@@ -14,8 +14,8 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { startCourseWithPlan } from "../goals/_test-utils/start-course-with-plan";
 import { loadCourseOutline, plansFromCourseOutline } from "../goals/_utils/course-outline";
-import { startCourseGoal } from "../goals/start-course-goal";
 import { getStartedCourseScope } from "../library/curriculum/course-start-graph";
 import { loadGoalCurriculumInputs } from "../library/curriculum/goal-curriculum-inputs";
 import { toGoalPlanGraph } from "../library/curriculum/goal-plan-graph";
@@ -371,7 +371,7 @@ describe("course estimate privacy and area evidence", () => {
       timeZone: "UTC",
     });
 
-    const started = await startCourseGoal({
+    const started = await startCourseWithPlan({
       courseId: course.id,
       input: {
         dailyMinutes: 15,
@@ -532,7 +532,7 @@ describe("course estimate privacy and area evidence", () => {
       timeZone: "UTC",
     });
 
-    const started = await startCourseGoal({
+    const started = await startCourseWithPlan({
       courseId: course.id,
       input: {
         dailyMinutes: 240,

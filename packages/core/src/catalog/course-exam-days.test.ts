@@ -11,7 +11,7 @@ import {
   getCourseCurriculumCacheTag,
   getExamBlueprintCacheTag,
 } from "../cache/tags";
-import { startCourseGoal } from "../goals/start-course-goal";
+import { startCourseWithPlan } from "../goals/_test-utils/start-course-with-plan";
 import { getCourseExamDays } from "./course-exam-days";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
@@ -107,7 +107,7 @@ describe(getCourseExamDays, () => {
     mockSession(user.id);
 
     await expect(
-      startCourseGoal({ courseId: course.id, input: { timeZone: "UTC" } }),
+      startCourseWithPlan({ courseId: course.id, input: { timeZone: "UTC" } }),
     ).resolves.toMatchObject({ goal: { targetDate: "2020-10-11" }, status: "created" });
   });
 
@@ -126,7 +126,7 @@ describe(getCourseExamDays, () => {
     mockSession(user.id);
 
     await expect(
-      startCourseGoal({ courseId: course.id, input: { timeZone: "UTC" } }),
+      startCourseWithPlan({ courseId: course.id, input: { timeZone: "UTC" } }),
     ).resolves.toMatchObject({ goal: { targetDate: "2020-10-11" }, status: "created" });
   });
 
@@ -165,7 +165,7 @@ describe(getCourseExamDays, () => {
       mockSession(user.id);
 
       await expect(
-        startCourseGoal({ courseId: course.id, input: { timeZone } }),
+        startCourseWithPlan({ courseId: course.id, input: { timeZone } }),
       ).resolves.toMatchObject({ goal: { targetDate }, status: "created" });
     },
   );
@@ -192,7 +192,7 @@ describe(getCourseExamDays, () => {
         });
 
       await expect(
-        startCourseGoal({ courseId: course.id, input: { timeZone: "Asia/Tokyo" } }),
+        startCourseWithPlan({ courseId: course.id, input: { timeZone: "Asia/Tokyo" } }),
       ).resolves.toMatchObject({ goal: { targetDate: "2020-10-11" }, status: "created" });
 
       vi.setSystemTime(new Date("2020-10-11T03:00:00Z"));
@@ -209,7 +209,7 @@ describe(getCourseExamDays, () => {
       mockSession(afterMidnightUser.id);
 
       await expect(
-        startCourseGoal({ courseId: course.id, input: { timeZone: "Asia/Tokyo" } }),
+        startCourseWithPlan({ courseId: course.id, input: { timeZone: "Asia/Tokyo" } }),
       ).resolves.toMatchObject({ goal: { targetDate: "2020-10-18" }, status: "created" });
     },
   );
@@ -234,7 +234,7 @@ describe(getCourseExamDays, () => {
       });
 
       await expect(
-        startCourseGoal({ courseId: course.id, input: { timeZone: "UTC" } }),
+        startCourseWithPlan({ courseId: course.id, input: { timeZone: "UTC" } }),
       ).resolves.toMatchObject({ goal: { targetDate: "2020-10-18" }, status: "created" });
 
       vi.setSystemTime(new Date("2020-10-18T03:00:00Z"));
@@ -249,7 +249,7 @@ describe(getCourseExamDays, () => {
       mockSession(afterMidnightUser.id);
 
       await expect(
-        startCourseGoal({ courseId: course.id, input: { timeZone: "UTC" } }),
+        startCourseWithPlan({ courseId: course.id, input: { timeZone: "UTC" } }),
       ).resolves.toMatchObject({ goal: { targetDate: "2021-10-10" }, status: "created" });
     },
   );
@@ -273,7 +273,7 @@ describe(getCourseExamDays, () => {
 
       mockSession(user.id);
 
-      await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toMatchObject({
+      await expect(startCourseWithPlan({ courseId: course.id, input: {} })).resolves.toMatchObject({
         goal: { targetDate: "2021-10-10" },
         status: "created",
       });
@@ -334,7 +334,7 @@ describe(getCourseExamDays, () => {
     mockSession(user.id);
 
     await expect(
-      startCourseGoal({ courseId: course.id, input: { timeZone: "UTC" } }),
+      startCourseWithPlan({ courseId: course.id, input: { timeZone: "UTC" } }),
     ).resolves.toMatchObject({ goal: { targetDate: "2020-12-13" }, status: "created" });
   });
 
@@ -379,7 +379,7 @@ describe(getCourseExamDays, () => {
 
     mockSession(user.id);
 
-    await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toMatchObject({
+    await expect(startCourseWithPlan({ courseId: course.id, input: {} })).resolves.toMatchObject({
       goal: { targetDate: "2020-10-11" },
       status: "created",
     });
@@ -404,7 +404,7 @@ describe(getCourseExamDays, () => {
       mockSession(user.id);
 
       await expect(
-        startCourseGoal({ courseId: course.id, input: { timeZone: "America/Sao_Paulo" } }),
+        startCourseWithPlan({ courseId: course.id, input: { timeZone: "America/Sao_Paulo" } }),
       ).resolves.toMatchObject({ goal: { targetDate: "2020-10-18" }, status: "created" });
     },
   );

@@ -20,7 +20,7 @@ import {
   keepMaterialPrivate,
   loadGoalCurriculumStep,
 } from "./steps/goal-curriculum-steps";
-import { listPlanSetupTasksStep } from "./steps/goal-plan-steps";
+import { listPlanSetupTasksStep, prepareCourseGoalPlanStep } from "./steps/goal-plan-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
 import { recordGoalRunStep } from "./steps/record-goal-run-step";
 import { loadStoredCurriculumStep } from "./steps/stored-plan-steps";
@@ -230,6 +230,17 @@ async function buildGoal({
   return { goalId, speculativeLessonIds, status: "built" };
 }
 
+async function loadInitialCurriculum(input: GoalContentInput) {
+  const initial = await loadGoalCurriculumStep(input.goalId);
+
+  if (!input.rebuild && initial?.startedCourse && !initial.hasPlanGraph) {
+    await prepareCourseGoalPlanStep({ goalId: input.goalId, platform: input.platform ?? null });
+    return loadGoalCurriculumStep(input.goalId);
+  }
+
+  return initial;
+}
+
 export async function goalContentWorkflow(input: GoalContentInput): Promise<GoalContentResult> {
   "use workflow";
 
@@ -250,7 +261,7 @@ export async function goalContentWorkflow(input: GoalContentInput): Promise<Goal
   await recordGoalRunStep({ generationId: workflowRunId, goalId });
   await goalProgressStep({ entityId: goalId, status: "started", step: "understandGoal" });
 
-  const initial = await loadGoalCurriculumStep(goalId);
+  const initial = await loadInitialCurriculum(input);
 
   if (!initial) {
     await goalProgressStep(

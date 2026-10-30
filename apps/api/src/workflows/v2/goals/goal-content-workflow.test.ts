@@ -26,6 +26,7 @@ import { markPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
@@ -1129,6 +1130,49 @@ describe(goalContentWorkflow, () => {
       false,
     );
   });
+
+  it.each([false, true])(
+    "prepares a started course's published plan only in its initial run (rebuild: %s)",
+    async (rebuild) => {
+      const course = await courseFixture({ isPublished: true, visibility: "public" });
+
+      const bands = await courseBandsFixture({
+        courseId: course.id,
+        levels: ["overview", "beginner", "intermediate", "advanced"],
+      });
+
+      const { goal } = await newGoal({
+        details: { courseStart: { chapterId: null }, level: "none" },
+        primaryCourseId: course.id,
+      });
+
+      await expect(
+        goalContentWorkflow({ goalId: goal.id, platform: "ios", rebuild }),
+      ).resolves.toMatchObject({ status: rebuild ? "ready" : "prepared" });
+
+      const items = await prisma.planItem.findMany({
+        orderBy: { position: "asc" },
+        where: { kind: "lesson", plan: { goalId: goal.id } },
+      });
+
+      expect(items.map((item) => item.lessonId)).toStrictEqual(
+        rebuild ? [] : bands.map((band) => band.lesson.id),
+      );
+
+      expect(generateSkillGraph).not.toHaveBeenCalled();
+
+      const createdPlatforms = vi
+        .mocked(trackServerEvent)
+        .mock.calls.filter(([event]) => event.name === "Plan Created")
+        .map(([event]) => event.shared.platform);
+
+      expect(createdPlatforms).toStrictEqual(rebuild ? [] : ["ios"]);
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ select: { setupTasks: true }, where: { goalId: goal.id } }),
+      ).resolves.toStrictEqual({ setupTasks: [] });
+    },
+  );
 
   it(
     "writes a started course's curriculum into that course, even when the graph names others",

@@ -15,7 +15,7 @@ import { cacheTag } from "next/cache";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getCourseCacheTag, getCourseCurriculumCacheTag } from "../cache/tags";
-import { startCourseGoal } from "../goals/start-course-goal";
+import { startCourseWithPlan } from "../goals/_test-utils/start-course-with-plan";
 import { ensureQuickLessons } from "../library/quick-lessons/quick-lessons";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { loadCourseEstimateData } from "./_utils/course-estimate-data";
@@ -431,7 +431,7 @@ describe(estimateCoursePlan, () => {
 
       mockSession(user.id);
 
-      const started = await startCourseGoal({
+      const started = await startCourseWithPlan({
         courseId: course.id,
         input: { dailyMinutes: 30, level: "basic", studyDays: DAYS, timeZone: "UTC" },
       });

@@ -1,5 +1,6 @@
 import { type generateSkillGraph } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
 import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
+import { prepareCourseGoalPlan } from "@zoonk/core/goals/prepare-course-plan";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { createGoalPlan } from "@zoonk/core/plans/create";
@@ -10,6 +11,15 @@ import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
 import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
 
 type GraphProvenance = Awaited<ReturnType<typeof generateSkillGraph>>["provenance"];
+
+export async function prepareCourseGoalPlanStep(input: {
+  goalId: string;
+  platform: AnalyticsPlatform | null;
+}): Promise<void> {
+  "use step";
+
+  await prepareCourseGoalPlan(input);
+}
 
 type GraphPlanInput = {
   courseIdsByKey: Record<string, string>;

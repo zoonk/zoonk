@@ -18,9 +18,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useIsolatedBudgetDay } from "../_test-utils/isolated-budget-day";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { loadGoalCurriculumInputs } from "../library/curriculum/goal-curriculum-inputs";
+import { listPlanSetupTasks, setUpPlanNow } from "../plans/plan-setup";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
+import { startCourseWithPlan } from "./_test-utils/start-course-with-plan";
 import { isResearchedCourseStart } from "./goal-research";
+import { prepareCourseGoalPlan } from "./prepare-course-goal-plan";
 import { findCourseGoalStart, startCourseGoal } from "./start-course-goal";
 
 /** Before other tests' learning events, so their pace never changes these plans. */
@@ -152,7 +155,7 @@ describe(startCourseGoal, () => {
     const [{ course }, user] = await Promise.all([outlinedCourse(), userFixture()]);
     mockSession(user.id);
 
-    const result = await startCourseGoal({ courseId: course.id, input: { timeZone: "UTC" } });
+    const result = await startCourseWithPlan({ courseId: course.id, input: { timeZone: "UTC" } });
 
     expect(result).toMatchObject({
       goal: {
@@ -206,21 +209,25 @@ describe(startCourseGoal, () => {
       status: "created",
     });
 
-    const onboarding = await getOnboarding({
-      goalId: known.status === "created" ? known.goal.id : "",
-    });
+    const goalId = known.status === "created" ? known.goal.id : "";
+    await expect(prisma.planItem.count({ where: { plan: { goalId } } })).resolves.toBe(0);
+    await prepareCourseGoalPlan({ goalId });
+    const onboarding = await getOnboarding({ goalId });
 
     const steps = onboarding.status === "ready" ? onboarding.onboarding.steps : [];
 
     expect(steps).not.toContain("level");
     expect(steps).toContain("placement");
+
+    await expect(listPlanSetupTasks(goalId)).resolves.toStrictEqual(["placement", "routine"]);
+    await expect(setUpPlanNow(goalId)).resolves.toStrictEqual([]);
   });
 
   it("takes a quick test as the level's answer, leaving the level to placement", async () => {
     const [course, user] = await Promise.all([publicCourse(), userFixture()]);
     mockSession(user.id);
 
-    const result = await startCourseGoal({ courseId: course.id, input: { level: null } });
+    const result = await startCourseWithPlan({ courseId: course.id, input: { level: null } });
     const goal = result.status === "created" ? result.goal : null;
 
     expect(goal?.details).toMatchObject({ answered: ["level"] });
@@ -239,7 +246,7 @@ describe(startCourseGoal, () => {
 
     mockSession(user.id);
 
-    const result = await startCourseGoal({ courseId: course.id, input: {} });
+    const result = await startCourseWithPlan({ courseId: course.id, input: {} });
     const plan = await readPlan(result.status === "created" ? result.goal.id : "");
 
     expect(plan.lessons).toStrictEqual([
@@ -263,7 +270,7 @@ describe(startCourseGoal, () => {
     const decisions = chapters[1]?.id ?? "";
     mockSession(user.id);
 
-    const result = await startCourseGoal({
+    const result = await startCourseWithPlan({
       courseId: course.id,
       input: { chapterId: decisions, dailyMinutes: 30 },
     });
@@ -298,8 +305,8 @@ describe(startCourseGoal, () => {
     const [{ course }, user] = await Promise.all([outlinedCourse(), userFixture()]);
     mockSession(user.id);
 
-    const first = await startCourseGoal({ courseId: course.id, input: {} });
-    const again = await startCourseGoal({ courseId: course.id, input: {} });
+    const first = await startCourseWithPlan({ courseId: course.id, input: {} });
+    const again = await startCourseWithPlan({ courseId: course.id, input: {} });
 
     expect(again).toMatchObject({
       goal: { id: first.status === "created" ? first.goal.id : "" },
@@ -320,7 +327,7 @@ describe(startCourseGoal, () => {
     mockSession(user.id);
     await expect(findCourseGoalStart(course.id)).resolves.toBeNull();
 
-    const started = await startCourseGoal({ courseId: course.id, input: { level: "basic" } });
+    const started = await startCourseWithPlan({ courseId: course.id, input: { level: "basic" } });
 
     await expect(findCourseGoalStart(course.id)).resolves.toStrictEqual({
       goalId: started.status === "created" ? started.goal.id : "",
@@ -344,7 +351,7 @@ describe(startCourseGoal, () => {
       userId: user.id,
     });
 
-    await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toMatchObject({
+    await expect(startCourseWithPlan({ courseId: course.id, input: {} })).resolves.toMatchObject({
       goal: { id: goal.id },
       inOnboarding: false,
       status: "existing",
@@ -359,7 +366,7 @@ describe(startCourseGoal, () => {
 
     mockSession(user.id);
 
-    const result = await startCourseGoal({ courseId: course.id, input: {} });
+    const result = await startCourseWithPlan({ courseId: course.id, input: {} });
 
     expect(result).toMatchObject({
       goal: { kind: "language", language: "pt", targetLanguage: "en", title: "Inglês" },
@@ -375,7 +382,7 @@ describe(startCourseGoal, () => {
 
     mockSession(user.id);
 
-    const result = await startCourseGoal({ courseId: course.id, input: {} });
+    const result = await startCourseWithPlan({ courseId: course.id, input: {} });
 
     expect(result).toMatchObject({
       goal: { plan: { ready: false }, primaryCourseId: course.id },
@@ -402,7 +409,7 @@ describe(startCourseGoal, () => {
 
     mockSession(user.id);
 
-    const result = await startCourseGoal({ courseId: course.id, input: { level: "basic" } });
+    const result = await startCourseWithPlan({ courseId: course.id, input: { level: "basic" } });
     const goalId = result.status === "created" ? result.goal.id : "";
 
     expect(result).toMatchObject({
@@ -429,7 +436,7 @@ describe(startCourseGoal, () => {
 
     mockSession(user.id);
 
-    const result = await startCourseGoal({
+    const result = await startCourseWithPlan({
       courseId: course.id,
       input: { chapterId: chapters[0]?.id ?? "" },
     });
@@ -448,7 +455,7 @@ describe(startCourseGoal, () => {
 
       mockSession(user.id);
 
-      const result = await startCourseGoal({ courseId: course.id, input: {} });
+      const result = await startCourseWithPlan({ courseId: course.id, input: {} });
 
       expect(result).toMatchObject({ goal: { plan: { ready: false } }, status: "created" });
     },
@@ -465,7 +472,7 @@ describe(startCourseGoal, () => {
 
     mockSession(user.id);
 
-    const result = await startCourseGoal({ courseId: course.id, input: {} });
+    const result = await startCourseWithPlan({ courseId: course.id, input: {} });
 
     expect(result).toMatchObject({ goal: { plan: { ready: false } }, status: "created" });
   });
@@ -522,7 +529,7 @@ describe(startCourseGoal, () => {
 
       mockSession(user.id);
 
-      const result = await startCourseGoal({ courseId: course.id, input: {} });
+      const result = await startCourseWithPlan({ courseId: course.id, input: {} });
 
       expect(result).toMatchObject({
         goal: { examBlueprintId: blueprint.id, kind: "exam", plan: { ready } },
@@ -571,7 +578,7 @@ describe(startCourseGoal, () => {
 
     mockSession(user.id);
 
-    const result = await startCourseGoal({ courseId: course.id, input: {} });
+    const result = await startCourseWithPlan({ courseId: course.id, input: {} });
 
     expect(result).toMatchObject({
       goal: { kind: "exam", targetDate: "2020-11-08" },
@@ -585,7 +592,7 @@ describe(startCourseGoal, () => {
       settings: { noticeDate: "2020-11-08" },
     });
 
-    await startCourseGoal({ courseId: course.id, input: {} });
+    await startCourseWithPlan({ courseId: course.id, input: {} });
   });
 
   it("starts an exam course without a stored exam as an exam goal, which research reads", async () => {
@@ -596,7 +603,7 @@ describe(startCourseGoal, () => {
 
     mockSession(user.id);
 
-    const result = await startCourseGoal({ courseId: course.id, input: {} });
+    const result = await startCourseWithPlan({ courseId: course.id, input: {} });
     const goal = result.status === "created" ? result.goal : null;
 
     expect(goal).toMatchObject({ examBlueprintId: null, kind: "exam", primaryCourseId: course.id });
@@ -613,23 +620,23 @@ describe(startCourseGoal, () => {
 
     mockSession(other.id);
 
-    await expect(startCourseGoal({ courseId: privateCourse.id, input: {} })).resolves.toStrictEqual(
-      { status: "notFound" },
-    );
+    await expect(
+      startCourseWithPlan({ courseId: privateCourse.id, input: {} }),
+    ).resolves.toStrictEqual({ status: "notFound" });
 
-    await expect(startCourseGoal({ courseId: unlisted.id, input: {} })).resolves.toStrictEqual({
+    await expect(startCourseWithPlan({ courseId: unlisted.id, input: {} })).resolves.toStrictEqual({
       status: "notFound",
     });
 
-    await expect(startCourseGoal({ courseId: "not-a-course", input: {} })).resolves.toStrictEqual({
-      status: "notFound",
-    });
+    await expect(
+      startCourseWithPlan({ courseId: "not-a-course", input: {} }),
+    ).resolves.toStrictEqual({ status: "notFound" });
 
     mockSession(owner.id);
 
-    await expect(startCourseGoal({ courseId: privateCourse.id, input: {} })).resolves.toMatchObject(
-      { status: "created" },
-    );
+    await expect(
+      startCourseWithPlan({ courseId: privateCourse.id, input: {} }),
+    ).resolves.toMatchObject({ status: "created" });
   });
 
   it.each([false, true])(
@@ -644,13 +651,13 @@ describe(startCourseGoal, () => {
         startCourseGoal({ courseId: course.id, input: { level: "basic" } }),
       ).resolves.toStrictEqual({ status: "notFound" });
 
-      await expect(startCourseGoal({ courseId: randomUUID(), input: {} })).resolves.toStrictEqual({
-        status: "notFound",
-      });
+      await expect(
+        startCourseWithPlan({ courseId: randomUUID(), input: {} }),
+      ).resolves.toStrictEqual({ status: "notFound" });
 
       mockGuestSession(other.id);
 
-      await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toStrictEqual({
+      await expect(startCourseWithPlan({ courseId: course.id, input: {} })).resolves.toStrictEqual({
         status: "notFound",
       });
 
@@ -659,7 +666,7 @@ describe(startCourseGoal, () => {
 
       mockSession(owner.id);
 
-      await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toMatchObject({
+      await expect(startCourseWithPlan({ courseId: course.id, input: {} })).resolves.toMatchObject({
         goal: { primaryCourseId: course.id },
         status: "created",
       });
@@ -695,7 +702,7 @@ describe(startCourseGoal, () => {
     await goalFixture({ userId: learner.id });
     mockSession(learner.id);
 
-    await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toMatchObject({
+    await expect(startCourseWithPlan({ courseId: course.id, input: {} })).resolves.toMatchObject({
       refusals: [{ decision: { limit: { resource: "activeGoals" }, status: "limitReached" } }],
       status: "refused",
     });
@@ -713,11 +720,11 @@ describe(startCourseGoal, () => {
     await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } });
     mockGuestSession(guest.id);
 
-    await expect(startCourseGoal({ courseId: first.id, input: {} })).resolves.toMatchObject({
+    await expect(startCourseWithPlan({ courseId: first.id, input: {} })).resolves.toMatchObject({
       status: "created",
     });
 
-    await expect(startCourseGoal({ courseId: second.id, input: {} })).resolves.toMatchObject({
+    await expect(startCourseWithPlan({ courseId: second.id, input: {} })).resolves.toMatchObject({
       refusals: [{ decision: { limit: { tier: "guest" }, status: "limitReached" } }],
       status: "refused",
     });
@@ -727,7 +734,7 @@ describe(startCourseGoal, () => {
     const course = await publicCourse();
     mockSession(null);
 
-    await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toStrictEqual({
+    await expect(startCourseWithPlan({ courseId: course.id, input: {} })).resolves.toStrictEqual({
       status: "unauthorized",
     });
   });

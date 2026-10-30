@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { startCourseGoal } from "../goals/start-course-goal";
+import { startCourseWithPlan } from "../goals/_test-utils/start-course-with-plan";
 import { ensureQuickLessons } from "../library/quick-lessons/quick-lessons";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getGoalPlan } from "../plans/get-goal-plan";
@@ -66,7 +66,7 @@ describe("public course plan numbers", () => {
     const estimate = await estimateCoursePlan({ ...input, courseId: course.id });
     mockSession(user.id);
 
-    const started = await startCourseGoal({
+    const started = await startCourseWithPlan({
       courseId: course.id,
       input: { ...input, level: "none", timeZone: "UTC" },
     });

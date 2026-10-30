@@ -14,7 +14,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { startCourseGoal } from "../goals/start-course-goal";
+import { startCourseWithPlan } from "../goals/_test-utils/start-course-with-plan";
 import { changeGoalPlan } from "../plans/change-goal-plan";
 import { estimateCoursePlan } from "./course-estimate";
 
@@ -122,7 +122,7 @@ describe("published course study order", () => {
 
       mockSession(user.id);
 
-      const started = await startCourseGoal({
+      const started = await startCourseWithPlan({
         courseId: course.id,
         input: { dailyMinutes: 15, studyDays: [1, 2, 3, 4, 5] },
       });

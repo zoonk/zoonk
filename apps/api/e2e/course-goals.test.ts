@@ -195,7 +195,7 @@ test.describe("Course goals API", () => {
     await anonymous.dispose();
   });
 
-  test("starts a course as a goal with its plan, and gives the same goal back after", async () => {
+  test("starts a course as a goal, queues its plan, and gives the same goal back after", async () => {
     const [{ apiContext, user }, { course }] = await Promise.all([
       createAuthenticatedApiContext({ baseURL, prefix: "course-goal" }),
       createOutlinedCourse({ everyBand: true }),
@@ -213,7 +213,7 @@ test.describe("Course goals API", () => {
       dailyMinutes: 20,
       details: { courseStart: { chapterId: null } },
       kind: "learn",
-      plan: { ready: true },
+      plan: { ready: false },
       primaryCourseId: course.id,
     });
 

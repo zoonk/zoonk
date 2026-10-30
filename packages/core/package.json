@@ -134,6 +134,7 @@
     "./goals/owned-goal": "./src/learner/get-owned-goal.ts",
     "./goals/record-generation": "./src/goals/record-goal-generation.ts",
     "./goals/research": "./src/goals/goal-research.ts",
+    "./goals/prepare-course-plan": "./src/goals/prepare-course-goal-plan.ts",
     "./goals/start-course": "./src/goals/start-course-goal.ts",
     "./goals/suggestions/contract": "./src/goals/suggestions/suggested-goal-contract.ts",
     "./goals/suggestions/respond": "./src/goals/suggestions/respond-to-suggested-goal.ts",

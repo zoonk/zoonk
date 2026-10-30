@@ -6,19 +6,15 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { getExamCalendarDay, getPlanExamDays } from "../exams/_utils/plan-exam-days";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
-import { createGoalPlan } from "../plans/create-goal-plan";
 import { fromIsoDate, toIsoDate } from "../plans/planner/plan-calendar";
 import { getTargetDateBounds } from "../plans/target-date-range";
 import { getSession } from "../users/get-session";
-import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { hasOnboardingQuestions } from "../view-models/onboarding/onboarding-steps";
 import { loadCourseExam } from "./_utils/course-exam";
 import { getCourseGoalKind } from "./_utils/course-goal-kind";
-import { loadCourseOutline, plansFromCourseOutline } from "./_utils/course-outline";
-import { toCoursePlanGraph } from "./_utils/course-plan-graph";
+import { loadCourseOutline } from "./_utils/course-outline";
 import { followsCourse } from "./_utils/follows-course";
-import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { type CourseGoalStartInput } from "./course-start-contract";
 import { type CourseStart } from "./course-start-details";
 import { type GoalRefusal, createGoals } from "./create-goals";
@@ -87,16 +83,6 @@ export async function findCourseGoalStart(
     : null;
 }
 
-async function loadGoalView({ goal, userId }: { goal: GoalView; userId: string }) {
-  const [row, activeGoalId] = await Promise.all([
-    prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
-    findActiveGoalId(userId),
-  ]);
-
-  const [view] = await loadGoalViews({ activeGoalId, goals: [row] });
-  return view ?? goal;
-}
-
 function toCourseGoalDraft({
   course,
   courseStart,
@@ -108,10 +94,16 @@ function toCourseGoalDraft({
   examBlueprintId: string | undefined;
   input: CourseGoalStartInput;
 }): GoalDraft {
+  const answered = [
+    input.targetDate !== undefined && "targetDate",
+    input.level !== undefined && "level",
+  ].filter(Boolean);
+
   return {
     details: {
-      ...(input.targetDate === undefined ? {} : { answered: ["targetDate"] }),
+      ...(answered.length > 0 && { answered }),
       courseStart,
+      ...(input.level && { level: input.level }),
     },
     examBlueprintId,
     kind: getCourseGoalKind({
@@ -126,31 +118,6 @@ function toCourseGoalDraft({
     targetLanguage: course.targetLanguage ?? undefined,
     title: course.title,
   };
-}
-
-async function planFromOutline({
-  chapterId,
-  course,
-  exam,
-  goalId,
-  outline,
-}: {
-  chapterId: string | null;
-  course: NonNullable<Awaited<ReturnType<typeof findStartableCourse>>>;
-  exam: Awaited<ReturnType<typeof loadCourseExam>>;
-  goalId: string;
-  outline: Awaited<ReturnType<typeof loadCourseOutline>>;
-}): Promise<void> {
-  const graph = toCoursePlanGraph({
-    chapters: outline,
-    course,
-    examGraph: exam?.graph,
-    startChapterId: chapterId,
-  });
-
-  if (graph.skills.length > 0 || exam) {
-    await createGoalPlan({ goalId, graph });
-  }
 }
 
 function findDefaultExamDay(exam: Awaited<ReturnType<typeof loadCourseExam>>): string | null {
@@ -171,10 +138,10 @@ async function setDefaultExamDate({
   userId,
 }: {
   exam: Awaited<ReturnType<typeof loadCourseExam>>;
-  goal: Pick<GoalView, "id" | "kind">;
+  goal: GoalView;
   input: CourseGoalStartInput;
   userId: string;
-}): Promise<void> {
+}): Promise<GoalView> {
   const day =
     goal.kind === "exam" && input.targetDate === undefined ? findDefaultExamDay(exam) : null;
 
@@ -182,7 +149,7 @@ async function setDefaultExamDate({
   const today = toIsoDate(getDateInTimeZone({ date: new Date(), timeZone }));
 
   if (!day || day > getTargetDateBounds(today).max) {
-    return;
+    return goal;
   }
 
   const goalId = goal.id;
@@ -207,6 +174,8 @@ async function setDefaultExamDate({
       where: { goalId },
     });
   });
+
+  return { ...goal, targetDate: day };
 }
 
 /**
@@ -233,13 +202,13 @@ export async function startCourseGoal({
     return { status: "notFound" };
   }
 
+  const chapterId = input.chapterId ?? null;
+
   const [existing, outline, exam] = await Promise.all([
     findCourseGoal({ courseId, userId }),
-    loadCourseOutline({ courseId, userId }),
+    chapterId ? loadCourseOutline({ courseId, userId }) : [],
     loadCourseExam(courseId),
   ]);
-
-  const chapterId = input.chapterId ?? null;
 
   if (chapterId && !outline.some((chapter) => chapter.chapterId === chapterId)) {
     return { status: "notFound" };
@@ -272,27 +241,5 @@ export async function startCourseGoal({
     return { status: created.status === "unauthorized" ? "unauthorized" : "notFound" };
   }
 
-  await setDefaultExamDate({ exam, goal, input, userId });
-
-  if (input.level !== undefined) {
-    await answerOnboardingQuestion({
-      goalId: goal.id,
-      input: { level: input.level, question: "level" },
-    });
-  }
-
-  const plansFromOutline = plansFromCourseOutline({
-    chapterId,
-    chapters: outline,
-    courseFormat: course.format,
-    courseId: course.id,
-    examGraph: exam?.graph ?? null,
-    outlineStatus: course.outlineStatus,
-  });
-
-  if (plansFromOutline) {
-    await planFromOutline({ chapterId, course, exam, goalId: goal.id, outline });
-  }
-
-  return { goal: await loadGoalView({ goal, userId }), status: "created" };
+  return { goal: await setDefaultExamDate({ exam, goal, input, userId }), status: "created" };
 }

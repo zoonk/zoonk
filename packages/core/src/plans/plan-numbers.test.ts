@@ -8,7 +8,7 @@ import {
   estimateNumbersFixture,
 } from "../catalog/_test-utils/estimate-numbers-fixture";
 import { loadCourseEstimateData } from "../catalog/_utils/course-estimate-data";
-import { startCourseGoal } from "../goals/start-course-goal";
+import { startCourseWithPlan } from "../goals/_test-utils/start-course-with-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { getPlanNumbers } from "./_utils/plan-numbers";
 import { changeGoalPlan } from "./change-goal-plan";
@@ -31,7 +31,7 @@ describe("learner plan numbers", () => {
     const [{ course }, user] = await Promise.all([estimateNumbersFixture(), userFixture()]);
     mockSession(user.id);
 
-    const started = await startCourseGoal({
+    const started = await startCourseWithPlan({
       courseId: course.id,
       input: {
         dailyMinutes: 30,

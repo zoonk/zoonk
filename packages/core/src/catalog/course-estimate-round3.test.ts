@@ -15,7 +15,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { startCourseGoal } from "../goals/start-course-goal";
+import { startCourseWithPlan } from "../goals/_test-utils/start-course-with-plan";
 import { resolveMergedSkills } from "../plans/_utils/planner-inputs";
 import { findBeyondNoticeSkillIds } from "../plans/planner/beyond-notice-skills";
 import { loadCourseEstimateData } from "./_utils/course-estimate-data";
@@ -92,7 +92,7 @@ describe("honest course estimates", () => {
     const [{ course }, user] = await Promise.all([sharedSkillCourse(), userFixture()]);
     mockSession(user.id);
 
-    const started = await startCourseGoal({
+    const started = await startCourseWithPlan({
       courseId: course.id,
       input: { dailyMinutes: 15, level: "none", targetDate: null, timeZone: "UTC" },
     });
@@ -113,7 +113,7 @@ describe("honest course estimates", () => {
     const [{ course }, user] = await Promise.all([sharedSkillCourse(true), userFixture()]);
     mockSession(user.id);
 
-    const started = await startCourseGoal({
+    const started = await startCourseWithPlan({
       courseId: course.id,
       input: { dailyMinutes: 15, level: "none", targetDate: null, timeZone: "UTC" },
     });

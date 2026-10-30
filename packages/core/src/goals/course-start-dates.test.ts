@@ -11,8 +11,8 @@ import { planLibraryFixture } from "../plans/_test-utils/plan-library";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
+import { startCourseWithPlan } from "./_test-utils/start-course-with-plan";
 import { courseGoalStartInputSchema } from "./course-start-contract";
-import { startCourseGoal } from "./start-course-goal";
 
 /** Before other tests' learning events, so their pace never changes these plans. */
 const NOW = new Date("2020-09-28T12:00:00Z");
@@ -140,7 +140,7 @@ describe("course-start deadlines", () => {
 
   it("leaves an ordinary course undated and asks the optional date in onboarding", async () => {
     const { course } = await courseLibrary();
-    const result = await startCourseGoal({ courseId: course.id, input: { level: "none" } });
+    const result = await startCourseWithPlan({ courseId: course.id, input: { level: "none" } });
     expect(result.status).toBe("created");
     const goalId = result.status === "created" ? result.goal.id : "";
 
@@ -160,7 +160,7 @@ describe("course-start deadlines", () => {
         targetDate,
       });
 
-      const result = await startCourseGoal({ courseId: course.id, input });
+      const result = await startCourseWithPlan({ courseId: course.id, input });
       expect(result.status).toBe("created");
       const goalId = result.status === "created" ? result.goal.id : "";
       const saved = await readGoal(goalId);
@@ -179,7 +179,7 @@ describe("course-start deadlines", () => {
   it("answers a course date, then clears it on skip and restores the undated plan", async () => {
     const { course } = await courseLibrary();
 
-    const result = await startCourseGoal({
+    const result = await startCourseWithPlan({
       courseId: course.id,
       input: { dailyMinutes: 5, level: "none" },
     });
@@ -211,7 +211,7 @@ describe("course-start deadlines", () => {
 
   it("starts a linked public exam goal with the next notice date and follows its revised date", async () => {
     const { blueprint, course } = await examCourse();
-    const result = await startCourseGoal({ courseId: course.id, input: { level: "none" } });
+    const result = await startCourseWithPlan({ courseId: course.id, input: { level: "none" } });
 
     expect(result).toMatchObject({
       goal: { examBlueprintId: blueprint.id, kind: "exam", targetDate: EXAM_DATE },
@@ -241,7 +241,7 @@ describe("course-start deadlines", () => {
 
   it("gives a deferred exam start its notice's date right away, which the notice can still move", async () => {
     const { blueprint, course } = await examCourse({}, { deferred: true });
-    const result = await startCourseGoal({ courseId: course.id, input: { level: "none" } });
+    const result = await startCourseWithPlan({ courseId: course.id, input: { level: "none" } });
 
     expect(result).toMatchObject({
       goal: { examBlueprintId: blueprint.id, kind: "exam", targetDate: EXAM_DATE },
@@ -280,7 +280,7 @@ describe("course-start deadlines", () => {
     async (targetDate) => {
       const { blueprint, course } = await examCourse({}, { deferred: true });
 
-      const result = await startCourseGoal({
+      const result = await startCourseWithPlan({
         courseId: course.id,
         input: courseGoalStartInputSchema.parse({ level: "none", targetDate }),
       });
@@ -312,7 +312,7 @@ describe("course-start deadlines", () => {
   it("keeps an explicit no-deadline exam undated through graph rebuilds", async () => {
     const { blueprint, course } = await examCourse();
 
-    const result = await startCourseGoal({
+    const result = await startCourseWithPlan({
       courseId: course.id,
       input: courseGoalStartInputSchema.parse({ level: "none", targetDate: null }),
     });
@@ -342,7 +342,7 @@ describe("course-start deadlines", () => {
     "lets the learner keep, change or remove the default exam date by answering %s",
     async (targetDate) => {
       const { course } = await examCourse();
-      const result = await startCourseGoal({ courseId: course.id, input: { level: "none" } });
+      const result = await startCourseWithPlan({ courseId: course.id, input: { level: "none" } });
       expect(result.status).toBe("created");
       const goalId = result.status === "created" ? result.goal.id : "";
       const initial = await readGoal(goalId);
@@ -389,7 +389,7 @@ describe("course-start deadlines", () => {
       examDate: new Date("2019-10-13"),
     });
 
-    await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toMatchObject({
+    await expect(startCourseWithPlan({ courseId: course.id, input: {} })).resolves.toMatchObject({
       goal: { kind: "exam", targetDate: EXAM_DATE },
       status: "created",
     });
@@ -397,7 +397,7 @@ describe("course-start deadlines", () => {
 
   it("asks for an optional date when the linked exam has no stored exam days", async () => {
     const { course } = await examCourse({ edition: { ...edition(), dates: [] }, examDate: null });
-    const result = await startCourseGoal({ courseId: course.id, input: {} });
+    const result = await startCourseWithPlan({ courseId: course.id, input: {} });
 
     expect(result).toMatchObject({ goal: { kind: "exam", targetDate: null }, status: "created" });
 
@@ -418,7 +418,7 @@ describe("course-start deadlines", () => {
       examDate: new Date(far),
     });
 
-    const result = await startCourseGoal({ courseId: course.id, input: {} });
+    const result = await startCourseWithPlan({ courseId: course.id, input: {} });
 
     expect(result).toMatchObject({ goal: { kind: "exam", targetDate: null }, status: "created" });
 
@@ -432,7 +432,7 @@ describe("course-start deadlines", () => {
   it("keeps an exam's supplied date over its notice when replanning", async () => {
     const { course } = await examCourse();
 
-    const result = await startCourseGoal({
+    const result = await startCourseWithPlan({
       courseId: course.id,
       input: courseGoalStartInputSchema.parse({ targetDate: "2020-10-04" }),
     });
@@ -455,7 +455,7 @@ describe("course-start deadlines", () => {
   it("never uses a private linked blueprint as the public course's exam", async () => {
     const owner = await userFixture();
     const { course } = await examCourse({ ownerId: owner.id, visibility: "private" });
-    const result = await startCourseGoal({ courseId: course.id, input: {} });
+    const result = await startCourseWithPlan({ courseId: course.id, input: {} });
 
     expect(result).toMatchObject({
       goal: { examBlueprintId: null, kind: "learn", targetDate: null },
