@@ -137,18 +137,25 @@ private struct AppWindow: View {
           session.handleGoogleSignInURL(url)
         }
       }
-      // Once the saved sign-in is checked, so the result only reopens for a learner it can load for.
-      .onChange(of: session.state == .restoring, initial: true) { _, isRestoring in
-        guard !isRestoring, restoresTestOutResult else {
+      // Once the saved sign-in is checked, so the result only reopens for a learner it can load for;
+      // a check that couldn't reach the server keeps it for the next one.
+      .onChange(of: session.state, initial: true) { _, state in
+        guard restoresTestOutResult else {
           return
         }
 
-        restoresTestOutResult = false
+        switch state {
+        case .signedIn:
+          restoresTestOutResult = false
 
-        if let openTestOutResult, session.authenticatedSession != nil {
-          router.open(url: openTestOutResult)
-        } else {
+          if let openTestOutResult {
+            router.open(url: openTestOutResult)
+          }
+        case .signedOut:
+          restoresTestOutResult = false
           openTestOutResult = nil
+        case .restoring, .unavailable:
+          break
         }
       }
   }
