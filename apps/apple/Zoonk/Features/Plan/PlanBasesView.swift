@@ -174,8 +174,12 @@ struct PlanBasesView: View {
             Text(
               "Your plan stays as it is.", tableName: "Plan", comment: "A preview with no change")
           case .changes(let previewed):
-            if let text = planEffectText(previewed.effect, plan: plan) {
-              Text(text)
+            PlanEffectDiff(effect: previewed.effect, today: plan.today)
+
+            if let footnote = footnote(previewed) {
+              Text(footnote)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
             }
           }
 
@@ -291,6 +295,58 @@ struct PlanBasesView: View {
     case .failed: preview = .failed
     case .obsolete: break
     }
+  }
+
+  /// Main's `useBasesFootnote`: the topics that come in or leave, and what the plan covers then.
+  private func footnote(_ preview: PlanChangePreview) -> String? {
+    let added = (preview.effect?.topicsAdded ?? []).flatMap(\.topics)
+    let leftOut = (preview.effect?.topicsLeftOut ?? []).flatMap(\.topics)
+    let lines = [
+      added.isEmpty
+        ? nil
+        : String(
+          localized: "\(added.count) topics come in: \(planTopicList(added)).", table: "Plan",
+          comment: "Topics a prerequisites' change brings into the plan, named"),
+      leftOut.isEmpty
+        ? nil
+        : String(
+          localized: "\(leftOut.count) topics leave: \(planTopicList(leftOut)).", table: "Plan",
+          comment: "Topics a prerequisites' change leaves out of the plan, named"),
+      preview.feasibility.map(coverageLine),
+    ].compactMap(\.self)
+
+    return lines.isEmpty ? nil : lines.joined(separator: " ")
+  }
+
+  private func coverageLine(_ feasibility: PlanChangePreview.Feasibility) -> String {
+    if feasibility.fits {
+      return String(
+        localized: "Everything then fits by your date.", table: "Plan",
+        comment: "A change would fit everything by the goal's date")
+    }
+
+    let share = FloatingPointFormatStyle<Double>.Percent().precision(.fractionLength(0))
+    let after = feasibility.coveredShare.formatted(share)
+    let before = (plan.feasibility?.coveredShare ?? 0).formatted(share)
+    let isExam = feasibility.measure == "exam"
+
+    if after == before {
+      return isExam
+        ? String(
+          localized: "By your date: \(after) of the exam, as now.", table: "Plan",
+          comment: "What a change covers of the exam by its date, the same as now")
+        : String(
+          localized: "By your date: \(after) of your goal, as now.", table: "Plan",
+          comment: "What a change covers of the goal by its date, the same as now")
+    }
+
+    return isExam
+      ? String(
+        localized: "By your date: \(after) of the exam, against \(before) now.", table: "Plan",
+        comment: "What a change covers of the exam by its date, then what the plan covers now")
+      : String(
+        localized: "By your date: \(after) of your goal, against \(before) now.", table: "Plan",
+        comment: "What a change covers of the goal by its date, then what the plan covers now")
   }
 
   private func save(_ changed: [GoalPlan.Bases.Item]) async {

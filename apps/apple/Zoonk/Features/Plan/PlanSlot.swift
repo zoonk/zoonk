@@ -163,12 +163,12 @@ struct PlanSuggestionSection: View {
     }
   }
 
-  private func fitTitle(fits: Bool) -> Text {
+  private func fitTitle(_ offer: GoalPlan.FitOffer) -> Text {
     let schedule = context.plan.schedule
 
-    guard fits, let targetDate = schedule.targetDate else {
+    guard offer.fits, let targetDate = schedule.targetDate else {
       return Text(
-        "More lessons fit in your time", tableName: "Plan",
+        "\(offer.effect.lessonsAdded) more lessons fit in your time", tableName: "Plan",
         comment: "Title of the offer that brings more lessons in")
     }
 
@@ -190,9 +190,13 @@ struct PlanSuggestionSection: View {
   @ViewBuilder
   private func fitLessons(_ item: PlanSlotItem) -> some View {
     if let offer = context.plan.fitOffer {
-      let title = fitTitle(fits: offer.fits)
+      let title = fitTitle(offer)
 
-      card(title: title, systemImage: "sparkles", description: nil) {
+      card(
+        title: title, systemImage: "sparkles",
+        description: topicsMoved(offer.effect).map(Text.init),
+        effect: offer.effect
+      ) {
         if offer.canApply {
           Button {
             Task { await applyOffer(offer) }
@@ -207,7 +211,7 @@ struct PlanSuggestionSection: View {
   }
 
   private func card(
-    title: Text, systemImage: String, description: Text?,
+    title: Text, systemImage: String, description: Text?, effect: PlanEffect? = nil,
     @ViewBuilder actions: () -> some View
   ) -> some View {
     VStack(alignment: .leading, spacing: 8) {
@@ -224,11 +228,43 @@ struct PlanSuggestionSection: View {
           .foregroundStyle(.secondary)
       }
 
+      PlanEffectDiff(effect: effect, today: context.plan.today)
+
       HStack {
         actions()
       }
       .buttonStyle(.bordered)
     }
+  }
+
+  /// Main's `useTopicsMovedSentence`, naming two topics.
+  private func topicsMoved(_ effect: PlanEffect) -> String? {
+    let out = (effect.topicsLeftOut ?? []).flatMap(\.topics)
+    let back = (effect.topicsAdded ?? []).flatMap(\.topics)
+    let outList = planTopicList(out, named: 2)
+    let backList = planTopicList(back, named: 2)
+    let sentences = [
+      out.isEmpty
+        ? nil
+        : out.count == 1
+          ? String(
+            localized: "\(outList) no longer fits by your date.", table: "Plan",
+            comment: "One topic a change leaves out of what the goal's date covers")
+          : String(
+            localized: "\(outList) no longer fit by your date.", table: "Plan",
+            comment: "Topics a change leaves out of what the goal's date covers, listed"),
+      back.isEmpty
+        ? nil
+        : back.count == 1
+          ? String(
+            localized: "\(backList) now fits by your date.", table: "Plan",
+            comment: "One topic a change brings into what the goal's date covers")
+          : String(
+            localized: "\(backList) now fit by your date.", table: "Plan",
+            comment: "Topics a change brings into what the goal's date covers, listed"),
+    ].compactMap(\.self)
+
+    return sentences.isEmpty ? nil : sentences.joined(separator: " ")
   }
 
   private func adjustButton(_ section: AdjustPlanSheet.Section) -> some View {

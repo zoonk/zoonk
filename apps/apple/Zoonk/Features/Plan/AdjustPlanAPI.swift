@@ -103,18 +103,54 @@ enum PlanEdit: Encodable, Equatable, Sendable {
 }
 
 struct PlanEffect: Decodable, Equatable, Sendable {
+  struct Move<Value: Decodable & Equatable & Sendable>: Decodable, Equatable, Sendable {
+    let after: Value
+    let before: Value
+  }
+
+  struct NamedMove: Decodable, Equatable, Sendable {
+    let after: String
+    let before: String
+    let name: String
+  }
+
+  struct AreaMove<Value: Decodable & Equatable & Sendable>: Decodable, Equatable, Sendable {
+    let after: Value
+    let area: String
+    let before: Value
+  }
+
+  struct Topics: Decodable, Equatable, Sendable {
+    let area: String
+    let topics: [String]
+  }
+
   struct UnwrittenLeftOut: Decodable, Equatable, Sendable {
     let lessons: Int
     let skill: String
   }
 
+  struct WeeklyEvents: Decodable, Equatable, Sendable {
+    let after: Int
+    let before: Int
+    /// `mock` or `challenge`.
+    let kind: String
+  }
+
+  let areaEnds: [AreaMove<String>]?
+  let areaLessons: [AreaMove<Int>]?
   let endDateAfter: String?
   let endDateBefore: String?
   let lessonsAdded: Int
   let lessonsAddedEstimated: Bool?
   let lessonsLeftOut: [String]?
   let lessonsRemoved: Int
+  let nextMock: Move<String>?
+  let phaseEnds: [NamedMove]?
+  let topicsAdded: [Topics]?
+  let topicsLeftOut: [Topics]?
   let unwrittenLeftOut: [UnwrittenLeftOut]?
+  let weeklyEvents: WeeklyEvents?
 }
 
 struct PlanChangePreview: Decodable, Equatable, Sendable {

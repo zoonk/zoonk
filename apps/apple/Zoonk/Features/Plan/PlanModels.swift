@@ -67,6 +67,7 @@ struct GoalPlan: Decodable, Equatable, Sendable {
 
   struct FitOffer: Decodable, Equatable, Sendable {
     let canApply: Bool
+    let effect: PlanEffect
     let fits: Bool
     let operations: [JSONValue]
   }
