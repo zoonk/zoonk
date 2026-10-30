@@ -39,7 +39,12 @@ class SessionViewModelTest {
     private fun TestScope.viewModel(api: FakeStudyApi): SessionViewModel {
         val scope = CoroutineScope(SupervisorJob() + dispatcher)
         val cache = AppCache(FakeSession(ana), scope)
-        return SessionViewModel(StudyOpener(api, api::writeLesson, cache, { "UTC" }, scope), StudySessionStore(api, cache) { "UTC" })
+        return SessionViewModel(
+            StudyOpener(api, api::writeLesson, cache, { "UTC" }, scope),
+            StudySessionStore(api, cache) { "UTC" },
+            { _, _ -> },
+            cache,
+        )
     }
 
     private fun TestScope.routes(viewModel: SessionViewModel): List<AppRoute> {

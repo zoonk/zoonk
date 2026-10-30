@@ -115,6 +115,7 @@
     <string name="session_next_eyebrow">Up next</string>
     <string name="session_next_start">Start</string>
     <string name="session_next_getting_ready">Getting it ready…</string>
+    <string name="session_next_lesson_ready">Your lesson is ready.</string>
     <string name="session_next_stop">Stop for today</string>
     <string name="session_next_stop_failed">We couldn\'t stop the session. Try again.</string>
     <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->

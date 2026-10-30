@@ -19,13 +19,15 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -38,6 +40,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.player.LessonNotWrittenNotice
 import com.zoonk.android.feature.player.LessonWriting
+import com.zoonk.android.feature.player.LiveLessonWritingApi
 import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.feature.today.stepsDone
 import com.zoonk.android.navigation.AppNavigator
@@ -80,7 +83,10 @@ fun SessionScreen(
                 (route.blockId == null || read.day.steps.any { it.id?.toString() == route.blockId })
         }
     val sessionId = route.sessionId?.let(UUID::fromString) ?: shown?.day?.sessionId
-    val viewModel = viewModel(key = "session:${sessionId ?: route.goalId}") { SessionViewModel(app.studyOpener, app.studySessions) }
+    val viewModel =
+        viewModel(key = "session:${sessionId ?: route.goalId}") {
+            SessionViewModel(app.studyOpener, app.studySessions, LiveLessonWritingApi(app.api), app.cache)
+        }
 
     LaunchedEffect(viewModel) {
         viewModel.routes.collect {
@@ -105,7 +111,6 @@ fun SessionScreen(
                     day,
                     step,
                     day.goalId ?: shown.today.goal.id,
-                    asked = false,
                     notWritten = null,
                     alternative = null,
                     refresh = null,
@@ -154,7 +159,6 @@ private fun SavedDay(
                     day = session.toDayView(),
                     step = step.toDayStep(),
                     goalId = session.goalId,
-                    asked = opened != null,
                     notWritten = opened?.let { app.studyOpener.notWritten(it.id) },
                     alternative = session.alternativeTo(step),
                     refresh = { app.studySessions.day[sessionId].refresh() },
@@ -250,19 +254,18 @@ private fun SessionSummaryContent(
 
 /**
  * The day's next step, or the one a tap opened when its lesson isn't made yet. That wait reads the
- * day again until the lesson is there, then opens it, since the tap asked for it; a link or a
- * screen restored later waits for Start instead. [notWritten] says, in place of Start, why the API
- * wouldn't write the lesson the tap asked for; [alternative] is work to do meanwhile or instead.
- * [refresh] is null on a day not opened yet, which has no lesson to wait for; [onStop] once the
- * session has work done.
+ * day again until the lesson is there, then says it's ready and focuses Start, never opening it on
+ * its own: the learner may be reading, or doing what "While you wait" offered. [notWritten] says,
+ * in place of Start, why the API wouldn't write the lesson the tap asked for; [alternative] is work
+ * to do meanwhile or instead. [refresh] is null on a day not opened yet, which has no lesson to
+ * wait for; [onStop] once the session has work done.
  */
 @Composable
-private fun NextStop(
+internal fun NextStop(
     viewModel: SessionViewModel,
     day: DayView,
     step: DayStep,
     goalId: UUID?,
-    asked: Boolean,
     notWritten: LessonWriting?,
     alternative: DayStep?,
     refresh: (suspend () -> Unit)?,
@@ -271,11 +274,12 @@ private fun NextStop(
 ) {
     val rereading = refresh?.takeIf { step.waitsForItsLesson() }
     val waiting = rereading != null
-    var waited by remember(step.id) { mutableStateOf(false) }
     val busy = viewModel.busy != null
     val refusal = notWritten?.takeIf { step.isUnwrittenLesson() }
     val ready = !waiting && refusal == null
     val startsFor = goalId?.takeIf { ready }
+    val written = startsFor != null && viewModel.writtenWhileWaiting == step.position
+    val startFocus = remember { FocusRequester() }
     val instead = alternative?.takeIf { !ready && goalId != null }
     // Main stacks the actions full width below its large breakpoint once an alternative joins them.
     val stacked =
@@ -283,17 +287,19 @@ private fun NextStop(
             !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
     val actionWidth = if (stacked) Modifier.fillMaxWidth() else Modifier
 
-    LaunchedEffect(waiting) {
-        val reread = rereading ?: return@LaunchedEffect
-        waited = true
+    LaunchedEffect(step.position, waiting) {
+        val reread = rereading
+        if (reread == null) {
+            viewModel.lessonWritten(step.position)
+            return@LaunchedEffect
+        }
+        viewModel.waitForLesson(step.position)
         while (true) {
             delay(LESSON_CHECK_MILLIS)
             reread()
         }
     }
-    LaunchedEffect(waiting, waited) {
-        if (!waiting && waited && asked && goalId != null) viewModel.start(day, step, goalId)
-    }
+    LaunchedEffect(written) { if (written) startFocus.requestFocus() }
 
     TaskScaffold(
         onClose = navigator::closeTask,
@@ -320,7 +326,11 @@ private fun NextStop(
                                 ) { Text(stringResource(R.string.session_next_stop)) }
                             }
                             startsFor?.let { goal ->
-                                Button(onClick = { viewModel.start(day, step, goal) }, enabled = !busy) {
+                                Button(
+                                    onClick = { viewModel.start(day, step, goal) },
+                                    Modifier.focusRequester(startFocus),
+                                    enabled = !busy,
+                                ) {
                                     Text(stringResource(R.string.session_next_start))
                                 }
                             }
@@ -362,6 +372,13 @@ private fun NextStop(
                         Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                     }
                     StepFacts(step)
+                    if (written) {
+                        Text(
+                            stringResource(R.string.session_next_lesson_ready),
+                            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                     refusal?.let { reason ->
                         Surface(
                             Modifier.padding(top = 16.dp).fillMaxWidth(),

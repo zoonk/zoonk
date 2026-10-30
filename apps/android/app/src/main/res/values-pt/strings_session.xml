@@ -34,6 +34,7 @@
   "session_next_eyebrow": "9b2e5474ad38a19de0fb02491aaf0efe0417d0cf21614eaeb161648620437d5c",
   "session_next_getting_ready": "b87e11cc508a525d890f479dbbd6369cbdf0b632929371de629b0888a8a5a832",
   "session_next_instead": "77e67bf137900d3e557ed38788980efb51f9971ed97e1489c59118779a7850d2",
+  "session_next_lesson_ready": "aa2b76d34f9c61bd20fcebf1f72f4bcca88c0329f097f822979199ad5a3207d6",
   "session_next_start": "97f92d4ba845627b50c7151e63c3dac0dd9795510ccee99574971bb68c5972e0",
   "session_next_stop": "fc287d36ab301d3f7eb3a412ac486a19229145c145d44cbacf197f0a1de536bc",
   "session_next_stop_failed": "5ebef059b80687e427348e61c1095ae3d0819125e6d6c419390d0331a0d14dbb",
@@ -197,6 +198,7 @@
     <string name="session_next_eyebrow">A seguir</string>
     <string name="session_next_start">Começar</string>
     <string name="session_next_getting_ready">Preparando tudo…</string>
+    <string name="session_next_lesson_ready">Sua aula está pronta.</string>
     <string name="session_next_stop">Parar por hoje</string>
     <string name="session_next_stop_failed">Não foi possível parar a sessão. Tente de novo.</string>
     <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->

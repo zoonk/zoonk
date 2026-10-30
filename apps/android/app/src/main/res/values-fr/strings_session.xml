@@ -34,6 +34,7 @@
   "session_next_eyebrow": "f6c59bc49295e97b030ed9537c19a95f7be2ec2544b16be13d58f8dd8a721d48",
   "session_next_getting_ready": "d9af6e18f51ffce6d6d7d607d0e595771606c6821855960a349fad7fa56fa401",
   "session_next_instead": "fea6a3f5549574e86737666066c307d2ddd6715aeeb6ed3639e5b56f0196f0fa",
+  "session_next_lesson_ready": "6bd01547980cf502e95a4332b9d661791236479936c3618d1a2e880c3552875d",
   "session_next_start": "bcb67a5b784924ba728cdcecee496365f2511cd9c37e11666a817116440fac3f",
   "session_next_stop": "cc300448c004e0cf1f4137ab26bfd1d1a3dc243d5b6dc241a3ab7acd43882d5d",
   "session_next_stop_failed": "adc1245d17b6c593dc9f8b4c33ff6326fa0c318bde6cf759b9a83e13023e9b5f",
@@ -197,6 +198,7 @@
     <string name="session_next_eyebrow">À suivre</string>
     <string name="session_next_start">Commencer</string>
     <string name="session_next_getting_ready">Préparation en cours…</string>
+    <string name="session_next_lesson_ready">Ta leçon est prête.</string>
     <string name="session_next_stop">Arrêter pour aujourd’hui</string>
     <string name="session_next_stop_failed">Impossible d’arrêter la séance. Réessaie.</string>
     <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->

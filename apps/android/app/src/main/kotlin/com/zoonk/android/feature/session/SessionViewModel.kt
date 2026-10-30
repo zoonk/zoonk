@@ -5,8 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.player.LessonWritingApi
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.Job
@@ -19,15 +21,24 @@ import java.util.UUID
 enum class SessionAction { Start, Stop, KeepGoing, ExtraTime }
 
 /**
- * The session screen's taps, one at a time (its only writes, so opening the screen changes nothing),
- * and what the screen keeps across a rotation.
+ * The session screen's taps, one at a time, and what the screen keeps across a rotation. Opening
+ * the screen writes nothing but, once a lesson the learner waited on is written, how long that took.
  */
 class SessionViewModel(
     private val opener: StudyOpener,
     private val sessions: StudySessionStore,
+    private val writingApi: LessonWritingApi,
+    private val cache: AppCache,
+    private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     var busy by mutableStateOf<SessionAction?>(null)
         private set
+
+    /** The position of the step whose lesson was written while the learner waited on it. */
+    var writtenWhileWaiting by mutableStateOf<Long?>(null)
+        private set
+
+    private var waiting: LessonWait? = null
 
     var failed by mutableStateOf<SessionAction?>(null)
         private set
@@ -76,6 +87,17 @@ class SessionViewModel(
             }
     }
 
+    fun waitForLesson(position: Long) {
+        if (waiting?.position != position) waiting = LessonWait(position, now())
+    }
+
+    fun lessonWritten(position: Long) {
+        val wait = waiting?.takeIf { it.position == position } ?: return
+        waiting = null
+        writtenWhileWaiting = position
+        viewModelScope.launch { cache.mutate { writingApi.recordWait(it, now() - wait.since) } }
+    }
+
     fun start(
         day: DayView,
         step: DayStep,
@@ -117,3 +139,8 @@ class SessionViewModel(
         }
     }
 }
+
+private data class LessonWait(
+    val position: Long,
+    val since: Long,
+)
