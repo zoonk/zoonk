@@ -1221,9 +1221,24 @@ importers:
       '@eloqnt/cli':
         specifier: 'catalog:'
         version: 0.6.33(@swc/helpers@0.5.23)
+      '@eloqnt/format-apple-xcstrings':
+        specifier: 'catalog:'
+        version: 0.0.9
+      '@eloqnt/format-po':
+        specifier: 0.1.1
+        version: 0.1.1
+      '@formatjs/icu-messageformat-parser':
+        specifier: 3.5.22
+        version: 3.5.22
+      '@zoonk/utils':
+        specifier: workspace:*
+        version: link:../utils
       ai-sdk-provider-codex-cli:
         specifier: 2.3.0
         version: 2.3.0(zod@4.6.7)
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1234,6 +1249,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.3(@opentelemetry/api@1.9.1)(@types/node@24.19.1)(@vitest/browser-playwright@5.0.3)(@vitest/ui@5.0.3)(jsdom@30.1.2(@noble/hashes@2.4.0))(vite@8.3.3(@types/node@24.19.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/learn:
     dependencies:
@@ -2488,6 +2506,9 @@ packages:
 
   '@formatjs/icu-messageformat-parser@3.5.21':
     resolution: {integrity: sha512-Vnl7IOSyMRaP4Pjv48etkT2nlcIwzh4QWIa3hewzGlZZPBbft+TbMir4MijpDViOLN/1hvkGC10oYMuilsG+fw==}
+
+  '@formatjs/icu-messageformat-parser@3.5.22':
+    resolution: {integrity: sha512-YuwN+dDKgssfuYwtOyGQD0CSn7K46g9cv1Fp0VgKpjZDDFvv8b8crzP990IcJhRPWHhKzCGsbUSJVIguyyFA5A==}
 
   '@formatjs/icu-skeleton-parser@2.1.11':
     resolution: {integrity: sha512-j8cUmOJzVgkHuS0QiQ6ga76UIoLOFSAMWhs7aZJztH3aAdCOAE6vpC8KVvFB4cU10ON0y2/5oOVmPJ43s2lTwA==}
@@ -10162,6 +10183,10 @@ snapshots:
       '@formatjs/icu-skeleton-parser': 2.1.11
 
   '@formatjs/icu-messageformat-parser@3.5.21':
+    dependencies:
+      '@formatjs/icu-skeleton-parser': 2.1.12
+
+  '@formatjs/icu-messageformat-parser@3.5.22':
     dependencies:
       '@formatjs/icu-skeleton-parser': 2.1.12
 
