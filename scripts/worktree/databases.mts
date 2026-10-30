@@ -53,7 +53,10 @@ async function prepareDatabase({
   });
 
   if (state === "true") {
-    return { mode, name, ready: true };
+    const database = { mode, name, ready: true };
+    // A fresh mark keeps a cleanup that found this worktree missing from dropping its copies.
+    await markDatabase({ database, ready: true, source, worktree });
+    return database;
   }
 
   if (state && state !== "false") {

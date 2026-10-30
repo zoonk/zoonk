@@ -1,10 +1,12 @@
-import { postgresEnvironment, run, sqlLiteral } from "./postgres.mts";
+import { existsSync } from "node:fs";
+import { postgresEnvironment, query, run, sqlLiteral } from "./postgres.mts";
 
 /**
- * Inactivity takes two unchanged observations; resets, restarts, reads and writes all extend
+ * A removed worktree's databases go at once unless a setup marked them since. Otherwise
+ * inactivity takes two unchanged observations; resets, restarts, reads and writes all extend
  * retention.
  */
-export function pruneDatabases({
+export async function pruneDatabases({
   source,
   worktree,
 }: {
@@ -12,6 +14,19 @@ export function pruneDatabases({
   worktree: string;
 }): Promise<string> {
   const weekMilliseconds = 7 * 24 * 60 * 60 * 1000;
+  const listedAt = Date.now();
+
+  const worktrees = await query({
+    source,
+    sql: String.raw`SELECT DISTINCT shobj_description(oid, 'pg_database')::jsonb->>'worktree'
+FROM pg_database WHERE datname ~ '^zoonk_wt_[a-f0-9]{12}_(dev|test|e2e)$'
+  AND shobj_description(oid, 'pg_database') IS JSON OBJECT`,
+  });
+
+  const removed = worktrees
+    .split("\n")
+    .filter((path) => path && !existsSync(path))
+    .map((path) => sqlLiteral(path));
 
   const script = String.raw`
 SELECT pg_try_advisory_lock(hashtext('zoonk-worktree-cleanup')) AS cleanup_lock \gset
@@ -34,8 +49,10 @@ FROM databases WHERE metadata->>'owner' = 'zoonk-worktree-v1'
 SELECT format('DROP DATABASE %I', datname)
 FROM zoonk_worktree_activity
 WHERE numbackends = 0 AND metadata->>'worktree' <> ${sqlLiteral(worktree)}
-  AND metadata->>'fingerprint' = fingerprint
-  AND observed_at < extract(epoch FROM clock_timestamp()) * 1000 - ${weekMilliseconds}
+  AND ((metadata->>'worktree' = ANY(ARRAY[${removed.join(", ")}]::text[])
+      AND observed_at < ${listedAt})
+    OR (metadata->>'fingerprint' = fingerprint
+      AND observed_at < extract(epoch FROM clock_timestamp()) * 1000 - ${weekMilliseconds}))
   AND pg_try_advisory_lock(hashtext('zoonk-worktree:' || (metadata->>'worktree')))
 \gexec
 
