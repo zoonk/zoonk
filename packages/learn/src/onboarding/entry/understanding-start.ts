@@ -58,6 +58,32 @@ export function takeSentGoal(draftId: string): number | null {
   return sentAt;
 }
 
+/** A goal sent from another page, still on its way: `/start` shows it waiting and then takes it. */
+export type HandedOffGoal = {
+  goal: string;
+  outcome: Promise<StartUnderstandingOutcome>;
+  sentAt: number;
+};
+
+/** Long enough for `/start` to open after the tap; older ones belong to a tap that went elsewhere. */
+const HAND_OFF_MS = 30_000;
+
+let handedOff: HandedOffGoal | null = null;
+
+export function handOffGoal(goal: HandedOffGoal): void {
+  handedOff = goal;
+}
+
+export function getHandedOffGoal(): HandedOffGoal | null {
+  return handedOff && Date.now() - handedOff.sentAt < HAND_OFF_MS ? handedOff : null;
+}
+
+export function forgetHandedOffGoal(goal: HandedOffGoal): void {
+  if (handedOff === goal) {
+    handedOff = null;
+  }
+}
+
 export function getExplanationGoalInput({
   draft,
   language,

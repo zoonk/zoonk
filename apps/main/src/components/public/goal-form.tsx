@@ -1,9 +1,7 @@
 "use client";
 
-import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { useRouter } from "@/i18n/navigation";
 import { GOAL_PARAM } from "@/lib/public/public-hrefs";
-import { type GoalError } from "@zoonk/learn/onboarding/goal-errors";
 import {
   GOAL_FIELD_TEXT_CLASS,
   GoalField,
@@ -13,25 +11,10 @@ import {
 } from "@zoonk/learn/onboarding/goal-field";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { type ReactNode, useId, useRef, useState } from "react";
+import { type ReactNode, useId, useRef, useState, useTransition } from "react";
 import { useSendGoal } from "./use-send-goal";
 
 const FIELD_TEXT_CLASS = cn(GOAL_FIELD_TEXT_CLASS, "col-start-1 row-start-1");
-
-function SendErrorAlert({ error, id }: { error: GoalError; id: string }) {
-  const t = useExtracted();
-
-  return (
-    <div className="flex flex-col items-start gap-2" id={id} role="alert">
-      <p className="text-destructive-text text-sm">{error.message}</p>
-      {error.needsAccount && (
-        <CurrentPageLoginLink className="text-foreground text-sm font-medium underline underline-offset-4">
-          {t("Create a free account")}
-        </CurrentPageLoginLink>
-      )}
-    </div>
-  );
-}
 
 /**
  * Without scripts it's a plain GET form that only fills onboarding's box: reading a goal always
@@ -52,14 +35,13 @@ export function GoalForm({
   const t = useExtracted();
   const router = useRouter();
   const fieldId = useId();
-  const errorId = useId();
   const exampleId = useId();
   const lineId = useId();
   const fieldRef = useRef<HTMLTextAreaElement>(null);
   const [hinted, setHinted] = useState(false);
-  const { error, send, sending } = useSendGoal();
+  const send = useSendGoal();
+  const [sending, startSending] = useTransition();
   const line = hinted ? t("Write your goal in the box first, in your own words.") : note;
-  const shownError = hinted ? null : error;
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -77,7 +59,7 @@ export function GoalForm({
             setHinted(true);
             fieldRef.current?.focus();
           } else if (!sending) {
-            void send(goal);
+            startSending(() => send(goal));
           }
         }}
       >
@@ -103,9 +85,7 @@ export function GoalForm({
             </span>
 
             <GoalFieldText
-              aria-describedby={[shownError && errorId, hinted && lineId, exampleId]
-                .filter(Boolean)
-                .join(" ")}
+              aria-describedby={[hinted && lineId, exampleId].filter(Boolean).join(" ")}
               aria-invalid={hinted || undefined}
               className="col-start-1 row-start-1"
               id={fieldId}
@@ -125,21 +105,17 @@ export function GoalForm({
         </GoalFieldSubmit>
       </GoalField>
 
-      {shownError ? (
-        <SendErrorAlert error={shownError} id={errorId} />
-      ) : (
-        <p
-          aria-live="polite"
-          id={lineId}
-          className={cn(
-            "text-muted-foreground -mt-1 text-[13px]",
-            hinted && "text-foreground",
-            !line && "sr-only",
-          )}
-        >
-          {line}
-        </p>
-      )}
+      <p
+        aria-live="polite"
+        id={lineId}
+        className={cn(
+          "text-muted-foreground -mt-1 text-[13px]",
+          hinted && "text-foreground",
+          !line && "sr-only",
+        )}
+      >
+        {line}
+      </p>
     </div>
   );
 }

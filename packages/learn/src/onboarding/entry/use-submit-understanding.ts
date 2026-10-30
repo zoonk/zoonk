@@ -5,7 +5,7 @@ import { useLocale } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { useLearnAnalytics } from "../../learn-context";
 import { type GoalError, useStartError } from "../goal-errors";
-import { type UnderstandingActions } from "../onboarding-actions";
+import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
 import {
   forgetSentGoal,
   getClassifiedKind,
@@ -73,11 +73,25 @@ export function useSubmitUnderstanding({
   }
 
   async function sendOnce({ goal, signal }: { goal: string; signal: AbortSignal }) {
-    setIsSubmitting(true);
     analytics.track({ name: "Goal Typed", properties: { has_attachment: hasAttachment } });
+    const outcome = sendGoal({ goal, language: locale, signal, understanding });
+    await follow({ goal, outcome, signal });
+  }
+
+  /** Shows the goal on its way, then what was understood or what went wrong, unless `signal` aborted. */
+  async function follow({
+    goal,
+    outcome,
+    signal,
+  }: {
+    goal: string;
+    outcome: Promise<StartUnderstandingOutcome>;
+    signal: AbortSignal;
+  }) {
+    setIsSubmitting(true);
     onSending(goal);
 
-    const outcome = await sendGoal({ goal, language: locale, signal, understanding });
+    const result = await outcome;
 
     if (signal.aborted) {
       return;
@@ -85,12 +99,12 @@ export function useSubmitUnderstanding({
 
     setIsSubmitting(false);
 
-    if (outcome.status !== "started" && outcome.status !== "startFailed") {
-      onError({ error: toError(outcome), words: goal });
+    if (result.status !== "started" && result.status !== "startFailed") {
+      onError({ error: toError(result), words: goal });
       return;
     }
 
-    onDraft(outcome.draft);
+    onDraft(result.draft);
   }
 
   function settle(draft: OnboardingDraftView) {
@@ -114,5 +128,5 @@ export function useSubmitUnderstanding({
     }
   }
 
-  return { cancel, isSubmitting, send, settle };
+  return { cancel, follow, isSubmitting, send, settle };
 }

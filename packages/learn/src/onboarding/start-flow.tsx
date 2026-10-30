@@ -13,6 +13,7 @@ import { GuestGoalGate } from "./entry/guest-goal-gate";
 import { useSubmitGoal } from "./entry/material-goal";
 import { type MaterialIntent } from "./entry/material-intent";
 import { MaterialQuestions } from "./entry/material-questions";
+import { forgetHandedOffGoal, getHandedOffGoal } from "./entry/understanding-start";
 import { SendingGoal } from "./entry/understanding-wait";
 import { useDraftActions } from "./entry/use-draft-actions";
 import { useFollowSavedDraft } from "./entry/use-follow-saved-draft";
@@ -36,6 +37,24 @@ type StartState =
   | { kind: "questions" }
   | { goal: string; kind: "sending" }
   | { draft: OnboardingDraftView; kind: "draft" };
+
+function getInitialState({
+  defaultGoal,
+  initialDraft,
+}: {
+  defaultGoal: string;
+  initialDraft: OnboardingDraftView | null;
+}): StartState {
+  if (initialDraft) {
+    return { draft: initialDraft, kind: "draft" };
+  }
+
+  const handedOff = getHandedOffGoal();
+
+  return handedOff
+    ? { goal: handedOff.goal, kind: "sending" }
+    : { error: null, kind: "entry", words: defaultGoal };
+}
 
 function getScreenKey(state: StartState): string {
   if (state.kind === "draft") {
@@ -74,6 +93,35 @@ export function StartFlow({
   return <GoalStartFlow {...props} />;
 }
 
+/** A goal sent from another page goes on here; a replayed mount follows the same send again. */
+function useFollowHandedOffGoal({
+  follow,
+  opensDraft,
+}: {
+  follow: ReturnType<typeof useSubmitUnderstanding>["follow"];
+  opensDraft: boolean;
+}) {
+  const followHandedOff = useEffectEvent(async (signal: AbortSignal) => {
+    const handedOff = getHandedOffGoal();
+
+    if (!handedOff || opensDraft) {
+      return;
+    }
+
+    await follow({ goal: handedOff.goal, outcome: handedOff.outcome, signal });
+
+    if (!signal.aborted) {
+      forgetHandedOffGoal(handedOff);
+    }
+  });
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void followHandedOff(controller.signal);
+    return () => controller.abort();
+  }, []);
+}
+
 type GoalStartFlowProps = {
   actions: OnboardingActions;
   /** `null` is the resolved default buddy; `undefined` isn't known yet. */
@@ -105,9 +153,7 @@ function GoalStartFlow({
   const [intent, setIntent] = useState<MaterialIntent | null>(null);
 
   const [state, setState] = useState<StartState>(() =>
-    initialDraft
-      ? { draft: initialDraft, kind: "draft" }
-      : { error: null, kind: "entry", words: defaultGoal },
+    getInitialState({ defaultGoal, initialDraft }),
   );
 
   const screen = getScreenKey(state);
@@ -184,6 +230,8 @@ function GoalStartFlow({
 
   const shownDraft = state.kind === "draft" ? state.draft : null;
   const settleShown = useEffectEvent((draft: OnboardingDraftView) => submission.settle(draft));
+
+  useFollowHandedOffGoal({ follow: submission.follow, opensDraft: initialDraft !== null });
 
   useEffect(() => {
     if (shownDraft) {

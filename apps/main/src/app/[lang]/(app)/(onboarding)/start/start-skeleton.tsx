@@ -7,7 +7,7 @@ import {
   StartSentGoal,
   StartWaitSkeleton,
 } from "@zoonk/learn/onboarding/skeletons";
-import { getSentGoal } from "@zoonk/learn/onboarding/understanding-start";
+import { getHandedOffGoal, getSentGoal } from "@zoonk/learn/onboarding/understanding-start";
 import { useSearchParams } from "next/navigation";
 import { DRAFT_PARAM } from "./start-params";
 
@@ -17,7 +17,13 @@ export function StartSkeleton() {
   const draftId = searchParams.get(DRAFT_PARAM);
 
   if (!draftId) {
-    return <StartEntrySkeleton />;
+    const handedOff = getHandedOffGoal();
+
+    return handedOff ? (
+      <StartSentGoal goal={handedOff.goal} hasAccount={hasAccount(learner)} />
+    ) : (
+      <StartEntrySkeleton />
+    );
   }
 
   const sent = getSentGoal(draftId);
