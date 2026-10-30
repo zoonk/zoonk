@@ -119,6 +119,17 @@ class PlanEditorTest {
     }
 
     @Test
+    fun aPlanWithoutADeadlineSaysWhatADeadlineDoes() {
+        show()
+
+        compose
+            .onNodeWithText(
+                "No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then.",
+            ).performScrollTo()
+            .assertIsDisplayed()
+    }
+
+    @Test
     fun anotherTimeFromTheMenuJoinsThePresets() {
         show()
 

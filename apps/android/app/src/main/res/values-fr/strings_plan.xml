@@ -347,7 +347,7 @@
   "plan_next_on_path": "f7e4883af4aee8239caba844dae4b892b3ad4161c0c3934646514ff656134534",
   "plan_no_change_this_week": "4a7b3f5680019c4bd8082775bb010ffc2974b1fc5c812a3c3401b9c3b4eddf96",
   "plan_no_date": "6e32a52f192077bfd5c023087bf05b1a669c337ba8d930a1be17100200756722",
-  "plan_no_deadline_note": "4e25bcf56867afc4790734e9f76121bad902996a6fce4dfc41c19dd86fa7f2d9",
+  "plan_no_deadline_note": "ede4ffd8808e94bfb260dfb352ecd709fe112732eb734d4ecb889e212715029f",
   "plan_no_goal_description": "8c89e28fdce5de0929a3a525fb73c38d27b90f51cde49c5a7b811bae9c54fcbe",
   "plan_no_lessons_studied_yet": "35de57e29c4c86a87091b91851a1130872618815cf1bef17284ffd87e35ddd92",
   "plan_no_longer_fits": "97497900fd4eea8d8d02623fa6074ec32b6109a7e6478beade082f1fe9f25f0e",
@@ -1215,7 +1215,7 @@
     <string name="plan_undo">Annuler</string>
     <string name="plan_deadline">Date limite</string>
     <string name="plan_named_month_note">%1$s pour l’instant. Choisis le jour quand tu le connaîtras.</string>
-    <string name="plan_no_deadline_note">Sans date limite : tu étudies tout à ton rythme.</string>
+    <string name="plan_no_deadline_note">Sans date limite : tu étudies tout à ton rythme. Avec une date limite, ton plan prévoit l’essentiel d’ici là.</string>
     <string name="plan_pick_date">Choisir une date</string>
     <string name="plan_save">Enregistrer</string>
     <string name="plan_use_this_date">Utiliser cette date</string>

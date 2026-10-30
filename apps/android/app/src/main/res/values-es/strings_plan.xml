@@ -347,7 +347,7 @@
   "plan_next_on_path": "dce5fe79fe92f90e7f854c16ccc61d16b20834de80cb2b97a2af53b8d3c1af45",
   "plan_no_change_this_week": "fd630d5e21c3665d18acb94733be31d02ac64218720b1ed3481999e2e7b71cea",
   "plan_no_date": "a302f567d7a6e779d5f775a79c89049658268456423ab94685b64f1ced4a6e03",
-  "plan_no_deadline_note": "d81122ffa93245c8cfed0146f1df5d4e7addde826d58c02ef5ac18df4cb8ab02",
+  "plan_no_deadline_note": "f922192c576f0532c7973c9a4652e8bb9c4c180871d6a3a8a11e2f2b941786e1",
   "plan_no_goal_description": "369f3e24418cd2befbcf7d9eb5800c4bcc804e93de41da9b8b84e6dd9665ae49",
   "plan_no_lessons_studied_yet": "b9c424f378e74f0f72658bbafe0c9c3b554c5b653ed0f09bb2fb015c12403d12",
   "plan_no_longer_fits": "d51ea528774c1b154d41766b7f43f4b9536f41e9503d2db91c8758564b85697c",
@@ -1215,7 +1215,7 @@
     <string name="plan_undo">Deshacer</string>
     <string name="plan_deadline">Fecha límite</string>
     <string name="plan_named_month_note">%1$s por ahora. Elige el día cuando lo sepas.</string>
-    <string name="plan_no_deadline_note">Sin fecha límite: estudias todo a tu ritmo.</string>
+    <string name="plan_no_deadline_note">Sin fecha límite, estudias todo a tu ritmo. Si eliges una fecha límite, tu plan incluye lo más importante para entonces.</string>
     <string name="plan_pick_date">Elige una fecha</string>
     <string name="plan_save">Guardar</string>
     <string name="plan_use_this_date">Usar esta fecha</string>

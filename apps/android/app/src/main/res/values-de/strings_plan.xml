@@ -347,7 +347,7 @@
   "plan_next_on_path": "8378ba2f72cc63f0f08f21e02bf616b5c4c67a8b2bea3d673904a3c31f1219f0",
   "plan_no_change_this_week": "751447a17e2e16a9a1b072a21ed928465e997d09875267651eefd376d0b1553e",
   "plan_no_date": "aaa70661b2d901147ed8a6e0103427c9d17edf1a62fd4690cecbf11b7056d650",
-  "plan_no_deadline_note": "8ce29d34c7b41bcfbc302c9c542686fcfa2c76b711e8faa6afea22310c9fdf3e",
+  "plan_no_deadline_note": "0ddf291db0edb4f757dd60bcd1cd0428689d8c7f1dc9ba1bcbd7ededd7230840",
   "plan_no_goal_description": "275598c8f2ffd26aaaf6c0da6336c2b222cf3e6659bbe07a189555395df45750",
   "plan_no_lessons_studied_yet": "48adc113957488453733c25ae89bc94f1c8f141da7ce31068adbaa1be8145662",
   "plan_no_longer_fits": "3af074f97eac4611cb8c9b57fa1055f13ab59c5a392568a890a06bd4931d86a9",
@@ -1144,7 +1144,7 @@
     <string name="plan_undo">Rückgängig</string>
     <string name="plan_deadline">Zieldatum</string>
     <string name="plan_named_month_note">Vorerst %1$s. Wähle den Tag, sobald du ihn kennst.</string>
-    <string name="plan_no_deadline_note">Ohne Zieldatum: Du lernst alles in deinem eigenen Tempo.</string>
+    <string name="plan_no_deadline_note">Ohne Zieldatum lernst du alles in deinem eigenen Tempo. Mit einem Zieldatum ist dein Plan so abgestimmt, dass du bis dahin das Wichtigste lernst.</string>
     <string name="plan_pick_date">Datum wählen</string>
     <string name="plan_save">Speichern</string>
     <string name="plan_use_this_date">Dieses Datum verwenden</string>
