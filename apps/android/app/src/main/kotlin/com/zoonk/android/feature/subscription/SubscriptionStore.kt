@@ -38,6 +38,8 @@ interface SubscriptionApi {
         session: AuthenticatedSession,
         purchaseToken: String,
     ): StoreSubscriptionResponse
+
+    suspend fun webPlusCancellation(session: AuthenticatedSession): String
 }
 
 class LiveSubscriptionApi(
@@ -57,6 +59,9 @@ class LiveSubscriptionApi(
         purchaseToken: String,
     ): StoreSubscriptionResponse =
         perform { api.clients(session).subscriptions.createGooglePlaySubscription(GooglePlaySubscriptionRequest(purchaseToken)) }
+
+    override suspend fun webPlusCancellation(session: AuthenticatedSession): String =
+        perform { api.clients(session).subscriptions.createStripeSubscriptionCancellation() }.url.toString()
 }
 
 sealed interface PurchaseState {
@@ -139,6 +144,9 @@ class SubscriptionStore(
     }
 
     private var reconciledFor: AuthenticatedSession? = null
+
+    /** Stripe's page where a Plus bought on the web is canceled. An expired session signs out, as any write's. */
+    suspend fun webPlusCancellation(): MutationResult<String> = cache.mutate { api.webPlusCancellation(it) }
 
     /** Only an account can buy: a guest creates one first, as main asks. */
     suspend fun buy(

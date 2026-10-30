@@ -102,6 +102,8 @@ private class FakeSubscriptionApi : SubscriptionApi {
         linked += session.bearerToken to purchaseToken
         return StoreSubscriptionResponse(subscribed(session.accountId), isActive = true)
     }
+
+    override suspend fun webPlusCancellation(session: AuthenticatedSession): String = throw UnsupportedOperationException()
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)

@@ -25,7 +25,9 @@
   "subscription_benefits_summary": "f2039b997e4b9d35c0861c5f92cfedd7ac843df00ea0cb3f98b5c340a13b9efc",
   "subscription_billed_monthly": "79d337b66ba01baaeec9130117c083a4274ca59020b6d22e0692905545969d18",
   "subscription_billing_period": "eb82a1d2b891a3d1762d9e02e0f70924fc4b319f8974f8b4a25f85103873ffa6",
+  "subscription_cancel": "564f2afdc29dbdaf51950689bae111e4c37055a6f82646ceef227fa87ad01660",
   "subscription_cancel_anytime": "2f215df53f49a230a553a1f38b76d83d9eb535ee76272bd1900badd2fdf01841",
+  "subscription_cancel_failed": "b61f3372603800b51a6104e3bd49c547528e0b068f1be26ec0977f4328c8bc5b",
   "subscription_contact_support": "1a8c3b492a0574a1627aef472fb5790c20be64a81121ec6b1dfd62a6464160ad",
   "subscription_ending": "15fb2387151e922c521d96f22f8c555b3a3eb5d7c8c3b2b42dc267c4bf15d28d",
   "subscription_ends_on": "c1976f512b793fa39f1e912853ca3e4f31f04fb1647faa9be7ead93ec37e45f5",
@@ -44,10 +46,8 @@
   "subscription_get_plus": "11bbacf52d235c2a60c19a3b99012716c402f1164a4a7462b332fd3228f50b64",
   "subscription_hide_answer": "f78641011a7f2c94f3df56fc306f3175c04c1b15d52a932ba75dbaa1290189e5",
   "subscription_manage_google": "dd534b011c2d612956bd9acb735d1df4b0acdbd0a4afc98cb7e9004938396782",
-  "subscription_manage_web": "91e38cf219c78f5d38dbee44c6ed47d3f4633aa40ef931f6091dbf818dd14fb4",
   "subscription_managed_apple": "37cb74852b77b6d0b970e8266c55190aee70f4739f65b9907d336600dc9702db",
   "subscription_managed_google": "468762302db1685c90fd98df2df77649d344cd858020e39435ab135bcb1b9e25",
-  "subscription_managed_web": "b26cda40dd9952aea121072f519c03d85e493e1fd1a66f98ab9184ad9b9d17b2",
   "subscription_managed_zoonk": "ad1c3469392e91336bc5cbe767532b83bb5ce9d1440f5062145ff820f4c0f831",
   "subscription_messages_used": "35cac036f04122a5110eb34474360270577b4b1fb002d43fcf4db639f36ebd7b",
   "subscription_monthly": "25946e99cd564afbfc0bb1dd0ced429ccae990375391347807f55b7b8466ee52",
@@ -97,11 +97,13 @@
     <string name="subscription_period_ends_on">La période de facturation actuelle prend fin le %1$s.</string>
     <string name="subscription_managed_google">Cet abonnement est géré sur Google Play. Pour le modifier ou le résilier, utilise Google Play.</string>
     <string name="subscription_managed_apple">Cet abonnement est géré sur l’App Store. Pour le modifier ou le résilier, utilise les réglages des abonnements de ton identifiant Apple sur un iPhone, iPad ou Mac.</string>
-    <string name="subscription_managed_web">Cet abonnement est géré sur le site de Zoonk, où tu peux le modifier ou le résilier.</string>
     <string name="subscription_managed_zoonk">Cet abonnement est géré par Zoonk. Contacte l’assistance si tu as besoin d’aide pour le modifier ou le résilier.</string>
     <string name="subscription_manage_google">Gérer sur Google Play</string>
-    <string name="subscription_manage_web">Gérer ta formule</string>
     <string name="subscription_contact_support">Contacter l’assistance</string>
+    <!-- Opens the page that cancels a Plus bought on the web. -->
+    <string name="subscription_cancel">Résilier l’abonnement</string>
+    <!-- Opening the page that cancels a Plus bought on the web failed. -->
+    <string name="subscription_cancel_failed">Impossible de gérer ton abonnement. Contacte-nous à l’adresse hello@zoonk.com</string>
     <string name="subscription_offer_title">S’abonner à Zoonk Plus</string>
     <string name="subscription_your_plan">Ta formule</string>
     <string name="subscription_free">Gratuite</string>

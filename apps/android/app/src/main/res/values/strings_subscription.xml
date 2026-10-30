@@ -15,11 +15,13 @@
     <string name="subscription_period_ends_on">Current billing period ends on %1$s.</string>
     <string name="subscription_managed_google">This subscription is managed through Google Play. To change or cancel it, use Google Play.</string>
     <string name="subscription_managed_apple">This subscription is managed through the App Store. To change or cancel it, use your Apple ID\'s subscription settings on an iPhone, iPad or Mac.</string>
-    <string name="subscription_managed_web">This subscription is managed on the Zoonk website, where you can change or cancel it.</string>
     <string name="subscription_managed_zoonk">This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.</string>
     <string name="subscription_manage_google">Manage in Google Play</string>
-    <string name="subscription_manage_web">Manage your plan</string>
     <string name="subscription_contact_support">Contact support</string>
+    <!-- Opens the page that cancels a Plus bought on the web. -->
+    <string name="subscription_cancel">Cancel subscription</string>
+    <!-- Opening the page that cancels a Plus bought on the web failed. -->
+    <string name="subscription_cancel_failed">Unable to manage your subscription. Contact us at hello@zoonk.com</string>
     <string name="subscription_offer_title">Subscribe to Zoonk Plus</string>
     <string name="subscription_your_plan">Your plan</string>
     <string name="subscription_free">Free</string>

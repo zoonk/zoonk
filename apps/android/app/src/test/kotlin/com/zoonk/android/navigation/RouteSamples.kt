@@ -60,7 +60,6 @@ val routeSamples: List<AppRoute> =
         AppRoute.Privacy,
         AppRoute.Terms,
         AppRoute.Blog,
-        AppRoute.WebSubscription,
         AppRoute.FairUse,
     )
 

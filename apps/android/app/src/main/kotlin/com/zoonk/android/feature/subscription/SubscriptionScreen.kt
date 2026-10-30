@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -51,10 +52,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -64,6 +68,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -127,7 +132,16 @@ private fun Account(
     when (val state = account) {
         is LoadState.Loaded -> {
             val subscription = state.value.account.subscription
-            if (subscription != null) CurrentPlan(subscription, navigator) else Offer(app, navigator, hasAccount = true, isVisitor = false)
+            if (subscription != null) {
+                CurrentPlan(
+                    subscription,
+                    navigator,
+                    openWebPlusCancellation = app.subscriptions::webPlusCancellation,
+                    readPlanAgain = { app.subscriptions.account.refresh() },
+                )
+            } else {
+                Offer(app, navigator, hasAccount = true, isVisitor = false)
+            }
         }
 
         is LoadState.Failed -> {
@@ -141,9 +155,11 @@ private fun Account(
 }
 
 @Composable
-private fun CurrentPlan(
+internal fun CurrentPlan(
     subscription: MeSubscription,
     navigator: AppNavigator,
+    openWebPlusCancellation: suspend () -> MutationResult<String>,
+    readPlanAgain: suspend () -> Unit,
 ) {
     val context = LocalContext.current
     val isEnding = subscription.cancelAt != null
@@ -165,6 +181,11 @@ private fun CurrentPlan(
 
     PlusBenefits()
 
+    if (provider == STRIPE) {
+        if (!isEnding) WebPlusCancellation(openWebPlusCancellation, readPlanAgain)
+        return
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text =
@@ -172,7 +193,6 @@ private fun CurrentPlan(
                     when (provider) {
                         GOOGLE -> R.string.subscription_managed_google
                         APPLE -> R.string.subscription_managed_apple
-                        STRIPE -> R.string.subscription_managed_web
                         else -> R.string.subscription_managed_zoonk
                     },
                 ),
@@ -180,26 +200,70 @@ private fun CurrentPlan(
             style = MaterialTheme.typography.bodyMedium,
         )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            when (provider) {
-                GOOGLE -> {
-                    Button(
-                        onClick = {
-                            val url =
-                                "https://play.google.com/store/account/subscriptions?sku=$PLUS_PRODUCT_ID&package=${context.packageName}"
-                            CustomTabsIntent.Builder().build().launchUrl(context, url.toUri())
-                        },
-                    ) { Text(stringResource(R.string.subscription_manage_google)) }
-                }
-
-                STRIPE -> {
-                    Button(onClick = { navigator.open(AppRoute.WebSubscription) }) {
-                        Text(stringResource(R.string.subscription_manage_web))
-                    }
-                }
+            if (provider == GOOGLE) {
+                Button(
+                    onClick = {
+                        val url = "https://play.google.com/store/account/subscriptions?sku=$PLUS_PRODUCT_ID&package=${context.packageName}"
+                        CustomTabsIntent.Builder().build().launchUrl(context, url.toUri())
+                    },
+                ) { Text(stringResource(R.string.subscription_manage_google)) }
             }
             OutlinedButton(
                 onClick = { navigator.open(AppRoute.Help) },
             ) { Text(stringResource(R.string.subscription_contact_support)) }
+        }
+    }
+}
+
+/** Main's `CancelPlusButton`: Stripe's page opens over the app, and the plan is read again on the way back. */
+@Composable
+private fun WebPlusCancellation(
+    open: suspend () -> MutationResult<String>,
+    readPlanAgain: suspend () -> Unit,
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var opening by remember { mutableStateOf(false) }
+    var failed by rememberSaveable { mutableStateOf(false) }
+    var awaitingReturn by rememberSaveable { mutableStateOf(false) }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        if (awaitingReturn) {
+            awaitingReturn = false
+            scope.launch { readPlanAgain() }
+        }
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        OutlinedButton(
+            onClick = {
+                opening = true
+                failed = false
+                scope.launch {
+                    when (val result = open()) {
+                        is MutationResult.Done -> {
+                            awaitingReturn = true
+                            CustomTabsIntent.Builder().build().launchUrl(context, result.value.toUri())
+                        }
+
+                        is MutationResult.Failed -> {
+                            failed = true
+                        }
+
+                        MutationResult.Obsolete -> {}
+                    }
+                    opening = false
+                }
+            },
+            enabled = !opening,
+        ) { PendingLabel(opening, stringResource(R.string.subscription_cancel)) }
+        if (failed) {
+            Text(
+                stringResource(R.string.subscription_cancel_failed),
+                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
     }
 }

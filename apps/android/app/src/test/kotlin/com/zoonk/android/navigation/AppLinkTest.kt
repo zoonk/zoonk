@@ -90,8 +90,6 @@ class AppLinkTest {
             AppRoute.CatalogCourse::class.java,
             AppRoute.CatalogChapter::class.java,
             AppRoute.CatalogLesson::class.java,
-            // A link to main's subscription page opens Subscription; this one opens that page itself for web plans.
-            AppRoute.WebSubscription::class.java,
             // A section of the terms, which links open as the terms.
             AppRoute.FairUse::class.java,
             // Main credits its dependencies on the web; the app lists its own.
