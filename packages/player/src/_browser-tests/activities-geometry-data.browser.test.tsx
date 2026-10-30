@@ -79,7 +79,7 @@ describe("geometry and data activities", () => {
 
   it("random simulation by sampling: bigger samples bunch up", async () => {
     openActivity({ content: polls, template: "randomSimulation" });
-    await expect.element(page.getByText("200 samples of 400")).toBeVisible();
+    await expect.element(page.getByText("200 samples of 400", { exact: true })).toBeVisible();
     await expect.element(page.getByText("Example numbers, not real data")).toBeVisible();
     await page.getByRole("radio", { name: /Half as big/u }).click();
     await checkActivity();
@@ -88,6 +88,15 @@ describe("geometry and data activities", () => {
     await expect
       .element(page.getByText("From 100 to 400, the margin shrinks to 50% of its size."))
       .toBeVisible();
+  });
+
+  it("random simulation by sampling: a margin shown as 1 is one point", async () => {
+    openActivity({
+      content: { ...polls, fields: { ...polls.fields, sampleSizes: [100, 8000] } },
+      template: "randomSimulation",
+    });
+
+    await expect.element(page.getByText("±1 point", { exact: true })).toBeVisible();
   });
 
   it("random simulation by sampling: the wrong guess is marked", async () => {
@@ -129,8 +138,8 @@ describe("geometry and data activities with a keyboard or a pointer", () => {
   it("random simulation by sampling: the size slider switches the runs", async () => {
     openActivity({ content: polls, template: "randomSimulation" });
     await pressOnSlider("People per poll", "ArrowLeft", 1);
-    await expect.element(page.getByText("200 samples of 100")).toBeVisible();
+    await expect.element(page.getByText("200 samples of 100", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Run again" }).click();
-    await expect.element(page.getByText("200 samples of 100")).toBeVisible();
+    await expect.element(page.getByText("200 samples of 100", { exact: true })).toBeVisible();
   });
 });

@@ -74,7 +74,7 @@ export function AreaModelActivity({ content, labelId, phase }: AreaModelProps) {
   const parts = sides.map((side) => ({ parts: cutsToParts(side.cuts, side.total) }));
   const values = pieces(parts);
   const total = values.reduce((sum, value) => sum + value, 0);
-  const hidesTotal = check.kind === "numeric" && !isChecked;
+  const hidesTotal = check.kind !== "interaction" && phase === "answering";
   const unit = fields.model === "area" && fields.unit ? `${fields.unit}²` : fields.unit;
   const sum = `${values.map((value) => format(value)).join(" + ")} = ${hidesTotal ? "?" : format(total, { unit })}`;
 

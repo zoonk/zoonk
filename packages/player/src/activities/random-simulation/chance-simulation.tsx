@@ -44,7 +44,7 @@ function usePercent() {
     });
 }
 
-export function ChanceSimulation({ answer, content, labelId, phase }: ChanceProps) {
+export function ChanceSimulation({ answer, content, expected, labelId, phase }: ChanceProps) {
   const t = useExtracted();
   const format = useFormatNumber();
   const percent = usePercent();
@@ -66,6 +66,11 @@ export function ChanceSimulation({ answer, content, labelId, phase }: ChanceProp
   const isDone = isChecked && shown.length === outcomes.length;
   const exact = computeActivityValue(content);
   const guess = guessValue(content, answer);
+
+  const isGuessRight =
+    expected?.kind === "choice" &&
+    answer?.kind === "choice" &&
+    answer.optionId === expected.optionId;
 
   const runsLabel = t("{runs} runs of {trial}", {
     runs: format(fields.runs),
@@ -96,6 +101,7 @@ export function ChanceSimulation({ answer, content, labelId, phase }: ChanceProp
       {isChecked && fields.model.kind === "sharedBirthday" && (
         <RunningShareChart
           guess={guess}
+          isGuessRight={isGuessRight}
           guessLabel={guess === null ? "" : t("Your guess: {value}", { value: percent(guess) })}
           hits={hits}
           runs={fields.runs}

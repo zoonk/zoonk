@@ -8,6 +8,7 @@ type Fields = Extract<ActivityContentFor<"randomSimulation">["fields"], { mode: 
 
 const PERCENT = 100;
 const SHARE_DIGITS = 1;
+const SHARE_SCALE = 10 ** SHARE_DIGITS;
 
 export function useSamplingFormat(fields: Fields) {
   const t = useExtracted();
@@ -21,10 +22,12 @@ export function useSamplingFormat(fields: Fields) {
   }
 
   function formatMargin(margin: number): string {
+    const points = Math.round(margin * PERCENT * SHARE_SCALE) / SHARE_SCALE;
+
     return isShare
       ? t("±{value} {count, plural, =0 {points} one {point} other {points}}", {
-          count: margin * PERCENT,
-          value: format(margin * PERCENT, { maximumFractionDigits: SHARE_DIGITS }),
+          count: points,
+          value: format(points, { maximumFractionDigits: SHARE_DIGITS }),
         })
       : t("±{value}", { value: format(margin, { unit: fields.unit }) });
   }

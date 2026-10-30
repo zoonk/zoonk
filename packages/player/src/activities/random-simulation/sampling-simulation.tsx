@@ -57,7 +57,8 @@ export function SamplingSimulation({ content, labelId, phase }: SamplingProps) {
   const reducedMotion = useReducedMotion();
   const { fields } = content;
   const { format, formatMargin, formatSize, formatValue } = useSamplingFormat(fields);
-  const [sizeIndex, setSizeIndex] = useState(fields.sampleSizes.length - 1);
+  const openingSizeIndex = fields.sampleSizes.length - 1;
+  const [sizeIndex, setSizeIndex] = useState(openingSizeIndex);
   const [runIndex, setRunIndex] = useState(0);
   const isChecked = phase === "checked";
   const smallest = fields.sampleSizes[0] ?? 1;
@@ -68,7 +69,7 @@ export function SamplingSimulation({ content, labelId, phase }: SamplingProps) {
   const baseline = useRuns({ content, runIndex, size: smallest });
 
   const revealed = useRevealCount({
-    instant: reducedMotion,
+    instant: reducedMotion || (runIndex === 0 && sizeIndex === openingSizeIndex),
     runKey: selected.seed,
     total: fields.runs,
   });

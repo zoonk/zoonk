@@ -94,10 +94,12 @@ export function RunningShareChart({
   guess,
   guessLabel,
   hits,
+  isGuessRight,
   runs,
 }: {
   guess: number | null;
   guessLabel: string;
+  isGuessRight: boolean;
   hits: readonly boolean[];
   runs: number;
 }) {
@@ -114,7 +116,10 @@ export function RunningShareChart({
       {guess !== null && (
         <>
           <ActivityPlotLine
-            className="stroke-destructive stroke-2 [stroke-dasharray:5_4]"
+            className={cn(
+              "stroke-2 [stroke-dasharray:5_4]",
+              isGuessRight ? "stroke-success" : "stroke-destructive",
+            )}
             points={[
               { x: 0, y: guess },
               { x: runs, y: guess },
@@ -122,7 +127,7 @@ export function RunningShareChart({
           />
           <ActivityPlotLabel
             anchor="end"
-            className="fill-destructive text-xs"
+            className={cn("text-xs", isGuessRight ? "fill-success" : "fill-destructive")}
             dy={GUESS_LABEL_OFFSET}
             x={runs}
             y={guess}

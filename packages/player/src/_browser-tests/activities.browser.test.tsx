@@ -8,6 +8,9 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { buildLesson } from "../preview/preview-lesson";
+import { explanationStep } from "../preview/preview-steps";
 
 describe("lesson activities", () => {
   it("formula model: moving the rate produces the value to check", async () => {
@@ -29,14 +32,24 @@ describe("lesson activities", () => {
     await expect.element(page.getByText(/3 \+ 3 \+ 5 = 5/u)).toBeVisible();
   });
 
-  it("area model: moving a split keeps the same total", async () => {
+  it("area model: the total a choice asks for waits for the check", async () => {
     openActivity({ template: "areaModel" });
-    await expect.element(page.getByText(/200 \+ 30 \+ 80 \+ 12 = 322/u)).toBeVisible();
+    await expect.element(page.getByText(/200 \+ 30 \+ 80 \+ 12 = \?/u)).toBeVisible();
     await pressOnSlider("Split across the width", "ArrowLeft", 3);
-    await expect.element(page.getByText(/170 \+ 60 \+ 68 \+ 24 = 322/u)).toBeVisible();
+    await expect.element(page.getByText(/170 \+ 60 \+ 68 \+ 24 = \?/u)).toBeVisible();
     await page.getByRole("radio", { name: /322 m²/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
+    await expect.element(page.getByText(/170 \+ 60 \+ 68 \+ 24 = 322/u)).toBeVisible();
+  });
+
+  it("area model: an explanation that explores it shows the total", async () => {
+    const { fields } = activityContentFixtures.areaModel;
+    const step = explanationStep({ explore: { fields, template: "areaModel" }, text: "Split it." });
+
+    renderLessonPlayer({ lesson: buildLesson([step]) });
+
+    await expect.element(page.getByText(/200 \+ 30 \+ 80 \+ 12 = 322/u)).toBeVisible();
   });
 
   it("balance: one-sided moves tip the scale and equal moves solve it", async () => {
