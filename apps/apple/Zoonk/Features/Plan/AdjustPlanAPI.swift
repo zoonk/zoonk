@@ -14,6 +14,8 @@ enum PlanEdit: Encodable, Equatable, Sendable {
   /// `moreExplanation`, `balanced` or `morePractice`.
   case practiceBias(String)
   case restoreActivities([String])
+  /// Brings subjects the learner took out back into the plan.
+  case restoreAreas([String])
   case skipActivities([String])
   /// A new date, or nil for none: a goal that isn't an exam studies everything at its own pace.
   case targetDate(String?)
@@ -78,6 +80,9 @@ enum PlanEdit: Encodable, Equatable, Sendable {
     case .restoreActivities(let activities):
       try container.encode("restoreActivities", forKey: .kind)
       try container.encode(activities, forKey: .activities)
+    case .restoreAreas(let areas):
+      try container.encode("restoreAreas", forKey: .kind)
+      try container.encode(areas, forKey: .areas)
     case .skipActivities(let activities):
       try container.encode("skipActivities", forKey: .kind)
       try container.encode(activities, forKey: .activities)

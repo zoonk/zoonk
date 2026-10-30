@@ -536,6 +536,8 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
     var id: String { (heading ?? "") + "/" + name }
   }
 
+  /// The plan's areas it gathers, as plan changes name them.
+  let areas: [String]
   let chapters: [Chapter]
   let displayWeight: DisplayWeight?
   let key: String

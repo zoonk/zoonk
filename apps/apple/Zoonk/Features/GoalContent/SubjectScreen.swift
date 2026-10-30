@@ -167,9 +167,7 @@ private struct SubjectContent: View {
         }
 
         if let reason = subject.notPlannedReason, !reason.isEmpty {
-          Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+          SubjectNotPlannedNotice(goalId: goal.id, reason: reason, areas: subject.areas)
         }
 
         if subject.notPlannedReason == nil,
@@ -466,6 +464,84 @@ private struct SubjectTopicRow: View {
     case "known": .skipped
     case "inProgress": .next
     default: .todo
+    }
+  }
+}
+
+/// Says why the subject isn't in the plan, with the way back main offers for each reason.
+private struct SubjectNotPlannedNotice: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(PlanStore.self) private var plans
+  @State private var failed = false
+  @State private var isRestoring = false
+
+  let goalId: String
+  let reason: String
+  let areas: [String]
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Label {
+        switch reason {
+        case "skipped":
+          Text(
+            "You took this subject out of your plan.", tableName: "Plan",
+            comment: "Why a subject isn't in the plan: the learner skipped it")
+        case "time":
+          Text(
+            "It doesn't fit in the time you have.", tableName: "Plan",
+            comment: "Why a subject isn't in the plan: no time for it by the date")
+        case "missing":
+          Text(
+            "Your plan doesn't teach this subject yet.", tableName: "Plan",
+            comment: "Why a subject isn't in the plan: no lesson teaches it yet")
+        default:
+          Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
+        }
+      } icon: {
+        Image(systemName: "minus.circle")
+      }
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+
+      if reason == "skipped" {
+        Button {
+          Task { await restore() }
+        } label: {
+          Text(
+            "Bring it back", tableName: "Plan", comment: "Puts a skipped subject back in the plan")
+        }
+        .buttonStyle(.bordered)
+        .disabled(isRestoring)
+      } else if reason == "time" {
+        Button {
+          router.showRoot(of: .plan)
+        } label: {
+          Text(
+            "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
+        }
+        .buttonStyle(.bordered)
+      }
+
+      if failed {
+        Text(
+          "That didn't work. Try again in a moment.", tableName: "Plan",
+          comment: "Says the subject didn't come back into the plan"
+        )
+        .font(.subheadline)
+        .foregroundStyle(.destructive)
+      }
+    }
+  }
+
+  private func restore() async {
+    isRestoring = true
+    defer { isRestoring = false }
+
+    switch await plans.change(goalId: goalId, edits: [.restoreAreas(areas)]) {
+    case .done(.invalid), .failed: failed = true
+    case .done: failed = false
+    case .obsolete: break
     }
   }
 }
