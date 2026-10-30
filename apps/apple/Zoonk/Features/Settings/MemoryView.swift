@@ -294,7 +294,9 @@ extension MemoryFact.Source {
         "Noticed from your activity", tableName: "Settings",
         comment: "Source of a fact Zoonk noticed")
     case .told:
-      Text("You told us", tableName: "Settings", comment: "Source of a fact the learner said")
+      Text(
+        "You told us", tableName: "Settings",
+        comment: "Source of a fact the learner told Zoonk themselves (\"us\" is Zoonk)")
     case .chat:
       Text("From a chat", tableName: "Settings", comment: "Source of a fact from a chat")
     case .onboarding:

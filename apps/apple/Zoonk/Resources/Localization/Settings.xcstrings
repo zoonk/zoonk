@@ -2073,7 +2073,7 @@
       }
     },
     "You told us" : {
-      "comment" : "Source of a fact the learner said",
+      "comment" : "Source of a fact the learner told Zoonk themselves (\"us\" is Zoonk)",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2096,7 +2096,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você contou"
+            "value" : "Você contou pra gente"
           }
         }
       }
