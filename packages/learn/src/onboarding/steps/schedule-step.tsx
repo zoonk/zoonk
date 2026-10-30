@@ -23,7 +23,7 @@ import {
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
 import { type Schedule, type ScheduleActions, useSchedule } from "./use-schedule";
-import { WAITING_RUN, getWaitRun, isPlanMade, isRunStopped } from "./wait-run";
+import { WAITING_RUN, getWaitRun, hasWaitFailed, isPlanMade, isRunStopped } from "./wait-run";
 
 const FULL_COURSE_ID = "onboarding-full-course";
 
@@ -75,7 +75,7 @@ function PlanWait({
   goal: GoalView;
   run: GenerationRun | null;
 }) {
-  if (gate.last?.readingNotice && gate.status !== "failed" && !isRunStopped(run)) {
+  if (gate.last?.readingNotice && !hasWaitFailed({ poll: gate.status, run })) {
     return <NoticeReading document={getExamDocument(goal)} lastNotice={false} />;
   }
 

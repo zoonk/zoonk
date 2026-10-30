@@ -4,6 +4,7 @@ import {
 } from "@zoonk/core/plans/time-advice-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
+import { followRun } from "./generation-run";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
 
 function inMinutes(minutes: number): Date {
@@ -165,23 +166,46 @@ test("an exam's plan waits on the reveal while its notice is read, then shows on
   noProgressUser,
   userWithoutProgress: page,
 }) => {
+  await page.clock.install();
   const goal = await createMappedGoal(noProgressUser.id);
 
   await Promise.all([
     prisma.goal.update({
-      data: { details: { answered: [...ANSWERED, "placement"], subject: "algebra" } },
+      data: {
+        details: { answered: [...ANSWERED, "placement"], subject: "algebra" },
+        generationRunId: goal.id,
+      },
       where: { id: goal.id },
     }),
-    prisma.plan.update({ data: { noticeWaitUntil: inMinutes(10) }, where: { goalId: goal.id } }),
+    prisma.plan.update({ data: { noticeWaitUntil: inMinutes(30) }, where: { goalId: goal.id } }),
   ]);
 
+  await followRun({ events: [{ status: "completed", step: "createPlan" }], page, runId: goal.id });
+  const completedRun = page.waitForResponse((response) =>
+    response.url().includes(`/v1/generations/${goal.id}/events`),
+  );
   await page.goto(`/start/${goal.id}`);
+  await (await completedRun).finished();
+  await page.clock.runFor(1);
 
   await expect(
     page.getByRole("heading", { level: 1, name: "Reading the exam's official documents" }),
   ).toBeVisible();
 
   await expect(page.getByRole("link", { name: "Start" })).toHaveCount(0);
+
+  const afterLongWait = page.waitForResponse(
+    (response) =>
+      response.request().method() === "POST" && response.url().endsWith(`/start/${goal.id}`),
+  );
+
+  await page.clock.fastForward(11 * 60_000);
+  await afterLongWait;
+  await page.clock.runFor(1);
+
+  await expect(
+    page.getByRole("heading", { name: "Reading the exam's official documents" }),
+  ).toBeVisible();
 
   await prisma.plan.update({ data: { noticeWaitUntil: null }, where: { goalId: goal.id } });
 

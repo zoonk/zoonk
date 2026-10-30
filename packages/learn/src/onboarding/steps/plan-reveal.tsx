@@ -15,7 +15,7 @@ import { NoticeReading } from "./notice-reading";
 import { PlanBuilding } from "./plan-building";
 import { RevealBody } from "./reveal-body";
 import { StepLoading } from "./step-parts";
-import { WAITING_RUN, getWaitRun, isPlanMade, isRunStopped } from "./wait-run";
+import { WAITING_RUN, getWaitRun, hasWaitFailed, isPlanMade, isRunStopped } from "./wait-run";
 
 const POLL_MS = 3000;
 
@@ -111,6 +111,7 @@ export function PlanReveal({
     intervalMs: POLL_MS,
     key: String(isPlanMade(run)),
     onPoll: refresh,
+    timeoutMs: Infinity,
   });
 
   usePlanWait({
@@ -118,18 +119,22 @@ export function PlanReveal({
     recordPlanWait: actions.recordPlanWait,
   });
 
+  const waitRun = getWaitRun({ poll, run: run ?? WAITING_RUN });
+
   if (!plan?.ready) {
     return !read && poll.status === "polling" ? (
       <StepLoading />
     ) : (
-      <PlanBuilding run={getWaitRun({ poll, run: run ?? WAITING_RUN })}>
+      <PlanBuilding run={waitRun}>
         {libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
       </PlanBuilding>
     );
   }
 
   if (readingNotice) {
-    return (
+    return hasWaitFailed({ poll: poll.status, run }) ? (
+      <PlanBuilding run={waitRun} />
+    ) : (
       <NoticeReading document={plan.examDocument} lastNotice={plan.schedule.targetDateEstimated} />
     );
   }

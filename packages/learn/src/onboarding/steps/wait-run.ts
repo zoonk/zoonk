@@ -26,3 +26,13 @@ export function isRunStopped(run: GenerationRun | null): boolean {
 export function isPlanMade(run: GenerationRun | null): boolean {
   return run?.steps.createPlan === "completed";
 }
+
+export function hasWaitFailed({
+  poll,
+  run,
+}: {
+  poll: PollStatus;
+  run: GenerationRun | null;
+}): boolean {
+  return poll === "failed" || poll === "timedOut" || isRunStopped(run);
+}
