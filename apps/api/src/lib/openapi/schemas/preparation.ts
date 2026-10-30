@@ -57,7 +57,7 @@ export const planStatusSchema = z
       })
       .meta({
         description:
-          "Every lesson of the plan is studied or tested out (its progress reads 100%) and only required phase challenges are left: the plan isn't finished until they're won. Free language call challenges remain pending and locked but don't block finishing. Non-exam reviews are practice and don't block this status, whatever the date. Exams still wait for their mocks and reviews. Never say it finished while required challenges remain; say how many are left",
+          "Every lesson of the plan is studied or tested out (its progress reads 100%) and only required phase challenges on the calendar are left: the plan isn't finished until they're won. Free language call challenges remain pending and locked but don't block finishing. Non-exam reviews are practice and don't block this status, whatever the date. Exams still wait for their mocks and reviews. Never say it finished while required challenges remain; say how many are left",
       }),
     z
       .object({ kind: z.literal("finished") })
@@ -65,10 +65,15 @@ export const planStatusSchema = z
         description:
           "Every lesson of the plan is studied or tested out and every required phase challenge won. Free language call challenges can remain pending and locked, with no won result. Non-exam reviews remain practice after finishing and never delay this status. An exam also waits for its mocks and reviews still ahead",
       }),
-    z.object({
-      kind: z.literal("needsAdjusting"),
-      options: z.array(z.enum(["addTime", "narrowScope", "moveDate"])),
-    }),
+    z
+      .object({
+        kind: z.literal("needsAdjusting"),
+        options: z.array(z.enum(["addTime", "narrowScope", "moveDate"])),
+      })
+      .meta({
+        description:
+          "The plan no longer fits the time before its date: offer to adjust it (`options`). Also once every lesson is done while a required phase challenge has no room before the date (a phase's `challengeLeftOut`): winning the challenges on the calendar wouldn't finish it, so say it needs more study days before the date or a later date",
+      }),
     z
       .object({
         kind: z.literal("pastDate"),

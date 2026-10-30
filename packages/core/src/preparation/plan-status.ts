@@ -1,7 +1,9 @@
 import { type Goal } from "@zoonk/db";
 import {
+  areLessonsFinished,
   countChallengesLeft,
   countLessonsLeft,
+  hasChallengeLeftOut,
   isDateReached,
   isPlanFinished,
 } from "../plans/_utils/plan-end";
@@ -14,6 +16,7 @@ type PlanAdjustment = "addTime" | "moveDate" | "narrowScope";
 type PlanLifecycle =
   | { challenges: number; kind: "challengesLeft" }
   | { kind: "finished" }
+  | { kind: "needsAdjusting"; options: PlanAdjustment[] }
   | { kind: "pastDate"; lessons: number };
 
 type PlanPace =
@@ -155,6 +158,11 @@ function getPlanLifecycle({
 
   if (lessons > 0 && isDateReached({ studiesPastTarget, targetDate, today })) {
     return { kind: "pastDate", lessons };
+  }
+
+  // Winning what's on the calendar can't finish it: it needs more study days or a later date.
+  if (hasChallengeLeftOut(ends) && areLessonsFinished(ends)) {
+    return { kind: "needsAdjusting", options: targetDate ? ["addTime", "moveDate"] : ["addTime"] };
   }
 
   const challenges = countChallengesLeft(ends);

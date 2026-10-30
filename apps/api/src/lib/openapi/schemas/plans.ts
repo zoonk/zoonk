@@ -102,7 +102,7 @@ export const planResponseSchema = z
       .nullable()
       .meta({
         description:
-          "Every lesson of the plan is studied or tested out and every required phase challenge won: time for what to study next (`GET /v1/goals/{goalId}/map`'s `next`, and POST `/v1/goals/{goalId}/next-level`). Free language plans can finish with their Plus call challenges still locked; those challenges retain their pending state, with no won result. Non-exam reviews remain practice after finishing; exams also wait for their mocks and reviews still ahead. Null while something required is left, lessons set aside included (a plan whose date came with lessons left isn't over: status `pastDate`) and required challenges too (status `challengesLeft`)",
+          "Every lesson of the plan is studied or tested out and every required phase challenge won: time for what to study next (`GET /v1/goals/{goalId}/map`'s `next`, and POST `/v1/goals/{goalId}/next-level`). Free language plans can finish with their Plus call challenges still locked; those challenges retain their pending state, with no won result. Non-exam reviews remain practice after finishing; exams also wait for their mocks and reviews still ahead. Null while something required is left, lessons set aside included (a plan whose date came with lessons left isn't over: status `pastDate`) and required challenges too (status `challengesLeft`, or `needsAdjusting` while one has no room before the date)",
       }),
     estimate: z.object({
       endDate: isoDateSchema.nullable(),

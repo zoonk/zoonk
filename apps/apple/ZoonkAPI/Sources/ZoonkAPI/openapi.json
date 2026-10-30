@@ -72995,7 +72995,7 @@
               "kind"
             ],
             "additionalProperties": false,
-            "description": "Every lesson of the plan is studied or tested out (its progress reads 100%) and only required phase challenges are left: the plan isn't finished until they're won. Free language call challenges remain pending and locked but don't block finishing. Non-exam reviews are practice and don't block this status, whatever the date. Exams still wait for their mocks and reviews. Never say it finished while required challenges remain; say how many are left"
+            "description": "Every lesson of the plan is studied or tested out (its progress reads 100%) and only required phase challenges on the calendar are left: the plan isn't finished until they're won. Free language call challenges remain pending and locked but don't block finishing. Non-exam reviews are practice and don't block this status, whatever the date. Exams still wait for their mocks and reviews. Never say it finished while required challenges remain; say how many are left"
           },
           {
             "type": "object",
@@ -73038,7 +73038,8 @@
               "kind",
               "options"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "The plan no longer fits the time before its date: offer to adjust it (`options`). Also once every lesson is done while a required phase challenge has no room before the date (a phase's `challengeLeftOut`): winning the challenges on the calendar wouldn't finish it, so say it needs more study days before the date or a later date"
           },
           {
             "type": "object",
@@ -76444,7 +76445,7 @@
           },
           "end": {
             "nullable": true,
-            "description": "Every lesson of the plan is studied or tested out and every required phase challenge won: time for what to study next (`GET /v1/goals/{goalId}/map`'s `next`, and POST `/v1/goals/{goalId}/next-level`). Free language plans can finish with their Plus call challenges still locked; those challenges retain their pending state, with no won result. Non-exam reviews remain practice after finishing; exams also wait for their mocks and reviews still ahead. Null while something required is left, lessons set aside included (a plan whose date came with lessons left isn't over: status `pastDate`) and required challenges too (status `challengesLeft`)",
+            "description": "Every lesson of the plan is studied or tested out and every required phase challenge won: time for what to study next (`GET /v1/goals/{goalId}/map`'s `next`, and POST `/v1/goals/{goalId}/next-level`). Free language plans can finish with their Plus call challenges still locked; those challenges retain their pending state, with no won result. Non-exam reviews remain practice after finishing; exams also wait for their mocks and reviews still ahead. Null while something required is left, lessons set aside included (a plan whose date came with lessons left isn't over: status `pastDate`) and required challenges too (status `challengesLeft`, or `needsAdjusting` while one has no room before the date)",
             "type": "object",
             "properties": {
               "kind": {

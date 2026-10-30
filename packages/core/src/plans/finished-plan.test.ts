@@ -319,6 +319,11 @@ describe("a finished plan", () => {
     expect(before?.phases.some((phase) => phase.challengeLeftOut)).toBe(true);
     expect(after?.end).toBeNull();
 
+    expect(after?.status).toStrictEqual({
+      kind: "needsAdjusting",
+      options: ["addTime", "moveDate"],
+    });
+
     expect(after?.phases.map((phase) => phase.state)).toStrictEqual(
       before?.phases.map((phase) => {
         if (phase.state === "leftOut") {

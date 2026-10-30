@@ -23,6 +23,34 @@ function getFinishedStatus(index: number): PlanItemStatus {
   return index < 10 ? "skipped" : "todo";
 }
 
+function getStatusWithChallengesLeftOut({
+  challenge,
+  phaseChallengesRequired,
+}: {
+  challenge: PlanItemStatus;
+  phaseChallengesRequired: boolean;
+}) {
+  return getPlanStatus({
+    goalKind: "learn",
+    items: [
+      ...schedule(20),
+      {
+        chapterId: null,
+        kind: "boss",
+        lessonId: null,
+        scheduledFor: TODAY,
+        skillId: null,
+        status: challenge,
+      },
+    ],
+    minutesPerItem: 4,
+    phaseChallengesRequired,
+    phases: [{}, { challengeLeftOut: true }, { challengeLeftOut: true }],
+    targetDate: new Date("2026-09-12T00:00:00Z"),
+    today: TODAY,
+  });
+}
+
 describe(getPlanStatus, () => {
   it.each(["2026-09-06", "2026-10-01"])(
     "ignores locked language calls when measuring Free pace (%s)",
@@ -203,6 +231,22 @@ describe(getPlanStatus, () => {
         targetDate: new Date("2026-09-08T00:00:00Z"),
         today: TODAY,
       }),
+    ).toStrictEqual({ kind: "finished" });
+  });
+
+  it("needs more days or a later date once every lesson is done and a challenge was left out", () => {
+    const adjust = { kind: "needsAdjusting", options: ["addTime", "moveDate"] };
+
+    expect(
+      getStatusWithChallengesLeftOut({ challenge: "todo", phaseChallengesRequired: true }),
+    ).toStrictEqual(adjust);
+
+    expect(
+      getStatusWithChallengesLeftOut({ challenge: "done", phaseChallengesRequired: true }),
+    ).toStrictEqual(adjust);
+
+    expect(
+      getStatusWithChallengesLeftOut({ challenge: "todo", phaseChallengesRequired: false }),
     ).toStrictEqual({ kind: "finished" });
   });
 

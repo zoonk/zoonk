@@ -54,7 +54,7 @@ export function withinLessonScope<Item extends EndItem>({
   return items.filter((item) => !LEARN_KINDS.has(item.kind) || isInLessonScope({ deadline, item }));
 }
 
-function hasChallengeLeftOut({
+export function hasChallengeLeftOut({
   phaseChallengesRequired = true,
   phases = [],
 }: {
