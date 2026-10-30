@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityStepContent
+import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
 
 /** [Explore] draws the canvas on an explanation screen: nothing to answer, and [ActivityProps.expected] is the solved end state when the template checks only that. */
@@ -14,6 +15,7 @@ enum class ActivityPhase { Answering, Checked, Explore }
  * What a template's canvas gets. The screen's answer is the player's, never the canvas's own;
  * [expected] and [isCorrect] come from the server's check, so a canvas draws them and never grades.
  * While [isLocked] (being checked or checked) the player takes no new answer, so a canvas changes nothing.
+ * [baseMap] is a map activity's base map as the API draws it, with its places already projected.
  */
 data class ActivityProps(
     val content: ActivityStepContent,
@@ -25,6 +27,7 @@ data class ActivityProps(
     val onAnswerChange: (ActivityAnswer?) -> Unit,
     val cantListen: Boolean = false,
     val onCantListenChange: (Boolean) -> Unit = {},
+    val baseMap: ActivityBaseMap? = null,
 ) {
     val isChecked: Boolean get() = phase == ActivityPhase.Checked
     val isExploring: Boolean get() = phase == ActivityPhase.Explore

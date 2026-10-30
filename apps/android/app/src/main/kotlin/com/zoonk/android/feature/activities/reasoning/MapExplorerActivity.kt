@@ -46,7 +46,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -90,8 +89,7 @@ private typealias Place = PlayableLibraryStepAnyOfContentOneOf23FieldsPlacesInne
 @Composable
 private fun MapExplorerActivity(props: ActivityProps) {
     val fields = (props.content as MapExplorerContent).value.fields
-    val assets = LocalContext.current.assets
-    val map = remember(fields.baseMapId) { loadBaseMap(assets, fields.baseMapId) }
+    val map = remember(props.baseMap) { props.baseMap?.toBaseMap() }
 
     if (map == null) {
         ActivityCanvas {
@@ -167,10 +165,7 @@ private fun layoutPins(
 ): MapLayout {
     val projected =
         places.withIndex().mapNotNull { (index, place) ->
-            projectPlace(drawing.projection, place.latitude, place.longitude)?.let {
-                index to
-                    it
-            }
+            drawing.places.find { it.id == place.id }?.let { index to MapPoint(it.x, it.y) }
         }
     val crop = fitViewport(drawing.width, drawing.height, drawing.maxZoom, projected.map { it.second }, maxAspect = MAX_MAP_HEIGHT / width)
     val zoom = width / crop.width

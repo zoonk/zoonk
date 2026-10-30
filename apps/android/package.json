@@ -18,6 +18,7 @@
     "@types/node": "catalog:",
     "@zoonk/core": "workspace:*",
     "@zoonk/i18n": "workspace:*",
+    "@zoonk/player": "workspace:*",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "@zoonk/utils": "workspace:*",

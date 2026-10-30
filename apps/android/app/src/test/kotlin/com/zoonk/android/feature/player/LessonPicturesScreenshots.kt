@@ -11,6 +11,7 @@ import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.PictureDescription
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.api.models.ScreenPicture
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -92,7 +93,11 @@ private fun questionDrawing(): LessonStep {
             alt = "A sweater's care tag: a tub with 30°, a crossed-out triangle, a square with a circle",
             prompt = "A care tag",
         )
-    return check.copy(content = StepContent.Check(content.copy(image = picture)), imagePending = true)
+    return check.copy(
+        content = StepContent.Check(content.copy(image = picture)),
+        imagePending = true,
+        picture = ScreenPicture(picture.alt, required = false),
+    )
 }
 
 private fun longDescriptions(): LessonStep {

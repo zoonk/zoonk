@@ -13,6 +13,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.PictureDescription
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.api.models.ScreenPicture
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -91,5 +92,5 @@ private fun LessonStep.drawing(parts: List<String>? = null): LessonStep {
             is StepContent.Guess -> StepContent.Guess(content.content.copy(image = picture))
             else -> content
         }
-    return copy(content = pictured, imagePending = true)
+    return copy(content = pictured, imagePending = true, picture = ScreenPicture(alt = CLOUD, required = parts != null))
 }

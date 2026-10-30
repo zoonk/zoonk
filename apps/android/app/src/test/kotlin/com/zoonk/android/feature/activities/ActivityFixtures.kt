@@ -7,7 +7,6 @@ import com.zoonk.android.feature.activities.geometry.moleculeElements
 import com.zoonk.android.feature.activities.music.KeyboardFretboard
 import com.zoonk.android.feature.activities.music.notesAnswer
 import com.zoonk.android.feature.player.model.ActivityAnswer
-import com.zoonk.android.feature.player.model.ActivityFrame
 import com.zoonk.android.feature.player.model.ActivityStepContent
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
@@ -20,12 +19,12 @@ import com.zoonk.api.models.PlayableLibraryStep
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
-import kotlinx.serialization.json.putJsonObject
 import java.util.UUID
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf11Value as LabeledDiagramContent
 
@@ -93,25 +92,24 @@ object ActivityFixtures {
             }
         }
 
-    /** The fixture's step, with [check] in place of its own when given. */
+    /** The fixture's step, sent as the API sends it and read by the player's own loader, with [check] in place of its own when given. */
     fun step(
         name: String,
         id: String = name,
         check: JsonObject? = null,
     ): LessonStep {
         val written = entry(name).getValue("content").jsonObject
-        return step(if (check == null) written else JsonObject(written + ("check" to check)), id)
+        return sentStep(id, "activity", if (check == null) written else JsonObject(written + ("check" to check))) {
+            put("picture", entry(name)["picture"] ?: JsonNull)
+            put("baseMap", entry(name)["baseMap"] ?: JsonNull)
+        }
     }
 
-    /** A step of content a fixture doesn't have, written as the API sends it; a labeled diagram's picture is drawn, as in main's `activityStep`. */
+    /** A step of content a fixture doesn't have, sent as the API sends it. */
     fun step(
         json: JsonElement,
         id: String,
-    ): LessonStep {
-        val content = ApiJson.decodeFromJsonElement(ActivityStepContent.serializer(), json)
-        val frame = ApiJson.decodeFromJsonElement(ActivityFrame.serializer(), json)
-        return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null), image = drawnPicture(content, id))
-    }
+    ): LessonStep = sentStep(id, "activity", json) {}
 
     /** The fixtures whose template an explanation can explore. */
     val exploreNames: Set<String> get() =
@@ -129,25 +127,49 @@ object ActivityFixtures {
         id: String = name,
     ): LessonStep {
         val explore = entry(name).getValue("explore").jsonObject
+        val content =
+            buildJsonObject {
+                put("text", "Explore $name.")
+                put("title", name)
+                put("explore", explore.getValue("content"))
+            }
+        return sentStep(id, "explanation", content) {
+            put("exploreExpected", explore.getValue("expected"))
+            put("picture", explore.getValue("picture"))
+            put("baseMap", entry(name)["baseMap"] ?: JsonNull)
+        }
+    }
+
+    /** A step as the API sends it, read by the player's loader; it keeps [id] so tests can name it, and a labeled diagram's picture is drawn, as in main's `activityStep`. */
+    private fun sentStep(
+        id: String,
+        kind: String,
+        content: JsonElement,
+        fields: JsonObjectBuilder.() -> Unit,
+    ): LessonStep {
         val sent =
             buildJsonObject {
                 put("id", UUID.nameUUIDFromBytes(id.toByteArray()).toString())
-                put("kind", "explanation")
+                put("kind", kind)
                 put("position", 0)
                 put("skillId", JsonNull)
                 put("citation", JsonNull)
                 put("image", JsonNull)
                 put("imagePending", false)
-                put("exploreExpected", explore.getValue("expected"))
-                putJsonObject("content") {
-                    put("text", "Explore $name.")
-                    put("title", name)
-                    put("explore", explore.getValue("content"))
-                }
+                put("picture", JsonNull)
+                put("baseMap", JsonNull)
+                put("minTolerance", JsonNull)
+                put("content", content)
+                fields()
             }
         val step = ApiJson.decodeFromJsonElement(PlayableLibraryStep.serializer(), sent).toLessonStep()
-        val explored = (step.content as StepContent.Explanation).explore
-        return step.copy(image = explored?.let { drawnPicture(it.content, step.id) })
+        val drawn =
+            when (val read = step.content) {
+                is StepContent.Activity -> read.content
+                is StepContent.Explanation -> read.explore?.content
+                else -> null
+            }
+        return step.copy(id = id, image = drawn?.let { drawnPicture(it, id) })
     }
 
     private fun drawnPicture(

@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.player.model
 
 import androidx.compose.runtime.Immutable
+import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1Content
@@ -36,6 +37,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfData
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfImage
 import com.zoonk.api.models.PlayableLibraryStepAnyOfMinTolerance
+import com.zoonk.api.models.ScreenPicture
 
 // The contract's names for each screen's content, so code reads by meaning, not by union position.
 typealias ActivityStepContent = PlayableLibraryStepAnyOfContent
@@ -111,6 +113,7 @@ sealed interface StepContent {
         val content: ActivityStepContent,
         val frame: ActivityFrame,
         val minTolerance: ActivityTolerance?,
+        val baseMap: ActivityBaseMap? = null,
     ) : StepContent {
         override val kind get() = StepKind.Activity
     }
@@ -193,6 +196,7 @@ data class LessonStep(
     val pictureWaitStartedAt: Long? = null,
     val optionPictures: Map<String, StepImage> = emptyMap(),
     val citation: StepCitation? = null,
+    val picture: ScreenPicture? = null,
 ) {
     val kind: StepKind get() = content.kind
 }
@@ -203,6 +207,7 @@ data class ExploredActivity(
     val content: ActivityStepContent,
     val frame: ActivityFrame,
     val expected: ActivityExpected?,
+    val baseMap: ActivityBaseMap? = null,
 )
 
 /** What every activity template shares: the frame draws it, the template's renderer the rest. */
@@ -213,5 +218,4 @@ data class ActivityFrame(
     val prompt: String,
     val check: ActivityCheck,
     val data: ActivityData? = null,
-    val image: PictureDescription? = null,
 )

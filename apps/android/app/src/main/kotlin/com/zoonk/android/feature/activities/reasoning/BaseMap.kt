@@ -1,39 +1,12 @@
 package com.zoonk.android.feature.activities.reasoning
 
-import android.content.res.AssetManager
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.vector.PathParser
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.ActivityBaseMap
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.io.FileNotFoundException
-
-@Serializable
-internal enum class ProjectionKind {
-    @SerialName("albersUsa")
-    AlbersUsa,
-
-    @SerialName("azimuthalEqualArea")
-    AzimuthalEqualArea,
-
-    @SerialName("conicEqualArea")
-    ConicEqualArea,
-
-    @SerialName("equalEarth")
-    EqualEarth,
-
-    @SerialName("mercator")
-    Mercator,
-}
-
-@Serializable
-internal data class BaseMapProjection(
-    val kind: ProjectionKind,
-    val scale: Double,
-    val translate: List<Double>,
-    val parallels: List<Double>? = null,
-    val rotate: List<Double>? = null,
-)
 
 @Serializable
 internal enum class RegionTone {
@@ -97,13 +70,20 @@ internal data class BaseMapLegendItem(
     val tone: RegionTone,
 )
 
-/** Main's pre-built base map drawings (`_assets/base-maps/generated`), in their own coordinates. */
+@Serializable
+internal data class BaseMapPlace(
+    val id: String,
+    val x: Double,
+    val y: Double,
+)
+
+/** The API's `baseMap`: main's base map drawing, in its own units, with each place already at its spot. */
 @Serializable
 internal data class BaseMapDrawing(
     val width: Double,
     val height: Double,
     val maxZoom: Double,
-    val projection: BaseMapProjection,
+    val places: List<BaseMapPlace>,
     val regions: List<BaseMapRegion>,
     val streets: List<BaseMapStreet>,
     val insets: List<BaseMapInset>,
@@ -123,18 +103,7 @@ internal class BaseMap(
 
 private fun toPath(svg: String): Path = PathParser().parsePathString(svg).toPath()
 
-/** The build copies main's drawings into `assets/base-maps`; a map it doesn't have is null. */
-internal fun loadBaseMap(
-    assets: AssetManager,
-    id: String,
-): BaseMap? {
-    val json =
-        try {
-            assets.open("base-maps/$id.json").use { it.readBytes().decodeToString() }
-        } catch (_: FileNotFoundException) {
-            return null
-        }
-    return BaseMap(mapJson.decodeFromString(BaseMapDrawing.serializer(), json))
-}
+internal fun ActivityBaseMap.toBaseMap(): BaseMap =
+    BaseMap(mapJson.decodeFromJsonElement(BaseMapDrawing.serializer(), ApiJson.encodeToJsonElement(ActivityBaseMap.serializer(), this)))
 
 private val mapJson = Json { ignoreUnknownKeys = true }

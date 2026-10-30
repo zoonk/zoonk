@@ -457,6 +457,9 @@ importers:
       '@zoonk/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@zoonk/player':
+        specifier: workspace:*
+        version: link:../../packages/player
       '@zoonk/testing':
         specifier: workspace:*
         version: link:../../packages/testing

@@ -22,7 +22,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.recode
-import com.zoonk.android.feature.player.engine.askedPicture
 import com.zoonk.android.feature.player.engine.isOwnPictureDrawing
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepVisual
@@ -43,12 +42,12 @@ fun StepPicture(
     frame: PictureFrame,
 ) {
     val image = step.image
-    val asked = step.askedPicture
+    val picture = step.picture
 
     when {
         image != null -> PrivatePicture(image.url, image.alt, image.width, image.height, frame)
-        step.isOwnPictureDrawing -> StepPicturePending(frame, asked?.alt?.takeIf { frame == PictureFrame.Question })
-        frame == PictureFrame.Question && asked != null -> DescribedPicture(asked.alt)
+        step.isOwnPictureDrawing -> StepPicturePending(frame, picture?.alt?.takeIf { frame == PictureFrame.Question })
+        frame == PictureFrame.Question && picture != null -> DescribedPicture(picture.alt)
     }
 }
 

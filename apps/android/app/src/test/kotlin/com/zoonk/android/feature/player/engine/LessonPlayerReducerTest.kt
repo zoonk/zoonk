@@ -18,6 +18,7 @@ import com.zoonk.android.feature.player.workedExampleStep
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.api.models.ScreenPicture
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -555,14 +556,7 @@ class LessonPlayerReducerTest {
     @Test
     fun anActivityAskingAboutAPicturesNumberedPartsWaitsForIt() {
         val timeline = ActivityFixtures.step("timeline", id = "parts")
-        val content = timeline.content as StepContent.Activity
-        val parts = PictureDescription(alt = "A cell", prompt = "A cell", parts = listOf("Nucleus", "Wall"))
-        val drawing =
-            timeline.copy(
-                content = content.copy(frame = content.frame.copy(image = parts)),
-                imagePending = true,
-                pictureWaitStartedAt = 0,
-            )
+        val drawing = timeline.copy(picture = ScreenPicture(alt = "A cell", required = true), imagePending = true, pictureWaitStartedAt = 0)
         val answer = LessonAnswer.Activity(checkNotNull(ActivityFixtures.rightAnswer("timeline")))
 
         val waiting = play(listOf(drawing, summaryStep("end")), started(), LessonAction.SelectAnswer("parts", answer))
@@ -612,5 +606,6 @@ private fun checkWithPicture(
             StepContent.Check(
                 content.copy(image = PictureDescription(alt = "A cell", prompt = "A cell", parts = parts)),
             ),
+        picture = ScreenPicture(alt = "A cell", required = parts != null),
     )
 }

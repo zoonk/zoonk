@@ -204,6 +204,7 @@ internal fun ActivityView(
                         onAnswerChange,
                         actions.cantListen,
                         actions::setCantListen,
+                        content.baseMap,
                     ),
                 )
                 if (it.showsData(content.content)) ActivityDataNote(frame)
@@ -318,6 +319,7 @@ internal fun ExploredActivityCanvas(explore: ExploredActivity) {
                 phase = ActivityPhase.Explore,
                 isLocked = false,
                 onAnswerChange = {},
+                baseMap = explore.baseMap,
             ),
         )
         if (renderer.showsData(explore.content)) ActivityDataNote(explore.frame)

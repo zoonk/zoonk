@@ -3,6 +3,7 @@ package com.zoonk.android.feature.player.model
 import androidx.compose.runtime.Immutable
 import com.zoonk.android.data.recode
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ExplanationLesson
 import com.zoonk.api.models.LessonTutorSuggestion
@@ -17,6 +18,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOf9
 import com.zoonk.api.models.PlayableLibraryStepAnyOf9Exercise
 import com.zoonk.api.models.PlayableLibraryStepAnyOfImage
 import com.zoonk.api.models.PlayableLibraryStepAnyOfOptionPicturesValue
+import com.zoonk.api.models.ScreenPicture
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -117,12 +119,13 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                 teaching(
                     id = id.toString(),
                     skillId = skillId?.toString(),
-                    content = StepContent.Activity(content, activityFrame(content), minTolerance),
+                    content = StepContent.Activity(content, activityFrame(content), minTolerance, baseMap),
                     image = image,
                     imagePending = imagePending,
                     pictureWaitStartedAt = pictureWaitStartedAt,
                     optionPictures = optionPictures,
                     citation = citation,
+                    picture = picture,
                 )
             }
         }
@@ -138,6 +141,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     pictureWaitStartedAt,
                     optionPictures,
                     citation,
+                    picture,
                 )
             }
         }
@@ -153,6 +157,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     pictureWaitStartedAt,
                     optionPictures,
                     citation,
+                    picture,
                 )
             }
         }
@@ -162,12 +167,13 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                 teaching(
                     id.toString(),
                     skillId?.toString(),
-                    StepContent.Explanation(content, content.explore?.let { exploredActivity(it, exploreExpected) }),
+                    StepContent.Explanation(content, content.explore?.let { exploredActivity(it, exploreExpected, baseMap) }),
                     image,
                     imagePending,
                     pictureWaitStartedAt,
                     optionPictures,
                     citation,
+                    picture,
                 )
             }
         }
@@ -179,7 +185,17 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                         is PlayableLibraryStepAnyOf4Content.PlayableLibraryStepAnyOf4ContentOneOfValue -> StepContent.Guess(hook.value)
                         is PlayableLibraryStepAnyOf4Content.PlayableLibraryStepAnyOf4ContentOneOf1Value -> StepContent.Fact(hook.value)
                     }
-                teaching(id.toString(), skillId?.toString(), hook, image, imagePending, pictureWaitStartedAt, optionPictures, citation)
+                teaching(
+                    id.toString(),
+                    skillId?.toString(),
+                    hook,
+                    image,
+                    imagePending,
+                    pictureWaitStartedAt,
+                    optionPictures,
+                    citation,
+                    picture,
+                )
             }
         }
 
@@ -194,6 +210,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     pictureWaitStartedAt,
                     optionPictures,
                     citation,
+                    picture,
                 )
             }
         }
@@ -209,6 +226,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     pictureWaitStartedAt,
                     optionPictures,
                     citation,
+                    picture,
                 )
             }
         }
@@ -224,6 +242,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     pictureWaitStartedAt,
                     optionPictures,
                     citation,
+                    picture,
                 )
             }
         }
@@ -239,6 +258,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     pictureWaitStartedAt,
                     optionPictures,
                     citation,
+                    picture,
                 )
             }
         }
@@ -264,6 +284,7 @@ private fun teaching(
     pictureWaitStartedAt: Long?,
     optionPictures: Map<String, PlayableLibraryStepAnyOfOptionPicturesValue>?,
     citation: StepCitation?,
+    picture: ScreenPicture?,
 ) = LessonStep(
     id = id,
     skillId = skillId,
@@ -276,16 +297,23 @@ private fun teaching(
             StepImage(picture.id.toString(), picture.url, picture.alt, picture.width, picture.height)
         },
     citation = citation,
+    picture = picture,
 )
 
 /** Main's `toCanvasContent`: the explore's template, fields and data, drawn as an activity with nothing to ask. */
 private fun exploredActivity(
     explore: PlayableLibraryStepAnyOf3ContentExplore,
     expected: PlayableLibraryStepAnyOf3ExploreExpected?,
+    baseMap: ActivityBaseMap?,
 ): ExploredActivity {
     val written = ApiJson.encodeToJsonElement(PlayableLibraryStepAnyOf3ContentExplore.serializer(), explore).jsonObject
     val content = ApiJson.decodeFromJsonElement(ActivityStepContent.serializer(), JsonObject(written + NOTHING_TO_ASK))
-    return ExploredActivity(content, activityFrame(content), expected?.recode<PlayableLibraryStepAnyOf3ExploreExpected, ActivityExpected>())
+    return ExploredActivity(
+        content,
+        activityFrame(content),
+        expected?.recode<PlayableLibraryStepAnyOf3ExploreExpected, ActivityExpected>(),
+        baseMap,
+    )
 }
 
 private val NOTHING_TO_ASK =
