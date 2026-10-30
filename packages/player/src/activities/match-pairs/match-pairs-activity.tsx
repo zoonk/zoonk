@@ -91,12 +91,15 @@ export function MatchPairsActivity({
       setMiss(null);
 
       setAnnouncement(
-        t("Matched {left} with {right}. {matched} of {total} pairs matched.", {
-          left: leftCard.text,
-          matched: String(next.matched.length),
-          right: rightCard.text,
-          total: String(pairIds.length),
-        }),
+        t(
+          "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}",
+          {
+            left: leftCard.text,
+            matched: next.matched.length,
+            right: rightCard.text,
+            total: String(pairIds.length),
+          },
+        ),
       );
 
       return;
@@ -165,10 +168,10 @@ export function MatchPairsActivity({
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <ActivityCanvasLabel className="tabular-nums">
-        {t("{matched} of {total} pairs matched", {
-          matched: String(progress.matched.length),
-          total: String(pairIds.length),
-        })}
+        {t(
+          "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}",
+          { matched: progress.matched.length, total: String(pairIds.length) },
+        )}
 
         {trapCount > 0 && (
           <>
@@ -217,12 +220,8 @@ export function MatchPairsActivity({
 
       <ActivityTextAlternative>
         {t(
-          "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched} of {total} pairs matched.",
-          {
-            count: trapCount,
-            matched: String(progress.matched.length),
-            total: String(pairIds.length),
-          },
+          "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}",
+          { count: trapCount, matched: progress.matched.length, total: String(pairIds.length) },
         )}
       </ActivityTextAlternative>
     </ActivityCanvas>

@@ -759,11 +759,6 @@ msgid "{cause} picked. Now pick what it led to."
 msgstr "Has elegido {cause}. Ahora elige a qué dio lugar."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
-msgctxt "Ce6gED"
-msgid "Now pick what {cause} led to."
-msgstr "Ahora elige a qué dio lugar {cause}."
-
-#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "M2FAHj"
 msgid "Pick a cause, then pick what it led to."
 msgstr "Elige una causa y luego elige a qué dio lugar."
@@ -1810,9 +1805,9 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "Plano simplificado de las calles, basado en el mapa de John Snow de 1854."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "6DG-0D"
-msgid "Matched {left} with {right}. {matched} of {total} pairs matched."
-msgstr "Has emparejado {left} con {right}. {matched} de {total} parejas formadas."
+msgctxt "HfJhT9"
+msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
+msgstr "Has emparejado {left} con {right}. {matched, plural, other {Has formado # de {total} parejas.}}"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "95nYEN"
@@ -1835,9 +1830,9 @@ msgid "{text}, no match"
 msgstr "{text}, sin pareja"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "aCh1Dx"
-msgid "{matched} of {total} pairs matched"
-msgstr "{matched} de {total} parejas formadas"
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, other {Has formado # de {total} parejas}}"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "ZdoI92"
@@ -1855,9 +1850,9 @@ msgid "Those two don't go together."
 msgstr "Esas dos no forman pareja."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "1hDE7k"
-msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched} of {total} pairs matched."
-msgstr "Dos columnas de tarjetas. Elige una tarjeta de la izquierda y otra de la derecha para formar una pareja. {count, plural, =0 {} one {# tarjeta no tiene pareja.} other {# tarjetas no tienen pareja.}} {matched} de {total} parejas formadas."
+msgctxt "Dzn88L"
+msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
+msgstr "Dos columnas de tarjetas. Elige una tarjeta de la izquierda y otra de la derecha para emparejarlas. {count, plural, =0 {} one {# tarjeta no tiene pareja.} other {# tarjetas no tienen pareja.}} {matched, plural, other {Has formado # de {total} parejas.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"

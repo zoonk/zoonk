@@ -146,9 +146,7 @@ export function CauseEffectChainActivity({
       {!isExploring && (
         <div className="flex items-baseline justify-between gap-3">
           <ActivityCanvasLabel className="text-sm">
-            {causeId
-              ? t("Now pick what {cause} led to.", { cause: labelOf(causeId) })
-              : t("Pick a cause, then pick what it led to.")}
+            {t("Pick a cause, then pick what it led to.")}
           </ActivityCanvasLabel>
 
           {check.kind === "interaction" && (

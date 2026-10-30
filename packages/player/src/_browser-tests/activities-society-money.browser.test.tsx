@@ -215,6 +215,15 @@ describe("money and society activities", () => {
     await expect.element(page.getByText("Bare soil blew away.")).toBeVisible();
   });
 
+  it("cause and effect: a picked cause is named once, under the cards", async () => {
+    openActivity({ template: "causeEffectChain" });
+    await chainNode("1920 Prairie plowed for wheat").click();
+    await expect
+      .element(page.getByText("Prairie plowed for wheat picked. Now pick what it led to."))
+      .toBeVisible();
+    await expect.element(page.getByText("Pick a cause, then pick what it led to.")).toBeVisible();
+  });
+
   it("cause and effect: a backward link is wrong and the missed ones show", async () => {
     openActivity({ template: "causeEffectChain" });
     await chainNode("1934 Dust storms").click();
