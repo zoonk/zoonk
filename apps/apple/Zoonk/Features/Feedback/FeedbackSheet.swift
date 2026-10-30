@@ -227,6 +227,7 @@ private struct FeedbackForm: View {
       } icon: {
         Image(systemName: "checkmark.circle.fill")
           .foregroundStyle(.success)
+          .accessibilityHidden(true)
       }
     }
   }

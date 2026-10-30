@@ -399,6 +399,7 @@ struct PlusBenefits: View {
     } icon: {
       Image(systemName: "checkmark")
         .foregroundStyle(.secondary)
+        .accessibilityHidden(true)
     }
   }
 }
@@ -609,6 +610,7 @@ private struct FreePlanIncludes: View {
     } icon: {
       Image(systemName: "checkmark")
         .foregroundStyle(.secondary)
+        .accessibilityHidden(true)
     }
   }
 }
@@ -786,6 +788,7 @@ private struct PlusQuestions: View {
       Image(systemName: "circle.fill")
         .imageScale(.small)
         .font(.caption2)
+        .accessibilityHidden(true)
     }
     .foregroundStyle(.secondary)
   }
