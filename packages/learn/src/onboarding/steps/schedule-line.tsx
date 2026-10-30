@@ -6,7 +6,7 @@ import { useExtracted } from "next-intl";
 import { useFormatGoalDate, useFormatIsoDate } from "../../_utils/iso-date";
 import { useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
-import { type DaySplit, type TimeLine } from "./schedule-time";
+import { type DaySplit, type TimeLine, type TooClose } from "./schedule-time";
 
 export type GoalDate = { isoDate: string; namedMonth: boolean };
 
@@ -31,17 +31,26 @@ function FinishMonth(chunks: React.ReactNode) {
   return <span className="text-foreground font-medium">{chunks}</span>;
 }
 
-function TooCloseWords({ recommendedMinutes }: { recommendedMinutes: number | null }) {
+function TooCloseWords({ tooClose }: { tooClose: TooClose }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
+  const { cause, recommendedMinutes } = tooClose;
+  const time = formatDuration(recommendedMinutes ?? 0);
 
-  if (recommendedMinutes === null) {
-    return t("Your date is too close to cover everything in depth.");
+  if (cause === "days") {
+    return recommendedMinutes === null
+      ? t(
+          "The days you picked can't cover everything in depth by your date. More study days would help.",
+        )
+      : t(
+          "Covering everything in depth by your date takes {time} a day on the days you picked. More study days bring that down.",
+          { time },
+        );
   }
 
-  return t("Your date is close: covering everything in depth takes {time} a day.", {
-    time: formatDuration(recommendedMinutes),
-  });
+  return recommendedMinutes === null
+    ? t("Your date is too close to cover everything in depth.")
+    : t("Your date is close: covering everything in depth takes {time} a day.", { time });
 }
 
 function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line: DatedLine }) {
@@ -199,7 +208,7 @@ export function ScheduleLine({
   onRetry: () => void;
   onUseOffer: (minutes: number) => void;
   split: DaySplit | null;
-  tooClose: { recommendedMinutes: number | null } | null;
+  tooClose: TooClose | null;
 }) {
   const t = useExtracted();
   const failed = FAILED_KINDS.has(line.kind);
@@ -212,7 +221,7 @@ export function ScheduleLine({
     >
       {tooClose && (
         <>
-          <TooCloseWords recommendedMinutes={tooClose.recommendedMinutes} />{" "}
+          <TooCloseWords tooClose={tooClose} />{" "}
         </>
       )}
 

@@ -114,7 +114,11 @@ function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule })
           setPicked(toPickedMinutes({ first: found.first, found: found.found, minutes: offer }))
         }
         split={schedule.split}
-        tooClose={getTooClose({ found: found.found, line })}
+        tooClose={getTooClose({
+          found: found.found,
+          line,
+          studiesEveryDay: schedule.week.days.length === EVERY_DAY.length,
+        })}
       />
     </div>
   );

@@ -246,21 +246,33 @@ describe(getTooClose, () => {
   const SHORT = { kind: "share", share: 0.15 } as const;
 
   it("says why only when no sensible time covers everything", () => {
-    expect(getTooClose({ found: foundTime(), line: SHORT })).toBeNull();
-    expect(getTooClose({ found: foundTime(PAST_DATE), line: SHORT })).toBeNull();
+    expect(getTooClose({ found: foundTime(), line: SHORT, studiesEveryDay: true })).toBeNull();
 
-    expect(getTooClose({ found: foundTime(TOO_CLOSE), line: SHORT })).toStrictEqual({
-      recommendedMinutes: 900,
-    });
+    expect(
+      getTooClose({ found: foundTime(PAST_DATE), line: SHORT, studiesEveryDay: true }),
+    ).toBeNull();
 
-    expect(getTooClose({ found: foundTime(everyTopicAt(45)), line: SHORT })).toStrictEqual({
-      recommendedMinutes: 300,
-    });
+    expect(
+      getTooClose({ found: foundTime(TOO_CLOSE), line: SHORT, studiesEveryDay: true }),
+    ).toStrictEqual({ cause: "date", recommendedMinutes: 900 });
+
+    expect(
+      getTooClose({ found: foundTime(everyTopicAt(45)), line: SHORT, studiesEveryDay: true }),
+    ).toStrictEqual({ cause: "date", recommendedMinutes: 300 });
+  });
+
+  it("blames the study days, not the date, while there are days left to add", () => {
+    expect(
+      getTooClose({ found: foundTime(TOO_CLOSE), line: SHORT, studiesEveryDay: false }),
+    ).toStrictEqual({ cause: "days", recommendedMinutes: 900 });
   });
 
   it("says nothing once the time picked covers everything anyway", () => {
     const covers = { kind: "everything", suggested: false } as const;
-    expect(getTooClose({ found: foundTime(TOO_CLOSE), line: covers })).toBeNull();
+
+    expect(
+      getTooClose({ found: foundTime(TOO_CLOSE), line: covers, studiesEveryDay: false }),
+    ).toBeNull();
   });
 });
 

@@ -183,14 +183,21 @@ export function toPickedMinutes({
   return follows && getSuggestedMinutes(found) === minutes ? null : minutes;
 }
 
-/** Why no suggestion covers everything; null when one does, the time shown does, or the date passed. */
+export type TooClose = { cause: "date" | "days"; recommendedMinutes: number | null };
+
+/**
+ * Why no suggestion covers everything; null when one does, the time shown does, or the date passed.
+ * The date is to blame only once every day is a study day: until then, more days bring the time down.
+ */
 export function getTooClose({
   found,
   line,
+  studiesEveryDay,
 }: {
   found: PlanTimeToCover | null;
   line: TimeLine;
-}): { recommendedMinutes: number | null } | null {
+  studiesEveryDay: boolean;
+}): TooClose | null {
   if (
     !found ||
     found.pastDate ||
@@ -200,7 +207,7 @@ export function getTooClose({
     return null;
   }
 
-  return { recommendedMinutes: found.recommendedMinutes };
+  return { cause: studiesEveryDay ? "date" : "days", recommendedMinutes: found.recommendedMinutes };
 }
 
 /** Only while the time shown falls short of everything. */

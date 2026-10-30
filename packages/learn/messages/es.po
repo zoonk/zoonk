@@ -9093,6 +9093,16 @@ msgid "E.g., reports, A/B tests"
 msgstr "Por ejemplo, informes, pruebas A/B"
 
 #: src/onboarding/steps/schedule-line.tsx
+msgctxt "9pdAsn"
+msgid "The days you picked can't cover everything in depth by your date. More study days would help."
+msgstr "Los días que elegiste no alcanzan para abarcarlo todo en profundidad antes de tu fecha. Más días de estudio ayudarían."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "xCMWWU"
+msgid "Covering everything in depth by your date takes {time} a day on the days you picked. More study days bring that down."
+msgstr "Para abarcarlo todo en profundidad antes de tu fecha, hace falta dedicar {time} al día en los días que elegiste. Más días de estudio reducen ese tiempo."
+
+#: src/onboarding/steps/schedule-line.tsx
 msgctxt "YNFEUo"
 msgid "Your date is too close to cover everything in depth."
 msgstr "La fecha está demasiado cerca para estudiar todo en profundidad."
