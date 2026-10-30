@@ -46,7 +46,7 @@ function ScoreWords({ score }: { score: MomentScore }) {
   const t = useExtracted();
   const format = useFormatter();
 
-  const values = {
+  const scoreValues = {
     answered: format.number(score.answered),
     correct: score.correct,
     number: scoreNumber,
@@ -57,11 +57,11 @@ function ScoreWords({ score }: { score: MomentScore }) {
         description: "Counts words the learner said aloud in pronunciation practice.",
         message:
           "{correct, plural, =0 {<number>#</number> of {answered} sounded right} one {<number>#</number> of {answered} sounded right} other {<number>#</number> of {answered} sounded right}}",
-        values,
+        values: scoreValues,
       })
     : t.rich(
         "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}",
-        values,
+        scoreValues,
       );
 }
 
