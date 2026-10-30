@@ -557,6 +557,7 @@ struct MockSummaryRow: View {
           StatusMark(status: .done)
         }
       }
+      .disclosureChevron()
     }
   }
 

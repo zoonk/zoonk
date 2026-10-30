@@ -552,6 +552,7 @@ private struct ExamMocksSection: View {
                 StatusMark(status: isNext ? .next : .todo)
               }
             }
+            .disclosureChevron()
           }
         }
 
@@ -573,6 +574,7 @@ private struct ExamMocksSection: View {
                 StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
               }
             }
+            .disclosureChevron()
           }
         }
 
