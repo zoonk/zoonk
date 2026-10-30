@@ -45,14 +45,11 @@ struct CatalogStartActions: View {
           .font(.footnote)
           .foregroundStyle(.secondary)
       } else if session.authenticatedSession == nil {
-        Label {
-          Text(
-            "Start free, no account needed.",
-            tableName: "Courses",
-            comment: "Note under a course's start buttons for someone who isn't signed in")
-        } icon: {
-          Image(systemName: "play.circle")
-        }
+        Text(
+          "Start free, no account needed.",
+          tableName: "Courses",
+          comment: "Note under a course's start buttons for someone who isn't signed in"
+        )
         .font(.footnote)
         .foregroundStyle(.secondary)
       }
