@@ -155,7 +155,7 @@ private fun PlayButton(
 
     FilledIconButton(onClick = onClick, enabled = enabled) {
         Icon(
-            painterResource(if (isPlaying) R.drawable.ic_stop_filled else R.drawable.ic_play_arrow),
+            painterResource(if (isPlaying) R.drawable.ic_stop_filled else R.drawable.ic_play_arrow_filled),
             contentDescription = label,
             modifier = Modifier.size(24.dp),
         )
@@ -173,7 +173,7 @@ private fun PlaybackProgress(
             progress = { if (bar == null || bars == 0) 0f else (bar + 1f) / bars },
             modifier = Modifier.fillMaxWidth().height(6.dp).clearAndSetSemantics {},
             color = MaterialTheme.zoonk.vizSecondary,
-            trackColor = MaterialTheme.colorScheme.outlineVariant,
+            trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             gapSize = 0.dp,
             drawStopIndicator = {},
         )
