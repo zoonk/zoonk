@@ -4,14 +4,14 @@
   "essay_comments": "ef5a861138bc1c3867d6147fb1a15eaaa6b1dc65e8232cbaec6e66f0c2dd28f1",
   "essay_criterion_addressing": "4671c6b075d185a0c6f16599cec4f4fa08d655f92356324628af7998e94a650f",
   "essay_criterion_argument": "14cb55436139b2596d665e1dffce30fc12fd8f7f3d65939c6b6018c0eb8a05f6",
-  "essay_criterion_closing": "0f41314e1e857ac3abbd65a14717cc8a5a83d2543e523f0c6115d2f893172ab8",
+  "essay_criterion_closing": "51a52a3eb3afd84bee41b8e2a8a3a359c545e767f1b4d40b3a91a21aeae8c45e",
   "essay_criterion_cohesion": "f031e4c6a02462a8f177eac1a5060b6da7978e93245a9026fc3675db5a8f8339",
   "essay_criterion_facts": "1b03d2c70d8a1279e4e926cd3dad16749b79fdb0003db265ced9e1c1a8de23b1",
   "essay_criterion_formal_writing": "73071be8e2e066eb5585a733b9aed7d2cfc9b6d1d568770fc9718e9305dff150",
   "essay_criterion_intervention": "abbcfaa69154201e61777ea73ae7a4c7c0cd4cc5a129a4346014793cbf64303e",
-  "essay_criterion_legal_basis": "67534746c7d0a90779ac77396d6b64a6056f691ca7b5e5ac7ffecc4a52d7e7d0",
+  "essay_criterion_legal_basis": "eb71c90a255595f370de3f3c970b63889f8a73d3f368ab91407dfd6a1871afb4",
   "essay_criterion_requests": "0608de3e6f998ed142abd07fa0d3484487d48052075668a5f7d05843be7c3383",
-  "essay_criterion_topic": "fc6dd9cfb5caeac2255f52fa653e4adfdd07bd8f108d27b9fb10ab857831c69a",
+  "essay_criterion_topic": "bca729d134145029ff3f353b2dfa7bdfb3cf522c695f23e5691382739ec2b2df",
   "essay_element_action": "9294d12cc681d95a193673b3f746f6e9b52be53eef869273a195ec6cc7b5a7d2",
   "essay_element_agent": "a0aa2c6b5214bcf7f5f13f59861ae9d294f7ab02e26eb2997ab905dbc4bfe526",
   "essay_element_detail": "67854c1f6424909e9e1421d31b386ad2ce7bc7aee1c5495fc4e6dfe1cb82cbb9",
@@ -69,16 +69,17 @@
     <!-- A criterion's score, such as "160 of 200". -->
     <string name="essay_score_of">%1$s de %2$s</string>
     <string name="essay_criterion_formal_writing">Escrita formal</string>
-    <!-- Enem essay competence 2: addressing the set topic and drawing on outside knowledge. -->
-    <string name="essay_criterion_topic">Tema e referências</string>
+    <!-- Enem essay competence 2: addressing the set theme and drawing on outside knowledge. -->
+    <string name="essay_criterion_topic">Tema e repertório</string>
     <string name="essay_criterion_argument">Argumentação</string>
     <string name="essay_criterion_cohesion">Coesão</string>
     <string name="essay_criterion_intervention">Proposta de intervenção</string>
     <string name="essay_criterion_addressing">Endereçamento e partes</string>
     <string name="essay_criterion_facts">Fatos</string>
-    <string name="essay_criterion_legal_basis">Fundamentos jurídicos</string>
+    <string name="essay_criterion_legal_basis">Fundamentação jurídica</string>
     <string name="essay_criterion_requests">Pedidos</string>
-    <string name="essay_criterion_closing">Fecho e forma</string>
+    <!-- OAB legal brief criterion: the brief's closing (claim value, place, date, lawyer and OAB number) and its form. -->
+    <string name="essay_criterion_closing">Fechamento e forma</string>
     <string name="essay_next_step">Próximo passo</string>
     <string name="essay_what_to_rewrite">O que reescrever</string>
     <string name="essay_for_example">Por exemplo: %1$s</string>

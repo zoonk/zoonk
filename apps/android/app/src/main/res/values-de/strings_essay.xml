@@ -11,7 +11,7 @@
   "essay_criterion_intervention": "86718a4d9432bab0678f0312ff7164846bbd77a1f61601c25291bde57b13a4dc",
   "essay_criterion_legal_basis": "d7144cb5c5e1af8a61b7630deee25d979f90e6c59b18533eefeea7ebcef02adb",
   "essay_criterion_requests": "2f2d091e188c4fbce8e93ec0d1fe004ad6e56cd4116537231c4a15687204a8e9",
-  "essay_criterion_topic": "2cc9145c95cff6c1b54d2810ae7732853e6215d1914103e34b3caab46981f89e",
+  "essay_criterion_topic": "6177c30f277716f23c86127542033dcd8f0038e120762e49e66a8ebf7c437df1",
   "essay_element_action": "64c1c907e7fec708f5ce215199f21c454b489d80dd1c48455cd18c1956ea4f7d",
   "essay_element_agent": "a70649f0f295c13dd138342d84a10746f5d063db517b3424d014512b091d6d97",
   "essay_element_detail": "73c731f24e1dadabaca4466cfaadd56d10c12bf8899160af9b10a6e4d943d558",
@@ -69,8 +69,8 @@
     <!-- A criterion's score, such as "160 of 200". -->
     <string name="essay_score_of">%1$s von %2$s</string>
     <string name="essay_criterion_formal_writing">Formelles Schreiben</string>
-    <!-- Enem essay competence 2: addressing the set topic and drawing on outside knowledge. -->
-    <string name="essay_criterion_topic">Thema und Quellen</string>
+    <!-- Enem essay competence 2: addressing the set theme and drawing on outside knowledge. -->
+    <string name="essay_criterion_topic">Themenbezug und Hintergrundwissen</string>
     <string name="essay_criterion_argument">Argumentation</string>
     <string name="essay_criterion_cohesion">Textzusammenhang</string>
     <string name="essay_criterion_intervention">Vorschlag für Maßnahmen</string>
@@ -78,6 +78,7 @@
     <string name="essay_criterion_facts">Sachverhalt</string>
     <string name="essay_criterion_legal_basis">Rechtsgrundlage</string>
     <string name="essay_criterion_requests">Anträge</string>
+    <!-- OAB legal brief criterion: the brief's closing (claim value, place, date, lawyer and OAB number) and its form. -->
     <string name="essay_criterion_closing">Schluss und Form</string>
     <string name="essay_next_step">Nächster Schritt</string>
     <string name="essay_what_to_rewrite">Was du überarbeiten solltest</string>

@@ -69,7 +69,7 @@
     <!-- A criterion's score, such as "160 of 200". -->
     <string name="essay_score_of">%1$s de %2$s</string>
     <string name="essay_criterion_formal_writing">Expresión escrita formal</string>
-    <!-- Enem essay competence 2: addressing the set topic and drawing on outside knowledge. -->
+    <!-- Enem essay competence 2: addressing the set theme and drawing on outside knowledge. -->
     <string name="essay_criterion_topic">Tema y referencias</string>
     <string name="essay_criterion_argument">Argumentación</string>
     <string name="essay_criterion_cohesion">Cohesión</string>
@@ -78,6 +78,7 @@
     <string name="essay_criterion_facts">Hechos</string>
     <string name="essay_criterion_legal_basis">Fundamento jurídico</string>
     <string name="essay_criterion_requests">Peticiones</string>
+    <!-- OAB legal brief criterion: the brief's closing (claim value, place, date, lawyer and OAB number) and its form. -->
     <string name="essay_criterion_closing">Cierre y formato</string>
     <string name="essay_next_step">Siguiente paso</string>
     <string name="essay_what_to_rewrite">Qué reescribir</string>
