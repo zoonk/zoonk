@@ -4,6 +4,7 @@
 
 - Use Spain Spanish (es-ES), informal “tú” and “vosotros”.
 - For what just happened, use the present perfect, as Spain does: “Has dicho”, not “Dijiste”.
+- Buttons, links and menu actions use the infinitive: “Crear una cuenta gratis”, not “Crea una cuenta gratis”. Mission names keep the “tú” imperative.
 - Localize illustrative exam examples for Spain, such as oposiciones and the PAU.
 - Treat “Poder Mental” as a product name without an article in short labels and headings.
 
