@@ -60,11 +60,36 @@ extension View {
   }
 }
 
-/// The screens that count as steps in the counter: placement sits between the questions; the plan isn't one.
+/// The screens Back returns to: placement sits between the questions; the plan isn't one.
 private let stepScreens: Set<Components.Schemas.OnboardingStep> = [
   .purpose, .role, .reason, .target, .targetDate, .followUps, .examChoice, .level, .schedule,
   .buddy, .placement,
 ]
+
+/// Where the learner is among the goal's setup questions.
+struct SetupProgress: Equatable {
+  let step: Int
+  let total: Int
+}
+
+extension SetupProgress {
+  /// Placement is optional, so it never counts: the total can't jump when a beginner skips it.
+  private static let questions = stepScreens.subtracting([.placement])
+
+  /// Nil on a screen that isn't one of the questions, placement included.
+  init?(
+    current: Components.Schemas.OnboardingStep, history: [Components.Schemas.OnboardingStep],
+    steps: [Components.Schemas.OnboardingStep]
+  ) {
+    guard Self.questions.contains(current) else {
+      return nil
+    }
+
+    let answered = history.filter(Self.questions.contains).count
+    let remaining = steps.filter { $0 != current && Self.questions.contains($0) }.count
+    self.init(step: answered + 1, total: answered + 1 + remaining)
+  }
+}
 
 private struct GoalSteps: View {
   let view: GoalOnboarding
@@ -148,10 +173,10 @@ private struct GoalSteps: View {
         }
       }
 
-      if let progress {
+      if let progress = SetupProgress(current: step, history: history, steps: view.steps) {
         ToolbarItem(placement: .principal) {
           Text(
-            "Step \(progress.current) of \(progress.total)", tableName: "Onboarding",
+            "Step \(progress.step) of \(progress.total)", tableName: "Onboarding",
             comment: "Where the learner is among the goal's questions"
           )
           .font(.subheadline)
@@ -188,16 +213,6 @@ private struct GoalSteps: View {
         comment: "What starting over does")
     }
     .onDisappear { startingOver?.cancel() }
-  }
-
-  private var progress: (current: Int, total: Int)? {
-    guard stepScreens.contains(step) else {
-      return nil
-    }
-
-    let answered = history.filter(stepScreens.contains).count
-    let remaining = view.steps.filter { $0 != step && stepScreens.contains($0) }.count
-    return (answered + 1, answered + 1 + remaining)
   }
 
   /// One answer saves at a time; a save that fails keeps the learner on this screen with what they picked.
