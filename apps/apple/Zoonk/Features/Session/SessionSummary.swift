@@ -71,8 +71,8 @@ struct SessionSummary: Decodable, Equatable, Sendable {
   let tomorrow: Tomorrow?
 }
 
-struct BlockMoment: Decodable, Equatable, Sendable {
-  struct FullMeal: Decodable, Equatable, Sendable {
+struct BlockMoment: Decodable, Hashable, Sendable {
+  struct FullMeal: Decodable, Hashable, Sendable {
     let bonus: Int
     let paid: Bool
   }
