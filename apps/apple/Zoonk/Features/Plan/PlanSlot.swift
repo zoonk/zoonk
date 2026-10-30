@@ -329,6 +329,7 @@ private struct PlanPausedSlot: View {
 }
 
 private struct PlanFinishedSlot: View {
+  @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
   @State private var failed = false
   @State private var isStarting = false
@@ -366,8 +367,13 @@ private struct PlanFinishedSlot: View {
         }
 
         ForEach(value.related) { course in
-          Label(course.title, systemImage: "books.vertical")
-            .font(.subheadline)
+          Button {
+            router.open(.course(courseId: course.courseId, title: course.title))
+          } label: {
+            Label(course.title, systemImage: "books.vertical")
+              .font(.subheadline)
+          }
+          .buttonStyle(.borderless)
         }
       }
 
