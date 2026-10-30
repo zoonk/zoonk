@@ -1570,35 +1570,35 @@ msgctxt "eNbJHf"
 msgid "{count, plural, one {# topic} other {# topics}}"
 msgstr "{count, plural, one {# topic} other {# topics}}"
 
-#. Study time is the learner's daily amount.
+#. The daily time limit is a setting that stops study for the day.
 #: src/challenge/challenge-used-up.tsx
-msgctxt "mRVajh"
-msgid "You've reached today's study time. The challenge will be in your next session."
-msgstr "You've reached today's study time. The challenge will be in your next session."
+msgctxt "n_NkaB"
+msgid "You've reached your daily time limit. The challenge will be in your next session."
+msgstr "You've reached your daily time limit. The challenge will be in your next session."
 
-#. Study time is the learner's daily amount.
+#. The daily time limit is a setting that stops study for the day.
 #: src/challenge/challenge-used-up.tsx
-msgctxt "8FeiIg"
-msgid "You've reached today's study time. The challenge will be here tomorrow."
-msgstr "You've reached today's study time. The challenge will be here tomorrow."
+msgctxt "7KZiEr"
+msgid "You've reached your daily time limit. The challenge will be here tomorrow."
+msgstr "You've reached your daily time limit. The challenge will be here tomorrow."
 
-#. Study time is the learner's daily amount. {day} is a weekday, like "Monday".
+#. The daily time limit is a setting that stops study for the day. {day} is a weekday, like "Monday".
 #: src/challenge/challenge-used-up.tsx
-msgctxt "aWkKNY"
-msgid "You've reached today's study time. The challenge will be here on {day}."
-msgstr "You've reached today's study time. The challenge will be here on {day}."
+msgctxt "n9OwoN"
+msgid "You've reached your daily time limit. The challenge will be here on {day}."
+msgstr "You've reached your daily time limit. The challenge will be here on {day}."
 
-#. Study time is the learner's daily amount.
+#. The daily time limit is a setting that stops study for the day.
 #: src/challenge/challenge-used-up.tsx
-msgctxt "c9tebJ"
-msgid "You've reached today's study time. Move the challenge to Monday to keep it."
-msgstr "You've reached today's study time. Move the challenge to Monday to keep it."
+msgctxt "Cc_lvA"
+msgid "You've reached your daily time limit. Move the challenge to Monday to keep it."
+msgstr "You've reached your daily time limit. Move the challenge to Monday to keep it."
 
-#. Study time is the learner's daily amount. The weekly challenge can't move to another day, so the learner misses it this week.
+#. The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week.
 #: src/challenge/challenge-used-up.tsx
-msgctxt "oMsVbG"
-msgid "You've reached today's study time. You'll miss this week's challenge."
-msgstr "You've reached today's study time. You'll miss this week's challenge."
+msgctxt "1WWfWS"
+msgid "You've reached your daily time limit. You'll miss this week's challenge."
+msgstr "You've reached your daily time limit. You'll miss this week's challenge."
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
@@ -4658,11 +4658,11 @@ msgctxt "dKxF7Y"
 msgid "It opens here as soon as it's ready."
 msgstr "It opens here as soon as it's ready."
 
-#. Study time is the learner's daily amount.
+#. The daily time limit is a setting that stops study for the day.
 #: src/language/conversation/conversation-intro.tsx
-msgctxt "KD6-UQ"
-msgid "You've reached today's study time. You can make this call in your next session."
-msgstr "You've reached today's study time. You can make this call in your next session."
+msgctxt "HYCGBs"
+msgid "You've reached your daily time limit. You can make this call in your next session."
+msgstr "You've reached your daily time limit. You can make this call in your next session."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/unit/practice-conversation.tsx
@@ -12690,16 +12690,27 @@ msgctxt "L6jXw1"
 msgid "See you {day}!"
 msgstr "See you {day}!"
 
+#. The daily time limit is a setting that stops study for the day.
+#: src/today/today-day-status.tsx
+msgctxt "wuaEUY"
+msgid "You've reached your daily time limit of {time}."
+msgstr "You've reached your daily time limit of {time}."
+
+#. The daily time limit is a setting that stops study for the day. It's shorter than the plan's time for today.
+#: src/today/today-day-status.tsx
+msgctxt "Ta4Ml6"
+msgid "Today stops at your daily time limit of {time}."
+msgstr "Today stops at your daily time limit of {time}."
+
+#: src/today/today-day-status.tsx
+msgctxt "oeCtXD"
+msgid "Change limit"
+msgstr "Change limit"
+
 #: src/today/today-day-status.tsx
 msgctxt "FyQP44"
 msgid "Today's lessons aren't written yet."
 msgstr "Today's lessons aren't written yet."
-
-#. Study time is the learner's daily amount, all studied today.
-#: src/today/today-day-status.tsx
-msgctxt "nQ6arV"
-msgid "That's today's study time."
-msgstr "That's today's study time."
 
 #: src/today/today-day-status.tsx
 msgctxt "2PMQ3_"

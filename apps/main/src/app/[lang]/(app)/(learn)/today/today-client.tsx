@@ -186,6 +186,7 @@ export function TodayClient({
           const next = stepAt(today.session.nextPosition);
           return next ? taps.next(next) : Promise.resolve(false);
         },
+        dailyLimitHref: "/settings/appearance",
         decidePlanChange,
         examHref: "/exam",
         missionLinks,

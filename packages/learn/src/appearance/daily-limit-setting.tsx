@@ -1,10 +1,10 @@
 "use client";
 
-import { DAILY_LIMIT_CHOICES } from "@zoonk/core/profile/daily-limit";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { SelectSettingRow } from "../_components/setting-rows";
+import { getDailyTimes } from "../_utils/daily-times";
 import { useFormatDuration } from "../_utils/time-format";
 
 const NO_LIMIT = "none";
@@ -21,9 +21,6 @@ export function DailyLimitSetting({
   const selectId = useId();
   const descriptionId = useId();
 
-  const choice =
-    minutes !== null && DAILY_LIMIT_CHOICES.includes(minutes) ? String(minutes) : NO_LIMIT;
-
   return (
     <SelectSettingRow
       description={t("Stop for the day after this much study.")}
@@ -38,10 +35,10 @@ export function DailyLimitSetting({
           onChange(event.target.value === NO_LIMIT ? null : Number(event.target.value))
         }
         size="sm"
-        value={choice}
+        value={minutes === null ? NO_LIMIT : String(minutes)}
       >
         <NativeSelectOption value={NO_LIMIT}>{t("No limit")}</NativeSelectOption>
-        {DAILY_LIMIT_CHOICES.map((limit) => (
+        {getDailyTimes(minutes).map((limit) => (
           <NativeSelectOption key={limit} value={String(limit)}>
             {t("{time} a day", { time: formatDuration(limit) })}
           </NativeSelectOption>

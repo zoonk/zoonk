@@ -1,7 +1,7 @@
 import { BuddyGlasses, BuddyKind } from "@zoonk/db";
 import { z } from "zod";
+import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 import { BUDDY_NAME_MAX_LENGTH } from "./buddy-name-limit";
-import { MAX_DAILY_LIMIT_MINUTES, MIN_DAILY_LIMIT_MINUTES } from "./daily-limit";
 import { type ResolvedBuddy } from "./default-buddy";
 
 export const learningBuddySchema = z
@@ -50,8 +50,8 @@ export const learningProfileUpdateSchema = z
       .meta({ description: "The learner's buddy choice, or null to return to the default buddy" }),
     dailyLimitMinutes: z
       .int()
-      .min(MIN_DAILY_LIMIT_MINUTES)
-      .max(MAX_DAILY_LIMIT_MINUTES)
+      .min(MIN_DAILY_MINUTES)
+      .max(MAX_DAILY_MINUTES)
       .nullable()
       .optional()
       .meta({ description: "The learner's daily study limit in minutes, or null for no limit" }),

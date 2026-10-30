@@ -24575,8 +24575,8 @@
             "description": "The learner's daily study limit in minutes, or null for no limit",
             "nullable": true,
             "type": "integer",
-            "minimum": 10,
-            "maximum": 480
+            "minimum": 5,
+            "maximum": 1440
           },
           "soundsEnabled": {
             "description": "Sounds for a right answer and for finishing",

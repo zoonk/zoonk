@@ -18,8 +18,9 @@ export function ChallengeUsedUpLine({
     return (
       <StudyTimeUsedUpNote>
         {t({
-          description: "Study time is the learner's daily amount.",
-          message: "You've reached today's study time. The challenge will be in your next session.",
+          description: "The daily time limit is a setting that stops study for the day.",
+          message:
+            "You've reached your daily time limit. The challenge will be in your next session.",
         })}
       </StudyTimeUsedUpNote>
     );
@@ -29,8 +30,8 @@ export function ChallengeUsedUpLine({
     return (
       <StudyTimeUsedUpNote>
         {t({
-          description: "Study time is the learner's daily amount.",
-          message: "You've reached today's study time. The challenge will be here tomorrow.",
+          description: "The daily time limit is a setting that stops study for the day.",
+          message: "You've reached your daily time limit. The challenge will be here tomorrow.",
         })}
       </StudyTimeUsedUpNote>
     );
@@ -40,8 +41,8 @@ export function ChallengeUsedUpLine({
     <StudyTimeUsedUpNote>
       {t({
         description:
-          'Study time is the learner\'s daily amount. {day} is a weekday, like "Monday".',
-        message: "You've reached today's study time. The challenge will be here on {day}.",
+          'The daily time limit is a setting that stops study for the day. {day} is a weekday, like "Monday".',
+        message: "You've reached your daily time limit. The challenge will be here on {day}.",
         values: { day: formatDate(nextStudyDate, "weekday") },
       })}
     </StudyTimeUsedUpNote>
@@ -49,7 +50,7 @@ export function ChallengeUsedUpLine({
 }
 
 /**
- * Past today's study time the week's challenge doesn't come back on its own: the next study day
+ * Past the daily time limit the week's challenge doesn't come back on its own: the next study day
  * re-plans without it (RULES R24).
  */
 export function WeeklyUsedUpLine({ movable }: { movable: boolean }) {
@@ -59,13 +60,14 @@ export function WeeklyUsedUpLine({ movable }: { movable: boolean }) {
     <StudyTimeUsedUpNote>
       {movable
         ? t({
-            description: "Study time is the learner's daily amount.",
-            message: "You've reached today's study time. Move the challenge to Monday to keep it.",
+            description: "The daily time limit is a setting that stops study for the day.",
+            message:
+              "You've reached your daily time limit. Move the challenge to Monday to keep it.",
           })
         : t({
             description:
-              "Study time is the learner's daily amount. The weekly challenge can't move to another day, so the learner misses it this week.",
-            message: "You've reached today's study time. You'll miss this week's challenge.",
+              "The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week.",
+            message: "You've reached your daily time limit. You'll miss this week's challenge.",
           })}
     </StudyTimeUsedUpNote>
   );

@@ -140,9 +140,9 @@ function CallIntroFooter({ onStart, start }: { onStart: () => void; start: CallI
         {start === "dailyLimitReached" && (
           <StudyTimeUsedUpNote>
             {t({
-              description: "Study time is the learner's daily amount.",
+              description: "The daily time limit is a setting that stops study for the day.",
               message:
-                "You've reached today's study time. You can make this call in your next session.",
+                "You've reached your daily time limit. You can make this call in your next session.",
             })}
           </StudyTimeUsedUpNote>
         )}
