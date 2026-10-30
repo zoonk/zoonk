@@ -183,7 +183,7 @@ private fun ArgumentBuilderActivity(props: ActivityProps) {
                         result = resultOf(line?.id),
                         clearLabel = stringResource(R.string.activities_reasoning_take_reasoning_out),
                         onClear = if (editable && line != null) ({ update(evidenceId, null) }) else null,
-                        clearModifier = if (openPart == null) Modifier.focusRequester(next) else Modifier,
+                        clearFocus = next.takeIf { openPart == null },
                     ) {
                         line?.let {
                             ReasoningText(it.text)
@@ -300,7 +300,7 @@ private fun ArgumentSlot(
     result: AnswerResult?,
     clearLabel: String,
     onClear: (() -> Unit)?,
-    clearModifier: Modifier = Modifier,
+    clearFocus: FocusRequester? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -346,7 +346,20 @@ private fun ArgumentSlot(
             )
             if (result != null) Verdict(strong = result == AnswerResult.Right)
             if (onClear != null) {
-                IconButton(onClick = onClear, modifier = clearModifier.offset(x = CLEAR_OVERHANG)) {
+                IconButton(
+                    onClick = onClear,
+                    modifier =
+                        Modifier
+                            .then(
+                                if (clearFocus !=
+                                    null
+                                ) {
+                                    Modifier.focusRequester(clearFocus)
+                                } else {
+                                    Modifier
+                                },
+                            ).offset(x = CLEAR_OVERHANG),
+                ) {
                     Icon(painterResource(R.drawable.ic_close), contentDescription = clearLabel, modifier = Modifier.size(18.dp))
                 }
             }

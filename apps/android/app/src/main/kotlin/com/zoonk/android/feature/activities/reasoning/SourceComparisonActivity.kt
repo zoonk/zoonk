@@ -349,30 +349,29 @@ private fun Legend(
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         if (found) {
-            LegendEntry(
-                stringResource(R.string.activities_reasoning_source_what_to_mark),
-                Modifier.tint(MaterialTheme.colorScheme.tertiary),
-            )
+            LegendEntry(stringResource(R.string.activities_reasoning_source_what_to_mark)) {
+                Box(Modifier.tint(MaterialTheme.colorScheme.tertiary))
+            }
         }
         if (missed) {
-            LegendEntry(
-                stringResource(R.string.activities_reasoning_source_missed),
-                Modifier.width(16.dp).height(2.dp).drawBehind {
-                    drawLine(
-                        dash,
-                        Offset(0f, size.height / 2),
-                        Offset(size.width, size.height / 2),
-                        strokeWidth = size.height,
-                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(size.height * 2, size.height * 2)),
-                    )
-                },
-            )
+            LegendEntry(stringResource(R.string.activities_reasoning_source_missed)) {
+                Box(
+                    Modifier.width(16.dp).height(2.dp).drawBehind {
+                        drawLine(
+                            dash,
+                            Offset(0f, size.height / 2),
+                            Offset(size.width, size.height / 2),
+                            strokeWidth = size.height,
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(size.height * 2, size.height * 2)),
+                        )
+                    },
+                )
+            }
         }
         if (wrong) {
-            LegendEntry(
-                stringResource(R.string.activities_reasoning_source_wrong_mark),
-                Modifier.tint(MaterialTheme.colorScheme.error),
-            )
+            LegendEntry(stringResource(R.string.activities_reasoning_source_wrong_mark)) {
+                Box(Modifier.tint(MaterialTheme.colorScheme.error))
+            }
         }
     }
 }
@@ -380,10 +379,10 @@ private fun Legend(
 @Composable
 private fun LegendEntry(
     label: String,
-    swatch: Modifier,
+    swatch: @Composable () -> Unit,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        Box(swatch)
+        swatch()
         Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }
