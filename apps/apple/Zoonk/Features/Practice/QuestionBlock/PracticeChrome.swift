@@ -16,8 +16,7 @@ struct PracticeSegmentsBar: View {
   var body: some View {
     HStack(spacing: 3) {
       ForEach(Array(segments.enumerated()), id: \.offset) { _, segment in
-        Capsule()
-          .fill(color(segment))
+        mark(segment)
           .frame(height: 4)
       }
     }
@@ -29,13 +28,14 @@ struct PracticeSegmentsBar: View {
       ))
   }
 
-  private func color(_ segment: PracticeSegment) -> Color {
+  @ViewBuilder
+  private func mark(_ segment: PracticeSegment) -> some View {
     switch segment {
-    case .right: .success
-    case .wrong: .destructive
-    case .read: Color(.systemGray3)
-    case .current: .primary
-    case .ahead: Color(.systemFill)
+    case .right: Capsule().fill(.success)
+    case .wrong: Capsule().fill(.destructive)
+    case .read: Capsule().fill(Color(.systemGray3))
+    case .current: Capsule().strokeBorder(.success, lineWidth: 1)
+    case .ahead: Capsule().fill(Color(.systemFill))
     }
   }
 }
