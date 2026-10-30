@@ -67,7 +67,8 @@ internal fun seedText(element: JsonElement): String =
 
 private fun jsNumber(value: Double): String {
     val text = BigDecimal(value.toString()).stripTrailingZeros()
-    return if (value != 0.0 && abs(value) < JS_EXPONENT_BELOW) text.toString().replace('E', 'e') else text.toPlainString()
+    val exponential = value != 0.0 && (abs(value) < JS_EXPONENT_BELOW || abs(value) >= JS_EXPONENT_FROM)
+    return if (exponential) text.toString().replace('E', 'e') else text.toPlainString()
 }
 
 /** Main's `runSimulation`: one outcome per run of [model], drawn from [seed]. */
@@ -258,6 +259,7 @@ private fun addDie(
 ): List<Double> = List(counts.size + sides) { total -> (0 until sides).sumOf { face -> counts.getOrNull(total - face - 1) ?: 0.0 } }
 
 private const val JS_EXPONENT_BELOW = 1e-6
+private const val JS_EXPONENT_FROM = 1e21
 private const val EXACT_LIMIT = 1000
 private const val MIDDLE_SHARE = 0.95
 private const val DOMAIN_REACH = 3.5

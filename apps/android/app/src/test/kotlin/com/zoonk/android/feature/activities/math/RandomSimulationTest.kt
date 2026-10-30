@@ -31,6 +31,10 @@ class RandomSimulationTest {
             seedOf(fields("randomSimulation")),
         )
         assertEquals(574_654_392L, hashSeed(seedOf(fields("randomSimulation"))))
+        assertEquals(
+            """{"mean":1e+21,"negative":-2e+22,"sd":100000000000000000000,"shortest":123456789012345680000,"small":1e-7}""",
+            seedText(ApiJson.parseToJsonElement("""{"mean":1e21,"negative":-2e22,"sd":1e20,"shortest":123456789012345678901,"small":0.0000001}""")),
+        )
         assertEquals(1_429_737_586L, hashSeed("${seedOf(fields("randomSimulation.sampling"))}:100"))
     }
 
