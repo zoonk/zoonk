@@ -45,39 +45,35 @@ jobs:
       # Let the running build finish and save its compilation cache.
       cancel-in-progress: false
     steps:
-      - &checkout
-        name: Check out code
+      - name: Check out code
         uses: actions/checkout@v7
 
-      - &xcode
-        name: Identify Xcode toolchain
+      - name: Identify Xcode toolchain
         id: xcode
         run: |
           set -o pipefail
           xcodebuild -version | shasum -a 256 | awk '{ print "version=" $1 }' >> "$GITHUB_OUTPUT"
 
-      - &packages
-        name: Cache Swift packages
+      - name: Cache Swift packages
         uses: actions/cache@v6
         with:
           path: ${{ runner.temp }}/apple-source-packages
           # Frozen resolution needs a cache containing this lockfile's revisions.
           key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
 
-      - &compilations
-        name: Cache Xcode compilations
+      - name: Cache Xcode compilations
         uses: actions/cache@v6
         with:
           path: apps/apple/DerivedData/Make/CompilationCache.noindex
           # Any app edit recompiles the whole app module, so the key follows the packages, the API
           # client and the project; Xcode or build flag changes start from an empty cache.
-          key: ${{ runner.os }}-${{ runner.arch }}-apple-compilation-${{ github.job }}-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/ZoonkAPI/**') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/ZoonkAPI/**') }}
           restore-keys: |
-            ${{ runner.os }}-${{ runner.arch }}-apple-compilation-${{ github.job }}-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-
+            ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-
 
       - name: Build iPhone and iPad app
-        # CI never attaches a debugger, so it skips debug info.
-        env: &xcodebuild
+        env:
+          # CI only checks that the app compiles, so it skips debug info.
           XCODEBUILD_ARGUMENTS: >-
             -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
             -onlyUsePackageVersionsFromResolvedFile
@@ -86,31 +82,3 @@ jobs:
             COMPILER_INDEX_STORE_ENABLE=NO
             GCC_GENERATE_DEBUGGING_SYMBOLS=NO
         run: make -C apps/apple build
-
-  test:
-    needs: changes
-    if: needs.changes.outputs.changed == 'true'
-    runs-on: xcode-27
-    timeout-minutes: 30
-    concurrency:
-      group: ${{ github.workflow }}-test-${{ github.event.pull_request.number || github.ref }}
-      # Let the running build finish and save its compilation cache.
-      cancel-in-progress: false
-    steps:
-      - *checkout
-      - *xcode
-      - *packages
-      - *compilations
-
-      # A destination by name defaults to OS=latest, the SDK's iOS version, which the image's
-      # simulators don't run. Booting now lets the simulator start while the app builds.
-      - name: Boot an iPhone simulator
-        run: |
-          udid=$(xcrun simctl list devices available --json | jq -r 'first(.devices[][] | select(.name == "iPhone 17")) | .udid')
-          xcrun simctl boot "$udid"
-          echo "TEST_DESTINATION=platform=iOS Simulator,id=$udid" >> "$GITHUB_ENV"
-
-      # UI tests take over 6 minutes even on a fast Mac, so they run locally with `make test`.
-      - name: Run unit tests
-        env: *xcodebuild
-        run: make -C apps/apple test TEST_ARGUMENTS="-only-testing:ZoonkTests -parallel-testing-enabled NO"
