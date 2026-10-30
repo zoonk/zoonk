@@ -62,6 +62,84 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertFalse(conversation.canAsk)
   }
 
+  func testAnAnswerCutShortShowsTheAnswerTheServerSaved() async {
+    let api = TutorAPIStub(answers: [[.text("See [Plan](https://evil.example)")]])
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+
+    conversation.draft = "Where is my plan?"
+    await conversation.send()
+
+    XCTAssertEqual(conversation.turns.first?.answer, "Answer")
+    XCTAssertEqual(conversation.turns.first?.status, .completed)
+  }
+
+  func testAnAnswerCutShortWhileTheServerStillWritesItKeepsWhatCame() async {
+    let api = TutorAPIStub(answers: [[.text("See [Plan](https://evil.example)")]])
+    api.questionStatus = .running
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+
+    conversation.draft = "Where is my plan?"
+    await conversation.send()
+    await conversation.checkAgain(conversation.turns[0].id)
+
+    XCTAssertEqual(conversation.turns.first?.answer, "See [Plan](https://evil.example)")
+    XCTAssertEqual(conversation.turns.first?.status, .running, "so it can be checked again")
+    XCTAssertEqual(conversation.turns.first?.linksVerified, false)
+
+    api.questionStatus = .completed
+    await conversation.checkAgain(conversation.turns[0].id)
+    XCTAssertEqual(conversation.turns.first?.answer, "Answer", "the saved answer, once there")
+  }
+
+  func testCheckingAgainWithAnExpiredSessionSignsOut() async {
+    let session = SessionStore.preview(account: .tutorTestAccount)
+    let api = TutorAPIStub(answers: [[.text("See [Plan](https://evil.example)")]])
+    api.questionStatus = .running
+    let conversation = TutorStore(api: api, cache: AppCache(session: session))
+      .conversation(.plan(goalId: "goal"))
+    await conversation.thread.load()
+
+    conversation.draft = "Where is my plan?"
+    await conversation.send()
+    api.questionFailure = APIError.unauthorized
+    await conversation.checkAgain(conversation.turns[0].id)
+
+    XCTAssertNil(session.authenticatedSession)
+  }
+
+  func testAnAnswerThatArrivedWhileItsReadFailedStaysAnswered() async {
+    let api = TutorAPIStub(answers: [[.text("See [Plan](https://evil.example)")]])
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+    api.thread = TutorThreadPage(
+      turns: [.fixture(id: "question-1", question: "Where is my plan?")], hasMore: false,
+      nextCursor: nil)
+    api.questionFailure = APIError.network
+    api.beforeQuestion = { await conversation.thread.refresh() }
+
+    conversation.draft = "Where is my plan?"
+    await conversation.send()
+
+    XCTAssertEqual(conversation.turns.first?.status, .completed)
+    XCTAssertEqual(conversation.turns.first?.answer, "Answer")
+  }
+
+  func testAnAnswerCutShortThatCantBeReadAgainFailsAndKeepsItsText() async {
+    let api = TutorAPIStub(answers: [[.text("See [Plan](https://evil.example)")]])
+    api.questionFailure = APIError.network
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+
+    conversation.draft = "Where is my plan?"
+    await conversation.send()
+
+    XCTAssertEqual(conversation.turns.first?.answer, "See [Plan](https://evil.example)")
+    XCTAssertEqual(conversation.turns.first?.status, .failed)
+    XCTAssertEqual(conversation.turns.first?.linksVerified, false)
+  }
+
   func testRetryingAFailedAnswerStreamsItAgain() async {
     let api = TutorAPIStub(answers: [[], [.text("Here it is."), .finish]])
     let conversation = makeConversation(api: api)
@@ -308,6 +386,9 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   var answers: [[TutorAnswerEvent]]
   var answerFailure: TutorFailure?
   var decideFailure: Error?
+  var questionFailure: Error?
+  var questionStatus = TutorTurn.Status.completed
+  var beforeQuestion: (@MainActor () async -> Void)?
   var beforeAnswer: (@MainActor () async -> Void)?
   private(set) var requestIDs: [String] = []
   private var asked = 0
@@ -361,7 +442,13 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   }
 
   func question(id: String, token: String) async throws -> TutorTurn {
-    .fixture(id: id)
+    await beforeQuestion?()
+
+    if let questionFailure {
+      throw questionFailure
+    }
+
+    return .fixture(id: id, status: questionStatus)
   }
 
   func decidePlanChange(

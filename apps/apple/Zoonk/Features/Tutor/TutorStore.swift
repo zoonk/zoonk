@@ -124,21 +124,13 @@ final class TutorConversation {
   }
 
   func checkAgain(_ id: String) async {
-    guard let session = cache.session.authenticatedSession else {
+    guard let session = cache.session.authenticatedSession,
+      await !readAgain(id, session: session)
+    else {
       return
     }
 
-    do {
-      let turn = try await api.question(id: id, token: session.bearerToken)
-
-      guard cache.session.authenticatedSession == session else {
-        return
-      }
-
-      update(id) { $0 = turn }
-    } catch {
-      answerFailures[id] = .failed
-    }
+    answerFailures[id] = .failed
   }
 
   func loadEarlier() async {
@@ -325,7 +317,7 @@ final class TutorConversation {
       }
 
       if !saved {
-        finishUnsaved(id, text: text)
+        await finishUnsaved(id, text: text, session: session)
       }
     } catch {
       if !saved {
@@ -341,17 +333,64 @@ final class TutorConversation {
     answeringID = nil
   }
 
-  /// An answer that came is kept; none is a failure.
-  private func finishUnsaved(_ id: String, text: String) {
-    if text.isEmpty {
-      update(id) { $0.status = .failed }
-      answerFailures[id] = .failed
-    } else {
-      update(id) {
-        $0.status = .completed
-        $0.linksVerified = true
+  /// A stream can end without saying the answer was saved when it was cut short, so the saved
+  /// question says how it went. None at all, or no way to read it, is a failure.
+  private func finishUnsaved(_ id: String, text: String, session: AuthenticatedSession) async {
+    if !text.isEmpty, await readAgain(id, session: session) {
+      return
+    }
+
+    guard cache.session.authenticatedSession == session else {
+      return
+    }
+
+    var failed = false
+
+    update(id) { turn in
+      if turn.status != .completed {
+        turn.status = .failed
+        failed = true
       }
     }
+
+    if failed {
+      answerFailures[id] = .failed
+    }
+  }
+
+  /// Takes the saved question once its answer is saved. Until then the text that came stays,
+  /// without links, still being written or failed; a saved answer is never replaced. False when
+  /// the question couldn't be read.
+  private func readAgain(_ id: String, session: AuthenticatedSession) async -> Bool {
+    do {
+      let turn = try await api.question(id: id, token: session.bearerToken)
+
+      guard cache.session.authenticatedSession == session else {
+        return true
+      }
+
+      update(id) { current in
+        if current.status == .completed {
+          return
+        }
+
+        if turn.status == .completed {
+          current = turn
+        } else {
+          current.status = turn.status == .running ? .running : .failed
+        }
+      }
+
+      if turn.status == .pending || turn.status == .failed {
+        answerFailures[id] = .failed
+      }
+    } catch APIError.unauthorized {
+      await cache.session.expire(session)
+    } catch {
+      return false
+    }
+
+    return true
   }
 
   private func failure(from error: Error) -> TutorFailure {
