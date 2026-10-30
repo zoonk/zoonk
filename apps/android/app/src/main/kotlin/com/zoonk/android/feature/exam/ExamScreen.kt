@@ -282,8 +282,7 @@ internal fun ExamFacts(facts: List<String>) {
     FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         facts.forEachIndexed { index, fact ->
             Text(
-                // A no-break space keeps the dot on the fact's last line when the fact wraps.
-                text = if (index < facts.lastIndex) "$fact\u00A0·" else fact,
+                text = if (index < facts.lastIndex) fact + NO_BREAK_DOT else fact,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
@@ -292,3 +291,4 @@ internal fun ExamFacts(facts: List<String>) {
 }
 
 private const val FROM_EXAM = "exam"
+private const val NO_BREAK_DOT = "\u00A0·"

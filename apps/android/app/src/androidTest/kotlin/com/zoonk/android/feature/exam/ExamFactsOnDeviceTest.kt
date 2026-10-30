@@ -23,7 +23,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Robolectric's text layout never leaves the dot alone on a line, so only a device shows where it wraps. */
+/** Robolectric's text layout didn't reproduce the lone dot a device showed, so this runs on a device. */
 @RunWith(AndroidJUnit4::class)
 class ExamFactsOnDeviceTest {
     @get:Rule
