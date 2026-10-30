@@ -163,7 +163,7 @@ fun ZoonkApp(
 
     val signedIn = access.value == LearnerAccess.SignedIn || access.value == LearnerAccess.NoGoal || access.value == LearnerAccess.Learner
 
-    val snackbars = remember { SnackbarHostState() }
+    val snackbars = rememberWindowSnackbars(app)
 
     val pictures = remember(session) { PrivatePictures(app.images, (session as? SessionState.SignedIn)?.session) }
 

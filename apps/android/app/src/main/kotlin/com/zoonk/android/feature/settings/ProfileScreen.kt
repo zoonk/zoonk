@@ -48,7 +48,6 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.account.ProfileFields
@@ -204,8 +203,6 @@ private fun DeletionDialogs(
 ) {
     val email = signedIn.account.user.email
     val context = LocalContext.current
-    val snackbars = LocalSnackbarHostState.current
-    val deleted = stringResource(R.string.settings_account_deleted)
     val failure = profile.deletionFailure?.let { deletionFailureMessage(it) }
 
     when (profile.deletionStep) {
@@ -292,7 +289,7 @@ private fun DeletionDialogs(
                 navigator.showRoot(AppTab.Today)
                 app.scope.launch {
                     app.account.forgetDeletedAccount(signedIn.session)
-                    snackbars.showSnackbar(deleted)
+                    app.snackbars.show(R.string.settings_account_deleted)
                 }
             }
         }

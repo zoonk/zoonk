@@ -145,7 +145,6 @@ internal fun SearchPanel(
     val switcher = viewModel { GoalSwitcherViewModel(app) }
     val search = viewModel { SearchViewModel(app.today, app.studyOpener) }
     val continueFailed = stringResource(R.string.search_continue_failed)
-    val signOutFailed = stringResource(R.string.account_sign_out_failed)
     val expanded = state.currentValue == SearchBarValue.Expanded
     val sendFeedback = rememberSendFeedback(app, "command-palette")
 
@@ -170,7 +169,13 @@ internal fun SearchPanel(
 
             SearchAction.SignOut -> {
                 // The app's scope: closing search mustn't cancel it halfway.
-                app.scope.launch { if (app.sessions.signOut() is SignOutResult.Failed) snackbars.showSnackbar(signOutFailed) }
+                app.scope.launch {
+                    if (app.sessions.signOut() is SignOutResult.Failed) {
+                        app.snackbars.show(
+                            R.string.account_sign_out_failed,
+                        )
+                    }
+                }
             }
 
             SearchAction.SendFeedback -> {

@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SignOutResult
 import com.zoonk.android.data.collectShown
@@ -58,8 +57,6 @@ fun SettingsScreen(
     val memory by app.memory.memory.collectShown()
     val signedIn = session as? SessionState.SignedIn
     val account = signedIn?.takeUnless { it.isGuest }?.account?.user
-    val snackbars = LocalSnackbarHostState.current
-    val signOutFailed = stringResource(R.string.account_sign_out_failed)
     val open = { route: AppRoute -> navigator.openSettingsPage(route) }
 
     PageScaffold(
@@ -157,7 +154,7 @@ fun SettingsScreen(
                                     app.scope.launch {
                                         when (app.sessions.signOut()) {
                                             SignOutResult.SignedOut -> navigator.closeSection()
-                                            is SignOutResult.Failed -> snackbars.showSnackbar(signOutFailed)
+                                            is SignOutResult.Failed -> app.snackbars.show(R.string.account_sign_out_failed)
                                         }
                                     }
                                 },

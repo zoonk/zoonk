@@ -21,7 +21,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,7 +43,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -280,10 +278,7 @@ internal fun StartActions(
     val goal = summary.value?.goalOnCourse(courseId)
     val follows = goal != null
     val visitorNote = if (isVisitor(app)) stringResource(R.string.catalog_start_free) else null
-    val snackbars = LocalSnackbarHostState.current
-    val switchFailed = stringResource(R.string.goal_switcher_failed)
     val saving by app.goalSwitch.saving.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -304,7 +299,7 @@ internal fun StartActions(
                     }
 
                     is CourseContinue.Switch -> {
-                        app.scope.switchThenOpenToday(navigator, onFailed = { scope.launch { snackbars.showSnackbar(switchFailed) } }) {
+                        app.scope.switchThenOpenToday(navigator, onFailed = { app.snackbars.show(R.string.goal_switcher_failed) }) {
                             app.goalSwitch.select(next.goalId, listOf(app.learnerSummary.summary, app.today.today), app.today::shows)
                         }
                     }

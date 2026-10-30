@@ -53,10 +53,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.SessionState
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import java.util.UUID
 
 /** Main's message to the team: the message, an email for the reply when there's no account, and Send. */
@@ -177,8 +175,6 @@ private fun rememberFeedbackSheet(
 ): FeedbackSheet {
     // Each opening is a new message, as main's dialog is, and a slow send closes only its own.
     var opening by rememberSaveable { mutableStateOf<String?>(null) }
-    val snackbars = LocalSnackbarHostState.current
-    val thanks = stringResource(R.string.feedback_thanks)
 
     opening?.let { id ->
         val form = viewModel(key = "feedback:$id") { FeedbackViewModel(sender, target) }
@@ -186,7 +182,7 @@ private fun rememberFeedbackSheet(
         LaunchedEffect(form) {
             snapshotFlow { form.status }.first { it == FeedbackStatus.Sent }
             if (opening == id) opening = null
-            app.scope.launch { snackbars.showSnackbar(thanks) }
+            app.snackbars.show(R.string.feedback_thanks)
         }
 
         if (form.status != FeedbackStatus.Sent) {

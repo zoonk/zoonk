@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.feedback
 
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -19,6 +18,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
+import com.zoonk.android.app.rememberWindowSnackbars
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.FeedbackSubmission
@@ -60,7 +60,7 @@ class FeedbackSheetTest {
                 ZoonkTheme {
                     val context = LocalContext.current
                     val app = remember { AppContainer.preview(context) }
-                    val snackbars = remember { SnackbarHostState() }
+                    val snackbars = rememberWindowSnackbars(app)
 
                     CompositionLocalProvider(LocalSnackbarHostState provides snackbars) {
                         if (hosted) sheet = rememberSendFeedback(app, "account-menu", sender)

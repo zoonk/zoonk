@@ -137,6 +137,7 @@ class AppContainer private constructor(
     constructor(context: Context) : this(context, EncryptedSessionCredentials(context), previewAccess = null)
 
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    val snackbars = AppSnackbars()
     val api = ApiClients("${BuildConfig.API_BASE_URL}/v1/".toHttpUrl(), apiHttpClient { buildTypeSetup() })
     val images = PrivateImages(api.baseUrl, imageLoader(context, api.http))
     val drafts = DraftStore(File(context.filesDir, "drafts"), scope)

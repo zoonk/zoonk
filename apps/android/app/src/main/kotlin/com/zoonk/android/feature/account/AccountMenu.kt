@@ -34,7 +34,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalNavigationSuiteType
-import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SignOutResult
 import com.zoonk.android.data.collectShown
@@ -62,8 +61,6 @@ fun AccountMenu(
     val user = signedIn?.takeUnless { it.isGuest }?.account?.user
     val isPlus = summary.value?.tier == LearnerSummary.Tier.PLUS
     var isOpen by rememberSaveable { mutableStateOf(false) }
-    val snackbars = LocalSnackbarHostState.current
-    val signOutFailed = stringResource(R.string.account_sign_out_failed)
     val sendFeedback = rememberSendFeedback(app, "account-menu")
     val drawerHasFeedback = LocalNavigationSuiteType.current == NavigationSuiteType.NavigationDrawer
 
@@ -120,7 +117,7 @@ fun AccountMenu(
                         isOpen = false
                         // The app's scope: closing the menu or turning the screen mustn't cancel it halfway.
                         app.scope.launch {
-                            if (app.sessions.signOut() is SignOutResult.Failed) snackbars.showSnackbar(signOutFailed)
+                            if (app.sessions.signOut() is SignOutResult.Failed) app.snackbars.show(R.string.account_sign_out_failed)
                         }
                     }
                 }
