@@ -96,6 +96,9 @@ struct ZoonkApp: App {
         .environment(voice)
         .environment(\.privateImageLoader, privateImages)
         .environment(\.lessonTutor, .buddy)
+        .environment(
+          \.lessonGuestStart, LessonGuestStart { [session] in await session.continueAsGuest() }
+        )
         .environment(\.lessonPlayer, lessonPlayer)
         .environment(\.lessonAudio, .voice(voice))
         .environment(\.spokenAnswerRecording, .voice)
