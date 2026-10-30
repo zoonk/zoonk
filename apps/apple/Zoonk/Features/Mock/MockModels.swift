@@ -168,11 +168,14 @@ struct MockResult: Hashable, Decodable, Sendable {
     var before: Double
   }
 
-  struct Topic: Hashable, Decodable, Sendable {
+  struct Topic: Hashable, Decodable, Sendable, Identifiable {
     var area: String?
     var correct: Int
     var name: String
+    var skillId: String
     var total: Int
+
+    var id: String { skillId }
   }
 
   var areas: [Area]

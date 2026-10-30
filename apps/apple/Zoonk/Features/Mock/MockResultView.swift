@@ -15,6 +15,12 @@ struct MockResultView: View {
 
         if result.areas.count > 1 {
           MockAreaSection(result: result)
+        } else if result.topics.count > 1 {
+          Section {
+            MockTopicRows(topics: result.topics)
+          } header: {
+            Text("By topic", tableName: "Mock", comment: "Each topic's result")
+          }
         }
 
         MockInsightsSection(result: result)
@@ -372,27 +378,84 @@ private struct MockAreaSection: View {
   var body: some View {
     Section {
       ForEach(result.areas, id: \.name) { area in
-        VStack(alignment: .leading, spacing: 6) {
-          LabeledContent {
-            if let score = area.score {
-              Text(MockLabels.range(low: score.low, high: score.high))
-            } else {
-              Text(
-                "\(MockLabels.number(area.correct)) of \(area.total)", tableName: "Mock",
-                comment: "An area's right answers")
-            }
-          } label: {
-            Text(area.name)
-          }
-          .monospacedDigit()
+        let topics = result.topics.filter { $0.area == area.name }
 
-          ProgressView(value: area.correct, total: Double(max(area.total, 1)))
-            .tint(.success)
-            .accessibilityHidden(true)
+        if topics.isEmpty {
+          row(area)
+        } else {
+          DisclosureGroup {
+            MockTopicRows(topics: topics)
+          } label: {
+            row(area)
+          }
         }
       }
     } header: {
       Text("By area", tableName: "Mock", comment: "Each area's result")
+    }
+  }
+
+  private func row(_ area: MockResult.Area) -> some View {
+    VStack(alignment: .leading, spacing: 6) {
+      LabeledContent {
+        if let score = area.score {
+          Text(MockLabels.range(low: score.low, high: score.high))
+        } else {
+          Text(
+            "\(MockLabels.number(area.correct)) of \(area.total)", tableName: "Mock",
+            comment: "An area's right answers")
+        }
+      } label: {
+        Text(area.name)
+      }
+      .monospacedDigit()
+
+      ProgressView(value: area.correct, total: Double(max(area.total, 1)))
+        .tint(.success)
+        .accessibilityHidden(true)
+    }
+  }
+}
+
+/// The weakest topics first; past the first five, the rest open on a tap.
+private struct MockTopicRows: View {
+  private static let shown = 5
+
+  let topics: [MockResult.Topic]
+
+  var body: some View {
+    let sorted = topics.sorted { first, second in
+      let firstShare = Double(first.correct) / Double(max(first.total, 1))
+      let secondShare = Double(second.correct) / Double(max(second.total, 1))
+      return firstShare == secondShare ? first.total > second.total : firstShare < secondShare
+    }
+    let rest = sorted.dropFirst(Self.shown)
+
+    ForEach(sorted.prefix(Self.shown)) { topic in
+      row(topic)
+    }
+
+    if !rest.isEmpty {
+      DisclosureGroup {
+        ForEach(rest) { topic in
+          row(topic)
+        }
+      } label: {
+        Text("\(rest.count) more topics", tableName: "Mock", comment: "More topics")
+          .foregroundStyle(.secondary)
+      }
+    }
+  }
+
+  private func row(_ topic: MockResult.Topic) -> some View {
+    LabeledContent {
+      Text(
+        "\(topic.correct) of \(topic.total)", tableName: "Mock",
+        comment: "A topic's right answers"
+      )
+      .monospacedDigit()
+    } label: {
+      Text(topic.name)
     }
   }
 }
