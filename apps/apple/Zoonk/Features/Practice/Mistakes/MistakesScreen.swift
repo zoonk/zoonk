@@ -369,7 +369,7 @@ private struct MistakeEntryView: View {
       case .gap:
         String(
           localized: "Content gap", table: "Practice",
-          comment: "Mistake cause: didn't know the idea.")
+          comment: "Label of a mistake's cause: the learner didn't know or misunderstood the idea.")
       case .misread:
         String(
           localized: "Misread", table: "Practice", comment: "Mistake cause: misread the question.")

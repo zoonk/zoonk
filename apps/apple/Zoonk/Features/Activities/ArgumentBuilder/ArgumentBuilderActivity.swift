@@ -91,7 +91,7 @@ private struct ArgumentBuilderCanvas: View {
           .evidence,
           label: Text(
             "Evidence", tableName: "Activities",
-            comment: "The part of an argument that quotes a source"),
+            comment: "Label of the argument's part that backs the claim with a quote from a source"),
           hint: Text(
             "Pick the quote that best supports the claim", tableName: "Activities",
             comment: "An argument's empty evidence part"),

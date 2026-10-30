@@ -108,7 +108,9 @@ struct MemoryView: View {
     }
     .loads(settings.memory)
     .alert(
-      Text("Edit memory", tableName: "Settings", comment: "Title of the dialog correcting a fact"),
+      Text(
+        "Edit memory", tableName: "Settings",
+        comment: "Title of the dialog correcting one remembered fact"),
       isPresented: isEditingBinding,
       presenting: editing
     ) { fact in
@@ -270,10 +272,14 @@ extension MemoryFact.Category {
     switch self {
     case .goals: Text("Goals", tableName: "Settings", comment: "Memory category: goals")
     case .background:
-      Text("Background", tableName: "Settings", comment: "Memory category: background")
+      Text(
+        "Background", tableName: "Settings",
+        comment: "Memory category: facts about the learner's background, like studies and work")
     case .routine: Text("Routine", tableName: "Settings", comment: "Memory category: routine")
     case .preferences:
-      Text("Preferences", tableName: "Settings", comment: "Memory category: preferences")
+      Text(
+        "Preferences", tableName: "Settings",
+        comment: "Memory category: how the learner likes to learn, like short explanations")
     case .learning: Text("Learning", tableName: "Settings", comment: "Memory category: learning")
     case .context: Text("Context", tableName: "Settings", comment: "Memory category: context")
     }

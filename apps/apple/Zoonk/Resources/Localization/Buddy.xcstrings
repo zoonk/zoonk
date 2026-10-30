@@ -1432,7 +1432,7 @@
       }
     },
     "Move my study time to %@" : {
-      "comment" : "Accepts a schedule idea; the argument is a time",
+      "comment" : "Accepts a schedule idea: moves the time of day the learner studies; the argument is a clock time like 20:00",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2012,7 +2012,7 @@
       }
     },
     "Study time moved." : {
-      "comment" : "A schedule idea was accepted",
+      "comment" : "A schedule idea was accepted: the time of day the learner studies moved",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2766,7 +2766,7 @@
       }
     },
     "Your study time stays the same." : {
-      "comment" : "A schedule idea was declined",
+      "comment" : "A schedule idea was declined: the time of day the learner studies stays the same",
       "localizations" : {
         "de" : {
           "stringUnit" : {

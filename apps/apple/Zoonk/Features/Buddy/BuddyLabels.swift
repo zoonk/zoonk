@@ -165,7 +165,7 @@ extension BuddyGlasses {
     case .round:
       Text(
         "Comes with your buddy", tableName: "Settings",
-        comment: "How the round glasses are earned")
+        comment: "How the round glasses are earned: they come with the buddy")
     case .star:
       Text(
         "Win your first phase challenge", tableName: "Settings",

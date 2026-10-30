@@ -4041,7 +4041,7 @@
       }
     },
     "It's built from what you tell us." : {
-      "comment" : "Why the goal's questions matter",
+      "comment" : "Why the goal's questions matter; \"It\" is the learner's plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4402,7 +4402,7 @@
       }
     },
     "Lighter day: saving time for %@'s mock exam" : {
-      "comment" : "Why the day is lighter",
+      "comment" : "Why the day is lighter; the argument is the mock's date, like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5480,7 +5480,7 @@
       }
     },
     "Practice writing" : {
-      "comment" : "Mission: an essay",
+      "comment" : "Mission: write an essay",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5857,7 +5857,7 @@
       }
     },
     "Saving time for %@'s mock exam" : {
-      "comment" : "Why the day is lighter, on a return after a break that already says so",
+      "comment" : "Why the day is lighter, on a return after a break that already says so; the argument is the mock's date, like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5981,7 +5981,7 @@
       }
     },
     "Say them" : {
-      "comment" : "Opens the words to say again",
+      "comment" : "Opens the words to say aloud again; \"them\" is the words",
       "localizations" : {
         "de" : {
           "stringUnit" : {

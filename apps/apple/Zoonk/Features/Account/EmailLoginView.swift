@@ -15,7 +15,8 @@ struct EmailLoginView: View {
           prompt: Text(
             "you@example.com",
             tableName: "Account",
-            comment: "Example email address in the sign-in field")
+            comment:
+              "Example email address in the sign-in field: localize \"you\" and keep example.com")
         ) {
           Text("Email", tableName: "Account", comment: "Email sign-in field label")
         }

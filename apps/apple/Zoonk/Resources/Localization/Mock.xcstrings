@@ -968,7 +968,7 @@
       }
     },
     "%lld q" : {
-      "comment" : "Questions, short",
+      "comment" : "A mock's number of questions; q is short for questions",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -997,7 +997,7 @@
       }
     },
     "%lld q · ~%@" : {
-      "comment" : "A mock's questions and time",
+      "comment" : "A mock's number of questions (q is short for questions) and about how long it takes",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1462,7 +1462,7 @@
       }
     },
     "%lld since the last one" : {
-      "comment" : "Score went down",
+      "comment" : "Score went down since the learner's previous mock exam",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1776,7 +1776,7 @@
       }
     },
     "+%lld since the last one" : {
-      "comment" : "Score went up",
+      "comment" : "Score went up since the learner's previous mock exam",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4382,7 +4382,7 @@
       }
     },
     "objective part only" : {
-      "comment" : "No written part",
+      "comment" : "A mock with only the exam's objective questions, without its written part like the essay",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5524,7 +5524,7 @@
       }
     },
     "Sure: %lld of %lld right. Flagged as unsure: %lld of %lld right." : {
-      "comment" : "Sure against unsure answers",
+      "comment" : "How many of the answers the learner was sure of were right, against those flagged as unsure",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6674,7 +6674,7 @@
       }
     },
     "This mock gives %@." : {
-      "comment" : "The mock's own time",
+      "comment" : "The time limit this mock sets, since the exam's own time is unknown; the argument is a duration like '5 h'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7196,7 +7196,7 @@
       }
     },
     "Writing your task cards…" : {
-      "comment" : "Speaking cards",
+      "comment" : "Zoonk is writing the speaking exam's task cards",
       "localizations" : {
         "de" : {
           "stringUnit" : {

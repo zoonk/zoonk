@@ -246,7 +246,7 @@
       }
     },
     "Background" : {
-      "comment" : "Memory category: background",
+      "comment" : "Memory category: facts about the learner's background, like studies and work",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -478,7 +478,7 @@
       }
     },
     "Comes with your buddy" : {
-      "comment" : "How the round glasses are earned",
+      "comment" : "How the round glasses are earned: they come with the buddy",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -739,7 +739,7 @@
       }
     },
     "Edit memory" : {
-      "comment" : "Title of the dialog correcting a fact",
+      "comment" : "Title of the dialog correcting one remembered fact",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1435,7 +1435,7 @@
       }
     },
     "Preferences" : {
-      "comment" : "Memory category: preferences\nTitle of the Preferences page",
+      "comment" : "Memory category: how the learner likes to learn, like short explanations",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1464,7 +1464,7 @@
       }
     },
     "Preparing…" : {
-      "comment" : "A download's button while its file is made",
+      "comment" : "Data export button while Zoonk prepares the file to download",
       "localizations" : {
         "de" : {
           "stringUnit" : {

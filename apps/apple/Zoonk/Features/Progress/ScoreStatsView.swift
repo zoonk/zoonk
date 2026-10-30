@@ -50,7 +50,7 @@ private struct ScoreTiles: View {
         systemImage: "calendar",
         detail: Text(
           "Back from today", tableName: "Progress",
-          comment: "Under the Score's period: counted back from today")
+          comment: "Under the Score's period: the days counted backward from today")
       )
     }
   }

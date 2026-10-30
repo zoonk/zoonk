@@ -1906,7 +1906,7 @@
       }
     },
     "Preferences" : {
-      "comment" : "Settings row for Preferences",
+      "comment" : "Settings row for Preferences\nTitle of the Preferences page",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3183,7 +3183,7 @@
       }
     },
     "you@example.com" : {
-      "comment" : "Example email address in the sign-in field",
+      "comment" : "Example email address in the sign-in field: localize \"you\" and keep example.com",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3299,7 +3299,7 @@
       }
     },
     "Your plan" : {
-      "comment" : "Section with the learner's own plan",
+      "comment" : "Section with the learner's subscription plan, Free or Plus",
       "localizations" : {
         "de" : {
           "stringUnit" : {

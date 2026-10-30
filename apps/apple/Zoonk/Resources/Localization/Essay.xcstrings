@@ -538,7 +538,7 @@
       }
     },
     "Motivating texts" : {
-      "comment" : "ENEM's texts to read first",
+      "comment" : "The short source texts an ENEM essay prompt gives to read before writing",
       "localizations" : {
         "de" : {
           "stringUnit" : {

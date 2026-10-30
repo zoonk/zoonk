@@ -269,7 +269,10 @@ private struct LevelTestIntro: View {
         Section {
           Text(
             "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.",
-            tableName: "Onboarding", comment: "The level test of a language with another alphabet")
+            tableName: "Onboarding",
+            comment:
+              "The level test of a language with another alphabet: a learner new to the alphabet doesn't take it"
+          )
         }
       }
 

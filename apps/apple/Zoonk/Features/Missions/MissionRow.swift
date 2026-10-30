@@ -97,7 +97,7 @@ extension StudyMission {
     case .mock:
       String(localized: "Take the mock", table: "Today", comment: "Mission: a mock exam")
     case .essay:
-      String(localized: "Practice writing", table: "Today", comment: "Mission: an essay")
+      String(localized: "Practice writing", table: "Today", comment: "Mission: write an essay")
     case .practice:
       String(localized: "Practice", table: "Today", comment: "Mission: practice")
     case .fixMistake:

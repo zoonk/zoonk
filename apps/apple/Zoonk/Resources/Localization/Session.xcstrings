@@ -3326,7 +3326,7 @@
       }
     },
     "Wear them" : {
-      "comment" : "Puts the glasses just earned on the buddy",
+      "comment" : "Puts the glasses just earned on the buddy; \"them\" is the glasses",
       "localizations" : {
         "de" : {
           "stringUnit" : {

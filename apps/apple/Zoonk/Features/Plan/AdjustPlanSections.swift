@@ -94,7 +94,8 @@ private struct PlanExamChoiceSection: View {
     } header: {
       Text(
         "\(choice.group): which one will you take?", tableName: "Plan",
-        comment: "Asks which option of an exam's choice the learner takes")
+        comment:
+          "Asks which option of an exam's choice, like its foreign language, the learner takes")
     } footer: {
       if choice.subject == nil {
         Text(
@@ -451,7 +452,9 @@ private struct PlanToolsSection: View {
   private func answer(_ tool: GoalPlan.Tool) -> String {
     switch tool.choice {
     case "have":
-      String(localized: "You have it", table: "Plan", comment: "A tool the learner has")
+      String(
+        localized: "You have it", table: "Plan",
+        comment: "Status of a tool the course uses, like a program, that the learner already has")
     case "setup":
       tool.system.map {
         String(

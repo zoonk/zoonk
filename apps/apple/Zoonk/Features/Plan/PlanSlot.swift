@@ -98,7 +98,8 @@ struct PlanSuggestionSection: View {
       card(
         title: Text(
           "\(choice.group): which one will you take?", tableName: "Plan",
-          comment: "Asks which option of an exam's choice the learner takes"),
+          comment:
+            "Asks which option of an exam's choice, like its foreign language, the learner takes"),
         systemImage: "list.bullet",
         description: Text(
           "Pick the one you'll take. Until you do, your plan leaves \(choice.group) out.",

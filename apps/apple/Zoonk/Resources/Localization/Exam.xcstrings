@@ -1682,7 +1682,7 @@
       }
     },
     "No exam date in %@" : {
-      "comment" : "An exam with no sitting in the learner's month",
+      "comment" : "An exam with no sitting in the learner's month; the argument is a month like 'May'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2442,7 +2442,7 @@
       }
     },
     "The exam notice says %@." : {
-      "comment" : "The notice's day",
+      "comment" : "The notice's day; the argument is a date like 'Tuesday, May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2471,7 +2471,7 @@
       }
     },
     "The exam's likely date is now %@." : {
-      "comment" : "The exam's likely day, while the notice isn't out",
+      "comment" : "The exam's likely day, while the notice isn't out; the argument is a date like 'Tuesday, May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2500,7 +2500,7 @@
       }
     },
     "The exam's official calendar says %@." : {
-      "comment" : "The official calendar's day",
+      "comment" : "The official calendar's day; the argument is a date like 'Tuesday, May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3022,7 +3022,7 @@
       }
     },
     "Use %@" : {
-      "comment" : "Moves the plan to one of the closest sittings",
+      "comment" : "Moves the plan to one of the closest sittings; the argument is its date, like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {

@@ -17,7 +17,9 @@ struct LessonWaysOut: View {
           Label {
             Text(
               "Explain first", tableName: "Player",
-              comment: "Shows the explanation before answering")
+              comment:
+                "Asks Zoonk to show the explanation before the learner answers; the learner doesn't explain"
+            )
           } icon: {
             Image(systemName: "book")
           }

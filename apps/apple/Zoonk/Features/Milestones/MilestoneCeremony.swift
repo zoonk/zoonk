@@ -75,7 +75,8 @@ struct MilestoneCeremony: View {
           onClose()
         } label: {
           Text(
-            "Wear them", tableName: "Session", comment: "Puts the glasses just earned on the buddy"
+            "Wear them", tableName: "Session",
+            comment: "Puts the glasses just earned on the buddy; \"them\" is the glasses"
           )
           .frame(maxWidth: .infinity)
         }

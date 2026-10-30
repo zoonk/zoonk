@@ -97,7 +97,9 @@ struct SeePlusButton: View {
     Button {
       router.present(.subscription)
     } label: {
-      Text("See Plus", tableName: "Subscriptions", comment: "Opens the Zoonk Plus subscription")
+      Text(
+        "See Plus", tableName: "Subscriptions",
+        comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"")
     }
   }
 }

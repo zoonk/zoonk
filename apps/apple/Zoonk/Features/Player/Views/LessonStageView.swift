@@ -427,7 +427,9 @@ private struct LessonNotice: View {
             Button {
               store.restoreWriting()
             } label: {
-              Text("Write again", tableName: "Player", comment: "Takes back \"Can't write now\"")
+              Text(
+                "Write again", tableName: "Player",
+                comment: "Takes back \"Can't write now\": the learner does the writing again")
             }
             .buttonStyle(.borderless)
           }

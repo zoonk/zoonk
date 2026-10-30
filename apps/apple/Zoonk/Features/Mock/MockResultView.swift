@@ -278,12 +278,14 @@ private struct MockScoreSections: View {
     return change > 0
       ? (
         String(
-          localized: "+\(change) since the last one", table: "Mock", comment: "Score went up"),
+          localized: "+\(change) since the last one", table: "Mock",
+          comment: "Score went up since the learner's previous mock exam"),
         true
       )
       : (
         String(
-          localized: "\(change) since the last one", table: "Mock", comment: "Score went down"),
+          localized: "\(change) since the last one", table: "Mock",
+          comment: "Score went down since the learner's previous mock exam"),
         false
       )
   }
@@ -435,7 +437,10 @@ private struct MockInsightsSection: View {
           ) {
             Text(
               "Sure: \(calibration.sure.right) of \(calibration.sure.answered) right. Flagged as unsure: \(calibration.unsure.right) of \(calibration.unsure.answered) right.",
-              tableName: "Mock", comment: "Sure against unsure answers")
+              tableName: "Mock",
+              comment:
+                "How many of the answers the learner was sure of were right, against those flagged as unsure"
+            )
             if calibration.advice == .blankUnsure {
               Text(
                 "Leaving the unsure ones blank would have added \(Int(calibration.blankingGain.rounded())) points.",

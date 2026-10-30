@@ -102,7 +102,7 @@ struct PreferencesView: View {
       }
     }
     .navigationTitle(
-      Text("Preferences", tableName: "Settings", comment: "Title of the Preferences page")
+      Text("Preferences", tableName: "Account", comment: "Title of the Preferences page")
     )
     .overlay {
       SettingsLoadingState(state: settings.preferences.state) {

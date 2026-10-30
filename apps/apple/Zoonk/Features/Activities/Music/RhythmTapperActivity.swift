@@ -339,7 +339,7 @@ private struct RhythmFeedback: View {
       if extraTaps > 0 {
         Text(
           "\(extraTaps) extra taps.", tableName: "ActivitiesMusic",
-          comment: "Taps that matched no beat")
+          comment: "Rhythm result: the learner's taps on the screen that matched no beat")
       }
     }
     .font(.subheadline)

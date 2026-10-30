@@ -210,7 +210,8 @@ private struct MockChooser: View {
                   table: "Mock", comment: "A placement length"),
               detail: precision(option),
               trailing: String(
-                localized: "\(option.questions) q", table: "Mock", comment: "Questions, short")
+                localized: "\(option.questions) q", table: "Mock",
+                comment: "A mock's number of questions; q is short for questions")
             ) {
               length = option.length
             }
@@ -392,7 +393,9 @@ private struct MockChooser: View {
       trailing: String(
         localized:
           "\(option.questions) q · ~\(MockLabels.duration(minutes: option.estimatedMinutes))",
-        table: "Mock", comment: "A mock's questions and time")
+        table: "Mock",
+        comment:
+          "A mock's number of questions (q is short for questions) and about how long it takes")
     ) {
       picked = option.id
     }
@@ -446,7 +449,11 @@ private struct MockChooser: View {
     let written = option.written.isEmpty ? nil : "+ \(option.written.formatted(.list(type: .and)))"
     let objective =
       option.objectiveOnly && covers == nil
-      ? String(localized: "objective part only", table: "Mock", comment: "No written part") : nil
+      ? String(
+        localized: "objective part only", table: "Mock",
+        comment:
+          "A mock with only the exam's objective questions, without its written part like the essay"
+      ) : nil
 
     return [covers, subjects, written, objective].compactMap { $0 }.joined(separator: " · ")
   }

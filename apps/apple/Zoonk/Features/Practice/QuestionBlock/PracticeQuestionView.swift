@@ -234,7 +234,8 @@ enum PracticeVerdict: Equatable {
         "Correct!", table: "Practice", comment: "Verdict after a right answer.")
     case .wrong:
       LocalizedStringResource(
-        "Not quite", table: "Practice", comment: "Verdict after a wrong answer.")
+        "Not quite", table: "Practice",
+        comment: "Gentle verdict after a wrong answer, without saying it was almost right.")
     case .blank:
       LocalizedStringResource(
         "Left blank", table: "Practice",

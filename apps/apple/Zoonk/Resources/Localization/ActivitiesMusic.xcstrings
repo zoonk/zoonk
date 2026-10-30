@@ -410,7 +410,7 @@
       }
     },
     "%lld extra taps." : {
-      "comment" : "Taps that matched no beat",
+      "comment" : "Rhythm result: the learner's taps on the screen that matched no beat",
       "localizations" : {
         "de" : {
           "variations" : {

@@ -2419,7 +2419,7 @@
       }
     },
     "Content gap" : {
-      "comment" : "Mistake cause: didn't know the idea.",
+      "comment" : "Label of a mistake's cause: the learner didn't know or misunderstood the idea.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4401,7 +4401,7 @@
       }
     },
     "Not quite" : {
-      "comment" : "Verdict after a wrong answer.",
+      "comment" : "Gentle verdict after a wrong answer, without saying it was almost right.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6077,7 +6077,7 @@
       }
     },
     "See Plus" : {
-      "comment" : "Opens the Plus subscription.",
+      "comment" : "Opens the Zoonk Plus subscription; Plus is its name, not \"more\".",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6860,7 +6860,7 @@
       }
     },
     "The unit's call" : {
-      "comment" : "Title of a language goal's challenge call before it's written.",
+      "comment" : "Title of a language goal's challenge, a speaking practice call, before it's written.",
       "localizations" : {
         "de" : {
           "stringUnit" : {

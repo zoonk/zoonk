@@ -290,7 +290,7 @@ private struct PlanPhaseRow: View {
         )
         : Text(
           "Continues \(PlanDate.text(next, today: context.plan.today))", tableName: "Plan",
-          comment: "When the current phase's lessons continue")
+          comment: "When the current phase's lessons continue; the argument is a date like 'May 5'")
     }
 
     switch (writing, challenge) {
@@ -326,7 +326,7 @@ private struct PlanPhaseRow: View {
 
     return Text(
       "until \(PlanDate.text(endDate, today: context.plan.today))", tableName: "Plan",
-      comment: "When a phase ends")
+      comment: "When a phase ends; the argument is a date like 'May 5'")
   }
 }
 

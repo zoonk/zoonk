@@ -232,7 +232,8 @@ struct ChallengeScreen: View {
     if challenge.locked || challenge.status == .plusRequired {
       PracticeMainButton(
         title: LocalizedStringResource(
-          "See Plus", table: "Practice", comment: "Opens the Plus subscription.")
+          "See Plus", table: "Practice",
+          comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\".")
       ) {
         hooks.navigate(.subscription)
       }
@@ -390,7 +391,8 @@ struct ChallengeScreen: View {
           "Challenge passed", table: "Practice", comment: "A finished challenge.")
         : LocalizedStringResource(
           "The unit's call", table: "Practice",
-          comment: "Title of a language goal's challenge call before it's written.")
+          comment:
+            "Title of a language goal's challenge, a speaking practice call, before it's written.")
     }
 
     if isTrickster(challenge) {

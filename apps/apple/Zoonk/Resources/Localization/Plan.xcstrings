@@ -711,7 +711,7 @@
       }
     },
     "%@: which one will you take?" : {
-      "comment" : "Asks which option of an exam's choice the learner takes",
+      "comment" : "Asks which option of an exam's choice, like its foreign language, the learner takes",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4876,7 +4876,7 @@
       }
     },
     "Adjust your plan" : {
-      "comment" : "Title of the plan editor",
+      "comment" : "Navigation title of the plan editor",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5990,7 +5990,7 @@
       }
     },
     "Continues %@" : {
-      "comment" : "When the current phase's lessons continue",
+      "comment" : "When the current phase's lessons continue; the argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6251,7 +6251,7 @@
       }
     },
     "Date moved to %@." : {
-      "comment" : "Says the goal's date moved",
+      "comment" : "Says the goal's date moved, earlier or later; the argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6512,7 +6512,7 @@
       }
     },
     "Ends %@ instead of %@." : {
-      "comment" : "How a change moves the plan's end",
+      "comment" : "How a change moves the plan's end; the arguments are dates like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6547,7 +6547,7 @@
       }
     },
     "Ends around %@ instead of %@." : {
-      "comment" : "How a change moves the plan's estimated end",
+      "comment" : "How a change moves the plan's estimated end; the arguments are dates like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7133,7 +7133,7 @@
       }
     },
     "For reference" : {
-      "comment" : "Section of a chapter's map and summaries",
+      "comment" : "Section of a chapter with its mind map and summaries, to look back at",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7452,7 +7452,7 @@
       }
     },
     "I can already read it" : {
-      "comment" : "Skips the alphabet lesson",
+      "comment" : "Skips the alphabet lesson; \"it\" is the language's alphabet",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9333,7 +9333,7 @@
       }
     },
     "Move your date to %@" : {
-      "comment" : "Moves the goal's date to the day its time covers everything",
+      "comment" : "Moves the goal's date to the day its time covers everything; the argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12071,7 +12071,7 @@
       }
     },
     "The exam notice says %@." : {
-      "comment" : "The exam's day its notice gives",
+      "comment" : "The exam's day its notice gives; the argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12100,7 +12100,7 @@
       }
     },
     "The exam's likely date is now %@." : {
-      "comment" : "The exam's likely day while its notice isn't out",
+      "comment" : "The exam's likely day while its notice isn't out; the argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12129,7 +12129,7 @@
       }
     },
     "The exam's official calendar says %@." : {
-      "comment" : "A language certificate's day its official calendar gives",
+      "comment" : "A language certificate's day its official calendar gives; the argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12837,7 +12837,7 @@
       }
     },
     "until %@" : {
-      "comment" : "When a phase ends",
+      "comment" : "When a phase ends; the argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13539,7 +13539,7 @@
       }
     },
     "You have it" : {
-      "comment" : "A tool the learner has",
+      "comment" : "Status of a tool the course uses, like a program, that the learner already has",
       "localizations" : {
         "de" : {
           "stringUnit" : {

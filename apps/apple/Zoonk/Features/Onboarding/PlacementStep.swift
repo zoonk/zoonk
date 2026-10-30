@@ -87,7 +87,7 @@ struct PlacementStep: View {
         title: forToday
           ? Text(
             "That's enough questions for today", tableName: "Onboarding",
-            comment: "Placement ended for the day")
+            comment: "Placement paused for the day: it has enough answers for now")
           : Text(
             "Your starting point is set", tableName: "Onboarding", comment: "Placement ended"),
         description: forToday

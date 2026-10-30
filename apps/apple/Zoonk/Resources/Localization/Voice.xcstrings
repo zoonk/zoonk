@@ -2192,7 +2192,7 @@
       }
     },
     "Not enough call time this month for this task" : {
-      "comment" : "The call time left this month can't fit this task",
+      "comment" : "The call time left this month can't fit this speaking exam task",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2221,7 +2221,7 @@
       }
     },
     "Not enough call time today for this task" : {
-      "comment" : "The call time left today can't fit this task",
+      "comment" : "The call time left today can't fit this speaking exam task",
       "localizations" : {
         "de" : {
           "stringUnit" : {

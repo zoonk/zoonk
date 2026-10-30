@@ -477,7 +477,9 @@ enum UnderstoodRows {
       ? String(
         localized: LocalizedStringResource(
           "The exam's official calendar says \(date).", table: "Onboarding",
-          comment: "The day a language certificate's official calendar gives"))
+          comment:
+            "The day a language certificate's official calendar gives; the argument is a date like 'May 5, 2027'"
+        ))
       : String(
         localized: LocalizedStringResource(
           "The exam notice says \(date).", table: "Onboarding",

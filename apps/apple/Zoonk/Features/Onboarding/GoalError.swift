@@ -216,7 +216,9 @@ struct GoalLimitNoticeSection: View {
         Button {
           router.present(.subscription)
         } label: {
-          Text("See Plus", tableName: "Onboarding", comment: "Opens the Plus subscription")
+          Text(
+            "See Plus", tableName: "Onboarding",
+            comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"")
         }
 
         if reason == .oneActiveGoal {

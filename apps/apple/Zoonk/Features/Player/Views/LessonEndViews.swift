@@ -373,7 +373,8 @@ private struct LessonGuestEndingView: View {
       Label {
         Text(
           "Save your progress and a quick review comes back to help it stick.", tableName: "Player",
-          comment: "At the end of a guest's lesson")
+          comment:
+            "At the end of a guest's lesson: once saved, Zoonk brings back a quick review later")
       } icon: {
         Image(systemName: "calendar.badge.clock")
       }

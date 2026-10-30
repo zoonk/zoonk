@@ -1369,7 +1369,7 @@
       }
     },
     "Any day" : {
-      "comment" : "Best day when every day scores about the same",
+      "comment" : "Best day to study when every day scores about the same: any day works",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1543,7 +1543,7 @@
       }
     },
     "Back from today" : {
-      "comment" : "Under the Score's period: counted back from today",
+      "comment" : "Under the Score's period: the days counted backward from today",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3492,7 +3492,7 @@
       }
     },
     "Spread across the week" : {
-      "comment" : "Row: the range the days' scores span",
+      "comment" : "Row: the range from the week's lowest to highest day score, like 40–75%",
       "localizations" : {
         "de" : {
           "stringUnit" : {

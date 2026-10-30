@@ -277,11 +277,11 @@ private struct SpeakingPaperView: View {
     case .limit(let limit) where limit.period == .month:
       Text(
         "Not enough call time this month for this task", tableName: "Voice",
-        comment: "The call time left this month can't fit this task")
+        comment: "The call time left this month can't fit this speaking exam task")
     case .limit:
       Text(
         "Not enough call time today for this task", tableName: "Voice",
-        comment: "The call time left today can't fit this task")
+        comment: "The call time left today can't fit this speaking exam task")
     case .failed:
       Text(
         "The task didn't start. Try again in a moment.", tableName: "Voice",

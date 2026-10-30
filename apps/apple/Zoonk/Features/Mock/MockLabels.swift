@@ -139,7 +139,7 @@ struct MockSizeNote: View {
               "The official guide doesn't say how many questions each format has, so they're split evenly.",
             table: "Mock", comment: "Formats split evenly")) : nil,
       source.time == .unstated
-        ? "\(notice ? String(localized: "The notice doesn't give the exam's time.", table: "Mock", comment: "No exam time in the notice") : String(localized: "The official guide doesn't give the exam's time.", table: "Mock", comment: "No exam time in the guide")) \(String(localized: "This mock gives \(time).", table: "Mock", comment: "The mock's own time"))"
+        ? "\(notice ? String(localized: "The notice doesn't give the exam's time.", table: "Mock", comment: "No exam time in the notice") : String(localized: "The official guide doesn't give the exam's time.", table: "Mock", comment: "No exam time in the guide")) \(String(localized: "This mock gives \(time).", table: "Mock", comment: "The time limit this mock sets, since the exam's own time is unknown; the argument is a duration like '5 h'"))"
         : nil,
     ].compactMap { $0 }
   }

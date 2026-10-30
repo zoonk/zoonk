@@ -411,7 +411,9 @@ private struct ChapterReferenceSection: View {
         }
       }
     } header: {
-      Text("For reference", tableName: "Plan", comment: "Section of a chapter's map and summaries")
+      Text(
+        "For reference", tableName: "Plan",
+        comment: "Section of a chapter with its mind map and summaries, to look back at")
     }
   }
 

@@ -62,7 +62,7 @@ extension ScorePatterns {
     case .even:
       String(
         localized: "Any day", table: "Progress",
-        comment: "Best day when every day scores about the same")
+        comment: "Best day to study when every day scores about the same: any day works")
     case .notEnough:
       nil
     }

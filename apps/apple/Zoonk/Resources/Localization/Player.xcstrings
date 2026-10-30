@@ -989,7 +989,7 @@
       }
     },
     "Explain first" : {
-      "comment" : "Shows the explanation before answering",
+      "comment" : "Asks Zoonk to show the explanation before the learner answers; the learner doesn't explain",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1946,7 +1946,7 @@
       }
     },
     "Not quite" : {
-      "comment" : "The answer was wrong",
+      "comment" : "Gentle verdict after a wrong answer, without saying it was almost right",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2271,7 +2271,7 @@
       }
     },
     "Save your progress and a quick review comes back to help it stick." : {
-      "comment" : "At the end of a guest's lesson",
+      "comment" : "At the end of a guest's lesson: once saved, Zoonk brings back a quick review later",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3727,7 +3727,7 @@
       }
     },
     "Write again" : {
-      "comment" : "Takes back \"Can't write now\"",
+      "comment" : "Takes back \"Can't write now\": the learner does the writing again",
       "localizations" : {
         "de" : {
           "stringUnit" : {

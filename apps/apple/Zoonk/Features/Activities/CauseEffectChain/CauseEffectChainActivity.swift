@@ -212,7 +212,10 @@ private struct CauseEffectCanvas: View {
     if isGuided, !expected.contains(link) {
       notice = String(
         localized: "\(cause) didn't lead straight to \(effect) here. Try another link.",
-        table: "Activities", comment: "A cause-effect link that isn't in the story")
+        table: "Activities",
+        comment:
+          "A link the learner drew that isn't in the story; the arguments are the cause and the effect"
+      )
       announceActivityChange(notice ?? "")
       return
     }

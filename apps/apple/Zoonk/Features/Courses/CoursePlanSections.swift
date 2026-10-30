@@ -149,11 +149,16 @@ private struct DatedHeadline: View {
         Text(
           "by \(date), at \(time) a day, Monday to Friday, what comes up most first: lessons written as you reach them.",
           tableName: "Courses",
-          comment: "What an exam course's example plan holds with no written lessons")
+          comment:
+            "What an exam course's example plan holds with no written lessons; the arguments are a date like 'May 5' and a duration like '30 min'"
+        )
       } else {
         Text(
           "by \(date), at \(time) a day, Monday to Friday, what comes up most first: \(fitting) lessons already in the course, and more written as you reach them.",
-          tableName: "Courses", comment: "What an exam course's example plan holds")
+          tableName: "Courses",
+          comment:
+            "What an exam course's example plan holds; the arguments are a date like 'May 5' and a duration like '30 min'"
+        )
       }
     } else if fitting == 0 || areas.contains(where: { $0.quickLessons > 0 }) {
       Text(

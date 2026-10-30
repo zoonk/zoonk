@@ -299,7 +299,7 @@ private struct PatternsOverview: View {
           row(
             Text(
               "Spread across the week", tableName: "Progress",
-              comment: "Row: the range the days' scores span"),
+              comment: "Row: the range from the week's lowest to highest day score, like 40–75%"),
             value: spread, share: nil)
         }
       }

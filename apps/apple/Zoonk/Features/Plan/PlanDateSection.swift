@@ -111,18 +111,22 @@ struct PlanDateSection: View {
     if noticeDay.estimated {
       return Text(
         "The exam's likely date is now \(date).", tableName: "Plan",
-        comment: "The exam's likely day while its notice isn't out")
+        comment:
+          "The exam's likely day while its notice isn't out; the argument is a date like 'May 5, 2027'"
+      )
     }
 
     if plan.examDocument == .notice {
       return Text(
         "The exam notice says \(date).", tableName: "Plan",
-        comment: "The exam's day its notice gives")
+        comment: "The exam's day its notice gives; the argument is a date like 'May 5, 2027'")
     }
 
     return Text(
       "The exam's official calendar says \(date).", tableName: "Plan",
-      comment: "A language certificate's day its official calendar gives")
+      comment:
+        "A language certificate's day its official calendar gives; the argument is a date like 'May 5, 2027'"
+    )
   }
 
   /// True once saved.
@@ -136,7 +140,9 @@ struct PlanDateSection: View {
       sentence: isFirstDay
         ? String(localized: "Date set to \(date).", table: "Plan", comment: "Says the goal's date")
         : String(
-          localized: "Date moved to \(date).", table: "Plan", comment: "Says the goal's date moved")
+          localized: "Date moved to \(date).", table: "Plan",
+          comment:
+            "Says the goal's date moved, earlier or later; the argument is a date like 'May 5'")
     )
   }
 

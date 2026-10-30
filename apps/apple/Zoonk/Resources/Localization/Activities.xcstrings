@@ -229,7 +229,7 @@
       }
     },
     "%@ didn't lead straight to %@ here. Try another link." : {
-      "comment" : "A cause-effect link that isn't in the story",
+      "comment" : "A link the learner drew that isn't in the story; the arguments are the cause and the effect",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2167,7 +2167,7 @@
       }
     },
     "Evidence" : {
-      "comment" : "The part of an argument that quotes a source",
+      "comment" : "Label of the argument's part that backs the claim with a quote from a source",
       "localizations" : {
         "de" : {
           "stringUnit" : {

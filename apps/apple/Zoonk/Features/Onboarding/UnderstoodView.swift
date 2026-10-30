@@ -612,7 +612,9 @@ private struct InstrumentOutcome: View {
         systemImage: "guitars",
         title: Text(
           "Lessons for playing \(instrument) are coming", tableName: "Onboarding",
-          comment: "Title when the learner wants to play an instrument"),
+          comment:
+            "Title when the learner wants to play an instrument; the argument is the instrument in the learner's words, without an article, like 'guitar'"
+        ),
         description: Text(
           "To teach you to play, we need to hear you play, and we're still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm.",
           tableName: "Onboarding", comment: "Why playing an instrument is a waitlist for now"))

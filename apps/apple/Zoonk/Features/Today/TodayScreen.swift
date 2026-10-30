@@ -212,7 +212,7 @@ private struct TodayPreparing: View {
         } description: {
           Text(
             "It's built from what you tell us.", tableName: "Today",
-            comment: "Why the goal's questions matter")
+            comment: "Why the goal's questions matter; \"It\" is the learner's plan")
         } actions: {
           Button {
             router.open(.goalSetup(goalId: goalID))

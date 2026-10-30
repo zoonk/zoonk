@@ -104,7 +104,9 @@ struct MemoryInsightCard: View {
     case .scheduleIdea:
       Text(
         "Move my study time to \(insight.studyTime ?? "")", tableName: "Buddy",
-        comment: "Accepts a schedule idea; the argument is a time")
+        comment:
+          "Accepts a schedule idea: moves the time of day the learner studies; the argument is a clock time like 20:00"
+      )
     case .tip:
       Text("Got it", tableName: "Buddy", comment: "Acknowledges a tip")
     }
@@ -135,10 +137,13 @@ struct MemoryInsightCard: View {
           comment: "An insight's plan change was declined")
     case .scheduleIdea:
       accepted
-        ? Text("Study time moved.", tableName: "Buddy", comment: "A schedule idea was accepted")
+        ? Text(
+          "Study time moved.", tableName: "Buddy",
+          comment: "A schedule idea was accepted: the time of day the learner studies moved")
         : Text(
           "Your study time stays the same.", tableName: "Buddy",
-          comment: "A schedule idea was declined")
+          comment:
+            "A schedule idea was declined: the time of day the learner studies stays the same")
     case .tip:
       Text("Noted.", tableName: "Buddy", comment: "A tip was acknowledged")
     }

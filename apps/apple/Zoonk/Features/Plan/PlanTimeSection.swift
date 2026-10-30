@@ -180,12 +180,17 @@ struct PlanTimeSection: View {
             [.targetDate(fittingDate)],
             sentence: String(
               localized: "Date moved to \(PlanDate.text(fittingDate, today: plan.today)).",
-              table: "Plan", comment: "Says the goal's date moved"))
+              table: "Plan",
+              comment:
+                "Says the goal's date moved, earlier or later; the argument is a date like 'May 5'")
+          )
         }
       } label: {
         Text(
           "Move your date to \(PlanDate.text(fittingDate, today: plan.today))", tableName: "Plan",
-          comment: "Moves the goal's date to the day its time covers everything")
+          comment:
+            "Moves the goal's date to the day its time covers everything; the argument is a date like 'May 5'"
+        )
       }
     }
   }

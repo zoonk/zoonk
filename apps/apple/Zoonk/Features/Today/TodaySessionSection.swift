@@ -116,11 +116,13 @@ struct TodaySessionSection: View {
         if session.freshStart == .welcomeBack {
           Text(
             "Saving time for \(day)'s mock exam", tableName: "Today",
-            comment: "Why the day is lighter, on a return after a break that already says so")
+            comment:
+              "Why the day is lighter, on a return after a break that already says so; the argument is the mock's date, like 'May 5'"
+          )
         } else {
           Text(
             "Lighter day: saving time for \(day)'s mock exam", tableName: "Today",
-            comment: "Why the day is lighter")
+            comment: "Why the day is lighter; the argument is the mock's date, like 'May 5'")
         }
 
         if !session.examAccess.includesMockExams {

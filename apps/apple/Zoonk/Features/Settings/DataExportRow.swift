@@ -33,7 +33,7 @@ struct DataExportRow: View {
           if isPreparing {
             Text(
               "Preparing…", tableName: "Settings",
-              comment: "A download's button while its file is made")
+              comment: "Data export button while Zoonk prepares the file to download")
           } else {
             Text(
               "Download", tableName: "Settings", comment: "Downloads a file of the learner's data")

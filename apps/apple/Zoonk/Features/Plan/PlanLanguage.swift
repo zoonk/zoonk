@@ -113,7 +113,9 @@ struct PlanAlphabetRow: View {
       Button {
         Task { await skip() }
       } label: {
-        Text("I can already read it", tableName: "Plan", comment: "Skips the alphabet lesson")
+        Text(
+          "I can already read it", tableName: "Plan",
+          comment: "Skips the alphabet lesson; \"it\" is the language's alphabet")
       }
       .disabled(isSkipping)
 

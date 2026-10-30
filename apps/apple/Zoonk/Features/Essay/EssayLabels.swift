@@ -25,7 +25,9 @@ extension EssayRubric {
     case .ap, .custom:
       String(localized: "Supporting texts", table: "Essay", comment: "Texts to read first")
     case .enem:
-      String(localized: "Motivating texts", table: "Essay", comment: "ENEM's texts to read first")
+      String(
+        localized: "Motivating texts", table: "Essay",
+        comment: "The short source texts an ENEM essay prompt gives to read before writing")
     case .oab:
       String(localized: "The case", table: "Essay", comment: "OAB's case to read first")
     }

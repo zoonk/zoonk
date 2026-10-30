@@ -23,7 +23,8 @@ extension CourseCategory {
       LocalizedStringResource("Arts", table: "Courses", comment: "Course category for the arts.")
     case .business:
       LocalizedStringResource(
-        "Business", table: "Courses", comment: "Course category for business.")
+        "Business", table: "Courses",
+        comment: "Course category for business and management, separate from Economics.")
     case .communication:
       LocalizedStringResource(
         "Communication", table: "Courses", comment: "Course category for communication.")
@@ -32,7 +33,8 @@ extension CourseCategory {
         "Culture", table: "Courses", comment: "Course category for culture.")
     case .economics:
       LocalizedStringResource(
-        "Economics", table: "Courses", comment: "Course category for economics.")
+        "Economics", table: "Courses",
+        comment: "Course category for economics, separate from Business.")
     case .engineering:
       LocalizedStringResource(
         "Engineering", table: "Courses", comment: "Course category for engineering.")
@@ -83,7 +85,7 @@ extension CourseLevel {
       LocalizedStringResource(
         "Intermediate",
         table: "Courses",
-        comment: "Heading above a course's intermediate chapters.")
+        comment: "Heading above a course's intermediate chapters, between Beginner and Advanced.")
     case .advanced:
       LocalizedStringResource(
         "Advanced", table: "Courses", comment: "Heading above a course's advanced chapters.")

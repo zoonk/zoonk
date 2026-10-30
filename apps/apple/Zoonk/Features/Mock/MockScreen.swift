@@ -435,7 +435,9 @@ private struct MockSpeakingView: View {
             Task { await run.startSpeaking() }
           } label: {
             if run.busy == .startSpeaking {
-              Text("Writing your task cards…", tableName: "Mock", comment: "Speaking cards")
+              Text(
+                "Writing your task cards…", tableName: "Mock",
+                comment: "Zoonk is writing the speaking exam's task cards")
             } else {
               Text("Start the speaking part", tableName: "Mock", comment: "Starts mock speaking")
             }

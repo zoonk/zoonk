@@ -1715,7 +1715,7 @@
       }
     },
     "Business" : {
-      "comment" : "Course category for business.",
+      "comment" : "Course category for business and management, separate from Economics.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1924,7 +1924,7 @@
       }
     },
     "by %@, at %@ a day, Monday to Friday, what comes up most first: %lld lessons already in the course, and more written as you reach them." : {
-      "comment" : "What an exam course's example plan holds",
+      "comment" : "What an exam course's example plan holds; the arguments are a date like 'May 5' and a duration like '30 min'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2069,7 +2069,7 @@
       }
     },
     "by %@, at %@ a day, Monday to Friday, what comes up most first: lessons written as you reach them." : {
-      "comment" : "What an exam course's example plan holds with no written lessons",
+      "comment" : "What an exam course's example plan holds with no written lessons; the arguments are a date like 'May 5' and a duration like '30 min'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2754,7 +2754,7 @@
       }
     },
     "Economics" : {
-      "comment" : "Course category for economics.",
+      "comment" : "Course category for economics, separate from Business.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3085,7 +3085,7 @@
       }
     },
     "Intermediate" : {
-      "comment" : "Heading above a course's intermediate chapters.",
+      "comment" : "Heading above a course's intermediate chapters, between Beginner and Advanced.",
       "localizations" : {
         "de" : {
           "stringUnit" : {

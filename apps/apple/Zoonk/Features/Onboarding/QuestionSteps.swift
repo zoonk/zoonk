@@ -225,7 +225,8 @@ private struct PurposeQuestion: View {
     StepHeader(
       subject: subject,
       title: Text(
-        "What do you want from it?", tableName: "Onboarding", comment: "Onboarding question"),
+        "What do you want from it?", tableName: "Onboarding",
+        comment: "Onboarding question: what the learner hopes to get from learning it"),
       description: Text(
         "Pick what motivates you most.", tableName: "Onboarding",
         comment: "Under the purpose question"))
@@ -448,7 +449,9 @@ private struct TextQuestion: View {
   private var label: Text {
     switch kind {
     case .admission, .score:
-      Text("Your target", tableName: "Onboarding", comment: "Box for the learner's exam target")
+      Text(
+        "Your target", tableName: "Onboarding",
+        comment: "Box for the course and score the learner aims for on the exam")
     case .position:
       Text("Position", tableName: "Onboarding", comment: "Box for the position an exam is for")
     case .reason:
@@ -810,7 +813,9 @@ private struct SubjectsLevelQuestion: View {
       description: Text(
         "Your plan starts past their basics. A quick test places you in the rest.",
         tableName: "Onboarding",
-        comment: "Under the known subjects question"))
+        comment:
+          "Under the known subjects question: the plan skips the basics of the subjects picked, and a test finds the level in the others"
+      ))
 
     Section {
       ForEach(subjects, id: \.name) { item in
@@ -837,7 +842,7 @@ private struct SubjectsLevelQuestion: View {
       continueLabel: known.isEmpty
         ? Text(
           "None of them yet", tableName: "Onboarding",
-          comment: "Continues without any subject known well")
+          comment: "Continues without any of the listed subjects known well")
         : nil,
       skipLabel: Text(
         "I'm starting from scratch", tableName: "Onboarding",

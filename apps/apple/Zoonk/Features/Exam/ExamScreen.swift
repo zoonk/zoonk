@@ -208,13 +208,17 @@ private struct ExamHero: View {
           if noticeDay.estimated {
             Text(
               "The exam's likely date is now \(day).", tableName: "Exam",
-              comment: "The exam's likely day, while the notice isn't out")
+              comment:
+                "The exam's likely day, while the notice isn't out; the argument is a date like 'Tuesday, May 5'"
+            )
           } else if exam.examDocument == .notice {
-            Text("The exam notice says \(day).", tableName: "Exam", comment: "The notice's day")
+            Text(
+              "The exam notice says \(day).", tableName: "Exam",
+              comment: "The notice's day; the argument is a date like 'Tuesday, May 5'")
           } else {
             Text(
               "The exam's official calendar says \(day).", tableName: "Exam",
-              comment: "The official calendar's day")
+              comment: "The official calendar's day; the argument is a date like 'Tuesday, May 5'")
           }
           if dateFailed {
             Text(
@@ -245,7 +249,8 @@ private struct ExamHero: View {
         VStack(alignment: .leading, spacing: 4) {
           Text(
             "No exam date in \(month.formatted(.studyDay.month(.wide)))", tableName: "Exam",
-            comment: "An exam with no sitting in the learner's month"
+            comment:
+              "An exam with no sitting in the learner's month; the argument is a month like 'May'"
           )
           .font(.headline)
           Group {
@@ -269,7 +274,9 @@ private struct ExamHero: View {
             } label: {
               Text(
                 "Use \(date.formatted(.studyDay.month(.wide).day().year()))", tableName: "Exam",
-                comment: "Moves the plan to one of the closest sittings")
+                comment:
+                  "Moves the plan to one of the closest sittings; the argument is its date, like 'May 5, 2027'"
+              )
             }
             .disabled(usingDate)
           }

@@ -951,7 +951,9 @@ struct TodayLanguagePracticeSection: View {
           "Say \(pronunciation.count) words again", tableName: "Today",
           comment: "Mispronounced words due to be said again today"),
         detail: Text(pronunciation.words.formatted(.list(type: .and))), systemImage: "mic",
-        action: Text("Say them", tableName: "Today", comment: "Opens the words to say again")
+        action: Text(
+          "Say them", tableName: "Today",
+          comment: "Opens the words to say aloud again; \"them\" is the words")
       ) {
         router.open(.pronunciation(goalId: view.goal.id))
       }

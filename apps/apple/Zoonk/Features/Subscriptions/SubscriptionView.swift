@@ -314,7 +314,9 @@ private struct SubscriptionMarketingContent: View {
           }
           .frame(maxWidth: .infinity, alignment: .leading)
         } label: {
-          Text("Your plan", tableName: "Account", comment: "Section with the learner's own plan")
+          Text(
+            "Your plan", tableName: "Account",
+            comment: "Section with the learner's subscription plan, Free or Plus")
         }
       }
     }

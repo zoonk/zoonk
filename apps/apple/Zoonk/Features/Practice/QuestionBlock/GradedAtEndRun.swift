@@ -272,7 +272,8 @@ struct PracticeQuestionsPreparingView: View {
       if failure as? PracticeAPIError == .plusRequired {
         PracticeMainButton(
           title: LocalizedStringResource(
-            "See Plus", table: "Practice", comment: "Opens the Plus subscription.")
+            "See Plus", table: "Practice",
+            comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\".")
         ) {
           hooks.navigate(.subscription)
         }

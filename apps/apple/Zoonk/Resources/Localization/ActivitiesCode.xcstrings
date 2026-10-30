@@ -567,7 +567,7 @@
       }
     },
     "Not quite" : {
-      "comment" : "Before the feedback for a likely mistake",
+      "comment" : "Gentle verdict after a wrong answer, above the feedback on its likely mistake",
       "localizations" : {
         "de" : {
           "stringUnit" : {

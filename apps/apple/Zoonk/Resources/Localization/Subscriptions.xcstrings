@@ -60,7 +60,7 @@
       }
     },
     "See Plus" : {
-      "comment" : "Opens the Zoonk Plus subscription",
+      "comment" : "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"",
       "localizations" : {
         "de" : {
           "stringUnit" : {

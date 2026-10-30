@@ -324,7 +324,8 @@ private struct CodeRunnerOutput: View {
               VStack(alignment: .leading, spacing: 2) {
                 Text(
                   "Not quite", tableName: "ActivitiesCode",
-                  comment: "Before the feedback for a likely mistake"
+                  comment:
+                    "Gentle verdict after a wrong answer, above the feedback on its likely mistake"
                 )
                 .fontWeight(.semibold)
                 .foregroundStyle(.destructive)

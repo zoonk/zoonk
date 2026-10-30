@@ -57,7 +57,7 @@ struct AdjustPlanSheet: View {
         }
       }
       .navigationTitle(
-        Text("Adjust your plan", tableName: "Plan", comment: "Title of the plan editor")
+        Text("Adjust your plan", tableName: "Plan", comment: "Navigation title of the plan editor")
       )
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
@@ -267,10 +267,10 @@ func planEffectText(_ effect: PlanEffect?, today: String, isEstimated: Bool) -> 
   return isEstimated
     ? String(
       localized: "Ends around \(afterText) instead of \(beforeText).", table: "Plan",
-      comment: "How a change moves the plan's estimated end")
+      comment: "How a change moves the plan's estimated end; the arguments are dates like 'May 5'")
     : String(
       localized: "Ends \(afterText) instead of \(beforeText).", table: "Plan",
-      comment: "How a change moves the plan's end")
+      comment: "How a change moves the plan's end; the arguments are dates like 'May 5'")
 }
 
 /// Mirrors main's `useLessonsEffectText` for a plan with a date: what a change adds and leaves out,

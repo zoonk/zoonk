@@ -165,7 +165,7 @@ struct GoalMaterialSections: View {
               value: MaterialIntent.exam,
               label: Text(
                 "Prepare for an exam", tableName: "Onboarding",
-                comment: "Material intent: an exam on it"),
+                comment: "Material intent: the learner wants to prepare for an exam on it"),
               detail: Text(
                 "Give a date and we'll plan up to it", tableName: "Onboarding",
                 comment: "Under the exam material intent")),

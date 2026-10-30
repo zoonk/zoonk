@@ -199,7 +199,9 @@ struct TutorToolOfferCard: View {
             comment: "What the subscription page shows"),
         action: plus.subscribed
           ? Text("Manage", tableName: "Tutor", comment: "Opens the learner's subscription")
-          : Text("See Plus", tableName: "Tutor", comment: "Opens the subscription"),
+          : Text(
+            "See Plus", tableName: "Tutor",
+            comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\""),
         place: .subscription)
     }
   }

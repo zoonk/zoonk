@@ -5136,7 +5136,7 @@
       }
     },
     "Lessons for playing %@ are coming" : {
-      "comment" : "Title when the learner wants to play an instrument",
+      "comment" : "Title when the learner wants to play an instrument; the argument is the instrument in the learner's words, without an article, like 'guitar'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5664,7 +5664,7 @@
       }
     },
     "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it." : {
-      "comment" : "The level test of a language with another alphabet",
+      "comment" : "The level test of a language with another alphabet: a learner new to the alphabet doesn't take it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5751,7 +5751,7 @@
       }
     },
     "None of them yet" : {
-      "comment" : "Continues without any subject known well",
+      "comment" : "Continues without any of the listed subjects known well",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6505,7 +6505,7 @@
       }
     },
     "Prepare for an exam" : {
-      "comment" : "Material intent: an exam on it",
+      "comment" : "Material intent: the learner wants to prepare for an exam on it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7259,7 +7259,7 @@
       }
     },
     "See Plus" : {
-      "comment" : "Opens the Plus subscription",
+      "comment" : "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8228,7 +8228,7 @@
       }
     },
     "That's enough questions for today" : {
-      "comment" : "Placement ended for the day",
+      "comment" : "Placement paused for the day: it has enough answers for now",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8402,7 +8402,7 @@
       }
     },
     "The exam's official calendar says %@." : {
-      "comment" : "The day a language certificate's official calendar gives",
+      "comment" : "The day a language certificate's official calendar gives; the argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10026,7 +10026,7 @@
       }
     },
     "What do you want from it?" : {
-      "comment" : "Onboarding question",
+      "comment" : "Onboarding question: what the learner hopes to get from learning it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12271,7 +12271,7 @@
       }
     },
     "Your plan starts past their basics. A quick test places you in the rest." : {
-      "comment" : "Under the known subjects question",
+      "comment" : "Under the known subjects question: the plan skips the basics of the subjects picked, and a test finds the level in the others",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12445,7 +12445,7 @@
       }
     },
     "Your target" : {
-      "comment" : "Box for the learner's exam target",
+      "comment" : "Box for the course and score the learner aims for on the exam",
       "localizations" : {
         "de" : {
           "stringUnit" : {

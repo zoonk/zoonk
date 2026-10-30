@@ -178,7 +178,9 @@ struct LessonVerdictView: View {
     }
 
     return Verdict(
-      title: LocalizedStringResource("Not quite", table: "Player", comment: "The answer was wrong"),
+      title: LocalizedStringResource(
+        "Not quite", table: "Player",
+        comment: "Gentle verdict after a wrong answer, without saying it was almost right"),
       symbol: "xmark", tint: .destructive)
   }
 }

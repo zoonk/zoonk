@@ -422,7 +422,7 @@
       }
     },
     "About this subject" : {
-      "comment" : "Above a question to the buddy",
+      "comment" : "Above a question to the buddy about a subject of the learner's exam or plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -741,7 +741,7 @@
       }
     },
     "Ask %@ about this subject" : {
-      "comment" : "Ask button for VoiceOver; the argument is the buddy's name",
+      "comment" : "Ask button for VoiceOver; the argument is the buddy's name, and the subject is one of the learner's exam or plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1002,7 +1002,7 @@
       }
     },
     "Ask about this subject…" : {
-      "comment" : "Placeholder of the buddy's composer",
+      "comment" : "Placeholder of the buddy's composer; the subject is one of the learner's exam or plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1205,7 +1205,7 @@
       }
     },
     "Ask questions about this subject" : {
-      "comment" : "What the buddy's panel is about",
+      "comment" : "What the buddy's panel is about: a subject of the learner's exam or plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2497,7 +2497,7 @@
       }
     },
     "See Plus" : {
-      "comment" : "Opens the subscription",
+      "comment" : "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"",
       "localizations" : {
         "de" : {
           "stringUnit" : {
