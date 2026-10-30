@@ -44,11 +44,9 @@ fun AnswerOptionGroup(
 
 /**
  * One option of a question (main's `AnswerOption`): its number key (for keyboards, so TalkBack
- * skips it), its words and, once checked,
- * the word its result shows. The word sits beside the option's words while their longest word fits
- * next to it, and under them otherwise, so a long word never breaks at a large font. An option
- * among several picks is a [Role.Checkbox]; [tag] replaces the result's word (an order step's place).
- * A [glyph] marks the key in place of its number, as main's net-scored statements (✓, ✗, –).
+ * skips it), its words and, once checked, the word its result shows. An option among several
+ * picks is a [Role.Checkbox]; [tag] replaces the result's word (an order step's place). A [glyph]
+ * marks the key in place of its number, as main's net-scored statements (✓, ✗, –).
  */
 @Composable
 fun AnswerOption(
@@ -123,7 +121,6 @@ private fun NumberKey(
     }
 }
 
-/** An option's words with a tag beside them while their longest word fits next to it, else under them. */
 @Composable
 internal fun TagBesideOrUnder(
     modifier: Modifier,
@@ -136,10 +133,17 @@ internal fun TagBesideOrUnder(
         val tagPlaceable = tags.firstOrNull()?.measure(constraints.copy(minWidth = 0, minHeight = 0))
         val tagWidth = tagPlaceable?.width ?: 0
         val tagHeight = tagPlaceable?.height ?: 0
-        val longestWord = words.firstOrNull()?.minIntrinsicWidth(constraints.maxHeight) ?: 0
-        val beside = tagPlaceable == null || longestWord + gap + tagWidth <= width
-        val wordsWidth = if (beside && tagPlaceable != null) width - gap - tagWidth else width
-        val wordsPlaceable = words.firstOrNull()?.measure(constraints.copy(minWidth = 0, maxWidth = max(0, wordsWidth)))
+        val besideWidth = max(0, width - gap - tagWidth)
+        val text = words.firstOrNull()
+        val beside =
+            tagPlaceable == null ||
+                text == null ||
+                (
+                    text.minIntrinsicWidth(constraints.maxHeight) <= besideWidth &&
+                        max(text.minIntrinsicHeight(besideWidth), tagHeight) <= text.minIntrinsicHeight(width) + gap / 2 + tagHeight
+                )
+        val wordsWidth = if (beside && tagPlaceable != null) besideWidth else width
+        val wordsPlaceable = text?.measure(constraints.copy(minWidth = 0, maxWidth = wordsWidth))
         val wordsHeight = wordsPlaceable?.height ?: 0
         val height = if (beside) max(wordsHeight, tagHeight) else wordsHeight + gap / 2 + tagHeight
 
