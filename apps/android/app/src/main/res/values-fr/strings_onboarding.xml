@@ -323,7 +323,6 @@
   "onboarding_reveal_until_about_month": "322239d08039d091ad7928106344dac4255aca7de758dbb4f0fc2568011f3571",
   "onboarding_reveal_usual_structure": "a5736f5fd9aac141546d2a4c7889732a1fd55ddcfdb8a6e0a5834e825cf980da",
   "onboarding_reveal_weights": "1c29793776dbfd6639a3a52acf25640f9e150edfeffc6150f56ae98dba4aff94",
-  "onboarding_reveal_you_are_here": "42ad8e24417896a7472b9a7849cf09d563ff0d2c92a1fa2fa5add892c4c088a3",
   "onboarding_rewrite_hint": "9c5c66a4f300674ba593697388dbfa9b8e6ecb207e10c18c52e8d1fb40b58379",
   "onboarding_role_career_description": "7f4d2b68397098bc2ca4d9a35925b3a7fb7c57de82133ab1d202c578a11895a0",
   "onboarding_role_career_title": "4f0b8f405c4897c19c59695f0578e186ce3cffa6051e0a01ce729a4d0c700f7d",
@@ -813,8 +812,6 @@
     <string name="onboarding_reveal_phase_short_mock">Examen blanc court et révision</string>
     <string name="onboarding_reveal_phase_full_review">Révision complète</string>
     <string name="onboarding_reveal_phase_light_review">Révision légère</string>
-    <!-- Read by TalkBack on the mark of the phase the learner is in. -->
-    <string name="onboarding_reveal_you_are_here">Tu es ici</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Aujourd’hui</string>
     <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->

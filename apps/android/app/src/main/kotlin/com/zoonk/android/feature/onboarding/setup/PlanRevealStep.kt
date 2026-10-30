@@ -476,7 +476,6 @@ private fun PlanPhases(
         Column {
             phases.forEachIndexed { index, phase ->
                 if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                val isCurrent = phase.state == PlanPhase.State.CURRENT
                 ListRow {
                     StatusMark(
                         status =
@@ -485,7 +484,6 @@ private fun PlanPhases(
                                 PlanPhase.State.DONE -> MarkStatus.Done
                                 else -> MarkStatus.Todo
                             },
-                        contentDescription = if (isCurrent) stringResource(R.string.onboarding_reveal_you_are_here) else null,
                     )
                     Text(
                         phaseName(phase, mocksRequirePlus),

@@ -323,7 +323,6 @@
   "onboarding_reveal_until_about_month": "d9635a983ea4ff147efe746ed517f1ef79a31fd83076f4a3a23c13dc689452fc",
   "onboarding_reveal_usual_structure": "c607e620af5a29c18ea7964b1ecbd25e9d6dd901bd6acc00e72017a9913afa23",
   "onboarding_reveal_weights": "9431776481cd43444ec00d817cd78884053a32020961707fbbb0301955a5ea4e",
-  "onboarding_reveal_you_are_here": "8007f82af4f774f761578e5a07a197736dcd08c70a79e0a0735178c5d3b4e967",
   "onboarding_rewrite_hint": "f86b94dbfc8c8e3d27bd172eef07e680df8f27eb0f7a162f454c36e7efcd4136",
   "onboarding_role_career_description": "88f5ceb307667cd2e27f5164d1113d4fd6db67b89a28369b13637638483fd79c",
   "onboarding_role_career_title": "2b2071f5996d90df369a2054fc72c3c956742ab3f6d141dd6698faa8ea461153",
@@ -804,8 +803,6 @@
     <string name="onboarding_reveal_phase_short_mock">Kurze Probeprüfung und Wiederholung</string>
     <string name="onboarding_reveal_phase_full_review">Vollständige Wiederholung</string>
     <string name="onboarding_reveal_phase_light_review">Kurze Wiederholung</string>
-    <!-- Read by TalkBack on the mark of the phase the learner is in. -->
-    <string name="onboarding_reveal_you_are_here">Hier bist du</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Heute</string>
     <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->

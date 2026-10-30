@@ -323,7 +323,6 @@
   "onboarding_reveal_until_about_month": "8765701b719a725cdb00717984dc878c64f2622ff0016f2a5ce12bc211dbd7be",
   "onboarding_reveal_usual_structure": "8937376e898e692185c94cbdcd07e8d6d119ad951e1548cff0c69bb40ece76db",
   "onboarding_reveal_weights": "99e065f730d36688f553ecf8f06e24bfd22407cdadf062ceddfbaa71ae423081",
-  "onboarding_reveal_you_are_here": "a28a60f98f2c47209547a575f44ab7eebbc032c2aa8d9babc947fa4f61a3c4d0",
   "onboarding_rewrite_hint": "f758d992e42dd52d7433fc587c508413ba0f6c5caa644a33575729d649cad117",
   "onboarding_role_career_description": "83d7da827b3786168e890185215dcef76282973575f22b9bf6012de45bdf69fc",
   "onboarding_role_career_title": "5da9b5454717ef41f3f9921c7d93c06012baef57d8bde6dcfdbd30f0a0ba9815",
@@ -813,8 +812,6 @@
     <string name="onboarding_reveal_phase_short_mock">Simulado curto e revisão</string>
     <string name="onboarding_reveal_phase_full_review">Revisão completa</string>
     <string name="onboarding_reveal_phase_light_review">Revisão leve</string>
-    <!-- Read by TalkBack on the mark of the phase the learner is in. -->
-    <string name="onboarding_reveal_you_are_here">Você está aqui</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Hoje</string>
     <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->

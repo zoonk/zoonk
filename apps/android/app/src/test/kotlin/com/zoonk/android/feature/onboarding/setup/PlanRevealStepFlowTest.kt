@@ -7,6 +7,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -115,6 +118,16 @@ class PlanRevealStepFlowTest {
         val today = LocalDate.now()
         val earlier = today.minusDays(10)
         api.plan =
+    @Test
+    fun theCurrentPhaseReadsAsItShows() {
+        show()
+
+        rule
+            .onNodeWithText("Today")
+            .performScrollTo()
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.ContentDescription))
+    }
+
             planOf(
                 phases =
                     listOf(

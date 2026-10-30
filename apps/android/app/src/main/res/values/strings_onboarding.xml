@@ -362,8 +362,6 @@
     <string name="onboarding_reveal_phase_short_mock">Short mock and review</string>
     <string name="onboarding_reveal_phase_full_review">Full review</string>
     <string name="onboarding_reveal_phase_light_review">Light review</string>
-    <!-- Read by TalkBack on the mark of the phase the learner is in. -->
-    <string name="onboarding_reveal_you_are_here">You are here</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Today</string>
     <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
