@@ -29,6 +29,25 @@ enum PreferencesUpdate: Equatable, Sendable {
     return next
   }
 
+  /// `preferences` with the setting this update changes as `source` has it.
+  func copied(from source: LearningPreferences, to preferences: LearningPreferences)
+    -> LearningPreferences
+  {
+    var next = preferences
+
+    switch self {
+    case .buddy:
+      next.buddy = source.buddy
+      next.buddyPicked = source.buddyPicked
+    case .dailyLimitMinutes:
+      next.dailyLimitMinutes = source.dailyLimitMinutes
+    case .soundsEnabled:
+      next.soundsEnabled = source.soundsEnabled
+    }
+
+    return next
+  }
+
   /// "No limit" clears the daily limit, which the generated body would leave out.
   var nullKeys: [String] {
     self == .dailyLimitMinutes(nil) ? ["dailyLimitMinutes"] : []

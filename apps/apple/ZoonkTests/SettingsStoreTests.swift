@@ -28,6 +28,123 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertTrue(store.saveFailed)
   }
 
+  func testAFailedSaveLeavesAnotherSettingSavedAfterIt() async {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    await store.preferences.load()
+    await api.hold(.soundsEnabled(false))
+
+    let sounds = Task { await store.updatePreferences(.soundsEnabled(false)) }
+    await api.waitForHeldUpdate()
+    let limit = Task { await store.updatePreferences(.dailyLimitMinutes(30)) }
+    await waitUntil { store.preferences.value?.dailyLimitMinutes == 30 }
+    await api.releaseHeldUpdate(throwing: APIError.unavailable)
+    await sounds.value
+    await limit.value
+
+    XCTAssertEqual(store.preferences.value?.dailyLimitMinutes, 30, "the later save stays")
+    XCTAssertEqual(store.preferences.value?.soundsEnabled, true)
+    XCTAssertTrue(store.saveFailed)
+  }
+
+  func testAFailedSaveLeavesALaterChangeOfTheSameSetting() async {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    await store.preferences.load()
+    await api.hold(.dailyLimitMinutes(30))
+
+    let first = Task { await store.updatePreferences(.dailyLimitMinutes(30)) }
+    await api.waitForHeldUpdate()
+    let second = Task { await store.updatePreferences(.dailyLimitMinutes(60)) }
+    await waitUntil { store.preferences.value?.dailyLimitMinutes == 60 }
+    await api.releaseHeldUpdate(throwing: APIError.unavailable)
+    await first.value
+    await second.value
+
+    XCTAssertEqual(store.preferences.value?.dailyLimitMinutes, 60)
+    let updates = await api.updates
+    XCTAssertEqual(updates, [.dailyLimitMinutes(30), .dailyLimitMinutes(60)], "sent in order")
+  }
+
+  func testTwoFailedSavesShowWhatTheServerHas() async {
+    let api = SettingsAPIStub(updateError: APIError.unavailable)
+    let store = makeStore(api: api)
+    await store.preferences.load()
+    await api.hold(.dailyLimitMinutes(30))
+
+    let first = Task { await store.updatePreferences(.dailyLimitMinutes(30)) }
+    await api.waitForHeldUpdate()
+    let second = Task { await store.updatePreferences(.dailyLimitMinutes(60)) }
+    await waitUntil { store.preferences.value?.dailyLimitMinutes == 60 }
+    await api.releaseHeldUpdate(throwing: APIError.unavailable)
+    await first.value
+    await second.value
+
+    XCTAssertNil(store.preferences.value?.dailyLimitMinutes, "neither limit saved")
+  }
+
+  func testAFailedEditLeavesAFactDeletedAfterIt() async {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    await store.memory.load()
+    await api.holdEdits()
+
+    let edit = Task { await store.updateMemoryFact(id: MemoryFact.sciFi.id, statement: "Reads") }
+    await api.waitForHeldEdit()
+    let deletion = Task { await store.deleteMemoryFact(id: MemoryFact.evenings.id) }
+    await waitUntil { store.memory.value?.facts.count == 1 }
+    await api.releaseEdits(throwing: APIError.network)
+    await edit.value
+    await deletion.value
+
+    XCTAssertEqual(store.memory.value?.facts, [.sciFi], "the deleted fact stays deleted")
+  }
+
+  func testAChangeWaitingWhenItsLearnerLeavesIsNeverSentForTheNext() async {
+    let accounts = SwitchingAccountAPI()
+    let session = await accounts.signedIn(as: "learner-a")
+    let cache = AppCache(session: session)
+    let api = SettingsAPIStub()
+    let store = SettingsStore(api: api, cache: cache)
+    await store.preferences.load()
+    await api.hold(.soundsEnabled(false))
+
+    let sounds = Task { await store.updatePreferences(.soundsEnabled(false)) }
+    await api.waitForHeldUpdate()
+    let limit = Task { await store.updatePreferences(.dailyLimitMinutes(30)) }
+    await waitUntil { store.preferences.value?.dailyLimitMinutes == 30 }
+    await accounts.signIn(session, as: "learner-b")
+    cache.followSession()
+    await api.releaseHeldUpdate(throwing: APIError.network)
+    await sounds.value
+    await limit.value
+
+    let updates = await api.updates
+    XCTAssertEqual(updates, [.soundsEnabled(false)], "learner A's limit never reaches learner B")
+  }
+
+  func testAnUndoAnsweredAfterAnotherDeletionLeavesThatOneUndoable() async {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    await store.memory.load()
+    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
+    await api.holdDeletes()
+
+    let deletion = Task { await store.deleteMemoryFact(id: MemoryFact.sciFi.id) }
+    await api.waitForHeldDelete()
+    let undo = Task { await store.undoDeletion() }
+    // Lets the undo take the notice it's for before the deletion's answer replaces it.
+    for _ in 0..<10 {
+      await Task.yield()
+    }
+    await api.releaseDeletes(throwing: nil)
+    await deletion.value
+    await undo.value
+
+    XCTAssertEqual(store.deletedFact, .sciFi)
+    XCTAssertEqual(store.undoStatus, .idle, "the later deletion can still be undone")
+  }
+
   func testDeletedFactLeavesTheListAndCanComeBack() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)
@@ -146,6 +263,14 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertFalse(store.saveFailed)
   }
 
+  private func waitUntil(_ condition: () -> Bool) async {
+    for _ in 0..<10_000 where !condition() {
+      await Task.yield()
+    }
+
+    XCTAssertTrue(condition(), "the change never showed")
+  }
+
   private func makeStore(api: SettingsAPIStub) -> SettingsStore {
     SettingsStore(
       api: api, cache: AppCache(session: SessionStore.preview(account: .settingsTestFixture)))
@@ -158,6 +283,10 @@ private actor SettingsAPIStub: SettingsAPIClient {
   private var beforeDelete: (@MainActor @Sendable () async -> Void)?
   private var holdsDeletes = false
   private var heldDelete: CheckedContinuation<Void, Error>?
+  private var heldUpdate: PreferencesUpdate?
+  private var heldUpdateResponse: CheckedContinuation<Void, Error>?
+  private var holdsEdits = false
+  private var heldEdit: CheckedContinuation<Void, Error>?
 
   private let updateError: Error?
   private let deleteError: Error?
@@ -189,11 +318,31 @@ private actor SettingsAPIStub: SettingsAPIClient {
   {
     updates.append(update)
 
+    if update == heldUpdate {
+      heldUpdate = nil
+      try await withCheckedThrowingContinuation { heldUpdateResponse = $0 }
+    }
+
     if let updateError {
       throw updateError
     }
 
     return update.applied(to: .settingsTestFixture)
+  }
+
+  func hold(_ update: PreferencesUpdate) {
+    heldUpdate = update
+  }
+
+  func waitForHeldUpdate() async {
+    while heldUpdateResponse == nil {
+      await Task.yield()
+    }
+  }
+
+  func releaseHeldUpdate(throwing error: Error) {
+    heldUpdateResponse?.resume(throwing: error)
+    heldUpdateResponse = nil
   }
 
   nonisolated func getMemory(token: String) async throws -> LearnerMemory {
@@ -204,10 +353,29 @@ private actor SettingsAPIStub: SettingsAPIClient {
 
   nonisolated func setMemoryEnabled(token: String, _ enabled: Bool) async throws {}
 
-  nonisolated func updateMemoryFact(token: String, factId: String, statement: String) async throws
+  func updateMemoryFact(token: String, factId: String, statement: String) async throws
     -> MemoryFact
   {
-    .evenings
+    if holdsEdits {
+      try await withCheckedThrowingContinuation { heldEdit = $0 }
+    }
+
+    return .evenings
+  }
+
+  func holdEdits() {
+    holdsEdits = true
+  }
+
+  func waitForHeldEdit() async {
+    while heldEdit == nil {
+      await Task.yield()
+    }
+  }
+
+  func releaseEdits(throwing error: Error) {
+    heldEdit?.resume(throwing: error)
+    heldEdit = nil
   }
 
   func deleteMemoryFact(token: String, factId: String) async throws -> MemoryFact {
@@ -221,7 +389,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
       throw deleteError
     }
 
-    return .evenings
+    return [MemoryFact.sciFi, .evenings].first { $0.id == factId } ?? .evenings
   }
 
   func holdDeletes() {
@@ -234,8 +402,13 @@ private actor SettingsAPIStub: SettingsAPIClient {
     }
   }
 
-  func releaseDeletes(throwing error: Error) {
-    heldDelete?.resume(throwing: error)
+  func releaseDeletes(throwing error: Error?) {
+    if let error {
+      heldDelete?.resume(throwing: error)
+    } else {
+      heldDelete?.resume()
+    }
+
     heldDelete = nil
   }
 

@@ -38,6 +38,8 @@ final class SettingsStore {
 
   private let api: any SettingsAPIClient
   private let cache: AppCache
+  private let preferenceSaves: QueuedSaves<LearningPreferences>
+  private let memorySaves: QueuedSaves<LearnerMemory>
 
   init(api: any SettingsAPIClient, cache: AppCache) {
     self.api = api
@@ -55,109 +57,93 @@ final class SettingsStore {
       }
     }
 
-    preferences = signedIn([.learningProfile]) { try await api.getPreferences(token: $0) }
-    memory = signedIn([.memory]) { try await api.getMemory(token: $0) }
+    let preferences: Resource<LearningPreferences> = signedIn([.learningProfile]) {
+      try await api.getPreferences(token: $0)
+    }
+    let memory: Resource<LearnerMemory> = signedIn([.memory]) {
+      try await api.getMemory(token: $0)
+    }
+    self.preferences = preferences
+    self.memory = memory
     allowance = signedIn([.allowance, .userSubscription]) { try await api.getAllowance(token: $0) }
+    preferenceSaves = QueuedSaves(preferences, cache: cache)
+    memorySaves = QueuedSaves(memory, cache: cache)
   }
 
   func updatePreferences(_ update: PreferencesUpdate) async {
-    guard let shown = preferences.value else {
-      return
-    }
-
-    preferences.update(update.applied)
-
-    let result = await save([.learningProfile]) {
+    _ = await save(update.applied, in: preferenceSaves, changing: [.learningProfile]) { [api] in
       try await api.updatePreferences(token: $0.bearerToken, update)
-    }
-
-    switch result {
-    case .done(let saved):
-      preferences.update { _ in saved }
-    case .failed:
-      preferences.update { _ in shown }
-    case .obsolete:
-      break
+    } confirm: {
+      update.copied(from: $1, to: $0)
     }
   }
 
   func setMemoryEnabled(_ enabled: Bool) async {
-    guard let shown = memory.value else {
-      return
-    }
+    let change = { (memory: LearnerMemory) in LearnerMemory(enabled: enabled, facts: memory.facts) }
 
-    memory.update { LearnerMemory(enabled: enabled, facts: $0.facts) }
-
-    if case .failed = await save(
-      [.memory], { try await api.setMemoryEnabled(token: $0.bearerToken, enabled) })
-    {
-      memory.update { _ in shown }
+    _ = await save(change, in: memorySaves, changing: [.memory]) { [api] in
+      try await api.setMemoryEnabled(token: $0.bearerToken, enabled)
+    } confirm: { memory, _ in
+      change(memory)
     }
   }
 
   func updateMemoryFact(id: String, statement: String) async {
-    guard let shown = memory.value else {
-      return
+    let change = { (memory: LearnerMemory) in
+      memory.replacingFact(id: id) { $0.statement = statement }
     }
 
-    memory.update { $0.replacingFact(id: id) { $0.statement = statement } }
-
-    let result = await save([.memory]) {
+    _ = await save(change, in: memorySaves, changing: [.memory]) { [api] in
       try await api.updateMemoryFact(token: $0.bearerToken, factId: id, statement: statement)
-    }
-
-    if case .failed = result {
-      memory.update { _ in shown }
+    } confirm: { memory, _ in
+      change(memory)
     }
   }
 
   func deleteMemoryFact(id: String) async {
-    guard let shown = memory.value else {
-      return
+    let change = { (memory: LearnerMemory) in
+      LearnerMemory(enabled: memory.enabled, facts: memory.facts.filter { $0.id != id })
     }
 
-    memory.update { LearnerMemory(enabled: $0.enabled, facts: $0.facts.filter { $0.id != id }) }
-
-    let result = await save([.memory]) {
+    let result = await save(change, in: memorySaves, changing: [.memory]) { [api] in
       try await api.deleteMemoryFact(token: $0.bearerToken, factId: id)
+    } confirm: { memory, _ in
+      change(memory)
     }
 
-    switch result {
-    case .done(let deleted):
+    if case .done(let deleted) = result {
       setNotice {
         $0.deletedFact = deleted
         $0.undoStatus = .idle
       }
-    case .failed:
-      memory.update { _ in shown }
-    case .obsolete:
-      break
     }
   }
 
+  /// Waits its turn behind the memory's other changes, so the restored fact stays once they settle.
   func undoDeletion() async {
     guard let deleted = deletedFact else {
       return
     }
 
-    let result = await cache.mutate(invalidating: [.memory]) {
+    let unchanged = { (memory: LearnerMemory) in memory }
+
+    let result = await memorySaves.save(unchanged, invalidating: [.memory]) { [api] in
       try await api.restoreMemoryFact(token: $0.bearerToken, factId: deleted.id)
+    } confirm: {
+      $0.restoring($1)
+    }
+
+    // A deletion made meanwhile has its own notice and its own undo.
+    guard deletedFact?.id == deleted.id else {
+      return
     }
 
     switch result {
-    case .done(let restored):
-      let restoredIds = Set(restored.map(\.id))
-
-      memory.update { memory in
-        let facts = memory.facts.filter { !restoredIds.contains($0.id) } + restored
-        return LearnerMemory(
-          enabled: memory.enabled, facts: facts.sorted { $0.createdAt > $1.createdAt })
-      }
-
+    case .done:
       setNotice { $0.undoStatus = .undone }
     case .failed:
       setNotice { $0.undoStatus = .failed }
-    case .obsolete:
+    case .obsolete, nil:
       break
     }
   }
@@ -189,12 +175,15 @@ final class SettingsStore {
     notice = next
   }
 
-  private func save<Value: Sendable>(
-    _ changed: Set<DataDomain>,
-    _ write: (AuthenticatedSession) async throws -> Value
-  ) async -> MutationResult<Value> {
+  private func save<Value: Equatable & Sendable, Reply: Sendable>(
+    _ change: @escaping (Value) -> Value,
+    in saves: QueuedSaves<Value>,
+    changing domains: Set<DataDomain>,
+    _ write: @escaping (AuthenticatedSession) async throws -> Reply,
+    confirm: @escaping (Value, Reply) -> Value
+  ) async -> MutationResult<Reply>? {
     setNotice { $0.saveFailed = false }
-    let result = await cache.mutate(invalidating: changed, write)
+    let result = await saves.save(change, invalidating: domains, write, confirm: confirm)
 
     if case .failed = result {
       setNotice { $0.saveFailed = true }
@@ -220,5 +209,12 @@ extension LearnerMemory {
     }
 
     return memory
+  }
+
+  /// Newest first, as the server lists them.
+  fileprivate func restoring(_ restored: [MemoryFact]) -> LearnerMemory {
+    let restoredIds = Set(restored.map(\.id))
+    let facts = facts.filter { !restoredIds.contains($0.id) } + restored
+    return LearnerMemory(enabled: enabled, facts: facts.sorted { $0.createdAt > $1.createdAt })
   }
 }
