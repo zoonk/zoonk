@@ -126,7 +126,7 @@ class SessionViewModel(
      * Reads [lessonId]'s readiness every few seconds and follows the run writing it, reading the day
      * again once it's written: the wait shows until the day does, so its step is offered as ready. A
      * lesson nobody writes is waited on only when the learner [asked] for it; a failed one is still
-     * read, since it may be written again elsewhere.
+     * read, since it may be written again elsewhere, unless its checks set it aside.
      */
     suspend fun followLesson(
         lessonId: UUID,
@@ -147,10 +147,10 @@ class SessionViewModel(
                         if (status == LessonReadiness.Status.READY) {
                             readDay()
                         } else {
-                            lesson = LessonState(lessonId, status)
+                            lesson = LessonState(lessonId, status, read.value.setAside)
                         }
                         if (status == LessonReadiness.Status.GENERATING) follow(read.value.generationId)
-                        if (status == LessonReadiness.Status.NOT_STARTED && !asked) return
+                        if ((status == LessonReadiness.Status.NOT_STARTED && !asked) || read.value.setAside) return
                     }
                 }
                 delay(LESSON_CHECK_MILLIS)
@@ -245,6 +245,7 @@ enum class NextStopLesson { NotStarted, Writing, Failed }
 data class LessonState(
     val id: UUID,
     val status: LessonReadiness.Status,
+    val setAside: Boolean,
 )
 
 private data class LessonWait(

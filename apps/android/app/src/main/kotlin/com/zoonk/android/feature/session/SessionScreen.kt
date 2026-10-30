@@ -297,16 +297,17 @@ internal fun NextStop(
     onStop: (() -> Unit)?,
     navigator: AppNavigator,
 ) {
-    val refusal = notWritten?.takeIf { step.isUnwrittenLesson() }
-    val unwritten = refresh != null && refusal == null && step.kind == StudyBlock.Kind.LEARN && step.screen != StudyBlock.Screen.LESSON
+    val refused = notWritten?.takeIf { step.isUnwrittenLesson() }
+    val unwritten = refresh != null && refused == null && step.kind == StudyBlock.Kind.LEARN && step.screen != StudyBlock.Screen.LESSON
     val watched = step.lessonId?.takeIf { unwritten }
     val picking = unwritten && watched == null && asked
-    val known = viewModel.lesson?.takeIf { it.id == watched }?.status
+    val known = viewModel.lesson?.takeIf { it.id == watched }
+    val refusal = refused ?: LessonWriting.SetAside.takeIf { known?.setAside == true }
     val lesson =
         when {
-            !unwritten -> null
-            known == LessonReadiness.Status.GENERATING -> NextStopLesson.Writing
-            known == LessonReadiness.Status.FAILED -> NextStopLesson.Failed
+            !unwritten || refusal != null -> null
+            known?.status == LessonReadiness.Status.GENERATING -> NextStopLesson.Writing
+            known?.status == LessonReadiness.Status.FAILED -> NextStopLesson.Failed
             asked -> NextStopLesson.NotStarted
             else -> null
         }

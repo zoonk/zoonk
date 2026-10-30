@@ -218,6 +218,25 @@ class NextStopTest {
     }
 
     @Test
+    fun aLessonItsChecksSetAsideSaysSoInsteadOfOfferingToTryAgain() {
+        settled = LessonReadiness.Status.FAILED
+        setAside = true
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show(alternative = practice)
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("This lesson isn't available").assertExists()
+        rule.onNodeWithText("This didn't finish").assertDoesNotExist()
+        rule.onNodeWithText("Try again").assertDoesNotExist()
+
+        rule.mainClock.advanceTimeBy(10_000)
+        rule.waitForIdle()
+
+        assertEquals(1, readinessReads)
+    }
+
+    @Test
     fun aLessonARunIsWritingShowsTheRunsPhasesAndWhatItTakes() {
         settled = LessonReadiness.Status.GENERATING
         shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
