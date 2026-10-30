@@ -297,7 +297,6 @@ internal object MoleculeLayout {
         layout: Map<String, Vec>,
     ): Map<String, Vec> = (1..ITERATIONS).fold(layout) { current, _ -> relaxStep(current, bonds) }
 
-    /** Places atoms one at a time next to an atom already placed that they bond to, then settles them. */
     fun of(build: MoleculeBuild): Map<String, Vec> {
         val placed =
             build.atoms.fold(linkedMapOf<String, Vec>()) { layout, atom ->

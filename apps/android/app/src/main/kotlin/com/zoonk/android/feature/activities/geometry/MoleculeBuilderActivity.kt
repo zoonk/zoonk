@@ -341,7 +341,6 @@ private fun MoleculeBoard(
     }
 }
 
-/** Main's tween: an atom glides to where the layout settles it, and jumps there when animations are off. */
 @Composable
 private fun tweened(
     point: Vec,

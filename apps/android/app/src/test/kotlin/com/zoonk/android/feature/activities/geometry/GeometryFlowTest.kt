@@ -44,7 +44,6 @@ import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
-/** Main's player tests for the geometry templates, played in the real player with core's expected end states. */
 @RunWith(AndroidJUnit4::class)
 class GeometryFlowTest {
     @get:Rule
