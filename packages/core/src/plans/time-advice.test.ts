@@ -505,7 +505,7 @@ describe(getPlanTimeAdvice, () => {
   });
 
   it("keeps lighter weekdays when recommending time with an unchanged weekend override", async () => {
-    const { goal, library } = await setup(28, 60);
+    const { goal, library } = await setup(31, 60);
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     await change(goal.id, [
@@ -608,7 +608,7 @@ describe(getPlanTimeAdvice, () => {
   );
 
   it("offers no daily-time increase when weekend-only candidates save the same schedule", async () => {
-    const { goal, library } = await setup(12, 60);
+    const { goal, library } = await setup(16, 60);
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const input = { studyDays: [0, 6], weekendMinutes: 60 };
@@ -631,7 +631,7 @@ describe(getPlanTimeAdvice, () => {
   });
 
   it("recommends more than 4 hours on weekdays when the weekend's 4 hours don't cover it", async () => {
-    const { goal, library } = await setup(60, 60);
+    const { goal, library } = await setup(70, 60);
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const input = { dailyMinutes: 5, studyDays: [0, 1, 6], weekendMinutes: 240 };

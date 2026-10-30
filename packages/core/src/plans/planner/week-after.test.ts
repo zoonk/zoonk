@@ -22,7 +22,7 @@ function initialInput(): BuildPlanInput {
     graph: {
       phases: [{ milestone: null, name: "Basics" }],
       skills: [
-        { area: null, lessons: 10, name: "Earlier topic", phase: 0, skillId: "A", weight: null },
+        { area: null, lessons: 16, name: "Earlier topic", phase: 0, skillId: "A", weight: null },
         { area: null, lessons: 20, name: "Functions", phase: 0, skillId: "B", weight: null },
       ],
     },
@@ -116,7 +116,7 @@ describe("this week's saved teaching", () => {
       userFixture(),
       planLibraryFixture({
         skills: [
-          { lessons: 1, size: 10 },
+          { lessons: 1, size: 16 },
           { lessons: 1, size: 20 },
         ],
       }),

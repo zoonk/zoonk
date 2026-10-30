@@ -16,7 +16,6 @@ const KEYED_FIELDS = {
   bossMinutes: "The time each challenge took as the plan saved it: the plan's own output.",
   bringBackSetAside: "Only a learner's change brings set-aside work back, and its plan holds it.",
   carryOver: "What earlier days left, which the plan the run saved already lays out first.",
-  courseStart: true,
   examWindows: "The exam's phases as the saved plan shows them: that plan's own dates.",
   finishedOn: true,
   fullMockMinutes: true,

@@ -198,8 +198,8 @@ describe("today's session the learner was shown", () => {
     );
 
     expect(readSelectedItemFacts(spanning?.facts)?.days).toStrictEqual([
-      ["2026-09-30", 1, 0.5],
-      ["2026-10-01", 5, 2.5],
+      ["2026-09-30", 2, 2],
+      ["2026-10-01", 2, 1],
     ]);
 
     expect(learnLessonIds(before).length).toBeGreaterThan(0);
@@ -337,7 +337,7 @@ describe("today's session the learner was shown", () => {
   });
 
   it("fills the rest of the day once the outline it waited for ends without its lessons", async () => {
-    const { course, goal } = await setupDayWithStandIn();
+    const { course, goal } = await setupDayWithStandIn({ laterLessons: 16 });
     const before = await readToday(goal.id);
 
     expect(before.lessonsComing).toBe(true);

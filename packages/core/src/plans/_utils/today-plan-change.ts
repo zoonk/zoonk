@@ -2,7 +2,6 @@ import "server-only";
 import { type Goal, type PlanChange, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { PHASE_DATES_SOURCE } from "../plan-change-contract";
 import { type PlanChangeView } from "../plan-view-contract";
 import { parsePlanGraph, parsePlanSettings } from "../planner/plan-state";
 import { asksAboutAutomaticChange } from "./automatic-plan-change";
@@ -22,12 +21,10 @@ async function findTodayChanges({
   dateReached,
   now,
   planId,
-  skipPhaseDates,
 }: {
   dateReached: boolean;
   now: Date;
   planId: string;
-  skipPhaseDates: boolean;
 }) {
   const [proposals, recent] = await Promise.all([
     prisma.planChange.findMany({
@@ -51,32 +48,19 @@ async function findTodayChanges({
       parsePlanChangePayload(change.payload).seenAt === null,
   );
 
-  const offered = skipPhaseDates
-    ? proposals.filter(
-        (proposal) => parsePlanChangePayload(proposal.payload).source !== PHASE_DATES_SOURCE,
-      )
-    : proposals;
-
-  return { automatic: automatic ?? null, proposals: offered };
+  return { automatic: automatic ?? null, proposals };
 }
 
 async function pickTodayChange({
   dateReached,
   now,
   planId,
-  skipPhaseDates,
 }: {
   dateReached: boolean;
   now: Date;
   planId: string;
-  skipPhaseDates: boolean;
 }): Promise<{ change: PlanChange; effect: PlanChangeView["effect"] } | null> {
-  const { automatic, proposals } = await findTodayChanges({
-    dateReached,
-    now,
-    planId,
-    skipPhaseDates,
-  });
+  const { automatic, proposals } = await findTodayChanges({ dateReached, now, planId });
 
   const proposal = proposals.find(
     (candidate) => parsePlanChangePayload(candidate.payload).effect !== null,
@@ -94,12 +78,10 @@ async function pickTodayChange({
 export async function loadTodayPlanChange({
   goal,
   now,
-  skipPhaseDates = false,
   timeZone,
 }: {
   goal: Goal;
   now: Date;
-  skipPhaseDates?: boolean;
   timeZone?: string | null;
 }): Promise<TodayPlanChangeView | null> {
   const goalId = goal.id;
@@ -123,9 +105,7 @@ export async function loadTodayPlanChange({
       today: getDateInTimeZone({ date: now, timeZone: getAnswerTimeZone({ goal, timeZone }) }),
     });
 
-  const picked = plan
-    ? await pickTodayChange({ dateReached, now, planId: plan.id, skipPhaseDates })
-    : null;
+  const picked = plan ? await pickTodayChange({ dateReached, now, planId: plan.id }) : null;
 
   if (!plan || !picked) {
     return null;

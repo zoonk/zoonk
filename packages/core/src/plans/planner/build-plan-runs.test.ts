@@ -227,7 +227,7 @@ describe("work missed days set aside", () => {
       goal: { dailyMinutes: 12, kind: "learn", targetDate: fromIsoDate("2026-10-16") },
       graph: {
         phases: [{ milestone: null, name: "Only" }],
-        skills: [skill("s1", { lessons: 4 }), skill("s2", { lessons: 4 })],
+        skills: [skill("s1", { lessons: 4 }), skill("s2", { lessons: 3 })],
       },
       lessons: lessonsOf("s1", 4),
     });

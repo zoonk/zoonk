@@ -100,7 +100,7 @@ describe("notices for changes within an estimate", () => {
     "names the one lesson a sampled change leaves out (already own: %s)",
     async (own) => {
       const { goal, plan, user } = await pacedPlanFixture({
-        dailyMinutes: 22,
+        dailyMinutes: 19,
         days: 14,
         lessons: 6,
         skills: 8,

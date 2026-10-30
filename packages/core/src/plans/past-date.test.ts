@@ -115,7 +115,7 @@ describe("a plan whose date came with lessons left", () => {
     const found = await findPlanTimeToCover({ goalId: goal.id, input: {} });
     const targetDate = found.status === "ready" ? found.time.fittingDate : null;
 
-    expect(targetDate).toBe("2020-11-04");
+    expect(targetDate).toBe("2020-11-03");
 
     const operations: PlanChangeInput["operations"] = [{ kind: "setTargetDate", targetDate }];
     const previewed = await preview(goal.id, operations);

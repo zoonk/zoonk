@@ -24,7 +24,6 @@ export type RunDayInput = Pick<
   BuildPlanInput,
   | "bossDays"
   | "bossMinutes"
-  | "courseStart"
   | "examWindows"
   | "fullMockMinutes"
   | "goal"
@@ -89,7 +88,6 @@ export function createDays({ input, planStart }: { input: RunDayInput; planStart
   return {
     describeDay: createLearnDays({
       calendar,
-      courseStart: input.courseStart,
       eventWeekday,
       mockMinutes: input.goal.kind === "exam" ? input.mockMinutes : null,
       practiceBias,

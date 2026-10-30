@@ -210,7 +210,7 @@ describe("undoing a change in the app", () => {
   it("announces Undo once and restores the whole original queue, with a no-op replay", async () => {
     const { goal } = await setupDayWithMistake({ dailyMinutes: 15 });
     const original = await readDaySession(goal.id);
-    expect(original.blocks).toHaveLength(4);
+    expect(original.blocks).toHaveLength(5);
 
     const applied = await changeGoalPlan({
       goalId: goal.id,

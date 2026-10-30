@@ -21,7 +21,7 @@ import { refreshGoalPlan } from "./refresh-goal-plan";
 /** A Sunday in 2020, before the learning events other tests write, which estimates read. */
 const SUNDAY = new Date("2020-09-27T12:00:00Z");
 
-const TIGHT = new Date("2020-10-17T00:00:00Z");
+const TIGHT = new Date("2020-10-16T00:00:00Z");
 
 async function setup({ refresh = true }: { refresh?: boolean } = {}) {
   const user = await userFixture();

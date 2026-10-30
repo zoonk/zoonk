@@ -60,7 +60,7 @@ function planInput(attrs: Partial<BuildPlanInput> = {}): BuildPlanInput {
     paceFactor: 1,
     prerequisites: new Map(),
     readiness: new Map(),
-    settings: parsePlanSettings({}),
+    settings: parsePlanSettings({ startDate: toIsoDate(TODAY) }),
     today: TODAY,
     ...attrs,
   };
@@ -81,10 +81,10 @@ describe(buildPlan, () => {
     expect(summarize(plan)).toStrictEqual([
       { date: "2026-09-28", key: "lesson:l1", phase: 0 },
       { date: "2026-09-28", key: "lesson:l2", phase: 0 },
-      { date: "2026-09-30", key: "skill:s2", phase: 0 },
-      { date: "2026-10-01", key: "boss:0", phase: 0 },
-      { date: "2026-10-02", key: "lesson:l3", phase: 1 },
-      { date: "2026-10-03", key: "boss:1", phase: 1 },
+      { date: "2026-09-29", key: "skill:s2", phase: 0 },
+      { date: "2026-09-30", key: "boss:0", phase: 0 },
+      { date: "2026-10-01", key: "lesson:l3", phase: 1 },
+      { date: "2026-10-02", key: "boss:1", phase: 1 },
     ]);
 
     expect(plan.items.find((item) => item.key === "skill:s2")).toMatchObject({
@@ -96,27 +96,27 @@ describe(buildPlan, () => {
 
     expect(plan.phases).toStrictEqual([
       {
-        endDate: "2026-10-01",
+        endDate: "2026-09-30",
         kind: "learn",
         milestone: "Use the basics",
-        minutes: 43,
+        minutes: 31,
         name: "Basics",
         startDate: "2026-09-28",
       },
       {
-        endDate: "2026-10-03",
+        endDate: "2026-10-02",
         kind: "learn",
         milestone: null,
         minutes: 21,
         name: "Advanced",
-        startDate: "2026-10-02",
+        startDate: "2026-10-01",
       },
     ]);
 
     expect(plan.estimate).toStrictEqual({
-      endDate: fromIsoDate("2026-10-03"),
-      remainingMinutes: 64,
-      totalMinutes: 64,
+      endDate: fromIsoDate("2026-10-02"),
+      remainingMinutes: 52,
+      totalMinutes: 52,
     });
   });
 
@@ -394,7 +394,7 @@ describe(buildPlan, () => {
     const first = buildPlan(input);
     const today = addDays(TODAY, 1);
 
-    const items = store(first, new Set(["boss:1", "lesson:s1-0", "lesson:s1-1"])).map((item) =>
+    const items = store(first, new Set(["boss:1", ...lessonsOn(first, TODAY)])).map((item) =>
       item.status === "done" ? { ...item, completedAt: today } : item,
     );
 
@@ -510,6 +510,7 @@ describe(buildPlan, () => {
         },
         items,
         lessons,
+        settings: parsePlanSettings({ startDate: toIsoDate(addDays(TODAY, -1)) }),
       }),
     );
 
@@ -1047,7 +1048,10 @@ function lessonMinutes(input: BuildPlanInput): number {
 
 describe("language plans", () => {
   it("plans each situation at the graph's size, the part not outlined yet as a stand-in", () => {
-    const input = languageInput();
+    const input = languageInput({
+      settings: parsePlanSettings({ startDate: toIsoDate(addDays(TODAY, -1)) }),
+    });
+
     const keys = buildPlan(input).items.map((item) => item.key);
 
     expect(keys.filter((key) => key.startsWith("skill:"))).toStrictEqual([
@@ -1264,17 +1268,17 @@ describe("big goals of any kind", () => {
             skill("units", { lessons: 8 }),
           ],
         },
-        lessons: [...lessonsFor("waves", 5), ...lessonsFor("spin", 6), ...lessonsFor("units", 5)],
+        lessons: [...lessonsFor("waves", 10), ...lessonsFor("spin", 6), ...lessonsFor("units", 5)],
       }),
     );
 
     expect(standIns(plan)).toStrictEqual([
-      ["waves", 25],
+      ["waves", 20],
       ["spin", 34],
     ]);
 
     const keys = plan.items.map((item) => item.key);
-    expect(keys.indexOf("skill:waves")).toBe(keys.indexOf("lesson:waves-4") + 1);
+    expect(keys.indexOf("skill:waves")).toBe(keys.indexOf("lesson:waves-9") + 1);
   });
 
   it("puts a dated exam plan's stand-ins after their skill's lessons, before the final stretch, and says what doesn't fit", () => {
@@ -1336,6 +1340,22 @@ describe("a plan's first day", () => {
 
     expect(lessonDays.has("2026-09-28")).toBe(true);
     expect(lessonDays.has("2026-10-05")).toBe(false);
+  });
+
+  it("gives its lessons the learner's whole time, since there's nothing to review yet", () => {
+    const lessons = Array.from({ length: 12 }, (_, index) => lesson(`l${index}`, ["s1"], 4));
+
+    const plan = buildPlan(
+      planInput({
+        goal: { dailyMinutes: 16, kind: "learn", targetDate: null },
+        graph: { phases: [{ milestone: null, name: "Basics" }], skills: [skill("s1")] },
+        lessons,
+        settings: parsePlanSettings({ startDate: "2026-09-28" }),
+      }),
+    );
+
+    expect(lessonsOn(plan, TODAY)).toHaveLength(4);
+    expect(lessonsOn(plan, addDays(TODAY, 1))).toHaveLength(2);
   });
 });
 
@@ -1637,7 +1657,10 @@ describe("work an earlier day left", () => {
         skills: [skill("s1"), skill("s2", { lessons: 4, phase: 1 })],
       },
       lessons: [lesson("l1", ["s1"]), lesson("l2", ["s1"]), ...lessonsFor("s2", 4)],
-      settings: parsePlanSettings({ weekdayMinutes: [15, 15, 21, 15, 15, 15, 15] }),
+      settings: parsePlanSettings({
+        startDate: toIsoDate(monday),
+        weekdayMinutes: [15, 15, 21, 15, 15, 15, 15],
+      }),
     });
 
     const first = buildPlan(input);

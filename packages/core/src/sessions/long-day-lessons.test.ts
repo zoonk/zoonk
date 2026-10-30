@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -50,14 +51,22 @@ describe("a long study day", () => {
   it("gives lessons the learn share of a whole day the learner gives, as the week counts the day", async () => {
     const user = await userFixture();
 
-    const { goal } = await sessionGoalFixture({
+    const { goal, plan } = await sessionGoalFixture({
       goal: { dailyMinutes: MAX_DAILY_MINUTES },
       itemsPerSkill: 1,
       lessons: 400,
       userId: user.id,
     });
 
-    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+    // A plan's first day is all lessons; this one began the day before.
+    await Promise.all([
+      prisma.plan.update({
+        data: { settings: { startDate: "2026-09-29" } },
+        where: { id: plan.id },
+      }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
     mockSession(user.id);
 
     const result = await getTodayStudySession({});

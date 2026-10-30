@@ -45,8 +45,10 @@ async function plannedLearner({
     skills: phases.map((_, phase) => ({ area: "Physics", lessons, phase })),
   });
 
+  // Earlier days left lessons, so the plan began before today.
   const { goal } = await unplannedGoalFixture({
     dailyMinutes: 12,
+    settings: { startDate: "2020-09-27" },
     targetDate,
     timezone: "UTC",
     userId: user.id,

@@ -129,10 +129,10 @@ describe(createGoalPlan, () => {
     expect(datesOf(items)).toStrictEqual([
       "2020-09-28",
       "2020-09-28",
+      "2020-09-28",
       "2020-09-29",
-      "2020-09-30",
+      "2020-10-02",
       "2020-10-03",
-      "2020-10-04",
     ]);
 
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
@@ -141,7 +141,7 @@ describe(createGoalPlan, () => {
 
     expect(stored.phases).toMatchObject([
       { kind: "learn", name: "Basics", startDate: "2020-09-28" },
-      { endDate: "2020-10-04", kind: "learn", name: "Advanced" },
+      { endDate: "2020-10-03", kind: "learn", name: "Advanced" },
     ]);
 
     expect(stored.estimateHours).toBeGreaterThan(0);
@@ -661,8 +661,14 @@ describe(getGoalPlan, () => {
 
     expect(plan?.week.startDate).toBe("2020-09-28");
     expect(plan?.week.days[0]).toMatchObject({ date: "2020-09-28", minutes: 12, state: "today" });
-    expect(plan?.week.days[0]?.items.map((item) => item.kind)).toStrictEqual(["lesson", "lesson"]);
-    expect(plan?.estimate.endDate).toBe("2020-10-04");
+
+    expect(plan?.week.days[0]?.items.map((item) => item.kind)).toStrictEqual([
+      "lesson",
+      "lesson",
+      "lesson",
+    ]);
+
+    expect(plan?.estimate.endDate).toBe("2020-10-03");
     expect(plan?.feasibility).not.toHaveProperty("alternative");
   });
 

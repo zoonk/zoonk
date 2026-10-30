@@ -4,6 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { takenChallengeFixture } from "./_test-utils/taken-challenge";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { refreshGoalPlan } from "./refresh-goal-plan";
@@ -29,6 +30,7 @@ async function setup({ dailyMinutes, lessons }: { dailyMinutes: number; lessons:
     userId: user.id,
   });
 
+  await takenChallengeFixture({ date: new Date("2020-09-20T00:00:00Z"), planId: plan.id });
   await createGoalPlan({ goalId: goal.id, graph: library.graph });
   mockSession(user.id);
 

@@ -76,7 +76,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
     }
 
     const plan = read.result.plan.plan;
-    expect(plan.status).toMatchObject({ kind: "behind", lessons: 6 });
+    expect(plan.status).toMatchObject({ kind: "behind", lessons: 8 });
 
     expect(plan.phases[0]).toMatchObject({
       chapters: [expect.objectContaining({ lessonsTotal: 14, nextDate: "2020-09-28" })],
@@ -86,7 +86,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
 
     expect(
       plan.week.days.filter((day) => day.date < "2020-10-01").flatMap((day) => day.items),
-    ).toHaveLength(6);
+    ).toHaveLength(8);
 
     expect(plan.week.days.find((day) => day.date === "2020-10-01")?.items).toHaveLength(2);
 

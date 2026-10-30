@@ -54,7 +54,6 @@ export type BuildPlanInput = {
   bossFacts?: BossPlanFacts;
   bossMinutes?: BossMinutes;
   bossDays?: ExamBossDays;
-  courseStart?: boolean;
   announcements?: readonly string[];
   answeredWrongSkillIds?: ReadonlySet<string>;
   bands?: ReadonlyMap<string, CourseLevel>;

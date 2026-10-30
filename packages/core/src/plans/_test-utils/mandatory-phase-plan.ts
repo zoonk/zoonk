@@ -6,10 +6,13 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getWeeklyMockMinutes, listMockClocks } from "../../exams/mocks/mock-plan";
 import { buildPlan } from "../planner/build-plan";
 import { type PlanGraph, parsePlanSettings } from "../planner/plan-state";
+import { takenChallengeFixture } from "./taken-challenge";
 
 const PRIOR_DAY = new Date("2026-10-13T12:00:00Z");
 
 const AT_RISK_DATE = new Date("2026-10-30T00:00:00Z");
+
+const FIRST_PHASE_LESSONS = 13;
 
 async function createPriorDayPlan({ atRisk }: { atRisk: boolean }) {
   const user = await userFixture();
@@ -36,7 +39,7 @@ async function createPriorDayPlan({ atRisk }: { atRisk: boolean }) {
     ],
     skills: skills.map((skill, index) => ({
       area: "Interviews",
-      lessons: index === 0 ? 12 : 60,
+      lessons: index === 0 ? FIRST_PHASE_LESSONS : 60,
       name: skill.name,
       phase: index,
       skillId: skill.id,
@@ -74,6 +77,7 @@ async function createPriorDayPlan({ atRisk }: { atRisk: boolean }) {
 
   await Promise.all([
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    takenChallengeFixture({ date: new Date("2026-10-06T00:00:00Z"), planId: plan.id }),
     prisma.planItem.createMany({
       data: built.items.map((item, position) => ({
         chapterId: item.chapterId,

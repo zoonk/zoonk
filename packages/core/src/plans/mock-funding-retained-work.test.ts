@@ -21,12 +21,12 @@ describe("funding only the exam work the saved plan retains", () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ area: "Math", lessons: 9 }] });
 
-    const setup = async (kind: "exam" | "learn") => {
+    const setup = async (kind: "exam" | "learn", startDate: string) => {
       const fixture = await unplannedGoalFixture({
         dailyMinutes: 30,
         details: { placementDeclined: true },
         kind,
-        settings: { startDate: START, weekdayMinutes: [0, 30, 30, 30, 30, 30, 0] },
+        settings: { startDate, weekdayMinutes: [0, 30, 30, 30, 30, 30, 0] },
         targetDate: null,
         timezone: "UTC",
         userId: user.id,
@@ -36,7 +36,8 @@ describe("funding only the exam work the saved plan retains", () => {
       return fixture;
     };
 
-    const [exam, learn] = await Promise.all([setup("exam"), setup("learn")]);
+    // A learn plan's first day is all lessons, so the one it matches is past that day.
+    const [exam, learn] = await Promise.all([setup("exam", START), setup("learn", "2020-09-27")]);
 
     const [saved, examItems, learnItems] = await Promise.all([
       prisma.plan.findUniqueOrThrow({ where: { id: exam.plan.id } }),

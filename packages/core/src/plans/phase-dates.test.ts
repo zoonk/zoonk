@@ -10,6 +10,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { getChallenge } from "../checkpoints/get-challenge";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { takenChallengeFixture } from "./_test-utils/taken-challenge";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
@@ -22,7 +23,9 @@ const SUNDAY = new Date("2020-09-27T12:00:00Z");
 
 const FAR = new Date("2020-12-31T00:00:00Z");
 
-const TIGHT = new Date("2020-10-17T00:00:00Z");
+const TIGHT = new Date("2020-10-16T00:00:00Z");
+
+const LAST_WEEK = new Date("2020-09-20T00:00:00Z");
 
 type Outline = { count: number; minutes: number };
 
@@ -34,9 +37,11 @@ const SKILLS = [
 ];
 
 async function setup({
+  challengeTaken = true,
   skills = SKILLS,
   targetDate,
 }: {
+  challengeTaken?: boolean;
   skills?: typeof SKILLS;
   targetDate: Date;
 }) {
@@ -50,6 +55,10 @@ async function setup({
     timezone: "UTC",
     userId: user.id,
   });
+
+  if (challengeTaken) {
+    await takenChallengeFixture({ date: LAST_WEEK, planId: plan.id });
+  }
 
   await createGoalPlan({ goalId: goal.id, graph: library.graph });
   mockSession(user.id);
@@ -149,6 +158,7 @@ async function setupRestingEnd({
     userId: user.id,
   });
 
+  await takenChallengeFixture({ date: LAST_WEEK, planId: plan.id });
   await createGoalPlan({ goalId: goal.id, graph: library.graph });
   mockSession(user.id);
 
@@ -269,10 +279,38 @@ describe("phase dates through system refreshes", () => {
     expect(last && end && last <= end).toBe(true);
   });
 
+  it("keeps a new learner's challenge after lessons that land longer than planned, without asking", async () => {
+    const { goal, library, outline, plan } = await setup({
+      challengeTaken: false,
+      targetDate: FAR,
+    });
+
+    const [planned] = await readPhaseEnds(plan.id);
+
+    await outline({ outline: { count: 10, minutes: 8 }, skill: 1 });
+    await refreshGoalPlan({ goalId: goal.id });
+
+    const [[end], [challenge], last] = await Promise.all([
+      readPhaseEnds(plan.id),
+      readChallengeDates(plan.id),
+      readLastLessonDay({ phase: 0, planId: plan.id, skills: library.graph.skills }),
+    ]);
+
+    expect(end && planned && end > planned).toBe(true);
+    expect(challenge).toBe(end);
+    expect(last && end && last < end).toBe(true);
+    await expect(readProposals(plan.id)).resolves.toHaveLength(0);
+
+    await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+      status: "ready",
+      today: { planChange: null },
+    });
+  });
+
   it("moves an unsafe phase end after a focus and names the applied move", async () => {
     const { goal, library, outline, plan } = await setup({ targetDate: FAR });
     const ends = await readPhaseEnds(plan.id);
-    expect(ends[0]).toBe("2020-10-07");
+    expect(ends[0]).toBe("2020-10-06");
 
     await outline({ outline: { count: 10, minutes: 8 }, skill: 1 });
     await refreshGoalPlan({ goalId: goal.id });
@@ -291,7 +329,7 @@ describe("phase dates through system refreshes", () => {
     }
 
     const phaseEnds = [
-      { after: "2020-10-15", before: "2020-10-07", lessonsFirst: true, name: "Basics" },
+      { after: "2020-10-14", before: "2020-10-06", lessonsFirst: true, name: "Basics" },
     ];
 
     expect(changed.change.effect?.phaseEnds).toStrictEqual(phaseEnds);
@@ -307,11 +345,11 @@ describe("phase dates through system refreshes", () => {
     ).resolves.toMatchObject({ status: "replaced" });
 
     const [end] = await readPhaseEnds(plan.id);
-    expect(end).toBe("2020-10-15");
+    expect(end).toBe("2020-10-14");
 
     await expect(
       readLastLessonDay({ phase: 0, planId: plan.id, skills: library.graph.skills }),
-    ).resolves.toBe("2020-10-14");
+    ).resolves.toBe("2020-10-13");
 
     await expect(
       prisma.planItem.count({
@@ -323,7 +361,7 @@ describe("phase dates through system refreshes", () => {
       }),
     ).resolves.toBe(14);
 
-    await expectChallengeDate({ date: "2020-10-15", planId: plan.id });
+    await expectChallengeDate({ date: "2020-10-14", planId: plan.id });
   });
 
   it("offers to move a phase's end this week past lessons that land longer than planned", async () => {
@@ -466,7 +504,7 @@ describe("phase dates through system refreshes", () => {
   it("moves an unsafe phase end after a rest day and records it, quietly on Today", async () => {
     const { goal, plan } = await setup({ targetDate: FAR });
     const ends = await readPhaseEnds(plan.id);
-    expect(ends[0]).toBe("2020-10-07");
+    expect(ends[0]).toBe("2020-10-06");
     const restDay = new Date(`${ends[0]}T00:00:00Z`).getUTCDay();
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const settings = saved.settings as Record<string, unknown>;
@@ -486,8 +524,8 @@ describe("phase dates through system refreshes", () => {
     const [endAfter] = await readPhaseEnds(plan.id);
     const [challenge] = await readChallengeDates(plan.id);
 
-    expect(endAfter).toBe("2020-10-09");
-    expect(challenge).toBe("2020-10-09");
+    expect(endAfter).toBe("2020-10-08");
+    expect(challenge).toBe("2020-10-08");
     await expect(readProposals(plan.id)).resolves.toHaveLength(0);
 
     const applied = await prisma.planChange.findFirstOrThrow({
@@ -495,14 +533,14 @@ describe("phase dates through system refreshes", () => {
     });
 
     const phaseEnds = [
-      { after: "2020-10-09", before: "2020-10-07", lessonsFirst: true, name: "Basics" },
+      { after: "2020-10-08", before: "2020-10-06", lessonsFirst: true, name: "Basics" },
     ];
 
     const payload = parsePlanChangePayload(applied.payload);
     expect(payload.source).toBe("system");
     expect(payload.effect).toMatchObject({ lessonsAdded: 0, lessonsRemoved: 0 });
     expect(payload.effect?.phaseEnds).toStrictEqual(phaseEnds);
-    await expectChallengeDate({ date: "2020-10-09", planId: plan.id });
+    await expectChallengeDate({ date: "2020-10-08", planId: plan.id });
 
     await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
       status: "ready",
@@ -528,7 +566,7 @@ describe("phase dates through system refreshes", () => {
   });
 
   it("moves a later end only as far as its lessons need when the moved challenge takes their day", async () => {
-    const { ends, goal, plan } = await setupRestingEnd();
+    const { ends, goal, plan } = await setupRestingEnd({ lessons: 4 });
 
     await refreshGoalPlan({ goalId: goal.id });
 

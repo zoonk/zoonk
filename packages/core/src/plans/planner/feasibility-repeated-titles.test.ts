@@ -7,7 +7,6 @@ import { summarizeSelectedPlan } from "./selected-plan-summary";
 
 function repeatedTitleInput(): BuildPlanInput {
   return {
-    courseStart: true,
     goal: { dailyMinutes: 30, kind: "learn", targetDate: fromIsoDate("2020-10-26") },
     graph: {
       phases: [{ milestone: null, name: "Physics" }],

@@ -233,7 +233,6 @@ describe("course estimate chapter work", () => {
     }
 
     const built = buildPlan({
-      courseStart: true,
       goal: { dailyMinutes: 10, kind: "learn", targetDate: null },
       graph: data.graph,
       items: [],

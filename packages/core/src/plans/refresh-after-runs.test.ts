@@ -191,7 +191,7 @@ describe("a session whose slower pace no longer fits this week", () => {
       "2020-09-30": 2,
       "2020-10-01": 2,
       "2020-10-02": 2,
-      "2020-10-03": 2,
+      "2020-10-04": 2,
     });
 
     await prisma.planItem.updateMany({

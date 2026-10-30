@@ -8,6 +8,7 @@ import { getChallenge } from "../checkpoints/get-challenge";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { takenChallengeFixture } from "./_test-utils/taken-challenge";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { createGoalPlan } from "./create-goal-plan";
 import { refreshGoalPlan } from "./refresh-goal-plan";
@@ -39,11 +40,12 @@ describe("asking to move the phase dates a run keeps", () => {
       userId: user.id,
     });
 
+    await takenChallengeFixture({ date: new Date("2020-09-21T00:00:00Z"), planId: plan.id });
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     await expect(
       prisma.planItem.findFirstOrThrow({ where: { kind: "boss", phase: 0, planId: plan.id } }),
-    ).resolves.toMatchObject({ scheduledFor: new Date("2020-10-01") });
+    ).resolves.toMatchObject({ scheduledFor: new Date("2020-09-30") });
 
     await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
     mockSession(user.id);
@@ -77,12 +79,12 @@ describe("asking to move the phase dates a run keeps", () => {
       where: { kind: "boss", phase: 0, planId: plan.id },
     });
 
-    expect(boss.scheduledFor).toStrictEqual(new Date("2020-10-02"));
+    expect(boss.scheduledFor).toStrictEqual(new Date("2020-10-01"));
 
     await expect(
       getChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }),
     ).resolves.toMatchObject({
-      challenge: { date: "2020-10-02", planItemId: boss.id, status: "upcoming" },
+      challenge: { date: "2020-10-01", planItemId: boss.id, status: "upcoming" },
       status: "ready",
     });
 
@@ -91,7 +93,7 @@ describe("asking to move the phase dates a run keeps", () => {
     });
 
     const phaseEnds = [
-      { after: "2020-10-02", before: "2020-10-01", lessonsFirst: true, name: "Basics" },
+      { after: "2020-10-01", before: "2020-09-30", lessonsFirst: true, name: "Basics" },
     ];
 
     const payload = parsePlanChangePayload(applied.payload);

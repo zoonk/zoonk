@@ -43,6 +43,23 @@ export function getLearningShare({
   );
 }
 
+/** A new plan has nothing to review yet, so its first day is all lessons; an exam's has mocks. */
+export function getLearnDayShare({
+  date,
+  hasMocks,
+  practiceBias,
+  start,
+}: {
+  date: Date | null;
+  hasMocks: boolean;
+  practiceBias: PracticeBias;
+  start: Date;
+}): number {
+  return !hasMocks && date?.getTime() === start.getTime()
+    ? 1
+    : getLearningShare({ phaseKind: "learn", practiceBias });
+}
+
 function getFinalStretchDays(studyDays: number): number {
   return Math.min(
     FINAL_STRETCH_MAX_DAYS,

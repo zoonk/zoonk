@@ -4,6 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../_test-utils/plan-library";
+import { takenChallengeFixture } from "../_test-utils/taken-challenge";
 import { createGoalPlan } from "../create-goal-plan";
 import { addDays, toIsoDate } from "../planner/plan-calendar";
 import { parsePlanPhases, parsePlanSettings } from "../planner/plan-state";
@@ -85,7 +86,7 @@ describe("proposal effects on Today", () => {
     const library = await planLibraryFixture({
       phases: ["First interviews", "Practice"],
       skills: [
-        { area: "Interviews", lessons: 0, phase: 0, size: 12 },
+        { area: "Interviews", lessons: 0, phase: 0, size: 13 },
         { area: "Interviews", lessons: 0, phase: 1, size: 60 },
       ],
     });
@@ -97,6 +98,7 @@ describe("proposal effects on Today", () => {
       userId: user.id,
     });
 
+    await takenChallengeFixture({ date: new Date("2020-09-21T00:00:00Z"), planId: plan.id });
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });

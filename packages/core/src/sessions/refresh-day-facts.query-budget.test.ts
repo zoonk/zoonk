@@ -25,13 +25,13 @@ function runBody(body: () => Promise<void>) {
   return promise.finally(() => pending.delete(promise));
 }
 
-async function setup(spent: number, open = true) {
+async function setup(spent: number, open = true, startDate = "2020-09-28") {
   const user = await userFixture();
   const library = await planLibraryFixture({ skills: [{ lessons: 8 }, { lessons: 6 }] });
 
   const { goal, plan } = await unplannedGoalFixture({
     dailyMinutes: 12,
-    settings: { startDate: "2020-09-28" },
+    settings: { startDate },
     timezone: "UTC",
     userId: user.id,
   });
@@ -199,7 +199,8 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
 
   it("rebuilds the opened day when Undo has no saved session snapshot, preserving eligible targets", () =>
     runBody(async () => {
-      const { goal, readDay, user } = await setup(0, false);
+      // A plan's first day is all lessons, which leaves no room for a mission outside the session.
+      const { goal, readDay, user } = await setup(0, false, "2020-09-27");
 
       const applied = await changeGoalPlan({
         goalId: goal.id,

@@ -153,7 +153,9 @@ describe("shown-day membership", () => {
 
       expect(preview).toStrictEqual([
         { key: "lesson:a1", minutes: 3 },
-        { key: "lesson:a2", minutes: 2 },
+        { key: "lesson:a2", minutes: 3 },
+        { key: "lesson:a3", minutes: 3 },
+        { key: "lesson:b1", minutes: 1 },
       ]);
 
       const opened = buildPlan({
@@ -167,7 +169,7 @@ describe("shown-day membership", () => {
       });
 
       expect(onToday(opened)).toStrictEqual(preview.filter((entry) => entry.key !== "lesson:a1"));
-      expect(onToday(opened)).toHaveLength(1);
+      expect(onToday(opened)).toHaveLength(3);
     },
   );
 

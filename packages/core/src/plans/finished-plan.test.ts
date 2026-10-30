@@ -14,9 +14,9 @@ import { createGoalPlan } from "./create-goal-plan";
 /** A Monday in 2020, before the learning events other tests write. */
 const START = new Date("2020-09-28T12:00:00Z");
 
-const DATE = new Date("2020-10-07T00:00:00Z");
+const DATE = new Date("2020-10-06T00:00:00Z");
 
-const DAY_AFTER = new Date("2020-10-08T12:00:00Z");
+const DAY_AFTER = new Date("2020-10-07T12:00:00Z");
 
 const SIZES = [8, 8, 8, 4];
 
@@ -284,7 +284,7 @@ describe("a finished plan", () => {
     await finish(plan.id, ["chapter", "lesson"]);
 
     await prisma.planItem.updateMany({
-      data: { scheduledFor: new Date("2020-10-08T00:00:00Z") },
+      data: { scheduledFor: new Date("2020-10-07T00:00:00Z") },
       where: { kind: "boss", planId: plan.id },
     });
 

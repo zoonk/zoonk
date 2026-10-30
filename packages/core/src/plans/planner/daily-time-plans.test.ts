@@ -12,7 +12,7 @@ const state: PlanState = {
   goal: { dailyMinutes: 60, targetDate: "2020-10-01" },
   graph: {
     phases: [{ milestone: null, name: "Everything" }],
-    skills: [{ area: null, lessons: 16, name: "One", phase: 0, skillId: "s1", weight: null }],
+    skills: [{ area: null, lessons: 22, name: "One", phase: 0, skillId: "s1", weight: null }],
   },
   settings: parsePlanSettings({
     startDate: "2020-09-28",

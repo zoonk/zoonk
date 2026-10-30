@@ -99,7 +99,7 @@ describe("mandatory phase notices after missed days", () => {
 
     const payload = parsePlanChangePayload(change.payload);
 
-    const phaseEnds = [{ after: "2026-10-24", before: "2026-10-21", name: "First interviews" }];
+    const phaseEnds = [{ after: "2026-10-26", before: "2026-10-21", name: "First interviews" }];
 
     expect(change.kind).toBe("missedDays");
 
@@ -114,13 +114,13 @@ describe("mandatory phase notices after missed days", () => {
 
     expect(saved.phases).toStrictEqual(
       expect.arrayContaining([
-        expect.objectContaining({ endDate: "2026-10-24", name: "First interviews" }),
+        expect.objectContaining({ endDate: "2026-10-26", name: "First interviews" }),
       ]),
     );
 
     await expect(
       prisma.planItem.findFirstOrThrow({ where: { kind: "boss", phase: 0, planId: plan.id } }),
-    ).resolves.toMatchObject({ scheduledFor: new Date("2026-10-24T00:00:00Z") });
+    ).resolves.toMatchObject({ scheduledFor: new Date("2026-10-26T00:00:00Z") });
 
     expect(result.today.planChange).toBeNull();
     expect(payload.seenAt).toBeNull();

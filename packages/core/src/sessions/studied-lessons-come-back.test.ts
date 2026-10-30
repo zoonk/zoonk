@@ -120,9 +120,10 @@ async function liveDays(lessonSkills: LessonSkills) {
 
   const [user, library] = await Promise.all([userFixture(), outlinedLibrary(lessonSkills)]);
 
+  // A plan's first day is all lessons; these days follow a plan that began the day before.
   const { goal } = await unplannedGoalFixture({
     dailyMinutes: 15,
-    settings: { startDate: "2026-09-30" },
+    settings: { startDate: "2026-09-29" },
     timezone: TIME_ZONE,
     userId: user.id,
   });

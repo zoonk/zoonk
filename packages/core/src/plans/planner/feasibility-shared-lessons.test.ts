@@ -9,7 +9,6 @@ function sharedLessonInput({
   weekdayMinutes = [0, 0, 0, 0, 0, 15, 0],
 }: { lessonMinutes?: readonly number[]; weekdayMinutes?: number[] } = {}): BuildPlanInput {
   return {
-    courseStart: true,
     goal: { dailyMinutes: 15, kind: "learn", targetDate: fromIsoDate("2020-09-29") },
     graph: {
       phases: [{ milestone: null, name: "Shared concepts" }],

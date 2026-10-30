@@ -426,7 +426,7 @@ describe("skill extensions", () => {
   });
 
   it("swaps the next chapter's lessons in for part of the stand-in when the goal re-plans", async () => {
-    const { course, goal, plan, skill } = await setup();
+    const { course, goal, plan, skill } = await setup({ dailyMinutes: 20 });
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
 
     await addChapter({

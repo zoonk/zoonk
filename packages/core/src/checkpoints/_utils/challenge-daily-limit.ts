@@ -1,7 +1,5 @@
 import "server-only";
-import { isJsonObject } from "@zoonk/utils/json";
 import { getWeeklyMockMinutes } from "../../exams/mocks/mock-plan";
-import { readCourseStart } from "../../goals/course-start-details";
 import { canHoldPhaseChallenge } from "../../plans/planner/phase-challenge-days";
 import { addDays, toIsoDate } from "../../plans/planner/plan-calendar";
 import { toExamWindows } from "../../plans/planner/plan-phases";
@@ -38,7 +36,6 @@ function getTomorrowRunInput({
   const { goal, items, plan, today } = challenge;
 
   return {
-    courseStart: readCourseStart(isJsonObject(goal.details) ? goal.details : {}) !== null,
     examWindows: toExamWindows(parsePlanPhases(plan.phases)),
     fullMockMinutes: getWeeklyMockMinutes({ fullLength: true, structure: null }),
     goal: { dailyMinutes: goal.dailyMinutes, kind: goal.kind, targetDate: goal.targetDate },

@@ -1,10 +1,8 @@
 import "server-only";
 import { type PlanChangeStatus } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
 import { once } from "@zoonk/utils/once";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
-import { readCourseStart } from "../../goals/course-start-details";
 import { getKnownSubjects } from "../../learner/placement/placement-contract";
 import { chooseBases } from "../planner/base-choices";
 import { type BossMinutes } from "../planner/boss-minutes";
@@ -16,9 +14,11 @@ import { type StudyScheduleAt } from "../planner/daily-time-plans";
 import { weighGraphForExam } from "../planner/exam-weights";
 import { getShownPhaseEnds } from "../planner/kept-phase-ends";
 import { sizeLanguageGraph } from "../planner/language-size";
+import { isPhaseDatesMoveWorth, mayCostToKeepPhaseDates } from "../planner/phase-dates-move";
 import { type PlanBases } from "../planner/plan-bases";
 import { type PlanEffect } from "../planner/plan-effect";
 import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
+import { hasTakenChallenge } from "../planner/plan-item-rules";
 import { type Pace } from "../planner/plan-pace";
 import { toExamWindows } from "../planner/plan-phases";
 import { type PlanState } from "../planner/plan-state";
@@ -101,26 +101,53 @@ type ComputePlanRequest = {
   studyScheduleAt?: StudyScheduleAt;
 };
 
+/**
+ * Asking to move a challenge the learner has never met is noise: until they take one, a plan that
+ * would pay for keeping its phase dates lays its phases out again instead of proposing the move.
+ */
+async function layOutUnmetPhaseDates({
+  built,
+  graph,
+  kept,
+  request,
+}: {
+  built: BuiltPlan;
+  graph: PlanState["graph"];
+  kept: ReadonlyMap<number, Date> | undefined;
+  request: ComputePlanRequest;
+}): Promise<ComputedPlan | null> {
+  if (!kept?.size || hasTakenChallenge(request.context.items) || !mayCostToKeepPhaseDates(built)) {
+    return null;
+  }
+
+  const laidOut = await computePlan({ ...request, keepPhaseDates: false });
+  return isPhaseDatesMoveWorth({ graph, kept: built, moved: laidOut.built }) ? laidOut : null;
+}
+
 /** Plans a goal from a state without saving anything. */
 export function computePlan(
   input: ComputePlanRequest & { skipUnchangedInputs: true },
 ): Promise<ComputedPlan | null>;
 export function computePlan(input: ComputePlanRequest): Promise<ComputedPlan>;
 export async function computePlan({
-  carrySnapshot,
-  context,
-  mode,
-  keepPhaseDates = mode === "automatic",
-  now = new Date(),
-  movedEnds,
-  pace: paceSource = "saved",
-  releasedPhases,
-  setAsideLeftWork = false,
   skipUnchangedInputs,
-  state = context.state,
-  todayShown: shownToday,
-  ...options
+  ...request
 }: ComputePlanRequest & { skipUnchangedInputs?: boolean }): Promise<ComputedPlan | null> {
+  const {
+    carrySnapshot,
+    context,
+    mode,
+    keepPhaseDates = mode === "automatic",
+    now = new Date(),
+    movedEnds,
+    pace: paceSource = "saved",
+    releasedPhases,
+    setAsideLeftWork = false,
+    state = context.state,
+    todayShown: shownToday,
+    ...options
+  } = request;
+
   const resolved = await resolveMergedSkills(
     await chooseExamOptionSkills({
       choices: state.settings.examChoices,
@@ -181,8 +208,6 @@ export async function computePlan({
     bossMinutes: listSavedBossMinutes(context.items),
     bringBackSetAside: options.bringBackSetAside ?? false,
     carryOver,
-    courseStart:
-      readCourseStart(isJsonObject(context.goal.details) ? context.goal.details : {}) !== null,
     examWindows: toExamWindows(context.phases),
     finishedOn: listFinishedDays({ items: context.items, timeZone: context.timeZone }),
     goal: { dailyMinutes: state.goal.dailyMinutes, kind: context.goal.kind, targetDate },
@@ -225,6 +250,11 @@ export async function computePlan({
   const builtInput = { ...input, ...landing };
 
   const built = buildPlan(builtInput);
+  const laidOut = await layOutUnmetPhaseDates({ built, graph, kept: input.phaseEnds, request });
+
+  if (laidOut) {
+    return laidOut;
+  }
 
   const bases = once(advise);
 

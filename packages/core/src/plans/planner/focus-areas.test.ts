@@ -22,7 +22,7 @@ function lessonsFor(skillId: string, count: number): PlannerLesson[] {
 
 function shortPlan(focusAreas: string[]): BuildPlanInput {
   return {
-    goal: { dailyMinutes: 12, kind: "learn", targetDate: fromIsoDate("2026-10-08") },
+    goal: { dailyMinutes: 12, kind: "learn", targetDate: fromIsoDate("2026-10-07") },
     graph: {
       phases: [
         { milestone: null, name: "Research" },

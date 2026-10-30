@@ -55,7 +55,6 @@ async function getCachedCourseEstimate({
     announcements: data.facts.announcements,
     bands: data.bands,
     bossFacts: data.bossFacts,
-    courseStart: true,
     fullMockMinutes: data.facts.fullMockMinutes,
     goal: { dailyMinutes: input.dailyMinutes, kind: data.kind, targetDate },
     graph: data.graph,
