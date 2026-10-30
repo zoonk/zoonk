@@ -47,7 +47,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -265,7 +264,9 @@ private fun RhythmGrid(
                 }
             }
             FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                LegendItem(stringResource(R.string.activities_music_rhythm_hits)) { HitDot(MaterialTheme.zoonk.vizHighlight) }
+                LegendItem(stringResource(R.string.activities_music_rhythm_hits)) {
+                    Box(Modifier.width(12.dp).height(8.dp).background(MaterialTheme.zoonk.vizAccent, RoundedCornerShape(2.dp)))
+                }
                 LegendItem(stringResource(R.string.activities_music_on_time)) { ResultMark(TapStatus.OnTime) }
                 LegendItem(stringResource(R.string.activities_music_early_or_late)) { ResultMark(TapStatus.Early) }
             }
@@ -293,7 +294,7 @@ private fun RowScope.StepCell(
                 .fillMaxWidth()
                 .height(32.dp)
                 .clip(shape)
-                .background(if (isHit) MaterialTheme.zoonk.vizHighlight else colors.surface)
+                .background(if (isHit) MaterialTheme.zoonk.vizAccent else colors.surface)
                 .then(if (isPlaying) Modifier.border(2.dp, colors.onSurface, shape) else Modifier),
         )
     }
@@ -304,15 +305,10 @@ private fun RowScope.StepCell(
 private fun ResultMark(status: TapStatus) {
     val colors = MaterialTheme.colorScheme
     when (status) {
-        TapStatus.OnTime -> HitDot(colors.tertiary)
+        TapStatus.OnTime -> Box(Modifier.size(8.dp).background(colors.tertiary, CircleShape))
         TapStatus.Early, TapStatus.Late -> Box(Modifier.width(10.dp).height(4.dp).background(MaterialTheme.zoonk.warning, CircleShape))
         TapStatus.Missed -> Box(Modifier.size(8.dp).border(2.dp, colors.error, CircleShape))
     }
-}
-
-@Composable
-private fun HitDot(color: Color) {
-    Box(Modifier.size(8.dp).background(color, CircleShape))
 }
 
 @Composable
