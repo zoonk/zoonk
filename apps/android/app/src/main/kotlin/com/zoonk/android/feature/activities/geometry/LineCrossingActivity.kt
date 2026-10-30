@@ -272,15 +272,15 @@ private fun LineCrossingChart(
                 answerLine?.let { drawSegment(segment(it), colors.right, dashed = true) }
                 shown.forEachIndexed { index, line -> drawSegment(segment(line), colors.tones[index], dashed = false) }
             }
-            movedLines.forEach { label(beforeLabel, colors.muted, segment(it), false) }
-            answerLine?.let { label(whatHappened, colors.rightText, segment(it), false) }
-            shown.forEachIndexed { index, line -> label(fields.lines[index].label, colors.tones[index], segment(line), true) }
-
             if (movedLines.isNotEmpty()) {
                 crossingMark(pixel(before), left, bottom, isBefore = true, colors)
                 changeArrows(pixel(before), pixel(after), left, bottom, colors.ink)
             }
             crossingMark(pixel(after), left, bottom, isBefore = false, colors)
+
+            movedLines.forEach { label(beforeLabel, colors.muted, segment(it), false) }
+            answerLine?.let { label(whatHappened, colors.rightText, segment(it), false) }
+            shown.forEachIndexed { index, line -> label(fields.lines[index].label, colors.tones[index], segment(line), true) }
         }
 
         val handles =
