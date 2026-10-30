@@ -147,26 +147,16 @@ final class GoalContentStore {
     return unit
   }
 
-  func practice(goalId: String, areaId: String) async -> AreaPracticeOutcome? {
-    guard let session = cache.session.authenticatedSession else {
-      return nil
+  func practice(goalId: String, areaId: String) async -> MutationResult<AreaPracticeOutcome> {
+    let result = await cache.mutate { identity in
+      try await api.practice(token: identity.bearerToken, goalId: goalId, areaId: areaId)
     }
 
-    do {
-      let outcome = try await api.practice(
-        token: session.bearerToken, goalId: goalId, areaId: areaId)
-
-      if case .opened = outcome {
-        cache.invalidate([.userProgress])
-      }
-
-      return outcome
-    } catch APIError.unauthorized {
-      await cache.session.expire(session)
-      return nil
-    } catch {
-      return nil
+    if case .done(.opened) = result {
+      cache.invalidate([.userProgress])
     }
+
+    return result
   }
 }
 

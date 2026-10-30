@@ -100,6 +100,7 @@ private struct ChapterContent: View {
   @Environment(GoalContentStore.self) private var store
   @State private var isPracticing = false
   @State private var practiceNote: Text?
+  @State private var practiceTask: Task<Void, Never>?
 
   let goal: LearnerGoal
   let chapter: GoalChapter
@@ -122,6 +123,9 @@ private struct ChapterContent: View {
         practiceSection
         referenceSection
       }
+    }
+    .onDisappear {
+      practiceTask?.cancel()
     }
   }
 
@@ -288,27 +292,30 @@ private struct ChapterContent: View {
   }
 
   private func practice() {
-    Task {
-      isPracticing = true
-      practiceNote = nil
-      let outcome = await store.practice(goalId: goal.id, areaId: chapter.chapter.chapterId)
+    isPracticing = true
+    practiceNote = nil
+
+    practiceTask = Task {
+      let result = await store.practice(goalId: goal.id, areaId: chapter.chapter.chapterId)
       isPracticing = false
 
-      switch outcome {
-      case .opened(let route):
+      switch result {
+      case .done(.opened(let route)):
         router.open(route)
-      case .dailyCap:
+      case .done(.dailyCap):
         practiceNote = Text(
           "That's all the bonus practice for today. Tomorrow's session picks this chapter up.",
           tableName: "Plan", comment: "Says today's bonus practice is used up")
-      case .nothingToPractice:
+      case .done(.nothingToPractice):
         practiceNote = Text(
           "Nothing to practice in this chapter yet.", tableName: "Plan",
           comment: "Says the chapter has nothing to practice")
-      case nil:
+      case .failed:
         practiceNote = Text(
           "That didn't work. Try again in a moment.", tableName: "Plan",
           comment: "Says the practice didn't start")
+      case .obsolete:
+        break
       }
     }
   }
