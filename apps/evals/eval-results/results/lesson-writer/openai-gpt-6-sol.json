@@ -4785,6 +4785,126 @@
           "activityTemplates": []
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The care instructions, approximate cold-water temperature, and explanations of wool shrinkage are accurate at this level. Each check has exactly one defensible correct answer, and the option reasons correctly distinguish washing method and dryer heat.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The wording is short, concrete, and appropriate for beginners. Care-tag phrases are explained in everyday language, and the temperature uses familiar US units. A practical illustration of laying the garment flat would offer a small additional benefit.",
+          "score": 9,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The checks require choosing care actions rather than identifying the tag's words. The image alt supplies both instructions, the required low-heat dryer misconception is retained, and the feedback explains the options. However, the sweater check's basis covers drying only and cannot explain why the hot-wash-and-flat-dry option is wrong.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses US English and beginner-level language, opens directly with the planned guess, follows the planned screen sequence, and ends with one-sentence summary items. Leo's hoodie-and-towels decision is a realistic home application with a concrete location. The sweater question correctly follows the explicit decision-making requirement rather than the conflicting request in the plan to ask what the tag says.",
+          "score": 10,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3662,
+          "outputTokens": 892,
+          "reasoningTokens": 349
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The sweater check's basis quotes only the drying rule. That sentence rules out the dryer options but does not distinguish the correct answer from the hot-machine-wash option, which also ends with laying the sweater flat. The highlighted feedback therefore does not fully resolve the question.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Consider asking only how to dry the pictured sweater. This would focus the decision on the quoted basis while preserving the required tempting wrong answer, 'tumble dry low.' A brief practical example, such as laying the sweater flat on a clean towel, could also make the drying instruction more actionable.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for beginners\n      - The check about the sweater's tag has an `image` whose `alt` gives the tag's words (hand wash cold, lay flat to dry), so a learner who can't see the picture can still answer\n      - Since that alt gives the tag's words, the check doesn't ask what the tag says or reads: it asks what the tag means for a decision, such as how to dry the sweater after washing it, and keeps \"tumble dry low\" as a wrong option\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-care-tag-picture-meaning-1",
+        "userInput": {
+          "chapterTitle": "Laundry",
+          "courseTitle": "Home skills",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Read a clothing care tag and wash and dry the piece without ruining it",
+            "description": "See what a care tag's washing and drying words mean, so a sweater doesn't shrink.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Guess first: a wool sweater's tag says 'Hand wash cold'. If you machine wash it in hot water, what most likely happens? Right answer: it shrinks and gets stiff. Tempting wrong answer: nothing, the tag is only a suggestion.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A care tag says how to wash and dry a piece without damaging it. 'Cold' means water up to about 86 °F; heat and rubbing shrink wool. 'Tumble dry low' allows the dryer on low heat, while 'Lay flat to dry' means no dryer at all: tumbling shrinks the piece and hanging it wet stretches it.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The picture shows a sweater's care tag reading 'HAND WASH COLD. LAY FLAT TO DRY.' Ask what the tag says. Tempting wrong answer: 'Tumble dry low' (taking low heat as safe for any piece).",
+                "kind": "check",
+                "skills": [0],
+                "visual": "A wool sweater on a bed, its sewn-in care tag turned out and reading 'HAND WASH COLD. LAY FLAT TO DRY.'"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Leo's new cotton hoodie has a tag that says 'Machine wash cold. Tumble dry low.' He wants to dry it with his towels on high heat. Ask what he should do (dry it on low, separately if the towels need high heat). Tempting wrong answer: high heat is fine because the tag allows the dryer.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A care tag's words set the water temperature and whether the piece may go in the dryer and at what heat.",
+                "example": "A tag saying 'Lay flat to dry' means no dryer, not even on low.",
+                "hard": false,
+                "name": "Read clothing care tags",
+                "topic": "Laundry basics",
+                "useCase": "Washing a new sweater without shrinking it."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Reading a care tag"
+          },
+          "activityTemplates": []
+        }
+      }
     }
   ],
   "taskId": "lesson-writer"

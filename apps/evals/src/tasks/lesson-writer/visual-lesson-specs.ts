@@ -167,6 +167,60 @@ export const VISUAL_LESSON_SPECS = {
     supportMode: "explanationFirst",
     title: "Where seeds come from",
   },
+  "en-laundry-care-labels-beginner": {
+    canDo: "Read a clothing care tag and wash and dry the piece without ruining it",
+    description:
+      "See what a care tag's washing and drying words mean, so a sweater doesn't shrink.",
+    estimatedMinutes: 3,
+    screens: [
+      {
+        activityTemplate: null,
+        brief:
+          "Guess first: a wool sweater's tag says 'Hand wash cold'. If you machine wash it in hot water, what most likely happens? Right answer: it shrinks and gets stiff. Tempting wrong answer: nothing, the tag is only a suggestion.",
+        kind: "hook",
+        skills: [],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "A care tag says how to wash and dry a piece without damaging it. 'Cold' means water up to about 86 °F; heat and rubbing shrink wool. 'Tumble dry low' allows the dryer on low heat, while 'Lay flat to dry' means no dryer at all: tumbling shrinks the piece and hanging it wet stretches it.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "The picture shows a sweater's care tag reading 'HAND WASH COLD. LAY FLAT TO DRY.' Ask what the tag says. Tempting wrong answer: 'Tumble dry low' (taking low heat as safe for any piece).",
+        kind: "check",
+        skills: [0],
+        visual:
+          "A wool sweater on a bed, its sewn-in care tag turned out and reading 'HAND WASH COLD. LAY FLAT TO DRY.'",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Leo's new cotton hoodie has a tag that says 'Machine wash cold. Tumble dry low.' He wants to dry it with his towels on high heat. Ask what he should do (dry it on low, separately if the towels need high heat). Tempting wrong answer: high heat is fine because the tag allows the dryer.",
+        kind: "application",
+        skills: [0],
+        visual: null,
+      },
+    ],
+    skills: [
+      {
+        description:
+          "A care tag's words set the water temperature and whether the piece may go in the dryer and at what heat.",
+        example: "A tag saying 'Lay flat to dry' means no dryer, not even on low.",
+        hard: false,
+        name: "Read clothing care tags",
+        topic: "Laundry basics",
+        useCase: "Washing a new sweater without shrinking it.",
+      },
+    ],
+    supportMode: "explanationFirst",
+    title: "Reading a care tag",
+  },
   "pt-graficos-de-barras-beginner": {
     canDo: "Criar um gráfico de barras com categorias legíveis",
     description:

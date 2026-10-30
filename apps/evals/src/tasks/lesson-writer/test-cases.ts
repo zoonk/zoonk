@@ -508,6 +508,23 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
     expectations: `
       - MUST be in US English, for beginners
+      - The check about the sweater's tag has an \`image\` whose \`alt\` gives the tag's words (hand wash cold, lay flat to dry), so a learner who can't see the picture can still answer
+      - Since that alt gives the tag's words, the check doesn't ask what the tag says or reads: it asks what the tag means for a decision, such as how to dry the sweater after washing it, and keeps "tumble dry low" as a wrong option
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-care-tag-picture-meaning",
+    userInput: toInput({
+      chapterTitle: "Laundry",
+      courseTitle: "Home skills",
+      language: "en",
+      level: "beginner",
+      spec: VISUAL_LESSON_SPECS["en-laundry-care-labels-beginner"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in US English, for beginners
       - The second screen's \`explore\` is a formulaModel whose slider is the yearly rate from 0 to 12 (starting at 5) and whose output formula gives the balance of $1,000 after 20 years, 1000 * (1 + rate/100)^20; its labels and units fit the text
       - Every number in the text matches what that formula gives (about $2,191 at 4% and $4,661 at 8%)
       - No screen has a picture
