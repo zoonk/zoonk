@@ -26,6 +26,12 @@ struct BuddyDayView: View {
 
       if let today = status.today, !today.missions.isEmpty {
         Section {
+          MissionsSummary(
+            missions: today.missions.compactMap(StudyMission.init), bonus: today.fullMeal.bonus,
+            earned: today.fullMeal.earned
+          )
+          .listRowSeparator(.hidden, edges: .bottom)
+
           ForEach(Array(today.missions.enumerated()), id: \.offset) { _, mission in
             if let row = StudyMission(mission) {
               MissionRow(mission: row, buddyName: name) {
@@ -36,7 +42,7 @@ struct BuddyDayView: View {
             }
           }
         } header: {
-          missionsHeader(today)
+          Text("Today's missions", tableName: "Buddy", comment: "Section of the day's missions")
         }
       }
 
@@ -81,43 +87,6 @@ struct BuddyDayView: View {
 
   var subtitle: Text {
     Text("\(status.stage.name) · \(status.growthLine)")
-  }
-
-  private func missionsHeader(_ today: BuddyStatus.TodayPayload) -> some View {
-    let minutes = Int(today.missions.compactMap(\.minutes).reduce(0, +).rounded())
-
-    return HStack(alignment: .firstTextBaseline) {
-      VStack(alignment: .leading, spacing: 2) {
-        Text("Today's missions", tableName: "Buddy", comment: "Section of the day's missions")
-
-        Text(
-          "\(missionCount(today.missions.count)) · ~\(minutes) min", tableName: "Buddy",
-          comment:
-            "How many missions today and about how long they take; the first argument is the count"
-        )
-        .font(.footnote)
-        .foregroundStyle(.secondary)
-      }
-
-      Spacer()
-
-      if today.fullMeal.bonus > 0 {
-        Label {
-          Text(
-            "+\(today.fullMeal.bonus) Brain Power", tableName: "Buddy",
-            comment: "The Brain Power every mission done adds")
-        } icon: {
-          Image(systemName: "brain")
-        }
-        .font(.footnote.monospacedDigit())
-        .foregroundStyle(.brain)
-      }
-    }
-    .textCase(nil)
-  }
-
-  private func missionCount(_ count: Int) -> String {
-    String(localized: "\(count) missions", table: "Buddy", comment: "How many missions today")
   }
 
   @ViewBuilder

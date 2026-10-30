@@ -455,62 +455,24 @@ struct TodayMissionsSection: View {
   private var missions: [StudyMission] { view.session.missions }
 
   var body: some View {
-    let left = missions.filter { !$0.isDone }
-    let bonus = view.session.fullMeal.bonus
+    let earned = view.session.fullMeal.earned
 
-    if view.session.fullMeal.earned {
-      Section {
-        if left.isEmpty {
-          HStack {
-            Text("Missions done", tableName: "Today", comment: "Today's missions are done")
-              .font(.body.weight(.medium))
-            Spacer()
-            BrainPowerReward(points: bonus, earned: true)
-          }
-        } else {
-          Text(
-            "Today's +\(bonus) Brain Power is already earned.", tableName: "Today",
-            comment: "Another goal already earned the day's missions reward"
-          )
-          .foregroundStyle(.secondary)
-        }
-      }
-    } else {
-      Section {
-        VStack(alignment: .leading, spacing: 12) {
-          HStack(spacing: 10) {
-            MissionsRing(done: missions.count - left.count, total: missions.count) {
-              let buddy = learner.summary.value?.buddy ?? BuddyLook()
-              BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
-            }
-
-            Text(
-              "\(left.count) left · ~\(studyDuration(minutes: minutesLeft(left)))",
-              tableName: "Today", comment: "Missions left and their time"
-            )
-            .font(.subheadline)
-            .monospacedDigit()
-
-            Spacer()
-
-            BrainPowerReward(points: bonus, earned: false)
-          }
-
-          MissionTrack(missions: missions)
-        }
+    Section {
+      MissionsSummary(missions: missions, bonus: view.session.fullMeal.bonus, earned: earned)
         .listRowSeparator(.hidden, edges: .bottom)
 
-        if isBesideTheDay || !onlyOpensBlocks {
-          ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
-            MissionRow(
-              mission: mission, buddyName: learner.buddyDisplayName,
-              block: view.session.blocks.first { mission.opens($0) }
-            ) {
-              go(mission)
-            }
+      if !earned, isBesideTheDay || !onlyOpensBlocks {
+        ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
+          MissionRow(
+            mission: mission, buddyName: learner.buddyDisplayName,
+            block: view.session.blocks.first { mission.opens($0) }
+          ) {
+            go(mission)
           }
         }
-      } header: {
+      }
+    } header: {
+      if !earned {
         Text("Today's missions", tableName: "Today", comment: "Today's missions header")
       }
     }
@@ -521,10 +483,6 @@ struct TodayMissionsSection: View {
       mission.isDone
         || (mission.opens?.kind == "block" && mission.waitReason == nil && mission.total <= 1)
     }
-  }
-
-  private func minutesLeft(_ missions: [StudyMission]) -> Int {
-    Int(missions.reduce(0) { $0 + ($1.minutes ?? 0) }.rounded())
   }
 
   /// A place of its own saves the day itself on its first answer (core's `saveDayBeforeActivity`).
