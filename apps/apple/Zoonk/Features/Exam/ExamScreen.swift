@@ -667,21 +667,29 @@ private struct ExamProgressSection: View {
 
         let trends = progress.subjects.contains { $0.change != nil }
         ForEach(progress.subjects) { subject in
-          LabeledContent {
-            HStack(spacing: 12) {
-              Text((Double(subject.percents.last ?? 0) / 100).formatted(.percent))
-              if trends {
-                Text(subject.change.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? "–")
-                  .foregroundStyle(subject.change == nil ? .secondary : .primary)
-                  .accessibilityLabel(
-                    subject.change.map {
-                      Text("Since the first mock: \($0)", tableName: "Exam", comment: "A change")
-                    } ?? Text(""))
+          let share = Double(subject.percents.last ?? 0) / 100
+
+          VStack(alignment: .leading, spacing: 6) {
+            LabeledContent {
+              HStack(spacing: 12) {
+                Text(share.formatted(.percent))
+                if trends {
+                  Text(subject.change.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? "–")
+                    .foregroundStyle(subject.change == nil ? .secondary : .primary)
+                    .accessibilityLabel(
+                      subject.change.map {
+                        Text("Since the first mock: \($0)", tableName: "Exam", comment: "A change")
+                      } ?? Text(""))
+                }
               }
+              .monospacedDigit()
+            } label: {
+              Text(subject.name)
             }
-            .monospacedDigit()
-          } label: {
-            Text(subject.name)
+
+            ProgressView(value: min(max(share, 0), 1))
+              .tint(.success)
+              .accessibilityHidden(true)
           }
         }
       } header: {
