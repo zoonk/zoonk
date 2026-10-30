@@ -7,13 +7,15 @@ struct AccountToolbarButton: View {
 
   var body: some View {
     Button(action: action) {
-      AccountAvatar(user: session.account?.user, size: 32)
-        .frame(width: 44, height: 44)
-        .contentShape(Circle())
+      Label {
+        Text("Account", tableName: "Account", comment: "Accessibility label for the account button")
+      } icon: {
+        AccountAvatar(user: session.account?.user, size: 32)
+          .frame(width: 44, height: 44)
+          .contentShape(Circle())
+      }
     }
     .buttonStyle(.plain)
-    .accessibilityLabel(
-      Text("Account", tableName: "Account", comment: "Accessibility label for the account button"))
   }
 }
 
