@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct CourseCatalogGrid: View {
+  @Environment(AppRouter.self) private var router
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(CourseCatalogStore.self) private var catalog
@@ -83,10 +84,15 @@ struct CourseCatalogGrid: View {
     let cell = CourseCell(
       course: course, isColumn: isColumn, showsSubject: course.subject != category)
 
+    // The grid is one list row, and a row fires its links together, so each cell is a plain
+    // button, which takes only its own taps.
     if isColumn {
-      NavigationLink(value: destination) { cell }
-        .buttonStyle(.plain)
-        .navigationLinkIndicatorVisibility(.hidden)
+      Button {
+        router.push(destination)
+      } label: {
+        cell
+      }
+      .buttonStyle(.plain)
     } else {
       NavigationLink(value: destination) { cell }
     }

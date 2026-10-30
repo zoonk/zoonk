@@ -65,6 +65,16 @@ final class AppNavigationTests: XCTestCase {
   }
 
   @MainActor
+  func testAPushedPageGoesOnTheSelectedTab() {
+    let router = AppRouter(selectedTab: .search)
+
+    router.push(CourseDestination.course(CourseReference(id: "c1", title: "Course")))
+
+    XCTAssertEqual(router.path(for: .search).wrappedValue.count, 1)
+    XCTAssertTrue(router.path(for: .today).wrappedValue.isEmpty)
+  }
+
+  @MainActor
   func testTasksStackAndCloseFromTheOneDismissed() {
     let router = AppRouter()
 

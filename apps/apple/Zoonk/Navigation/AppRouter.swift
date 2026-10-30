@@ -98,6 +98,11 @@ final class AppRouter {
     }
   }
 
+  /// A value the selected tab's own `navigationDestination` shows.
+  func push(_ value: some Hashable) {
+    paths[selectedTab, default: NavigationPath()].append(value)
+  }
+
   /// `NavigationPath` doesn't show its elements, but paths compare by them.
   private static func depth(of route: AppRoute, in path: NavigationPath) -> Int? {
     var prefix = path
