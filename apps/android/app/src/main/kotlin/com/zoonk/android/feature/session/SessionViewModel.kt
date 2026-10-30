@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.player.LessonWritingApi
@@ -32,7 +32,7 @@ class SessionViewModel(
     private val sessions: StudySessionStore,
     private val writingApi: LessonWritingApi,
     private val cache: AppCache,
-    private val readiness: suspend (UUID) -> LessonReadiness?,
+    private val readiness: suspend (AuthenticatedSession, UUID) -> LessonReadiness,
     private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     var busy by mutableStateOf<SessionAction?>(null)
@@ -99,29 +99,39 @@ class SessionViewModel(
         if (waiting?.position != position) waiting = LessonWait(position, now())
     }
 
-    /** Reads [lessonId]'s readiness while a run writes it, and the day again only once that changes. */
+    /**
+     * Reads [lessonId]'s readiness while a run writes it, and the day again only once that changes:
+     * a written lesson keeps the wait until the day shows it, so its step is offered as ready.
+     */
     suspend fun followWriting(
         lessonId: UUID,
         readDay: suspend () -> Unit,
     ) {
         while (true) {
-            val status =
-                try {
-                    readiness(lessonId)?.status
-                } catch (e: ApiException) {
-                    null
-                }
-            when (status) {
-                null -> {}
-
-                LessonReadiness.Status.GENERATING -> {
-                    lessonBeingWritten = lessonId
-                }
-
-                else -> {
-                    if (status == LessonReadiness.Status.READY || lessonBeingWritten == lessonId) readDay()
+            when (val read = cache.mutate { readiness(it, lessonId) }) {
+                MutationResult.Obsolete -> {
                     lessonBeingWritten = null
                     return
+                }
+
+                is MutationResult.Failed -> {}
+
+                is MutationResult.Done -> {
+                    when (read.value.status) {
+                        LessonReadiness.Status.GENERATING -> {
+                            lessonBeingWritten = lessonId
+                        }
+
+                        LessonReadiness.Status.READY -> {
+                            readDay()
+                        }
+
+                        else -> {
+                            if (lessonBeingWritten == lessonId) readDay()
+                            lessonBeingWritten = null
+                            return
+                        }
+                    }
                 }
             }
             delay(LESSON_CHECK_MILLIS)

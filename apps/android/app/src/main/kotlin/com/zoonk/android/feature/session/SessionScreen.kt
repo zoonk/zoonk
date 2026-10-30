@@ -97,7 +97,7 @@ fun SessionScreen(
                 app.studySessions,
                 LiveLessonWritingApi(app.api),
                 app.cache,
-                readiness = { lessonId -> app.sessions.current?.let { app.lessonPlayer.api.readiness(it, lessonId.toString()) } },
+                readiness = { session, lessonId -> app.lessonPlayer.api.readiness(session, lessonId.toString()) },
             )
         }
 

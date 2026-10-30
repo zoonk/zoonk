@@ -12,6 +12,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.requestFocus
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -34,15 +36,19 @@ class NextStopTest {
     val rule = createComposeRule()
 
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
+    private val signIn = FakeSession(ana)
     private val api = FakeStudyApi()
     private val waits = mutableListOf<Long>()
     private val waiting = step(0, screen = StudyBlock.Screen.SESSION, lessonId = null)
     private val practice = step(1, kind = StudyBlock.Kind.PRACTICE, screen = StudyBlock.Screen.SESSION, lessonId = null)
     private var shown by mutableStateOf(waiting)
-    private val statuses = mutableListOf<LessonReadiness.Status>()
+
+    /** Readiness answers in order, then ready; null answers that the sign-in expired. */
+    private val statuses = mutableListOf<LessonReadiness.Status?>()
     private var readinessReads = 0
     private var dayReads = 0
     private var dayShowsTheLessonWritten = true
+    private var staleDayReads = 0
 
     /** A step whose lesson the plan hasn't picked yet, as the API sends it; returns a way to draw the screen anew. */
     private fun show(
@@ -50,20 +56,20 @@ class NextStopTest {
         alternative: DayStep? = null,
     ): () -> Unit {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-        val cache = AppCache(FakeSession(ana), scope)
+        val cache = AppCache(signIn, scope)
         val viewModel =
             SessionViewModel(
                 StudyOpener(api, api::writeLesson, cache, { "UTC" }, scope),
                 StudySessionStore(api, cache) { "UTC" },
                 { _, milliseconds -> waits += milliseconds },
                 cache,
-                readiness = {
+                readiness = { _, _ ->
                     readinessReads++
+                    val status = if (statuses.isEmpty()) LessonReadiness.Status.READY else statuses.removeAt(0)
                     LessonReadiness(
                         alternative = null,
                         generationId = "run-1",
-                        status =
-                            statuses.removeFirstOrNull() ?: LessonReadiness.Status.READY,
+                        status = status ?: throw ApiException(ApiError.Unauthorized),
                     )
                 },
             )
@@ -81,7 +87,7 @@ class NextStopTest {
                         alternative = alternative,
                         refresh = {
                             dayReads++
-                            if (dayShowsTheLessonWritten) {
+                            if (dayShowsTheLessonWritten && dayReads > staleDayReads) {
                                 shown = shown.copy(lessonId = shown.lessonId ?: WRITTEN, screen = StudyBlock.Screen.LESSON)
                             }
                         },
@@ -131,6 +137,38 @@ class NextStopTest {
         assertEquals(3, readinessReads)
         assertEquals(1, dayReads)
         assertEquals(1, waits.size)
+    }
+
+    @Test
+    fun aWrittenLessonTheDayHasntCaughtUpOnKeepsTheWaitUntilItDoes() {
+        statuses += LessonReadiness.Status.GENERATING
+        staleDayReads = 1
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show()
+        rule.mainClock.advanceTimeBy(6_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Getting it ready…").assertExists()
+        rule.onNodeWithText("Start").assertDoesNotExist()
+
+        rule.mainClock.advanceTimeBy(5_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Your lesson is ready.").assertExists()
+        assertEquals(2, dayReads)
+        assertEquals(1, waits.size)
+    }
+
+    @Test
+    fun anExpiredSignInEndsTheWait() {
+        statuses += listOf(LessonReadiness.Status.GENERATING, null)
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show()
+        rule.mainClock.advanceTimeBy(16_000)
+        rule.waitForIdle()
+
+        assertEquals(listOf(ana), signIn.expired)
+        assertEquals(2, readinessReads)
     }
 
     @Test

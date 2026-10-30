@@ -44,7 +44,7 @@ class SessionViewModelTest {
             StudySessionStore(api, cache) { "UTC" },
             { _, _ -> },
             cache,
-            readiness = { error("Not used") },
+            readiness = { _, _ -> error("Not used") },
         )
     }
 
