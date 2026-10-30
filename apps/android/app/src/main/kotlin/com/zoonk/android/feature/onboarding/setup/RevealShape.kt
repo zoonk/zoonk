@@ -23,15 +23,11 @@ internal data class RevealFacts(
     val end: LocalDate?,
     /** The end is far off, so it reads as a month, never "October" in October. */
     val endAsMonth: Boolean,
-    val dailyMinutes: Int,
-    /** Rounded as "about" says; 0 when there's nothing to say. */
-    val studyMinutes: Int,
 )
 
 internal fun Plan.revealFacts(today: LocalDate): RevealFacts {
     val targetDate = schedule.targetDate?.toJavaLocalDate()
     val end = estimate.endDate?.toJavaLocalDate().takeIf { targetDate == null }
-    val study = numbers?.let { if (it.context.targetDate == null) it.scheduledMinutes else it.beforeDeadlineMinutes } ?: 0.0
 
     return RevealFacts(
         days =
@@ -44,17 +40,8 @@ internal fun Plan.revealFacts(today: LocalDate): RevealFacts {
         daysEstimated = schedule.targetDateEstimated,
         end = end,
         endAsMonth = end != null && ChronoUnit.DAYS.between(week.startDate.toJavaLocalDate(), end) > NEAR_ESTIMATE_DAYS,
-        dailyMinutes = schedule.dailyMinutes.toInt(),
-        studyMinutes = roundStudyMinutes(study),
     )
 }
-
-private fun roundStudyMinutes(minutes: Double): Int =
-    if (minutes >= ROUND_TO_HOURS_FROM) {
-        (minutes / MINUTES_PER_HOUR).roundToInt() * MINUTES_PER_HOUR
-    } else {
-        (minutes / MINUTES_STEP).roundToInt() * MINUTES_STEP
-    }
 
 /** The phases a new plan shows: what comes after the exam isn't part of it. */
 internal val Plan.revealPhases get() = phases.filter { it.kind != PlanPhase.Kind.AFTER_EXAM }
@@ -264,7 +251,4 @@ internal fun Syllabus.areaWeights(): AreaWeights? {
 }
 
 private const val NEAR_ESTIMATE_DAYS = 42
-private const val ROUND_TO_HOURS_FROM = 120.0
-private const val MINUTES_PER_HOUR = 60
-private const val MINUTES_STEP = 5
 private const val HEAVIEST_SHOWN = 3

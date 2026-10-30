@@ -19,13 +19,11 @@ class RevealShapeTest {
     private val today = LocalDate.now()
 
     @Test
-    fun factsCountTheDaysToTheGoalAndRoundTheStudyTime() {
+    fun factsCountTheDaysToTheGoal() {
         assertEquals(
-            RevealFacts(days = 53, daysEstimated = false, end = null, endAsMonth = false, dailyMinutes = 30, studyMinutes = 1260),
-            planOf(numbers = numbersOf(beforeDeadlineMinutes = 1234.0)).revealFacts(today),
+            RevealFacts(days = 53, daysEstimated = false, end = null, endAsMonth = false),
+            planOf().revealFacts(today),
         )
-        assertEquals(95, planOf(numbers = numbersOf(beforeDeadlineMinutes = 93.0)).revealFacts(today).studyMinutes)
-        assertEquals(0, planOf().revealFacts(today).studyMinutes)
     }
 
     @Test

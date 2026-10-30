@@ -257,6 +257,7 @@
   "onboarding_reveal_covers_nothing": "a8cebe773f906c1c17d483c607014b60d0f8065f3ab8bcf831a79f365b92004f",
   "onboarding_reveal_created": "55fcbcb8577c074e8868bf789d49e4dafb01942f16a7649a3857058112ec506e",
   "onboarding_reveal_daily": "6f483d010258366fe9407782ad1839e5591bd30befdc85a06f2e2f3bbc9594c9",
+  "onboarding_reveal_daily_weekends": "e92166b552431e6b1041de07a58ae92b94327074f82c0268346e8c51c4cc95ac",
   "onboarding_reveal_days": "5f2408dc95b3d3211d645a007e06099cac8dd9ced1e246324bbce961fb8c7152",
   "onboarding_reveal_estimated_guide_area": "f90b1eeb79f30cf1a7f0b1ee22daf8672019d4ba71c7dd425ef0a393f0fb73b5",
   "onboarding_reveal_estimated_guide_areas": "76ebcdaff4bd18c0aa6d498feccaf3d39fd9f3959b39f7c4a1604cde10f6aee9",
@@ -312,7 +313,6 @@
   "onboarding_reveal_reading_title": "5c82d729e3d6bfcc7b11a4932e22d19cf7fd95843d0493567719b18223ceecca",
   "onboarding_reveal_save_note": "072698f4d7753153944ee898d1f7270ec851072bb12aeffd275ec8543c9a7fa5",
   "onboarding_reveal_start": "fdc11dd0e6a007e94efcd734c929500b6eebb2455b32bdc47465d6b14d3204af",
-  "onboarding_reveal_study": "ea8ff111a7bfb8ae5cb52693006898315f9a136ef43b839ec30f9af2ca7e2d75",
   "onboarding_reveal_today": "1f50a4b957f1d6a1787f44c8f06373918287314eadd3647390a24c8c6a6cfb36",
   "onboarding_reveal_topics": "707b2ffeff6784c1751217d0af666ede21014ad04144c942090db24d1a56adca",
   "onboarding_reveal_topics_all_planned": "b419f46272f460497976eede682484c9810699728c237b5d49042d8b29f67001",
@@ -773,12 +773,13 @@
     <string name="onboarding_reveal_until_about_month">Jusqu’à %1$s environ</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_daily">%1$s par jour</string>
+    <!-- %1$s is the time on study weekdays and %2$s on weekend days, such as "30 min". -->
+    <string name="onboarding_reveal_daily_weekends">%1$s par jour, %2$s le week-end</string>
     <!-- Under a plan without a date that holds every part of a learn goal. -->
     <string name="onboarding_reveal_pace_covers">Ton plan couvre toutes les parties de ton objectif. Pour finir plus tôt, consacre-lui plus de temps chaque jour, ou choisis une date : ton plan inclura ce qui compte le plus d’ici là.</string>
     <!-- Under a plan without a date that stops before every part of a learn goal. -->
     <string name="onboarding_reveal_pace_time">Le temps que tu y consacres chaque jour détermine jusqu’où va ton plan. Pour aller plus loin ou finir plus tôt, consacre-lui plus de temps chaque jour, ou choisis une date : ton plan inclura ce qui compte le plus d’ici là.</string>
     <!-- The study time a plan adds up to. %1$s is a duration, such as "12 hr". -->
-    <string name="onboarding_reveal_study">environ %1$s d’étude</string>
     <string name="onboarding_reveal_start">Commencer</string>
     <string name="onboarding_reveal_adjust">Ajuster</string>
     <string name="onboarding_reveal_save_note">Enregistre ton plan pour le retrouver la prochaine fois.</string>

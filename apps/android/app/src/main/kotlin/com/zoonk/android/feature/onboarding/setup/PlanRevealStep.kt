@@ -45,6 +45,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.plan.studyDaysWords
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.GenerationWait
@@ -70,10 +71,13 @@ import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanFeasibility
 import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.PlanPhaseChaptersInner
+import com.zoonk.api.models.PlanSchedule
+import com.zoonk.api.models.PlanWeekShape
 import com.zoonk.api.models.ShortExamFocus
 import com.zoonk.api.models.Syllabus
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
+import java.util.Locale
 
 /** Reading the plan starts no work; only Start and Adjust leave. */
 @Composable
@@ -215,7 +219,7 @@ private fun RevealBody(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SuccessEyebrow(stringResource(R.string.onboarding_reveal_created))
         Text(goal.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-        FactsLine(plan.revealFacts(today))
+        FactsLine(plan.revealFacts(today), plan.schedule)
         PaceLine(plan, goal.kind)
         NoticeDayLine(plan)
     }
@@ -259,7 +263,10 @@ private fun RevealBody(
 }
 
 @Composable
-private fun FactsLine(facts: RevealFacts) {
+private fun FactsLine(
+    facts: RevealFacts,
+    schedule: PlanSchedule,
+) {
     val locale = currentLocale()
     val days = facts.days
     val end = facts.end
@@ -275,8 +282,11 @@ private fun FactsLine(facts: RevealFacts) {
                     formatDate(it, locale, if (facts.endAsMonth) DateStyle.Month else DateStyle.Day),
                 )
             },
-            stringResource(R.string.onboarding_reveal_daily, formatMinutes(facts.dailyMinutes, locale)),
-            facts.studyMinutes.takeIf { it > 0 }?.let { stringResource(R.string.onboarding_reveal_study, formatMinutes(it, locale)) },
+            dailyTime(schedule.shape),
+            schedule.weekdayMinutes
+                .map(Long::toInt)
+                .takeUnless { days -> days.all { it > 0 } }
+                ?.let { studyDaysWords(it, locale) },
         )
 
     Text(
@@ -284,6 +294,15 @@ private fun FactsLine(facts: RevealFacts) {
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
     )
+}
+
+/** The time a day and the weekend's when it differs, in the Plan settings' words. */
+@Composable
+private fun dailyTime(shape: PlanWeekShape): String {
+    val locale = currentLocale()
+    val weekdays = formatMinutes(shape.weekdays.toInt(), locale)
+    return shape.weekend?.let { stringResource(R.string.onboarding_reveal_daily_weekends, weekdays, formatMinutes(it.toInt(), locale)) }
+        ?: stringResource(R.string.onboarding_reveal_daily, weekdays)
 }
 
 /**
@@ -345,6 +364,19 @@ private fun NoticeDayLine(plan: Plan) {
         }
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
+
+/** What the roadmap's axis shows: "Today" for the current phase, a start for each one after it, nothing before. */
+@Composable
+private fun phaseWhen(
+    phase: PlanPhase,
+    locale: Locale,
+    today: LocalDate,
+): String? =
+    when (phase.state) {
+        PlanPhase.State.CURRENT -> stringResource(R.string.onboarding_reveal_today)
+        PlanPhase.State.UPCOMING -> phase.startDate?.let { formatDate(it.toJavaLocalDate(), locale, DateStyle.Day, today) }
+        else -> null
+    }
 
 @Composable
 private fun PlanPhases(
@@ -410,14 +442,9 @@ private fun PlanPhases(
                         fontWeight = FontWeight.Medium,
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    phase.startDate?.let { start ->
+                    phaseWhen(phase, locale, today)?.let {
                         Text(
-                            text =
-                                if (isCurrent) {
-                                    stringResource(R.string.onboarding_reveal_today)
-                                } else {
-                                    formatDate(start.toJavaLocalDate(), locale, DateStyle.Day, today)
-                                },
+                            text = it,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelMedium.withTabularFigures(),
                         )

@@ -257,6 +257,7 @@
   "onboarding_reveal_covers_nothing": "2ea95a586f2b7a657c690cc558939cf50b71f5dae1b42a3ab1730a7b014b5edc",
   "onboarding_reveal_created": "a271358a3e64b64fcdcf561760f31fe139c4985c15340818c5ec0d7234ac125e",
   "onboarding_reveal_daily": "a6845eedeb2322c8d1dea7c786385c1bb77cb437a7ca58a8e10d2a3b4d684fb2",
+  "onboarding_reveal_daily_weekends": "f053c10f074631d788d36192bb5616843f821d47474b20b6a9a199ccc10514bb",
   "onboarding_reveal_days": "1eba845d1466fee82d98ebd3db6c8d8a49d5a0852bbf126ae03cc9c0a72cf464",
   "onboarding_reveal_estimated_guide_area": "72a6f68d72465bb5d998f98f0709c85a49fee18331b68d6b8fc5ec62619e6062",
   "onboarding_reveal_estimated_guide_areas": "c633d32a5deb8b247dcb3f7a4d6b5b1dbfeb16ecd63b471bfac301236f515c7f",
@@ -312,7 +313,6 @@
   "onboarding_reveal_reading_title": "30ab14e961b0ae52f1b1fdee54fd785c1b53200d77bc204bb4425263b4dfd43f",
   "onboarding_reveal_save_note": "e2009d39e256494fc0dffadbf2bd8dd8fca386c875005fed8764218ee10e6861",
   "onboarding_reveal_start": "5c7bb491553f22479f3583d0c08b92bc25b29049648c6b8ae0ac4b1f9237f040",
-  "onboarding_reveal_study": "701068d1d093b46f1af5253b5a145308d7663fa953d7abb1a0d1b32b04317b57",
   "onboarding_reveal_today": "248b9e88e04c84191665cf51dbd28d035dbde7a94385193d853fc189cac2f17d",
   "onboarding_reveal_topics": "a274a3752a81e777dddd6a7c27a564a337b074d6b378df90e0c2d8898df86596",
   "onboarding_reveal_topics_all_planned": "025ca7c70ce8e8d525ec9dc8dac4dc075954578438675ed4b59bf3a759e286d1",
@@ -773,12 +773,13 @@
     <string name="onboarding_reveal_until_about_month">Hasta aproximadamente %1$s</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_daily">%1$s al día</string>
+    <!-- %1$s is the time on study weekdays and %2$s on weekend days, such as "30 min". -->
+    <string name="onboarding_reveal_daily_weekends">%1$s al día, %2$s los fines de semana</string>
     <!-- Under a plan without a date that holds every part of a learn goal. -->
     <string name="onboarding_reveal_pace_covers">Tu plan cubre todas las partes de tu objetivo. Para terminar antes, dedícale más tiempo al día o elige una fecha y el plan ajustará lo más importante al tiempo disponible.</string>
     <!-- Under a plan without a date that stops before every part of a learn goal. -->
     <string name="onboarding_reveal_pace_time">El tiempo que dedicas al día determina hasta dónde llega tu plan. Para avanzar más o terminar antes, dedícale más tiempo al día o elige una fecha y el plan ajustará lo más importante al tiempo disponible.</string>
     <!-- The study time a plan adds up to. %1$s is a duration, such as "12 hr". -->
-    <string name="onboarding_reveal_study">unos %1$s de estudio</string>
     <string name="onboarding_reveal_start">Empezar</string>
     <string name="onboarding_reveal_adjust">Ajustar</string>
     <string name="onboarding_reveal_save_note">Guarda tu plan para tenerlo aquí la próxima vez.</string>

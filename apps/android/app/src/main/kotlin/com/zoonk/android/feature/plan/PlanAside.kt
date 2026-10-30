@@ -204,7 +204,7 @@ internal fun PlanProperties(
             )
             PropertyRow(
                 stringResource(R.string.plan_study_days),
-                studyDaysText(
+                studyDaysWords(
                     schedule.weekdayMinutes.map {
                         it.toInt()
                     },
@@ -346,7 +346,7 @@ internal fun studyDaysText(
 }
 
 @Composable
-private fun studyDaysText(
+internal fun studyDaysWords(
     weekdayMinutes: List<Int>,
     locale: java.util.Locale,
 ): String {

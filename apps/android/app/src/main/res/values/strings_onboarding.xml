@@ -325,12 +325,13 @@
     <string name="onboarding_reveal_until_about_month">Until about %1$s</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_daily">%1$s a day</string>
+    <!-- %1$s is the time on study weekdays and %2$s on weekend days, such as "30 min". -->
+    <string name="onboarding_reveal_daily_weekends">%1$s a day, %2$s on weekends</string>
     <!-- Under a plan without a date that holds every part of a learn goal. -->
     <string name="onboarding_reveal_pace_covers">Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
     <!-- Under a plan without a date that stops before every part of a learn goal. -->
     <string name="onboarding_reveal_pace_time">Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
     <!-- The study time a plan adds up to. %1$s is a duration, such as "12 hr". -->
-    <string name="onboarding_reveal_study">about %1$s of study</string>
     <string name="onboarding_reveal_start">Start</string>
     <string name="onboarding_reveal_adjust">Adjust</string>
     <string name="onboarding_reveal_save_note">Save your plan so it\'s here next time.</string>

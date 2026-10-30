@@ -116,6 +116,8 @@ internal fun planOf(
     numbers: String? = null,
     endDate: LocalDate? = null,
     weekStart: LocalDate = LocalDate.now(),
+    weekdayMinutes: List<Int> = listOf(0, dailyMinutes, dailyMinutes, dailyMinutes, dailyMinutes, dailyMinutes, 0),
+    weekendMinutes: Int? = null,
 ): Plan =
     ApiJson.decodeFromString(
         """
@@ -128,8 +130,8 @@ internal fun planOf(
          ${numbers?.let { ""","numbers":$it""" } ?: ""},
          "schedule":{"dailyMinutes":$dailyMinutes,"dailyTimes":[15,30,45],"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDateEstimated":false,
            "targetDateNamedMonth":false,
-           "shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":30,"weekend":null,"weekendDays":[]},
-           "weekdayMinutes":[0,30,30,30,30,30,0]${targetDate?.let { ""","targetDate":"$it"""" } ?: ""}
+           "shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":$dailyMinutes,"weekend":$weekendMinutes,"weekendDays":[]},
+           "weekdayMinutes":$weekdayMinutes${targetDate?.let { ""","targetDate":"$it"""" } ?: ""}
            ${noticeDay?.let { ""","noticeDay":$it""" } ?: ""}},
          "steering":{"difficultyBias":"standard","lessonsStudied":0,"practiceBias":"balanced","skippedActivities":[]},
          "tools":[],"week":{"days":[],"startDate":"$weekStart","endDate":"${weekStart.plusDays(6)}"},

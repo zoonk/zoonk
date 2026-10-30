@@ -22,6 +22,8 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.examGoal
 import com.zoonk.android.feature.onboarding.feasibilityOf
+import com.zoonk.android.feature.onboarding.numbersOf
+import com.zoonk.android.feature.onboarding.phaseOf
 import com.zoonk.android.feature.onboarding.planOf
 import com.zoonk.android.feature.onboarding.subjectOf
 import com.zoonk.android.feature.onboarding.syllabusOf
@@ -29,6 +31,8 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OnboardingLibraryCourse
@@ -41,6 +45,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import java.time.LocalDate
+import java.util.Locale
 import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
@@ -81,7 +86,7 @@ class PlanRevealStepFlowTest {
 
         rule.onNodeWithText("Plan created").assertIsDisplayed()
         rule.onNodeWithText("Pass the bar exam").assertIsDisplayed()
-        rule.onNodeWithText("53 days\u00A0· 30\u00A0min a day").assertIsDisplayed()
+        rule.onNodeWithText("53 days\u00A0· 30\u00A0min a day\u00A0· Mon – Fri").assertIsDisplayed()
         rule.onNodeWithText("Foundations\u00A0· day 1 of 21").performScrollTo().assertIsDisplayed()
         rule.onNodeWithText("Final stretch").performScrollTo().assertIsDisplayed()
 
@@ -89,6 +94,35 @@ class PlanRevealStepFlowTest {
         rule.onNodeWithText("Start").performScrollTo().performClick()
 
         assertEquals(AppRoute.Today, navigator.currentRoute)
+    }
+
+    @Test
+    fun theFactsSayTheWeekendsOwnTimeAndNoStudyTotal() {
+        api.plan = planOf(numbers = numbersOf(600.0), weekdayMinutes = listOf(45, 30, 30, 30, 30, 30, 45), weekendMinutes = 45)
+        show()
+
+        rule.onNodeWithText("53 days\u00A0· 30\u00A0min a day, 45\u00A0min on weekends").assertIsDisplayed()
+        rule.onNodeWithText("of study", substring = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun aPhaseBeforeTodaysShowsNoDateAndTodaysSaysToday() {
+        val today = LocalDate.now()
+        val earlier = today.minusDays(10)
+        api.plan =
+            planOf(
+                phases =
+                    listOf(
+                        phaseOf(0, "foundations", "done", earlier, today.minusDays(1)),
+                        phaseOf(1, "practice", "current", today, today.plusDays(20)),
+                        phaseOf(2, "finalStretch", "upcoming", today.plusDays(21), today.plusDays(52)),
+                    ),
+            )
+        show()
+
+        rule.onNodeWithText("Today").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText(formatDate(today.plusDays(21), Locale.US, DateStyle.Day, today)).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText(formatDate(earlier, Locale.US, DateStyle.Day, today)).assertDoesNotExist()
     }
 
     @Test

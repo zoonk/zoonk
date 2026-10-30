@@ -257,6 +257,7 @@
   "onboarding_reveal_covers_nothing": "743e6102c99d4c80232fbbcc59350997ef22c51cbe247ecf7c2a03bbdddc91f9",
   "onboarding_reveal_created": "efa5828748a35da2ac608c5435adc85531be4f11ba358abc8e2009fb31f8438c",
   "onboarding_reveal_daily": "b38ff141c2e9363ccb1ac3fd50dfca8cc37016024b4907206555de3683ae41be",
+  "onboarding_reveal_daily_weekends": "72174bbef4bfe2397861c606db8d829e6734d79037dc9b778c0f99e61f06bc61",
   "onboarding_reveal_days": "adca650e80e82099280dd39e82a493b945d51d8ee146f67f8a713f9f63a703d3",
   "onboarding_reveal_estimated_guide_area": "0f6ef9ca6123f3931a6461f9abba2ec14bcc884a6f5aa6119a85080c8c4a0b0d",
   "onboarding_reveal_estimated_guide_areas": "fc0d6d798595f7a6f0d4f9a0bf66044e0fce7d4131a5be0819eb648301a0dee8",
@@ -312,7 +313,6 @@
   "onboarding_reveal_reading_title": "d7b3ea5914b4afc1c4ae13f4640929c8da3b9d5b5ab949b104b61733d0c9d522",
   "onboarding_reveal_save_note": "0651961cad9ffe4dbe8d241a89360937246fffe216e3937f95992b791c7b3573",
   "onboarding_reveal_start": "e01c296b9342072041cb0d7d7a42897e219255689a35345149bf1e7d62039088",
-  "onboarding_reveal_study": "99a3d13a0384f6b751df950f96e3fa86964e73e20f007cd748e15748a040d680",
   "onboarding_reveal_today": "e3bf5c3963d27e57c5e41826eff64ff2b73eeecd3e90cbab84c06b04fe4816de",
   "onboarding_reveal_topics": "60ac66e065d34ebe08accd559b7529322fbdde860c4a738771f680b3064ba82c",
   "onboarding_reveal_topics_all_planned": "378a5fde11a730faedabd8bfddf7a7bec7d86d85e1a5ab4ca8c6434bba4e5294",
@@ -766,12 +766,13 @@
     <string name="onboarding_reveal_until_about_month">Bis etwa %1$s</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_daily">%1$s pro Tag</string>
+    <!-- %1$s is the time on study weekdays and %2$s on weekend days, such as "30 min". -->
+    <string name="onboarding_reveal_daily_weekends">%1$s pro Tag, %2$s am Wochenende</string>
     <!-- Under a plan without a date that holds every part of a learn goal. -->
     <string name="onboarding_reveal_pace_covers">Dein Plan deckt dein ganzes Ziel ab. Wenn du früher fertig werden möchtest, erhöhe deine tägliche Lernzeit. Oder wähl ein Datum, dann plant er das Wichtigste bis dahin ein.</string>
     <!-- Under a plan without a date that stops before every part of a learn goal. -->
     <string name="onboarding_reveal_pace_time">Deine tägliche Lernzeit bestimmt, wie weit dein Plan reicht. Wenn du mehr schaffen oder früher fertig werden möchtest, erhöhe deine tägliche Lernzeit. Oder wähl ein Datum, dann plant er das Wichtigste bis dahin ein.</string>
     <!-- The study time a plan adds up to. %1$s is a duration, such as "12 hr". -->
-    <string name="onboarding_reveal_study">etwa %1$s Lernzeit</string>
     <string name="onboarding_reveal_start">Starten</string>
     <string name="onboarding_reveal_adjust">Anpassen</string>
     <string name="onboarding_reveal_save_note">Speichere deinen Plan, damit er beim nächsten Mal für dich bereit ist.</string>
