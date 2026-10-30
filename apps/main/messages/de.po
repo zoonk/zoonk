@@ -3552,6 +3552,11 @@ msgid "<big>{time}</big> of study"
 msgstr "<big>{time}</big> Lernzeit"
 
 #: src/components/catalog/course-progress.tsx
+msgctxt "YdCF9O"
+msgid "Continue your plan"
+msgstr "Deinen Plan fortsetzen"
+
+#: src/components/catalog/course-progress.tsx
 msgctxt "mElWfu"
 msgid "You are here"
 msgstr "Du bist hier"
@@ -4059,11 +4064,6 @@ msgstr "Nutzungsbedingungen"
 msgctxt "k7JNE3"
 msgid "© {year} Zoonk"
 msgstr "© {year} Zoonk"
-
-#: src/components/public/start-plan-link.tsx
-msgctxt "YdCF9O"
-msgid "Continue your plan"
-msgstr "Deinen Plan fortsetzen"
 
 #: src/lib/belt-colors.ts
 #: src/lib/belt-label.ts

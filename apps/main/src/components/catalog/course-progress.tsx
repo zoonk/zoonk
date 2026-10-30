@@ -1,6 +1,9 @@
 "use client";
 
+import { switchGoal } from "@/app/[lang]/(app)/(learn)/_components/switch-goal";
 import { VisitorLook } from "@/components/learner/visitor-look";
+import { getStartControlClassName } from "@/components/public/public-start";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
 import { type CourseLevel } from "@zoonk/db/enums";
@@ -8,6 +11,7 @@ import { RouteZone } from "@zoonk/learn/route-line";
 import { StatusMark } from "@zoonk/learn/status-mark";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isJsonObject } from "@zoonk/utils/json";
+import { ArrowRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   type ComponentProps,
@@ -16,6 +20,7 @@ import {
   use,
   useEffect,
   useSyncExternalStore,
+  useTransition,
 } from "react";
 import { type CourseProgress } from "./course-progress-contract";
 import { ShowMore } from "./show-more";
@@ -116,6 +121,59 @@ function useCourseGoal(courseId: string): LearnerSummaryGoal | null {
   return learner.status === "ready"
     ? (learner.summary.goals.find((goal) => goal.courseId === courseId) ?? null)
     : null;
+}
+
+/**
+ * Goes where the plan is, so it never waits on the start page's redirect: its setup while questions
+ * are left, or Today, after making the goal the one the tabs show.
+ */
+export function CourseContinueLink({ courseId }: { courseId: string }) {
+  const t = useExtracted();
+  const router = useRouter();
+  const goal = useCourseGoal(courseId);
+  const [isPending, startTransition] = useTransition();
+
+  if (!goal) {
+    return null;
+  }
+
+  const label = (
+    <>
+      {t("Continue your plan")}
+      <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
+    </>
+  );
+
+  if (goal.isSettingUp || goal.isActive) {
+    return (
+      <Link
+        className={getStartControlClassName()}
+        href={goal.isSettingUp ? `/start/${goal.id}` : "/today"}
+        prefetch
+      >
+        {label}
+      </Link>
+    );
+  }
+
+  const continueGoal = () => {
+    startTransition(async () => {
+      await switchGoal(goal.id);
+      router.push("/today");
+    });
+  };
+
+  return (
+    <button
+      aria-busy={isPending}
+      className={getStartControlClassName()}
+      disabled={isPending}
+      onClick={continueGoal}
+      type="button"
+    >
+      {label}
+    </button>
+  );
 }
 
 /**

@@ -1,4 +1,4 @@
-import { CourseGoalSwitch } from "@/components/catalog/course-progress";
+import { CourseContinueLink, CourseGoalSwitch } from "@/components/catalog/course-progress";
 import { NoAccountStartNote } from "@/components/public/no-account-note";
 import { StartBlock, getSecondaryStartControlClassName } from "@/components/public/public-start";
 import { StartPlanLink } from "@/components/public/start-plan-link";
@@ -8,7 +8,7 @@ import { getExtracted } from "next-intl/server";
 function CoursePlanLink({ courseId, pace }: { courseId: string; pace: number | null }) {
   return (
     <CourseGoalSwitch
-      continueLink={<StartPlanLink showContinueLabel courseId={courseId} />}
+      continueLink={<CourseContinueLink courseId={courseId} />}
       courseId={courseId}
       startLinks={<StartPlanLink courseId={courseId} minutes={pace ?? undefined} />}
     />
