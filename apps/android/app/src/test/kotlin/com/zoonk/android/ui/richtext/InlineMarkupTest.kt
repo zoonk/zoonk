@@ -73,6 +73,14 @@ class InlineMarkupTest {
     }
 
     @Test
+    fun keepsLookingForAngleQuotesPastOneThatSpansLines() {
+        assertEquals(
+            listOf(InlineMarkup(Text, "«first\nsecond» and "), InlineMarkup(Italic, "word")),
+            parseInlineMarkup("«first\nsecond» and «word»"),
+        )
+    }
+
+    @Test
     fun findsNothingInAnEmptyLine() {
         assertEquals(emptyList<InlineMarkup>(), parseInlineMarkup(""))
     }

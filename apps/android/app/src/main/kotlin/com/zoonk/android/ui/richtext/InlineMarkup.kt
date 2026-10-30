@@ -38,14 +38,28 @@ private fun findCode(text: String): Span? {
 
 private val ANGLE_QUOTES = listOf("«" to "»", "<<" to ">>")
 
+private tailrec fun findQuote(
+    text: String,
+    open: String,
+    close: String,
+    from: Int,
+): Span? {
+    val start = text.indexOf(open, from)
+    val end = if (start == -1) -1 else text.indexOf(close, start + open.length)
+    if (end == -1) return null
+
+    val content = text.substring(start + open.length, end)
+    return if (content.isNotBlank() && '\n' !in content) {
+        Span(content.trim(), start, end + close.length)
+    } else {
+        findQuote(text, open, close, start + open.length)
+    }
+}
+
 private fun findAngleQuote(text: String): Span? =
-    ANGLE_QUOTES
-        .mapNotNull { (open, close) ->
-            val start = text.indexOf(open)
-            val end = if (start == -1) -1 else text.indexOf(close, start + open.length)
-            val content = if (end == -1) "" else text.substring(start + open.length, end)
-            if (content.isNotBlank() && '\n' !in content) Span(content.trim(), start, end + close.length) else null
-        }.minByOrNull { it.start }
+    ANGLE_QUOTES.mapNotNull { (open, close) -> findQuote(text, open, close, 0) }.minByOrNull {
+        it.start
+    }
 
 private fun findBold(text: String): Span? {
     val start = text.indexOf("**")
