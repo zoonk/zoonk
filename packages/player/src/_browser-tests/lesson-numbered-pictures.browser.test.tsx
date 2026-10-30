@@ -77,6 +77,38 @@ describe("numbered pictures", () => {
     );
   });
 
+  it("waits for a labeled diagram's numbered picture before taking labels", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
+    const step = activityStep({ content: heart, image: null, imagePending: true });
+    const lesson = buildLesson([step]);
+    const firstSpot = page.getByRole("button", { exact: true, name: "Put Right atrium on spot 1" });
+    const labeled = page.getByRole("button", { name: "Spot 1: Right atrium" });
+
+    const getLessonPictures = vi
+      .fn<NonNullable<LessonPlayerAdapters["getLessonPictures"]>>()
+      .mockResolvedValue([]);
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
+
+    await expect.element(page.getByRole("status")).toHaveTextContent("Drawing the picture…");
+    await expect.element(page.getByText(heart.fields.picture.alt)).toBeVisible();
+    await expect.element(firstSpot).toBeDisabled();
+
+    getLessonPictures.mockResolvedValue([
+      { image: inlineImage({ alt: heart.fields.picture.alt }), stepId: step.id },
+    ]);
+
+    await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
+    await expect.element(page.getByRole("img", { name: heart.fields.picture.alt })).toBeVisible();
+    await firstSpot.click();
+    await expect.element(labeled).toBeVisible();
+  });
+
   it("leaves out numbered questions whose picture never came, and goes on", async () => {
     const diagram = activityStep({ content: heart, image: null });
 

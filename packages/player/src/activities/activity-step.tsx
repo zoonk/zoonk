@@ -51,6 +51,7 @@ export function ActivityStep({
   answer,
   content,
   isCorrect,
+  isLocked = false,
   onAnswerChange,
   phase,
   picture,
@@ -81,7 +82,7 @@ export function ActivityStep({
 
       {isCheckFirst && checkArea}
 
-      <div className="flex flex-col gap-2">
+      <fieldset className="flex min-w-0 flex-col gap-2" disabled={isLocked} inert={isLocked}>
         {isMounted ? (
           <Suspense fallback={<ActivityCanvasSkeleton />}>
             <Canvas
@@ -98,7 +99,7 @@ export function ActivityStep({
         )}
 
         <ActivityDataNote content={content} />
-      </div>
+      </fieldset>
 
       {!isCheckFirst && checkArea}
 

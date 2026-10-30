@@ -1,7 +1,11 @@
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { openActivity } from "../_test-utils/activity-player";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { holdAndDrag, swipeUpFrom, tap } from "../_test-utils/touch-screen";
+import { buildLesson } from "../preview/preview-lesson";
+import { activityStep } from "../preview/preview-steps";
 
 const SWIPE_PX = 200;
 
@@ -17,6 +21,26 @@ describe("dragging activity items with a finger", () => {
     await expect
       .element(page.getByRole("button", { name: "Spot 3: Right ventricle" }))
       .toBeVisible();
+  });
+
+  it("labeled diagram: a name dragged while its picture is drawn stays off the spots", async () => {
+    const step = activityStep({
+      content: activityContentFixtures.labeledDiagram,
+      image: null,
+      imagePending: true,
+    });
+
+    renderLessonPlayer({ lesson: buildLesson([step]) });
+    await expect.element(page.getByText("Drawing the picture…")).toBeVisible();
+
+    await holdAndDrag({
+      from: page.getByRole("button", { name: "Put Right ventricle on spot 1" }),
+      to: page.getByRole("button", { name: "Spot 3: empty" }),
+    });
+
+    await expect
+      .element(page.getByRole("button", { name: "Spot 3: Right ventricle" }))
+      .not.toBeInTheDocument();
   });
 
   it("categorize: an item held and dragged onto a group sorts it", async () => {

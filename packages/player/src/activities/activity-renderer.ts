@@ -36,6 +36,7 @@ export type ActivityStepProps = {
   content: ActivityStepContent;
   picture: React.ReactNode;
   isCorrect: boolean | null;
+  isLocked?: boolean;
   onAnswerChange: (answer: ActivityAnswer | null) => void;
   phase: Exclude<ActivityPhase, "explore">;
 };
