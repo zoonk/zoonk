@@ -950,7 +950,7 @@ final class LessonAskPlacementTests: XCTestCase {
     store.isSpread = false
     store.ask(suggestionId: "simpler")
     XCTAssertTrue(store.isAskingInSheet, "one column shows it as a sheet")
-    XCTAssertEqual(store.askingSuggestionId, "simpler")
+    XCTAssertEqual(store.askingOffer?.suggestionId, "simpler")
   }
 
   func testClosingTheDuoNeverBringsBackASheetAskWasBesideTheLessonFor() {

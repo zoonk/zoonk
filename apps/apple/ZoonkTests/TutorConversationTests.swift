@@ -21,6 +21,31 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertTrue(conversation.canAsk)
   }
 
+  func testPreparedSuggestionWaitsAndGoesByItsIDOnlyWhileUnchanged() async {
+    let api = TutorAPIStub(answers: [[.text("Sure."), .finish], [.text("Sure."), .finish]])
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+    let offer = TutorDraft(suggestion: simpler, offer: UUID())
+
+    conversation.prepare(offer)
+
+    XCTAssertEqual(conversation.draft, "Explain it more simply")
+    XCTAssertTrue(api.suggestions.isEmpty, "a prepared suggestion is never asked on its own")
+
+    await conversation.send()
+    conversation.prepare(TutorDraft(suggestion: simpler, offer: UUID()))
+    conversation.draft = "Explain it with an example"
+    conversation.prepare(offer)
+
+    XCTAssertEqual(conversation.draft, "Explain it with an example", "an offer is prepared once")
+
+    await conversation.send()
+
+    XCTAssertEqual(api.suggestions, ["simpler", nil])
+  }
+
   func testSavedAnswerReplacesTheStreamedTextAndEnablesLinks() async {
     let api = TutorAPIStub(answers: [
       [.text("See [Plan](https://evil.example)"), .savedAnswer("See your plan."), .finish]
@@ -391,6 +416,7 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   var beforeQuestion: (@MainActor () async -> Void)?
   var beforeAnswer: (@MainActor () async -> Void)?
   private(set) var requestIDs: [String] = []
+  private(set) var suggestions: [String?] = []
   private var asked = 0
 
   init(
@@ -412,6 +438,7 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
     _ scope: TutorScope, question: String, suggestion: String?, requestId: String, token: String
   ) async throws -> TutorAskedQuestion {
     requestIDs.append(requestId)
+    suggestions.append(suggestion)
 
     if !askFailures.isEmpty {
       throw askFailures.removeFirst()

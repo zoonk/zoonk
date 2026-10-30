@@ -159,7 +159,13 @@ struct LessonTutorScope: Hashable, Sendable {
   var stepIds: [String] = []
   let suggestions: [Components.Schemas.LessonTutorSuggestion]
   /// The suggestion to have ready to send (`simpler` when the learner seems stuck), if any.
-  var startingSuggestionId: String?
+  var startingOffer: LessonTutorOffer?
+}
+
+/// Each tap that offers a suggestion is its own offer, so it's put in the composer once.
+struct LessonTutorOffer: Hashable, Sendable {
+  let suggestionId: String
+  let id = UUID()
 }
 
 struct LessonTutor: Sendable {

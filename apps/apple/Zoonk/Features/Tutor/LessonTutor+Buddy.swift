@@ -2,7 +2,16 @@ import SwiftUI
 
 extension LessonTutor {
   static let buddy = LessonTutor { scope, isBeside in
-    AnyView(TutorPanel(scope: TutorScope(scope), isPane: isBeside))
+    let tutorScope = TutorScope(scope)
+
+    return AnyView(
+      TutorPanel(
+        scope: tutorScope, isPane: isBeside,
+        draft: scope.startingOffer.flatMap { offer in
+          tutorScope.lessonSuggestions.first { $0.id == offer.suggestionId }.map {
+            TutorDraft(suggestion: $0, offer: offer.id)
+          }
+        }))
   }
 }
 

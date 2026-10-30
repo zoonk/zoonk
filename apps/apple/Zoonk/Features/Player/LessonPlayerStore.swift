@@ -53,7 +53,7 @@ final class LessonPlayerStore {
   /// Any touch or scroll on the screen: a learner who touches it isn't stuck.
   var touches = 0
   var isAsking = false
-  private(set) var askingSuggestionId: String?
+  private(set) var askingOffer: LessonTutorOffer?
   /// The lesson shows as a spread, where Ask opens beside it; elsewhere Ask is a sheet. Kept by the
   /// stage, which measures it. Once Ask is beside the lesson, closing iPhone Duo doesn't bring its
   /// sheet back.
@@ -116,7 +116,7 @@ final class LessonPlayerStore {
   }
 
   func ask(suggestionId: String? = nil) {
-    askingSuggestionId = suggestionId
+    askingOffer = suggestionId.map { LessonTutorOffer(suggestionId: $0) }
     isAskingInSheet = !isSpread
     isAsking = true
   }

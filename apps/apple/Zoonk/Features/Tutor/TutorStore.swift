@@ -51,6 +51,9 @@ final class TutorConversation {
   @ObservationIgnored var scope: TutorScope
   @ObservationIgnored private let api: any TutorAPIClient
   @ObservationIgnored private let cache: AppCache
+  /// Main's chosen suggestion: sent by its id while the draft still says it.
+  @ObservationIgnored private var draftSuggestion: TutorSuggestion?
+  @ObservationIgnored private var preparedOffers: Set<UUID> = []
   /// A question whose reply never came, sent again with its request id so it's asked once.
   @ObservationIgnored private var unresolved: (question: String, suggestion: String?, id: String)?
 
@@ -107,7 +110,16 @@ final class TutorConversation {
       return
     }
 
-    await ask(question, suggestion: nil)
+    let suggestion = draftSuggestion.flatMap { $0.label == question ? $0.lessonSuggestionID : nil }
+    await ask(question, suggestion: suggestion)
+  }
+
+  /// Ready in the composer, never sent on its own; drawing the panel again keeps what the learner
+  /// made of it.
+  func prepare(_ draft: TutorDraft) {
+    guard preparedOffers.insert(draft.offer).inserted else { return }
+    self.draft = draft.suggestion.label
+    draftSuggestion = draft.suggestion
   }
 
   /// A lesson's own suggestion goes by its id, so its shared answer is reused.
@@ -421,6 +433,12 @@ final class TutorConversation {
   private func update(_ id: String, _ change: (inout TutorTurn) -> Void) {
     thread.update { $0.updating(id, change) }
   }
+}
+
+/// A suggestion offered once, to wait in the composer.
+struct TutorDraft: Hashable, Sendable {
+  let suggestion: TutorSuggestion
+  let offer: UUID
 }
 
 /// A lesson's own suggestion carries its id.

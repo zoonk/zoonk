@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Reading the thread is the only request it makes on its own: an answer (paid AI) comes only after
-/// the learner sends something. A `draft` waits in the composer for the learner's own send.
+/// the learner sends something. A `draft` suggestion waits in the composer for the learner's own
+/// send.
 struct TutorThreadView<Header: View>: View {
   @Environment(TutorStore.self) private var tutor
   @Environment(LearnerSummaryStore.self) private var summary
@@ -10,7 +11,7 @@ struct TutorThreadView<Header: View>: View {
   let scope: TutorScope
   var suggestions: [TutorSuggestion]?
   var placeholder: Text?
-  var draft: String?
+  var draft: TutorDraft?
   /// The page's own conversation (the Buddy tab): no "About…" above each question.
   var isPage = false
   @ViewBuilder var header: Header
@@ -42,7 +43,7 @@ private struct TutorConversationView<Header: View>: View {
   let buddyName: String
   let suggestions: [TutorSuggestion]
   let placeholder: Text
-  let draft: String?
+  let draft: TutorDraft?
   let isPage: Bool
   let header: Header
 
@@ -76,8 +77,8 @@ private struct TutorConversationView<Header: View>: View {
     }
     .modifier(LoadsThread(thread: conversation.thread, isActive: canTalk))
     .onChange(of: draft, initial: true) { _, draft in
-      if let draft, !draft.isEmpty {
-        conversation.draft = draft
+      if let draft {
+        conversation.prepare(draft)
       }
     }
     .onChange(of: conversation.turns.last?.id) { previous, latest in

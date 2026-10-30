@@ -9,6 +9,8 @@ struct TutorPanel: View {
   let scope: TutorScope
   var quote: String?
   var isPane = false
+  /// Main's offer when the learner seems stuck: the suggestion waits in the composer.
+  var draft: TutorDraft?
 
   var body: some View {
     if isPane {
@@ -38,7 +40,7 @@ struct TutorPanel: View {
   }
 
   private var thread: some View {
-    TutorThreadView(scope: scope) {
+    TutorThreadView(scope: scope, draft: draft) {
       VStack(alignment: .leading, spacing: 8) {
         if isPane {
           title
