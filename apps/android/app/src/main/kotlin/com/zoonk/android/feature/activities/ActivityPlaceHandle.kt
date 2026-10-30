@@ -89,7 +89,7 @@ fun ActivityPlaceHandle(
                     disabled()
                 } else {
                     setProgress { target ->
-                        onChange(snapToStep(target.toDouble(), range))
+                        onChange(valueToward(target.toDouble(), value, range))
                         true
                     }
                 }

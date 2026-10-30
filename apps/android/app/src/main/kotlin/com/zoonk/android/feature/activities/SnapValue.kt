@@ -6,6 +6,7 @@ import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.sign
 
 /** Main's `snap-value.ts`: the values something placed along an axis can take. */
 data class SnapRange(
@@ -53,6 +54,19 @@ fun sliderValue(
     stop: Int,
     range: SnapRange,
 ): Double = if (stop >= sliderStops(range)) range.max else snapToStep(range.min + stop * range.step, range)
+
+/**
+ * TalkBack asks for a twentieth of the way along when there's no stop between the ends, which
+ * snaps back to where it was, so a request moves at least one step toward its target.
+ */
+fun valueToward(
+    target: Double,
+    value: Double,
+    range: SnapRange,
+): Double {
+    val snapped = snapToStep(target, range)
+    return if (snapped == value && target != value) snapToStep(value + sign(target - value) * range.step, range) else snapped
+}
 
 /** Moves like a native slider: arrows a step, Page Up and Down ten, Home and End to the ends; other keys give null. */
 fun valueAfterKey(

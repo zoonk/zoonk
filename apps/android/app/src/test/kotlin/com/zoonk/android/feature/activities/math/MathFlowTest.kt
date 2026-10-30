@@ -305,6 +305,15 @@ class MathFlowTest {
     }
 
     @Test
+    fun areaModelSplitWithTwoStopsMovesByTalkBack() {
+        play(listOf(barStep()), isCorrect = true, ApiJson.decodeFromString(ActivityExpected.serializer(), """{"kind":"numeric","value":3}"""))
+
+        rule.onNode(slider("Split across the width")).performSemanticsAction(SemanticsActions.SetProgress) { it(1.05f) }
+
+        rule.onNode(slider("Split across the width")).assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "2 + 1"))
+    }
+
+    @Test
     fun randomSimulationByChanceRunsAfterTheGuessIsChecked() {
         play("randomSimulation", isCorrect = true)
 
@@ -347,9 +356,7 @@ class MathFlowTest {
              "fields":{"outputs":[{"formula":"10 * on","id":"value","label":"Value"}],
              "variables":[{"initial":0,"label":"Switch","max":1,"min":0,"name":"on","step":1}]}}
             """
-        val content = ApiJson.decodeFromString(ActivityStepContent.serializer(), json)
-        val frame = ApiJson.decodeFromString(ActivityFrame.serializer(), json)
-        return LessonStep("switch", null, StepContent.Activity(content, frame, minTolerance = null))
+        return step("switch", json)
     }
 
     private fun precisionStep(): LessonStep {
@@ -359,9 +366,26 @@ class MathFlowTest {
              "tolerance":{"kind":"absolute","value":0.0001},"explanation":"Worked out by code."},
              "fields":{"label":"Value","min":0.124,"max":0.126,"moves":[{"by":0.0004}],"start":0.125,"step":0.0001}}
             """
+        return step("precision", json)
+    }
+
+    private fun barStep(): LessonStep {
+        val json =
+            """
+            {"template":"areaModel","prompt":"Split it.","check":{"kind":"numeric","question":"What is the total?","answer":3,
+             "tolerance":{"kind":"absolute","value":0.01},"explanation":"Worked out by code."},
+             "fields":{"model":"bar","bar":{"parts":[1,2],"total":3}}}
+            """
+        return step("bar", json)
+    }
+
+    private fun step(
+        id: String,
+        json: String,
+    ): LessonStep {
         val content = ApiJson.decodeFromString(ActivityStepContent.serializer(), json)
         val frame = ApiJson.decodeFromString(ActivityFrame.serializer(), json)
-        return LessonStep("precision", null, StepContent.Activity(content, frame, minTolerance = null))
+        return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null))
     }
 
     private companion object {

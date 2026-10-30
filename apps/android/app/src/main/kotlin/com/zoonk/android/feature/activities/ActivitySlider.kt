@@ -150,13 +150,7 @@ private fun Modifier.betweenTwoStops(
     next != null
 }.semantics {
     setProgress { target ->
-        onPositionChange(
-            when {
-                target > position -> 1
-                target < position -> 0
-                else -> position
-            },
-        )
+        onPositionChange(valueToward(target.toDouble(), position.toDouble(), TWO_STOPS).toInt())
         true
     }
 }
