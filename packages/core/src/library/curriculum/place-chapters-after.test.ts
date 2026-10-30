@@ -12,7 +12,8 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { collectCourseContentTags } from "../../cache/revalidate-course-content";
 import { placeChaptersAfter } from "./place-chapters-after";
 
 describe(placeChaptersAfter, () => {
@@ -87,6 +88,40 @@ describe(placeChaptersAfter, () => {
     expect(placements.map((placement) => placement.chapterId)).toStrictEqual(
       [sounds, greetings, lodging, problems, checkout].map((chapter) => chapter?.id),
     );
+  });
+
+  it("asks Main to read the course again only when its order changed", async () => {
+    vi.stubEnv("ZOONK_APP", "api");
+
+    try {
+      const [course, ...chapters] = await Promise.all([
+        courseFixture(),
+        libraryChapterFixture(),
+        libraryChapterFixture(),
+        libraryChapterFixture(),
+      ]);
+
+      await Promise.all(
+        chapters.map((chapter, position) =>
+          courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position }),
+        ),
+      );
+
+      const [first, second, third] = chapters;
+
+      const place = (moves: { afterChapterId: string | null; chapterId: string }[]) =>
+        collectCourseContentTags(() =>
+          placeChaptersAfter({ courseId: course.id, level: "beginner", moves }),
+        );
+
+      const kept = await place([{ afterChapterId: first?.id ?? "", chapterId: second?.id ?? "" }]);
+      const moved = await place([{ afterChapterId: null, chapterId: third?.id ?? "" }]);
+
+      expect(kept.tags).toStrictEqual([]);
+      expect(moved.tags).toStrictEqual([`course-curriculum:${course.id}`]);
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it("marks the plans reading a moved chapter's lessons, and nothing when the order stays", async () => {

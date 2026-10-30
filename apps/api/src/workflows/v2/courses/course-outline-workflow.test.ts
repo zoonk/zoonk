@@ -375,6 +375,47 @@ describe(courseOutlineWorkflow, () => {
       );
     });
 
+    it("queues Main's refresh for the chapters it tags, whether or not Main answers", async () => {
+      vi.stubEnv("ZOONK_APP", "api");
+      const fetch = vi.fn().mockRejectedValue(new Error("Main offline"));
+      vi.stubGlobal("fetch", fetch);
+
+      try {
+        const course = await courseFixture({
+          language: "pt",
+          outlineStatus: "completed",
+          targetLanguage: "it",
+        });
+
+        const [, skill] = await Promise.all([
+          writtenBand({
+            chapters: [{ lessons: ["Disponibilidade de quartos"], title: "Reserva e hospedagem" }],
+            courseId: course.id,
+          }),
+          italianSkill("Hospedar-se em um hotel"),
+        ]);
+
+        vi.mocked(findTeachingChapters).mockResolvedValue(
+          taskResult([{ after: 1, chapter: 1, key: skill.id }]),
+        );
+
+        await courseOutlineWorkflow({
+          bands: [{ level: "beginner", skills: [toSkillRef(skill)] }],
+          courseId: course.id,
+          scope: ITALIAN_SCOPE,
+        });
+
+        expect(fetch).not.toHaveBeenCalled();
+
+        expect(start).toHaveBeenCalledWith(courseContentNotificationWorkflow, [
+          [`course-curriculum:${course.id}`],
+        ]);
+      } finally {
+        vi.unstubAllEnvs();
+        vi.unstubAllGlobals();
+      }
+    });
+
     it("writes a chapter only for the skill no chapter teaches, right after the chapter it builds on", async () => {
       const course = await courseFixture({
         language: "pt",
