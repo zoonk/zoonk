@@ -26,6 +26,7 @@ struct MockScreen: View {
 private struct MockStage: View {
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.scenePhase) private var scenePhase
   @Bindable var run: MockRun
   let sessionId: String?
   /// A result opened again shows its day moment still; one finished here celebrates.
@@ -51,6 +52,11 @@ private struct MockStage: View {
       .onChange(of: run.view?.status) { previous, status in
         if previous != nil, previous != .finished, status == .finished {
           finishedHere = true
+        }
+      }
+      .onChange(of: scenePhase) { _, phase in
+        if phase == .active {
+          run.offerGradingOnANewDay()
         }
       }
       .onDisappear { run.queue.stop() }

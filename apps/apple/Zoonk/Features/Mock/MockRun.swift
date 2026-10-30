@@ -17,7 +17,7 @@ final class MockRun {
     case idle
     case grading
     case failed
-    case limitReached
+    case limitReached(on: Date)
   }
 
   private static let slowAfter = Duration.seconds(10)
@@ -44,13 +44,17 @@ final class MockRun {
   private var questionTimeUp = false
 
   @ObservationIgnored private let store: ExamStore
+  @ObservationIgnored private let blockId: String
+  @ObservationIgnored private let now: () -> Date
   @ObservationIgnored private var adopted: String?
   @ObservationIgnored private var shown: (itemId: String, at: ContinuousClock.Instant)?
   @ObservationIgnored private var unsavedText: MockDraft?
   @ObservationIgnored private var textTask: Task<Void, Never>?
 
-  init(store: ExamStore, blockId: String) {
+  init(store: ExamStore, blockId: String, now: @escaping () -> Date = { .now }) {
     self.store = store
+    self.blockId = blockId
+    self.now = now
     let mock = store.mock(blockId: blockId)
     self.mock = mock
     queue = MockDraftQueue { [store] draft in
@@ -318,10 +322,10 @@ final class MockRun {
   }
 
   func gradeEssays() async {
-    guard essayGrading != .grading, let blockId = view?.blockId else { return }
+    guard essayGrading != .grading else { return }
     essayGrading = .grading
 
-    let result: MutationResult<Bool>? = await within(Self.gradingTimeout) { [store] in
+    let result: MutationResult<Bool>? = await within(Self.gradingTimeout) { [store, blockId] in
       await store.write(invalidating: [.learnerModel]) { api, token in
         try await api.gradeEssays(token: token, blockId: blockId)
       }
@@ -330,11 +334,20 @@ final class MockRun {
     switch result {
     case .done(let allGraded):
       await mock.refresh()
-      essayGrading = allGraded ? .idle : .limitReached
+      essayGrading = allGraded ? .idle : .limitReached(on: now())
     case .obsolete:
       essayGrading = .idle
     case .failed, nil:
       essayGrading = .failed
+    }
+  }
+
+  /// The day's essay grades come back at the learner's midnight.
+  func offerGradingOnANewDay() {
+    if case .limitReached(let day) = essayGrading,
+      !Calendar.current.isDate(day, inSameDayAs: now())
+    {
+      essayGrading = .idle
     }
   }
 
