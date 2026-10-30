@@ -1,5 +1,6 @@
 "use client";
 
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -20,8 +21,9 @@ type TimeChoice = {
 /**
  * A closed select changes with the keyboard on some platforms (arrows, typing a time's first
  * letters), reporting each time on the way within the key's own event. Where each time picked saves
- * (`saves`), a time reached by keys waits for Enter or for focus to leave; a pick from the open list
- * arrives later and saves at once.
+ * (`saves`), a time reached by keys waits for Enter and is dropped when focus leaves, so a click
+ * elsewhere (Undo, a study day) never saves it first; a pick from the open list arrives later and
+ * saves at once.
  */
 function useTimeChoice({ disabled, minutes, onChange, saves }: TimeChoice) {
   const [moved, setMoved] = useState<number | null>(null);
@@ -36,11 +38,7 @@ function useTimeChoice({ disabled, minutes, onChange, saves }: TimeChoice) {
   };
 
   return {
-    onBlur: () => {
-      if (moved !== null) {
-        pick(moved);
-      }
-    },
+    onBlur: () => setMoved(null),
     onChange: (event: React.ChangeEvent<HTMLSelectElement>) => {
       const next = Number(event.target.value);
 
@@ -65,6 +63,7 @@ function useTimeChoice({ disabled, minutes, onChange, saves }: TimeChoice) {
       }, 0);
     },
     value: moved ?? minutes,
+    waiting: moved !== null,
   };
 }
 
@@ -83,10 +82,16 @@ export function TimeSelect({
 }) {
   const formatDuration = useFormatDuration();
   const times = getDailyTimes(value);
-  const choice = useTimeChoice({ disabled, minutes: value, onChange, saves });
+  const { waiting, ...choice } = useTimeChoice({ disabled, minutes: value, onChange, saves });
 
   return (
-    <NativeSelect aria-label={label} disabled={disabled} focusableWhenDisabled {...choice}>
+    <NativeSelect
+      aria-keyshortcuts={waiting ? "Enter" : undefined}
+      aria-label={label}
+      disabled={disabled}
+      focusableWhenDisabled
+      {...choice}
+    >
       {times.map((minutes) => (
         <NativeSelectOption key={minutes} value={minutes}>
           {formatDuration(minutes)}
@@ -117,7 +122,7 @@ function DailyTimeReadout({
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const times = getDailyTimes(minutes, suggested);
-  const choice = useTimeChoice({ disabled, minutes, onChange, saves });
+  const { waiting, ...choice } = useTimeChoice({ disabled, minutes, onChange, saves });
 
   return (
     <div
@@ -131,10 +136,12 @@ function DailyTimeReadout({
       <span aria-hidden="true" className="flex items-center gap-2">
         <BigQuantity className="text-5xl">{formatDuration(choice.value)}</BigQuantity>
         <ChevronDownIcon className="text-muted-foreground size-5 shrink-0" />
+        {waiting && <ShortcutKbd>⏎</ShortcutKbd>}
       </span>
 
       <select
         aria-disabled={disabled || undefined}
+        aria-keyshortcuts={waiting ? "Enter" : undefined}
         aria-label={label}
         className="absolute inset-0 size-full cursor-pointer appearance-none text-base opacity-0 aria-disabled:pointer-events-none"
         {...choice}
