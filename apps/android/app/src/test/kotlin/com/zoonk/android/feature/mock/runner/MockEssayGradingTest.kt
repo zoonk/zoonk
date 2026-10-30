@@ -32,7 +32,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MockEssayGradingTest {
@@ -52,13 +54,16 @@ class MockEssayGradingTest {
     @After
     fun reset() = Dispatchers.resetMain()
 
-    private suspend fun viewModel(initial: MockExam = api.mock): MockRunnerViewModel {
+    private suspend fun viewModel(
+        initial: MockExam = api.mock,
+        clock: Clock = Clock.System,
+    ): MockRunnerViewModel {
         val scope = CoroutineScope(SupervisorJob() + dispatcher)
         val drafts = DraftStore(folder.root, scope, io = dispatcher)
         drafts.follow { DraftsChange(next = ana.accountId) }
         cache = AppCache(session, scope)
         store = MockRunStore(api, cache, drafts) { "UTC" }
-        return MockRunnerViewModel(store, session, RUN_BLOCK, OpenedMock(initial, emptyList()), reread = {})
+        return MockRunnerViewModel(store, session, RUN_BLOCK, OpenedMock(initial, emptyList()), reread = {}, clock = clock)
     }
 
     private fun essays(vararg essays: String) = finishedMock(extra = """"essayRubric":"enem","essays":[${essays.joinToString(",")}]""")
@@ -95,6 +100,27 @@ class MockEssayGradingTest {
 
             assertEquals(EssayGrading.LimitReached, viewModel.essayGrading.value)
             assertEquals(listOf(MockEssay.Status.GRADED, MockEssay.Status.PENDING), viewModel.essayStatuses)
+        }
+
+    @Test
+    fun gradeItComesBackOnceTheLearnersDayTurns() =
+        runTest(dispatcher) {
+            api.afterFinish = essays(pendingEssay())
+            api.afterGrade = essays(pendingEssay())
+            api.gradeOutcome = EssayGradeOutcome.LimitReached
+            val clock = SetClock(Instant.parse("2026-10-29T22:00:00Z"))
+            val viewModel = viewModel(clock = clock)
+
+            viewModel.finish()
+            advanceUntilIdle()
+            viewModel.onStop()
+            viewModel.onStart()
+            assertEquals(EssayGrading.LimitReached, viewModel.essayGrading.value)
+
+            clock.now = Instant.parse("2026-10-30T08:00:00Z")
+            viewModel.onStop()
+            viewModel.onStart()
+            assertEquals(EssayGrading.Idle, viewModel.essayGrading.value)
         }
 
     @Test
@@ -159,4 +185,10 @@ class MockEssayGradingTest {
 
             assertEquals(2, reads)
         }
+}
+
+private class SetClock(
+    var now: Instant,
+) : Clock {
+    override fun now() = now
 }

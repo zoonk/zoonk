@@ -232,7 +232,7 @@ class MockRunStore(
     private val api: MockRunApi,
     private val cache: AppCache,
     private val drafts: DraftStore,
-    private val timeZone: () -> String,
+    val timeZone: () -> String,
 ) {
     /** Each opening reads the mock again, as main's page does, so a runner never starts from a read older than its saves. */
     fun open(blockId: String): Resource<OpenedMock> =
