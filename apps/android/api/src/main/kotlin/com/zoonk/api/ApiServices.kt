@@ -26,25 +26,18 @@ import com.zoonk.api.apis.StudySessionsApi
 import com.zoonk.api.apis.SubscriptionsApi
 import com.zoonk.api.apis.UsersApi
 import com.zoonk.api.apis.WorkflowsApi
-import com.zoonk.api.models.Goal
-import com.zoonk.api.models.OpenedStudyDay
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.serializer
 import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Converter
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.create
-import retrofit2.http.Body
-import retrofit2.http.POST
-import retrofit2.http.Path
 import java.lang.reflect.Type
-import java.util.UUID
 
 /** [baseUrl] is the API's versioned root, ending in `/v1/`. */
 class ApiServices(
@@ -59,7 +52,7 @@ class ApiServices(
             .addConverterFactory(NullBody)
             .addConverterFactory(SerialNames)
             .addConverterFactory(FormFields)
-            .addConverterFactory(ApiJson.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(JsonBodies)
             .build()
 
     val account: AccountApi by lazy { retrofit.create() }
@@ -88,27 +81,26 @@ class ApiServices(
     val subscriptions: SubscriptionsApi by lazy { retrofit.create() }
     val users: UsersApi by lazy { retrofit.create() }
     val workflows: WorkflowsApi by lazy { retrofit.create() }
-    val jsonBodies: JsonBodyApi by lazy { retrofit.create() }
 }
 
-/**
- * Operations whose request must send explicit `null`s, which [ApiJson] leaves out of generated
- * bodies: each takes its body as JSON built by the caller.
- */
-interface JsonBodyApi {
-    /** The generated `openStudyDay`, whose shown block (`target`) keeps its `null` fields. */
-    @POST("goals/{goalId}/study-sessions")
-    suspend fun openStudyDay(
-        @Path("goalId") goalId: UUID,
-        @Body body: JsonObject,
-    ): Response<OpenedStudyDay>
+/** Request bodies are written with [ApiRequestJson] and responses read with [ApiJson]. */
+private object JsonBodies : Converter.Factory() {
+    private val json = "application/json".toMediaType()
+    private val requests = ApiRequestJson.asConverterFactory(json)
+    private val responses = ApiJson.asConverterFactory(json)
 
-    /** The generated `startCourseGoal`, whose `level` is `null` for a quick test and absent to ask it in the setup. */
-    @POST("courses/{courseId}/goals")
-    suspend fun startCourseGoal(
-        @Path("courseId") courseId: UUID,
-        @Body body: JsonObject,
-    ): Response<Goal>
+    override fun requestBodyConverter(
+        type: Type,
+        parameterAnnotations: Array<out Annotation>,
+        methodAnnotations: Array<out Annotation>,
+        retrofit: Retrofit,
+    ): Converter<*, RequestBody>? = requests.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit)
+
+    override fun responseBodyConverter(
+        type: Type,
+        annotations: Array<out Annotation>,
+        retrofit: Retrofit,
+    ): Converter<ResponseBody, *>? = responses.responseBodyConverter(type, annotations, retrofit)
 }
 
 /**

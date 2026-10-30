@@ -5,19 +5,23 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.recode
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.models.OpenStudyDayRequest
+import com.zoonk.api.models.OpenStudyDayRequestTarget
+import com.zoonk.api.models.OpenStudyDayRequestTargetOneOf
+import com.zoonk.api.models.OpenStudyDayRequestTargetOneOf1
+import com.zoonk.api.models.OpenStudyDayRequestTargetOneOfShown
+import com.zoonk.api.models.OpenStudyDayRequestTargetOneOfShownCheckpoint
+import com.zoonk.api.models.OpenStudyDayRequestTargetOneOfShownFlags
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudyCheckpoint
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.StudySessionSummary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import kotlinx.serialization.json.putJsonObject
 import java.util.UUID
 
 /** The study reads, and the writes a tap makes; nothing here starts AI work. */
@@ -25,7 +29,7 @@ interface StudyApi {
     suspend fun openDay(
         session: AuthenticatedSession,
         goalId: UUID,
-        body: JsonObject,
+        body: OpenStudyDayRequest,
     ): OpenedStudyDay
 
     suspend fun session(
@@ -273,79 +277,38 @@ class StudyOpener(
 internal fun DayStep.waitsForItsLesson(): Boolean =
     lessonId == null && (screen == StudyBlock.Screen.LESSON || (screen == StudyBlock.Screen.SESSION && kind == StudyBlock.Kind.LEARN))
 
-/**
- * Names the shown step by its work, never by position alone, so a changed day never opens other
- * work; core needs the ref's `null`s, which generated bodies leave out.
- */
+/** Names the shown step by its work, never by position alone, so a changed day never opens other work. */
 internal fun openDayBody(
     shownDate: LocalDate,
     step: DayStep?,
     next: Boolean,
     timeZone: String,
-): JsonObject =
-    buildJsonObject {
-        put("shownDate", shownDate.toString())
-        put("timeZone", timeZone)
-
-        if (step == null) {
-            put("keepEmpty", true)
-        } else if (next) {
-            putJsonObject("target") {
-                put("kind", "next")
-                put("shown", step.ref())
+) = OpenStudyDayRequest(
+    shownDate = shownDate,
+    keepEmpty = true.takeIf { step == null },
+    target =
+        step?.shown()?.let { shown ->
+            if (next) {
+                OpenStudyDayRequestTarget.OpenStudyDayRequestTargetOneOfValue(
+                    OpenStudyDayRequestTargetOneOf(OpenStudyDayRequestTargetOneOf.Kind.NEXT, shown),
+                )
+            } else {
+                OpenStudyDayRequestTarget.OpenStudyDayRequestTargetOneOf1Value(
+                    OpenStudyDayRequestTargetOneOf1(OpenStudyDayRequestTargetOneOf1.Kind.REF, shown.recode()),
+                )
             }
-        } else {
-            putJsonObject("target") {
-                put("kind", "ref")
-                put("ref", step.ref())
-            }
-        }
-    }
+        },
+    timeZone = timeZone,
+)
 
-private fun DayStep.ref(): JsonObject =
-    buildJsonObject {
-        put("areaId", areaId)
-        put("chapterId", chapterId?.toString())
-        put("checkpoint", checkpointRef())
-        putJsonObject("flags") {
-            put("extra", extra)
-            put("fullReview", fullReview)
-            put("mistakesOnly", mistakesOnly)
-            put("refresh", refresh)
-            put("reinforcement", reinforcement)
-            put("weakest", weakest)
-        }
-        put("kind", kind.value)
-        put("lessonId", lessonId?.toString())
-        put("planItemKey", planItemKey)
-        put("position", position)
-    }
-
-private fun DayStep.checkpointRef() =
-    when (val checkpoint = checkpoint) {
-        null -> {
-            JsonNull
-        }
-
-        is com.zoonk.api.models.StudyCheckpoint.StudyCheckpointOneOfValue -> {
-            buildJsonObject {
-                put("kind", checkpoint.value.kind.value)
-                put("mock", true)
-                putJsonObject("mockIdentity") {
-                    put("day", checkpoint.value.mockIdentity.day)
-                    put("fullLength", checkpoint.value.mockIdentity.fullLength)
-                }
-                put("phase", checkpoint.value.phase)
-                put("rematch", checkpoint.value.rematch)
-            }
-        }
-
-        is com.zoonk.api.models.StudyCheckpoint.StudyCheckpointOneOf1Value -> {
-            buildJsonObject {
-                put("kind", checkpoint.value.kind.value)
-                put("mock", false)
-                put("phase", checkpoint.value.phase)
-                put("rematch", checkpoint.value.rematch)
-            }
-        }
-    }
+private fun DayStep.shown() =
+    OpenStudyDayRequestTargetOneOfShown(
+        areaId = areaId,
+        chapterId = chapterId,
+        checkpoint = checkpoint?.recode<StudyCheckpoint, OpenStudyDayRequestTargetOneOfShownCheckpoint>(),
+        flags = OpenStudyDayRequestTargetOneOfShownFlags(extra, fullReview, mistakesOnly, refresh, reinforcement, weakest),
+        kind = OpenStudyDayRequestTargetOneOfShown.Kind.valueOf(kind.name),
+        lessonId = lessonId,
+        planItemKey = planItemKey,
+        position = position,
+    )

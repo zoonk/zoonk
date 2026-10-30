@@ -7,7 +7,6 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.perform
-import com.zoonk.android.data.withBearer
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
@@ -44,24 +43,18 @@ import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.Source
 import com.zoonk.api.models.Syllabus
-import com.zoonk.api.models.UploadToken
+import com.zoonk.api.models.UploadTokenRequest
+import com.zoonk.api.models.UploadTokenRequestPayload
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import kotlinx.serialization.json.putJsonObject
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import okio.BufferedSink
 import okio.source
-import retrofit2.Response
 import java.io.IOException
 import java.io.InputStream
 import java.util.Base64
@@ -293,7 +286,7 @@ class LiveOnboardingApi(
         session: AuthenticatedSession,
         courseId: String,
         body: JsonObject,
-    ) = perform { api.clients(session).jsonBodies.startCourseGoal(UUID.fromString(courseId), body) }
+    ) = perform { api.clients(session).goals.startCourseGoal(UUID.fromString(courseId), body) }
 
     override suspend fun planLink(
         session: AuthenticatedSession?,
@@ -371,39 +364,15 @@ class LiveOnboardingApi(
         putBlob(pathname, file, signed.delegationToken, signed.signature, signed.params)
     }
 
-    /** Vercel Blob's body needs `clientPayload` sent as null, which the generated client leaves out. */
     private suspend fun uploadToken(
         session: AuthenticatedSession,
         pathname: String,
-    ): Response<UploadToken> {
-        val body =
-            buildJsonObject {
-                putJsonObject("payload") {
-                    put("clientPayload", JsonNull)
-                    put("multipart", false)
-                    put("pathname", pathname)
-                }
-                put("type", "blob.generate-presigned-url")
-            }
-        val request =
-            Request
-                .Builder()
-                .url(api.baseUrl.resolve("uploads/tokens")!!)
-                .post(body.toString().toRequestBody("application/json".toMediaType()))
-                .build()
-        return withContext(Dispatchers.IO) {
-            val raw =
-                api.http
-                    .withBearer(session.bearerToken)
-                    .newCall(request)
-                    .execute()
-            if (raw.isSuccessful) {
-                raw.use { Response.success(ApiJson.decodeFromString<UploadToken>(it.body.string()), it) }
-            } else {
-                Response.error(raw.body, raw)
-            }
-        }
-    }
+    ) = api.clients(session).sources.createUploadToken(
+        UploadTokenRequest(
+            payload = UploadTokenRequestPayload(clientPayload = null, multipart = false, pathname = pathname),
+            type = UploadTokenRequest.Type.BLOB_PERIOD_GENERATE_PRESIGNED_URL,
+        ),
+    )
 
     override suspend fun attach(
         session: AuthenticatedSession,

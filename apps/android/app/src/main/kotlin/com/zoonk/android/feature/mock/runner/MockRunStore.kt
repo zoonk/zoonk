@@ -12,9 +12,11 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.perform
+import com.zoonk.android.data.recode
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.Answer
-import com.zoonk.api.ApiJson
+import com.zoonk.api.models.MockAnswer
+import com.zoonk.api.models.MockAnswerInput
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockPlanOfferInput
 import com.zoonk.api.models.MockPlanOfferResult
@@ -22,9 +24,6 @@ import com.zoonk.api.models.MockPlayInput
 import com.zoonk.api.models.MockTimeZoneInput
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import retrofit2.Response
 import java.util.UUID
 
@@ -125,12 +124,7 @@ class LiveMockRunApi(
             perform {
                 api.clients(session).exams.saveMockAnswer(
                     UUID.fromString(blockId),
-                    buildJsonObject {
-                        put("answer", draft.answer?.let { ApiJson.encodeToJsonElement(Answer.serializer(), it) } ?: JsonNull)
-                        put("durationMs", draft.durationMs)
-                        put("flagged", draft.flagged)
-                        put("itemId", draft.itemId)
-                    },
+                    MockAnswerInput(draft.answer?.recode<Answer, MockAnswer>(), draft.durationMs, draft.flagged, UUID.fromString(draft.itemId)),
                 )
             }
             SaveOutcome.Stored

@@ -20,6 +20,7 @@ import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.LearningProfile
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.MockOptions
+import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudySession
@@ -177,7 +178,7 @@ class BuddyViewModelTest {
         override suspend fun openDay(
             session: AuthenticatedSession,
             goalId: UUID,
-            body: JsonObject,
+            body: OpenStudyDayRequest,
         ): OpenedStudyDay = error("Not used")
 
         override suspend fun stop(

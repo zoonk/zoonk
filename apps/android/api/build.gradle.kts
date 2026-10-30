@@ -46,15 +46,13 @@ openApiGenerate {
     // Unions of JSON values the generator can't express; a new one fails compilation, so add it here.
     schemaMappings =
         listOf(
+            // Its `level` is null for a quick test and absent to ask it in the setup, which the model can't tell apart.
+            "CourseGoalStartInput",
             "ExamTopicFrequency",
-            // Its keys are required even when null (no score, a pass not known yet), which the model would drop.
-            "ExamResultInput",
             "LanguageLevelTestSpokenAnswerRequest",
             // Its explicit nulls mean "clear it" (no daily limit, no active goal), which the model can't tell from absent.
             "LearningProfileUpdate",
             "MeDeletion",
-            // Its `answer` is required even when null (a blank answer), which the model would drop.
-            "MockAnswerInput",
             // Its `setTargetDate` takes an explicit null (no date), which the generated models would drop.
             "PlanChangeInput",
             "PronunciationAnswerRequest",

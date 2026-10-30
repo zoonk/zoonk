@@ -10,10 +10,8 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
 import com.zoonk.android.feature.mock.notAnExamAsNull
 import com.zoonk.api.models.ExamResult
+import com.zoonk.api.models.ExamResultInput
 import com.zoonk.api.models.ExamView
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonObject
 import java.util.UUID
 
 /** What the learner reports after the exam: a score on [scale], whether they passed, or both. */
@@ -57,12 +55,12 @@ class LiveExamApi(
     ) = perform {
         api.clients(session).exams.reportExamResult(
             goalId,
-            buildJsonObject {
-                put("maxScore", report.maxScore?.let(::JsonPrimitive) ?: JsonNull)
-                put("passed", report.passed?.let(::JsonPrimitive) ?: JsonNull)
-                put("scale", report.scale?.value?.let(::JsonPrimitive) ?: JsonNull)
-                put("score", report.score?.let(::JsonPrimitive) ?: JsonNull)
-            },
+            ExamResultInput(
+                maxScore = report.maxScore,
+                passed = report.passed,
+                scale = report.scale?.let { ExamResultInput.Scale.valueOf(it.name) },
+                score = report.score,
+            ),
             timeZone,
         )
     }

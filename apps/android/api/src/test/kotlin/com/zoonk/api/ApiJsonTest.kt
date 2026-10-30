@@ -1,11 +1,12 @@
 package com.zoonk.api
 
 import com.zoonk.api.models.ActivityExpectedRows
+import com.zoonk.api.models.AnytimeMockInput
 import com.zoonk.api.models.ExamBlueprintSource
 import com.zoonk.api.models.ItemSetListening
 import com.zoonk.api.models.LanguageConversationStartInputOneOf
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf12
-import com.zoonk.api.models.MeUpdate
+import com.zoonk.api.models.MockShape
 import com.zoonk.api.models.PlayableLibraryStepAnyOf9Exercise
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf18Fields
 import kotlinx.serialization.json.Json
@@ -53,9 +54,16 @@ class ApiJsonTest {
     }
 
     @Test
-    fun aBodyLeavesOutTheFieldsItDoesNotSet() {
-        val body = MeUpdate(name = "Ana")
-        assertEquals("{\"name\":\"Ana\"}", ApiJson.encodeToString(MeUpdate.serializer(), body))
+    fun aBodyKeepsTheNullsItsContractRequiresAndLeavesOutWhatItDoesNotSet() {
+        val body =
+            AnytimeMockInput(
+                purpose = AnytimeMockInput.Purpose.PRACTICE,
+                shape = MockShape(area = null, day = null, kind = MockShape.Kind.HALF),
+            )
+        assertEquals(
+            """{"purpose":"practice","shape":{"area":null,"day":null,"kind":"half"}}""",
+            ApiRequestJson.encodeToString(AnytimeMockInput.serializer(), body),
+        )
     }
 
     @Test

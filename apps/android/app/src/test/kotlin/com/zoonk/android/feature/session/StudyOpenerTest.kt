@@ -7,6 +7,8 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.ApiRequestJson
+import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudySession
@@ -31,7 +33,7 @@ class StudyOpenerTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
 
     private class FakeStudyApi : StudyApi {
-        val opened = mutableListOf<JsonObject>()
+        val opened = mutableListOf<OpenStudyDayRequest>()
         val started = mutableListOf<UUID>()
         val prepared = mutableListOf<UUID>()
         val stopped = mutableListOf<UUID>()
@@ -44,7 +46,7 @@ class StudyOpenerTest {
         override suspend fun openDay(
             session: AuthenticatedSession,
             goalId: UUID,
-            body: JsonObject,
+            body: OpenStudyDayRequest,
         ): OpenedStudyDay {
             opened += body
             val day = openedSession
@@ -121,7 +123,7 @@ class StudyOpenerTest {
 
             assertEquals(MutationResult.Done(AppRoute.Lesson(lesson.lessonId.toString(), SESSION.toString())), result)
             assertEquals(listOf(blockId(0)), api.started)
-            assertEquals(emptyList<JsonObject>(), api.opened)
+            assertEquals(emptyList<OpenStudyDayRequest>(), api.opened)
         }
 
     @Test
@@ -162,8 +164,9 @@ class StudyOpenerTest {
             val opened = decodeFixture<OpenedStudyDay>("opened-study-day").sessionId
             assertEquals(MutationResult.Done(AppRoute.QuestionBlock(opened.toString(), blockId(0).toString())), result)
             val target =
-                api.opened
-                    .single()
+                ApiRequestJson
+                    .encodeToJsonElement(OpenStudyDayRequest.serializer(), api.opened.single())
+                    .jsonObject
                     .getValue("target")
                     .jsonObject
             assertEquals("next", target.getValue("kind").toString().trim('"'))
@@ -278,7 +281,7 @@ class StudyOpenerTest {
 
             api.session = decodeFixture("study-session", *studySession(next = blockId(1), current = false))
             assertEquals(MutationResult.Done(AppRoute.Today), opener(api).continueSession(SESSION))
-            assertEquals(emptyList<JsonObject>(), api.opened)
+            assertEquals(emptyList<OpenStudyDayRequest>(), api.opened)
 
             api.session = decodeFixture("study-session", *studySession(next = blockId(1)))
             api.openedSession = fixture("study-session", *studySession(next = blockId(1)), "id" to UUID.randomUUID().toString())
