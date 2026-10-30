@@ -53,7 +53,7 @@ describe("picture options", () => {
     await expect.element(page.getByText(ROMANESQUE?.reason ?? "")).toBeVisible();
   });
 
-  it("holds the question while a picture is drawn, then takes answers once it arrives", async () => {
+  it("takes answers from picture descriptions while pictures are drawn", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
 
     onTestFinished(() => {
@@ -74,14 +74,15 @@ describe("picture options", () => {
       .element(page.getByRole("status").filter({ hasText: "Drawing the picture…" }))
       .toBeInTheDocument();
 
-    await expect.element(page.getByRole("radio").first()).toBeDisabled();
+    await expect.element(page.getByText(BAROQUE?.picture.alt ?? "")).toBeVisible();
+    await option(BAROQUE?.picture.alt ?? "").click();
+    await checkAnswer("Not quite");
     expect(getLessonPictures).toHaveBeenLastCalledWith([step.id]);
 
     getLessonPictures.mockResolvedValue([{ image: drawn, optionId: "baroque", stepId: step.id }]);
     await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
 
     await expect.element(page.getByRole("img", { name: BAROQUE?.picture.alt })).toBeVisible();
-    await expect.element(page.getByRole("radio").first()).toBeEnabled();
   });
 
   it("describes a picture that never came, so the question still plays", async () => {

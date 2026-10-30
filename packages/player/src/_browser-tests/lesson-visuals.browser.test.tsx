@@ -202,7 +202,31 @@ describe("lesson visuals", () => {
     await expectAccessibleScreen("a question with a timeline");
   });
 
-  it("waits on a question's picture while it's drawn, then shows it and takes answers", async () => {
+  it("takes a first guess while its optional picture is still pending", async () => {
+    const hook = teachingStep("hook");
+
+    const lesson = buildLesson([
+      {
+        ...hook,
+        content: {
+          ...hook.content,
+          image: { alt: "An electron cloud", prompt: "An electron cloud" },
+        },
+        image: null,
+        imagePending: true,
+      },
+    ]);
+
+    renderLessonPlayer({ lesson });
+
+    await expect.element(page.getByText("Drawing the picture…")).toBeVisible();
+    await page.getByRole("radio").first().click();
+    await expect.element(page.getByRole("button", { name: "See the answer" })).toBeEnabled();
+    await page.getByRole("button", { name: "See the answer" }).click();
+    await expect.element(page.getByRole("button", { exact: true, name: "Continue" })).toBeVisible();
+  });
+
+  it("takes answers while a question's picture is drawn, then shows it", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
 
     onTestFinished(() => {
@@ -222,16 +246,18 @@ describe("lesson visuals", () => {
     renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
 
     await expect.element(page.getByRole("status")).toHaveTextContent("Drawing the picture…");
-    await expect.element(page.getByText(request.alt)).not.toBeInTheDocument();
+    await expect.element(page.getByText(request.alt)).toBeVisible();
 
     const firstOption = page.getByRole("radio").first();
-    await expect.element(firstOption).toBeDisabled();
+    await expect.element(firstOption).toBeEnabled();
+    await firstOption.click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(page.getByRole("radio").first()).toHaveAttribute("aria-checked", "true");
 
     getLessonPictures.mockResolvedValue([{ image: drawn, stepId: step.id }]);
     await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
 
     await expect.element(page.getByRole("img", { name: request.alt })).toBeVisible();
-    await expect.element(firstOption).toBeEnabled();
   });
 
   it("describes a question's picture that never came, so the question still reads", async () => {

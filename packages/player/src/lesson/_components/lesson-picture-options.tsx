@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { ImageIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
@@ -37,13 +38,13 @@ function PictureOptionContent({
 
     if (pending) {
       return (
-        <div
-          className="bg-muted/60 text-muted-foreground flex aspect-4/5 w-full items-center justify-center rounded-lg motion-safe:animate-pulse"
-          role="status"
-        >
+        <Skeleton className="bg-muted/60 text-muted-foreground flex aspect-4/5 w-full items-center justify-center rounded-lg">
           <ImageIcon aria-hidden="true" className="size-5" />
-          <span className="sr-only">{t("Drawing the picture…")}</span>
-        </div>
+          <span className="sr-only" role="status">
+            {t("Drawing the picture…")}
+          </span>
+          <p className="px-3 text-sm leading-snug">{alt}</p>
+        </Skeleton>
       );
     }
 

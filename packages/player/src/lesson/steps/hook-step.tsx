@@ -10,7 +10,7 @@ import { LessonChoiceOptions } from "../_components/lesson-choice-options";
 import {
   LessonStepPicture,
   useHasStepPicture,
-  useIsPictureDrawing,
+  useIsRequiredPictureDrawing,
 } from "../_components/lesson-pictures";
 import {
   LessonBody,
@@ -30,7 +30,7 @@ function HookGuess({
   step,
 }: LessonStepViewProps<StepOf<"hook">>) {
   const t = useExtracted();
-  const isPictureDrawing = useIsPictureDrawing(step);
+  const isRequiredPictureDrawing = useIsRequiredPictureDrawing(step);
 
   if (step.content.variant !== "guess") {
     return null;
@@ -60,7 +60,7 @@ function HookGuess({
       <LessonChoiceOptions
         isChecked={Boolean(result)}
         isGuess
-        isLocked={isLocked || isPictureDrawing}
+        isLocked={isLocked || isRequiredPictureDrawing}
         onSelect={(optionId) => onAnswer(optionId ? { kind: "hook", optionId } : null)}
         options={step.content.options}
         selectedId={selectedId}

@@ -4,7 +4,7 @@ import { LessonVisual } from "@zoonk/learn/visual";
 import { PlayerChoiceScene, PlayerChoiceScenePrompt } from "../../components/player-choice-scene";
 import { LessonChoiceOptions } from "../_components/lesson-choice-options";
 import { LessonPictureOptions } from "../_components/lesson-picture-options";
-import { LessonStepPicture, useIsPictureDrawing } from "../_components/lesson-pictures";
+import { LessonStepPicture, useIsRequiredPictureDrawing } from "../_components/lesson-pictures";
 import { LessonContext, LessonQuestion } from "../_components/lesson-step-text";
 import { ScreenSupport } from "../_components/screen-support";
 import { splitQuestionData } from "../_utils/lesson-aside";
@@ -19,7 +19,7 @@ export function CheckStepView({
   step,
 }: LessonStepViewProps<StepOf<"check">>) {
   const selectedId = answer?.kind === "check" ? answer.optionId : null;
-  const isPictureDrawing = useIsPictureDrawing(step);
+  const isRequiredPictureDrawing = useIsRequiredPictureDrawing(step);
   const hasPictureOptions = step.content.options.some((option) => option.picture);
   const { data, question } = splitQuestionData(step.content.question);
 
@@ -42,7 +42,7 @@ export function CheckStepView({
       {hasPictureOptions ? (
         <LessonPictureOptions
           isChecked={Boolean(result)}
-          isLocked={isLocked || isPictureDrawing}
+          isLocked={isLocked || isRequiredPictureDrawing}
           onSelect={select}
           options={step.content.options}
           selectedId={selectedId}
@@ -51,7 +51,7 @@ export function CheckStepView({
       ) : (
         <LessonChoiceOptions
           isChecked={Boolean(result)}
-          isLocked={isLocked || isPictureDrawing}
+          isLocked={isLocked || isRequiredPictureDrawing}
           onSelect={select}
           options={step.content.options}
           selectedId={selectedId}

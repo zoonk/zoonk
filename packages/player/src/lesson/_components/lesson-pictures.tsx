@@ -1,6 +1,8 @@
 "use client";
 
 import { type LessonPicture } from "@zoonk/core/lesson-player/contract";
+import { shouldOmitNumberedPicture } from "@zoonk/core/lesson-player/picture-policy";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ImageIcon } from "lucide-react";
@@ -23,7 +25,6 @@ import {
   getWaitingKeys,
   labeledDiagramOf,
   pictureKey,
-  pictureOptionIds,
 } from "../_utils/lesson-pictures";
 import {
   type LessonPlayerAdapters,
@@ -142,16 +143,19 @@ export function useOptionPicture(step: PlayableLibraryStep, optionId: string) {
   return { image, pending };
 }
 
-export function useIsPictureDrawing(step: PlayableLibraryStep): boolean {
-  const { pending } = use(LessonPicturesContext);
-  const ownPending = useStepPicture(step).pending;
-  const options = pictureOptionIds(step);
+export function useIsRequiredPictureDrawing(step: PlayableLibraryStep): boolean {
+  const { pending } = useStepPicture(step);
 
-  if (options.length === 0) {
-    return ownPending;
-  }
-
-  return ownPending || options.some((id) => pending.includes(pictureKey(step.id, id)));
+  return (
+    pending &&
+    "content" in step &&
+    shouldOmitNumberedPicture({
+      content: step.content,
+      imageAvailable: false,
+      imagePending: false,
+      kind: step.kind,
+    })
+  );
 }
 
 export function useIsExploredPictureLost(step: PlayableLibraryStep): boolean {
@@ -168,16 +172,16 @@ function LessonPicturePending({ frame }: { frame: LessonPictureFrame }) {
   const t = useExtracted();
 
   return (
-    <div
+    <Skeleton
       className={cn(
-        "bg-muted/60 text-muted-foreground flex aspect-4/5 w-full flex-col items-center justify-center gap-2 rounded-xl motion-safe:animate-pulse",
+        "bg-muted/60 text-muted-foreground flex aspect-4/5 w-full flex-col items-center justify-center gap-2 rounded-xl",
         PICTURE_FRAME_CLASS[frame],
       )}
       role="status"
     >
       <ImageIcon aria-hidden="true" className="size-6" />
       <p className="text-sm">{t("Drawing the picture…")}</p>
-    </div>
+    </Skeleton>
   );
 }
 
@@ -232,7 +236,10 @@ export function LessonStepPicture({
   if (pending) {
     return (
       <PictureFrame className={className} frame={frame}>
-        <LessonPicturePending frame={frame} />
+        <div className="flex w-full flex-col gap-2">
+          <LessonPicturePending frame={frame} />
+          {asks && request && <p className="text-muted-foreground text-sm">{request.alt}</p>}
+        </div>
       </PictureFrame>
     );
   }

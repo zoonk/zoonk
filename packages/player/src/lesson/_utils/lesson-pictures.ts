@@ -13,7 +13,7 @@ export function pictureKey(stepId: string, optionId?: string): string {
   return optionId ? `${stepId}:${optionId}` : stepId;
 }
 
-export function pictureOptionIds(step: PlayableLibraryStep): string[] {
+function pictureOptionIds(step: PlayableLibraryStep): string[] {
   if (step.kind !== "check") {
     return [];
   }
