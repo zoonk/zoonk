@@ -38,7 +38,6 @@
   "conversation_criterion_range": "a308d00b543605db388f710b0911c5465b4acf3e08b505adc7d29f4f86a6f2f0",
   "conversation_criterion_task": "d071574d37166c76f89f4227595fed8335fd52ff19a98403dbe734109eeea36c",
   "conversation_criterion_vocabulary": "f16e70e0e00552653a7cb829bfede7fba8b8519abd35f36f46b36f62d7791877",
-  "conversation_diff_line": "534813179835767944e78546b4e3046ce6fa6828326994713380aca192b5fbd2",
   "conversation_dropped": "3e3e3ef3cc1169a11112bc19979c595956efcfb83e2319cc4e92f47622be91dc",
   "conversation_dropped_title": "836b3d86699b903dc0cf92076fbff7d0c631637ed3fc41714683c385d1dd2e0e",
   "conversation_end": "d92ac9718d2926125b8b36c5e610dc94aae54739be0bdbe2d027794e80ae7679",
@@ -266,8 +265,6 @@
     <string name="conversation_better">Mejor</string>
     <!-- A button that plays a word or sentence aloud, such as "Listen to por favor". -->
     <string name="conversation_listen_to">Escuchar %1$s</string>
-    <!-- One line of a correction, read aloud: its label, then the words, such as "Better: Un café, por favor". -->
-    <string name="conversation_diff_line">%1$s: %2$s</string>
     <string name="conversation_practice">Practica una conversación</string>
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->
     <string name="conversation_practice_with">con %1$s · %2$s</string>

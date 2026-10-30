@@ -46,6 +46,8 @@
     <string name="other_time">Other time…</string>
     <string name="disclosure_expanded">Expanded</string>
     <string name="disclosure_collapsed">Collapsed</string>
+    <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->
+    <string name="diff_line_spoken">%1$s: %2$s</string>
     <string name="lessons_title">Lessons</string>
     <!-- Lessons done of the total: "2 of 6". -->
     <string name="lessons_done_count">%1$s of %2$s</string>

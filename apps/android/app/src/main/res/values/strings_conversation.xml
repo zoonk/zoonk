@@ -96,8 +96,6 @@
     <string name="conversation_better">Better</string>
     <!-- A button that plays a word or sentence aloud, such as "Listen to por favor". -->
     <string name="conversation_listen_to">Listen to %1$s</string>
-    <!-- One line of a correction, read aloud: its label, then the words, such as "Better: Un café, por favor". -->
-    <string name="conversation_diff_line">%1$s: %2$s</string>
 
     <string name="conversation_practice">Practice a conversation</string>
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->

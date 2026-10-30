@@ -1,8 +1,6 @@
 package com.zoonk.android.feature.plan
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,25 +12,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.DiffKind
+import com.zoonk.android.ui.components.DiffLine
+import com.zoonk.android.ui.components.DiffLines
+import com.zoonk.android.ui.components.DiffTone
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.theme.withTabularFigures
-import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanEffect
 import com.zoonk.api.models.PlanEffectWeeklyEvents
@@ -115,61 +110,13 @@ fun PlanEffectDiff(
 ) {
     val lines = diffLines(effect, goalDate, byDate)
     if (lines.isEmpty()) return
-    val now = stringResource(R.string.plan_change_now)
-    val after = stringResource(R.string.plan_change_after)
 
-    Column(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .clip(MaterialTheme.shapes.medium)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
-    ) {
-        lines.forEach { line ->
-            val (container, content) = line.colors()
-            val spoken = if (line.prefixed) "${if (line.added) after else now}: ${line.text}" else line.text
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .background(container)
-                        .padding(horizontal = 12.dp, vertical = 3.dp)
-                        .clearAndSetSemantics { contentDescription = spoken },
-            ) {
-                val style = MaterialTheme.typography.bodySmall.withTabularFigures()
-                Text(text = if (line.added) "+ " else "− ", style = style, color = content)
-                Text(
-                    text = line.text,
-                    style = style,
-                    color = content,
-                    textDecoration = if (line.tone == Tone.Neutral && !line.added) TextDecoration.LineThrough else null,
-                )
-            }
-        }
-    }
-}
-
-private enum class Tone { Good, Bad, Neutral }
-
-/** A lesson line says its own when ("Leaves out", "Adds"), so TalkBack reads it without "Now" or "After". */
-private class DiffLine(
-    val added: Boolean,
-    val text: String,
-    val tone: Tone,
-    val prefixed: Boolean = true,
-)
-
-@Composable
-private fun DiffLine.colors(): Pair<Color, Color> {
-    val colors = MaterialTheme.colorScheme
-    return when (tone) {
-        Tone.Good -> colors.tertiaryContainer to colors.onTertiaryContainer
-
-        // Pink means wrong; lessons left out are news to notice, so they take the warning's soft amber.
-        Tone.Bad -> MaterialTheme.zoonk.warning.copy(alpha = WARNING_TINT) to MaterialTheme.zoonk.warningText
-
-        Tone.Neutral -> Color.Transparent to if (added) colors.onSurface else colors.onSurfaceVariant
-    }
+    DiffLines(
+        lines = lines,
+        added = stringResource(R.string.plan_change_after),
+        removed = stringResource(R.string.plan_change_now),
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -185,13 +132,9 @@ private fun diffLines(
     goalDate?.takeIf { it.after != it.before }?.let { move ->
         move.before?.let {
             lines +=
-                DiffLine(
-                    added = false,
-                    stringResource(R.string.plan_change_goal_date_line, diffDate(it)),
-                    Tone.Neutral,
-                )
+                DiffLine(DiffKind.Removed, stringResource(R.string.plan_change_goal_date_line, diffDate(it)), DiffTone.Neutral)
         }
-        lines += DiffLine(added = true, stringResource(R.string.plan_change_goal_date_line, diffDate(move.after)), Tone.Neutral)
+        lines += DiffLine(DiffKind.Added, stringResource(R.string.plan_change_goal_date_line, diffDate(move.after)), DiffTone.Neutral)
     }
     shownEndMove(effect)?.let { (before, after) ->
         lines +=
@@ -245,7 +188,10 @@ private fun diffLines(
 private fun moved(
     before: String,
     after: String,
-): List<DiffLine> = if (before == after) emptyList() else listOf(DiffLine(false, before, Tone.Neutral), DiffLine(true, after, Tone.Neutral))
+): List<DiffLine> {
+    if (before == after) return emptyList()
+    return listOf(DiffLine(DiffKind.Removed, before, DiffTone.Neutral), DiffLine(DiffKind.Added, after, DiffTone.Neutral))
+}
 
 /** Without a date only the net count changes, never "8 fewer" beside "1 more". */
 @Composable
@@ -260,22 +206,22 @@ private fun lessonLines(
     return listOfNotNull(
         if (removed > 0) {
             DiffLine(
-                added = false,
+                kind = DiffKind.Removed,
                 text =
                     if (byDate) {
                         pluralStringResource(R.plurals.plan_change_leaves_out, removed, removed)
                     } else {
                         pluralStringResource(R.plurals.plan_change_fewer_lessons, removed, removed)
                     },
-                tone = if (byDate) Tone.Bad else Tone.Good,
-                prefixed = false,
+                tone = if (byDate) DiffTone.Bad else DiffTone.Good,
+                labeled = false,
             )
         } else {
             null
         },
         if (added > 0) {
             DiffLine(
-                added = true,
+                kind = DiffKind.Added,
                 text =
                     when {
                         byDate && about -> pluralStringResource(R.plurals.plan_change_adds_about, added, added)
@@ -283,8 +229,8 @@ private fun lessonLines(
                         about -> pluralStringResource(R.plurals.plan_change_about_more_lessons, added, added)
                         else -> pluralStringResource(R.plurals.plan_change_more_lessons, added, added)
                     },
-                tone = if (byDate) Tone.Good else Tone.Neutral,
-                prefixed = false,
+                tone = if (byDate) DiffTone.Good else DiffTone.Neutral,
+                labeled = false,
             )
         } else {
             null
@@ -300,5 +246,3 @@ private fun diffDate(
 ): String = formatDate(date, currentLocale(), style).replace(' ', NO_BREAK_SPACE)
 
 private const val NO_BREAK_SPACE = '\u00A0'
-
-private const val WARNING_TINT = 0.12f

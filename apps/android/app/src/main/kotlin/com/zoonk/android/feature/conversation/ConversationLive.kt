@@ -53,6 +53,7 @@ import com.zoonk.android.feature.livecall.LiveCallPhase
 import com.zoonk.android.feature.livecall.LiveCallState
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.formatClock
+import com.zoonk.android.ui.format.WORDS_MARK
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LanguageConversation
@@ -196,7 +197,7 @@ private fun Turn(
 ) {
     val words = inLanguage(text, conversation.targetLanguage)
     if (speaker == Speaker.LEARNER) {
-        val said = spokenAs(stringResource(R.string.conversation_you_said, MARK), text, conversation.targetLanguage)
+        val said = spokenAs(stringResource(R.string.conversation_you_said, WORDS_MARK), text, conversation.targetLanguage)
         Box(modifier, contentAlignment = Alignment.CenterEnd) {
             Surface(
                 modifier = Modifier.fillMaxWidth(BUBBLE_SHARE).wrapContentWidth(Alignment.End).clearAndSetSemantics { this.text = said },
@@ -209,7 +210,7 @@ private fun Turn(
     } else {
         val said =
             spokenAs(
-                stringResource(R.string.conversation_character_said, conversation.character.name, MARK),
+                stringResource(R.string.conversation_character_said, conversation.character.name, WORDS_MARK),
                 text,
                 conversation.targetLanguage,
             )

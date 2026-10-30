@@ -51,6 +51,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.format.withWords
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -147,19 +148,12 @@ private fun callTitle(
         else -> stringResource(R.string.conversation_practice_call)
     }
 
-/** Marks where a spoken line's words go in its sentence ("You: …"). */
-internal const val MARK = "\u2063"
-
-/** [template] read aloud with [text] in [language] where its [MARK] is, as TalkBack reads a line of the call. */
+/** [template] read aloud with [text] in [language], as TalkBack reads a line of the call. */
 internal fun spokenAs(
     template: String,
     text: String,
     language: String,
-) = buildAnnotatedString {
-    append(template.substringBefore(MARK))
-    append(inLanguage(text, language))
-    append(template.substringAfter(MARK, ""))
-}
+) = withWords(template, inLanguage(text, language))
 
 /** Words in the language the learner studies, so TalkBack reads them in that language. */
 internal fun inLanguage(

@@ -15,6 +15,7 @@
   "belt_red": "43b0f1da55e2b586d711036f928b7dd44cab643b6549ea840eb7ec6ac0732b02",
   "belt_white": "4348afae540fb5a9714476d821e196046435c2ae4fb1b02b9987ea8b4b919124",
   "belt_yellow": "f8faf5651d3d1463f6fa8734c37fe116923213ca2419eeae60a0e3b0b9d06083",
+  "diff_line_spoken": "de8080575de02358b87a2f6cdef85969858733ce88fa41ebb70b8e8fe117bc11",
   "disclosure_collapsed": "f49121409f18b6d4eb2d5c5f87fcd6e7883b31987745452e63a3550f2847fa0b",
   "disclosure_expanded": "02e11e04e3cfd7f7f8dd0b5458f7d4b0917eee97af279d7c7efb1650da415a09",
   "gate_log_in": "2b0884dd61bbc490df35f2b14bf94c213eb0b7c5dec16b99c03c1651f2d73f52",
@@ -107,6 +108,8 @@
     <string name="other_time">Outra duração…</string>
     <string name="disclosure_expanded">Expandido</string>
     <string name="disclosure_collapsed">Recolhido</string>
+    <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->
+    <string name="diff_line_spoken">%1$s: %2$s</string>
     <string name="lessons_title">Aulas</string>
     <!-- Lessons done of the total: "2 of 6". -->
     <string name="lessons_done_count">%1$s de %2$s</string>

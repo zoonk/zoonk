@@ -3,7 +3,7 @@ package com.zoonk.android.feature.plan
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
@@ -209,8 +209,8 @@ class PlanChangeWordsTest {
         val change = planChange(effect = effect(""""lessonsAdded":2,"endDateBefore":"2027-01-10","endDateAfter":"2027-01-20""""))
         compose.setContent { ZoonkTheme { PlanEffectDiff(change.effect, goalDate = GoalDateMove(LocalDate.of(2027, 2, 1), null)) } }
 
-        compose.onNodeWithContentDescription("Adds 2 lessons").assertExists()
-        compose.onNodeWithContentDescription("Now: Plan ends January${NBSP}10,${NBSP}2027").assertExists()
-        compose.onNodeWithContentDescription("After the change: Plan ends January${NBSP}20,${NBSP}2027").assertExists()
+        compose.onNodeWithText("Adds 2 lessons").assertExists()
+        compose.onNodeWithText("Now: Plan ends January${NBSP}10,${NBSP}2027").assertExists()
+        compose.onNodeWithText("After the change: Plan ends January${NBSP}20,${NBSP}2027").assertExists()
     }
 }

@@ -16,7 +16,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,6 +51,9 @@ import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.ui.components.DiffKind
+import com.zoonk.android.ui.components.DiffLine
+import com.zoonk.android.ui.components.DiffLines
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
@@ -331,8 +333,15 @@ private fun ImproveStep(
     StepTitle(stringResource(R.string.conversation_to_improve))
     feedback?.improve?.let { improve ->
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            DiffLine(stringResource(R.string.conversation_you_said_label), "− ", improve.said, language, better = false)
-            DiffLine(stringResource(R.string.conversation_better), "+ ", improve.better, language, better = true)
+            DiffLines(
+                lines =
+                    listOf(
+                        DiffLine(DiffKind.Removed, inLanguage(improve.said, language)),
+                        DiffLine(DiffKind.Added, inLanguage(improve.better, language)),
+                    ),
+                added = stringResource(R.string.conversation_better),
+                removed = stringResource(R.string.conversation_you_said_label),
+            )
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
                 Text(
                     improve.why,
@@ -377,29 +386,6 @@ private fun ImproveStep(
                     SpeakButton(speech, language, item.word)
                 }
             }
-        }
-    }
-}
-
-/** A line of main's `DiffLines`: what was said, struck out in pink, and the better way in blue. */
-@Composable
-private fun DiffLine(
-    label: String,
-    sign: String,
-    text: String,
-    language: String,
-    better: Boolean,
-) {
-    val spoken = spokenAs(stringResource(R.string.conversation_diff_line, label, MARK), text, language)
-    Surface(
-        Modifier.fillMaxWidth().clearAndSetSemantics { this.text = spoken },
-        shape = MaterialTheme.shapes.small,
-        color = if (better) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.errorContainer,
-        contentColor = if (better) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onErrorContainer,
-    ) {
-        Row(Modifier.padding(horizontal = 12.dp, vertical = 6.dp)) {
-            Text(sign, style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace))
-            Text(inLanguage(text, language), style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
