@@ -9,6 +9,7 @@ import {
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
 import { ActivityPlot } from "../_components/activity-plot";
+import { hidesAskedTotal } from "../_utils/hides-asked-total";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { BarModel } from "./area-model-bar";
 import { cutsToParts, partsToCuts, splitStep } from "./area-model-cuts";
@@ -74,7 +75,7 @@ export function AreaModelActivity({ content, labelId, phase }: AreaModelProps) {
   const parts = sides.map((side) => ({ parts: cutsToParts(side.cuts, side.total) }));
   const values = pieces(parts);
   const total = values.reduce((sum, value) => sum + value, 0);
-  const hidesTotal = check.kind !== "interaction" && phase === "answering";
+  const hidesTotal = hidesAskedTotal({ check, phase });
   const unit = fields.model === "area" && fields.unit ? `${fields.unit}²` : fields.unit;
   const sum = `${values.map((value) => format(value)).join(" + ")} = ${hidesTotal ? "?" : format(total, { unit })}`;
 

@@ -54,6 +54,7 @@ import com.zoonk.android.feature.activities.ActivityCanvasLabel
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.ActivityTakeaway
+import com.zoonk.android.feature.activities.hidesAskedTotal
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
@@ -88,7 +89,7 @@ private fun GeometryBoardActivity(props: ActivityProps) {
     var points by rememberSaveable(stateSaver = positionsSaver) { mutableStateOf(start) }
     val step = BoardGeometry.gridStep(start)
     val bounds = BoardGeometry.bounds(fields.measure, start, step)
-    val hideTotal = content.check is NumericCheckValue && !props.isChecked
+    val hideTotal = hidesAskedTotal(content.check, props.phase)
     val reading = readBoard(points, fields.measure)
     val summary = describeBoard(fields.measure, reading, hideTotal)
     val moved = points != start

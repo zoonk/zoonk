@@ -1,4 +1,8 @@
-import { engineModeFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import { choiceCheck } from "@zoonk/testing/fixtures/activity-checks";
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import {
@@ -26,6 +30,34 @@ describe("geometry and data activities", () => {
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("The angles always add to 180°.")).toBeVisible();
+  });
+
+  it("geometry board: the total a choice asks for waits for the check", async () => {
+    const corner = page.getByRole("slider", { name: "Corner C" });
+
+    openActivity({
+      content: {
+        ...activityContentFixtures.geometryBoard,
+        check: choiceCheck("What do the angles add up to?", [
+          ["90°", false, 90],
+          ["180°", true, 180],
+          ["360°", false, 360],
+        ]),
+      },
+      template: "geometryBoard",
+    });
+
+    await expect
+      .element(corner)
+      .toHaveAttribute("aria-valuetext", expect.stringMatching(/Angles: 72°, 45°, 63°\.$/u));
+
+    await page.getByRole("radio", { name: /^180°/u }).click();
+    await checkActivity();
+    await expectVerdict("Correct!");
+
+    await expect
+      .element(corner)
+      .toHaveAttribute("aria-valuetext", expect.stringMatching(/adding up to 180°\.$/u));
   });
 
   it("geometry board: a wrong sum shows the real one", async () => {

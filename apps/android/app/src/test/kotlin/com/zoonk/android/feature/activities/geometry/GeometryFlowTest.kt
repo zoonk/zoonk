@@ -32,11 +32,13 @@ import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.swipe
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
+import com.zoonk.android.feature.activities.sorting.choiceCheck
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
 import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonStepAnswer
+import kotlinx.serialization.json.JsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -59,7 +61,8 @@ class GeometryFlowTest {
         fixture: String,
         isCorrect: Boolean,
         restoration: StateRestorationTester? = null,
-    ) = harness.play(listOf(ActivityFixtures.step(fixture)), restoration = restoration) {
+        check: JsonObject? = null,
+    ) = harness.play(listOf(ActivityFixtures.step(fixture, check = check)), restoration = restoration) {
         grade = { _, _ -> checkResult(isCorrect, expected = ActivityFixtures.expected(fixture)) }
     }
 
@@ -175,6 +178,17 @@ class GeometryFlowTest {
         harness.tap("Check")
 
         shows("The angles always add to 180°.")
+    }
+
+    @Test
+    fun geometryBoardKeepsTheTotalAChoiceAsksForUntilTheCheck() {
+        play("geometryBoard", isCorrect = true, check = choiceCheck("What do the angles add up to?", "180°", "360°", "90°"))
+
+        assertEquals(true, handle(CORNER_C).state()?.endsWith("Angles: 72°, 45°, 63°."))
+        rule.onNodeWithText("180°").performScrollTo().performClick()
+        harness.tap("Check")
+
+        assertEquals(true, handle(CORNER_C).state()?.endsWith("adding up to 180°."))
     }
 
     @Test

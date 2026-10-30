@@ -38,12 +38,12 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
-import com.zoonk.android.feature.activities.ActivityPhase
 import com.zoonk.android.feature.activities.ActivityPlaceHandle
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityReadout
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.PlaceOrientation
+import com.zoonk.android.feature.activities.hidesAskedTotal
 import com.zoonk.android.ui.components.LinearScale
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
@@ -52,7 +52,6 @@ import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf2Value as AreaModelContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf2Fields.PlayableLibraryStepAnyOfContentOneOf2FieldsOneOf1Value as BarFields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf2Fields.PlayableLibraryStepAnyOfContentOneOf2FieldsOneOfValue as GridFields
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1Value as InteractionCheckValue
 
 val areaModelRenderer =
     ActivityRenderer(
@@ -75,7 +74,7 @@ private fun AreaModelActivity(props: ActivityProps) {
     val sides = starting.zip(cuts) { side, sideCuts -> side.copy(cuts = sideCuts) }
     val values = pieces(sides.map { cutsToParts(it.cuts, it.total) })
     val total = values.sum()
-    val hidesTotal = content.check !is InteractionCheckValue && props.phase == ActivityPhase.Answering
+    val hidesTotal = hidesAskedTotal(content.check, props.phase)
     val unit = fieldUnit?.let { if (isArea) "$it²" else it }
     val format = { value: Double -> formatAmount(value, locale) }
     val totalText = formatAmount(total, locale, unit)

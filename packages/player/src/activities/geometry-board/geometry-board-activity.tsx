@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import { hidesAskedTotal } from "../_utils/hides-asked-total";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { BoardDrawing } from "./board-drawing";
 import {
@@ -41,7 +42,7 @@ export function GeometryBoardActivity({ content, labelId, phase }: GeometryBoard
   const [points, setPoints] = useState<BoardPoint[]>(start);
   const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
   const isChecked = phase === "checked";
-  const hideTotal = check.kind === "numeric" && !isChecked;
+  const hideTotal = hidesAskedTotal({ check, phase });
   const step = gridStep(start);
   const bounds = boardBounds({ measure: fields.measure, points: start, step });
   const scale = createBoardScale({ bounds, maxHeight: MAX_HEIGHT, padding: PADDING, width });

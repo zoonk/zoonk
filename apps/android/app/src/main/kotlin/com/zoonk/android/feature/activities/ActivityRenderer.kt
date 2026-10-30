@@ -7,9 +7,18 @@ import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityStepContent
 import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck
 
 /** [Explore] draws the canvas on an explanation screen: nothing to answer, and [ActivityProps.expected] is the solved end state when the template checks only that. */
 enum class ActivityPhase { Answering, Checked, Explore }
+
+/** Main's `hidesAskedTotal`: a total the question may ask for waits for the check; an interaction check's total is part of the activity. */
+fun hidesAskedTotal(
+    check: PlayableLibraryStepAnyOfContentOneOfCheck,
+    phase: ActivityPhase,
+): Boolean =
+    check !is PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1Value &&
+        phase == ActivityPhase.Answering
 
 /**
  * What a template's canvas gets. The screen's answer is the player's, never the canvas's own;
