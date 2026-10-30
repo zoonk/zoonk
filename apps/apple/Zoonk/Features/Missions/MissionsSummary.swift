@@ -33,12 +33,9 @@ struct MissionsSummary: View {
             BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
           }
 
-          Text(
-            "\(left.count) left · ~\(studyDuration(minutes: minutesLeft(left)))",
-            tableName: "Today", comment: "Missions left and their time"
-          )
-          .font(.subheadline)
-          .monospacedDigit()
+          remaining(left)
+            .font(.subheadline)
+            .monospacedDigit()
 
           Spacer()
 
@@ -48,6 +45,24 @@ struct MissionsSummary: View {
         MissionTrack(missions: missions)
       }
     }
+  }
+
+  private func remaining(_ left: [StudyMission]) -> Text {
+    let count =
+      left.count == missions.count
+      ? Text(
+        "\(left.count) missions", tableName: "Today",
+        comment: "How many missions today has, before any is done")
+      : Text("\(left.count) left", tableName: "Today", comment: "Today's missions still to do")
+    let minutes = minutesLeft(left)
+
+    guard minutes > 0 else {
+      return count
+    }
+
+    return Text(
+      "\(count) · ~\(studyDuration(minutes: minutes))", tableName: "Today",
+      comment: "Today's missions and the time they take, such as “2 missions · ~12 min”")
   }
 
   private func minutesLeft(_ missions: [StudyMission]) -> Int {
