@@ -2274,6 +2274,41 @@
         }
       }
     },
+    "hello@zoonk.com" : {
+      "comment" : "An email address, not a phrase: keep it unless the style guide gives the language its own inbox",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hello@zoonk.com"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "hello@zoonk.com"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "contacto@zoonk.com"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hello@zoonk.com"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "contato@zoonk.com"
+          }
+        }
+      }
+    },
     "Help" : {
       "comment" : "Settings row to ask the team for help",
       "localizations" : {
@@ -3688,6 +3723,41 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Still unsure? %@" : {
+      "comment" : "Under the pricing questions' title; the argument is the email address to write to",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch unsicher? %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Still unsure? %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Aún tienes dudas? %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu hésites encore ? %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda tem dúvidas? %@"
           }
         }
       }

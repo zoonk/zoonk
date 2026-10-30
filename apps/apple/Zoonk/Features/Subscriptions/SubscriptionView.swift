@@ -18,8 +18,10 @@ struct SubscriptionScreen: View {
           SubscriptionView(appAccountToken: appAccountToken)
         } else {
           ScrollView {
-            SubscriptionMarketingContent(freePlan: settings.freePlan, hasAccount: false)
-              .scenePadding()
+            SubscriptionMarketingContent(
+              freePlan: settings.freePlan, viewer: isGuest ? .guest : .visitor
+            )
+            .scenePadding()
           }
           .loads(settings.freePlan, refreshable: false)
           .safeAreaBar(edge: .bottom) {
@@ -70,7 +72,7 @@ struct SubscriptionView: View {
   var body: some View {
     SubscriptionStoreView(productIDs: AppStoreSubscriptionProduct.productIDs) {
       SubscriptionMarketingContent(
-        allowance: settings.allowance.value, freePlan: settings.freePlan, hasAccount: true)
+        allowance: settings.allowance.value, freePlan: settings.freePlan, viewer: .member)
     }
     .subscriptionStoreControlStyle(.prominentPicker)
     .subscriptionStoreButtonLabel(.multiline)
@@ -278,11 +280,17 @@ extension Text {
   }
 }
 
+/// Who decides on Plus, as main's `PlusViewerState`: a guest has a session but no account.
+private enum PlusViewer {
+  case visitor
+  case guest
+  case member
+}
+
 private struct SubscriptionMarketingContent: View {
   var allowance: PlanAllowance?
   let freePlan: Resource<FreePlan>
-  /// A visitor or guest starts free without one.
-  let hasAccount: Bool
+  let viewer: PlusViewer
 
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
@@ -331,8 +339,11 @@ private struct SubscriptionMarketingContent: View {
 
       switch freePlan.state {
       case .loaded(let limits):
-        FreePlanIncludes(limits: limits)
-        PlusQuestions(limits: limits, hasAccount: hasAccount)
+        if viewer == .visitor {
+          FreePlanIncludes(limits: limits)
+        }
+
+        PlusQuestions(limits: limits, viewer: viewer)
       case .failed, .empty:
         VStack(alignment: .leading, spacing: 8) {
           Text(
@@ -602,20 +613,40 @@ private struct FreePlanIncludes: View {
   }
 }
 
-/// Main's pricing questions.
+/// Main's pricing questions. Only a visitor sees the Free card, so for anyone else the free plan's
+/// question starts open.
 private struct PlusQuestions: View {
   let limits: FreePlan
-  let hasAccount: Bool
+  let viewer: PlusViewer
+
+  @State private var isFreePlanOpen: Bool
+
+  init(limits: FreePlan, viewer: PlusViewer) {
+    self.limits = limits
+    self.viewer = viewer
+    _isFreePlanOpen = State(initialValue: viewer != .visitor)
+  }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("Common questions", tableName: "Account", comment: "Title of the pricing questions")
-        .font(.title3.bold())
+      VStack(alignment: .leading, spacing: 4) {
+        Text("Common questions", tableName: "Account", comment: "Title of the pricing questions")
+          .font(.title3.bold())
 
-      DisclosureGroup {
+        Text(
+          "Still unsure? \(supportEmail)", tableName: "Account",
+          comment:
+            "Under the pricing questions' title; the argument is the email address to write to"
+        )
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+      }
+
+      DisclosureGroup(isExpanded: $isFreePlanOpen) {
         freePlanAnswer
       } label: {
-        Text("What's in the free plan?", tableName: "Account", comment: "A pricing question")
+        question(
+          Text("What's in the free plan?", tableName: "Account", comment: "A pricing question"))
       }
 
       DisclosureGroup {
@@ -629,7 +660,8 @@ private struct PlusQuestions: View {
             "Read our fair use policy", tableName: "Account", comment: "Opens the fair use policy")
         }
       } label: {
-        Text("Is Plus really unlimited?", tableName: "Account", comment: "A pricing question")
+        question(
+          Text("Is Plus really unlimited?", tableName: "Account", comment: "A pricing question"))
       }
 
       DisclosureGroup {
@@ -638,7 +670,8 @@ private struct PlusQuestions: View {
             "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you.",
             tableName: "Account", comment: "Answers what canceling Plus does"))
       } label: {
-        Text("What happens if I cancel?", tableName: "Account", comment: "A pricing question")
+        question(
+          Text("What happens if I cancel?", tableName: "Account", comment: "A pricing question"))
       }
 
       DisclosureGroup {
@@ -651,14 +684,14 @@ private struct PlusQuestions: View {
           Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
         }
       } label: {
-        Text("Can I get a refund?", tableName: "Account", comment: "A pricing question")
+        question(Text("Can I get a refund?", tableName: "Account", comment: "A pricing question"))
       }
     }
   }
 
   @ViewBuilder
   private var freePlanAnswer: some View {
-    if !hasAccount, let guestLessons = limits.guestLessons {
+    if viewer != .member, let guestLessons = limits.guestLessons {
       answer(
         Text(
           "Start free with \(guestLessons) lessons, no account needed. With a free account, you get:",
@@ -722,6 +755,22 @@ private struct PlusQuestions: View {
           "Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)",
           tableName: "Account", comment: "Free plan: practice calls, never a number"))
     }
+  }
+
+  private var supportEmail: AttributedString {
+    let address = String(
+      localized: "hello@zoonk.com", table: "Account",
+      comment:
+        "An email address, not a phrase: keep it unless the style guide gives the language its own inbox"
+    )
+    var link = AttributedString(address)
+    link.link = URL(string: "mailto:\(address)")
+    return link
+  }
+
+  /// A disclosure's label is a button, which centers a wrapped line.
+  private func question(_ text: Text) -> some View {
+    text.multilineTextAlignment(.leading)
   }
 
   private func answer(_ text: Text) -> some View {
