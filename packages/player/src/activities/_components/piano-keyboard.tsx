@@ -150,7 +150,10 @@ export function PianoKeyboard({
             data-slot="piano-key"
             style={keyPosition(key, whiteCount)}
           >
-            {mark && <NoteMark kind={mark} label={nameOf(key.midi)} />}
+            {/* Keys keep their shade in dark mode, so a ring in the page's color sets a mark off a key of its shade. */}
+            {mark && (
+              <NoteMark className="ring-background ring-2" kind={mark} label={nameOf(key.midi)} />
+            )}
             {!mark && key.midi % OCTAVE === 0 && (
               <span aria-hidden="true" className="text-xs font-medium text-neutral-600">
                 {nameOf(key.midi)}
