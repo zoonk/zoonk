@@ -462,15 +462,14 @@ final class LessonPlayerStore {
     }
   }
 
-  func resolveSpoken(_ verdict: SpokenAnswerVerdict) {
-    guard let stepId = state?.currentStep?.id else { return }
+  func resolveSpoken(_ verdict: SpokenAnswerVerdict, stepId: String) {
     var result = LessonStepResult(
       isCorrect: verdict.isCorrect, answerText: verdict.transcript, correctAnswer: nil,
       feedback: verdict.feedback)
     result.score = verdict.score
     result.wordsToPractice = verdict.wordsToPractice
 
-    if case .spokenAnswer(let content, _) = state?.currentStep?.content, !verdict.isCorrect {
+    if case .spokenAnswer(let content, _) = state?.steps[stepId]?.content, !verdict.isCorrect {
       result.correctAnswer = content.targetText
     }
 

@@ -57,7 +57,7 @@ struct LessonStepView: View {
       result: state.results[step.id],
       isLocked: state.phase != .playing,
       select: { store.select($0) },
-      resolveSpoken: { store.resolveSpoken($0) })
+      resolveSpoken: { store.resolveSpoken($0, stepId: step.id) })
   }
 }
 

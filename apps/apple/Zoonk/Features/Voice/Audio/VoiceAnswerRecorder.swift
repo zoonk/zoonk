@@ -4,6 +4,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   @Environment(VoiceServices.self) private var voice
   @State private var recorder = VoiceRecorder()
   @State private var checking = false
+  @State private var grading: Task<Void, Never>?
   @State private var issue: Issue?
 
   let grade: @MainActor (VoiceServices, VoiceRecording) async -> GradeOutcome<Grade>
@@ -34,7 +35,10 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 
         status
       }
-      .onDisappear { recorder.cancel() }
+      .onDisappear {
+        recorder.cancel()
+        grading?.cancel()
+      }
     }
   }
 
@@ -84,7 +88,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
     issue = nil
 
     let started = await recorder.start { recording in
-      Task { await check(recording) }
+      grading = Task { await check(recording) }
     }
 
     if !started, recorder.isDenied {

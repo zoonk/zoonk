@@ -405,12 +405,15 @@ struct LessonPlayerState: Equatable, Sendable {
   /// Records a verdict. The first one on a screen is what counts. A missed check or activity comes
   /// back once at the end of the lesson; a missed language answer the learner built gets one chance
   /// to self-correct first; during "I know this" a miss ends the quick check instead. A hook's
-  /// guess (`counts: false`) only shows its reveal.
+  /// guess (`counts: false`) only shows its reveal. A verdict only lands on the screen being
+  /// answered: one that comes back after the learner left its screen changes nothing.
   mutating func resolve(
     _ stepId: String, result: LessonStepResult, counts: Bool = true, saving: UnsavedAnswer? = nil,
     now: Date = .now
   ) {
-    guard phase != .completed, let step = steps[stepId] else {
+    guard phase == .playing || phase == .checking, currentStep?.id == stepId,
+      let step = steps[stepId]
+    else {
       return
     }
 

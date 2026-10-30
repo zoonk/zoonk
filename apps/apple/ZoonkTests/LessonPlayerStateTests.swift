@@ -86,6 +86,21 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.firstVerdicts, [step.id: false], "the first verdict still counts")
   }
 
+  func testALateVerdictForAScreenTheLearnerLeftChangesNothing() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+    state.goBack()
+    let shown = state
+
+    state.resolve(
+      "check",
+      result: LessonStepResult(
+        isCorrect: true, answerText: "Paris", correctAnswer: nil, feedback: nil))
+
+    XCTAssertEqual(state, shown)
+  }
+
   func testPreviousShowsAnAnsweredScreenAgain() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
     state.continueLesson()
