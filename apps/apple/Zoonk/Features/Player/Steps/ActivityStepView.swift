@@ -30,7 +30,7 @@ struct ActivityStepView: View {
 
       LessonQuestionText(text: content.prompt)
       LessonPictureView(
-        image: step.image, description: content.image, isPending: step.imagePending, asks: true)
+        image: step.image, alt: step.picture?.alt, isPending: step.imagePending, asks: true)
     case .turn:
       turn
     }

@@ -56,6 +56,7 @@ struct LessonStepView: View {
       answer: state.answers[step.id],
       result: state.results[step.id],
       isLocked: state.phase != .playing,
+      waitsForPicture: step.isRequiredPictureDrawing(openedAt: store.openedAt),
       select: { store.select($0) },
       resolveSpoken: { store.resolveSpoken($0, stepId: step.id) })
   }
@@ -67,6 +68,8 @@ struct LessonStepContext {
   let answer: LessonAnswer?
   let result: LessonStepResult?
   let isLocked: Bool
+  /// Picks wait while the numbered picture the question is about is still being drawn, as on main.
+  let waitsForPicture: Bool
   let select: @MainActor (LessonAnswer?) -> Void
   let resolveSpoken: @MainActor (SpokenAnswerVerdict) -> Void
 }
@@ -100,11 +103,11 @@ private struct HookStepView: View {
       .font(.caption.monospaced())
       .foregroundStyle(.secondary)
       LessonQuestionText(text: question)
-      StepMedia(step: step, description: content.image, visual: content.visual, asks: true)
+      StepMedia(step: step, visual: content.visual, asks: true)
     } else {
       // A read screen leads with its picture; a spread has it on the facing page.
       if !isPaneSplit {
-        StepMedia(step: step, description: content.image, visual: content.visual)
+        StepMedia(step: step, visual: content.visual)
       }
 
       LessonTextBlocks(content.text ?? "")
@@ -119,11 +122,11 @@ private struct HookStepView: View {
         options: options.map { LessonOption(id: $0.id, text: $0.text, isCorrect: $0.isCorrect) },
         selectedId: context.answer.flatMap { if case .hookGuess(let id) = $0 { id } else { nil } },
         isChecked: context.result != nil,
-        isLocked: context.isLocked,
+        isLocked: context.isLocked || context.waitsForPicture,
         isGuess: true
       ) { context.select(.hookGuess(optionId: $0)) }
     } else if isPaneSplit {
-      StepMedia(step: step, description: content.image, visual: content.visual)
+      StepMedia(step: step, visual: content.visual)
     }
   }
 }
@@ -146,7 +149,7 @@ private struct ExplanationStepView: View {
     switch part {
     case .screen:
       if !isPaneSplit {
-        StepMedia(step: step, description: content.image, visual: content.visual)
+        StepMedia(step: step, visual: content.visual)
       }
 
       if let title = content.title {
@@ -157,7 +160,7 @@ private struct ExplanationStepView: View {
         .font(.body)
     case .turn:
       if isPaneSplit {
-        StepMedia(step: step, description: content.image, visual: content.visual)
+        StepMedia(step: step, visual: content.visual)
       }
 
       if let explore = content.explore, !isExploredPictureLost,
@@ -195,7 +198,7 @@ private struct WorkedExampleStepView: View {
   }
 
   private var media: some View {
-    StepMedia(step: step, description: content.image, visual: content.visual)
+    StepMedia(step: step, visual: content.visual)
   }
 
   @ViewBuilder
@@ -259,7 +262,7 @@ private struct CheckStepView: View {
       }
 
       LessonQuestionText(text: content.question)
-      StepMedia(step: step, description: content.image, visual: content.visual, asks: true)
+      StepMedia(step: step, visual: content.visual, asks: true)
     case .turn:
       LessonOptionList(
         options: content.options.map {
@@ -269,8 +272,7 @@ private struct CheckStepView: View {
         },
         selectedId: context.answer.flatMap { if case .check(let id) = $0 { id } else { nil } },
         isChecked: context.result != nil,
-        // Nothing is picked while a picture the question needs is still drawn, as on main.
-        isLocked: context.isLocked || step.imagePending,
+        isLocked: context.isLocked || context.waitsForPicture,
         picturesPending: step.imagePending
       ) { context.select(.check(optionId: $0)) }
     }
@@ -515,13 +517,12 @@ private struct SummaryStepView: View {
 
 struct StepMedia: View {
   let step: LessonStep
-  let description: LessonPictureDescription?
   let visual: LessonVisual?
   var asks = false
 
   var body: some View {
     LessonPictureView(
-      image: step.image, description: description, isPending: step.imagePending, asks: asks)
+      image: step.image, alt: step.picture?.alt, isPending: step.imagePending, asks: asks)
 
     if let visual {
       LessonVisualView(visual: visual)

@@ -77,29 +77,11 @@ struct LessonOptionList: View {
 
   private func pictureLabel(_ option: LessonOption) -> some View {
     VStack(spacing: 8) {
-      Group {
-        if let picture = option.picture {
-          LessonPictureView(image: picture, description: nil, isPending: false)
-        } else if picturesPending {
-          Image(systemName: "photo")
-            .font(.title2)
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .aspectRatio(4 / 5, contentMode: .fit)
-            .background(.fill.tertiary, in: .rect(cornerRadius: 12))
-            .accessibilityLabel(
-              Text(
-                "Drawing the picture…", tableName: "Player",
-                comment: "While a screen's picture is drawn"))
-        } else {
-          Text(option.pictureAlt ?? "")
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .aspectRatio(4 / 5, contentMode: .fit)
-            .padding(12)
-            .background(.fill.tertiary, in: .rect(cornerRadius: 12))
-        }
+      if let picture = option.picture {
+        LessonPictureView(image: picture, alt: option.pictureAlt, isPending: false, asks: true)
+      } else {
+        LessonPicturePlaceholder(alt: option.pictureAlt, isDrawing: picturesPending)
+          .pictureFrame(aspectRatio: LessonPicturePlaceholder.aspectRatio)
       }
 
       // Its name would give the answer away, so it shows once the answer is checked, as on main.

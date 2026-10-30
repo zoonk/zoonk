@@ -6,7 +6,6 @@ public struct ActivityStepContent: Codable, Hashable, Sendable {
   public let template: String
   public let prompt: String
   public let check: ActivityCheck
-  public let image: LessonPictureDescription?
   public let data: ActivityData?
   public let payload: JSONValue
   /// Sent on the step beside `content`, so `LessonStep` fills it in.
@@ -15,7 +14,7 @@ public struct ActivityStepContent: Codable, Hashable, Sendable {
   public internal(set) var baseMap: ActivityBaseMap?
 
   private enum CodingKeys: String, CodingKey {
-    case check, data, image, prompt, template
+    case check, data, prompt, template
   }
 
   public init(from decoder: any Decoder) throws {
@@ -23,7 +22,6 @@ public struct ActivityStepContent: Codable, Hashable, Sendable {
     template = try container.decode(String.self, forKey: .template)
     prompt = try container.decode(String.self, forKey: .prompt)
     check = try container.decode(ActivityCheck.self, forKey: .check)
-    image = try container.decodeIfPresent(LessonPictureDescription.self, forKey: .image)
     data = try container.decodeIfPresent(ActivityData.self, forKey: .data)
     payload = try JSONValue(from: decoder)
   }

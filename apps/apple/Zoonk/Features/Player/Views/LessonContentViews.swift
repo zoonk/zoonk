@@ -75,27 +75,20 @@ struct LessonPictureView: View {
   @Environment(SessionStore.self) private var session
 
   let image: LessonStepImage?
-  let description: LessonPictureDescription?
+  let alt: String?
   let isPending: Bool
-  /// A question's picture that never came says what it would show, since the question may need it.
+  /// A question's picture says what it shows until it's there, since the question may need it.
   var asks = false
 
   var body: some View {
     if let image, let url = URL(string: image.url) {
-      picture(url: url, alt: image.alt ?? description?.alt)
-    } else if let description, isPending {
+      picture(url: url, image: image)
+    } else if let alt, isPending {
+      LessonPicturePlaceholder(alt: asks ? alt : nil, saysItIsDrawing: true)
+        .pictureFrame(aspectRatio: LessonPicturePlaceholder.aspectRatio)
+    } else if let alt, asks {
       Label {
-        Text(
-          "Drawing the picture…", tableName: "Player", comment: "While a screen's picture is drawn")
-      } icon: {
-        Image(systemName: "photo")
-      }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
-      .accessibilityHint(Text(description.alt))
-    } else if let description, asks {
-      Label {
-        Text(description.alt)
+        Text(alt)
       } icon: {
         Image(systemName: "photo")
       }
@@ -107,32 +100,119 @@ struct LessonPictureView: View {
     }
   }
 
-  @ViewBuilder
-  private func picture(url: URL, alt: String?) -> some View {
-    let aspectRatio = image.flatMap { image in
-      image.width.flatMap { width in image.height.map { CGFloat(width) / CGFloat(max($0, 1)) } }
+  private func picture(url: URL, image: LessonStepImage) -> some View {
+    let aspectRatio = image.width.flatMap { width in
+      image.height.map { CGFloat(width) / CGFloat(max($0, 1)) }
     }
+    let alt = image.alt ?? self.alt
+    let loading = LessonPicturePlaceholder(alt: asks ? alt : nil, isDrawing: false)
 
-    Group {
+    return Group {
       if let privateImages, privateImages.requiresSession(url) {
         LessonPrivatePicture(
-          loader: privateImages, token: session.authenticatedSession?.bearerToken, url: url)
+          loader: privateImages, token: session.authenticatedSession?.bearerToken, url: url,
+          placeholder: loading)
       } else {
         AsyncImage(url: url) { phase in
           if let picture = phase.image {
             picture.resizable().scaledToFit()
           } else {
-            Color(.secondarySystemBackground)
+            loading
           }
         }
       }
     }
-    .aspectRatio(aspectRatio ?? 4 / 3, contentMode: .fit)
-    .frame(maxWidth: .infinity)
-    .clipShape(.rect(cornerRadius: 16))
+    .pictureFrame(aspectRatio: aspectRatio ?? LessonPicturePlaceholder.aspectRatio)
     .accessibilityElement()
     .accessibilityLabel(Text(alt ?? ""))
     .accessibilityAddTraits(.isImage)
+  }
+}
+
+/// Holds a picture's place until it's drawn and loaded, so nothing moves when it comes. Its
+/// description says what the question needs meanwhile; only the fill pulses, so it stays readable.
+struct LessonPicturePlaceholder: View {
+  /// Pictures are drawn at 1024 by 1280, as main's default.
+  static let aspectRatio: CGFloat = 4 / 5
+
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  let alt: String?
+  var saysItIsDrawing = false
+  /// A picture that's downloading, or didn't load, holds still.
+  var isDrawing = true
+
+  var body: some View {
+    // A long description, or a large text size, scrolls inside the frame rather than being cut off.
+    ViewThatFits(in: .vertical) {
+      description
+      ScrollView { description }
+    }
+    .font(.subheadline)
+    .foregroundStyle(.secondary)
+    .multilineTextAlignment(.center)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background { fill }
+    .accessibilityElement(children: .combine)
+  }
+
+  private var description: some View {
+    VStack(spacing: 8) {
+      Image(systemName: "photo")
+        .font(.title2)
+        .accessibilityHidden(true)
+
+      if saysItIsDrawing {
+        Text(
+          "Drawing the picture…", tableName: "Player", comment: "While a screen's picture is drawn")
+      }
+
+      if let alt {
+        Text(alt)
+      }
+    }
+    .padding(12)
+  }
+
+  @ViewBuilder
+  private var fill: some View {
+    let shape = Rectangle().fill(.fill.tertiary)
+
+    if isDrawing, !reduceMotion {
+      shape.phaseAnimator([false, true]) { content, isDim in
+        content.opacity(isDim ? 0.4 : 1)
+      } animation: { _ in
+        .easeInOut(duration: 1)
+      }
+    } else {
+      shape
+    }
+  }
+}
+
+extension View {
+  /// A picture's shape at the width it's offered; whatever holds its place gets the same frame.
+  func pictureFrame(aspectRatio: CGFloat) -> some View {
+    PictureFrameLayout(aspectRatio: aspectRatio) { self }
+      .clipShape(.rect(cornerRadius: 16))
+      .frame(maxWidth: .infinity)
+  }
+}
+
+private struct PictureFrameLayout: Layout {
+  let aspectRatio: CGFloat
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    let width = proposal.replacingUnspecifiedDimensions().width
+    return CGSize(width: width, height: width / aspectRatio)
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    for subview in subviews {
+      subview.place(at: bounds.origin, proposal: ProposedViewSize(bounds.size))
+    }
   }
 }
 
@@ -140,6 +220,7 @@ private struct LessonPrivatePicture: View {
   let loader: PrivateImageLoader
   let token: String?
   let url: URL
+  let placeholder: LessonPicturePlaceholder
   @State private var image: UIImage?
 
   var body: some View {
@@ -147,7 +228,7 @@ private struct LessonPrivatePicture: View {
       if let image {
         Image(uiImage: image).resizable().scaledToFit()
       } else {
-        Color(.secondarySystemBackground)
+        placeholder
       }
     }
     .task(id: url) {

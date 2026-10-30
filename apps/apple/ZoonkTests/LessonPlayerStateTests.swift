@@ -1043,21 +1043,25 @@ final class LessonPlayerSavingTests: XCTestCase {
 
   func testANumberedPictureThatNeverCameLeavesItsQuestionOut() throws {
     let numbered = check(id: "numbered")
-      .replacingOccurrences(of: "\"imagePending\": false", with: "\"imagePending\": true")
       .replacingOccurrences(
-        of: "\"basis\": null,",
-        with:
-          #""basis": null, "image": {"alt": "A flower", "prompt": "Flower", "parts": ["ovary"]},"#)
+        of: "\"imagePending\": false",
+        with: #""imagePending": true, "picture": {"alt": "A flower", "required": true}"#
+      )
     let plain = check(id: "plain")
-      .replacingOccurrences(of: "\"imagePending\": false", with: "\"imagePending\": true")
+      .replacingOccurrences(
+        of: "\"imagePending\": false",
+        with: #""imagePending": true, "picture": {"alt": "A tulip", "required": false}"#)
     let openedAt = Date.now.addingTimeInterval(-10 * 60)
     var state = LessonPlayerState(
       lessonId: "lesson",
       steps: [try step(textHook), try step(numbered), try step(plain), try step(summary)])
     let question = try XCTUnwrap(state.steps["numbered"])
 
-    XCTAssertTrue(state.isWaitingForPicture(question, openedAt: .now), "the check waits for it")
-    XCTAssertFalse(state.isWaitingForPicture(question, openedAt: openedAt), "until its wait ends")
+    XCTAssertTrue(question.isRequiredPictureDrawing(openedAt: .now), "the check waits for it")
+    XCTAssertFalse(question.isRequiredPictureDrawing(openedAt: openedAt), "until its wait ends")
+    XCTAssertFalse(
+      try XCTUnwrap(state.steps["plain"]).isRequiredPictureDrawing(openedAt: .now),
+      "any other picture still being drawn is optional")
 
     state.leaveOutLostPictures(openedAt: openedAt)
     XCTAssertEqual(state.queue, ["hook", "plain", "summary"])

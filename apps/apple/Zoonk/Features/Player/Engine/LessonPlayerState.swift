@@ -517,10 +517,6 @@ struct LessonPlayerState: Equatable, Sendable {
     }
   }
 
-  func isWaitingForPicture(_ step: LessonStep, openedAt: Date, now: Date = .now) -> Bool {
-    step.isAnswerable && step.isWaitingForPicture(openedAt: openedAt, now: now)
-  }
-
   /// A question about a numbered picture that never came is left out, since nobody can tell which
   /// number is which (main's `getLostNumberedScreens`).
   mutating func leaveOutLostPictures(openedAt: Date, now: Date = .now) {
@@ -531,7 +527,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     let lost = steps.values.filter { step in
-      step.asksNumberedPicture && step.image == nil
+      step.picture?.required == true && step.image == nil
         && !step.isWaitingForPicture(openedAt: openedAt, now: now)
     }
 
@@ -921,17 +917,8 @@ struct LessonPlayerState: Equatable, Sendable {
 }
 
 extension LessonStep {
-  var asksNumberedPicture: Bool {
-    let description: LessonPictureDescription? =
-      switch content {
-      case .check(let content): content.image
-      case .activity(let content): content.image
-      case .hook(let content): content.image
-      case .workedExample(let content): content.image
-      default: nil
-      }
-
-    return !(description?.parts ?? []).isEmpty
+  func isRequiredPictureDrawing(openedAt: Date, now: Date = .now) -> Bool {
+    picture?.required == true && isWaitingForPicture(openedAt: openedAt, now: now)
   }
 
   /// Screens the learner reads and moves past with Continue. A hook with a guess waits for a pick.

@@ -8,6 +8,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
   public let citation: LessonCitation?
   public let image: LessonStepImage?
   public let imagePending: Bool
+  public let picture: LessonStepPicture?
   /// By option id.
   public let optionPictures: [String: LessonStepImage]
   /// Epoch milliseconds.
@@ -18,7 +19,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
 
   private enum CodingKeys: String, CodingKey {
     case baseMap, citation, content, exercise, id, image, imagePending, kind, listening
-    case minTolerance, optionPictures, pictureWaitStartedAt, position, skillId, wordHints
+    case minTolerance, optionPictures, picture, pictureWaitStartedAt, position, skillId, wordHints
   }
 
   public init(
@@ -28,6 +29,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     citation: LessonCitation? = nil,
     image: LessonStepImage? = nil,
     imagePending: Bool = false,
+    picture: LessonStepPicture? = nil,
     optionPictures: [String: LessonStepImage] = [:],
     pictureWaitStartedAt: Int? = nil,
     content: LessonStepContent
@@ -38,6 +40,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     self.citation = citation
     self.image = image
     self.imagePending = imagePending
+    self.picture = picture
     self.optionPictures = optionPictures
     self.pictureWaitStartedAt = pictureWaitStartedAt
     self.content = content
@@ -51,6 +54,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     citation = try container.decodeIfPresent(LessonCitation.self, forKey: .citation)
     image = try container.decodeIfPresent(LessonStepImage.self, forKey: .image)
     imagePending = try container.decodeIfPresent(Bool.self, forKey: .imagePending) ?? false
+    picture = try container.decodeIfPresent(LessonStepPicture.self, forKey: .picture)
     optionPictures =
       try container.decodeIfPresent([String: LessonStepImage].self, forKey: .optionPictures) ?? [:]
     pictureWaitStartedAt = try container.decodeIfPresent(Int.self, forKey: .pictureWaitStartedAt)
@@ -113,6 +117,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     try container.encode(citation, forKey: .citation)
     try container.encode(image, forKey: .image)
     try container.encode(imagePending, forKey: .imagePending)
+    try container.encode(picture, forKey: .picture)
     try container.encode(optionPictures, forKey: .optionPictures)
     try container.encodeIfPresent(pictureWaitStartedAt, forKey: .pictureWaitStartedAt)
 
@@ -138,11 +143,24 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
   }
 }
 
+/// A screen's own picture, drawn or not.
+public struct LessonStepPicture: Codable, Hashable, Sendable {
+  public let alt: String
+  /// Only a picture the question is about holds its answers back while it's drawn.
+  public let required: Bool
+
+  public init(alt: String, required: Bool) {
+    self.alt = alt
+    self.required = required
+  }
+}
+
 extension LessonStep {
   public func withPictures(from fresh: LessonStep) -> LessonStep {
     LessonStep(
       id: id, position: position, skillId: skillId, citation: citation,
       image: fresh.image ?? image, imagePending: fresh.imagePending,
+      picture: picture,
       optionPictures: optionPictures.merging(fresh.optionPictures) { _, drawn in drawn },
       pictureWaitStartedAt: pictureWaitStartedAt, content: content)
   }
@@ -150,7 +168,7 @@ extension LessonStep {
   public var withoutPendingPictures: LessonStep {
     LessonStep(
       id: id, position: position, skillId: skillId, citation: citation, image: image,
-      imagePending: false, optionPictures: optionPictures,
+      imagePending: false, picture: picture, optionPictures: optionPictures,
       pictureWaitStartedAt: pictureWaitStartedAt, content: content)
   }
 
@@ -206,12 +224,6 @@ public struct LessonStepImage: Codable, Hashable, Sendable {
   public let alt: String?
   public let width: Int?
   public let height: Int?
-}
-
-public struct LessonPictureDescription: Codable, Hashable, Sendable {
-  public let alt: String
-  public let prompt: String
-  public let parts: [String]?
 }
 
 public enum LessonCitation: Codable, Hashable, Sendable {
@@ -346,7 +358,6 @@ public struct HookContent: Codable, Hashable, Sendable {
   public let question: String?
   public let options: [Option]?
   public let reveal: String?
-  public let image: LessonPictureDescription?
   public let visual: LessonVisual?
 }
 
@@ -357,7 +368,6 @@ public struct ExplanationContent: Codable, Hashable, Sendable {
 
   public let title: String?
   public let text: String
-  public let image: LessonPictureDescription?
   public let visual: LessonVisual?
   public internal(set) var explore: ActivityExploreContent?
   public let exampleLineSlot: ExampleLineSlot?
@@ -373,7 +383,6 @@ public struct WorkedExampleContent: Codable, Hashable, Sendable {
   public let problem: String
   public let steps: [Step]
   public let result: String
-  public let image: LessonPictureDescription?
   public let visual: LessonVisual?
 }
 
@@ -396,7 +405,6 @@ public struct CheckContent: Codable, Hashable, Sendable {
   public let context: String?
   public let options: [Option]
   public let basis: LessonBasis?
-  public let image: LessonPictureDescription?
   public let visual: LessonVisual?
 }
 

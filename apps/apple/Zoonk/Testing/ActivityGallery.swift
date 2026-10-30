@@ -164,7 +164,7 @@
           step: step, content: content,
           context: LessonStepContext(
             lessonId: "gallery", studySessionId: nil, answer: answer, result: result,
-            isLocked: result != nil,
+            isLocked: result != nil, waitsForPicture: false,
             select: { answer = $0 }, resolveSpoken: { _ in }),
           part: part)
       }
