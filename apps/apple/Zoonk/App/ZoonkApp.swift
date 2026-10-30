@@ -111,6 +111,7 @@ private struct AppWindow: View {
   @Environment(SessionStore.self) private var session
   @State private var router: AppRouter
   @SceneStorage(TestOutScreen.openResultKey) private var openTestOutResult: URL?
+  @State private var restoresTestOutResult = true
 
   init(initialSheet: AppSheet?, today: TodayStore) {
     _router = State(
@@ -136,9 +137,18 @@ private struct AppWindow: View {
           session.handleGoogleSignInURL(url)
         }
       }
-      .onAppear {
-        if let openTestOutResult {
+      // Once the saved sign-in is checked, so the result only reopens for a learner it can load for.
+      .onChange(of: session.state == .restoring, initial: true) { _, isRestoring in
+        guard !isRestoring, restoresTestOutResult else {
+          return
+        }
+
+        restoresTestOutResult = false
+
+        if let openTestOutResult, session.authenticatedSession != nil {
           router.open(url: openTestOutResult)
+        } else {
+          openTestOutResult = nil
         }
       }
   }
