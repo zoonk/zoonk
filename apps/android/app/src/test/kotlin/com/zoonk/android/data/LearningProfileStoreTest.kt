@@ -147,7 +147,7 @@ class LearningProfileStoreTest {
     fun theLiveApiSendsTheChangeAsIs() =
         runTest {
             MockWebServer().use { server ->
-                server.start()
+                server.startOnLoopback()
                 server.enqueue(
                     MockResponse
                         .Builder()

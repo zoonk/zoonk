@@ -3,6 +3,7 @@ package com.zoonk.android.feature.account
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.apiHttpClient
+import com.zoonk.android.data.startOnLoopback
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
@@ -21,7 +22,7 @@ class LiveAccountApiTest {
 
     @Before
     fun start() {
-        server.start()
+        server.startOnLoopback()
         api = api(IntegrityTokens { hash -> token.also { hashes += hash } })
     }
 

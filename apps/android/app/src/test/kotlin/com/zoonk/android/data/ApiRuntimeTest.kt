@@ -26,7 +26,7 @@ class ApiRuntimeTest {
 
     @Before
     fun start() {
-        server.start()
+        server.startOnLoopback()
         api = ApiClients(server.url("/v1/"), apiHttpClient { addInterceptor(RequestLog { log += it }) })
     }
 

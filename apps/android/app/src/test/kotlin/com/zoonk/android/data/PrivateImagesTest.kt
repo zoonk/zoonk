@@ -73,8 +73,8 @@ class PrivateImagesTest {
             object : Dispatcher() {
                 override fun dispatch(request: RecordedRequest) = png(width = 4)
             }
-        api.start()
-        elsewhere.start()
+        api.startOnLoopback()
+        elsewhere.startOnLoopback()
         images = PrivateImages(api.url("/v1/"), imageLoader(context, apiHttpClient()))
     }
 

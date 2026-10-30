@@ -17,7 +17,7 @@ class LiveGenerationSourceTest {
 
     @Before
     fun start() {
-        server.start()
+        server.startOnLoopback()
         source = LiveGenerationSource(ApiClients(server.url("/v1/"), apiHttpClient()), ana)
     }
 

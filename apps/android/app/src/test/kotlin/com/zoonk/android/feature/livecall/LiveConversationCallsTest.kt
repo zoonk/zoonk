@@ -5,6 +5,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.apiHttpClient
+import com.zoonk.android.data.startOnLoopback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,7 +29,7 @@ class LiveConversationCallsTest {
     private val session = FakeSession(ana)
 
     @Before
-    fun start() = server.start()
+    fun start() = server.startOnLoopback()
 
     @After
     fun stop() = server.close()

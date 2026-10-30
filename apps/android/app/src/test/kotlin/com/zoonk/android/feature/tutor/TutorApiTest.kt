@@ -4,6 +4,7 @@ import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.apiHttpClient
+import com.zoonk.android.data.startOnLoopback
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
@@ -30,7 +31,7 @@ class TutorApiTest {
 
     @Before
     fun start() {
-        server.start()
+        server.startOnLoopback()
         api = LiveTutorApi(ApiClients(server.url("/v1/"), apiHttpClient()))
     }
 

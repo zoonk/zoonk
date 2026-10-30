@@ -3,6 +3,7 @@ package com.zoonk.android.feature.exam
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.apiHttpClient
+import com.zoonk.android.data.startOnLoopback
 import com.zoonk.android.feature.mock.LiveMockApi
 import com.zoonk.api.models.ExamResult
 import kotlinx.coroutines.test.runTest
@@ -22,7 +23,7 @@ class ExamApiTest {
 
     @Before
     fun start() {
-        server.start()
+        server.startOnLoopback()
         clients = ApiClients(server.url("/v1/"), apiHttpClient())
     }
 
