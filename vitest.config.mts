@@ -5,6 +5,7 @@ export default defineConfig({
     environment: "node",
     include: [
       "scripts/deploy/*.test.mts",
+      "scripts/dev/*.test.mts",
       "scripts/e2e/*.test.mts",
       "scripts/perf/*.test.mts",
       "scripts/verify/*.test.mts",

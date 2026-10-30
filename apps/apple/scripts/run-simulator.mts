@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
 import path from "node:path";
+import { waitForTurn } from "../../../scripts/dev/queue.mts";
 
 type DeviceFamily = "ipad" | "iphone";
 
@@ -249,7 +250,7 @@ function installAndLaunchApp({ appPath, device }: { appPath: string; device: Sim
   });
 }
 
-function runSimulator(family: DeviceFamily) {
+async function runSimulator(family: DeviceFamily) {
   const catalog = parseSimulatorCatalog(
     readCommand({
       arguments: ["simctl", "list", "devices", "available", "--json"],
@@ -263,14 +264,21 @@ function runSimulator(family: DeviceFamily) {
     `Building ${APP_SCHEME} for ${device.name} (${getRuntimeName(runtimeIdentifier)})...\n`,
   );
 
-  bootSimulator(device);
-  buildApp(device);
+  const turn = await waitForTurn();
+
+  try {
+    bootSimulator(device);
+    buildApp(device);
+  } finally {
+    turn?.release();
+  }
+
   installAndLaunchApp({ appPath: getAppPath(), device });
   process.stdout.write(`${APP_SCHEME} is running on ${device.name}.\n`);
 }
 
 try {
-  runSimulator(getDeviceFamily(process.argv[2]));
+  await runSimulator(getDeviceFamily(process.argv[2]));
 } catch (error) {
   process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
   process.exitCode = 1;

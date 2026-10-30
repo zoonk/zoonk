@@ -33,6 +33,7 @@
       "DATABASE_*",
       "MAIN_CACHE_BYPASS_SECRET",
       "ZOONK_DEV_LAUNCHER_PID",
+      "ZOONK_QUEUE_*",
       "ZOONK_QUERY_LOG"
     ],
     "cacheMaxAge": "7d",

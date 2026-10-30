@@ -1,4 +1,4 @@
-GRADLEW := ./gradlew
+GRADLEW := $(if $(CI),,node ../../scripts/dev/queue.mts) ./gradlew
 GRADLE_ARGUMENTS ?= --console=plain
 DEFAULT_ANDROID_SDK := $(firstword $(wildcard $(HOME)/Library/Android/sdk $(HOME)/Android/Sdk))
 ANDROID_HOME ?= $(DEFAULT_ANDROID_SDK)
