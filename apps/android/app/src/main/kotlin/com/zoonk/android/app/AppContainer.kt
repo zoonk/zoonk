@@ -43,6 +43,8 @@ import com.zoonk.android.feature.checkpoint.CheckpointStore
 import com.zoonk.android.feature.checkpoint.LiveCheckpointApi
 import com.zoonk.android.feature.conversation.ConversationStore
 import com.zoonk.android.feature.conversation.LiveConversationApi
+import com.zoonk.android.feature.essay.EssayStore
+import com.zoonk.android.feature.essay.LiveEssayApi
 import com.zoonk.android.feature.exam.ExamStore
 import com.zoonk.android.feature.exam.LiveExamApi
 import com.zoonk.android.feature.explain.ExplainStore
@@ -270,6 +272,7 @@ class AppContainer private constructor(
     val challenges = ChallengeStore(LiveChallengeApi(api), cache, timeZone)
     val testOuts = TestOutStore(LiveTestOutApi(api), cache, drafts, timeZone)
     val focusTests = FocusTestStore(LiveFocusTestApi(api), cache, drafts, timeZone)
+    val essays = EssayStore(LiveEssayApi(api), cache, drafts, timeZone)
 
     val buddy = BuddyStore(LiveBuddyApi(api), cache, timeZone, learnerSummary.summary, scope)
 
