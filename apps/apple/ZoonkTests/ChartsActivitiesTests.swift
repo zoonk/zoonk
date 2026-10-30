@@ -224,7 +224,7 @@ final class ChartsActivitiesTests: XCTestCase {
       fields.grade(try ActivityAnswer(encoding: PatternTableAnswer(pairs: ["1": "éis"]))))
   }
 
-  func testPatternTesterGradesRegexesAndFormulasLikeCore() throws {
+  func testPatternTesterTestsRegexesAndFormulasLikeCore() throws {
     XCTAssertFalse(PatternRegex.isSafe("(a+)+"))
     XCTAssertFalse(PatternRegex.isSafe("(a|aa)*"))
     XCTAssertFalse(PatternRegex.isSafe("(\\w)\\1"))
@@ -238,17 +238,17 @@ final class ChartsActivitiesTests: XCTestCase {
        "shouldNotMatch":["9410","941031","94103-12"],"solution":"^\\\\d{5}(-\\\\d{4})?$","task":"ZIP"}
       """)
 
-    XCTAssertTrue(
-      zip.grade(try ActivityAnswer(encoding: PatternTesterAnswer(pattern: "^\\d{5}(-\\d{4})?$"))))
-    XCTAssertFalse(zip.grade(try ActivityAnswer(encoding: PatternTesterAnswer(pattern: "^\\d{5}"))))
-    XCTAssertFalse(zip.grade(try ActivityAnswer(encoding: PatternTesterAnswer(pattern: "(\\d+)+"))))
-
-    if case .regex(let regex) = zip, let results = PatternRegex.test("\\d{5}", regex: regex) {
-      XCTAssertEqual(results.shouldMatch.map(\.match), [0..<5, 0..<5])
-      XCTAssertEqual(results.shouldNotMatch.map(\.passes), [true, false, false])
-    } else {
-      XCTFail("The pattern should compile")
+    guard case .regex(let regex) = zip else {
+      return XCTFail("A regex tester")
     }
+
+    let solved = try XCTUnwrap(PatternRegex.test("^\\d{5}(-\\d{4})?$", regex: regex))
+    XCTAssertTrue((solved.shouldMatch + solved.shouldNotMatch).allSatisfy(\.passes))
+    XCTAssertNil(PatternRegex.test("(\\d+)+", regex: regex), "an unsafe pattern doesn't run")
+
+    let results = try XCTUnwrap(PatternRegex.test("\\d{5}", regex: regex))
+    XCTAssertEqual(results.shouldMatch.map(\.match), [0..<5, 0..<5])
+    XCTAssertEqual(results.shouldNotMatch.map(\.passes), [true, false, false])
 
     let price: PatternTesterFields = try decode(
       """
@@ -258,9 +258,12 @@ final class ChartsActivitiesTests: XCTestCase {
        "tolerance":{"kind":"absolute","value":0.01}}
       """)
 
-    XCTAssertTrue(
-      price.grade(try ActivityAnswer(encoding: PatternTesterAnswer(pattern: "=A1*(1+B1)"))))
-    XCTAssertFalse(price.grade(try ActivityAnswer(encoding: PatternTesterAnswer(pattern: "A1*B1"))))
+    guard case .formula(let formula) = price else {
+      return XCTFail("A formula tester")
+    }
+
+    XCTAssertTrue(PatternFormula.test("=A1*(1+B1)", formula: formula).allSatisfy(\.passes))
+    XCTAssertFalse(PatternFormula.test("A1*B1", formula: formula).allSatisfy(\.passes))
   }
 
   func testAreaModelSplitsKeepTheirParts() {

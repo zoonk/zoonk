@@ -8,6 +8,7 @@ struct PatternTesterCanvas: View {
   @State private var pattern: String
   @State private var selection: TextSelection?
   @State private var hintsShown = 0
+  @State private var regexTest: (pattern: String, results: PatternRegex.Results?)?
 
   init(context: ActivityCanvasContext, fields: PatternTesterFields) {
     self.context = context
@@ -76,6 +77,19 @@ struct PatternTesterCanvas: View {
         }
         .font(.footnote)
         .foregroundStyle(.secondary)
+      }
+    }
+    .task(id: pattern) {
+      guard case .regex(let regex) = fields else {
+        return
+      }
+
+      let pattern = pattern
+      let results =
+        pattern.isEmpty ? nil : await PatternRegexPreview.shared.test(pattern, regex: regex)
+
+      if !Task.isCancelled {
+        regexTest = (pattern, results)
       }
     }
   }
@@ -234,9 +248,10 @@ struct PatternTesterCanvas: View {
   private var examples: some View {
     switch fields {
     case .regex(let regex):
-      let results = pattern.isEmpty ? nil : PatternRegex.test(pattern, regex: regex)
+      let tested = regexTest?.pattern == pattern ? regexTest : nil
+      let results = tested?.results
 
-      if !pattern.isEmpty && results == nil {
+      if tested != nil, !pattern.isEmpty, results == nil {
         Text(
           "This pattern can't run. Check that brackets close, and don't repeat a group that already repeats inside.",
           tableName: "ActivitiesCharts", comment: "A regex that doesn't compile or is unsafe"
@@ -420,8 +435,8 @@ struct PatternTesterCanvas: View {
 
   private var summary: (passing: Int, total: Int)? {
     switch fields {
-    case .regex(let regex):
-      guard !pattern.isEmpty, let results = PatternRegex.test(pattern, regex: regex) else {
+    case .regex:
+      guard regexTest?.pattern == pattern, let results = regexTest?.results else {
         return nil
       }
 

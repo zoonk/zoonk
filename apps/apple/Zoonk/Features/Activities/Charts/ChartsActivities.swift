@@ -45,15 +45,9 @@ enum ChartsActivities {
         ChartsFields(context: context) { PatternTableCanvas(context: context, fields: $0) }
       }
     ),
-    ActivityRenderer(
-      template: "patternTester",
-      grade: { content, answer in
-        (try? content.fields(as: PatternTesterFields.self))?.grade(answer) ?? false
-      },
-      canvas: { context in
-        ChartsFields(context: context) { PatternTesterCanvas(context: context, fields: $0) }
-      }
-    ),
+    ActivityRenderer(template: "patternTester") { context in
+      ChartsFields(context: context) { PatternTesterCanvas(context: context, fields: $0) }
+    },
     ActivityRenderer(template: "areaModel") { context in
       ChartsFields(context: context) { AreaModelCanvas(context: context, fields: $0) }
     },

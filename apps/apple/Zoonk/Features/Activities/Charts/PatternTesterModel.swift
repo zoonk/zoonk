@@ -88,21 +88,6 @@ enum PatternTesterFields: Decodable, Hashable, Sendable {
     }
   }
 
-  /// Core's grading of a pattern: the regex sorts every example, or the formula gives every
-  /// example's output within the tolerance.
-  func grade(_ answer: ActivityAnswer) -> Bool {
-    guard answer.kind == "pattern", case .string(let pattern) = answer.value["pattern"] else {
-      return false
-    }
-
-    switch self {
-    case .regex(let regex):
-      guard let results = PatternRegex.test(pattern, regex: regex) else { return false }
-      return (results.shouldMatch + results.shouldNotMatch).allSatisfy(\.passes)
-    case .formula(let formula):
-      return PatternFormula.test(pattern, formula: formula).allSatisfy(\.passes)
-    }
-  }
 }
 
 struct PatternTesterAnswer: Codable, Hashable, Sendable {
@@ -120,6 +105,8 @@ struct PatternSampleResult: Hashable, Sendable {
 /// (run in JavaScriptCore, so the syntax and matching are the same as on the server), and only
 /// patterns that can't backtrack for exponential time.
 enum PatternRegex {
+  typealias Results = (shouldMatch: [PatternSampleResult], shouldNotMatch: [PatternSampleResult])
+
   private static let maxLength = 200
 
   private static let script = """
@@ -182,9 +169,7 @@ enum PatternRegex {
   }
 
   /// Every sample tested; nil when the pattern is unsafe or doesn't compile.
-  static func test(_ pattern: String, regex: PatternTesterFields.Regex)
-    -> (shouldMatch: [PatternSampleResult], shouldNotMatch: [PatternSampleResult])?
-  {
+  static func test(_ pattern: String, regex: PatternTesterFields.Regex) -> Results? {
     guard isSafe(pattern), let context = JSContext() else {
       return nil
     }
@@ -215,6 +200,17 @@ enum PatternRegex {
       Array(results.prefix(regex.shouldMatch.count)),
       Array(results.dropFirst(regex.shouldMatch.count))
     )
+  }
+}
+
+/// JavaScriptCore can't stop a slow pattern, so the preview runs one at a time, off the main thread,
+/// and skips a pattern the learner changed while it waited. Core grades the answer, within its time
+/// limit.
+actor PatternRegexPreview {
+  static let shared = PatternRegexPreview()
+
+  func test(_ pattern: String, regex: PatternTesterFields.Regex) -> PatternRegex.Results? {
+    Task.isCancelled ? nil : PatternRegex.test(pattern, regex: regex)
   }
 }
 
