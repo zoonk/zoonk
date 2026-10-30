@@ -9,6 +9,7 @@ import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.requestFocus
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
@@ -34,9 +35,15 @@ class NextStopTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val api = FakeStudyApi()
     private val waits = mutableListOf<Long>()
+    private val waiting = step(0, screen = StudyBlock.Screen.SESSION, lessonId = null)
+    private val practice = step(1, kind = StudyBlock.Kind.PRACTICE, screen = StudyBlock.Screen.SESSION, lessonId = null)
+    private var shown by mutableStateOf(waiting)
 
     /** A step whose lesson the plan hasn't picked yet, as the API sends it; returns a way to draw the screen anew. */
-    private fun show(onStop: (() -> Unit)? = null): () -> Unit {
+    private fun show(
+        onStop: (() -> Unit)? = null,
+        alternative: DayStep? = null,
+    ): () -> Unit {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val cache = AppCache(FakeSession(ana), scope)
         val viewModel =
@@ -46,8 +53,6 @@ class NextStopTest {
                 { _, milliseconds -> waits += milliseconds },
                 cache,
             )
-        val waiting = step(0, screen = StudyBlock.Screen.SESSION, lessonId = null)
-        var shown by mutableStateOf(waiting)
         var drawn by mutableIntStateOf(0)
 
         rule.setContent {
@@ -59,7 +64,7 @@ class NextStopTest {
                         step = shown,
                         goalId = GOAL,
                         notWritten = null,
-                        alternative = null,
+                        alternative = alternative,
                         refresh = { shown = waiting.copy(lessonId = WRITTEN, screen = StudyBlock.Screen.LESSON) },
                         onStop = onStop,
                         navigator = rememberAppNavigator(),
@@ -96,6 +101,18 @@ class NextStopTest {
         rule.onNodeWithText("Your lesson is ready.").assertExists()
         rule.onNodeWithText("Stop for today").assertIsFocused()
         rule.onNodeWithText("Start").assertIsNotFocused()
+    }
+
+    @Test
+    fun workTappedWhileWaitingIsNeverDrawnAsTheReadyLesson() {
+        show(alternative = practice)
+        rule.onNodeWithText("While you wait: Mixed practice").performClick()
+        rule.waitForIdle()
+        shown = practice
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Your lesson is ready.").assertDoesNotExist()
+        assertEquals(0, waits.size)
     }
 
     @Test
