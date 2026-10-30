@@ -58,6 +58,13 @@ describe(parseInlineMarkup, () => {
       { kind: "text", text: " and «" },
     ]);
   });
+
+  it("keeps looking for angle quotes past one that spans lines", () => {
+    expect(parseInlineMarkup("«first\nsecond» and «word»")).toStrictEqual([
+      { kind: "text", text: "«first\nsecond» and " },
+      { kind: "italic", text: "word" },
+    ]);
+  });
 });
 
 describe(parseInlineMarkupRanges, () => {

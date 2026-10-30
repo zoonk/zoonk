@@ -26,16 +26,23 @@ const ANGLE_QUOTES = [
   { close: ">>", open: "<<" },
 ] as const;
 
-function findAngleQuote(text: string): Span | null {
-  const spans = ANGLE_QUOTES.flatMap(({ close, open }) => {
-    const start = text.indexOf(open);
-    const end = start === -1 ? -1 : text.indexOf(close, start + open.length);
-    const content = end === -1 ? "" : text.slice(start + open.length, end);
+function findQuote(text: string, open: string, close: string, from: number): Span | null {
+  const start = text.indexOf(open, from);
+  const end = start === -1 ? -1 : text.indexOf(close, start + open.length);
 
-    return content.trim() && !content.includes("\n")
-      ? [{ content: content.trim(), end: end + close.length, start }]
-      : [];
-  });
+  if (end === -1) {
+    return null;
+  }
+
+  const content = text.slice(start + open.length, end);
+
+  return content.trim() && !content.includes("\n")
+    ? { content: content.trim(), end: end + close.length, start }
+    : findQuote(text, open, close, start + open.length);
+}
+
+function findAngleQuote(text: string): Span | null {
+  const spans = ANGLE_QUOTES.flatMap(({ close, open }) => findQuote(text, open, close, 0) ?? []);
 
   return spans.toSorted((left, right) => left.start - right.start)[0] ?? null;
 }
