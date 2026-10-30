@@ -77,17 +77,13 @@ struct SubscriptionView: View {
       [.appAccountToken(appAccountToken)]
     }
     .onInAppPurchaseCompletion { _, result in
-      let isSubscribed = await subscriptions.handlePurchase(
+      _ = await subscriptions.handlePurchase(
         StoreKitSubscriptionClient.purchaseOutcome(from: result),
         synchronizationScope: session.account?.user.id
       ) { signedTransaction, expectedAccountID in
         await session.synchronizeAppleSubscription(
           signedTransaction: signedTransaction,
           expectedAccountID: expectedAccountID)
-      }
-
-      if isSubscribed {
-        settings.subscriptionChanged()
       }
     }
     .loads(settings.allowance, refreshable: false)

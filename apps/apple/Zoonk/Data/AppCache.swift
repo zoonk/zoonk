@@ -14,6 +14,9 @@ final class AppCache {
   ) {
     self.session = session
     self.now = now
+    session.subscriptionChanged = { [weak self] in
+      self?.invalidate([.allowance, .userSubscription])
+    }
   }
 
   /// A fetch returning nil is empty too.

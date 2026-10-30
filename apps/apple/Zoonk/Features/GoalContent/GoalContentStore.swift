@@ -111,7 +111,7 @@ final class GoalContentStore {
 
     let api = api
     let chapter: Resource<GoalChapter> = cache.resource(
-      audience: .signedIn, domains: [.goals, .learnerModel, .userProgress]
+      audience: .signedIn, domains: [.goals, .learnerModel, .userProgress, .userSubscription]
     ) { session in
       guard let session else {
         return nil
@@ -134,7 +134,7 @@ final class GoalContentStore {
 
     let api = api
     let unit: Resource<LanguageUnit> = cache.resource(
-      audience: .signedIn, domains: [.goals, .learnerModel, .userProgress]
+      audience: .signedIn, domains: [.goals, .learnerModel, .userProgress, .userSubscription]
     ) { session in
       guard let session else {
         return nil

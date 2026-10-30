@@ -12,7 +12,16 @@ struct AuthenticatedSession: Hashable, Sendable {
 final class SessionStore {
   private(set) var failure: AccountFailure?
   private(set) var isWorking = false
-  private(set) var state = AccountSessionState.restoring
+  private(set) var state = AccountSessionState.restoring {
+    didSet {
+      if oldValue.account?.account.subscription != account?.account.subscription {
+        subscriptionChanged?()
+      }
+    }
+  }
+  /// A purchase, a restore, StoreKit's updates and the account refresh all change it here, with or
+  /// without a window open.
+  @ObservationIgnored var subscriptionChanged: (@MainActor () -> Void)?
 
   private let api: any AccountAPIClient
   private let credentialStore: any SessionCredentialStoring
@@ -54,11 +63,7 @@ final class SessionStore {
   }
 
   var account: CurrentAccount? {
-    guard case .signedIn(let account) = state else {
-      return nil
-    }
-
-    return account
+    state.account
   }
 
   var authenticatedSession: AuthenticatedSession? {

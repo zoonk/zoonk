@@ -23,7 +23,7 @@ final class ExamStore {
 
     let api = api
     let exam: Resource<ExamView> = cache.resource(
-      audience: .signedIn, domains: [.goals, .learnerModel, .learningProfile]
+      audience: .signedIn, domains: [.goals, .learnerModel, .learningProfile, .userSubscription]
     ) { session in
       guard let session else { return nil }
       return try await api.exam(token: session.bearerToken, goalId: goalId)

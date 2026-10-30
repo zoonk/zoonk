@@ -98,6 +98,10 @@ enum AccountSessionState: Equatable {
   case signedOut
   case signedIn(CurrentAccount)
   case unavailable
+
+  var account: CurrentAccount? {
+    if case .signedIn(let account) = self { account } else { nil }
+  }
 }
 
 enum AccountFailure: Equatable {

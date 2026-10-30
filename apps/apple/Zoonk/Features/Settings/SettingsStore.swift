@@ -148,10 +148,6 @@ final class SettingsStore {
     }
   }
 
-  func subscriptionChanged() {
-    cache.invalidate([.allowance, .userSubscription])
-  }
-
   /// Exports say their own failure beside their button, so they leave `saveFailed` alone.
   func exportMemory() async -> Data? {
     await cache.mutate { try await api.exportMemory(token: $0.bearerToken) }.value

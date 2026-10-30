@@ -562,6 +562,37 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testASubscriptionChangeReadsWhatItDecidesAgainWithNoScreenOpen() async {
+    let api = SessionStoreAPIStub(
+      appleSubscriptionResult: .success(
+        AppleSubscriptionSynchronization(
+          account: makeAccount(
+            subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active")),
+          isActive: true)),
+      currentAccountResult: .success(makeAccount()))
+    let session = makeSession(
+      api: api,
+      credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    let cache = AppCache(session: session)
+    let reads = ReadCount()
+    let allowance: Resource<Int> = cache.resource(
+      audience: .signedIn, domains: [.userSubscription]
+    ) { _ in
+      reads.count += 1
+      return reads.count
+    }
+    await allowance.load()
+
+    _ = await session.synchronizeAppleSubscription(
+      signedTransaction: "signed-transaction",
+      expectedAccountID: "session-store-test-user")
+    await allowance.load()
+
+    XCTAssertEqual(reads.count, 2, "Plus shows without waiting for the old read to go stale")
+  }
+
+  @MainActor
   func testSuccessfulAppleSubscriptionSynchronizationClearsAnEarlierFailure() async {
     let subscribedAccount = makeAccount(
       subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active"))
@@ -1090,6 +1121,11 @@ final class SessionStoreTests: XCTestCase {
         name: name,
         username: "learner"))
   }
+}
+
+@MainActor
+private final class ReadCount {
+  var count = 0
 }
 
 private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
