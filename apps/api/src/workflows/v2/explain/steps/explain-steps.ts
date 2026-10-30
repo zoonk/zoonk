@@ -52,6 +52,9 @@ export async function classifyQuestionStep({ goal }: { goal: ExplainGoal }): Pro
   );
 
   await stream.status({ entityId: goal.id, status: "completed", step: "classifyQuestion" });
+  // The write starts next, unawaited: an explanation reused from before ends the stream while it may
+  // still be starting, so it never writes to the stream itself.
+  await stream.status({ entityId: goal.id, status: "started", step: "writeExplanation" });
 
   return isGeneral;
 }
@@ -117,9 +120,6 @@ export async function writeExplanationStep({
   steps: ExplanationStep[];
 }> {
   "use step";
-
-  await using stream = createStepStream<ExplanationStreamStep>();
-  await stream.status({ entityId: goal.id, status: "started", step: "writeExplanation" });
 
   const { data, provenance } = await withAiRetry(() =>
     generateQuickExplanation({

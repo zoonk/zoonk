@@ -1,7 +1,6 @@
 import { LEVEL_TEST_BANK_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { createHook, getWorkflowMetadata, sleep } from "workflow";
-import { closeStreamAfter } from "../../_shared/stream-status";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { repeatUntil } from "../_shared/repeat-until";
 import {
@@ -26,21 +25,16 @@ export async function levelTestBankWorkflow(
 ): Promise<LevelTestBankResult> {
   "use workflow";
 
-  return closeStreamAfter(() => prepareLevelTestBank(input));
-}
-
-async function prepareLevelTestBank(input: LevelTestBankInput): Promise<LevelTestBankResult> {
   const { pair } = input;
   const { workflowRunId } = getWorkflowMetadata();
   const hook = createHook({ token: `level-test-bank:${pair.language}:${pair.targetLanguage}` });
   const conflict = await hook.getConflict();
 
   if (conflict) {
-    await levelTestBankProgressStep({
-      entityId: conflict.runId,
-      status: "started",
-      step: "joinLevelTestBank",
-    });
+    await levelTestBankProgressStep(
+      { entityId: conflict.runId, status: "started", step: "joinLevelTestBank" },
+      { last: true },
+    );
 
     return { status: "joined" };
   }
@@ -83,23 +77,25 @@ async function writeQuestionBank(
     });
 
     if (!DONE.has(status)) {
-      await levelTestBankProgressStep({
-        reason: "aiGenerationFailed",
-        status: "error",
-        step: WORKFLOW_ERROR_STEP,
-      });
+      await levelTestBankProgressStep(
+        { reason: "aiGenerationFailed", status: "error", step: WORKFLOW_ERROR_STEP },
+        { last: true },
+      );
 
       return { status: "unfinished" };
     }
 
-    await levelTestBankProgressStep({ status: "completed", step: LEVEL_TEST_BANK_READY_STEP });
+    await levelTestBankProgressStep(
+      { status: "completed", step: LEVEL_TEST_BANK_READY_STEP },
+      { last: true },
+    );
+
     return { status: status === "written" ? "written" : "ready" };
   } catch (error) {
-    await levelTestBankProgressStep({
-      reason: "aiGenerationFailed",
-      status: "error",
-      step: WORKFLOW_ERROR_STEP,
-    });
+    await levelTestBankProgressStep(
+      { reason: "aiGenerationFailed", status: "error", step: WORKFLOW_ERROR_STEP },
+      { last: true },
+    );
 
     throw error;
   }

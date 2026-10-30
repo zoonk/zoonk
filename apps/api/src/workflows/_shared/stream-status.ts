@@ -2,6 +2,7 @@ import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 import { getWritable } from "workflow";
 
 type StepStream<T extends string> = {
+  close: () => Promise<void>;
   status: (params: StepStreamMessage<T>) => Promise<void>;
   [Symbol.asyncDispose]: () => Promise<void>;
 };
@@ -22,33 +23,31 @@ export function createStepStream<T extends string>(): StepStream<T> {
       writer.releaseLock();
     },
 
+    async close() {
+      await writer.close();
+    },
+
     async status(params: StepStreamMessage<T>) {
       await writeSSE(writer, { ...params, at: Date.now() });
     },
   };
 }
 
-/** Workflow code can't touch streams, so events the workflow itself decides on go through this step. */
-export async function progressStep<T extends string>(message: StepStreamMessage<T>): Promise<void> {
+/**
+ * Workflow code can't touch streams, so events the workflow itself decides on go through this step.
+ * `last` ends the run's stream with this event, which the SDK doesn't do when the run ends
+ * (vercel/workflow#964): nothing can write to it after.
+ */
+export async function progressStep<T extends string>(
+  message: StepStreamMessage<T>,
+  { last = false }: { last?: boolean } = {},
+): Promise<void> {
   "use step";
 
   await using stream = createStepStream<T>();
   await stream.status(message);
-}
 
-// The SDK leaves a finished run's stream open (https://github.com/vercel/workflow/issues/964), so
-// readers wait out the function limit. Remove this once that ships.
-async function closeStreamStep(): Promise<void> {
-  "use step";
-
-  await getWritable().close();
-}
-
-/** Closes the run's stream once `work` settles, even when it throws: nothing can write to it after. */
-export async function closeStreamAfter<T>(work: () => Promise<T>): Promise<T> {
-  try {
-    return await work();
-  } finally {
-    await closeStreamStep();
+  if (last) {
+    await stream.close();
   }
 }

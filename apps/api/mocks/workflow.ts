@@ -16,8 +16,11 @@ export const workflowWriteMock = vi.fn().mockResolvedValue(null);
 
 function createWritable() {
   return {
-    close: vi.fn(),
-    getWriter: () => ({ releaseLock: workflowReleaseLockMock, write: workflowWriteMock }),
+    getWriter: () => ({
+      close: vi.fn(),
+      releaseLock: workflowReleaseLockMock,
+      write: workflowWriteMock,
+    }),
   };
 }
 

@@ -3,7 +3,6 @@ import { EXPLANATION_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
 import { start } from "workflow/api";
-import { closeStreamAfter } from "../../_shared/stream-status";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken } from "../_shared/run-token";
@@ -142,26 +141,29 @@ async function finish(result: ExplainQuestionResult): Promise<ExplainQuestionRes
           status: "error",
           step: WORKFLOW_ERROR_STEP,
         },
+    { last: true },
   );
 
   return result;
 }
 
-type ExplainQuestionInput = { goalId: string; platform?: AnalyticsPlatform | null };
-
-async function explainQuestion({
+export async function explainQuestionWorkflow({
   goalId,
   platform,
-}: ExplainQuestionInput): Promise<ExplainQuestionResult> {
+}: {
+  goalId: string;
+  platform?: AnalyticsPlatform | null;
+}): Promise<ExplainQuestionResult> {
+  "use workflow";
+
   const { workflowRunId } = getWorkflowMetadata();
   const { conflict } = await claimRunToken(`explain:${goalId}`);
 
   if (conflict) {
-    await explainProgressStep({
-      entityId: conflict.runId,
-      status: "started",
-      step: "joinRunningExplanation",
-    });
+    await explainProgressStep(
+      { entityId: conflict.runId, status: "started", step: "joinRunningExplanation" },
+      { last: true },
+    );
 
     return { goalId, lessonId: null, status: "joined" };
   }
@@ -230,12 +232,4 @@ async function explainQuestion({
   await linkGoFurther({ course, goal, lessonId: saved.lessonId });
 
   return finish({ goalId, lessonId: saved.lessonId, status: "ready" });
-}
-
-export async function explainQuestionWorkflow(
-  input: ExplainQuestionInput,
-): Promise<ExplainQuestionResult> {
-  "use workflow";
-
-  return closeStreamAfter(() => explainQuestion(input));
 }

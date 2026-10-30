@@ -6,7 +6,6 @@ import {
 } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
-import { closeStreamAfter } from "../../_shared/stream-status";
 import { claimRunToken } from "../_shared/run-token";
 import {
   completeUnderstandingStep,
@@ -39,12 +38,15 @@ async function understandDraft(draft: UnderstandingRunDraft): Promise<Understood
   } catch (error) {
     await Promise.all([
       failUnderstandingStep(draft.id),
-      understandingProgressStep({
-        entityId: draft.id,
-        reason: "aiGenerationFailed",
-        status: "error",
-        step: WORKFLOW_ERROR_STEP,
-      }),
+      understandingProgressStep(
+        {
+          entityId: draft.id,
+          reason: "aiGenerationFailed",
+          status: "error",
+          step: WORKFLOW_ERROR_STEP,
+        },
+        { last: true },
+      ),
     ]);
 
     throw error;
@@ -56,46 +58,6 @@ export type GoalUnderstandingRunResult = {
   status: "joined" | "missing" | "understood";
 };
 
-async function understandGoal(draftId: string): Promise<GoalUnderstandingRunResult> {
-  const { workflowRunId } = getWorkflowMetadata();
-  const { conflict } = await claimRunToken(`goal-understanding:${draftId}`);
-
-  if (conflict) {
-    await understandingProgressStep({
-      entityId: conflict.runId,
-      status: "started",
-      step: "joinRunningUnderstanding",
-    });
-
-    return { draftId, status: "joined" };
-  }
-
-  const draft = await recordUnderstandingRunStep({ draftId, runId: workflowRunId });
-
-  if (!draft) {
-    await understandingProgressStep({
-      entityId: draftId,
-      reason: "notFound",
-      status: "error",
-      step: WORKFLOW_ERROR_STEP,
-    });
-
-    return { draftId, status: "missing" };
-  }
-
-  const pairs = await understandDraft(draft);
-
-  await understandingProgressStep({
-    entityId: draftId,
-    status: "completed",
-    step: GOAL_UNDERSTANDING_READY_STEP,
-  });
-
-  await startLevelTests({ pairs, userId: draft.userId });
-
-  return { draftId, status: "understood" };
-}
-
 export async function goalUnderstandingWorkflow({
   draftId,
 }: {
@@ -103,5 +65,37 @@ export async function goalUnderstandingWorkflow({
 }): Promise<GoalUnderstandingRunResult> {
   "use workflow";
 
-  return closeStreamAfter(() => understandGoal(draftId));
+  const { workflowRunId } = getWorkflowMetadata();
+  const { conflict } = await claimRunToken(`goal-understanding:${draftId}`);
+
+  if (conflict) {
+    await understandingProgressStep(
+      { entityId: conflict.runId, status: "started", step: "joinRunningUnderstanding" },
+      { last: true },
+    );
+
+    return { draftId, status: "joined" };
+  }
+
+  const draft = await recordUnderstandingRunStep({ draftId, runId: workflowRunId });
+
+  if (!draft) {
+    await understandingProgressStep(
+      { entityId: draftId, reason: "notFound", status: "error", step: WORKFLOW_ERROR_STEP },
+      { last: true },
+    );
+
+    return { draftId, status: "missing" };
+  }
+
+  const pairs = await understandDraft(draft);
+
+  await understandingProgressStep(
+    { entityId: draftId, status: "completed", step: GOAL_UNDERSTANDING_READY_STEP },
+    { last: true },
+  );
+
+  await startLevelTests({ pairs, userId: draft.userId });
+
+  return { draftId, status: "understood" };
 }

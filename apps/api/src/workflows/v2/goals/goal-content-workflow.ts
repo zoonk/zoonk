@@ -4,7 +4,6 @@ import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { GOAL_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
-import { closeStreamAfter } from "../../_shared/stream-status";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { claimRunToken } from "../_shared/run-token";
 import { prepareAhead, startPairLevelTest } from "./goal-ahead";
@@ -48,12 +47,15 @@ async function reportBuildFailure({
   goalId: string;
 }) {
   await Promise.all([
-    goalProgressStep({
-      entityId: goalId,
-      reason: "aiGenerationFailed",
-      status: "error",
-      step: WORKFLOW_ERROR_STEP,
-    }),
+    goalProgressStep(
+      {
+        entityId: goalId,
+        reason: "aiGenerationFailed",
+        status: "error",
+        step: WORKFLOW_ERROR_STEP,
+      },
+      { last: true },
+    ),
     recordGoalBuildFailureStep(goalId),
     trackGenerationFailedStep({
       analytics: context.analytics,
@@ -100,7 +102,11 @@ async function prepareExistingPlan({
   await setUpPlan({ goalId, tasks: await listPlanSetupTasksStep(goalId) });
 
   if (await isPlanPreparedStep(goalId)) {
-    await goalProgressStep({ entityId: goalId, status: "completed", step: GOAL_READY_STEP });
+    await goalProgressStep(
+      { entityId: goalId, status: "completed", step: GOAL_READY_STEP },
+      { last: true },
+    );
+
     await reconcileRestartedResearch({ context, inputs, researchId });
     return { goalId, speculativeLessonIds: [], status: "ready" };
   }
@@ -114,7 +120,10 @@ async function prepareExistingPlan({
     startPairLevelTest({ context, goal: inputs.goal }),
   ]);
 
-  await goalProgressStep({ entityId: goalId, status: "completed", step: GOAL_READY_STEP });
+  await goalProgressStep(
+    { entityId: goalId, status: "completed", step: GOAL_READY_STEP },
+    { last: true },
+  );
 
   await Promise.all([
     followPlanStart({ context, inputs, started: speculativeLessonIds }),
@@ -171,7 +180,10 @@ async function prepareAheadOfLearner({
   const goalId = inputs.goal.id;
   const [speculativeLessonIds] = await prepareAhead({ context, inputs, rebuild });
 
-  await goalProgressStep({ entityId: goalId, status: "completed", step: GOAL_READY_STEP });
+  await goalProgressStep(
+    { entityId: goalId, status: "completed", step: GOAL_READY_STEP },
+    { last: true },
+  );
 
   if (!rebuild) {
     await followPlanStart({ context, inputs, started: speculativeLessonIds });
@@ -198,7 +210,11 @@ async function buildGoal({
   });
 
   if (!built) {
-    await goalProgressStep({ entityId: goalId, status: "completed", step: GOAL_READY_STEP });
+    await goalProgressStep(
+      { entityId: goalId, status: "completed", step: GOAL_READY_STEP },
+      { last: true },
+    );
+
     return { goalId, speculativeLessonIds: [], status: "ready" };
   }
 
@@ -214,18 +230,19 @@ async function buildGoal({
   return { goalId, speculativeLessonIds, status: "built" };
 }
 
-async function prepareGoalContent(input: GoalContentInput): Promise<GoalContentResult> {
+export async function goalContentWorkflow(input: GoalContentInput): Promise<GoalContentResult> {
+  "use workflow";
+
   const { goalId } = input;
   const { workflowRunId } = getWorkflowMetadata();
   const token = `goal-${input.rebuild ? "rebuild" : "content"}:${goalId}`;
   const { conflict } = await claimRunToken(token);
 
   if (conflict) {
-    await goalProgressStep({
-      entityId: conflict.runId,
-      status: "started",
-      step: "joinRunningGoal",
-    });
+    await goalProgressStep(
+      { entityId: conflict.runId, status: "started", step: "joinRunningGoal" },
+      { last: true },
+    );
 
     return { goalId, speculativeLessonIds: [], status: "joined" };
   }
@@ -236,12 +253,10 @@ async function prepareGoalContent(input: GoalContentInput): Promise<GoalContentR
   const initial = await loadGoalCurriculumStep(goalId);
 
   if (!initial) {
-    await goalProgressStep({
-      entityId: goalId,
-      reason: "notFound",
-      status: "error",
-      step: WORKFLOW_ERROR_STEP,
-    });
+    await goalProgressStep(
+      { entityId: goalId, reason: "notFound", status: "error", step: WORKFLOW_ERROR_STEP },
+      { last: true },
+    );
 
     return { goalId, speculativeLessonIds: [], status: "missing" };
   }
@@ -257,15 +272,13 @@ async function prepareGoalContent(input: GoalContentInput): Promise<GoalContentR
 
   // The first build is still running, and reads the new source when it gets to the graph.
   if (!initial.hasPlanGraph && rebuild) {
-    await goalProgressStep({ entityId: goalId, status: "completed", step: GOAL_READY_STEP });
+    await goalProgressStep(
+      { entityId: goalId, status: "completed", step: GOAL_READY_STEP },
+      { last: true },
+    );
+
     return { goalId, speculativeLessonIds: [], status: "ready" };
   }
 
   return buildGoal({ context, initial, input });
-}
-
-export async function goalContentWorkflow(input: GoalContentInput): Promise<GoalContentResult> {
-  "use workflow";
-
-  return closeStreamAfter(() => prepareGoalContent(input));
 }

@@ -5,7 +5,6 @@ import { type PlanGenerationManifest } from "@zoonk/core/lookahead/speculative-l
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { type Run, start } from "workflow/api";
-import { closeStreamAfter } from "../../_shared/stream-status";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
@@ -51,6 +50,7 @@ async function finish({ lessonId, status }: LessonContentResult): Promise<Lesson
           status: "error",
           step: WORKFLOW_ERROR_STEP,
         },
+    { last: true },
   );
 
   return { lessonId, status };
@@ -160,19 +160,26 @@ async function planAndWrite({
     await Promise.all([
       failLessonContentStep(claim),
       trackGenerationFailedStep(failed),
-      lessonProgressStep({
-        entityId: input.lessonId,
-        reason: "aiGenerationFailed",
-        status: "error",
-        step: WORKFLOW_ERROR_STEP,
-      }),
+      lessonProgressStep(
+        {
+          entityId: input.lessonId,
+          reason: "aiGenerationFailed",
+          status: "error",
+          step: WORKFLOW_ERROR_STEP,
+        },
+        { last: true },
+      ),
     ]);
 
     throw error;
   }
 }
 
-async function prepareLessonContent(input: LessonContentInput): Promise<LessonContentResult> {
+export async function lessonContentWorkflow(
+  input: LessonContentInput,
+): Promise<LessonContentResult> {
+  "use workflow";
+
   const { lessonId } = input;
 
   if (
@@ -226,12 +233,4 @@ async function prepareLessonContent(input: LessonContentInput): Promise<LessonCo
   }
 
   return ready;
-}
-
-export async function lessonContentWorkflow(
-  input: LessonContentInput,
-): Promise<LessonContentResult> {
-  "use workflow";
-
-  return closeStreamAfter(() => prepareLessonContent(input));
 }
