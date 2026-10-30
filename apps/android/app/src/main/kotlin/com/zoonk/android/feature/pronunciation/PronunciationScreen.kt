@@ -234,10 +234,8 @@ private fun WordStep(
         },
         bottomBar = {
             TaskActionBar {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (round.finishFailed) SaveFailed(onRetry = model::finish)
-                    WordActions(round, step, model, status, tapRecord)
-                }
+                if (round.finishFailed) SaveFailed(onRetry = model::finish)
+                WordActions(round, step, model, status, tapRecord)
             }
         },
     ) { padding ->
@@ -502,9 +500,11 @@ private fun WordActions(
         }
 
         model.microphoneOff -> {
-            Button(onClick = model::next, modifier = Modifier.fillMaxWidth(), enabled = !round.pending) {
-                if (round.pending) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
-                Text(stringResource(R.string.pronunciation_skip))
+            TaskActions { width ->
+                Button(onClick = model::next, modifier = width, enabled = !round.pending) {
+                    if (round.pending) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
+                    Text(stringResource(R.string.pronunciation_skip))
+                }
             }
         }
 
@@ -523,10 +523,10 @@ private fun WordActions(
 
 @Composable
 private fun SaveFailed(onRetry: () -> Unit) {
-    Row(Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite }, verticalAlignment = Alignment.CenterVertically) {
+    Row(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalAlignment = Alignment.CenterVertically) {
         Text(
             stringResource(R.string.pronunciation_save_failed),
-            Modifier.weight(1f),
+            Modifier.weight(1f, fill = false),
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,
         )

@@ -54,6 +54,7 @@ import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.needsAccount
+import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -391,11 +392,11 @@ fun CompletionActions(
     }
 
     if (status == CompletionStatus.Saved && ending.guest) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = { main?.invoke() }, enabled = main != null, modifier = Modifier.fillMaxWidth()) { Text(stringResource(label)) }
-            FilledTonalButton(onClick = { exits.replace(AppRoute.Login) }, modifier = Modifier.fillMaxWidth()) {
+        TaskActions { width ->
+            FilledTonalButton(onClick = { exits.replace(AppRoute.Login) }, modifier = Modifier.taskOption()) {
                 Text(stringResource(R.string.player_create_account_to_save))
             }
+            Button(onClick = { main?.invoke() }, enabled = main != null, modifier = width) { Text(stringResource(label)) }
         }
         return
     }

@@ -70,6 +70,7 @@ import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
@@ -118,7 +119,7 @@ internal fun MockRunnerView(
                 }
             }
         },
-        bottomBar = { RunnerActions(viewModel, run, handIn, wide = taskAsideBeside()) },
+        bottomBar = { RunnerActions(viewModel, run, handIn) },
         aside =
             TaskAside(
                 title = stringResource(R.string.mock_answer_sheet),
@@ -347,7 +348,6 @@ private fun RunnerActions(
     viewModel: MockRunnerViewModel,
     run: MockRun,
     onHandIn: () -> Unit,
-    wide: Boolean,
 ) {
     val question = run.question
     val flagged = question != null && run.drafts[question.itemId]?.flagged == true
@@ -356,10 +356,7 @@ private fun RunnerActions(
 
     TaskActionBar {
         MockStepStatus(viewModel, run)
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp, if (wide) Alignment.End else Alignment.Start),
-        ) {
+        TaskActions { width ->
             OutlinedButton(
                 onClick = viewModel::toggleFlag,
                 modifier = Modifier.heightIn(min = 48.dp).semantics { toggleableState = ToggleableState(flagged) },
@@ -395,7 +392,7 @@ private fun RunnerActions(
                 busy = handingIn,
                 enabled = !run.pending && run.moves.canAdvance,
                 onClick = { if (last) onHandIn() else viewModel.go(run.position + 1) },
-                modifier = if (wide) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f),
+                modifier = width,
             )
         }
     }
@@ -650,7 +647,6 @@ private const val MAP_ROW = 9
 private val MAP_GAP = 6.dp
 private val MAP_TARGET = 48.dp
 private val SHEET_GAP = 8.dp
-private val MAIN_ACTION_WIDTH = 160.dp
 private const val LARGE_FONT_SCALE = 1.5f
 private val NUMBER_KEYS = listOf(Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine)
 private val NUMPAD_KEYS =

@@ -30,12 +30,15 @@ fun TaskActionBar(content: @Composable ColumnScope.() -> Unit) {
 }
 
 /**
- * Main's `TaskActions`: the main one at the end on a wide window. On a narrow one the main action
- * fills its line and moves to a line of its own when the others don't leave it room, so a large
- * font never breaks its word.
+ * Main's `TaskActions`: the main one at the end on a wide window, [back] at the start. On a narrow
+ * one the main action fills its line and moves to a line of its own when the others don't leave it
+ * room, so a large font never breaks its word.
  */
 @Composable
-fun TaskActions(content: @Composable FlowRowScope.(main: Modifier) -> Unit) {
+fun TaskActions(
+    back: (@Composable () -> Unit)? = null,
+    content: @Composable FlowRowScope.(main: Modifier) -> Unit,
+) {
     val wide = isWideWindow()
 
     FlowRow(
@@ -43,8 +46,17 @@ fun TaskActions(content: @Composable FlowRowScope.(main: Modifier) -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(12.dp, if (wide) Alignment.End else Alignment.Start),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         itemVerticalAlignment = Alignment.CenterVertically,
-    ) { content(if (wide) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f)) }
+    ) {
+        if (back != null) {
+            if (wide) Box(Modifier.weight(1f)) { back() } else back()
+        }
+        content(if (wide) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f))
+    }
 }
+
+/** Main's `TASK_OPTION_CLASS`: an action beside the main one that takes a line of its own on a narrow window. */
+@Composable
+fun Modifier.taskOption(): Modifier = if (isWideWindow()) this else fillMaxWidth()
 
 @Composable
 private fun isWideWindow() =

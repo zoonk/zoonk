@@ -539,12 +539,18 @@ private fun ActionBar(
     // A screen that's read (a word, a letter) has its recording here; listening plays it on the screen.
     val promptUrl = screen.step?.takeIf { it.isReadStep }?.let(::promptAudioUrl)
 
-    TaskActions { width ->
+    val back: (@Composable () -> Unit)? =
         if (screen.canGoBack) {
-            OutlinedIconButton(onClick = onBack) {
-                Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.player_previous_screen))
+            {
+                OutlinedIconButton(onClick = onBack) {
+                    Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.player_previous_screen))
+                }
             }
+        } else {
+            null
         }
+
+    TaskActions(back) { width ->
         if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
         Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width) {
             if (primary.busy) {

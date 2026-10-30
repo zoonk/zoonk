@@ -1,12 +1,8 @@
 package com.zoonk.android.feature.player
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
@@ -14,8 +10,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppNavigator
@@ -23,6 +17,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.taskOption
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -99,27 +94,22 @@ fun SessionEndActions(
     onStop: () -> Unit,
     onContinue: () -> Unit,
 ) {
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-    val buttons: @Composable (Modifier) -> Unit = { width ->
+    move.failed?.let { failed ->
+        Text(
+            stringResource(if (failed == SessionStep.Stop) R.string.player_stop_failed else R.string.player_next_step_failed),
+            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+    TaskActions { width ->
         if (canStop && !completed) {
-            OutlinedButton(onClick = onStop, enabled = !move.busy, modifier = width) {
+            OutlinedButton(onClick = onStop, enabled = !move.busy, modifier = Modifier.taskOption()) {
                 Text(stringResource(R.string.player_stop_for_today))
             }
         }
         Button(onClick = onContinue, enabled = !move.busy, modifier = width) {
             Text(stringResource(if (completed) R.string.player_see_todays_summary else R.string.player_action_continue))
         }
-    }
-
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        move.failed?.let { failed ->
-            Text(
-                stringResource(if (failed == SessionStep.Stop) R.string.player_stop_failed else R.string.player_next_step_failed),
-                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        if (wide) TaskActions { width -> buttons(width) } else buttons(Modifier.fillMaxWidth())
     }
 }
