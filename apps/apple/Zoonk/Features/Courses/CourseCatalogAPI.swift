@@ -8,6 +8,7 @@ protocol CourseCatalogAPIClient: Sendable {
   func getChapter(_ key: CatalogChapterKey) async throws -> CourseChapter
   func listCourseChapters(courseID: String) async throws -> [CourseChapter]
   func listChapterLessons(_ key: CatalogChapterKey) async throws -> [CourseLesson]
+  func getLesson(_ key: CatalogLessonKey) async throws -> CatalogLesson
   func searchCatalog(query: CatalogSearchQuery) async throws -> CatalogSearchResults
 }
 
@@ -75,6 +76,18 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
   }
 
   /// A course that doesn't place the chapter is not found.
+  func getLesson(_ key: CatalogLessonKey) async throws -> CatalogLesson {
+    try await clients.perform(token: nil) { client in
+      switch try await client.getCatalogLesson(
+        path: .init(lessonId: key.lessonID), query: .init(courseId: key.courseID))
+      {
+      case .ok(let response): return try PracticeJSON.recode(try response.body.json)
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
   func getChapter(_ key: CatalogChapterKey) async throws -> CourseChapter {
     try await clients.perform(token: nil) { client in
       let output = try await client.getChapter(

@@ -15,6 +15,7 @@ final class CourseCatalogStore {
   @ObservationIgnored let language: String
   @ObservationIgnored private var chapters: [CatalogChapterKey: Resource<ChapterDetail>] = [:]
   @ObservationIgnored private var courseDetails: [String: Resource<CourseDetail>] = [:]
+  @ObservationIgnored private var lessons: [CatalogLessonKey: Resource<CatalogLesson>] = [:]
   @ObservationIgnored private var pages: [CourseCategory?: Resource<CourseCatalogPage>] = [:]
   @ObservationIgnored private var searches: [String: Resource<CatalogSearchResults>] = [:]
 
@@ -112,6 +113,20 @@ final class CourseCatalogStore {
   }
 
   /// A chapter that no longer exists also refreshes its course, so the course page stops listing it.
+  func lesson(_ key: CatalogLessonKey) -> Resource<CatalogLesson> {
+    if let resource = lessons[key] {
+      return resource
+    }
+
+    let resource: Resource<CatalogLesson> = cache.resource(
+      audience: .everyone, maxAge: Self.catalogMaxAge
+    ) { [api] _ in
+      try await api.getLesson(key)
+    }
+    lessons[key] = resource
+    return resource
+  }
+
   func chapter(_ key: CatalogChapterKey) -> Resource<ChapterDetail> {
     if let resource = chapters[key] {
       return resource

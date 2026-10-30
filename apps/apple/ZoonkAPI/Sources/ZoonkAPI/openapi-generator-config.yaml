@@ -96,6 +96,7 @@ filter:
     - findPlanTimeToCover
     - finishLanguageLevelTest
     - finishMock
+    - getCatalogLesson
     - getChallenge
     - getChallengeTeam
     - getChapter

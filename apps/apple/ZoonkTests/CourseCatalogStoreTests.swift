@@ -434,6 +434,10 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
     return try takeFirstResult(from: &chapterResults).get()
   }
 
+  func getLesson(_ key: CatalogLessonKey) async throws -> CatalogLesson {
+    throw APIError.notFound
+  }
+
   func listChapterLessons(_ key: CatalogChapterKey) async throws
     -> [CourseLesson]
   {
@@ -522,6 +526,10 @@ private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
     throw APIError.unavailable
   }
 
+  func getLesson(_ key: CatalogLessonKey) async throws -> CatalogLesson {
+    throw APIError.notFound
+  }
+
   func listChapterLessons(_ key: CatalogChapterKey) async throws
     -> [CourseLesson]
   {
@@ -584,6 +592,10 @@ private actor SuspendedCourseDetailAPI: CourseCatalogAPIClient {
       chaptersContinuation = continuation
       chaptersDidStart()
     }
+  }
+
+  func getLesson(_ key: CatalogLessonKey) async throws -> CatalogLesson {
+    throw APIError.notFound
   }
 
   func listChapterLessons(_ key: CatalogChapterKey) async throws

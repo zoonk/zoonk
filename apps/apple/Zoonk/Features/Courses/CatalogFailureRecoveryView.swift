@@ -4,6 +4,7 @@ enum CatalogFailureContext {
   case catalog
   case chapter
   case course
+  case lesson
 }
 
 struct CatalogFailureRecoveryView: View {
@@ -92,6 +93,18 @@ struct CatalogFailureRecoveryView: View {
           "Chapter unavailable",
           tableName: "Courses",
           comment: "Title when a chapter cannot be loaded.")
+      }
+    case .lesson:
+      if failure == .notFound {
+        Text(
+          "Lesson not found",
+          tableName: "Courses",
+          comment: "Title when a lesson cannot be found.")
+      } else {
+        Text(
+          "Lesson unavailable",
+          tableName: "Courses",
+          comment: "Title when a lesson cannot be loaded.")
       }
     }
   }

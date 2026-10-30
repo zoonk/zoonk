@@ -174,6 +174,10 @@
       return snapshot.chapters.filter { $0.courseID == courseID }
     }
 
+    func getLesson(_ key: CatalogLessonKey) async throws -> CatalogLesson {
+      throw APIError.notFound
+    }
+
     func listChapterLessons(_ key: CatalogChapterKey) async throws -> [CourseLesson] {
       _ = try readableCourse(id: key.courseID)
       _ = try placedChapter(key)

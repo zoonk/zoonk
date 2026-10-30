@@ -3,11 +3,13 @@ import SwiftUI
 enum CourseDestination: Hashable {
   case course(CourseReference)
   case chapter(ChapterReference)
+  case lesson(LessonReference)
 
   var title: String {
     switch self {
     case .course(let course): course.title
     case .chapter(let chapter): chapter.title
+    case .lesson(let lesson): lesson.title
     }
   }
 }
@@ -101,6 +103,21 @@ struct ChapterReference: Hashable {
   }
 }
 
+/// A lesson as the chapter it was opened from places it.
+struct LessonReference: Hashable {
+  let chapter: ChapterReference
+  let chapterNumber: Int?
+  let id: String
+  let lessonCount: Int
+  let minutes: Int
+  let number: Int
+  let title: String
+
+  var key: CatalogLessonKey {
+    CatalogLessonKey(courseID: chapter.courseID, lessonID: id)
+  }
+}
+
 extension View {
   func catalogDestinations() -> some View {
     navigationDestination(for: CourseDestination.self) { destination in
@@ -110,6 +127,8 @@ extension View {
           CourseView(course: course)
         case .chapter(let chapter):
           ChapterView(chapter: chapter)
+        case .lesson(let lesson):
+          CatalogLessonView(lesson: lesson)
         }
       }
       .navigationTitle(destination.title)

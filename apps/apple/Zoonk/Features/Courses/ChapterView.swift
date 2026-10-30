@@ -130,7 +130,7 @@ private struct ChapterLandingList: View {
 
     if hasLesson {
       ChapterLessonsSection(
-        lessons: detail.lessons.sorted { $0.position < $1.position },
+        chapter: chapter, lessons: detail.lessons.sorted { $0.position < $1.position },
         number: index.map { $0 + 1 }, total: outline.count)
     }
 
@@ -285,8 +285,7 @@ private struct ChapterStrip: View {
 }
 
 private struct ChapterLessonsSection: View {
-  @Environment(AppRouter.self) private var router
-
+  let chapter: ChapterReference
   let lessons: [CourseLesson]
   let number: Int?
   let total: Int
@@ -294,9 +293,12 @@ private struct ChapterLessonsSection: View {
   var body: some View {
     Section {
       ForEach(Array(lessons.enumerated()), id: \.element.id) { offset, lesson in
-        Button {
-          router.open(.lesson(lessonId: lesson.id))
-        } label: {
+        NavigationLink(
+          value: CourseDestination.lesson(
+            LessonReference(
+              chapter: chapter, chapterNumber: number, id: lesson.id, lessonCount: lessons.count,
+              minutes: lesson.estimatedMinutes, number: offset + 1, title: lesson.displayTitle()))
+        ) {
           LabeledContent {
             Text(studyDuration(minutes: lesson.estimatedMinutes))
               .monospacedDigit()

@@ -146,6 +146,55 @@ struct CatalogChapterKey: Hashable, Sendable {
   let courseID: String
 }
 
+struct CatalogLessonKey: Hashable, Sendable {
+  let courseID: String
+  let lessonID: String
+}
+
+/// A Library lesson's public page: what it teaches and its first screen, the same for everyone.
+struct CatalogLesson: Decodable, Equatable, Sendable {
+  struct Option: Decodable, Equatable, Identifiable, Sendable {
+    let id: String
+    let text: String
+  }
+
+  enum FirstScreen: Decodable, Equatable, Sendable {
+    /// Its options come without the right one: the lesson checks the answer.
+    case choice(context: String?, guess: Bool, options: [Option], question: String)
+    case start
+    case text(String)
+
+    private enum CodingKeys: String, CodingKey {
+      case context, guess, kind, options, question, text
+    }
+
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: CodingKeys.self)
+
+      switch try container.decode(String.self, forKey: .kind) {
+      case "choice":
+        self = .choice(
+          context: try container.decodeIfPresent(String.self, forKey: .context),
+          guess: try container.decode(Bool.self, forKey: .guess),
+          options: try container.decode([Option].self, forKey: .options),
+          question: try container.decode(String.self, forKey: .question))
+      case "text":
+        self = .text(try container.decode(String.self, forKey: .text))
+      default:
+        self = .start
+      }
+    }
+  }
+
+  let description: String
+  let estimatedMinutes: Int
+  /// Nil until the lesson is written.
+  let firstScreen: FirstScreen?
+  let id: String
+  let summaryIdeas: [String]
+  let title: String
+}
+
 struct CourseCategoryCounts: Equatable, Sendable {
   let counts: [CourseCategory: Int]
   let total: Int
