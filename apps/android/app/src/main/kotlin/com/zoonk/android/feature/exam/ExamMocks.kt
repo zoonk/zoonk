@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.exam
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,7 +25,9 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.mock.MockListRow
 import com.zoonk.android.feature.mock.MockSummaryRow
+import com.zoonk.android.feature.mock.factsUnderLines
 import com.zoonk.android.feature.mock.mockDaySize
+import com.zoonk.android.feature.mock.mockMeasure
 import com.zoonk.android.feature.mock.mockShapeLabel
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.mock.rememberNow
@@ -72,25 +75,31 @@ internal fun ExamMocksSection(
                 ?.let { pluralStringResource(R.plurals.exam_mocks_taken, it, it) },
         )
 
-        // The row the learner is on stands on its fill, with no hairline touching it.
-        val rows =
-            buildList<Pair<Boolean, @Composable () -> Unit>> {
-                exam.runningMocks.forEachIndexed { index, mock ->
-                    val open = { navigator.open(AppRoute.Mock(mock.id.toString())) }
-                    add((index == 0) to { RunningMockRow(mock, current = index == 0, onOpen = open) })
+        val clocks = exam.runningMocks.map { runningMockClock(it.deadline) }
+        val nextDate = next?.date?.let { examDayDate(it.toJavaLocalDate(), LocalDate.now(), currentLocale()) }
+
+        BoxWithConstraints {
+            val stacked = factsUnderLines(clocks + listOfNotNull(nextDate) + exam.mocks.map { mockMeasure(it) }, maxWidth)
+            // The row the learner is on stands on its fill, with no hairline touching it.
+            val rows =
+                buildList<Pair<Boolean, @Composable () -> Unit>> {
+                    exam.runningMocks.forEachIndexed { index, mock ->
+                        val open = { navigator.open(AppRoute.Mock(mock.id.toString())) }
+                        add((index == 0) to { RunningMockRow(mock, clocks[index], current = index == 0, stacked, onOpen = open) })
+                    }
+                    if (next != null) {
+                        add(!running to { NextMockRow(exam, next, nextDate, current = !running, stacked, navigator) })
+                    }
+                    exam.mocks.forEach { mock ->
+                        val open = mock.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } }
+                        add(false to { MockSummaryRow(mock, onOpen = open, stacked = stacked) })
+                    }
                 }
-                if (next != null) {
-                    add(!running to { NextMockRow(exam, next, current = !running, navigator) })
+            Column {
+                rows.forEachIndexed { index, (current, row) ->
+                    if (index > 0 && !current && !rows[index - 1].first) HorizontalDivider()
+                    row()
                 }
-                exam.mocks.forEach { mock ->
-                    val open = mock.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } }
-                    add(false to { MockSummaryRow(mock, onOpen = open) })
-                }
-            }
-        Column {
-            rows.forEachIndexed { index, (current, row) ->
-                if (index > 0 && !current && !rows[index - 1].first) HorizontalDivider()
-                row()
             }
         }
 
@@ -107,7 +116,9 @@ internal fun ExamMocksSection(
 private fun NextMockRow(
     exam: ExamView,
     next: ExamViewNextMock,
+    date: String?,
     current: Boolean,
+    stacked: Boolean,
     navigator: AppNavigator,
 ) {
     MockListRow(
@@ -118,9 +129,10 @@ private fun NextMockRow(
             }
         },
         supporting = pluralStringResource(R.plurals.exam_questions, next.questions.toInt(), next.questions.toInt()),
-        trailing = next.date?.let { examDayDate(it.toJavaLocalDate(), LocalDate.now(), currentLocale()) },
+        trailing = date,
         leading = { StatusMark(if (current) MarkStatus.Next else MarkStatus.Todo) },
         onClick = { navigator.open(AppRoute.Challenge(next.planItemId.toString())) },
+        stacked = stacked,
         modifier = Modifier.currentRow(current),
     )
 }
@@ -128,7 +140,9 @@ private fun NextMockRow(
 @Composable
 private fun RunningMockRow(
     mock: ExamViewRunningMocksInner,
+    clock: String,
     current: Boolean,
+    stacked: Boolean,
     onOpen: () -> Unit,
 ) {
     val locale = currentLocale()
@@ -143,9 +157,10 @@ private fun RunningMockRow(
     MockListRow(
         headline = { Text(mockTitle(mock.number)) },
         supporting = if (shape.isEmpty()) answered else stringResource(R.string.mock_row_detail, shape, answered),
-        trailing = runningMockClock(mock.deadline),
+        trailing = clock,
         leading = { StatusMark(if (current) MarkStatus.Next else MarkStatus.Todo) },
         onClick = onOpen,
+        stacked = stacked,
         modifier = Modifier.currentRow(current),
     )
 }
