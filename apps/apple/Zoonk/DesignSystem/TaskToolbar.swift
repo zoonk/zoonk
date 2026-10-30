@@ -15,8 +15,8 @@ extension View {
     modifier(TaskOptionsToolbar(isShown: isShown, label: label, actions: actions()))
   }
 
-  /// A task's action that opens its side panel (the lesson's Ask), which the bar keeps beside the
-  /// close when it runs out of room.
+  /// A screen's own main action (the lesson's Ask, the Plan's Adjust plan), which the bar keeps
+  /// when it runs out of room instead of moving it into the overflow menu.
   func taskAction<Action: View>(isShown: Bool = true, @ViewBuilder _ action: () -> Action)
     -> some View
   {

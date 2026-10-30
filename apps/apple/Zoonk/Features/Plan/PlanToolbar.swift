@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// What acts on the goal itself (pause or resume, archive) lives here, on its own page, so it's clear
-/// which goal changes.
-struct PlanMenu: View {
+/// The Plan's toolbar: "Adjust plan" and the "…" options. What acts on the goal itself (pause or
+/// resume, archive) lives here, on its own page, so it's clear which goal changes.
+struct PlanToolbar: ViewModifier {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
   @Environment(LearnerSummaryStore.self) private var learner
@@ -19,126 +19,138 @@ struct PlanMenu: View {
     var id: Self { self }
   }
 
-  var body: some View {
-    Menu {
-      Section {
-        if context.goal.kind == .exam {
-          Button {
-            router.open(.exam)
-          } label: {
-            Label {
-              Text("About the exam", tableName: "Plan", comment: "Opens the exam's page")
-            } icon: {
-              Image(systemName: "graduationcap")
-            }
-          }
-        }
-
-        if let course = context.plan.partialCourse {
-          Button {
-            router.open(.course(courseId: course.courseId, title: course.title))
-          } label: {
-            Label {
-              Text(
-                "See the full course", tableName: "Plan",
-                comment: "Opens the Library course the plan takes some chapters of")
-            } icon: {
-              Image(systemName: "books.vertical")
-            }
+  func body(content: Content) -> some View {
+    content
+      .taskAction {
+        Button {
+          context.adjust(.top)
+        } label: {
+          Label {
+            Text(
+              "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
+          } icon: {
+            Image(systemName: "slider.horizontal.3")
           }
         }
       }
-
-      ShareLink(item: shareURL) {
-        Label {
-          Text("Share the plan", tableName: "Plan", comment: "Shares a link to the plan")
-        } icon: {
-          Image(systemName: "square.and.arrow.up")
-        }
+      .taskOptions(
+        label: Text("Plan options", tableName: "Plan", comment: "Spoken label of the Plan's … menu")
+      ) {
+        options
       }
-
-      Button {
-        router.select(.buddy)
-      } label: {
-        Label {
+      .confirmationDialog(
+        confirmationTitle, isPresented: isConfirming, titleVisibility: .visible,
+        presenting: confirming
+      ) { confirmation in
+        switch confirmation {
+        case .archive:
+          Button(role: .destructive) {
+            set(.archived)
+          } label: {
+            Text("Archive", tableName: "Plan", comment: "Confirms archiving the goal")
+          }
+        case .resume:
+          Button {
+            set(.active)
+          } label: {
+            Text("Resume", tableName: "Plan", comment: "Confirms resuming the paused goal")
+          }
+        }
+      } message: { confirmation in
+        switch confirmation {
+        case .archive:
           Text(
-            "Talk to \(learner.buddyDisplayName)", tableName: "Plan",
-            comment: "Opens the buddy's conversation, where questions about the plan go")
-        } icon: {
-          Image(systemName: "questionmark.bubble")
-        }
-      }
-
-      Button {
-        context.report()
-      } label: {
-        Label {
+            "It leaves your goals and its plan stops. What you learned stays in your progress.",
+            tableName: "Plan", comment: "Explains what archiving a goal does")
+        case .resume:
           Text(
-            "Report a problem", tableName: "Plan", comment: "Opens the feedback form about the plan"
-          )
-        } icon: {
-          Image(systemName: "flag")
+            "Your plan picks up from today, starting with the lessons planned for the days you paused.",
+            tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
+        }
+      }
+      .alert(
+        Text("Couldn't save", tableName: "Plan", comment: "Title of an error saving the goal"),
+        isPresented: hasFailed, presenting: failure
+      ) { _ in
+      } message: { outcome in
+        if outcome == .limitReached {
+          Text(
+            "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
+            tableName: "Plan", comment: "Explains why resuming a goal failed on the free plan")
+        } else {
+          Text(
+            "Check your connection and try again.", tableName: "Plan",
+            comment: "Explains a failed save")
+        }
+      }
+  }
+
+  @ViewBuilder
+  private var options: some View {
+    Section {
+      if context.goal.kind == .exam {
+        Button {
+          router.open(.exam)
+        } label: {
+          Label {
+            Text("About the exam", tableName: "Plan", comment: "Opens the exam's page")
+          } icon: {
+            Image(systemName: "graduationcap")
+          }
         }
       }
 
-      Section {
-        statusItems
+      if let course = context.plan.partialCourse {
+        Button {
+          router.open(.course(courseId: course.courseId, title: course.title))
+        } label: {
+          Label {
+            Text(
+              "See the full course", tableName: "Plan",
+              comment: "Opens the Library course the plan takes some chapters of")
+          } icon: {
+            Image(systemName: "books.vertical")
+          }
+        }
       }
+    }
+
+    ShareLink(item: shareURL) {
+      Label {
+        Text("Share the plan", tableName: "Plan", comment: "Shares a link to the plan")
+      } icon: {
+        Image(systemName: "square.and.arrow.up")
+      }
+    }
+
+    Button {
+      router.select(.buddy)
     } label: {
       Label {
-        Text("Plan options", tableName: "Plan", comment: "Spoken label of the Plan's … menu")
+        Text(
+          "Talk to \(learner.buddyDisplayName)", tableName: "Plan",
+          comment: "Opens the buddy's conversation, where questions about the plan go")
       } icon: {
-        Image(systemName: "ellipsis")
+        Image(systemName: "questionmark.bubble")
       }
-      .labelStyle(.iconOnly)
-      .frame(maxHeight: .infinity)
+    }
+
+    Button {
+      context.report()
+    } label: {
+      Label {
+        Text(
+          "Report a problem", tableName: "Plan", comment: "Opens the feedback form about the plan"
+        )
+      } icon: {
+        Image(systemName: "flag")
+      }
+    }
+
+    Section {
+      statusItems
     }
     .disabled(isSaving)
-    .confirmationDialog(
-      confirmationTitle, isPresented: isConfirming, titleVisibility: .visible,
-      presenting: confirming
-    ) { confirmation in
-      switch confirmation {
-      case .archive:
-        Button(role: .destructive) {
-          set(.archived)
-        } label: {
-          Text("Archive", tableName: "Plan", comment: "Confirms archiving the goal")
-        }
-      case .resume:
-        Button {
-          set(.active)
-        } label: {
-          Text("Resume", tableName: "Plan", comment: "Confirms resuming the paused goal")
-        }
-      }
-    } message: { confirmation in
-      switch confirmation {
-      case .archive:
-        Text(
-          "It leaves your goals and its plan stops. What you learned stays in your progress.",
-          tableName: "Plan", comment: "Explains what archiving a goal does")
-      case .resume:
-        Text(
-          "Your plan picks up from today, starting with the lessons planned for the days you paused.",
-          tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
-      }
-    }
-    .alert(
-      Text("Couldn't save", tableName: "Plan", comment: "Title of an error saving the goal"),
-      isPresented: hasFailed, presenting: failure
-    ) { _ in
-    } message: { outcome in
-      if outcome == .limitReached {
-        Text(
-          "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
-          tableName: "Plan", comment: "Explains why resuming a goal failed on the free plan")
-      } else {
-        Text(
-          "Check your connection and try again.", tableName: "Plan",
-          comment: "Explains a failed save")
-      }
-    }
   }
 
   @ViewBuilder

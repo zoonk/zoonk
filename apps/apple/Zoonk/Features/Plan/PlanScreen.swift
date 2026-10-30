@@ -114,7 +114,6 @@ private struct PlanContent: View {
 
     PaneSplit(primaryShare: 0.55) {
       List {
-        PlanHeaderRow(context: context)
         PlanRoadmapSection(context: context, structure: structure)
         structureSections(context: context, structure: structure)
       }
@@ -128,7 +127,6 @@ private struct PlanContent: View {
       }
     } single: {
       List {
-        PlanHeaderRow(context: context)
         PlanRoadmapSection(context: context, structure: structure)
         PlanNumbersSection(context: context, syllabus: syllabus)
         PlanSuggestionSection(context: context)
@@ -138,6 +136,7 @@ private struct PlanContent: View {
         PlanSettingsSection(context: context)
       }
     }
+    .modifier(PlanToolbar(context: context))
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: store)
     }
@@ -166,25 +165,4 @@ struct PlanContext {
   var report: () -> Void = {}
 
   var isPaused: Bool { goal.status == .paused }
-}
-
-private struct PlanHeaderRow: View {
-  let context: PlanContext
-
-  var body: some View {
-    HStack {
-      Button {
-        context.adjust(.top)
-      } label: {
-        Text("Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
-          .frame(maxHeight: .infinity)
-      }
-
-      PlanMenu(context: context)
-    }
-    .fixedSize(horizontal: false, vertical: true)
-    .buttonStyle(.bordered)
-    .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
-  }
 }

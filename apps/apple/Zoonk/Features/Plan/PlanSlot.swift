@@ -122,14 +122,26 @@ struct PlanSuggestionSection: View {
           comment: "Title of the Plan's notice when the goal's date came"),
         systemImage: "calendar.badge.exclamationmark", description: Text(text)
       ) {
-        adjustButton(.date)
+        Button {
+          context.adjust(.date)
+        } label: {
+          Text("Change the date", tableName: "Plan", comment: "Opens the plan's date to change it")
+        }
+
         notNow(item)
       }
     case .fitLessons:
       fitLessons(item)
     case .coverage(let text):
       card(title: Text(text), systemImage: "clock", description: nil) {
-        adjustButton(.time)
+        Button {
+          context.adjust(.time)
+        } label: {
+          Text(
+            "Change time a day", tableName: "Plan",
+            comment: "Opens the plan's study time a day to change it")
+        }
+
         notNow(item)
       }
     case .finished:
@@ -141,7 +153,12 @@ struct PlanSuggestionSection: View {
           comment: "Title of the Plan's notice when the plan no longer fits"),
         systemImage: "calendar.badge.clock", description: nil
       ) {
-        adjustButton(.top)
+        Button {
+          context.adjust(.top)
+        } label: {
+          Text(
+            "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
+        }
       }
     case .behind(let text):
       card(
@@ -265,14 +282,6 @@ struct PlanSuggestionSection: View {
     ].compactMap(\.self)
 
     return sentences.isEmpty ? nil : sentences.joined(separator: " ")
-  }
-
-  private func adjustButton(_ section: AdjustPlanSheet.Section) -> some View {
-    Button {
-      context.adjust(section)
-    } label: {
-      Text("Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
-    }
   }
 
   private func notNow(_ item: PlanSlotItem) -> some View {
