@@ -30,7 +30,6 @@ export function useNoticeDayText() {
         );
 }
 
-/** "No exam date in {month}" and a link to use each of the closest sittings, inside a line of text. */
 export function NoSittingWords({
   disabled,
   noSitting,

@@ -57,7 +57,6 @@ function StartButton({ href }: { href: string }) {
   );
 }
 
-/** The time a day and, unless it's every day, which days: what the Plan's settings say. */
 function useScheduleFacts(): string[] {
   const t = useExtracted();
   const formatDuration = useFormatDuration();

@@ -21,6 +21,8 @@ const TODAY = "2020-09-28";
 
 const NOTICE_DAY = "2020-11-08";
 
+const A_DAY_AHEAD_ZONE = "Pacific/Kiritimati";
+
 const citation = { passage: "", sourceId: "notice" };
 
 async function plannedExam({
@@ -387,8 +389,7 @@ describe("the notice's day where the exam date shows", () => {
       targetDate: "2020-09-20",
     });
 
-    // UTC+14: the learner's today is already the exam's tomorrow.
-    await prisma.goal.update({ data: { timezone: "Pacific/Kiritimati" }, where: { id: goal.id } });
+    await prisma.goal.update({ data: { timezone: A_DAY_AHEAD_ZONE }, where: { id: goal.id } });
 
     await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
       onboarding: { examDays: { days: ["2020-11-14"] } },

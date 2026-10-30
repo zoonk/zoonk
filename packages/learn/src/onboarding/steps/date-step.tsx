@@ -75,7 +75,6 @@ function getGoalToday({ now, timeZone }: { now: Date; timeZone: string | null })
     .slice(0, "YYYY-MM-DD".length);
 }
 
-/** A date that has passed, or is today, is said so and never kept as the learner's answer. */
 export function DateStep({
   dateProblem,
   exam,
