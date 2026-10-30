@@ -236,11 +236,10 @@ export async function restoreDaySession({
     where: { id: { in: leaving.map((block) => block.id) }, status: "pending" },
   });
 
-  await Promise.all(
-    unskipped.map((block) =>
-      tx.studySessionBlock.update({ data: { status: block.status }, where: { id: block.id } }),
-    ),
-  );
+  for (const block of unskipped) {
+    // oxlint-disable-next-line no-await-in-loop -- An interactive transaction uses one Postgres connection.
+    await tx.studySessionBlock.update({ data: { status: block.status }, where: { id: block.id } });
+  }
 
   await tx.studySessionBlock.createMany({
     data: back.map((block) => ({ ...block, sessionId: session.id, status: "pending" as const })),

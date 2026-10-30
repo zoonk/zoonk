@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { readDatabaseFacts } from "../../_utils/read-database-facts";
 import { loadListeningExam } from "../../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../../exams/listening/listening-skills";
 import { getKnownSubjects, getOwnLevel } from "../../learner/placement/placement-contract";
@@ -95,10 +96,12 @@ export async function listPlacementListeningAreas({
     return [];
   }
 
-  const [plan, exam] = await Promise.all([
-    tx.plan.findUnique({ select: { graph: true, id: true, settings: true }, where: { goalId } }),
-    loadListeningExam(goalId, tx),
-  ]);
+  const [plan, exam] = await readDatabaseFacts(
+    tx,
+    () =>
+      tx.plan.findUnique({ select: { graph: true, id: true, settings: true }, where: { goalId } }),
+    () => loadListeningExam(goalId, tx),
+  );
 
   const graph = parsePlanGraph(plan?.graph);
   const listening = getListeningSkillIds({ exam, graph });
@@ -123,14 +126,20 @@ export async function listPlacementListeningAreas({
     return [];
   }
 
-  const [prerequisites, bands, chosen] = await Promise.all([
-    loadSkillPrerequisites(
-      graph.skills.map((skill) => skill.skillId),
-      tx,
-    ),
-    tx.skill.findMany({ select: { id: true, level: true }, where: { id: { in: [...listening] } } }),
-    listChosenStartAreas(plan.id, tx),
-  ]);
+  const [prerequisites, bands, chosen] = await readDatabaseFacts(
+    tx,
+    () =>
+      loadSkillPrerequisites(
+        graph.skills.map((skill) => skill.skillId),
+        tx,
+      ),
+    () =>
+      tx.skill.findMany({
+        select: { id: true, level: true },
+        where: { id: { in: [...listening] } },
+      }),
+    () => listChosenStartAreas(plan.id, tx),
+  );
 
   const { pastBasicsAreas } = parsePlanSettings(plan.settings);
 

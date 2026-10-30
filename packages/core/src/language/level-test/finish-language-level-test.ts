@@ -51,15 +51,14 @@ async function saveSkillLevels(
       !isFreshStart({ row: existing.find((row) => row.skill === skill), score }),
   );
 
-  await Promise.all(
-    restarted.map(({ score, skill }) =>
-      transaction.languageSkillLevel.upsert({
-        create: { language, score, skill, startScore: score, userId },
-        update: { score, startScore: score, windowCeiling: null, windowCorrect: 0, windowTotal: 0 },
-        where: { userLanguageSkill: { language, skill, userId } },
-      }),
-    ),
-  );
+  for (const { score, skill } of restarted) {
+    // oxlint-disable-next-line no-await-in-loop -- An interactive transaction uses one Postgres connection.
+    await transaction.languageSkillLevel.upsert({
+      create: { language, score, skill, startScore: score, userId },
+      update: { score, startScore: score, windowCeiling: null, windowCorrect: 0, windowTotal: 0 },
+      where: { userLanguageSkill: { language, skill, userId } },
+    });
+  }
 }
 
 async function recordTestActivity({

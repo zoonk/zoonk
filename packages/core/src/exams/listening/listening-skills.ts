@@ -1,5 +1,6 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { readDatabaseFacts } from "../../_utils/read-database-facts";
 import { getSkillArea } from "../../plans/planner/graph-areas";
 import {
   type PlanGraph,
@@ -86,16 +87,11 @@ export function isDrillQuestion({
   return !listeningSkillIds.has(item.skillId) || item.id === mistakeItemId;
 }
 
-const LISTENING_GOAL_SELECT = {
-  examBlueprint: true,
-  kind: true,
-  plan: { select: { graph: true } },
-  targetLanguage: true,
-} as const;
+const LISTENING_GOAL_SELECT = { examBlueprint: true, kind: true, targetLanguage: true } as const;
 
 export async function loadLearnerListeningSkillIds(userId: string): Promise<Set<string>> {
   const goals = await prisma.goal.findMany({
-    select: LISTENING_GOAL_SELECT,
+    select: { ...LISTENING_GOAL_SELECT, plan: { select: { graph: true } } },
     where: { examBlueprintId: { not: null }, kind: "exam", userId },
   });
 
@@ -138,16 +134,17 @@ export async function loadListeningSkillIds(
   goalId: string,
   tx: TransactionClient = prisma,
 ): Promise<Set<string>> {
-  const goal = await tx.goal.findUnique({ select: LISTENING_GOAL_SELECT, where: { id: goalId } });
+  const [goal, plan] = await readDatabaseFacts(
+    tx,
+    () => tx.goal.findUnique({ select: LISTENING_GOAL_SELECT, where: { id: goalId } }),
+    () => tx.plan.findUnique({ select: { graph: true }, where: { goalId } }),
+  );
 
   if (!goal) {
     return new Set();
   }
 
-  return getListeningSkillIds({
-    exam: toListeningExam(goal),
-    graph: parsePlanGraph(goal.plan?.graph),
-  });
+  return getListeningSkillIds({ exam: toListeningExam(goal), graph: parsePlanGraph(plan?.graph) });
 }
 
 export async function loadListeningSkills({

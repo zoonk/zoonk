@@ -1,6 +1,6 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
-import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
+import { type StudySessionRow } from "./study-session-access";
 
 /** Call after locking the learner but before writing plan/goal changes; reload state after waiting for block-then-session locks. */
 export async function lockSessionQueue({
@@ -19,5 +19,16 @@ export async function lockSessionQueue({
     SELECT id FROM study_sessions WHERE id = ${sessionId}::uuid FOR NO KEY UPDATE
   `;
 
-  return tx.studySession.findUnique({ include: STUDY_SESSION_INCLUDE, where: { id: sessionId } });
+  const session = await tx.studySession.findUnique({
+    include: { blocks: { orderBy: { position: "asc" } } },
+    where: { id: sessionId },
+  });
+
+  if (!session) {
+    return null;
+  }
+
+  const goal = session.goalId ? await tx.goal.findUnique({ where: { id: session.goalId } }) : null;
+
+  return { ...session, goal };
 }

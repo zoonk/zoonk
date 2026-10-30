@@ -67,14 +67,13 @@ export async function placeContinuations({
       where: { courseId, level },
     });
 
-    await Promise.all(
-      order.map((chapterId, position) =>
-        tx.courseChapter.update({
-          data: { position },
-          where: { courseId_chapterId: { chapterId, courseId } },
-        }),
-      ),
-    );
+    for (const [position, chapterId] of order.entries()) {
+      // oxlint-disable-next-line no-await-in-loop -- An interactive transaction uses one Postgres connection.
+      await tx.courseChapter.update({
+        data: { position },
+        where: { courseId_chapterId: { chapterId, courseId } },
+      });
+    }
   });
 
   await revalidateCourseContent([getCourseCurriculumCacheTag(courseId)]);

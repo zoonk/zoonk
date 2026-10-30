@@ -6,6 +6,8 @@ export type StatementCounts = { statements: number; writes: number };
 
 const counters = new AsyncLocalStorage<StatementCounts[]>();
 const rowCounters = new AsyncLocalStorage<{ matching: string | null; rows: number }[]>();
+const overlapCounters = new AsyncLocalStorage<string[][]>();
+const activeQueries = new WeakMap<DriverClient, string>();
 /** Resolve the very same pg instance that @zoonk/db's PrismaPg adapter uses. */
 const requireDatabaseDependency = createRequire(import.meta.resolve("@zoonk/db"));
 type DriverClient = { query: (...args: unknown[]) => unknown };
@@ -120,15 +122,29 @@ Client.prototype.query = function query(...args: unknown[]) {
   }
 
   const reading = rowCounters.getStore();
+  const observing = overlapCounters.getStore();
 
-  if (!reading) {
+  if (!reading && !observing) {
     return Reflect.apply(originalQuery, this, args);
   }
 
   const text = queryText(args[0]) ?? "";
+  const previous = activeQueries.get(this);
+
+  if (observing) {
+    if (previous) {
+      observing.forEach((overlaps) => overlaps.push(`${previous}\nOVERLAPS\n${text}`));
+    }
+
+    activeQueries.set(this, text);
+  }
 
   const count = (result: { rowCount?: number | null } | undefined) => {
-    reading.forEach((counter) => {
+    if (observing) {
+      activeQueries.delete(this);
+    }
+
+    reading?.forEach((counter) => {
       if (counter.matching === null || text.includes(counter.matching)) {
         counter.rows += result?.rowCount ?? 0;
       }
@@ -151,12 +167,35 @@ Client.prototype.query = function query(...args: unknown[]) {
   const returned: unknown = Reflect.apply(originalQuery, this, args);
 
   return returned instanceof Promise
-    ? returned.then((result: { rowCount?: number | null }) => {
-        count(result);
-        return result;
-      })
+    ? returned.then(
+        (result: { rowCount?: number | null }) => {
+          count(result);
+          return result;
+        },
+        (error: unknown) => {
+          if (observing) {
+            activeQueries.delete(this);
+          }
+
+          throw error;
+        },
+      )
     : returned;
 };
+
+export async function observeDatabaseQueries<T>(callback: () => Promise<T>) {
+  const overlaps: string[] = [];
+
+  const result = await overlapCounters.run(
+    [...(overlapCounters.getStore() ?? []), overlaps],
+    async () => {
+      const value = await callback();
+      return value;
+    },
+  );
+
+  return { overlaps, result };
+}
 
 /**
  * Counts BEGIN/COMMIT/ROLLBACK and writes in CTEs too, and nested counters add to their parent.

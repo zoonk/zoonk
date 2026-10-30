@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type TransactionClient } from "@zoonk/db";
+import { readDatabaseFacts } from "../../_utils/read-database-facts";
 import { countUsage } from "../../entitlements/_utils/usage-counts";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getLearnerTier } from "../../lookahead/learner-lookahead";
@@ -98,16 +99,18 @@ async function canCall({
   }
 
   const now = new Date();
+  const targetLanguage = session.goal.targetLanguage;
+  const chapterId = pick.anchor.chapterId;
 
-  const [chapter, counts, tier] = await Promise.all([
-    client.chapter.findFirst({
-      where: {
-        ...libraryRowsVisibleTo(session.userId),
-        id: pick.anchor.chapterId,
-        targetLanguage: session.goal.targetLanguage,
-      },
-    }),
-    countUsage({ client, kind: "conversation", now, userId: session.userId }),
+  const [[chapter, counts], tier] = await Promise.all([
+    readDatabaseFacts(
+      client,
+      () =>
+        client.chapter.findFirst({
+          where: { ...libraryRowsVisibleTo(session.userId), id: chapterId, targetLanguage },
+        }),
+      () => countUsage({ client, kind: "conversation", now, userId: session.userId }),
+    ),
     getLearnerTier(session.userId),
   ]);
 
@@ -202,13 +205,19 @@ export async function rebuildMissions({
 
   const document = readMissionDocument(session.missions);
 
-  const eligible = await Promise.all(
-    (document?.picks ?? []).map(async (pick) =>
-      (await isEligible({ client, facts, pick: remainingPick({ current, pick }), session }))
-        ? pick
-        : null,
-    ),
-  );
+  const eligible: (MissionPick | null)[] = [];
+
+  for (const pick of document?.picks ?? []) {
+    // oxlint-disable-next-line no-await-in-loop -- Eligibility reads share the day-refresh transaction.
+    const allowed = await isEligible({
+      client,
+      facts,
+      pick: remainingPick({ current, pick }),
+      session,
+    });
+
+    eligible.push(allowed ? pick : null);
+  }
 
   const picks = eligible.reduce<MissionPick[]>((chosen, pick) => {
     if (!pick) {

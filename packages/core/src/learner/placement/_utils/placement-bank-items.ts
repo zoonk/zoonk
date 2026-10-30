@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { readDatabaseFacts } from "../../../_utils/read-database-facts";
 import {
   type ExamChoiceFormat,
   fitsExamChoice,
@@ -36,25 +37,27 @@ export async function loadPlacementItems({
   writingSkillIds?: ReadonlySet<string>;
   tx?: TransactionClient;
 }) {
-  const [items, choice] = await Promise.all([
-    tx.item.findMany({
-      orderBy: { id: "asc" },
-      select: {
-        content: true,
-        difficulty: true,
-        examBlueprintId: true,
-        format: true,
-        id: true,
-        skillId: true,
-      },
-      where: {
-        format: { in: PLACEMENT_ITEM_FORMATS.filter((format) => typed || format !== "typed") },
-        skillId: { in: skillIds },
-        ...getItemAudienceFilter({ examBlueprintId }),
-      },
-    }),
-    loadExamChoice(examBlueprintId, tx),
-  ]);
+  const [items, choice] = await readDatabaseFacts(
+    tx,
+    () =>
+      tx.item.findMany({
+        orderBy: { id: "asc" },
+        select: {
+          content: true,
+          difficulty: true,
+          examBlueprintId: true,
+          format: true,
+          id: true,
+          skillId: true,
+        },
+        where: {
+          format: { in: PLACEMENT_ITEM_FORMATS.filter((format) => typed || format !== "typed") },
+          skillId: { in: skillIds },
+          ...getItemAudienceFilter({ examBlueprintId }),
+        },
+      }),
+    () => loadExamChoice(examBlueprintId, tx),
+  );
 
   const fitting = items
     .filter((item) => fitsExamChoice({ choice, item }))

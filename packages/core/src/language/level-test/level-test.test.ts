@@ -7,6 +7,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { observeDatabaseQueries } from "@zoonk/testing/statement-counter";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
@@ -156,6 +157,33 @@ async function readItemStatuses(itemIds: string[]) {
 }
 
 describe("language level test", () => {
+  it("finishes a language test without overlapping queries on its transaction connection", async () => {
+    const { goal, user } = await placedLearnerFixture();
+
+    await prisma.goal.update({
+      data: {
+        details: {
+          ...readGoalDetails(goal),
+          levelTest: { ...TESTED_UP_TO_B2, speaking: { level: "B2", score: 1 } },
+        },
+      },
+      where: { id: goal.id },
+    });
+
+    mockSession(user.id);
+
+    const { overlaps, result } = await observeDatabaseQueries(() =>
+      finishLanguageLevelTest(goal.id),
+    );
+
+    expect(result).toMatchObject({ status: "ready" });
+    expect(overlaps).toStrictEqual([]);
+
+    await expect(
+      prisma.languageSkillLevel.findMany({ where: { userId: user.id } }),
+    ).resolves.toHaveLength(3);
+  });
+
   it("asks questions near the learner's level, checks only the current one, and sets levels", async () => {
     await saveBank();
     const { goal, user } = await languageGoalFixture();

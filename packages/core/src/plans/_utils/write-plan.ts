@@ -234,12 +234,11 @@ export async function saveProposalPreviews({
   tx: TransactionClient;
   previews?: PlanWrite["previews"];
 }): Promise<void> {
-  await Promise.all(
-    previews.map((preview) =>
-      tx.planChange.updateMany({
-        data: { payload: preview.payload },
-        where: { id: preview.id, status: "proposed" },
-      }),
-    ),
-  );
+  for (const preview of previews) {
+    // oxlint-disable-next-line no-await-in-loop -- An interactive transaction uses one Postgres connection.
+    await tx.planChange.updateMany({
+      data: { payload: preview.payload },
+      where: { id: preview.id, status: "proposed" },
+    });
+  }
 }

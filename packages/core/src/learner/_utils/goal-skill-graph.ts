@@ -1,6 +1,7 @@
 import "server-only";
 import { type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { readDatabaseFacts } from "../../_utils/read-database-facts";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { getFoundationSkillIds, getSkillArea } from "../../plans/planner/graph-areas";
 import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
@@ -210,11 +211,12 @@ async function loadPlan(input: PlanRead): Promise<GoalPlan> {
   const { allEntries, entries, membersOf, plan } = loaded;
   const skillIds = entries.map((entry) => entry.skillId);
 
-  const [titles, edges, bands] = await Promise.all([
-    loadAreaTitles({ entries, from, items: plan.items, phases: plan.phases }),
-    readSkillEdges(skillIds, from),
-    readSkillLevels(skillIds, from),
-  ]);
+  const [titles, edges, bands] = await readDatabaseFacts(
+    from === "shared" ? prisma : from,
+    () => loadAreaTitles({ entries, from, items: plan.items, phases: plan.phases }),
+    () => readSkillEdges(skillIds, from),
+    () => readSkillLevels(skillIds, from),
+  );
 
   const graph = parsePlanGraph(plan.graph);
   const sections = new Map(graph.skills.map((skill) => [skill.skillId, skill.area]));
@@ -285,10 +287,11 @@ export function loadGoalPlan(
 }
 
 async function loadTextTestPlan({ goalId, withLeftOut, tx = prisma }: PlanRead): Promise<GoalPlan> {
-  const [plan, listening] = await Promise.all([
-    loadPlan({ goalId, tx, withLeftOut }),
-    loadListeningSkillIds(goalId, tx),
-  ]);
+  const [plan, listening] = await readDatabaseFacts(
+    tx,
+    () => loadPlan({ goalId, tx, withLeftOut }),
+    () => loadListeningSkillIds(goalId, tx),
+  );
 
   return { ...plan, skills: plan.skills.filter((skill) => !listening.has(skill.id)) };
 }

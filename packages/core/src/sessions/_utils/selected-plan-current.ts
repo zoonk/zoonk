@@ -15,13 +15,14 @@ export async function isSelectedPlanCurrent({
 }): Promise<boolean> {
   const { context } = selection;
 
-  const [goal, plan] = await Promise.all([
-    tx.goal.findFirst({ where: { id: context.goal.id, userId: context.goal.userId } }),
-    tx.plan.findUnique({
-      select: { inputVersion: true, summary: true, version: true },
-      where: { id: context.plan.id },
-    }),
-  ]);
+  const goal = await tx.goal.findFirst({
+    where: { id: context.goal.id, userId: context.goal.userId },
+  });
+
+  const plan = await tx.plan.findUnique({
+    select: { inputVersion: true, summary: true, version: true },
+    where: { id: context.plan.id },
+  });
 
   return (
     goal !== null &&

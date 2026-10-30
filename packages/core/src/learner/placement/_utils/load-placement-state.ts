@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { readDatabaseFacts } from "../../../_utils/read-database-facts";
 import { toChosenStructure } from "../../../exams/choices/exam-choices";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readNoticeFormats } from "../../../library/exams/notice-formats";
@@ -86,16 +87,17 @@ function getChosenAreaShares({
 }
 
 async function loadGoalExam(goalId: string, tx: TransactionClient) {
-  const goal = await tx.goal.findUnique({
-    include: { examBlueprint: true, plan: { select: { graph: true, settings: true } } },
-    where: { id: goalId },
-  });
+  const [goal, plan] = await readDatabaseFacts(
+    tx,
+    () => tx.goal.findUnique({ include: { examBlueprint: true }, where: { id: goalId } }),
+    () => tx.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId } }),
+  );
 
   const blueprint = goal?.examBlueprint ?? null;
   const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
   const notice = readNoticeFormats(goal?.details);
-  const graph = parsePlanGraph(goal?.plan?.graph);
-  const settings = parsePlanSettings(goal?.plan?.settings);
+  const graph = parsePlanGraph(plan?.graph);
+  const settings = parsePlanSettings(plan?.settings);
 
   return {
     answeredOnly: isOwnMaterialTest(blueprint),
@@ -205,26 +207,28 @@ export async function loadPlacementState({
   const ownLevel = requestedLevel ?? goalLevel;
 
   const [{ attempts, evidence, placementAnswers, seenItemIds }, { bankItems, build }] =
-    await Promise.all([
-      loadEvidence({ skillIds, tx, userId }),
-      loadPlanBuild({
-        everySkill: answeredOnly,
-        focusAreas,
-        goalId,
-        knownAreas,
-        ownLevel,
-        tx,
-      }).then(async (planBuild) => ({
-        bankItems: await loadPlacementItems({
-          examBlueprintId,
-          skillIds,
+    await readDatabaseFacts(
+      tx,
+      () => loadEvidence({ skillIds, tx, userId }),
+      () =>
+        loadPlanBuild({
+          everySkill: answeredOnly,
+          focusAreas,
+          goalId,
+          knownAreas,
+          ownLevel,
           tx,
-          typed,
-          writingSkillIds: planBuild.preparingSkillIds,
-        }),
-        build: planBuild,
-      })),
-    ]);
+        }).then(async (planBuild) => ({
+          bankItems: await loadPlacementItems({
+            examBlueprintId,
+            skillIds,
+            tx,
+            typed,
+            writingSkillIds: planBuild.preparingSkillIds,
+          }),
+          build: planBuild,
+        })),
+    );
 
   const items: PlacementItemCandidate[] = bankItems.map((item) => ({
     ...item,

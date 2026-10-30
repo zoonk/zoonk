@@ -85,15 +85,17 @@ export function toMockSummary(mock: FinishedMock): ExamMockSummary {
 export async function findLastMock(goalId: string): Promise<ExamMockSummary | null> {
   /** A concurrent completion must not attach its number to the previous mock's result. */
   const [row, finished] = await prisma.$transaction(
-    (transaction) =>
-      Promise.all([
-        transaction.mockExam.findFirst({
-          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-          select: FINISHED_MOCK_SELECT,
-          where: { goalId, status: "finished" },
-        }),
-        transaction.mockExam.count({ where: { goalId, status: "finished" } }),
-      ]),
+    async (transaction) => {
+      const latest = await transaction.mockExam.findFirst({
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        select: FINISHED_MOCK_SELECT,
+        where: { goalId, status: "finished" },
+      });
+
+      const total = await transaction.mockExam.count({ where: { goalId, status: "finished" } });
+
+      return [latest, total] as const;
+    },
     { isolationLevel: "RepeatableRead" },
   );
 

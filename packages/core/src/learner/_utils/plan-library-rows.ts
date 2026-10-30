@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { readDatabaseFacts } from "../../_utils/read-database-facts";
 import {
   type LessonSkillRow,
   getChapterTitleRows,
@@ -24,32 +25,35 @@ export async function loadItemSkillRows({
   lessonIds: readonly string[];
   tx?: TransactionClient;
 }): Promise<ItemSkillRows> {
-  const [lessonSkills, chapterLessons] = await Promise.all([
-    lessonIds.length === 0
-      ? []
-      : tx.lessonSkill.findMany({
-          orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
-          select: { lesson: { select: { homeChapterId: true } }, lessonId: true, skillId: true },
-          where: { lessonId: { in: [...lessonIds] } },
-        }),
-    chapterIds.length === 0
-      ? []
-      : tx.chapterLesson.findMany({
-          orderBy: { position: "asc" },
-          select: {
-            chapterId: true,
-            lesson: {
-              select: {
-                skills: {
-                  orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
-                  select: { skillId: true },
+  const [lessonSkills, chapterLessons] = await readDatabaseFacts(
+    tx,
+    () =>
+      lessonIds.length === 0
+        ? []
+        : tx.lessonSkill.findMany({
+            orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
+            select: { lesson: { select: { homeChapterId: true } }, lessonId: true, skillId: true },
+            where: { lessonId: { in: [...lessonIds] } },
+          }),
+    () =>
+      chapterIds.length === 0
+        ? []
+        : tx.chapterLesson.findMany({
+            orderBy: { position: "asc" },
+            select: {
+              chapterId: true,
+              lesson: {
+                select: {
+                  skills: {
+                    orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
+                    select: { skillId: true },
+                  },
                 },
               },
             },
-          },
-          where: { chapterId: { in: [...chapterIds] } },
-        }),
-  ]);
+            where: { chapterId: { in: [...chapterIds] } },
+          }),
+  );
 
   return { chapterLessons, lessonSkills };
 }

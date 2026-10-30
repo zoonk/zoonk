@@ -17,15 +17,21 @@ async function hasStudiedOn({
   goalId: string;
   userId: string;
 }): Promise<boolean> {
-  const [answer, block] = await Promise.all([
-    client.attempt.findFirst({ select: { id: true }, where: { localDate: day, userId } }),
-    client.studySessionBlock.findFirst({
-      select: { id: true },
-      where: { session: { goalId, localDate: day, userId }, startedAt: { not: null } },
-    }),
-  ]);
+  const answer = await client.attempt.findFirst({
+    select: { id: true },
+    where: { localDate: day, userId },
+  });
 
-  return Boolean(answer ?? block);
+  if (answer) {
+    return true;
+  }
+
+  const block = await client.studySessionBlock.findFirst({
+    select: { id: true },
+    where: { session: { goalId, localDate: day, userId }, startedAt: { not: null } },
+  });
+
+  return block !== null;
 }
 
 /** Caller must hold the learner's lock and guard its update against the zone read here. */

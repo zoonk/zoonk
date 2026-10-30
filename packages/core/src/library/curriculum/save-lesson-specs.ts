@@ -84,15 +84,14 @@ async function placeAfter({
       where: { chapterId },
     });
 
-    await Promise.all(
-      order.map((id, position) =>
-        tx.chapterLesson.upsert({
-          create: { chapterId, lessonId: id, position },
-          update: { position },
-          where: { chapterId_lessonId: { chapterId, lessonId: id } },
-        }),
-      ),
-    );
+    for (const [position, id] of order.entries()) {
+      // oxlint-disable-next-line no-await-in-loop -- An interactive transaction uses one Postgres connection.
+      await tx.chapterLesson.upsert({
+        create: { chapterId, lessonId: id, position },
+        update: { position },
+        where: { chapterId_lessonId: { chapterId, lessonId: id } },
+      });
+    }
   });
 
   await revalidateCourseContent(await getChapterCacheTags(chapterId));

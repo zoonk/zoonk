@@ -71,15 +71,16 @@ async function loadSkillHistory({
     return { before: null, recent: { correct: 0, total: 0 } };
   }
 
-  const [before, answers] = await Promise.all([
-    transaction.learnerSkill.findUnique({ where: { userSkill: { skillId, userId } } }),
-    transaction.attempt.findMany({
-      orderBy: { answeredAt: "desc" },
-      select: { isCorrect: true },
-      take: RECENT_SKILL_ANSWERS,
-      where: { skillId, userId },
-    }),
-  ]);
+  const before = await transaction.learnerSkill.findUnique({
+    where: { userSkill: { skillId, userId } },
+  });
+
+  const answers = await transaction.attempt.findMany({
+    orderBy: { answeredAt: "desc" },
+    select: { isCorrect: true },
+    take: RECENT_SKILL_ANSWERS,
+    where: { skillId, userId },
+  });
 
   return {
     before,
@@ -206,11 +207,9 @@ export async function persistLearnerAnswer({
     transaction,
   });
 
-  const [review, fixedMistakes, recorded] = await Promise.all([
-    updateMemory(context),
-    fixAnsweredMistakes(context),
-    addToNotebook({ attemptId: attempt.id, context }),
-  ]);
+  const review = await updateMemory(context);
+  const fixedMistakes = await fixAnsweredMistakes(context);
+  const recorded = await addToNotebook({ attemptId: attempt.id, context });
 
   // Attribution must come from server evidence, never the raw client answer.
   const recordedAttempt =
