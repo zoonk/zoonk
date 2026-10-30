@@ -7,7 +7,8 @@ import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityStepContent
 import com.zoonk.api.models.ActivityExpected
 
-enum class ActivityPhase { Answering, Checked }
+/** [Explore] draws the canvas on an explanation screen: nothing to answer, and [ActivityProps.expected] is the solved end state when the template checks only that. */
+enum class ActivityPhase { Answering, Checked, Explore }
 
 /**
  * What a template's canvas gets. The screen's answer is the player's, never the canvas's own;
@@ -26,6 +27,7 @@ data class ActivityProps(
     val onCantListenChange: (Boolean) -> Unit = {},
 ) {
     val isChecked: Boolean get() = phase == ActivityPhase.Checked
+    val isExploring: Boolean get() = phase == ActivityPhase.Explore
 }
 
 data class ActivityBadge(

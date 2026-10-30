@@ -53,6 +53,7 @@ import com.zoonk.android.feature.audio.VoiceAnswerRecorder
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
+import com.zoonk.android.feature.player.engine.isExploredPictureLost
 import com.zoonk.android.feature.player.engine.isNumberAnswer
 import com.zoonk.android.feature.player.model.CheckOption
 import com.zoonk.android.feature.player.model.LessonAnswer
@@ -171,6 +172,7 @@ internal fun ExplanationView(
             BodyText(explanation.text)
         }
         LessonStepVisual(explanation.visual)
+        content.explore?.takeUnless { step.isExploredPictureLost }?.let { ExploredActivityCanvas(it) }
     }
 }
 

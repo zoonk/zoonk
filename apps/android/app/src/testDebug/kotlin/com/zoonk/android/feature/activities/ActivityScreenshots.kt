@@ -37,6 +37,7 @@ import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
+import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.playable
 import com.zoonk.android.feature.player.steps.activityRenderers
@@ -74,7 +75,7 @@ private val shots =
             .map { Shot(it, ActivityFixtures.rightAnswer(it), isCorrect = true) }
 
 /**
- * Review screenshots of each activity template, answering and checked, written only on demand:
+ * Review screenshots of each activity template, answering, checked and explored, written only on demand:
  * `./gradlew :app:testDebugUnitTest --tests '*ActivityScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
@@ -110,14 +111,15 @@ class ActivityScreenshots {
     @Config(qualifiers = "w1280dp-h1000dp-land-xhdpi")
     fun tablet() = capture("tablet")
 
+    private fun started(step: LessonStep) =
+        reduce(
+            LessonPlayerState.initial(LESSON_ID, listOf(step), now = 0),
+            LessonAction.RunStarted("run", emptyList(), HyperdriveStart(emptySet(), 0), Instant.parse("2026-10-29T10:00:00Z")),
+            0,
+        )
+
     private fun states(shot: Shot): List<Pair<String, LessonPlayerState>> {
-        val step = ActivityFixtures.step(shot.fixture, id = "act")
-        val started =
-            reduce(
-                LessonPlayerState.initial(LESSON_ID, listOf(step), now = 0),
-                LessonAction.RunStarted("run", emptyList(), HyperdriveStart(emptySet(), 0), Instant.parse("2026-10-29T10:00:00Z")),
-                0,
-            )
+        val started = started(ActivityFixtures.step(shot.fixture, id = "act"))
         val answered = shot.answer?.let { reduce(started, LessonAction.SelectAnswer("act", LessonAnswer.Activity(it)), 0) } ?: started
         val checked =
             listOf(
@@ -141,12 +143,17 @@ class ActivityScreenshots {
         val cache = AppCache(session, scope)
         val drafts = DraftStore(temporary.newFolder(), scope)
         val sandbox = ScriptedSandbox(scope).sandbox
+        val explored =
+            ActivityFixtures.exploreNames.filter { it.substringBefore('.') in activityRenderers }.sorted().map { name ->
+                val step = ActivityFixtures.exploreStep(name, id = "explore")
+                Triple("$name-explore", playable(listOf(step)), started(step))
+            }
         val screens =
             shots.flatMap { shot ->
                 states(shot).map { (state, player) ->
                     Triple(state, playable(listOf(ActivityFixtures.step(shot.fixture, id = "act"))), player)
                 }
-            }
+            } + explored
         val viewModel =
             LessonPlayerViewModel(
                 LESSON_ID,

@@ -12,15 +12,21 @@ import com.zoonk.android.feature.player.model.ActivityStepContent
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
+import com.zoonk.android.feature.player.model.toLessonStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ActivityExpectedAnswer
+import com.zoonk.api.models.PlayableLibraryStep
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonObject
+import java.util.UUID
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf11Value as LabeledDiagramContent
 
 /** Main's activity fixtures with core's expected end state and value, from `pnpm --filter android fixtures:activities`. */
@@ -104,10 +110,50 @@ object ActivityFixtures {
     ): LessonStep {
         val content = ApiJson.decodeFromJsonElement(ActivityStepContent.serializer(), json)
         val frame = ApiJson.decodeFromJsonElement(ActivityFrame.serializer(), json)
-        val picture =
-            (content as? LabeledDiagramContent)?.let {
-                StepImage("$id-picture", "https://api.zoonk.test/v1/files/$id-picture", it.value.fields.picture.alt, 1024, 1280)
+        return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null), image = drawnPicture(content, id))
+    }
+
+    /** The fixtures whose template an explanation can explore. */
+    val exploreNames: Set<String> get() =
+        all
+            .filterValues {
+                it.jsonObject["explore"].let { explore ->
+                    explore != null &&
+                        explore !is JsonNull
+                }
+            }.keys
+
+    /** An explanation exploring the fixture's activity, as main's preview `exploreStep`, sent as the API sends it and read by the player's own loader. */
+    fun exploreStep(
+        name: String,
+        id: String = name,
+    ): LessonStep {
+        val explore = entry(name).getValue("explore").jsonObject
+        val sent =
+            buildJsonObject {
+                put("id", UUID.nameUUIDFromBytes(id.toByteArray()).toString())
+                put("kind", "explanation")
+                put("position", 0)
+                put("skillId", JsonNull)
+                put("citation", JsonNull)
+                put("image", JsonNull)
+                put("imagePending", false)
+                put("exploreExpected", explore.getValue("expected"))
+                putJsonObject("content") {
+                    put("text", "Explore $name.")
+                    put("title", name)
+                    put("explore", explore.getValue("content"))
+                }
             }
-        return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null), image = picture)
+        val step = ApiJson.decodeFromJsonElement(PlayableLibraryStep.serializer(), sent).toLessonStep()
+        val explored = (step.content as StepContent.Explanation).explore
+        return step.copy(image = explored?.let { drawnPicture(it.content, step.id) })
+    }
+
+    private fun drawnPicture(
+        content: ActivityStepContent,
+        id: String,
+    ) = (content as? LabeledDiagramContent)?.let {
+        StepImage("$id-picture", "https://api.zoonk.test/v1/files/$id-picture", it.value.fields.picture.alt, 1024, 1280)
     }
 }

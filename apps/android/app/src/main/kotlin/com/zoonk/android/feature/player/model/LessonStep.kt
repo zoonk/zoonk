@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.player.model
 
 import androidx.compose.runtime.Immutable
+import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1Content
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1ContentEndingsInner
@@ -128,6 +129,7 @@ sealed interface StepContent {
 
     data class Explanation(
         val content: ExplanationStepContent,
+        val explore: ExploredActivity? = null,
     ) : StepContent {
         override val kind get() = StepKind.Explanation
     }
@@ -194,6 +196,14 @@ data class LessonStep(
 ) {
     val kind: StepKind get() = content.kind
 }
+
+/** An explanation's activity to explore (main's `ActivityExplore`): its template's canvas with nothing to answer. */
+@Immutable
+data class ExploredActivity(
+    val content: ActivityStepContent,
+    val frame: ActivityFrame,
+    val expected: ActivityExpected?,
+)
 
 /** What every activity template shares: the frame draws it, the template's renderer the rest. */
 @Immutable

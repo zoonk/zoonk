@@ -38,6 +38,18 @@
       "template": "areaModel"
     },
     "expected": { "kind": "choice", "optionId": "o1" },
+    "explore": {
+      "content": {
+        "fields": {
+          "height": { "parts": [10, 4], "total": 14 },
+          "model": "area",
+          "unit": "m",
+          "width": { "parts": [20, 3], "total": 23 }
+        },
+        "template": "areaModel"
+      },
+      "expected": null
+    },
     "value": 322
   },
   "balance": {
@@ -67,6 +79,26 @@
       "template": "balance"
     },
     "expected": { "kind": "numeric", "value": 3 },
+    "explore": {
+      "content": {
+        "fields": {
+          "equation": { "left": "4*x + 1", "right": "2*x + 7" },
+          "hints": [{ "hint": "Take the same off both sides.", "move": "Took bags off one side" }],
+          "objects": [
+            { "label": "One bag of rice", "symbol": "x" },
+            { "label": "1 kg", "symbol": "1" }
+          ],
+          "steps": [
+            { "left": "2*x + 1", "right": "7", "move": "Take 2 bags off each side" },
+            { "left": "2*x", "right": "6", "move": "Take 1 kg off each side" },
+            { "left": "x", "right": "3", "move": "Split into 2 equal groups" }
+          ],
+          "variable": "x"
+        },
+        "template": "balance"
+      },
+      "expected": null
+    },
     "value": 3
   },
   "formulaModel": {
@@ -106,6 +138,35 @@
       "template": "formulaModel"
     },
     "expected": { "kind": "numeric", "value": 3869.68 },
+    "explore": {
+      "content": {
+        "data": { "isExample": true },
+        "fields": {
+          "compareAt": 5,
+          "outputs": [
+            {
+              "formula": "1000 * (1 + rate / 100) ^ 20",
+              "id": "value",
+              "label": "Value after 20 years",
+              "unit": "$"
+            }
+          ],
+          "variables": [
+            {
+              "initial": 5,
+              "label": "Rate per year",
+              "max": 12,
+              "min": 0,
+              "name": "rate",
+              "step": 0.5,
+              "unit": "%"
+            }
+          ]
+        },
+        "template": "formulaModel"
+      },
+      "expected": null
+    },
     "value": 2653.2977051444223
   },
   "guessReveal": {
@@ -137,6 +198,7 @@
       "template": "guessReveal"
     },
     "expected": { "kind": "numeric", "value": 11.57 },
+    "explore": null,
     "value": 11.574074074074074
   },
   "numberLine": {
@@ -161,6 +223,21 @@
       "template": "numberLine"
     },
     "expected": { "kind": "numeric", "value": 5 },
+    "explore": {
+      "content": {
+        "fields": {
+          "label": "Temperature",
+          "max": 7,
+          "min": -5,
+          "moves": [{ "by": 3 }, { "by": 5 }],
+          "start": -3,
+          "step": 1,
+          "unit": "°C"
+        },
+        "template": "numberLine"
+      },
+      "expected": null
+    },
     "value": 5
   },
   "stepSolver": {
@@ -220,6 +297,7 @@
       "answer": { "kind": "assignment", "pairs": { "discount": "a", "tax": "b" } },
       "kind": "interaction"
     },
+    "explore": null,
     "value": 3.6
   },
   "chartReader": {
@@ -272,6 +350,30 @@
       "template": "chartReader"
     },
     "expected": { "kind": "choice", "optionId": "o1" },
+    "explore": {
+      "content": {
+        "data": {
+          "source": { "publisher": "NOAA", "title": "Mauna Loa CO2 record", "year": 2024 }
+        },
+        "fields": {
+          "points": [
+            { "x": 1960, "y": 317 },
+            { "x": 1970, "y": 326 },
+            { "x": 2010, "y": 390 },
+            { "x": 2020, "y": 414 }
+          ],
+          "spans": [
+            { "from": 1960, "id": "early", "label": "1960 to 1970", "to": 1970 },
+            { "from": 2010, "id": "late", "label": "2010 to 2020", "to": 2020 }
+          ],
+          "statistic": "change",
+          "xLabel": "Year",
+          "yLabel": "CO₂ (ppm)"
+        },
+        "template": "chartReader"
+      },
+      "expected": null
+    },
     "value": 9
   },
   "distributionExplorer": {
@@ -296,6 +398,20 @@
       "template": "distributionExplorer"
     },
     "expected": { "kind": "numeric", "value": 95.45 },
+    "explore": {
+      "content": {
+        "data": { "source": { "title": "Wechsler Adult Intelligence Scale norms" } },
+        "fields": {
+          "distribution": { "kind": "normal", "mean": 100, "sd": 15 },
+          "handles": { "from": 90, "to": 110 },
+          "target": { "from": 70, "to": 130 },
+          "unit": "IQ points",
+          "valueLabel": "IQ score"
+        },
+        "template": "distributionExplorer"
+      },
+      "expected": null
+    },
     "value": 95.44998742254873
   },
   "geometryBoard": {
@@ -320,6 +436,21 @@
       "template": "geometryBoard"
     },
     "expected": { "kind": "numeric", "value": 180 },
+    "explore": {
+      "content": {
+        "fields": {
+          "invariant": "The angles always add to 180°.",
+          "measure": "angleSum",
+          "points": [
+            { "id": "a", "movable": true, "x": 0, "y": 0 },
+            { "id": "b", "movable": false, "x": 4, "y": 0 },
+            { "id": "c", "movable": true, "x": 1, "y": 3 }
+          ]
+        },
+        "template": "geometryBoard"
+      },
+      "expected": null
+    },
     "value": 180
   },
   "randomSimulation": {
@@ -374,6 +505,24 @@
       "template": "randomSimulation"
     },
     "expected": { "kind": "choice", "optionId": "o2" },
+    "explore": {
+      "content": {
+        "fields": {
+          "hitLabel": "Exactly 5 heads",
+          "mode": "chance",
+          "model": {
+            "hit": { "comparison": "exactly", "value": 5 },
+            "kind": "binomial",
+            "probability": 0.5,
+            "trials": 10
+          },
+          "runs": 1000,
+          "trialLabel": "10 flips"
+        },
+        "template": "randomSimulation"
+      },
+      "expected": null
+    },
     "value": 0.24609375000000025
   },
   "unitCircle": {
@@ -397,6 +546,18 @@
       "template": "unitCircle"
     },
     "expected": { "kind": "numeric", "value": 0.5 },
+    "explore": {
+      "content": {
+        "fields": {
+          "angleUnit": "degrees",
+          "frame": "A Ferris wheel seat.",
+          "show": ["sin", "cos"],
+          "startAngle": 0
+        },
+        "template": "unitCircle"
+      },
+      "expected": null
+    },
     "value": 0
   },
   "combinationGrid": {
@@ -439,6 +600,19 @@
       "template": "combinationGrid"
     },
     "expected": { "kind": "choice", "optionId": "o1" },
+    "explore": {
+      "content": {
+        "fields": {
+          "columns": { "label": "White parent", "values": ["p", "p"] },
+          "rows": { "label": "Purple parent", "values": ["P", "p"] },
+          "rule": "alleles",
+          "title": "Flower color",
+          "traits": { "dominant": "Purple", "recessive": "White" }
+        },
+        "template": "combinationGrid"
+      },
+      "expected": null
+    },
     "value": 0.5
   },
   "labeledDiagram": {
@@ -480,6 +654,44 @@
       },
       "kind": "interaction"
     },
+    "explore": {
+      "content": {
+        "fields": {
+          "distractors": ["Pulmonary valve"],
+          "mixUps": [
+            {
+              "feedback": "The picture faces you, so the heart's right side is on your left.",
+              "labels": ["Right atrium", "Left atrium"]
+            }
+          ],
+          "parts": [
+            { "label": "Right atrium", "part": "right atrium" },
+            { "label": "Left atrium", "part": "left atrium" },
+            { "label": "Right ventricle", "part": "right ventricle" },
+            { "label": "Left ventricle", "part": "left ventricle" },
+            { "label": "Aorta", "part": "aorta" }
+          ],
+          "picture": {
+            "alt": "A human heart cut open from the front, with five numbered parts",
+            "prompt": "A human heart cut open from the front, showing its four chambers and the aorta"
+          }
+        },
+        "template": "labeledDiagram"
+      },
+      "expected": {
+        "answer": {
+          "kind": "assignment",
+          "pairs": {
+            "1": "Right atrium",
+            "2": "Left atrium",
+            "3": "Right ventricle",
+            "4": "Left ventricle",
+            "5": "Aorta"
+          }
+        },
+        "kind": "interaction"
+      }
+    },
     "value": null
   },
   "lineCrossing": {
@@ -507,6 +719,29 @@
       "answer": { "curve": "supply", "direction": "left", "kind": "curveShift" },
       "kind": "interaction"
     },
+    "explore": {
+      "content": {
+        "data": {
+          "source": { "publisher": "USDA", "title": "Egg Markets Overview", "year": 2022 }
+        },
+        "fields": {
+          "change": "Bird flu cut the number of laying hens.",
+          "feedback": {
+            "wrongDirection": "Fewer hens means less supply.",
+            "wrongLine": "People didn't want more eggs."
+          },
+          "lines": [
+            { "id": "supply", "intercept": 1, "label": "Supply", "slope": 0.5 },
+            { "id": "demand", "intercept": 10, "label": "Demand", "slope": -1 }
+          ],
+          "shift": { "amount": 2, "direction": "left", "line": "supply" },
+          "xLabel": "Eggs sold",
+          "yLabel": "Price per dozen"
+        },
+        "template": "lineCrossing"
+      },
+      "expected": null
+    },
     "value": 4.666666666666666
   },
   "moleculeBuilder": {
@@ -519,6 +754,13 @@
     "expected": {
       "answer": { "elements": { "C": 1, "O": 2 }, "kind": "molecule" },
       "kind": "interaction"
+    },
+    "explore": {
+      "content": {
+        "fields": { "elements": ["C", "O", "H"], "formula": "CO2" },
+        "template": "moleculeBuilder"
+      },
+      "expected": null
     },
     "value": 4
   },
@@ -561,6 +803,44 @@
       "answer": { "ids": ["absorb", "split", "store", "calvin", "starch"], "kind": "order" },
       "kind": "interaction"
     },
+    "explore": {
+      "content": {
+        "fields": {
+          "steps": [
+            { "icon": "sun", "id": "absorb", "text": "Chlorophyll absorbs sunlight" },
+            {
+              "icon": "droplets",
+              "id": "split",
+              "text": "Water is split, releasing oxygen",
+              "why": "The absorbed light energy is what splits water."
+            },
+            {
+              "icon": "battery-charging",
+              "id": "store",
+              "text": "Light energy is stored in ATP and NADPH",
+              "why": "Splitting water frees the electrons that charge ATP and NADPH."
+            },
+            {
+              "icon": "refresh-cw",
+              "id": "calvin",
+              "text": "The Calvin cycle builds sugar from CO₂",
+              "why": "The Calvin cycle runs on the ATP and NADPH that light made."
+            },
+            {
+              "icon": "wheat",
+              "id": "starch",
+              "text": "The plant stores sugar as starch",
+              "why": "There has to be sugar before any can be stored."
+            }
+          ]
+        },
+        "template": "processOrder"
+      },
+      "expected": {
+        "answer": { "ids": ["absorb", "split", "store", "calvin", "starch"], "kind": "order" },
+        "kind": "interaction"
+      }
+    },
     "value": null
   },
   "codeRunner": {
@@ -578,6 +858,20 @@
       "template": "codeRunner"
     },
     "expected": { "answer": { "kind": "output", "output": "5050" }, "kind": "interaction" },
+    "explore": {
+      "content": {
+        "fields": {
+          "editableLines": [2],
+          "expectedOutput": "5050",
+          "language": "python",
+          "mistakes": [{ "feedback": "range stops before its end.", "output": "4950" }],
+          "solution": "total = 0\nfor n in range(1, 101):\n    total += n\nprint(total)",
+          "starterCode": "total = 0\nfor n in range(1, 100):\n    total += n\nprint(total)"
+        },
+        "template": "codeRunner"
+      },
+      "expected": { "answer": { "kind": "output", "output": "5050" }, "kind": "interaction" }
+    },
     "value": null
   },
   "codeTracer": {
@@ -637,6 +931,62 @@
       "answer": { "kind": "assignment", "pairs": { "0": "b" } },
       "kind": "interaction"
     },
+    "explore": {
+      "content": {
+        "fields": {
+          "code": "let lo = 0, hi = 7;\nwhile (lo <= hi) {\n  const mid = Math.floor((lo + hi) / 2);\n  if (mid < 6) lo = mid + 1;\n  else if (mid > 6) hi = mid - 1;\n  else break;\n}",
+          "language": "javascript",
+          "pauses": [
+            {
+              "options": [
+                { "id": "a", "text": "5" },
+                { "id": "b", "text": "6" },
+                { "id": "c", "text": "7" }
+              ],
+              "question": "What will mid be on pass 3?",
+              "step": 3,
+              "variable": "mid"
+            }
+          ],
+          "trace": [
+            {
+              "line": 1,
+              "values": [
+                { "name": "lo", "value": 0 },
+                { "name": "hi", "value": 7 }
+              ]
+            },
+            {
+              "line": 3,
+              "values": [
+                { "name": "lo", "value": 0 },
+                { "name": "mid", "value": 3 }
+              ]
+            },
+            {
+              "line": 3,
+              "values": [
+                { "name": "lo", "value": 4 },
+                { "name": "mid", "value": 5 }
+              ]
+            },
+            {
+              "line": 3,
+              "values": [
+                { "name": "lo", "value": 6 },
+                { "name": "mid", "value": 6 }
+              ]
+            }
+          ],
+          "watch": ["lo", "hi", "mid"]
+        },
+        "template": "codeTracer"
+      },
+      "expected": {
+        "answer": { "kind": "assignment", "pairs": { "0": "b" } },
+        "kind": "interaction"
+      }
+    },
     "value": null
   },
   "dialogueSimulator": {
@@ -683,6 +1033,7 @@
       "template": "dialogueSimulator"
     },
     "expected": { "answer": { "ids": ["polite"], "kind": "selection" }, "kind": "interaction" },
+    "explore": null,
     "value": null
   },
   "patternTable": {
@@ -746,6 +1097,7 @@
       "answer": { "kind": "assignment", "pairs": { "4": "éis", "5": "en" } },
       "kind": "interaction"
     },
+    "explore": null,
     "value": null
   },
   "patternTester": {
@@ -769,6 +1121,27 @@
         "shouldNotMatch": ["9410", "941031", "94103-12"]
       },
       "kind": "interaction"
+    },
+    "explore": {
+      "content": {
+        "fields": {
+          "hints": [{ "hint": "Say where the text must end.", "mistake": "Matches extra digits" }],
+          "mode": "regex",
+          "shouldMatch": ["94103", "94103-1234"],
+          "shouldNotMatch": ["9410", "941031", "94103-12"],
+          "solution": "^\\d{5}(-\\d{4})?$",
+          "task": "Match US ZIP codes, like 94103 or 94103-1234."
+        },
+        "template": "patternTester"
+      },
+      "expected": {
+        "answer": {
+          "kind": "regex",
+          "shouldMatch": ["94103", "94103-1234"],
+          "shouldNotMatch": ["9410", "941031", "94103-12"]
+        },
+        "kind": "interaction"
+      }
     },
     "value": null
   },
@@ -832,6 +1205,65 @@
       },
       "kind": "interaction"
     },
+    "explore": {
+      "content": {
+        "data": {
+          "source": {
+            "publisher": "United Nations",
+            "title": "World Population Prospects",
+            "year": 2024
+          }
+        },
+        "fields": {
+          "expected": {
+            "columns": ["name", "pop_millions"],
+            "orderMatters": true,
+            "rows": [
+              ["India", 1451],
+              ["China", 1419],
+              ["Indonesia", 283]
+            ]
+          },
+          "mistakes": [
+            {
+              "feedback": "OR keeps rows that pass either test.",
+              "mistake": "Used OR instead of AND"
+            }
+          ],
+          "solution": "SELECT name, pop_millions FROM countries WHERE continent = 'Asia' AND pop_millions > 200 ORDER BY pop_millions DESC;",
+          "tables": [
+            {
+              "columns": [
+                { "name": "name", "type": "text" },
+                { "name": "continent", "type": "text" },
+                { "name": "pop_millions", "type": "integer" }
+              ],
+              "name": "countries",
+              "rows": [
+                ["India", "Asia", 1451],
+                ["China", "Asia", 1419],
+                ["Brazil", "South America", 212],
+                ["Indonesia", "Asia", 283]
+              ]
+            }
+          ]
+        },
+        "template": "sqlPlayground"
+      },
+      "expected": {
+        "answer": {
+          "columns": ["name", "pop_millions"],
+          "kind": "rows",
+          "orderMatters": true,
+          "rows": [
+            ["India", 1451],
+            ["China", 1419],
+            ["Indonesia", 283]
+          ]
+        },
+        "kind": "interaction"
+      }
+    },
     "value": null
   },
   "argumentBuilder": {
@@ -874,6 +1306,7 @@
       "template": "argumentBuilder"
     },
     "expected": { "answer": { "ids": ["e1", "r1"], "kind": "selection" }, "kind": "interaction" },
+    "explore": null,
     "value": null
   },
   "categorize": {
@@ -900,6 +1333,7 @@
       },
       "kind": "interaction"
     },
+    "explore": null,
     "value": null
   },
   "causeEffectChain": {
@@ -928,6 +1362,23 @@
         ]
       },
       "kind": "interaction"
+    },
+    "explore": {
+      "content": {
+        "fields": {
+          "links": [
+            { "from": "plow", "to": "dust", "why": "Bare soil blew away." },
+            { "from": "drought", "to": "dust", "why": "Dry soil lifted." }
+          ],
+          "nodes": [
+            { "id": "plow", "label": "Prairie plowed for wheat", "year": 1920 },
+            { "id": "drought", "label": "Years of drought", "year": 1931 },
+            { "id": "dust", "label": "Dust storms", "year": 1934 }
+          ]
+        },
+        "template": "causeEffectChain"
+      },
+      "expected": null
     },
     "value": null
   },
@@ -975,6 +1426,49 @@
       "answer": { "ids": ["q1", "q2", "pine"], "kind": "order" },
       "kind": "interaction"
     },
+    "explore": {
+      "content": {
+        "fields": {
+          "case": {
+            "answers": [
+              { "branch": "Needles", "nodeId": "q1" },
+              { "branch": "In bundles", "nodeId": "q2" }
+            ],
+            "description": "Needles grow in bundles of two.",
+            "outcomeId": "pine"
+          },
+          "nodes": [
+            {
+              "branches": [
+                { "label": "Needles", "next": "q2" },
+                { "label": "Broad leaves", "next": "oak" }
+              ],
+              "id": "q1",
+              "kind": "question",
+              "question": "What are the leaves like?"
+            },
+            {
+              "branches": [
+                { "label": "In bundles", "next": "pine" },
+                { "label": "Single", "next": "spruce" }
+              ],
+              "id": "q2",
+              "kind": "question",
+              "question": "How do the needles grow?"
+            },
+            { "id": "pine", "kind": "outcome", "label": "Pine" },
+            { "id": "spruce", "kind": "outcome", "label": "Spruce" },
+            { "id": "oak", "kind": "outcome", "label": "Oak" }
+          ],
+          "rootId": "q1"
+        },
+        "template": "decisionTree"
+      },
+      "expected": {
+        "answer": { "ids": ["q1", "q2", "pine"], "kind": "order" },
+        "kind": "interaction"
+      }
+    },
     "value": null
   },
   "findError": {
@@ -1005,6 +1499,7 @@
       "template": "findError"
     },
     "expected": { "answer": { "ids": ["s2"], "kind": "selection" }, "kind": "interaction" },
+    "explore": null,
     "value": null
   },
   "mapExplorer": {
@@ -1058,6 +1553,39 @@
       "template": "mapExplorer"
     },
     "expected": { "kind": "choice", "optionId": "o0" },
+    "explore": {
+      "content": {
+        "data": { "source": { "title": "On the Mode of Communication of Cholera", "year": 1855 } },
+        "fields": {
+          "baseMapId": "london-1854",
+          "places": [
+            {
+              "id": "pump",
+              "label": "Broad Street pump",
+              "latitude": 51.51334,
+              "longitude": -0.13667,
+              "reveals": "Most of the deaths were in houses a few streets from this pump."
+            },
+            {
+              "id": "brewery",
+              "label": "Brewery on Broad Street",
+              "latitude": 51.51348,
+              "longitude": -0.1358,
+              "reveals": "Over 70 workers and no cholera deaths. They drank beer and had their own well."
+            },
+            {
+              "id": "workhouse",
+              "label": "Poland Street workhouse",
+              "latitude": 51.5149,
+              "longitude": -0.137,
+              "reveals": "535 people lived here and only 5 died. It had its own well."
+            }
+          ]
+        },
+        "template": "mapExplorer"
+      },
+      "expected": null
+    },
     "value": null
   },
   "matchPairs": {
@@ -1089,6 +1617,7 @@
       "answer": { "kind": "assignment", "pairs": { "a": "a", "b": "b", "c": "c" } },
       "kind": "interaction"
     },
+    "explore": null,
     "value": null
   },
   "sourceComparison": {
@@ -1119,6 +1648,7 @@
       "template": "sourceComparison"
     },
     "expected": { "answer": { "ids": ["p1", "p2"], "kind": "selection" }, "kind": "interaction" },
+    "explore": null,
     "value": null
   },
   "timeline": {
@@ -1137,6 +1667,21 @@
       "template": "timeline"
     },
     "expected": { "answer": { "ids": ["cleo", "moon"], "kind": "order" }, "kind": "interaction" },
+    "explore": {
+      "content": {
+        "fields": {
+          "anchors": [{ "label": "Great Pyramid built", "year": -2560 }],
+          "end": 2000,
+          "events": [
+            { "id": "moon", "label": "Moon landing", "year": 1969 },
+            { "id": "cleo", "label": "Cleopatra rules Egypt", "year": -51 }
+          ],
+          "start": -3000
+        },
+        "template": "timeline"
+      },
+      "expected": null
+    },
     "value": null
   },
   "beforeAfter": {
@@ -1167,6 +1712,26 @@
       "template": "beforeAfter"
     },
     "expected": { "kind": "numeric", "value": 0.12 },
+    "explore": {
+      "content": {
+        "data": { "source": { "title": "Ford Motor Company production records" } },
+        "fields": {
+          "after": {
+            "description": "The moving line.",
+            "facts": [{ "id": "hours", "label": "Hours per car", "value": 1.5 }],
+            "label": "1914"
+          },
+          "before": {
+            "description": "Cars built in place.",
+            "facts": [{ "id": "hours", "label": "Hours per car", "value": 12.5 }],
+            "label": "1912"
+          },
+          "change": "The car moved past the workers."
+        },
+        "template": "beforeAfter"
+      },
+      "expected": null
+    },
     "value": 0.12
   },
   "keyboardFretboard": {
@@ -1186,6 +1751,17 @@
     "expected": {
       "answer": { "kind": "pitchClasses", "pitchClasses": [0, 3, 7] },
       "kind": "interaction"
+    },
+    "explore": {
+      "content": {
+        "fields": {
+          "instruments": ["piano", "guitar"],
+          "start": { "kind": "chord", "quality": "major", "root": "C" },
+          "target": { "kind": "chord", "quality": "minor", "root": "C" }
+        },
+        "template": "keyboardFretboard"
+      },
+      "expected": null
     },
     "value": null
   },
@@ -1208,6 +1784,17 @@
       "template": "notationPlayer"
     },
     "expected": { "kind": "choice", "optionId": "o0" },
+    "explore": {
+      "content": {
+        "fields": {
+          "notation": "X:1\nT:Ode to Joy\nC:Beethoven, 1824\nM:4/4\nL:1/4\nK:C\nE E F G | G F E D | C C D E | E3/2 D/2 D2 |]",
+          "tempo": 80,
+          "view": "staff"
+        },
+        "template": "notationPlayer"
+      },
+      "expected": null
+    },
     "value": null
   },
   "rhythmTapper": {
@@ -1237,6 +1824,7 @@
       },
       "kind": "interaction"
     },
+    "explore": null,
     "value": null
   },
   "combinationGrid.dice": {
@@ -1259,6 +1847,18 @@
       "template": "combinationGrid"
     },
     "expected": { "kind": "numeric", "value": 0.1667 },
+    "explore": {
+      "content": {
+        "fields": {
+          "columns": { "label": "Second die", "values": [1, 2, 3, 4, 5, 6] },
+          "rows": { "label": "First die", "values": [1, 2, 3, 4, 5, 6] },
+          "title": "Two dice",
+          "rule": "sum"
+        },
+        "template": "combinationGrid"
+      },
+      "expected": null
+    },
     "value": null
   },
   "combinationGrid.timesTable": {
@@ -1276,6 +1876,18 @@
     "expected": {
       "answer": { "cells": ["2", "4", "6", "3", "6", "9", "4", "8", "12"], "kind": "grid" },
       "kind": "interaction"
+    },
+    "explore": {
+      "content": {
+        "fields": {
+          "columns": { "label": "Times", "values": [1, 2, 3] },
+          "rows": { "label": "Number", "values": [2, 3, 4] },
+          "title": "Times table",
+          "rule": "product"
+        },
+        "template": "combinationGrid"
+      },
+      "expected": null
     },
     "value": null
   },
@@ -1314,6 +1926,33 @@
       "template": "formulaModel"
     },
     "expected": { "kind": "numeric", "value": 251.54 },
+    "explore": {
+      "content": {
+        "data": { "isExample": true },
+        "fields": {
+          "outputs": [
+            {
+              "formula": "-log(1 - 0.005 * 200000 / (1199 + extra)) / log(1.005)",
+              "id": "months",
+              "label": "Months to pay off"
+            }
+          ],
+          "variables": [
+            {
+              "initial": 0,
+              "label": "Extra per month",
+              "max": 500,
+              "min": 0,
+              "name": "extra",
+              "step": 50,
+              "unit": "$"
+            }
+          ]
+        },
+        "template": "formulaModel"
+      },
+      "expected": null
+    },
     "value": 360.08488878299187
   },
   "formulaModel.scenario": {
@@ -1357,6 +1996,36 @@
       "template": "formulaModel"
     },
     "expected": { "kind": "numeric", "value": 1000 },
+    "explore": {
+      "content": {
+        "data": { "isExample": true },
+        "fields": {
+          "events": [{ "label": "Rent goes up $500", "name": "rentUp" }],
+          "outputs": [
+            {
+              "formula": "(price - 1) * (2000 - 250 * price) - 1500 - 500 * rentUp",
+              "id": "profit",
+              "label": "Monthly profit",
+              "unit": "$"
+            }
+          ],
+          "title": "Coffee cart",
+          "variables": [
+            {
+              "initial": 3,
+              "label": "Price per cup",
+              "max": 6,
+              "min": 2,
+              "name": "price",
+              "step": 0.5,
+              "unit": "$"
+            }
+          ]
+        },
+        "template": "formulaModel"
+      },
+      "expected": null
+    },
     "value": 1000
   },
   "formulaModel.simulation": {
@@ -1412,6 +2081,51 @@
       "template": "formulaModel"
     },
     "expected": { "kind": "numeric", "value": 40.77 },
+    "explore": {
+      "content": {
+        "data": { "isExample": true },
+        "fields": {
+          "outputs": [
+            {
+              "formula": "speed^2 * sin(rad(2 * angle)) / 9.81",
+              "id": "distance",
+              "label": "Lands at",
+              "unit": "m"
+            },
+            {
+              "formula": "(speed * sin(rad(angle)))^2 / (2 * 9.81)",
+              "id": "peak",
+              "label": "Peak height",
+              "unit": "m"
+            }
+          ],
+          "plot": { "x": "angle", "y": "distance" },
+          "title": "Projectile",
+          "variables": [
+            {
+              "initial": 30,
+              "label": "Launch angle",
+              "max": 90,
+              "min": 0,
+              "name": "angle",
+              "step": 1,
+              "unit": "°"
+            },
+            {
+              "initial": 20,
+              "label": "Speed",
+              "max": 30,
+              "min": 5,
+              "name": "speed",
+              "step": 1,
+              "unit": "m/s"
+            }
+          ]
+        },
+        "template": "formulaModel"
+      },
+      "expected": null
+    },
     "value": 35.311943069701876
   },
   "guessReveal.cited": {
@@ -1436,6 +2150,7 @@
       "template": "guessReveal"
     },
     "expected": { "kind": "numeric", "value": 14 },
+    "explore": null,
     "value": 14
   },
   "keyboardFretboard.byEar": {
@@ -1452,6 +2167,17 @@
     "expected": {
       "answer": { "kind": "pitchClasses", "pitchClasses": [0, 7] },
       "kind": "interaction"
+    },
+    "explore": {
+      "content": {
+        "fields": {
+          "byEar": true,
+          "instruments": ["piano"],
+          "target": { "kind": "notes", "notes": ["C", "G"] }
+        },
+        "template": "keyboardFretboard"
+      },
+      "expected": null
     },
     "value": null
   },
@@ -1484,6 +2210,17 @@
       "template": "keyboardFretboard"
     },
     "expected": { "kind": "choice", "optionId": "o1" },
+    "explore": {
+      "content": {
+        "fields": {
+          "byEar": true,
+          "instruments": ["piano", "guitar"],
+          "target": { "kind": "chord", "quality": "minor", "root": "A" }
+        },
+        "template": "keyboardFretboard"
+      },
+      "expected": null
+    },
     "value": null
   },
   "lineCrossing.breakEven": {
@@ -1515,6 +2252,27 @@
       "template": "lineCrossing"
     },
     "expected": { "kind": "numeric", "value": 250 },
+    "explore": {
+      "content": {
+        "data": { "isExample": true },
+        "fields": {
+          "change": "The rent for the workshop goes up by $500 a month.",
+          "feedback": {
+            "wrongDirection": "Higher rent costs more at every quantity.",
+            "wrongLine": "The price of each lamp didn't change."
+          },
+          "lines": [
+            { "id": "cost", "intercept": 2000, "label": "Cost", "slope": 5 },
+            { "id": "revenue", "intercept": 0, "label": "Revenue", "slope": 15 }
+          ],
+          "shift": { "amount": 500, "direction": "up", "line": "cost" },
+          "xLabel": "Lamps sold",
+          "yLabel": "Dollars per month"
+        },
+        "template": "lineCrossing"
+      },
+      "expected": null
+    },
     "value": 3750
   },
   "randomSimulation.sampling": {
@@ -1559,6 +2317,21 @@
       "template": "randomSimulation"
     },
     "expected": { "kind": "choice", "optionId": "o0" },
+    "explore": {
+      "content": {
+        "data": { "isExample": true },
+        "fields": {
+          "mode": "sampling",
+          "population": { "kind": "proportion", "proportion": 0.5 },
+          "populationLabel": "Example town",
+          "runs": 200,
+          "sampleSizes": [100, 400],
+          "sizeLabel": "People per poll"
+        },
+        "template": "randomSimulation"
+      },
+      "expected": null
+    },
     "value": 0.5
   }
 }

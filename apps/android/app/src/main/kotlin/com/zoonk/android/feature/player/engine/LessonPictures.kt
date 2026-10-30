@@ -45,6 +45,10 @@ val LessonStep.isOwnPictureDrawing: Boolean
 
 val LessonStep.isRequiredPictureDrawing: Boolean get() = isOwnPictureDrawing && asksNumberedPicture
 
+/** An explanation's labeled diagram can't be explored once its picture won't come. */
+val LessonStep.isExploredPictureLost: Boolean
+    get() = (content as? StepContent.Explanation)?.explore?.content is LabeledDiagramContent && image == null && !imagePending
+
 fun LessonStep.isWaitingForPicture(
     openedAt: Long,
     now: Long,

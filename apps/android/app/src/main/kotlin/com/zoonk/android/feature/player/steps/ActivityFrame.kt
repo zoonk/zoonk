@@ -77,6 +77,7 @@ import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityCheck
 import com.zoonk.android.feature.player.model.ActivityFrame
 import com.zoonk.android.feature.player.model.ActivityStepContent
+import com.zoonk.android.feature.player.model.ExploredActivity
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.NumericCheck
@@ -301,6 +302,27 @@ internal val NumericCheck.allowed: Double
             PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Tolerance.Kind.ABSOLUTE -> tolerance.`value`
             PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Tolerance.Kind.RELATIVE -> tolerance.`value` * abs(answer)
         }
+
+/** Main's `ActivityExplore`: an explanation's activity, its canvas to explore with nothing to answer. */
+@Composable
+internal fun ExploredActivityCanvas(explore: ExploredActivity) {
+    val renderer = activityRenderers[explore.frame.template] ?: return
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        renderer.canvas(
+            ActivityProps(
+                explore.content,
+                answer = null,
+                expected = explore.expected,
+                isCorrect = null,
+                phase = ActivityPhase.Explore,
+                isLocked = false,
+                onAnswerChange = {},
+            ),
+        )
+        if (renderer.showsData(explore.content)) ActivityDataNote(explore.frame)
+    }
+}
 
 /** Main's `ActivityDataNote`: made-up numbers say so; real ones name their source, linked when it has an address. */
 @Composable

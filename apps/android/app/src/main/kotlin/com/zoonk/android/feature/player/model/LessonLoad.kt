@@ -1,18 +1,28 @@
 package com.zoonk.android.feature.player.model
 
 import androidx.compose.runtime.Immutable
+import com.zoonk.android.data.recode
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ExplanationLesson
 import com.zoonk.api.models.LessonTutorSuggestion
 import com.zoonk.api.models.PlayableLibraryLessonResponse
 import com.zoonk.api.models.PlayableLibraryLessonResponseOneOf1Lesson
 import com.zoonk.api.models.PlayableLibraryStep
+import com.zoonk.api.models.PlayableLibraryStepAnyOf3ContentExplore
+import com.zoonk.api.models.PlayableLibraryStepAnyOf3ExploreExpected
 import com.zoonk.api.models.PlayableLibraryStepAnyOf4Content
 import com.zoonk.api.models.PlayableLibraryStepAnyOf5Listening
 import com.zoonk.api.models.PlayableLibraryStepAnyOf9
 import com.zoonk.api.models.PlayableLibraryStepAnyOf9Exercise
 import com.zoonk.api.models.PlayableLibraryStepAnyOfImage
 import com.zoonk.api.models.PlayableLibraryStepAnyOfOptionPicturesValue
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.put
 
 /** What `/learn/{lessonId}` opens to: its screens, its outline waiting to be written, or a visitor's gate. */
 @Immutable
@@ -152,7 +162,7 @@ internal fun PlayableLibraryStep.toLessonStep(): LessonStep =
                 teaching(
                     id.toString(),
                     skillId?.toString(),
-                    StepContent.Explanation(content),
+                    StepContent.Explanation(content, content.explore?.let { exploredActivity(it, exploreExpected) }),
                     image,
                     imagePending,
                     pictureWaitStartedAt,
@@ -267,6 +277,27 @@ private fun teaching(
         },
     citation = citation,
 )
+
+/** Main's `toCanvasContent`: the explore's template, fields and data, drawn as an activity with nothing to ask. */
+private fun exploredActivity(
+    explore: PlayableLibraryStepAnyOf3ContentExplore,
+    expected: PlayableLibraryStepAnyOf3ExploreExpected?,
+): ExploredActivity {
+    val written = ApiJson.encodeToJsonElement(PlayableLibraryStepAnyOf3ContentExplore.serializer(), explore).jsonObject
+    val content = ApiJson.decodeFromJsonElement(ActivityStepContent.serializer(), JsonObject(written + NOTHING_TO_ASK))
+    return ExploredActivity(content, activityFrame(content), expected?.recode<PlayableLibraryStepAnyOf3ExploreExpected, ActivityExpected>())
+}
+
+private val NOTHING_TO_ASK =
+    mapOf(
+        "check" to
+            buildJsonObject {
+                put("kind", "choice")
+                put("options", JsonArray(emptyList()))
+                put("question", "")
+            },
+        "prompt" to JsonPrimitive(""),
+    )
 
 private fun activityFrame(content: ActivityStepContent): ActivityFrame =
     ApiJson.decodeFromJsonElement(
