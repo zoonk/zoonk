@@ -42,7 +42,11 @@ export function EmailLoginForm({ redirectTo }: { redirectTo: string | null }) {
         <LoginEmailInput
           aria-describedby={hasError ? emailErrorId : undefined}
           aria-invalid={hasError}
-          placeholder={t("me@gmail.com")}
+          placeholder={t({
+            description:
+              "An example address shown in the empty email field. Write a name that fits your language.",
+            message: "me@gmail.com",
+          })}
         />
       </LoginField>
 

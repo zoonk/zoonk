@@ -33,6 +33,7 @@ msgctxt "sy-pv5"
 msgid "Email"
 msgstr "Email"
 
+#. An example address shown in the empty email field. Write a name that fits your language.
 #: src/app/auth/login/email-login-form.tsx
 msgctxt "apQW0E"
 msgid "me@gmail.com"
@@ -160,6 +161,7 @@ msgctxt "SmuYUd"
 msgid "What should we call you?"
 msgstr "Como podemos te chamar?"
 
+#. “it” is the name and username the learner picks on this screen.
 #: src/app/auth/setup/page.tsx
 msgctxt "y9wzAs"
 msgid "You can change it later in your profile."

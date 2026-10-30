@@ -38,7 +38,12 @@ export default async function SetupPage({ searchParams }: PageProps<"/auth/setup
       <Setup>
         <SetupHeader>
           <SetupTitle>{t("What should we call you?")}</SetupTitle>
-          <SetupDescription>{t("You can change it later in your profile.")}</SetupDescription>
+          <SetupDescription>
+            {t({
+              description: "“it” is the name and username the learner picks on this screen.",
+              message: "You can change it later in your profile.",
+            })}
+          </SetupDescription>
         </SetupHeader>
 
         <SetupProfileForm
