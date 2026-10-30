@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { type RefObject, useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useKeyboardCallback } from "./use-keyboard";
 
 const DEFAULT_SEARCH_DEBOUNCE_MS = 300;
@@ -17,6 +17,7 @@ export function useCommandPaletteSearch<TResults>(options: {
   onSelectItem: () => void;
   open: () => void;
   query: string;
+  returnFocusRef: RefObject<HTMLElement | null>;
   results: TResults;
   setQuery: (query: string) => void;
   toggle: () => void;
@@ -33,14 +34,18 @@ export function useCommandPaletteSearch<TResults>(options: {
   const [results, setResults] = useState<TResults>(emptyResults);
   const [isPending, startTransition] = useTransition();
   const requestIdRef = useRef(0);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
-  useKeyboardCallback("k", () => setIsOpen((prev) => !prev), {
-    mode: "any",
-    modifiers: { ctrlKey: true, metaKey: true },
-  });
+  const open = useCallback(() => {
+    if (isOpen) {
+      return;
+    }
 
-  const open = useCallback(() => setIsOpen(true), []);
-  const toggle = useCallback(() => setIsOpen((prev) => !prev), []);
+    returnFocusRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    setIsOpen(true);
+  }, [isOpen]);
 
   const handleQueryChange = useCallback(
     (value: string) => {
@@ -55,10 +60,22 @@ export function useCommandPaletteSearch<TResults>(options: {
   );
 
   const closePalette = useCallback(() => {
+    requestIdRef.current += 1;
     setIsOpen(false);
     setQuery("");
     setResults(emptyResults);
   }, [emptyResults]);
+
+  const toggle = useCallback(() => {
+    if (isOpen) {
+      closePalette();
+      return;
+    }
+
+    open();
+  }, [closePalette, isOpen, open]);
+
+  useKeyboardCallback("k", toggle, { mode: "any", modifiers: { ctrlKey: true, metaKey: true } });
 
   const onSelectItem = useCallback(() => {
     closePalette();
@@ -101,6 +118,7 @@ export function useCommandPaletteSearch<TResults>(options: {
     open,
     query,
     results: query.trim().length < minQueryLength ? emptyResults : results,
+    returnFocusRef,
     setQuery: handleQueryChange,
     toggle,
   };

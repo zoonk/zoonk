@@ -18,12 +18,12 @@ import {
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
+import { listenForCommandPaletteOpen } from "@zoonk/ui/lib/command-palette-event";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
-import { listenForCommandPaletteOpen } from "./command-palette-event";
 import { usePaletteGroups } from "./command-palette-groups";
 import { keepsRowsThrough } from "./command-palette-highlight";
 import { type PaletteItem, getPaletteItemSearchValue } from "./command-palette-items";
@@ -120,7 +120,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
     [locale],
   );
 
-  const { closePalette, isOpen, onSelectItem, open, query, results, setQuery } =
+  const { closePalette, isOpen, onSelectItem, open, query, results, returnFocusRef, setQuery } =
     useCommandPaletteSearch<PaletteSearchResults>({
       emptyResults: EMPTY_SEARCH_RESULTS,
       onSearch: handleSearch,
@@ -173,7 +173,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
   }
 
   return (
-    <CommandDialog onOpenChange={handleDialogOpenChange} open={isOpen}>
+    <CommandDialog finalFocus={returnFocusRef} onOpenChange={handleDialogOpenChange} open={isOpen}>
       <CommandDialogTitle>{t("Search or ask")}</CommandDialogTitle>
       <CommandDialogDescription>
         {t("Go to a page, run an action or ask a question.")}

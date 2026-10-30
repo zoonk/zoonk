@@ -1,6 +1,7 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type CourseGetPayload, prisma } from "@zoonk/db";
+import { normalizeString } from "@zoonk/utils/string";
 
 const courseListInclude = {
   courseChapters: { select: { chapterId: true } },
@@ -15,9 +16,7 @@ export type ListedCourse = Omit<CourseWithOutline, "courseChapters"> & {
 };
 
 const cachedListCourses = cacheAdminData(async (limit: number, offset: number, search?: string) => {
-  const where = search
-    ? { normalizedTitle: { contains: search, mode: "insensitive" as const } }
-    : undefined;
+  const where = search ? { normalizedTitle: { contains: normalizeString(search) } } : undefined;
 
   const [courses, total] = await Promise.all([
     prisma.course.findMany({

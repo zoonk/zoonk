@@ -9,71 +9,12 @@ import {
   SidebarHeaderRow,
   SidebarSection,
 } from "@zoonk/ui/components/sidebar";
-import { SidebarToggle, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
-import {
-  BarChart3Icon,
-  BookOpen,
-  BrainCircuitIcon,
-  CpuIcon,
-  CreditCardIcon,
-  FileTextIcon,
-  FileWarningIcon,
-  GraduationCapIcon,
-  HomeIcon,
-  ImageIcon,
-  LayersIcon,
-  ListChecksIcon,
-  MessagesSquareIcon,
-  PhoneIcon,
-  ThumbsUpIcon,
-  TrophyIcon,
-  UserXIcon,
-  Users,
-} from "lucide-react";
+import { SidebarSearch, SidebarToggle, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type AdminAccount, AdminAccountMenu } from "./admin-account-menu";
-
-const menuGroups = [
-  {
-    items: [
-      { icon: HomeIcon, label: "Home", url: "/" },
-      { icon: BarChart3Icon, label: "Stats", url: "/stats" },
-      { icon: ThumbsUpIcon, label: "Feedback", url: "/feedback/messages" },
-      { icon: CpuIcon, label: "AI", url: "/ai" },
-      { icon: PhoneIcon, label: "Live calls", url: "/live-calls" },
-    ],
-    label: "Overview",
-  },
-  {
-    items: [
-      { icon: Users, label: "Users", url: "/users" },
-      { icon: TrophyIcon, label: "Leaderboard", url: "/leaderboard" },
-      { icon: CreditCardIcon, label: "Subscriptions", url: "/subscriptions" },
-      { icon: UserXIcon, label: "Account deletions", url: "/account-deletions" },
-    ],
-    label: "Learners",
-  },
-  {
-    items: [
-      { icon: BookOpen, label: "Courses", url: "/courses" },
-      { icon: LayersIcon, label: "Lessons", url: "/lessons" },
-      { icon: MessagesSquareIcon, label: "Questions", url: "/questions" },
-    ],
-    label: "Content",
-  },
-  {
-    items: [
-      { icon: BrainCircuitIcon, label: "Skills", url: "/skills" },
-      { icon: ListChecksIcon, label: "Items", url: "/items" },
-      { icon: FileTextIcon, label: "Sources", url: "/sources" },
-      { icon: GraduationCapIcon, label: "Exams", url: "/exams" },
-      { icon: ImageIcon, label: "Media", url: "/media" },
-      { icon: FileWarningIcon, label: "Needs review", url: "/review-flags" },
-    ],
-    label: "Library",
-  },
-] as const;
+import { adminNavigation } from "./admin-navigation";
 
 function isActive(pathname: string, url: string) {
   if (url === "/") {
@@ -86,7 +27,7 @@ function isActive(pathname: string, url: string) {
 function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
-  return menuGroups.map((group) => (
+  return adminNavigation.map((group) => (
     <SidebarSection aria-label={group.label} key={group.label} label={group.label}>
       {group.items.map(({ icon: Icon, label, url }) => (
         <SidebarTooltip key={label} label={label}>
@@ -109,21 +50,24 @@ function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
 function AdminSidebarContent({
   account,
   onNavigate,
+  search,
   toggle,
 }: {
   account: AdminAccount;
   onNavigate?: () => void;
+  search?: React.ReactNode;
   toggle?: React.ReactNode;
 }) {
   return (
     <>
-      <SidebarHeader>
+      <SidebarHeader className="gap-4">
         <SidebarHeaderRow>
           <span className="sidebar-collapsed:hidden flex h-8 items-center px-2 text-sm font-semibold">
             Zoonk Admin
           </span>
           {toggle}
         </SidebarHeaderRow>
+        {search}
       </SidebarHeader>
 
       <AdminNav onNavigate={onNavigate} />
@@ -140,6 +84,7 @@ export function AppSidebar({ account }: { account: AdminAccount }) {
     <Sidebar aria-label="Sidebar" className="gap-4">
       <AdminSidebarContent
         account={account}
+        search={<SidebarSearch label="Search…" onClick={openCommandPalette} />}
         toggle={<SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />}
       />
     </Sidebar>

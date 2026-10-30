@@ -1,6 +1,6 @@
 "use client";
 
-import { dropPendingCommandPalette } from "@/app/[lang]/(app)/(catalog)/_components/command-palette-event";
+import { dropPendingCommandPalette } from "@zoonk/ui/lib/command-palette-event";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 

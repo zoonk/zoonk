@@ -1,12 +1,12 @@
 "use client";
 
-import {
-  listenForCommandPaletteRequest,
-  openCommandPalette,
-} from "@/app/[lang]/(app)/(catalog)/_components/command-palette-event";
 import { getLearnerSummaryState, subscribeToLearnerSummary } from "@/lib/learner/learner-store";
 import { hasSessionHint } from "@/lib/learner/session-hint";
 import { runWhenIdle } from "@/lib/run-when-idle";
+import {
+  listenForCommandPaletteRequest,
+  openCommandPalette,
+} from "@zoonk/ui/lib/command-palette-event";
 import { Suspense, lazy, useEffect, useState, useSyncExternalStore } from "react";
 
 const loadPalette = () => import("./app-command-palette-dialog");

@@ -16,36 +16,22 @@ import {
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
+import { listenForCommandPaletteOpen } from "@zoonk/ui/lib/command-palette-event";
 import { safeAsync } from "@zoonk/utils/error";
-import { ArrowDownIcon, ArrowUpIcon, FileIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, FileIcon, type LucideIcon } from "lucide-react";
 import { type Route } from "next";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { searchAdminAction } from "./search-admin-action";
+import { useEffect } from "react";
+import { searchAdminAction } from "./_actions/search-admin";
+import { adminNavigation } from "./admin-navigation";
 
-type PaletteItem = { detail?: string; href: Route; label: string };
+type PaletteItem = { detail?: string; href: Route; icon?: LucideIcon; label: string };
 type PaletteGroup = { items: PaletteItem[]; label: string };
 
-const PAGES: PaletteItem[] = [
-  { href: "/", label: "Home" },
-  { href: "/stats", label: "Stats" },
-  { href: "/feedback/messages", label: "Feedback" },
-  { href: "/ai", label: "AI" },
-  { href: "/live-calls", label: "Live calls" },
-  { href: "/users", label: "Users" },
-  { href: "/leaderboard", label: "Leaderboard" },
-  { href: "/subscriptions", label: "Subscriptions" },
-  { href: "/account-deletions", label: "Account deletions" },
-  { href: "/courses", label: "Courses" },
-  { href: "/lessons", label: "Lessons" },
-  { href: "/questions", label: "Questions" },
-  { href: "/skills", label: "Skills" },
-  { href: "/items", label: "Items" },
-  { href: "/sources", label: "Sources" },
-  { href: "/exams", label: "Exams" },
-  { href: "/media", label: "Media" },
-  { href: "/review-flags", label: "Needs review" },
-];
+const PAGES = adminNavigation.flatMap((group) =>
+  group.items.map(({ icon, label, url }) => ({ href: url, icon, label })),
+);
 
 const EMPTY_RESULTS: { error: boolean; groups: PaletteGroup[]; query: string } = {
   error: false,
@@ -66,10 +52,13 @@ export function AdminCommandPalette() {
 }
 
 function Palette({ currentUrl }: { currentUrl: string }) {
-  const { closePalette, isOpen, isPending, query, results, setQuery } = useCommandPaletteSearch({
-    emptyResults: EMPTY_RESULTS,
-    onSearch: search,
-  });
+  const { closePalette, isOpen, isPending, open, query, results, returnFocusRef, setQuery } =
+    useCommandPaletteSearch<typeof EMPTY_RESULTS>({
+      emptyResults: EMPTY_RESULTS,
+      onSearch: search,
+    });
+
+  useEffect(() => listenForCommandPaletteOpen(open), [open]);
 
   const trimmedQuery = query.trim();
 
@@ -89,7 +78,11 @@ function Palette({ currentUrl }: { currentUrl: string }) {
   const empty = groups.length === 0 && !searching && !failed;
 
   return (
-    <CommandDialog onOpenChange={(open) => !open && closePalette()} open={isOpen}>
+    <CommandDialog
+      finalFocus={returnFocusRef}
+      onOpenChange={(nextOpen) => !nextOpen && closePalette()}
+      open={isOpen}
+    >
       <CommandDialogTitle>Search admin</CommandDialogTitle>
       <CommandDialogDescription>
         Go to a page or find a user, course, lesson or skill.
@@ -148,10 +141,13 @@ function Palette({ currentUrl }: { currentUrl: string }) {
           <Kbd>
             <ArrowDownIcon />
           </Kbd>{" "}
-          to navigate
+          move
         </span>
         <span>
-          <Kbd>↵</Kbd> to open
+          <Kbd>⏎</Kbd> open
+        </span>
+        <span>
+          <Kbd>Esc</Kbd> close
         </span>
       </CommandFooter>
     </CommandDialog>
@@ -167,6 +163,14 @@ function PaletteOption({
   currentUrl: string;
   item: PaletteItem;
 }) {
+  const pathname = item.href.split("?")[0] ?? "";
+
+  const parent = PAGES.find(
+    (page) => pathname === page.href || pathname.startsWith(`${page.href}/`),
+  );
+
+  const Icon = item.icon ?? parent?.icon ?? FileIcon;
+
   return (
     <CommandItem
       onClick={(event) => {
@@ -184,7 +188,7 @@ function PaletteOption({
       render={<Link href={item.href} prefetch />}
       value={item}
     >
-      <FileIcon aria-hidden="true" />
+      <Icon aria-hidden="true" />
       <span className="min-w-0 flex-1 truncate">{item.label}</span>
       {item.detail && (
         <span className="text-muted-foreground max-w-[50%] truncate text-xs">{item.detail}</span>

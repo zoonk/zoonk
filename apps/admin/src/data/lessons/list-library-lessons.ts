@@ -2,6 +2,7 @@ import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type LibraryLessonStatus, toContentStatus } from "@/lib/library-lesson-filters";
 import { prisma } from "@zoonk/db";
+import { normalizeString } from "@zoonk/utils/string";
 
 type LibraryLessonFilter = {
   model?: string;
@@ -27,7 +28,7 @@ const libraryLessonListInclude = {
  * prompt filters match lessons by their current screens.
  */
 function buildLibraryLessonWhere({ model, promptVersion, search, status }: LibraryLessonFilter) {
-  const containsSearch = search ? { contains: search, mode: "insensitive" as const } : undefined;
+  const containsSearch = search ? { contains: normalizeString(search) } : undefined;
   const hasProvenanceFilter = Boolean(model ?? promptVersion);
 
   return {
@@ -36,9 +37,9 @@ function buildLibraryLessonWhere({ model, promptVersion, search, status }: Libra
     ...(containsSearch
       ? {
           OR: [
-            { title: containsSearch },
-            { homeChapter: { title: containsSearch } },
-            { homeChapter: { homeCourse: { title: containsSearch } } },
+            { normalizedTitle: containsSearch },
+            { homeChapter: { normalizedTitle: containsSearch } },
+            { homeChapter: { homeCourse: { normalizedTitle: containsSearch } } },
           ],
         }
       : {}),

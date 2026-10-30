@@ -1,11 +1,11 @@
 "use client";
 
-import { openCommandPalette } from "@/app/[lang]/(app)/(catalog)/_components/command-palette-event";
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { useContentFeedback } from "@zoonk/learn/feedback";
 import { SIDEBAR_COUNT_CLASS, SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
 import { SidebarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
 import { MessageSquareIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";

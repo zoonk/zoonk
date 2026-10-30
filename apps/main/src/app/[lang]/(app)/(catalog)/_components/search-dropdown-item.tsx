@@ -6,9 +6,9 @@ import {
   DropdownMenuShortcut,
 } from "@zoonk/ui/components/dropdown-menu";
 import { useShortcutLabel } from "@zoonk/ui/hooks/shortcut-label";
+import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
 import { SearchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { openCommandPalette } from "./command-palette-event";
 
 export function SearchDropdownItem() {
   const t = useExtracted();

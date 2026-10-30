@@ -184,7 +184,10 @@ export function SidebarSearch({
         SEARCH_CLASS[placement],
         className,
       )}
-      onClick={onClick}
+      onClick={(event) => {
+        event.currentTarget.focus();
+        onClick();
+      }}
       type="button"
     >
       <SearchIcon aria-hidden="true" className="size-4 shrink-0" />
