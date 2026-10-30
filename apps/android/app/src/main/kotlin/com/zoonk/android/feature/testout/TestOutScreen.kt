@@ -25,6 +25,8 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -119,6 +121,7 @@ fun TestOutScreen(
             )
         }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
     val plan by app.plans.plan[goalId].collectShown()
     val chapter =
         plan.value

@@ -161,8 +161,12 @@ class TestOutViewModel(
         val next = answers + GradedAnswer(question.itemId, answer, now() - shownAt)
         shownAt = now()
         mutableUi.update { it.copy(answers = next) }
-        viewModelScope.launch { answersDraft?.save(AnswersDraft(requestId, next)) }
+        answersDraft?.saveDebounced(AnswersDraft(requestId, next))
         if (next.size >= questions.size) send(next)
+    }
+
+    fun onStop() {
+        viewModelScope.launch { answersDraft?.flush() }
     }
 
     fun retrySend() {

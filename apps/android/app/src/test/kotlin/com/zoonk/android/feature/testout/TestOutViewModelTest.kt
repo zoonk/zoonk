@@ -1,6 +1,10 @@
 package com.zoonk.android.feature.testout
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -241,6 +245,28 @@ class TestOutViewModelTest {
                 true,
                 viewModel.ui.value.outcome
                     ?.passed,
+            )
+        }
+
+    @Test
+    fun anAnswerIsKeptWhenTheTestClosesRightAfterIt() =
+        runTest(dispatcher) {
+            val parts = parts()
+            val first = viewModel(parts = parts)
+            started(first)
+            val owner = ViewModelStore()
+            ViewModelProvider.create(owner, viewModelFactory { initializer { first } })[TestOutViewModel::class]
+
+            first.answer(questions, questions[0], Answer.Choice(0))
+            owner.clear()
+            advanceUntilIdle()
+
+            val again = viewModel(parts = parts)
+            started(again)
+            assertEquals(
+                1,
+                again.ui.value.answers
+                    ?.size,
             )
         }
 
