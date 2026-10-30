@@ -117,10 +117,13 @@ export async function MovePractice() {
         <p className="mt-auto flex gap-2 border-t pt-3.5 text-[0.84375rem] leading-snug">
           <LightbulbIcon aria-hidden="true" className="text-warning mt-px size-4 flex-none" />
           <span>
-            {t.rich(
-              "{move, select, london {Stress the first part: <b>SAT</b>-ur-day.} other {Stress the accent: <b>SÁ</b>-ba-do.}}",
-              { b: renderBold, move: set.move },
-            )}
+            {t.rich({
+              description:
+                "Pronunciation tips: “SAT-ur-day” is the English word “Saturday” and “SÁ-ba-do” the Spanish word “sábado”. Keep each word as written.",
+              message:
+                "{move, select, london {Stress the first part: <b>SAT</b>-ur-day.} other {Stress the accent: <b>SÁ</b>-ba-do.}}",
+              values: { b: renderBold, move: set.move },
+            })}
           </span>
         </p>
       </ProductWindow>

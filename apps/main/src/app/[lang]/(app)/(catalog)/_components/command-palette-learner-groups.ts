@@ -86,7 +86,11 @@ export function useLearnerPaletteGroups({
     continueItem,
     places.exam &&
       createNavigationPaletteItem({
-        chip: t("full, half or one subject"),
+        chip: t({
+          description:
+            "The sizes of mock exam the learner can take: the full exam, half of it, or one subject.",
+          message: "full, half or one subject",
+        }),
         id: "mock",
         label: t("Take a mock exam"),
         menu: getMenu("mock"),

@@ -43,7 +43,13 @@ function Alternative({
   return (
     <section className="flex flex-col gap-2">
       <h2 className="text-label">
-        {instead ? t("Ready to do instead") : t("Ready while you wait")}
+        {instead
+          ? t({
+              description:
+                "Heading over a lesson or review the learner can start now, because this lesson couldn't be written.",
+              message: "Ready to do instead",
+            })
+          : t("Ready while you wait")}
       </h2>
       {alternative.kind === "lesson" ? (
         <Link className={rowClass} href={`/learn/${alternative.lessonId}`}>

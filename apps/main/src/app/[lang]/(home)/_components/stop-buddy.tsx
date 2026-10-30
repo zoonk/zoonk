@@ -88,10 +88,17 @@ async function getExchanges(): Promise<Record<ExampleGoal, Exchange>> {
             quote: "¿Puedo ver el piso el sábado?",
           }
         : {
-            answer: t(
-              "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there.",
-            ),
-            ask: t("Why “flat” and not “apartment”?"),
+            answer: t({
+              description:
+                "The buddy answers a learner of English: “flat” and “apartment” are the English words being taught.",
+              message:
+                "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there.",
+            }),
+            ask: t({
+              description:
+                "A learner of English asks about the English words “flat” and “apartment”.",
+              message: "Why “flat” and not “apartment”?",
+            }),
             context: t("Lesson · Calling about an apartment"),
             lang: "en",
             quote: "Can I see the flat on Saturday?",

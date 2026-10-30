@@ -165,6 +165,7 @@ msgctxt "u82Vi2"
 msgid "Continue today's session"
 msgstr "Continuar la sesión de hoy"
 
+#. The sizes of mock exam the learner can take: the full exam, half of it, or one subject.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
 msgid "full, half or one subject"
@@ -1583,6 +1584,7 @@ msgctxt "0ZGPb-"
 msgid "{belt} at <mono>{points}</mono> Brain Power"
 msgstr "{belt} al llegar a <mono>{points}</mono> de Poder Mental"
 
+#. The Brain Power the learner still needs to earn the next belt.
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "dzpvr6"
 msgid "{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}"
@@ -2734,6 +2736,7 @@ msgctxt "-ImamJ"
 msgid "Can I see the apartment on Saturday?"
 msgstr "¿Puedo ver el piso el sábado?"
 
+#. Pronunciation tips: “SAT-ur-day” is the English word “Saturday” and “SÁ-ba-do” the Spanish word “sábado”. Keep each word as written.
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "wXawda"
 msgid "{move, select, london {Stress the first part: <b>SAT</b>-ur-day.} other {Stress the accent: <b>SÁ</b>-ba-do.}}"
@@ -2824,11 +2827,13 @@ msgctxt "00sc5X"
 msgid "Lesson · Calling about an apartment"
 msgstr "Lección · Llamar por un piso"
 
+#. The buddy answers a learner of English: “flat” and “apartment” are the English words being taught.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "4teyr4"
 msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
 msgstr "Las dos palabras sirven, pero en Londres se dice «piso». «Apartamento» es más común en Estados Unidos, así que «piso» suena más natural cuando buscas alquiler allí."
 
+#. A learner of English asks about the English words “flat” and “apartment”.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "O0g0Ss"
 msgid "Why “flat” and not “apartment”?"
@@ -3205,6 +3210,7 @@ msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "Sobre esta lección"
 
+#. Heading over a lesson or review the learner can start now, because this lesson couldn't be written.
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "27L4n6"
 msgid "Ready to do instead"

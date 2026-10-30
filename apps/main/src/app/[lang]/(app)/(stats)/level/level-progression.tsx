@@ -149,9 +149,10 @@ async function NextBelt({
       </p>
 
       <p className="text-muted-foreground text-xs">
-        {t.rich("{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}", {
-          mono: renderNumber,
-          points: level.nextBelt.brainPowerToGo,
+        {t.rich({
+          description: "The Brain Power the learner still needs to earn the next belt.",
+          message: "{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}",
+          values: { mono: renderNumber, points: level.nextBelt.brainPowerToGo },
         })}
       </p>
     </div>
