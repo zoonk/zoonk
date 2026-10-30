@@ -88,6 +88,7 @@
   "player_listen": "33c25f4330c7d879754a4b64be21df831570adff59c8eed9c194d146ccfb27f9",
   "player_microphone_blocked": "810ce0eb4cc51bf5a714fa24c64d336f75e713aec335222c8e02d809c004234a",
   "player_next_lesson": "b00fccbe9c29eda0ceab8b948e61124faa4f9af58d7b524a2308fe1e70986da2",
+  "player_next_step_failed": "d1f777100b36305bacc4330dc1ed5e3cfee66e865e09636d4960db9b71bdb7b2",
   "player_not_found_description": "0900170d4ef4646593638816d6632119d2ebd0a39f94613c9becbd4e89e9d617",
   "player_not_found_title": "c5995cd035b62c43c415b6ab4ff36334abadceffa18703525af484f17baca95d",
   "player_not_in_app_description": "a09e4f500187a2d5d8df0899d4a3c7fd89004659acda1d10afaff3500abe93ae",
@@ -128,6 +129,7 @@
   "player_say_it_instead": "785c9c4b63e85cdecee1dc39fbec00282b88b53197d96d6ea59547083b18b6cd",
   "player_screen_options": "1371cbf567e6f1ecd49cd9197e5007149b44c3bb26d1cdedeb82d041104633d0",
   "player_see_plus": "d5ec54f7a771c207c57ff8ab42b68548312f2feb2d259cd9d9eb909728bc7699",
+  "player_see_todays_summary": "51988a28ac624c002b5f6714b2ca823e21d41cb320ff08d9bd07b58a28786bf1",
   "player_set_aside_description": "bfe4a4c9f556005018f012d69e677c0c42e864682736c84d5d37805905cd755a",
   "player_set_aside_title": "58ec14edf499fc8c9c54c2dcb5fbf6ae93484119f537ca2585b870034c14f8ec",
   "player_slow_down_description": "7a4f32c995d56bee757575979740febe824eec96e1706e1b038193b3d162f078",
@@ -140,6 +142,8 @@
   "player_start_this_lesson": "18cb82fc63c666695e681a26e449ad69e5fcfab1ff369d2b85748c0332b8ee1d",
   "player_starting": "2e781063d991f9bbd1487fb301eac4d01b3f55e75cd51fb51a2433c5e50f1226",
   "player_still_checking": "1e47cac3ee5cf7c5b68959355d68978cdaaca8ee5d400cd6eab958df6f47a64f",
+  "player_stop_failed": "37e13c5d517a50dd17e56ab314497b71722d002ac9bd619e0a17d558e9842b5c",
+  "player_stop_for_today": "0f63477dc3f1aeac247207477e2a1b275ccda3bebedad5f21edf3d2cdddacf45",
   "player_summary": "93992c2c4e9242927a420d20eff2d4f1f47c44004fd341682302647cb42c0316",
   "player_summary_ideas": "f52ee79a8c0cb12ab86d298e33084f9f863b7280c7a7033d41417772f4c1e662",
   "player_try_again": "d1a991547322d000dd857669394a2cbc6d4497e844e593cf2b44a494fd341270",
@@ -343,6 +347,10 @@
     <string name="player_save_failed">L’enregistrement a échoué. Tes réponses sont conservées.</string>
     <string name="player_review_on">À réviser le %1$s</string>
     <string name="player_next_lesson">Leçon suivante</string>
+    <string name="player_stop_for_today">Arrêter pour aujourd’hui</string>
+    <string name="player_see_todays_summary">Voir le bilan du jour</string>
+    <string name="player_next_step_failed">Impossible d’ouvrir la prochaine étape. Réessaie.</string>
+    <string name="player_stop_failed">Impossible d’arrêter la séance. Réessaie.</string>
     <string name="player_back_to_chapter">Retour au chapitre</string>
     <string name="player_back_to_unit">Retour à l’unité</string>
     <string name="player_part_of">Fait partie de</string>
