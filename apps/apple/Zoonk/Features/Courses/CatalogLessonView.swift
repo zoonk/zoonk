@@ -33,6 +33,7 @@ struct CatalogLessonView: View {
 
 private struct CatalogLessonList: View {
   @Environment(AppRouter.self) private var router
+  @Environment(SessionStore.self) private var session
 
   let lesson: LessonReference
   let value: CatalogLesson
@@ -122,9 +123,17 @@ private struct CatalogLessonList: View {
         .buttonStyle(.mainAction)
         .controlSize(.large)
       } footer: {
-        Text(
-          "\(value.estimatedMinutes) minutes", tableName: "Courses",
-          comment: "How long a lesson takes")
+        VStack(alignment: .leading, spacing: 2) {
+          Text(
+            "\(value.estimatedMinutes) minutes", tableName: "Courses",
+            comment: "How long a lesson takes")
+
+          if session.authenticatedSession == nil {
+            Text(
+              "No sign-up needed.", tableName: "Courses",
+              comment: "Under a lesson's length for someone who isn't signed in")
+          }
+        }
       }
       .listRowBackground(Color.clear)
 

@@ -3972,6 +3972,35 @@
         }
       }
     },
+    "No sign-up needed." : {
+      "comment" : "Under a lesson's length for someone who isn't signed in",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Registrierung nötig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hace falta registrarse."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas besoin de s’inscrire."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não precisa se cadastrar."
+          }
+        }
+      }
+    },
     "Not all of it fits by then. Before you start, you see how much fits at your level and your time." : {
       "comment" : "An exam course's example plan doesn't cover everything",
       "localizations" : {
