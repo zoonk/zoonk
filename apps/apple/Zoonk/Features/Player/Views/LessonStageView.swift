@@ -85,26 +85,35 @@ struct LessonStageView: View {
                 .id(Self.checkNoteId)
 
               if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
-                LessonVerdictView(
-                  step: step, result: result, store: store,
-                  willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position }
-                    ?? false,
-                  hyperdriveStreak: state.hyperdriveStreak(for: step.id)
-                )
-                .id(Self.verdictId)
+                VStack(alignment: .leading, spacing: 24) {
+                  LessonVerdictView(
+                    step: step, result: result, store: store,
+                    willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position }
+                      ?? false,
+                    hyperdriveStreak: state.hyperdriveStreak(for: step.id)
+                  )
 
-                if state.struggleOffer != nil {
-                  LessonAskBuddyOffer(reason: .misses, store: store)
+                  if state.struggleOffer != nil {
+                    LessonAskBuddyOffer(reason: .misses, store: store)
+                  }
                 }
+                .id(Self.verdictId)
               }
 
               if step.strugglePause != nil {
                 LessonPauseOffer(step: step, store: store)
               }
             }
-            .onChange(of: state.currentResult != nil) { _, hasResult in
-              if hasResult {
-                scroll.scrollTo(Self.verdictId, anchor: .bottom)
+            // The server's verdict can add lines to the device's ("Saved to your mistakes"), so
+            // every change of the result scrolls the verdict whole into view again.
+            .onChange(of: state.currentResult) { old, result in
+              guard result != nil else {
+                return
+              }
+
+              scroll.scrollTo(Self.verdictId, anchor: .bottom)
+
+              if old == nil {
                 announceVerdict()
               }
             }
