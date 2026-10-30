@@ -55,3 +55,9 @@ internal fun ComposeContentTestRule.waitFor(condition: () -> Boolean) {
         waitForIdle()
     }
 }
+
+/** Lets what the last change composed start its reads, then waits until [reads] hold content and none is refreshing. */
+internal fun ComposeContentTestRule.settle(vararg reads: Resource<*>) {
+    waitForIdle()
+    waitFor { reads.all { it.state.value.hasContent && !it.isRefreshing.value } }
+}

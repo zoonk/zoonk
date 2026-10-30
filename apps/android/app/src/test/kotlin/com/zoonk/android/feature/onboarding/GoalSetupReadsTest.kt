@@ -13,6 +13,7 @@ import com.zoonk.android.data.CountingApi
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.settle
 import com.zoonk.android.data.waitFor
 import com.zoonk.android.feature.plan.SetupLeft
 import com.zoonk.android.feature.plan.setupLeft
@@ -57,7 +58,8 @@ class GoalSetupReadsTest {
         }
         rule.waitFor { onboarding.onboardings[GOAL_ID].state.value is LoadState.Loaded }
         rule.runOnIdle { planTab = true }
-        rule.waitFor { planLeft == SetupLeft.Yes }
+        rule.settle(onboarding.onboardings[GOAL_ID])
+        assertEquals(SetupLeft.Yes, planLeft)
 
         assertEquals(1, api.requests(SETUP))
     }

@@ -11,6 +11,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.CountingApi
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.settle
 import com.zoonk.android.data.waitFor
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
@@ -44,8 +45,7 @@ class LessonStartedReadsTest {
         rule.waitFor { started.state.value is LoadState.Loaded }
         rule.runOnIdle { shown = false }
         rule.runOnIdle { shown = true }
-        rule.waitForIdle()
-        rule.waitFor { !started.isRefreshing.value }
+        rule.settle(started)
 
         assertEquals(1, api.requests(PROGRESS))
     }

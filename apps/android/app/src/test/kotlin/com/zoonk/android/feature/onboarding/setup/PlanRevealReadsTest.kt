@@ -12,8 +12,8 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.CountingApi
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationRun
-import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.settle
 import com.zoonk.android.data.waitFor
 import com.zoonk.android.feature.onboarding.examGoal
 import com.zoonk.android.feature.onboarding.planOf
@@ -82,7 +82,7 @@ class PlanRevealReadsTest {
         rule.waitFor { api.requests(plan) == 1 && api.requests(syllabus) == 1 }
         rule.waitForIdle()
         rule.runOnIdle { planTab = true }
-        rule.waitFor { plans.plan[goal.id].state.value is LoadState.Loaded && plans.syllabus[goal.id].state.value is LoadState.Loaded }
+        rule.settle(plans.plan[goal.id], plans.syllabus[goal.id])
 
         assertEquals(1 to 1, api.requests(plan) to api.requests(syllabus))
     }

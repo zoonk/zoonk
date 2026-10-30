@@ -28,7 +28,6 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.StepState
-import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.examGoal
 import com.zoonk.android.feature.onboarding.feasibilityOf
@@ -68,7 +67,6 @@ class PlanRevealStepFlowTest {
     @get:Rule
     val rule: ComposeContentTestRule = createComposeRule()
 
-    private val api = FakeOnboardingApi()
     private val planApi =
         FakePlanApi().apply {
             shownPlan = planOf()

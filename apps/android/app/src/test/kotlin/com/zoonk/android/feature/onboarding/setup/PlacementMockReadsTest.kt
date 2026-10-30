@@ -12,8 +12,8 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.CountingApi
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationRun
-import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.settle
 import com.zoonk.android.data.waitFor
 import com.zoonk.android.feature.mock.LiveMockApi
 import com.zoonk.android.feature.mock.MockStore
@@ -76,7 +76,7 @@ class PlacementMockReadsTest {
         rule.waitFor { api.requests(mocks) == 1 }
         rule.waitForIdle()
         rule.runOnIdle { chooser = true }
-        rule.waitFor { mockStore.options[goal].state.value is LoadState.Loaded }
+        rule.settle(mockStore.options[goal])
 
         assertEquals(1, api.requests(mocks))
     }

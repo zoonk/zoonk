@@ -13,6 +13,7 @@ import com.zoonk.android.data.CountingApi
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.settle
 import com.zoonk.android.data.waitFor
 import com.zoonk.android.feature.exam.ExamStore
 import com.zoonk.android.feature.exam.LiveExamApi
@@ -58,7 +59,8 @@ class SearchMockReadsTest {
         }
         rule.waitFor { exams.exam[GOAL].state.value is LoadState.Loaded }
         rule.runOnIdle { searching = true }
-        rule.waitFor { found.isNotEmpty() }
+        rule.settle(exams.exam[GOAL])
+        assertEquals(1, found.size)
 
         assertEquals(1, api.requests(EXAM))
     }

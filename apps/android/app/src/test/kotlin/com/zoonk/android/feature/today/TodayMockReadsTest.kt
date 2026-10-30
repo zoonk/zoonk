@@ -11,8 +11,8 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.CountingApi
 import com.zoonk.android.data.FakeSession
-import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.settle
 import com.zoonk.android.data.waitFor
 import com.zoonk.android.feature.mock.LiveMockApi
 import com.zoonk.android.feature.mock.MockStore
@@ -59,7 +59,7 @@ class TodayMockReadsTest {
         }
         rule.waitFor { api.requests(MOCKS) == 1 }
         rule.runOnIdle { examPage = true }
-        rule.waitFor { mocks.options[GOAL].state.value is LoadState.Loaded }
+        rule.settle(mocks.options[GOAL])
 
         assertEquals(1, api.requests(MOCKS))
     }
