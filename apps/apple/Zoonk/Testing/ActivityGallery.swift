@@ -157,7 +157,7 @@
           renderer.canvas(
             ActivityCanvasContext(
               template: content.template, payload: content.payload, check: nil, phase: .explore,
-              answer: nil, setAnswer: { _ in }))
+              answer: nil, setAnswer: { _ in }, baseMap: content.baseMap))
         }
       } else {
         ActivityStepView(

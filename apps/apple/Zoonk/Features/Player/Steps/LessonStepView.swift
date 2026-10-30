@@ -166,7 +166,7 @@ private struct ExplanationStepView: View {
         renderer.canvas(
           ActivityCanvasContext(
             template: explore.template, payload: explore.payload, check: nil, phase: .explore,
-            answer: nil, setAnswer: { _ in }))
+            answer: nil, setAnswer: { _ in }, baseMap: explore.baseMap))
 
         ActivityDataNote(data: explore.data)
       }

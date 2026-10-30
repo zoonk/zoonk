@@ -17,8 +17,8 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
   public var kind: LessonStepKind { content.kind }
 
   private enum CodingKeys: String, CodingKey {
-    case citation, content, exercise, id, image, imagePending, kind, listening, minTolerance
-    case optionPictures, pictureWaitStartedAt, position, skillId, wordHints
+    case baseMap, citation, content, exercise, id, image, imagePending, kind, listening
+    case minTolerance, optionPictures, pictureWaitStartedAt, position, skillId, wordHints
   }
 
   public init(
@@ -61,7 +61,9 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     case "hook":
       content = .hook(try container.decode(HookContent.self, forKey: .content))
     case "explanation":
-      content = .explanation(try container.decode(ExplanationContent.self, forKey: .content))
+      var explanation = try container.decode(ExplanationContent.self, forKey: .content)
+      explanation.explore?.baseMap = Self.baseMap(in: container)
+      content = .explanation(explanation)
     case "workedExample":
       content = .workedExample(try container.decode(WorkedExampleContent.self, forKey: .content))
     case "check":
@@ -76,6 +78,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
       var activity = try container.decode(ActivityStepContent.self, forKey: .content)
       activity.minTolerance = try container.decodeIfPresent(
         ActivityCheck.Tolerance.self, forKey: .minTolerance)
+      activity.baseMap = Self.baseMap(in: container)
       content = .activity(activity)
     case "summary":
       content = .summary(try container.decode(SummaryContent.self, forKey: .content))
@@ -86,6 +89,12 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
         try container.decode(LanguageExercise.self, forKey: .exercise),
         wordHints: try container.decodeIfPresent(WordHints.self, forKey: .wordHints))
     }
+  }
+
+  /// A map that doesn't decode shows as unavailable instead of failing the lesson.
+  private static func baseMap(in container: KeyedDecodingContainer<CodingKeys>) -> ActivityBaseMap?
+  {
+    (try? container.decodeIfPresent(ActivityBaseMap.self, forKey: .baseMap)) ?? nil
   }
 
   public func encode(to encoder: any Encoder) throws {
@@ -109,7 +118,9 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
 
     switch content {
     case .hook(let value): try container.encode(value, forKey: .content)
-    case .explanation(let value): try container.encode(value, forKey: .content)
+    case .explanation(let value):
+      try container.encode(value, forKey: .content)
+      try container.encode(value.explore?.baseMap, forKey: .baseMap)
     case .workedExample(let value): try container.encode(value, forKey: .content)
     case .check(let value): try container.encode(value, forKey: .content)
     case .typedAnswer(let value): try container.encode(value, forKey: .content)
@@ -119,6 +130,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     case .activity(let value):
       try container.encode(value, forKey: .content)
       try container.encode(value.minTolerance, forKey: .minTolerance)
+      try container.encode(value.baseMap, forKey: .baseMap)
     case .summary(let value): try container.encode(value, forKey: .content)
     case .challenge(let value): try container.encode(value, forKey: .content)
     case .language: break
@@ -347,7 +359,7 @@ public struct ExplanationContent: Codable, Hashable, Sendable {
   public let text: String
   public let image: LessonPictureDescription?
   public let visual: LessonVisual?
-  public let explore: ActivityExploreContent?
+  public internal(set) var explore: ActivityExploreContent?
   public let exampleLineSlot: ExampleLineSlot?
 }
 

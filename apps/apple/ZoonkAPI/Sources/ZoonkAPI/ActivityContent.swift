@@ -11,6 +11,8 @@ public struct ActivityStepContent: Codable, Hashable, Sendable {
   public let payload: JSONValue
   /// Sent on the step beside `content`, so `LessonStep` fills it in.
   public internal(set) var minTolerance: ActivityCheck.Tolerance?
+  /// Sent on the step beside `content`, so `LessonStep` fills it in.
+  public internal(set) var baseMap: ActivityBaseMap?
 
   private enum CodingKeys: String, CodingKey {
     case check, data, image, prompt, template
@@ -39,6 +41,8 @@ public struct ActivityExploreContent: Codable, Hashable, Sendable {
   public let template: String
   public let data: ActivityData?
   public let payload: JSONValue
+  /// Sent on the step beside `content`, so `LessonStep` fills it in.
+  public internal(set) var baseMap: ActivityBaseMap?
 
   private enum CodingKeys: String, CodingKey {
     case data, template
@@ -224,4 +228,63 @@ public struct ActivityAnswer: Codable, Hashable, Sendable {
   public func decode<Answer: Decodable>(as type: Answer.Type = Answer.self) throws -> Answer {
     try value.decode(as: type)
   }
+}
+
+/// A `mapExplorer`'s base map as the API sends it: shapes in the drawing's own units (`width` by
+/// `height`), paths as SVG path data, each place already projected onto it.
+public struct ActivityBaseMap: Codable, Hashable, Sendable {
+  public enum Tone: String, Codable, Hashable, Sendable {
+    case context, focus, groupA, groupB, groupC
+  }
+
+  public struct Region: Codable, Hashable, Sendable {
+    public let path: String
+    public let tone: Tone
+  }
+
+  public struct Street: Codable, Hashable, Sendable {
+    public let path: String
+  }
+
+  public struct Label: Codable, Hashable, Sendable {
+    public enum Kind: String, Codable, Hashable, Sendable {
+      case region, street
+    }
+
+    public let angle: Double
+    public let key: String?
+    public let kind: Kind
+    public let text: String
+    public let x: Double
+    public let y: Double
+  }
+
+  public struct LegendItem: Codable, Hashable, Sendable {
+    public let key: String
+    public let tone: Tone
+  }
+
+  public struct Inset: Codable, Hashable, Sendable {
+    public let height: Double
+    public let width: Double
+    public let x: Double
+    public let y: Double
+  }
+
+  public struct Place: Codable, Hashable, Sendable {
+    public let id: String
+    public let x: Double
+    public let y: Double
+  }
+
+  public let height: Double
+  public let insets: [Inset]
+  public let labels: [Label]
+  public let legend: [LegendItem]
+  public let maxZoom: Double
+  public let places: [Place]
+  public let regions: [Region]
+  public let sphere: String?
+  public let streets: [Street]
+  public let width: Double
 }

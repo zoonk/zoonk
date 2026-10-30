@@ -589,6 +589,151 @@
         }
       }
     },
+    "%@ with %lld places to explore: %@." : {
+      "comment" : "VoiceOver: a map activity's map, its number of places, then each place",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ mit %#@places@ zum Erkunden: %3$@."
+          },
+          "substitutions" : {
+            "places" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Ort"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Orten"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ with %#@places@ to explore: %3$@."
+          },
+          "substitutions" : {
+            "places" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg place"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg places"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ con %#@places@ para explorar: %3$@."
+          },
+          "substitutions" : {
+            "places" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lugar"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lugares"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ avec %#@places@ à explorer : %3$@."
+          },
+          "substitutions" : {
+            "places" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lieu"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lieux"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ com %#@places@ para explorar: %3$@."
+          },
+          "substitutions" : {
+            "places" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lugar"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lugares"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%@, matched" : {
       "comment" : "VoiceOver: a card already matched",
       "localizations" : {
@@ -1992,6 +2137,35 @@
         }
       }
     },
+    "Africa" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afrika"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Africa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Africa"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Africa"
+          }
+        }
+      }
+    },
     "All sorted. Check when you're ready." : {
       "comment" : "Every item of a sorting activity has a group",
       "localizations" : {
@@ -2017,6 +2191,122 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tudo classificado. Confira quando estiver pronto."
+          }
+        }
+      }
+    },
+    "Antarctica" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antarktis"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antarctica"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antarctica"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antarctica"
+          }
+        }
+      }
+    },
+    "Asia" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asien"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asia"
+          }
+        }
+      }
+    },
+    "Austria-Hungary" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Österreich-Ungarn"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Austria-Hungary"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Austria-Hungary"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Austria-Hungary"
+          }
+        }
+      }
+    },
+    "Borders are simplified." : {
+      "comment" : "Under a historical map",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Grenzen sind vereinfacht dargestellt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las fronteras están simplificadas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les frontières sont simplifiées."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As fronteiras são simplificadas."
           }
         }
       }
@@ -2108,6 +2398,35 @@
         }
       }
     },
+    "Europe" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Europa"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Europe"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Europe"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Europe"
+          }
+        }
+      }
+    },
     "Every spot has a name. Tap a spot to change it." : {
       "comment" : "Every numbered spot of a picture has a name",
       "localizations" : {
@@ -2195,6 +2514,64 @@
         }
       }
     },
+    "France" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frankreich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "France"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "France"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "France"
+          }
+        }
+      }
+    },
+    "German Empire" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deutsches Reich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "German Empire"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "German Empire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "German Empire"
+          }
+        }
+      }
+    },
     "Hear the best reply" : {
       "comment" : "Plays the best reply of a conversation aloud",
       "localizations" : {
@@ -2278,6 +2655,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Isso leva a %@."
+          }
+        }
+      }
+    },
+    "Italy" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Italien"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Italy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Italy"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Italy"
           }
         }
       }
@@ -2400,6 +2806,267 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cartões parecidos sem par"
+          }
+        }
+      }
+    },
+    "Map of Africa" : {
+      "comment" : "A base map's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte von Afrika"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de Africa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte d’Africa"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de Africa"
+          }
+        }
+      }
+    },
+    "Map of Asia" : {
+      "comment" : "A base map's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte von Asien"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de Asia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte d’Asia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de Asia"
+          }
+        }
+      }
+    },
+    "Map of Brazil by state" : {
+      "comment" : "A base map's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte von Brasilien nach Bundesstaaten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de Brazil por estados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte de Brazil par État"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de Brazil por estado"
+          }
+        }
+      }
+    },
+    "Map of Europe" : {
+      "comment" : "A base map's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte von Europa"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de Europe"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte d’Europe"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de Europe"
+          }
+        }
+      }
+    },
+    "Map of Europe in 1914" : {
+      "comment" : "A base map's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte von Europa im Jahr 1914"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de Europe en 1914"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte d’Europe en 1914"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de Europe em 1914"
+          }
+        }
+      }
+    },
+    "Map of Soho, London, in 1854" : {
+      "comment" : "A base map's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte von Soho in London im Jahr 1854"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de Soho, London, en 1854"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan de Soho, London, en 1854"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de Soho, London, em 1854"
+          }
+        }
+      }
+    },
+    "Map of the Americas" : {
+      "comment" : "A base map's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte von Nord- und Südamerika"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de las Americas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte des Americas"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa das Americas"
+          }
+        }
+      }
+    },
+    "Map of the Roman Empire in 117 CE" : {
+      "comment" : "A base map's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte des Römischen Reichs im Jahr 117 n. Chr."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa del Roman Empire en el año 117 de la era común"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte du Roman Empire en 117 de notre ère"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa do Roman Empire em 117 EC"
+          }
+        }
+      }
+    },
+    "Map of the United States by state" : {
+      "comment" : "A base map's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte der Vereinigten Staaten nach Bundesstaaten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de los United States por estados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte des United States par État"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa dos United States por estado"
           }
         }
       }
@@ -2700,6 +3367,35 @@
         }
       }
     },
+    "North America" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nordamerika"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "North America"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "North America"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "North America"
+          }
+        }
+      }
+    },
     "Not a link in this story" : {
       "comment" : "After the check: a wrong cause-effect link",
       "localizations" : {
@@ -2841,6 +3537,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Agora escolha a consequência de %@."
+          }
+        }
+      }
+    },
+    "Oceania" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ozeanien"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oceania"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oceania"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oceania"
+          }
+        }
+      }
+    },
+    "Ottoman Empire" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Osmanisches Reich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottoman Empire"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottoman Empire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottoman Empire"
+          }
+        }
+      }
+    },
+    "Parthian Empire" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partherreich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parthian Empire"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parthian Empire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parthian Empire"
           }
         }
       }
@@ -3391,6 +4174,93 @@
         }
       }
     },
+    "Roman Empire" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Römisches Reich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Roman Empire"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Roman Empire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Roman Empire"
+          }
+        }
+      }
+    },
+    "Russian Empire" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Russisches Reich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Russian Empire"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Russian Empire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Russian Empire"
+          }
+        }
+      }
+    },
+    "Serbia" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serbien"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serbia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serbia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serbia"
+          }
+        }
+      }
+    },
     "Show after: %@" : {
       "comment" : "Reveals the after state of a before-and-after comparison",
       "localizations" : {
@@ -3449,6 +4319,35 @@
         }
       }
     },
+    "Simplified street plan, after John Snow's 1854 map." : {
+      "comment" : "Under the 1854 map of Soho, London",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vereinfachter Straßenplan nach John Snows Karte von 1854."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plano de calles simplificado, basado en el mapa de John Snow de 1854."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan des rues simplifié, d’après la carte de 1854 de John Snow."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa simplificado das ruas, baseado no mapa de John Snow de 1854."
+          }
+        }
+      }
+    },
     "Someone asked an AI assistant" : {
       "comment" : "Above the question an AI assistant answered, with one wrong step",
       "localizations" : {
@@ -3474,6 +4373,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alguém perguntou a um assistente de IA"
+          }
+        }
+      }
+    },
+    "South America" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Südamerika"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "South America"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "South America"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "South America"
+          }
+        }
+      }
+    },
+    "Spain" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spanien"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spain"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spain"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spain"
           }
         }
       }
@@ -4216,6 +5173,35 @@
         }
       }
     },
+    "This map can't be shown. Continue to the next screen." : {
+      "comment" : "A map activity whose map isn't available",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Karte kann nicht angezeigt werden. Geh zur nächsten Seite."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede mostrar este mapa. Pasa a la siguiente pantalla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’afficher cette carte. Passe à l’écran suivant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível mostrar este mapa. Continue para a próxima tela."
+          }
+        }
+      }
+    },
     "Those two don't go together." : {
       "comment" : "Two picked cards don't match and there's no note on why",
       "localizations" : {
@@ -4274,6 +5260,64 @@
         }
       }
     },
+    "Triple Alliance" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dreibund"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Triple Alliance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Triple Alliance"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Triple Alliance"
+          }
+        }
+      }
+    },
+    "Triple Entente" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Triple Entente"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Triple Entente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Triple Entente"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Triple Entente"
+          }
+        }
+      }
+    },
     "Undo" : {
       "comment" : "Steps back one answer in a decision tree",
       "localizations" : {
@@ -4299,6 +5343,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Desfazer"
+          }
+        }
+      }
+    },
+    "United Kingdom" : {
+      "comment" : "A map label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vereinigtes Königreich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "United Kingdom"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "United Kingdom"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "United Kingdom"
           }
         }
       }
@@ -4502,6 +5575,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Qual genótipo vai no quadrado %lld?"
+          }
+        }
+      }
+    },
+    "World map" : {
+      "comment" : "A base map's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weltkarte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapamundi"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte du monde"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa-múndi"
+          }
+        }
+      }
+    },
+    "World map of the continents" : {
+      "comment" : "A base map's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weltkarte mit Kontinenten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa de los continentes del mundo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte des continents du monde"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa-múndi dos continentes"
           }
         }
       }

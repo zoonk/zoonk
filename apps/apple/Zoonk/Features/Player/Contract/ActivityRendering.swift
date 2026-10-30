@@ -18,6 +18,7 @@ struct ActivityCanvasContext {
   let phase: ActivityPhase
   let answer: ActivityAnswer?
   let setAnswer: @MainActor (ActivityAnswer?) -> Void
+  var baseMap: ActivityBaseMap?
 
   func fields<Fields: Decodable>(as type: Fields.Type = Fields.self) throws -> Fields {
     try (payload["fields"] ?? .null).decode(as: type)

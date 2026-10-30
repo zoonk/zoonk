@@ -53,7 +53,7 @@ struct ActivityStepView: View {
         if !context.isLocked {
           context.select(value.map(LessonAnswer.activity))
         }
-      })
+      }, baseMap: content.baseMap)
 
     if let renderer {
       renderer.canvas(canvasContext)
