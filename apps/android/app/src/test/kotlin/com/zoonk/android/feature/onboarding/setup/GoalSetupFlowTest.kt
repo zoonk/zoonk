@@ -45,8 +45,9 @@ import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
@@ -305,16 +306,18 @@ class GoalSetupFlowTest {
 
     @Test
     fun unsentWordsComeBackWhenTheScreenIsRebuiltAndGoOnceTheAnswerSaves() {
-        val draftStore =
-            DraftStore(folder.newFolder(), CoroutineScope(SupervisorJob() + Dispatchers.IO), debounce = Duration.ZERO)
+        val background = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        val draftStore = DraftStore(folder.newFolder(), background, debounce = Duration.ZERO)
         runBlocking { draftStore.follow { DraftsChange(next = ana.accountId) } }
         val drafts = SetupDrafts(draftStore, ana)
+        // Blocking the main thread to read it could deadlock with the screen's own read, which resumes there.
+        val saved = drafts.words(GOAL_ID, "reason").value.stateIn(background, SharingStarted.Eagerly, null)
         api.setup = { setupView(listOf("reason", "plan"), kind = "language") }
         show(drafts = drafts)
 
         rule.onNode(hasSetTextAction()).performTextInput("To pass the DELE")
         rule.onNodeWithText("To pass the DELE").assertExists()
-        rule.waitUntil(5_000) { runBlocking { drafts.words(GOAL_ID, "reason").value.first() } == listOf("To pass the DELE") }
+        rule.waitUntil(5_000) { saved.value == listOf("To pass the DELE") }
         screen++
 
         rule.onNodeWithText("To pass the DELE").assertIsDisplayed()
@@ -322,7 +325,7 @@ class GoalSetupFlowTest {
         rule.onNodeWithText("Continue").performScrollTo().performClick()
         rule.waitForIdle()
         assertEquals(listOf(GOAL_ID), api.answers.map { it.first })
-        rule.waitUntil(5_000) { runBlocking { drafts.words(GOAL_ID, "reason").value.first() } == null }
+        rule.waitUntil(5_000) { saved.value == null }
     }
 
     @Test
