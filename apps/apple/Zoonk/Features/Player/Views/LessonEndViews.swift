@@ -77,6 +77,7 @@ struct LessonCompletionView: View {
     case .saved:
       if let summary = completion.summary {
         readouts(summary)
+          .celebratesOnce(id: summary)
       }
     }
   }
@@ -142,8 +143,8 @@ struct LessonCompletionView: View {
               .font(.largeTitle.weight(.semibold).monospacedDigit())
           }
           if summary.brainPower > 0 {
-            Text("+\(summary.brainPower)")
-              .font(.largeTitle.weight(.semibold).monospacedDigit())
+            EarnedNumber(value: summary.brainPower)
+              .font(.largeTitle.weight(.semibold))
               .foregroundStyle(.brain)
           }
         }
