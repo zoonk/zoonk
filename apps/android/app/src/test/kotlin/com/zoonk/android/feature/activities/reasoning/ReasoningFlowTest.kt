@@ -164,6 +164,7 @@ class ReasoningFlowTest {
     fun mapExplorerTappingPlacesUncoversWhatIsThere() {
         play("mapExplorer", isCorrect = true)
 
+        shows("Source: On the Mode of Communication of Cholera (1855)")
         rule.onNode(hasContentDescription("2. Brewery on Broad Street")).performScrollTo().performClick()
         shows("Over 70 workers and no cholera deaths")
         rule.onNode(hasContentDescription("3. Poland Street workhouse")).performScrollTo().performClick()

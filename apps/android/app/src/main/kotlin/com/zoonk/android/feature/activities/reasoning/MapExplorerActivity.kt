@@ -82,6 +82,7 @@ val mapExplorerRenderer =
     ActivityRenderer(
         badge = { ActivityBadge(R.string.activities_reasoning_badge_explore_map, R.drawable.ic_map) },
         canvas = { MapExplorerActivity(it) },
+        showsData = { true },
     )
 
 private typealias Place = PlayableLibraryStepAnyOfContentOneOf23FieldsPlacesInner
