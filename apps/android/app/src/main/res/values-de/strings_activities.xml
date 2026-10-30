@@ -56,7 +56,7 @@
   "activities_sortable_move_up": "d72d29c745c154daaba66840679d2e4b9aee823f2d6c935a1be161525acaf8a5",
   "activities_sortable_over": "9b05fbac9e503696826b325c179eafa1b582fc4fc34bda2b71adacb626111be9",
   "activities_sortable_picked_up": "2629b9eb4e9572651c45d624a1d3f07445744732912d9f10837cb1f5aa530410",
-  "activities_sortable_stopped": "abcff9c4347fda0018374b2f13de83f82f0afbade1055d23fb766869fae7df2a",
+  "activities_sortable_stopped": "64981e997889bae6b02535aa4e46190cc5b3b2ed2af4b4ecb1f2aa0b74a75105",
   "activities_tree_case": "8e82f701cdf1af3145a2ab44564a7518542674829849d39a3d16103799d8ae78",
   "activities_tree_it_leads_to": "5e28eda2d07552ce659ff99500fdfa7735d434d5453defbc35a7d99149853c82",
   "activities_tree_leads_to": "290218c1977b2765f665700e1a4b9f53c7f9a3700af9fc68f5fa991fb0a47bec",
@@ -168,7 +168,7 @@
     <!-- Read by TalkBack when a row is put down, like "Water is split dropped at position 3." -->
     <string name="activities_sortable_dropped">%1$s an Position %2$d abgelegt.</string>
     <!-- Read by TalkBack when moving a row is cancelled. -->
-    <string name="activities_sortable_stopped">%1$s nicht weiterbewegt. Es bleibt an seinem Platz.</string>
+    <string name="activities_sortable_stopped">Verschieben von %1$s beendet. Die Position bleibt unverändert.</string>
     <!-- TalkBack actions that move a row of a list one place. -->
     <string name="activities_sortable_move_up">Nach oben verschieben</string>
     <string name="activities_sortable_move_down">Nach unten verschieben</string>

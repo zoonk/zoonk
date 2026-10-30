@@ -51,12 +51,12 @@
   "activities_solver_not_quite": "eacd09226acb2157f1e99594b30d974958e66a2b403b93c319132a2a153a7ee9",
   "activities_solver_right": "efbe539ba7a19aa186c1c4c56e6cd5a78395ff2b2538112e44ad448499b2a2ae",
   "activities_solver_steps": "71c7ce303f2cf3eee4b469ebecd4437d9310b7b84d47847493116ba210b11f14",
-  "activities_sortable_dropped": "38d2ff14c2ba39c4b44e249b0e834185c9dc022813f86167ef1db0c9fd9b102f",
-  "activities_sortable_move_down": "89a643f141dc223d4dc33c3fb095eee8fffa9150d7c0dba31554448166e0af9a",
-  "activities_sortable_move_up": "e572fcfa4276ea2278fab669b9f4ff5544af62632a60c59f82b1e43276cfc8a5",
-  "activities_sortable_over": "aa65f016410439aca792a2446b39627e4c7c70b296c59bfad73c15768601c538",
-  "activities_sortable_picked_up": "dfcd451e419ca44a4154dc57f521454f8856a0add6e6ebfe86db162370b2a312",
-  "activities_sortable_stopped": "cfa7de90178abe400c621fd859561fff33a071bce6146a4bbc39a30e0e3d4ff9",
+  "activities_sortable_dropped": "ae1c223a5445c3e2651c87f33f496faf41b6ccf0d8c9b79b99919111ecfc09e6",
+  "activities_sortable_move_down": "babb5b597c21321439250d875d08797a1b54047ae3ac42253c2f10a9f2ff41ba",
+  "activities_sortable_move_up": "5a53d12a4013f6e46bf1bfb8e95ef076f537c7ae945a27c81604e5b95afefd18",
+  "activities_sortable_over": "71fb60bf84b4b434dc490e84776d4f650d877e052bc0d20f9141c47555ac0a25",
+  "activities_sortable_picked_up": "0f02f68549d7dddfa01b188bb8bf91c80cf18b98758a643cc4c07e09a05e1261",
+  "activities_sortable_stopped": "15b76a952938644c9a5dd2e583563e749067bfe41a8e75c6de55e59951d73f5e",
   "activities_tree_case": "edc2bd1c5a4b09d47510960f6a571a526f7b208108b5a739ee1664860312d2b3",
   "activities_tree_it_leads_to": "f06e37531d7791453070da1551b73f7888dd23558045433a67ed82f762ea38c0",
   "activities_tree_leads_to": "9620f246396bd90d0998d71c086590ba872be648b37c2dd0a5aa204d52d14547",
@@ -162,14 +162,14 @@
     <string name="activities_dialogue_hear_line">Écouter cette réplique</string>
     <string name="activities_dialogue_hear_best">Écouter la meilleure réponse</string>
     <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->
-    <string name="activities_sortable_picked_up">%1$s saisi à la position %2$d.</string>
+    <string name="activities_sortable_picked_up">%1$s saisi en position %2$d.</string>
     <!-- Read by TalkBack as a lifted row moves, like "Water is split is over position 3." -->
-    <string name="activities_sortable_over">%1$s est au-dessus de la position %2$d.</string>
+    <string name="activities_sortable_over">%1$s se trouve au-dessus de la position %2$d.</string>
     <!-- Read by TalkBack when a row is put down, like "Water is split dropped at position 3." -->
-    <string name="activities_sortable_dropped">%1$s déposé à la position %2$d.</string>
+    <string name="activities_sortable_dropped">%1$s déposé en position %2$d.</string>
     <!-- Read by TalkBack when moving a row is cancelled. -->
-    <string name="activities_sortable_stopped">Déplacement de %1$s arrêté. Il reste à sa place.</string>
+    <string name="activities_sortable_stopped">Déplacement de %1$s arrêté. L’élément reste à sa place.</string>
     <!-- TalkBack actions that move a row of a list one place. -->
-    <string name="activities_sortable_move_up">Monter</string>
-    <string name="activities_sortable_move_down">Descendre</string>
+    <string name="activities_sortable_move_up">Déplacer vers le haut</string>
+    <string name="activities_sortable_move_down">Déplacer vers le bas</string>
 </resources>

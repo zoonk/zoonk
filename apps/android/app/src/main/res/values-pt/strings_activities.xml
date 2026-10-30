@@ -51,12 +51,12 @@
   "activities_solver_not_quite": "ef56757a5418e6320c048ff2135df11b907ed80d5fe052e220fa4e24bf2afbe9",
   "activities_solver_right": "4cdb9ab755d1c53a2136c25939fae4826fd1da978d859653c325b92e8efc69c3",
   "activities_solver_steps": "2ddce6852365c9e7c3e6f37fb297139236ad4afb02b6ad65acf6b7194756a646",
-  "activities_sortable_dropped": "75cb258e3cc5e1f4be845ad918c62a557e499988df21671680783a344ea00b91",
+  "activities_sortable_dropped": "b3ac839fdcb7f4940364942b49f4cdc66051e071eaaad68543c2c30cabf98025",
   "activities_sortable_move_down": "7f7079035d97d2e5271d4e834771a3765c0ca36159278013c058b248683545d8",
   "activities_sortable_move_up": "dafc37dcb568ec546f0bc5039c5ec6f2d2eced6a88e980be90f47ab198e7fd8b",
   "activities_sortable_over": "e6712f33953bc0ed1ab948c8eef784ea967aa790936176010a5e1f335144c0ed",
-  "activities_sortable_picked_up": "a950781f6279de5ed117c84f8d51d7fa85135a299a81f03f387df6a9242d25ce",
-  "activities_sortable_stopped": "7ea6102a51280d864363fb03d56d132945bbd9deb908108101ad7851f2521858",
+  "activities_sortable_picked_up": "9b1fbb823cb1dd35f89a6407b72666d2969a23e5bf01e30ce3f69d98ed82a32f",
+  "activities_sortable_stopped": "a117fdd33e08dad1e48c3220a3260235f80a46f2d060a3615d2f924db60665d6",
   "activities_tree_case": "56bb9bfef27971565c8b2ffa347757eedb68da98b2101065da66e2dfcb1f282a",
   "activities_tree_it_leads_to": "a7e5266d5b22b40c3777e73cd3889e535b09aedb4a186c5dd50809bffb26d828",
   "activities_tree_leads_to": "b763331c17394d1e948518ae15b00a3022770133a0630dfe494af51261599504",
@@ -162,13 +162,13 @@
     <string name="activities_dialogue_hear_line">Ouvir esta fala</string>
     <string name="activities_dialogue_hear_best">Ouvir a melhor resposta</string>
     <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->
-    <string name="activities_sortable_picked_up">Você pegou %1$s na posição %2$d.</string>
+    <string name="activities_sortable_picked_up">%1$s foi selecionado na posição %2$d.</string>
     <!-- Read by TalkBack as a lifted row moves, like "Water is split is over position 3." -->
     <string name="activities_sortable_over">%1$s está sobre a posição %2$d.</string>
     <!-- Read by TalkBack when a row is put down, like "Water is split dropped at position 3." -->
-    <string name="activities_sortable_dropped">%1$s foi colocado na posição %2$d.</string>
+    <string name="activities_sortable_dropped">%1$s foi solto na posição %2$d.</string>
     <!-- Read by TalkBack when moving a row is cancelled. -->
-    <string name="activities_sortable_stopped">Você parou de mover %1$s. Ele fica onde estava.</string>
+    <string name="activities_sortable_stopped">Você parou de mover %1$s. Continua onde estava.</string>
     <!-- TalkBack actions that move a row of a list one place. -->
     <string name="activities_sortable_move_up">Mover para cima</string>
     <string name="activities_sortable_move_down">Mover para baixo</string>

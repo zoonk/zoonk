@@ -40,11 +40,8 @@
     <string name="activities_sorting_you_had_it_at">You had it at %1$d</string>
 
     <string name="activities_sorting_badge_match_pairs">Match pairs</string>
-    <!-- Pairs matched so far, like "1 of 3 pairs matched". -->
-    <plurals name="activities_sorting_pairs_matched">
-        <item quantity="one">%1$d of %2$d pair matched</item>
-        <item quantity="other">%1$d of %2$d pairs matched</item>
-    </plurals>
+    <!-- Pairs matched so far, like "Pairs matched: 1 of 3". -->
+    <string name="activities_sorting_pairs_matched">Pairs matched: %1$d of %2$d</string>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="one">%d card has no match</item>
@@ -56,11 +53,8 @@
     <string name="activities_sorting_card_matched">%1$s, matched</string>
     <!-- A card with no match, for TalkBack, like "embarrassed, no match". -->
     <string name="activities_sorting_card_no_match">%1$s, no match</string>
-    <!-- Read by TalkBack after a match, like "Matched éxito with success. 2 of 3 pairs matched." -->
-    <plurals name="activities_sorting_matched">
-        <item quantity="one">Matched %1$s with %2$s. %3$d of %4$d pair matched.</item>
-        <item quantity="other">Matched %1$s with %2$s. %3$d of %4$d pairs matched.</item>
-    </plurals>
+    <!-- Read by TalkBack after a match, like "Matched éxito with success. Pairs matched: 2 of 3." -->
+    <string name="activities_sorting_matched">Matched %1$s with %2$s. Pairs matched: %3$d of %4$d.</string>
     <!-- Starts the reason a picked card has no match, like "“embarrassed” has no match." -->
     <string name="activities_sorting_no_match_note">“%1$s” has no match.</string>
     <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
@@ -108,10 +102,10 @@
     <string name="activities_sorting_remove_link">Remove the link from %1$s to %2$s</string>
 
     <string name="activities_sorting_badge_place_in_time">Place in time</string>
-    <!-- A year before the common era, like "51 BCE". The no-break space keeps the year and its era on one line. -->
-    <string name="activities_sorting_year_bce">%1$s\u00A0BCE</string>
-    <!-- A year of the common era, on a timeline that also has BCE years, like "1969 CE". The no-break space keeps the year and its era on one line. -->
-    <string name="activities_sorting_year_ce">%1$s\u00A0CE</string>
+    <!-- A year before the common era, like "51 BCE". Keep the no-break space (U+00A0) between the year and its era, so they stay on one line. -->
+    <string name="activities_sorting_year_bce">%1$s BCE</string>
+    <!-- A year of the common era, on a timeline that also has BCE years, like "1969 CE". Keep the no-break space (U+00A0) between the year and its era, so they stay on one line. -->
+    <string name="activities_sorting_year_ce">%1$s CE</string>
     <!-- What TalkBack reads for an event once the real dates show: its real year, then the learner's guess, like "51 BCE. Your guess: 2000 CE". -->
     <string name="activities_sorting_year_and_guess">%1$s. Your guess: %2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
