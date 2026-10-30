@@ -40,6 +40,7 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityReadout
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.SnapRange
+import com.zoonk.android.feature.activities.activityCanvasColor
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.ui.components.LinearScale
 import com.zoonk.android.ui.format.currentLocale
@@ -206,7 +207,7 @@ private fun DistributionPlot(
     val accent = MaterialTheme.zoonk.vizAccent
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val border = MaterialTheme.colorScheme.outlineVariant
-    val ring = MaterialTheme.colorScheme.surface
+    val canvas = activityCanvasColor()
     val right = MaterialTheme.colorScheme.tertiary
 
     BoxWithConstraints(Modifier.fillMaxWidth().height(with(density) { height.toDp() })) {
@@ -315,7 +316,7 @@ private fun DistributionPlot(
                 val left = if (isBelow) x.toPixel(from) - tailGap - label.size.width else x.toPixel(to) + tailGap
                 val topLeft = Offset(left, tailY - label.size.height)
                 drawText(
-                    measurer.measure(text, labelStyle.copy(color = ring, drawStyle = Stroke(HALO.toPx(), join = StrokeJoin.Round))),
+                    measurer.measure(text, labelStyle.copy(color = canvas, drawStyle = Stroke(HALO.toPx(), join = StrokeJoin.Round))),
                     topLeft = topLeft,
                 )
                 drawText(label, topLeft = topLeft, drawStyle = Fill)

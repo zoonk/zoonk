@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -63,13 +64,17 @@ fun ActivityCanvas(
             modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = CANVAS_ALPHA))
+                .background(activityCanvasColor())
                 .then(if (description == null) Modifier else Modifier.semantics { contentDescription = description })
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(gap),
         content = content,
     )
 }
+
+/** The canvas's color on the screen, for what has to blend into it, like a label's halo. */
+@Composable
+fun activityCanvasColor(): Color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = CANVAS_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
 
 /** Main's `LineMarker`: a small icon centered on the first line of [style]'s text beside it, at any font size. */
 @Composable
