@@ -36,6 +36,7 @@ struct PlanWait<Content: View>: View {
         content(ready)
       case let reading? where reading.ready:
         NoticeReadingView(plan: reading)
+          .onboardingColumn()
           .task {
             while !Task.isCancelled {
               try? await Task.sleep(for: Self.noticeCheck)
@@ -48,6 +49,7 @@ struct PlanWait<Content: View>: View {
           ProgressView()
         default:
           building(plan)
+            .onboardingColumn()
             .onAppear { isWaiting = true }
         }
       }
@@ -149,8 +151,8 @@ private struct LibraryCourseOffer: View {
 /// the learner named has no sitting; the plan keeps its date until the learner switches.
 private struct RevealNoticeDay: View {
   @Environment(PlanStore.self) private var plans
-  @State private var isSaving = false
-  @State private var failed = false
+  @Binding var isSaving: Bool
+  @Binding var failed: Bool
 
   let goalID: String
   let plan: GoalPlan
@@ -297,6 +299,8 @@ private struct PlanReveal: View {
   @State private var showsTopics = false
   @State private var openingToday: Task<Void, Never>?
   @State private var showsTodayProgress = false
+  @State private var isChangingDate = false
+  @State private var dateChangeFailed = false
 
   var body: some View {
     let goal = learnerGoal
@@ -304,124 +308,20 @@ private struct PlanReveal: View {
     let syllabus = plans.syllabus(goalId: goal.id)
     let structure = syllabus.value.flatMap { $0.hasSubjectPages ? $0 : nil }
 
-    List {
-      Section {
-        VStack(alignment: .leading, spacing: 6) {
-          Label {
-            Text(
-              "Plan created", tableName: "Onboarding",
-              comment: "Eyebrow over a goal whose plan was just built")
-          } icon: {
-            Image(systemName: "checkmark.circle.fill")
-          }
-          .font(.subheadline.weight(.semibold))
-          .foregroundStyle(.success)
-
-          Text(goal.title)
-            .font(.title2.bold())
-            .accessibilityAddTraits(.isHeader)
-
-          Text(facts.joined(separator: " · "))
-            .font(.subheadline)
-            .monospacedDigit()
-            .foregroundStyle(.secondary)
-
-          if let pace = paceLine(goal: goal) {
-            Text(pace)
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
-          }
-        }
-        .listRowBackground(Color.clear)
+    PaneSplit {
+      List {
+        heroSections(goal: goal)
       }
-
-      RevealNoticeDay(goalID: goal.id, plan: plan)
-
-      Section {
-        VStack(spacing: 12) {
-          Button(action: openToday) {
-            HStack {
-              if showsTodayProgress {
-                ProgressView()
-              }
-
-              Text(
-                "Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
-            }
-            .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.mainAction)
-          .keyboardShortcut(.defaultAction)
-          .disabled(showsTodayProgress)
-
-          Button {
-            adjusting = .top
-          } label: {
-            Text(
-              "Adjust", tableName: "Onboarding", comment: "Opens the plan's settings to change it"
-            )
-            .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.bordered)
-        }
-        .controlSize(.large)
-        .keepsOffFold()
-        .listRowInsets(EdgeInsets())
-        .listRowBackground(Color.clear)
-      } footer: {
-        if learner.summary.value?.identity.isAnonymous == true {
-          VStack(alignment: .leading, spacing: 8) {
-            Text(
-              "Save your plan so it's here next time.", tableName: "Onboarding",
-              comment: "A guest's plan isn't saved to an account yet")
-            Button {
-              router.present(.signIn)
-            } label: {
-              Text(
-                "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan"
-              )
-            }
-          }
-        }
+    } secondary: {
+      List {
+        detailSections(context: context, syllabus: syllabus.value, structure: structure)
       }
-
-      // A plan of one phase has nothing to draw in time: its chapters say its shape instead.
-      if plan.roadPhases.count > 1 {
-        PlanRoadmapSection(context: context, structure: structure, listsPhases: true)
-      } else {
-        RevealChapters(plan: plan)
+    } single: {
+      List {
+        heroSections(goal: goal)
+        detailSections(context: context, syllabus: syllabus.value, structure: structure)
       }
-
-      if plan.notice == .usual {
-        Section {
-        } footer: {
-          Text(
-            "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today.",
-            tableName: "Onboarding",
-            comment: "Under a plan revealed before its exam's official documents were read")
-        }
-      }
-
-      if let syllabus = syllabus.value {
-        AreaWeights(syllabus: syllabus)
-      }
-
-      PlanSuggestionSection(context: context)
-
-      if let structure {
-        Section {
-          Text(syllabusSummary(structure, dailyMinutes: plan.schedule.dailyMinutes))
-            .foregroundStyle(.secondary)
-
-          Button {
-            showsTopics = true
-          } label: {
-            Text("See topics", tableName: "Onboarding", comment: "Opens what the plan studies")
-          }
-        }
-      } else if plan.roadPhases.count > 1 {
-        PlanPathSection(context: context)
-      }
+      .onboardingColumn()
     }
     .loads(syllabus, refreshable: false)
     .onDisappear { openingToday?.cancel() }
@@ -432,6 +332,133 @@ private struct PlanReveal: View {
       if let structure {
         SyllabusTopicsSheet(syllabus: structure)
       }
+    }
+  }
+
+  @ViewBuilder
+  private func heroSections(goal: LearnerGoal) -> some View {
+    Section {
+      VStack(alignment: .leading, spacing: 6) {
+        Label {
+          Text(
+            "Plan created", tableName: "Onboarding",
+            comment: "Eyebrow over a goal whose plan was just built")
+        } icon: {
+          Image(systemName: "checkmark.circle.fill")
+        }
+        .font(.subheadline.weight(.semibold))
+        .foregroundStyle(.success)
+
+        Text(goal.title)
+          .font(.title2.bold())
+          .accessibilityAddTraits(.isHeader)
+
+        Text(facts.joined(separator: " · "))
+          .font(.subheadline)
+          .monospacedDigit()
+          .foregroundStyle(.secondary)
+
+        if let pace = paceLine(goal: goal) {
+          Text(pace)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+      }
+      .listRowBackground(Color.clear)
+    }
+
+    RevealNoticeDay(
+      isSaving: $isChangingDate, failed: $dateChangeFailed, goalID: goal.id, plan: plan)
+
+    Section {
+      VStack(spacing: 12) {
+        Button(action: openToday) {
+          HStack {
+            if showsTodayProgress {
+              ProgressView()
+            }
+
+            Text(
+              "Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
+          }
+          .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+        .disabled(showsTodayProgress)
+
+        Button {
+          adjusting = .top
+        } label: {
+          Text(
+            "Adjust", tableName: "Onboarding", comment: "Opens the plan's settings to change it"
+          )
+          .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+      }
+      .controlSize(.large)
+      .keepsOffFold()
+      .listRowInsets(EdgeInsets())
+      .listRowBackground(Color.clear)
+    } footer: {
+      if learner.summary.value?.identity.isAnonymous == true {
+        VStack(alignment: .leading, spacing: 8) {
+          Text(
+            "Save your plan so it's here next time.", tableName: "Onboarding",
+            comment: "A guest's plan isn't saved to an account yet")
+          Button {
+            router.present(.signIn)
+          } label: {
+            Text(
+              "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan"
+            )
+          }
+        }
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func detailSections(
+    context: PlanContext, syllabus: GoalSyllabus?, structure: GoalSyllabus?
+  ) -> some View {
+    // A plan of one phase has nothing to draw in time: its chapters say its shape instead.
+    if plan.roadPhases.count > 1 {
+      PlanRoadmapSection(context: context, structure: structure, listsPhases: true)
+    } else {
+      RevealChapters(plan: plan)
+    }
+
+    if plan.notice == .usual {
+      Section {
+      } footer: {
+        Text(
+          "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today.",
+          tableName: "Onboarding",
+          comment: "Under a plan revealed before its exam's official documents were read")
+      }
+    }
+
+    if let syllabus {
+      AreaWeights(syllabus: syllabus)
+    }
+
+    PlanSuggestionSection(context: context)
+
+    if let structure {
+      Section {
+        Text(syllabusSummary(structure, dailyMinutes: plan.schedule.dailyMinutes))
+          .foregroundStyle(.secondary)
+
+        Button {
+          showsTopics = true
+        } label: {
+          Text("See topics", tableName: "Onboarding", comment: "Opens what the plan studies")
+        }
+      }
+    } else if plan.roadPhases.count > 1 {
+      PlanPathSection(context: context)
     }
   }
 
