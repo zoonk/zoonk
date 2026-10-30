@@ -24,8 +24,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -142,39 +144,43 @@ fun TaskScaffold(
 
 @Composable
 private fun TaskAsideRail(aside: TaskAside) {
-    Row {
-        VerticalDivider()
-        Column(
-            Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.End))
-                .then(
-                    if (aside.footer ==
-                        null
-                    ) {
-                        Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
-                    } else {
-                        Modifier
-                    },
-                ).semantics { aside.title?.let { paneTitle = it } },
+    // A footer's bar keeps clear of the bottom inset itself.
+    val sides =
+        if (aside.footer ==
+            null
         ) {
-            aside.title?.let { title ->
-                Box(
-                    Modifier.fillMaxWidth().heightIn(min = TopAppBarDefaults.TopAppBarExpandedHeight).padding(horizontal = 24.dp),
-                    contentAlignment = Alignment.CenterStart,
-                ) { SectionLabel(title) }
-            }
+            WindowInsetsSides.Vertical + WindowInsetsSides.End
+        } else {
+            WindowInsetsSides.Top + WindowInsetsSides.End
+        }
+
+    Surface(color = MaterialTheme.colorScheme.background) {
+        Row {
+            VerticalDivider()
             Column(
                 Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp)
-                    .padding(top = if (aside.title == null) 24.dp else 0.dp, bottom = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                content = aside.content,
-            )
-            aside.footer?.let { TaskActionBar(it) }
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.safeDrawing.only(sides))
+                    .semantics { aside.title?.let { paneTitle = it } },
+            ) {
+                aside.title?.let { title ->
+                    Box(
+                        Modifier.fillMaxWidth().heightIn(min = TopAppBarDefaults.TopAppBarExpandedHeight).padding(horizontal = 24.dp),
+                        contentAlignment = Alignment.CenterStart,
+                    ) { SectionLabel(title) }
+                }
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp)
+                        .padding(top = if (aside.title == null) 24.dp else 0.dp, bottom = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    content = aside.content,
+                )
+                aside.footer?.let { TaskActionBar(it) }
+            }
         }
     }
 }
