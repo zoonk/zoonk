@@ -25,8 +25,8 @@ export async function askForLessons({
 }
 
 /**
- * A preparation that started an outline for a course the day needs leaves its ask to that outline;
- * otherwise it ends the ask, unless a newer request has replaced it.
+ * A preparation that started an outline for a course the day needs keeps its ask until it goes
+ * stale; otherwise it ends the ask, unless a newer request has replaced it.
  */
 export async function endLessonsAsk({
   askedAt,

@@ -114,9 +114,8 @@ export async function loadDayStandInCourseIds({
 
 /**
  * Whether the day's stand-ins are getting lessons (`awaiting`) or wait for someone to ask (`idle`);
- * null without stand-ins. They're getting lessons while an outline is writing a course they need,
- * or while the learner's ask is fresh and no such course has been written since it. Never wait on
- * content nobody is writing.
+ * null without stand-ins. They're getting lessons while an outline is writing a course they need or
+ * the learner's own ask is fresh. Never wait on content nobody is writing.
  */
 export async function getDayOutlines(input: DayOutlinesInput): Promise<DayOutlines> {
   const { client = prisma, goal, now = new Date() } = input;
@@ -128,7 +127,7 @@ export async function getDayOutlines(input: DayOutlinesInput): Promise<DayOutlin
 
   const staleBefore = getOutlineStaleBefore(now);
 
-  const [outlining, plan] = await Promise.all([
+  const [outlining, asked] = await Promise.all([
     client.course.count({
       where: {
         id: { in: courseIds },
@@ -136,24 +135,10 @@ export async function getDayOutlines(input: DayOutlinesInput): Promise<DayOutlin
         updatedAt: { gt: staleBefore },
       },
     }),
-    client.plan.findUnique({ select: { lessonsAskedAt: true }, where: { goalId: goal.id } }),
+    client.plan.count({ where: { goalId: goal.id, lessonsAskedAt: { gt: staleBefore } } }),
   ]);
 
-  const askedAt = plan?.lessonsAskedAt;
-
-  if (outlining > 0) {
-    return "awaiting";
-  }
-
-  if (!askedAt || askedAt <= staleBefore) {
-    return "idle";
-  }
-
-  const written = await client.course.count({
-    where: { id: { in: courseIds }, updatedAt: { gt: askedAt } },
-  });
-
-  return written > 0 ? "idle" : "awaiting";
+  return outlining + asked > 0 ? "awaiting" : "idle";
 }
 
 export async function isDayAwaitingOutlines(input: DayOutlinesInput): Promise<boolean> {

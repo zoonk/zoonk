@@ -129,8 +129,8 @@ model Plan {
   buildFailedAt       DateTime?              @map("build_failed_at")
   /// Until then, a skill's missing placement questions are still coming.
   placementPreparedAt DateTime?              @map("placement_prepared_at")
-  /// When the learner asked for the plan's lessons. The day reads as getting them until a course it
-  /// needs is written after it, preparation finds none of them to outline, or the ask goes stale.
+  /// When the learner asked for the plan's lessons. The day reads as getting them until its
+  /// preparation finds none of them to outline or the ask goes stale.
   lessonsAskedAt      DateTime?              @map("lessons_asked_at")
   /// A plan built before research read the exam's notice waits for that reading until then; past
   /// it, the reading arrives as a change the learner applies. Null when nothing is waited for.

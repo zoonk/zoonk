@@ -276,7 +276,26 @@ describe("preparing a guest's lessons", () => {
     });
 
     await expect(readCourse(guest)).resolves.toMatchObject({ outlineStatus: "completed" });
-    await expect(isDayComing(guest)).resolves.toBe(false);
+  });
+
+  it("keeps the day's lessons coming when another learner's outline of the course finishes first", async () => {
+    const guest = await placedGuestFixture();
+
+    await prisma.course.update({
+      data: { outlineRunId: "beginner-outline", outlineStatus: "running" },
+      where: { id: guest.course.id },
+    });
+
+    await startGoalPreparation({ goalId: guest.goal.id });
+    await settle();
+
+    await finishCourseOutline({
+      courseId: guest.course.id,
+      status: "completed",
+      workflowRunId: "beginner-outline",
+    });
+
+    await expect(isDayComing(guest)).resolves.toBe(true);
   });
 
   it.each([

@@ -114,7 +114,7 @@ async function setupPlacedDay() {
 
   mockSession(user.id);
 
-  return { course, goal };
+  return { goal };
 }
 
 async function landWaitingLessons({
@@ -292,8 +292,8 @@ describe("today's session the learner was shown", () => {
     expect(after.today.session).toMatchObject({ blocks: [], emptyDay: "lessonsComing" });
   });
 
-  it("asks for a practice-only day's lessons nobody is outlining, and says they're coming until their course is written", async () => {
-    const { course, goal } = await setupPlacedDay();
+  it("asks for a practice-only day's lessons nobody is outlining, and says they're coming once asked", async () => {
+    const { goal } = await setupPlacedDay();
     const before = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
     const day = before.status === "ready" ? before.today.session : null;
 
@@ -314,12 +314,6 @@ describe("today's session the learner was shown", () => {
     const after = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
     expect(after.today.session).toMatchObject({ lessonsComing: true, lessonsToPrepare: false });
-
-    vi.setSystemTime(A_MINUTE_LATER);
-    await prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: course.id } });
-    const written = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
-
-    expect(written.today.session).toMatchObject({ lessonsComing: false, lessonsToPrepare: true });
   });
 
   it("stops waiting on an outline nobody has touched for a while", async () => {
