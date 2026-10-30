@@ -35,6 +35,7 @@ import com.zoonk.android.feature.activities.selectionIds
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.LessonStepAnswer
@@ -154,6 +155,14 @@ class ReasoningFlowTest {
         harness.tap("Check")
 
         shows("6 of 36 squares: 7")
+    }
+
+    @Test
+    fun anExploredPunnettSquareIsFilledWithItsTraitsCounted() {
+        harness.play(listOf(ActivityFixtures.exploreStep("combinationGrid"), summaryStep("end")))
+
+        shows("Purple: 2 of 4 · White: 2 of 4")
+        rule.onNodeWithText("goes in square", substring = true).assertDoesNotExist()
     }
 
     private val regulars = hasContentDescription("The regulars fired on us without any provocation.")

@@ -99,7 +99,7 @@ private fun CombinationGridActivity(props: ActivityProps) {
     val grid = remember(content.fields) { CombinationGrid.of(content.fields) }
     val check = content.check
     val output = checkOutput(check, grid)
-    val isReadOnly = !grid.isFillable
+    val isReadOnly = props.isExploring || !grid.isFillable
     var fill by rememberSaveable(stateSaver = FillSaver) {
         mutableStateOf(if (isReadOnly) grid.cells else initialFill(props.answer, grid.cells.size))
     }
@@ -124,7 +124,7 @@ private fun CombinationGridActivity(props: ActivityProps) {
             checked = counted?.let { GridChecked(it, right) },
             onSelectCell = if (editable && !props.isChecked) ({ activeCell = it }) else null,
         )
-        if (!isReadOnly || !counted.isNullOrEmpty()) {
+        if (!isReadOnly || !counted.isNullOrEmpty() || (grid.isAllele && props.isExploring)) {
             GridCaption(
                 grid = grid,
                 fill = fill,
