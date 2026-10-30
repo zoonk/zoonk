@@ -4,6 +4,7 @@ import { getItemKey } from "../../plans/planner/plan-items";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { type PlannedLesson } from "../session-builder";
 import { getLessonLookahead } from "./day-lessons";
+import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionPlanItem } from "./session-plan-item";
 
 type LessonWithSkills = Lesson & { skills: { skillId: string }[] };
@@ -80,18 +81,23 @@ export async function loadLessonsForSkills({
   return unique.slice(0, limit).map((lesson) => toPlannedLesson({ item: null, lesson }));
 }
 
-/** Look ahead after keptLessonIds so retained work cannot consume the window for newly landed lessons. */
+/**
+ * Look ahead after keptLessonIds so retained work cannot consume the window for newly landed
+ * lessons. A day the plan selected loads them all: the selection already chose exactly its lessons.
+ */
 export function loadUpcomingLessons({
   dayMinutes,
   items,
   keptLessonIds,
+  selection,
 }: Parameters<typeof loadPlanLessons>[0] & {
   dayMinutes: number;
   keptLessonIds?: ReadonlySet<string>;
+  selection?: SelectedDayPlan;
 }) {
+  const upcoming = items.filter((item) => !item.lessonId || !keptLessonIds?.has(item.lessonId));
+
   return loadPlanLessons({
-    items: items
-      .filter((item) => !item.lessonId || !keptLessonIds?.has(item.lessonId))
-      .slice(0, getLessonLookahead(dayMinutes)),
+    items: selection ? upcoming : upcoming.slice(0, getLessonLookahead(dayMinutes)),
   });
 }

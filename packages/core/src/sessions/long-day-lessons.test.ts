@@ -48,6 +48,38 @@ describe("a long study day", () => {
     );
   });
 
+  it("fills a first half-hour with ten 3-minute lessons, not the eight a 4-minute guess holds", async () => {
+    const user = await userFixture();
+
+    const { goal, lessons } = await sessionGoalFixture({
+      goal: { dailyMinutes: 30 },
+      itemsPerSkill: 1,
+      lessons: 20,
+      userId: user.id,
+    });
+
+    await Promise.all([
+      prisma.lesson.updateMany({
+        data: { estimatedMinutes: 3 },
+        where: { id: { in: lessons.map((lesson) => lesson.id) } },
+      }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
+    mockSession(user.id);
+
+    const result = await getTodayStudySession({});
+
+    if (result.status !== "ready") {
+      throw new Error(`Expected a session, got ${result.status}`);
+    }
+
+    const learn = result.session.blocks.filter((block) => block.kind === "learn");
+
+    expect(learn).toHaveLength(10);
+    expect(learn.reduce((sum, block) => sum + block.estimatedMinutes, 0)).toBe(30);
+  });
+
   it("gives lessons the learn share of a whole day the learner gives, as the week counts the day", async () => {
     const user = await userFixture();
 
