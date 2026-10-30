@@ -74,6 +74,12 @@ struct CodeTracerFields: Decodable, Sendable {
     }
   }
 
+  /// The pause the next step asks: the first still without a prediction, then the step's first.
+  func upcomingPause(after step: Int, predictions: [String: String]) -> Int? {
+    let next = pauses.indices.filter { pauses[$0].step == step + 1 }
+    return next.first { predictions[String($0)] == nil } ?? next.first
+  }
+
   /// A traced value as JavaScript's `String(value)` writes it, which is what core compares.
   static func text(_ value: JSONValue) -> String {
     switch value {
@@ -123,7 +129,7 @@ private struct CodeTracerCanvas: View {
 
   private var upcoming: Int? {
     guard !asksNothing,
-      let index = fields.pauses.firstIndex(where: { $0.step == step + 1 }),
+      let index = fields.upcomingPause(after: step, predictions: predictions),
       furthest < fields.pauses[index].step
     else {
       return nil
