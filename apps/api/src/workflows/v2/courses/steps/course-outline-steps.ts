@@ -76,7 +76,12 @@ export async function planOutlineBandStep({
       withToolChapters: band.withToolChapters,
     }),
     getCourseBandContext({ courseId, level: band.level }),
-    planSkillExtensions({ courseId, extensions: band.extend ?? [], ownerId: scope.ownerId }),
+    planSkillExtensions({
+      courseId,
+      extensions: band.extend ?? [],
+      ownerId: scope.ownerId,
+      withToolChapters: band.withToolChapters,
+    }),
   ]);
 
   const extended = extensions.filter((extension) => extension.level === band.level);

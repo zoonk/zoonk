@@ -433,6 +433,31 @@ describe("skill extensions", () => {
     ).resolves.toStrictEqual([]);
   });
 
+  it("keeps a goal without tools asking for a skill's next chapter after another learner gets one needing a tool", async () => {
+    const { chapter, course, skill } = await courseSetup();
+    const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
+
+    await addChapter({
+      courseId: course.id,
+      lessons: 4,
+      position: 1,
+      skillId: skill.id,
+      title: "Entrevistas gravadas no editor de vídeo",
+      tools: [{ essential: true, name: "Editor de vídeo" }],
+    });
+
+    await expect(
+      planSkillExtensions({
+        courseId: course.id,
+        extensions: [{ afterChapterId: chapter.id, lessons: 5, skill: ref }],
+        ownerId: null,
+        withToolChapters: false,
+      }),
+    ).resolves.toMatchObject([
+      { afterChapterId: chapter.id, chapters: [{ title: chapter.title }], lessons: 5 },
+    ]);
+  });
+
   it("continues after every chapter that teaches the skill, one that needs a tool included", async () => {
     const { chapter, course, skill } = await courseSetup();
     const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };

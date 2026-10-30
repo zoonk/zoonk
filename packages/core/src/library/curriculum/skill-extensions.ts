@@ -1,6 +1,6 @@
 import "server-only";
 import { type CourseLevel, type Goal, type LibraryVisibility, prisma } from "@zoonk/db";
-import { type OutlineWindow, getOutlineWindow } from "../../lookahead/outline-window";
+import { getOutlineWindow } from "../../lookahead/outline-window";
 import { toPlanCourseScope } from "../../lookahead/plan-outline-needs";
 import { goalUsesTools } from "../../plans/_utils/plan-tools";
 import { loadGoalPlannerLessons } from "../../plans/_utils/planner-lessons";
@@ -8,6 +8,7 @@ import { type PlanGraphSkill, parsePlanGraph } from "../../plans/planner/plan-st
 import { getStandInLessons } from "../../plans/planner/plan-units";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { isChallengeIdentityKey } from "../challenges/challenge-lesson-spec";
+import { needsTool } from "../chapters/chapter-tools";
 import {
   type CourseBandNeed,
   type CurriculumScope,
@@ -117,14 +118,11 @@ function planExtension({
 
   const last = teaching.at(-1);
 
-  if (!last || extension.lessons <= 0) {
-    return [];
-  }
+  const extendedSince =
+    extension.afterChapterId !== undefined &&
+    extension.afterChapterId !== last?.placement.chapterId;
 
-  const alreadyExtended =
-    extension.afterChapterId !== undefined && extension.afterChapterId !== last.placement.chapterId;
-
-  if (alreadyExtended) {
+  if (!last || extension.lessons <= 0 || extendedSince) {
     return [];
   }
 
@@ -147,10 +145,12 @@ export async function planSkillExtensions({
   courseId,
   extensions,
   ownerId,
+  withToolChapters = true,
 }: {
   courseId: string;
   extensions: readonly WantedExtension[];
   ownerId: string | null;
+  withToolChapters?: boolean;
 }): Promise<ExtensionPlan[]> {
   if (extensions.length === 0) {
     return [];
@@ -162,16 +162,14 @@ export async function planSkillExtensions({
     skillIds: extensions.map((extension) => extension.skill.id),
   });
 
-  return extensions.flatMap((extension) => planExtension({ extension, placements }));
+  const usable = placements.filter((at) => withToolChapters || !needsTool(at.chapter.tools));
+
+  return extensions.flatMap((extension) => planExtension({ extension, placements: usable }));
 }
 
-async function loadSoonStandInSkillIds({
-  goalId,
-  outlineWindow,
-}: {
-  goalId: string;
-  outlineWindow: OutlineWindow;
-}) {
+async function loadSoonStandInSkillIds({ days, goalId }: { days: number; goalId: string }) {
+  const outlineWindow = await getOutlineWindow({ days, goalId });
+
   const items = await prisma.planItem.findMany({
     distinct: ["skillId"],
     select: { skillId: true },
@@ -239,6 +237,7 @@ async function toCourseRequest({
     courseId: course.id,
     extensions,
     ownerId: scope.ownerId,
+    withToolChapters,
   });
 
   return plans.length > 0
@@ -285,8 +284,7 @@ export async function listSkillExtensions({
   }
 
   const graph = parsePlanGraph(goal.plan.graph);
-  const outlineWindow = await getOutlineWindow({ days, goalId });
-  const soon = await loadSoonStandInSkillIds({ goalId, outlineWindow });
+  const soon = await loadSoonStandInSkillIds({ days, goalId });
   const graphSkills = graph.skills.filter((skill) => soon.has(skill.skillId));
 
   const courseIds = [
