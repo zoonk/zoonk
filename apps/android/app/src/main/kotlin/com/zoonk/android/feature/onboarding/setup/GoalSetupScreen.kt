@@ -57,11 +57,9 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
-import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -85,7 +83,6 @@ fun GoalSetupScreen(
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = session as? SessionState.SignedIn
     CompositionLocalProvider(
-        LocalPrivatePictures provides PrivatePictures(app.images, signedIn?.session),
         LocalSetupDrafts provides signedIn?.session?.let { SetupDrafts(app.drafts, it) },
         LocalSetupSpeech provides app.speech,
     ) {

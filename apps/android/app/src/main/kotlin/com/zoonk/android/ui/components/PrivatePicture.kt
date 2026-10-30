@@ -35,7 +35,7 @@ import coil3.compose.AsyncImage
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.PrivateImages
 
-/** Private pictures load with the session the screen shows, provided once by the screen through [LocalPrivatePictures]. */
+/** Private pictures load with the signed-in session, provided once at the app's root through [LocalPrivatePictures]. */
 class PrivatePictures(
     val images: PrivateImages,
     val session: AuthenticatedSession?,

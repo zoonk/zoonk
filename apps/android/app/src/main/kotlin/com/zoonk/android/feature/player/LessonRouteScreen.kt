@@ -57,8 +57,6 @@ import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.LocalPrivatePictures
-import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
 
@@ -188,7 +186,6 @@ internal fun PlayingLesson(
         }
 
     CompositionLocalProvider(
-        LocalPrivatePictures provides PrivatePictures(app.images, signedIn),
         LocalLessonSpeech provides app.speech,
         LocalCodeSandbox provides app.codeSandbox,
         LocalChallengeTeam provides team,

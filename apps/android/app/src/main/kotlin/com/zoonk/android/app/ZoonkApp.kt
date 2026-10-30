@@ -89,6 +89,8 @@ import com.zoonk.android.navigation.rememberEntries
 import com.zoonk.android.navigation.section
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.LearnerSummary
@@ -151,8 +153,10 @@ fun ZoonkApp(
 
     val snackbars = remember { SnackbarHostState() }
 
+    val pictures = remember(session) { PrivatePictures(app.images, (session as? SessionState.SignedIn)?.session) }
+
     // Search opens over any page, so it shares the frame's snackbars.
-    CompositionLocalProvider(LocalSnackbarHostState provides snackbars) {
+    CompositionLocalProvider(LocalSnackbarHostState provides snackbars, LocalPrivatePictures provides pictures) {
         SearchHost(app, navigator, signedIn) {
             AppShell(navigator, entryProvider, summary = summary.value.takeIf { signedIn }, snackbarHostState = snackbars)
         }
