@@ -77,8 +77,9 @@ async function runMain() {
     return;
   }
 
-  const port = await findFreePort();
+  const [port, mainPort] = await Promise.all([findFreePort(), findFreePort()]);
   process.env.E2E_API_URL = `http://localhost:${port}`;
+  process.env.MAIN_APP_URL = `http://localhost:${mainPort}`;
 
   const [apiBuilt, mainBuilt] = await Promise.all([
     run({

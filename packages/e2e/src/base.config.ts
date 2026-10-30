@@ -11,6 +11,7 @@ export function createBaseConfig(options: {
   globalSetup?: string;
   testDir: string;
   webServerEnv?: Record<string, string>;
+  webServerPort?: number;
 }) {
   assertBrowserLaunchAllowed();
 
@@ -31,7 +32,7 @@ export function createBaseConfig(options: {
       video: process.env.CI ? "off" : "retain-on-failure",
     },
     webServer: {
-      command: "pnpm start:app -p 0",
+      command: `pnpm start:app -p ${options.webServerPort ?? 0}`,
       env: {
         ...getTestEnvironment("e2e"),
         STRIPE_SECRET_KEY: "sk_test_fake",

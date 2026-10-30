@@ -1,6 +1,10 @@
 import { createBaseConfig } from "@zoonk/e2e/base.config";
 
-const config = createBaseConfig({ globalSetup: "./e2e/global-setup.ts", testDir: "./e2e" });
+const config = createBaseConfig({
+  globalSetup: "./e2e/global-setup.ts",
+  testDir: "./e2e",
+  webServerPort: process.env.MAIN_APP_URL ? Number(new URL(process.env.MAIN_APP_URL).port) : 0,
+});
 
 /** These cases change call admission, so they run after every other learner call. */
 const playwrightConfig = {
