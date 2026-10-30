@@ -144,7 +144,12 @@ struct StatsCalendar: View {
 
       ForEach(shades.indices, id: \.self) { index in
         RoundedRectangle(cornerRadius: 2, style: .continuous)
-          .fill(shades[index])
+          .fill(shades[0])
+          .overlay {
+            if index > 0 {
+              RoundedRectangle(cornerRadius: 2, style: .continuous).fill(shades[index])
+            }
+          }
           .aspectRatio(1, contentMode: .fit)
           .frame(maxWidth: swatchSize)
       }
@@ -160,9 +165,12 @@ struct StatsCalendar: View {
   private var grid: some View {
     Canvas { context, _ in
       for (index, day) in days.enumerated() {
-        context.fill(
-          Path(roundedRect: square(index), cornerRadius: 2),
-          with: .color(shades.indices.contains(day.step) ? shades[day.step] : shades[0]))
+        let path = Path(roundedRect: square(index), cornerRadius: 2)
+        context.fill(path, with: .color(shades[0]))
+
+        if day.step > 0, shades.indices.contains(day.step) {
+          context.fill(path, with: .color(shades[day.step]))
+        }
       }
 
       if let picked, days.indices.contains(picked) {
