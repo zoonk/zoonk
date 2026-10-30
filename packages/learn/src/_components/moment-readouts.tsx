@@ -57,6 +57,7 @@ function ScoreWords({ score }: { score: MomentScore }) {
         description: "Counts words the learner said aloud in pronunciation practice.",
         message:
           "{correct, plural, =0 {<number>#</number> of {answered} sounded right} one {<number>#</number> of {answered} sounded right} other {<number>#</number> of {answered} sounded right}}",
+        // next-intl's extractor drops a shorthand `values` (https://github.com/amannn/next-intl/issues/2444), so keep this a key-value property.
         values: scoreValues,
       })
     : t.rich(
