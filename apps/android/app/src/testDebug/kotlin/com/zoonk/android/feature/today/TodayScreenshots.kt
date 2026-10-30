@@ -424,6 +424,7 @@ class TodayScreenshots {
                     "minutes" to minutes,
                     "week" to week,
                     "goalId" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01",
+                    "state" to "underway",
                     *extra.toList().toTypedArray(),
                 )
             val goal =

@@ -132,6 +132,7 @@ class TodayFlowTest {
                 "blocks" to blocks,
                 "nextPosition" to 0,
                 "minutes" to minutes,
+                "state" to "underway",
                 *sessionFields,
             )
         val today = decodeFixture<Today>("today", "session" to day, *todayFields.toTypedArray())

@@ -24,7 +24,7 @@
   "pauseSuggested": false,
   "plusLessons": [],
   "sessionBar": { "completed": 0, "total": 0 },
-  "state": "underway",
+  "state": "rest",
   "status": "planned",
   "week": { "days": [], "nextStudyDate": null, "time": { "studiedMinutes": 0, "targetMinutes": 0 } }
 }

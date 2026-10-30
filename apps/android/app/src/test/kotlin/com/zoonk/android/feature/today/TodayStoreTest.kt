@@ -102,6 +102,7 @@ class TodayStoreTest {
                     "unstarted-study-day",
                     "blocks" to kotlinx.serialization.json.JsonArray(listOf(block)),
                     "nextPosition" to 2,
+                    "state" to "underway",
                 )
             val today = decodeFixture<Today>("today", "session" to session, "lessonStatus" to buildJsonObject { put(lesson, "generating") })
 

@@ -42,6 +42,7 @@
     "pauseSuggested": false,
     "plusLessons": [],
     "sessionBar": { "completed": 0, "total": 0 },
+    "state": "rest",
     "status": "planned",
     "week": {
       "days": [],
