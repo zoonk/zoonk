@@ -1,6 +1,5 @@
 "use client";
 
-import { MAX_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -8,32 +7,15 @@ import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { BigQuantity } from "../../_components/big-quantity";
+import { getDailyTimes } from "../../_utils/daily-times";
 import { useFormatDuration } from "../../_utils/time-format";
 import { ChoiceList } from "../choice-list";
 
 const MINUTE_OPTIONS = ["15", "30", "45", "60", "90", "120", "180", "240"].map(Number);
 
-const FINE_STEP = 15;
-const COARSE_STEP = 30;
-
-const FINE_UNTIL = 240;
-
-const DAILY_TIMES = [
-  ...Array.from({ length: FINE_UNTIL / FINE_STEP }, (_, index) => (index + 1) * FINE_STEP),
-  ...Array.from(
-    { length: Math.floor((MAX_DAILY_MINUTES - FINE_UNTIL) / COARSE_STEP) },
-    (_, index) => FINE_UNTIL + (index + 1) * COARSE_STEP,
-  ),
-];
-
 export function getTimeChoices(...times: (number | null)[]): number[] {
   const own = times.filter((time) => time !== null);
   return [...new Set([...MINUTE_OPTIONS, ...own])].toSorted((a, b) => a - b);
-}
-
-function withShownTime(...values: (number | null)[]): number[] {
-  const own = values.filter((value) => value !== null);
-  return [...new Set([...DAILY_TIMES, ...own])].toSorted((a, b) => a - b);
 }
 
 export function TimeSelect({
@@ -50,7 +32,7 @@ export function TimeSelect({
   value: number | null;
 }) {
   const formatDuration = useFormatDuration();
-  const times = withShownTime(value);
+  const times = getDailyTimes(value);
 
   return (
     <NativeSelect
@@ -178,7 +160,7 @@ export function DailyTimePicker({
         onChange={(event) => onChange(Number(event.target.value))}
         value={minutes}
       >
-        {withShownTime(minutes, suggested).map((time) => (
+        {getDailyTimes(minutes, suggested).map((time) => (
           <option key={time} value={time}>
             {time === suggested
               ? t("{time} (suggested)", { time: formatDuration(time) })
