@@ -17,6 +17,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,10 @@ class NextStopTest {
     private val waiting = step(0, screen = StudyBlock.Screen.SESSION, lessonId = null)
     private val practice = step(1, kind = StudyBlock.Kind.PRACTICE, screen = StudyBlock.Screen.SESSION, lessonId = null)
     private var shown by mutableStateOf(waiting)
+    private val statuses = mutableListOf<LessonReadiness.Status>()
+    private var readinessReads = 0
+    private var dayReads = 0
+    private var dayShowsTheLessonWritten = true
 
     /** A step whose lesson the plan hasn't picked yet, as the API sends it; returns a way to draw the screen anew. */
     private fun show(
@@ -52,6 +57,15 @@ class NextStopTest {
                 StudySessionStore(api, cache) { "UTC" },
                 { _, milliseconds -> waits += milliseconds },
                 cache,
+                readiness = {
+                    readinessReads++
+                    LessonReadiness(
+                        alternative = null,
+                        generationId = "run-1",
+                        status =
+                            statuses.removeFirstOrNull() ?: LessonReadiness.Status.READY,
+                    )
+                },
             )
         var drawn by mutableIntStateOf(0)
 
@@ -65,7 +79,12 @@ class NextStopTest {
                         goalId = GOAL,
                         notWritten = null,
                         alternative = alternative,
-                        refresh = { shown = waiting.copy(lessonId = WRITTEN, screen = StudyBlock.Screen.LESSON) },
+                        refresh = {
+                            dayReads++
+                            if (dayShowsTheLessonWritten) {
+                                shown = shown.copy(lessonId = shown.lessonId ?: WRITTEN, screen = StudyBlock.Screen.LESSON)
+                            }
+                        },
                         onStop = onStop,
                         navigator = rememberAppNavigator(),
                     )
@@ -90,6 +109,43 @@ class NextStopTest {
         rule.onNodeWithText("Your lesson is ready.").assertExists()
         rule.onNodeWithText("Start").assertIsFocused()
         assertEquals(1, waits.size)
+    }
+
+    @Test
+    fun aLessonARunIsWritingWaitsOnTheNextStopByItsReadinessAlone() {
+        statuses += listOf(LessonReadiness.Status.GENERATING, LessonReadiness.Status.GENERATING)
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show(alternative = practice)
+        rule.mainClock.advanceTimeBy(6_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Getting it ready…").assertExists()
+        rule.onNodeWithText("While you wait: Mixed practice").assertExists()
+        rule.onNodeWithText("Start").assertDoesNotExist()
+        assertEquals(0, dayReads)
+
+        rule.mainClock.advanceTimeBy(5_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Your lesson is ready.").assertExists()
+        assertEquals(3, readinessReads)
+        assertEquals(1, dayReads)
+        assertEquals(1, waits.size)
+    }
+
+    @Test
+    fun aRunThatFailsOffersStartAgainWithoutSayingTheLessonIsReady() {
+        statuses += listOf(LessonReadiness.Status.GENERATING, LessonReadiness.Status.FAILED)
+        dayShowsTheLessonWritten = false
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show()
+        rule.mainClock.advanceTimeBy(6_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Start").assertExists()
+        rule.onNodeWithText("Your lesson is ready.").assertDoesNotExist()
+        assertEquals(1, dayReads)
+        assertEquals(0, waits.size)
     }
 
     @Test

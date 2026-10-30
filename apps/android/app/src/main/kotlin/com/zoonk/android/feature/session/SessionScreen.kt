@@ -33,6 +33,9 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
@@ -89,7 +92,13 @@ fun SessionScreen(
     val sessionId = route.sessionId?.let(UUID::fromString) ?: shown?.day?.sessionId
     val viewModel =
         viewModel(key = "session:${sessionId ?: route.goalId}") {
-            SessionViewModel(app.studyOpener, app.studySessions, LiveLessonWritingApi(app.api), app.cache)
+            SessionViewModel(
+                app.studyOpener,
+                app.studySessions,
+                LiveLessonWritingApi(app.api),
+                app.cache,
+                readiness = { lessonId -> app.sessions.current?.let { app.lessonPlayer.api.readiness(it, lessonId.toString()) } },
+            )
         }
 
     LaunchedEffect(viewModel) {
@@ -258,8 +267,9 @@ private fun SessionSummaryContent(
 
 /**
  * The day's next step, or the one a tap opened when its lesson isn't made yet. That wait reads the
- * day again until the lesson is there, then says it's ready and focuses Start, never opening it on
- * its own: the learner may be reading, or doing what "While you wait" offered. [notWritten] says,
+ * day again until the lesson is there, or only the lesson's readiness while a run writes it, then
+ * says it's ready and focuses Start, never opening it on its own: the learner may be reading, or
+ * doing what "While you wait" offered. [notWritten] says,
  * in place of Start, why the API wouldn't write the lesson the tap asked for; [alternative] is work
  * to do meanwhile or instead. [refresh] is null on a day not opened yet, which has no lesson to
  * wait for; [onStop] once the session has work done.
@@ -277,7 +287,8 @@ internal fun NextStop(
     navigator: AppNavigator,
 ) {
     val rereading = refresh?.takeIf { step.waitsForItsLesson() }
-    val waiting = rereading != null
+    val beingWritten = step.lessonId?.takeIf { refresh != null && step.isUnwrittenLesson() }
+    val waiting = rereading != null || (beingWritten != null && viewModel.lessonBeingWritten == beingWritten)
     val busy = viewModel.busy != null
     val refusal = notWritten?.takeIf { step.isUnwrittenLesson() }
     val ready = !waiting && refusal == null
@@ -292,17 +303,26 @@ internal fun NextStop(
             !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
     val actionWidth = if (stacked) Modifier.fillMaxWidth() else Modifier
 
-    LaunchedEffect(step.position, waiting) {
-        val reread = rereading
-        if (reread == null) {
-            viewModel.lessonWritten(step.position)
-            return@LaunchedEffect
+    LaunchedEffect(step.position, waiting, step.screen) {
+        when {
+            waiting -> viewModel.waitForLesson(step.position)
+            step.screen == StudyBlock.Screen.LESSON -> viewModel.lessonWritten(step.position)
         }
-        viewModel.waitForLesson(step.position)
-        while (true) {
-            delay(LESSON_CHECK_MILLIS)
-            reread()
+    }
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect(rereading != null) {
+        val reread = rereading ?: return@LaunchedEffect
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            while (true) {
+                delay(LESSON_CHECK_MILLIS)
+                reread()
+            }
         }
+    }
+    LaunchedEffect(beingWritten) {
+        val lessonId = beingWritten ?: return@LaunchedEffect
+        val readDay = refresh ?: return@LaunchedEffect
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { viewModel.followWriting(lessonId, readDay) }
     }
 
     TaskScaffold(
@@ -479,5 +499,4 @@ private fun StudySession.alternativeTo(step: StudyBlock): DayStep? =
         }?.toDayStep()
 
 private val OPEN = setOf(StudyBlock.Status.ACTIVE, StudyBlock.Status.PENDING)
-private const val LESSON_CHECK_MILLIS = 5_000L
 private val CONTENT_WIDTH = 640.dp

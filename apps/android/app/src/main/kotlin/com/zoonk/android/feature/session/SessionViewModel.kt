@@ -5,14 +5,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.player.LessonWritingApi
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -29,6 +32,7 @@ class SessionViewModel(
     private val sessions: StudySessionStore,
     private val writingApi: LessonWritingApi,
     private val cache: AppCache,
+    private val readiness: suspend (UUID) -> LessonReadiness?,
     private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     var busy by mutableStateOf<SessionAction?>(null)
@@ -39,6 +43,10 @@ class SessionViewModel(
         private set
 
     private var waiting: LessonWait? = null
+
+    /** The step's lesson while a run writes it: the next stop waits on its readiness alone. */
+    var lessonBeingWritten by mutableStateOf<UUID?>(null)
+        private set
 
     var failed by mutableStateOf<SessionAction?>(null)
         private set
@@ -91,6 +99,35 @@ class SessionViewModel(
         if (waiting?.position != position) waiting = LessonWait(position, now())
     }
 
+    /** Reads [lessonId]'s readiness while a run writes it, and the day again only once that changes. */
+    suspend fun followWriting(
+        lessonId: UUID,
+        readDay: suspend () -> Unit,
+    ) {
+        while (true) {
+            val status =
+                try {
+                    readiness(lessonId)?.status
+                } catch (e: ApiException) {
+                    null
+                }
+            when (status) {
+                null -> {}
+
+                LessonReadiness.Status.GENERATING -> {
+                    lessonBeingWritten = lessonId
+                }
+
+                else -> {
+                    if (status == LessonReadiness.Status.READY || lessonBeingWritten == lessonId) readDay()
+                    lessonBeingWritten = null
+                    return
+                }
+            }
+            delay(LESSON_CHECK_MILLIS)
+        }
+    }
+
     fun lessonWritten(position: Long) {
         val wait = waiting?.takeIf { it.position == position } ?: return
         waiting = null
@@ -139,6 +176,8 @@ class SessionViewModel(
         }
     }
 }
+
+internal const val LESSON_CHECK_MILLIS = 5_000L
 
 private data class LessonWait(
     val position: Long,
