@@ -58,7 +58,10 @@ class AnswerOptionTest {
     fun aWrappingOptionKeepsItsTagBesideWhenThatIsNoTaller() {
         showChecked(WRAPPING)
 
-        assertTrue("The tag sits under words that wrap as much beside it: ${tagTop()} >= ${wordsBottom(WRAPPING)}", tagTop() < wordsBottom(WRAPPING))
+        assertTrue(
+            "The tag sits under words that wrap as much beside it: ${tagTop()} >= ${wordsBottom(WRAPPING)}",
+            tagTop() < wordsBottom(WRAPPING),
+        )
     }
 
     @Test
@@ -66,6 +69,9 @@ class AnswerOptionTest {
         RuntimeEnvironment.setFontScale(2f)
         showChecked(LONG)
 
-        assertTrue("Beside the tag, the words squeeze into a narrow column: ${tagTop()} < ${wordsBottom(LONG)}", tagTop() >= wordsBottom(LONG))
+        assertTrue(
+            "Beside the tag, the words squeeze into a narrow column: ${tagTop()} < ${wordsBottom(LONG)}",
+            tagTop() >= wordsBottom(LONG),
+        )
     }
 }
