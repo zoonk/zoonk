@@ -678,7 +678,12 @@ describe(researchWorkflow, () => {
       const blockedCopy = copy("https://arquivos.cdn.cebraspe.org.br/edital-tcdf.pdf");
       const readableCopy = copy("https://www.examsite.com.br/editais/tcdf-2026.pdf");
 
-      const initialDocuments = allBlocked ? [notice] : found;
+      const coachingPage = {
+        ...copy("https://coaching.example.com/exam"),
+        documentType: "officialPage" as const,
+      };
+
+      const initialDocuments = allBlocked ? [notice, coachingPage] : found;
 
       vi.mocked(findOfficialSources).mockImplementation(async ({ unreadable = [] }) => ({
         ...TASK_RESULT,
@@ -1070,6 +1075,49 @@ describe(researchWorkflow, () => {
     await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({ status: "ready" });
 
     expect(cancel).toHaveBeenCalledWith({ cancelReason: expect.any(String) });
+  });
+
+  it("refuses a readable coaching page when official downloads fail and no copy is found", async () => {
+    const { goal } = await examGoal();
+    await replayTcdfResearch();
+    const { data } = await findOfficialSources({} as never);
+
+    const official = data.documents.map((document) => ({
+      ...document,
+      url: `${document.url}?test=${randomUUID()}`,
+    }));
+
+    const secondary = {
+      ...official[0]!,
+      documentType: "officialPage" as const,
+      kind: "secondary" as const,
+      url: `https://coaching.example.com/${randomUUID()}`,
+    };
+
+    vi.mocked(findOfficialSources).mockImplementation(async ({ unreadable = [] }) => ({
+      ...TASK_RESULT,
+      data: {
+        documents: unreadable.length > 0 ? [] : [...official, secondary],
+        officialFound: true,
+        searchCalls: 1,
+      },
+    }));
+
+    vi.mocked(fetch).mockImplementation(async (input) =>
+      requestedUrl(input).includes("coaching.example.com")
+        ? new PageResponse(
+            `<main>${"<p>Coaching advice about the exam subjects and dates.</p>".repeat(10)}</main>`,
+            { headers: { "content-type": "text/html" } },
+          )
+        : new PageResponse("Access Denied", { status: 403 }),
+    );
+
+    await expect(researchWorkflow({ goalId: goal.id })).resolves.toStrictEqual({
+      reason: "noOfficialSource",
+      status: "needsUpload",
+    });
+
+    expect(extractExamBlueprint).not.toHaveBeenCalled();
   });
 
   it("asks for the notice instead of guessing when search finds nothing official", async () => {

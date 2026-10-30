@@ -132,7 +132,12 @@ export async function findAndStoreSources({
 
   const copies = await storeCopies({ analytics, plan, searchAnalytics, stored, topic, unreadable });
 
-  const sourceIds = [...stored, ...copies].map((source) => source.sourceId);
+  const readable =
+    requireOfficial && !stored.some((source) => source.kind === "official")
+      ? copies
+      : [...stored, ...copies];
+
+  const sourceIds = readable.map((source) => source.sourceId);
 
   return [...new Set(sourceIds)];
 }
