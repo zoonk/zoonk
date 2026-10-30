@@ -81,6 +81,7 @@ export function toCourseResource(course: CourseResource) {
     landingPage: parseCourseLandingPageContent(course.landingPage),
     language: course.language,
     languageFlag: toLanguageFlag(course.targetLanguage),
+    levels: course.levels,
     organization: toCourseOrganization(course.organization),
     slug: course.slug,
     targetLanguage: course.targetLanguage,

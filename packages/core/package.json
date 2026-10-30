@@ -261,6 +261,7 @@
     "./library/claims/generation": "./src/library/claims/generation-claim.ts",
     "./library/courses/details": "./src/library/courses/course-details.ts",
     "./library/courses/get": "./src/library/courses/get-library-course.ts",
+    "./library/courses/levels": "./src/library/courses/course-levels.ts",
     "./library/courses/icon": "./src/library/courses/course-icon.ts",
     "./library/courses/regenerate-details": "./src/library/courses/regenerate-course-details.ts",
     "./library/curriculum/add-coverage-skills": "./src/library/curriculum/add-coverage-skills.ts",

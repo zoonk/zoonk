@@ -164,6 +164,12 @@ export const courseResourceSchema = z
         description:
           "A language course's flag: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other courses",
       }),
+    levels: z
+      .array(z.object({ level: z.enum(CourseLevel), written: z.boolean() }))
+      .meta({
+        description:
+          "Every level the course covers, in order: a course on the path to mastery covers Beginner to Advanced, and `written` is false for a level with no chapter yet, written as learners reach it; empty until any chapter is written",
+      }),
     organization: nullableOrganizationSummarySchema,
     slug: z.string(),
     targetLanguage: z.string().nullable(),

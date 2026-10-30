@@ -24,6 +24,27 @@ describe(getCourseDetail, () => {
     expect(detail?.examplePlan).toMatchObject({ exam: null, pace: { minutes: 15 } });
   });
 
+  it("names every level the course covers, with those not written yet", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+
+    const course = await courseFixture({
+      format: "language",
+      isPublished: true,
+      organizationId: organization.id,
+      visibility: "public",
+    });
+
+    await courseBandsFixture({ courseId: course.id, levels: ["beginner"] });
+
+    const detail = await getCourseDetail({ courseId: course.id });
+
+    expect(detail?.levels).toStrictEqual([
+      { level: "beginner", written: true },
+      { level: "intermediate", written: false },
+      { level: "advanced", written: false },
+    ]);
+  });
+
   it("is null for a course nobody can read", async () => {
     const course = await courseFixture({ isPublished: false });
 

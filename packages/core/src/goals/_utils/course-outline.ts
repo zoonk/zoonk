@@ -1,6 +1,7 @@
 import "server-only";
-import { type CourseFormat, type CourseLevel, type GenerationStatus, prisma } from "@zoonk/db";
+import { type CourseFormat, type GenerationStatus, prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
+import { MASTERY_LEVELS } from "../../library/courses/course-levels";
 import { type PlanGraph } from "../../plans/planner/plan-state";
 import { type CourseOutlineChapter } from "./course-plan-graph";
 import { getExamCourseSkills } from "./exam-course-skills";
@@ -56,9 +57,6 @@ export async function loadCourseOutline({
     tags: placement.chapter.goalSkills.map((row) => row.skill),
   }));
 }
-
-/** An overview is a shorter course of its own, so it isn't part of the path to mastery. */
-const MASTERY_LEVELS: readonly CourseLevel[] = ["beginner", "intermediate", "advanced"];
 
 function isSettledOutline({
   chapters,

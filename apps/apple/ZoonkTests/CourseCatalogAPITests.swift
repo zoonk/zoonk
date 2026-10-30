@@ -151,6 +151,7 @@ final class CourseCatalogAPITests: XCTestCase {
             },
             "language": "en",
             "languageFlag": null,
+            "levels": [{ "level": "beginner", "written": true }],
             "organization": {
               "id": "00000000-0000-7000-8000-000000000001",
               "logo": "https://cdn.zoonk.test/organization.png",
@@ -233,6 +234,7 @@ final class CourseCatalogAPITests: XCTestCase {
             "landingPage": null,
             "language": "pt",
             "languageFlag": null,
+            "levels": [],
             "organization": null,
             "slug": "enem",
             "targetLanguage": null,
