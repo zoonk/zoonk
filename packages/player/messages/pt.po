@@ -789,6 +789,12 @@ msgctxt "hqD1Uy"
 msgid "Missed link"
 msgstr "Ligação que faltou"
 
+#. Names the list of an explained cause-and-effect chain's links, which the lesson drew.
+#: src/activities/cause-effect-chain/cause-effect-link-list.tsx
+msgctxt "zc5N8H"
+msgid "How they connect"
+msgstr "Como se conectam"
+
 #: src/activities/cause-effect-chain/cause-effect-link-list.tsx
 msgctxt "4jfGCF"
 msgid "Your links"
@@ -2127,14 +2133,14 @@ msgid "Bar {bar}: {notes}."
 msgstr "Compasso {bar}: {notes}."
 
 #: src/activities/number-line/number-line-activity.tsx
-msgctxt "r-rNo2"
-msgid "Your answer on the number line"
-msgstr "Sua resposta na reta numérica"
-
-#: src/activities/number-line/number-line-activity.tsx
 msgctxt "-s66db"
 msgid "{label} in {unit}"
 msgstr "{label} em {unit}"
+
+#: src/activities/number-line/number-line-activity.tsx
+msgctxt "BDKQJ4"
+msgid "A number line for {label} from {min} to {max}. It starts at {start}."
+msgstr "Uma reta numérica para {label}, de {min} a {max}. Ela começa em {start}."
 
 #: src/activities/number-line/number-line-activity.tsx
 msgctxt "iidOXi"
@@ -2145,6 +2151,11 @@ msgstr "Uma reta numérica para {label}, de {min} a {max}. Ela começa em {start
 msgctxt "dzkrMe"
 msgid "The jumps go {jumps} and land at {landing}."
 msgstr "Os saltos são {jumps} e chegam a {landing}."
+
+#: src/activities/number-line/number-line-drawing.tsx
+msgctxt "r-rNo2"
+msgid "Your answer on the number line"
+msgstr "Sua resposta na reta numérica"
 
 #: src/activities/pattern-table/pattern-row.tsx
 msgctxt "mgXw7n"

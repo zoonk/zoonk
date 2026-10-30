@@ -40,6 +40,7 @@ function useStateLabel() {
 export function CauseEffectLinkList({
   canRemove,
   explanations,
+  isExploring,
   labelOf,
   links,
   onRemove,
@@ -47,6 +48,7 @@ export function CauseEffectLinkList({
 }: {
   canRemove: boolean;
   explanations: readonly (Link & { why: string })[];
+  isExploring: boolean;
   labelOf: (id: string) => string;
   links: readonly ListedLink[];
   onRemove: (link: Link) => void;
@@ -60,7 +62,19 @@ export function CauseEffectLinkList({
   }
 
   return (
-    <ul aria-label={t("Your links")} className="flex flex-col gap-2" data-slot="cause-effect-links">
+    <ul
+      aria-label={
+        isExploring
+          ? t({
+              description:
+                "Names the list of an explained cause-and-effect chain's links, which the lesson drew.",
+              message: "How they connect",
+            })
+          : t("Your links")
+      }
+      className="flex flex-col gap-2"
+      data-slot="cause-effect-links"
+    >
       {links.map((link) => {
         const why = explanations.find((item) => sameLink(item, link))?.why;
         const note = stateLabel(link.state);

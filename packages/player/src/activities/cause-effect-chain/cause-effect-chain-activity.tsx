@@ -190,6 +190,7 @@ export function CauseEffectChainActivity({
       </p>
 
       <CauseEffectLinkList
+        isExploring={isExploring}
         canRemove={!isLocked && !isGuided}
         explanations={fields.links}
         labelOf={labelOf}
