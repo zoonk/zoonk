@@ -3,11 +3,13 @@
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
+import { parseCefrScore } from "@zoonk/utils/cefr";
 import { useExtracted } from "next-intl";
 import { FactChip, FactChips } from "../_components/fact-chips";
 import { daysUntilIsoDate, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { OnboardingRailSection } from "./onboarding-rail";
+import { readLevelChoice, toLevelAnswer, useOwnLevelLabels } from "./steps/level-choices";
 import { useDetailRows, useLanguageRows } from "./understood/use-understood-rows";
 
 type ReceiptFact = { count?: string; id: string; label: string; mono?: boolean; value: string };
@@ -17,33 +19,67 @@ function isAnswered({ goal, question }: { goal: GoalView; question: string }): b
   return Array.isArray(answered) && answered.includes(question);
 }
 
-function useReceiptFacts(goal: GoalView): ReceiptFact[] {
+function useLevelText() {
+  const ownLevels = useOwnLevelLabels();
+
+  return function levelText(details: GoalView["details"]): string | null {
+    const { level, levelNote } = details;
+
+    if (typeof level === "string" && parseCefrScore(level) !== null) {
+      return level;
+    }
+
+    if (typeof levelNote === "string" && levelNote.trim() !== "") {
+      return levelNote;
+    }
+
+    const choice = readLevelChoice(details);
+    const own = choice && toLevelAnswer(choice);
+
+    return own ? ownLevels[own] : null;
+  };
+}
+
+function useDateFact() {
   const t = useExtracted();
   const today = useMountTime();
   const formatDate = useFormatIsoDate();
-  const formatDuration = useFormatDuration();
-  const languageRows = useLanguageRows();
-  const detailRows = useDetailRows();
-  const levelNote = goal.details.levelNote;
 
-  const date: ReceiptFact | null = goal.targetDate
-    ? {
+  return function dateFact(goal: GoalView): ReceiptFact | null {
+    const label = goal.kind === "exam" ? t("Exam date") : t("Date");
+
+    if (goal.targetDate) {
+      return {
         count: t("{days, plural, =0 {# days} one {# day} other {# days}}", {
           days: Math.max(0, daysUntilIsoDate({ isoDate: goal.targetDate, today })),
         }),
         id: "date",
-        label: goal.kind === "exam" ? t("Exam date") : t("Date"),
+        label,
         value: formatDate(goal.targetDate, "long"),
-      }
-    : null;
+      };
+    }
+
+    return isAnswered({ goal, question: "targetDate" })
+      ? { id: "date", label, value: t("No date") }
+      : null;
+  };
+}
+
+function useReceiptFacts(goal: GoalView): ReceiptFact[] {
+  const t = useExtracted();
+  const formatDuration = useFormatDuration();
+  const languageRows = useLanguageRows();
+  const detailRows = useDetailRows();
+  const dateFact = useDateFact();
+  const levelText = useLevelText();
+  const level = levelText(goal.details);
 
   const facts: (ReceiptFact | null | false)[] = [
     { id: "title", label: t("Goal"), value: goal.title },
-    date,
+    dateFact(goal),
     ...languageRows(goal),
     ...detailRows(goal, null),
-    typeof levelNote === "string" &&
-      levelNote.trim() !== "" && { id: "level", label: t("Level"), value: levelNote },
+    level !== null && { id: "level", label: t("Level"), value: level },
     isAnswered({ goal, question: "schedule" }) && {
       id: "time",
       label: t("Time a day"),

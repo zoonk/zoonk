@@ -8456,11 +8456,6 @@ msgid "Getting started"
 msgstr "Primeros pasos"
 
 #: src/onboarding/plan-receipt.tsx
-msgctxt "qHAnd4"
-msgid "{days, plural, =0 {# days} one {# day} other {# days}}"
-msgstr "{days, plural, =0 {# días} one {# día} other {# días}}"
-
-#: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/understood-date-row.ts
 #: src/plan/plan-date.tsx
 #: src/plan/plan-properties.tsx
@@ -8473,6 +8468,17 @@ msgstr "Fecha del examen"
 msgctxt "P7PLVj"
 msgid "Date"
 msgstr "Fecha"
+
+#: src/onboarding/plan-receipt.tsx
+msgctxt "qHAnd4"
+msgid "{days, plural, =0 {# days} one {# day} other {# days}}"
+msgstr "{days, plural, =0 {# días} one {# día} other {# días}}"
+
+#: src/onboarding/plan-receipt.tsx
+#: src/plan/plan-properties.tsx
+msgctxt "065UXh"
+msgid "No date"
+msgstr "Sin fecha"
 
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/use-understood-rows.ts
@@ -8639,19 +8645,9 @@ msgid "Study everything, even after the exam"
 msgstr "Estudiar todo, incluso después del examen"
 
 #: src/onboarding/steps/level-choices.tsx
-msgctxt "HGiiLi"
-msgid "From scratch, with everyday examples"
-msgstr "Desde cero, con ejemplos cotidianos"
-
-#: src/onboarding/steps/level-choices.tsx
-msgctxt "pIPmbB"
-msgid "Nothing, I'm just starting"
-msgstr "Nada, estoy empezando"
-
-#: src/onboarding/steps/level-choices.tsx
-msgctxt "uzFoxW"
-msgid "I know a few things"
-msgstr "Sé algunas cosas"
+msgctxt "BY-vT3"
+msgid "I know it well"
+msgstr "Lo conozco bien"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "wouTdw"
@@ -8659,24 +8655,34 @@ msgid "The basics"
 msgstr "Lo básico"
 
 #: src/onboarding/steps/level-choices.tsx
-msgctxt "h9kQ0S"
-msgid "We'll skip what you already know"
-msgstr "Saltaremos lo que ya sabes"
-
-#: src/onboarding/steps/level-choices.tsx
 msgctxt "koLFLL"
 msgid "I studied it before"
 msgstr "Ya lo he estudiado"
 
 #: src/onboarding/steps/level-choices.tsx
+msgctxt "pIPmbB"
+msgid "Nothing, I'm just starting"
+msgstr "Nada, estoy empezando"
+
+#: src/onboarding/steps/level-choices.tsx
+msgctxt "HGiiLi"
+msgid "From scratch, with everyday examples"
+msgstr "Desde cero, con ejemplos cotidianos"
+
+#: src/onboarding/steps/level-choices.tsx
+msgctxt "uzFoxW"
+msgid "I know a few things"
+msgstr "Sé algunas cosas"
+
+#: src/onboarding/steps/level-choices.tsx
+msgctxt "h9kQ0S"
+msgid "We'll skip what you already know"
+msgstr "Saltaremos lo que ya sabes"
+
+#: src/onboarding/steps/level-choices.tsx
 msgctxt "47D0tB"
 msgid "Only what's new or hard"
 msgstr "Solo lo nuevo o lo difícil"
-
-#: src/onboarding/steps/level-choices.tsx
-msgctxt "BY-vT3"
-msgid "I know it well"
-msgstr "Lo conozco bien"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "MLAAq8"
@@ -10242,11 +10248,6 @@ msgstr "{days}, cada {weeks, plural, one {# semana} other {# semanas}}"
 msgctxt "FGYEtx"
 msgid "Next <date></date>"
 msgstr "Próximo: <date></date>"
-
-#: src/plan/plan-properties.tsx
-msgctxt "065UXh"
-msgid "No date"
-msgstr "Sin fecha"
 
 #: src/plan/plan-properties.tsx
 msgctxt "mWKPwa"

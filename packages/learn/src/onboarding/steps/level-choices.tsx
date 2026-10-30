@@ -31,6 +31,17 @@ export function readLevelChoice(details: Record<string, unknown>): LevelChoice |
   return Array.isArray(answered) && answered.includes("level") ? QUICK_TEST : null;
 }
 
+export function useOwnLevelLabels(): Record<OnboardingOwnLevel, string> {
+  const t = useExtracted();
+
+  return {
+    advanced: t("I know it well"),
+    basic: t("The basics"),
+    intermediate: t("I studied it before"),
+    none: t("Nothing, I'm just starting"),
+  };
+}
+
 export function LevelChoiceList({
   onChange,
   onPick,
@@ -47,20 +58,17 @@ export function LevelChoiceList({
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
+  const labels = useOwnLevelLabels();
 
   const choices: Choice<LevelChoice>[] = [
-    {
-      description: t("From scratch, with everyday examples"),
-      label: t("Nothing, I'm just starting"),
-      value: "none",
-    },
-    { description: t("I know a few things"), label: t("The basics"), value: "basic" },
+    { description: t("From scratch, with everyday examples"), label: labels.none, value: "none" },
+    { description: t("I know a few things"), label: labels.basic, value: "basic" },
     {
       description: t("We'll skip what you already know"),
-      label: t("I studied it before"),
+      label: labels.intermediate,
       value: "intermediate",
     },
-    { description: t("Only what's new or hard"), label: t("I know it well"), value: "advanced" },
+    { description: t("Only what's new or hard"), label: labels.advanced, value: "advanced" },
     {
       description: t("Adapts to your answers, about {time}", { time: formatDuration(testMinutes) }),
       label: t("Not sure, give me a quick test"),
