@@ -145,7 +145,10 @@ fun CheckpointScreen(
     BackHandler(onBack = viewModel::close)
 
     when (val shown = duel) {
-        null -> CheckpointRead(blockId, route, viewModel, app, navigator)
+        null -> {
+            CheckpointRead(blockId, route, viewModel, app, navigator)
+        }
+
         else -> {
             if (shown.state.showsResult) {
                 MomentAfterCeremony(app, shown.state.completion?.ceremony) { buddy -> DuelResult(shown, viewModel, app, buddy) }

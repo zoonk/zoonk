@@ -103,7 +103,8 @@ class MistakePracticeViewModelTest {
         runTest(dispatcher) {
             val yellow = MistakePatternPracticeResultReachedLevel(MistakePatternPracticeResultReachedLevel.Color.YELLOW, 3)
             val api = FakeMistakesApi(twoMistakes)
-            val reached = mutableListOf(MistakePracticeFeedbackReached(energy = 62, level = yellow), MistakePracticeFeedbackReached(58, null))
+            val reached =
+                mutableListOf(MistakePracticeFeedbackReached(energy = 62, level = yellow), MistakePracticeFeedbackReached(58, null))
             api.answer = { practiceFeedback().copy(reached = reached.removeAt(0)) }
             api.finish = { completion().copy(reached = MistakePatternPracticeResultReached(energy = 60, level = null)) }
             val viewModel = viewModel(api)
