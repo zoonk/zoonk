@@ -21,9 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -117,10 +120,15 @@ fun ActivityPlaceHandle(
                             next != null
                         }.focusable()
                 },
-            ).drawBehind { if (focused && !disabled) drawCircle(ring, FOCUS_RADIUS.toPx(), style = Stroke(FOCUS_STROKE.toPx())) },
+            ),
         contentAlignment = Alignment.Center,
     ) {
-        Box(Modifier.wrapContentSize(unbounded = true).clearAndSetSemantics {}) { knob() }
+        Box(
+            Modifier
+                .wrapContentSize(unbounded = true)
+                .drawBehind { if (focused && !disabled) drawFocusRing(ring) }
+                .clearAndSetSemantics {},
+        ) { knob() }
     }
 }
 
@@ -182,6 +190,18 @@ private fun Modifier.inPlot(bounds: Rect) =
 private fun Offset.along(orientation: PlaceOrientation): Float = if (orientation == PlaceOrientation.Horizontal) x else y
 
 /** TalkBack's adjust actions move one [SnapRange.step] at a time. */
+/** Main's focus ring: around the knob in its own shape, a round dot or a pill. */
+private fun DrawScope.drawFocusRing(color: Color) {
+    val gap = FOCUS_GAP.toPx()
+    drawRoundRect(
+        color,
+        Offset(-gap, -gap),
+        Size(size.width + gap * 2, size.height + gap * 2),
+        CornerRadius(size.minDimension / 2 + gap),
+        style = Stroke(FOCUS_STROKE.toPx()),
+    )
+}
+
 private fun rangeInfo(
     value: Double,
     range: SnapRange,
@@ -207,5 +227,5 @@ internal fun flipVerticalKey(key: Key): Key =
     }
 
 private val HIT = 48.dp
-private val FOCUS_RADIUS = 17.dp
+private val FOCUS_GAP = 2.dp
 private val FOCUS_STROKE = 3.dp
