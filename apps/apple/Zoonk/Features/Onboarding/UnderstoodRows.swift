@@ -513,7 +513,7 @@ enum UnderstoodRows {
     }
 
     guard let month,
-      let date = Calendar.current.date(from: DateComponents(year: year, month: month))
+      let date = Calendar.isoLocal.date(from: DateComponents(year: year, month: month))
     else {
       return String(
         localized: LocalizedStringResource(
@@ -525,11 +525,6 @@ enum UnderstoodRows {
       localized: LocalizedStringResource(
         "\(date.formatted(.dateTime.month(.wide).year())), to be confirmed", table: "Onboarding",
         comment: "An exam date that isn't out yet, with the month the learner named"))
-  }
-
-  private static func isoDay(_ date: Date) -> String {
-    let parts = Calendar.current.dateComponents([.year, .month, .day], from: date)
-    return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
   }
 
   private static func daysLeft(until date: Date, today: Date) -> String {
@@ -554,7 +549,7 @@ enum UnderstoodRows {
       return nil
     }
 
-    return Calendar.current.date(
+    return Calendar.isoLocal.date(
       from: DateComponents(year: parts[0], month: parts[1], day: parts[2]))
   }
 

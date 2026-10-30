@@ -12410,6 +12410,35 @@
         }
       }
     },
+    "Your date is today, so there are no days left to plan." : {
+      "comment" : "Above the date question when the goal's date is today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Zieldatum ist heute, also bleiben keine Tage mehr zum Planen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fecha de tu objetivo es hoy, así que no quedan días para planificar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La date prévue est aujourd’hui, il ne reste donc plus de jours à planifier."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A data da sua meta é hoje, então não há mais dias para planejar."
+          }
+        }
+      }
+    },
     "Your date is too close to cover everything in depth." : {
       "comment" : "No time a day covers the whole goal by its date",
       "localizations" : {
@@ -12435,6 +12464,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sua data está próxima demais para estudar tudo a fundo."
+          }
+        }
+      }
+    },
+    "Your date, %@, has passed." : {
+      "comment" : "Above the date question when the goal's date has passed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Zieldatum (%@) liegt bereits zurück."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fecha de tu objetivo, %@, ya ha pasado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La date prévue, %@, est passée."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A data da sua meta, %@, já passou."
           }
         }
       }

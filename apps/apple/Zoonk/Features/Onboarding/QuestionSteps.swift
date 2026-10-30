@@ -33,7 +33,8 @@ struct QuestionStep: View {
     case .targetDate:
       DateQuestion(
         subject: subject, examDays: view.examDays, initialDate: view.goal.targetDate,
-        onAnswer: onAnswer)
+        problem: DateProblem(view.dateProblem),
+        today: GoalDate.today(now: .now, timeZone: view.goal.timezone), onAnswer: onAnswer)
     case .followUps:
       FollowUpsQuestion(questions: view.followUps, onAnswer: onAnswer)
     case .examChoice:
@@ -486,6 +487,9 @@ private struct DateQuestion: View {
   let subject: String
   let examDays: Components.Schemas.Onboarding.ExamDaysPayload?
   let initialDate: String?
+  let problem: DateProblem?
+  /// The goal's today, `YYYY-MM-DD`.
+  let today: String
   let onAnswer: ([String: Any]) -> Void
 
   @State private var picksOtherDate = false
@@ -495,16 +499,20 @@ private struct DateQuestion: View {
     subject: String,
     examDays: Components.Schemas.Onboarding.ExamDaysPayload?,
     initialDate: String?,
+    problem: DateProblem?,
+    today: String,
     onAnswer: @escaping ([String: Any]) -> Void
   ) {
     self.subject = subject
     self.examDays = examDays
     self.initialDate = initialDate
+    self.problem = problem
+    self.today = today
     self.onAnswer = onAnswer
+    let kept = GoalDate.kept(initialDate, problem: problem)
     let firstDay = examDays?.days.first
-    _picksOtherDate = State(
-      initialValue: examDays == nil || (initialDate != nil && initialDate != firstDay))
-    _date = State(initialValue: initialDate.flatMap(UnderstoodRows.day))
+    _picksOtherDate = State(initialValue: examDays == nil || (kept != nil && kept != firstDay))
+    _date = State(initialValue: kept.flatMap(UnderstoodRows.day))
   }
 
   var body: some View {
@@ -513,14 +521,17 @@ private struct DateQuestion: View {
     {
       examDate(examDays, first: first, firstDay: firstDay)
     } else {
+      let withoutDate = String(
+        localized: LocalizedStringResource(
+          "Without a date, you study everything at your own pace, and we show when you reach each milestone.",
+          table: "Onboarding", comment: "Under the date question"))
+
       StepHeader(
         subject: subject,
         title: Text(
           "Is there a date you're aiming for?", tableName: "Onboarding",
           comment: "Onboarding question"),
-        description: Text(
-          "Without a date, you study everything at your own pace, and we show when you reach each milestone.",
-          tableName: "Onboarding", comment: "Under the date question"))
+        description: Text([passedNote, withoutDate].compactMap { $0 }.joined(separator: " ")))
 
       Section {
         if let date {
@@ -534,9 +545,11 @@ private struct DateQuestion: View {
           ) {
             Text("Date", tableName: "Onboarding", comment: "Label of the goal's date picker")
           }
+
+          noSittingRows(for: date)
         } else {
           Button {
-            date = Calendar.current.date(byAdding: .month, value: 3, to: .now)
+            date = Calendar.isoLocal.date(byAdding: .month, value: 3, to: .now)
           } label: {
             LabeledContent {
               Text(
@@ -563,6 +576,52 @@ private struct DateQuestion: View {
     }
   }
 
+  /// Why the date shown before can't be planned; the screen then starts without it.
+  private var passedNote: String? {
+    guard let initialDate, let day = studyDate(initialDate) else {
+      return nil
+    }
+
+    switch problem {
+    case .passed:
+      return String(
+        localized: LocalizedStringResource(
+          "Your date, \(day.formatted(.studyDay.day().month(.wide).year())), has passed.",
+          table: "Onboarding", comment: "Above the date question when the goal's date has passed"))
+    case .today:
+      return String(
+        localized: LocalizedStringResource(
+          "Your date is today, so there are no days left to plan.", table: "Onboarding",
+          comment: "Above the date question when the goal's date is today"))
+    case .noSitting, nil:
+      return nil
+    }
+  }
+
+  /// The exam isn't held in the picked month: each closest sitting, one tap away.
+  @ViewBuilder
+  private func noSittingRows(for date: Date) -> some View {
+    if case .noSitting(let month, let closest) = problem,
+      isoDay(date).prefix(7) == month.prefix(7), let monthDay = studyDate(month)
+    {
+      Text(
+        "No exam date in \(monthDay.formatted(.studyDay.month(.wide)))", tableName: "Exam",
+        comment: "An exam with no sitting in the learner's month")
+
+      ForEach(closest, id: \.self) { sitting in
+        if let day = studyDate(sitting) {
+          Button {
+            onAnswer(["question": "targetDate", "targetDate": sitting])
+          } label: {
+            Text(
+              "Use \(day.formatted(.studyDay.month(.wide).day().year()))", tableName: "Exam",
+              comment: "Moves the plan to one of the closest sittings")
+          }
+        }
+      }
+    }
+  }
+
   @ViewBuilder
   private func examDate(
     _ examDays: Components.Schemas.Onboarding.ExamDaysPayload,
@@ -581,10 +640,13 @@ private struct DateQuestion: View {
         localized: LocalizedStringResource(
           "Your plan gets you ready by the first day.", table: "Onboarding",
           comment: "Under an exam's dates over several days"))
-    let estimated = String(
-      localized: LocalizedStringResource(
-        "This is the expected date until the notice confirms it.", table: "Onboarding",
-        comment: "Under an exam date estimated from past years"))
+    let estimated =
+      examDays.estimated
+      ? String(
+        localized: LocalizedStringResource(
+          "This is the expected date until the notice confirms it.", table: "Onboarding",
+          comment: "Under an exam date estimated from past years"))
+      : nil
 
     StepHeader(
       subject: subject,
@@ -594,7 +656,7 @@ private struct DateQuestion: View {
           tableName: "Onboarding",
           comment: "An exam held over two days")
       } ?? Text("Your exam is on \(date)", tableName: "Onboarding", comment: "An exam's date"),
-      description: Text(examDays.estimated ? "\(ready) \(estimated)" : ready))
+      description: Text([passedNote, ready, estimated].compactMap { $0 }.joined(separator: " ")))
 
     StepButtons(
       skipLabel: Text(
@@ -606,17 +668,67 @@ private struct DateQuestion: View {
     }
   }
 
-  /// After today, and no later than a plan reaches (3,650 days).
+  /// After the goal's today, and no later than a plan reaches (3,650 days).
   private var range: ClosedRange<Date> {
-    let calendar = Calendar.current
-    let today = calendar.startOfDay(for: .now)
-    let tomorrow = calendar.date(byAdding: .day, value: 1, to: today) ?? today
-    return tomorrow...(calendar.date(byAdding: .day, value: 3650, to: today) ?? today)
+    let calendar = Calendar.isoLocal
+    let goalToday = UnderstoodRows.day(today) ?? calendar.startOfDay(for: .now)
+    let tomorrow = calendar.date(byAdding: .day, value: 1, to: goalToday) ?? goalToday
+    return tomorrow...(calendar.date(byAdding: .day, value: 3650, to: goalToday) ?? goalToday)
+  }
+}
+
+/// Why the goal's date can't be planned as it stands, as core says.
+enum DateProblem: Equatable {
+  case passed
+  case today
+  /// The exam isn't held in `month`; `closest` are the nearest sittings still open.
+  case noSitting(month: String, closest: [String])
+
+  init?(_ payload: Components.Schemas.Onboarding.DateProblemPayload?) {
+    switch payload {
+    case .case1:
+      self = .passed
+    case .case2:
+      self = .today
+    case .case3(let noSitting):
+      self = .noSitting(month: noSitting.month, closest: noSitting.closest)
+    case nil:
+      return nil
+    }
+  }
+}
+
+enum GoalDate {
+  /// A date that passed or is today can't be planned, so the date screen starts without it.
+  static func kept(_ date: String?, problem: DateProblem?) -> String? {
+    switch problem {
+    case .passed, .today:
+      nil
+    case .noSitting, nil:
+      date
+    }
+  }
+
+  /// Core counts the goal's days in its zone, UTC without one, so the date screen does too.
+  static func today(now: Date, timeZone: String?) -> String {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = timeZone.flatMap(TimeZone.init(identifier:)) ?? .gmt
+    let parts = calendar.dateComponents([.year, .month, .day], from: now)
+    return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
+  }
+}
+
+extension Calendar {
+  /// ISO dates are Gregorian whatever calendar the learner reads dates in, with days in their zone.
+  static var isoLocal: Calendar {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = .current
+    return calendar
   }
 }
 
 func isoDay(_ date: Date) -> String {
-  let parts = Calendar.current.dateComponents([.year, .month, .day], from: date)
+  let parts = Calendar.isoLocal.dateComponents([.year, .month, .day], from: date)
   return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
 }
 
