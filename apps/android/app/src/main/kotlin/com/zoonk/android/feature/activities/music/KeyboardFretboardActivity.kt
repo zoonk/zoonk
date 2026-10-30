@@ -340,13 +340,11 @@ private fun SoundAsText(
 
     if (props.isLocked) return
 
-    if (props.cantListen) {
-        GhostAction(R.drawable.ic_hearing, stringResource(R.string.activities_music_can_listen_now)) { props.onCantListenChange(false) }
-    } else if (!isSoundUnavailable) {
+    if (props.cantListen || !isSoundUnavailable) {
         GhostAction(
-            R.drawable.ic_hearing_disabled,
-            stringResource(R.string.activities_music_cant_listen_now),
-        ) { props.onCantListenChange(true) }
+            if (props.cantListen) R.drawable.ic_hearing else R.drawable.ic_hearing_disabled,
+            stringResource(if (props.cantListen) R.string.activities_music_can_listen_now else R.string.activities_music_cant_listen_now),
+        ) { props.onCantListenChange(!props.cantListen) }
     }
 }
 
