@@ -8585,9 +8585,9 @@ msgid "Your exam is on {date} (and {second})"
 msgstr "Ton examen a lieu le {date} (et le {second})"
 
 #: src/onboarding/steps/date-step.tsx
-msgctxt "jYQxlD"
-msgid "Your date, {date}, has passed."
-msgstr "La date que tu as choisie, le {date}, est passée."
+msgctxt "cozhs1"
+msgid "{when, select, today {Your date is today, so there are no days left to plan.} other {Your date, {date}, has passed.}}"
+msgstr "{when, select, today {La date que tu as choisie tombe aujourd’hui, il ne reste donc plus de jours à planifier.} other {La date que tu as choisie, le {date}, est passée.}}"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "pwmWjt"

@@ -202,10 +202,17 @@ export type OnboardingLibraryCourse = {
   title: string;
 };
 
+/** Why the goal's date can't be planned as it stands: it's today or earlier, or its exam has no sitting that month. */
+export type OnboardingDateProblem =
+  | { kind: "passed" | "today" }
+  | ({ kind: "noSitting" } & NoSitting);
+
 export type OnboardingView = {
+  /** "passed" and "today" bring the `targetDate` screen back even when answered; "noSitting" until the learner answers it. */
+  dateProblem: OnboardingDateProblem | null;
   /** Studies only selected options; empty when the exam offers no choices. */
   examChoices: ExamChoiceView[];
-  /** First day defaults the plan date unless overridden; null outside public course exam starts. */
+  /** The next sitting's days, the first the plan's default date; null unless the exam has a public calendar. */
   examDays: { days: string[]; estimated: boolean } | null;
   /** knownSubjects must send notice names, not display short names. */
   examSubjects: { name: string; shortName: string | null }[];
@@ -217,8 +224,6 @@ export type OnboardingView = {
   goalIds: string[];
   /** Searched again after all questions; null before then or when no public course fits. */
   libraryCourse: OnboardingLibraryCourse | null;
-  /** The exam's closest sittings when none falls in the goal date's month; null otherwise. */
-  noSitting: NoSitting | null;
   /** Initial choice only; preserve course-page selections and never imply the recommendation guarantees plan coverage. */
   recommendedMinutes: number;
   /** Onboarding screens still ahead, in order, ending with the plan. */

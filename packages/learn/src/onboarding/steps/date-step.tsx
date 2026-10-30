@@ -2,7 +2,10 @@
 
 import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { type NoSitting } from "@zoonk/core/plans/view-contract";
-import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
+import {
+  type OnboardingAnswerInput,
+  type OnboardingDateProblem,
+} from "@zoonk/core/view-models/onboarding/contract";
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
@@ -19,7 +22,6 @@ type StepProps = {
   subject: string;
 };
 
-/** `passedNote` says the learner's date has passed; null when it hasn't. */
 type DateStepProps = StepProps & { passedNote: string | null };
 
 function ExamDateStep({
@@ -63,26 +65,30 @@ function ExamDateStep({
   );
 }
 
-/** A date that has passed is shown as passed, never kept as the learner's date. */
+/** A date that has passed, or is today, is said so and never kept as the learner's answer. */
 export function DateStep({
+  dateProblem,
   exam,
   initialDate,
-  noSitting,
   ...props
 }: StepProps & {
+  dateProblem: OnboardingDateProblem | null;
   exam: { days: string[]; estimated: boolean } | null;
   initialDate: string | null;
-  noSitting: NoSitting | null;
 }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
   const today = toLocalIsoDate(useMountTime());
-  const passed = initialDate !== null && initialDate <= today ? initialDate : null;
-  const kept = passed ? null : initialDate;
+  const gone = dateProblem?.kind === "passed" || dateProblem?.kind === "today";
+  const kept = gone ? null : initialDate;
 
-  const passedNote = passed
-    ? t("Your date, {date}, has passed.", { date: formatDate(passed, "long") })
-    : null;
+  const passedNote =
+    gone && initialDate
+      ? t(
+          "{when, select, today {Your date is today, so there are no days left to plan.} other {Your date, {date}, has passed.}}",
+          { date: formatDate(initialDate, "long"), when: dateProblem.kind },
+        )
+      : null;
 
   const [otherDate, setOtherDate] = useState(
     () => !exam || (kept !== null && kept !== exam.days[0]),
@@ -103,7 +109,7 @@ export function DateStep({
     <DateFieldStep
       {...props}
       initialDate={kept}
-      noSitting={noSitting}
+      noSitting={dateProblem?.kind === "noSitting" ? dateProblem : null}
       passedNote={passedNote}
       today={today}
     />

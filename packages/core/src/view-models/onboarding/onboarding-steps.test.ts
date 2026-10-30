@@ -120,19 +120,22 @@ describe(getOnboardingSteps, () => {
     ).toStrictEqual(["schedule", "plan"]);
   });
 
-  it("asks for a new date when the goal's has passed, even after the learner answered it", () => {
-    expect(
-      getOnboardingSteps({
-        goal: {
-          dateProblem: "passed",
-          details: { answered: ["purpose", "targetDate", "level", "schedule", "placement"] },
-          kind: "learn",
-          targetDate: "2020-10-01",
-        },
-        profile: SET_UP_PROFILE,
-      }),
-    ).toStrictEqual(["targetDate", "plan"]);
-  });
+  it.each(["passed", "today"] as const)(
+    "asks for a new date when the goal's is %s, even after the learner answered it",
+    (dateProblem) => {
+      expect(
+        getOnboardingSteps({
+          goal: {
+            dateProblem,
+            details: { answered: ["purpose", "targetDate", "level", "schedule", "placement"] },
+            kind: "learn",
+            targetDate: "2020-10-01",
+          },
+          profile: SET_UP_PROFILE,
+        }),
+      ).toStrictEqual(["targetDate", "plan"]);
+    },
+  );
 
   it("asks an exam for its date when no sitting falls in the month it understood, until the learner answers", () => {
     const goal = {

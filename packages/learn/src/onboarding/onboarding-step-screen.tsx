@@ -109,9 +109,9 @@ function QuestionStepScreen({
       return (
         <DateStep
           {...props}
+          dateProblem={view.dateProblem}
           exam={view.examDays}
           initialDate={view.goal.targetDate}
-          noSitting={view.noSitting}
           subject={subject}
         />
       );

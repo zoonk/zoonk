@@ -5,6 +5,7 @@ import { isPlacementSkipped } from "../../learner/placement/placement-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import {
   ONBOARDING_QUESTIONS,
+  type OnboardingDateProblem,
   type OnboardingQuestion,
   type OnboardingStep,
 } from "./onboarding-contract";
@@ -12,11 +13,7 @@ import {
 type GoalKind = "exam" | "explain" | "language" | "learn";
 
 type StepGoal = {
-  /**
-   * A passed date can't be planned, so it's asked again even when answered; an exam month with no
-   * sitting is asked unless the learner chose that date themselves.
-   */
-  dateProblem?: "noSitting" | "passed" | null;
+  dateProblem?: OnboardingDateProblem["kind"] | null;
   details: Record<string, unknown>;
   /** Omit unless the caller loaded notice/plan choices; omission never asks an exam-choice question. */
   hasUnpickedChoice?: boolean;
@@ -168,13 +165,17 @@ function picksBuddy({ answered, profile }: { answered: Set<string>; profile: Ste
   return !profile.hasEarlierGoals && !profile.hasBuddy && !answered.has("buddy");
 }
 
+function isDateGone(goal: StepGoal): boolean {
+  return goal.dateProblem === "passed" || goal.dateProblem === "today";
+}
+
 /** Preserves question order and treats skipped questions as answered. */
 export function getMissingQuestions(goal: StepGoal): OnboardingQuestion[] {
   const answered = new Set(getAnsweredQuestions(goal.details));
 
   return ONBOARDING_QUESTIONS.filter(
     (question) =>
-      (question === "targetDate" && goal.dateProblem === "passed") ||
+      (question === "targetDate" && isDateGone(goal)) ||
       (!answered.has(question) && isQuestionMissing({ goal, question })),
   );
 }

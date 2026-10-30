@@ -354,7 +354,27 @@ describe("the notice's day where the exam date shows", () => {
 
     expect(read).toMatchObject({
       onboarding: {
-        noSitting: { closest: ["2020-11-14", "2021-04-02"], month: "2021-02-01" },
+        dateProblem: {
+          closest: ["2020-11-14", "2021-04-02"],
+          kind: "noSitting",
+          month: "2021-02-01",
+        },
+        steps: ["targetDate", "plan"],
+      },
+    });
+  });
+
+  it("asks onboarding for a passed date again, leading with the exam's next sitting", async () => {
+    const goal = await plannedExam({
+      days: ["2020-10-16", "2020-11-14"],
+      details: { answered: ["targetDate", "level", "schedule", "buddy", "placement"] },
+      targetDate: "2020-09-20",
+    });
+
+    await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+      onboarding: {
+        dateProblem: { kind: "passed" },
+        examDays: { days: ["2020-10-16"], estimated: false },
         steps: ["targetDate", "plan"],
       },
     });

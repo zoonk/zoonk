@@ -84081,6 +84081,79 @@
       "Onboarding": {
         "type": "object",
         "properties": {
+          "dateProblem": {
+            "nullable": true,
+            "description": "Why the goal's date can't be planned as it stands, so the `targetDate` screen asks again: always for `passed` and `today`, which no plan can be made for (start the screen empty, saying the date passed or is today), and for `noSitting` until the learner answers (offer each of `closest` with one tap). Null when the date can be planned",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "passed"
+                    ],
+                    "description": "The goal's date is before the learner's today"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "today"
+                    ],
+                    "description": "The goal's date is today"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "closest": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "date",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                      "description": "Learner-local calendar date"
+                    },
+                    "description": "The first day of the closest sittings still open for registration, before and after `month`, each to offer with one tap (a setTargetDate change)"
+                  },
+                  "month": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                    "description": "The first day of the learner's month"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "noSitting"
+                    ],
+                    "description": "The exam is held several times a year, none in the date's month"
+                  }
+                },
+                "required": [
+                  "closest",
+                  "month",
+                  "kind"
+                ],
+                "additionalProperties": false
+              }
+            ],
+            "type": "object"
+          },
           "examChoices": {
             "type": "array",
             "items": {
@@ -84090,7 +84163,7 @@
           },
           "examDays": {
             "nullable": true,
-            "description": "The days of the exam's next sitting for a goal started from a public exam course, for the `targetDate` screen to lead with; null for other goals",
+            "description": "The days of the exam's next sitting, for the `targetDate` screen to lead with, when the exam has a public calendar (a goal started from a public exam course, or an exam goal whose notice is public); null for other goals",
             "type": "object",
             "properties": {
               "days": {
@@ -84196,34 +84269,6 @@
             ],
             "additionalProperties": false
           },
-          "noSitting": {
-            "nullable": true,
-            "description": "An exam held several times a year with no sitting in the month of the goal's date: the `targetDate` screen comes back until the learner answers it, and offers `closest` with one tap. Null otherwise",
-            "type": "object",
-            "properties": {
-              "closest": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "date",
-                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                  "description": "Learner-local calendar date"
-                },
-                "description": "The first day of the closest sittings still open for registration, before and after `month`, each to offer with one tap (a setTargetDate change)"
-              },
-              "month": {
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                "description": "The first day of the learner's month"
-              }
-            },
-            "required": [
-              "closest",
-              "month"
-            ],
-            "additionalProperties": false
-          },
           "recommendedMinutes": {
             "type": "integer",
             "minimum": 0,
@@ -84236,10 +84281,11 @@
             "items": {
               "$ref": "#/components/schemas/OnboardingStep"
             },
-            "description": "The screens still ahead, in order, always ending with the plan. A goal whose date is today or earlier gets the `targetDate` screen again, even when answered"
+            "description": "The screens still ahead, in order, always ending with the plan. `dateProblem` says why `targetDate` is back after an answer"
           }
         },
         "required": [
+          "dateProblem",
           "examChoices",
           "examDays",
           "examSubjects",
@@ -84248,7 +84294,6 @@
           "goal",
           "goalIds",
           "libraryCourse",
-          "noSitting",
           "recommendedMinutes",
           "steps"
         ],

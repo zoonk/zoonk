@@ -12,8 +12,31 @@ const onboardingStepSchema = z
   .enum([...ONBOARDING_QUESTIONS, "buddy", "placement", "plan"])
   .meta({ id: "OnboardingStep" });
 
+const dateProblemSchema = z
+  .discriminatedUnion("kind", [
+    z.object({
+      kind: z
+        .literal("passed")
+        .meta({ description: "The goal's date is before the learner's today" }),
+    }),
+    z.object({ kind: z.literal("today").meta({ description: "The goal's date is today" }) }),
+    noSittingSchema
+      .unwrap()
+      .extend({
+        kind: z
+          .literal("noSitting")
+          .meta({ description: "The exam is held several times a year, none in the date's month" }),
+      }),
+  ])
+  .nullable()
+  .meta({
+    description:
+      "Why the goal's date can't be planned as it stands, so the `targetDate` screen asks again: always for `passed` and `today`, which no plan can be made for (start the screen empty, saying the date passed or is today), and for `noSitting` until the learner answers (offer each of `closest` with one tap). Null when the date can be planned",
+  });
+
 export const onboardingResponseSchema = z
   .object({
+    dateProblem: dateProblemSchema,
     examChoices: z
       .array(examChoiceViewSchema)
       .meta({
@@ -35,7 +58,7 @@ export const onboardingResponseSchema = z
       .nullable()
       .meta({
         description:
-          "The days of the exam's next sitting for a goal started from a public exam course, for the `targetDate` screen to lead with; null for other goals",
+          "The days of the exam's next sitting, for the `targetDate` screen to lead with, when the exam has a public calendar (a goal started from a public exam course, or an exam goal whose notice is public); null for other goals",
       }),
     examSubjects: z
       .array(
@@ -80,10 +103,6 @@ export const onboardingResponseSchema = z
         description:
           "A published Library course that teaches the goal, searched again once every question is answered",
       }),
-    noSitting: noSittingSchema.meta({
-      description:
-        "An exam held several times a year with no sitting in the month of the goal's date: the `targetDate` screen comes back until the learner answers it, and offers `closest` with one tap. Null otherwise",
-    }),
     recommendedMinutes: z
       .int()
       .positive()
@@ -95,7 +114,7 @@ export const onboardingResponseSchema = z
       .array(onboardingStepSchema)
       .meta({
         description:
-          "The screens still ahead, in order, always ending with the plan. A goal whose date is today or earlier gets the `targetDate` screen again, even when answered",
+          "The screens still ahead, in order, always ending with the plan. `dateProblem` says why `targetDate` is back after an answer",
       }),
   })
   .meta({ id: "Onboarding" }) satisfies z.ZodType<OnboardingView>;

@@ -13,12 +13,14 @@ import { findActiveGoalId, loadGoalViews } from "../../goals/_utils/goal-view";
 import { readCourseStart } from "../../goals/course-start-details";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
+import { type NoSitting } from "../../plans/plan-view-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { findLearningProfileView } from "../../profile/_utils/learning-profile-view";
 import { findOnboardingGoalIds } from "./_utils/onboarding-goals";
 import { getGoalSize, getRecommendedMinutes } from "./_utils/recommended-minutes";
 import {
   ONBOARDING_QUESTIONS,
+  type OnboardingDateProblem,
   type OnboardingLibraryCourse,
   type OnboardingStep,
   type OnboardingView,
@@ -49,12 +51,20 @@ async function findExamNotice({
 }): Promise<{
   choices: OnboardingView["examChoices"];
   examDate: string | null;
+  examDays: OnboardingView["examDays"];
   fromMaterial: boolean;
-  noSitting: OnboardingView["noSitting"];
+  noSitting: NoSitting | null;
   subjects: OnboardingView["examSubjects"];
 }> {
   if (!examBlueprintId) {
-    return { choices: [], examDate: null, fromMaterial: false, noSitting: null, subjects: [] };
+    return {
+      choices: [],
+      examDate: null,
+      examDays: null,
+      fromMaterial: false,
+      noSitting: null,
+      subjects: [],
+    };
   }
 
   const [blueprint, choices] = await Promise.all([
@@ -76,6 +86,7 @@ async function findExamNotice({
   return {
     choices: stored ? listExamChoiceViews({ choices, structure: stored }) : [],
     examDate: blueprint?.examDate ? toIsoDate(blueprint.examDate) : null,
+    examDays: blueprint && !blueprint.ownerId ? getNextSittingDays(blueprint.edition) : null,
     fromMaterial: Boolean(blueprint?.ownerId),
     noSitting: getNoSitting({ blueprint, details, goalDate, today }),
     subjects: subjects.map((subject) => ({
@@ -83,6 +94,15 @@ async function findExamNotice({
       shortName: subject.shortName ?? null,
     })),
   };
+}
+
+function getNextSittingDays(edition: unknown): OnboardingView["examDays"] {
+  const { today } = getExamCalendarDay({ edition, now: new Date() });
+  const found = getPlanExamDays({ details: {}, edition, goalDate: null, today });
+
+  return found.days.length > 0
+    ? { days: found.days.map((day) => day.date), estimated: found.estimated }
+    : null;
 }
 
 async function findCourseExamDays(goal: {
@@ -94,17 +114,7 @@ async function findCourseExamDays(goal: {
       ? await loadCourseExam(goal.primaryCourseId)
       : null;
 
-  if (!exam) {
-    return null;
-  }
-
-  const { edition } = exam.blueprint;
-  const { today } = getExamCalendarDay({ edition, now: new Date() });
-  const found = getPlanExamDays({ details: {}, edition, goalDate: null, today });
-
-  return found.days.length > 0
-    ? { days: found.days.map((day) => day.date), estimated: found.estimated }
-    : null;
+  return exam ? getNextSittingDays(exam.blueprint.edition) : null;
 }
 
 function getDateProblem({
@@ -113,14 +123,18 @@ function getDateProblem({
   today,
 }: {
   goalDate: string | null;
-  noSitting: OnboardingView["noSitting"];
+  noSitting: NoSitting | null;
   today: string;
-}) {
-  if (goalDate !== null && goalDate <= today) {
-    return "passed";
+}): OnboardingDateProblem | null {
+  if (goalDate === today) {
+    return { kind: "today" };
   }
 
-  return noSitting ? "noSitting" : null;
+  if (goalDate !== null && goalDate < today) {
+    return { kind: "passed" };
+  }
+
+  return noSitting ? { kind: "noSitting", ...noSitting } : null;
 }
 
 const QUESTIONS = new Set<OnboardingStep>(ONBOARDING_QUESTIONS);
@@ -179,7 +193,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
   );
 
-  const [profile, activeGoalId, goalIds, notice, examDays] = await Promise.all([
+  const [profile, activeGoalId, goalIds, notice, courseExamDays] = await Promise.all([
     findLearningProfileView(userId),
     findActiveGoalId(userId),
     findOnboardingGoalIds(goal),
@@ -196,9 +210,11 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     return { status: "notFound" };
   }
 
+  const dateProblem = getDateProblem({ goalDate, noSitting: notice.noSitting, today });
+
   const steps = getOnboardingSteps({
     goal: {
-      dateProblem: getDateProblem({ goalDate, noSitting: notice.noSitting, today }),
+      dateProblem: dateProblem?.kind ?? null,
       details,
       hasUnpickedChoice: notice.choices.some((choice) => choice.subject === null),
       kind: goal.kind,
@@ -225,14 +241,14 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
   return {
     onboarding: {
       examChoices: notice.choices,
-      examDays,
+      dateProblem,
+      examDays: courseExamDays ?? notice.examDays,
       examSubjects: notice.subjects,
       followUps: getFollowUpQuestions(details),
       generationId: goal.generationRunId,
       goal: view,
       goalIds,
       libraryCourse,
-      noSitting: notice.noSitting,
       // The time a day the course's page had picked stays the learner's until they change it.
       recommendedMinutes:
         courseStart?.dailyMinutes ??
