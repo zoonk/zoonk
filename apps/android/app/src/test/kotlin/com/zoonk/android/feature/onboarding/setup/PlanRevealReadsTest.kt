@@ -20,6 +20,7 @@ import com.zoonk.android.feature.onboarding.planOf
 import com.zoonk.android.feature.onboarding.syllabusOf
 import com.zoonk.android.feature.plan.LivePlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
@@ -74,6 +75,7 @@ class PlanRevealReadsTest {
                             null,
                             plans,
                             rememberAppNavigator(),
+                            AppRoute.GoalSetup(goal.id.toString()),
                         )
                     }
                 }

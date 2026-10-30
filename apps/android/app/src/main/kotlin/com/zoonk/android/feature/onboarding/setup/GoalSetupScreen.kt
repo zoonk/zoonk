@@ -88,7 +88,9 @@ fun GoalSetupScreen(
         LocalSetupDrafts provides signedIn?.session?.let { SetupDrafts(app.drafts, it) },
         LocalSetupSpeech provides app.speech,
     ) {
-        GoalSetupScreen(route, app.onboarding, app.plans, app.mocks, isGuest = signedIn?.isGuest == true, navigator, prepareToday = { app.today.today.refresh() })
+        GoalSetupScreen(route, app.onboarding, app.plans, app.mocks, isGuest = signedIn?.isGuest == true, navigator, prepareToday = {
+            app.today.today.refresh()
+        })
     }
 }
 
@@ -178,7 +180,21 @@ fun GoalSetupScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
-                        step?.let { SetupStep(it, shown.value, vm, store, plans, mocks, isGuest, navigator, route, asideBeside, prepareToday) }
+                        step?.let {
+                            SetupStep(
+                                it,
+                                shown.value,
+                                vm,
+                                store,
+                                plans,
+                                mocks,
+                                isGuest,
+                                navigator,
+                                route,
+                                asideBeside,
+                                prepareToday,
+                            )
+                        }
                     }
                 }
 
@@ -214,7 +230,23 @@ private fun ColumnScope.SetupStep(
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 
     CompositionLocalProvider(LocalPlanStart provides planStart) {
-        QuestionStep(step, view, vm, store, plans, mocks, isGuest, navigator, route, subject, pending, run, onRetryRun, asideBeside, prepareToday)
+        QuestionStep(
+            step,
+            view,
+            vm,
+            store,
+            plans,
+            mocks,
+            isGuest,
+            navigator,
+            route,
+            subject,
+            pending,
+            run,
+            onRetryRun,
+            asideBeside,
+            prepareToday,
+        )
     }
 }
 
