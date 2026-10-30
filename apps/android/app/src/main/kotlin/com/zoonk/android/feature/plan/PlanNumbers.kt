@@ -131,7 +131,7 @@ internal fun PlanNumbers(
                 when (standing) {
                     is Standing.Preparation -> PreparationDetails(standing.progress, forExam = true, lessons = null, links = links)
                     is Standing.Progress -> PreparationDetails(standing.progress, forExam = false, lessons = standing, links = links)
-                    is Standing.Language -> LanguageDetails(standing, links.closing { open = null })
+                    is Standing.Language -> LanguageDetails(standing, links)
                 }
             }
         }

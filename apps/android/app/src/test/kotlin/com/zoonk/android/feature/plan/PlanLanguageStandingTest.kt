@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.plan
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
@@ -49,16 +50,22 @@ class PlanLanguageStandingTest {
             }
         compose.setContent {
             navigator = rememberAppNavigator()
+            val pages = rememberSaveableStateHolder()
             ZoonkTheme {
-                PlanContent(
-                    page = page,
-                    standing = standing,
-                    structure = null,
-                    links = PlanLinks(navigator, page),
-                    resume = Resume.Plain,
-                    isSaving = false,
-                    onSetStatus = {},
-                )
+                // As in the shell's display, the plan leaves composition, keeping its saved state, while a page or task covers it.
+                if (navigator.currentRoute == AppRoute.Today) {
+                    pages.SaveableStateProvider("plan") {
+                        PlanContent(
+                            page = page,
+                            standing = standing,
+                            structure = null,
+                            links = PlanLinks(navigator, page),
+                            resume = Resume.Plain,
+                            isSaving = false,
+                            onSetStatus = {},
+                        )
+                    }
+                }
             }
         }
     }
@@ -134,6 +141,17 @@ class PlanLanguageStandingTest {
     }
 
     @Test
+    fun backFromSpeakingPracticeReturnsToTheSheet() {
+        show(languageProgress().copy(speaking = speakingPaper()))
+        openSheet()
+        compose.onNodeWithText("Exam-style speaking").performScrollTo().performClick()
+
+        compose.runOnIdle { navigator.back() }
+
+        compose.onNodeWithText("Your level").assertIsDisplayed()
+    }
+
+    @Test
     fun theSpeakingMockStartsOnlyOnTheTapAndOpensItsCall() {
         show(languageProgress(speakingMock = "ielts"))
         openSheet()
@@ -146,5 +164,6 @@ class PlanLanguageStandingTest {
             assertEquals(listOf<CallRequest>(CallRequest.SpeakingMock(UUID.fromString(GOAL))), requests)
             assertEquals(AppRoute.Conversation(started.toString()), navigator.currentRoute)
         }
+        compose.onNodeWithText("Your level").assertDoesNotExist()
     }
 }
