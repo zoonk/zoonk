@@ -300,7 +300,11 @@ fun PlanOp.toOperation(): PlanOperation? =
 
         is PlanOp.MoveWeeklyEvent -> {
             PlanOperation.PlanOperationOneOf3Value(
-                PlanOperationOneOf3(from.toKotlinLocalDate(), PlanOperationOneOf3.Kind.MOVE_WEEKLY_EVENT, to.toKotlinLocalDate()),
+                PlanOperationOneOf3(
+                    from = from.toKotlinLocalDate(),
+                    kind = PlanOperationOneOf3.Kind.MOVE_WEEKLY_EVENT,
+                    to = to.toKotlinLocalDate(),
+                ),
             )
         }
 
@@ -313,7 +317,7 @@ fun PlanOp.toOperation(): PlanOperation? =
                 PlanOperationOneOf5(
                     areas,
                     PlanOperationOneOf5.Kind.FOCUS_AREAS,
-                    parts.map { PlanFocusPart(it.area, it.name, it.skillIds) }.ifEmpty { null },
+                    parts.map { PlanFocusPart(area = it.area, name = it.name, skillIds = it.skillIds) }.ifEmpty { null },
                 ),
             )
         }
