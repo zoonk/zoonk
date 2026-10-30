@@ -56,13 +56,13 @@ describe(findTeachingChapters, () => {
     expect(generateText).toHaveBeenCalledOnce();
   });
 
-  it("asks again when a chapter doesn't exist, and keeps a skill still unplaced after the band", async () => {
+  it("asks again when a chapter doesn't exist, and keeps the answer that names real ones", async () => {
     vi.mocked(generateText)
       .mockResolvedValueOnce(
         answer({ call: { after: 0, chapter: 7 }, stay: { after: 9, chapter: null } }),
       )
       .mockResolvedValueOnce(
-        answer({ call: { after: 0, chapter: 5 }, stay: { after: 0, chapter: 1 } }),
+        answer({ call: { after: 2, chapter: null }, stay: { after: 0, chapter: 1 } }),
       );
 
     const { data } = await find(["stay", "call"]);
@@ -73,5 +73,14 @@ describe(findTeachingChapters, () => {
       { after: 1, chapter: 1, key: "stay" },
       { after: 2, chapter: null, key: "call" },
     ]);
+  });
+
+  it("fails instead of writing a chapter when no draft names a real one", async () => {
+    vi.mocked(generateText).mockResolvedValue(
+      answer({ call: { after: 0, chapter: 5 }, stay: { after: 0, chapter: 1 } }),
+    );
+
+    await expect(find(["stay", "call"])).rejects.toThrow(/doesn't have/u);
+    expect(generateText).toHaveBeenCalledTimes(2);
   });
 });

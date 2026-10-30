@@ -85,20 +85,7 @@ function countInvalid({
   return skills.filter(({ key }) => !isValid({ answer: answers[key], count })).length;
 }
 
-/** A skill whose answer is still invalid after a second draft gets a chapter after the band. */
-function toTeachingChapter({
-  answer,
-  count,
-  key,
-}: {
-  answer?: Answer;
-  count: number;
-  key: string;
-}): TeachingChapter {
-  if (!answer || !isValid({ answer, count })) {
-    return { after: count, chapter: null, key };
-  }
-
+function toTeachingChapter({ answer, key }: { answer: Answer; key: string }): TeachingChapter {
   return { after: answer.chapter ?? answer.after, chapter: answer.chapter, key };
 }
 
@@ -144,10 +131,16 @@ export async function findTeachingChapters(params: TeachingChaptersParams) {
     draft: () => draftAnswers({ params, systemPrompt, userPrompt }),
   });
 
+  // Only an answer that names no chapter may write one: a wrong number would repeat a topic.
+  if (countInvalid({ answers: kept.answers, count, skills: params.skills }) > 0) {
+    throw new Error("The teaching chapters named a chapter the band doesn't have.");
+  }
+
   return {
-    data: params.skills.map(({ key }) =>
-      toTeachingChapter({ answer: kept.answers[key], count, key }),
-    ),
+    data: params.skills.flatMap(({ key }) => {
+      const answer = kept.answers[key];
+      return answer ? [toTeachingChapter({ answer, key })] : [];
+    }),
     provenance: kept.provenance,
     systemPrompt,
     usage: kept.usage,
