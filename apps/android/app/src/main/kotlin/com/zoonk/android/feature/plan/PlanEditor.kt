@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.plan
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -388,8 +387,6 @@ internal fun PlanChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     role: Role? = null,
-    @DrawableRes trailing: Int? = null,
-    description: String? = null,
     enabled: Boolean = true,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -398,32 +395,13 @@ internal fun PlanChip(
         selected = selected,
         onClick = onClick,
         enabled = enabled,
-        label = {
-            if (description == null) {
-                Text(text)
-            } else {
-                Column(Modifier.padding(vertical = 6.dp)) {
-                    Text(text)
-                    Text(description, style = MaterialTheme.typography.labelSmall)
-                }
-            }
-        },
+        label = { Text(text) },
         modifier = if (role != null) modifier.semantics { this.role = role } else modifier,
         leadingIcon =
             if (selected) {
                 { Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(FilterChipDefaults.IconSize)) }
             } else {
                 null
-            },
-        trailingIcon =
-            trailing?.let {
-                {
-                    Icon(
-                        painterResource(it),
-                        contentDescription = null,
-                        Modifier.size(FilterChipDefaults.IconSize),
-                    )
-                }
             },
         colors =
             FilterChipDefaults.filterChipColors(
