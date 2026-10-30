@@ -127,24 +127,29 @@ function decimalSeparator(locale: string): string {
 
 const SPACES = /[\s\u00A0\u202F]/gu;
 
-const GROUPED_DIGITS = /^[+-]?\d{1,3}(?:[.,]\d{3})+$/u;
+const GROUPED_DIGITS = /^[+-]?[1-9]\d{0,2}(?:[.,]\d{3})+$/u;
 
 /**
  * A lone separator is a decimal point unless it groups thousands the locale's way, like "1,000" in
- * English or "1.000" in Portuguese.
+ * English or "1.000" in Portuguese. "0,125" is always a decimal.
  */
 function normalizeOneSeparator(text: string, separator: string, locale: string): string {
   const groupsThousands = decimalSeparator(locale) !== separator && GROUPED_DIGITS.test(text);
   return groupsThousands ? text.replaceAll(separator, "") : text.replace(separator, ".");
 }
 
+/**
+ * With both marks, the last is the decimal point in any language, since a learner may type their
+ * region's notation: "1.234,5" and "1,234.5" both read 1234.5.
+ */
 function normalizeSeparators(text: string, locale: string): string {
   const [hasDot, hasComma] = [text.includes("."), text.includes(",")];
 
   if (hasDot && hasComma) {
-    return decimalSeparator(locale) === ","
-      ? text.replaceAll(".", "").replace(",", ".")
-      : text.replaceAll(",", "");
+    const [point, grouping] =
+      text.lastIndexOf(".") > text.lastIndexOf(",") ? [".", ","] : [",", "."];
+
+    return text.replaceAll(grouping, "").replaceAll(point, ".");
   }
 
   if (hasComma) {

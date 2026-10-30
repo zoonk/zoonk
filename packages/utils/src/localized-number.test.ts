@@ -112,15 +112,34 @@ describe(parseLocalizedNumber, () => {
     expect(parseLocalizedNumber({ locale: "en", text: "3.5" })).toBe(3.5);
     expect(parseLocalizedNumber({ locale: "en", text: "3,5" })).toBe(3.5);
     expect(parseLocalizedNumber({ locale: "pt", text: "3,5" })).toBe(3.5);
+    expect(parseLocalizedNumber({ locale: "pt", text: "12,5" })).toBe(12.5);
+    expect(parseLocalizedNumber({ locale: "de", text: "2,5" })).toBe(2.5);
     expect(parseLocalizedNumber({ locale: "pt", text: "0.25" })).toBe(0.25);
     expect(parseLocalizedNumber({ locale: "en", text: "3," })).toBe(3);
   });
 
   it("reads thousands grouped the locale's way", () => {
     expect(parseLocalizedNumber({ locale: "en", text: "1,000" })).toBe(1000);
+    expect(parseLocalizedNumber({ locale: "en", text: "12,000" })).toBe(12_000);
+    expect(parseLocalizedNumber({ locale: "en", text: "1,234,567" })).toBe(1_234_567);
     expect(parseLocalizedNumber({ locale: "pt", text: "1.000" })).toBe(1000);
+    expect(parseLocalizedNumber({ locale: "pt", text: "12.000" })).toBe(12_000);
     expect(parseLocalizedNumber({ locale: "en", text: "3,869.68" })).toBe(3869.68);
     expect(parseLocalizedNumber({ locale: "pt", text: "3.869,68" })).toBe(3869.68);
+  });
+
+  it("takes the last mark as the decimal point when both appear, in any language", () => {
+    expect(parseLocalizedNumber({ locale: "en", text: "1.234,5" })).toBe(1234.5);
+    expect(parseLocalizedNumber({ locale: "pt", text: "1,234.5" })).toBe(1234.5);
+    expect(parseLocalizedNumber({ locale: "de", text: "1.234,5" })).toBe(1234.5);
+    expect(parseLocalizedNumber({ locale: "de", text: "1,234.5" })).toBe(1234.5);
+  });
+
+  it("never reads a number starting with 0 as grouped", () => {
+    expect(parseLocalizedNumber({ locale: "en", text: "0,125" })).toBe(0.125);
+    expect(parseLocalizedNumber({ locale: "en", text: "-0,125" })).toBe(-0.125);
+    expect(parseLocalizedNumber({ locale: "pt", text: "0.125" })).toBe(0.125);
+    expect(parseLocalizedNumber({ locale: "de", text: "0,125" })).toBe(0.125);
   });
 
   it("accepts signs, the typographic minus and spaces", () => {
@@ -132,6 +151,7 @@ describe(parseLocalizedNumber, () => {
   it("rejects anything that isn't one plain number", () => {
     expect(parseLocalizedNumber({ locale: "en", text: "" })).toBeNull();
     expect(parseLocalizedNumber({ locale: "en", text: "3.5.1" })).toBeNull();
+    expect(parseLocalizedNumber({ locale: "en", text: "1.234,5,6" })).toBeNull();
     expect(parseLocalizedNumber({ locale: "en", text: "12 kg" })).toBeNull();
     expect(parseLocalizedNumber({ locale: "en", text: "1e5" })).toBeNull();
   });
