@@ -59,6 +59,41 @@
         }
       }
     },
+    "%@ a day, %@ on weekends" : {
+      "comment" : "How long the learner studies each weekday, then on Saturdays and Sundays",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ am Tag, %2$@ am Wochenende"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ a day, %2$@ on weekends"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ al día, %2$@ los fines de semana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ par jour en semaine, %2$@ le week-end"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ por dia, %2$@ nos fins de semana"
+          }
+        }
+      }
+    },
     "%@ out of %@" : {
       "comment" : "A score on its scale, such as 7 out of 10",
       "localizations" : {
@@ -2017,35 +2052,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "São cerca de %@ de leitura e escuta, e uma frase em voz alta, para seu plano começar no seu nível."
-          }
-        }
-      }
-    },
-    "about %@ of study" : {
-      "comment" : "The study time a plan adds up to",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "etwa %@ Lernzeit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "aproximadamente %@ de estudio"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "environ %@ d’étude"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cerca de %@ de estudo"
           }
         }
       }

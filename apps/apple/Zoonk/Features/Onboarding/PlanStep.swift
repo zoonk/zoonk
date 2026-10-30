@@ -486,32 +486,28 @@ private struct PlanReveal: View {
           ))
     }
 
-    facts.append(
-      String(
-        localized: "\(planDurationText(minutes: Double(schedule.dailyMinutes))) a day",
-        table: "Onboarding", comment: "How long the learner studies each day"))
-
-    if let study = studyMinutes, study > 0 {
-      facts.append(
-        String(
-          localized: "about \(planDurationText(minutes: study)) of study", table: "Onboarding",
-          comment: "The study time a plan adds up to"))
-    }
-
-    return facts
+    return facts + scheduleFacts
   }
 
-  /// To five minutes under two hours and to the hour above, as "about" says.
-  private var studyMinutes: Double? {
-    guard let numbers = plan.numbers else {
-      return nil
-    }
+  /// The time a day and, unless it's every day, which days: what the plan's settings say.
+  private var scheduleFacts: [String] {
+    let schedule = plan.schedule
+    let weekdays = planDurationText(minutes: Double(schedule.shape.weekdays))
+    let time =
+      if let weekend = schedule.shape.weekend {
+        String(
+          localized:
+            "\(weekdays) a day, \(planDurationText(minutes: Double(weekend))) on weekends",
+          table: "Onboarding",
+          comment: "How long the learner studies each weekday, then on Saturdays and Sundays")
+      } else {
+        String(
+          localized: "\(weekdays) a day", table: "Onboarding",
+          comment: "How long the learner studies each day")
+      }
 
-    let minutes =
-      numbers.context.targetDate == nil
-      ? numbers.scheduledMinutes : (numbers.beforeDeadlineMinutes ?? 0)
-
-    return minutes >= 120 ? (minutes / 60).rounded() * 60 : (minutes / 5).rounded() * 5
+    let everyDay = schedule.weekdayMinutes.allSatisfy { $0 > 0 }
+    return everyDay ? [time] : [time, studyDaysText(schedule.weekdayMinutes)]
   }
 }
 
