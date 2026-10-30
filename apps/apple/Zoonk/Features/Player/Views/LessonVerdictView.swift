@@ -24,11 +24,8 @@ struct LessonVerdictView: View {
           text: spelling)
       }
 
-      if !result.isCorrect, let correctAnswer = result.correctAnswer, step.kind != .typedAnswer {
-        LabeledText(
-          label: Text(
-            "Correct answer", tableName: "Player", comment: "Before the right answer after a miss"),
-          text: correctAnswer)
+      if correctReason == nil {
+        correctAnswerLine
       }
 
       if case .typedAnswer(let content) = step.content, !result.isCorrect {
@@ -62,6 +59,13 @@ struct LessonVerdictView: View {
           .font(.subheadline)
       }
 
+      if let correctReason {
+        correctAnswerLine
+
+        LessonTextBlocks(correctReason)
+          .font(.subheadline)
+      }
+
       if case .typedAnswer = step.content, !result.isCorrect, result.checked, !result.isSampleAnswer
       {
         LessonExplainAnswerView(step: step, store: store)
@@ -77,6 +81,27 @@ struct LessonVerdictView: View {
     .padding()
     .background(verdict.tint.opacity(0.15), in: .rect(cornerRadius: 20))
     .accessibilityElement(children: .contain)
+  }
+
+  @ViewBuilder
+  private var correctAnswerLine: some View {
+    if !result.isCorrect, let correctAnswer = result.correctAnswer, step.kind != .typedAnswer {
+      LabeledText(
+        label: Text(
+          "Correct answer", tableName: "Player", comment: "Before the right answer after a miss"),
+        text: correctAnswer)
+    }
+  }
+
+  /// Main's activity feedback: after a missed choice, the picked option's reason, then the right
+  /// option with its own.
+  private var correctReason: String? {
+    guard !result.isCorrect, case .activity(let content) = step.content,
+      case .choice(_, let options, _, _) = content.check,
+      let reason = options.first(where: \.isCorrect)?.reason, !reason.isEmpty
+    else { return nil }
+
+    return reason
   }
 
   private var notes: Text {
