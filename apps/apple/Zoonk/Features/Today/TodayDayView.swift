@@ -19,6 +19,7 @@ struct TodayDayView: View {
     case keepLearning
     case main
     case planChange
+    case prepare
   }
 
   var body: some View {
@@ -60,7 +61,10 @@ struct TodayDayView: View {
   @ViewBuilder
   private var day: some View {
     TodaySessionSection(
-      view: view, busy: busy, failed: failed, disclosures: $disclosures, open: open)
+      view: view, busy: busy, failed: failed, disclosures: $disclosures, open: open
+    ) {
+      perform(.prepare) { await store.prepareLessons(in: view) }
+    }
 
     if !view.upNextLessons.isEmpty {
       TodayUpNextSection(view: view, isBusy: busy == .keepLearning) {

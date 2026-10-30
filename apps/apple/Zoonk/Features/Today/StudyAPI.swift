@@ -33,6 +33,8 @@ protocol StudyAPIClient: Sendable {
   /// Only on the learner's tap, since it runs AI.
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome
   func prepareSession(token: String, sessionID: String) async throws
+  /// Only on the learner's tap, since it outlines the day's lessons with AI.
+  func prepareLessons(token: String, goalID: String) async throws
   func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws
   func markMilestoneShown(token: String, milestoneID: String) async throws
   func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap
@@ -351,6 +353,10 @@ struct StudyAPI: StudyAPIClient {
         throw APIError.unavailable
       }
     }
+  }
+
+  func prepareLessons(token: String, goalID: String) async throws {
+    try await OnboardingAPI(clients: clients).prepareLessons(goalID: goalID, token: token)
   }
 
   func markMilestoneShown(token: String, milestoneID: String) async throws {

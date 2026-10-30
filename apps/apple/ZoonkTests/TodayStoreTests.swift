@@ -13,6 +13,8 @@ final class TodayStoreTests: XCTestCase {
       try day(blocks: [], nextPosition: nil, emptyDay: "lessonsComing").state, .waiting)
     XCTAssertEqual(try day(blocks: [], nextPosition: nil, emptyDay: "nothingNew").state, .ahead)
     XCTAssertEqual(
+      try day(blocks: [], nextPosition: nil, emptyDay: "lessonsToPrepare").state, .prepare)
+    XCTAssertEqual(
       try day(blocks: [block(position: 0)], nextPosition: 0, limitReached: true).state, .limit)
   }
 
@@ -140,6 +142,26 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(destination, .lessonWait(blockID: "b1", writing: .preparing))
     let prepared = await api.preparedSessions
     XCTAssertEqual(prepared, ["s1"])
+  }
+
+  func testGettingTodaysLessonsAsksForThemAndReadsTodayAgain() async throws {
+    let view = try today(
+      session: day(blocks: [], nextPosition: nil, emptyDay: "lessonsToPrepare"))
+    let api = StudyAPIStub(today: .day(view))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    let result = await store.prepareLessons(in: view)
+    await store.today.load()
+
+    guard case .done = result else {
+      return XCTFail("asking for the day's lessons saves")
+    }
+
+    let prepared = await api.preparedGoals
+    XCTAssertEqual(prepared, ["g1"])
+    let reads = await api.todayReads
+    XCTAssertEqual(reads, 2, "the next read says the lessons are coming")
   }
 
   func testPlannedChallengeOpensOnItsIntro() async throws {
@@ -466,6 +488,7 @@ private actor StudyAPIStub: StudyAPIClient {
   private(set) var startedBlocks: [String] = []
   private(set) var writtenLessons: [String] = []
   private(set) var preparedSessions: [String] = []
+  private(set) var preparedGoals: [String] = []
   private(set) var readinessReads: [String] = []
   private(set) var todayReads = 0
 
@@ -579,6 +602,11 @@ private actor StudyAPIStub: StudyAPIClient {
   func prepareSession(token: String, sessionID: String) async throws {
     preparedSessions.append(sessionID)
   }
+
+  func prepareLessons(token: String, goalID: String) async throws {
+    preparedGoals.append(goalID)
+  }
+
   func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {}
   func markMilestoneShown(token: String, milestoneID: String) async throws {}
 

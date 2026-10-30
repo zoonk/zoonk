@@ -165,6 +165,15 @@ final class TodayStore {
     }
   }
 
+  /// The next read says they're coming, and Today follows them from there.
+  func prepareLessons(in view: TodayView) async -> MutationResult<Void> {
+    let goalID = view.session.goalId ?? view.goal.id
+
+    return await cache.mutate(invalidating: [.userSession]) { identity in
+      try await api.prepareLessons(token: identity.bearerToken, goalID: goalID)
+    }
+  }
+
   func catchUp(in view: TodayView) async -> MutationResult<Void> {
     await cache.mutate(invalidating: [.goals, .userSession]) { identity in
       let sessionID = try await keptSessionID(in: view, token: identity.bearerToken)

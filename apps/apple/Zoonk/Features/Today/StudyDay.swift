@@ -145,6 +145,10 @@ struct StudyDay: Decodable, Equatable, Sendable {
       return .waiting
     }
 
+    if studyDay && emptyDay == .lessonsToPrepare {
+      return .prepare
+    }
+
     if nextBlock != nil && !limitReached {
       return .underway
     }
@@ -165,6 +169,8 @@ enum DayState: Equatable, Sendable {
   case ahead
   case done
   case limit
+  /// Its lessons wait for the learner to ask for them.
+  case prepare
   case rest
   case underway
   case waiting

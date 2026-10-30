@@ -17,6 +17,7 @@ struct TodaySessionSection: View {
   let failed: TodayDayView.Tap?
   @Binding var disclosures: TodayDisclosures
   let open: (StudyBlock, Bool) -> Void
+  let prepare: () -> Void
 
   /// Done blocks shown before folding them into one row, and upcoming ones before "+N more".
   private let doneRows = 2
@@ -261,6 +262,10 @@ struct TodaySessionSection: View {
       return TodayMainAction(kind: .summary, isBusy: false, failed: false) {
         router.open(.session)
       }
+    case .prepare:
+      return TodayMainAction(
+        kind: .prepareLessons, isBusy: busy == .prepare, failed: failed == .prepare,
+        action: prepare)
     case .ahead, .limit, .rest, .waiting:
       return nil
     }
@@ -272,6 +277,7 @@ struct TodayMainAction: View {
     case continueSession
     case keepLearning
     case practice(minutes: Int)
+    case prepareLessons
     case seePlan
     case startSession
     case summary
@@ -299,14 +305,23 @@ struct TodayMainAction: View {
       .disabled(isBusy)
 
       if failed {
-        Text(
-          "We couldn't open the next step. Try again.", tableName: "Today",
-          comment: "Opening the day's next step failed"
-        )
-        .font(.footnote)
-        .foregroundStyle(.destructive)
+        failure
+          .font(.footnote)
+          .foregroundStyle(.destructive)
       }
     }
+  }
+
+  private var failure: Text {
+    if case .prepareLessons = kind {
+      return Text(
+        "That didn't save. Try again.", tableName: "Today",
+        comment: "A change couldn't be saved")
+    }
+
+    return Text(
+      "We couldn't open the next step. Try again.", tableName: "Today",
+      comment: "Opening the day's next step failed")
   }
 
   private var title: Text {
@@ -319,6 +334,10 @@ struct TodayMainAction: View {
       Text(
         "Practice for \(minutes) minutes", tableName: "Today",
         comment: "Adds practice on a day with nothing new")
+    case .prepareLessons:
+      Text(
+        "Get today's lessons", tableName: "Today",
+        comment: "Asks for the day's lessons, which aren't written yet")
     case .seePlan:
       Text("See your plan", tableName: "Today", comment: "Opens the Plan")
     case .startSession:
@@ -573,6 +592,12 @@ private struct TodayDayStatus: View {
       clause = String(
         localized: "They show up here on their own.", table: "Today",
         comment: "The day's lessons are being outlined")
+    case .prepare:
+      systemImage = "clock"
+      sentence = String(
+        localized: "Today's lessons aren't written yet.", table: "Today",
+        comment: "The day's lessons wait for the learner to ask for them")
+      clause = nil
     case .limit:
       systemImage = "hourglass"
       sentence = String(

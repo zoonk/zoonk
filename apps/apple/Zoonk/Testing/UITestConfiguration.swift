@@ -444,6 +444,10 @@
       throw APIError.network
     }
 
+    func prepareLessons(token: String, goalID: String) async throws {
+      throw APIError.network
+    }
+
     func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {
       throw APIError.network
     }
