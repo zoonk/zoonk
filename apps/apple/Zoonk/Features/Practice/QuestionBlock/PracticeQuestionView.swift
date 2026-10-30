@@ -432,7 +432,7 @@ enum PracticeAnswerText {
       }
       .joined(separator: "; ")
     case .number(let number):
-      let value = number.formatted(.number)
+      let value = number.formatted(.number.locale(.courseLanguage))
       guard let unit = question.unit else { return value }
       return unit.position == .prefix ? "\(unit.symbol) \(value)" : "\(value) \(unit.symbol)"
     case .dontKnow, .partial, .typing:

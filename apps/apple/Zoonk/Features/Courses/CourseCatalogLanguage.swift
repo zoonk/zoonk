@@ -6,6 +6,12 @@ func currentCourseCatalogLanguage() -> String {
   courseCatalogLanguage(preferredLocalizations: Bundle.main.preferredLocalizations)
 }
 
+extension Locale {
+  /// Lessons write and read numbers the course language's way, as main does, so a readout never
+  /// says "12.000" beside lesson text saying "12,000". The app's own screens keep the device region.
+  static let courseLanguage = Locale(identifier: currentCourseCatalogLanguage())
+}
+
 func courseCatalogLanguage(preferredLocalizations: [String]) -> String {
   preferredLocalizations
     .lazy

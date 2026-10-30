@@ -42,6 +42,17 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertTrue(ActivityNumberFormat.format(3, unit: "days").hasSuffix("\u{00A0}days"))
   }
 
+  func testReadoutsWriteNumbersInTheLessonsLanguageNotTheDevicesRegion() {
+    let lessons = Locale(identifier: currentCourseCatalogLanguage())
+
+    XCTAssertEqual(ActivityNumberFormat.format(12_000), 12_000.formatted(.number.locale(lessons)))
+    XCTAssertEqual(ActivityNumberFormat.format(2.5), 2.5.formatted(.number.locale(lessons)))
+    XCTAssertEqual(
+      PracticeAnswerText.text(
+        for: .number(12_000.5), question: makeQuestion("a"), labels: .trueFalse),
+      12_000.5.formatted(.number.locale(lessons)))
+  }
+
   func testMoneyLeadsWhereTheLanguageWritesItFirst() {
     XCTAssertTrue(ActivityNumberFormat.unitLeads("R$", locale: Locale(identifier: "pt_BR")))
     XCTAssertTrue(ActivityNumberFormat.unitLeads("$", locale: Locale(identifier: "en_US")))

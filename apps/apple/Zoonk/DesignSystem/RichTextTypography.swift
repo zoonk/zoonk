@@ -3,11 +3,10 @@ import Foundation
 /// Main's `typesetNumbers`: long numbers grouped the learner's way, and a number kept on one line
 /// with its unit or money sign.
 enum RichTextTypography {
-  /// Every run but inline code, as main typesets every segment but math and code. Separators follow
-  /// the lessons' language, as on main, not the device's region.
-  static func typesetNumbers(
-    in text: AttributedString, locale: Locale = Locale(identifier: currentCourseCatalogLanguage())
-  ) -> AttributedString {
+  /// Every run but inline code, as main typesets every segment but math and code.
+  static func typesetNumbers(in text: AttributedString, locale: Locale = .courseLanguage)
+    -> AttributedString
+  {
     text.runs.reduce(into: AttributedString()) { result, run in
       let piece = AttributedString(text[run.range])
 

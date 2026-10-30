@@ -144,7 +144,7 @@ private struct NumericAnswerField: View {
   let onChange: (Double?) -> Void
 
   var body: some View {
-    let unitLeads = unit.map { ActivityNumberFormat.unitLeads($0, locale: locale) } ?? false
+    let unitLeads = unit.map { ActivityNumberFormat.unitLeads($0) } ?? false
 
     HStack {
       if let unit, unitLeads {
