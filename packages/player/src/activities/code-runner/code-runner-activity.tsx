@@ -45,7 +45,7 @@ export function CodeRunnerActivity({
   const runtime = useSandboxRuntime(fields.language);
   const [edits, setEdits] = useState<Record<number, string>>({});
   const [run, setRun] = useState<ProgramRun | null>(() => runFromAnswer(answer));
-  const editorRun = useEditorRun();
+  const editorRun = useEditorRun({ isChecked });
   const { isRunning, isStale } = editorRun;
   const program = programWithEdits(isExploring ? fields.solution : fields.starterCode, edits);
   const lines = program.split("\n");

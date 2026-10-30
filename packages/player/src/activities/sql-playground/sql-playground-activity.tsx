@@ -52,7 +52,7 @@ export function SqlPlaygroundActivity({
   const runtime = useSandboxRuntime("sql");
   const [query, setQuery] = useState(phase === "explore" ? fields.solution : "");
   const [state, setState] = useState<QueryState>(() => stateFromAnswer(answer));
-  const editorRun = useEditorRun();
+  const editorRun = useEditorRun({ isChecked });
   const { isRunning, isStale } = editorRun;
   const expectedRows = expectedInteraction(expected, "rows");
   const result = state?.status === "done" ? state.result : null;

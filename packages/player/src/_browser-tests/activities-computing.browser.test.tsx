@@ -100,6 +100,34 @@ describe("computing activities", () => {
     await expectVerdict("Not quite");
   });
 
+  it("code runner: a run still going at Check never replaces the checked output", async () => {
+    const slow = {
+      ...javascriptRunner,
+      fields: {
+        ...javascriptRunner.fields,
+        starterCode:
+          'const until = Date.now() + 800;\nwhile (Date.now() < until) {}\nconsole.log("ran at " + Date.now());',
+      },
+    };
+
+    openActivity({ content: slow, template: "codeRunner" });
+    await page.getByRole("button", { name: "Run" }).click();
+    const printed = page.getByText(/^ran at \d+$/u);
+    await expect.element(printed).toBeVisible();
+    const checked = printed.element().textContent;
+
+    await page.getByRole("button", { name: /^Run/u }).click();
+    await checkActivity();
+    await expectVerdict("Not quite");
+
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 1500);
+    });
+
+    await expect.element(page.getByText(checked ?? "", { exact: true })).toBeVisible();
+    await expectCount(page.getByText(/^ran at \d+$/u), 1);
+  });
+
   it("code tracer: predicting the traced value is right", async () => {
     openActivity({ template: "codeTracer" });
     await expect.element(page.getByText("Step 1 of 4", { exact: true })).toBeVisible();

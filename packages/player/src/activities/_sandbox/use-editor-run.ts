@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function useEditorRun() {
+export function useEditorRun({ isChecked }: { isChecked: boolean }) {
   const revision = useRef(0);
   const active = useRef<number | null>(null);
   const [isRunning, setIsRunning] = useState(false);
@@ -16,6 +16,13 @@ export function useEditorRun() {
     },
     [],
   );
+
+  // A run still going at Check ends unseen, so the checked answer keeps the output it was graded on.
+  useEffect(() => {
+    if (isChecked) {
+      active.current = null;
+    }
+  }, [isChecked]);
 
   function edit() {
     revision.current += 1;
@@ -34,6 +41,7 @@ export function useEditorRun() {
 
   function finish(startedRevision: number): "cancelled" | "current" | "stale" {
     if (active.current !== startedRevision) {
+      setIsRunning(false);
       return "cancelled";
     }
 
