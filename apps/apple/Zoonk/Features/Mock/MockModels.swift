@@ -334,6 +334,50 @@ struct MockSpeaking: Hashable, Decodable, Sendable {
     var id: String { key }
   }
 
+  /// Never an official score.
+  struct Estimate: Hashable, Decodable, Sendable {
+    var complete: Bool
+    var high: Double?
+    var low: Double?
+    var total: Double
+    var typed: Bool
+
+    var points: (low: Double, high: Double)? {
+      guard complete, let low, let high else { return nil }
+      return (low, high)
+    }
+  }
+
+  enum PassRule: Hashable, Decodable, Sendable {
+    /// A minimum shared with another paper (DELE's with listening).
+    case group(min: Double, of: Double)
+    case paper(min: Double)
+    /// Below it the whole exam fails (DELF).
+    case floor(min: Double)
+    case none
+
+    private enum CodingKeys: String, CodingKey {
+      case kind, min, of
+    }
+
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: CodingKeys.self)
+
+      switch try container.decode(String.self, forKey: .kind) {
+      case "group":
+        self = .group(
+          min: try container.decode(Double.self, forKey: .min),
+          of: try container.decode(Double.self, forKey: .of))
+      case "paper": self = .paper(min: try container.decode(Double.self, forKey: .min))
+      case "floor": self = .floor(min: try container.decode(Double.self, forKey: .min))
+      default: self = .none
+      }
+    }
+  }
+
+  var estimate: Estimate
+  var paper: String
+  var pass: PassRule
   var tasks: [Task]
   var title: String
 }

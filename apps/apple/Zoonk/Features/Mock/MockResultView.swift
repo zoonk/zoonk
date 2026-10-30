@@ -9,7 +9,7 @@ struct MockResultView: View {
   var body: some View {
     List {
       if let result = view.result {
-        if result.total > 0 || view.essays.isEmpty {
+        if result.total > 0 || (view.essays.isEmpty && view.speaking == nil) {
           MockScoreSections(view: view, result: result)
         }
 
@@ -32,6 +32,10 @@ struct MockResultView: View {
         MockEssaySections(
           run: run, essay: essay, number: index + 1, total: view.essays.count,
           rubric: view.essayRubric ?? .custom)
+      }
+
+      if let speaking = view.speaking {
+        MockSpeakingSection(paper: speaking)
       }
 
       if let adapt = view.adapt, adapt.skip != nil || adapt.focus != nil {
@@ -626,6 +630,124 @@ private struct MockEssaySections: View {
         }
         .buttonStyle(.bordered)
       }
+    }
+  }
+}
+
+private struct MockSpeakingSection: View {
+  @State private var openTask: MockSpeaking.Task?
+  let paper: MockSpeaking
+
+  var body: some View {
+    Section {
+      VStack(alignment: .leading, spacing: 6) {
+        Text(estimateTitle)
+          .font(.title2.weight(.semibold).monospacedDigit())
+        Group {
+          Text(estimateDetail)
+          if paper.estimate.typed, paper.estimate.points != nil {
+            Text(
+              "You typed in at least one task, so the estimate leaves out how you sounded there.",
+              tableName: "Mock", comment: "A speaking estimate with a typed task")
+          }
+          if let passRule {
+            Text(passRule)
+          }
+        }
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+      }
+      .padding(.vertical, 4)
+
+      ForEach(paper.tasks) { task in
+        LabeledContent {
+          if task.status == .completed {
+            Button {
+              openTask = task
+            } label: {
+              Text("See feedback", tableName: "Mock", comment: "Opens a speaking task's result")
+            }
+            .buttonStyle(.bordered)
+          } else {
+            Text("Not done", tableName: "Mock", comment: "A speaking task left undone")
+          }
+        } label: {
+          Text(task.name)
+        }
+      }
+    } header: {
+      Text(paper.paper)
+    }
+    .sheet(item: $openTask) { task in
+      ConversationScreen(conversationId: task.conversationId)
+    }
+  }
+
+  private var estimateTitle: String {
+    guard let points = paper.estimate.points else {
+      return String(localized: "No estimate", table: "Mock", comment: "A speaking paper's estimate")
+    }
+
+    let total = number(paper.estimate.total)
+
+    if points.low == points.high {
+      return String(
+        localized: "About \(number(points.low)) of \(total)", table: "Mock",
+        comment: "A speaking paper's estimated points")
+    }
+
+    return String(
+      localized: "About \(number(points.low)) to \(number(points.high)) of \(total)",
+      table: "Mock", comment: "A speaking paper's estimated points range")
+  }
+
+  private func number(_ value: Double) -> String {
+    value.formatted(.number.precision(.fractionLength(0...1)))
+  }
+
+  private var estimateDetail: String {
+    if paper.estimate.points != nil {
+      return String(
+        localized: "An estimate, not an official score.", table: "Mock",
+        comment: "Under a speaking paper's estimate")
+    }
+
+    if paper.tasks.contains(where: { $0.status != .completed }) {
+      return String(
+        localized: "Not every task was done, so there's no estimate for this paper.",
+        table: "Mock", comment: "A speaking paper with tasks left undone")
+    }
+
+    if paper.estimate.typed {
+      return String(
+        localized:
+          "You typed in at least one task, and typing shows nothing of how you sound, so the speaking part has no estimate. Speak every task next time to get one.",
+        table: "Mock", comment: "A speaking paper with a typed task")
+    }
+
+    return String(
+      localized: "A task couldn't be graded, so the speaking part has no estimate.", table: "Mock",
+      comment: "A speaking paper with a task that couldn't be graded")
+  }
+
+  private var passRule: String? {
+    switch paper.pass {
+    case .group(let min, let of):
+      String(
+        localized:
+          "The exam asks for at least \(MockLabels.number(min)) of \(MockLabels.number(of)) on this paper and listening together.",
+        table: "Mock", comment: "A speaking paper's pass mark shared with listening")
+    case .paper(let min):
+      String(
+        localized: "The exam asks for at least \(MockLabels.number(min)) on this paper.",
+        table: "Mock", comment: "A speaking paper's own pass mark")
+    case .floor(let min):
+      String(
+        localized:
+          "Below \(MockLabels.number(min)) on this paper, the whole exam isn't passed.",
+        table: "Mock", comment: "A speaking paper's floor for the whole exam")
+    case .none:
+      nil
     }
   }
 }
