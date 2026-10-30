@@ -115,8 +115,8 @@ export function getPhaseStates({
   return phases.map((phase, index) => {
     const inPhase = items.filter((item) => item.phase === index);
 
-    if (items.length > 0 && inPhase.length === 0 && phase.kind !== "afterExam") {
-      return "leftOut";
+    if (inPhase.length === 0) {
+      return items.length > 0 && phase.kind !== "afterExam" ? "leftOut" : "upcoming";
     }
 
     const required = phaseChallengesRequired
@@ -124,8 +124,7 @@ export function getPhaseStates({
       : inPhase.filter((item) => item.kind !== "boss");
 
     const leftOut = phaseChallengesRequired && phase.challengeLeftOut === true;
-    const finished = !leftOut && inPhase.length > 0 && isPhaseFinished(required);
 
-    return getProgressState({ current, finished, index });
+    return getProgressState({ current, finished: !leftOut && isPhaseFinished(required), index });
   });
 }

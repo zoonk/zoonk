@@ -232,7 +232,7 @@ describe("a plan made after its date", () => {
     vi.useRealTimers();
   });
 
-  it("shows no phase as done, since nothing was studied", async () => {
+  it("shows its phases as still to come, none done or left out, since it holds nothing yet", async () => {
     const user = await userFixture();
 
     const library = await planLibraryFixture({
@@ -258,7 +258,7 @@ describe("a plan made after its date", () => {
 
     const view = await readPlan();
 
-    expect(view?.phases.map((phase) => phase.state)).not.toContain("done");
+    expect(view?.phases.map((phase) => phase.state)).toStrictEqual(["upcoming", "upcoming"]);
   });
 
   it("asks onboarding for a new date before showing a plan, even though the learner gave one", async () => {
