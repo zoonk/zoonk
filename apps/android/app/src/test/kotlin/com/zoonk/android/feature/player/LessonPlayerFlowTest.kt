@@ -84,6 +84,19 @@ class LessonPlayerFlowTest {
     private fun tap(text: String) = rule.onNodeWithText(text).performClick()
 
     @Test
+    fun cantTalkAndCantListenEndAtMidnightEvenWhileTheLessonStaysOpen() {
+        play(listOf(spokenStep("say"), summaryStep("end")))
+        viewModel.setCantTalk(true)
+        viewModel.setCantListen(true)
+
+        assertEquals(true to true, viewModel.cantTalk to viewModel.cantListen)
+
+        harness.today = harness.today.plusDays(1)
+
+        assertEquals(false to false, viewModel.cantTalk to viewModel.cantListen)
+    }
+
+    @Test
     fun playsALessonFromItsFirstScreenToItsEnd() {
         play(listOf(explanationStep("idea"), checkStep("quiz"), typedAnswerStep("why"), summaryStep("end"))) {
             grade = { stepId, _ ->

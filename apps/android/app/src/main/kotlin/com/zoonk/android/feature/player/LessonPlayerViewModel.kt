@@ -68,6 +68,7 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
+import java.time.LocalDate
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 import com.zoonk.api.models.LessonSupport as ApiLessonSupport
@@ -224,20 +225,20 @@ class LessonPlayerViewModel(
     }
 
     /** "I can't talk now": spoken screens are typed for the rest of the day on this device. */
-    private val talkChoice = mutableStateOf(false)
-    val cantTalk: Boolean get() = talkChoice.value
+    private val talkDay = mutableStateOf<LocalDate?>(null)
+    val cantTalk: Boolean get() = talkDay.value == choices.today()
 
     fun setCantTalk(chosen: Boolean) {
-        talkChoice.value = chosen
+        talkDay.value = choices.today().takeIf { chosen }
         owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantTalk, chosen) } }
     }
 
     /** "I can't listen now": a sound to find by ear is shown as its notes for the rest of the day on this device. */
-    private val listenChoice = mutableStateOf(false)
-    val cantListen: Boolean get() = listenChoice.value
+    private val listenDay = mutableStateOf<LocalDate?>(null)
+    val cantListen: Boolean get() = listenDay.value == choices.today()
 
     fun setCantListen(chosen: Boolean) {
-        listenChoice.value = chosen
+        listenDay.value = choices.today().takeIf { chosen }
         owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantListen, chosen) } }
     }
 
@@ -395,8 +396,8 @@ class LessonPlayerViewModel(
         if (session != null && choices.isChosen(session, TodayChoice.CantWrite)) {
             state = reduce(state, LessonAction.SkipWriting(opening = true), started)
         }
-        talkChoice.value = session != null && choices.isChosen(session, TodayChoice.CantTalk)
-        listenChoice.value = session != null && choices.isChosen(session, TodayChoice.CantListen)
+        talkDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantTalk) }
+        listenDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
 
         return state.withFirstAnswer(started)
     }

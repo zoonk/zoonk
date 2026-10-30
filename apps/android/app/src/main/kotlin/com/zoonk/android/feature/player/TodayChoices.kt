@@ -21,7 +21,7 @@ private data class ChosenOn(
  */
 class TodayChoices(
     private val drafts: DraftStore,
-    private val today: () -> LocalDate = LocalDate::now,
+    val today: () -> LocalDate = LocalDate::now,
 ) {
     suspend fun isChosen(
         session: AuthenticatedSession,

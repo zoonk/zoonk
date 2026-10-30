@@ -31,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
 import java.io.File
+import java.time.LocalDate
 
 /** Plays a lesson in the real player against [FakeLessonPlayerApi], recording where it leads. */
 internal class LessonPlayerHarness(
@@ -45,6 +46,8 @@ internal class LessonPlayerHarness(
     lateinit var api: FakeLessonPlayerApi
     lateinit var openAgain: () -> LessonPlayerViewModel
     lateinit var viewModel: LessonPlayerViewModel
+
+    var today: LocalDate = LocalDate.of(2026, 10, 29)
 
     /** The code templates' sandbox; by default one whose page can't open. */
     var codeSandbox: (CoroutineScope) -> CodeSandbox = { CodeSandbox(openPage = { null }, scope = it) }
@@ -87,7 +90,7 @@ internal class LessonPlayerHarness(
                 store = LessonPlayerStore(api, cache),
                 cache = cache,
                 sessions = session,
-                choices = TodayChoices(drafts),
+                choices = TodayChoices(drafts) { today },
                 drafts = drafts,
                 sessionSteps = sessionSteps,
                 isGuest = { guest },
