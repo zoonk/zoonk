@@ -81,7 +81,6 @@ import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
@@ -161,7 +160,7 @@ internal fun PatternContent(
     val onClose = viewModel::leave
     when {
         drill.isTypos -> TyposPattern(drill.pattern, onClose)
-        step is DrillStep.Result -> PatternResult(step.result, app, onClose)
+        step is DrillStep.Result -> PatternResult(drill.pattern.title, step.result, app, onClose)
         step is DrillStep.Question -> PatternQuestion(drill, step.index, viewModel, app, onClose)
         else -> PatternIntroPage(drill.pattern, onStart = viewModel::start, onClose = onClose)
     }
@@ -288,10 +287,8 @@ private fun PatternQuestion(
                 }
             }
         },
-        aside = {
-            SectionLabel(stringResource(R.string.pattern_rule))
-            RuleDetails(pattern)
-        },
+        aside = { RuleDetails(pattern) },
+        asideTitle = stringResource(R.string.pattern_rule),
     ) { _, asideShown ->
         key(index) {
             QuestionTitle(question.sentence, graded = checked != null)
@@ -429,6 +426,7 @@ private fun AlsoCameUp(examples: List<MistakePatternExamplesInner>) {
 
 @Composable
 private fun PatternResult(
+    title: String,
     result: MistakePatternPracticeResult,
     app: AppContainer,
     onClose: () -> Unit,
@@ -439,6 +437,7 @@ private fun PatternResult(
             action = stringResource(R.string.pattern_done),
             saving = false,
             onClose = onClose,
+            headerTitle = title,
             detail = stringResource(if (result.correct == result.total) R.string.pattern_got_it else R.string.pattern_keep_going),
         ) {
             MomentReadouts(brainPower = result.brainPower, score = MomentScore(result.total.toInt(), result.correct.toInt()))
