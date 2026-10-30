@@ -816,6 +816,32 @@ final class LocalizedNumberTests: XCTestCase {
     XCTAssertEqual(parseLocalizedNumber("12\u{202F}345,5", locale: german), 12345.5)
   }
 
+  /// Lessons follow the device's language, and its decimal pad types its region's separator.
+  func testReadsANumberTypedTheLessonsWayOrTheKeyboardsWay() {
+    let typed: [(device: String, text: String, number: Double)] = [
+      ("en_US", "12.5", 12.5),
+      ("en_US", "12,000", 12_000),
+      ("en_BR", "12,5", 12.5),
+      ("en_BR", "12,000", 12_000),
+      ("en_BR", "1,234,567", 1_234_567),
+      ("en_BR", "0,125", 0.125),
+      ("en_BR", "1.234,5", 1234.5),
+      ("pt_BR", "12,5", 12.5),
+      ("pt_BR", "12.000", 12_000),
+      ("pt_BR", "0.125", 0.125),
+      ("pt_BR", "1,234.5", 1234.5),
+      ("de_DE", "2,5", 2.5),
+      ("de_DE", "0,125", 0.125),
+      ("de_DE", "1.234,5", 1234.5),
+      ("de_DE", "1,234.5", 1234.5),
+    ]
+
+    for (device, text, number) in typed {
+      let lessons = Locale(identifier: courseCatalogLanguage(preferredLocalizations: [device]))
+      XCTAssertEqual(parseLocalizedNumber(text, locale: lessons), number, "\(device): \(text)")
+    }
+  }
+
   // Mirrors main's `localized-number.test.ts`.
   func testShowsFewerDecimalsAsNumbersGrowAndKeepsTinyValuesReadable() {
     XCTAssertEqual(
@@ -888,6 +914,7 @@ final class LocalizedNumberTests: XCTestCase {
     XCTAssertNil(parseLocalizedNumber("12 cm", locale: english))
     XCTAssertNil(parseLocalizedNumber("1,2,3", locale: english))
     XCTAssertNil(parseLocalizedNumber("1.2.3", locale: english))
+    XCTAssertNil(parseLocalizedNumber("1.234,5,6", locale: english))
   }
 }
 

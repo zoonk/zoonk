@@ -239,6 +239,16 @@ final class PracticeModelTests: XCTestCase {
     XCTAssertNil(NumericEntryParser.parse("abc", entry: nil))
   }
 
+  func testNumericEntryReadsNumbersLikeALessonsAnswerField() {
+    let lessons = Locale(identifier: currentCourseCatalogLanguage())
+
+    for text in ["12,000", "1,234,567", "12.000", "0,125", "1.234,5"] {
+      XCTAssertEqual(
+        NumericEntryParser.parse(text, entry: nil), parseLocalizedNumber(text, locale: lessons),
+        text)
+    }
+  }
+
   func testNumericDraftShowsAsTextThatReadsBackTheSameNumber() {
     let typed = [2.5, 1234.5, 12, 0.1, -7.25, 0.000123456789, 3.14159265358979, 1_000_000_000]
 
@@ -247,7 +257,9 @@ final class PracticeModelTests: XCTestCase {
 
       for number in typed {
         let text = NumericEntryParser.text(for: .number(number), locale: locale)
-        XCTAssertEqual(NumericEntryParser.parse(text, entry: nil), number, "\(identifier): \(text)")
+        XCTAssertEqual(
+          NumericEntryParser.parse(text, entry: nil, locale: locale), number,
+          "\(identifier): \(text)")
       }
     }
 

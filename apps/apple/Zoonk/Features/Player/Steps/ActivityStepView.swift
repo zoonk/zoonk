@@ -133,7 +133,6 @@ struct ActivityDataNote: View {
 /// The field keeps what the learner typed ("0," on the way to "0,17") and answers with the number it
 /// reads.
 private struct NumericAnswerField: View {
-  @Environment(\.locale) private var locale
   @State private var typed: String?
 
   let value: Double?
@@ -167,7 +166,7 @@ private struct NumericAnswerField: View {
     .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
     .onChange(of: value) {
       // An answer set elsewhere (going back to the screen) shows as itself.
-      if let typed, parseLocalizedNumber(typed, locale: locale) != value {
+      if let typed, parseLocalizedNumber(typed, locale: .courseLanguage) != value {
         self.typed = nil
       }
     }
@@ -179,12 +178,12 @@ private struct NumericAnswerField: View {
       formatLocalizedNumber(
         $0,
         fractionDigits: exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: $0),
-        locale: locale)
+        locale: .courseLanguage)
     } ?? ""
   }
 
   private func type(_ text: String) {
     typed = text
-    onChange(parseLocalizedNumber(text, locale: locale))
+    onChange(parseLocalizedNumber(text, locale: .courseLanguage))
   }
 }

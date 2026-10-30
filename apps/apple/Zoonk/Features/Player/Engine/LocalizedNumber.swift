@@ -17,15 +17,15 @@ func parseLocalizedNumber(_ text: String, locale: Locale) -> Double? {
   return Double(normalized)
 }
 
-/// When both separators appear, the learner's locale decides which one groups digits.
+/// When both separators appear, the last one is the decimal point in any language: "1.234,5" and
+/// "1,234.5" both read 1234.5, since the learner may type their region's notation.
 private func normalizeSeparators(_ text: String, decimal: String) -> String {
   let hasDot = text.contains(".")
   let hasComma = text.contains(",")
 
-  if hasDot, hasComma {
-    return decimal == ","
-      ? replacingFirst(",", in: text.replacingOccurrences(of: ".", with: ""))
-      : text.replacingOccurrences(of: ",", with: "")
+  if hasDot, hasComma, let point = text.last(where: { $0 == "." || $0 == "," }) {
+    return text.replacingOccurrences(of: point == "." ? "," : ".", with: "")
+      .replacingOccurrences(of: String(point), with: ".")
   }
 
   if hasComma {
@@ -37,9 +37,10 @@ private func normalizeSeparators(_ text: String, decimal: String) -> String {
 
 /// When only one kind of separator appears, it's a decimal point ("3,5" or "3.5" in any language)
 /// unless it groups thousands the locale's way, like "1,000" in English or "1.000" in Portuguese.
+/// "0,125" is always a decimal.
 private func normalizeOneSeparator(_ text: String, separator: String, decimal: String) -> String {
   let groupsThousands =
-    decimal != separator && text.wholeMatch(of: /[+-]?[0-9]{1,3}(?:[.,][0-9]{3})+/) != nil
+    decimal != separator && text.wholeMatch(of: /[+-]?[1-9][0-9]{0,2}(?:[.,][0-9]{3})+/) != nil
 
   return groupsThousands
     ? text.replacingOccurrences(of: separator, with: "") : replacingFirst(separator, in: text)

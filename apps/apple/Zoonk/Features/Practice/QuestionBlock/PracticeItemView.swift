@@ -639,51 +639,36 @@ private struct AnswerFieldStyle: ViewModifier {
 /// The number an answer box takes from what the learner typed: a fraction box takes "2/3" or a
 /// decimal, an integer box only a whole number, every other box a number with a comma or a point.
 enum NumericEntryParser {
-  /// A draft's number as the field shows it in the learner's language: no grouping, and every digit
+  /// A draft's number as the field shows it in the lessons' language: no grouping, and every digit
   /// a typed number can have, so it reads back as the same number.
-  static func text(for draft: PracticeAnswer?, locale: Locale = .autoupdatingCurrent) -> String {
+  static func text(for draft: PracticeAnswer?, locale: Locale = .courseLanguage) -> String {
     guard case .number(let value) = draft else { return "" }
     return value.formatted(
       .number.grouping(.never).precision(.significantDigits(1...15)).locale(locale))
   }
 
-  static func parse(_ text: String, entry: PracticeNumericEntry?) -> Double? {
+  static func parse(
+    _ text: String, entry: PracticeNumericEntry?, locale: Locale = .courseLanguage
+  ) -> Double? {
     let trimmed = text.trimmingCharacters(in: .whitespaces)
 
     if entry?.kind == .fraction, trimmed.contains("/") {
       let parts = trimmed.split(separator: "/", omittingEmptySubsequences: false)
 
-      guard parts.count == 2, let numerator = number(String(parts[0])),
-        let denominator = number(String(parts[1])), denominator != 0
+      guard parts.count == 2,
+        let numerator = parseLocalizedNumber(String(parts[0]), locale: locale),
+        let denominator = parseLocalizedNumber(String(parts[1]), locale: locale), denominator != 0
       else { return nil }
 
       return numerator / denominator
     }
 
-    guard let value = number(trimmed) else { return nil }
+    guard let value = parseLocalizedNumber(trimmed, locale: locale) else { return nil }
 
     if entry?.kind == .integer, value.rounded() != value {
       return nil
     }
 
     return value
-  }
-
-  /// A comma or a point reads as the decimal mark; spaces and thousands separators are ignored
-  /// when another mark follows them ("1.234,5" and "1,234.5" both read 1234.5).
-  private static func number(_ text: String) -> Double? {
-    var cleaned = text.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: " ", with: "")
-      .replacingOccurrences(of: "\u{00A0}", with: "")
-
-    guard !cleaned.isEmpty else { return nil }
-
-    if let lastMark = cleaned.lastIndex(where: { $0 == "," || $0 == "." }) {
-      let head = cleaned[..<lastMark].filter { $0 != "," && $0 != "." }
-      let tail = cleaned[cleaned.index(after: lastMark)...]
-      cleaned = head + "." + tail
-    }
-
-    cleaned = cleaned.replacingOccurrences(of: "\u{2212}", with: "-")
-    return Double(cleaned)
   }
 }
