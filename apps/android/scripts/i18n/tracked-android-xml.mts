@@ -14,6 +14,25 @@ function decodeXml(content: string) {
   return createAndroidXmlCodec().decode(content);
 }
 
+const COMMENTED_RESOURCE =
+  /<!--(?<comment>(?:(?!-->)[\s\S])*)-->\s*<(?:string|plurals|string-array)\b[^>]*?\bname="(?<name>[^"]+)"/gu;
+
+/** The Android codec keeps a resource's comment for the XML but doesn't give it to translators. */
+function withTranslatorComments(xml: string, messages: ReturnType<typeof decodeXml>) {
+  const comments = new Map(
+    [...xml.matchAll(COMMENTED_RESOURCE)].map(({ groups }) => [
+      groups?.name,
+      groups?.comment.trim(),
+    ]),
+  );
+
+  return messages.map((message) => {
+    const resource = Array.isArray(message.segments) ? String(message.segments[0]) : message.id;
+    const comment = comments.get(resource);
+    return comment ? { ...message, description: [comment] } : message;
+  });
+}
+
 /**
  * Decodes stale translations as missing, so Eloqnt's lint and translate commands handle them.
  * `readSources` returns every catalog's source XML because Eloqnt doesn't tell a codec which file it reads.
@@ -30,7 +49,7 @@ export function createTrackedAndroidXmlCodec({
       const messages = decodeXml(stripFingerprints(content));
 
       if (locale === sourceLocale) {
-        return messages;
+        return withTranslatorComments(content, messages);
       }
 
       const fingerprints = readFingerprints(content);

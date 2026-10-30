@@ -237,3 +237,26 @@ test("a plural gets every category its locale has, and stays fresh", () => {
   assert.match(target, /<item quantity="many">%1\$d lecciones<\/item>/u);
   assert.ok(readTranslations({ target }).every((message) => message.message !== ""));
 });
+
+test("translators get each resource's comment as its description", () => {
+  const source = `<resources>
+  <!-- A screen's name. -->
+  <string name="title">Home</string>
+  <string name="greeting">Hello, %1$s!</string>
+  <!-- Skill levels. -->
+  <string-array name="levels"><item>Beginner</item><item>Advanced</item></string-array>
+</resources>`;
+
+  assert.deepEqual(
+    readTranslations({ locale: "en", source, target: source }).map((message) => [
+      message.id,
+      message.description,
+    ]),
+    [
+      ["title", ["A screen's name."]],
+      ["greeting", []],
+      ["levels.0", ["Skill levels."]],
+      ["levels.1", ["Skill levels."]],
+    ],
+  );
+});
