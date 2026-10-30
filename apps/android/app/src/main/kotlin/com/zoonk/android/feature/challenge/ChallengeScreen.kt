@@ -528,7 +528,7 @@ private fun IntroHeading(
     detail: String? = null,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        eyebrow?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge) }
+        eyebrow?.let { Eyebrow(it) }
         whenText?.let { Eyebrow(it) }
         Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
         detail?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge) }

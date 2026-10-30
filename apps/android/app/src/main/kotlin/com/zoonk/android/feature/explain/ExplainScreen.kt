@@ -67,6 +67,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
@@ -431,19 +432,7 @@ internal fun ExplainEnding(
 
     LessonColumn(Modifier.padding(vertical = 24.dp)) {
         ExplainHeading(explanation.title) {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painterResource(R.drawable.ic_check),
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                    tint = MaterialTheme.colorScheme.tertiary,
-                )
-                Text(
-                    stringResource(R.string.explain_now_you_know),
-                    color = MaterialTheme.colorScheme.tertiary,
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            }
+            SuccessEyebrow(stringResource(R.string.explain_now_you_know))
         }
 
         if (saving) {

@@ -48,6 +48,7 @@ import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
 import com.zoonk.android.ui.components.BeltTicks
 import com.zoonk.android.ui.components.CelebrationScope
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionLabel
@@ -183,11 +184,7 @@ private fun DoneStep(
 
     Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                stringResource(R.string.session_summary_eyebrow),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelLarge,
-            )
+            Eyebrow(stringResource(R.string.session_summary_eyebrow))
             Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
             if (facts.stopped && summary.minutes >= 1) {
                 Text(
