@@ -10,7 +10,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -290,7 +294,12 @@ private fun BlockActions(
         }
 
         RunPhase.AlreadyAnswered -> {
-            Text(stringResource(R.string.practice_already_answered), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                stringResource(R.string.practice_already_answered),
+                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
             TaskActions { width ->
                 Button(onClick = viewModel::reread, modifier = width) { Text(stringResource(R.string.practice_continue)) }
             }
