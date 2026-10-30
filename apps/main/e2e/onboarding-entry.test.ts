@@ -51,6 +51,23 @@ test.describe("Sending a goal", () => {
   });
 });
 
+test.describe("Sending a goal from another page", () => {
+  test("the catalog's goal box goes on to /start, which shows what was understood", async ({
+    page,
+  }) => {
+    const goal = uniqueWords("understand quantum physics, from the catalog");
+    await goalUnderstandingFixture({ goal, result: QUANTUM, userId: await ensureGuest(page) });
+
+    await page.goto("/courses");
+    await page.getByRole("textbox", { name: "I want to" }).fill(goal);
+    await page.getByRole("button", { name: "Build my plan" }).click();
+
+    await expect(page).toHaveURL(DRAFT_URL);
+    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByText(goal, { exact: true })).toBeVisible();
+  });
+});
+
 test.describe("Coming back", () => {
   test("a refreshed question draft waits for Explain it instead of starting new work", async ({
     page,

@@ -41,15 +41,17 @@ type StartState =
 function getInitialState({
   defaultGoal,
   initialDraft,
+  takesHandedOffGoal,
 }: {
   defaultGoal: string;
   initialDraft: OnboardingDraftView | null;
+  takesHandedOffGoal: boolean;
 }): StartState {
   if (initialDraft) {
     return { draft: initialDraft, kind: "draft" };
   }
 
-  const handedOff = getHandedOffGoal();
+  const handedOff = takesHandedOffGoal ? getHandedOffGoal() : null;
 
   return handedOff
     ? { goal: handedOff.goal, kind: "sending" }
@@ -93,18 +95,21 @@ export function StartFlow({
   return <GoalStartFlow {...props} />;
 }
 
-/** A goal sent from another page goes on here; a replayed mount follows the same send again. */
+/**
+ * A goal sent from another page goes on here; a replayed mount, or the page shown again after the
+ * learner went elsewhere, follows the same send again until its outcome is taken.
+ */
 function useFollowHandedOffGoal({
   follow,
-  opensDraft,
+  takes,
 }: {
   follow: ReturnType<typeof useSubmitUnderstanding>["follow"];
-  opensDraft: boolean;
+  takes: boolean;
 }) {
   const followHandedOff = useEffectEvent(async (signal: AbortSignal) => {
-    const handedOff = getHandedOffGoal();
+    const handedOff = takes ? getHandedOffGoal() : null;
 
-    if (!handedOff || opensDraft) {
+    if (!handedOff) {
       return;
     }
 
@@ -133,6 +138,8 @@ type GoalStartFlowProps = {
   initialDraft?: OnboardingDraftView | null;
   navigation: OnboardingNavigation;
   routes: OnboardingRoutes;
+  /** `/start` itself, which shows the goal another page sent; never a flow embedded in another page. */
+  takesHandedOffGoal?: boolean;
 };
 
 function GoalStartFlow({
@@ -145,6 +152,7 @@ function GoalStartFlow({
   initialDraft = null,
   navigation,
   routes,
+  takesHandedOffGoal = false,
 }: GoalStartFlowProps) {
   const section = useOnboardingSection();
   const creation = useGoalCreation();
@@ -153,7 +161,7 @@ function GoalStartFlow({
   const [intent, setIntent] = useState<MaterialIntent | null>(null);
 
   const [state, setState] = useState<StartState>(() =>
-    getInitialState({ defaultGoal, initialDraft }),
+    getInitialState({ defaultGoal, initialDraft, takesHandedOffGoal }),
   );
 
   const screen = getScreenKey(state);
@@ -231,7 +239,10 @@ function GoalStartFlow({
   const shownDraft = state.kind === "draft" ? state.draft : null;
   const settleShown = useEffectEvent((draft: OnboardingDraftView) => submission.settle(draft));
 
-  useFollowHandedOffGoal({ follow: submission.follow, opensDraft: initialDraft !== null });
+  useFollowHandedOffGoal({
+    follow: submission.follow,
+    takes: takesHandedOffGoal && initialDraft === null,
+  });
 
   useEffect(() => {
     if (shownDraft) {

@@ -51,6 +51,7 @@ export function StartClient({
         navigation={navigation}
         needsAccount={needsAccount}
         routes={WEB_ONBOARDING_ROUTES}
+        takesHandedOffGoal={!embedded}
       />
     </GenerationFollowerProvider>
   );

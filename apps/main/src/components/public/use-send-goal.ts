@@ -20,7 +20,7 @@ export function useSendGoal() {
 
   return (goal: string) => {
     trackEvent({ name: "Goal Typed", properties: { has_attachment: false } });
-    handOffGoal({ goal, outcome: sendHomeGoal({ goal, language: locale }), sentAt: Date.now() });
+    handOffGoal({ goal, outcome: sendHomeGoal({ goal, language: locale }) });
     router.push("/start");
   };
 }
