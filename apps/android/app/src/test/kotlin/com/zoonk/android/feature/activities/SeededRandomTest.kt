@@ -30,4 +30,13 @@ class SeededRandomTest {
         assertEquals(listOf("f", "d", "c", "b", "e", "a"), seededShuffle(items, "🌱 sprout"))
         assertEquals(listOf("b", "d", "c", "a", "f", "e"), seededShuffle(items, "x𝄞y"))
     }
+
+    @Test
+    fun drawsMainsNormalsAndCounts() {
+        val normals = seededRandom(42)
+        assertEquals(listOf(-0.024399294170303627, -1.0514974760395719, 0.7720683476950277), List(3) { standardNormal(normals) })
+
+        val counts = seededRandom(7)
+        assertEquals(listOf(5, 2, 0, 4), listOf(10, 10, 0, 10).map { binomialCount(0.3, it, counts) })
+    }
 }
