@@ -292,6 +292,7 @@ private struct PlanReveal: View {
   @Environment(PlanStore.self) private var plans
   @Environment(TodayStore.self) private var today
   @State private var adjusting: AdjustPlanSheet.Section?
+  @State private var sheet: PlanSheet?
   @State private var showsTopics = false
   @State private var openingToday: Task<Void, Never>?
   @State private var showsTodayProgress = false
@@ -300,7 +301,8 @@ private struct PlanReveal: View {
 
   var body: some View {
     let goal = learnerGoal
-    let context = PlanContext(goal: goal, plan: plan, adjust: { adjusting = $0 })
+    let context = PlanContext(
+      goal: goal, plan: plan, adjust: { adjusting = $0 }, show: { sheet = $0 })
     let syllabus = plans.syllabus(goalId: goal.id)
     let structure = syllabus.value.flatMap { $0.hasSubjectPages ? $0 : nil }
 
@@ -321,6 +323,7 @@ private struct PlanReveal: View {
     }
     .loads(syllabus, refreshable: false)
     .onDisappear { openingToday?.cancel() }
+    .planSheets($sheet, context: context, syllabus: syllabus.value)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: plans)
     }

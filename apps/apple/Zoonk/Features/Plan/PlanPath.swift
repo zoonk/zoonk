@@ -339,11 +339,6 @@ private struct PlanPhaseRow: View {
 }
 
 private struct PlanChapterRow: View {
-  @Environment(AppRouter.self) private var router
-  @Environment(\.planSheetOpen) private var sheetOpen
-  @State private var showsOutline = false
-  @State private var pendingRoute: AppRoute?
-
   let context: PlanContext
   let chapter: PlanChapter
 
@@ -355,38 +350,15 @@ private struct PlanChapterRow: View {
     } else if chapter.far, let skillId = chapter.skillId {
       // Past the weeks the plan writes ahead: its outline is the learner's to ask for.
       Button {
-        showsOutline = true
+        context.show(.farTopic(skillId: skillId, title: chapter.title))
       } label: {
         content
           .foregroundStyle(.primary)
           .disclosureChevron()
       }
-      .sheet(isPresented: $showsOutline, onDismiss: openPendingRoute) {
-        FarTopicSheet(goal: context.goal, skillId: skillId, title: chapter.title)
-          .environment(
-            \.planSheetOpen,
-            PlanSheetOpen { route in
-              pendingRoute = route
-              showsOutline = false
-            })
-      }
     } else {
       content
         .foregroundStyle(.secondary)
-    }
-  }
-
-  private func openPendingRoute() {
-    guard let route = pendingRoute else {
-      return
-    }
-
-    pendingRoute = nil
-
-    if let sheetOpen {
-      sheetOpen.open(route)
-    } else {
-      router.open(route)
     }
   }
 

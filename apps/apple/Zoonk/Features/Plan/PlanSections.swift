@@ -48,10 +48,6 @@ func planDurationText(minutes: Double) -> String {
 }
 
 struct PlanRoadmapSection: View {
-  @Environment(AppRouter.self) private var router
-  @State private var pendingRoute: AppRoute?
-  @State private var showsPhases = false
-
   let context: PlanContext
   let structure: GoalSyllabus?
   var listsPhases = false
@@ -69,7 +65,7 @@ struct PlanRoadmapSection: View {
           }
         } else if structure != nil {
           Button {
-            showsPhases = true
+            context.show(.path)
           } label: {
             RoadmapCompact(context: context, opens: true)
           }
@@ -82,36 +78,6 @@ struct PlanRoadmapSection: View {
           Text("Phases", tableName: "Plan", comment: "Header over a new plan's phases")
         }
       }
-      .sheet(isPresented: $showsPhases, onDismiss: openPendingRoute) {
-        NavigationStack {
-          List {
-            PlanPathRows(context: context, brief: true)
-          }
-          .navigationTitle(
-            Text("Your path", tableName: "Plan", comment: "Title of the plan's phases")
-          )
-          .toolbarTitleDisplayMode(.inline)
-          .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-              PlanSheetDoneButton()
-            }
-          }
-        }
-        .presentationDetents([.medium, .large])
-        .environment(
-          \.planSheetOpen,
-          PlanSheetOpen { route in
-            pendingRoute = route
-            showsPhases = false
-          })
-      }
-    }
-  }
-
-  private func openPendingRoute() {
-    if let route = pendingRoute {
-      pendingRoute = nil
-      router.open(route)
     }
   }
 }
@@ -238,25 +204,10 @@ private struct RoadmapCompact: View {
 
 struct PlanNumbersSection: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-  @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
-  @State private var open: Sheet?
-  @State private var then: Then?
 
   let context: PlanContext
   let syllabus: GoalSyllabus?
-
-  private enum Sheet: Identifiable {
-    case pace
-    case standing
-
-    var id: Self { self }
-  }
-
-  private enum Then {
-    case adjust
-    case open(AppRoute)
-  }
 
   var body: some View {
     let standing = standingNumber
@@ -269,7 +220,7 @@ struct PlanNumbersSection: View {
 
       layout {
         if let standing {
-          tile(standing) { open = .standing }
+          tile(standing) { context.show(.standing) }
         }
 
         if let pace = paceNumber {
@@ -277,47 +228,11 @@ struct PlanNumbersSection: View {
             Divider()
           }
 
-          tile(pace) { open = .pace }
+          tile(pace) { context.show(.pace) }
         }
       }
       .buttonStyle(.plain)
     }
-    .sheet(item: $open, onDismiss: doThen) { sheet in
-      NavigationStack {
-        switch sheet {
-        case .standing:
-          if context.goal.kind == .language,
-            let language = store.languageStanding(goalId: context.goal.id).value
-          {
-            LanguageLevelSheet(standing: language)
-          } else {
-            PlanStandingSheet(context: context, syllabus: syllabus)
-          }
-        case .pace:
-          PlanPaceSheet(context: context) {
-            then = .adjust
-            open = nil
-          }
-        }
-      }
-      .presentationDetents([.medium, .large])
-      .environment(
-        \.planSheetOpen,
-        PlanSheetOpen { route in
-          then = .open(route)
-          open = nil
-        })
-    }
-  }
-
-  private func doThen() {
-    switch then {
-    case .adjust: context.adjust(.top)
-    case .open(let route): router.open(route)
-    case nil: break
-    }
-
-    then = nil
   }
 
   private func tile(_ number: PlanNumber, open: @escaping () -> Void) -> some View {

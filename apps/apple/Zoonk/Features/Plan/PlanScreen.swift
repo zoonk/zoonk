@@ -101,6 +101,7 @@ private struct GoalPlanView: View {
 private struct PlanContent: View {
   @Environment(PlanStore.self) private var store
   @State private var adjusting: AdjustPlanSheet.Section?
+  @State private var sheet: PlanSheet?
   @State private var isReporting = false
 
   let goal: LearnerGoal
@@ -110,7 +111,8 @@ private struct PlanContent: View {
     let syllabus = store.syllabus(goalId: goal.id).value
     let structure = syllabus.flatMap { $0.hasSubjectPages ? $0 : nil }
     let context = PlanContext(
-      goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true })
+      goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
+      show: { sheet = $0 })
 
     PaneSplit(primaryShare: 0.55) {
       List {
@@ -137,6 +139,7 @@ private struct PlanContent: View {
       }
     }
     .modifier(PlanToolbar(context: context))
+    .planSheets($sheet, context: context, syllabus: syllabus)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: store)
     }
@@ -163,6 +166,7 @@ struct PlanContext {
   let plan: GoalPlan
   let adjust: (AdjustPlanSheet.Section) -> Void
   var report: () -> Void = {}
+  var show: (PlanSheet) -> Void
 
   var isPaused: Bool { goal.status == .paused }
 }
