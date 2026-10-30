@@ -1,76 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ of %@" : {
-      "comment" : "An estimated band of the scale's highest",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ von %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ of %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ de %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ sur %2$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ de %2$@"
-          }
-        }
-      }
-    },
-    "%@ of %@ points" : {
-      "comment" : "An estimate in the points its bands give, of the line's most",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ von %2$@ Punkten"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ of %2$@ points"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ de %2$@ puntos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ sur %2$@ points"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ de %2$@ pontos"
-          }
-        }
-      }
-    },
     "%@ · Level %@" : {
       "comment" : "A call's length and level, over its title",
       "localizations" : {
@@ -102,6 +32,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ · Nível %2$@"
+          }
+        }
+      }
+    },
+    "%@ · Task %lld of %lld" : {
+      "comment" : "An exam task's place in its speaking paper",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Aufgabe %2$lld von %3$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · Task %2$lld of %3$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Tarea %2$lld de %3$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Tâche %2$lld sur %3$lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Tarefa %2$lld de %3$lld"
           }
         }
       }
@@ -199,6 +164,76 @@
         }
       }
     },
+    "%@ of %@" : {
+      "comment" : "An estimated band of the scale's highest",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ von %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ sur %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@"
+          }
+        }
+      }
+    },
+    "%@ of %@ points" : {
+      "comment" : "An estimate in the points its bands give, of the line's most",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ von %2$@ Punkten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@ points"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@ puntos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ sur %2$@ points"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@ pontos"
+          }
+        }
+      }
+    },
     "%@ to prepare" : {
       "comment" : "How long the exam gives to prepare",
       "localizations" : {
@@ -224,41 +259,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ para se preparar"
-          }
-        }
-      }
-    },
-    "%@ · Task %lld of %lld" : {
-      "comment" : "An exam task's place in its speaking paper",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · Aufgabe %2$lld von %3$lld"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · Task %2$lld of %3$lld"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · Tarea %2$lld de %3$lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · Tâche %2$lld sur %3$lld"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · Tarefa %2$lld de %3$lld"
           }
         }
       }
@@ -2616,7 +2616,7 @@
       }
     },
     "Not enough call time this month for this task" : {
-      "comment" : "The call time left this month can't fit this speaking exam task",
+      "comment" : "The call time left this month can't fit this speaking exam task\nThe call time left this month can't fit this task",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2674,7 +2674,7 @@
       }
     },
     "Not enough call time today for this task" : {
-      "comment" : "The call time left today can't fit this speaking exam task",
+      "comment" : "The call time left today can't fit this speaking exam task\nThe call time left today can't fit this task",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5829,31 +5829,31 @@
         }
       }
     },
-    "You've reached today's study time. It'll be in your next session." : {
-      "comment" : "A checkpoint call that today's study time no longer has room for",
+    "You've reached today's study time. You can make this call in your next session." : {
+      "comment" : "Study time is the learner's daily amount.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine heutige Lernzeit ist aufgebraucht. Das Gespräch kommt in deiner nächsten Lerneinheit."
+            "value" : "Du hast deine Lernzeit für heute ausgeschöpft. Du kannst dieses Gespräch in deiner nächsten Lerneinheit führen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has alcanzado el tiempo de estudio de hoy. La llamada estará en tu próxima sesión."
+            "value" : "Has completado tu tiempo de estudio de hoy. Puedes hacer esta llamada en tu próxima sesión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as atteint ta durée d’étude pour aujourd’hui. Cet appel sera dans ta prochaine séance."
+            "value" : "Tu as utilisé tout ton temps d’étude pour aujourd’hui. Tu pourras passer cet appel lors de ta prochaine séance."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você chegou ao fim do seu tempo de estudo de hoje. A conversa estará na sua próxima sessão."
+            "value" : "Você já usou todo o tempo de estudo de hoje. Pode ter essa conversa na próxima sessão."
           }
         }
       }

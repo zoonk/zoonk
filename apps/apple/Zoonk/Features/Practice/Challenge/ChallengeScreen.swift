@@ -168,16 +168,7 @@ struct ChallengeScreen: View {
 
       if challenge.dailyLimitReached {
         PracticeCallout(systemImage: "hourglass") {
-          Text(
-            challenge.canMove
-              ? LocalizedStringResource(
-                "You've reached today's study time. Move it to Monday to keep it.",
-                table: "Practice",
-                comment: "A weekly challenge can't start today: the daily limit is reached.")
-              : LocalizedStringResource(
-                "You've reached today's study time.", table: "Practice",
-                comment: "A challenge can't start today: the daily limit is reached.")
-          )
+          Text(usedUpLine(challenge))
         }
       }
 
@@ -502,6 +493,46 @@ struct ChallengeScreen: View {
       "Mock exams come with Plus: whenever you want, and every week in your plan.",
       table: "Practice",
       comment: "A mock exam challenge is Plus-only.")
+  }
+
+  /// Past today's study time the week's challenge doesn't come back on its own, so it asks to move
+  /// it; a phase's challenge waits for the next study day.
+  private func usedUpLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource {
+    if challenge.kind == .weekly {
+      return challenge.canMove
+        ? LocalizedStringResource(
+          "You've reached today's study time. Move the challenge to Monday to keep it.",
+          table: "Practice", comment: "Study time is the learner's daily amount.")
+        : LocalizedStringResource(
+          "You've reached today's study time.", table: "Practice",
+          comment: "A challenge can't start today: the daily limit is reached.")
+    }
+
+    guard let next = challenge.nextStudyDate, let nextDate = Self.parseDay(next),
+      let today = Self.parseDay(challenge.today)
+    else {
+      return LocalizedStringResource(
+        "You've reached today's study time. The challenge will be in your next session.",
+        table: "Practice", comment: "Study time is the learner's daily amount.")
+    }
+
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = .gmt
+
+    if calendar.dateComponents([.day], from: today, to: nextDate).day == 1 {
+      return LocalizedStringResource(
+        "You've reached today's study time. The challenge will be here tomorrow.",
+        table: "Practice", comment: "Study time is the learner's daily amount.")
+    }
+
+    var weekday = Date.FormatStyle.dateTime.weekday(.wide)
+    weekday.timeZone = .gmt
+
+    return LocalizedStringResource(
+      "You've reached today's study time. The challenge will be here on \(nextDate.formatted(weekday)).",
+      table: "Practice",
+      comment: "Study time is the learner's daily amount. The argument is a weekday, like 'Monday'."
+    )
   }
 
   private static func parseDay(_ day: String) -> Date? {

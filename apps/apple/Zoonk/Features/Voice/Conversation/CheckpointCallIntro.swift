@@ -141,8 +141,8 @@ private struct StudyTimeUsedUp: View {
 
   var body: some View {
     Text(
-      "You've reached today's study time. It'll be in your next session.", tableName: "Voice",
-      comment: "A checkpoint call that today's study time no longer has room for"
+      "You've reached today's study time. You can make this call in your next session.",
+      tableName: "Voice", comment: "Study time is the learner's daily amount."
     )
     .font(.footnote)
     .foregroundStyle(.secondary)
