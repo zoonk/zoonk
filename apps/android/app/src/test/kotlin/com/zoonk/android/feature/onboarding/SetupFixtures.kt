@@ -126,7 +126,7 @@ internal fun planOf(
             ""","notice":"$it""""
         } ?: ""}${feasibility?.let { ""","feasibility":$it""" } ?: ""}
          ${numbers?.let { ""","numbers":$it""" } ?: ""},
-         "schedule":{"dailyMinutes":$dailyMinutes,"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDateEstimated":false,
+         "schedule":{"dailyMinutes":$dailyMinutes,"dailyTimes":[15,30,45],"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDateEstimated":false,
            "targetDateNamedMonth":false,
            "shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":30,"weekend":null,"weekendDays":[]},
            "weekdayMinutes":[0,30,30,30,30,30,0]${targetDate?.let { ""","targetDate":"$it"""" } ?: ""}

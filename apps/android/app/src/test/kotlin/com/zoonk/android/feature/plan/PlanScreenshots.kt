@@ -509,7 +509,7 @@ class PlanScreenshots {
         val plan =
             plan(
                 """
-                "schedule":{"dailyMinutes":45,"fullCourse":false,"lightWeeks":[],"studyDays":6,"targetDate":"2027-11-07",
+                "schedule":{"dailyMinutes":45,"dailyTimes":[15,30,45],"fullCourse":false,"lightWeeks":[],"studyDays":6,"targetDate":"2027-11-07",
                  "targetDateEstimated":false,"targetDateNamedMonth":false,"noticeDay":{"date":"2027-11-14","estimated":false},
                  "shape":{"canDiffer":true,"weekdayDays":[1,2,3,4,5],"weekdays":45,"weekend":90,"weekendDays":[6]},"weekdayMinutes":[0,45,45,45,45,45,90]},
                 "steering":{"difficultyBias":"harder","lessonsStudied":12,"practiceBias":"balanced","skippedActivities":[]},

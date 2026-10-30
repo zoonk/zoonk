@@ -40,7 +40,9 @@ struct PlanTimeSection: View {
             Task { await setMinutes(minutes) }
           })
       ) {
-        ForEach(ScheduleTime.dailyTimes(with: current, recommended), id: \.self) { minutes in
+        ForEach(
+          ScheduleTime.dailyTimes(plan.schedule.dailyTimes, with: current, recommended), id: \.self
+        ) { minutes in
           Text(planDurationText(minutes: Double(minutes)))
             .tag(minutes)
         }

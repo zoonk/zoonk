@@ -241,18 +241,8 @@ final class ScheduleTimeTests: XCTestCase {
       ScheduleWeek(studyDays: [0, 6], weekendMinutes: 30))
   }
 
-  func testOffersEachQuarterHourToFourHoursThenEachHalfHourWithTheTimesShown() {
-    let times = ScheduleTime.dailyTimes(with: 35, 240, nil)
-
-    XCTAssertEqual(Array(times.prefix(4)), [15, 30, 35, 45])
-    XCTAssertEqual(times.filter { (240...300).contains($0) }, [240, 270, 300])
-    XCTAssertEqual(times.last, 1440)
-  }
-
   func testOffersCoresTimesWithTheTimesShown() {
-    let choices = [15, 30, 45].map { TimeChoice(minutes: $0, split: nil) }
-
-    XCTAssertEqual(ScheduleTime.dailyTimes(choices, with: 35, 30, nil), [15, 30, 35, 45])
+    XCTAssertEqual(ScheduleTime.dailyTimes([15, 30, 45], with: 35, 30, nil), [15, 30, 35, 45])
   }
 
   func testOpensOnMondayToFridayUnlessTheGoalHasFewerDays() {

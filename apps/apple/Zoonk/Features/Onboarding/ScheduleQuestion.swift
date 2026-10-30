@@ -192,7 +192,9 @@ struct ScheduleQuestion: View {
               first: found.first, found: shown.lastFound, minutes: $0)
           })
       ) {
-        ForEach(ScheduleTime.dailyTimes(timeChoices, with: minutes, suggested), id: \.self) {
+        ForEach(
+          ScheduleTime.dailyTimes(timeChoices.map(\.minutes), with: minutes, suggested), id: \.self
+        ) {
           time in
           Text(
             time == suggested
@@ -634,7 +636,8 @@ struct ScheduleQuestion: View {
           let current = weekendPicked ?? shown.minutes ?? view.recommendedMinutes
 
           Picker(selection: Binding(get: { current }, set: { weekendPicked = $0 })) {
-            ForEach(ScheduleTime.dailyTimes(timeChoices, with: current), id: \.self) { time in
+            ForEach(ScheduleTime.dailyTimes(timeChoices.map(\.minutes), with: current), id: \.self)
+            { time in
               Text(duration(time))
                 .tag(time)
             }

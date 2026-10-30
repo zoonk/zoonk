@@ -211,6 +211,7 @@ export type PlanView = {
   shortPlan: { days: number; mockDate: string | null } | null;
   schedule: {
     dailyMinutes: number;
+    dailyTimes: number[];
     fullCourse: boolean;
     lightWeeks: LightWeek[];
     mocks: MockScheduleView | null;

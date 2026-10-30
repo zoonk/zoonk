@@ -15,7 +15,7 @@ async function readPlanLink(_request: Request, context: RouteContext<"/v1/plan-l
   }
 
   return NextResponse.json(
-    { outline: result.outline, owner: result.owner },
+    { dailyTimes: result.dailyTimes, outline: result.outline, owner: result.owner },
     { headers: { "X-Robots-Tag": "noindex" } },
   );
 }

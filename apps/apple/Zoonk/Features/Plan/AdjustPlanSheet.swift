@@ -172,7 +172,8 @@ struct AdjustPlanSheet: View {
               Task { await setWeekend(minutes) }
             })
         ) {
-          ForEach(ScheduleTime.dailyTimes(with: current), id: \.self) { minutes in
+          ForEach(ScheduleTime.dailyTimes(plan.schedule.dailyTimes, with: current), id: \.self) {
+            minutes in
             Text(planDurationText(minutes: Double(minutes)))
               .tag(minutes)
           }

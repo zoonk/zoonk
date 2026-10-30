@@ -175,7 +175,8 @@ class PlanEditorTest {
     @Test
     fun theLastStudyDayCantBeTurnedOff() {
         show(
-            """"schedule":{"dailyMinutes":20,"fullCourse":false,"lightWeeks":[],"studyDays":1,"targetDateEstimated":false,""" +
+            """"schedule":{"dailyMinutes":20,"dailyTimes":[15,30,45],"fullCourse":false,"lightWeeks":[],"studyDays":1,""" +
+                """"targetDateEstimated":false,""" +
                 """"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[3],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,0,0,20,0,0,0]}""",
         )
 

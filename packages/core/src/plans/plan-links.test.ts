@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
+import { DAILY_TIME_CHOICES } from "./daily-minutes";
 import { getPlanLink } from "./get-plan-link";
 import { startGoalFromPlanLink } from "./start-goal-from-plan-link";
 
@@ -67,6 +68,7 @@ describe("plan links", () => {
     const link = await getPlanLink(plan.id);
 
     expect(link).toStrictEqual({
+      dailyTimes: DAILY_TIME_CHOICES,
       outline: {
         goalKind: "learn",
         hours: 0.4,

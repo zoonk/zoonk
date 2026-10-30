@@ -149,6 +149,8 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     }
 
     let dailyMinutes: Int
+    /// Core's daily times for the time a day's picker.
+    let dailyTimes: [Int]
     let fullCourse: Bool
     /// The month the learner named has no sitting; the closest ones to switch to.
     let noSitting: ExamView.NoSitting?

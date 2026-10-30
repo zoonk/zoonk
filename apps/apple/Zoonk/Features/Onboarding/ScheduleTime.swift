@@ -26,15 +26,9 @@ enum ScheduleTime {
 
   private static let weekdays = [1, 2, 3, 4, 5]
 
-  private static let dailyTimes =
-    Array(stride(from: 15, through: 240, by: 15)) + Array(stride(from: 270, through: 1440, by: 30))
-
-  static func dailyTimes(with shown: Int?...) -> [Int] {
-    Set(dailyTimes + shown.compactMap { $0 }).sorted()
-  }
-
-  static func dailyTimes(_ choices: [TimeChoice], with shown: Int?...) -> [Int] {
-    Set(choices.map(\.minutes) + shown.compactMap { $0 }).sorted()
+  /// Core's daily times, with the times shown that fall between them.
+  static func dailyTimes(_ times: [Int], with shown: Int?...) -> [Int] {
+    Set(times + shown.compactMap { $0 }).sorted()
   }
 
   /// A new goal's every-day week was never chosen, so the question opens on Monday to Friday unless

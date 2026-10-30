@@ -4,13 +4,19 @@ import { cacheTag } from "next/cache";
 import { getGoalsCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
 import { getLinkSubject, keepPublicGraph, loadLinkedPlan } from "./_utils/linked-plan";
+import { DAILY_TIME_CHOICES } from "./daily-minutes";
 import { type PlanLinkOutline } from "./plan-link-contract";
 import { getLearningShare } from "./planner/plan-phases";
 import { type PlanGraph, parsePlanGraph, parsePlanPhases } from "./planner/plan-state";
 import { DEFAULT_LESSON_MINUTES } from "./planner/plan-units";
 
 export type PlanLinkResult =
-  | { outline: PlanLinkOutline; owner: { goalId: string } | null; status: "ready" }
+  | {
+      dailyTimes: number[];
+      outline: PlanLinkOutline;
+      owner: { goalId: string } | null;
+      status: "ready";
+    }
   | { status: "notFound" };
 
 const MINUTES_PER_HOUR = 60;
@@ -46,6 +52,7 @@ export async function getPlanLink(planId: string): Promise<PlanLinkResult> {
   const kinds = parsePlanPhases(plan.phases).map((phase) => phase.kind);
 
   return {
+    dailyTimes: DAILY_TIME_CHOICES,
     outline: {
       goalKind: plan.goal.kind,
       hours: toHours({ graph }),

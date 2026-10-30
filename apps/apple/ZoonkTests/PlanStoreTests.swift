@@ -325,7 +325,8 @@ extension GoalPlan {
         "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null, "goalId": "goal",
         "phases": [], "planId": "\(planId)", "ready": true,
         "schedule": {
-          "dailyMinutes": 30, "fullCourse": false, "studyDays": 7, "targetDate": null,
+          "dailyMinutes": 30, "dailyTimes": [15, 30, 45], "fullCourse": false, "studyDays": 7,
+          "targetDate": null,
           "targetDateEstimated": false, "targetDateNamedMonth": false,
           "shape": {
             "canDiffer": true, "weekdayDays": [1, 2, 3, 4, 5], "weekdays": 30, "weekend": null,

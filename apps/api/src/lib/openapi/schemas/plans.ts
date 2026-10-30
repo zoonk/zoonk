@@ -65,6 +65,13 @@ const planDaySchema = z
   })
   .meta({ id: "PlanDay" });
 
+const dailyTimesSchema = z
+  .array(z.int().positive())
+  .meta({
+    description:
+      "The daily times a picker offers, in order, from the shortest a plan accepts to a whole day; add the time shown when it's between them",
+  });
+
 export const planResponseSchema = z
   .object({
     access: z.object({
@@ -150,6 +157,7 @@ export const planResponseSchema = z
 
     schedule: z.object({
       dailyMinutes: z.int(),
+      dailyTimes: dailyTimesSchema,
       fullCourse: z
         .boolean()
         .meta({
@@ -263,6 +271,7 @@ export const planChangeResultSchema = z
 
 export const planLinkResponseSchema = z
   .object({
+    dailyTimes: dailyTimesSchema,
     outline: z.object({
       goalKind: z.enum(GoalKind),
       hours: z.number().min(0),

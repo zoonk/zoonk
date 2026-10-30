@@ -18,6 +18,7 @@ function searchedPlan(planId: string) {
     planId,
     schedule: {
       dailyMinutes: 30,
+      dailyTimes: [15, 30, 45],
       fullCourse: false,
       lightWeeks: [],
       mocks: null,

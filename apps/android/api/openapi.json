@@ -77303,6 +77303,16 @@
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
               },
+              "dailyTimes": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "exclusiveMinimum": true,
+                  "maximum": 9007199254740991
+                },
+                "description": "The daily times a picker offers, in order, from the shortest a plan accepts to a whole day; add the time shown when it's between them"
+              },
               "fullCourse": {
                 "type": "boolean",
                 "description": "The exam plan studies everything: what doesn't fit before the exam goes on after it (`setFullCourse`); the exam keeps its date. False for other goals, which study everything without a date"
@@ -77424,6 +77434,7 @@
             },
             "required": [
               "dailyMinutes",
+              "dailyTimes",
               "fullCourse",
               "lightWeeks",
               "mocks",
@@ -78776,6 +78787,16 @@
       "PlanLink": {
         "type": "object",
         "properties": {
+          "dailyTimes": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "maximum": 9007199254740991
+            },
+            "description": "The daily times a picker offers, in order, from the shortest a plan accepts to a whole day; add the time shown when it's between them"
+          },
           "outline": {
             "type": "object",
             "properties": {
@@ -78891,6 +78912,7 @@
           }
         },
         "required": [
+          "dailyTimes",
           "outline",
           "owner"
         ],

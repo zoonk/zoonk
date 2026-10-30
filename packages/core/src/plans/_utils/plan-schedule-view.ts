@@ -1,6 +1,7 @@
 import "server-only";
 import { type loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
 import { type loadNoticeDates } from "../../exams/_utils/notice-day";
+import { DAILY_TIME_CHOICES } from "../daily-minutes";
 import { type PlanView } from "../plan-view-contract";
 import {
   countStudyDays,
@@ -34,6 +35,7 @@ export function buildScheduleView({
 
   return {
     dailyMinutes: goal.dailyMinutes,
+    dailyTimes: DAILY_TIME_CHOICES,
     fullCourse,
     lightWeeks: state.settings.lightWeeks,
     mocks: getMockSchedule({ items, today }),

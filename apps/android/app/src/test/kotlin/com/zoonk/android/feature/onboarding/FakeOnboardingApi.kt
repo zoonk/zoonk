@@ -138,7 +138,7 @@ internal fun setupView(
 internal fun planLinkOf(owner: String? = null): PlanLink =
     ApiJson.decodeFromString(
         """
-        {"owner":${owner?.let { "{\"goalId\":\"$it\"}" } ?: "null"},
+        {"dailyTimes":[15,30,45],"owner":${owner?.let { "{\"goalId\":\"$it\"}" } ?: "null"},
          "outline":{"goalKind":"exam","hours":40.5,"language":"en","skillCount":24,"targetLanguage":null,
           "subject":{"title":"Bar exam","description":"Pass the state bar on the first try."},
           "phases":[{"hours":20.0,"kind":"foundations","milestone":"Every subject once","name":""},
