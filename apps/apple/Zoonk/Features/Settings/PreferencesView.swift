@@ -195,6 +195,11 @@ struct SettingsLoadingState<Value: Equatable & Sendable>: View {
 
 /// The language the app shows, which the device chooses.
 var appLanguageName: String {
-  let identifier = Bundle.main.preferredLocalizations.first ?? "en"
-  return Locale.current.localizedString(forIdentifier: identifier) ?? identifier
+  nativeLanguageName(Bundle.main.preferredLocalizations.first ?? "en")
+}
+
+func nativeLanguageName(_ identifier: String) -> String {
+  let language = Locale(identifier: identifier)
+  return (language.localizedString(forIdentifier: identifier) ?? identifier)
+    .capitalized(with: language)
 }
