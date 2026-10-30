@@ -19,6 +19,7 @@ let courseCatalogUITestSnapshotJSON =
           "valueProposition": "Grow a plant from root to leaf."
         },
         "language": "en",
+        "levels": ["beginner", "intermediate"],
         "organization": {
           "id": "organization-ai",
           "logoURL": null,
@@ -39,6 +40,7 @@ let courseCatalogUITestSnapshotJSON =
         "isExam": false,
         "imageURL": null,
         "language": "en",
+        "levels": [],
         "organization": {
           "id": "organization-zoonk",
           "logoURL": null,
@@ -59,6 +61,7 @@ let courseCatalogUITestSnapshotJSON =
         "isExam": false,
         "imageURL": null,
         "language": "en",
+        "levels": [],
         "organization": {
           "id": "organization-zoonk",
           "logoURL": null,
@@ -79,6 +82,7 @@ let courseCatalogUITestSnapshotJSON =
         "isExam": false,
         "imageURL": null,
         "language": "en",
+        "levels": [],
         "organization": {
           "id": "organization-ai",
           "logoURL": null,
@@ -99,6 +103,7 @@ let courseCatalogUITestSnapshotJSON =
         "isExam": false,
         "imageURL": null,
         "language": "en",
+        "levels": ["overview"],
         "organization": null,
         "quickTestMinutes": 2,
         "slug": "my-backyard-field-notes",
