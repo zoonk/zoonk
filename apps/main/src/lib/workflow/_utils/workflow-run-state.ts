@@ -41,7 +41,7 @@ export type WorkflowRunAction =
   | { kind: GenerationKind; message: StepStreamMessage; type: "event" }
   | { offsetMs: number; type: "serverClock" }
   | { runId: string | null; type: "polled" }
-  | { status: RunStatus; type: "runStatus" }
+  | { runId: string; status: RunStatus; type: "runStatus" }
   | { type: "connectionLost" }
   | { type: "notStarted" }
   | { type: "reconnect" }
@@ -64,6 +64,11 @@ export const INITIAL_WORKFLOW_RUN_STATE: WorkflowRunState = {
 
 function isSettled(state: WorkflowRunState): boolean {
   return state.ready || state.failure !== null;
+}
+
+/** A joining run's stream ends as it hands over, so its status says nothing about the wait. */
+function isFollowed(state: WorkflowRunState, runId: string): boolean {
+  return !state.replaced.includes(runId) && (state.joined === null || state.joined === runId);
 }
 
 function getReconnectDelay(lostConnections: number): number {
@@ -175,7 +180,7 @@ export function workflowRunReducer(
         polled: action.runId && !state.replaced.includes(action.runId) ? action.runId : null,
       };
     case "runStatus":
-      return applyRunStatus(state, action.status);
+      return isFollowed(state, action.runId) ? applyRunStatus(state, action.status) : state;
     case "connectionLost":
       return applyConnectionLost(state);
     case "notStarted":

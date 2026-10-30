@@ -92,8 +92,26 @@ describe(workflowRunReducer, () => {
     expect(state.steps).toStrictEqual({});
   });
 
+  it("keeps following the run it joined when the joining run's stream ends", () => {
+    const joined = run([
+      event({ entityId: "run-doing-the-work", status: "started", step: "joinRunningGoal" }),
+    ]);
+
+    const state = run([{ runId: "joining-run", status: "completed", type: "runStatus" }], joined);
+
+    expect(state.ready).toBe(false);
+    expect(getRunStatus({ runId: "run-doing-the-work", state })).toBe("following");
+  });
+
+  it("ignores how a run it started over from ended", () => {
+    const restarted = run([{ runIds: ["failed-run"], type: "restart" }]);
+    const state = run([{ runId: "failed-run", status: "failed", type: "runStatus" }], restarted);
+
+    expect(state.failure).toBeNull();
+  });
+
   it("reopens a stream the server closed while its run still works", () => {
-    const closed = run([{ status: "running", type: "runStatus" }]);
+    const closed = run([{ runId: "run", status: "running", type: "runStatus" }]);
     const reopened = run([{ type: "reconnect" }], closed);
 
     expect(closed.reconnectIn).not.toBeNull();
@@ -103,12 +121,15 @@ describe(workflowRunReducer, () => {
   });
 
   it("is ready when the stream closed on a finished run", () => {
-    expect(run([{ status: "completed", type: "runStatus" }]).ready).toBe(true);
+    expect(run([{ runId: "run", status: "completed", type: "runStatus" }]).ready).toBe(true);
   });
 
   it("fails when the stream closed on a failed or cancelled run", () => {
-    expect(run([{ status: "failed", type: "runStatus" }]).failure).toBe("generation");
-    expect(run([{ status: "cancelled", type: "runStatus" }]).failure).toBe("generation");
+    expect(run([{ runId: "run", status: "failed", type: "runStatus" }]).failure).toBe("generation");
+
+    expect(run([{ runId: "run", status: "cancelled", type: "runStatus" }]).failure).toBe(
+      "generation",
+    );
   });
 
   it("waits longer after each lost connection in a row", () => {
@@ -179,7 +200,10 @@ describe(workflowRunReducer, () => {
   });
 
   it("stays ready when the wait for a run ends after it was ready", () => {
-    const state = run([{ status: "completed", type: "runStatus" }, { type: "notStarted" }]);
+    const state = run([
+      { runId: "run", status: "completed", type: "runStatus" },
+      { type: "notStarted" },
+    ]);
 
     expect(getRunStatus({ runId: "run", state })).toBe("ready");
   });

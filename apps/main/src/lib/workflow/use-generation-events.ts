@@ -15,7 +15,7 @@ export function useGenerationEvents({
   runId,
 }: {
   connection: number;
-  onComplete: () => void;
+  onComplete: (runId: string) => void;
   onError: () => void;
   onMessage: (data: StepStreamMessage) => void;
   onOpen: (response: Response) => void;
@@ -84,7 +84,7 @@ export function useGenerationEvents({
 
         parser.feed(decoder.decode());
 
-        onCompleteEvent();
+        onCompleteEvent(runId);
       } catch (error) {
         if (error instanceof Error && error.name !== "AbortError") {
           onErrorEvent();

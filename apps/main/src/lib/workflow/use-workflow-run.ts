@@ -96,7 +96,10 @@ export function useWorkflowRun({
 
   async function checkRun(id: string) {
     const runStatus = await readRunStatus(id);
-    dispatch(runStatus ? { status: runStatus, type: "runStatus" } : { type: "connectionLost" });
+
+    dispatch(
+      runStatus ? { runId: id, status: runStatus, type: "runStatus" } : { type: "connectionLost" },
+    );
   }
 
   const isConnected = status === "following" && runId !== null && state.reconnectIn === null;
@@ -105,7 +108,7 @@ export function useWorkflowRun({
     const runStatus = await readRunStatus(id);
 
     if (runStatus === "failed" || runStatus === "cancelled") {
-      dispatch({ status: runStatus, type: "runStatus" });
+      dispatch({ runId: id, status: runStatus, type: "runStatus" });
     }
   });
 
@@ -120,11 +123,7 @@ export function useWorkflowRun({
 
   useGenerationEvents({
     connection: state.connection,
-    onComplete: () => {
-      if (runId) {
-        void checkRun(runId);
-      }
-    },
+    onComplete: (id) => void checkRun(id),
     onError: () => dispatch({ type: "connectionLost" }),
     onMessage: (message) => dispatch({ kind, message, type: "event" }),
     onOpen: (response) => {
