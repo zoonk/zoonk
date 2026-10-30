@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { blockingPause, firstStep, tracerAnswer, watchedValues } from "./tracer-steps";
+import {
+  blockingPause,
+  firstStep,
+  tracerAnswer,
+  upcomingPause,
+  watchedValues,
+} from "./tracer-steps";
 
 const trace = [
   {
@@ -63,6 +69,16 @@ describe(blockingPause, () => {
 
     expect(blockingPause({ pauses, predictions: { 0: "b" }, step: 2 })).toBeNull();
     expect(blockingPause({ pauses, predictions: {}, step: 1 })).toBeNull();
+  });
+});
+
+describe(upcomingPause, () => {
+  const pauses = [{ step: 3 }, { step: 3 }];
+
+  it("asks each pause on the next step in turn, then shows the first again", () => {
+    expect(upcomingPause({ pauses, predictions: {}, step: 2 })?.index).toBe(0);
+    expect(upcomingPause({ pauses, predictions: { 0: "b" }, step: 2 })?.index).toBe(1);
+    expect(upcomingPause({ pauses, predictions: { 0: "b", 1: "c" }, step: 2 })?.index).toBe(0);
   });
 });
 

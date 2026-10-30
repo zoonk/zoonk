@@ -57,10 +57,21 @@ export function blockingPause<TPause extends Pause>({
   return pause ? { index, pause } : null;
 }
 
-export function upcomingPause<TPause extends Pause>(
-  pauses: readonly TPause[],
-  step: number,
-): { index: number; pause: TPause } | null {
+export function upcomingPause<TPause extends Pause>({
+  pauses,
+  predictions,
+  step,
+}: {
+  pauses: readonly TPause[];
+  predictions: Readonly<Record<string, string>>;
+  step: number;
+}): { index: number; pause: TPause } | null {
+  const blocking = blockingPause({ pauses, predictions, step });
+
+  if (blocking) {
+    return blocking;
+  }
+
   const index = pauses.findIndex((pause) => pause.step === step + 1);
   const pause = pauses[index];
   return pause ? { index, pause } : null;

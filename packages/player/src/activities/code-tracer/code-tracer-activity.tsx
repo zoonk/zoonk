@@ -84,7 +84,7 @@ export function CodeTracerActivity({
   const expectedPairs = expectedInteraction(expected, "assignment")?.pairs ?? null;
   const lastStep = fields.trace.length - 1;
   const blocking = asksNothing ? null : blockingPause({ pauses: fields.pauses, predictions, step });
-  const upcoming = asksNothing ? null : upcomingPause(fields.pauses, step);
+  const upcoming = asksNothing ? null : upcomingPause({ pauses: fields.pauses, predictions, step });
   const isRevealed = (pause: Pause) => isChecked || furthest >= pause.step;
   const values = watchedValues({ step, trace: fields.trace, watch: fields.watch });
 
