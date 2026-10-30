@@ -758,6 +758,35 @@
         }
       }
     },
+    "%lld Brain Power earned for today's missions" : {
+      "comment" : "The missions' bonus, earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für die heutigen Missionen %lld Brain Power verdient"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld de Poder Mental conseguido por las misiones de hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as gagné %lld Puissance Mentale pour les missions du jour"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld de Poder Mental conquistados pelas missões de hoje"
+          }
+        }
+      }
+    },
     "%lld Brain Power for finishing them" : {
       "comment" : "The missions' reward",
       "localizations" : {
@@ -3079,6 +3108,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prática extra"
+          }
+        }
+      }
+    },
+    "Brain Power" : {
+      "comment" : "Title of what Brain Power is\nUnder the missions' bonus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brain Power"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poder Mental"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puissance Mentale"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poder Mental"
           }
         }
       }
@@ -8678,6 +8736,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O que você já sabe"
+          }
+        }
+      }
+    },
+    "What you've learned, in points: it raises your belt and grows your buddy. Answers, lessons and challenges add to it, and finishing today's missions adds +%lld." : {
+      "comment" : "What Brain Power is; the number is the missions' bonus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du gelernt hast, in Punkten: Damit steigst du im Gürtel auf und dein Kumpel wächst. Für Antworten, Lektionen und Herausforderungen bekommst du Punkte. Wenn du alle heutigen Missionen abschließt, kommen +%lld dazu."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que has aprendido, en puntos: te ayuda a subir de cinturón y a hacer crecer a tu compañero. Las respuestas, las lecciones y los desafíos suman puntos, y completar las misiones de hoy suma +%lld."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu as appris, en points : cela te fait progresser dans les ceintures et grandir ton Compagnon. Tes réponses, tes leçons et tes défis t’en rapportent, et terminer les missions du jour t’en donne +%lld."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você aprendeu, em pontos: ajuda você a subir de faixa e seu Parceiro a crescer. Respostas, aulas e desafios somam pontos, e concluir as missões de hoje rende mais +%lld."
           }
         }
       }

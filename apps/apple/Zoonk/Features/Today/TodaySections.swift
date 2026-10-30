@@ -465,7 +465,7 @@ struct TodayMissionsSection: View {
             Text("Missions done", tableName: "Today", comment: "Today's missions are done")
               .font(.body.weight(.medium))
             Spacer()
-            reward(bonus)
+            BrainPowerReward(points: bonus, earned: true)
           }
         } else {
           Text(
@@ -477,28 +477,26 @@ struct TodayMissionsSection: View {
       }
     } else {
       Section {
-        VStack(alignment: .leading, spacing: 8) {
-          HStack(alignment: .firstTextBaseline) {
+        VStack(alignment: .leading, spacing: 12) {
+          HStack(spacing: 10) {
+            MissionsRing(done: missions.count - left.count, total: missions.count) {
+              let buddy = learner.summary.value?.buddy ?? BuddyLook()
+              BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
+            }
+
             Text(
               "\(left.count) left · ~\(studyDuration(minutes: minutesLeft(left)))",
               tableName: "Today", comment: "Missions left and their time"
             )
+            .font(.subheadline)
             .monospacedDigit()
 
             Spacer()
 
-            reward(bonus)
-              .accessibilityLabel(
-                Text(
-                  "\(bonus) Brain Power for finishing them", tableName: "Today",
-                  comment: "The missions' reward"))
+            BrainPowerReward(points: bonus, earned: false)
           }
-          .font(.subheadline)
 
-          MeterParts(
-            parts: missions.map {
-              MeterParts.Part(fill: $0.isDone ? .color(.brain) : .color(.brain.opacity(0.18)))
-            })
+          MissionTrack(missions: missions)
         }
         .listRowSeparator(.hidden, edges: .bottom)
 
@@ -516,16 +514,6 @@ struct TodayMissionsSection: View {
         Text("Today's missions", tableName: "Today", comment: "Today's missions header")
       }
     }
-  }
-
-  private func reward(_ bonus: Int) -> some View {
-    Label {
-      Text("+\(bonus)")
-        .monospacedDigit()
-    } icon: {
-      Image(systemName: "brain")
-    }
-    .foregroundStyle(.brain)
   }
 
   private var onlyOpensBlocks: Bool {
