@@ -13223,6 +13223,35 @@
         }
       }
     },
+    "Your question" : {
+      "comment" : "The box for a question about the learner's material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Frage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu pregunta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta question"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua pergunta"
+          }
+        }
+      }
+    },
     "Your role" : {
       "comment" : "Box for the learner's role at work\nRow with the learner's role at work",
       "localizations" : {

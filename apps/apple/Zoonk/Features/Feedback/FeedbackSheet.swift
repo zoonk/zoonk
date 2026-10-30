@@ -163,26 +163,19 @@ private struct FeedbackForm: View {
       }
 
       Section {
-        TextField(
+        MultilineTextField(
           text: $store.message,
           prompt: Text(
             "How can we help?",
             tableName: "Feedback",
             comment: "Placeholder in the feedback message field."),
-          axis: .vertical
-        ) {
-          Text(
+          label: Text(
             "Message",
             tableName: "Feedback",
             comment: "Message field label in the feedback form.")
-        }
+        )
         .focused($focusedField, equals: .message)
         .lineLimit(5...10)
-        .accessibilityLabel(
-          Text(
-            "Message",
-            tableName: "Feedback",
-            comment: "Message field label in the feedback form."))
       } footer: {
         if attachesScreen {
           Label {

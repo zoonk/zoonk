@@ -177,24 +177,12 @@ private struct SQLPlaygroundCanvas: View {
 
   private var editor: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Group {
-        if context.phase == .explore {
-          Text("Query", tableName: "ActivitiesCode", comment: "Label of an explored SQL editor")
-        } else {
-          Text(
-            "Your query", tableName: "ActivitiesCode", comment: "Label of the learner's SQL editor")
-        }
-      }
-      .font(.subheadline.weight(.medium))
-      .accessibilityHidden(true)
+      editorLabel
+        .font(.subheadline.weight(.medium))
+        .accessibilityHidden(true)
 
-      TextField(
-        context.phase == .explore
-          ? LocalizedStringResource(
-            "Query", table: "ActivitiesCode", comment: "Label of an explored SQL editor")
-          : LocalizedStringResource(
-            "Your query", table: "ActivitiesCode", comment: "Label of the learner's SQL editor"),
-        text: $query, selection: $selection, prompt: Text(verbatim: "SELECT"), axis: .vertical
+      MultilineTextField(
+        text: $query, selection: $selection, prompt: Text(verbatim: "SELECT"), label: editorLabel
       )
       .lineLimit(3...)
       .font(.body.monospaced())
@@ -214,6 +202,13 @@ private struct SQLPlaygroundCanvas: View {
         canRun: !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, run: runQuery,
         retry: {})
     }
+  }
+
+  private var editorLabel: Text {
+    context.phase == .explore
+      ? Text("Query", tableName: "ActivitiesCode", comment: "Label of an explored SQL editor")
+      : Text(
+        "Your query", tableName: "ActivitiesCode", comment: "Label of the learner's SQL editor")
   }
 
   private var snippets: some View {

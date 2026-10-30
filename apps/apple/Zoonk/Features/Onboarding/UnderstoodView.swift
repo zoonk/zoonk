@@ -218,11 +218,12 @@ private struct RewritableWords: View {
   var body: some View {
     if rewriting {
       Section {
-        TextField(text: $value, axis: .vertical) {
-          Text(
+        MultilineTextField(
+          text: $value,
+          label: Text(
             "What you wrote", tableName: "Onboarding",
             comment: "Header over the learner's typed goal")
-        }
+        )
         .lineLimit(1...8)
         .focused($isFocused)
         .onAppear {

@@ -312,6 +312,7 @@ private struct TypedAnswerStepView: View {
       }
     case .turn:
       LessonAnswerField(
+        label: Text(LessonRichText.attributed(content.question)),
         text: context.answer?.text ?? "",
         isLocked: context.isLocked,
         isNumber: content.isNumberAnswer,
@@ -323,6 +324,7 @@ private struct TypedAnswerStepView: View {
 }
 
 struct LessonAnswerField: View {
+  let label: Text
   let text: String
   let isLocked: Bool
   var isNumber = false
@@ -330,11 +332,12 @@ struct LessonAnswerField: View {
   let onChange: @MainActor (String) -> Void
 
   var body: some View {
-    TextField(
-      text: Binding(get: { text }, set: onChange), axis: .vertical
-    ) {
-      Text("Write your answer", tableName: "Player", comment: "Placeholder of a written answer")
-    }
+    MultilineTextField(
+      text: Binding(get: { text }, set: onChange),
+      prompt: Text(
+        "Write your answer", tableName: "Player", comment: "Placeholder of a written answer"),
+      label: label
+    )
     .lineLimit(isNumber ? 1...1 : 3...8)
     .keyboardType(isNumber ? .numbersAndPunctuation : .default)
     .focused(isFocused)
@@ -450,7 +453,8 @@ private struct SpokenAnswerStepView: View {
       }
 
       LessonAnswerField(
-        text: context.answer?.text ?? "", isLocked: context.isLocked, isFocused: $isFocused
+        label: Text(LessonRichText.attributed(content.prompt)), text: context.answer?.text ?? "",
+        isLocked: context.isLocked, isFocused: $isFocused
       ) {
         context.select($0.isEmpty ? nil : .spokenAnswer(text: $0))
       }

@@ -103,11 +103,12 @@ struct GoalEntrySections<Attachment: View>: View {
         .foregroundStyle(.secondary)
         .accessibilityHidden(true)
 
-        TextField(text: $words, prompt: Text(placeholder), axis: .vertical) {
-          Text(
+        MultilineTextField(
+          text: $words, prompt: Text(placeholder),
+          label: Text(
             "I want to", tableName: "Onboarding",
             comment: "The goal box's label, before the learner's words")
-        }
+        )
         .lineLimit(1...6)
         .focused($isFocused)
         .submitLabel(.send)

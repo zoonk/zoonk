@@ -55,15 +55,13 @@ struct BuddyGoalStart: View {
           Text("Examples", tableName: "Buddy", comment: "Example goals filled in with one tap"))
 
         HStack(alignment: .bottom, spacing: 8) {
-          TextField(
+          MultilineTextField(
             text: $goal,
             prompt: Text(
               "What you want to learn", tableName: "Buddy", comment: "Placeholder of the goal field"
             ),
-            axis: .vertical
-          ) {
-            Text("Your goal", tableName: "Buddy", comment: "The goal field for VoiceOver")
-          }
+            label: Text("Your goal", tableName: "Buddy", comment: "The goal field for VoiceOver")
+          )
           .lineLimit(1...4)
           .onSubmit(start)
           .padding(.leading, 16)

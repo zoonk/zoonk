@@ -481,6 +481,8 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertTrue(
       app.buttons["Build my plan"].waitForExistence(timeout: 5),
       "Expected the catalog's goal box for goals no course covers")
+    XCTAssertTrue(
+      app.textFields["I want to"].exists, "Expected VoiceOver to name the goal box by its label")
 
     let categorySelector = app.scrollViews["Course categories"]
     XCTAssertTrue(

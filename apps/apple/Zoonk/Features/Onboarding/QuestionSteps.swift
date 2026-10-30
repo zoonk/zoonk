@@ -355,9 +355,8 @@ struct LabeledField: View {
       label
         .font(.subheadline)
         .foregroundStyle(.secondary)
-      TextField(text: $text, prompt: prompt, axis: .vertical) {
-        label
-      }
+        .accessibilityHidden(true)
+      MultilineTextField(text: $text, prompt: prompt, label: label)
     }
   }
 }

@@ -326,11 +326,14 @@ private struct PasteMaterialRow: View {
           .autocorrectionDisabled()
           .onSubmit(add)
         } else {
-          TextField(text: $value, axis: .vertical) {
-            Text(
+          MultilineTextField(
+            text: $value,
+            prompt: Text(
               "Paste the syllabus, your notes or a chapter", tableName: "Onboarding",
-              comment: "Placeholder of the box for pasted material")
-          }
+              comment: "Placeholder of the box for pasted material"),
+            label: Text(
+              "Your text", tableName: "Onboarding", comment: "Pasted material without a title")
+          )
           .lineLimit(3...12)
         }
       }
@@ -434,11 +437,15 @@ struct MaterialQuestionsView: View {
     }
     .safeAreaInset(edge: .bottom) {
       HStack(alignment: .bottom, spacing: 8) {
-        TextField(text: $question, axis: .vertical) {
-          Text(
+        MultilineTextField(
+          text: $question,
+          prompt: Text(
             "E.g., why does glycolysis net only 2 ATP?", tableName: "Onboarding",
-            comment: "Placeholder of the box for a question about the learner's material")
-        }
+            comment: "Placeholder of the box for a question about the learner's material"),
+          label: Text(
+            "Your question", tableName: "Onboarding",
+            comment: "The box for a question about the learner's material")
+        )
         .lineLimit(1...5)
         .focused($isFocused)
         .submitLabel(.send)
