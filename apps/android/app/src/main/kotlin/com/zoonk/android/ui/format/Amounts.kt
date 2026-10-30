@@ -5,6 +5,7 @@ import android.icu.text.CompactDecimalFormat
 import android.icu.text.DecimalFormat
 import android.icu.text.DecimalFormatSymbols
 import android.icu.text.NumberFormat
+import android.icu.text.PluralRules
 import android.icu.util.Currency
 import android.icu.util.ULocale
 import java.util.Locale
@@ -172,6 +173,20 @@ private fun isWhole(
     return Math.round(value * scale) % scale.toLong() == 0L
 }
 
+/**
+ * Android's plurals take a whole number, so a shown [value] with decimals gives a whole number its
+ * language words the same way by ICU's rules, as main's messages do: "1.5 points", "1,5 point".
+ */
+fun pluralQuantity(
+    value: Double,
+    locale: Locale,
+): Int {
+    if (value == floor(value)) return value.toInt()
+    val rules = PluralRules.forLocale(locale)
+    val category = rules.select(value)
+    return (0..PLURAL_SEARCH).firstOrNull { rules.select(it.toDouble()) == category } ?: value.toInt()
+}
+
 private val CURRENCY_SYMBOLS =
     mapOf(
         "$" to "USD",
@@ -196,3 +211,4 @@ private const val MONEY_FRACTION_DIGITS = 2
 private const val WHOLE_MONEY_FROM = 1_000.0
 private const val THOUSAND = 1_000.0
 private const val TEN = 10.0
+private const val PLURAL_SEARCH = 100

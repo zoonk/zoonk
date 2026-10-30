@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -133,17 +134,35 @@ class Plot internal constructor(
         drawText(measured, topLeft = Offset(left, point.y - measured.size.height / 2))
     }
 
-    /** Text centered on a point, lifted by [lift]. */
+    /** Text centered on a point, or ending at it when [end], lifted by [lift]. */
     fun label(
         text: String,
         x: Double,
         y: Double,
         color: Color,
         lift: Dp = 12.dp,
+        end: Boolean = false,
     ) = with(scope) {
         val measured = measurer.measure(text, style.copy(color = color, fontWeight = FontWeight.SemiBold))
         val point = at(x, y)
-        drawText(measured, topLeft = Offset(point.x - measured.size.width / 2, point.y - lift.toPx() - measured.size.height / 2))
+        val left = if (end) point.x - measured.size.width else point.x - measured.size.width / 2
+        drawText(measured, topLeft = Offset(left, point.y - lift.toPx() - measured.size.height / 2))
+    }
+
+    /** A bar from the plot's bottom up to [y], [width] pixels wide and centered on [x]. */
+    fun bar(
+        x: Double,
+        y: Double,
+        width: Float,
+        color: Color,
+    ) = with(scope) {
+        val top = this@Plot.y.toPixel(y)
+        drawRoundRect(
+            color,
+            Offset(this@Plot.x.toPixel(x) - width / 2, top),
+            Size(width, bottom - top),
+            CornerRadius(minOf(width * BAR_ROUNDING, MAX_BAR_RADIUS.toPx())),
+        )
     }
 }
 
@@ -181,7 +200,7 @@ fun ActivityPlot(
         val yLabels = yTicks.map { measurer.measure(formatY(it), style.copy(color = muted)) }
         val xLabels = xTicks.map { measurer.measure(formatX(it), style.copy(color = muted)) }
         val gap = LABEL_GAP.toPx()
-        val left = max(MIN_LEFT.toPx(), (yLabels.maxOfOrNull { it.size.width } ?: 0) + gap)
+        val left = if (yLabels.isEmpty()) RIGHT.toPx() else max(MIN_LEFT.toPx(), yLabels.maxOf { it.size.width } + gap)
         val right = size.width - RIGHT.toPx()
         val top = TOP.toPx()
         val bottom = size.height - max(MIN_BOTTOM.toPx(), (xLabels.maxOfOrNull { it.size.height } ?: 0) + gap)
@@ -214,3 +233,5 @@ private val DASH_GAP = 4.dp
 private val DOT_RING = 2.5.dp
 private val GUIDE_DASH = 3.dp
 private val GUIDE_WIDTH = 1.5.dp
+private val MAX_BAR_RADIUS = 3.dp
+private const val BAR_ROUNDING = 0.25f

@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.format
 
+import android.icu.text.PluralRules
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -58,5 +59,16 @@ class AmountsTest {
         assertEquals("$3.50", money(3.5, en, "$", compact = true))
         assertEquals("R$ 2 mil", money(2_000.0, pt, "R$", compact = true))
         assertEquals("R$ 1.200 per month", money(1_200.0, pt, "R$ per month"))
+    }
+
+    @Test
+    fun aDecimalAmountTakesThePluralItsLanguageGivesIt() {
+        val category = { value: Double, locale: Locale -> PluralRules.forLocale(locale).select(pluralQuantity(value, locale).toDouble()) }
+
+        assertEquals(
+            listOf("other", "one", "other", "one", "other", "one", "one", "other", "other"),
+            listOf(1.5 to en, 1.0 to en, 5.0 to en, 1.5 to fr, 2.5 to fr, 0.3 to pt, 1.5 to pt, 1.5 to Locale.GERMAN, 1.5 to Locale.forLanguageTag("es"))
+                .map { (value, locale) -> category(value, locale) },
+        )
     }
 }

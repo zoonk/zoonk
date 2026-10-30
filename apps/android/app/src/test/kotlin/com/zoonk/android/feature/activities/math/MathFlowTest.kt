@@ -300,6 +300,41 @@ class MathFlowTest {
         typedValue("0")
     }
 
+    @Test
+    fun randomSimulationByChanceRunsAfterTheGuessIsChecked() {
+        play("randomSimulation", isCorrect = true)
+
+        rule.onNodeWithText("Pick your guess, then check it to run the simulation.").assertExists()
+        rule.onNodeWithText("About 1 in 4", substring = true).performScrollTo().performClick()
+        harness.tap("Check")
+
+        rule.onNodeWithText("The exact chance is 25%", substring = true).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Run again").performScrollTo().performClick()
+        rule.onNodeWithText("The exact chance is 25%", substring = true).assertExists()
+    }
+
+    @Test
+    fun randomSimulationBySamplingBiggerSamplesBunchUp() {
+        play("randomSimulation.sampling", isCorrect = true)
+
+        rule.onNodeWithText("200 samples of 400").assertExists()
+        rule.onNodeWithText("Example numbers, not real data").assertExists()
+        rule.onNodeWithText("Half as big", substring = true).performScrollTo().performClick()
+        harness.tap("Check")
+
+        rule.onNodeWithText("From 100 to 400, the margin shrinks to 50% of its size.").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun randomSimulationBySamplingTheSizeSliderSwitchesTheRuns() {
+        play("randomSimulation.sampling", isCorrect = true)
+
+        press(Key.DirectionLeft, 1, handle = slider("People per poll"))
+        rule.onNodeWithText("200 samples of 100").assertExists()
+        rule.onNodeWithText("Run again").performScrollTo().performClick()
+        rule.onNodeWithText("200 samples of 100").assertExists()
+    }
+
     private fun switchStep(): LessonStep {
         val json =
             """

@@ -8,6 +8,8 @@
   "activities_math_badge_explore": "cb46ed4512fa5d7994eaf34882a17d7bb7203c957f04158ac258540f30ca3aeb",
   "activities_math_badge_hands_on": "76c4d65f8724732cdcb0e736d2676064121111df6b6ce3b185e7249942ac92cb",
   "activities_math_badge_place_it": "39493563fa645e3b0e52cab7da404ac1346fb4aea9c90110c7030342ce83ca62",
+  "activities_math_badge_predict_first": "7e5439e15181d1dd8266c2cddcecdd5965b3e3269014c8b6230f89e5f0482fcc",
+  "activities_math_badge_simulate": "5332f484868b17fa6cb5aacff51f3e4ca0f690f8f015515cee1f077f5da04aa0",
   "activities_math_badge_split_it": "12473ccecdabc83ce95d6ceb28458361626c07de62c4287a2f082ca202089853",
   "activities_math_badge_try_it": "d5abab8be74dc921816950fcd74812f4b74549f88c34fcf11dc57fdf574518b6",
   "activities_math_balance_description": "9b7d8549ecd6e210b129f938ded4afc2cbaee6459bb6c41a301a491ba535c2e3",
@@ -27,6 +29,13 @@
   "activities_math_balance_take_left": "618592c43e26bffef25b1b67e45317d24b5ae044a18182af7c308451762c0fc7",
   "activities_math_balance_take_right": "9c2d086742b04b169b18f6913fe9d0609c87360a026bbaded39cc698a01acb55",
   "activities_math_balance_undo": "efc8f9516565822205b27a9b59161d55beab2278e0a566ef9545fc8e135f7333",
+  "activities_math_chance_description": "9453f9925c8548bbc0ca4d997f3b3d18bf6f35f08d2661b7c275311cd6f452ff",
+  "activities_math_chance_no": "8cdfe7c7d78879b9c236e4747c4f7259e18f53bcd9c794f22c78d481d812df95",
+  "activities_math_chance_pick_first": "bcf553bbcbefaf0b8912c30788340092be5016c2cd6b9276577ef23f9504967b",
+  "activities_math_chance_result": "cd16d7258c2e29d550febdc82070e6cc5eb0efbc7a98f1812dffd50518f80100",
+  "activities_math_chance_runs": "5047f04f183770361fcaa634fd3dc4c1182b34901854de544b0c1d5ef0410187",
+  "activities_math_chance_yes": "f2992147c61b312511a4d8022c847f29d3eab24f874cc27400b9892a310f13db",
+  "activities_math_chance_your_guess": "1c751d3d8ccfd44dcf566d0e6ab9c212d4cbfb72c3a4692522461ca3e6351a22",
   "activities_math_distribution_handle_value": "7eec4819a2bec9e9374be581dcce7e4d9ddbf97d109b64a272e6c0d9d4e81345",
   "activities_math_distribution_lower": "00d80ab95c3318c256de606f13c1ccb6a8de36fcf81719a1b5bb0d6e478834e3",
   "activities_math_distribution_normal": "8c8f7b6ff41afc71525af0e0ec6ce15ba37208c55f30183500cfade4ddc7b90f",
@@ -53,7 +62,20 @@
   "activities_math_number_line_answer": "0f273b480615b2cbd25e900eca629276d1afaefc0abea7b5567c9a3b887fe5ce",
   "activities_math_number_line_description": "1f936c44316b3a27825eb627a9046874fa21bec018305b214974c6058898fc4a",
   "activities_math_number_line_jumps": "0d8444a1dfc1824afde082909f6d9abc45a1554760fc71cfff00c806d71224a5",
-  "activities_math_number_line_label": "0bdcf31abe1fabfda37d8f1ec04ba1630c813571c07ffa6badaa6755f6fe6e41"
+  "activities_math_number_line_label": "0bdcf31abe1fabfda37d8f1ec04ba1630c813571c07ffa6badaa6755f6fe6e41",
+  "activities_math_run_again": "8c55ee73a7bea32c8b06a942783165240f83be7eee0d3a9947bf1b48152a7d82",
+  "activities_math_sampling_done": "c3d218265e5b680bd1a5e770ae5c4565a3b8f8e139fb8125543d59dbf7097502",
+  "activities_math_sampling_margin": "5f5011f3e4933ae5c3f8ca9e197e859b02b5d1c8cd6469e6b32d47355e6b8030",
+  "activities_math_sampling_margin_points": "3fdaf8bb39e065a95a894a2c7d42b0a1a029d95caf6d14359cd78f5c2745d5bc",
+  "activities_math_sampling_math": "7c9a5db5daa8e83fbb307c6419bab3749499d7b1c199822a4802e9790da997b9",
+  "activities_math_sampling_range": "ed34d538e855f0973a3d3589e77a3c7e76e8370c07f1f54e78ca653fa5b7fcc6",
+  "activities_math_sampling_running": "2738c405a1df143a4a208737c99c2b28c3221942dffbe59759717984a0396420",
+  "activities_math_sampling_shrinks": "41844a2e8c0db85be96fe48fed8e83b00b554be5b4cc7ee655c465c3a059ae7f",
+  "activities_math_sampling_size": "6264c6641426417e1477afe845d4eb3442aaf0e6b2cf803a67ed9532ce0a4791",
+  "activities_math_sampling_slider_value": "07929196a1fa5f2aa88ce32cb52ad407e0d4820020703b8c04187aa372ae52fe",
+  "activities_math_sampling_summary": "7356b9f48b3007dfd7de1f4798a05e97bdd0815af5494b54d78da944102d7267",
+  "activities_math_sampling_truth": "31a9c859aa4f290924c4f6d541432b60175613468b8de8af5cade25352e663eb",
+  "activities_math_sampling_within": "83245bdc93d2d796cb871e187b984ab3fdd691a44359da498ff1b855c8bd3d1d"
 }
 -->
 <resources>
@@ -67,6 +89,10 @@
     <string name="activities_math_badge_explore">Explore</string>
     <!-- A badge on an activity where the learner splits a rectangle or a bar into easy parts. -->
     <string name="activities_math_badge_split_it">Divida em partes</string>
+    <!-- A short badge on an activity where the learner guesses how often something random happens before a simulation runs it. -->
+    <string name="activities_math_badge_predict_first">Dê seu palpite primeiro</string>
+    <!-- A short badge on an activity that runs many random polls or samples; a verb, one word where the language allows. -->
+    <string name="activities_math_badge_simulate">Simule</string>
     <!-- A number line's name, then the unit its values are measured in, like "Temperature in °C" or "Distance in km". -->
     <string name="activities_math_number_line_label">%1$s em %2$s</string>
     <!-- The dot the learner drags along the number line, for TalkBack. -->
@@ -167,4 +193,48 @@
     <string name="activities_math_balance_step">%1$s: %2$s</string>
     <!-- The name of the list of moves to pick from when solving an equation step by step, for TalkBack. -->
     <string name="activities_math_balance_pick_move">Escolha o próximo passo</string>
+    <!-- How many times a random experiment runs, then what one run is, like "1,000 runs of 10 flips". -->
+    <string name="activities_math_chance_runs">%1$s repetições de %2$s</string>
+    <!-- The chance the learner guessed, as a percent, like "Your guess: 25%". -->
+    <string name="activities_math_chance_your_guess">Seu palpite: %1$s</string>
+    <!-- Shown where the simulation's chart will be, before the learner checks a guess. -->
+    <string name="activities_math_chance_pick_first">Escolha seu palpite e confira para iniciar a simulação.</string>
+    <!-- Once the runs are in: the event, how often it came up, and its exact chance, like "Exactly 5 heads in 24% of the runs. The exact chance is 25%." -->
+    <string name="activities_math_chance_result">%1$s em %2$s das repetições. A chance exata é %3$s.</string>
+    <!-- What the simulation shows, for TalkBack: the runs, the event and how often it came up, like "1,000 runs of 10 flips: Exactly 5 heads came up in 24% of them." -->
+    <string name="activities_math_chance_description">%1$s: %2$s ocorreu em %3$s delas.</string>
+    <!-- Under a chart of runs with two outcomes, the bar for runs where the event happened. -->
+    <string name="activities_math_chance_yes">Sim</string>
+    <!-- Under a chart of runs with two outcomes, the bar for runs where the event didn't happen. -->
+    <string name="activities_math_chance_no">Não</string>
+    <!-- A button that runs the random simulation again with new random draws. -->
+    <string name="activities_math_run_again">Simular de novo</string>
+    <!-- Above the margin of error of many random polls, like "95% of samples land within ±9.8 points"; %1$s is the share, "95%". -->
+    <string name="activities_math_sampling_within">%1$s das amostras ficam dentro de</string>
+    <!-- The name of the slider that picks how big each random sample is. -->
+    <string name="activities_math_sampling_size">Tamanho da amostra</string>
+    <!-- What the sampling simulation shows, for TalkBack, like "200 samples of 400 from Example town. The true value is 50%; 95% of samples landed between 45% and 55%." -->
+    <string name="activities_math_sampling_summary">%1$s amostras de %2$s de %3$s. O valor real é %4$s; 95%% das amostras ficaram entre %5$s e %6$s.</string>
+    <!-- Under the chart, where the middle 95% of the samples landed, like "45% to 55%". -->
+    <string name="activities_math_sampling_range">%1$s a %2$s</string>
+    <!-- Above a dashed line on the chart at the population's real value, like "True value: 50%". -->
+    <string name="activities_math_sampling_truth">Valor real: %1$s</string>
+    <!-- What the sample size slider says to TalkBack: the size, then the margin it gives, like "400. 95% of samples within ±4.9 points." -->
+    <string name="activities_math_sampling_slider_value">%1$s. 95%% das amostras ficam dentro de %2$s.</string>
+    <!-- Once every sample is drawn, how many and of what size, like "200 samples of 400". -->
+    <string name="activities_math_sampling_done">%1$s amostras de %2$s</string>
+    <!-- While samples are being drawn, like "Running 120 of 200…". -->
+    <string name="activities_math_sampling_running">Simulando %1$s de %2$s…</string>
+    <!-- The heading of a box with each sample size's margin of error as the formula gives it. -->
+    <string name="activities_math_sampling_math">O que a matemática diz</string>
+    <!-- How the margin of error changes from the smallest sample to the largest, like "From 100 to 400, the margin shrinks to 50% of its size." -->
+    <string name="activities_math_sampling_shrinks">De %1$s para %2$s, a margem cai para %3$s do tamanho inicial.</string>
+    <!-- A margin of error around a mean, plus or minus an amount with its unit, like "±3 cm". -->
+    <string name="activities_math_sampling_margin">±%1$s</string>
+    <!-- A margin of error in percentage points, like "±9.8 points"; the number can have decimals. -->
+    <plurals name="activities_math_sampling_margin_points">
+        <item quantity="one">±%1$s ponto</item>
+        <item quantity="many">±%1$s pontos</item>
+        <item quantity="other">±%1$s pontos</item>
+    </plurals>
 </resources>

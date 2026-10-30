@@ -48,6 +48,7 @@ import com.zoonk.android.feature.activities.math.balanceRenderer
 import com.zoonk.android.feature.activities.math.distributionExplorerRenderer
 import com.zoonk.android.feature.activities.math.formulaModelRenderer
 import com.zoonk.android.feature.activities.math.numberLineRenderer
+import com.zoonk.android.feature.activities.math.randomSimulationRenderer
 import com.zoonk.android.feature.activities.music.keyboardFretboardRenderer
 import com.zoonk.android.feature.activities.music.notationPlayerRenderer
 import com.zoonk.android.feature.activities.music.rhythmTapperRenderer
@@ -129,6 +130,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "patternTable" to patternTableRenderer,
         "patternTester" to patternTesterRenderer,
         "processOrder" to processOrderRenderer,
+        "randomSimulation" to randomSimulationRenderer,
         "rhythmTapper" to rhythmTapperRenderer,
         "sourceComparison" to sourceComparisonRenderer,
         "sqlPlayground" to sqlPlaygroundRenderer,
