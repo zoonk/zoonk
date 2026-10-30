@@ -14,6 +14,8 @@ struct CallIntro {
   }
 
   let character: Character
+  /// Nil before a checkpoint's call is made.
+  let conversationId: String?
   let level: String
   let minutes: Int
   let objectives: [Objective]
@@ -25,6 +27,7 @@ struct CallIntro {
   init(_ conversation: LanguageConversation) {
     let character = conversation.character
     self.character = Character(name: character.name, place: character.place, role: character.role)
+    conversationId = conversation.id
     level = conversation.level.rawValue
     minutes = conversation.minutes
     objectives = conversation.objectives.map {
@@ -39,6 +42,7 @@ struct CallIntro {
   init(_ intro: Components.Schemas.LanguageConversationIntro) {
     let character = intro.character
     self.character = Character(name: character.name, place: character.place, role: character.role)
+    conversationId = nil
     level = intro.level.rawValue
     minutes = intro.minutes
     objectives = intro.objectives.map { Objective(description: $0.description, label: $0.label) }
@@ -79,6 +83,10 @@ struct ConversationIntro<Footer: View>: View {
       }
 
       if let examTask = intro.speakingTask {
+        if examTask.task.prepMinutes > 0, let conversationId = intro.conversationId {
+          ExamPrepTimer(cardId: conversationId, task: examTask.task)
+        }
+
         ExamTaskCard(task: examTask)
       } else {
         Section {
@@ -252,12 +260,6 @@ private struct ExamTaskCard: View {
       Text(
         "Task \(task.number) of \(task.taskCount)", tableName: "Voice",
         comment: "Which task of the exam's speaking paper this is")
-    } footer: {
-      if task.task.prepMinutes > 0 {
-        Text(
-          "The exam gives \(Duration.seconds(task.task.prepMinutes * 60).formatted(.units(allowed: [.minutes, .seconds], width: .wide))) to prepare.",
-          tableName: "Voice", comment: "How long the exam gives to prepare this task")
-      }
     }
     .typesettingLanguage(.init(identifier: task.language))
   }
