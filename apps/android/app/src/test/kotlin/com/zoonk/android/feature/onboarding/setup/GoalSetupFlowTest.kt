@@ -44,6 +44,7 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf9
 import com.zoonk.api.models.PlanTimeAdvice
+import com.zoonk.api.models.PlanTimeToCoverSuggestedSplit
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -379,6 +380,33 @@ class GoalSetupFlowTest {
             kotlinx.datetime.LocalDate(2030, 6, 10),
             (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf4Value).value.targetDate,
         )
+    }
+
+    @Test
+    fun aSuggestedTimePickedKeepsItsSplitOnceTheDaysChangeAgain() {
+        api.setup =
+            { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08", goalIds = listOf(GOAL_ID, EXAM_GOAL_ID)) }
+        api.cover = { input ->
+            when (input.studyDays.orEmpty().size) {
+                5 -> coverOf(recommended = 2_000, core = 2_000)
+                6 -> coverOf(recommended = 50, split = PlanTimeToCoverSuggestedSplit(mine = 35, others = 1, rest = 15))
+                else -> coverOf(recommended = 40, split = PlanTimeToCoverSuggestedSplit(mine = 28, others = 1, rest = 12))
+            }
+        }
+        api.advice = { adviceOf(0.6) }
+        show()
+
+        rule.onNodeWithContentDescription("Saturday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.onNodeWithText("Cover everything with 50\u00A0min a day").performScrollTo().performClick()
+        rule.onNodeWithContentDescription("Sunday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+
+        rule.onNodeWithContentDescription("Time a day, 50\u00A0min").assertIsDisplayed()
+        rule
+            .onNodeWithText("This goal gets 35\u00A0min a day and your other goal 15\u00A0min.", substring = true)
+            .performScrollTo()
+            .assertIsDisplayed()
     }
 
     @Test

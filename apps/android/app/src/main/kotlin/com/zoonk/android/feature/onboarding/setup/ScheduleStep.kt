@@ -84,6 +84,7 @@ internal fun ColumnScope.ScheduleStep(
 ) {
     val exam = goal.kind == Goal.Kind.EXAM
     var picked by rememberSaveable { mutableStateOf<Int?>(null) }
+    var pickedSplit by rememberSaveable(stateSaver = DaySplitSaver) { mutableStateOf<DaySplit?>(null) }
     var fullCourse by rememberSaveable { mutableStateOf(false) }
     var days by rememberSaveable { mutableStateOf(startingDays(goal.studyDays.map(Long::toInt))) }
     var weekendOn by rememberSaveable { mutableStateOf(false) }
@@ -148,7 +149,12 @@ internal fun ColumnScope.ScheduleStep(
             ?.targetDate
             ?.takeIf { dated }
             ?.let { ShownDate(it, shownFound.targetDateNamedMonth) }
-    val pick = { next: Int -> picked = pickedMinutes(first, shownFound, next) }
+    val answers = listOf(covering.answer, covering.last, covering.first)
+    val choose = { next: Int, followed: PlanTimeToCover? ->
+        picked = pickedMinutes(first, followed, next)
+        pickedSplit = daySplit(next, timeChoices, answers)
+    }
+    val pick = { next: Int -> choose(next, shownFound) }
     val stale = hasDays && waitsForSuggestion(findFailed, first, found, picked)
 
     StepForm(
@@ -189,9 +195,16 @@ internal fun ColumnScope.ScheduleStep(
                 minutes = minutes,
                 offer = offer(found, line, minutes),
                 tooClose = tooClose(found, line, studiesEveryDay = days.size == EVERY_DAY.size),
-                split = daySplit(minutes, timeChoices, listOf(covering.answer, covering.last, covering.first)).takeIf { hasDays },
+                split =
+                    (
+                        daySplit(
+                            minutes,
+                            timeChoices,
+                            answers,
+                        ) ?: pickedSplit.takeIf { picked != null && picked == minutes }
+                    ).takeIf { hasDays },
                 onRetry = if (findFailed) covering.restart else timeAdvice.restart,
-                onUseOffer = { picked = pickedMinutes(first, found, it) },
+                onUseOffer = { choose(it, found) },
             )
         }
 

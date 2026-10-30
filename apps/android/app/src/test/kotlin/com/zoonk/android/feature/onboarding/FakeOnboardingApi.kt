@@ -37,6 +37,7 @@ import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.PlanTimeToCoverSuggested
+import com.zoonk.api.models.PlanTimeToCoverSuggestedSplit
 import com.zoonk.api.models.Source
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.TodayUploadRequest
@@ -526,12 +527,13 @@ internal fun coverOf(
     targetDate: LocalDate = LocalDate(2030, 11, 8),
     ready: Boolean = true,
     core: Long? = null,
+    split: PlanTimeToCoverSuggestedSplit? = null,
 ) = PlanTimeToCover(
     coreMinutes = core,
     fittingDate = null,
     ready = ready,
     recommendedMinutes = recommended,
-    suggested = suggestionFor(recommended, core).takeIf { ready },
+    suggested = suggestionFor(recommended, core)?.copy(split = split).takeIf { ready },
     targetDate = targetDate,
     targetDateNamedMonth = false,
 )

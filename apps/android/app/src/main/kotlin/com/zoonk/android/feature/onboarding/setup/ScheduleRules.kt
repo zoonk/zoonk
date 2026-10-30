@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import androidx.compose.runtime.saveable.Saver
 import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeAdviceInput
@@ -30,10 +31,16 @@ internal data class DaySplit(
     val rest: Int,
 )
 
+internal val DaySplitSaver =
+    Saver<DaySplit?, List<Int>>(
+        save = { split -> split?.let { listOf(it.mine, it.others, it.rest) } },
+        restore = { (mine, others, rest) -> DaySplit(mine, others, rest) },
+    )
+
 /**
  * Core's split of the time shown among the goals typed together: the question's own times carry
- * theirs, and a suggestion between them its own, which stays the learner's pick once later weeks
- * suggest other times.
+ * theirs, and a suggestion between them its own; the screen keeps a picked suggestion's split once
+ * later weeks suggest other times.
  */
 internal fun daySplit(
     minutes: Int?,
