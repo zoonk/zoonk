@@ -356,7 +356,7 @@ msgstr "{runtime} konnte nicht geladen werden. Prüf deine Verbindung und versuc
 #: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
-msgstr "Versuch es noch einmal"
+msgstr "Noch einmal versuchen"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "g91Ps-"
@@ -621,7 +621,7 @@ msgstr "Beide Seiten in {count} gleich große Gruppen teilen"
 #: src/activities/molecule-builder/molecule-palette.tsx
 msgctxt "JkS37H"
 msgid "Undo"
-msgstr "Rückgängig"
+msgstr "Rückgängig machen"
 
 #: src/activities/balance/balance-steps.tsx
 msgctxt "B2kJuH"

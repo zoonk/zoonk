@@ -116,7 +116,7 @@ msgstr "Hoy"
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
-msgstr "Crea una cuenta gratis"
+msgstr "Crear una cuenta gratis"
 
 #: src/_components/detail-page.tsx
 #: src/_components/steps.tsx
@@ -774,12 +774,12 @@ msgstr "{buddy} se ha echado una siesta. Se despertará cuando aprendas algo."
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "KRzhMQ"
 msgid "You studied today, so Energy won't drop."
-msgstr "Hoy has estudiado, así que la energía no bajará."
+msgstr "Hoy has estudiado, así que la Energía no bajará."
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "ok24EC"
 msgid "Studying today keeps Energy up."
-msgstr "Estudiar hoy mantiene la energía."
+msgstr "Estudiar hoy evita que baje la Energía."
 
 #: src/buddies/buddy-day-parts.tsx
 #: src/buddies/buddy-day.tsx
@@ -791,7 +791,7 @@ msgstr "Energía"
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "eiGdZK"
 msgid "Energy starts with your first lesson and grows as you learn."
-msgstr "La energía comienza con tu primera lección y aumenta a medida que aprendes."
+msgstr "La Energía empieza con tu primera lección y crece a medida que aprendes."
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
@@ -1656,7 +1656,7 @@ msgstr "Habilidades"
 #: src/plan/use-short-plan.ts
 msgctxt "KV-O0y"
 msgid "Practice"
-msgstr "Practicar"
+msgstr "Práctica"
 
 #: src/chapter/chapter-screen.tsx
 #: src/journey/journey-hero.tsx
@@ -2204,7 +2204,7 @@ msgstr "Una breve llamada de voz, adaptada a tu nivel."
 #: src/mock/mock-entry.tsx
 msgctxt "g5EneG"
 msgid "Take a mock exam"
-msgstr "Haz un simulacro"
+msgstr "Hacer un simulacro"
 
 #: src/course/use-level-name.ts
 msgctxt "9uOFF3"
@@ -11863,7 +11863,7 @@ msgstr "¡Has subido de nivel!"
 #: src/session/reached-moment.tsx
 msgctxt "K1evK3"
 msgid "As high as Energy goes."
-msgstr "La energía ha llegado al máximo."
+msgstr "Energía al máximo."
 
 #: src/session/reached-moment.tsx
 msgctxt "ejGTo0"
@@ -12141,7 +12141,7 @@ msgstr "Explicaciones rápidas"
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.QTg-WT"
 msgid "Start a new goal"
-msgstr "Empezar un objetivo nuevo"
+msgstr "Empezar un nuevo objetivo"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.s-Ncqj"

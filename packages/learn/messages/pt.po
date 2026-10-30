@@ -5566,7 +5566,7 @@ msgstr "Pular esta palavra"
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
-msgstr "Repita"
+msgstr "Fale de novo"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "FLqp3G"
@@ -11863,7 +11863,7 @@ msgstr "Você subiu de nível!"
 #: src/session/reached-moment.tsx
 msgctxt "K1evK3"
 msgid "As high as Energy goes."
-msgstr "A energia chegou ao máximo."
+msgstr "Energia no máximo."
 
 #: src/session/reached-moment.tsx
 msgctxt "ejGTo0"

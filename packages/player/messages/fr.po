@@ -2555,7 +2555,7 @@ msgstr "Continuer"
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "WYzHAI"
 msgid "Skip for now"
-msgstr "Passer pour l’instant"
+msgstr "Sauter pour l’instant"
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx

@@ -241,7 +241,7 @@ msgstr "Resposta:"
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
-msgstr "Avaliação da resposta"
+msgstr "Feedback sobre a resposta"
 
 #: src/activities/_components/activity-guess-comparison.tsx
 msgctxt "iNWAkL"

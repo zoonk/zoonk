@@ -1908,7 +1908,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Días con la energía al máximo"
+            "value" : "Días con Energía al máximo"
           }
         },
         "fr" : {
@@ -1995,7 +1995,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Intensidad de la energía de baja a alta"
+            "value" : "Intensidad de la Energía de menor a mayor"
           }
         },
         "fr" : {
@@ -2140,7 +2140,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada lección que completas aumenta tu energía. Los días que descansas baja un poco, pero conservas tu cinturón y tu progreso."
+            "value" : "Cada lección que completas aumenta tu Energía. Los días de descanso baja un poco y conservas tu cinturón y tu progreso."
           }
         },
         "fr" : {

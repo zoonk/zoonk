@@ -1532,7 +1532,7 @@ msgstr "Élevé"
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "5ZmEgv"
 msgid "{date} · No Energy recorded"
-msgstr "{date} · Aucune énergie enregistrée"
+msgstr "{date} · Aucune Énergie enregistrée"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "beOKv0"
@@ -1557,7 +1557,7 @@ msgstr "Moyenne"
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "WUD69_"
 msgid "Days with full Energy"
-msgstr "Jours avec une énergie au maximum"
+msgstr "Jours avec l’Énergie au maximum"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "1bzMX0"
@@ -1567,12 +1567,12 @@ msgstr "À 100 %"
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "y6wXa9"
 msgid "Every lesson you finish raises your Energy. On days off it drops a little, and your belt and progress stay."
-msgstr "Chaque leçon terminée augmente ton énergie. Les jours sans étude, elle baisse un peu, mais tu gardes ta ceinture et tes progrès."
+msgstr "Chaque leçon terminée augmente ton Énergie. Les jours de pause, elle baisse un peu, mais tu gardes ta ceinture et tes progrès."
 
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 msgctxt "wSjCCg"
 msgid "Your Energy now and over the past 12 months."
-msgstr "Ton énergie actuelle et son évolution sur les 12 derniers mois."
+msgstr "Ton Énergie actuelle et son évolution sur les 12 derniers mois."
 
 #: src/app/[lang]/(app)/(stats)/layout.tsx
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
@@ -1865,7 +1865,7 @@ msgstr "Écart sur la semaine"
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "Q0jtuV"
 msgid "Your belt, Energy, study days, right answers and when you do best."
-msgstr "Ta ceinture, ton énergie, tes jours d’étude, tes bonnes réponses et les moments où tu réussis le mieux."
+msgstr "Ta ceinture, ton Énergie, tes jours d’étude, tes bonnes réponses et les moments où tu réussis le mieux."
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "AezvZG"
@@ -2911,7 +2911,7 @@ msgstr "Les bases"
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "h9kQ0S"
 msgid "We'll skip what you already know"
-msgstr "On passera ce que tu connais déjà"
+msgstr "On sautera ce que tu connais déjà"
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "koLFLL"

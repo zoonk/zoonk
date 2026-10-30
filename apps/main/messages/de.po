@@ -56,7 +56,7 @@ msgstr "Kurse entdecken"
 #: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
-msgstr "Ein Ziel starten"
+msgstr "Ziel starten"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
@@ -177,7 +177,7 @@ msgstr "die ganze Probeprüfung, die Hälfte oder ein Fach"
 #: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
 msgctxt "g5EneG"
 msgid "Take a mock exam"
-msgstr "Probeprüfung machen"
+msgstr "Probeprüfung ablegen"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(home)/_components/exam-tomorrow.ts
@@ -2115,7 +2115,7 @@ msgstr "Englisch für London"
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "AeiByK"
 msgid "Data analyst by {month}"
-msgstr "Bis {month} in die Datenanalyse"
+msgstr "Bis {month} Datenanalyst werden"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
@@ -2132,7 +2132,7 @@ msgstr "SAT"
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "EV-GCl"
 msgid "Data analyst"
-msgstr "Datenanalyse"
+msgstr "Datenanalyst"
 
 #: src/app/[lang]/(home)/_components/final-call.tsx
 msgctxt "PYDioW"
@@ -2346,7 +2346,7 @@ msgstr "mich auf den SAT im {month} vorbereiten"
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "XmrixE"
 msgid "get promoted to data analyst by {month}"
-msgstr "spätestens im {month} zur Fachkraft für Datenanalyse befördert werden"
+msgstr "bis {month} zum Datenanalysten befördert werden"
 
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "Kiy_DO"

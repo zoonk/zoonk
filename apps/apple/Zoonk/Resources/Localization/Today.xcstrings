@@ -7223,7 +7223,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Probeprüfung machen"
+            "value" : "Probeprüfung ablegen"
           }
         },
         "es" : {
@@ -7939,7 +7939,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Versuch es noch einmal"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {

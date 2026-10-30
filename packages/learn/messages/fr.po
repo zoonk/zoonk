@@ -791,7 +791,7 @@ msgstr "Énergie"
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "eiGdZK"
 msgid "Energy starts with your first lesson and grows as you learn."
-msgstr "L’énergie apparaît dès ta première leçon et augmente à mesure que tu apprends."
+msgstr "Tu gagnes de l’Énergie dès ta première leçon et à mesure que tu apprends."
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
@@ -3407,7 +3407,7 @@ msgstr "Adaptation du plan à ton emploi du temps"
 #: src/generation/use-generation-copy.ts
 msgctxt "0EAw5g"
 msgid "Finding lessons in the Library…"
-msgstr "Recherche de leçons dans la bibliothèque…"
+msgstr "Recherche de leçons dans la Bibliothèque…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "eO1ana"
@@ -3478,7 +3478,7 @@ msgstr "Choix de tes cours"
 #: src/generation/use-generation-copy.ts
 msgctxt "JRrpUO"
 msgid "Finding courses in the Library…"
-msgstr "Recherche de cours dans la bibliothèque…"
+msgstr "Recherche de cours dans la Bibliothèque…"
 
 #: src/generation/use-generation-copy.ts
 #: src/language/level-test/level-test-preparing.tsx
@@ -8427,7 +8427,7 @@ msgstr "Commence gratuitement, sans créer de compte."
 #: src/onboarding/library-course-offer.tsx
 msgctxt "JHbf4S"
 msgid "A course in the Library fits your goal"
-msgstr "Un cours de la bibliothèque correspond à ton objectif"
+msgstr "Un cours de la Bibliothèque correspond à ton objectif"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -8640,7 +8640,7 @@ msgstr "Les bases"
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "h9kQ0S"
 msgid "We'll skip what you already know"
-msgstr "Nous passerons ce que tu connais déjà"
+msgstr "On sautera ce que tu sais déjà"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "koLFLL"
@@ -8852,7 +8852,7 @@ msgstr "Elles portent sur les compétences nécessaires à ton objectif. Cela pr
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
 msgid "Skip for now"
-msgstr "Passer pour le moment"
+msgstr "Sauter pour l’instant"
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "8S9f9-"

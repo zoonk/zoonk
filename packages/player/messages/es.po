@@ -2447,7 +2447,7 @@ msgstr "El 95 % de las muestras queda entre"
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "tXYVJd"
 msgid "{from} to {to}"
-msgstr "{from} y {to}"
+msgstr "De {from} a {to}"
 
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "Dv2Fkx"
@@ -3116,7 +3116,7 @@ msgstr "Guarda tu progreso para seguir"
 #: src/questions/tutor-conversation.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
-msgstr "Crear una cuenta gratuita"
+msgstr "Crear una cuenta gratis"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "nkKtmz"

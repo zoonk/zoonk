@@ -675,13 +675,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La energía empieza con tu primera lección y aumenta a medida que aprendes."
+            "value" : "Tu Energía empieza con tu primera lección y aumenta a medida que aprendes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’énergie apparaît dès ta première leçon et augmente à mesure que tu apprends."
+            "value" : "Tu gagnes de l’énergie dès ta première leçon, puis à mesure que tu apprends."
           }
         },
         "pt" : {
@@ -1893,7 +1893,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudiar hoy mantiene la energía."
+            "value" : "Estudiar hoy mantiene alta tu Energía."
           }
         },
         "fr" : {

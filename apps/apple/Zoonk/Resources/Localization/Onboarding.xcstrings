@@ -2441,7 +2441,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frag"
+            "value" : "Fragen"
           }
         },
         "es" : {
@@ -3686,7 +3686,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crear una cuenta gratuita"
+            "value" : "Crear una cuenta gratis"
           }
         },
         "fr" : {
@@ -7851,7 +7851,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passer pour l’instant"
+            "value" : "Sauter pour l’instant"
           }
         },
         "pt" : {
@@ -8100,7 +8100,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Ziel starten"
+            "value" : "Ziel starten"
           }
         },
         "es" : {
@@ -9568,7 +9568,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Versuch es noch einmal"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -10450,7 +10450,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous passerons ce que tu connais déjà"
+            "value" : "On sautera ce que tu connais déjà"
           }
         },
         "pt" : {

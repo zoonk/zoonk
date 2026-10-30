@@ -196,7 +196,7 @@ msgstr "Pregunta a {buddy}…"
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "QTg-WT"
 msgid "Start a new goal"
-msgstr "Empieza un nuevo objetivo"
+msgstr "Empezar un nuevo objetivo"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
@@ -1517,7 +1517,7 @@ msgstr "Tus días de estudio, lecciones completadas y tiempo dedicado a aprender
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "jPmToJ"
 msgid "Energy intensity from low to high"
-msgstr "Intensidad de la energía, de baja a alta"
+msgstr "Nivel de Energía de menor a mayor"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "477I0g"
@@ -1532,12 +1532,12 @@ msgstr "Alta"
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "5ZmEgv"
 msgid "{date} · No Energy recorded"
-msgstr "{date} · Sin energía registrada"
+msgstr "{date} · Sin Energía registrada"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "beOKv0"
 msgid "{date} · {percentage} Energy"
-msgstr "{date} · {percentage} de energía"
+msgstr "{date} · {percentage} de Energía"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "0i1UHO"
@@ -1557,7 +1557,7 @@ msgstr "Media"
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "WUD69_"
 msgid "Days with full Energy"
-msgstr "Días con la energía al máximo"
+msgstr "Días con Energía al máximo"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "1bzMX0"
@@ -1567,12 +1567,12 @@ msgstr "Al 100 %"
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "y6wXa9"
 msgid "Every lesson you finish raises your Energy. On days off it drops a little, and your belt and progress stay."
-msgstr "Cada lección que completas aumenta tu energía. Los días que descansas baja un poco, pero conservas tu cinturón y tu progreso."
+msgstr "Cada lección que completas aumenta tu Energía. Los días de descanso baja un poco, pero tu cinturón y tu progreso se mantienen."
 
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 msgctxt "wSjCCg"
 msgid "Your Energy now and over the past 12 months."
-msgstr "Tu energía actual y durante los últimos 12 meses."
+msgstr "Tu Energía actual y la de los últimos 12 meses."
 
 #: src/app/[lang]/(app)/(stats)/layout.tsx
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
@@ -1865,7 +1865,7 @@ msgstr "Variación durante la semana"
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "Q0jtuV"
 msgid "Your belt, Energy, study days, right answers and when you do best."
-msgstr "Tu cinturón, energía, días de estudio, respuestas correctas y cuándo obtienes mejores resultados."
+msgstr "Tu cinturón, tu Energía, tus días de estudio, tus aciertos y cuándo rindes mejor."
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "AezvZG"

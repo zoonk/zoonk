@@ -1289,7 +1289,7 @@ msgstr "Der Start läuft noch. Das dauert länger als üblich."
 #: src/questions/test-out-preparing.tsx
 msgctxt "RFCwI6"
 msgid "Starting…"
-msgstr "Wird gestartet…"
+msgstr "Wir starten…"
 
 #: src/challenge/challenge-footer.tsx
 #: src/mock/mock-chooser.tsx
@@ -1696,7 +1696,7 @@ msgstr "Richtig!"
 #: src/session/question-block/question-feedback.tsx
 msgctxt "--l7ni"
 msgid "Not quite"
-msgstr "Nicht ganz"
+msgstr "Nicht ganz richtig"
 
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "5qf9VW"
@@ -2005,7 +2005,7 @@ msgstr "„{goal}“"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "QTg-WT"
 msgid "Start a new goal"
-msgstr "Ein neues Ziel starten"
+msgstr "Neues Ziel starten"
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "Zt_vKl"
@@ -2204,7 +2204,7 @@ msgstr "Ein kurzes Gespräch auf deinem Niveau, bei dem du laut sprichst."
 #: src/mock/mock-entry.tsx
 msgctxt "g5EneG"
 msgid "Take a mock exam"
-msgstr "Eine Probeprüfung machen"
+msgstr "Probeprüfung ablegen"
 
 #: src/course/use-level-name.ts
 msgctxt "9uOFF3"
@@ -5794,7 +5794,7 @@ msgstr "Aufnahme"
 #: src/listening/listening-player.tsx
 msgctxt "tFFMkF"
 msgid "Pause"
-msgstr "Pause"
+msgstr "Pausieren"
 
 #: src/listening/listening-player.tsx
 msgctxt "6BZTod"
@@ -7987,7 +7987,7 @@ msgstr "{title} entfernen"
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
-msgstr "Ein Ziel starten"
+msgstr "Ziel starten"
 
 #: src/onboarding/entry/goal-entry.tsx
 #: src/onboarding/onboarding-skeletons.tsx
@@ -8272,7 +8272,7 @@ msgstr "Z. B.: Warum liefert die Glykolyse netto nur 2 ATP?"
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "ZT0z9z"
 msgid "Ask"
-msgstr "Frag"
+msgstr "Frage stellen"
 
 #: src/onboarding/entry/paste-link.tsx
 msgctxt "JBWS0c"

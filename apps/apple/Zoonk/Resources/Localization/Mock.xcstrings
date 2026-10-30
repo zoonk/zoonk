@@ -6056,13 +6056,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Probeprüfung machen"
+            "value" : "Probeprüfung ablegen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haz un simulacro"
+            "value" : "Hacer un simulacro"
           }
         },
         "fr" : {
@@ -7554,7 +7554,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Versuch es noch einmal"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
