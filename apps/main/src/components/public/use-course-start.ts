@@ -42,8 +42,14 @@ export function useCourseStart({
         return;
       }
 
-      const { data } = await safeAsync(async () =>
-        (await ensureGuestSession()) === "ready"
+      const { data } = await safeAsync(async () => {
+        const guest = await ensureGuestSession();
+
+        if (guest === "blocked") {
+          return { reason: "browserBlocked", status: "limitReached" } as const;
+        }
+
+        return guest === "ready"
           ? startCourseAction({
               chapterId,
               courseId,
@@ -51,8 +57,8 @@ export function useCourseStart({
               level,
               timeZone: getLocalTimeZone(),
             })
-          : null,
-      );
+          : null;
+      });
 
       const outcome: CourseStartOutcome = data ?? { status: "failed" };
 

@@ -7,7 +7,11 @@ import { findGoalTimeToCover, getGoalTimeAdvice } from "@/lib/goals/goal-time-ad
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
-import { type OnboardingActions, type OnboardingRoutes } from "@zoonk/learn/onboarding/actions";
+import {
+  type CreateGoalsOutcome,
+  type OnboardingActions,
+  type OnboardingRoutes,
+} from "@zoonk/learn/onboarding/actions";
 import { isValidLocale } from "@zoonk/utils/locale";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
@@ -33,6 +37,20 @@ import {
 import { createGoalsFromPlanLinkAction } from "./plan-link-actions";
 import { WEB_UNDERSTANDING_ACTIONS } from "./understanding-client-actions";
 
+async function createAsGuest(
+  create: () => Promise<CreateGoalsOutcome>,
+): Promise<CreateGoalsOutcome> {
+  const guest = await ensureGuestSession();
+
+  if (guest === "ready") {
+    return create();
+  }
+
+  return guest === "blocked"
+    ? { reason: "browserBlocked", status: "limitReached" }
+    : { status: "failed" };
+}
+
 /**
  * A visitor becomes a guest before their goal is read, so what follows is theirs and moves to their
  * account. Material goes through the uploads API from the browser: files go straight to storage.
@@ -42,10 +60,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   answerPlacement: (input) => answerPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
   askMaterial: askMaterialQuestion,
   attach: { file: attachGoalFile, link: attachGoalLink, text: attachGoalText },
-  createGoals: async (input) =>
-    (await ensureGuestSession()) === "ready"
-      ? createOnboardingGoalsAction(input)
-      : { status: "failed" },
+  createGoals: (input) => createAsGuest(() => createOnboardingGoalsAction(input)),
   findTimeToCover: findGoalTimeToCover,
   finishPlacement: (input) => finishPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
   getPlacement: (goalId) => getPlacementAction({ goalId, timeZone: getLocalTimeZone() }),
@@ -98,9 +113,6 @@ export function useWebOnboardingRoutes(): OnboardingRoutes {
 export function getPlanLinkOnboardingActions(planId: string): OnboardingActions {
   return {
     ...WEB_ONBOARDING_ACTIONS,
-    createGoals: async (input) =>
-      (await ensureGuestSession()) === "ready"
-        ? createGoalsFromPlanLinkAction(planId, input)
-        : { status: "failed" },
+    createGoals: (input) => createAsGuest(() => createGoalsFromPlanLinkAction(planId, input)),
   };
 }

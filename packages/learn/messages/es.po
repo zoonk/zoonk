@@ -8314,6 +8314,12 @@ msgctxt "BtsGFn"
 msgid "We couldn't save your goal. Try again in a moment."
 msgstr "No hemos podido guardar tu objetivo. Vuelve a intentarlo en un momento."
 
+#. Shown when automated bot protection refuses to let this browser continue without an account.
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors.qi0x0O"
+msgid "A security check blocked this browser. Try another browser, or create a free account."
+msgstr "Una comprobación de seguridad ha bloqueado este navegador. Prueba con otro navegador o crea una cuenta gratis."
+
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.4-VMGC"
 msgid "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
@@ -8373,12 +8379,6 @@ msgstr "Has enviado todos los objetivos nuevos que permite el plan gratuito este
 msgctxt "goalErrors.HeGg5v"
 msgid "You've sent as many new goals as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
 msgstr "Has enviado todos los objetivos nuevos que permite el plan gratuito hoy. Vuelve a intentarlo mañana o consigue Plus para seguir ahora."
-
-#. Shown when automated bot protection refuses to let this browser continue without an account.
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.CMlBco"
-msgid "A security check blocked this browser. Create a free account to continue, or try another browser."
-msgstr "Una comprobación de seguridad ha bloqueado este navegador. Crea una cuenta gratuita para continuar o prueba con otro navegador."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"

@@ -3,7 +3,7 @@
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { type GoalError, useGoalLimitMessage } from "../goal-errors";
+import { type GoalError, needsAccountFor, useGoalLimitMessage } from "../goal-errors";
 import { type CreateGoalsOutcome } from "../onboarding-actions";
 
 function useCreateError() {
@@ -62,9 +62,7 @@ export function useGoalCreation() {
       setError({
         limit: outcome.status === "limitReached" ? outcome.reason : undefined,
         message: createError(outcome),
-        needsAccount:
-          outcome.status === "limitReached" &&
-          (outcome.reason === "guest" || outcome.reason === "signUpRequired"),
+        needsAccount: outcome.status === "limitReached" && needsAccountFor(outcome.reason),
       });
     });
 

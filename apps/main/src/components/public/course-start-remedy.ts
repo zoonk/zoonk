@@ -1,3 +1,4 @@
+import { needsAccountFor } from "@zoonk/learn/onboarding/goal-errors";
 import { type CourseStartFailure } from "./use-course-start";
 
 type CourseStartRemedy = "signUp" | "upgrade" | "retry" | null;
@@ -7,7 +8,7 @@ export function getCourseStartRemedy(failure: CourseStartFailure): CourseStartRe
     return "retry";
   }
 
-  if (failure.reason === "guest" || failure.reason === "signUpRequired") {
+  if (needsAccountFor(failure.reason)) {
     return "signUp";
   }
 

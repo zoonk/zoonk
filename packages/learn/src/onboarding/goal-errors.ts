@@ -10,10 +10,22 @@ import { type GoalLimitReason, type StartUnderstandingOutcome } from "./onboardi
  */
 export type GoalError = { limit?: GoalLimitReason; message: string; needsAccount: boolean };
 
+const ACCOUNT_REASONS = new Set<GoalLimitReason>(["browserBlocked", "guest", "signUpRequired"]);
+
+export function needsAccountFor(reason: GoalLimitReason): boolean {
+  return ACCOUNT_REASONS.has(reason);
+}
+
 export function useGoalLimitMessage() {
   const t = useExtracted("goalErrors");
 
   const messages: Record<GoalLimitReason, string> = {
+    browserBlocked: t({
+      description:
+        "Shown when automated bot protection refuses to let this browser continue without an account.",
+      message:
+        "A security check blocked this browser. Try another browser, or create a free account.",
+    }),
     dailyExplanations: t(
       "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
     ),
@@ -98,15 +110,7 @@ export function useStartError() {
     }
 
     if (outcome.status === "browserBlocked") {
-      return {
-        message: t({
-          description:
-            "Shown when automated bot protection refuses to let this browser continue without an account.",
-          message:
-            "A security check blocked this browser. Create a free account to continue, or try another browser.",
-        }),
-        needsAccount: true,
-      };
+      return { message: goalLimitMessage("browserBlocked"), needsAccount: true };
     }
 
     return {

@@ -41,7 +41,9 @@ export type UnderstandingActions = {
   start: (input: { goal: string; language: string }) => Promise<StartUnderstandingOutcome>;
 };
 
+/** `browserBlocked`: the bot check refused to make this browser a guest. */
 export type GoalLimitReason =
+  | "browserBlocked"
   | "dailyExplanations"
   | "dailyGoals"
   | "guest"

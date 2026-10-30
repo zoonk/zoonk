@@ -8314,6 +8314,12 @@ msgctxt "BtsGFn"
 msgid "We couldn't save your goal. Try again in a moment."
 msgstr "A gente não conseguiu salvar sua meta. Tente de novo em instantes."
 
+#. Shown when automated bot protection refuses to let this browser continue without an account.
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors.qi0x0O"
+msgid "A security check blocked this browser. Try another browser, or create a free account."
+msgstr "O sistema de segurança bloqueou este navegador. Tente usar outro navegador ou crie uma conta grátis."
+
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.4-VMGC"
 msgid "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
@@ -8373,12 +8379,6 @@ msgstr "Você atingiu o limite de novas metas que o plano grátis permite enviar
 msgctxt "goalErrors.HeGg5v"
 msgid "You've sent as many new goals as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
 msgstr "Você atingiu o limite de novas metas que o plano grátis permite enviar hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
-
-#. Shown when automated bot protection refuses to let this browser continue without an account.
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.CMlBco"
-msgid "A security check blocked this browser. Create a free account to continue, or try another browser."
-msgstr "O sistema de segurança bloqueou este navegador. Crie uma conta grátis para continuar ou tente usar outro navegador."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"
