@@ -125,9 +125,6 @@ private fun GeometryBoardActivity(props: ActivityProps) {
             enabled = !props.isLocked,
             onMoveTo = ::moveTo,
         )
-        if (!props.isChecked) {
-            ActivityCanvasLabel(stringResource(R.string.activities_geometry_board_hint))
-        }
         BoardSummary(fields.measure, reading, hideTotal, isAnswer = content.check is NumericCheckValue && props.isChecked)
         if (!props.isChecked && moved) {
             OutlinedButton(
@@ -295,7 +292,6 @@ private fun BoardDrawing(
     }
 }
 
-/** Main's `BoardSummary`: the corners torn off and put side by side, then the parts adding up to the total. */
 @Composable
 private fun BoardSummary(
     measure: Measure,
@@ -312,7 +308,7 @@ private fun BoardSummary(
             .copy(fontWeight = FontWeight.Medium)
     val totalColor =
         when {
-            isAnswer -> MaterialTheme.colorScheme.tertiary
+            isAnswer -> MaterialTheme.colorScheme.onTertiaryContainer
             measure == Measure.PYTHAGORAS -> tones.highlight.ink
             else -> MaterialTheme.colorScheme.onSurface
         }
@@ -362,7 +358,6 @@ private fun UnknownTotal(style: androidx.compose.ui.text.TextStyle) {
     )
 }
 
-/** Main's `AngleFan`: a triangle's corners fill a straight line, a four-sided shape's a full turn. */
 @Composable
 private fun AngleFan(
     reading: BoardReading,
@@ -437,7 +432,6 @@ private fun describeBoard(
     }
 }
 
-/** Main's `BOARD_TONES`: a series color, its soft fill for marks, and its ink for numbers. */
 private class BoardTone(
     val ink: Color,
     val soft: Color,
@@ -591,7 +585,8 @@ private fun DrawScope.drawAngleWedges(
         val next = points[(index + 1) % points.size]
         val shortest = minOf((previous - corner).length(), (next - corner).length())
         val radius = (shortest * WEDGE_SHARE).coerceIn(MIN_WEDGE_RADIUS.toPx().toDouble(), WEDGE_RADIUS.toPx().toDouble())
-        val (wedge, labelAt) = cornerWedge(angles[index], corner, next, previous, radius, ANGLE_LABEL_GAP.toPx().toDouble())
+        val labelGap = ANGLE_LABEL_GAP.toPx() * fontScale.coerceAtLeast(1f)
+        val (wedge, labelAt) = cornerWedge(angles[index], corner, next, previous, radius, labelGap.toDouble())
         val tone = tones.corner(index, points.size)
         drawWedge(corner.offset(), radius.toFloat(), wedge, tone, stroke = 1.5.dp.toPx())
         drawLabel(measure(reading.parts.getOrElse(index) { 0.0 }), labelAt.offset(), tone.ink, halo)

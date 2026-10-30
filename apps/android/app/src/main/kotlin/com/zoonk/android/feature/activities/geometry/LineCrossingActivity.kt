@@ -75,7 +75,6 @@ val lineCrossingRenderer =
 private typealias LineCrossingFields = PlayableLibraryStepAnyOfContentOneOf15Fields
 private typealias FieldLine = PlayableLibraryStepAnyOfContentOneOf15FieldsLinesInner
 
-/** Main's `lineShiftAnswer`: which line moved and which way; an unmoved chart is no answer. */
 private fun curveShiftAnswer(
     curve: String,
     offset: Double,
@@ -90,7 +89,7 @@ private val ActivityAnswer?.curveShift get() = (this as? CurveShiftAnswerValue)?
 
 private fun FieldLine.line() = Line(intercept, slope)
 
-/** The learner moves one line at a time; the interaction's answer is that move, a number check's the crossing it leads to. A given move starts as the real shift's size. */
+/** A curve shift doesn't say how far the line moved, so a given one starts at the real shift's size. */
 @Composable
 private fun LineCrossingActivity(props: ActivityProps) {
     val content = (props.content as LineCrossingContent).value
@@ -189,7 +188,7 @@ private fun LineCrossingActivity(props: ActivityProps) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     "${movedText(shifted, realOffset, axis)}.",
-                    color = MaterialTheme.colorScheme.tertiary,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                 )
                 feedback?.let { RichText(it, style = MaterialTheme.typography.bodyMedium) }
@@ -203,10 +202,10 @@ private class ChartColors(
     val muted: Color,
     val halo: Color,
     val right: Color,
+    val rightText: Color,
     val tones: List<Color>,
 )
 
-/** Main's `LineCrossingChart`: both lines with a handle each, where they cross, and how that moved. */
 @Composable
 private fun LineCrossingChart(
     fields: LineCrossingFields,
@@ -227,6 +226,7 @@ private fun LineCrossingChart(
             muted = MaterialTheme.colorScheme.onSurfaceVariant,
             halo = MaterialTheme.colorScheme.surface,
             right = MaterialTheme.colorScheme.tertiary,
+            rightText = MaterialTheme.colorScheme.onTertiaryContainer,
             tones = listOf(MaterialTheme.zoonk.vizHighlight, MaterialTheme.zoonk.vizSecondary),
         )
     val beforeLabel = stringResource(R.string.activities_geometry_line_before)
@@ -258,7 +258,9 @@ private fun LineCrossingChart(
         val segment = { line: Line -> LineCrossingModel.segment(line, domain).let { (from, to) -> pixel(from) to pixel(to) } }
 
         Canvas(Modifier.matchParentSize().clearAndSetSemantics {}) {
-            val strong = { text: String, color: Color -> measurer.measure(text, lineStyle.copy(color = color)) }
+            val label = { text: String, color: Color, ends: Pair<Offset, Offset>, upper: Boolean ->
+                lineLabel(measurer.measure(text, lineStyle), color, colors.halo, ends, upper, top)
+            }
             drawAxes(left, right, top, bottom, colors.ink)
             drawText(measurer.measure(fields.yLabel, axisStyle.copy(color = colors.muted)), topLeft = Offset(left, 0f))
             measurer.measure(fields.xLabel, axisStyle.copy(color = colors.muted)).let {
@@ -270,14 +272,9 @@ private fun LineCrossingChart(
                 answerLine?.let { drawSegment(segment(it), colors.right, dashed = true) }
                 shown.forEachIndexed { index, line -> drawSegment(segment(line), colors.tones[index], dashed = false) }
             }
-            movedLines.forEach { lineLabel(strong(beforeLabel, colors.muted), segment(it), upper = false, top) }
-            answerLine?.let { lineLabel(strong(whatHappened, colors.right), segment(it), upper = false, top) }
-            shown.forEachIndexed {
-                index,
-                line,
-                ->
-                lineLabel(strong(fields.lines[index].label, colors.tones[index]), segment(line), upper = true, top)
-            }
+            movedLines.forEach { label(beforeLabel, colors.muted, segment(it), false) }
+            answerLine?.let { label(whatHappened, colors.rightText, segment(it), false) }
+            shown.forEachIndexed { index, line -> label(fields.lines[index].label, colors.tones[index], segment(line), true) }
 
             if (movedLines.isNotEmpty()) {
                 crossingMark(pixel(before), left, bottom, isBefore = true, colors)
@@ -326,7 +323,6 @@ private fun LineCrossingChart(
     }
 }
 
-/** Main's handle: a ring in the line's color with chevrons showing which way it slides. */
 @Composable
 private fun LineKnob(
     axis: PlaceOrientation,
@@ -446,9 +442,10 @@ private fun DrawScope.drawSegment(
     )
 }
 
-/** Main's `LineLabel`: a line's name by its upper or lower end, kept inside the chart. */
 private fun DrawScope.lineLabel(
     text: TextLayoutResult,
+    color: Color,
+    halo: Color,
     ends: Pair<Offset, Offset>,
     upper: Boolean,
     top: Float,
@@ -457,11 +454,12 @@ private fun DrawScope.lineLabel(
     val end = if (upper) higher else lower
     val gap = LABEL_GAP.toPx()
     val baseline = maxOf(end.y - gap, top + gap)
-    val left = if (end.x < size.width / 2) end.x + gap else end.x - gap - text.size.width
-    drawText(text, topLeft = Offset(left, baseline - text.firstBaseline))
+    val middle = baseline - text.firstBaseline + text.size.height / 2f
+    val inLeftHalf = end.x < size.width / 2
+    val at = Offset(if (inLeftHalf) end.x + gap else end.x - gap, middle)
+    drawLabel(text, at, color, halo, if (inLeftHalf) LabelAnchor.Start else LabelAnchor.End)
 }
 
-/** Main's `Crossing`: where the lines meet, read off both axes. */
 private fun DrawScope.crossingMark(
     at: Offset,
     left: Float,
@@ -488,7 +486,6 @@ private fun DrawScope.crossingMark(
     }
 }
 
-/** Main's `ChangeArrows`: which way the crossing moved along each axis, when it moved enough to see. */
 private fun DrawScope.changeArrows(
     before: Offset,
     after: Offset,

@@ -33,7 +33,6 @@ internal data class BoardBounds(
     val maxY: Double,
 )
 
-/** What moves on a board: whether a corner moves, and the line it slides along, if any. */
 internal data class BoardCorner(
     val movable: Boolean,
     val track: Track?,

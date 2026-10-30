@@ -32,7 +32,6 @@ internal data class MoleculeBuild(
 
 internal enum class AtomFill { Open, Full, Over }
 
-/** The build as the learner's answer; nothing built is no answer. */
 internal fun moleculeAnswer(build: MoleculeBuild): ActivityAnswer? =
     build.takeIf { it.atoms.isNotEmpty() }?.let {
         MoleculeAnswerValue(
@@ -53,7 +52,6 @@ internal val ActivityAnswer?.molecule: MoleculeBuild?
             )
         }
 
-/** The server's expected molecule: how many atoms of each element it has. */
 internal val ActivityExpected?.moleculeElements: Map<String, Int>?
     get() =
         ((this as? ActivityExpected.InteractionWrapper)?.value?.answer as? ActivityExpectedAnswer.MoleculeWrapper)

@@ -7,7 +7,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-/** A straight line, y = intercept + slope × x. */
 internal data class Line(
     val intercept: Double,
     val slope: Double,
@@ -56,7 +55,6 @@ internal object LineCrossingModel {
         return Vec(x, first.yAt(x))
     }
 
-    /** Four steps per real shift, up to twice it either way. */
     fun range(amount: Double) = SnapRange(min = -amount * 2, max = amount * 2, step = amount / STEPS_PER_SHIFT)
 
     /** The chart's top right corner: room for every crossing the handles can reach, and a little more. */
@@ -90,7 +88,6 @@ internal object LineCrossingModel {
         return Vec(start, line.yAt(start)) to Vec(end, line.yAt(end))
     }
 
-    /** The point [share] of the way along a line's visible part. */
     fun along(
         line: Line,
         domain: Vec,

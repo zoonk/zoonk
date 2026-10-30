@@ -72,13 +72,11 @@ val unitCircleRenderer =
         canvas = { UnitCircleActivity(it) },
     )
 
-/** The angle and value a numeric check reads; turning the point there answers it. */
 private class CheckTarget(
     val degrees: Double,
     val output: Trig,
 )
 
-/** A checked target, drawn on the circle with the server's value. */
 private class ExpectedMark(
     val degrees: Double,
     val label: String,
@@ -129,7 +127,6 @@ private fun UnitCircleActivity(props: ActivityProps) {
         ).joinToString(" ")
 
     fun turn(next: Double) {
-        if (next == degrees) return
         degrees = next
         target?.let { props.onAnswerChange(UnitCircleAngle.value(it.output, next)?.let(::numericAnswer)) }
     }
@@ -307,7 +304,6 @@ private class TrigTones(
 private fun trigTones() =
     TrigTones(sin = MaterialTheme.zoonk.vizHighlight, cos = MaterialTheme.zoonk.vizSecondary, tan = MaterialTheme.zoonk.vizAccent)
 
-/** Main's `TrigLegs`: the cosine along the axis, the sine up to the point, each with its value. */
 private fun DrawScope.trigLegs(
     center: Offset,
     point: Offset,
@@ -349,7 +345,6 @@ private fun DrawScope.trigLegs(
     }
 }
 
-/** Main's `TangentMark`: the tangent's height where the radius's line meets the upright at x = 1. */
 private fun DrawScope.tangent(
     center: Offset,
     radius: Float,
@@ -375,7 +370,6 @@ private fun DrawScope.tangent(
     drawLabel(measure("$name = ${formatTrig(value)}"), Offset(top.x - LABEL_GAP.toPx(), top.y), tone, halo, LabelAnchor.End)
 }
 
-/** Main's `UnitCircleWave`: each wave over one turn, drawn up to the point's angle. */
 @Composable
 private fun UnitCircleWaves(
     degrees: Double,

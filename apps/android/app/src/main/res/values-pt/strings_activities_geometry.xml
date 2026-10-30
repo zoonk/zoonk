@@ -14,7 +14,6 @@
   "activities_geometry_board_corner_value": "37a2208d042b833f75fed97fe38cfe827e779f0694469727697405c19ab4291e",
   "activities_geometry_board_fan": "2ef930c38656acb272a50bf3c9cbb38a3df9342c2bfac5953467a8fd375de6c5",
   "activities_geometry_board_full_turn": "5eb28792e68810c9d07efceb0a0963d9b748ed7be78586bc2e03904e3b42d79f",
-  "activities_geometry_board_hint": "90bd77a0dde040552cc70ac8225ecde1c3e09524ebcfebbcc075dbf5455763c8",
   "activities_geometry_board_move_down": "3cd0b418c377ac4e5a791682fb3b846464bbe46e827dc346b889f41f31b80f2a",
   "activities_geometry_board_move_left": "22f3c499027ab6d60a45903086243dc34568cee173d16ad6930fb164ff02036c",
   "activities_geometry_board_move_right": "f9770a4a5258bb89854de4481ac9ee2389fe1aa28f9aa69b07734bc339d25644",
@@ -122,7 +121,6 @@
     <string name="activities_geometry_board_corner">Vértice %1$s</string>
     <!-- Where a corner is, then what the board measures, like "At 1, 3. Angles: 72°, 45°, 63°." -->
     <string name="activities_geometry_board_corner_value">Em %1$s, %2$s. %3$s</string>
-    <string name="activities_geometry_board_hint">Arraste um vértice ou toque em um ponto para mover o vértice mais próximo até lá.</string>
     <!-- TalkBack actions that move a shape's corner one grid step. -->
     <string name="activities_geometry_board_move_left">Mover para a esquerda</string>
     <string name="activities_geometry_board_move_right">Mover para a direita</string>

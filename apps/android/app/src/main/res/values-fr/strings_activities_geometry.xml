@@ -14,7 +14,6 @@
   "activities_geometry_board_corner_value": "074fdd7b72d9ba9aa8f4192d93685fda3ed8cadb95f5df0b8d6709e977f09c41",
   "activities_geometry_board_fan": "2bb124eff7f3e16340312268f1386ab1c9e10727fd0ed6e7857a8f7d044b4a01",
   "activities_geometry_board_full_turn": "90c892578c10ccf145c2368a6cefa21a45c5cb31b4cfe3f1c5739842a2f65943",
-  "activities_geometry_board_hint": "d797e04ed8f9568748a35fedecd797f3aafc2c4953d1c68ede59e4c51d6f4a0d",
   "activities_geometry_board_move_down": "1c5437ad9d966dd5bceb41d79d65cd89e7aa86d0f95161f4f418fdfaa9de84a1",
   "activities_geometry_board_move_left": "6d825639f18b6d379a92f650b1ac6433ff898f9bbb2025b4fc45837e72c759c6",
   "activities_geometry_board_move_right": "be9c2f9a1f29798a764be2f879c9d557f54492aa6f7f1e4fe6ae589dbcbcb9a7",
@@ -122,7 +121,6 @@
     <string name="activities_geometry_board_corner">Sommet %1$s</string>
     <!-- Where a corner is, then what the board measures, like "At 1, 3. Angles: 72°, 45°, 63°." -->
     <string name="activities_geometry_board_corner_value">En %1$s, %2$s. %3$s</string>
-    <string name="activities_geometry_board_hint">Fais glisser un sommet ou touche un point pour y déplacer le sommet le plus proche.</string>
     <!-- TalkBack actions that move a shape's corner one grid step. -->
     <string name="activities_geometry_board_move_left">Déplacer vers la gauche</string>
     <string name="activities_geometry_board_move_right">Déplacer vers la droite</string>

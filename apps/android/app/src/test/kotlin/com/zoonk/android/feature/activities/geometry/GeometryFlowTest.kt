@@ -16,6 +16,7 @@ import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -25,6 +26,7 @@ import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.swipe
@@ -56,7 +58,8 @@ class GeometryFlowTest {
     private fun play(
         fixture: String,
         isCorrect: Boolean,
-    ) = harness.play(listOf(ActivityFixtures.step(fixture))) {
+        restoration: StateRestorationTester? = null,
+    ) = harness.play(listOf(ActivityFixtures.step(fixture)), restoration = restoration) {
         grade = { _, _ -> checkResult(isCorrect, expected = ActivityFixtures.expected(fixture)) }
     }
 
@@ -136,6 +139,17 @@ class GeometryFlowTest {
             up()
         }
         assertEquals(false, handle(POINT).state()?.startsWith("30°"))
+    }
+
+    @Test
+    fun unitCircleTurnedToTheSameAngleAnswersWithItsValueAgain() {
+        play("unitCircle", isCorrect = true)
+
+        handle(POINT).performSemanticsAction(SemanticsActions.SetProgress) { it(30f) }
+        rule.onNode(hasSetTextAction()).performTextReplacement("0.25")
+        handle(POINT).performSemanticsAction(SemanticsActions.SetProgress) { it(30f) }
+
+        assertEquals("0.5", typedAnswer())
     }
 
     @Test
@@ -303,6 +317,19 @@ class GeometryFlowTest {
         val supply = handle(SUPPLY).fetchSemanticsNode().boundsInRoot.center
         rule.onRoot().performTouchInput { click(supply - Offset(80f, 0f)) }
         assertEquals(true, handle(SUPPLY).state()?.contains("Price per dozen goes up"))
+    }
+
+    @Test
+    fun moleculeBuilderKeepsItsUndoWhenAndroidRecreatesTheScreen() {
+        val restoration = StateRestorationTester(rule)
+        play("moleculeBuilder", isCorrect = true, restoration = restoration)
+
+        buildCarbonDioxide(doubleBonds = false)
+        restoration.emulateSavedInstanceStateRestore()
+        rule.onNodeWithContentDescription("Undo").performScrollTo().performClick()
+
+        rule.onNodeWithContentDescription("Oxygen 2:", substring = true).assertDoesNotExist()
+        rule.onNodeWithContentDescription("Oxygen 1: 1 of 2 bonds").assertExists()
     }
 
     private companion object {

@@ -91,7 +91,6 @@ val moleculeBuilderRenderer =
         canvas = { MoleculeBuilderActivity(it) },
     )
 
-/** A build, where its atoms sit, and the atom new atoms bond to. */
 private data class Builder(
     val build: MoleculeBuild,
     val layout: Map<String, Vec>,
@@ -116,6 +115,12 @@ private val builderSaver =
         },
     )
 
+private val historySaver =
+    listSaver<List<Builder>, Any>(
+        save = { history -> history.mapNotNull { with(builderSaver) { save(it) } } },
+        restore = { saved -> saved.mapNotNull(builderSaver::restore) },
+    )
+
 @Composable
 private fun MoleculeBuilderActivity(props: ActivityProps) {
     val content = (props.content as MoleculeBuilderContent).value
@@ -125,7 +130,7 @@ private fun MoleculeBuilderActivity(props: ActivityProps) {
     val order = target.keys.toList()
     val start = props.answer.molecule?.let { Builder(it, MoleculeLayout.of(it), null) } ?: Builder(MoleculeBuild(), emptyMap(), null)
     var builder by rememberSaveable(stateSaver = builderSaver) { mutableStateOf(start) }
-    var history by remember { mutableStateOf(emptyList<Builder>()) }
+    var history by rememberSaveable(stateSaver = historySaver) { mutableStateOf(emptyList()) }
     var announcement by rememberSaveable { mutableStateOf("") }
     val names = elementNames()
     val atomName = { atom: BuildAtom ->
@@ -292,7 +297,6 @@ private fun MoleculeBuilderActivity(props: ActivityProps) {
     }
 }
 
-/** Main's `MoleculeCanvas`: bonds as one to three lines, atoms in their element's color with open bonds as dots. */
 @Composable
 private fun MoleculeBoard(
     build: MoleculeBuild,
@@ -375,7 +379,6 @@ private fun AtomButton(
     )
 }
 
-/** The atoms and bonds drawn at [shown] (in pixels), sized by [scale] from the 320 × 240 layout. */
 @Composable
 private fun MoleculeDrawing(
     build: MoleculeBuild,
@@ -490,7 +493,7 @@ private fun MoleculeStatus(
             }
 
             else -> {
-                Triple(stringResource(R.string.activities_geometry_molecule_full), MaterialTheme.colorScheme.tertiary, strong)
+                Triple(stringResource(R.string.activities_geometry_molecule_full), MaterialTheme.colorScheme.onTertiaryContainer, strong)
             }
         }
     val hint =
@@ -513,7 +516,6 @@ private fun MoleculeStatus(
     }
 }
 
-/** Main's `MoleculeElements`: one button per element, adding an atom bonded to the selected one. */
 @Composable
 private fun MoleculeElements(
     elements: List<String>,
@@ -526,7 +528,8 @@ private fun MoleculeElements(
     val shape = RoundedCornerShape(12.dp)
 
     BoxWithConstraints(Modifier.fillMaxWidth()) {
-        val columns = ((maxWidth + GAP) / (ELEMENT_MIN_WIDTH + GAP)).toInt().coerceAtLeast(1)
+        val minWidth = ELEMENT_MIN_WIDTH * LocalDensity.current.fontScale.coerceAtLeast(1f)
+        val columns = ((maxWidth + GAP) / (minWidth + GAP)).toInt().coerceAtLeast(1)
         Column(verticalArrangement = Arrangement.spacedBy(GAP)) {
             elements.chunked(columns).forEach { row ->
                 Row(horizontalArrangement = Arrangement.spacedBy(GAP)) {
@@ -574,12 +577,11 @@ private fun ElementSwatch(
     modifier: Modifier = Modifier,
 ) {
     val measurer = rememberTextMeasurer()
-    val density = LocalDensity.current
     val colors = elementColors(element)
     val edge = MaterialTheme.colorScheme.onSurface.copy(alpha = OPEN_RING_ALPHA)
-    val style = TextStyle(fontSize = with(density) { SWATCH_LETTER.toPx().toSp() }, fontWeight = FontWeight.SemiBold, color = colors.text)
+    val style = TextStyle(fontSize = SWATCH_LETTER, fontWeight = FontWeight.SemiBold, color = colors.text)
 
-    Canvas(modifier.size(SWATCH).clearAndSetSemantics {}) {
+    Canvas(modifier.size(with(LocalDensity.current) { SWATCH.toDp() }).clearAndSetSemantics {}) {
         drawCircle(colors.fill)
         drawCircle(edge, style = Stroke(1.dp.toPx()))
         val text = measurer.measure(element, style)
@@ -587,7 +589,6 @@ private fun ElementSwatch(
     }
 }
 
-/** Main's `MoleculeExample`: a complete structure with the formula's atoms, after a miss or a choice or number check. */
 @Composable
 private fun MoleculeExample(
     structure: MoleculeBuild,
@@ -649,7 +650,6 @@ private fun bondText(
         second,
     )
 
-/** Main's `useBuildDescription`: every bond, then every atom with none. */
 private fun describeBuild(
     build: MoleculeBuild,
     atomName: (BuildAtom) -> String,
@@ -713,8 +713,8 @@ private val FOCUS_GAP = 8.dp
 private val DOT_STEP = 18.dp
 private val GAP = 8.dp
 private val ELEMENT_MIN_WIDTH = 104.dp
-private val SWATCH = 28.dp
-private val SWATCH_LETTER = 12.dp
+private val SWATCH = 28.sp
+private val SWATCH_LETTER = 12.sp
 private const val MAX_ATOMS = 16
 private const val SETTLE_MILLIS = 240
 private const val LETTER_SIZE = 17f

@@ -28,7 +28,6 @@
     <string name="activities_geometry_board_corner">Corner %1$s</string>
     <!-- Where a corner is, then what the board measures, like "At 1, 3. Angles: 72°, 45°, 63°." -->
     <string name="activities_geometry_board_corner_value">At %1$s, %2$s. %3$s</string>
-    <string name="activities_geometry_board_hint">Drag a corner, or tap a spot to move the nearest corner there.</string>
     <!-- TalkBack actions that move a shape's corner one grid step. -->
     <string name="activities_geometry_board_move_left">Move left</string>
     <string name="activities_geometry_board_move_right">Move right</string>

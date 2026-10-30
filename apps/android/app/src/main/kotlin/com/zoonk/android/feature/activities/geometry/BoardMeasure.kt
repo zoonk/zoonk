@@ -101,13 +101,11 @@ internal fun cornerWedge(
     return Wedge(from, sweep) to along(corner, from + sweep / 2, radius + labelGap)
 }
 
-/** Main's `fanWedges`: the angles side by side from the left, as if torn off and put together. */
 internal fun fanWedges(angles: List<Double>): List<Wedge> =
     angles.mapIndexed { index, angle -> Wedge(PI + angles.take(index).sum() * PI / HALF_TURN, angle * PI / HALF_TURN) }
 
 internal fun centroid(points: List<Vec>) = Vec(points.sumOf { it.x } / points.size, points.sumOf { it.y } / points.size)
 
-/** [point] moved [distance] farther from [middle]. */
 internal fun awayFromMiddle(
     point: Vec,
     middle: Vec,
