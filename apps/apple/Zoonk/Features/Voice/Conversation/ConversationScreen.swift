@@ -34,7 +34,7 @@ struct ConversationScreen: View {
       Group {
         switch source {
         case .conversation(let conversationId):
-          conversation(conversationId, callsRightAway: false)
+          conversation(started ?? conversationId, callsRightAway: false)
         case .checkpoint(let blockId):
           checkpoint(blockId)
         }
@@ -70,7 +70,10 @@ struct ConversationScreen: View {
     ConversationLoad(
       conversationId: conversationId, callsRightAway: callsRightAway, isInCall: $isInCall,
       day: $day, onSaved: onSaved
-    )
+    ) { again in
+      day = nil
+      started = again
+    }
     .id(conversationId)
   }
 }
@@ -83,6 +86,7 @@ private struct ConversationLoad: View {
   @Binding var isInCall: Bool
   @Binding var day: DayResult?
   let onSaved: (() -> Void)?
+  let onStartedAgain: (String) -> Void
 
   var body: some View {
     let conversation = voice.conversation(id: conversationId)
@@ -104,7 +108,7 @@ private struct ConversationLoad: View {
       }
     case .loaded(let value):
       if value.result != nil {
-        ConversationResultView(conversation: value, day: day)
+        ConversationResultView(conversation: value, day: day, onStartedAgain: onStartedAgain)
           .navigationTitle(ConversationTitle(conversation: value).text)
       } else {
         LiveCallRun(

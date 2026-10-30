@@ -1,10 +1,21 @@
 import SwiftUI
 
 struct ConversationResultView: View {
+  private enum StartFailure: Equatable {
+    case limit(CallLimit)
+    case failed
+  }
+
+  @Environment(VoiceServices.self) private var voice
+  @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
+  @State private var isStartingAgain = false
+  @State private var startFailure: StartFailure?
   let conversation: LanguageConversation
   /// Nil for a call opened later, which shows only its own result.
   var day: DayResult?
+  /// Shows the new call this result started in its place.
+  let onStartedAgain: (String) -> Void
 
   var body: some View {
     List {
@@ -36,17 +47,145 @@ struct ConversationResultView: View {
     }
     .milestoneCeremony(day?.ceremony)
     .safeAreaBar(edge: .bottom) {
-      Button {
-        dismiss()
-      } label: {
-        Text("Continue", tableName: "Voice", comment: "Leaves a call's result")
-          .frame(maxWidth: .infinity)
+      VStack(spacing: 8) {
+        if let startFailure {
+          startFailureText(startFailure)
+            .font(.subheadline)
+            .foregroundStyle(.destructive)
+        }
+
+        mainAction
+
+        if let again = againInput {
+          Button {
+            Task { await startAgain(again) }
+          } label: {
+            if conversation.kind == .speakingMock {
+              Text("Try another mock", tableName: "Voice", comment: "Starts a new speaking mock")
+            } else {
+              Text(
+                "Try this task with a new card", tableName: "Voice",
+                comment: "Starts the same exam task again with a new card")
+            }
+          }
+          .buttonStyle(.borderless)
+          .disabled(isStartingAgain)
+        }
       }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .keyboardShortcut(.defaultAction)
       .scenePadding()
       .keepsOffFold()
+    }
+  }
+
+  /// The paper's next task when this one stands alone: a mock's tasks go back to the mock.
+  private var nextTask: (key: String, number: Int)? {
+    guard let task = conversation.speakingTask, task.sectionId == nil, let next = task.nextTask
+    else {
+      return nil
+    }
+
+    return (next, task.number + 1)
+  }
+
+  /// A speaking mock, or an exam task outside a mock, starts again with a new card.
+  private var againInput: Components.Schemas.LanguageConversationStartInput? {
+    guard let goalId = conversation.goalId else {
+      return nil
+    }
+
+    if conversation.kind == .speakingMock {
+      return .case3(.init(goalId: goalId, kind: .speakingMock))
+    }
+
+    if let task = conversation.speakingTask, task.sectionId == nil {
+      return .case4(.init(goalId: goalId, kind: .examSpeaking, task: task.task.key))
+    }
+
+    return nil
+  }
+
+  private var mainAction: some View {
+    Button {
+      if let nextTask {
+        router.speakingTask = nextTask.key
+        router.open(.speaking)
+      } else {
+        dismiss()
+      }
+    } label: {
+      Group {
+        if let nextTask {
+          Text(
+            "Go to task \(nextTask.number)", tableName: "Voice",
+            comment: "Opens the speaking paper's next task")
+        } else {
+          Text("Continue", tableName: "Voice", comment: "Leaves a call's result")
+        }
+      }
+      .frame(maxWidth: .infinity)
+    }
+    .buttonStyle(.mainAction)
+    .controlSize(.large)
+    .keyboardShortcut(.defaultAction)
+  }
+
+  @ViewBuilder
+  private func startFailureText(_ failure: StartFailure) -> some View {
+    let isMock = conversation.kind == .speakingMock
+
+    switch failure {
+    case .limit(let limit) where limit.period == .month:
+      if isMock {
+        Text(
+          "Not enough call time this month for this mock", tableName: "Voice",
+          comment: "The call time left this month can't fit the mock")
+      } else {
+        Text(
+          "Not enough call time this month for this task", tableName: "Voice",
+          comment: "The call time left this month can't fit this task")
+      }
+    case .limit:
+      if isMock {
+        Text(
+          "Not enough call time today for this mock", tableName: "Voice",
+          comment: "The call time left today can't fit the mock")
+      } else {
+        Text(
+          "Not enough call time today for this task", tableName: "Voice",
+          comment: "The call time left today can't fit this task")
+      }
+    case .failed:
+      if isMock {
+        Text(
+          "The mock didn't start. Try again in a moment.", tableName: "Voice",
+          comment: "Starting the speaking mock failed")
+      } else {
+        Text(
+          "The task didn't start. Try again in a moment.", tableName: "Voice",
+          comment: "Starting an exam task failed")
+      }
+    }
+  }
+
+  /// Only on the learner's tap: it writes a new card.
+  private func startAgain(_ input: Components.Schemas.LanguageConversationStartInput) async {
+    isStartingAgain = true
+    startFailure = nil
+    defer { isStartingAgain = false }
+
+    switch await voice.startConversation(input) {
+    case .done(.done(let id)):
+      onStartedAgain(id)
+    case .done(.refused(let refusal)):
+      if case .limit(let limit) = CallReservation(refusal: refusal) {
+        startFailure = .limit(limit)
+      } else {
+        startFailure = .failed
+      }
+    case .failed:
+      startFailure = .failed
+    case .obsolete:
+      break
     }
   }
 

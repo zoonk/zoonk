@@ -14,6 +14,8 @@ enum AppSheet: Hashable, Identifiable {
 final class AppRouter {
   var selectedTab: AppTab
   var sheet: AppSheet?
+  /// The speaking paper's open task in this window, as main's `/speaking?task=`.
+  var speakingTask: String?
   private(set) var tasks: [AppRoute] = [] {
     didSet {
       hiddenTasks = hiddenTasks.filter { tasks.count > $0 + 1 }

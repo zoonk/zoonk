@@ -32,7 +32,6 @@ private struct SpeakingPaperView: View {
   @Environment(AppRouter.self) private var router
   @State private var startingTask: String?
   @State private var startFailure: StartFailure?
-  @State private var openTask: String?
 
   let goalId: String
   let paper: Resource<Components.Schemas.SpeakingPaper>
@@ -163,7 +162,8 @@ private struct SpeakingPaperView: View {
       ForEach(Array(paper.tasks.enumerated()), id: \.element.key) { index, task in
         DisclosureGroup(
           isExpanded: Binding(
-            get: { openTask == task.key }, set: { openTask = $0 ? task.key : nil })
+            get: { router.speakingTask == task.key },
+            set: { router.speakingTask = $0 ? task.key : nil })
         ) {
           taskDetails(task, paper: paper)
         } label: {
