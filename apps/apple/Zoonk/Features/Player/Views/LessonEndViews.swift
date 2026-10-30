@@ -123,35 +123,39 @@ struct LessonCompletionView: View {
     }
   }
 
+  @ViewBuilder
   private var actionBar: some View {
-    Group {
-      switch completion.status {
-      case .ready:
-        Button(action: finish) {
-          Text(
-            "Finish", tableName: "Player",
-            comment: "Saves a lesson answered in an earlier sitting"
-          ).frame(maxWidth: .infinity)
+    // As on main, a guest's ending leads with Build my plan, and the close button leaves.
+    if guestEnding == nil || completion.status == .ready || completion.status == .failed {
+      Group {
+        switch completion.status {
+        case .ready:
+          Button(action: finish) {
+            Text(
+              "Finish", tableName: "Player",
+              comment: "Saves a lesson answered in an earlier sitting"
+            ).frame(maxWidth: .infinity)
+          }
+        case .failed:
+          Button(action: finish) {
+            Text("Try again", tableName: "Player", comment: "Tries saving the lesson again").frame(
+              maxWidth: .infinity)
+          }
+        case .saving, .saved:
+          Button(action: close) {
+            Text("Continue", tableName: "Player", comment: "Leaves the finished lesson").frame(
+              maxWidth: .infinity)
+          }
+          .disabled(completion.status == .saving)
         }
-      case .failed:
-        Button(action: finish) {
-          Text("Try again", tableName: "Player", comment: "Tries saving the lesson again").frame(
-            maxWidth: .infinity)
-        }
-      case .saving, .saved:
-        Button(action: close) {
-          Text("Continue", tableName: "Player", comment: "Leaves the finished lesson").frame(
-            maxWidth: .infinity)
-        }
-        .disabled(completion.status == .saving)
       }
+      .buttonStyle(.mainAction)
+      .controlSize(.large)
+      .keyboardShortcut(.defaultAction)
+      .frame(maxWidth: 680)
+      .frame(maxWidth: .infinity)
+      .scenePadding()
     }
-    .buttonStyle(.mainAction)
-    .controlSize(.large)
-    .keyboardShortcut(.defaultAction)
-    .frame(maxWidth: 680)
-    .frame(maxWidth: .infinity)
-    .scenePadding()
   }
 
   private func readouts(_ summary: LessonCompletionSummary) -> some View {
@@ -418,6 +422,7 @@ private struct LessonGuestEndingView: View {
         }
         .buttonStyle(.mainAction)
         .controlSize(.large)
+        .keyboardShortcut(.defaultAction)
 
         Button {
           routes.signIn()
