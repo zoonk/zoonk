@@ -468,7 +468,7 @@ final class LessonPlayerStore {
       isCorrect: verdict.isCorrect, answerText: verdict.transcript, correctAnswer: nil,
       feedback: verdict.feedback)
     result.score = verdict.score
-    result.wordsToPractice = verdict.wordsToPractice
+    result.heard = verdict.heard
 
     if case .spokenAnswer(let content, _) = state?.steps[stepId]?.content, !verdict.isCorrect {
       result.correctAnswer = content.targetText

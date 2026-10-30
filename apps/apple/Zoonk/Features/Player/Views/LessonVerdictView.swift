@@ -45,6 +45,10 @@ struct LessonVerdictView: View {
           text: content.sampleAnswer)
       }
 
+      if let heard = result.heard, case .spokenAnswer(let content, _) = step.content {
+        LessonSpokenWordsView(heard: heard, language: content.language)
+      }
+
       ForEach(result.corrections, id: \.self) { correction in
         Text("\(Text(correction.wrong).strikethrough()) → \(Text(correction.right).bold())")
           .font(.subheadline)

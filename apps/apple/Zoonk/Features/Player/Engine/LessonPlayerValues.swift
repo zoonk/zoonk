@@ -23,7 +23,8 @@ struct LessonStepResult: Hashable, Sendable {
   var score: Double?
   /// A typed answer right apart from a typo: the right spelling.
   var spelling: String?
-  var wordsToPractice: [String] = []
+  /// A spoken answer's words as heard.
+  var heard: SpokenHeard?
   /// When the idea comes back, once the server recorded the answer.
   var nextReviewAt: Date?
   var savedMistake = false

@@ -1,6 +1,70 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ (heard as %@)" : {
+      "comment" : "VoiceOver: a spoken word that sounded like another; the second is what was heard",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ (verstanden als %2$@)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (heard as %2$@)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ (se ha oído como %2$@)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ (entendu comme %2$@)"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ (ouvido como %2$@)"
+          }
+        }
+      }
+    },
+    "%@ (not heard)" : {
+      "comment" : "VoiceOver: a word missing from a spoken answer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (nicht gehört)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (no se ha oído)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (non entendu)"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (não ouvido)"
+          }
+        }
+      }
+    },
     "%lld chapters · about %@ at your pace" : {
       "comment" : "A course's size at the end of a guest's lesson",
       "localizations" : {
@@ -1626,6 +1690,35 @@
         }
       }
     },
+    "How to say %@" : {
+      "comment" : "A word to practice saying",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "So sprichst du %@ aus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo decir %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment prononcer %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Como falar %@"
+          }
+        }
+      }
+    },
     "I already know this" : {
       "comment" : "Asks the lesson's checks to skip it",
       "localizations" : {
@@ -2086,6 +2179,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Relacione as causas"
+          }
+        }
+      }
+    },
+    "Listen" : {
+      "comment" : "Plays a word to practice",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anhören"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuchar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écouter"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvir"
           }
         }
       }
@@ -3459,6 +3581,35 @@
         }
       }
     },
+    "Slowly" : {
+      "comment" : "Plays a word to practice slowly",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Langsam"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Despacio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lentement"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devagar"
+          }
+        }
+      }
+    },
     "Sort into groups" : {
       "comment" : "What the learner does in an activity, named above its prompt",
       "localizations" : {
@@ -3484,6 +3635,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Separe em grupos"
+          }
+        }
+      }
+    },
+    "sounds like %@" : {
+      "comment" : "How a word to practice sounds, spelled for the learner",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "klingt wie %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "suena como %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "se prononce comme %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "soa como %@"
           }
         }
       }
@@ -4731,6 +4911,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "E se · %@"
+          }
+        }
+      }
+    },
+    "What we heard" : {
+      "comment" : "Above a spoken answer's words as heard",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was wir gehört haben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que hemos oído"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce qu’on a entendu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que a gente ouviu"
           }
         }
       }

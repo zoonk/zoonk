@@ -99,7 +99,34 @@ struct SpokenAnswerVerdict: Hashable, Sendable {
   let score: Double?
   let transcript: String
   let feedback: String?
-  let wordsToPractice: [String]
+  let heard: SpokenHeard
+}
+
+/// What was heard, word by word against the expected sentence, and at most two words to practice.
+struct SpokenHeard: Hashable, Sendable {
+  struct Word: Hashable, Sendable {
+    enum Status: String, Hashable, Sendable {
+      case correct
+      case different
+      case missed
+    }
+
+    let text: String
+    let status: Status
+    /// What was heard in its place; nil when right or not heard.
+    let heard: String?
+  }
+
+  struct PracticeWord: Hashable, Sendable {
+    let text: String
+    /// Nil when the word has no recording: it's read aloud instead.
+    let audioUrl: String?
+    let respelling: String?
+    let tip: String?
+  }
+
+  let words: [Word]
+  let wordsToPractice: [PracticeWord]
 }
 
 struct SpokenAnswerContext {

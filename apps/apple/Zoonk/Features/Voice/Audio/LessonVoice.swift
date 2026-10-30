@@ -36,10 +36,24 @@ private struct SpokenStepRecorder: View {
           context.onGraded(
             SpokenAnswerVerdict(
               isCorrect: grade.isCorrect, score: grade.score, transcript: grade.transcript,
-              feedback: grade.explanation, wordsToPractice: grade.wordsToPractice.map(\.text)))
+              feedback: grade.explanation, heard: SpokenHeard(grade)))
         },
         asksToSpeak: false,
         onBlocked: context.onBlocked)
     }
+  }
+}
+
+extension SpokenHeard {
+  init(_ grade: Components.Schemas.SpokenAnswerGrade) {
+    self.init(
+      words: grade.words.map {
+        Word(
+          text: $0.text, status: Word.Status(rawValue: $0.status.rawValue) ?? .missed,
+          heard: $0.heard)
+      },
+      wordsToPractice: grade.wordsToPractice.map {
+        PracticeWord(text: $0.text, audioUrl: $0.audioUrl, respelling: $0.respelling, tip: $0.tip)
+      })
   }
 }
