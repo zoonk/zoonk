@@ -10,6 +10,7 @@ struct PlanLinkScreen: View {
   @State private var isStarting = false
   @State private var error: GoalError?
   @State private var goalID: String?
+  @State private var startTask: Task<Void, Never>?
 
   var body: some View {
     let resource = onboarding.planLink(id: planId)
@@ -52,6 +53,9 @@ struct PlanLinkScreen: View {
       }
     }
     .loads(resource, refreshable: false)
+    .onDisappear {
+      startTask?.cancel()
+    }
     .onChange(of: resource.value?.owner?.goalId) { _, ownGoal in
       if ownGoal != nil {
         router.showRoot(of: .plan)
@@ -169,7 +173,7 @@ struct PlanLinkScreen: View {
     isStarting = true
     error = nil
 
-    Task {
+    startTask = Task {
       defer { isStarting = false }
 
       do {

@@ -42,6 +42,9 @@ struct SessionSummaryView: View {
     }
     .loads(summary)
     .milestoneCeremony(summary.value?.ceremony)
+    .onDisappear {
+      action?.cancel()
+    }
   }
 
   private func content(_ summary: SessionSummary) -> some View {
@@ -162,6 +165,7 @@ struct SessionSummaryView: View {
           }
           .buttonStyle(.bordered)
           .controlSize(.large)
+          .disabled(isAddingTime)
         }
 
         if summary.finished && summary.extraTime.available {
