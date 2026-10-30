@@ -105,6 +105,7 @@ android {
                 "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
             )
             test.maxHeapSize = "2g"
+            test.maxParallelForks = providers.gradleProperty("zoonk.testForks").getOrElse("1").toInt()
             // Review screenshots are written only on demand: `-Pzoonk.shots=<folder>`.
             test.systemProperty("zoonk.shots", providers.gradleProperty("zoonk.shots").getOrElse(""))
         }

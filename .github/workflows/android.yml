@@ -22,13 +22,21 @@ jobs:
       app: android
 
   compile:
-    name: compile
+    name: compile (${{ matrix.job }})
     needs: changes
     if: needs.changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - job: release
+            tasks: :app:compileReleaseKotlin
+          - job: tests
+            tasks: :app:compileDebugUnitTestKotlin :api:compileTestKotlin
     concurrency:
-      group: ${{ github.workflow }}-compile-${{ github.event.pull_request.number || github.ref }}
+      group: ${{ github.workflow }}-compile-${{ matrix.job }}-${{ github.event.pull_request.number || github.ref }}
       cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
     steps:
       - &checkout
@@ -55,13 +63,13 @@ jobs:
           cache-provider: enhanced
           cache-read-only: false
 
-      - name: Compile shared Release inputs
-        run: make -C apps/android build BUILD_TASKS=:app:compileReleaseKotlin
+      - name: Compile shared inputs
+        run: make -C apps/android build BUILD_TASKS="${{ matrix.tasks }}"
 
       - name: Share compiled task outputs
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: android-compile-cache
+          name: android-compile-cache-${{ matrix.job }}
           path: |
             ~/.gradle/caches/build-cache-1/*
             !~/.gradle/caches/build-cache-1/*.lock
@@ -75,7 +83,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: profile-${{ matrix.job || 'compile' }}
+          name: profile-${{ github.job }}-${{ matrix.job }}
           path: apps/android/build/reports/profile/
 
   gradle:
@@ -94,19 +102,14 @@ jobs:
           - job: checks
             target: lint
             tasks: :app:lintRelease
-          - job: style
-            target: lint
-            tasks: spotlessCheck :lint-checks:test
           - job: tests
             target: test
+            cache: tests
+            arguments: -Pzoonk.testForks=2
           - job: release
             target: build
             arguments: -x :app:lintVitalRelease
     steps:
-      - name: Require successful compilation
-        if: needs.compile.result != 'success'
-        run: exit 1
-
       - *checkout
       - *java
       - *android
@@ -115,7 +118,7 @@ jobs:
       - name: Restore compiled task outputs
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: android-compile-cache
+          name: android-compile-cache-${{ matrix.cache || 'release' }}
           path: ~/.gradle/caches/build-cache-1
           digest-mismatch: error
 
@@ -123,3 +126,26 @@ jobs:
         run: make -C apps/android ${{ matrix.target }} GRADLE_ARGUMENTS="$GRADLE_ARGUMENTS ${{ matrix.arguments }}" ${{ matrix.tasks && format('LINT_TASKS="{0}"', matrix.tasks) || '' }}
 
       - *profiles
+
+  style:
+    name: style
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: ${{ github.workflow }}-style-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+    steps:
+      - *checkout
+      - *java
+      - *android
+      - *gradle
+      - name: Check formatting and lint detectors
+        run: make -C apps/android lint LINT_TASKS="spotlessCheck :lint-checks:test"
+      - name: Upload task profiles
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: profile-style
+          path: apps/android/build/reports/profile/
