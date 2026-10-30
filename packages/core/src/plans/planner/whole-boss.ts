@@ -49,6 +49,13 @@ export function placeBoss({
   const floor = Math.max(used, cumulative[afterDay] ?? 0);
 
   const reached = floor <= PLAN_EPSILON ? -1 : findDayIndex({ cumulative, needed: floor });
+
+  // Past the plan's last day, it's left out with the work before it: the day of the lessons it tests
+  // would put it first (day one, when placement found them known).
+  if (reached === -1 && floor > PLAN_EPSILON) {
+    return { beside: true, dayIndex: -1, start: floor, used: floor };
+  }
+
   const lastDay = Math.max(reached, afterDay);
   const start = lastDay === -1 ? floor : Math.max(floor, cumulative[lastDay] ?? floor);
 

@@ -1320,6 +1320,48 @@ describe("big goals of any kind", () => {
   });
 });
 
+describe("a phase whose lessons the learner's time leaves out", () => {
+  const phases = ["Basics", "Known", "Later"].map((name) => ({ milestone: null, name }));
+
+  const input = planInput({
+    goal: { dailyMinutes: 5, kind: "learn", targetDate: fromIsoDate("2026-10-02") },
+    graph: {
+      phases,
+      skills: [
+        skill("a", { lessons: 4 }),
+        skill("b", { lessons: 20, phase: 1 }),
+        skill("c", { lessons: 20, phase: 2 }),
+      ],
+    },
+    items: [0, 1].map((index) =>
+      existing({
+        id: `known-${index}`,
+        lessonId: `known-${index}`,
+        phase: 1,
+        position: index,
+        scheduledFor: TODAY,
+        skillId: "b",
+        status: "testedOut",
+      }),
+    ),
+    lessons: lessonsFor("a", 4),
+  });
+
+  it("has no challenge, even beside lessons placement found known today", () => {
+    const plan = buildPlan(input);
+
+    const taught = (phase: number) =>
+      plan.items.some(
+        (item) => item.kind === "lesson" && item.phase === phase && item.status === "todo",
+      );
+
+    const bosses = plan.items.filter((item) => item.kind === "boss");
+
+    expect(taught(2)).toBe(false);
+    expect(bosses.map((boss) => boss.phase)).toStrictEqual([0]);
+  });
+});
+
 describe("a plan's first day", () => {
   it("has study time even when the learner rests on that weekday, and rests from the next week on", () => {
     const restsOnMonday = [12, 0, 12, 12, 12, 12, 12];
