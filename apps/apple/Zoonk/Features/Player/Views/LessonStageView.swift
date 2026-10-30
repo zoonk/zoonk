@@ -18,6 +18,17 @@ struct LessonStageView: View {
     return result.isCorrect
   }
 
+  /// Main's verdict is a live status region: VoiceOver says it as it arrives, wherever focus is.
+  private func announceVerdict() {
+    guard let step = state.currentStep, let result = state.currentResult, !step.showsOwnResult
+    else { return }
+
+    var announcement = AttributedString(
+      String(localized: LessonVerdict.of(result, step: step).title))
+    announcement.accessibilitySpeechAnnouncementPriority = .high
+    AccessibilityNotification.Announcement(announcement).post()
+  }
+
   /// The two pages where the stage splits, or nil for one column, which accessibility text sizes
   /// always get.
   private func pages(_ proxy: GeometryProxy) -> PaneSpace.Panes? {
@@ -89,6 +100,7 @@ struct LessonStageView: View {
             .onChange(of: state.currentResult != nil) { _, hasResult in
               if hasResult {
                 scroll.scrollTo(Self.verdictId, anchor: .bottom)
+                announceVerdict()
               }
             }
             .onChange(of: state.notice == .selfCorrect || state.checkFailed) { _, hasNote in

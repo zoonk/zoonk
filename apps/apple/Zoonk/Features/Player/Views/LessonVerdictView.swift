@@ -155,67 +155,8 @@ struct LessonVerdictView: View {
     return nil
   }
 
-  private struct Verdict {
-    let title: LocalizedStringResource
-    let symbol: String
-    let tint: Color
-  }
-
-  /// A hook's guess is never wrong.
-  private var verdict: Verdict {
-    if result.isSampleAnswer {
-      return Verdict(
-        title: LocalizedStringResource(
-          "Here's a good answer", table: "Player",
-          comment: "\"I don't know yet\" shows a good answer"),
-        symbol: "text.bubble", tint: .secondary)
-    }
-
-    if step.kind == .hook {
-      return result.isCorrect
-        ? Verdict(
-          title: LocalizedStringResource(
-            "Good guess!", table: "Player", comment: "A hook's guess was right"),
-          symbol: "sparkles", tint: .success)
-        : Verdict(
-          title: LocalizedStringResource(
-            "Here's the answer", table: "Player", comment: "A hook's guess missed"),
-          symbol: "sparkles", tint: .secondary)
-    }
-
-    if result.isCorrect {
-      return result.spelling == nil
-        ? Verdict(
-          title: LocalizedStringResource(
-            "Correct!", table: "Player", comment: "The answer was right"), symbol: "checkmark",
-          tint: .success)
-        : Verdict(
-          title: LocalizedStringResource(
-            "Right, watch the spelling", table: "Player",
-            comment: "A right typed answer with a typo"),
-          symbol: "checkmark", tint: .success)
-    }
-
-    if step.kind == .typedAnswer, !result.checked {
-      return Verdict(
-        title: LocalizedStringResource(
-          "Not checked this time", table: "Player", comment: "A typed answer that wasn't graded"),
-        symbol: "text.bubble", tint: .secondary)
-    }
-
-    if let score = result.score, score >= 0.5 {
-      return Verdict(
-        title: LocalizedStringResource(
-          "Almost there", table: "Player", comment: "A typed or spoken answer that was partly right"
-        ),
-        symbol: "circle.lefthalf.filled", tint: .warning)
-    }
-
-    return Verdict(
-      title: LocalizedStringResource(
-        "Not quite", table: "Player",
-        comment: "Gentle verdict after a wrong answer, without saying it was almost right"),
-      symbol: "xmark", tint: .destructive)
+  private var verdict: LessonVerdict {
+    .of(result, step: step)
   }
 }
 
@@ -311,5 +252,69 @@ private struct LessonExplainAnswerView: View {
       .font(.subheadline)
       .foregroundStyle(.secondary)
     }
+  }
+}
+
+struct LessonVerdict {
+  let title: LocalizedStringResource
+  let symbol: String
+  let tint: Color
+}
+
+extension LessonVerdict {
+  static func of(_ result: LessonStepResult, step: LessonStep) -> LessonVerdict {
+    if result.isSampleAnswer {
+      return LessonVerdict(
+        title: LocalizedStringResource(
+          "Here's a good answer", table: "Player",
+          comment: "\"I don't know yet\" shows a good answer"),
+        symbol: "text.bubble", tint: .secondary)
+    }
+
+    if step.kind == .hook {
+      return result.isCorrect
+        ? LessonVerdict(
+          title: LocalizedStringResource(
+            "Good guess!", table: "Player", comment: "A hook's guess was right"),
+          symbol: "sparkles", tint: .success)
+        : LessonVerdict(
+          title: LocalizedStringResource(
+            "Here's the answer", table: "Player", comment: "A hook's guess missed"),
+          symbol: "sparkles", tint: .secondary)
+    }
+
+    if result.isCorrect {
+      return result.spelling == nil
+        ? LessonVerdict(
+          title: LocalizedStringResource(
+            "Correct!", table: "Player", comment: "The answer was right"), symbol: "checkmark",
+          tint: .success)
+        : LessonVerdict(
+          title: LocalizedStringResource(
+            "Right, watch the spelling", table: "Player",
+            comment: "A right typed answer with a typo"),
+          symbol: "checkmark", tint: .success)
+    }
+
+    if step.kind == .typedAnswer, !result.checked {
+      return LessonVerdict(
+        title: LocalizedStringResource(
+          "Not checked this time", table: "Player", comment: "A typed answer that wasn't graded"),
+        symbol: "text.bubble", tint: .secondary)
+    }
+
+    if let score = result.score, score >= 0.5 {
+      return LessonVerdict(
+        title: LocalizedStringResource(
+          "Almost there", table: "Player", comment: "A typed or spoken answer that was partly right"
+        ),
+        symbol: "circle.lefthalf.filled", tint: .warning)
+    }
+
+    return LessonVerdict(
+      title: LocalizedStringResource(
+        "Not quite", table: "Player",
+        comment: "Gentle verdict after a wrong answer, without saying it was almost right"),
+      symbol: "xmark", tint: .destructive)
   }
 }
