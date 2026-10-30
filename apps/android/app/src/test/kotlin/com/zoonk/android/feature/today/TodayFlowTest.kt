@@ -290,13 +290,21 @@ class TodayFlowTest {
                     fixture("study-block", "id" to reviewBlock, "kind" to "review", "status" to "completed", "position" to 1),
                 ),
             )
-        show("blocks" to done, "nextPosition" to null, "goalId" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01")
+        show("blocks" to done, "nextPosition" to null, "state" to "done", "goalId" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01")
 
         rule.onNodeWithText("Today's session is complete.", substring = true).assertIsDisplayed()
         rule.onNodeWithText("See today's summary").performClick()
         rule.waitForIdle()
 
         assertEquals(AppRoute.Session(goalId = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01"), navigator.currentRoute)
+    }
+
+    @Test
+    fun todayOffersWhatTheDaysStateFromCoreSaysNotWhatItsBlocksSuggest() {
+        show("state" to "done")
+
+        rule.onNodeWithText("See today's summary").assertExists()
+        rule.onNodeWithText("Start session").assertDoesNotExist()
     }
 
     @Test
@@ -307,7 +315,7 @@ class TodayFlowTest {
                 put("done", 0)
                 put("planned", 0)
             }
-        show("blocks" to JsonArray(emptyList()), "nextPosition" to null, "minutes" to noTime)
+        show("blocks" to JsonArray(emptyList()), "nextPosition" to null, "minutes" to noTime, "state" to "rest")
 
         rule.onNodeWithText("No study planned today.", substring = true).assertIsDisplayed()
         assertEquals(0, rule.onAllNodesWithText("Start session").fetchSemanticsNodes().size)

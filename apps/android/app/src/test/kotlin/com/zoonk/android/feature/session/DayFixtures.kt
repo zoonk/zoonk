@@ -3,6 +3,7 @@ package com.zoonk.android.feature.session
 import com.zoonk.api.models.DailyTimeLimit
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyExtraTime
+import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.StudySessionExamAccess
 import com.zoonk.api.models.StudySessionFullMeal
 import com.zoonk.api.models.StudySessionMinutes
@@ -71,6 +72,7 @@ internal fun day(
         localDate = DAY,
         steps = steps,
         nextPosition = nextPosition,
+        state = StudySession.State.UNDERWAY,
         missions = emptyList(),
         fullMeal = StudySessionFullMeal(bonus = 0, earned = false, ready = false),
         dailyLimit = if (limitReached) DailyTimeLimit(limitMinutes = 30, reached = true, remainingMinutes = 0, usedMinutes = 30) else null,

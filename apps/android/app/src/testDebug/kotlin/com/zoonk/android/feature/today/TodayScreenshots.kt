@@ -325,9 +325,9 @@ class TodayScreenshots {
                             ),
                     ),
                 "done-up-next" to doneWithUpNext(),
-                "rest" to day(blocks = emptyList(), next = null, dailyGoal = 0),
-                "waiting" to day(blocks = emptyList(), next = null, extra = mapOf("emptyDay" to "lessonsComing")),
-                "limit" to day(blocks = lessons(4, done = 2), next = 2, extra = mapOf("dailyLimit" to limitReached())),
+                "rest" to day(blocks = emptyList(), next = null, dailyGoal = 0, extra = mapOf("state" to "rest")),
+                "waiting" to day(blocks = emptyList(), next = null, extra = mapOf("emptyDay" to "lessonsComing", "state" to "waiting")),
+                "limit" to day(blocks = lessons(4, done = 2), next = 2, extra = mapOf("dailyLimit" to limitReached(), "state" to "limit")),
             )
         }
 
@@ -602,7 +602,7 @@ class TodayScreenshots {
                     put("minutes", 10)
                     put("reason", null as String?)
                 }
-            return day(blocks = lessons(3, done = 3), next = null, extra = mapOf("extraTime" to extraTime))
+            return day(blocks = lessons(3, done = 3), next = null, extra = mapOf("extraTime" to extraTime, "state" to "done"))
         }
     }
 }

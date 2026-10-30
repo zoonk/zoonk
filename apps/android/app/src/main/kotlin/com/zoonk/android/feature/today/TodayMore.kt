@@ -35,6 +35,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayWeeklyChallenge
 import kotlinx.datetime.toJavaLocalDate
 
@@ -53,7 +54,7 @@ internal fun TodayMore(
     if (model.pastDate != null || model.keepLearning) return
 
     when (model.state) {
-        DayState.Ahead -> {
+        StudySession.State.AHEAD -> {
             Column(modifier) {
                 ChallengeLink(model, actions)
                 LinkRow(
@@ -63,14 +64,14 @@ internal fun TodayMore(
             }
         }
 
-        DayState.Done, DayState.Rest, DayState.Underway -> {
+        StudySession.State.DONE, StudySession.State.REST, StudySession.State.UNDERWAY -> {
             Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (model.state != DayState.Underway) MoreTime(model, viewModel, actions)
-                if (model.state != DayState.Rest) CatchUpLater(model, viewModel)
+                if (model.state != StudySession.State.UNDERWAY) MoreTime(model, viewModel, actions)
+                if (model.state != StudySession.State.REST) CatchUpLater(model, viewModel)
             }
         }
 
-        DayState.Limit, DayState.Prepare, DayState.Waiting -> {}
+        StudySession.State.LIMIT, StudySession.State.PREPARE, StudySession.State.WAITING -> {}
     }
 }
 

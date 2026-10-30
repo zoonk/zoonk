@@ -59,6 +59,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.DockedActionBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.api.models.LanguageToday
+import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -70,9 +71,8 @@ internal class TodayDayModel(
 ) {
     val day = read.day
     val today = read.today
-    val state = day.dayState()
-    val session = day.sessionState()
-    val pastDate = today.pastDateLessons()?.takeIf { state == DayState.Rest || state == DayState.Ahead }
+    val state = day.state
+    val pastDate = today.pastDateLessons()?.takeIf { state == StudySession.State.REST || state == StudySession.State.AHEAD }
     val upNext = day.upNextLessons(pastDate != null)
     val keepLearning = upNext.isNotEmpty()
     val todaySubjects =
@@ -243,10 +243,10 @@ private val TodayDayModel.hasAction: Boolean
     get() =
         pastDate != null ||
             keepLearning ||
-            state == DayState.Underway ||
-            state == DayState.Done ||
-            state == DayState.Prepare ||
-            (state == DayState.Ahead && day.extraTime.available)
+            state == StudySession.State.UNDERWAY ||
+            state == StudySession.State.DONE ||
+            state == StudySession.State.PREPARE ||
+            (state == StudySession.State.AHEAD && day.extraTime.available)
 
 @Composable
 internal fun TodayAction(
@@ -263,9 +263,9 @@ internal fun TodayAction(
     val tap =
         when {
             model.pastDate != null -> null
-            model.state == DayState.Prepare -> TodayTap.Prepare
-            model.keepLearning || model.state == DayState.Ahead -> TodayTap.KeepLearning
-            model.state == DayState.Underway -> TodayTap.Continue
+            model.state == StudySession.State.PREPARE -> TodayTap.Prepare
+            model.keepLearning || model.state == StudySession.State.AHEAD -> TodayTap.KeepLearning
+            model.state == StudySession.State.UNDERWAY -> TodayTap.Continue
             else -> null
         }
 
@@ -278,7 +278,7 @@ internal fun TodayAction(
                 ActionButton(stringResource(R.string.today_see_plan), busy = false, buttonModifier) { actions.navigate(AppRoute.Plan()) }
             }
 
-            model.state == DayState.Prepare -> {
+            model.state == StudySession.State.PREPARE -> {
                 ActionButton(stringResource(R.string.today_get_lessons), busy, buttonModifier, actions.prepare)
             }
 
@@ -286,12 +286,12 @@ internal fun TodayAction(
                 ActionButton(stringResource(R.string.today_keep_learning), busy, buttonModifier, actions.keepLearning)
             }
 
-            model.state == DayState.Underway -> {
-                val label = if (model.session.started) R.string.today_continue_session else R.string.today_start_session
+            model.state == StudySession.State.UNDERWAY -> {
+                val label = if (model.day.started) R.string.today_continue_session else R.string.today_start_session
                 ActionButton(stringResource(label), busy, buttonModifier, actions.next)
             }
 
-            model.state == DayState.Done -> {
+            model.state == StudySession.State.DONE -> {
                 ActionButton(stringResource(R.string.today_see_summary), busy = false, buttonModifier) {
                     actions.navigate(AppRoute.Session(goalId = (model.day.goalId ?: model.today.goal.id).toString()))
                 }
@@ -329,9 +329,9 @@ internal fun rememberActionStatus(
     val tap =
         when {
             model.pastDate != null -> null
-            model.state == DayState.Prepare -> TodayTap.Prepare
-            model.keepLearning || model.state == DayState.Ahead -> TodayTap.KeepLearning
-            model.state == DayState.Underway -> TodayTap.Continue
+            model.state == StudySession.State.PREPARE -> TodayTap.Prepare
+            model.keepLearning || model.state == StudySession.State.AHEAD -> TodayTap.KeepLearning
+            model.state == StudySession.State.UNDERWAY -> TodayTap.Continue
             else -> null
         }
     val wait = rememberWaitState(tap != null && viewModel.pending == tap)

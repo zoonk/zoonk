@@ -43,6 +43,7 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamMoment
 import com.zoonk.api.models.PlanStatus
+import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.Today
 import com.zoonk.api.models.TodayProgress
 import kotlinx.datetime.toJavaLocalDate
@@ -102,7 +103,7 @@ internal fun TodayHeading(
             }
         }
 
-        if (model.state != DayState.Done && model.state != DayState.Rest) MockFundingLine(model)
+        if (model.state != StudySession.State.DONE && model.state != StudySession.State.REST) MockFundingLine(model)
     }
 }
 
@@ -269,17 +270,16 @@ internal fun DayTime(
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
-    val session = model.session
     val studied = model.day.studiedToday()
     val left = model.day.minutesLeft()
 
     val text =
         when {
-            session.waiting -> {
+            model.state == StudySession.State.WAITING -> {
                 null
             }
 
-            session.done || session.limitReached -> {
+            model.state == StudySession.State.DONE || model.day.limitReached -> {
                 if (studied >
                     0
                 ) {

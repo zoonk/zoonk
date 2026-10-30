@@ -8,6 +8,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.api.models.LessonGenerationStatus
+import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.test.runTest
@@ -131,12 +132,13 @@ class TodayStoreTest {
                             put("planned", 0)
                         },
                     "nextPosition" to null,
+                    "state" to "prepare",
                 )
             val today = decodeFixture<Today>("today", "session" to session)
 
             val read = read(api { today }, ana, "UTC") as TodayRead.Day
 
-            assertEquals(DayState.Prepare, read.day.dayState())
+            assertEquals(StudySession.State.PREPARE, read.day.state)
         }
 
     @Test

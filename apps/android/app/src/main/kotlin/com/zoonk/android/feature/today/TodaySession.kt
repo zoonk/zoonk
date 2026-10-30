@@ -84,6 +84,7 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyExtraTimeLessonsInner
+import com.zoonk.api.models.StudySession
 import kotlinx.datetime.toJavaLocalDate
 
 /** Which of the queue's folds are open, kept with the screen's saved state. */
@@ -104,7 +105,7 @@ internal fun LazyListScope.todaySession(
     buddyName: String,
 ) {
     val day = model.day
-    val next = day.nextStep?.takeIf { !model.session.limitReached }
+    val next = day.nextStep?.takeIf { !day.limitReached }
 
     if (model.today.earlierWork.isNotEmpty()) {
         item(key = "earlier-work", contentType = "earlier-work") { EarlierWork(model, Modifier.pageItem().padding(top = 16.dp)) }
@@ -145,7 +146,11 @@ private fun LazyListScope.freshStartItem(model: TodayDayModel) {
     val day = model.day
     val freshStart = day.freshStart ?: return
 
-    if (!day.showsFreshStart(model.today.studiedToday) || model.session.ahead || model.session.limitReached || model.session.rest) return
+    if (!day.showsFreshStart(model.today.studiedToday) || model.state == StudySession.State.AHEAD || day.limitReached ||
+        model.state == StudySession.State.REST
+    ) {
+        return
+    }
 
     item(key = "fresh-start", contentType = "note") {
         val time = formatMinutes(day.steps.sumOf { it.estimatedMinutes }.toInt(), currentLocale())
@@ -761,7 +766,7 @@ private fun TodayDayStatus(
     }
 
     when (model.state) {
-        DayState.Done -> {
+        StudySession.State.DONE -> {
             val studied = day.studiedToday()
             val summary = stringResource(R.string.today_see_summary)
             val link =
@@ -790,7 +795,7 @@ private fun TodayDayStatus(
             )
         }
 
-        DayState.Waiting -> {
+        StudySession.State.WAITING -> {
             if (model.writingStalled) {
                 TodayStatusLine(
                     R.drawable.ic_schedule,
@@ -809,15 +814,15 @@ private fun TodayDayStatus(
             }
         }
 
-        DayState.Prepare -> {
+        StudySession.State.PREPARE -> {
             TodayStatusLine(R.drawable.ic_schedule, stringResource(R.string.today_lessons_not_written), null, modifier)
         }
 
-        DayState.Limit -> {
+        StudySession.State.LIMIT -> {
             TodayStatusLine(R.drawable.ic_hourglass_empty, stringResource(R.string.today_limit), seeYou(model), modifier)
         }
 
-        DayState.Rest -> {
+        StudySession.State.REST -> {
             val welcomeBack = day.freshStart == FreshStart.WelcomeBack
             val clause =
                 when {
@@ -830,7 +835,7 @@ private fun TodayDayStatus(
         }
 
         // A free exam plan past its first week has its new lessons locked above, so it never claims they're all done.
-        DayState.Ahead -> {
+        StudySession.State.AHEAD -> {
             if (day.examAccess.trialEnded) {
                 TodayStatusLine(R.drawable.ic_auto_awesome, stringResource(R.string.today_nothing_to_review), null, modifier)
             } else {
@@ -843,7 +848,7 @@ private fun TodayDayStatus(
             }
         }
 
-        DayState.Underway -> {}
+        StudySession.State.UNDERWAY -> {}
     }
 }
 
