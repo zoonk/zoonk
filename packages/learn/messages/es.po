@@ -3768,7 +3768,6 @@ msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} othe
 msgstr "{studied, plural, =0 {Aún no has estudiado ninguna lección} one {# lección estudiada} other {# lecciones estudiadas}}"
 
 #: src/journey/journey-hero.tsx
-#: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 #: src/today/today-preparation.tsx
 msgctxt "y1Qr81"
@@ -3776,6 +3775,7 @@ msgid "Level"
 msgstr "Nivel"
 
 #: src/journey/journey-hero.tsx
+#: src/onboarding/plan-receipt.tsx
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "DejB0r"
 msgid "Your level"

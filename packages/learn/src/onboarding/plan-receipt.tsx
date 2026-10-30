@@ -79,7 +79,7 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
     dateFact(goal),
     ...languageRows(goal),
     ...detailRows(goal, null),
-    level !== null && { id: "level", label: t("Level"), value: level },
+    level !== null && { id: "level", label: t("Your level"), value: level },
     isAnswered({ goal, question: "schedule" }) && {
       id: "time",
       label: t("Time a day"),
