@@ -1,4 +1,4 @@
-import { getBudgetForGoal, splitDailyBudget } from "@zoonk/core/goals/daily-budget";
+import { splitDailyBudget } from "@zoonk/core/goals/daily-budget";
 import {
   type PlanSuggestedTime,
   type PlanTimeAdvice,
@@ -25,55 +25,6 @@ export type TimeLine =
 export type GoalsTogether = { count: number; place: number };
 
 export type DaySplit = { mine: number; others: number; rest: number };
-
-function getShare({ minutes, together }: { minutes: number; together: GoalsTogether }): number {
-  return splitDailyBudget({ budget: minutes, count: together.count })[together.place] ?? minutes;
-}
-
-/** The goal's plan answers for its share of the day's time. */
-export function toGoalWeek<Week extends StudyWeek & Pick<PlanTimeAdviceInput, "dailyMinutes">>({
-  together,
-  week,
-}: {
-  together: GoalsTogether;
-  week: Week;
-}): Week {
-  const { dailyMinutes, weekendMinutes } = week;
-
-  return {
-    ...week,
-    ...(dailyMinutes === undefined
-      ? {}
-      : { dailyMinutes: getShare({ minutes: dailyMinutes, together }) }),
-    ...(weekendMinutes === undefined
-      ? {}
-      : { weekendMinutes: getShare({ minutes: weekendMinutes, together }) }),
-  };
-}
-
-/** The times the goal's plan found, as the day's time that gives the goal them. */
-export function toDayTime({
-  time,
-  together,
-}: {
-  time: PlanTimeToCover;
-  together: GoalsTogether;
-}): PlanTimeToCover {
-  const toDay = (minutes: number | null) =>
-    minutes === null
-      ? null
-      : getBudgetForGoal({ count: together.count, minutes, place: together.place });
-
-  return {
-    ...time,
-    coreMinutes: toDay(time.coreMinutes),
-    recommendedMinutes: toDay(time.recommendedMinutes),
-    suggested: time.suggested && {
-      ...time.suggested,
-      minutes: toDay(time.suggested.minutes) ?? time.suggested.minutes,
-    },
-  };
-}
 
 export function getDaySplit({
   minutes,

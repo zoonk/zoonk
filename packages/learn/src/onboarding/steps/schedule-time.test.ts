@@ -9,9 +9,7 @@ import {
   getTimeLine,
   getTooClose,
   keepsFullCourse,
-  toDayTime,
   toFindWeek,
-  toGoalWeek,
   toPickedMinutes,
   toStudyWeek,
   waitsForSuggestion,
@@ -332,52 +330,6 @@ describe(toFindWeek, () => {
 describe("goals typed together", () => {
   const MAIN = { count: 2, place: 0 };
   const SECOND = { count: 2, place: 1 };
-
-  it("asks the shown goal's plan about its share of the day's time", () => {
-    expect(
-      toGoalWeek({
-        together: MAIN,
-        week: { dailyMinutes: 60, studyDays: [1], weekendMinutes: 90 },
-      }),
-    ).toStrictEqual({ dailyMinutes: 40, studyDays: [1], weekendMinutes: 60 });
-
-    expect(
-      toGoalWeek({
-        together: SECOND,
-        week: { dailyMinutes: 60, studyDays: [1], weekendMinutes: 90 },
-      }),
-    ).toStrictEqual({ dailyMinutes: 20, studyDays: [1], weekendMinutes: 30 });
-
-    expect(toGoalWeek({ together: MAIN, week: { studyDays: [1] } })).toStrictEqual({
-      studyDays: [1],
-    });
-
-    expect(
-      toGoalWeek({ together: { count: 1, place: 0 }, week: { dailyMinutes: 60, studyDays: [1] } }),
-    ).toStrictEqual({ dailyMinutes: 60, studyDays: [1] });
-  });
-
-  it("suggests the day's time that gives the shown goal the time its plan found", () => {
-    const found = foundTime({ coreMinutes: 20, recommendedMinutes: 40 });
-
-    expect(toDayTime({ time: found, together: MAIN })).toMatchObject({
-      coreMinutes: 25,
-      recommendedMinutes: 55,
-    });
-
-    expect(toDayTime({ time: found, together: SECOND })).toMatchObject({
-      coreMinutes: 60,
-      recommendedMinutes: 120,
-    });
-
-    expect(
-      toGoalWeek({ together: SECOND, week: { dailyMinutes: 120, studyDays: [1] } }),
-    ).toStrictEqual({ dailyMinutes: 40, studyDays: [1] });
-
-    expect(toDayTime({ time: foundTime(), together: { count: 1, place: 0 } })).toStrictEqual(
-      foundTime(),
-    );
-  });
 
   it("says how the day's time is shared only between goals typed together", () => {
     expect(getDaySplit({ minutes: 60, together: MAIN })).toStrictEqual({

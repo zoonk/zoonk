@@ -542,7 +542,7 @@ describe("onboarding a new goal", () => {
     expect(saved.map((goal) => goal.dailyMinutes)).toStrictEqual([40, 20]);
   });
 
-  it("refuses a day too short to give every goal typed together its minimum", async () => {
+  it("refuses a day too short to give every goal typed together its minimum, saying the least it takes", async () => {
     await useLearner({ plus: true });
     const onboardingId = randomUUID();
 
@@ -569,14 +569,14 @@ describe("onboarding a new goal", () => {
         goalId: main ?? "",
         input: { dailyMinutes: 5, question: "schedule" },
       }),
-    ).resolves.toStrictEqual({ status: "invalid" });
+    ).resolves.toStrictEqual({ goals: 2, minutes: 10, status: "dayTooShort" });
 
     await expect(
       answerOnboardingQuestion({
         goalId: main ?? "",
         input: { dailyMinutes: 30, question: "schedule", weekendMinutes: 5 },
       }),
-    ).resolves.toStrictEqual({ status: "invalid" });
+    ).resolves.toStrictEqual({ goals: 2, minutes: 10, status: "dayTooShort" });
 
     await expect(read()).resolves.toStrictEqual(before);
   });

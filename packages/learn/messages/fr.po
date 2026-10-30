@@ -8413,6 +8413,11 @@ msgctxt "s2KyHA"
 msgid "Your answers for this goal are cleared, and you type a goal again."
 msgstr "Tes réponses pour cet objectif seront effacées et tu devras saisir à nouveau un objectif."
 
+#: src/onboarding/steps-flow.tsx
+msgctxt "9RSqMB"
+msgid "{count, plural, one {Choose at least {time} a day for your # goal.} other {Choose at least {time} a day for your # goals.}}"
+msgstr "{count, plural, one {Choisis au moins {time} par jour pour ton # objectif.} other {Choisis au moins {time} par jour pour tes # objectifs.}}"
+
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."

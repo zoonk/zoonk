@@ -195,7 +195,11 @@ export const onboardingPaths = {
           content: { "application/json": { schema: onboardingResponseSchema } },
           description: "The screens still ahead",
         },
-        "422": unprocessableEntityResponse,
+        "422": {
+          ...unprocessableEntityResponse,
+          description:
+            "The answer can't be applied to the goal. A schedule whose dailyMinutes or weekendMinutes is shorter than the goals typed together need, at least 5 minutes each, gets `DAY_TOO_SHORT` with `details.minutes`, the least it takes, and `details.goals`, how many goals share it",
+        },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Answer an onboarding question",

@@ -1,4 +1,4 @@
-import { errors } from "@/lib/api-errors";
+import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { startGoalWork } from "@/lib/goal-content";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
@@ -30,6 +30,15 @@ async function createOnboardingAnswer(
 
   if (result.status === "invalid") {
     return errors.unprocessableEntity("This answer can't be applied to the goal");
+  }
+
+  if (result.status === "dayTooShort") {
+    return createErrorResponse({
+      code: "DAY_TOO_SHORT",
+      details: { goals: result.goals, minutes: result.minutes },
+      message: `The goals typed together need at least ${result.minutes} minutes a day`,
+      status: httpStatus.unprocessableEntity,
+    });
   }
 
   if (result.movedTo?.created) {

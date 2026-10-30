@@ -12,9 +12,7 @@ import {
   getDaySplit,
   getShownMinutes,
   getTimeLine,
-  toDayTime,
   toFindWeek,
-  toGoalWeek,
   toStudyWeek,
   waitsForSuggestion,
 } from "./schedule-time";
@@ -61,23 +59,18 @@ function useFoundTime({
   dated,
   days,
   paused,
-  together,
   weekend,
 }: {
   ask: ScheduleActions["findTimeToCover"];
   dated: boolean;
   days: number[];
   paused: boolean;
-  together: GoalsTogether;
   weekend: number | null;
 }) {
   const week = toFindWeek({ days, weekend });
 
   const covering = usePlanAnswer({
-    ask: async () => {
-      const time = await ask(toGoalWeek({ together, week }));
-      return time && toDayTime({ time, together });
-    },
+    ask: () => ask(week),
     enabled: dated && days.length > 0,
     key: JSON.stringify(week),
     paused,
@@ -123,7 +116,6 @@ export function useSchedule({
     dated: datedGuess,
     days: week.days,
     paused,
-    together,
     weekend: week.weekend,
   });
 
@@ -146,10 +138,7 @@ export function useSchedule({
   });
 
   const timeAdvice = usePlanAnswer({
-    ask: () =>
-      actions.getTimeAdvice(
-        toGoalWeek({ together, week: { ...asked, dailyMinutes: minutes ?? recommendedMinutes } }),
-      ),
+    ask: () => actions.getTimeAdvice({ ...asked, dailyMinutes: minutes ?? recommendedMinutes }),
     enabled:
       hasDays &&
       asksAboutTime({ dated, found: found.found, fullCourse: studiesEverything, minutes }),

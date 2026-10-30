@@ -1,5 +1,7 @@
 import "server-only";
 import { loadGoalDateKind } from "../exams/_utils/goal-date-estimate";
+import { getBudgetForGoal, getGoalShare } from "../goals/daily-budget";
+import { findOnboardingGoalIds } from "../view-models/onboarding/_utils/onboarding-goals";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { findOwnedPlan } from "./_utils/owned-plan";
 import { applyChangeOperations } from "./_utils/part-areas";
@@ -36,6 +38,43 @@ export type PlanTimeToCoverResult =
   | { status: "notFound" | "unauthorized" };
 
 type Waiting = { readingNotice: boolean; ready: false };
+
+type SharedDay = { count: number; place: number };
+
+/**
+ * A week asked about is the time question's, whose minutes, in and out, are the day the goals typed
+ * together share, as saving the schedule splits it. Without one, they're the goal's own.
+ */
+async function loadSharedDay({
+  context,
+  input,
+}: {
+  context: PlanContext;
+  input: PlanTimeToCoverInput;
+}): Promise<SharedDay> {
+  if (input.studyDays === undefined) {
+    return { count: 1, place: 0 };
+  }
+
+  const goalIds = await findOnboardingGoalIds(context.goal);
+  return { count: goalIds.length, place: Math.max(0, goalIds.indexOf(context.goal.id)) };
+}
+
+function toGoalWeek<Week extends PlanTimeToCoverInput>({
+  day,
+  week,
+}: {
+  day: SharedDay;
+  week: Week;
+}): Week {
+  return week.weekendMinutes === undefined
+    ? week
+    : { ...week, weekendMinutes: getGoalShare({ ...day, budget: week.weekendMinutes }) };
+}
+
+function toDayMinutes({ day, minutes }: { day: SharedDay; minutes: number | null }) {
+  return minutes === null ? null : getBudgetForGoal({ ...day, minutes });
+}
 
 function getSearchWeekdayMinutes({
   input,
@@ -170,7 +209,14 @@ export async function getPlanTimeAdvice({
   }
 
   const { context } = asked;
-  const dailyMinutes = input.dailyMinutes ?? context.state.goal.dailyMinutes;
+  const day = await loadSharedDay({ context, input });
+  const week = toGoalWeek({ day, week: input });
+
+  const dailyMinutes =
+    input.dailyMinutes === undefined
+      ? context.state.goal.dailyMinutes
+      : getGoalShare({ ...day, budget: input.dailyMinutes });
+
   const fullCourse = context.goal.kind === "exam" && input.fullCourse === true;
 
   const [computed, dateKind] = await Promise.all([
@@ -178,7 +224,7 @@ export async function getPlanTimeAdvice({
       context,
       mode: "forced",
       pace: "saved",
-      state: withStudyWeek({ context, dailyMinutes, fullCourse, input }),
+      state: withStudyWeek({ context, dailyMinutes, fullCourse, input: week }),
     }),
     loadGoalDateKind(context.goal),
   ]);
@@ -244,14 +290,16 @@ export async function findPlanTimeToCover({
   }
 
   const { context } = asked;
-  const stateAt = (dailyMinutes: number) => withStudyWeek({ context, dailyMinutes, input });
+  const day = await loadSharedDay({ context, input });
+  const week = toGoalWeek({ day, week: input });
+  const stateAt = (dailyMinutes: number) => withStudyWeek({ context, dailyMinutes, input: week });
 
   const [computed, dateKind] = await Promise.all([
     computePlan({
       context,
       mode: "forced",
       pace: "saved",
-      state: stateAt(getSearchWeekdayMinutes({ input, state: context.state })),
+      state: stateAt(getSearchWeekdayMinutes({ input: week, state: context.state })),
       studyScheduleAt: (dailyMinutes) => {
         const state = stateAt(dailyMinutes);
 
@@ -272,8 +320,10 @@ export async function findPlanTimeToCover({
 
   // Nothing covers a date that has passed, so no time is searched for.
   const minutes = {
-    coreMinutes: pastDate ? null : feasibility.coreMinutes,
-    recommendedMinutes: pastDate ? null : feasibility.recommendedMinutes,
+    coreMinutes: pastDate ? null : toDayMinutes({ day, minutes: feasibility.coreMinutes }),
+    recommendedMinutes: pastDate
+      ? null
+      : toDayMinutes({ day, minutes: feasibility.recommendedMinutes }),
   };
 
   return {

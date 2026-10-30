@@ -6,14 +6,17 @@ import {
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { safeAsync } from "@zoonk/utils/error";
+import { useExtracted } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
 import { StepDots } from "../_components/step-dots";
+import { useFormatDuration } from "../_utils/time-format";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
 import { type FlowState, applyAnswer } from "./_utils/answered-step";
 import { getSetupProgress } from "./_utils/setup-progress";
 import {
+  type AnswerOutcome,
   type OnboardingActions,
   type OnboardingNavigation,
   type OnboardingRoutes,
@@ -51,6 +54,20 @@ function getAnsweredScreens(view: OnboardingView): OnboardingStep[] {
   return Array.isArray(answered) ? answered.filter((step) => isStepScreen(step)) : [];
 }
 
+type DayTooShort = Omit<Extract<AnswerOutcome, { status: "dayTooShort" }>, "status">;
+
+type Failed = { dayTooShort: DayTooShort | null; step: OnboardingStep };
+
+function DayTooShortWords({ goals, minutes }: DayTooShort) {
+  const t = useExtracted();
+  const formatDuration = useFormatDuration();
+
+  return t(
+    "{count, plural, one {Choose at least {time} a day for your # goal.} other {Choose at least {time} a day for your # goals.}}",
+    { count: goals, time: formatDuration(minutes) },
+  );
+}
+
 export function StepsFlow({
   actions,
   generation = null,
@@ -71,7 +88,7 @@ export function StepsFlow({
   routes: OnboardingRoutes;
 }) {
   const [isPending, startTransition] = useTransition();
-  const [failedStep, setFailedStep] = useState<OnboardingStep | null>(null);
+  const [failed, setFailed] = useState<Failed | null>(null);
 
   // Current only when the page opened on the plan; after the steps the reveal reads it fresh.
   const pagePlan = (onboarding.steps[0] ?? "plan") === "plan" ? initialPlan : null;
@@ -98,7 +115,7 @@ export function StepsFlow({
     const step = state.current;
     setSending({ open: true, step });
 
-    setFailedStep(null);
+    setFailed(null);
 
     startTransition(async () => {
       // A save that fails, even by throwing, keeps the learner here with what they picked.
@@ -109,8 +126,15 @@ export function StepsFlow({
       saving.current = false;
       setSending({ open: false, step });
 
-      if (!outcome || outcome.status === "failed") {
-        setFailedStep(step);
+      if (!outcome || outcome.status !== "saved") {
+        setFailed({
+          dayTooShort:
+            outcome?.status === "dayTooShort"
+              ? { goals: outcome.goals, minutes: outcome.minutes }
+              : null,
+          step,
+        });
+
         return;
       }
 
@@ -159,7 +183,13 @@ export function StepsFlow({
             // Answers change in "Adjust" now, not by going back through the questions.
             onBack: state.history.length > 0 && !isPlan ? back : undefined,
           }}
-          notice={failedStep === state.current && <ChangeSaveError />}
+          notice={
+            failed?.step === state.current && (
+              <ChangeSaveError>
+                {failed.dayTooShort && <DayTooShortWords {...failed.dayTooShort} />}
+              </ChangeSaveError>
+            )
+          }
         >
           {/* Placement follows the run itself, so only the questions say it stopped. */}
           <PlanStartNoticeProvider

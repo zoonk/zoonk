@@ -16,6 +16,18 @@ export function splitDailyBudget({ budget, count }: { budget: number; count: num
   return [main, ...Array.from({ length: count - 1 }, () => other)];
 }
 
+export function getGoalShare({
+  budget,
+  count,
+  place,
+}: {
+  budget: number;
+  count: number;
+  place: number;
+}): number {
+  return splitDailyBudget({ budget, count })[place] ?? budget;
+}
+
 /** Each goal typed together gets at least the minimum, so the day they share holds that much each. */
 export function getLeastDailyBudget(count: number): number {
   return Math.max(1, count) * MIN_DAILY_MINUTES;

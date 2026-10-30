@@ -27,12 +27,18 @@ export function useChangeSaveErrorMessage(): string {
   return t("That didn't save. Try again.");
 }
 
-export function ChangeSaveError({ className }: { className?: string }) {
+export function ChangeSaveError({
+  children,
+  className,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) {
   const message = useChangeSaveErrorMessage();
 
   return (
     <p className={cn("text-destructive-text text-sm", className)} role="alert">
-      {message}
+      {children ?? message}
     </p>
   );
 }

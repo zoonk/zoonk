@@ -20,10 +20,13 @@ import { getAnsweredQuestions, getFollowUpQuestions, readExamTarget } from "./on
 /**
  * A saved answer says which goal onboarding goes on with: `movedTo` is the exam goal a language
  * goal moved to ("Pass an exam" naming a certificate), null when the goal stays. `created` is true
- * only for the request that created it, whose caller starts its research and curriculum.
+ * only for the request that created it, whose caller starts its research and curriculum. A schedule
+ * whose day or weekend is shorter than `minutes`, the least the `goals` typed together need, isn't
+ * saved.
  */
 export type OnboardingAnswerResult =
   | { movedTo: { created: boolean; goal: GoalView } | null; status: "saved" }
+  | { goals: number; minutes: number; status: "dayTooShort" }
   | { status: "invalid" }
   | { status: "notFound" }
   | { status: "unauthorized" };
@@ -170,16 +173,13 @@ function shareMinutes({ goalIds, minutes }: { goalIds: string[]; minutes: number
 
 type ScheduleAnswer = Extract<OnboardingAnswerInput, { question: "schedule" }>;
 
-/**
- * Applies shared weekday/weekend schedules and returns this goal's allocation; null for a day too
- * short to give each goal its minimum.
- */
+/** Applies shared weekday/weekend schedules and returns this goal's allocation. */
 async function updateSharedGoals({ goal, input }: { goal: Goal; input: ScheduleAnswer }) {
   const goalIds = await findOnboardingGoalIds(goal);
   const least = getLeastDailyBudget(goalIds.length);
 
   if (input.dailyMinutes < least || (input.weekendMinutes ?? least) < least) {
-    return null;
+    return { goals: goalIds.length, minutes: least, status: "dayTooShort" } as const;
   }
 
   const shares = shareMinutes({ goalIds, minutes: input.dailyMinutes });
@@ -206,8 +206,9 @@ async function updateSharedGoals({ goal, input }: { goal: Goal; input: ScheduleA
 
   return {
     dailyMinutes: shares.get(goal.id) ?? input.dailyMinutes,
+    status: "shared",
     weekendMinutes: weekendShares?.get(goal.id) ?? input.weekendMinutes,
-  };
+  } as const;
 }
 
 /** Requires an owned goal; remembers skipped answers too, and schedule answers settle its plan and shared time. A language goal whose reason names a certificate moves to an exam goal for it. */
@@ -248,11 +249,10 @@ export async function answerOnboardingQuestion({
   const details = isJsonObject(goal.details) ? goal.details : {};
   const answered = [...new Set([...getAnsweredQuestions(details), input.question])];
 
-  const shared =
-    input.question === "schedule" ? await updateSharedGoals({ goal, input }) : undefined;
+  const shared = input.question === "schedule" ? await updateSharedGoals({ goal, input }) : null;
 
-  if (shared === null) {
-    return { status: "invalid" };
+  if (shared?.status === "dayTooShort") {
+    return shared;
   }
 
   const result = await updateGoal({

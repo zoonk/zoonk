@@ -14,7 +14,7 @@ export const planTimeToCoverInputSchema = z
       .optional()
       .meta({
         description:
-          "The weekdays the learner would study, Sunday first (0), such as [1, 2, 3, 4, 5] for Monday to Friday; the plan's own days when absent",
+          "The weekdays the learner would study, Sunday first (0), such as [1, 2, 3, 4, 5] for Monday to Friday; the plan's own days when absent. A week asked about is onboarding's time question: every time in and out is then the time a day the goals typed together share, as `POST /goals/{goalId}/onboarding/answers` takes and splits it (the goal's own time when it was typed alone); without studyDays, the goal's own time",
       }),
     weekendMinutes: dailyMinutesSchema
       .optional()
@@ -26,5 +26,13 @@ export const planTimeToCoverInputSchema = z
   .meta({ id: "PlanTimeToCoverInput" });
 
 export const planTimeAdviceInputSchema = planTimeToCoverInputSchema
-  .extend({ dailyMinutes: dailyMinutesSchema.optional(), fullCourse: z.boolean().optional() })
+  .extend({
+    dailyMinutes: dailyMinutesSchema
+      .optional()
+      .meta({
+        description:
+          "The time a day asked about, as studyDays says; the goal's own when absent. With studyDays, the plan answers for this goal's share of it",
+      }),
+    fullCourse: z.boolean().optional(),
+  })
   .meta({ id: "PlanTimeAdviceInput" });

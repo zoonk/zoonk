@@ -60,7 +60,10 @@ export type CreateGoalsOutcome =
   | { status: "failed" }
   | { reason: GoalLimitReason; status: "limitReached" };
 
-export type AnswerOutcome = { onboarding: OnboardingView; status: "saved" } | { status: "failed" };
+export type AnswerOutcome =
+  | { onboarding: OnboardingView; status: "saved" }
+  | { goals: number; minutes: number; status: "dayTooShort" }
+  | { status: "failed" };
 
 export type WaitlistOutcome = "failed" | "joined" | "signInRequired";
 

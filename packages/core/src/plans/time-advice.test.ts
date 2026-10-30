@@ -88,7 +88,11 @@ async function readAdvice(goalId: string, studyDays: number[], week: PlanTimeAdv
     throw new Error(`Expected the time advice, got ${coverage.status} and ${found.status}`);
   }
 
-  return { ...coverage.advice, recommendedMinutes: found.time.recommendedMinutes };
+  return {
+    ...coverage.advice,
+    recommendedMinutes: found.time.recommendedMinutes,
+    suggested: found.time.suggested,
+  };
 }
 
 async function readPlanTime(goalId: string) {
@@ -337,71 +341,60 @@ describe(getPlanTimeAdvice, () => {
     });
   });
 
-  it("gives the main goal of goals typed together the time found for it when the learner takes the day it needs", async () => {
-    const { goal, library, user } = await setup();
-    const onboardingId = randomUUID();
+  it.each([
+    { name: "the main goal", place: 0 },
+    { name: "a goal typed after the main one", place: 1 },
+  ])(
+    "answers the time question for $name in the day goals typed together share, as saving splits it",
+    async ({ place }) => {
+      const { goal, library, user } = await setup();
+      const onboardingId = randomUUID();
 
-    await prisma.goal.update({ data: { details: { onboardingId } }, where: { id: goal.id } });
+      await prisma.goal.update({ data: { details: { onboardingId } }, where: { id: goal.id } });
 
-    const { goal: other } = await unplannedGoalFixture({
-      createdAt: new Date(NOW.getTime() + 1000),
-      details: { onboardingId },
-      userId: user.id,
-    });
+      const { goal: other } = await unplannedGoalFixture({
+        createdAt: new Date(NOW.getTime() + (place === 0 ? 1000 : -1000)),
+        details: { onboardingId },
+        userId: user.id,
+      });
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
-    const found = await readPlanTime(goal.id);
-    const main = found.recommendedMinutes ?? 0;
-    const day = getBudgetForGoal({ count: 2, minutes: main, place: 0 });
+      await createGoalPlan({ goalId: goal.id, graph: library.graph });
+      const ownTime = await readPlanTime(goal.id);
+      const own = ownTime.recommendedMinutes ?? 0;
+      const asked = await readAdvice(goal.id, EVERY_DAY);
+      const day = asked.recommendedMinutes ?? 0;
 
-    await answerOnboardingQuestion({
-      goalId: goal.id,
-      input: { dailyMinutes: day, question: "schedule", timeZone: "UTC" },
-    });
+      expect(day).toBe(getBudgetForGoal({ count: 2, minutes: own, place }));
+      expect(asked.suggested).toStrictEqual({ kind: "everything", minutes: day });
 
-    await expect(
-      prisma.goal.findMany({
-        orderBy: { createdAt: "asc" },
-        select: { dailyMinutes: true },
+      const [ownAsDay, wholeDay] = await Promise.all([
+        readAdvice(goal.id, EVERY_DAY, { dailyMinutes: own }),
+        readAdvice(goal.id, EVERY_DAY, { dailyMinutes: day }),
+      ]);
+
+      expect(ownAsDay.coveredShare).toBeLessThan(1);
+      expect(wholeDay.coveredShare).toBe(1);
+
+      await answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { dailyMinutes: day, question: "schedule", timeZone: "UTC" },
+      });
+
+      const saved = await prisma.goal.findMany({
+        select: { dailyMinutes: true, id: true },
         where: { id: { in: [goal.id, other.id] } },
-      }),
-    ).resolves.toStrictEqual([{ dailyMinutes: main }, { dailyMinutes: day - main }]);
+      });
 
-    await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1 });
-  });
+      expect(new Map(saved.map((row) => [row.id, row.dailyMinutes]))).toStrictEqual(
+        new Map([
+          [goal.id, own],
+          [other.id, day - own],
+        ]),
+      );
 
-  it("gives a goal typed after the main one the time found for it when the learner takes the day it needs", async () => {
-    const { goal, library, user } = await setup();
-    const onboardingId = randomUUID();
-
-    await prisma.goal.update({ data: { details: { onboardingId } }, where: { id: goal.id } });
-
-    const { goal: main } = await unplannedGoalFixture({
-      createdAt: new Date(NOW.getTime() - 1000),
-      details: { onboardingId },
-      userId: user.id,
-    });
-
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
-    const found = await readPlanTime(goal.id);
-    const minutes = found.recommendedMinutes ?? 0;
-    const day = getBudgetForGoal({ count: 2, minutes, place: 1 });
-
-    await answerOnboardingQuestion({
-      goalId: goal.id,
-      input: { dailyMinutes: day, question: "schedule", timeZone: "UTC" },
-    });
-
-    await expect(
-      prisma.goal.findMany({
-        orderBy: { createdAt: "asc" },
-        select: { dailyMinutes: true },
-        where: { id: { in: [main.id, goal.id] } },
-      }),
-    ).resolves.toStrictEqual([{ dailyMinutes: day - minutes }, { dailyMinutes: minutes }]);
-
-    await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1 });
-  });
+      await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1 });
+    },
+  );
 
   it("says what the time the learner looks at covers, without changing the time recommended", async () => {
     const { goal, library } = await setup();
@@ -846,6 +839,7 @@ describe(getPlanTimeAdvice, () => {
       readingNotice: false,
       ready: false,
       recommendedMinutes: null,
+      suggested: null,
       targetDate: null,
       targetDateNamedMonth: false,
     });

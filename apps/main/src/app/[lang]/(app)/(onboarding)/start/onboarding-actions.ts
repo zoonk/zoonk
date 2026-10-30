@@ -72,6 +72,10 @@ export async function answerOnboardingAction(
 
   const result = await answerOnboardingQuestion({ goalId, input: parsed.data });
 
+  if (result.status === "dayTooShort") {
+    return result;
+  }
+
   if (result.status !== "saved") {
     return { status: "failed" };
   }
