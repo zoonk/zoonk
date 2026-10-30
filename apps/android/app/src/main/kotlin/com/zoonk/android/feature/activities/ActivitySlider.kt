@@ -102,6 +102,7 @@ internal fun ActivitySliderTrack(
 ) {
     val track = MaterialTheme.colorScheme.surfaceContainerHigh
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val twoStops = if (positions == 1 && enabled) Modifier.betweenTwoStops(position, rtl, onPositionChange) else Modifier
     val colors =
         SliderDefaults.colors(
             activeTrackColor = fill ?: track,
@@ -114,7 +115,7 @@ internal fun ActivitySliderTrack(
     Slider(
         value = position.toFloat(),
         onValueChange = { onPositionChange(it.roundToInt()) },
-        modifier = modifier.fillMaxWidth().then(if (positions == 1 && enabled) Modifier.betweenTwoStops(position, rtl, onPositionChange) else Modifier),
+        modifier = modifier.fillMaxWidth().then(twoStops),
         enabled = enabled,
         valueRange = 0f..positions.toFloat(),
         steps = (positions - 1).coerceAtLeast(0),

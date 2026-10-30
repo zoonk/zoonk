@@ -36,9 +36,9 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -116,7 +116,9 @@ private fun BlockBalance(
     solution: Double,
     format: (Double) -> String,
 ) {
-    val unknown = fields.objects.find { it.symbol == fields.variable }?.let { BalanceObject(it.label, it.symbol) } ?: BalanceObject(fields.variable, fields.variable)
+    val unknown =
+        fields.objects.find { it.symbol == fields.variable }?.let { BalanceObject(it.label, it.symbol) }
+            ?: BalanceObject(fields.variable, fields.variable)
     val unit = fields.objects.find { it.symbol != fields.variable }?.let { BalanceObject(it.label, it.symbol) } ?: BalanceObject("1", "1")
     var current by rememberSaveable(stateSaver = BalanceSaver) { mutableStateOf(start) }
     var history by rememberSaveable(stateSaver = HistorySaver) { mutableStateOf(emptyList<BalanceState>()) }
@@ -183,9 +185,21 @@ private fun SymbolicBalance(
     start: BalanceState?,
     format: (Double) -> String,
 ) {
-    val text = { state: BalanceState -> "${panText(state.left, fields.variable, format)} = ${panText(state.right, fields.variable, format)}" }
-    val steps = fields.steps.map { step -> parseBalance(step.left, step.right, fields.variable).let { step.move to (it?.let(text) ?: "${step.left} = ${step.right}") } }
-    val answer = fields.steps.lastOrNull()?.let { parseBalance(it.left, it.right, fields.variable) }?.let(::isolatedValue)
+    val text = { state: BalanceState ->
+        "${panText(state.left, fields.variable, format)} = ${panText(state.right, fields.variable, format)}"
+    }
+    val steps =
+        fields.steps.map { step ->
+            parseBalance(step.left, step.right, fields.variable).let {
+                step.move to
+                    (it?.let(text) ?: "${step.left} = ${step.right}")
+            }
+        }
+    val answer =
+        fields.steps
+            .lastOrNull()
+            ?.let { parseBalance(it.left, it.right, fields.variable) }
+            ?.let(::isolatedValue)
     var reached by rememberSaveable { mutableIntStateOf(0) }
     var hint by rememberSaveable { mutableStateOf<String?>(null) }
     val next = fields.steps.getOrNull(reached)
@@ -193,13 +207,20 @@ private fun SymbolicBalance(
     Text(
         steps.getOrNull(reached - 1)?.second ?: start?.let(text) ?: "${fields.equation.left} = ${fields.equation.right}",
         Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
-        style = MaterialTheme.typography.headlineSmall.withTabularFigures().copy(fontWeight = FontWeight.Medium),
+        style =
+            MaterialTheme.typography.headlineSmall
+                .withTabularFigures()
+                .copy(fontWeight = FontWeight.Medium),
         textAlign = TextAlign.Center,
     )
     if (next != null && !props.isChecked) {
         val moves = (listOf(next.move) + fields.hints.map { it.move }.filter { it != next.move })
         val shift = reached % moves.size
-        ActivitySelectGrid(moves.drop(shift) + moves.take(shift), label = stringResource(R.string.activities_math_balance_pick_move), columns = 1) { move ->
+        ActivitySelectGrid(
+            moves.drop(shift) + moves.take(shift),
+            label = stringResource(R.string.activities_math_balance_pick_move),
+            columns = 1,
+        ) { move ->
             ActivityTile(
                 picked = false,
                 result = null,
@@ -235,7 +256,10 @@ private fun Equation(
             append(" $right")
         },
         Modifier.fillMaxWidth().clearAndSetSemantics {},
-        style = MaterialTheme.typography.headlineSmall.withTabularFigures().copy(fontWeight = FontWeight.Medium),
+        style =
+            MaterialTheme.typography.headlineSmall
+                .withTabularFigures()
+                .copy(fontWeight = FontWeight.Medium),
         textAlign = TextAlign.Center,
     )
 }
@@ -270,7 +294,16 @@ private fun BalanceControls(
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             PanSide.entries.forEach { side ->
                 val pan = if (side == PanSide.Left) state.left else state.right
-                val name = stringResource(if (side == PanSide.Left) R.string.activities_math_balance_left_side else R.string.activities_math_balance_right_side)
+                val name =
+                    stringResource(
+                        if (side ==
+                            PanSide.Left
+                        ) {
+                            R.string.activities_math_balance_left_side
+                        } else {
+                            R.string.activities_math_balance_right_side
+                        },
+                    )
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(name, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -280,7 +313,13 @@ private fun BalanceControls(
                         ).forEach { (thing, can, balanceMove) ->
                             val take =
                                 stringResource(
-                                    if (side == PanSide.Left) R.string.activities_math_balance_take_left else R.string.activities_math_balance_take_right,
+                                    if (side ==
+                                        PanSide.Left
+                                    ) {
+                                        R.string.activities_math_balance_take_left
+                                    } else {
+                                        R.string.activities_math_balance_take_right
+                                    },
                                     thing.label,
                                 )
                             OutlinedButton(
@@ -321,7 +360,12 @@ private fun BalanceSteps(
             val style = MaterialTheme.typography.bodyMedium.withTabularFigures()
             val spoken = stringResource(if (done) R.string.activities_math_balance_done else R.string.activities_math_balance_next)
             val shown = if (done) stringResource(R.string.activities_math_balance_step, move, equation) else move
-            Row(Modifier.semantics(mergeDescendants = true) { contentDescription = "$spoken $shown" }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                Modifier.semantics(mergeDescendants = true) {
+                    contentDescription = "$spoken $shown"
+                },
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 LineMarker(style) {
                     Icon(
                         painterResource(if (done) R.drawable.ic_check_circle else R.drawable.ic_circle),
@@ -358,10 +402,19 @@ private fun BalanceScale(
             block = MaterialTheme.zoonk.vizHighlight,
             heavier = MaterialTheme.colorScheme.error,
         )
-    val itemStyle = MaterialTheme.typography.labelLarge.withTabularFigures().copy(fontWeight = FontWeight.SemiBold)
+    val itemStyle =
+        MaterialTheme.typography.labelLarge
+            .withTabularFigures()
+            .copy(fontWeight = FontWeight.SemiBold)
     val heavier = stringResource(R.string.activities_math_balance_heavier)
 
-    Canvas(modifier.fillMaxWidth().wrapContentWidth().widthIn(max = MAX_WIDTH).aspectRatio(VIEW_WIDTH / (VIEW_BOTTOM - top))) {
+    Canvas(
+        modifier
+            .fillMaxWidth()
+            .wrapContentWidth()
+            .widthIn(max = MAX_WIDTH)
+            .aspectRatio(VIEW_WIDTH / (VIEW_BOTTOM - top)),
+    ) {
         val view = ScaleView(size.width / VIEW_WIDTH, top)
         drawStand(view, colors)
         rotate(angle, view.at(PIVOT_X, PIVOT_Y)) {
@@ -441,7 +494,14 @@ private fun DrawScope.drawPan(
         drawText(label, topLeft = view.at(x, y) - Offset(label.size.width / 2f, label.size.height / 2f))
     }
     drawLine(colors.muted, view.at(center, PIVOT_Y + dy), view.at(center, plateY), view.of(PAN_STRING))
-    drawRoundRect(colors.ink.copy(alpha = PLATE_ALPHA), view.at(center - PLATE_WIDTH / 2, itemsBottom), view.size(PLATE_WIDTH, PLATE_HEIGHT), CornerRadius(view.of(PLATE_HEIGHT / 2)))
+    drawRoundRect(
+        colors.ink.copy(alpha = PLATE_ALPHA),
+        view.at(center - PLATE_WIDTH / 2, itemsBottom),
+        view.size(PLATE_WIDTH, PLATE_HEIGHT),
+        CornerRadius(
+            view.of(PLATE_HEIGHT / 2),
+        ),
+    )
     val layout = panLayout(pan, ITEMS_WIDTH)
     layout.bags.forEach { bag ->
         val corner = view.at(itemsLeft + bag.x, itemsBottom - bag.y)
@@ -451,15 +511,30 @@ private fun DrawScope.drawPan(
     layout.blocks.forEach { block ->
         val corner = view.at(itemsLeft + block.x, itemsBottom - block.y)
         drawRoundRect(colors.block, corner, view.size(BLOCK_SIZE, BLOCK_SIZE), CornerRadius(view.of(BLOCK_RADIUS)))
-        drawRoundRect(colors.ring, corner, view.size(BLOCK_SIZE, BLOCK_SIZE), CornerRadius(view.of(BLOCK_RADIUS)), style = Stroke(view.of(BLOCK_STROKE)))
+        drawRoundRect(
+            colors.ring,
+            corner,
+            view.size(BLOCK_SIZE, BLOCK_SIZE),
+            CornerRadius(view.of(BLOCK_RADIUS)),
+            style = Stroke(view.of(BLOCK_STROKE)),
+        )
     }
     layout.weight?.let { weight ->
-        drawRoundRect(colors.block, view.at(itemsLeft + weight.x, itemsBottom - weight.y), view.size(WEIGHT_WIDTH, WEIGHT_HEIGHT), CornerRadius(view.of(WEIGHT_RADIUS)))
+        drawRoundRect(
+            colors.block,
+            view.at(itemsLeft + weight.x, itemsBottom - weight.y),
+            view.size(WEIGHT_WIDTH, WEIGHT_HEIGHT),
+            CornerRadius(view.of(WEIGHT_RADIUS)),
+        )
         centeredText(format(pan.units), itemsLeft + weight.x + WEIGHT_WIDTH / 2, itemsBottom - weight.y + WEIGHT_HEIGHT / 2)
     }
     heavier?.let {
         val label = measurer.measure(it, style.copy(color = colors.heavier))
-        drawText(label, topLeft = view.at(center, PIVOT_Y + dy + HEAVIER_OFFSET) - Offset(label.size.width / 2f, label.size.height.toFloat()))
+        drawText(
+            label,
+            topLeft =
+                view.at(center, PIVOT_Y + dy + HEAVIER_OFFSET) - Offset(label.size.width / 2f, label.size.height.toFloat()),
+        )
     }
 }
 

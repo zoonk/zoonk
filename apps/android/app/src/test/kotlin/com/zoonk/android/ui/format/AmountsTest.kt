@@ -67,8 +67,17 @@ class AmountsTest {
 
         assertEquals(
             listOf("other", "one", "other", "one", "other", "one", "one", "other", "other"),
-            listOf(1.5 to en, 1.0 to en, 5.0 to en, 1.5 to fr, 2.5 to fr, 0.3 to pt, 1.5 to pt, 1.5 to Locale.GERMAN, 1.5 to Locale.forLanguageTag("es"))
-                .map { (value, locale) -> category(value, locale) },
+            listOf(
+                1.5 to en,
+                1.0 to en,
+                5.0 to en,
+                1.5 to fr,
+                2.5 to fr,
+                0.3 to pt,
+                1.5 to pt,
+                1.5 to Locale.GERMAN,
+                1.5 to Locale.forLanguageTag("es"),
+            ).map { (value, locale) -> category(value, locale) },
         )
     }
 }

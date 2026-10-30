@@ -45,10 +45,24 @@ internal data class HistogramBin(
  */
 internal fun seedText(element: JsonElement): String =
     when (element) {
-        is JsonObject -> element.entries.sortedBy { it.key }.joinToString(",", "{", "}") { (key, value) -> "${JsonPrimitive(key)}:${seedText(value)}" }
-        is JsonArray -> element.joinToString(",", "[", "]") { seedText(it) }
-        JsonNull -> "null"
-        is JsonPrimitive -> if (element.isString) element.toString() else element.doubleOrNull?.let(::jsNumber) ?: element.content
+        is JsonObject -> {
+            element.entries
+                .sortedBy {
+                    it.key
+                }.joinToString(",", "{", "}") { (key, value) -> "${JsonPrimitive(key)}:${seedText(value)}" }
+        }
+
+        is JsonArray -> {
+            element.joinToString(",", "[", "]") { seedText(it) }
+        }
+
+        JsonNull -> {
+            "null"
+        }
+
+        is JsonPrimitive -> {
+            if (element.isString) element.toString() else element.doubleOrNull?.let(::jsNumber) ?: element.content
+        }
     }
 
 private fun jsNumber(value: Double): String {
@@ -186,7 +200,10 @@ internal fun simulateSamples(
 internal fun middleRange(results: List<Double>): Pair<Double, Double> {
     val sorted = results.sorted()
     val tail = (1 - MIDDLE_SHARE) / 2
-    val at = { share: Double -> sorted.getOrNull(clamp(jsRound(share * (sorted.size - 1)), 0.0, (sorted.size - 1).toDouble()).toInt()) ?: 0.0 }
+    val at = { share: Double ->
+        sorted.getOrNull(clamp(jsRound(share * (sorted.size - 1)), 0.0, (sorted.size - 1).toDouble()).toInt())
+            ?: 0.0
+    }
     return at(tail) to at(1 - tail)
 }
 

@@ -144,18 +144,51 @@ private fun ChanceSimulation(
     val hits = shown.map { isHit(fields.model, it) }
     val share = if (hits.isEmpty()) 0.0 else hits.count { it }.toDouble() / hits.size
     val done = running && shown.size == outcomes.size
-    val guess = (content.check as? ChoiceCheckValue)?.value?.options?.find { it.id == props.answer.choiceId }?.`value`
-    val percent = { value: Double -> formatAmount(value * PERCENT, locale, "%", maximumFractionDigits = if (value * PERCENT < SMALL_PERCENT) 1 else 0) }
+    val guess =
+        (content.check as? ChoiceCheckValue)
+            ?.value
+            ?.options
+            ?.find { it.id == props.answer.choiceId }
+            ?.`value`
+    val percent = { value: Double ->
+        formatAmount(
+            value * PERCENT,
+            locale,
+            "%",
+            maximumFractionDigits =
+                if (value * PERCENT <
+                    SMALL_PERCENT
+                ) {
+                    1
+                } else {
+                    0
+                },
+        )
+    }
     val runsLabel = stringResource(R.string.activities_math_chance_runs, formatAmount(fields.runs.toDouble(), locale), fields.trialLabel)
     val guessLabel = guess?.let { stringResource(R.string.activities_math_chance_your_guess, percent(it)) }
-    val description = if (running) stringResource(R.string.activities_math_chance_description, runsLabel, fields.hitLabel, percent(share)) else runsLabel
+    val description =
+        if (running) {
+            stringResource(
+                R.string.activities_math_chance_description,
+                runsLabel,
+                fields.hitLabel,
+                percent(share),
+            )
+        } else {
+            runsLabel
+        }
 
     ActivityCanvas(description = description) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(runsLabel, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                 ActivityCanvasLabel(fields.hitLabel)
-                if (running && guessLabel != null) Text(guessLabel, style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium))
+                if (running &&
+                    guessLabel != null
+                ) {
+                    Text(guessLabel, style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium))
+                }
             }
             if (running) ActivityReadout(percent(share), Modifier.clearAndSetSemantics {}, color = MaterialTheme.zoonk.vizAccent)
         }
@@ -186,7 +219,12 @@ private fun ChanceSimulation(
                 itemVerticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    stringResource(R.string.activities_math_chance_result, fields.hitLabel, percent(share), percent(hitProbability(fields.model))),
+                    stringResource(
+                        R.string.activities_math_chance_result,
+                        fields.hitLabel,
+                        percent(share),
+                        percent(hitProbability(fields.model)),
+                    ),
                     Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
                     style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
                 )
@@ -326,7 +364,11 @@ private fun SamplingSimulation(
     ActivityCanvas(description = summary) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(stringResource(R.string.activities_math_sampling_within, formatAmount(MIDDLE_PERCENT, locale, "%")), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    stringResource(R.string.activities_math_sampling_within, formatAmount(MIDDLE_PERCENT, locale, "%")),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
                 ActivityCanvasLabel(fields.populationLabel)
             }
             ActivityReadout(
@@ -365,7 +407,11 @@ private fun SamplingSimulation(
                 if (done) {
                     stringResource(R.string.activities_math_sampling_done, formatAmount(fields.runs.toDouble(), locale), formatSize(size))
                 } else {
-                    stringResource(R.string.activities_math_sampling_running, formatAmount(shown.size.toDouble(), locale), formatAmount(fields.runs.toDouble(), locale))
+                    stringResource(
+                        R.string.activities_math_sampling_running,
+                        formatAmount(shown.size.toDouble(), locale),
+                        formatAmount(fields.runs.toDouble(), locale),
+                    )
                 },
                 Modifier.weight(1f).semantics { if (done) liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -387,7 +433,11 @@ private fun marginText(
     val locale = currentLocale()
     if (!isShare) return stringResource(R.string.activities_math_sampling_margin, formatAmount(margin, locale, unit))
     val points = (margin * PERCENT * TENTHS).roundToInt() / TENTHS.toDouble()
-    return pluralStringResource(R.plurals.activities_math_sampling_margin_points, pluralQuantity(points, locale), formatAmount(points, locale))
+    return pluralStringResource(
+        R.plurals.activities_math_sampling_margin_points,
+        pluralQuantity(points, locale),
+        formatAmount(points, locale),
+    )
 }
 
 /** Main's `SamplingChart`: the polls' results, the smallest size's behind them, the true value and where the middle 95% fall. */
@@ -442,9 +492,28 @@ private fun SamplingChart(
 
             val truthX = x.toPixel(truth)
             val dash = TRUTH_DASH.toPx()
-            drawLine(ink, Offset(truthX, axis), Offset(truthX, top), LINE_WIDTH.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash, dash * 3 / 4)))
+            drawLine(
+                ink,
+                Offset(truthX, axis),
+                Offset(truthX, top),
+                LINE_WIDTH.toPx(),
+                pathEffect =
+                    PathEffect.dashPathEffect(
+                        floatArrayOf(
+                            dash,
+                            dash * 3 / 4,
+                        ),
+                    ),
+            )
             val truthText = measurer.measure(truthLabel, markStyle.copy(color = ink))
-            drawText(truthText, topLeft = Offset((truthX - truthText.size.width / 2).coerceIn(0f, size.width - truthText.size.width), top - gap - truthText.size.height))
+            drawText(
+                truthText,
+                topLeft =
+                    Offset(
+                        (truthX - truthText.size.width / 2).coerceIn(0f, size.width - truthText.size.width),
+                        top - gap - truthText.size.height,
+                    ),
+            )
 
             drawLine(border, Offset(x.range.first, axis), Offset(x.range.second, axis), LINE_WIDTH.toPx())
             val (from, to) = x.toPixel(range.first) to x.toPixel(range.second)
@@ -463,7 +532,14 @@ private fun SamplingChart(
                 }
             drawPath(bracketPath, accent, style = Stroke(LINE_WIDTH.toPx()))
             val rangeText = measurer.measure(rangeLabel, markStyle.copy(color = accent))
-            drawText(rangeText, topLeft = Offset((middle - rangeText.size.width / 2).coerceIn(0f, size.width - rangeText.size.width), bracket + gap))
+            drawText(
+                rangeText,
+                topLeft =
+                    Offset(
+                        (middle - rangeText.size.width / 2).coerceIn(0f, size.width - rangeText.size.width),
+                        bracket + gap,
+                    ),
+            )
         }
     }
 }
@@ -474,8 +550,18 @@ private fun SizeLegend(
     current: String,
 ) {
     val style = MaterialTheme.typography.labelSmall.withTabularFigures()
-    FlowRow(Modifier.clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        LegendItem(smallest, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = MISS_ALPHA), MaterialTheme.colorScheme.onSurfaceVariant, style)
+    FlowRow(
+        Modifier.clearAndSetSemantics {
+        },
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        LegendItem(
+            smallest,
+            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = MISS_ALPHA),
+            MaterialTheme.colorScheme.onSurfaceVariant,
+            style,
+        )
         LegendItem(current, MaterialTheme.zoonk.vizAccent, MaterialTheme.colorScheme.onSurface, style.copy(fontWeight = FontWeight.Medium))
     }
 }

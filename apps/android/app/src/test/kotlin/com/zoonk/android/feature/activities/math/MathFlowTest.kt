@@ -288,7 +288,11 @@ class MathFlowTest {
 
     @Test
     fun aSliderWithTwoStopsMovesByArrowKeysAndTalkBack() {
-        play(listOf(switchStep()), isCorrect = true, ApiJson.decodeFromString(ActivityExpected.serializer(), """{"kind":"numeric","value":10}"""))
+        play(
+            listOf(switchStep()),
+            isCorrect = true,
+            ApiJson.decodeFromString(ActivityExpected.serializer(), """{"kind":"numeric","value":10}"""),
+        )
 
         press(Key.DirectionRight, 1, handle = slider("Switch"))
         typedValue("10")
