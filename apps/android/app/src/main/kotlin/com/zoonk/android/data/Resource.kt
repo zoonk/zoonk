@@ -82,11 +82,18 @@ class Resource<T : Any> internal constructor(
         run()
     }
 
-    /** Marks it stale: refetched now if a screen shows it, otherwise on its next [load]. */
+    /**
+     * Marks it stale: refetched now if a screen shows it, otherwise on its next [load]. A write can
+     * bring back what wasn't found (a moved challenge's Undo), so a not-found is dropped.
+     */
     fun invalidate() {
         isInvalidated = true
         if (request == null && stored.value == LoadState.Idle) return
         cancelRequest()
+        if (stored.value == LoadState.Failed(ApiError.NotFound)) {
+            stored.value = LoadState.Idle
+            revision++
+        }
         if (isShown && canRequest) scope.launch { run() }
     }
 

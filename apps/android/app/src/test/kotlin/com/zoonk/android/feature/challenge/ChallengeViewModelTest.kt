@@ -9,6 +9,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
@@ -25,7 +26,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -51,6 +54,7 @@ class ChallengeViewModelTest {
     private val sessionId = UUID.fromString("8b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b")
     private val starts = mutableListOf<StudyBlockStart>()
     private var reads = 0
+    private var missing = false
     private var start: (StudyBlockStart) -> ChallengeStart = { ChallengeStart(blockId, ChallengeStart.Kind.CHECKPOINT, sessionId) }
     private var write: () -> ChallengeGeneration = { ChallengeGeneration("gen-1", ChallengeGeneration.Status.GENERATING) }
     private var move: () -> ChallengeMove = { ChallengeMove(UUID.randomUUID(), LocalDate(2026, 11, 2), null, null) }
@@ -70,7 +74,7 @@ class ChallengeViewModelTest {
                     session: AuthenticatedSession,
                     planItemId: UUID,
                     timeZone: String,
-                ) = challenge.also { reads++ }
+                ) = if (missing) throw ApiException(ApiError.NotFound) else challenge.also { reads++ }
 
                 override suspend fun start(
                     session: AuthenticatedSession,
@@ -94,7 +98,7 @@ class ChallengeViewModelTest {
                     planItemId: UUID,
                     changeId: UUID,
                     timeZone: String,
-                ) = ChallengeMoveUndo(planItemId)
+                ) = ChallengeMoveUndo(challenge.planItemId)
             }
         val source =
             object : GenerationSource {
@@ -196,6 +200,28 @@ class ChallengeViewModelTest {
             viewModel.undoMove()
             advanceUntilIdle()
             assertNull(viewModel.ui.value.moved)
+        }
+
+    @Test
+    fun undoShowsTheRestoredIntroThoughTheMoveLeftItMissing() =
+        runTest(dispatcher) {
+            move = { ChallengeMove(UUID.randomUUID(), LocalDate(2026, 11, 2), null, UUID.randomUUID()) }
+            val viewModel = viewModel()
+            val intro = backgroundScope.launch { viewModel.challenge.shown.collect {} }
+            advanceUntilIdle()
+
+            missing = true
+            viewModel.moveToMonday()
+            advanceUntilIdle()
+            intro.cancel()
+
+            missing = false
+            viewModel.undoMove()
+            advanceUntilIdle()
+
+            assertEquals(challenge.planItemId, viewModel.ui.value.planItemId)
+            val shown = viewModel.challenge.shown.first { it is LoadState.Loaded || it is LoadState.Failed }
+            assertTrue("The intro reads the item as missing: $shown", shown is LoadState.Loaded)
         }
 
     @Test

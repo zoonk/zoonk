@@ -108,6 +108,25 @@ class ResourceTest {
         }
 
     @Test
+    fun anInvalidatedNotFoundLoadsAgainInsteadOfShowingMissing() =
+        runTest {
+            val cache = cache(FakeSession(ana))
+            var next: () -> String = { throw ApiException(ApiError.NotFound) }
+            val resource = cache.resource<String>(Audience.SignedIn, setOf(DataDomain.Goals)) { next() }
+            resource.load()
+
+            next = { "restored" }
+            cache.invalidate(setOf(DataDomain.Goals))
+            val seen = mutableListOf<LoadState<String>>()
+            val screen = launch { resource.shown.collect { seen += it } }
+            advanceUntilIdle()
+            screen.cancel()
+
+            assertTrue("A screen opening it shows it missing first: $seen", seen.none { it is LoadState.Failed })
+            assertEquals(LoadState.Loaded("restored"), seen.last())
+        }
+
+    @Test
     fun unauthorizedSignsTheOwnerOut() =
         runTest {
             val session = FakeSession(ana)
