@@ -181,11 +181,14 @@ test("an exam's plan waits on the reveal while its notice is read, then shows on
   ]);
 
   await followRun({ events: [{ status: "completed", step: "createPlan" }], page, runId: goal.id });
+
   const completedRun = page.waitForResponse((response) =>
     response.url().includes(`/v1/generations/${goal.id}/events`),
   );
+
   await page.goto(`/start/${goal.id}`);
-  await (await completedRun).finished();
+  const runResponse = await completedRun;
+  await runResponse.finished();
   await page.clock.runFor(1);
 
   await expect(
