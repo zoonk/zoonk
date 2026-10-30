@@ -207,6 +207,7 @@ class CourseStartFlowTest {
 
         build()
         rule.onNodeWithText("Build my plan").assertDoesNotExist()
+        rule.onNodeWithText("Go to your Plan").performScrollTo().assertIsDisplayed()
         rule.onNodeWithText("See Plus").performScrollTo().performClick()
         assertEquals(AppRoute.Subscription, navigator.currentRoute)
 

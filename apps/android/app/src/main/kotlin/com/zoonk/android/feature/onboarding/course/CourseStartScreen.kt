@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -56,6 +57,7 @@ import com.zoonk.android.feature.onboarding.setup.LevelChoiceList
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.setup.StepHeading
 import com.zoonk.android.feature.onboarding.start.GoalFooter
+import com.zoonk.android.feature.onboarding.start.GoalLimitWall
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -177,33 +179,26 @@ private fun CourseStartForm(
     }
 
     SetupColumn {
-        when {
-            chapter != null -> {
-                StepHeading(chapter.title, stringResource(R.string.onboarding_course_chapter_description), subject = course.title)
-            }
-
-            blocked -> {
-                StepHeading(course.title, stringResource(R.string.onboarding_course_follows))
-            }
-
-            else -> {
-                StepHeading(
-                    stringResource(R.string.onboarding_level_title),
-                    stringResource(R.string.onboarding_level_description),
-                    subject = course.title,
-                )
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            CourseStartHeading(course.title, chapter?.title, blocked)
+            if (!blocked) {
+                minutes?.let {
+                    Text(
+                        pluralStringResource(R.plurals.onboarding_course_daily_minutes, it, it),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             }
         }
 
         if (!blocked) {
-            minutes?.let {
-                Text(
-                    pluralStringResource(R.plurals.onboarding_course_daily_minutes, it, it),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
             if (chapter != null) PlanPreview(planned) else LevelChoiceList(vm.level, onChange = vm::pick)
+        }
+
+        if (limit == GoalLimitReason.OneActiveGoal) {
+            GoalLimitWall(limit, onSeePlus = { remedy(AppRoute.Subscription) }, onOpenPlan = { remedy(AppRoute.Plan()) })
+            return@SetupColumn
         }
 
         GoalFooter(
@@ -221,10 +216,15 @@ private fun CourseStartForm(
                 )
             }
             if (!blocked) {
+                val starting = stringResource(R.string.onboarding_course_starting)
                 Button(
                     onClick = start,
                     enabled = !vm.isStarting && (chapter != null || vm.level != null),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier =
+                        Modifier.fillMaxWidth().semantics {
+                            liveRegion = LiveRegionMode.Polite
+                            if (vm.isStarting) stateDescription = starting
+                        },
                 ) {
                     if (vm.isStarting) {
                         CircularProgressIndicator(
@@ -236,7 +236,7 @@ private fun CourseStartForm(
                     }
                     Text(stringResource(R.string.onboarding_course_build))
                 }
-                if (!signedIn) {
+                if (!signedIn && vm.failure == null) {
                     Text(
                         stringResource(R.string.onboarding_course_start_free),
                         modifier = Modifier.fillMaxWidth(),
@@ -246,6 +246,31 @@ private fun CourseStartForm(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun CourseStartHeading(
+    course: String,
+    chapter: String?,
+    blocked: Boolean,
+) {
+    when {
+        chapter != null -> {
+            StepHeading(chapter, stringResource(R.string.onboarding_course_chapter_description), subject = course)
+        }
+
+        blocked -> {
+            StepHeading(course, stringResource(R.string.onboarding_course_follows))
+        }
+
+        else -> {
+            StepHeading(
+                stringResource(R.string.onboarding_level_title),
+                stringResource(R.string.onboarding_level_description),
+                subject = course,
+            )
         }
     }
 }

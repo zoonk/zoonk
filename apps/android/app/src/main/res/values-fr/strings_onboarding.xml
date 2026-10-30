@@ -32,6 +32,7 @@
   "onboarding_course_lessons": "3a18e4451e14f4fcb5ac613f44f91db46bc32e7a9af9a2de7b928a2182995e20",
   "onboarding_course_more_chapters": "be36d7872467730ea1188f6e5c90c134d2721d5ff19b8bacfb165bc886e4a098",
   "onboarding_course_start_free": "39a006e8f2dff6b2173bee8bc74e8523c725ee7e579167ef84519e87ce95045f",
+  "onboarding_course_starting": "0eef03f88f003aef3dfa9666844ed283b8072d04b48e9d8445dfbb098cc01a86",
   "onboarding_create_account": "e156329ca281c90dc90348e9aa9bf992f5667a4810cd559f16049104cd38d519",
   "onboarding_create_account_short": "ee492c0efad78a304cc1c43399d677e2aaea92f5f76466299d8fffa3cc4b3325",
   "onboarding_date_description": "80f18124bcd5c0482d67736b737ef5aed5d6f9291a3bd11e0af00653f10ee200",
@@ -889,6 +890,8 @@
         <item quantity="other">%d minutes par jour pour l’instant. Tu pourras modifier ce choix aux prochaines étapes.</item>
     </plurals>
     <string name="onboarding_course_build">Préparer mon plan</string>
+    <!-- Read out while Build my plan starts the course. -->
+    <string name="onboarding_course_starting">Démarrage de ton plan…</string>
     <string name="onboarding_course_failed">Impossible de démarrer ce cours.</string>
     <string name="onboarding_course_start_free">Commence gratuitement, sans compte.</string>
     <string name="onboarding_level_none">Rien, je débute</string>
