@@ -73,7 +73,7 @@ final class AppRouter {
   }
 
   /// A push closes any task first. A Study place already selected in the sidebar goes back to its
-  /// root instead of stacking itself again.
+  /// root, and a route already on the stack is gone back to, instead of stacking itself again.
   func open(_ route: AppRoute) {
     switch route.presentation {
     case .task:
@@ -81,12 +81,38 @@ final class AppRouter {
     case .push:
       tasks = []
 
+      var path = paths[selectedTab] ?? NavigationPath()
+
       if route.studyTab == selectedTab {
-        paths[selectedTab] = NavigationPath()
+        path = NavigationPath()
+      } else if let depth = Self.depth(of: route, in: path) {
+        path.removeLast(path.count - depth)
       } else {
-        paths[selectedTab, default: NavigationPath()].append(route)
+        path.append(route)
       }
+
+      paths[selectedTab] = path
     }
+  }
+
+  /// `NavigationPath` doesn't show its elements, but paths compare by them.
+  private static func depth(of route: AppRoute, in path: NavigationPath) -> Int? {
+    var prefix = path
+
+    while !prefix.isEmpty {
+      var before = prefix
+      before.removeLast()
+      var candidate = before
+      candidate.append(route)
+
+      if candidate == prefix {
+        return prefix.count
+      }
+
+      prefix = before
+    }
+
+    return nil
   }
 
   /// `beneath` takes its place at once and out of sight, so the learner sees only `route` come in,

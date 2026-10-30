@@ -128,6 +128,29 @@ final class AppNavigationTests: XCTestCase {
   }
 
   @MainActor
+  func testOpeningARouteAlreadyOnTheStackGoesBackToItInsteadOfStackingAnother() {
+    let router = AppRouter(selectedTab: .today)
+    var reached = NavigationPath()
+    reached.append(AppRoute.exam)
+    reached.append(AppRoute.speaking)
+    reached.append(CourseDestination.course(CourseReference(id: "c1", title: "Biology")))
+    router.path(for: .today).wrappedValue = reached
+    router.open(.conversation(conversationId: "call"))
+
+    router.open(.speaking)
+
+    var expected = NavigationPath()
+    expected.append(AppRoute.exam)
+    expected.append(AppRoute.speaking)
+    XCTAssertEqual(router.tasks, [])
+    XCTAssertEqual(router.path(for: .today).wrappedValue, expected)
+
+    router.open(.mockChooser)
+    expected.append(AppRoute.mockChooser)
+    XCTAssertEqual(router.path(for: .today).wrappedValue, expected, "A new route still stacks")
+  }
+
+  @MainActor
   func testAStudyPlaceThatCantStaySelectedMovesToToday() {
     let compact = AppRouter(selectedTab: .exam)
     compact.leaveStudyTab(keepingPlace: true)
