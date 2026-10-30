@@ -23,6 +23,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.LinearScale
@@ -198,7 +200,7 @@ fun ActivityPlot(
 
     Canvas(modifier.fillMaxWidth().height(height).clearAndSetSemantics {}) {
         val yLabels = yTicks.map { measurer.measure(formatY(it), style.copy(color = muted)) }
-        val xLabels = xTicks.map { measurer.measure(formatX(it), style.copy(color = muted)) }
+        val xLabels = xTicks.map { measurer.measureLine(formatX(it), style.copy(color = muted), size.width) }
         val gap = LABEL_GAP.toPx()
         val left = if (yLabels.isEmpty()) RIGHT.toPx() else max(MIN_LEFT.toPx(), yLabels.maxOf { it.size.width } + gap)
         val right = size.width - RIGHT.toPx()
@@ -222,6 +224,13 @@ fun ActivityPlot(
         Plot(this, x, y, top, bottom, measurer, style).draw()
     }
 }
+
+/** One line no wider than [width], ending in "…" when the text is longer, so it always fits inside. */
+internal fun TextMeasurer.measureLine(
+    text: String,
+    style: TextStyle,
+    width: Float,
+) = measure(text, style, overflow = TextOverflow.Ellipsis, maxLines = 1, constraints = Constraints(maxWidth = width.toInt().coerceAtLeast(0)))
 
 private val MIN_LEFT = 44.dp
 private val RIGHT = 12.dp

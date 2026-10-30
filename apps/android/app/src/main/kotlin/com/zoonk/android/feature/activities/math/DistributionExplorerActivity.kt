@@ -38,6 +38,7 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityReadout
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.SnapRange
+import com.zoonk.android.feature.activities.measureLine
 import com.zoonk.android.feature.activities.activityCanvasColor
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.ui.components.LinearScale
@@ -299,7 +300,7 @@ private fun DistributionPlot(
                             ),
                     )
                 }
-                val label = measurer.measure(targetLabel, targetStyle.copy(color = right))
+                val label = measurer.measureLine(targetLabel, targetStyle.copy(color = right), size.width)
                 val middle = (x.toPixel(target.from) + x.toPixel(target.to)) / 2
                 drawText(
                     label,

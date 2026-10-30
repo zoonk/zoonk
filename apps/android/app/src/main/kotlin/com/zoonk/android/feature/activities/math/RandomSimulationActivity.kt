@@ -66,6 +66,7 @@ import com.zoonk.android.feature.activities.ActivitySlider
 import com.zoonk.android.feature.activities.SnapRange
 import com.zoonk.android.feature.activities.choiceId
 import com.zoonk.android.feature.activities.hashSeed
+import com.zoonk.android.feature.activities.measureLine
 import com.zoonk.android.ui.components.LinearScale
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.niceTicks
@@ -510,7 +511,7 @@ private fun SamplingChart(
                         ),
                     ),
             )
-            val truthText = measurer.measure(truthLabel, markStyle.copy(color = ink))
+            val truthText = measurer.measureLine(truthLabel, markStyle.copy(color = ink), size.width)
             drawText(
                 truthText,
                 topLeft =
@@ -524,7 +525,7 @@ private fun SamplingChart(
             val (from, to) = x.toPixel(range.first) to x.toPixel(range.second)
             val middle = (from + to) / 2
             niceTicks(domain, AXIS_TICKS).filter { abs(x.toPixel(it) - middle) >= LABEL_CLEARANCE.toPx() }.forEach { tick ->
-                val label = measurer.measure(format(tick), tickStyle.copy(color = muted))
+                val label = measurer.measureLine(format(tick), tickStyle.copy(color = muted), size.width)
                 drawText(label, topLeft = Offset(x.toPixel(tick) - label.size.width / 2, axis + gap))
             }
             val tick = BRACKET_TICK.toPx()
@@ -536,7 +537,7 @@ private fun SamplingChart(
                     lineTo(to, bracket - tick)
                 }
             drawPath(bracketPath, accent, style = Stroke(LINE_WIDTH.toPx()))
-            val rangeText = measurer.measure(rangeLabel, markStyle.copy(color = accent))
+            val rangeText = measurer.measureLine(rangeLabel, markStyle.copy(color = accent), size.width)
             drawText(
                 rangeText,
                 topLeft =

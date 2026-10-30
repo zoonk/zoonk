@@ -10,12 +10,14 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
@@ -45,6 +47,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 /** Main's player tests for the math templates, played in the real player with core's expected end states. */
 @RunWith(AndroidJUnit4::class)
@@ -306,11 +309,29 @@ class MathFlowTest {
 
     @Test
     fun areaModelSplitWithTwoStopsMovesByTalkBack() {
-        play(listOf(barStep()), isCorrect = true, ApiJson.decodeFromString(ActivityExpected.serializer(), """{"kind":"numeric","value":3}"""))
+        play(
+            listOf(barStep()),
+            isCorrect = true,
+            ApiJson.decodeFromString(ActivityExpected.serializer(), """{"kind":"numeric","value":3}"""),
+        )
 
         rule.onNode(slider("Split across the width")).performSemanticsAction(SemanticsActions.SetProgress) { it(1.05f) }
 
         rule.onNode(slider("Split across the width")).assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "2 + 1"))
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "w320dp", fontScale = 2f)
+    fun randomSimulationLabelsLongerThanTheScreenStillDraw() {
+        play(
+            listOf(longUnitStep()),
+            isCorrect = true,
+            ApiJson.decodeFromString(ActivityExpected.serializer(), """{"kind":"choice","optionId":"a"}"""),
+        )
+
+        rule.onRoot().captureToImage()
+        rule.onNodeWithText("50 samples of 40").assertExists()
     }
 
     @Test
@@ -377,6 +398,18 @@ class MathFlowTest {
              "fields":{"model":"bar","bar":{"parts":[1,2],"total":3}}}
             """
         return step("bar", json)
+    }
+
+    private fun longUnitStep(): LessonStep {
+        val json =
+            """
+            {"template":"randomSimulation","prompt":"Survey the homes.","check":{"kind":"choice","question":"What happens?","options":[
+             {"id":"a","text":"Half as big","isCorrect":true,"reason":"Why.","value":0.5},{"id":"b","text":"The same","isCorrect":false,"reason":"Why.","value":1}]},
+             "data":{"isExample":true},
+             "fields":{"mode":"sampling","population":{"kind":"mean","mean":1000000,"sd":1000},"populationLabel":"Homes in the city",
+             "runs":50,"sampleSizes":[10,40],"unit":"kilowatt-hours"}}
+            """
+        return step("long-unit", json)
     }
 
     private fun step(
