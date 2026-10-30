@@ -43,11 +43,11 @@ class BlockCopyTest {
 
     @Test
     fun aLanguageUnitsChallengeIsALiveCallNotZeroQuestions() {
-        assertEquals("Ordering food · a live call", detail(challenge(questions = 0)))
+        assertEquals("Ordering food\u00A0· a live call", detail(challenge(questions = 0)))
     }
 
     @Test
     fun aPhaseChallengeCountsItsQuestions() {
-        assertEquals("Ordering food · 8 questions, no hints", detail(challenge(questions = 8)))
+        assertEquals("Ordering food\u00A0· 8 questions, no hints", detail(challenge(questions = 8)))
     }
 }

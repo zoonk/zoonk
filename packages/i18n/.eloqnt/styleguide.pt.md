@@ -56,6 +56,7 @@
 - “call” (speaking practice): “conversa”, not “chamada” or “ligação”
 - “Hyperdrive”: “Hiperpropulsão”
 - “Mistakes notebook”: “Caderno de erros”
+- “Saved to your mistakes”: “Salvo no seu caderno de erros”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Para corrigir” / “Corrigidos”
 - “practice mistakes”: “praticar o que você errou”
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Novo” / “Aprendendo” / “Firme” / “Dominado”

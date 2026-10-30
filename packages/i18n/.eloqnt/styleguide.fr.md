@@ -46,6 +46,7 @@
 - “essay”: “rédaction”, not “dissertation”
 - “Hyperdrive”: “Hyperpropulsion”
 - “Mistakes notebook”: “Carnet d’erreurs”
+- “Saved to your mistakes”: “Ajouté à ton carnet d’erreurs”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “À corriger” / “Corrigées”
 - “practice mistakes”: “réviser tes erreurs”
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Nouveau” / “En cours” / “Solide” / “Maîtrisé”

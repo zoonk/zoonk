@@ -45,21 +45,21 @@
   "questions_place_right": "340f7233ff2d4031ae9acaeb99bacf1cc48c565c0bb89a5c158c32c2a45d168d",
   "questions_place_wrong": "51e5cf95fb542a3db3665f88e0b8d883db56a0804c09c08be843c88382f600e9",
   "questions_placement_note": "8a1fd72bdc8e970a1d55728a32fb424f6098d27147a4e926459b873307b55912",
-  "questions_quoted_source": "4f737f4bfaa63eb0a46d0fdf2863f473da34f70dd06f9018176d01941cee095b",
+  "questions_quoted_source": "435c2c9a578d2ab629c3c384b866e72ffb103f9578259fc81990e321d8724f47",
   "questions_read_again": "f597e45e8ecf55495e0f3ac218cdf94772fa864ce45eaab0aafd4f60590c5768",
   "questions_result": "07e82c87677694881bd451fb8b6148182e2b0996b66cf4b07760c274d7ed6792",
   "questions_right": "9b10dbf6d9c437b0430f7fe9e067cbf5702484bdb818d4bf6aa5b2cd4ea44238",
   "questions_right_answer": "16e7a7cd7e1aa12f8bae9255abee742e86864d70d01a6bc7a3a2b59e3772b815",
   "questions_saved": "3a35e84d13cbb25cd40e05a4766672026b05df67f3fae4c0c7a8d0cff7ce5cf4",
-  "questions_saved_tomorrow": "226666f77345bf45c87a9b48b5bbf62461ecffa731a46086e40068c759e21914",
+  "questions_saved_tomorrow": "a76837e9565d2e054d14df397d7651d7466fe0ac9935b6c3040094a67f448a3e",
   "questions_set_place_audio": "aae4048a94645da7e7f4729036d0d358d93074290347a87163e715afd637b3c6",
   "questions_set_place_case": "8c91d0b034ac276cbcebae9933c71a8528348136fcc895f53c68077cd6a8cd25",
   "questions_set_place_chart": "4975c43ae9ad369e83aef9605253dc90516edf98e39954bc4781514c8a01db52",
   "questions_set_place_text": "e90a6a9013c7f7eacbb352432a1d7e85c3503573ca404add0147fc8b314fa0fe",
   "questions_show_less": "aea18fc70677bd45f1fcdad1688dc6a628d1326217cdf014c3d00f6564d6525f",
   "questions_source_checked": "e3d957cd1f61d2ea392b86abfef2e76a79fa24af44ff6da9e9b05dabdb1387dd",
-  "questions_source_checked_by": "a02ffd657e05deb7aa652f5a84906fca2a59d8e233451d457f993fc80e15c650",
-  "questions_sources_chip": "2937fed3e3d38a62d43824d3b4a96e3bdd6830183f0a9d054fbd0815089aa7ea",
+  "questions_source_checked_by": "8fa547933cbfdc18351283ed3c07206ba0bf65d52ec273b63d7835af4fb70089",
+  "questions_sources_chip": "132c69ee88be1157323023c3fa532f7e1b29c9a0836401181b10d1a9b9bb83b9",
   "questions_streak": "706081ac6cd98a179645586510c42c1c60001db04007c05c35371813c302bdfd",
   "questions_true": "617e712d49ffc3f15d2a19f08f1706738ffc0f1d6eac8244f1e0d6e1aee07573",
   "questions_wrong": "d8f8005b57242854323ac33cc9beb14361e4293abe61ea3873abdf5d44655948",
@@ -121,7 +121,7 @@
         <item quantity="other">%d Fehler korrigiert. Sie werden aus deinem Fehlerheft entfernt.</item>
     </plurals>
     <string name="questions_saved">Im Fehlerheft gespeichert</string>
-    <string name="questions_saved_tomorrow">Im Fehlerheft gespeichert · kommt morgen wieder</string>
+    <string name="questions_saved_tomorrow">Im Fehlerheft gespeichert · wird morgen wiederholt</string>
     <string name="questions_show_less">Weniger anzeigen</string>
     <string name="questions_read_again">Alles noch einmal lesen</string>
     <string name="questions_set_place_audio">Frage %1$d von %2$d zu dieser Aufnahme</string>
@@ -130,10 +130,10 @@
     <string name="questions_set_place_text">Frage %1$d von %2$d zu diesem Text</string>
     <string name="questions_placement_note">Wir stimmen deinen Plan genauer ab. Eine falsche Antwort wird hier nicht als Fehler gespeichert.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
-    <string name="questions_quoted_source">Frage aus einer früheren Prüfung · %1$s</string>
+    <string name="questions_quoted_source">Frage aus einer früheren Prüfung · %1$s</string>
     <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
-    <string name="questions_sources_chip">Quellen · Geprüft %1$s</string>
-    <string name="questions_source_checked_by">%1$s · Geprüft %2$s</string>
+    <string name="questions_sources_chip">Quellen · Geprüft: %1$s</string>
+    <string name="questions_source_checked_by">%1$s · Geprüft: %2$s</string>
     <string name="questions_source_checked">Geprüft %1$s</string>
     <string name="questions_open_source">Quelle öffnen</string>
     <string name="questions_drill_reteach_ideas">Erst die Erklärung, dann ein paar Fragen dazu.</string>

@@ -11,7 +11,7 @@
   "today_building_plan_goal": "71e1e8f9b052924e13bee2754389b85d6ede59a436f7d6de66ac6cde70456186",
   "today_catch_up_before_exam": "ebc0c9222ed0df3b5418dbd1fe64c511eab3637836ad76dddefee71d4270cf81",
   "today_catch_up_next_days": "c3414af7cd993a02933796d917638e15d791a91f2b15993c5dc14cad9c2130c5",
-  "today_catch_up_today": "c6286382439036112201dac9d8c7fba1f2431e20deee9d6f51b3faec1b20b19b",
+  "today_catch_up_today": "7304472e97c40066dc8b697e0dfcac2e871aea61ef0a1047e54a079a4bbef8dd",
   "today_catch_up_tomorrow": "92b00a41ec740452aadf69ed9678f4d3b95abc8d797ab10a13633ef7d9fa4e6c",
   "today_choose_focus": "860d97fd02b7c5daddf7c15e19cbe7952883bacad460f609b36b3fb5b6ff3852",
   "today_coming_not_written": "a9bf89ac41d895767c6602b2e75cb1508e99c80a1562237befa2bd5dbb4f37eb",
@@ -31,7 +31,7 @@
   "today_done": "5362f3e37f7c19b90bfeee43fc405a995db31051ebc9a8d29f8b0d8240a9e148",
   "today_done_count": "cbc44bdbaf1046935792743bf170ef66b4ef1e1231902b0e8cc0b358e033bdde",
   "today_done_day_off": "135c78381a16e2955cb2175daf71a6eab6613333951b6e8ffb626f8350b2969f",
-  "today_earlier_work": "0f10302e57016704c3deb7a3f78c36dd2d1aae5a311c0477a7eecd65b747a1df",
+  "today_earlier_work": "129e0062e5d272d3c0302b3f2e3b4b4ab0380161dc7308a359719261abc7d000",
   "today_earlier_work_detail": "84220237310963068c9279ee1eae19b53a32723eb0dca77114672a85a0405d63",
   "today_exam_choice_choose": "5741bdb58ec55beeb8202775641ce754044445d599e16c9ec6df8634436ecda8",
   "today_exam_choice_detail": "66fa09561ed00920e60979ddaef373a45ab5def8d73eff70ca66a1d9867546d5",
@@ -142,17 +142,17 @@
   "today_start_new_goal": "2556d4773c37d5d45514148016a9b5e825a71aa7efe7fdd900200e2d49c57bc7",
   "today_start_session": "34317da559ffc46559517b4460ed4fdf35869314a63a9e708b7cd6825243c584",
   "today_step_after_challenge": "42ca9491dc9bea4ac9cc56c2fdd281187027723367e12fcee7df826ff3c69530",
-  "today_step_after_challenge_phase": "5a432925a21e830ecd278f51c262a4dcbdb23ac678d0d03157f5c02f7c578de2",
+  "today_step_after_challenge_phase": "433995dc65f3aef63e775cd6d3076c417fca4318ae9c8f8ca24c5dc9735a9344",
   "today_step_after_lessons": "0e8880997e3f6a315907af767900849eac89686273abdd9ed1c1132f27015a2a",
-  "today_step_after_lessons_phase": "e5bc567cd2ea7504f85f71d1b13860d595225ec8c5bb183585fdee6119231d43",
+  "today_step_after_lessons_phase": "b12960b5369cabd6f3cd472f3694377737c1846abaad9ac4cef70010d6af1106",
   "today_step_being_written": "665bd86252ebab4242f6040cc01a99f2599025841ecbd65863b43a60451f8210",
   "today_step_catching_up": "9a752bc30daf472c02ebace8a6e5deaa27f3b868a4e3074766f56f50d0c62153",
-  "today_step_catching_up_subject": "5660a685ed7c2d21cf396f52730e6199ce76161ab87e28cf3355c31977f731af",
+  "today_step_catching_up_subject": "dc875f34df06d9257b6417e7342e2a07bf8b6c7b55c880794636dac5fee7d669",
   "today_step_counts_toward_mission": "d9bfc57823d933a6662cdb2c1b06e540ccdf93294b29580c5633cd17e56ef041",
   "today_step_done": "75ea98d625c758f01b99d7b83391975ec4e6bfc619d6a5d94cd4aeb5b752d788",
   "today_step_next": "273d0caa15be65f720ff38083694a300389ac8ccdaaba078169e006611e06bf5",
   "today_step_often_tested": "8e01f7e3b3ce0dbc0bd95b275b1c78da3a8c315e74240b5c981b2b91e78d79dd",
-  "today_step_often_tested_label": "963f74b2b206902c9d9a1105880c063378d2493371de53e02f55c024e4a655b4",
+  "today_step_often_tested_label": "449fb16cd7c35bbb8d666439a74ddc6fc6d22ecb647b768f4ae4d765472991a3",
   "today_step_skipped": "cb24182ca6ea0f088d8d5b38f56bbd05e8cbb4acb8bdf4419ddf57ea1053c4ca",
   "today_steps_done": "068c0feff1c4c8c2b813b0166027f92d226a9f0bdd7aefd6fd0ad9bcff9394dd",
   "today_study_everything": "a443e2bdfcb281f9aa76749ce4dd24200c5ef7625662dd305b9697b3923e5eb3",
@@ -268,16 +268,17 @@
     <string name="today_step_skipped">Passé</string>
     <string name="today_step_counts_toward_mission">Compte pour une mission</string>
     <string name="today_step_being_written">En cours de préparation pour toi…</string>
+    <!-- A step's label. It and today_step_catching_up_subject label the same kind of step, so both take the same grammatical form. -->
     <string name="today_step_catching_up">Rattrapage</string>
-    <!-- %1$s is the subject the block studies. -->
-    <string name="today_step_catching_up_subject">Rattrapage · %1$s</string>
+    <!-- %1$s is the subject the block studies. Labels the same kind of step as today_step_catching_up, so both take the same grammatical form. -->
+    <string name="today_step_catching_up_subject">Rattrapage · %1$s</string>
     <string name="today_step_often_tested">Souvent évalué</string>
-    <string name="today_step_often_tested_label">%1$s · souvent évalué</string>
+    <string name="today_step_often_tested_label">%1$s · souvent à l’examen</string>
     <string name="today_step_after_lessons">Après les leçons d’aujourd’hui</string>
     <!-- %1$s is the phase's name. -->
-    <string name="today_step_after_lessons_phase">%1$s · après les leçons du jour</string>
+    <string name="today_step_after_lessons_phase">%1$s · après les leçons d’aujourd’hui</string>
     <string name="today_step_after_challenge">Après le défi précédent</string>
-    <string name="today_step_after_challenge_phase">%1$s · après le défi précédent</string>
+    <string name="today_step_after_challenge_phase">%1$s · après le défi précédent</string>
     <string name="today_done">Ta séance du jour est terminée.</string>
     <string name="today_done_day_off">Tu as étudié pendant ton jour de repos.</string>
     <string name="today_see_summary">Voir le résumé du jour</string>
@@ -396,7 +397,7 @@
         <item quantity="other">Demain commencera par %d leçons de plus à rattraper.</item>
     </plurals>
     <!-- %1$s is a duration, such as "25 min". -->
-    <string name="today_catch_up_today">Rattraper aujourd’hui · +%1$s</string>
+    <string name="today_catch_up_today">Rattraper aujourd’hui · +%1$s</string>
     <!-- %1$s is a weekday, such as "Saturday". -->
     <string name="today_see_day_challenge">Voir le défi de %1$s</string>
     <string name="today_see_day_mock">Voir l’examen blanc de %1$s</string>
@@ -405,7 +406,7 @@
     <string name="today_already_know_this">Tu connais déjà ?</string>
     <string name="today_take_the_test">Passer le test</string>
     <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
-    <string name="today_earlier_work">Leçons précédentes à finir · %1$s</string>
+    <string name="today_earlier_work">Leçons des jours précédents à terminer · %1$s</string>
     <string name="today_earlier_work_detail">Commence par ceci. En lançant ta séance, ton plan s’adapte au temps disponible aujourd’hui.</string>
     <string name="today_practice_anytime">S’entraîner à tout moment</string>
     <string name="today_mistakes_notebook">Carnet d’erreurs</string>

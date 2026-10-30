@@ -12,16 +12,16 @@
   "session_block_mock_exam": "535cbfaa7eaf9e06d99209d51c0d032b0c7eb7f0673a4019fa8d1364d221b50d",
   "session_block_new_lesson": "96a3ac3d60f75d6868ecffa6cf99c2e160516fa545c57c9a2f5fd52147b094db",
   "session_block_phase_challenge": "c7cf21fd415425c861f078ac1eeed499f74c4ededc4b72a47f3e7edb571ba4e0",
-  "session_block_phase_live_call": "41ab7944a8157698e1868648553f0978caf6b6358f823ac9ba92b5c3c149bf62",
-  "session_block_phase_questions": "0bc5815b31b1f5c3694bca1dac78d6e021dbe30a11ab44f71ba9c2b73f264c1b",
+  "session_block_phase_live_call": "12876ff31f1287fee51ffd99cb24482a85744add8b5784ec026c0a8b67dfb0f4",
+  "session_block_phase_questions": "41d14c2df1167447dcfd1e6cc1d7c6603484ff24fd1c6b54715f4fe4f6b5b740",
   "session_block_practice_mistakes": "99487058712064fb8842bcf05904ecf9a95168a18097587f977038653aa3fa1e",
   "session_block_questions": "3f9311b3bb4890371f6ccc0a425eb35f5db727cc4cf56478bed78d16883c92b1",
   "session_block_quick_review": "a57b114a09f81c71aaca8adecc6e0392f4b46b620403c55068d0b2381b146579",
   "session_block_rematch_lesson": "1a527283471bbf8d42605cf60c014cba99fe7ea71c31bef3e1bc1d7f7a1b0501",
-  "session_block_review_topics": "f0bac251c8e33e87f13bac4ce1acc52934b62f4e05d8feaa44daf0ce938e9043",
-  "session_block_review_topics_and_known": "cf21e2b95f403e62922b689217b0171a7e01c5f121caf1a0f41ee8e3b5e4f96c",
+  "session_block_review_topics": "dd2c977b31758d1c8153d4908d010d53b1819c3ca5b8ea5155f16cd6dbcb6150",
+  "session_block_review_topics_and_known": "6b38847da98fbf5cfff83d87541c68689dece6b73f27f24a7af92c4fed7777ef",
   "session_block_reviews": "142eb86c9f32570a6af7aaa94e093000107b1138e15c215b209404673de018dc",
-  "session_block_weakest": "27cc7558cd181474c9bbf040cb175125780f32fb389bf2db24ae976388514a84",
+  "session_block_weakest": "fd7dcd5153ca164caad4b95e842b1a701da9231a77904b49b1dcce21003652a4",
   "session_block_weekly_challenge": "b3e959bb0c8e69691a6c821bc3b8ca792a3612c3d9f478b3ea6f146097439814",
   "session_block_what_you_know": "9b5359a0466c6ad81b838068ba12c7cb8eccecf2617c2939bf4cd846dcc3a2bf",
   "session_block_writing_practice": "fdc84147d9d9aa269b73311b7615a0ebf51014df028d60f7559bb2b1c28651d7",
@@ -95,29 +95,29 @@
         <item quantity="other">%d perguntas</item>
     </plurals>
     <plurals name="session_block_weakest">
-        <item quantity="one">Nenhuma revisão para hoje · %d pergunta sobre os tópicos que você menos domina</item>
-        <item quantity="many">Nenhuma revisão para hoje · %d perguntas sobre os tópicos que você menos domina</item>
-        <item quantity="other">Nenhuma revisão para hoje · %d perguntas sobre os tópicos que você menos domina</item>
+        <item quantity="one">Sem revisões para hoje · %d pergunta sobre os tópicos em que você tem mais dificuldade</item>
+        <item quantity="many">Sem revisões para hoje · %d perguntas sobre os tópicos em que você tem mais dificuldade</item>
+        <item quantity="other">Sem revisões para hoje · %d perguntas sobre os tópicos em que você tem mais dificuldade</item>
     </plurals>
     <!-- %2$s lists the topics reviewed, such as "Fractions, Ratios and 2 more topics". -->
     <plurals name="session_block_review_topics">
-        <item quantity="one">%1$d pergunta · %2$s</item>
-        <item quantity="many">%1$d perguntas · %2$s</item>
-        <item quantity="other">%1$d perguntas · %2$s</item>
+        <item quantity="one">%1$d pergunta · %2$s</item>
+        <item quantity="many">%1$d perguntas · %2$s</item>
+        <item quantity="other">%1$d perguntas · %2$s</item>
     </plurals>
     <plurals name="session_block_review_topics_and_known">
-        <item quantity="one">%1$d pergunta · %2$s, além do que você já sabe</item>
-        <item quantity="many">%1$d perguntas · %2$s, além do que você já sabe</item>
-        <item quantity="other">%1$d perguntas · %2$s, além do que você já sabe</item>
+        <item quantity="one">%1$d pergunta · %2$s, além do que você já sabe</item>
+        <item quantity="many">%1$d perguntas · %2$s, além do que você já sabe</item>
+        <item quantity="other">%1$d perguntas · %2$s, além do que você já sabe</item>
     </plurals>
     <!-- %2$s is the phase's name. -->
     <plurals name="session_block_phase_questions">
-        <item quantity="one">%2$s · %1$d pergunta, sem dicas</item>
-        <item quantity="many">%2$s · %1$d perguntas, sem dicas</item>
-        <item quantity="other">%2$s · %1$d perguntas, sem dicas</item>
+        <item quantity="one">%2$s · %1$d pergunta, sem dicas</item>
+        <item quantity="many">%2$s · %1$d perguntas, sem dicas</item>
+        <item quantity="other">%2$s · %1$d perguntas, sem dicas</item>
     </plurals>
     <!-- %1$s is the phase's name; a language unit's challenge is a live call with the Trickster. -->
-    <string name="session_block_phase_live_call">%1$s · uma conversa ao vivo</string>
+    <string name="session_block_phase_live_call">%1$s · uma conversa ao vivo</string>
     <string name="session_block_live_call">Uma conversa ao vivo</string>
     <plurals name="session_block_challenge_questions">
         <item quantity="one">%d pergunta, sem dicas</item>

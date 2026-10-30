@@ -23,10 +23,10 @@
   "stats_calendar_activity_summary": "e742599c6a397a6b658b76e176654cf5a173e5987fff6fc1c25cffd68820ce58",
   "stats_calendar_energy_summary": "ccac20a86f2af476dbdfdeb75d5506d89b83b09d12bb235de0ce84cfd3730436",
   "stats_correct_of_total": "0d4e0d3c997b5d8ca95a79df695db9a38000a59d75223ebc78ba2d115a456479",
-  "stats_day_activities": "2ee75c3d91c0c0a3da243453052e264dfcb66cf8d99c10ab350bfeb0b65f29ce",
-  "stats_day_energy": "ec84eb4547ad2ab649e006a870e2bef4f4ccde7a855e1eb94321924f9dc4b228",
-  "stats_day_no_energy": "314f52e2028b5532cae6dd0923cf81642f00b53fb439b3870576e71928111811",
-  "stats_day_no_study": "715f8abeab39bd878e3f43b490a5e9ca30ceec5070baa4c3cf2fb4c87b3be5b2",
+  "stats_day_activities": "c0503762708c71ad4dcd00049619828f1339d5b8d459ddf6cc93c7bcfcae4fa1",
+  "stats_day_energy": "0178f9b755dec0997b86696304b4f048f380e64c80a61748a0e0692cd24bbc2b",
+  "stats_day_no_energy": "00b97878e11d3614b95a8ceb3865f10c8ce33b34810ae7bd98fd84643d8d4f20",
+  "stats_day_no_study": "c8d298a9ccc0ff7e131cec4ee62e12d26e4074be85efe34896333cd36d311d3d",
   "stats_days": "b164fc610fcc3f4c4646492a7359ccf294b7a1eb25d61a6b122f78e272b6413b",
   "stats_days_even": "a66555e11660aa75a6e280197776c89ad6c1d33b5134309eaf7f264c2df0ec3b",
   "stats_empty_title": "183552715c0fb51a44cb2d38b751997b5df818c5ffbdcc007621659f579afca3",
@@ -43,7 +43,7 @@
   "stats_last_90": "796a69b46906a7f6f0a359d3b4d9cc6462d7949593845192085c698304b411e0",
   "stats_less": "3ad27b458c80e5860d3f8bdbe8999ce29d101055479d15dc981d8a5691091434",
   "stats_lessons": "6da5abd70ccec96e71660e878c93310c960498b4ac6f1b88de46b92bbd9aedd9",
-  "stats_lessons_time": "9c1d1ce04afb3c74c5bbef853664f3361b9e0aa5668017336629542955de735d",
+  "stats_lessons_time": "994465973a7236ce0b764db4247e4b9683bed15e46ef2511b16bfa1b94f5acbc",
   "stats_level": "53e49620aa434f8992a6f9d2669abdd07331ac3a149f67d79496c61a64f98f4f",
   "stats_level_line": "75b976708225744b3a918df4c6446f92226421b0e69ec2f25b34ec84c4ab6bf4",
   "stats_level_of": "4257c3b54e039af1f15f6eddb7d2ac51811fde853675131e8d96c7d819b3f64b",
@@ -65,7 +65,7 @@
   "stats_part_failed": "1e7e9b8b89e6bf65b34f10aa470b6230cc7d2cc4f15beecbeb81894025c01eb0",
   "stats_past_year": "dce7d65c57127e48433d6c8dc047ffed43005205d962adeac4b3470d4e231403",
   "stats_patterns": "7e162b1016577fc1c02154d8c398689db28c7681ce5e15c5d6d1f1133e792e9a",
-  "stats_patterns_90": "5e8f5261d6ada615ea4930c9f99430b97ce65926d1abecb8c2a29db94eb739fd",
+  "stats_patterns_90": "d01c08de755d64b60bd8b9eb1fc5780a0a7f78ec836e2c0575724cec50b66372",
   "stats_patterns_intro": "625849ccad869fab805fbd3dc1076930ad1bba826cc10e06bc24d22bb7c65e3a",
   "stats_period": "e55af6aca52f673175d314fe761eb6b8ac7da23c1f999b34c15b1fc5389a9829",
   "stats_range": "1b41c5945e9b422204f1d8e0307401136bc4232b007d317e388de70aa2f5325d",
@@ -74,10 +74,10 @@
   "stats_right_count": "5bf59c1e5ffb89c8f327bf339553731212c4260d9ad3800fe85da6ec3c67ee38",
   "stats_right_last_90": "1adc7e3be167f84775e93ac87a20eb6d820d8495912812ac3c0108adadeee518",
   "stats_score": "c0ab55b6a771bf442c31058071ee4994f4eddddce50eafbd9b5402bd9284b380",
-  "stats_score_90": "99bea3b40e1b4c964201f4a88c704d3adb86940d52590c7e41bb811ae4627dff",
+  "stats_score_90": "48c25bd5f79a51118316746f18cf78360440835da4f8305ce8195c50937e1ac9",
   "stats_score_across": "6932a4409348e8a532bf800be5171b7514666423a61341587bca3eedc508f31b",
   "stats_score_after_answers": "5af3735b433a01965a1afd26eac6341a62b6b30d0cf1a5630465e4cfc85d1cbf",
-  "stats_score_answers": "51abbf253b48b4543379229bc3b739ca536ce0afd7dc1a0e450b5b6501b7ccfe",
+  "stats_score_answers": "bfb867eaaa690c23ef1324bce179fe84959388975771aa842ad28283440f8272",
   "stats_score_line": "7254e9c35de913a5bf9987817a41d1a7270260f30c8556f34d4125931bb62f0d",
   "stats_score_trend": "8a0aa49fccf0cb3d2f199b60d6ca4a5ea8df98444014f61bce860e12ad3f97f0",
   "stats_score_week": "3b45cae421f69915cc47afdfcae5487b475824a78193a0a562d21d7a25866083",
@@ -113,15 +113,15 @@
     <string name="stats_energy_average">Durchschnitt: %1$s</string>
     <string name="stats_study_days">Lerntage</string>
     <plurals name="stats_lessons_time">
-        <item quantity="one">%1$s Lektion · %2$s</item>
-        <item quantity="other">%1$s Lektionen · %2$s</item>
+        <item quantity="one">%1$s Lektion · %2$s</item>
+        <item quantity="other">%1$s Lektionen · %2$s</item>
     </plurals>
     <string name="stats_right_count">%1$s/%2$s richtig</string>
     <string name="stats_right_last_90">Richtige Antworten in den letzten 90 Tagen</string>
-    <string name="stats_score_90">Score · 90 Tage</string>
+    <string name="stats_score_90">Score · 90 Tage</string>
     <string name="stats_score_after_answers">Dein Score erscheint nach deinen ersten Antworten.</string>
     <!-- Section header over when the learner answers best, by time of day and weekday, in the last 90 days. Not mistakes. -->
-    <string name="stats_patterns_90">Lernmuster · 90 Tage</string>
+    <string name="stats_patterns_90">Lernmuster · 90 Tage</string>
     <string name="stats_see_all">Alle ansehen</string>
     <string name="stats_best_day">Bester Tag</string>
     <string name="stats_best_time">Beste Uhrzeit</string>
@@ -169,14 +169,14 @@
         <item quantity="one">%1$s Aktivität</item>
         <item quantity="other">%1$s Aktivitäten</item>
     </plurals>
-    <string name="stats_day_no_study">%1$s · Nicht gelernt</string>
+    <string name="stats_day_no_study">%1$s · Nicht gelernt</string>
     <!-- %1$s is a date; %2$s is how many activities the learner did that day, as in "Nov 3 · 4 activities". -->
     <plurals name="stats_day_activities">
-        <item quantity="one">%1$s · %2$s Aktivität</item>
-        <item quantity="other">%1$s · %2$s Aktivitäten</item>
+        <item quantity="one">%1$s · %2$s Aktivität</item>
+        <item quantity="other">%1$s · %2$s Aktivitäten</item>
     </plurals>
-    <string name="stats_day_no_energy">%1$s · Keine Energie erfasst</string>
-    <string name="stats_day_energy">%1$s · %2$s Energie</string>
+    <string name="stats_day_no_energy">%1$s · Keine Energie erfasst</string>
+    <string name="stats_day_energy">%1$s · %2$s Energie</string>
     <string name="stats_calendar_energy_summary">Energie in den letzten 12 Monaten: %1$s heute, %2$s im Durchschnitt seit deinem Start</string>
     <string name="stats_right_answers">Richtige Antworten</string>
     <string name="stats_right">Richtig</string>
@@ -208,8 +208,8 @@
         <item quantity="other">Höchstens %1$d Punkte Unterschied</item>
     </plurals>
     <plurals name="stats_score_answers">
-        <item quantity="one">%1$s · %2$s Antwort</item>
-        <item quantity="other">%1$s · %2$s Antworten</item>
+        <item quantity="one">%1$s · %2$s Antwort</item>
+        <item quantity="other">%1$s · %2$s Antworten</item>
     </plurals>
     <plurals name="stats_answer_count">
         <item quantity="one">%1$s Antwort</item>

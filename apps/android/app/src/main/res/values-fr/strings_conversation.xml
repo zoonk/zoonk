@@ -18,7 +18,7 @@
   "conversation_calls_need_account": "3a8dda0450cc1ec89dd422b3d2daee744b972ceee08a652d6aeef9b80846c6f2",
   "conversation_challenge_passed": "0f3266a9b0d35415815520c3c062ecc4270cbbd0b68b32a6189be49b2c582366",
   "conversation_challenge_plus": "f505fe775ee75a3703aba9e7cd8c7a0889177f3bcd1fedb4e4047f98781e1107",
-  "conversation_character_detail": "cc4d92ac44b1bab4a631766a9ec1ec3c00e71deaf46bb12303816258b0034636",
+  "conversation_character_detail": "bdb870c614ef01c1c564598e1591c65cd08835c10024ba3e5de8c4983530a325",
   "conversation_character_said": "9531cea3e051feae61dbb2c273190cf213de459af7571043691044568d7394c6",
   "conversation_clock": "f52792b7550f33db2f27d7b573683628140380feda01973bdbc7e78004387f39",
   "conversation_criterion_accuracy": "1ed750561a85b46f5bddc704fc822a07c48c4306fc483779402fcfdea708df7c",
@@ -31,7 +31,7 @@
   "conversation_criterion_interviewer": "dde418e854db81daa728bf9cd34dbbfb2dfc8e86f99ea0c854314f70303d967e",
   "conversation_criterion_language": "a34955ccf3a4efa6277d70917687b10b28cdf1d035e3b45ac3c9cc00cd5f288e",
   "conversation_criterion_language_use": "ad43761f6daaff589ed38c05f4e147bb513017bda7ab0bf3e1453c1f0c0ddf88",
-  "conversation_criterion_line": "e5e3ae5d97c1e98a8458d80e3f99707510923970c37d4641a19b7dd89fc79125",
+  "conversation_criterion_line": "0c4e6afecc302e187fd7c52a4df4993cf23e19dc4c02da2cf364c51c549c5563",
   "conversation_criterion_overall": "f339994d066e31a7258dcea50a6475e11f2578a197ea4125d30c00fc0db8a1b6",
   "conversation_criterion_pronunciation": "325314ab23a12fe8f7cd71e46dd2af3695598a633b56242f64d74f4625129ece",
   "conversation_criterion_questions": "c177da9298c78cb3a8a1a749e91f46d57d9954e5d7e5bc4603d0fe16d651e139",
@@ -49,7 +49,7 @@
   "conversation_estimate": "e7cca1ad1489e5f9d0392b7f6b23be583dfcd3ba7e9e2af1967a91f25a3e62a2",
   "conversation_estimate_sound": "1f17c026d2e502e8ddbbb5526b37682ba14349a03b014bd92550765546346ab2",
   "conversation_every_criterion": "381fc788dc9f4a9f4cc089804496d00481e287ec7a486f4a54f7d09246f8d82d",
-  "conversation_exam_task_title": "942e780132e8eb864ab643591d509db232c5340f0027cfbe494b1cf3e9ff101f",
+  "conversation_exam_task_title": "0fa735adaf47288d99d39b75c7879b9d3607c7c9a41123efd88469c5778dd3af",
   "conversation_focus": "bf100f712928f9b56a8bd6d2fc58e8f7d4864b2b3200c2e1e194aec278036abb",
   "conversation_get_across": "32554c0292cb5a32dcace3e20e78264802b5cb342f18cf6d1b6d4bdd97ec46fb",
   "conversation_get_ready": "2178ac5bbd4e6a8ecfe76141a98db8c6b8f731bb1ec00ae03166546571ded486",
@@ -65,7 +65,7 @@
   "conversation_ielts_mock": "ded47d23e8f1f3ccfe4599f502ba9e9733b092511689c6ed08f101d76004f904",
   "conversation_in_progress": "3e6ac3ff4599ef2026328778a0a99d4a1a0f500c0f93bf4cd76a098e20830500",
   "conversation_in_progress_title": "a5cb97d4261b7679f46dda7368f1dd67abaf4f1670d7c0d6216e9d2cded20f4d",
-  "conversation_intro_meta": "9252d1bfe73fe919fa3efebe8d38b75898c304e219b060739e7c300158265ae6",
+  "conversation_intro_meta": "843436a3f337e1221d3046c28b741ad80250db8eb2b9b1b2592d104adfc4542e",
   "conversation_keep_talking": "e43de8e0a9dde952998e437672c2d91496bea1f916b576ac9982c3beffa26b9f",
   "conversation_level_line": "c792ba5cdbfea790ed89c4eb6f73cf874397efc25c090ee25e5aa21de944a4b3",
   "conversation_listen_to": "9e7757212bdc8eab8978a98784952c34e731b9f293b42d57964c05e0a158715d",
@@ -105,7 +105,7 @@
   "conversation_practice": "2e0b4ae62d588432f93426bd66a61dd580e1a7d5c4b7caeafa3b576ef3f8005d",
   "conversation_practice_call": "44257311a59d401deffd7acd6ade880859dacd3f02543cfbf739b9e044ba8432",
   "conversation_practice_estimate": "21b717af845626acb28937e096251d9d32136424254f6816c1de9bce6493b47e",
-  "conversation_practice_with": "376bd6ba84f30ed2f26fec24c9eadc94063aaa9d61c92795b53a12ef1f87d756",
+  "conversation_practice_with": "36ef8ffad94e9f14ab7116ca42190a7cb26a65dcbdf8218e663497a494cb8f2b",
   "conversation_prep": "996cd076d05a353ce4e6d162bd8c789613aa78ec632118557454680cbfa8162c",
   "conversation_prep_again": "e697951f2ec54e3b29310084918488dfb546b7e335bd21d5c532d5a8e4a86520",
   "conversation_prep_over": "2b99393c002f6345dab038ce806377c6317f99cb56ad903934a3f6f81dfa593b",
@@ -177,9 +177,9 @@
     <string name="conversation_ielts_mock">Examen blanc d’expression orale IELTS</string>
     <string name="conversation_toefl_mock">Examen blanc d’expression orale TOEFL</string>
     <!-- How long the call lasts and its language level, such as "5 min · Level A2". -->
-    <string name="conversation_intro_meta">%1$s · Niveau %2$s</string>
+    <string name="conversation_intro_meta">%1$s · Niveau %2$s</string>
     <!-- The character's role and where the call takes place, such as "Waiter · Café in Madrid". -->
-    <string name="conversation_character_detail">%1$s · %2$s</string>
+    <string name="conversation_character_detail">%1$s · %2$s</string>
     <string name="conversation_get_across">Ce que tu dois faire comprendre</string>
     <string name="conversation_mic_note">Parle ou écris. Le microphone est utilisé uniquement pendant l’appel.</string>
     <string name="conversation_start">Démarrer l’appel</string>
@@ -267,7 +267,7 @@
     <string name="conversation_listen_to">Écouter %1$s</string>
     <string name="conversation_practice">S’entraîner à converser</string>
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->
-    <string name="conversation_practice_with">avec %1$s · %2$s</string>
+    <string name="conversation_practice_with">avec %1$s · %2$s</string>
     <string name="conversation_call_length">Durée de l’appel</string>
     <string name="conversation_longer_calls_plus">Avec Plus, les appels durent plus longtemps.</string>
     <string name="conversation_opens_when_ready">Ton appel s’ouvrira dès qu’il sera prêt.</string>
@@ -285,7 +285,7 @@
     <string name="conversation_writing_call_line_4">Ajout de phrases pour t’aider…</string>
     <!-- Exam speaking tasks: an official exam's speaking task practiced on a call, with an AI in the examiner's place. -->
     <!-- The exam and the task's place in its paper, such as "DELE B2 · Task 2 of 4". -->
-    <string name="conversation_exam_task_title">%1$s · Tâche %2$s sur %3$s</string>
+    <string name="conversation_exam_task_title">%1$s · Tâche %2$s sur %3$s</string>
     <string name="conversation_opens_and_card">%1$s commence l’appel et ta fiche reste à l’écran.</string>
     <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
     <string name="conversation_rated_on">Évaluation selon %1$s.</string>
@@ -348,7 +348,7 @@
     <string name="conversation_every_criterion">Voir tous les critères</string>
     <string name="conversation_by_criterion">Par critère</string>
     <!-- A criterion, its estimate and how it stands, such as "Fluency · 3–4 of 5 · At B2". -->
-    <string name="conversation_criterion_line">%1$s · %2$s · %3$s</string>
+    <string name="conversation_criterion_line">%1$s · %2$s · %3$s</string>
     <string name="conversation_mock_band_ielts">Score estimé, de 0 à 9</string>
     <string name="conversation_mock_band_toefl">Note estimée, de 1 à 6</string>
     <string name="conversation_mock_estimate">Une estimation basée sur un examen blanc court, pas un score officiel.</string>

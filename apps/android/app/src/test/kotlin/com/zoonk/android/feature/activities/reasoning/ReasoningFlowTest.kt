@@ -161,7 +161,7 @@ class ReasoningFlowTest {
     fun anExploredPunnettSquareIsFilledWithItsTraitsCounted() {
         harness.play(listOf(ActivityFixtures.exploreStep("combinationGrid"), summaryStep("end")))
 
-        shows("Purple: 2 of 4 · White: 2 of 4")
+        shows("Purple: 2 of 4\u00A0· White: 2 of 4")
         rule.onNodeWithText("goes in square", substring = true).assertDoesNotExist()
     }
 
