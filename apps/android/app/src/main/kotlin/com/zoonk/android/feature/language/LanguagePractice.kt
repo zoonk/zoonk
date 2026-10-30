@@ -108,11 +108,6 @@ fun AlphabetRow(
     }
 }
 
-fun hasLanguagePractice(
-    pattern: TodayPattern?,
-    pronunciation: LanguageTodayPronunciation?,
-): Boolean = pronunciation != null || pattern != null
-
 /** Today's one language notice (main's `LanguagePracticeRow`): words to say again first, else the pattern noticed in recent mistakes. */
 @Composable
 fun LanguagePracticeNotice(

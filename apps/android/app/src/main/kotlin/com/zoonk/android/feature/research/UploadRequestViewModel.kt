@@ -13,7 +13,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.AttachDraft
-import com.zoonk.api.models.GoalUploadRequestRequest
+import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -23,7 +23,7 @@ internal enum class UploadWork { Attaching, Sending, Dismissing }
 internal data class UploadAnswer(
     val visit: Int,
     val uploading: Boolean = false,
-    val answered: GoalUploadRequestRequest? = null,
+    val answered: TodayUploadRequest? = null,
     val dismissed: Boolean = false,
     val attachFailure: WriteOutcome<*>? = null,
     val saveFailed: Boolean = false,
@@ -69,25 +69,25 @@ internal class UploadRequestViewModel(
 
     fun attachFile(
         visit: Int,
-        request: GoalUploadRequestRequest,
+        request: TodayUploadRequest,
         file: PickedFile,
     ) = send(visit, request) { store.attachFile(file, request.language, goalId) }
 
     fun attachText(
         visit: Int,
-        request: GoalUploadRequestRequest,
+        request: TodayUploadRequest,
         text: String,
     ) = send(visit, request) { store.attachText(text, request.language, goalId) }
 
     fun attachLink(
         visit: Int,
-        request: GoalUploadRequestRequest,
+        request: TodayUploadRequest,
         url: String,
     ) = send(visit, request) { store.attachLink(url, request.language, goalId) }
 
     private fun send(
         visit: Int,
-        request: GoalUploadRequestRequest,
+        request: TodayUploadRequest,
         attach: suspend () -> WriteOutcome<AttachedSource>,
     ) {
         if (work != null) return

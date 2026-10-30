@@ -27,7 +27,7 @@ import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.api.models.ExamDocument
-import com.zoonk.api.models.GoalUploadRequestRequest
+import com.zoonk.api.models.TodayUploadRequest
 import java.util.UUID
 
 /**
@@ -37,7 +37,7 @@ import java.util.UUID
 @Composable
 internal fun UploadRequestNotice(
     goalId: UUID,
-    request: GoalUploadRequestRequest?,
+    request: TodayUploadRequest?,
     store: OnboardingStore,
     visit: Int,
     layout: SuggestionLayout,
@@ -128,11 +128,11 @@ private class RequestCopy(
 )
 
 @Composable
-private fun requestCopy(request: GoalUploadRequestRequest): RequestCopy {
+private fun requestCopy(request: TodayUploadRequest): RequestCopy {
     val notice = request.examDocument == ExamDocument.NOTICE
 
     return when {
-        request.reason == GoalUploadRequestRequest.Reason.CLASS_MATERIAL -> {
+        request.reason == TodayUploadRequest.Reason.CLASS_MATERIAL -> {
             RequestCopy(
                 stringResource(R.string.research_class_title),
                 stringResource(R.string.research_class_body),
@@ -140,7 +140,7 @@ private fun requestCopy(request: GoalUploadRequestRequest): RequestCopy {
             )
         }
 
-        request.goalKind != GoalUploadRequestRequest.GoalKind.EXAM -> {
+        request.goalKind != TodayUploadRequest.GoalKind.EXAM -> {
             RequestCopy(
                 stringResource(R.string.research_source_title),
                 stringResource(R.string.research_source_body),
@@ -148,7 +148,7 @@ private fun requestCopy(request: GoalUploadRequestRequest): RequestCopy {
             )
         }
 
-        request.reason == GoalUploadRequestRequest.Reason.UNVERIFIED -> {
+        request.reason == TodayUploadRequest.Reason.UNVERIFIED -> {
             RequestCopy(
                 stringResource(R.string.research_unverified_title),
                 stringResource(if (notice) R.string.research_unverified_notice_body else R.string.research_unverified_guide_body),

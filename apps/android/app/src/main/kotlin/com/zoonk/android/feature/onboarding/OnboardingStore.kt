@@ -22,7 +22,6 @@ import com.zoonk.api.models.CreateUploadRequestOneOf2
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalGenerationRun
-import com.zoonk.api.models.GoalUploadRequestRequest
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestSpokenResult
@@ -354,18 +353,6 @@ class OnboardingStore(
             api.askMaterial(it, MaterialQuestionInput(language, question, sourceIds.map(UUID::fromString)))
         }
 
-    /** Today's word on a goal's sources: the latest change to what it studies, and what research asked to upload. */
-    val research =
-        cache.keyed<UUID, GoalResearch>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId ->
-            session?.let {
-                coroutineScope {
-                    val changes = async { api.sourceChanges(it, goalId) }
-                    val upload = async { api.uploadRequest(it, goalId) }
-                    GoalResearch(changes.await().firstOrNull()?.message, upload.await())
-                }
-            }
-        }
-
     /** The learner doesn't have the document: the ask leaves for good, and the plan follows the goal as typed. */
     suspend fun dismissUploadRequest(goalId: UUID) = write(setOf(DataDomain.Goals)) { api.dismissUploadRequest(it, goalId) }
 
@@ -550,11 +537,6 @@ data class AdviceQuery(
 data class CoverQuery(
     val goal: Goal,
     val input: PlanTimeToCoverInput,
-)
-
-data class GoalResearch(
-    val change: String?,
-    val upload: GoalUploadRequestRequest?,
 )
 
 internal data class CourseStarted(

@@ -171,10 +171,6 @@ private fun TodayRead(
                         plans = app.plans,
                         refreshIfChanged = app.today::refreshIfChanged,
                         language = language,
-                        research =
-                            app.onboarding.research[read.today.goal.id]
-                                .collectShown()
-                                .value,
                         onboarding = app.onboarding,
                     )
                 }

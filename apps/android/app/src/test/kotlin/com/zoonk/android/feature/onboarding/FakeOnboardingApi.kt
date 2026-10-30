@@ -14,7 +14,6 @@ import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalCreateResponse
 import com.zoonk.api.models.GoalGenerationRun
-import com.zoonk.api.models.GoalUploadRequestRequest
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestGeneration
@@ -39,8 +38,8 @@ import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.PlanTimeToCoverSuggested
 import com.zoonk.api.models.Source
-import com.zoonk.api.models.SourceChangeNoticesNoticesInner
 import com.zoonk.api.models.Syllabus
+import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -102,7 +101,7 @@ internal fun uploadAskOf(
     reason: String = "noOfficialSource",
     goalKind: String = "exam",
     examDocument: String = "notice",
-): GoalUploadRequestRequest =
+): TodayUploadRequest =
     ApiJson.decodeFromString(
         """{"examDocument":"$examDocument","goalId":"$GOAL_ID","goalKind":"$goalKind","language":"pt","reason":"$reason"}""",
     )
@@ -346,21 +345,9 @@ internal class FakeOnboardingApi : OnboardingApi {
         )
     }
 
-    var uploadAsk: GoalUploadRequestRequest? = null
-    var changes: List<SourceChangeNoticesNoticesInner> = emptyList()
     val dismissedAsks = mutableListOf<UUID>()
     val researchAnswers = mutableListOf<Pair<UUID, List<UUID>>>()
     var researchFailure: ApiException? = null
-
-    override suspend fun uploadRequest(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ) = uploadAsk
-
-    override suspend fun sourceChanges(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ) = changes
 
     override suspend fun dismissUploadRequest(
         session: AuthenticatedSession,

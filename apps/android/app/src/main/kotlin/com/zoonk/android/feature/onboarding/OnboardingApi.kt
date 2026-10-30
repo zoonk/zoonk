@@ -18,7 +18,6 @@ import com.zoonk.api.models.GoalCreateResponse
 import com.zoonk.api.models.GoalGenerationRun
 import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.GoalUpdateInput
-import com.zoonk.api.models.GoalUploadRequestRequest
 import com.zoonk.api.models.JoinInstrumentWaitlistRequest
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
@@ -44,7 +43,6 @@ import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.Source
-import com.zoonk.api.models.SourceChangeNoticesNoticesInner
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.UploadTokenRequest
 import com.zoonk.api.models.UploadTokenRequestPayload
@@ -180,16 +178,6 @@ interface OnboardingApi {
         session: AuthenticatedSession,
         input: MaterialQuestionInput,
     ): MaterialQuestionAnswer
-
-    suspend fun uploadRequest(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ): GoalUploadRequestRequest?
-
-    suspend fun sourceChanges(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ): List<SourceChangeNoticesNoticesInner>
 
     suspend fun dismissUploadRequest(
         session: AuthenticatedSession,
@@ -408,16 +396,6 @@ class LiveOnboardingApi(
         session: AuthenticatedSession,
         input: MaterialQuestionInput,
     ) = perform { api.streamingClients(session).sources.askMaterialQuestion(input) }
-
-    override suspend fun uploadRequest(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ) = perform { api.clients(session).sources.getGoalUploadRequest(goalId) }.request
-
-    override suspend fun sourceChanges(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ) = perform { api.clients(session).sources.listSourceChangeNotices(goalId) }.notices
 
     override suspend fun dismissUploadRequest(
         session: AuthenticatedSession,

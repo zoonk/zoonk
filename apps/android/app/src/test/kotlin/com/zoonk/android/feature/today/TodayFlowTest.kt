@@ -25,9 +25,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.goalcontent.examSyllabus
 import com.zoonk.android.feature.goalcontent.modulesSyllabus
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
-import com.zoonk.android.feature.onboarding.GoalResearch
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.uploadAskOf
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.StudyApi
@@ -39,6 +37,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.LanguageTodayPronunciation
 import com.zoonk.api.models.OpenStudyDayRequest
@@ -91,7 +90,6 @@ class TodayFlowTest {
     private val goal = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"
 
     private var language by mutableStateOf<LoadState<LanguageToday>?>(null)
-    private var research by mutableStateOf<LoadState<GoalResearch>?>(null)
 
     private fun show(
         vararg sessionFields: Pair<String, Any?>,
@@ -172,7 +170,6 @@ class TodayFlowTest {
                             .BuddyLook(),
                     buddyName = "Zu",
                     language = language,
-                    research = research,
                     onboarding = onboarding,
                     plans = PlanStore(plans, cache),
                     refreshIfChanged = store::refreshIfChanged,
@@ -182,43 +179,63 @@ class TodayFlowTest {
     }
 
     @Test
-    fun aLanguageGoalsWordsToSayAgainWinOverASuggestionReadBeforeThem() {
-        language = LoadState.Loading
+    fun aLanguageGoalsPracticeShowsWhenTodaysReadNamesIt() {
         val goal = fixture("today")["goal"]?.let { JsonObject(it.jsonObject + ("kind" to JsonPrimitive("language"))) }
-        show(
-            todayFields =
-                listOf(
-                    "goal" to goal,
-                    "studiedToday" to true,
-                    "suggestedGoal" to fixture("suggested-goal", "title" to "Chemistry"),
-                ),
-        )
-        rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
-
         language =
             LoadState.Loaded(
                 LanguageToday(level = null, pronunciation = LanguageTodayPronunciation(2, listOf("hola", "gracias")), speaking = null),
             )
+        show(
+            todayFields =
+                listOf(
+                    "goal" to goal,
+                    "notice" to "practice",
+                    "studiedToday" to true,
+                    "suggestedGoal" to fixture("suggested-goal", "title" to "Chemistry"),
+                ),
+        )
 
         rule.onNodeWithText("Say 2 words again").assertExists()
         rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
     }
 
     @Test
-    fun anUploadAskReadAfterTheDayWinsOverASuggestion() {
-        research = LoadState.Loading
+    fun theUploadAskComesWithTodaysReadWhenItNamesIt() {
         show(
             todayFields =
                 listOf(
+                    "notice" to "uploadRequest",
+                    "uploadRequest" to
+                        ApiJson.parseToJsonElement(
+                            """{"examDocument":"notice","goalId":"$goal","goalKind":"exam","language":"pt","reason":"noOfficialSource"}""",
+                        ),
                     "studiedToday" to true,
                     "suggestedGoal" to fixture("suggested-goal", "title" to "Chemistry"),
                 ),
         )
-        rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
-
-        research = LoadState.Loaded(GoalResearch(change = null, upload = uploadAskOf()))
 
         rule.onNodeWithText("We couldn't find the official notice").assertExists()
+        rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
+    }
+
+    @Test
+    fun aSourceChangeComesWithTodaysReadWhenItNamesIt() {
+        show(todayFields = listOf("notice" to "sourceChange", "sourceChange" to "The exam moved to November."))
+
+        rule.onAllNodesWithText("The exam moved to November.").onFirst().assertExists()
+    }
+
+    @Test
+    fun aNoticeTodaysReadDoesntNameStaysOut() {
+        show(
+            todayFields =
+                listOf(
+                    "notice" to null,
+                    "studiedToday" to true,
+                    "suggestedGoal" to fixture("suggested-goal", "title" to "Chemistry"),
+                ),
+        )
+
         rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
     }
 

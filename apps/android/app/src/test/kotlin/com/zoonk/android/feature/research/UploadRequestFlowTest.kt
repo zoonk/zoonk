@@ -25,7 +25,7 @@ import com.zoonk.android.feature.onboarding.uploadAskOf
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.CreateUploadRequest
-import com.zoonk.api.models.GoalUploadRequestRequest
+import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -44,7 +44,7 @@ class UploadRequestFlowTest {
 
     private val api = FakeOnboardingApi()
     private val goalId = UUID.fromString(GOAL_ID)
-    private var request by mutableStateOf<GoalUploadRequestRequest?>(uploadAskOf())
+    private var request by mutableStateOf<TodayUploadRequest?>(uploadAskOf())
     private var visit by mutableIntStateOf(0)
     private var layout by mutableStateOf(SuggestionLayout.Panel)
 

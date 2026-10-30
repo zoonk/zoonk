@@ -15,6 +15,7 @@ import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.SuggestedGoal
+import com.zoonk.api.models.Today
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -144,7 +145,7 @@ class TodayViewModel(
 
     fun holdNotice(
         read: TodayRead.Day,
-        picked: TodayNoticeKind?,
+        picked: Today.Notice?,
     ) {
         noticeHold = noticeHold.next(read.today.goal.id, read.day.localDate, picked, read.today.insight)
     }

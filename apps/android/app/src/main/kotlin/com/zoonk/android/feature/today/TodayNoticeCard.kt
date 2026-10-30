@@ -15,7 +15,6 @@ import com.zoonk.android.feature.exam.ExamMomentCard
 import com.zoonk.android.feature.exam.examMomentTitle
 import com.zoonk.android.feature.exam.icon
 import com.zoonk.android.feature.language.LanguagePracticeNotice
-import com.zoonk.android.feature.onboarding.GoalResearch
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.feature.plan.PlanEnd
@@ -41,6 +40,7 @@ import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MemoryInsightPlanChange
 import com.zoonk.api.models.SuggestedGoal
+import com.zoonk.api.models.Today
 import kotlinx.datetime.toJavaLocalDate
 
 /** What a notice needs from the screen: its read, the answers it saves, and where it leads. */
@@ -49,9 +49,7 @@ internal class TodayNoticeState(
     val viewModel: TodayViewModel,
     val navigate: (AppRoute) -> Unit,
     val plans: PlanStore? = null,
-    val host: HostNotices = HostNotices(),
     val language: LanguageToday? = null,
-    val research: GoalResearch? = null,
     val onboarding: OnboardingStore? = null,
 )
 
@@ -67,47 +65,56 @@ internal fun TodayNotice(
 ) {
     val read = state.read
     val viewModel = state.viewModel
-    val picked = pickTodayNotice(read.today, read.day, state.host)
+    val picked = read.today.notice
     LaunchedEffect(read.today.goal.id, read.day.localDate, picked, read.today.insight?.id) { viewModel.holdNotice(read, picked) }
     val hold = viewModel.noticeHold?.takeIf { it.goalId == read.today.goal.id && it.date == read.day.localDate }
 
     when (hold?.kind ?: picked) {
-        TodayNoticeKind.Exam -> {
+        Today.Notice.EXAM -> {
             read.today.exam?.let { ExamMomentNotice(it, state, layout, modifier) }
         }
 
-        TodayNoticeKind.ExamAccess -> {
+        Today.Notice.EXAM_ACCESS -> {
             ExamAccessNotice(state, layout, modifier)
         }
 
-        TodayNoticeKind.ExamChoice -> {
+        Today.Notice.EXAM_CHOICE -> {
             ExamChoiceNotice(state, layout, modifier)
         }
 
-        TodayNoticeKind.PlanChange -> {
+        Today.Notice.PLAN_CHANGE -> {
             PlanChangeNotice(state, layout, modifier)
         }
 
-        TodayNoticeKind.Insight -> {
+        Today.Notice.INSIGHT -> {
             (read.today.insight ?: hold?.insight)?.let { InsightNotice(it, state, layout, modifier) }
         }
 
-        TodayNoticeKind.SuggestedGoal -> {
+        Today.Notice.SUGGESTED_GOAL -> {
             read.today.suggestedGoal?.let { SuggestedGoalNotice(it, state, layout, modifier) }
         }
 
-        TodayNoticeKind.Practice -> {
+        Today.Notice.PRACTICE -> {
             state.language?.let {
                 LanguagePracticeNotice(read.today.goal.id, read.today.pattern, it.pronunciation, layout, state.navigate, modifier)
             }
         }
 
-        TodayNoticeKind.SourceChange -> {
-            state.research?.change?.let { SourceChangeNotice(it, layout, modifier) }
+        Today.Notice.SOURCE_CHANGE -> {
+            read.today.sourceChange?.let { SourceChangeNotice(it, layout, modifier) }
         }
 
-        TodayNoticeKind.UploadRequest -> {
-            state.onboarding?.let { UploadRequestNotice(read.today.goal.id, state.research?.upload, it, viewModel.visit, layout, modifier) }
+        Today.Notice.UPLOAD_REQUEST -> {
+            state.onboarding?.let {
+                UploadRequestNotice(
+                    read.today.goal.id,
+                    read.today.uploadRequest,
+                    it,
+                    viewModel.visit,
+                    layout,
+                    modifier,
+                )
+            }
         }
 
         null -> {}
