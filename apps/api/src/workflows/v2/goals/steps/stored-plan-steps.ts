@@ -68,15 +68,17 @@ export async function loadStoredCurriculumStep({
 
 async function adoptCurriculum({
   goalId,
+  replace,
   reusable,
 }: {
   goalId: string;
+  replace?: boolean;
   reusable: ReusableCurriculum;
 }): Promise<BuiltCurriculum> {
   const courseId = reusable.primaryCourseId ?? Object.values(reusable.courseIdsByKey)[0];
 
   if (courseId) {
-    await setGoalPrimaryCourse({ courseId, goalId });
+    await setGoalPrimaryCourse({ courseId, goalId, replace });
   }
 
   return toBuiltCurriculum({ generatedAt: new Date().toISOString(), stored: reusable });
@@ -133,5 +135,6 @@ export async function claimLanguageGraphStep({
     scope,
   });
 
-  return kept ? adoptCurriculum({ goalId: inputs.goal.id, reusable: kept }) : null;
+  // The goal's own build already set the course it found, which this graph doesn't plan from.
+  return kept ? adoptCurriculum({ goalId: inputs.goal.id, replace: true, reusable: kept }) : null;
 }

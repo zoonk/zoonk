@@ -1402,15 +1402,19 @@ describe(goalContentWorkflow, () => {
       const learners = await Promise.all([newGoal(answers), newGoal(answers)]);
       await Promise.all(learners.map(({ goal }) => goalContentWorkflow({ goalId: goal.id })));
 
-      const plans = await Promise.all(
-        learners.map(({ goal }) => prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } })),
-      );
+      const [plans, goals] = await Promise.all([
+        Promise.all(
+          learners.map(({ goal }) => prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } })),
+        ),
+        prisma.goal.findMany({ where: { id: { in: learners.map(({ goal }) => goal.id) } } }),
+      ]);
 
       const [first, second] = plans.map((plan) => planSkillIdsOf(plan));
 
       expect(generateSkillGraph).toHaveBeenCalledTimes(2);
       expect(first?.length).toBeGreaterThan(0);
       expect(second).toStrictEqual(first);
+      expect(new Set(goals.map((goal) => goal.primaryCourseId)).size).toBe(1);
     },
   );
 

@@ -18,12 +18,15 @@ export function getGoalCourseFormat({
   return kind === "language" ? "language" : "core";
 }
 
+/** Keeps a primary course the goal already has, unless `replace` asks for this one instead. */
 export async function setGoalPrimaryCourse({
   courseId,
   goalId,
+  replace = false,
 }: {
   courseId: string;
   goalId: string;
+  replace?: boolean;
 }): Promise<void> {
   const goal = await prisma.goal.findUnique({ select: { userId: true }, where: { id: goalId } });
 
@@ -36,7 +39,12 @@ export async function setGoalPrimaryCourse({
   const count = await writeLearnerChange(marker, async (tx) => {
     const updated = await tx.goal.updateMany({
       data: { primaryCourseId: courseId },
-      where: { id: goalId, primaryCourseId: null },
+      where: {
+        OR: replace
+          ? [{ primaryCourseId: null }, { primaryCourseId: { not: courseId } }]
+          : [{ primaryCourseId: null }],
+        id: goalId,
+      },
     });
 
     return updated.count > 0 ? updated.count : unchanged(0);
