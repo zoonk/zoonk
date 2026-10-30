@@ -5,6 +5,7 @@ import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-conte
 import { describe, expect, it } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
+import { CANVAS_LOAD_TIMEOUT_MS } from "../_test-utils/activity-canvas";
 import { press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { tabTo } from "../_test-utils/keyboard";
@@ -31,8 +32,6 @@ const TABLET_PORTRAIT = { height: 1180, width: 820 };
 type ActivityTemplate = keyof typeof activityContentFixtures;
 
 const ACTIVITY_TEMPLATES = Object.keys(activityContentFixtures) as ActivityTemplate[];
-
-const CANVAS_LOAD_TIMEOUT_MS = 10_000;
 
 const SCREENS: [string, () => PlayableLibraryStep][] = [
   ["hook", () => teachingStep("hook")],
