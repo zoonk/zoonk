@@ -187,6 +187,22 @@ class PlanRevealStepFlowTest {
     }
 
     @Test
+    fun goingBackWhileTodayLoadsKeepsTheLearnerWhereBackWent() {
+        val today = CompletableDeferred<Unit>()
+        show(prepareToday = { today.await() })
+        navigator.select(AppTab.Plan)
+        navigator.open(AppRoute.CatalogCourse("course"))
+
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.mainClock.advanceTimeByFrame()
+        navigator.back()
+        today.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.Plan(), navigator.currentRoute)
+    }
+
+    @Test
     fun adjustingWhileTodayLoadsKeepsTheLearnerWhereTheyWent() {
         val today = CompletableDeferred<Unit>()
         show(prepareToday = { today.await() })

@@ -109,6 +109,28 @@ internal fun ColumnScope.PlanRevealStep(
     val polls = (plan?.ready != true && !run.isStopped) || readingNotice
     val poll = rememberPoll(active = polls) { resource.refreshed() }
     LaunchedEffect(run.planMade) { if (run.planMade && polls) poll.restart() }
+    var opening by rememberSaveable { mutableStateOf(false) }
+    var starting by remember { mutableStateOf(false) }
+    LaunchedEffect(opening) {
+        if (!opening) return@LaunchedEffect
+        val from = navigator.currentRoute
+        val progress =
+            launch {
+                delay(TODAY_PROGRESS_DELAY)
+                starting = true
+            }
+        try {
+            prepareToday()
+        } finally {
+            progress.cancel()
+            starting = false
+        }
+        opening = false
+        if (navigator.currentRoute == from) {
+            navigator.closeSection()
+            navigator.open(AppRoute.Today)
+        }
+    }
 
     when {
         plan == null && polls && !poll.stopped -> {
@@ -134,16 +156,13 @@ internal fun ColumnScope.PlanRevealStep(
                 goal = goal,
                 syllabus = syllabus.value,
                 isGuest = isGuest,
-                onStart = {
-                    navigator.closeSection()
-                    navigator.open(AppRoute.Today)
-                },
+                starting = starting,
+                onStart = { opening = true },
                 // Adjust opens the Plan tab until the plan editor (F16) can open here.
                 onAdjust = {
                     navigator.closeSection()
                     navigator.open(AppRoute.Plan())
                 },
-                prepareToday = prepareToday,
                 onCreateAccount = { navigator.open(AppRoute.Login) },
                 onSeePlus = { navigator.open(AppRoute.Subscription) },
             )
@@ -235,38 +254,14 @@ private fun RevealBody(
     goal: Goal,
     syllabus: Syllabus?,
     isGuest: Boolean,
+    starting: Boolean,
     onStart: () -> Unit,
-    prepareToday: suspend () -> Unit,
     onAdjust: () -> Unit,
     onCreateAccount: () -> Unit,
     onSeePlus: () -> Unit,
 ) {
     val today = remember { LocalDate.now() }
     val coverage = revealCoverage(plan, goal.kind, syllabus)
-    var opening by rememberSaveable { mutableStateOf(false) }
-    var working by remember { mutableStateOf(false) }
-    LaunchedEffect(opening) {
-        if (!opening) return@LaunchedEffect
-        val progress =
-            launch {
-                delay(TODAY_PROGRESS_DELAY)
-                working = true
-            }
-        try {
-            prepareToday()
-        } finally {
-            progress.cancel()
-            working = false
-        }
-        if (opening) {
-            opening = false
-            onStart()
-        }
-    }
-    val leave = { exit: () -> Unit ->
-        opening = false
-        exit()
-    }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SuccessEyebrow(stringResource(R.string.onboarding_reveal_created))
@@ -277,9 +272,9 @@ private fun RevealBody(
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        StartButton(working, onClick = { opening = true })
+        StartButton(starting, onClick = onStart)
         FilledTonalButton(
-            onClick = { leave(onAdjust) },
+            onClick = onAdjust,
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.onboarding_reveal_adjust)) }
         if (isGuest) {
@@ -289,7 +284,7 @@ private fun RevealBody(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            TextButton(onClick = { leave(onCreateAccount) }) { Text(stringResource(R.string.onboarding_create_account_short)) }
+            TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account_short)) }
         }
     }
 
@@ -311,7 +306,7 @@ private fun RevealBody(
 
     // F16: the plan editor's coverage actions (move the date to cover everything, the syllabus's
     // topics) and choices (bases, study everything) go with this.
-    coverage?.let { CoverageWords(it, plan) { leave(onSeePlus) } }
+    coverage?.let { CoverageWords(it, plan, onSeePlus) }
 }
 
 @Composable
