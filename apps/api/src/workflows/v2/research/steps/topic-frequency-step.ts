@@ -3,7 +3,6 @@ import {
   findTopicFrequencyLookup,
   recordTopicFrequency,
 } from "@zoonk/core/library/exams/record-topic-frequency";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
 /** One search per subject: a lookup of every subject at once rated the first ones and left the rest out. */
@@ -26,9 +25,12 @@ export async function lookUpTopicFrequencyStep({
 
   const results = await Promise.allSettled(
     lookup.subjects.map(async (subject) => {
-      const { data } = await withAiRetry(() =>
-        findTopicFrequency({ ...lookup, analytics, subjects: [subject], today }),
-      );
+      const { data } = await findTopicFrequency({
+        ...lookup,
+        analytics,
+        subjects: [subject],
+        today,
+      });
 
       return data.subjects;
     }),

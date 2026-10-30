@@ -11,7 +11,6 @@ import {
   writeLessonContent,
 } from "@zoonk/core/library/lessons/write-content";
 import { prisma } from "@zoonk/db";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { type LessonStreamStep } from "./lesson-progress-step";
 
@@ -131,7 +130,7 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
   await using stream = createStepStream<LessonStreamStep>();
   await stream.status({ entityId: input.lessonId, status: "started", step: "writeLesson" });
 
-  const written = await withAiRetry(() => write({ input, lesson }));
+  const written = await write({ input, lesson });
 
   await stream.status({ entityId: input.lessonId, status: "completed", step: "writeLesson" });
 
@@ -144,5 +143,3 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
     status: "heldBack",
   };
 }
-
-writeLessonContentStep.maxRetries = 1;

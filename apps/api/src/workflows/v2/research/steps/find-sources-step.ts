@@ -5,7 +5,6 @@ import {
 import { type ExamResearchPlan, type ResearchTopic } from "@zoonk/ai/tasks/v2/research/plan";
 import { type SourceResearchPlan } from "@zoonk/ai/tasks/v2/research/source-plan";
 import { toSourceUrl } from "@zoonk/core/library/sources/fetch";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
 /** The prompt asks for 3 at most. */
@@ -62,9 +61,7 @@ export async function findSourcesStep({
 }): Promise<{ documents: FoundSourceDocument[]; officialFound: boolean }> {
   "use step";
 
-  const { data } = await withAiRetry(() =>
-    findOfficialSources({ analytics, plan, topic, unreadable }),
-  );
+  const { data } = await findOfficialSources({ analytics, plan, topic, unreadable });
 
   const documents =
     unreadable.length > 0

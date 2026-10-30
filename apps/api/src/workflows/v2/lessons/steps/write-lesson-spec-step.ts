@@ -13,7 +13,6 @@ import { getLessonSpecModel } from "@zoonk/core/library/curriculum/scope";
 import { releaseStaleLessonClaims } from "@zoonk/core/library/generation/state";
 import { loadLessonReuse } from "@zoonk/core/library/lessons/reuse";
 import { prisma } from "@zoonk/db";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { isRunActive } from "../../_shared/run-activity";
 import { type LessonStreamStep } from "./lesson-progress-step";
@@ -69,14 +68,12 @@ async function planLesson({
     lessonId,
   });
 
-  const { data, provenance } = await withAiRetry(() =>
-    generateLessonSpec({
-      ...inputs.prompt,
-      analytics: context,
-      model: getLessonSpecModel(inputs.scope),
-      serviceTier: chooseServiceTier({ reuse, wait }),
-    }),
-  );
+  const { data, provenance } = await generateLessonSpec({
+    ...inputs.prompt,
+    analytics: context,
+    model: getLessonSpecModel(inputs.scope),
+    serviceTier: chooseServiceTier({ reuse, wait }),
+  });
 
   const specs = await Promise.all(
     data.lessons.map((spec) => keepTeachingPictures({ analytics: context, spec })),

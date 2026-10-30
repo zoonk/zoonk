@@ -14,7 +14,6 @@ import {
   type OutlineChapter,
   saveOutlineChapter,
 } from "@zoonk/core/library/curriculum/save-outline-chapter";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { toContentAnalytics } from "../../_shared/content-analytics";
 import { deliverCourseContent } from "../../_shared/course-content-notification";
 import {
@@ -62,19 +61,17 @@ async function streamWaitedBand({
 
       const saved = await deliverCourseContent(
         collectCourseContentTags(() =>
-          withAiRetry(() =>
-            saveOutlineChapter({
-              analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-              chapter,
-              courseId,
-              goalSkills: plan.skills,
-              level: plan.level,
-              position,
-              provenance,
-              scope,
-              workflowRunId,
-            }),
-          ),
+          saveOutlineChapter({
+            analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+            chapter,
+            courseId,
+            goalSkills: plan.skills,
+            level: plan.level,
+            position,
+            provenance,
+            scope,
+            workflowRunId,
+          }),
         ),
       );
 

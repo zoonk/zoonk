@@ -1,7 +1,6 @@
 import { isCurrentEdition } from "@zoonk/core/library/exams/blueprint-reading";
 import { findSameExam } from "@zoonk/core/library/exams/find-same-exam";
 import { type ExamIdentity, buildExamIdentityKey } from "@zoonk/core/library/exams/identity";
-import { withAiRetry } from "../../_shared/ai-retry";
 
 type ExamBlueprintLookup = {
   identity: ExamIdentity;
@@ -19,7 +18,7 @@ export async function findExamBlueprintStep({
 }): Promise<ExamBlueprintLookup> {
   "use step";
 
-  const blueprint = await withAiRetry(() => findSameExam({ request: identity, searchTerms }));
+  const blueprint = await findSameExam({ request: identity, searchTerms });
 
   if (!blueprint) {
     return {

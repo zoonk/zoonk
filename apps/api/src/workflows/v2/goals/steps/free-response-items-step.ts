@@ -2,7 +2,6 @@ import { generateItems } from "@zoonk/ai/tasks/v2/items/generate";
 import { createItems } from "@zoonk/core/library/items/create";
 import { pickFreeResponseSkills } from "@zoonk/core/lookahead/free-response-skills";
 import { type PlacementItemSkill } from "@zoonk/core/lookahead/placement-item-skills";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { startPictureChecks } from "../../images/start-picture-checks";
 
@@ -25,17 +24,15 @@ export async function prepareFreeResponseItemStep({
 
   const { exam } = skill;
 
-  const { data, provenance } = await withAiRetry(() =>
-    generateItems({
-      analytics: toContentAnalytics({ analytics, scope: skill, workflowRunId }),
-      count: 1,
-      examFormat: exam,
-      format: "essay",
-      language: skill.language,
-      level: skill.level ?? "intermediate",
-      skill: { description: skill.description, name: skill.name },
-    }),
-  );
+  const { data, provenance } = await generateItems({
+    analytics: toContentAnalytics({ analytics, scope: skill, workflowRunId }),
+    count: 1,
+    examFormat: exam,
+    format: "essay",
+    language: skill.language,
+    level: skill.level ?? "intermediate",
+    skill: { description: skill.description, name: skill.name },
+  });
 
   const context = toContentAnalytics({ analytics, scope: skill, workflowRunId });
 

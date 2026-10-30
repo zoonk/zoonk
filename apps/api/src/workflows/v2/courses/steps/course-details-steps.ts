@@ -4,7 +4,6 @@ import {
 } from "@zoonk/core/cache/course-content";
 import { writeCourseDetails } from "@zoonk/core/library/courses/details";
 import { createCourseIcon } from "@zoonk/core/library/courses/icon";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 
 type CourseDetailsContext = {
@@ -24,13 +23,11 @@ export async function writeCourseDetailsStep(
   "use step";
 
   return collectCourseContentTags(() =>
-    withAiRetry(() =>
-      writeCourseDetails({
-        analytics: toSharedAnalytics(context),
-        copyOnly: context.copyOnly,
-        courseId: context.courseId,
-      }),
-    ),
+    writeCourseDetails({
+      analytics: toSharedAnalytics(context),
+      copyOnly: context.copyOnly,
+      courseId: context.courseId,
+    }),
   );
 }
 
@@ -40,8 +37,6 @@ export async function createCourseIconStep(
   "use step";
 
   return collectCourseContentTags(() =>
-    withAiRetry(() =>
-      createCourseIcon({ analytics: toSharedAnalytics(context), courseId: context.courseId }),
-    ),
+    createCourseIcon({ analytics: toSharedAnalytics(context), courseId: context.courseId }),
   );
 }

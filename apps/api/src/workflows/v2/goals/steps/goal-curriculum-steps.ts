@@ -27,7 +27,6 @@ import {
 } from "@zoonk/core/library/curriculum/scope";
 import { toScopedGraphPrompt } from "@zoonk/core/library/curriculum/shared-graph-prompt";
 import { safeAsync } from "@zoonk/utils/error";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { type GoalStreamStep } from "./goal-progress-step";
 
@@ -84,13 +83,11 @@ export async function decideGoalScopeStep({
     return toPrivateScope(goal);
   }
 
-  const { data } = await withAiRetry(() =>
-    classifyGoalSpecificity({
-      analytics: toContentAnalytics({ analytics, scope: shared, workflowRunId }),
-      goal: goal.prompt,
-      language: goal.language,
-    }),
-  );
+  const { data } = await classifyGoalSpecificity({
+    analytics: toContentAnalytics({ analytics, scope: shared, workflowRunId }),
+    goal: goal.prompt,
+    language: goal.language,
+  });
 
   if (data.privateCourse) {
     return toPrivateScope(goal);
@@ -170,13 +167,11 @@ export async function buildSkillGraphStep({
   await using stream = createStepStream<GoalStreamStep>();
   await stream.status({ entityId: inputs.goal.id, status: "started", step: "buildSkillGraph" });
 
-  const { data, provenance } = await withAiRetry(() =>
-    generateGraph({
-      analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-      prompt: toScopedGraphPrompt({ inputs, scope }),
-      scope,
-    }),
-  );
+  const { data, provenance } = await generateGraph({
+    analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    prompt: toScopedGraphPrompt({ inputs, scope }),
+    scope,
+  });
 
   await stream.status({ entityId: inputs.goal.id, status: "completed", step: "buildSkillGraph" });
 
@@ -204,25 +199,23 @@ export async function checkGraphCoverageStep({
   const prompt = toScopedGraphPrompt({ inputs, scope });
   const outline = prompt.goalKind === "exam" ? prompt.examBlueprint : undefined;
 
-  const coverage = await withAiRetry(() =>
-    checkCoverage({
-      analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-      examOutline: outline,
-      goal: prompt.goal,
-      goalKind: prompt.goalKind,
-      language: prompt.language,
-      references,
-      serviceTier: getGraphTier({ goalKind: prompt.goalKind, scope }),
-      skills: graph.skills.map(({ area, description, examWeight, key, name, topics }) => ({
-        area,
-        description,
-        examWeight,
-        key,
-        name,
-        topics,
-      })),
-    }),
-  );
+  const coverage = await checkCoverage({
+    analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    examOutline: outline,
+    goal: prompt.goal,
+    goalKind: prompt.goalKind,
+    language: prompt.language,
+    references,
+    serviceTier: getGraphTier({ goalKind: prompt.goalKind, scope }),
+    skills: graph.skills.map(({ area, description, examWeight, key, name, topics }) => ({
+      area,
+      description,
+      examWeight,
+      key,
+      name,
+      topics,
+    })),
+  });
 
   return applyGraphCoverage({ coverage: coverage.data, graph, outline });
 }
@@ -240,14 +233,12 @@ export async function saveGoalSkillsStep({
 }): Promise<Record<string, string>> {
   "use step";
 
-  return withAiRetry(() =>
-    saveGoalSkills({
-      analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-      provenance,
-      scope,
-      skills,
-    }),
-  );
+  return saveGoalSkills({
+    analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    provenance,
+    scope,
+    skills,
+  });
 }
 
 export async function linkSkillPrerequisitesStep(input: {

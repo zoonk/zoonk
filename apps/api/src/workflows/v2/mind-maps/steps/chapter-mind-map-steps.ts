@@ -10,7 +10,6 @@ import {
 } from "@zoonk/core/mind-maps/generation";
 import { safeAsync } from "@zoonk/utils/error";
 import { FatalError } from "workflow";
-import { withAiRetry } from "../../_shared/ai-retry";
 
 export async function writeMindMapStructureStep(input: {
   analytics: MindMapAnalytics;
@@ -18,7 +17,7 @@ export async function writeMindMapStructureStep(input: {
 }): Promise<void> {
   "use step";
 
-  await withAiRetry(() => writeChapterMindMapStructure(input));
+  await writeChapterMindMapStructure(input);
 }
 
 /** A drawn picture is paid for, so a failed store fails the run instead of retrying to draw another. */
@@ -29,7 +28,7 @@ export async function drawMindMapStep(input: {
 }): Promise<void> {
   "use step";
 
-  const drawn = await withAiRetry(() => drawChapterMindMap(input));
+  const drawn = await drawChapterMindMap(input);
 
   const { error } = await safeAsync(() =>
     showChapterMindMap({ chapterId: input.chapterId, drawn }),
@@ -48,7 +47,7 @@ export async function checkMindMapStep(input: {
 }): Promise<MindMapImageCheck> {
   "use step";
 
-  return withAiRetry(() => checkChapterMindMapImage(input));
+  return checkChapterMindMapImage(input);
 }
 
 export async function removeMindMapImageStep(input: {

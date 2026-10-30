@@ -7,7 +7,6 @@ import {
   type ExamFormatPick,
   pickExamFormatSkills,
 } from "@zoonk/core/lookahead/exam-format-skills";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { startPictureChecks } from "../../images/start-picture-checks";
 
@@ -39,25 +38,23 @@ export async function prepareExamFormatItemsStep({
   const { entry, format, select } = answerFormat;
   const context = toContentAnalytics({ analytics, scope: skill, workflowRunId });
 
-  const { data, provenance } = await withAiRetry(() =>
-    generateItems({
-      analytics: context,
-      count,
-      examFormat: skill.exam ? { ...skill.exam, entry, select } : null,
-      format,
-      language: skill.language,
-      level: skill.level ?? "intermediate",
-      serviceTier: chooseServiceTier({
-        reuse: getContentReuse({
-          forExam: skill.exam !== null,
-          ownerId: skill.ownerId,
-          targetLanguage: skill.targetLanguage,
-        }),
-        wait,
+  const { data, provenance } = await generateItems({
+    analytics: context,
+    count,
+    examFormat: skill.exam ? { ...skill.exam, entry, select } : null,
+    format,
+    language: skill.language,
+    level: skill.level ?? "intermediate",
+    serviceTier: chooseServiceTier({
+      reuse: getContentReuse({
+        forExam: skill.exam !== null,
+        ownerId: skill.ownerId,
+        targetLanguage: skill.targetLanguage,
       }),
-      skill: { description: skill.description, name: skill.name },
+      wait,
     }),
-  );
+    skill: { description: skill.description, name: skill.name },
+  });
 
   const { created, unchecked } = await createItems({
     analytics: context,

@@ -10,7 +10,6 @@ import {
   recordUnderstandingRun,
 } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
-import { withAiRetry } from "../../_shared/ai-retry";
 
 type UnderstandingStreamStep = GoalUnderstandingStepName | typeof WORKFLOW_ERROR_STEP;
 
@@ -34,7 +33,7 @@ export async function readGoalStep(draft: UnderstandingRunDraft): Promise<ReadWo
   await using stream = createStepStream<UnderstandingStreamStep>();
   await stream.status({ entityId: draft.id, status: "started", step: "readGoal" });
 
-  return await withAiRetry(() => readGoalWords(draft));
+  return await readGoalWords(draft);
 }
 
 export async function completeUnderstandingStep(input: {

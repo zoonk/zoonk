@@ -8,7 +8,6 @@ import {
   saveExamBlueprint,
 } from "@zoonk/core/library/exams/save";
 import { recordReusePolicy } from "@zoonk/core/library/sources/record-reuse-policy";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 import { type BlueprintReading } from "./extract-blueprint-step";
 
@@ -35,14 +34,12 @@ async function writeNotice({
     return null;
   }
 
-  const { data, provenance } = await withAiRetry(() =>
-    generateSourceChangeNotice({
-      analytics,
-      changes: formatChanges(changes),
-      language: identity.language,
-      source: identity.role ? `${identity.name}, ${identity.role}` : identity.name,
-    }),
-  );
+  const { data, provenance } = await generateSourceChangeNotice({
+    analytics,
+    changes: formatChanges(changes),
+    language: identity.language,
+    source: identity.role ? `${identity.name}, ${identity.role}` : identity.name,
+  });
 
   return { message: data.message, provenance };
 }

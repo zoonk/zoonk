@@ -25,7 +25,6 @@ import {
   readPlanOpeningToken,
 } from "@zoonk/core/lookahead/speculative-lessons";
 import { type GoalKind, prisma } from "@zoonk/db";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
 import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
@@ -56,15 +55,13 @@ export async function findGoalCoursesStep({
 
   const found = await Promise.all(
     courses.map(async (need) => {
-      const { course } = await withAiRetry(() =>
-        findOrCreateGoalCourse({
-          analytics: context,
-          format,
-          provenance,
-          scope,
-          title: need.title,
-        }),
-      );
+      const { course } = await findOrCreateGoalCourse({
+        analytics: context,
+        format,
+        provenance,
+        scope,
+        title: need.title,
+      });
 
       return [need.key, course.id] as const;
     }),

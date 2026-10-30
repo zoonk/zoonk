@@ -7,7 +7,6 @@ import {
   listLessonFieldItemTargets,
 } from "@zoonk/core/library/items/field-items";
 import { resolveGoalField } from "@zoonk/core/library/items/goal-field";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { startPictureChecks } from "../../images/start-picture-checks";
 
@@ -22,9 +21,7 @@ async function resolveGoalFieldStep({
 }): Promise<string | null> {
   "use step";
 
-  return withAiRetry(() =>
-    resolveGoalField({ analytics: { ...analytics, traceId: workflowRunId }, goalId }),
-  );
+  return resolveGoalField({ analytics: { ...analytics, traceId: workflowRunId }, goalId });
 }
 
 /** Null when sorting failed: field practice is extra, and the next preparation tries again. */
@@ -68,17 +65,15 @@ export async function prepareFieldItemsStep({
 
   const { field, skill } = target;
 
-  const { data, provenance } = await withAiRetry(() =>
-    generateItems({
-      analytics: toContentAnalytics({ analytics, scope: skill, workflowRunId }),
-      count: FIELD_ITEMS_PER_SKILL,
-      field,
-      format: "multipleChoice",
-      language: skill.language,
-      level: skill.level ?? "beginner",
-      skill: { description: skill.description, example: skill.example, name: skill.name },
-    }),
-  );
+  const { data, provenance } = await generateItems({
+    analytics: toContentAnalytics({ analytics, scope: skill, workflowRunId }),
+    count: FIELD_ITEMS_PER_SKILL,
+    field,
+    format: "multipleChoice",
+    language: skill.language,
+    level: skill.level ?? "beginner",
+    skill: { description: skill.description, example: skill.example, name: skill.name },
+  });
 
   const context = toContentAnalytics({ analytics, scope: skill, workflowRunId });
 

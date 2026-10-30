@@ -5,7 +5,6 @@ import {
   loadPastPaperText,
   savePastQuestions,
 } from "@zoonk/core/library/items/past-questions";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 
 /** A first set per paper: enough real questions for weeks of practice. */
@@ -35,18 +34,16 @@ export async function importPastQuestionsStep({
     return 0;
   }
 
-  const { data, provenance } = await withAiRetry(() =>
-    extractPastQuestions({
-      analytics: toContentAnalytics({ analytics, scope: { ownerId: null }, workflowRunId }),
-      count: QUESTIONS_PER_PAPER,
-      exam: target.exam,
-      format: target.format,
-      language: target.language,
-      optionCount: target.optionCount,
-      paper: { text: paperText, title: target.paper.title },
-      skills: target.skills.map(({ description, name }) => ({ description, name })),
-    }),
-  );
+  const { data, provenance } = await extractPastQuestions({
+    analytics: toContentAnalytics({ analytics, scope: { ownerId: null }, workflowRunId }),
+    count: QUESTIONS_PER_PAPER,
+    exam: target.exam,
+    format: target.format,
+    language: target.language,
+    optionCount: target.optionCount,
+    paper: { text: paperText, title: target.paper.title },
+    skills: target.skills.map(({ description, name }) => ({ description, name })),
+  });
 
   const { created } = await savePastQuestions({
     paperText,

@@ -2,7 +2,6 @@ import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { writeItemSet } from "@zoonk/ai/tasks/v2/items/write-set";
 import { storeWrittenItemSet } from "@zoonk/core/library/items/store-set";
 import { type ItemSetTarget, pickItemSetTargets } from "@zoonk/core/lookahead/item-set-targets";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 
 /** Questions on one stimulus: enough to need reading it well, few enough for one sitting. */
@@ -34,22 +33,20 @@ export async function prepareItemSetStep({
   const { format, skills, usedTitles } = target;
   const context = toContentAnalytics({ analytics, scope: first, workflowRunId });
 
-  const { data, provenance } = await withAiRetry(() =>
-    writeItemSet({
-      analytics: context,
-      examFormat: first.exam,
-      format,
-      language: first.language,
-      questionCount: QUESTIONS_PER_SET[format],
-      serviceTier: chooseServiceTier({ wait: "later" }),
-      skills: skills.map((skill) => ({
-        description: skill.description,
-        level: skill.level ?? "intermediate",
-        name: skill.name,
-      })),
-      usedTitles,
-    }),
-  );
+  const { data, provenance } = await writeItemSet({
+    analytics: context,
+    examFormat: first.exam,
+    format,
+    language: first.language,
+    questionCount: QUESTIONS_PER_SET[format],
+    serviceTier: chooseServiceTier({ wait: "later" }),
+    skills: skills.map((skill) => ({
+      description: skill.description,
+      level: skill.level ?? "intermediate",
+      name: skill.name,
+    })),
+    usedTitles,
+  });
 
   const stored = await storeWrittenItemSet({
     examBlueprintId: first.exam?.blueprintId ?? null,

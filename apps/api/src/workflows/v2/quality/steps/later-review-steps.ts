@@ -6,7 +6,6 @@ import {
   toLaterReviewProblems,
 } from "@zoonk/core/library/quality/later-reviews";
 import { type PublishedLessonOutcome } from "@zoonk/core/library/quality/published-checks";
-import { withAiRetry } from "../../_shared/ai-retry";
 
 export type LaterReviewOutcome = { outcome: PublishedLessonOutcome; version: number } | null;
 
@@ -27,13 +26,11 @@ export async function reviewLessonLaterStep({
 
   const { version, ...input } = review;
 
-  const { data } = await withAiRetry(() =>
-    checkLessonQuality({
-      ...input,
-      analytics: { contentScope: "shared", traceId: workflowRunId },
-      serviceTier: chooseServiceTier({ wait: "later" }),
-    }),
-  );
+  const { data } = await checkLessonQuality({
+    ...input,
+    analytics: { contentScope: "shared", traceId: workflowRunId },
+    serviceTier: chooseServiceTier({ wait: "later" }),
+  });
 
   const problems = toLaterReviewProblems(data.issues);
 

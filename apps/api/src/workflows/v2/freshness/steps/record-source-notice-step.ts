@@ -1,7 +1,6 @@
 import { generateSourceChangeNotice } from "@zoonk/ai/tasks/v2/research/source-change-notice";
 import { type SourceChange } from "@zoonk/core/library/exams/check-freshness";
 import { recordSourceChangeNotice } from "@zoonk/core/library/sources/notices";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../../research/_utils/research-analytics";
 
 export async function recordSourceNoticeStep({
@@ -19,14 +18,12 @@ export async function recordSourceNoticeStep({
     return null;
   }
 
-  const { data, provenance } = await withAiRetry(() =>
-    generateSourceChangeNotice({
-      analytics,
-      changes,
-      language: change.language,
-      source: change.title,
-    }),
-  );
+  const { data, provenance } = await generateSourceChangeNotice({
+    analytics,
+    changes,
+    language: change.language,
+    source: change.title,
+  });
 
   const notice = await recordSourceChangeNotice({
     contentHash: change.contentHash,

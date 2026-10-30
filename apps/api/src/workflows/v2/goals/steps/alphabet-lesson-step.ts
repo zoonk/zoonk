@@ -1,6 +1,5 @@
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { writeAlphabetLesson } from "@zoonk/core/library/language/write-alphabet-lesson";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics } from "../../_shared/content-analytics";
 
 export async function prepareAlphabetLessonStep({
@@ -20,12 +19,10 @@ export async function prepareAlphabetLessonStep({
 
   const targetLanguage = goal.targetLanguage;
 
-  await withAiRetry(() =>
-    writeAlphabetLesson({
-      analytics,
-      learnerLanguage: goal.language,
-      targetLanguage,
-      workflowRunId,
-    }),
-  );
+  await writeAlphabetLesson({
+    analytics,
+    learnerLanguage: goal.language,
+    targetLanguage,
+    workflowRunId,
+  });
 }

@@ -1,7 +1,6 @@
 import { findOfficialSources } from "@zoonk/ai/tasks/v2/research/find-official-sources";
 import { type UploadVisibility } from "@zoonk/ai/tasks/v2/research/upload-visibility";
 import { type SharedUpload, shareSourceUpload } from "@zoonk/core/library/sources/share-upload";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 import { isSameDocumentTitle } from "../_utils/title-match";
 
@@ -17,20 +16,18 @@ export async function confirmPublicDocumentStep({
 }): Promise<{ url: string } | null> {
   "use step";
 
-  const { data } = await withAiRetry(() =>
-    findOfficialSources({
-      analytics,
-      plan: {
-        board: decision.publisher,
-        country: ANY_COUNTRY,
-        edition: null,
-        name: decision.title,
-        officialDomains: [],
-        queries: [[decision.title, decision.publisher].filter(Boolean).join(" ")],
-        role: null,
-      },
-    }),
-  );
+  const { data } = await findOfficialSources({
+    analytics,
+    plan: {
+      board: decision.publisher,
+      country: ANY_COUNTRY,
+      edition: null,
+      name: decision.title,
+      officialDomains: [],
+      queries: [[decision.title, decision.publisher].filter(Boolean).join(" ")],
+      role: null,
+    },
+  });
 
   const match = data.documents.find(
     (document) =>

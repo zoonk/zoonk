@@ -8,7 +8,6 @@ import {
   type FlaggedDrillGroup,
   listFlaggedContent,
 } from "@zoonk/core/library/review-flags/flagged";
-import { withAiRetry } from "../../_shared/ai-retry";
 
 export async function listFlaggedContentStep(input: {
   flagIds?: string[];
@@ -27,17 +26,15 @@ export async function rewriteFlaggedDrillsStep({
 }): Promise<number> {
   "use step";
 
-  const { data, provenance } = await withAiRetry(() =>
-    generateStatuteDrills({
-      analytics: { contentScope: "shared", traceId: workflowRunId },
-      articles: [group.article],
-      count: group.itemIds.length,
-      fillInTheBlank: group.format === "typed",
-      language: group.language,
-      law: group.law,
-      style: group.style,
-    }),
-  );
+  const { data, provenance } = await generateStatuteDrills({
+    analytics: { contentScope: "shared", traceId: workflowRunId },
+    articles: [group.article],
+    count: group.itemIds.length,
+    fillInTheBlank: group.format === "typed",
+    language: group.language,
+    law: group.law,
+    style: group.style,
+  });
 
   return replaceFlaggedDrills({
     drills: data.drills,

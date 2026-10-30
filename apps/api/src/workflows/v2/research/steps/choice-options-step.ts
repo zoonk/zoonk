@@ -3,7 +3,6 @@ import {
   findChoiceOptionsLookup,
   recordChoiceOptions,
 } from "@zoonk/core/library/exams/record-choice-options";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
 export async function lookUpChoiceOptionsStep({
@@ -21,13 +20,11 @@ export async function lookUpChoiceOptionsStep({
     return;
   }
 
-  const { data } = await withAiRetry(() =>
-    findChoiceOptions({
-      ...lookup,
-      analytics,
-      today: new Date().toISOString().slice(0, "YYYY-MM-DD".length),
-    }),
-  );
+  const { data } = await findChoiceOptions({
+    ...lookup,
+    analytics,
+    today: new Date().toISOString().slice(0, "YYYY-MM-DD".length),
+  });
 
   await recordChoiceOptions({
     edition: data.edition,

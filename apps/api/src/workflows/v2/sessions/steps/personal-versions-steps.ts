@@ -6,7 +6,6 @@ import {
   type ToolVersionTarget,
   listLearnerVersionTargets,
 } from "@zoonk/core/library/variants/version-targets";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 
 export async function listLearnerVersionTargetsStep(input: {
@@ -29,14 +28,12 @@ export async function prepareToolVersionStep({
 }): Promise<string> {
   "use step";
 
-  const result = await withAiRetry(() =>
-    getOrCreateStepVariant({
-      analytics: toContentAnalytics({ analytics, scope: target, workflowRunId }),
-      key: target.key,
-      label: target.label,
-      stepId: target.stepId,
-    }),
-  );
+  const result = await getOrCreateStepVariant({
+    analytics: toContentAnalytics({ analytics, scope: target, workflowRunId }),
+    key: target.key,
+    label: target.label,
+    stepId: target.stepId,
+  });
 
   return result.status;
 }
@@ -52,13 +49,11 @@ export async function prepareFieldChallengeStep({
 }): Promise<string> {
   "use step";
 
-  const result = await withAiRetry(() =>
-    getOrCreateFieldChallenge({
-      analytics: toContentAnalytics({ analytics, scope: target, workflowRunId }),
-      field: target.field,
-      stepId: target.stepId,
-    }),
-  );
+  const result = await getOrCreateFieldChallenge({
+    analytics: toContentAnalytics({ analytics, scope: target, workflowRunId }),
+    field: target.field,
+    stepId: target.stepId,
+  });
 
   return result.status;
 }

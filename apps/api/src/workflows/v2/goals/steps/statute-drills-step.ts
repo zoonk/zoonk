@@ -7,7 +7,6 @@ import {
   loadStatuteDrillTargets,
   writeStatuteDrills,
 } from "@zoonk/core/exams/statutes/drill-targets";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 
 /** A first set per law: enough for a few days of drills, more as the plan reaches the law. */
@@ -30,17 +29,15 @@ export async function prepareStatuteDrillsStep({
 }): Promise<number> {
   "use step";
 
-  const { data, provenance } = await withAiRetry(() =>
-    generateStatuteDrills({
-      analytics: toContentAnalytics({ analytics, scope: { ownerId: null }, workflowRunId }),
-      articles: target.articles,
-      count: DRILLS_PER_LAW,
-      fillInTheBlank: target.fillInTheBlank,
-      language: target.language,
-      law: target.law,
-      style: target.style,
-    }),
-  );
+  const { data, provenance } = await generateStatuteDrills({
+    analytics: toContentAnalytics({ analytics, scope: { ownerId: null }, workflowRunId }),
+    articles: target.articles,
+    count: DRILLS_PER_LAW,
+    fillInTheBlank: target.fillInTheBlank,
+    language: target.language,
+    law: target.law,
+    style: target.style,
+  });
 
   return writeStatuteDrills({
     drills: data.drills,

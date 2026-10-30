@@ -8,7 +8,6 @@ import {
   setAsidePublishedLesson,
 } from "@zoonk/core/library/quality/published-checks";
 import { prisma } from "@zoonk/db";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics } from "../../_shared/content-analytics";
 import { type ImageScope, getImageScope } from "../../lessons/steps/write-lesson-content-step";
 
@@ -24,7 +23,7 @@ export async function checkPublishedLessonStep(
 ): Promise<PublishedLessonOutcome> {
   "use step";
 
-  return withAiRetry(() => checkPublishedLesson(input));
+  return checkPublishedLesson(input);
 }
 
 export async function redraftPublishedLessonStep(
@@ -32,17 +31,15 @@ export async function redraftPublishedLessonStep(
 ): Promise<PublishedLessonOutcome> {
   "use step";
 
-  return withAiRetry(() => redraftPublishedLesson(input));
+  return redraftPublishedLesson(input);
 }
-
-redraftPublishedLessonStep.maxRetries = 1;
 
 export async function citePublishedLessonStep(
   input: CheckStepInput & { plan: Pick<LessonCheckPlan, "lesson" | "version"> },
 ): Promise<number> {
   "use step";
 
-  return withAiRetry(() => citePublishedLesson(input));
+  return citePublishedLesson(input);
 }
 
 export async function setAsidePublishedLessonStep(input: {

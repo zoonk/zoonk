@@ -20,7 +20,6 @@ import {
 } from "@zoonk/core/library/explanations/save";
 import { resolveLibraryIdentity } from "@zoonk/core/library/identity/resolve";
 import { createSkill } from "@zoonk/core/library/skills/create";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { type ExplanationStreamStep } from "./explain-progress-step";
 
@@ -44,12 +43,10 @@ export async function classifyQuestionStep({ goal }: { goal: ExplainGoal }): Pro
   await using stream = createStepStream<ExplanationStreamStep>();
   await stream.status({ entityId: goal.id, status: "started", step: "classifyQuestion" });
 
-  const { isGeneral } = await withAiRetry(() =>
-    classifyQuestionGenerality({
-      analytics: { contentScope: "personal", distinctId: goal.userId, goalId: goal.id },
-      question: goal.question,
-    }),
-  );
+  const { isGeneral } = await classifyQuestionGenerality({
+    analytics: { contentScope: "personal", distinctId: goal.userId, goalId: goal.id },
+    question: goal.question,
+  });
 
   await stream.status({ entityId: goal.id, status: "completed", step: "classifyQuestion" });
   // The write starts next, unawaited: an explanation reused from before ends the stream while it may
@@ -93,12 +90,10 @@ async function findQuestionSkill({
     name: goal.question,
   };
 
-  const resolution = await withAiRetry(() =>
-    resolveLibraryIdentity({
-      analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-      request,
-    }),
-  );
+  const resolution = await resolveLibraryIdentity({
+    analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    request,
+  });
 
   if (resolution.kind === "existing") {
     const existingLessonId = await findExplanationLesson({ ownerId, skillId: resolution.id });
@@ -121,13 +116,11 @@ export async function writeExplanationStep({
 }> {
   "use step";
 
-  const { data, provenance } = await withAiRetry(() =>
-    generateQuickExplanation({
-      analytics: toContentAnalytics({ analytics, scope: { ownerId }, workflowRunId }),
-      language: goal.language,
-      question: goal.question,
-    }),
-  );
+  const { data, provenance } = await generateQuickExplanation({
+    analytics: toContentAnalytics({ analytics, scope: { ownerId }, workflowRunId }),
+    language: goal.language,
+    question: goal.question,
+  });
 
   const { problems, steps } = toExplanationSteps(data);
 
@@ -236,14 +229,12 @@ export async function findGoFurtherCourseStep({
     return null;
   }
 
-  const { course, created } = await withAiRetry(() =>
-    findOrCreateGoalCourse({
-      format: "core",
-      provenance,
-      scope: { language, ownerId: null, targetLanguage: null },
-      title: title.trim(),
-    }),
-  );
+  const { course, created } = await findOrCreateGoalCourse({
+    format: "core",
+    provenance,
+    scope: { language, ownerId: null, targetLanguage: null },
+    title: title.trim(),
+  });
 
   return { courseId: course.id, created };
 }

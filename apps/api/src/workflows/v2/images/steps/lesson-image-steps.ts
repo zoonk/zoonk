@@ -6,7 +6,6 @@ import {
   listLessonImageSteps,
   listLessonOptionPictures,
 } from "@zoonk/core/library/media/lesson-images";
-import { withAiRetry } from "../../_shared/ai-retry";
 
 export type ImageAnalytics = Parameters<typeof createStepImage>[0]["analytics"];
 
@@ -26,7 +25,7 @@ export async function createStepImageStep({
 }): Promise<StepImageOutcome> {
   "use step";
 
-  return withAiRetry(() => createStepImage({ analytics, stepId }));
+  return createStepImage({ analytics, stepId });
 }
 
 export async function listLessonOptionPicturesStep(
@@ -45,5 +44,5 @@ export async function createStepOptionPictureStep({
 }: OptionPictureTarget & { analytics?: ImageAnalytics }): Promise<StepImageOutcome> {
   "use step";
 
-  return withAiRetry(() => createStepOptionPicture({ analytics, optionId, stepId }));
+  return createStepOptionPicture({ analytics, optionId, stepId });
 }

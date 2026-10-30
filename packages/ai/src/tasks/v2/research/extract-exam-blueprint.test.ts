@@ -65,7 +65,6 @@ describe(extractExamBlueprint, () => {
       (error: unknown) => error,
     );
 
-    // A timeout is retried by the step (`withAiRetry`) once the provider recovers.
     expect(isTimeoutError(thrown)).toBe(true);
   });
 

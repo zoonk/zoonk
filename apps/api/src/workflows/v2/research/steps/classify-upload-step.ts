@@ -3,7 +3,6 @@ import {
   classifyUploadVisibility,
 } from "@zoonk/ai/tasks/v2/research/upload-visibility";
 import { loadSourceDocuments } from "@zoonk/core/library/sources/load-documents";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
 export async function classifyUploadStep({
@@ -21,9 +20,11 @@ export async function classifyUploadStep({
     return null;
   }
 
-  const { data } = await withAiRetry(() =>
-    classifyUploadVisibility({ analytics, document, fileName: document.title }),
-  );
+  const { data } = await classifyUploadVisibility({
+    analytics,
+    document,
+    fileName: document.title,
+  });
 
   return data;
 }

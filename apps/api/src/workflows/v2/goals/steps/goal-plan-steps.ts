@@ -6,7 +6,6 @@ import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-sk
 import { createGoalPlan } from "@zoonk/core/plans/create";
 import { isNoticeLandingExpiredError } from "@zoonk/core/plans/notice-wait";
 import { type PlanSetupTask, listPlanSetupTasks, runPlanSetupTask } from "@zoonk/core/plans/setup";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
 import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
 
@@ -91,7 +90,7 @@ export async function runPlanSetupTaskStep(input: {
 }): Promise<void> {
   "use step";
 
-  await withAiRetry(() => runPlanSetupTask(input));
+  await runPlanSetupTask(input);
 }
 
 export async function listPlanSetupTasksStep(goalId: string): Promise<PlanSetupTask[]> {

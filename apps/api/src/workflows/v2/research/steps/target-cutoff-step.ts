@@ -1,6 +1,5 @@
 import { findTargetCutoff } from "@zoonk/ai/tasks/v2/research/find-target-cutoff";
 import { findTargetCutoffLookup, recordTargetCutoff } from "@zoonk/core/exams/cutoffs/research";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
 export async function lookUpTargetCutoffStep({
@@ -20,16 +19,14 @@ export async function lookUpTargetCutoffStep({
     return;
   }
 
-  const { data, provenance } = await withAiRetry(() =>
-    findTargetCutoff({
-      analytics,
-      course: lookup.course,
-      exam: lookup.exam,
-      institution: lookup.institution,
-      position: lookup.position,
-      today,
-    }),
-  );
+  const { data, provenance } = await findTargetCutoff({
+    analytics,
+    course: lookup.course,
+    exam: lookup.exam,
+    institution: lookup.institution,
+    position: lookup.position,
+    today,
+  });
 
   await recordTargetCutoff({ finding: data, lookup, provenance });
 }

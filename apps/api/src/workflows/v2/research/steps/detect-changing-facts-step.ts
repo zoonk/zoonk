@@ -2,7 +2,6 @@ import {
   type ChangingFactsTopic,
   detectChangingFacts,
 } from "@zoonk/ai/tasks/v2/research/changing-facts";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchGoal } from "./load-research-goal-step";
 
 export async function detectChangingFactsStep({
@@ -20,10 +19,8 @@ export async function detectChangingFactsStep({
     return "none";
   }
 
-  return withAiRetry(() =>
-    detectChangingFacts({
-      analytics: { contentScope: "personal", distinctId: goal.userId, goalId: goal.id },
-      goal: `${goal.title}\n${goal.prompt}`,
-    }),
-  );
+  return detectChangingFacts({
+    analytics: { contentScope: "personal", distinctId: goal.userId, goalId: goal.id },
+    goal: `${goal.title}\n${goal.prompt}`,
+  });
 }

@@ -4,7 +4,6 @@ import {
   findCourseWeightsLookup,
   recordCourseWeights,
 } from "@zoonk/core/goals/course-weights-research";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
 export async function lookUpCourseWeightsStep({
@@ -23,16 +22,14 @@ export async function lookUpCourseWeightsStep({
     return;
   }
 
-  const { data, provenance } = await withAiRetry(() =>
-    findCourseWeights({
-      analytics,
-      course: lookup.course,
-      exam: lookup.exam,
-      institution: lookup.institution,
-      subjects: lookup.subjects,
-      today: now.toISOString().slice(0, "YYYY-MM-DD".length),
-    }),
-  );
+  const { data, provenance } = await findCourseWeights({
+    analytics,
+    course: lookup.course,
+    exam: lookup.exam,
+    institution: lookup.institution,
+    subjects: lookup.subjects,
+    today: now.toISOString().slice(0, "YYYY-MM-DD".length),
+  });
 
   await recordCourseWeights({ finding: data, goalId, lookup, provenance });
 }

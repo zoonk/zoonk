@@ -5,7 +5,6 @@ import {
   listReadableSourceIds,
   storeWebSource,
 } from "@zoonk/core/library/sources/web";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
 export type StoredSource = {
@@ -27,15 +26,13 @@ export async function storeSourceStep({
 }): Promise<StoredSource> {
   "use step";
 
-  const copyId = await withAiRetry(() =>
-    findWebSourceCopy({
-      analytics,
-      language,
-      publisher: document.publisher,
-      title: document.title,
-      url: document.url,
-    }),
-  );
+  const copyId = await findWebSourceCopy({
+    analytics,
+    language,
+    publisher: document.publisher,
+    title: document.title,
+    url: document.url,
+  });
 
   const { id } = copyId
     ? { id: copyId }

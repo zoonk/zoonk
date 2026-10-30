@@ -29,7 +29,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { logError } from "@zoonk/utils/logger";
 import { FatalError } from "workflow";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
 export type BlueprintReading = {
@@ -97,9 +96,7 @@ async function translateReadPassMarks({
   }
 
   const { data, error } = await safeAsync(() =>
-    withAiRetry(() =>
-      translatePassMarks({ analytics, languages: SUPPORTED_LOCALES, serviceTier, texts }),
-    ),
+    translatePassMarks({ analytics, languages: SUPPORTED_LOCALES, serviceTier, texts }),
   );
 
   if (error) {
@@ -144,17 +141,15 @@ export async function extractBlueprintStep({
     text: document.text,
   }));
 
-  const extraction = await withAiRetry(() =>
-    extractExamBlueprint({
-      analytics,
-      corrections: corrections.flatMap((problem) =>
-        toReadingCorrections({ documents: extractionDocuments, problem }),
-      ),
-      documents,
-      exam,
-      serviceTier,
-    }),
-  );
+  const extraction = await extractExamBlueprint({
+    analytics,
+    corrections: corrections.flatMap((problem) =>
+      toReadingCorrections({ documents: extractionDocuments, problem }),
+    ),
+    documents,
+    exam,
+    serviceTier,
+  });
 
   const facts = listBlueprintFacts({ documents: extractionDocuments, extraction: extraction.data });
   const citedFacts = toCitedFacts(facts);
@@ -162,7 +157,7 @@ export async function extractBlueprintStep({
   const [checks, findings, passMarks] = await Promise.all([
     Promise.all(
       toCheckBatches(citedFacts).map((batch) =>
-        withAiRetry(() => checkCitedFacts({ analytics, facts: batch, serviceTier })),
+        checkCitedFacts({ analytics, facts: batch, serviceTier }),
       ),
     ),
     shared

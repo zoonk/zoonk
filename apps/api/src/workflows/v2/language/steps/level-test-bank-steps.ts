@@ -6,7 +6,6 @@ import {
 import { writeLevelTestBank } from "@zoonk/core/language/level-test/write-bank";
 import { type LevelTestBankStepName } from "@zoonk/core/library/generation/steps";
 import { type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics } from "../../_shared/content-analytics";
 
 export type LevelTestBankStreamStep = LevelTestBankStepName | typeof WORKFLOW_ERROR_STEP;
@@ -28,16 +27,14 @@ export async function writeLevelTestBankStep({
 }): Promise<WriteStatus> {
   "use step";
 
-  const { status } = await withAiRetry(() =>
-    writeLevelTestBank({
-      analytics: {
-        distinctId: analytics?.distinctId,
-        goalId: analytics?.goalId,
-        traceId: workflowRunId,
-      },
-      pair,
-    }),
-  );
+  const { status } = await writeLevelTestBank({
+    analytics: {
+      distinctId: analytics?.distinctId,
+      goalId: analytics?.goalId,
+      traceId: workflowRunId,
+    },
+    pair,
+  });
 
   return status;
 }
@@ -62,15 +59,13 @@ export async function voiceLevelTestPassageStep({
 }): Promise<void> {
   "use step";
 
-  await withAiRetry(() =>
-    voiceLevelTestPassage({
-      analytics: {
-        distinctId: analytics?.distinctId,
-        goalId: analytics?.goalId,
-        traceId: workflowRunId,
-      },
-      language,
-      text,
-    }),
-  );
+  await voiceLevelTestPassage({
+    analytics: {
+      distinctId: analytics?.distinctId,
+      goalId: analytics?.goalId,
+      traceId: workflowRunId,
+    },
+    language,
+    text,
+  });
 }

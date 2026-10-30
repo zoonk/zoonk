@@ -35,7 +35,6 @@ import {
   tagTeachingChapters,
 } from "@zoonk/core/library/curriculum/teaching-chapters";
 import { logError } from "@zoonk/utils/logger";
-import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
 import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
@@ -186,17 +185,15 @@ async function coverBandSkills({
 
   const chapters = await loadBandChapters({ courseId, level: plan.level, ownerId: null });
 
-  const { data } = await withAiRetry(() =>
-    findTeachingChapters({
-      analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-      chapters: chapters.map(({ lessons, title }) => ({ lessons, title })),
-      courseTitle: plan.courseTitle,
-      language: scope.language,
-      level: plan.level,
-      serviceTier: getBandTier({ ...input, background, waitedSkillId }),
-      skills: plan.skills.map(({ description, key, name }) => ({ description, key, name })),
-    }),
-  );
+  const { data } = await findTeachingChapters({
+    analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    chapters: chapters.map(({ lessons, title }) => ({ lessons, title })),
+    courseTitle: plan.courseTitle,
+    language: scope.language,
+    level: plan.level,
+    serviceTier: getBandTier({ ...input, background, waitedSkillId }),
+    skills: plan.skills.map(({ description, key, name }) => ({ description, key, name })),
+  });
 
   const chapterAt = (number: number | null) =>
     number === null ? null : (chapters[number - 1]?.chapterId ?? null);
@@ -244,12 +241,13 @@ export async function writeOutlineBandStep({
   const serviceTier = getBandTier({ ...input, background, waitedSkillId });
 
   if (waitedKey && plan.extensions.length === 0) {
-    return withAiRetry(() => writeWaitedBand({ input, serviceTier, waitedKey }));
+    return writeWaitedBand({ input, serviceTier, waitedKey });
   }
 
-  const { data, provenance } = await withAiRetry(() =>
-    generateCourseOutline({ ...toOutlineParams(input), serviceTier }),
-  );
+  const { data, provenance } = await generateCourseOutline({
+    ...toOutlineParams(input),
+    serviceTier,
+  });
 
   return { chapters: pickChapters({ outline: data, plan }), early: null, provenance };
 }
@@ -275,19 +273,17 @@ export async function saveOutlineChapterStep({
   "use step";
 
   return collectCourseContentTags(() =>
-    withAiRetry(() =>
-      saveOutlineChapter({
-        analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-        chapter,
-        courseId,
-        goalSkills,
-        level,
-        position,
-        provenance,
-        scope,
-        workflowRunId,
-      }),
-    ),
+    saveOutlineChapter({
+      analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+      chapter,
+      courseId,
+      goalSkills,
+      level,
+      position,
+      provenance,
+      scope,
+      workflowRunId,
+    }),
   );
 }
 

@@ -49,8 +49,6 @@ export async function preparePartSetStep(input: PartStepInput): Promise<string |
   });
 }
 
-preparePartSetStep.maxRetries = 1;
-
 export async function voiceListeningSetStep({
   setId,
   ...input

@@ -1553,7 +1553,7 @@ describe(courseOutlineWorkflow, () => {
           workflowRunId: "outline-run",
         });
 
-      await expect(save()).rejects.toMatchObject({ name: "RetryableError", retryAfter: "1m" });
+      await expect(save()).rejects.toBeInstanceOf(EvaluationTimeoutError);
 
       const { value: saved } = await save();
 

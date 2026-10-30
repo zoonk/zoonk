@@ -184,8 +184,6 @@ export async function writePlacementBatchStep({
   return stored.filter((result) => result.status === "fulfilled" && result.value).length;
 }
 
-writePlacementBatchStep.maxRetries = 1;
-
 export async function isGoalInPlacementWeekStep(input: {
   goalId: string;
   timeZone: string;
