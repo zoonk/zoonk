@@ -2,19 +2,25 @@ package com.zoonk.android.feature.plan
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.height
+import androidx.compose.ui.unit.width
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanChangePreview
@@ -25,7 +31,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
@@ -152,6 +160,29 @@ class PlanSheetsTest {
         compose.onNode(hasText("Study everything") and hasClickAction()).performClick()
 
         assertEquals(listOf(PlanPart.FullCourse to listOf<PlanOp>(PlanOp.TargetDate(null))), changes)
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun theProgressRingsLeaveTheirLabelsRoomToReadInWordsAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        val page = page(learnPlan())
+        compose.setContent {
+            val links = PlanLinks(rememberAppNavigator(), page)
+            ZoonkTheme {
+                Column(Modifier.padding(horizontal = SHEET_MARGIN)) {
+                    PreparationDetails(
+                        progress(),
+                        forExam = false,
+                        lessons = Standing.Progress(progress(), 13, 46),
+                        links = links,
+                    )
+                }
+            }
+        }
+
+        val label = compose.onNodeWithText("Long-term memory", useUnmergedTree = true).getBoundsInRoot()
+        assertTrue(label.width > label.height)
     }
 
     @Test

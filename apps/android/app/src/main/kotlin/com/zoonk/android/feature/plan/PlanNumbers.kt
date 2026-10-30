@@ -10,15 +10,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +39,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -688,20 +688,22 @@ private fun PreparationParts(
         )
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        parts.chunked(2).forEach { row ->
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                row.forEach { part ->
-                    val value = part.value?.let { formatPercent(it, locale) }
-                    Row(
-                        modifier = Modifier.weight(1f).semantics(mergeDescendants = true) {},
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        PartRing(part.value, value)
-                        Column {
-                            Text(part.label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
-                            MetaLine(part.caption)
-                        }
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            maxItemsInEachRow = 2,
+        ) {
+            parts.forEach { part ->
+                val value = part.value?.let { formatPercent(it, locale) }
+                Row(
+                    modifier = Modifier.weight(1f).semantics(mergeDescendants = true) {},
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PartRing(part.value, value)
+                    Column {
+                        Text(part.label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                        MetaLine(part.caption)
                     }
                 }
             }
@@ -733,11 +735,11 @@ private fun PartRing(
 ) {
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
     val fill = MaterialTheme.colorScheme.tertiary
+    val style = MaterialTheme.typography.labelLarge.withTabularFigures()
     Box(
         modifier =
             Modifier
-                .sizeIn(minWidth = 56.dp, minHeight = 56.dp)
-                .aspectRatio(1f)
+                .size(with(LocalDensity.current) { style.fontSize.toDp() * RING_TO_LABEL })
                 .drawBehind {
                     val width = 4.dp.toPx()
                     val inset = width / 2
@@ -749,16 +751,19 @@ private fun PartRing(
                     ) {
                         drawArc(fill, -90f, sweep, false, Offset(inset, inset), arcSize, style = Stroke(width, cap = StrokeCap.Round))
                     }
-                }.padding(10.dp),
+                },
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = value ?: "–",
-            style = MaterialTheme.typography.labelLarge.withTabularFigures(),
+            style = style,
             color = if (value == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
         )
     }
 }
+
+/** Main's 56dp ring around its 14sp percentage, kept in proportion at any text size. */
+private const val RING_TO_LABEL = 4
 
 private data class StillNeededItem(
     val kind: LearnKind,
