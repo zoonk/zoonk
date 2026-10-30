@@ -89,7 +89,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   var nextBlockId: String?
   var nextPosition: Int?
   let plusLessons: [PlusLesson]
-  let state: DayState
+  var state: DayState
   let status: Status
   let week: StudyWeek
 
@@ -117,6 +117,9 @@ struct StudyDay: Decodable, Equatable, Sendable {
       }
 
       day.nextPosition = next.position
+    } else {
+      // A day with nothing next is done, as core says once Today is read again.
+      day.state = .done
     }
 
     return day
