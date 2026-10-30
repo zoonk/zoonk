@@ -68,16 +68,16 @@ private struct CatalogLessonList: View {
       if case .choice(let context, let guess, let options, let question) = value.firstScreen {
         Section {
           if let context, !context.isEmpty {
-            ItemText(context)
+            LessonTextBlocks(context)
               .foregroundStyle(.secondary)
           }
 
-          ItemText(question)
+          LessonTextBlocks(question)
             .font(.headline)
 
           ForEach(options) { option in
             Label {
-              ItemText(option.text)
+              LessonRichText(option.text)
             } icon: {
               Image(systemName: "circle.fill")
                 .imageScale(.small)
