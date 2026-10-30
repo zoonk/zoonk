@@ -101,6 +101,7 @@ class NextStopTest {
                     )
                 },
                 generations = { generations },
+                now = { rule.mainClock.currentTime },
             )
         var drawn by mutableIntStateOf(0)
 
@@ -238,6 +239,52 @@ class NextStopTest {
 
         rule.onNodeWithText("This didn't finish").assertExists()
         rule.onNodeWithText("Try again").assertExists()
+    }
+
+    @Test
+    fun aFailedLessonWrittenAgainElsewhereIsFollowedAndOffered() {
+        statuses += listOf(LessonReadiness.Status.FAILED, LessonReadiness.Status.GENERATING)
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("This didn't finish").assertExists()
+
+        rule.mainClock.advanceTimeBy(5_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("This lesson is being written for you. It's usually ready in about two minutes.").assertExists()
+
+        rule.mainClock.advanceTimeBy(5_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Your lesson is ready.").assertExists()
+    }
+
+    @Test
+    fun aWaitDrawnAnewKeepsItsDeadline() {
+        dayReadsShow += List(10) { unchanged }
+        val drawAnew = show()
+        rule.mainClock.advanceTimeBy(15_000)
+        drawAnew()
+        rule.mainClock.advanceTimeBy(6_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("This didn't start").assertExists()
+    }
+
+    @Test
+    fun aStuckWaitKeepsItsNoticeWhenTheScreenIsDrawnAnew() {
+        dayReadsShow += List(10) { unchanged }
+        val drawAnew = show()
+        rule.mainClock.advanceTimeBy(21_000)
+        rule.waitForIdle()
+        drawAnew()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("This didn't start").assertExists()
     }
 
     @Test

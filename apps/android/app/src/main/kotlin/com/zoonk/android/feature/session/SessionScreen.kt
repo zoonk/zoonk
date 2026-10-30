@@ -312,11 +312,10 @@ internal fun NextStop(
         }
     val waiting = lesson != null
     val run by viewModel.run.collectAsStateWithLifecycle()
-    var stuck by remember(step.position) { mutableStateOf<NextStopLesson?>(null) }
     val failure =
         when {
             lesson == NextStopLesson.Failed -> GenerationFailure.Generation
-            lesson == null || stuck != lesson -> null
+            lesson == null || viewModel.stuckWait != step.position to lesson -> null
             lesson == NextStopLesson.NotStarted -> GenerationFailure.NotStarted
             else -> GenerationFailure.Generation
         }
@@ -356,9 +355,9 @@ internal fun NextStop(
     }
     val runWrote = run.status == GenerationRun.Status.Ready && lesson == NextStopLesson.Writing
     LaunchedEffect(runWrote) { if (runWrote) refresh?.invoke() }
-    LaunchedEffect(lesson) {
-        delay(STUCK_AFTER_MILLIS[lesson] ?: return@LaunchedEffect)
-        stuck = lesson
+    LaunchedEffect(step.position, lesson) {
+        val after = STUCK_AFTER_MILLIS[lesson] ?: return@LaunchedEffect
+        viewModel.awaitStuck(step.position, lesson ?: return@LaunchedEffect, after)
     }
     val retry = { goalId?.let { viewModel.start(day, step, it) } }
 
@@ -539,9 +538,6 @@ private fun StudySession.alternativeTo(step: StudyBlock): DayStep? =
         }?.toDayStep()
 
 private val OPEN = setOf(StudyBlock.Status.ACTIVE, StudyBlock.Status.PENDING)
-
-/** Main's `NextStopLesson` while it isn't ready: what the next stop waits on. */
-private enum class NextStopLesson { NotStarted, Writing, Failed }
 
 /** Main's `STUCK_AFTER_MS`: when a wait that hasn't moved says so, with Try again. */
 private val STUCK_AFTER_MILLIS = mapOf(NextStopLesson.NotStarted to 20_000L, NextStopLesson.Writing to 300_000L)

@@ -125,7 +125,8 @@ class SessionViewModel(
     /**
      * Reads [lessonId]'s readiness every few seconds and follows the run writing it, reading the day
      * again once it's written: the wait shows until the day does, so its step is offered as ready. A
-     * lesson nobody writes is waited on only when the learner [asked] for it, and a failed one isn't.
+     * lesson nobody writes is waited on only when the learner [asked] for it; a failed one is still
+     * read, since it may be written again elsewhere.
      */
     suspend fun followLesson(
         lessonId: UUID,
@@ -149,7 +150,6 @@ class SessionViewModel(
                             lesson = LessonState(lessonId, status)
                         }
                         if (status == LessonReadiness.Status.GENERATING) follow(read.value.generationId)
-                        if (status == LessonReadiness.Status.FAILED) return
                         if (status == LessonReadiness.Status.NOT_STARTED && !asked) return
                     }
                 }
@@ -159,6 +159,24 @@ class SessionViewModel(
             follower.stop()
             followedRun = null
         }
+    }
+
+    /** The shown step's wait that went on too long, which says so with Try again. */
+    var stuckWait by mutableStateOf<Pair<Long, NextStopLesson>?>(null)
+        private set
+
+    private var currentWait: Pair<Pair<Long, NextStopLesson>, Long>? = null
+
+    /** Marks the wait for [lesson] on the step at [position] stuck [after] it began, counting from its start across a rotation. */
+    suspend fun awaitStuck(
+        position: Long,
+        lesson: NextStopLesson,
+        after: Long,
+    ) {
+        val wait = position to lesson
+        val began = currentWait?.takeIf { it.first == wait }?.second ?: now().also { currentWait = wait to it }
+        delay(began + after - now())
+        stuckWait = wait
     }
 
     /** Try again on a run whose updates stopped: it may still be writing. */
@@ -220,6 +238,9 @@ class SessionViewModel(
 }
 
 internal const val LESSON_CHECK_MILLIS = 5_000L
+
+/** Main's `NextStopLesson` while it isn't ready: what the next stop waits on. */
+enum class NextStopLesson { NotStarted, Writing, Failed }
 
 data class LessonState(
     val id: UUID,
