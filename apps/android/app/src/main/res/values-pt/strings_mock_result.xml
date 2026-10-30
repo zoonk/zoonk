@@ -16,7 +16,6 @@
   "mock_result_calibration": "3dbef2fa951de1b4eb274f19cb6173658fc1fe1213c205a97764cc8fa89e7edd",
   "mock_result_calibration_detail": "aa8dbb570be17daa36269953e052eb1d76927f76659f4d8affdd840d513946a0",
   "mock_result_cant_move": "6cea80a509b634bcff58d2c6d267a81f156f07dd8b8042307aa57441a7f38e8b",
-  "mock_result_collapsed": "8b38ed415cb7f0a6d4eefc5f9d98af39375859afeb8826c847fd688a06fdcb33",
   "mock_result_consistency": "ee1ea980f2869300d22d045656da5d09d3f09b8357c4b23eaaa928854ad5ee3f",
   "mock_result_consistency_detail": "50d6f82ed03ab5fe84733cc780f6868b7692391c393ec91cf9f3866b66647dbd",
   "mock_result_continue": "627c1cbf52d9cdb907e22bf318b0ab8fc856ff00252f81fb37a95b9dfa43b4c1",
@@ -26,7 +25,6 @@
   "mock_result_easy_wrong": "9a30f2d734310e78205680ac0f87d1715bca2d06026a18828d8166091ed3b985",
   "mock_result_estimate_detail": "e6a203e66a65de02c149ab589fa6dba2b257b007dadd325bcc74ec2281551896",
   "mock_result_estimated_score": "4c8f15fe642d4e90ea377b727a6e8bb0fb79ccb1bd8f11a7e0036870db834a61",
-  "mock_result_expanded": "4147b1cad44b131c2b5d155aa000cccb3fda0193220b82f8d3ccd160823c6834",
   "mock_result_focus_done": "5fcfd73800893271f0ee694c43617a78a0da95bb1e3fafb7728b0cef18005bcb",
   "mock_result_focus_title": "16f82e39e86d2b7a6878554730deb16d14eab885a2cfe539385d0f5cfee7d038",
   "mock_result_grade_it": "7e44c8e4ed54359e90125b1f2d70d865e36359e7d8e46366ac041fb164321807",
@@ -151,9 +149,6 @@
         <item quantity="many">mais %d tópicos</item>
         <item quantity="other">mais %d tópicos</item>
     </plurals>
-    <!-- Read by TalkBack on an area that opens to show its topics. -->
-    <string name="mock_result_expanded">Expandido</string>
-    <string name="mock_result_collapsed">Recolhido</string>
     <string name="mock_result_insights">O que o simulado mostrou</string>
     <string name="mock_result_timing">Tempo</string>
     <!-- %1$d is the seconds the learner took per question in one subject; %2$s is that subject's name, such as "Mathematics"; %3$s is the seconds to aim for. -->

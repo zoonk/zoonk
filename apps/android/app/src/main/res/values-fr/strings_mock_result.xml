@@ -16,7 +16,6 @@
   "mock_result_calibration": "47d2573365a419c1937930f6d4777d6cedabb8111d5199b27de67d2cc010c404",
   "mock_result_calibration_detail": "660175d961debb19924de52442f69c2d0222ef1be644c2933d52d4337eff534e",
   "mock_result_cant_move": "e053b399f5f473c4a2eb3ec3c8a1fe23b10a4050c9312085299047f34d054f0e",
-  "mock_result_collapsed": "2fe62e2dd0acb0f63184f514849f8c19af9b8fc942d526a981ebaf4cb1c3cff2",
   "mock_result_consistency": "c84d4d12a2a2d32930ac2a70d92835b8932e58d376ddfbd81feac9bb7dbe7d2c",
   "mock_result_consistency_detail": "242a1929a290daf3d2ecf49595092a09421d5d1fc927c2808d28dadc4e55cc33",
   "mock_result_continue": "05d4590b702b872e2e3f531b4ea953030388a88a8e7999224433d3b76b71e013",
@@ -26,7 +25,6 @@
   "mock_result_easy_wrong": "5040ac4c8b44b7404321b7796298736cc7f7a9aed2c114cb2aa7e473480c64e2",
   "mock_result_estimate_detail": "429e2cd5c472b962193042157777163ef91e7f7c93988c00b2dcb05ea0aea632",
   "mock_result_estimated_score": "4d6ccbdec1afa34f24e99a45c8ce6d84869892b7180498cf32ac59c71e0c2528",
-  "mock_result_expanded": "9bbf00caff6cef791b23ea15e599d9488ca1977e49b4c53354c2f65b559b7948",
   "mock_result_focus_done": "fca2addadf8014120cb2fa0e26957fc1a1312c10722ccac84808ce66adaadd5a",
   "mock_result_focus_title": "a276d024bd822cfe7387988bd678eff2a4ba798d38d0d6e1d87fc6712b0d36fc",
   "mock_result_grade_it": "4adff0c56eb8d628144846d40391212f9bdf804be8689c91c1459c1396a8bc15",
@@ -151,9 +149,6 @@
         <item quantity="many">%d thèmes supplémentaires</item>
         <item quantity="other">%d thèmes supplémentaires</item>
     </plurals>
-    <!-- Read by TalkBack on an area that opens to show its topics. -->
-    <string name="mock_result_expanded">Développé</string>
-    <string name="mock_result_collapsed">Réduit</string>
     <string name="mock_result_insights">Ce que l’examen blanc a révélé</string>
     <string name="mock_result_timing">Temps</string>
     <!-- %1$d is the seconds the learner took per question in one subject; %2$s is that subject's name, such as "Mathematics"; %3$s is the seconds to aim for. -->

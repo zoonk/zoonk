@@ -130,10 +130,6 @@
         <item quantity="one">The query took more than %d second and was stopped.</item>
         <item quantity="other">The query took more than %d seconds and was stopped.</item>
     </plurals>
-    <!-- A table's state, for TalkBack. -->
-    <string name="activities_code_table_expanded">Expanded</string>
-    <!-- A table's state, for TalkBack. -->
-    <string name="activities_code_table_collapsed">Collapsed</string>
     <plurals name="activities_code_table_rows">
         <item quantity="one">%d row</item>
         <item quantity="other">%d rows</item>

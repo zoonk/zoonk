@@ -77,8 +77,6 @@
   "activities_code_step_to_see": "13f5a9ce75985fc49a509d2149c81289473bceb8bbb2395a76d3bdc4a89cf408",
   "activities_code_stopped_after": "4c2cf8108e5a349c0c3999e5b96a461011652d05cc063b162765c62287eeece7",
   "activities_code_symbols": "c564fcae24dc02ee2175d2afa733495fea7742a5867c3defab62ade4f721f103",
-  "activities_code_table_collapsed": "987bcc1e8b2a93cb11b8ea9634be778c047066bb4a1b0d5c046e2f22251c5e8a",
-  "activities_code_table_expanded": "632680c51ae3ae598a86dabb060472746f89ffe15998510b91b603880e988882",
   "activities_code_table_named": "ed7a26f6b39fc1a01e2f1fb448ba19ca67c3c6bf0cdc5fefb7a017a6b028a694",
   "activities_code_table_rows": "d27bae19689ecb9afe51696527bc4a8701cc22a58a4809b2f59b4c76ab2a15c7",
   "activities_code_too_much_output": "5d20a830313f83b5b40439910158de16f8b9f9bdf23d30e4f074e0fce580a7bf",
@@ -227,10 +225,6 @@
         <item quantity="many">La consulta tardó más de %d segundos y se detuvo.</item>
         <item quantity="other">La consulta tardó más de %d segundos y se detuvo.</item>
     </plurals>
-    <!-- A table's state, for TalkBack. -->
-    <string name="activities_code_table_expanded">Expandida</string>
-    <!-- A table's state, for TalkBack. -->
-    <string name="activities_code_table_collapsed">Contraída</string>
     <plurals name="activities_code_table_rows">
         <item quantity="one">%d fila</item>
         <item quantity="many">%d filas</item>

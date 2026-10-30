@@ -77,8 +77,6 @@
   "activities_code_step_to_see": "1fc8888a6c7aaa32e14070d7df01ec244e85ae1c3b92658aae0fc7b00fdc5604",
   "activities_code_stopped_after": "b7379d6f844d67d728f153987298fe1652135d8366bc9e19344461c5c424396a",
   "activities_code_symbols": "deb2060cb15ceefecbf724cf8cc0b8fdf45248abd83b5e8814c648f9a19d78c1",
-  "activities_code_table_collapsed": "20de31acfea204e387e571363edc1b7687ceb94325fd32b31a3651d007aedb7d",
-  "activities_code_table_expanded": "0e3f49e1037dbaf122dbc9097d257f106c843bb7c401027ef6726fce1ecda42a",
   "activities_code_table_named": "777e8eb60b7f1383647538b517699e43bdebffb0d861a847f916c57903303845",
   "activities_code_table_rows": "988bd6b090696a888579cb9f3980b254f7b8171a9b36eca3fda05a37b10955ec",
   "activities_code_too_much_output": "b77cdb493dba335ea5fa04670252b29c8328dc126754c6334f6a01ba2bc42431",
@@ -227,10 +225,6 @@
         <item quantity="many">La requête a dépassé %d secondes et a été arrêtée.</item>
         <item quantity="other">La requête a dépassé %d secondes et a été arrêtée.</item>
     </plurals>
-    <!-- A table's state, for TalkBack. -->
-    <string name="activities_code_table_expanded">Développé</string>
-    <!-- A table's state, for TalkBack. -->
-    <string name="activities_code_table_collapsed">Réduit</string>
     <plurals name="activities_code_table_rows">
         <item quantity="one">%d ligne</item>
         <item quantity="many">%d lignes</item>

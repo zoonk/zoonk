@@ -191,7 +191,7 @@ private fun SqlTableViewer(table: SqlTable) {
     val colors = MaterialTheme.colorScheme
     val shape = RoundedCornerShape(12.dp)
     var open by rememberSaveable(table.name) { mutableStateOf(table.rows.size <= OPEN_ROW_LIMIT) }
-    val state = stringResource(if (open) R.string.activities_code_table_expanded else R.string.activities_code_table_collapsed)
+    val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
     val mono = FontFamily.Monospace
 
     Column(

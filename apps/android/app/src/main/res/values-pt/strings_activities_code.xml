@@ -77,8 +77,6 @@
   "activities_code_step_to_see": "89ffc1eeb783fb6b102cc63556199c3d80d49a1c7ff543d5cf5513b42aed275f",
   "activities_code_stopped_after": "19ea7502d430de49e4077d3f3d527e0c74140732128cd4d4ba67785746ad8738",
   "activities_code_symbols": "25c582279fdc49a310953715b0ed853827df2f7616f8fb585ad646132567d2da",
-  "activities_code_table_collapsed": "a8eec93f35866ceb7af8f69f94e0b4289b6b5b70893cbd4ff59f820f5c98f2e8",
-  "activities_code_table_expanded": "b6ef7fbcd957f1d9d0c21973352e3edb7e14703d414481e3d7354c60f8ec59d1",
   "activities_code_table_named": "d1f571d9388a3de56eca5e732b181a06a4f42064eb0abfa9676c89f361342b8e",
   "activities_code_table_rows": "258766812d19f0226c66f42437551d40b1c57ec723a0f1085c6cbed02239dbea",
   "activities_code_too_much_output": "6329f025dc7bd703e0b2b6d1ec243b08442445d5e115b206e4e04a060272e73f",
@@ -227,10 +225,6 @@
         <item quantity="many">A consulta levou mais de %d segundos e foi interrompida.</item>
         <item quantity="other">A consulta levou mais de %d segundos e foi interrompida.</item>
     </plurals>
-    <!-- A table's state, for TalkBack. -->
-    <string name="activities_code_table_expanded">Expandida</string>
-    <!-- A table's state, for TalkBack. -->
-    <string name="activities_code_table_collapsed">Recolhida</string>
     <plurals name="activities_code_table_rows">
         <item quantity="one">%d linha</item>
         <item quantity="many">%d linhas</item>

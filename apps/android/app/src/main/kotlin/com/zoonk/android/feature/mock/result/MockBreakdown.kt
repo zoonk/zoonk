@@ -82,7 +82,7 @@ private fun AreaRow(
 ) {
     val score = area.score?.let { scoreRange(it.low, it.high) } ?: rightOf(area.correct, area.total)
     var open by rememberSaveable(area.name) { mutableStateOf(false) }
-    val state = stringResource(if (open) R.string.mock_result_expanded else R.string.mock_result_collapsed)
+    val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
     val folds = topics.isNotEmpty()
 
     Column {
@@ -126,7 +126,7 @@ private fun TopicRows(topics: List<MockResultTopicsInner>) {
 
     TopicList(sorted.take(TOPICS_SHOWN))
     if (rest.isNotEmpty()) {
-        val state = stringResource(if (more) R.string.mock_result_expanded else R.string.mock_result_collapsed)
+        val state = stringResource(if (more) R.string.disclosure_expanded else R.string.disclosure_collapsed)
         TextButton(onClick = { more = !more }, modifier = Modifier.semantics { stateDescription = state }) {
             Text(pluralStringResource(R.plurals.mock_result_more_topics, rest.size, rest.size))
             Icon(

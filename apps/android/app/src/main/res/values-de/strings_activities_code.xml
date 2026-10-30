@@ -77,8 +77,6 @@
   "activities_code_step_to_see": "7a42b243b64d3d080688370021c6da4da43bf2d5f52f4e419553a249abd43540",
   "activities_code_stopped_after": "c3af8741acb22f60c6199edafd278d06a3f26db762e648241ccb8fa29b617273",
   "activities_code_symbols": "81f8cc72215ddf4a476eb99ea21d7b268eb1be2a0f3afb60348e3ecacfc3152f",
-  "activities_code_table_collapsed": "655a6b6d24359efedde7bf1ffb89b784f30ae30c2b1fc6d840153867e136b41c",
-  "activities_code_table_expanded": "fd3f1bff0b8b1134ea848f1ac3f844c4c02c3f050dca28beb1ac58264205eec8",
   "activities_code_table_named": "1a2201cb78183fc0fc21a04e7f75bb7fe707ff25ec390d9f6cc53f35a549ebd3",
   "activities_code_table_rows": "c57a4a47fb17791b1f465eed0040145e4485070c4c47f998203c959ab390742e",
   "activities_code_too_much_output": "2f7f78d34ca0aa348de07f7ecf4716e173d36368ee04c676476d223618c97dd0",
@@ -222,10 +220,6 @@
         <item quantity="one">Die Abfrage dauerte länger als %d Sek. und wurde gestoppt.</item>
         <item quantity="other">Die Abfrage dauerte länger als %d Sek. und wurde gestoppt.</item>
     </plurals>
-    <!-- A table's state, for TalkBack. -->
-    <string name="activities_code_table_expanded">Ausgeklappt</string>
-    <!-- A table's state, for TalkBack. -->
-    <string name="activities_code_table_collapsed">Eingeklappt</string>
     <plurals name="activities_code_table_rows">
         <item quantity="one">%d Zeile</item>
         <item quantity="other">%d Zeilen</item>
