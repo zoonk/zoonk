@@ -3,13 +3,12 @@ import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { LEARN_KINDS, hasUnwrittenSkill } from "../../plans/planner/plan-item-rules";
 import { type PlanGraph } from "../../plans/planner/plan-state";
-import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 
 const LESSON_LOOKAHEAD = 8;
 
-/** Scale lookahead with day length so long study days cannot stop at the fixed eight-lesson floor. */
+/** A lesson takes at least a minute, so a day can't hold more lessons than its minutes. */
 export function getLessonLookahead(dayMinutes: number): number {
-  return Math.max(LESSON_LOOKAHEAD, Math.ceil(dayMinutes / DEFAULT_LESSON_MINUTES));
+  return Math.max(LESSON_LOOKAHEAD, Math.ceil(dayMinutes));
 }
 
 type DayItem = Pick<PlanItem, "chapterId" | "lessonId" | "scheduledFor" | "skillId"> &

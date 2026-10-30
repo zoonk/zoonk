@@ -228,9 +228,9 @@ describe("an exam day whose subjects aren't all written yet", () => {
 });
 
 describe(getLessonLookahead, () => {
-  it("looks ahead at a lesson for every few minutes of the day, and at least eight", () => {
-    expect([15, 30, 120, 240].map((minutes) => getLessonLookahead(minutes))).toStrictEqual([
-      8, 8, 30, 60,
+  it("looks ahead at a lesson for every minute of the day, and at least eight", () => {
+    expect([5, 15, 30, 240].map((minutes) => getLessonLookahead(minutes))).toStrictEqual([
+      8, 15, 30, 240,
     ]);
   });
 });

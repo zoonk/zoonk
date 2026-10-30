@@ -6,7 +6,9 @@ import { mockSession } from "../_test-utils/mock-session";
 import { MAX_DAILY_MINUTES } from "../plans/daily-minutes";
 import { getLearningShare } from "../plans/planner/plan-phases";
 import { getTodayStudySession } from "./_test-utils/open-today";
-import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
+import { SESSION_NOW, SESSION_TODAY, sessionGoalFixture } from "./_test-utils/session-goal";
+import { planStudyDay } from "./_utils/plan-study-day";
+import { readSavedDayPlan } from "./_utils/selected-day-plan";
 
 describe("a long study day", () => {
   beforeEach(() => {
@@ -78,6 +80,42 @@ describe("a long study day", () => {
 
     expect(learn).toHaveLength(10);
     expect(learn.reduce((sum, block) => sum + block.estimatedMinutes, 0)).toBe(30);
+  });
+
+  it("loads no more lessons than a day's minutes hold for a learner back to a long overdue backlog", async () => {
+    const user = await userFixture();
+
+    const { goal, plan } = await sessionGoalFixture({
+      goal: { dailyMinutes: 15 },
+      itemsPerSkill: 1,
+      lessons: 60,
+      userId: user.id,
+    });
+
+    await prisma.planItem.updateMany({
+      data: { scheduledFor: new Date("2026-09-01T00:00:00Z") },
+      where: { kind: "lesson", planId: plan.id },
+    });
+
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    const selection = await readSavedDayPlan({ goal: saved, now: SESSION_NOW, timeZone: "UTC" });
+
+    if (!selection) {
+      throw new Error("Expected the saved plan's day");
+    }
+
+    const day = await planStudyDay({
+      blueprint: null,
+      goal: saved,
+      localDate: SESSION_TODAY,
+      now: SESSION_NOW,
+      selection,
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    expect(day.input.lessons.length).toBeGreaterThan(0);
+    expect(day.input.lessons.length).toBeLessThanOrEqual(15);
   });
 
   it("gives lessons the learn share of a whole day the learner gives, as the week counts the day", async () => {

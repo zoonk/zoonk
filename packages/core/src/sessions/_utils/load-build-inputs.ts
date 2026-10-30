@@ -170,7 +170,7 @@ export async function loadSessionBuildInput(
     dayPlan?: Awaited<ReturnType<typeof loadDayPlan>> | ReturnType<typeof loadDayPlan>;
   },
 ): Promise<SessionBuildInput> {
-  const { goal, keepsBlocks = false, localDate, now, timeZone, userId } = context;
+  const { goal, keepsBlocks = false, keptLessonIds, localDate, now, timeZone, userId } = context;
 
   const [plan, awaitingOutlines] = await Promise.all([
     context.dayPlan ?? loadDayPlan(context),
@@ -204,7 +204,7 @@ export async function loadSessionBuildInput(
     weekly,
     produce,
   ] = await Promise.all([
-    loadUpcomingLessons({ ...context, dayMinutes, items: learnItems }),
+    loadUpcomingLessons({ dayMinutes, items: learnItems, keptLessonIds }),
     loadAlphabetIntro({ goal, userId }),
     loadReviewsAndClaims({
       claims: { goal, graph: plan.graph, now, skillIds: testSkillIds, today: localDate, userId },
