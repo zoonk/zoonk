@@ -51,9 +51,28 @@ struct TodayView: Decodable, Equatable, Sendable {
     let lessons: Int?
   }
 
-  struct ExamMoment: Decodable, Equatable, Sendable {
-    let examName: String
-    let stage: String
+  /// Core picks the one notice Today shows, the most pressing first.
+  enum Notice: String, Decodable, Sendable {
+    case exam
+    case examAccess
+    case examChoice
+    case insight
+    case planChange
+    case practice
+    case sourceChange
+    case suggestedGoal
+    case uploadRequest
+  }
+
+  /// One of the exam's choices the learner hasn't picked yet; the plan studies none of its options.
+  struct ExamChoice: Decodable, Equatable, Sendable {
+    struct Option: Decodable, Equatable, Sendable {
+      let name: String
+      let shortName: String?
+    }
+
+    let group: String
+    let options: [Option]
   }
 
   struct MockFunding: Decodable, Equatable, Sendable {
@@ -61,8 +80,15 @@ struct TodayView: Decodable, Equatable, Sendable {
   }
 
   struct PlanChange: Decodable, Equatable, Sendable {
-    /// Set when missed days put the goal's date at risk: the Plan's catch-up choices answer it.
-    struct Behind: Decodable, Equatable, Sendable {}
+    /// Set when missed days put the goal's date at risk.
+    struct Behind: Decodable, Equatable, Sendable {
+      let canFocus: Bool
+      let coveredAfter: Double
+      let coveredBefore: Double
+      let currentMinutes: Int
+      /// `exam` or `goal`.
+      let measure: String
+    }
 
     struct OfficialDate: Decodable, Equatable, Sendable {
       let date: String
@@ -106,17 +132,22 @@ struct TodayView: Decodable, Equatable, Sendable {
 
   let earlierWork: [EarlierWork]
   let exam: ExamMoment?
+  let examChoice: ExamChoice?
   let goal: Goal
   /// At most one, until it's answered.
   let insight: MemoryInsight?
   /// `ready`, `generating`, `notStarted` or `failed`, by lesson.
   let lessonStatus: [String: String]
   let mockFunding: MockFunding?
+  let notice: Notice?
   let pattern: Pattern?
   let planChange: PlanChange?
   let progress: Progress?
   let session: StudyDay
+  /// The newest change to the source material the goal follows, in a sentence.
+  let sourceChange: String?
   let studiedToday: Bool
+  let suggestedGoal: SuggestedGoal?
   let weeklyChallenge: WeeklyChallenge?
 
   func isBeingWritten(_ block: StudyBlock) -> Bool {

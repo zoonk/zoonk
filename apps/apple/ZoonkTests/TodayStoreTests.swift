@@ -460,12 +460,12 @@ private func planChange(status: String, canUndo: Bool = false) throws -> TodayVi
 
 private func today(session: StudyDay, planChange: TodayView.PlanChange? = nil) throws -> TodayView {
   TodayView(
-    earlierWork: [], exam: nil,
+    earlierWork: [], exam: nil, examChoice: nil,
     goal: try decode(
       #"{"dateEstimated":false,"daysLeft":null,"id":"g1","kind":"learn","title":"Goal"}"#),
-    insight: nil, lessonStatus: [:], mockFunding: nil, pattern: nil,
-    planChange: planChange, progress: nil, session: session, studiedToday: false,
-    weeklyChallenge: nil)
+    insight: nil, lessonStatus: [:], mockFunding: nil, notice: nil, pattern: nil,
+    planChange: planChange, progress: nil, session: session, sourceChange: nil,
+    studiedToday: false, suggestedGoal: nil, weeklyChallenge: nil)
 }
 
 private func opened(target: StudyBlock) throws -> OpenedStudyDay {

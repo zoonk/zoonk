@@ -13,6 +13,9 @@ struct TodayDayView: View {
   @State private var tapTask: Task<Void, Never>?
   @State private var disclosures = TodayDisclosures()
   @State private var writingStalled = false
+  /// Main's `useShownNotice`: the notice Today opened with stays while the learner is here, so
+  /// answering it shows what the answer did; the next waits for the next visit.
+  @State private var shownNotice: TodayView.Notice?
 
   enum Tap: Equatable {
     case block(Int)
@@ -27,25 +30,34 @@ struct TodayDayView: View {
     PaneSplit(primaryShare: 0.55) {
       List {
         // It asks for a decision, so it leads the day where the day has room beside it.
-        planChange
+        notice
         day
       }
     } secondary: {
       List {
         aside
-        notices
         TodayPracticeSection(view: view, language: language)
       }
     } single: {
       List {
         day
-        planChange
-        notices
+        notice
         aside
         TodayPracticeSection(view: view, language: language)
       }
     }
     .listStyle(.insetGrouped)
+    .onAppear(perform: startVisit)
+    .onChange(of: isCovered) {
+      if !isCovered {
+        startVisit()
+      }
+    }
+    .onChange(of: view.notice) {
+      if shownNotice == nil {
+        shownNotice = view.notice
+      }
+    }
     .modifier(LanguageTodayLoading(goal: view.goal))
     .navigationSubtitle(dayLine)
     .task(id: view.session.localDate) {
@@ -99,17 +111,27 @@ struct TodayDayView: View {
   }
 
   @ViewBuilder
-  private var notices: some View {
-    TodayLanguagePracticeSection(view: view, language: language)
-
-    if let insight = view.insight {
-      Section {
-        MemoryInsightCard(insight: insight)
+  private var notice: some View {
+    switch shownNotice ?? view.notice {
+    case .planChange:
+      planChange
+    case .insight:
+      if let insight = view.insight {
+        Section {
+          MemoryInsightCard(insight: insight)
+        }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets())
       }
-      .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets())
+    case .practice:
+      TodayLanguagePracticeSection(view: view, language: language)
+    case .sourceChange:
+      if let message = view.sourceChange {
+        TodaySourceChangeSection(message: message)
+      }
+    case .exam, .examAccess, .examChoice, .suggestedGoal, .uploadRequest, nil:
+      EmptyView()
     }
-
   }
 
   @ViewBuilder
@@ -142,9 +164,9 @@ struct TodayDayView: View {
             : String(localized: "\(daysLeft) days left", table: "Today", comment: "Days left"))
     }
 
-    if let exam = view.exam, exam.stage == "dayBefore" || exam.stage == "examDay" {
+    if let exam = view.exam, exam.stage == .dayBefore || exam.stage == .examDay {
       parts.append(
-        exam.stage == "dayBefore"
+        exam.stage == .dayBefore
           ? String(localized: "\(exam.examName) tomorrow", table: "Today", comment: "Exam soon")
           : String(localized: "\(exam.examName) today", table: "Today", comment: "Exam day"))
     }
@@ -245,6 +267,12 @@ struct TodayDayView: View {
     }
 
     writingStalled = true
+  }
+
+  /// Main reads Today afresh on each visit (back from a lesson or another tab): what the learner
+  /// answered stays only while they're here.
+  private func startVisit() {
+    shownNotice = view.notice
   }
 }
 
