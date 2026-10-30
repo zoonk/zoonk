@@ -1810,6 +1810,35 @@
         }
       }
     },
+    "A course in the Library fits your goal" : {
+      "comment" : "Above a Library course that teaches the learner's goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Kurs in der Bibliothek passt zu deinem Ziel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un curso de la Biblioteca se ajusta a tu objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un cours de la Bibliothèque correspond à ton objectif"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um curso da Biblioteca combina com sua meta"
+          }
+        }
+      }
+    },
     "A few quick questions about the %lld areas, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer." : {
       "comment" : "What placement is for an exam with several areas",
       "localizations" : {

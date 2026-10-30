@@ -117,6 +117,41 @@
         }
       }
     },
+    "%lld of %lld" : {
+      "comment" : "Checklist items ticked off of all of them",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld von %2$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %2$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld sur %2$lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %2$lld"
+          }
+        }
+      }
+    },
     "%lld of %lld answered" : {
       "comment" : "A running mock's progress",
       "localizations" : {
@@ -1176,6 +1211,35 @@
         }
       }
     },
+    "For exam day" : {
+      "comment" : "Title of the exam day's checklist",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für den Prüfungstag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para el día del examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour le jour de l’examen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para o dia da prova"
+          }
+        }
+      }
+    },
     "From %@ to %@." : {
       "comment" : "The scale's range",
       "localizations" : {
@@ -1299,7 +1363,7 @@
       }
     },
     "How did it go?" : {
-      "comment" : "Asks for the official result",
+      "comment" : "Asks for the official result\nAsks how the exam went, once it's over",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3191,6 +3255,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Horários de fechamento dos portões e de início da prova"
+          }
+        }
+      }
+    },
+    "When your official result comes out, add it here. It helps make estimates more accurate for everyone." : {
+      "comment" : "Asks for the official result once the exam is over",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn dein offizielles Ergebnis da ist, trag es hier ein. Das hilft, die Schätzungen für alle genauer zu machen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando salga tu resultado oficial, añádelo aquí. Así las estimaciones serán más precisas para todos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand ton résultat officiel sera publié, ajoute-le ici. Cela aide à rendre les estimations plus précises pour tout le monde."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando seu resultado oficial sair, adicione ele aqui. Isso ajuda a tornar as estimativas mais precisas para todo mundo."
           }
         }
       }

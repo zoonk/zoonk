@@ -2622,6 +2622,64 @@
         }
       }
     },
+    "Add your class material" : {
+      "comment" : "Asks for a class's material, since the teacher's test isn't published",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füg dein Unterrichtsmaterial hinzu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade el material de clase"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute tes supports de cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicione o material da sua aula"
+          }
+        }
+      }
+    },
+    "Add your result" : {
+      "comment" : "Opens the exam to add the official result",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trag dein Ergebnis ein"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade tu resultado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter ton résultat"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicione seu resultado"
+          }
+        }
+      }
+    },
     "Adjust your plan to keep going." : {
       "comment" : "The goal's date passed",
       "localizations" : {
@@ -2856,6 +2914,76 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pergunte algo para %@"
+          }
+        }
+      }
+    },
+    "At %@ a day, your plan now covers %@ of the exam, down from %@." : {
+      "comment" : "Missed days left an exam plan covering less",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bei %1$@ am Tag deckt dein Plan jetzt %2$@ der Prüfungsinhalte ab, vorher waren es %3$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "At %1$@ a day, your plan now covers %2$@ of the exam, down from %3$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con %1$@ al día, tu plan cubre ahora %2$@ del examen, frente a %3$@ antes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À raison de %1$@ par jour, ton plan couvre maintenant %2$@ de l’examen, contre %3$@ auparavant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com %1$@ por dia, seu plano agora cobre %2$@ da prova, antes cobria %3$@."
+          }
+        }
+      }
+    },
+    "At %@ a day, your plan now covers %@ of your goal, down from %@." : {
+      "comment" : "Missed days left a plan covering less of its goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bei %1$@ am Tag deckt dein Plan jetzt %2$@ deines Ziels ab, vorher waren es %3$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "At %1$@ a day, your plan now covers %2$@ of your goal, down from %3$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con %1$@ al día, tu plan cubre ahora %2$@ de tu objetivo, frente a %3$@ antes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À raison de %1$@ par jour, ton plan couvre maintenant %2$@ de ton objectif, contre %3$@ auparavant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com %1$@ por dia, seu plano agora cobre %2$@ da sua meta, antes cobria %3$@."
           }
         }
       }
@@ -3262,6 +3390,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confira sua conexão e tente de novo."
+          }
+        }
+      }
+    },
+    "Choose where to focus" : {
+      "comment" : "Opens the choice of the plan's areas to focus on",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähl deine Schwerpunkte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige en qué centrarte"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisir les domaines à privilégier"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolha onde focar"
+          }
+        }
+      }
+    },
+    "Come back in a few minutes." : {
+      "comment" : "The day's lessons are taking long to outline",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Komm in ein paar Minuten noch einmal vorbei."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve dentro de unos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reviens dans quelques minutes."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volte em alguns minutos."
+          }
+        }
+      }
+    },
+    "Continue" : {
+      "comment" : "Opens the goal the learner typed and hasn't confirmed yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
           }
         }
       }
@@ -3959,6 +4174,35 @@
         }
       }
     },
+    "Get today's lessons" : {
+      "comment" : "Asks for the day's lessons, which aren't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heutige Lektionen erstellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparar las lecciones de hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparer les leçons du jour"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparar as aulas de hoje"
+          }
+        }
+      }
+    },
     "Getting today's lessons ready…" : {
       "comment" : "The day's lessons are being outlined",
       "localizations" : {
@@ -4279,6 +4523,35 @@
         }
       }
     },
+    "Keep my time" : {
+      "comment" : "Keeps the daily time after falling behind, with less depth",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meine Lernzeit beibehalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantener mi tiempo diario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garder ma durée quotidienne"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manter meu tempo"
+          }
+        }
+      }
+    },
     "Keep the notice's date" : {
       "comment" : "Declines a change and keeps the date the exam notice sets",
       "localizations" : {
@@ -4552,6 +4825,64 @@
         }
       }
     },
+    "More time a day" : {
+      "comment" : "Opens the plan's daily time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mehr Zeit pro Tag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más tiempo al día"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus de temps par jour"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mais tempo por dia"
+          }
+        }
+      }
+    },
+    "More time or a later date" : {
+      "comment" : "Opens the plan's daily time and date",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mehr Zeit oder ein späteres Datum"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más tiempo o una fecha posterior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus de temps ou une date plus tardive"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mais tempo ou uma data mais distante"
+          }
+        }
+      }
+    },
     "Most room to grow" : {
       "comment" : "Mission: the area where the learner has the most to gain",
       "localizations" : {
@@ -4703,6 +5034,35 @@
         }
       }
     },
+    "Next suggestion" : {
+      "comment" : "Shows the next plan suggestion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nächster Vorschlag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente sugerencia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestion suivante"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima sugestão"
+          }
+        }
+      }
+    },
     "No reviews due today · %lld questions on your weakest topics" : {
       "comment" : "A review of the weakest topics when nothing was due",
       "localizations" : {
@@ -4828,7 +5188,7 @@
       }
     },
     "Not now" : {
-      "comment" : "Dismisses the suggested goal",
+      "comment" : "Declines a proposed plan change\nDismisses the ask for a document\nDismisses the suggested goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4881,6 +5241,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "sem estudo"
+          }
+        }
+      }
+    },
+    "Noted. You keep your time, with less depth where it counts least." : {
+      "comment" : "The learner kept their daily time after falling behind",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles klar. Deine Lernzeit bleibt gleich. Weniger wichtige Themen behandelst du dafür weniger tief."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De acuerdo. Mantienes tu tiempo diario y estudiarás con menos profundidad lo menos importante."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est noté. Tu gardes ta durée quotidienne, en approfondissant moins les points les moins importants."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Combinado. Você mantém seu tempo, com menos profundidade no que tem menos peso."
           }
         }
       }
@@ -6195,6 +6584,35 @@
         }
       }
     },
+    "See your exam" : {
+      "comment" : "Opens the exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfung ansehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver tu examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir ton examen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver sua prova"
+          }
+        }
+      }
+    },
     "See your plan" : {
       "comment" : "Opens the Plan",
       "localizations" : {
@@ -6522,6 +6940,35 @@
         }
       }
     },
+    "Study everything" : {
+      "comment" : "Opens studying the whole goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles lernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudiar todo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout étudier"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudar tudo"
+          }
+        }
+      }
+    },
     "Study for %lld minutes" : {
       "comment" : "Adds study time on a rest day",
       "localizations" : {
@@ -6729,6 +7176,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fazer o simulado"
+          }
+        }
+      }
+    },
+    "Thanks. We're reading it now, and your plan will update in a few minutes." : {
+      "comment" : "After the learner uploaded the document research asked for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Danke. Wir lesen das Dokument jetzt und dein Plan wird in ein paar Minuten aktualisiert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gracias. Estamos leyendo el documento y tu plan se actualizará en unos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merci. Nous l’analysons et ton plan sera mis à jour dans quelques minutes."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valeu! A gente está lendo o documento e seu plano vai ser atualizado em alguns minutos."
+          }
+        }
+      }
+    },
+    "That didn't save. Try again." : {
+      "comment" : "A plan change failed\nAsking for the day's lessons failed\nDismissing failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das konnte nicht gespeichert werden. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha guardado. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’enregistrement a échoué. Réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível salvar. Tente de novo."
           }
         }
       }
@@ -7188,6 +7693,64 @@
         }
       }
     },
+    "Today's lessons are taking longer than usual." : {
+      "comment" : "The day's lessons are taking long to outline",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die heutigen Lektionen brauchen länger als üblich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las lecciones de hoy están tardando más de lo habitual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La préparation des leçons du jour prend plus de temps que prévu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As aulas de hoje estão demorando mais que o normal."
+          }
+        }
+      }
+    },
+    "Today's lessons aren't written yet." : {
+      "comment" : "The day's lessons wait for the learner to ask for them",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die heutigen Lektionen sind noch nicht erstellt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las lecciones de hoy aún no están preparadas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les leçons du jour ne sont pas encore préparées."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As aulas de hoje ainda não foram criadas."
+          }
+        }
+      }
+    },
     "Today's missions" : {
       "comment" : "Today's missions header",
       "localizations" : {
@@ -7374,6 +7937,209 @@
         }
       }
     },
+    "Upload a document" : {
+      "comment" : "Opens the ways to add the goal's official source",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dokument hochladen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subir un documento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importer un document"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar um documento"
+          }
+        }
+      }
+    },
+    "Upload the notice" : {
+      "comment" : "Opens the ways to add the exam notice",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfungsankündigung hochladen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subir la convocatoria"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importer l’avis d’examen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar o edital"
+          }
+        }
+      }
+    },
+    "Upload the notice so your plan follows the real exam." : {
+      "comment" : "Why the exam notice is asked for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lad die Prüfungsankündigung hoch, damit dein Plan zur tatsächlichen Prüfung passt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sube la convocatoria para que tu plan se ajuste al examen real."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importe l’avis d’examen pour que ton plan corresponde à l’examen réel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envie o edital para que seu plano siga a prova real."
+          }
+        }
+      }
+    },
+    "Upload the official guide" : {
+      "comment" : "Opens the ways to add a language certificate's official guide",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offiziellen Leitfaden hochladen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subir la guía oficial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importer le guide officiel"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar o guia oficial"
+          }
+        }
+      }
+    },
+    "Upload the official guide so your plan follows the real exam." : {
+      "comment" : "Why a language certificate's official guide is asked for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lad den offiziellen Leitfaden hoch, damit dein Plan zur tatsächlichen Prüfung passt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sube la guía oficial para que tu plan se ajuste al examen real."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importe le guide officiel pour que ton plan corresponde à l’examen réel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envie o guia oficial para que seu plano siga a prova real."
+          }
+        }
+      }
+    },
+    "Upload the official text or guide you study from so your lessons follow it." : {
+      "comment" : "Why the goal's official source is asked for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lad den offiziellen Text oder Leitfaden hoch, mit dem du lernst, damit deine Lektionen darauf abgestimmt sind."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sube el texto o la guía oficial con la que estudias para que tus lecciones se ajusten a ella."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importe le texte ou le guide officiel que tu étudies pour que tes leçons s’y conforment."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envie o texto ou guia oficial que você usa para estudar, para que suas aulas sigam esse material."
+          }
+        }
+      }
+    },
+    "Upload your material" : {
+      "comment" : "Opens the ways to add a class's material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Material hochladen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subir tu material"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importer tes supports de cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar seu material"
+          }
+        }
+      }
+    },
     "Use my date anyway" : {
       "comment" : "Applies a change that moves the exam off the notice's date",
       "localizations" : {
@@ -7405,6 +8171,122 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Usar minha data mesmo assim"
+          }
+        }
+      }
+    },
+    "We couldn't confirm the exam's details" : {
+      "comment" : "What research found didn't match the exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten die Prüfungsdetails nicht bestätigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido confirmar los detalles del examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu confirmer les détails de l’examen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente não conseguiu confirmar os detalhes da prova"
+          }
+        }
+      }
+    },
+    "We couldn't find the official guide" : {
+      "comment" : "Research found no official guide for a language certificate",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten den offiziellen Leitfaden nicht finden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos encontrado la guía oficial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas trouvé le guide officiel"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente não encontrou o guia oficial"
+          }
+        }
+      }
+    },
+    "We couldn't find the official notice" : {
+      "comment" : "Research found no exam notice",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten die offizielle Prüfungsankündigung nicht finden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos encontrado la convocatoria oficial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas trouvé l’avis d’examen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente não encontrou o edital"
+          }
+        }
+      }
+    },
+    "We couldn't find the official source" : {
+      "comment" : "Research found no official source for the goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten die offizielle Quelle nicht finden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos encontrado la fuente oficial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas trouvé la source officielle"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente não encontrou a fonte oficial"
           }
         }
       }
@@ -7672,6 +8554,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Boas-vindas de volta! Suas próximas aulas estão aqui caso queira estudar."
+          }
+        }
+      }
+    },
+    "What changed" : {
+      "comment" : "A change to the goal's sources",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was sich geändert hat"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué ha cambiado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce qui a changé"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que mudou"
+          }
+        }
+      }
+    },
+    "What we found didn't match the exam's details. Upload the official guide so your plan follows the real exam." : {
+      "comment" : "Why a language certificate's official guide is asked for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was wir gefunden haben, passt nicht zu den Prüfungsdetails. Lad den offiziellen Leitfaden hoch, damit dein Plan zur tatsächlichen Prüfung passt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que hemos encontrado no coincide con los detalles del examen. Sube la guía oficial para que tu plan se ajuste al examen real."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que nous avons trouvé ne correspond pas aux détails de l’examen. Importe le guide officiel pour que ton plan corresponde à l’examen réel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que a gente encontrou não corresponde aos detalhes da prova. Envie o guia oficial para que seu plano siga a prova real."
+          }
+        }
+      }
+    },
+    "What we found didn't match the exam's details. Upload the official notice so your plan follows the real exam." : {
+      "comment" : "Why the exam notice is asked for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was wir gefunden haben, passt nicht zu den Prüfungsdetails. Lad die offizielle Prüfungsankündigung hoch, damit dein Plan zur tatsächlichen Prüfung passt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que hemos encontrado no coincide con los detalles del examen. Sube la convocatoria oficial para que tu plan se ajuste al examen real."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que nous avons trouvé ne correspond pas aux détails de l’examen. Importe l’avis officiel pour que ton plan corresponde à l’examen réel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que a gente encontrou não corresponde aos detalhes da prova. Envie o edital para que seu plano siga a prova real."
           }
         }
       }
@@ -8195,6 +9164,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seus erros recentes foram distrações, não uma regra que você precisa aprender."
+          }
+        }
+      }
+    },
+    "Your teacher's test isn't published anywhere. Upload the slides, notes or list of topics so your plan follows your class." : {
+      "comment" : "Why a class's material is asked for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Test deiner Lehrkraft ist nirgendwo veröffentlicht. Lad die Folien, Notizen oder Themenliste hoch, damit dein Plan zu deinem Unterricht passt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El examen de tu profesor no está publicado en ninguna parte. Sube las diapositivas, los apuntes o la lista de temas para que tu plan se ajuste a tus clases."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le contrôle de ton enseignant n’est pas publié. Importe les diapositives, les notes ou la liste des sujets pour que ton plan corresponde à ton cours."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A prova do seu professor não está publicada. Envie os slides, anotações ou a lista de tópicos para que seu plano acompanhe sua aula."
           }
         }
       }
