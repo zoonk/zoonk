@@ -206,8 +206,10 @@ struct ChallengeScreen: View {
       if let movedChangeId, let date = challenge.date {
         HStack {
           Text(
-            "Moved to \(dayLabel(date, today: challenge.today))", tableName: "Practice",
-            comment: "A weekly challenge moved to another day.")
+            "Moved to \(Self.weekdayDay(date))", tableName: "Practice",
+            comment:
+              "A weekly challenge moved later, to the next Monday; the argument is that day, like 'Monday, May 5'."
+          )
           Spacer()
           Button {
             run { await undoMove(movedChangeId) }
@@ -490,12 +492,23 @@ struct ChallengeScreen: View {
       comment: "A mock exam challenge is Plus-only.")
   }
 
+  private static func parseDay(_ day: String) -> Date? {
+    try? Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day().parse(day)
+  }
+
+  private static func weekdayDay(_ day: String) -> String {
+    guard let date = parseDay(day) else { return day }
+
+    var style = Date.FormatStyle.dateTime.weekday(.wide).month(.abbreviated).day()
+    style.timeZone = .gmt
+    return date.formatted(style)
+  }
+
   private func dayLabel(_ day: String, today: String) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = .gmt
-    let parse = Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day()
 
-    guard let date = try? parse.parse(day), let now = try? parse.parse(today) else { return day }
+    guard let date = Self.parseDay(day), let now = Self.parseDay(today) else { return day }
 
     let days = calendar.dateComponents([.day], from: now, to: date).day ?? 0
 
@@ -508,9 +521,7 @@ struct ChallengeScreen: View {
         localized: "Tomorrow", table: "Practice", comment: "A challenge planned for tomorrow.")
     }
 
-    var style = Date.FormatStyle.dateTime.weekday(.wide).month(.abbreviated).day()
-    style.timeZone = .gmt
-    return date.formatted(style)
+    return Self.weekdayDay(day)
   }
 
   private func run(_ work: @escaping @MainActor () async -> Void) {

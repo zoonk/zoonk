@@ -4103,7 +4103,7 @@
       }
     },
     "Moved to %@" : {
-      "comment" : "A weekly challenge moved to another day.",
+      "comment" : "A weekly challenge moved later, to the next Monday; the argument is that day, like 'Monday, May 5'.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
