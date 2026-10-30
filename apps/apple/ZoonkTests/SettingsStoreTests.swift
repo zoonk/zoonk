@@ -425,6 +425,10 @@ private actor SettingsAPIStub: SettingsAPIClient {
     PlanAllowance(tier: .free, buddyMessagesToday: 1, buddyMessagesDailyLimit: 5)
   }
 
+  nonisolated func getFreePlan() async throws -> FreePlan {
+    throw APIError.unavailable
+  }
+
   nonisolated func exportMemory(token: String) async throws -> Data { Data() }
 
   func exportAccountData(token: String) async throws -> Data {

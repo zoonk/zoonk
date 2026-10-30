@@ -12,6 +12,7 @@ protocol SettingsAPIClient: Sendable {
   func deleteMemoryFact(token: String, factId: String) async throws -> MemoryFact
   func restoreMemoryFact(token: String, factId: String) async throws -> [MemoryFact]
   func getAllowance(token: String) async throws -> PlanAllowance
+  func getFreePlan() async throws -> FreePlan
   func exportMemory(token: String) async throws -> Data
   func exportAccountData(token: String) async throws -> Data
 }
@@ -133,6 +134,15 @@ struct SettingsAPI: SettingsAPIClient {
         throw APIError.unauthorized
       default:
         throw APIError.unavailable
+      }
+    }
+  }
+
+  func getFreePlan() async throws -> FreePlan {
+    try await clients.perform(token: nil) { client in
+      switch try await client.getFreePlan() {
+      case .ok(let response): return try PracticeJSON.recode(try response.body.json)
+      default: throw APIError.unavailable
       }
     }
   }

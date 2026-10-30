@@ -13,6 +13,7 @@ final class SettingsStore {
   let preferences: Resource<LearningPreferences>
   let memory: Resource<LearnerMemory>
   let allowance: Resource<PlanAllowance>
+  let freePlan: Resource<FreePlan>
 
   /// Kept with the learner it's about, so the next learner never sees it.
   private struct Notice {
@@ -68,6 +69,7 @@ final class SettingsStore {
     allowance = signedIn([.allowance, .userSubscription]) { try await api.getAllowance(token: $0) }
     preferenceSaves = QueuedSaves(preferences, cache: cache)
     memorySaves = QueuedSaves(memory, cache: cache)
+    freePlan = cache.resource(audience: .everyone) { _ in try await api.getFreePlan() }
   }
 
   func updatePreferences(_ update: PreferencesUpdate) async {

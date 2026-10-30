@@ -104,6 +104,17 @@ struct MemoryFact: Equatable, Identifiable, Sendable {
   let createdAt: Date
 }
 
+/// What a free account can do; nil means no cap.
+struct FreePlan: Decodable, Equatable, Sendable {
+  let activeGoals: Int?
+  let examPrepDays: Int?
+  let guestLessons: Int?
+  let lessonsPerDay: Int?
+  let lessonsPerMonth: Int?
+  let tutorMessagesPerDay: Int?
+  let uploadsPerDay: Int?
+}
+
 struct PlanAllowance: Equatable, Sendable {
   enum Tier: String, Sendable {
     case free

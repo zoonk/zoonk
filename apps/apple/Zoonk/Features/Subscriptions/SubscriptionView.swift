@@ -6,6 +6,7 @@ struct SubscriptionScreen: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
+  @Environment(SettingsStore.self) private var settings
 
   var body: some View {
     NavigationStack {
@@ -16,9 +17,10 @@ struct SubscriptionScreen: View {
           SubscriptionView(appAccountToken: appAccountToken)
         } else {
           ScrollView {
-            SubscriptionMarketingContent()
+            SubscriptionMarketingContent(freePlan: settings.freePlan, hasAccount: false)
               .scenePadding()
           }
+          .loads(settings.freePlan, refreshable: false)
           .safeAreaBar(edge: .bottom) {
             Button {
               router.present(.signIn)
@@ -64,7 +66,8 @@ struct SubscriptionView: View {
 
   var body: some View {
     SubscriptionStoreView(productIDs: AppStoreSubscriptionProduct.productIDs) {
-      SubscriptionMarketingContent(allowance: settings.allowance.value)
+      SubscriptionMarketingContent(
+        allowance: settings.allowance.value, freePlan: settings.freePlan, hasAccount: true)
     }
     .subscriptionStoreControlStyle(.prominentPicker)
     .subscriptionStoreButtonLabel(.multiline)
@@ -86,7 +89,7 @@ struct SubscriptionView: View {
           expectedAccountID: expectedAccountID)
       }
     }
-    .loads(settings.allowance, refreshable: false)
+    .loads(settings.allowance, settings.freePlan, refreshable: false)
     .navigationTitle(
       Text(
         "Zoonk Plus",
@@ -270,6 +273,9 @@ struct SubscriptionView: View {
 
 private struct SubscriptionMarketingContent: View {
   var allowance: PlanAllowance?
+  let freePlan: Resource<FreePlan>
+  /// A visitor or guest starts free without one.
+  let hasAccount: Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
@@ -314,6 +320,29 @@ private struct SubscriptionMarketingContent: View {
             "Your plan", tableName: "Account",
             comment: "Section with the learner's subscription plan, Free or Plus")
         }
+      }
+
+      switch freePlan.state {
+      case .loaded(let limits):
+        FreePlanIncludes(limits: limits)
+        PlusQuestions(limits: limits, hasAccount: hasAccount)
+      case .failed, .empty:
+        VStack(alignment: .leading, spacing: 8) {
+          Text(
+            "We couldn't load what the free plan includes.", tableName: "Account",
+            comment: "The free plan's limits failed to load on the Plus screen"
+          )
+          .foregroundStyle(.secondary)
+
+          Button {
+            Task { await freePlan.refresh() }
+          } label: {
+            Text("Try again", tableName: "Account", comment: "Loads the free plan's limits again")
+          }
+          .buttonStyle(.bordered)
+        }
+      case .idle, .loading:
+        EmptyView()
       }
     }
     .frame(maxWidth: 560, alignment: .leading)
@@ -431,5 +460,211 @@ struct PlusStatusView: View {
       : Text(
         "Current billing period ends on \(date(periodEnd)).", tableName: "Account",
         comment: "When the subscription's paid period ends")
+  }
+}
+
+/// Main's Free card: what the free plan includes, against Plus above it.
+private struct FreePlanIncludes: View {
+  let limits: FreePlan
+
+  var body: some View {
+    GroupBox {
+      VStack(alignment: .leading, spacing: 12) {
+        if let goals = limits.activeGoals, let lessons = limits.lessonsPerMonth {
+          Text(
+            verbatim: [
+              String(
+                localized: "\(goals) goals", table: "Account",
+                comment: "How many goals the free plan has at a time"),
+              String(
+                localized: "\(lessons) lessons a month", table: "Account",
+                comment: "Free plan: lessons a month"),
+            ].joined(separator: " · ")
+          )
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+        }
+
+        item(
+          Text(
+            "A plan for your goal and your date", tableName: "Account",
+            comment: "Free plan: a plan for the learner's goal"))
+
+        if let days = limits.examPrepDays {
+          item(
+            days == 7
+              ? Text(
+                "For an exam: the diagnostic, your plan and its first week", tableName: "Account",
+                comment: "Free plan: how much of an exam plan it includes")
+              : Text(
+                "For an exam: the diagnostic, your plan and its first \(days) days",
+                tableName: "Account", comment: "Free plan: how much of an exam plan it includes"))
+        }
+
+        if let messages = limits.tutorMessagesPerDay {
+          item(
+            Text(
+              "An AI study buddy: \(messages) messages a day", tableName: "Account",
+              comment: "Free plan: the study buddy's daily messages"))
+        }
+
+        item(
+          Text(
+            "Speaking practice calls, with lower limits than Plus", tableName: "Account",
+            comment: "Free plan: practice calls, never a number"))
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+    } label: {
+      Text("Free", tableName: "Account", comment: "The free plan's name")
+    }
+  }
+
+  private func item(_ title: Text) -> some View {
+    Label {
+      title
+    } icon: {
+      Image(systemName: "checkmark")
+        .foregroundStyle(.secondary)
+    }
+  }
+}
+
+/// Main's pricing questions.
+private struct PlusQuestions: View {
+  let limits: FreePlan
+  let hasAccount: Bool
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text("Common questions", tableName: "Account", comment: "Title of the pricing questions")
+        .font(.title3.bold())
+
+      DisclosureGroup {
+        freePlanAnswer
+      } label: {
+        Text("What's in the free plan?", tableName: "Account", comment: "A pricing question")
+      }
+
+      DisclosureGroup {
+        answer(
+          Text(
+            "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan.",
+            tableName: "Account", comment: "Answers whether Plus is unlimited, never in minutes"))
+
+        Link(destination: AccountLinks.fairUse) {
+          Text(
+            "Read our fair use policy", tableName: "Account", comment: "Opens the fair use policy")
+        }
+      } label: {
+        Text("Is Plus really unlimited?", tableName: "Account", comment: "A pricing question")
+      }
+
+      DisclosureGroup {
+        answer(
+          Text(
+            "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you.",
+            tableName: "Account", comment: "Answers what canceling Plus does"))
+      } label: {
+        Text("What happens if I cancel?", tableName: "Account", comment: "A pricing question")
+      }
+
+      DisclosureGroup {
+        answer(
+          Text(
+            "Just contact us and tell us what happened. We'll do our best to get you a refund.",
+            tableName: "Account", comment: "Answers whether Plus can be refunded"))
+
+        Link(destination: AccountLinks.support) {
+          Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
+        }
+      } label: {
+        Text("Can I get a refund?", tableName: "Account", comment: "A pricing question")
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var freePlanAnswer: some View {
+    if !hasAccount, let guestLessons = limits.guestLessons {
+      answer(
+        Text(
+          "Start free with \(guestLessons) lessons, no account needed. With a free account, you get:",
+          tableName: "Account", comment: "Leads the free plan's list for someone without an account"
+        ))
+    } else {
+      answer(
+        Text(
+          "With the free plan, you get:", tableName: "Account",
+          comment: "Leads the free plan's list"))
+    }
+
+    VStack(alignment: .leading, spacing: 6) {
+      if let goals = limits.activeGoals {
+        bullet(
+          Text(
+            "\(goals) goals at a time", tableName: "Account",
+            comment: "Free plan: goals at a time"))
+      }
+
+      if let month = limits.lessonsPerMonth {
+        bullet(
+          Text(
+            "\(month) lessons a month", tableName: "Account",
+            comment: "Free plan: lessons a month"))
+      }
+
+      if let day = limits.lessonsPerDay {
+        bullet(
+          Text(
+            "Up to \(day) lessons a day", tableName: "Account", comment: "Free plan: lessons a day")
+        )
+      }
+
+      if let days = limits.examPrepDays {
+        bullet(
+          days == 7
+            ? Text(
+              "The first week of exam prep", tableName: "Account",
+              comment: "Free plan: how much of an exam plan it includes")
+            : Text(
+              "The first \(days) days of exam prep", tableName: "Account",
+              comment: "Free plan: how much of an exam plan it includes"))
+      }
+
+      if let messages = limits.tutorMessagesPerDay {
+        bullet(
+          Text(
+            "\(messages) messages to your buddy a day", tableName: "Account",
+            comment: "Free plan: the study buddy's daily messages"))
+      }
+
+      if let uploads = limits.uploadsPerDay {
+        bullet(
+          Text(
+            "\(uploads) uploads a day", tableName: "Account", comment: "Free plan: daily uploads"))
+      }
+
+      bullet(
+        Text(
+          "Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)",
+          tableName: "Account", comment: "Free plan: practice calls, never a number"))
+    }
+  }
+
+  private func answer(_ text: Text) -> some View {
+    text
+      .foregroundStyle(.secondary)
+      .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private func bullet(_ text: Text) -> some View {
+    Label {
+      text
+    } icon: {
+      Image(systemName: "circle.fill")
+        .imageScale(.small)
+        .font(.caption2)
+    }
+    .foregroundStyle(.secondary)
   }
 }

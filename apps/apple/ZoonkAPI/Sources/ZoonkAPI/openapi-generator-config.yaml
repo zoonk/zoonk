@@ -128,6 +128,7 @@ filter:
     - getExamBlueprint
     - getExplanation
     - getFocusTest
+    - getFreePlan
     - getGeneration
     - getGoalChapter
     - getGoalGeneration
