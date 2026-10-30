@@ -1,4 +1,5 @@
 import { findEstimateArea, getAreaStudyText } from "@/components/catalog/area-study";
+import { CourseExampleNumbers } from "@/components/catalog/course-progress";
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { type DatedEstimate } from "@zoonk/core/catalog/course-plan-example-contract";
 import { RouteZone } from "@zoonk/learn/route-line";
@@ -27,11 +28,13 @@ function orderByStudy({ chapters, rows }: { chapters: OutlineChapter[]; rows: Ar
 async function AreaFit({
   area,
   chapters,
+  courseId,
   estimate,
   rows,
 }: {
   area: string | null;
   chapters: OutlineChapter[];
+  courseId: string;
   estimate: DatedEstimate;
   rows: AreaRows;
 }) {
@@ -46,31 +49,35 @@ async function AreaFit({
   ).length;
 
   return (
-    <span className="flex flex-col gap-1.5">
-      <span className="text-muted-foreground text-[13px] leading-snug font-normal sm:text-sm">
-        {[
-          text?.time,
-          text?.detail,
-          leftOut > 0 &&
-            leftOut < chapters.length &&
-            t("{count, plural, one {# chapter left out} other {# chapters left out}}", {
-              count: leftOut,
-            }),
-        ]
-          .filter(Boolean)
-          .join(OUTLINE_SEPARATOR)}
+    <CourseExampleNumbers courseId={courseId}>
+      <span className="flex flex-col gap-1.5">
+        <span className="text-muted-foreground text-[13px] leading-snug font-normal sm:text-sm">
+          {[
+            text?.time,
+            text?.detail,
+            leftOut > 0 &&
+              leftOut < chapters.length &&
+              t("{count, plural, one {# chapter left out} other {# chapters left out}}", {
+                count: leftOut,
+              }),
+          ]
+            .filter(Boolean)
+            .join(OUTLINE_SEPARATOR)}
+        </span>
       </span>
-    </span>
+    </CourseExampleNumbers>
   );
 }
 
 async function AreaChapters({
   chapters,
+  courseId,
   numbers,
   params,
   rows,
 }: {
   chapters: OutlineChapter[];
+  courseId: string;
   numbers: Map<string, number>;
   params: OutlineParams;
   rows: AreaRows;
@@ -103,25 +110,32 @@ async function AreaChapters({
 
   return (
     <OutlineChapterList
-      rows={orderByStudy({ chapters, rows }).map((chapter) => (
-        <OutlineChapterRow
-          chapter={chapter}
-          key={chapter.id}
-          mark={markText(chapter)}
-          number={numbers.get(chapter.id) ?? 0}
-          params={params}
-        />
-      ))}
+      courseId={courseId}
+      rows={orderByStudy({ chapters, rows }).map((chapter) => ({
+        chapterId: chapter.id,
+        row: (
+          <OutlineChapterRow
+            chapter={chapter}
+            courseId={courseId}
+            key={chapter.id}
+            mark={markText(chapter)}
+            number={numbers.get(chapter.id) ?? 0}
+            params={params}
+          />
+        ),
+      }))}
     />
   );
 }
 
 /** A chapter core can't place in an area yet isn't listed: "chapters in no exam area" is our data's gap, not the exam's. */
 export async function AreaOutline({
+  courseId,
   estimate,
   outline,
   params,
 }: {
+  courseId: string;
   estimate: DatedEstimate;
   outline: LibraryOutline;
   params: OutlineParams;
@@ -136,12 +150,18 @@ export async function AreaOutline({
   const areas = estimate.areas.flatMap((area) => (area.area ? [area.area] : []));
   const order = [...new Set(areas)].filter((area) => groups.has(area));
 
-  const shared = { numbers, params, rows };
+  const shared = { courseId, numbers, params, rows };
 
   if (order.length <= 1) {
     return (
       <div className="flex flex-col gap-2">
-        <AreaFit area={order[0] ?? null} chapters={chapters} estimate={estimate} rows={rows} />
+        <AreaFit
+          area={order[0] ?? null}
+          chapters={chapters}
+          courseId={courseId}
+          estimate={estimate}
+          rows={rows}
+        />
         <AreaChapters chapters={chapters} {...shared} />
       </div>
     );
@@ -161,7 +181,13 @@ export async function AreaOutline({
             summary={
               <span className="flex flex-col gap-2">
                 <span>{area}</span>
-                <AreaFit area={area} chapters={areaChapters} estimate={estimate} rows={rows} />
+                <AreaFit
+                  area={area}
+                  chapters={areaChapters}
+                  courseId={courseId}
+                  estimate={estimate}
+                  rows={rows}
+                />
               </span>
             }
           >

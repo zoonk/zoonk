@@ -1,4 +1,8 @@
-import { ShowMore } from "@/components/catalog/show-more";
+import {
+  CourseChapterFold,
+  CourseExampleNumbers,
+  CourseHere,
+} from "@/components/catalog/course-progress";
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { Link } from "@/i18n/navigation";
@@ -67,28 +71,36 @@ function ChapterLessonLinks({
 }
 
 /** Every row stays in the page's HTML, for search engines. */
-export async function OutlineChapterList({ rows }: { rows: ReactNode[] }) {
+export async function OutlineChapterList({
+  courseId,
+  rows,
+}: {
+  courseId: string;
+  rows: { chapterId: string; row: ReactNode }[];
+}) {
   const t = await getExtracted();
 
   if (rows.length < CHAPTERS_FOLDED_FROM) {
-    return <ol>{rows}</ol>;
+    return <ol>{rows.map((item) => item.row)}</ol>;
   }
 
-  const rest = rows.length - CHAPTERS_SHOWN;
+  const folded = rows.slice(CHAPTERS_SHOWN);
 
   return (
     <div className="flex flex-col">
-      <ol>{rows.slice(0, CHAPTERS_SHOWN)}</ol>
+      <ol>{rows.slice(0, CHAPTERS_SHOWN).map((item) => item.row)}</ol>
 
-      <ShowMore
+      <CourseChapterFold
+        chapterIds={folded.map((item) => item.chapterId)}
         className="mt-1 ml-10"
+        courseId={courseId}
         less={t("Show fewer chapters")}
         more={t("{count, plural, one {Show # more chapter} other {Show # more chapters}}", {
-          count: rest,
+          count: folded.length,
         })}
       >
-        <ol>{rows.slice(CHAPTERS_SHOWN)}</ol>
-      </ShowMore>
+        <ol>{folded.map((item) => item.row)}</ol>
+      </CourseChapterFold>
     </div>
   );
 }
@@ -96,11 +108,13 @@ export async function OutlineChapterList({ rows }: { rows: ReactNode[] }) {
 /** Its title is a heading under the section's: a level's or an area's name is the zone's label, not a heading. */
 export function OutlineChapterRow({
   chapter,
+  courseId,
   mark,
   number,
   params,
 }: {
   chapter: OutlineChapter;
+  courseId: string;
   mark?: ReactNode;
   number: number;
   params: OutlineParams;
@@ -125,7 +139,14 @@ export function OutlineChapterRow({
             </Link>
           </h3>
 
-          {mark && <p className={MARK_CLASS}>{mark}</p>}
+          <div className="flex items-baseline gap-3">
+            <CourseHere chapterId={chapter.id} courseId={courseId} />
+            {mark && (
+              <CourseExampleNumbers courseId={courseId}>
+                <p className={MARK_CLASS}>{mark}</p>
+              </CourseExampleNumbers>
+            )}
+          </div>
         </div>
 
         {chapter.lessons.length > 0 && <ChapterLessonLinks chapter={chapter} params={params} />}

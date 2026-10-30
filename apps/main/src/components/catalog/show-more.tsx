@@ -11,14 +11,16 @@ export function ShowMore({
   className,
   less,
   more,
+  open = false,
 }: {
   children: ReactNode;
   className?: string;
   less: string;
   more: string;
+  open?: boolean;
 }) {
   return (
-    <details className="group/more flex flex-col">
+    <details className="group/more flex flex-col" open={open}>
       <summary
         className={cn(
           "hit-area text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 relative order-1 inline-flex cursor-pointer list-none items-center gap-1 self-start rounded-md text-sm font-medium transition-colors outline-none select-none group-open/more:mt-3 focus-visible:ring-[3px] motion-reduce:transition-none [&::-webkit-details-marker]:hidden",

@@ -405,7 +405,6 @@ msgid "Chapter {number} of {total}"
 msgstr "Capítulo {number} de {total}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "t_2u2K"
 msgid "{count, plural, one {# short lesson} other {# short lessons}}"
 msgstr "{count, plural, one {# lección corta} other {# lecciones cortas}}"
@@ -579,6 +578,12 @@ msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, one {# capítulo} other {# capítulos}}"
 
+#. After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
+msgctxt "5RluHj"
+msgid "{count, plural, one {# lesson written so far} other {# lessons written so far}}"
+msgstr "{count, plural, one {# lección preparada hasta ahora} other {# lecciones preparadas hasta ahora}}"
+
 #. Describes what happens once the learner builds a plan; not a command. The learner builds and Zoonk writes, so use a different verb for each.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "bdvt9X"
@@ -634,6 +639,12 @@ msgstr "Mostrar menos capítulos"
 msgctxt "IiIBmN"
 msgid "{count, plural, one {Show # more chapter} other {Show # more chapters}}"
 msgstr "{count, plural, one {Mostrar # capítulo más} other {Mostrar # capítulos más}}"
+
+#. Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
+msgctxt "H7iemn"
+msgid "Not written yet. Zoonk writes its chapters as learners reach it."
+msgstr "Aún sin preparar. Zoonk prepara sus capítulos a medida que los estudiantes llegan a este nivel."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
 msgctxt "wieA_m"
@@ -3539,6 +3550,11 @@ msgstr "Todos los temas del examen incluidos en el curso, en profundidad."
 msgctxt "YTiAat"
 msgid "<big>{time}</big> of study"
 msgstr "<big>{time}</big> de estudio"
+
+#: src/components/catalog/course-progress.tsx
+msgctxt "mElWfu"
+msgid "You are here"
+msgstr "Estás aquí"
 
 #: src/components/catalog/first-question.tsx
 msgctxt "xpsuUj"

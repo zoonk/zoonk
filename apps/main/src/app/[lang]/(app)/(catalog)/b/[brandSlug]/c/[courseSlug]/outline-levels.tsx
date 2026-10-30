@@ -1,6 +1,14 @@
-import { CourseLevelZone } from "@/components/catalog/course-progress";
+import {
+  CourseExampleNumbers,
+  CourseHere,
+  CourseLevelZone,
+} from "@/components/catalog/course-progress";
 import { type UndatedEstimate } from "@zoonk/core/catalog/course-plan-example-contract";
+import { type CourseLevel } from "@zoonk/db/enums";
+import { RouteZoneAhead } from "@zoonk/learn/route-line";
+import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
+import { type ReactNode } from "react";
 import {
   OUTLINE_SEPARATOR,
   type OutlineBand,
@@ -11,6 +19,65 @@ import {
 import { type ChapterWeeks, getChapterWeeksFormatter } from "./outline-weeks";
 
 const CHAPTERS_NAMED = 3;
+
+const LEVEL_LINE_CLASS =
+  "text-muted-foreground text-[13px] leading-snug font-normal text-pretty sm:text-sm";
+
+function LevelLabel({
+  courseId,
+  label,
+  level,
+  line,
+}: {
+  courseId: string;
+  label: string;
+  level: CourseLevel;
+  line: ReactNode;
+}) {
+  return (
+    <span className="flex flex-col gap-1">
+      <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        {label}
+        <CourseHere courseId={courseId} level={level} />
+      </span>
+      {line}
+    </span>
+  );
+}
+
+/** A level of the course with no chapter written yet, so a learner sees the whole course it promises. */
+export async function UnwrittenLevel({
+  courseId,
+  label,
+  level,
+}: {
+  courseId: string;
+  label: string;
+  level: CourseLevel;
+}) {
+  const t = await getExtracted();
+
+  return (
+    <RouteZoneAhead
+      summary={
+        <LevelLabel
+          courseId={courseId}
+          label={label}
+          level={level}
+          line={
+            <span className={LEVEL_LINE_CLASS}>
+              {t({
+                description:
+                  "Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level.",
+                message: "Not written yet. Zoonk writes its chapters as learners reach it.",
+              })}
+            </span>
+          }
+        />
+      }
+    />
+  );
+}
 
 export async function OutlineLevel({
   band,
@@ -63,32 +130,51 @@ export async function OutlineLevel({
 
   return (
     <CourseLevelZone
-      aside={[chapterCount, span].filter(Boolean).join(OUTLINE_SEPARATOR)}
+      aside={
+        <>
+          {chapterCount}
+          {span && (
+            <CourseExampleNumbers courseId={courseId}>
+              {OUTLINE_SEPARATOR}
+              {span}
+            </CourseExampleNumbers>
+          )}
+        </>
+      }
       courseId={courseId}
       isFirst={isFirst}
       level={band.level}
       summary={
-        <span className="flex flex-col gap-1">
-          <span>{label}</span>
-          <span className="text-muted-foreground text-[13px] leading-snug font-normal text-pretty group-open/zone:hidden sm:text-sm">
-            {band.chapters
-              .slice(0, CHAPTERS_NAMED)
-              .map((chapter) => chapter.title)
-              .join(OUTLINE_SEPARATOR)}
-          </span>
-        </span>
+        <LevelLabel
+          courseId={courseId}
+          label={label}
+          level={band.level}
+          line={
+            <span className={cn(LEVEL_LINE_CLASS, "group-open/zone:hidden")}>
+              {band.chapters
+                .slice(0, CHAPTERS_NAMED)
+                .map((chapter) => chapter.title)
+                .join(OUTLINE_SEPARATOR)}
+            </span>
+          }
+        />
       }
     >
       <OutlineChapterList
-        rows={band.chapters.map((chapter, index) => (
-          <OutlineChapterRow
-            chapter={chapter}
-            key={chapter.id}
-            mark={weeksForChapter(weeks.get(chapter.id))}
-            number={firstNumber + index}
-            params={params}
-          />
-        ))}
+        courseId={courseId}
+        rows={band.chapters.map((chapter, index) => ({
+          chapterId: chapter.id,
+          row: (
+            <OutlineChapterRow
+              chapter={chapter}
+              courseId={courseId}
+              key={chapter.id}
+              mark={weeksForChapter(weeks.get(chapter.id))}
+              number={firstNumber + index}
+              params={params}
+            />
+          ),
+        }))}
       />
     </CourseLevelZone>
   );

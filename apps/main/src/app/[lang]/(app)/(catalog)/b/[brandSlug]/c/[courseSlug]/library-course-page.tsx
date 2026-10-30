@@ -297,6 +297,7 @@ export async function LibraryCoursePage({
 
             <LibraryCourseOutline
               className={STOP_CLASS}
+              courseFormat={course.format}
               courseId={course.id}
               lead={outlineLead}
               outline={outline}

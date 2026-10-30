@@ -2,10 +2,13 @@
 
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
+import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
 import { type CourseLevel } from "@zoonk/db/enums";
 import { RouteZone } from "@zoonk/learn/route-line";
+import { StatusMark } from "@zoonk/learn/status-mark";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isJsonObject } from "@zoonk/utils/json";
+import { useExtracted } from "next-intl";
 import {
   type ComponentProps,
   type ReactNode,
@@ -15,6 +18,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import { type CourseProgress } from "./course-progress-contract";
+import { ShowMore } from "./show-more";
 
 type ProgressScope = { courseId: string; lessonId: string | null };
 
@@ -106,6 +110,73 @@ export function CourseProgressScope({
   return <ProgressKeyContext value={key}>{children}</ProgressKeyContext>;
 }
 
+function useCourseGoal(courseId: string): LearnerSummaryGoal | null {
+  const learner = useLearnerSummary();
+
+  return learner.status === "ready"
+    ? (learner.summary.goals.find((goal) => goal.courseId === courseId) ?? null)
+    : null;
+}
+
+/**
+ * Marks the chapter of the next lesson in the learner's plan, or its level while that lesson isn't
+ * written into a chapter yet.
+ */
+export function CourseHere({
+  chapterId = null,
+  courseId,
+  level = null,
+}: {
+  chapterId?: string | null;
+  courseId: string;
+  level?: CourseLevel | null;
+}) {
+  const t = useExtracted();
+  const goal = useCourseGoal(courseId);
+
+  const isHere =
+    goal !== null &&
+    (chapterId
+      ? goal.courseChapterId === chapterId
+      : goal.courseChapterId === null && goal.courseLevel === level);
+
+  if (!isHere) {
+    return null;
+  }
+
+  return (
+    <span
+      className="text-success-text inline-flex flex-none items-center gap-1.5 font-mono text-xs font-normal tabular-nums"
+      data-slot="course-here"
+    >
+      <StatusMark status="next" />
+      {t("You are here")}
+    </span>
+  );
+}
+
+/** The example plan's numbers help someone deciding; a learner whose plan follows the course has their own. */
+export function CourseExampleNumbers({
+  children,
+  courseId,
+}: {
+  children: ReactNode;
+  courseId: string;
+}) {
+  return <CourseGoalSwitch continueLink={null} courseId={courseId} startLinks={children} />;
+}
+
+/** Opens on its own when it hides the chapter the learner's plan is at. */
+export function CourseChapterFold({
+  chapterIds,
+  courseId,
+  ...fold
+}: Omit<ComponentProps<typeof ShowMore>, "open"> & { chapterIds: string[]; courseId: string }) {
+  const here = useCourseGoal(courseId)?.courseChapterId;
+
+  return <ShowMore {...fold} open={here ? chapterIds.includes(here) : false} />;
+}
+
 /**
  * Until the summary answers, a browser whose session hint says it holds a session keeps the start
  * out of sight in its own room, so a learner never sees "Build my plan" turn into "Continue your plan".
@@ -120,11 +191,10 @@ export function CourseGoalSwitch({
   startLinks: ReactNode;
 }) {
   const learner = useLearnerSummary();
+  const goal = useCourseGoal(courseId);
 
   if (learner.status === "ready") {
-    return learner.summary.goals.some((goal) => goal.courseId === courseId)
-      ? continueLink
-      : startLinks;
+    return goal ? continueLink : startLinks;
   }
 
   return (
@@ -151,6 +221,7 @@ export function CourseLevelZone({
   level: CourseLevel;
 }) {
   const learner = useLearnerSummary();
+  const learnerLevel = useCourseGoal(courseId)?.courseLevel;
 
   if (learner.status === "not-loaded" && isFirst) {
     return (
@@ -167,11 +238,6 @@ export function CourseLevelZone({
       </>
     );
   }
-
-  const learnerLevel =
-    learner.status === "ready"
-      ? learner.summary.goals.find((goal) => goal.courseId === courseId)?.courseLevel
-      : null;
 
   return (
     <RouteZone {...zone} open={learnerLevel ? learnerLevel === level : isFirst}>

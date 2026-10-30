@@ -1,21 +1,20 @@
+import { CourseExampleNumbers } from "@/components/catalog/course-progress";
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { getLibraryOutlineStats } from "@/lib/public/library-outline";
-import {
-  getLevelLabels,
-  getMinutesFormatter,
-  getTotalDurationLabel,
-} from "@/lib/public/public-labels";
+import { getLevelLabels, getMinutesFormatter } from "@/lib/public/public-labels";
 import {
   type PaceEstimate,
   isDatedEstimate,
 } from "@zoonk/core/catalog/course-plan-example-contract";
+import { listCourseLevels } from "@zoonk/core/library/courses/levels";
+import { type CourseFormat } from "@zoonk/db/enums";
 import { RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { AreaOutline } from "./outline-areas";
-import { OutlineLevel } from "./outline-levels";
+import { OutlineLevel, UnwrittenLevel } from "./outline-levels";
 
 type Params = { brandSlug: string; courseSlug: string };
 
@@ -49,6 +48,7 @@ async function OutlinePlanLine({
 /** Every chapter and lesson title stays in the page's HTML once, for search engines. */
 export async function LibraryCourseOutline({
   className,
+  courseFormat,
   courseId,
   lead,
   outline,
@@ -56,6 +56,7 @@ export async function LibraryCourseOutline({
   plan = null,
 }: {
   className?: string;
+  courseFormat: CourseFormat;
   courseId: string;
   lead: string | null;
   outline: LibraryOutline;
@@ -64,7 +65,6 @@ export async function LibraryCourseOutline({
 }) {
   const t = await getExtracted();
   const stats = getLibraryOutlineStats(outline);
-  const durationLabel = await getTotalDurationLabel(stats.totalMinutes);
   const levelLabels = await getLevelLabels();
   const pace = stats.chapterCount > 0 ? plan?.pace : null;
   const estimate = pace?.estimate;
@@ -74,6 +74,11 @@ export async function LibraryCourseOutline({
   const firstNumbers = outline.levels.map((_, index) =>
     outline.levels.slice(0, index).reduce((sum, band) => sum + band.chapters.length, 1),
   );
+
+  const levels = listCourseLevels({
+    format: courseFormat,
+    written: outline.levels.map((band) => band.level),
+  });
 
   const titleId = `course-outline-${courseId}`;
 
@@ -96,10 +101,13 @@ export async function LibraryCourseOutline({
                   count: stats.chapterCount,
                 }),
                 stats.lessonCount > 0 &&
-                  t("{count, plural, one {# short lesson} other {# short lessons}}", {
-                    count: stats.lessonCount,
+                  t({
+                    description:
+                      "After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now.",
+                    message:
+                      "{count, plural, one {# lesson written so far} other {# lessons written so far}}",
+                    values: { count: stats.lessonCount },
                   }),
-                stats.lessonCount > 0 && durationLabel,
               ]
                 .filter(Boolean)
                 .join(" · ")}
@@ -107,7 +115,11 @@ export async function LibraryCourseOutline({
           )}
         </div>
 
-        {plan && pace && <OutlinePlanLine examDate={plan.examDate} pace={pace} />}
+        {plan && pace && (
+          <CourseExampleNumbers courseId={courseId}>
+            <OutlinePlanLine examDate={plan.examDate} pace={pace} />
+          </CourseExampleNumbers>
+        )}
 
         {lead && <p className="text-[0.9375rem] leading-relaxed text-pretty">{lead}</p>}
 
@@ -128,22 +140,36 @@ export async function LibraryCourseOutline({
         )}
       </div>
 
-      {areas && <AreaOutline estimate={areas} outline={outline} params={params} />}
+      {areas && (
+        <AreaOutline courseId={courseId} estimate={areas} outline={outline} params={params} />
+      )}
 
       {stats.chapterCount > 0 && !areas && (
         <div className="flex flex-col gap-2">
-          {outline.levels.map((band, index) => (
-            <OutlineLevel
-              band={band}
-              courseId={courseId}
-              firstNumber={firstNumbers[index] ?? 1}
-              isFirst={index === 0}
-              key={band.level}
-              label={levelLabels[band.level]}
-              params={params}
-              estimate={weeks}
-            />
-          ))}
+          {levels.map((level) => {
+            const index = outline.levels.findIndex((band) => band.level === level);
+            const band = outline.levels[index];
+
+            return band ? (
+              <OutlineLevel
+                band={band}
+                courseId={courseId}
+                firstNumber={firstNumbers[index] ?? 1}
+                isFirst={index === 0}
+                key={level}
+                label={levelLabels[level]}
+                params={params}
+                estimate={weeks}
+              />
+            ) : (
+              <UnwrittenLevel
+                courseId={courseId}
+                key={level}
+                label={levelLabels[level]}
+                level={level}
+              />
+            );
+          })}
         </div>
       )}
     </RouteStop>

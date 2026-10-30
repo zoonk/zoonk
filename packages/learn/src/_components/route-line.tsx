@@ -97,6 +97,42 @@ export function RouteTitle({
   );
 }
 
+const ZONE_CLASS = cn(
+  "group/zone bg-ground relative [--route-fill:var(--ground)]",
+  "-mr-4 ml-[calc(-1*var(--route-inset)-1rem)] pr-4 pl-[calc(var(--route-inset)+1rem)]",
+  "sm:mr-0 sm:ml-[calc(-1*var(--route-inset)-0.75rem)] sm:rounded-xl sm:pr-5 sm:pl-[calc(var(--route-inset)+0.75rem)]",
+);
+
+const ZONE_ROW_CLASS =
+  "relative flex gap-4 py-4 text-[0.9375rem] leading-snug font-semibold sm:text-base";
+
+function ZoneStation({ className }: { className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "pointer-events-none absolute inset-y-4 left-[calc(var(--route-x)-var(--route-inset))] z-1 -translate-x-1/2 bg-(--route-fill)",
+        ZONE_STATION_CLASS,
+        className,
+      )}
+    />
+  );
+}
+
+function ZoneLabel({ aside, summary }: { aside?: ReactNode; summary: ReactNode }) {
+  return (
+    <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+      <span className="text-pretty">{summary}</span>
+
+      {aside && (
+        <span className="text-muted-foreground flex-none font-mono text-xs font-normal tabular-nums">
+          {aside}
+        </span>
+      )}
+    </span>
+  );
+}
+
 /**
  * A native `<details>`, so its rows are in the page's HTML and it opens before any script loads.
  */
@@ -112,33 +148,15 @@ export function RouteZone({
   summary: ReactNode;
 }) {
   return (
-    <details
-      className={cn(
-        "group/zone bg-ground relative [--route-fill:var(--ground)]",
-        "-mr-4 ml-[calc(-1*var(--route-inset)-1rem)] pr-4 pl-[calc(var(--route-inset)+1rem)]",
-        "sm:mr-0 sm:ml-[calc(-1*var(--route-inset)-0.75rem)] sm:rounded-xl sm:pr-5 sm:pl-[calc(var(--route-inset)+0.75rem)]",
-      )}
-      data-slot="route-zone"
-      open={open}
-    >
-      <summary className="hover:text-foreground focus-visible:ring-ring/50 relative flex cursor-pointer list-none gap-4 rounded-md py-4 text-[0.9375rem] leading-snug font-semibold outline-none select-none focus-visible:ring-[3px] sm:text-base [&::-webkit-details-marker]:hidden">
-        <span
-          aria-hidden="true"
-          className={cn(
-            "pointer-events-none absolute inset-y-4 left-[calc(var(--route-x)-var(--route-inset))] z-1 -translate-x-1/2 bg-(--route-fill) group-open/zone:hidden",
-            ZONE_STATION_CLASS,
-          )}
-        />
-
-        <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-          <span className="text-pretty">{summary}</span>
-
-          {aside && (
-            <span className="text-muted-foreground flex-none font-mono text-xs font-normal tabular-nums">
-              {aside}
-            </span>
-          )}
-        </span>
+    <details className={ZONE_CLASS} data-slot="route-zone" open={open}>
+      <summary
+        className={cn(
+          ZONE_ROW_CLASS,
+          "hover:text-foreground focus-visible:ring-ring/50 cursor-pointer list-none rounded-md outline-none select-none focus-visible:ring-[3px] [&::-webkit-details-marker]:hidden",
+        )}
+      >
+        <ZoneStation className="group-open/zone:hidden" />
+        <ZoneLabel aside={aside} summary={summary} />
 
         <LineMarker>
           <ChevronDownIcon
@@ -150,5 +168,17 @@ export function RouteZone({
 
       <div className="pb-4">{children}</div>
     </details>
+  );
+}
+
+/** A zone with nothing in it yet, such as a level not written: a dashed station and nothing to open. */
+export function RouteZoneAhead({ aside, summary }: { aside?: ReactNode; summary: ReactNode }) {
+  return (
+    <div className={ZONE_CLASS} data-slot="route-zone">
+      <div className={ZONE_ROW_CLASS}>
+        <ZoneStation className="border-dashed" />
+        <ZoneLabel aside={aside} summary={summary} />
+      </div>
+    </div>
   );
 }
