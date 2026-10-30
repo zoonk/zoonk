@@ -16,13 +16,35 @@ class RunMeterTest {
     val rule = createComposeRule()
 
     @Test
-    fun tellsTalkBackAnAnsweredQuestionIsDoneBeforeTheRunMovesOn() {
-        rule.setContent {
-            ZoonkTheme { RunMeter(index = 0, total = 3, segments = listOf(Segment.Right, Segment.Ahead, Segment.Ahead)) }
-        }
+    fun tellsTalkBackTheDoneCountItIsGiven() {
+        show(done = 1)
+
+        rule.onNode(progress).assert(
+            SemanticsMatcher("one of three done") {
+                it.config[SemanticsProperties.ProgressBarRangeInfo].current ==
+                    1f
+            },
+        )
+    }
+
+    @Test
+    fun keepsAStudyRunsProgressOnItsQuestionUntilContinue() {
+        show()
 
         rule
-            .onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.ProgressBarRangeInfo))
-            .assert(SemanticsMatcher("one of three done") { it.config[SemanticsProperties.ProgressBarRangeInfo].current == 1f })
+            .onNode(
+                progress,
+            ).assert(SemanticsMatcher("none done yet") { it.config[SemanticsProperties.ProgressBarRangeInfo].current == 0f })
+    }
+
+    private val progress = SemanticsMatcher.keyIsDefined(SemanticsProperties.ProgressBarRangeInfo)
+
+    private fun show(done: Int? = null) {
+        val segments = listOf(Segment.Right, Segment.Ahead, Segment.Ahead)
+        rule.setContent {
+            ZoonkTheme {
+                if (done == null) RunMeter(index = 0, total = 3, segments = segments) else RunMeter(0, 3, segments, done = done)
+            }
+        }
     }
 }

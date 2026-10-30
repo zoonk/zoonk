@@ -168,9 +168,9 @@ internal fun RunMeter(
     index: Int,
     total: Int,
     segments: List<Segment>,
+    done: Int = index,
 ) {
     val label = stringResource(R.string.practice_progress, minOf(index + 1, total), total)
-    val done = segments.count { it != Segment.Ahead && it != Segment.Current }
     val parts =
         segments.map { segment ->
             MeterPart(
