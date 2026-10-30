@@ -4077,6 +4077,12 @@ msgctxt "uDE8Kt"
 msgid "Challenge left out"
 msgstr "Challenge left out"
 
+#. On a phase of the learner's plan: their time a day leaves no room for its challenge before their goal's date.
+#: src/journey/path-phase-row.tsx
+msgctxt "e4_rBx"
+msgid "No time for this phase's challenge before your date"
+msgstr "No time for this phase's challenge before your date"
+
 #: src/journey/path-phase-row.tsx
 msgctxt "nzBtDK"
 msgid "More lessons on the way · challenge {date}"

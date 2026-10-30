@@ -125,6 +125,41 @@ function PhaseResume({ phase }: { phase: PlanPhaseView }) {
   );
 }
 
+function isLeftOut(phase: PlanPhaseView): boolean {
+  return phase.state === "leftOut" || phase.state === "unfinished" || phase.challengeLeftOut;
+}
+
+function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
+  const t = useExtracted();
+  const lessons = phase.lessonsTotal - phase.lessonsDone;
+
+  if (phase.state === "leftOut") {
+    return <span className="text-muted-foreground text-xs">{t("Not in your plan")}</span>;
+  }
+
+  if (phase.state !== "unfinished") {
+    return (
+      <span className="text-muted-foreground text-xs">
+        {t({
+          description:
+            "On a phase of the learner's plan: their time a day leaves no room for its challenge before their goal's date.",
+          message: "No time for this phase's challenge before your date",
+        })}
+      </span>
+    );
+  }
+
+  return (
+    <span className="text-muted-foreground text-xs">
+      {lessons > 0
+        ? t("{count, plural, one {# lesson was left out} other {# lessons were left out}}", {
+            count: lessons,
+          })
+        : t("Challenge left out")}
+    </span>
+  );
+}
+
 function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
@@ -136,22 +171,8 @@ function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
 
   const writing = phase.chapters.some((chapter) => chapter.writing);
 
-  if (phase.state === "leftOut") {
-    return <span className="text-muted-foreground text-xs">{t("Not in your plan")}</span>;
-  }
-
-  if (phase.state === "unfinished") {
-    const leftOut = phase.lessonsTotal - phase.lessonsDone;
-
-    return (
-      <span className="text-muted-foreground text-xs">
-        {leftOut > 0
-          ? t("{count, plural, one {# lesson was left out} other {# lessons were left out}}", {
-              count: leftOut,
-            })
-          : t("Challenge left out")}
-      </span>
-    );
+  if (isLeftOut(phase)) {
+    return <PhaseLeftOut phase={phase} />;
   }
 
   const lessonsLeft = phase.lessonsDone < phase.lessonsTotal;
