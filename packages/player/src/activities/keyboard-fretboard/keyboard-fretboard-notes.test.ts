@@ -3,6 +3,7 @@ import {
   answeringMarks,
   checkedMarks,
   fretWindowStart,
+  initialPitches,
   pitchSpelling,
   pitchesToNotes,
   targetPitches,
@@ -70,5 +71,23 @@ describe("guitar shapes for the keys", () => {
     expect(fretWindowStart([null, 3, 1, 0, 1, 3], 4)).toBe(1);
     expect(fretWindowStart([null, 7, 9, 9, 8, 7], 4)).toBe(7);
     expect(fretWindowStart(null, 4)).toBe(1);
+  });
+});
+
+describe(initialPitches, () => {
+  it("shows an explored change's end, not its start, since the prompt that told them apart is gone", () => {
+    expect(
+      initialPitches({
+        answer: null,
+        content: {
+          check: { kind: "choice" },
+          fields: {
+            start: { kind: "chord", quality: "major", root: "C" },
+            target: { kind: "chord", quality: "minor", root: "C" },
+          },
+        },
+        phase: "explore",
+      }),
+    ).toStrictEqual([0, 3, 7]);
   });
 });

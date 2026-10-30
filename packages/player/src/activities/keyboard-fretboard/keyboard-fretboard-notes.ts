@@ -166,7 +166,13 @@ export function initialPitches({
   }
 
   const { check, fields } = content;
-  const showsTarget = fields.byEar ? phase === "explore" : check.kind !== "interaction";
+
+  // An explanation shows the solved end; without the prompt, a change's start would read as its end.
+  if (phase === "explore") {
+    return targetPitches(fields.target);
+  }
+
+  const showsTarget = !fields.byEar && check.kind !== "interaction";
 
   return targetPitches(fields.start ?? (showsTarget ? fields.target : undefined));
 }
