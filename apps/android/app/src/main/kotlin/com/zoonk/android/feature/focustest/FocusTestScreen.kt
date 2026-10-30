@@ -136,7 +136,7 @@ fun FocusTestScreen(
         is LoadState.Loaded -> {
             LaunchedEffect(read.value) { viewModel.arrive(read.value) }
             when {
-                ui.started && ui.questions.isNotEmpty() -> FocusTestQuestions(read.value, ui, viewModel, app, close)
+                ui.started && ui.questions.isNotEmpty() -> FocusTestQuestions(read.value, ui, viewModel, app, navigator, close)
                 ui.started && ui.writing -> FocusTestWriting(viewModel, close)
                 else -> FocusTestIntro(read.value, ui, viewModel, navigator)
             }
@@ -242,11 +242,14 @@ internal fun FocusTestQuestions(
     ui: FocusTestUi,
     viewModel: FocusTestViewModel,
     app: AppContainer,
+    navigator: AppNavigator,
     onClose: () -> Unit,
 ) {
     val run by viewModel.run.collectAsStateWithLifecycle()
-    val ended = run.status == GenerationRun.Status.Ready || run.status == GenerationRun.Status.Failed
-    val upcoming = UpcomingQuestions(read.total, ended).takeIf { ui.writing && ui.questions.size < read.total }
+    val refused = ui.refused
+    val ended = refused != null || run.status == GenerationRun.Status.Ready || run.status == GenerationRun.Status.Failed
+    // A refused rewrite ends the writing, but the questions it would have written still count as missing.
+    val upcoming = UpcomingQuestions(read.total, ended).takeIf { (ui.writing || refused != null) && ui.questions.size < read.total }
 
     ChoiceQuestionsRun(
         title = stringResource(R.string.focustest_title),
@@ -263,11 +266,21 @@ internal fun FocusTestQuestions(
         hint = { it.area },
         upcoming = upcoming,
         waiting = {
-            GenerationWait(GenerationKind.FocusTestQuestions, run, viewModel::retryWriting.takeIf { viewModel.canRestart }) {
-                if (run.status == GenerationRun.Status.Ready) {
-                    RunIntro(stringResource(R.string.focustest_ended_title), stringResource(R.string.focustest_ended_detail))
-                } else {
-                    RunIntro(stringResource(R.string.focustest_waiting_title), stringResource(R.string.focustest_waiting_detail))
+            if (refused != null) {
+                RunIntro(stringResource(R.string.focustest_ended_title), stringResource(R.string.focustest_ended_detail))
+                LimitNotice(
+                    refused,
+                    LimitSubject.Help,
+                    onCreateAccount = { navigator.open(AppRoute.Login) },
+                    onSeePlus = { navigator.open(AppRoute.Subscription) },
+                )
+            } else {
+                GenerationWait(GenerationKind.FocusTestQuestions, run, viewModel::retryWriting.takeIf { viewModel.canRestart }) {
+                    if (run.status == GenerationRun.Status.Ready) {
+                        RunIntro(stringResource(R.string.focustest_ended_title), stringResource(R.string.focustest_ended_detail))
+                    } else {
+                        RunIntro(stringResource(R.string.focustest_waiting_title), stringResource(R.string.focustest_waiting_detail))
+                    }
                 }
             }
         },

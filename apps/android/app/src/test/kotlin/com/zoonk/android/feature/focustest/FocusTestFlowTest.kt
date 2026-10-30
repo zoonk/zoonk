@@ -11,6 +11,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
@@ -21,6 +23,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.Answer
+import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.FocusTest
@@ -49,6 +52,7 @@ class FocusTestFlowTest {
     val drafts = TemporaryFolder()
 
     private var writes = 0
+    private var refuseRewrites = false
 
     private val focusTest: FocusTest =
         ApiJson.decodeFromString(
@@ -70,7 +74,10 @@ class FocusTestFlowTest {
                 override suspend fun writeQuestions(
                     session: AuthenticatedSession,
                     goalId: UUID,
-                ) = FocusTestGeneration("gen-$writes", FocusTestGeneration.Status.GENERATING).also { writes++ }
+                ): FocusTestGeneration {
+                    if (refuseRewrites && writes > 0) throw ApiException(ApiError.Unavailable, "SLOW_DOWN", 429)
+                    return FocusTestGeneration("gen-$writes", FocusTestGeneration.Status.GENERATING).also { writes++ }
+                }
 
                 override suspend fun submit(
                     session: AuthenticatedSession,
@@ -111,7 +118,7 @@ class FocusTestFlowTest {
         rule.setContent {
             ZoonkTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
-                FocusTestQuestions(read, ui, viewModel, AppContainer.preview(rule.activity)) {}
+                FocusTestQuestions(read, ui, viewModel, AppContainer.preview(rule.activity), rememberAppNavigator()) {}
             }
         }
 
@@ -120,5 +127,29 @@ class FocusTestFlowTest {
         rule.waitForIdle()
 
         assertEquals(2, writes)
+    }
+
+    @Test
+    fun aLimitHitWhileWritingSaysSoAndLetsTheAnswersGivenFinish() {
+        refuseRewrites = true
+        val viewModel = viewModel()
+        runBlocking { viewModel.test.refresh() }
+        val read = (viewModel.test.state.value as LoadState.Loaded<*>).value as FocusTestRead
+        viewModel.arrive(read)
+        viewModel.start(read)
+        rule.waitForIdle()
+        viewModel.answer(read.questions.single(), Answer.DontKnow)
+        rule.setContent {
+            ZoonkTheme {
+                val ui by viewModel.ui.collectAsStateWithLifecycle()
+                FocusTestQuestions(read, ui, viewModel, AppContainer.preview(rule.activity), rememberAppNavigator()) {}
+            }
+        }
+
+        rule.onNodeWithText("Try again").performClick()
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Take a short break, then try again.").assertExists()
+        rule.onNodeWithText("Finish with these answers").assertIsEnabled()
     }
 }

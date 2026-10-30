@@ -168,7 +168,7 @@ class FocusTestScreenshots {
                 val outcome = ui.outcome
                 when {
                     outcome != null -> FocusTestResult(outcome, ui, viewModel, AppContainer.preview(rule.activity), navigator)
-                    ui.started -> FocusTestQuestions(read, ui, viewModel, AppContainer.preview(rule.activity)) {}
+                    ui.started -> FocusTestQuestions(read, ui, viewModel, AppContainer.preview(rule.activity), navigator) {}
                     else -> FocusTestIntro(read, ui, viewModel, navigator)
                 }
             }
