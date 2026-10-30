@@ -61,21 +61,7 @@ struct ActivityStepView: View {
       ActivityFallbackCanvas(context: canvasContext)
     }
 
-    if let source = content.data?.source {
-      Text(
-        "Source: \(source.title)\(source.publisher.map { ", \($0)" } ?? "")", tableName: "Player",
-        comment: "Where an activity's numbers come from"
-      )
-      .font(.caption)
-      .foregroundStyle(.secondary)
-    } else if content.data?.isExample == true {
-      Text(
-        "Example numbers", tableName: "Player",
-        comment: "An activity's numbers are made up to show the idea"
-      )
-      .font(.caption)
-      .foregroundStyle(.secondary)
-    }
+    ActivityDataNote(data: content.data)
 
     if !checkFirst {
       checkArea
@@ -106,6 +92,41 @@ struct ActivityStepView: View {
     case .interaction:
       EmptyView()
     }
+  }
+}
+
+/// Main's `ActivityDataNote`: where a model's numbers come from, linked when they have a page, or
+/// that they're an example.
+struct ActivityDataNote: View {
+  let data: ActivityData?
+
+  var body: some View {
+    Group {
+      if data?.isExample == true {
+        Text(
+          "Example numbers, not real data", tableName: "Player",
+          comment: "An activity's numbers are made up to show the idea")
+      } else if let source = data?.source {
+        Text(
+          "Source: \(name(source))", tableName: "Player",
+          comment: "Where a model's numbers come from")
+      }
+    }
+    .font(.caption)
+    .foregroundStyle(.secondary)
+  }
+
+  private func name(_ source: ActivityData.Source) -> AttributedString {
+    let details = [source.publisher, source.year.map(String.init)].compactMap(\.self)
+    var name = AttributedString(
+      details.isEmpty ? source.title : "\(source.title) (\(details.joined(separator: ", ")))")
+
+    if let url = source.url.flatMap(URL.init(string:)) {
+      name.link = url
+      name.underlineStyle = .single
+    }
+
+    return name
   }
 }
 

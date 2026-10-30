@@ -1104,35 +1104,6 @@
         }
       }
     },
-    "Example numbers" : {
-      "comment" : "An activity's numbers are made up to show the idea",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beispielzahlen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cifras de ejemplo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chiffres donnés en exemple"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Números de exemplo"
-          }
-        }
-      }
-    },
     "Ear training" : {
       "comment" : "What the learner does in an activity, named above its prompt",
       "localizations" : {
@@ -1187,6 +1158,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Faça uma estimativa primeiro"
+          }
+        }
+      }
+    },
+    "Example numbers, not real data" : {
+      "comment" : "An activity's numbers are made up to show the idea",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beispielzahlen, keine echten Daten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cifras de ejemplo, no datos reales"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiffres donnés en exemple, pas des données réelles"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Números de exemplo, não são dados reais"
           }
         }
       }
@@ -3430,41 +3430,6 @@
         }
       }
     },
-    "Source: %@%@" : {
-      "comment" : "Where an activity's numbers come from",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quelle: %1$@%2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Source: %1$@%2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fuente: %1$@%2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Source : %1$@%2$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fonte: %1$@%2$@"
-          }
-        }
-      }
-    },
     "Sort into groups" : {
       "comment" : "What the learner does in an activity, named above its prompt",
       "localizations" : {
@@ -3490,6 +3455,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Separe em grupos"
+          }
+        }
+      }
+    },
+    "Source: %@" : {
+      "comment" : "Where a model's numbers come from",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelle: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuente: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source : %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonte: %@"
           }
         }
       }

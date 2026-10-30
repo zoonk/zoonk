@@ -147,6 +147,8 @@ private struct ExplanationStepView: View {
           ActivityCanvasContext(
             template: explore.template, payload: explore.payload, check: nil, phase: .explore,
             answer: nil, setAnswer: { _ in }))
+
+        ActivityDataNote(data: explore.data)
       }
     }
   }
