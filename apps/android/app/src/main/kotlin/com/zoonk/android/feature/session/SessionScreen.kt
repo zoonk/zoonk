@@ -193,10 +193,10 @@ private fun SessionSummaryContent(
             val again = app.studySessions.summary[session.id]
             day.refresh()
             again.refresh()
-            val next = day.state.value.value?.nextBlockId
-            val finished = again.state.value.value?.finished
+            val dayNow = day.state.value.value
+            val summaryNow = again.state.value.value
             // This read leaves out work Today replaces, such as a challenge Plus no longer covers.
-            if (next == null && finished == false) navigator.open(AppRoute.Today)
+            if (dayNow?.nextBlockId == null && summaryNow?.finished == false) navigator.open(AppRoute.Today)
         }
         SessionLoading(navigator::closeTask)
         return
