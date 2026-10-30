@@ -163,6 +163,7 @@ export function TodayClient({
   return (
     <TodayScreen
       level={data.language?.level ?? null}
+      readAt={readAt}
       actions={{
         addExtraTime: taps.addExtraTime,
         adjustTimeHref: "/plan?focus=time",

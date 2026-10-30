@@ -16,7 +16,7 @@ export const planChangedSinceSchema = z
       .boolean()
       .meta({
         description:
-          "True when something watched was written after the time asked about (or up to two seconds before it): read the plan or Today again. False: what the screen shows is still current, so ask again in a few seconds while lessons are being written",
+          "True when something watched was written after the time asked about (or up to two seconds before it), or the learner's ask for lessons has gone stale since: read the plan or Today again. False: what the screen shows is still current, so ask again in a few seconds while lessons are being written",
       }),
   })
   .meta({ id: "PlanChangedSince" });

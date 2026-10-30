@@ -172,6 +172,34 @@ describe(getPlanChangedSince, () => {
     ).resolves.toStrictEqual({ changed: true, status: "ready" });
   });
 
+  it("sees the learner's ask go stale after the read, so Today stops saying their lessons are coming", async () => {
+    const { goal, plan, readAt } = await setup();
+    const askedAt = new Date(readAt - 60_000);
+
+    await prisma.plan.update({
+      data: { lessonsAskedAt: askedAt, updatedAt: askedAt },
+      where: { id: plan.id },
+    });
+
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(readAt + 10 * 60_000);
+
+    const whileFresh = await getPlanChangedSince({
+      goalId: goal.id,
+      since: readAt,
+      watch: "today",
+    });
+
+    vi.setSystemTime(readAt + 15 * 60_000);
+
+    const onceStale = await getPlanChangedSince({ goalId: goal.id, since: readAt, watch: "today" });
+
+    vi.useRealTimers();
+
+    expect(whileFresh).toStrictEqual({ changed: false, status: "ready" });
+    expect(onceStale).toStrictEqual({ changed: true, status: "ready" });
+  });
+
   it("never answers about another learner's goal", async () => {
     const { goal, readAt } = await setup();
     const stranger = await userFixture();

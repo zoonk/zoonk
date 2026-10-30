@@ -1,5 +1,6 @@
 "use client";
 
+import { OUTLINE_STALE_AFTER_MS } from "@zoonk/core/lookahead/outline-ahead";
 import { type MistakeAvailability } from "@zoonk/core/mistakes/contract";
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
@@ -36,6 +37,9 @@ export type { TodayHostNotices } from "./today-context";
 export type { TodaySyllabus } from "./today-subject-rows";
 
 const WRITING_REFRESH_MS = 5000;
+
+/** Outlasts a learner's ask for lessons, so a screen left open reads the day again once it lapses. */
+const WRITING_WAIT_MS = OUTLINE_STALE_AFTER_MS + WRITING_REFRESH_MS;
 const NO_MISTAKES: MistakeAvailability = { ready: 0, tomorrow: 0 };
 
 const NOTICE_CLASS = "max-[72rem]:-mt-7 sm:col-span-2";
@@ -71,6 +75,7 @@ export function TodayScreen({
   mockEntry = null,
   notices = NO_TODAY_HOST_NOTICES,
   planEnd = null,
+  readAt,
   speakingEntry = null,
   syllabus = null,
   today,
@@ -84,6 +89,8 @@ export function TodayScreen({
   mockEntry?: React.ReactNode;
   notices?: TodayHostNotices;
   planEnd?: string | null;
+  /** Each new read waits a full window again, for whatever it shows waiting. */
+  readAt: number;
   speakingEntry?: React.ReactNode;
   syllabus?: TodaySyllabus | null;
   today: TodayView;
@@ -98,8 +105,10 @@ export function TodayScreen({
   const poll = usePoll({
     active: isWaitingForLessons(today),
     intervalMs: WRITING_REFRESH_MS,
+    key: String(readAt),
     onPoll: actions.refresh,
     startNow: false,
+    timeoutMs: WRITING_WAIT_MS,
   });
 
   const writingStalled = poll.status === "failed" || poll.status === "timedOut";

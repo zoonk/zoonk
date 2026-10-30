@@ -2,6 +2,7 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
+import { getOutlineStaleBefore } from "../lookahead/outline-ahead";
 import { readSkillCourses } from "../lookahead/plan-outline-needs";
 import { type PlanWatch } from "./plan-changed-since-contract";
 
@@ -43,7 +44,11 @@ async function countCourseWrites({
     : prisma.course.count({ where: { id: { in: [...courseIds] }, updatedAt: after } });
 }
 
-/** `since` is the screen's read time in epoch milliseconds. Uncached: screens poll it. */
+/**
+ * `since` is the screen's read time in epoch milliseconds. Uncached: screens poll it. A learner's
+ * ask for lessons that was fresh at the read and has gone stale since counts as a change, since the
+ * day stops waiting on it without anything being written.
+ */
 export async function getPlanChangedSince({
   goalId,
   since,
@@ -68,6 +73,12 @@ export async function getPlanChangedSince({
         OR: [
           { updatedAt: after },
           { items: { some: { OR: [{ updatedAt: after }, changedLesson] } } },
+          {
+            lessonsAskedAt: {
+              gt: getOutlineStaleBefore(after.gt),
+              lte: getOutlineStaleBefore(new Date()),
+            },
+          },
         ],
         goalId,
       },
