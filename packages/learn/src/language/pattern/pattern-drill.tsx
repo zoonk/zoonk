@@ -1,19 +1,13 @@
 "use client";
 
-import { type MistakePatternView } from "@zoonk/core/language/patterns/contract";
 import { useExtracted } from "next-intl";
 import { MomentReadouts } from "../../_components/moment-readouts";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
-import {
-  type ChoiceFeedback,
-  ChoiceQuestion,
-  type ChoiceQuestionView,
-} from "../../questions/choice-question";
+import { ChoiceQuestion, type ChoiceQuestionView } from "../../questions/choice-question";
 import { DayMoment } from "../../session/day-moment";
 import { MomentHeader } from "../../session/moment-header";
+import { type DrillQuestion, toDrillFeedback } from "./pattern-drill-feedback";
 import { type PatternPracticeResult } from "./use-pattern-drill";
-
-type DrillQuestion = MistakePatternView["drill"][number];
 
 /**
  * Not a bank item: the question reads only its format, options and text, so the ids just name the
@@ -39,24 +33,6 @@ function toChoiceQuestion({
   };
 }
 
-function toFeedback({
-  answer,
-  question,
-}: {
-  answer: string | null;
-  question: DrillQuestion;
-}): ChoiceFeedback | null {
-  if (answer === null) {
-    return null;
-  }
-
-  return {
-    correctAnswer: { selectedIndex: question.options.indexOf(question.answer) },
-    explanation: question.feedback,
-    isCorrect: answer.trim() === question.answer.trim(),
-  };
-}
-
 export function PatternDrillQuestion({
   answer,
   index,
@@ -74,7 +50,7 @@ export function PatternDrillQuestion({
 
   return (
     <ChoiceQuestion
-      feedback={toFeedback({ answer, question })}
+      feedback={toDrillFeedback({ answer, question })}
       onSelect={(choice) => {
         const option =
           choice && "selectedIndex" in choice ? question.options[choice.selectedIndex] : null;
