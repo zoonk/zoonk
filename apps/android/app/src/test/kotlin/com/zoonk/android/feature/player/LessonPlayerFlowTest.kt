@@ -32,6 +32,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.engine.LessonRefusal
@@ -53,6 +54,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -136,6 +138,23 @@ class LessonPlayerFlowTest {
 
         tap("Next lesson")
         assertEquals(listOf(AppRoute.Lesson(NEXT_LESSON_ID)), replaced)
+    }
+
+    @Test
+    fun aSavedAnswerMarksTheLessonStartedWithoutReadingItAgain() {
+        play(listOf(checkStep("quiz"), summaryStep("end")))
+
+        tap("Right")
+        tap("Check")
+        rule.onNodeWithText("Correct!").assertIsDisplayed()
+        rule.waitForIdle()
+
+        assertEquals(
+            LoadState.Loaded(true),
+            harness.catalog.lessonStarted[LESSON_ID]
+                .state.value,
+        )
+        assertTrue(harness.catalogApi.reads.none { it.startsWith("started:") })
     }
 
     @Test

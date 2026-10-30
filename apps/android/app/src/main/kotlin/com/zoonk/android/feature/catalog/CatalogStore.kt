@@ -23,7 +23,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import java.util.Locale
 import java.util.UUID
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
 interface CatalogApi {
@@ -130,9 +129,9 @@ class CatalogStore(
     val lesson: KeyedResources<LessonInCourse, CatalogLesson> =
         cache.keyed(Audience.Everyone, maxAge = CATALOG_MAX_AGE) { _, key -> api.lesson(key.lessonId, key.courseId) }
 
-    /** Answers saved in a lesson don't invalidate it, so it's read each time a page shows it, as main's is. */
+    /** The player marks a lesson started when it saves an answer, which is what started means. */
     val lessonStarted: KeyedResources<String, Boolean> =
-        cache.keyed(Audience.SignedIn, setOf(DataDomain.UserProgress), maxAge = Duration.ZERO) { session, lessonId ->
+        cache.keyed(Audience.SignedIn, setOf(DataDomain.UserProgress)) { session, lessonId ->
             session?.let { api.lessonStarted(it, lessonId) }
         }
 

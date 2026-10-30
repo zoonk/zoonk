@@ -10,6 +10,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.GradeOutcome
@@ -143,6 +144,7 @@ class LessonPlayerViewModel(
     private val sessionSteps: SessionSteps? = null,
     private val isGuest: () -> Boolean = { false },
     private val activeGoalId: () -> String? = { null },
+    private val started: Resource<Boolean>? = null,
     private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)
@@ -514,7 +516,9 @@ class LessonPlayerViewModel(
 
     private suspend fun send(pending: PendingCheck): CheckOutcome {
         val result =
-            cache.mutate { session ->
+            cache.mutate(replacing = { outcome ->
+                listOfNotNull(started?.takeIf { outcome is CheckOutcome.Checked }?.replacing(true))
+            }) { session ->
                 if (session != owner) return@mutate CheckOutcome.Failed
                 try {
                     CheckOutcome.Checked(store.api.check(session, pending.stepId, pending.input))

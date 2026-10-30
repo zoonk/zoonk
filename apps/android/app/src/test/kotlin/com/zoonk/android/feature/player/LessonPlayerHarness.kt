@@ -19,6 +19,8 @@ import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.activities.code.CodeSandbox
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
+import com.zoonk.android.feature.catalog.CatalogStore
+import com.zoonk.android.feature.catalog.FakeCatalogApi
 import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.model.LessonLoad
@@ -44,6 +46,8 @@ internal class LessonPlayerHarness(
     val replaced = mutableListOf<AppRoute>()
     var closed = 0
     lateinit var api: FakeLessonPlayerApi
+    val catalogApi = FakeCatalogApi()
+    lateinit var catalog: CatalogStore
     lateinit var openAgain: () -> LessonPlayerViewModel
     lateinit var viewModel: LessonPlayerViewModel
 
@@ -80,6 +84,7 @@ internal class LessonPlayerHarness(
         api = FakeLessonPlayerApi(LessonLoad.Ready(lesson)).apply(configure)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val cache = AppCache(session, scope)
+        catalog = CatalogStore(catalogApi, cache)
         val drafts = DraftStore(newFolder(), scope, io = Dispatchers.Main.immediate)
         runBlocking { drafts.follow { DraftsChange(ana.accountId) } }
         val newViewModel = {
@@ -95,6 +100,7 @@ internal class LessonPlayerHarness(
                 sessionSteps = sessionSteps,
                 isGuest = { guest },
                 activeGoalId = { GOAL_ID },
+                started = catalog.lessonStarted[LESSON_ID],
             )
         }
         viewModel = newViewModel()
