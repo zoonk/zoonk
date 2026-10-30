@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import com.zoonk.android.ui.theme.LightTheme
 
 private class PianoKey(
     val midi: Int,
@@ -162,7 +163,7 @@ private fun Key(
         Box(Modifier.clearAndSetSemantics {}) {
             when {
                 mark != null -> {
-                    NoteMark(mark, name)
+                    LightTheme { NoteMark(mark, name) }
                 }
 
                 key.midi % MusicNotes.OCTAVE == 0 -> {

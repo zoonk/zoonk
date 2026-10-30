@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
@@ -33,6 +34,19 @@ fun ZoonkTheme(
             moreContrast -> LightMoreContrast
             else -> Light
         }
+
+    CompositionLocalProvider(
+        LocalZoonkColors provides scheme.zoonk,
+        LocalLightScheme provides if (moreContrast) LightMoreContrast else Light,
+    ) {
+        MaterialTheme(colorScheme = scheme.material, content = content)
+    }
+}
+
+/** For marks on a surface that keeps its light look in dark theme, like a piano's keys. */
+@Composable
+fun LightTheme(content: @Composable () -> Unit) {
+    val scheme = LocalLightScheme.current
 
     CompositionLocalProvider(LocalZoonkColors provides scheme.zoonk) {
         MaterialTheme(colorScheme = scheme.material, content = content)
@@ -72,6 +86,8 @@ private val Light = scheme(LightPalette, dark = false, fixed = LightPalette)
 private val Dark = scheme(DarkPalette, dark = true, fixed = LightPalette)
 private val LightMoreContrast = scheme(LightMoreContrastPalette, dark = false, fixed = LightMoreContrastPalette)
 private val DarkMoreContrast = scheme(DarkMoreContrastPalette, dark = true, fixed = LightMoreContrastPalette)
+
+private val LocalLightScheme = staticCompositionLocalOf { Light }
 
 /**
  * `tertiary` is progress's blue, which Material never draws by default, so progress indicators
