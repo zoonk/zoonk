@@ -4481,6 +4481,35 @@
         }
       }
     },
+    "A live call where you get your point across" : {
+      "comment" : "What a language unit's challenge is, under its row",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Live-Gespräch, in dem du dich verständlich machst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una llamada en directo para hacerte entender"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un appel en direct pour te faire comprendre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma conversa ao vivo para você se fazer entender"
+          }
+        }
+      }
+    },
     "A short lesson shows how, right before you need it." : {
       "comment" : "Tool choice detail",
       "localizations" : {
@@ -12403,6 +12432,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Progresso"
+          }
+        }
+      }
+    },
+    "Questions on this phase, with no hints" : {
+      "comment" : "What a phase challenge is, under its row",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fragen zu dieser Phase ohne Hinweise"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntas sobre esta fase, sin pistas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Des questions sur cette phase, sans indice"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntas desta fase, sem dicas"
           }
         }
       }

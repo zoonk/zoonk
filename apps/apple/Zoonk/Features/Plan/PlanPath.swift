@@ -38,6 +38,8 @@ struct PlanPathSection: View {
 
 struct PlanPathRows: View {
   let context: PlanContext
+  /// The roadmap's list of every phase leaves out what a challenge is, where it would repeat.
+  var brief = false
 
   var body: some View {
     let phases = context.plan.phases
@@ -49,8 +51,8 @@ struct PlanPathRows: View {
 
     ForEach(beforeFinish) { phase in
       PlanPhaseRow(
-        context: context, phase: phase, isOpen: phase.index == open, isLast: phase.index == last
-      )
+        context: context, phase: phase, isOpen: phase.index == open, isLast: phase.index == last,
+        brief: brief)
     }
 
     LabeledContent {
@@ -64,7 +66,8 @@ struct PlanPathRows: View {
     }
 
     ForEach(phases.filter { $0.kind == .afterExam }) { phase in
-      PlanPhaseRow(context: context, phase: phase, isOpen: phase.index == open, isLast: false)
+      PlanPhaseRow(
+        context: context, phase: phase, isOpen: phase.index == open, isLast: false, brief: brief)
     }
   }
 }
@@ -87,6 +90,7 @@ private struct PlanPhaseRow: View {
   let phase: PlanPhase
   let isOpen: Bool
   let isLast: Bool
+  let brief: Bool
 
   private var disclosure: PlanStore.PhaseDisclosure {
     store.phaseDisclosure(goalId: context.goal.id, phase: phase.index)
@@ -166,7 +170,9 @@ private struct PlanPhaseRow: View {
   @ViewBuilder
   private var events: some View {
     if let checkpoint = phase.checkpoint {
-      PlanCheckpointRow(checkpoint: checkpoint, today: context.plan.today)
+      PlanCheckpointRow(
+        checkpoint: checkpoint, explains: !brief, isLanguage: context.goal.kind == .language,
+        today: context.plan.today)
     }
 
     if phase.chapters.contains(where: \.isWritingAhead) {
@@ -470,19 +476,14 @@ private struct PlanChapterRow: View {
 
 private struct PlanCheckpointRow: View {
   let checkpoint: PlanPhase.Checkpoint
+  let explains: Bool
+  let isLanguage: Bool
   let today: String
 
   var body: some View {
     PlanRouteLink(route: .challenge(planItemId: checkpoint.planItemId)) {
-      LabeledContent {
-        when
-      } label: {
-        Label {
-          Text("Phase challenge", tableName: "Plan", comment: "The challenge that closes a phase")
-        } icon: {
-          KindMark(kind: .challenge)
-        }
-      }
+      PlanChallengeLabel(
+        when: when, explains: explains && checkpoint.state != .done, isLanguage: isLanguage)
     }
   }
 
@@ -615,4 +616,54 @@ func planChapterWindow(states: [PlanChapter.State]) -> Range<Int> {
   let start = max(0, min(max(0, focus - 1), states.count - shown))
 
   return start..<min(states.count, start + shown)
+}
+
+/// Says what a challenge is under its row, since a learner meets one before they've ever taken one.
+struct PlanChallengeLabel: View {
+  @Environment(\.dynamicTypeSize) private var typeSize
+
+  let when: Text?
+  let explains: Bool
+  let isLanguage: Bool
+
+  var body: some View {
+    Label {
+      VStack(alignment: .leading, spacing: 2) {
+        let layout =
+          typeSize.isAccessibilitySize
+          ? AnyLayout(VStackLayout(alignment: .leading, spacing: 2))
+          : AnyLayout(HStackLayout(alignment: .firstTextBaseline))
+
+        layout {
+          Text("Phase challenge", tableName: "Plan", comment: "The challenge that closes a phase")
+            .foregroundStyle(.primary)
+
+          if !typeSize.isAccessibilitySize {
+            Spacer(minLength: 8)
+          }
+
+          when?
+            .foregroundStyle(.secondary)
+        }
+
+        if explains {
+          Group {
+            if isLanguage {
+              Text(
+                "A live call where you get your point across", tableName: "Plan",
+                comment: "What a language unit's challenge is, under its row")
+            } else {
+              Text(
+                "Questions on this phase, with no hints", tableName: "Plan",
+                comment: "What a phase challenge is, under its row")
+            }
+          }
+          .font(.caption)
+          .foregroundStyle(.secondary)
+        }
+      }
+    } icon: {
+      KindMark(kind: .challenge)
+    }
+  }
 }

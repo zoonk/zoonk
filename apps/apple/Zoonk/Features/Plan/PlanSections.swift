@@ -85,7 +85,7 @@ struct PlanRoadmapSection: View {
       .sheet(isPresented: $showsPhases, onDismiss: openPendingRoute) {
         NavigationStack {
           List {
-            PlanPathRows(context: context)
+            PlanPathRows(context: context, brief: true)
           }
           .navigationTitle(
             Text("Your path", tableName: "Plan", comment: "Title of the plan's phases")
@@ -593,10 +593,9 @@ struct NextOnPathSection: View {
           Button {
             router.open(.challenge(planItemId: checkpoint.planItemId))
           } label: {
-            row(
-              title: Text(
-                "Phase challenge", tableName: "Plan", comment: "The challenge that closes a phase"),
-              detail: checkpointWhen(checkpoint), kind: .challenge)
+            PlanChallengeLabel(
+              when: checkpointWhen(checkpoint), explains: true,
+              isLanguage: context.goal.kind == .language)
           }
         }
 
