@@ -127,6 +127,7 @@ private struct GoalStartFlow: View {
       NavigationStack {
         GuestGoalGate()
           .closesTask()
+          .barName(title)
       }
     } else if let goalID {
       NavigationStack {
@@ -158,17 +159,19 @@ private struct GoalStartFlow: View {
         }
         .onboardingColumn()
         .closesTask()
+        .barName(title)
         .navigationDestination(for: StartPage.self) { page in
-          switch page {
-          case .draft:
-            draftPage
-              .onboardingColumn()
-              .closesTask()
-          case .questions:
-            MaterialQuestionsView(sources: material)
-              .onboardingColumn()
-              .closesTask()
+          Group {
+            switch page {
+            case .draft:
+              draftPage
+            case .questions:
+              MaterialQuestionsView(sources: material)
+            }
           }
+          .onboardingColumn()
+          .closesTask()
+          .barName(title)
         }
       }
       // Today's box sent the words with the tap that opened this screen.
@@ -185,6 +188,12 @@ private struct GoalStartFlow: View {
         }
       }
     }
+  }
+
+  private var title: Text {
+    Text(
+      "Start with your goal", tableName: "Onboarding",
+      comment: "Names the start flow's screens, whose own titles head them")
   }
 
   @ViewBuilder

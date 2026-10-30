@@ -38,8 +38,7 @@ struct ChapterScreen: View {
           ProgressView()
         }
       }
-      .navigationTitle(chapter.value.map { Text($0.chapter.title) } ?? Text(verbatim: ""))
-      .toolbarTitleDisplayMode(.inline)
+      .navigationTitle(chapter.value.map { Text($0.chapter.title) } ?? untitledChapter)
       .barTitleAfterHero(chapter.value?.chapter.title ?? "")
       .toolbar {
         ToolbarItem(placement: .primaryAction) {
@@ -78,7 +77,15 @@ struct ChapterScreen: View {
       .loads(chapter)
     } else if learner.summary.value != nil {
       notInPlan
+        .navigationTitle(untitledChapter)
+        .toolbarTitleDisplayMode(.inline)
     }
+  }
+
+  private var untitledChapter: Text {
+    Text(
+      "Chapter", tableName: "Navigation",
+      comment: "Title shown instead of a chapter of the plan until it can open")
   }
 
   private var notInPlan: some View {

@@ -2,6 +2,7 @@ import SwiftUI
 
 extension View {
   /// A page that heads itself with its own title: the bar names it once that title scrolls away.
+  /// The bar stays inline, since a large title would repeat the heading above it.
   func barTitleAfterHero(_ title: String) -> some View {
     modifier(BarTitleAfterHero(title: title))
   }
@@ -9,6 +10,14 @@ extension View {
   /// The hero's title, which tells the bar when it leaves the screen.
   func heroTitle() -> some View {
     modifier(HeroTitleVisibility())
+  }
+
+  /// Names the bar of a page its content heads, for VoiceOver and the next page's Back, without
+  /// showing the name in it.
+  func barName(_ title: Text) -> some View {
+    navigationTitle(title)
+      .toolbarTitleDisplayMode(.inline)
+      .toolbar(removing: .title)
   }
 }
 
@@ -23,8 +32,10 @@ private struct BarTitleAfterHero: ViewModifier {
 
   func body(content: Content) -> some View {
     content
-      .toolbar(removing: .title)
+      .toolbarTitleDisplayMode(.inline)
       .toolbar {
+        // The principal item stands in for the title, which `toolbar(removing: .title)` would take
+        // with it.
         ToolbarItem(placement: .principal) {
           Text(title)
             .font(.headline)

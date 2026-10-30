@@ -16,7 +16,12 @@ struct MindMapScreen: View {
           let map = store.map(goalId: goal.id, chapterId: chapterId)
 
           content(map)
-            .navigationTitle(map.value.map { Text($0.title) } ?? Text(verbatim: ""))
+            .navigationTitle(
+              map.value.map { Text($0.title) }
+                ?? Text(
+                  "Mind map", tableName: "MindMaps",
+                  comment: "Names a chapter's mind map screen until the map loads")
+            )
             .loads(map, refreshable: false)
         }
       }

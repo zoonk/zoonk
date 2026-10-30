@@ -2097,6 +2097,41 @@
         }
       }
     },
+    "Challenge" : {
+      "comment" : "Names a challenge's screen until it loads",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herausforderung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Challenge"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafío"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défi"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafio"
+          }
+        }
+      }
+    },
     "Challenge calls come with Plus. Your plan keeps going without them." : {
       "comment" : "A challenge call is Plus-only.",
       "localizations" : {
@@ -7244,6 +7279,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hoje"
+          }
+        }
+      }
+    },
+    "Today's session" : {
+      "comment" : "Names a block of today's session until the block loads",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heutige Lerneinheit"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today's session"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesión de hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séance du jour"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessão de hoje"
           }
         }
       }

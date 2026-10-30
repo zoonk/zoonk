@@ -41,6 +41,10 @@ struct EssayScreen: View {
           EssayContent(resource: essay, essay: view)
         }
       }
+      .navigationTitle(
+        essay.value?.rubric.promptLabel
+          ?? String(localized: "Writing practice", table: "Essay", comment: "A writing task")
+      )
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         if essay.value == nil {
@@ -114,7 +118,6 @@ private struct EssayContent: View {
         }
       }
     }
-    .navigationTitle(essay.rubric.promptLabel)
     .toolbar {
       ToolbarItem(placement: .cancellationAction) {
         Button(role: .close) {

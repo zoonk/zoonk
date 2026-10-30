@@ -130,6 +130,8 @@ struct AccountSheet: View {
     case .restoring:
       ProgressView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .navigationTitle(accountTitle)
+        .toolbarTitleDisplayMode(.inline)
     case .signedOut:
       LoginView()
     case .signedIn where signsIn && isGuest:
@@ -176,11 +178,13 @@ struct AccountSheet: View {
         .buttonStyle(.mainAction)
         .disabled(session.isWorking)
       }
-      .navigationTitle(
-        Text("Account", tableName: "Account", comment: "Account sheet navigation title")
-      )
+      .navigationTitle(accountTitle)
       .toolbarTitleDisplayMode(.inline)
     }
+  }
+
+  private var accountTitle: Text {
+    Text("Account", tableName: "Account", comment: "Account sheet navigation title")
   }
 
   /// Leaves a local deletion result visible until the user dismisses it.

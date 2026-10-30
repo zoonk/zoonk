@@ -82,7 +82,10 @@ private struct LessonPlayerContent: View {
                 .scenePadding(.horizontal)
             }
           }
+          .navigationTitle(title)
           .navigationBarTitleDisplayMode(.inline)
+          // The bar shows the progress, or nothing; the title only names it.
+          .toolbar(removing: hasVerticalBar || progress == nil ? .title : nil)
           .taskClose { closeButton }
           .toolbar {
             if !hasVerticalBar, let progress {
@@ -303,6 +306,14 @@ private struct LessonPlayerContent: View {
           Image(systemName: "list.bullet.rectangle")
         }
       }
+    }
+  }
+
+  private var title: Text {
+    if let lesson = store.lesson {
+      Text(lesson.title)
+    } else {
+      Text("Lesson", tableName: "Player", comment: "Names a lesson's screen until its title loads")
     }
   }
 

@@ -50,6 +50,7 @@ struct PlanLinkScreen: View {
           }
         }
         .closesTask()
+        .barName(title(resource.value))
       }
     }
     .loads(resource, refreshable: false)
@@ -60,6 +61,16 @@ struct PlanLinkScreen: View {
       if ownGoal != nil {
         router.showRoot(of: .plan)
       }
+    }
+  }
+
+  private func title(_ link: Components.Schemas.PlanLink?) -> Text {
+    if let subject = link?.outline.subject?.title {
+      Text(
+        "A plan for \(subject)", tableName: "PlanLink",
+        comment: "Names a shared plan's screen; the argument is its subject")
+    } else {
+      Text("A study plan", tableName: "PlanLink", comment: "A shared plan without a subject")
     }
   }
 

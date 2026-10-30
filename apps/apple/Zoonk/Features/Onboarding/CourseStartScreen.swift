@@ -21,7 +21,20 @@ struct CourseStartScreen: View {
         form
           .onboardingColumn()
           .closesTask()
+          .barName(title)
       }
+    }
+  }
+
+  private var title: Text {
+    if let course = catalog.course(id: courseId).value?.course {
+      Text(
+        "Start \(course.title)", tableName: "Onboarding",
+        comment: "Names the screen that starts a course as a goal; the argument is the course")
+    } else {
+      Text(
+        "Start a course", tableName: "Onboarding",
+        comment: "Names the screen that starts a course as a goal, until the course loads")
     }
   }
 

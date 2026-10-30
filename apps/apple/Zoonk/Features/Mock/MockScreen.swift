@@ -61,6 +61,7 @@ private struct MockStage: View {
     switch run.mock.state {
     case .idle, .loading:
       ProgressView()
+        .navigationTitle(untitledMock)
     case .empty, .failed(.notFound):
       ContentUnavailableView {
         Label {
@@ -69,6 +70,7 @@ private struct MockStage: View {
           Image(systemName: "timer")
         }
       }
+      .navigationTitle(untitledMock)
     case .failed:
       ContentUnavailableView {
         Label {
@@ -84,9 +86,14 @@ private struct MockStage: View {
         }
         .buttonStyle(.bordered)
       }
+      .navigationTitle(untitledMock)
     case .loaded(let view):
       stage(view)
     }
+  }
+
+  private var untitledMock: Text {
+    Text("Mock exam", tableName: "Mock", comment: "Names a mock exam's screen until it loads")
   }
 
   @ViewBuilder
@@ -99,8 +106,10 @@ private struct MockStage: View {
           router.dismissTask()
           router.open(.challenge(planItemId: planItemId, sessionId: sessionId ?? view.sessionId))
         }
+        .navigationTitle(MockLabels.title(number: view.number))
     } else if view.status == .expired {
       MockExpiredView(view: view)
+        .navigationTitle(MockLabels.title(number: view.number))
     } else if view.status == .finished {
       MockResultView(run: run, view: view)
         .environment(\.celebrates, finishedHere)
@@ -114,6 +123,7 @@ private struct MockStage: View {
       MockRunnerView(run: run, view: view, current: current)
     } else {
       MockGradingView(run: run)
+        .navigationTitle(MockLabels.title(number: view.number))
     }
   }
 }

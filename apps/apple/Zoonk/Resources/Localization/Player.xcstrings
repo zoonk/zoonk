@@ -2067,6 +2067,41 @@
         }
       }
     },
+    "Lesson" : {
+      "comment" : "Names a lesson's screen until its title loads",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektion"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Lesson"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçon"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aula"
+          }
+        }
+      }
+    },
     "Lesson complete" : {
       "comment" : "Title at the end of a lesson",
       "localizations" : {

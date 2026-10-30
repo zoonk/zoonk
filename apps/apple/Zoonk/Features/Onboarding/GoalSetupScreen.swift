@@ -47,8 +47,11 @@ struct GoalSetupContent: View {
       case .idle, .loading, .empty:
         ProgressView()
           .closesTask()
+          .toolbar(removing: .title)
       }
     }
+    .navigationTitle(Text("Your plan", tableName: "Onboarding", comment: "Title of a new plan"))
+    .toolbarTitleDisplayMode(.inline)
     .loads(resource, refreshable: false)
   }
 }
@@ -148,6 +151,10 @@ private struct GoalSteps: View {
     .disabled(isSaving)
   }
 
+  private var progress: SetupProgress? {
+    SetupProgress(current: step, history: history, steps: view.steps)
+  }
+
   var body: some View {
     StepScreen(
       step: step, view: view, isSaving: isSaving, failed: failed, refusal: refusal,
@@ -156,6 +163,8 @@ private struct GoalSteps: View {
     )
     .id(step)
     .navigationBarBackButtonHidden()
+    // The step counter takes the title's place; without it the bar shows no title.
+    .toolbar(removing: progress == nil ? .title : nil)
     .taskOptions(
       isShown: step != .plan,
       label: Text("More", tableName: "Onboarding", comment: "Opens onboarding's menu")
@@ -176,7 +185,7 @@ private struct GoalSteps: View {
         }
       }
 
-      if let progress = SetupProgress(current: step, history: history, steps: view.steps) {
+      if let progress {
         ToolbarItem(placement: .principal) {
           Text(
             "Step \(progress.step) of \(progress.total)", tableName: "Onboarding",

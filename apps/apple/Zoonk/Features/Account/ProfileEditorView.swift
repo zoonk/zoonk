@@ -26,9 +26,7 @@ struct ProfileEditorView: View {
     Form {
       if isRequiredSetup {
         StepHeader(
-          title: Text(
-            "What should we call you?", tableName: "Account",
-            comment: "Title of the profile setup after signing up"),
+          title: setupTitle,
           description: Text(
             "You can change it later in your profile.", tableName: "Account",
             comment: "Explains that the setup's name and username can change later"))
@@ -165,10 +163,11 @@ struct ProfileEditorView: View {
     .disabled(session.isWorking)
     .navigationTitle(
       isRequiredSetup
-        ? Text(verbatim: "")
+        ? setupTitle
         : Text("Profile", tableName: "Account", comment: "Profile editor navigation title")
     )
     .toolbarTitleDisplayMode(.inline)
+    .toolbar(removing: isRequiredSetup ? .title : nil)
     .task {
       guard isRequiredSetup, username.isEmpty else {
         return
@@ -210,6 +209,12 @@ struct ProfileEditorView: View {
         }
       }
     }
+  }
+
+  private var setupTitle: Text {
+    Text(
+      "What should we call you?", tableName: "Account",
+      comment: "Title of the profile setup after signing up")
   }
 
   private var showsUsernameField: Bool {

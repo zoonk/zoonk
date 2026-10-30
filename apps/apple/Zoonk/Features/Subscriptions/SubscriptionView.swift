@@ -41,6 +41,8 @@ struct SubscriptionScreen: View {
             .scenePadding()
             .keepsOffFold()
           }
+          .navigationTitle(Text.zoonkPlus)
+          .toolbarTitleDisplayMode(.inline)
         }
       }
       .toolbar {
@@ -91,12 +93,7 @@ struct SubscriptionView: View {
       }
     }
     .loads(settings.allowance, settings.freePlan, refreshable: false)
-    .navigationTitle(
-      Text(
-        "Zoonk Plus",
-        tableName: "Account",
-        comment: "Title of the native Zoonk Plus subscription screen")
-    )
+    .navigationTitle(Text.zoonkPlus)
     .toolbarTitleDisplayMode(.inline)
     .toolbar {
       ToolbarItem(placement: .bottomBar) {
@@ -269,6 +266,15 @@ struct SubscriptionView: View {
     case nil:
       nil
     }
+  }
+}
+
+extension Text {
+  fileprivate static var zoonkPlus: Text {
+    Text(
+      "Zoonk Plus",
+      tableName: "Account",
+      comment: "Title of the native Zoonk Plus subscription screen")
   }
 }
 

@@ -4223,6 +4223,41 @@
         }
       }
     },
+    "Mock exam" : {
+      "comment" : "Names a mock exam's screen until it loads",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probeprüfung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mock exam"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulacro de examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulado"
+          }
+        }
+      }
+    },
     "Mock exam %lld" : {
       "comment" : "A mock exam's name, by its number",
       "localizations" : {

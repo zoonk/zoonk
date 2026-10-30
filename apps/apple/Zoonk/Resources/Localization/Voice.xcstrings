@@ -1298,6 +1298,41 @@
         }
       }
     },
+    "Conversation" : {
+      "comment" : "Names a call's screen until the call loads",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespräch"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversation"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversa"
+          }
+        }
+      }
+    },
     "Create a free account" : {
       "comment" : "Button to sign up after a guest used the free help",
       "localizations" : {

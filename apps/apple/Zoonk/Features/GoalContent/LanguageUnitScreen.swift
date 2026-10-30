@@ -144,8 +144,12 @@ struct LanguageUnitScreen: View {
           ProgressView()
         }
       }
-      .navigationTitle(unit.value.map { Text($0.unit.title) } ?? Text(verbatim: ""))
-      .toolbarTitleDisplayMode(.inline)
+      .navigationTitle(
+        unit.value.map { Text($0.unit.title) }
+          ?? Text(
+            "Unit", tableName: "Navigation",
+            comment: "Title shown instead of a unit of a language plan until it can open")
+      )
       .barTitleAfterHero(unit.value?.unit.title ?? "")
       .toolbar {
         ToolbarItem(placement: .primaryAction) {

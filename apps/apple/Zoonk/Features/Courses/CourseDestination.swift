@@ -132,7 +132,6 @@ extension View {
         }
       }
       .navigationTitle(destination.title)
-      .navigationBarTitleDisplayMode(.inline)
       .barTitleAfterHero(destination.title)
     }
   }

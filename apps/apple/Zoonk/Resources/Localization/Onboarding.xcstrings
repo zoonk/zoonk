@@ -8100,6 +8100,76 @@
         }
       }
     },
+    "Start %@" : {
+      "comment" : "Names the screen that starts a course as a goal; the argument is the course",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ starten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Start %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar %@"
+          }
+        }
+      }
+    },
+    "Start a course" : {
+      "comment" : "Names the screen that starts a course as a goal, until the course loads",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurs starten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Start a course"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar un curso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer un cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar um curso"
+          }
+        }
+      }
+    },
     "Start a goal" : {
       "comment" : "Title of the section where a learner types a new goal",
       "localizations" : {
@@ -8241,6 +8311,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recomeçar?"
+          }
+        }
+      }
+    },
+    "Start with your goal" : {
+      "comment" : "Names the start flow's screens, whose own titles head them",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit deinem Ziel starten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Start with your goal"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar con tu objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer par ton objectif"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comece pela sua meta"
           }
         }
       }

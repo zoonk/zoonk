@@ -103,7 +103,6 @@ extension AppRoute {
     case .course(let courseId, let title):
       CourseView(course: CourseReference(id: courseId, title: title))
         .navigationTitle(title)
-        .navigationBarTitleDisplayMode(.inline)
         .barTitleAfterHero(title)
         .catalogDestinations()
     case .session:

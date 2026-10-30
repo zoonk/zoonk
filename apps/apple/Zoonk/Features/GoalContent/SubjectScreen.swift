@@ -49,8 +49,7 @@ struct SubjectScreen: View {
           }
         }
       }
-      .navigationTitle(subject.map { Text($0.name) } ?? Text(verbatim: ""))
-      .toolbarTitleDisplayMode(.inline)
+      .navigationTitle(subject.map { Text($0.name) } ?? Text(AppTab.plan.title))
       .barTitleAfterHero(subject?.name ?? "")
       .toolbar {
         ToolbarItem(placement: .primaryAction) {

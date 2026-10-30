@@ -246,6 +246,41 @@
         }
       }
     },
+    "A plan for %@" : {
+      "comment" : "Names a shared plan's screen; the argument is its subject",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Plan für %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "A plan for %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un plan para %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un plan pour %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um plano para %@"
+          }
+        }
+      }
+    },
     "A study plan" : {
       "comment" : "A shared plan without a subject\nHeader over a shared plan's phases",
       "localizations" : {

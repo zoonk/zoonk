@@ -46,6 +46,7 @@ struct ChallengeScreen: View {
           intro(challenge)
         }
       }
+      .navigationTitle(title)
       .navigationBarTitleDisplayMode(.inline)
       .taskClose {
         PracticeCloseButton { dismiss() }
@@ -225,7 +226,15 @@ struct ChallengeScreen: View {
       actions(challenge)
     }
     .practiceActionsHidden(!hasActions(challenge))
-    .navigationTitle(titleText(challenge))
+  }
+
+  private var title: Text {
+    guard case .loaded(let challenge) = load else {
+      return Text(
+        "Challenge", tableName: "Practice", comment: "Names a challenge's screen until it loads")
+    }
+
+    return titleText(challenge)
   }
 
   @ViewBuilder

@@ -32,6 +32,11 @@ struct ExplainScreen: View {
         }
       }
       .closesTask()
+      .barName(
+        resource.value.map { Text($0.title) }
+          ?? Text(
+            "Quick explanation", tableName: "Explain",
+            comment: "Names an explanation's screen until its title loads"))
     }
     .loads(resource, refreshable: false)
   }

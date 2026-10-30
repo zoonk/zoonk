@@ -40,9 +40,20 @@ struct QuestionBlockScreen: View {
       .taskClose {
         PracticeCloseButton { dismiss() }
       }
+      .navigationTitle(title)
       .navigationBarTitleDisplayMode(.inline)
     }
     .task(id: session.authenticatedSession) { await read() }
+  }
+
+  private var title: LocalizedStringResource {
+    guard case .loaded(let run) = load else {
+      return LocalizedStringResource(
+        "Today's session", table: "Practice",
+        comment: "Names a block of today's session until the block loads")
+    }
+
+    return PracticeBlockTitle.title(for: run.detail.block)
   }
 
   /// Reads the block; a block not started yet starts first, since the learner's tap opened it.
@@ -123,7 +134,6 @@ struct QuestionBlockView: View {
         }
       }
     }
-    .navigationTitle(Text(blockTitle))
     .onChange(of: phase) { _, phase in
       if case .finished(let completion) = phase {
         onFinished?(completion)
@@ -362,10 +372,6 @@ struct QuestionBlockView: View {
   private var finishTitle: LocalizedStringResource {
     LocalizedStringResource(
       "Finish", table: "Practice", comment: "Finishes a block opened with every answer in.")
-  }
-
-  private var blockTitle: LocalizedStringResource {
-    PracticeBlockTitle.title(for: run.detail.block)
   }
 
   private func stop() async {

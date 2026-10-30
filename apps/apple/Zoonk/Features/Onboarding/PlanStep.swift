@@ -5,10 +5,6 @@ struct PlanStep: View {
 
   var body: some View {
     PlanWait(view: view, offersLibraryCourse: true) { PlanReveal(view: view, plan: $0) }
-      .navigationTitle(Text("Your plan", tableName: "Onboarding", comment: "Title of a new plan"))
-      .toolbarTitleDisplayMode(.inline)
-      // The plan heads itself, as main does; the bar keeps the title for VoiceOver.
-      .toolbar(removing: .title)
   }
 }
 

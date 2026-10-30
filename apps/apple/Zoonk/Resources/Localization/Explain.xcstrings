@@ -233,6 +233,41 @@
         }
       }
     },
+    "Quick explanation" : {
+      "comment" : "Names an explanation's screen until its title loads",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurze Erklärung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Quick explanation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explicación rápida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explication rapide"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explicação rápida"
+          }
+        }
+      }
+    },
     "Quick explanation · %@" : {
       "comment" : "Eyebrow over a quick explanation's title: its kind and length",
       "localizations" : {

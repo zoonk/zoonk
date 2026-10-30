@@ -100,12 +100,15 @@ private struct ConversationLoad: View {
     switch resource.state {
     case .idle, .loading:
       ProgressView()
+        .navigationTitle(untitledCall)
     case .empty, .failed(.notFound):
       CallNotHere()
+        .navigationTitle(untitledCall)
     case .failed:
       CallLoadFailed {
         Task { await resource.refresh() }
       }
+      .navigationTitle(untitledCall)
     case .loaded(let value):
       if value.result != nil {
         ConversationResultView(conversation: value, day: day, onStartedAgain: onStartedAgain)
@@ -127,6 +130,10 @@ private struct ConversationLoad: View {
         .navigationTitle(ConversationTitle(conversation: value).text)
       }
     }
+  }
+
+  private var untitledCall: Text {
+    Text("Conversation", tableName: "Voice", comment: "Names a call's screen until the call loads")
   }
 }
 
