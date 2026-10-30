@@ -10,14 +10,15 @@ import kotlin.math.min
 
 private val SPACES = Regex("[\\s\\u00A0\\u202F]")
 private val NUMBER_CHARACTERS = Regex("^[+-]?[\\d.,]+$")
-private val GROUPED_DIGITS = Regex("^[+-]?\\d{1,3}(?:[.,]\\d{3})+$")
+private val GROUPED_DIGITS = Regex("^[+-]?[1-9]\\d{0,2}(?:[.,]\\d{3})+$")
 private val PLAIN_NUMBER = Regex("^[+-]?(?:\\d+\\.?\\d*|\\.\\d+)$")
 private const val EXACT_MIN_FRACTION_DIGITS = 2
 
 /**
  * Main's `parseLocalizedNumber`: a number typed with either separator, where a lone separator is
  * a decimal point unless it groups thousands the locale's way ("1,000" in English, "1.000" in
- * Portuguese). Null for anything else.
+ * Portuguese; "0,125" is always a decimal). With both, the last is the decimal point in any
+ * language, since a learner may type their region's notation. Null for anything else.
  */
 fun parseLocalizedNumber(
     text: String,
@@ -44,10 +45,22 @@ private fun normalizeSeparators(
     val hasComma = ',' in text
 
     return when {
-        hasDot && hasComma -> if (decimal == ',') text.replace(".", "").replace(',', '.') else text.replace(",", "")
-        hasComma -> normalizeOneSeparator(text, ',', decimal)
-        hasDot -> normalizeOneSeparator(text, '.', decimal)
-        else -> text
+        hasDot && hasComma -> {
+            val (point, grouping) = if (text.lastIndexOf('.') > text.lastIndexOf(',')) '.' to ',' else ',' to '.'
+            text.replace(grouping.toString(), "").replace(point, '.')
+        }
+
+        hasComma -> {
+            normalizeOneSeparator(text, ',', decimal)
+        }
+
+        hasDot -> {
+            normalizeOneSeparator(text, '.', decimal)
+        }
+
+        else -> {
+            text
+        }
     }
 }
 
