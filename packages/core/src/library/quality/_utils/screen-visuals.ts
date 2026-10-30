@@ -11,7 +11,7 @@ const KINDS_WITH_PICTURES = new Set<WrittenScreen["kind"]>([
   "workedExample",
 ]);
 
-const OPTION_LABEL = /^(?:\p{L}+ )?(?<label>\d)(?=$|:| \()/u;
+const NUMBER_OPTION = /^\d$/u;
 
 function asksAboutItsPictures(screen: WrittenScreen): boolean {
   return (
@@ -60,7 +60,7 @@ export function getScreenVisualProblems({
   }
 
   const image = "image" in screen ? screen.image : null;
-  const unnamedLabels = allowImage ? findLabelsMissingFromAlt(screen) : [];
+  const unplacedNumbers = allowImage ? findNumbersMissingFromAlt(screen) : [];
 
   return [
     ...getVisualProblems({
@@ -73,35 +73,24 @@ export function getScreenVisualProblems({
         visual: screen.visual,
       },
     }),
-    ...(unnamedLabels.length > 0
+    ...(unplacedNumbers.length > 0
       ? [
-          `Its options name ${unnamedLabels.join(", ")} on the picture, but the picture's \`alt\` never says what is there. Learners who can't see the picture answer from the alt: say what each label shows, without naming what the question asks them to recognize.`,
+          `Its options name ${unplacedNumbers.join(", ")} on the numbered picture, but the picture's \`alt\` never says where they sit. Learners who can't see the picture answer from the alt: say where each number sits and how that spot looks, without naming the part.`,
         ]
       : []),
   ];
 }
 
-/**
- * Options name a numbered picture's numbers or the drawings 1 and 2 it compares ("1", "Scene 2",
- * "Drawing 1: …"); other numbers in options are answers, such as a count.
- */
-function findLabelsMissingFromAlt(screen: WrittenScreen): string[] {
-  if ((screen.kind !== "check" && screen.kind !== "hookGuess") || !screen.image) {
+function findNumbersMissingFromAlt(screen: WrittenScreen): string[] {
+  if (screen.kind !== "check" || !screen.image?.parts) {
     return [];
   }
 
-  const { image } = screen;
+  const { alt } = screen.image;
 
-  const labels = new Set(
-    screen.options.flatMap((option) => OPTION_LABEL.exec(option.text.trim())?.groups?.label ?? []),
-  );
-
-  const numbered = "parts" in image && image.parts !== null;
-  const compared = labels.size === 2 && labels.has("1") && labels.has("2");
-
-  if (!numbered && !compared) {
-    return [];
-  }
-
-  return [...labels].filter((label) => !new RegExp(`(?<!\\d)${label}(?!\\d)`, "u").test(image.alt));
+  return screen.options
+    .map((option) => option.text.trim())
+    .filter(
+      (text) => NUMBER_OPTION.test(text) && !new RegExp(`(?<!\\d)${text}(?!\\d)`, "u").test(alt),
+    );
 }

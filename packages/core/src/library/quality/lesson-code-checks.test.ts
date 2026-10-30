@@ -140,7 +140,7 @@ describe(checkWrittenLesson, () => {
     expect(shown.screens[7]?.ok && shown.screens[7].content).toMatchObject({ image });
   });
 
-  it("asks a question's picture alt to say what each label its options name shows", () => {
+  it("asks a numbered picture's alt to place each number, and takes other numbers as answers", () => {
     const application = writtenTemperatureLesson().screens[7];
 
     if (application?.kind !== "check") {
@@ -161,36 +161,16 @@ describe(checkWrittenLesson, () => {
 
     expect(codesOf(withScreen(7, numbered))).toStrictEqual([[7, "visual"]]);
 
-    const compared = {
-      ...application,
-      context: "In the picture, two thermometers hang outside a window.",
-      image: {
-        alt: "Two thermometers hang outside a window, one higher than the other.",
-        parts: null,
-        prompt: "Two street thermometers labeled 1 and 2, at −6 °C and at 4 °C.",
-      },
-      options: [
-        labeledOption("Thermometer 1: below zero", true),
-        labeledOption("Thermometer 2: above zero"),
-      ],
-      question: "Which thermometer shows a day when puddles freeze?",
-    };
-
-    expect(codesOf(withScreen(7, compared))).toStrictEqual([[7, "visual"]]);
-
-    const described = {
-      ...compared,
-      image: { ...compared.image, alt: "Thermometer 1 reads −6 °C and thermometer 2 reads 4 °C." },
-    };
-
-    expect(codesOf(withScreen(7, described))).toStrictEqual([]);
-
     const counted = {
-      ...compared,
-      context: "In the picture, a window shows the morning's thermometers.",
-      image: { ...compared.image, alt: "Three thermometers below zero hang by a window." },
-      options: [labeledOption("3", true), labeledOption("1"), labeledOption("2")],
-      question: "How many thermometers in the picture are below zero?",
+      ...application,
+      context: "In the picture, a bicycle leans on a wall.",
+      image: {
+        alt: "A bicycle with two wheels stands beside a wall.",
+        parts: null,
+        prompt: "A bicycle leaning on a brick wall.",
+      },
+      options: [labeledOption("2", true), labeledOption("1"), labeledOption("More than two")],
+      question: "How many wheels are on the bicycle in the picture?",
     };
 
     expect(codesOf(withScreen(7, counted))).toStrictEqual([]);
