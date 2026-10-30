@@ -38,8 +38,8 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityReadout
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.SnapRange
-import com.zoonk.android.feature.activities.measureLine
 import com.zoonk.android.feature.activities.activityCanvasColor
+import com.zoonk.android.feature.activities.measureLine
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.ui.components.LinearScale
 import com.zoonk.android.ui.format.currentLocale

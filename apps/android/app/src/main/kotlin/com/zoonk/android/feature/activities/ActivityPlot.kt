@@ -230,7 +230,13 @@ internal fun TextMeasurer.measureLine(
     text: String,
     style: TextStyle,
     width: Float,
-) = measure(text, style, overflow = TextOverflow.Ellipsis, maxLines = 1, constraints = Constraints(maxWidth = width.toInt().coerceAtLeast(0)))
+) = measure(
+    text,
+    style,
+    overflow = TextOverflow.Ellipsis,
+    maxLines = 1,
+    constraints = Constraints(maxWidth = width.toInt().coerceAtLeast(0)),
+)
 
 private val MIN_LEFT = 44.dp
 private val RIGHT = 12.dp
