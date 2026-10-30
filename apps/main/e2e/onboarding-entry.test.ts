@@ -61,7 +61,8 @@ test.describe("Sending a goal from another page", () => {
 
     await page.goto("/courses");
     const box = page.getByRole("textbox", { name: "I want to" });
-    // Words typed before hydration become the box's text, which Next keeps in the hidden /courses.
+    // Words typed before hydration become the box's text, which Next keeps in the hidden /courses:
+    // https://nextjs.org/docs/app/guides/preserving-ui-state#testing
     await expectHydrated(box);
     await box.fill(goal);
     await page.getByRole("button", { name: "Build my plan" }).click();
