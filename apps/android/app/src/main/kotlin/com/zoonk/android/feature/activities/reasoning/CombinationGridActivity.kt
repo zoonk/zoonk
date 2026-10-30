@@ -3,8 +3,10 @@ package com.zoonk.android.feature.activities.reasoning
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -204,48 +207,56 @@ private fun GridBoard(
     val active = activeCell?.let(grid.places::getOrNull)
     val compact = grid.columns.values.size > ROOMY_COLUMNS
     val label = MaterialTheme.typography.labelMedium
-    val side = maxOf(if (compact) 48.dp else 72.dp, longestWordWidth(grid.rows.label, label))
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val description = gridDescription(grid)
+    val word = longestWordWidth(grid.rows.label, label)
 
-    Column(
-        Modifier.semantics { contentDescription = description },
-        verticalArrangement = Arrangement.spacedBy(GAP),
-    ) {
-        Row(Modifier.clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(GAP)) {
-            Spacer(Modifier.width(side))
-            Text(grid.columns.label, Modifier.weight(1f), color = muted, textAlign = TextAlign.Center, style = label)
-        }
-        Row(Modifier.height(IntrinsicSize.Min).clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(GAP)) {
-            Box(Modifier.width(side).fillMaxHeight().padding(bottom = 4.dp), contentAlignment = Alignment.BottomCenter) {
-                Text(grid.rows.label, color = muted, textAlign = TextAlign.Center, style = label)
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
+        val base = if (compact) 48.dp else 72.dp
+        val side = maxOf(base, minOf(word, maxWidth * MAX_SIDE_SHARE))
+        val needed = side + (MIN_SQUARE + GAP) * grid.columns.values.size
+        val scrolls = onSelectCell != null && needed > maxWidth
+        Column(
+            Modifier
+                .then(if (scrolls) Modifier.horizontalScroll(rememberScrollState()).width(needed) else Modifier.fillMaxWidth())
+                .semantics { contentDescription = description },
+            verticalArrangement = Arrangement.spacedBy(GAP),
+        ) {
+            Row(Modifier.clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(GAP)) {
+                Spacer(Modifier.width(side))
+                Text(grid.columns.label, Modifier.weight(1f), color = muted, textAlign = TextAlign.Center, style = label)
             }
-            grid.columns.values.forEachIndexed { index, value ->
-                GridHeader(value, grid.isAllele, lit = active?.columnIndex == index, Modifier.weight(1f))
+            Row(Modifier.height(IntrinsicSize.Min).clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(GAP)) {
+                Box(Modifier.width(side).fillMaxHeight().padding(bottom = 4.dp), contentAlignment = Alignment.BottomCenter) {
+                    Text(grid.rows.label, color = muted, textAlign = TextAlign.Center, style = label)
+                }
+                grid.columns.values.forEachIndexed { index, value ->
+                    GridHeader(value, grid.isAllele, lit = active?.columnIndex == index, Modifier.weight(1f))
+                }
             }
-        }
-        grid.rows.values.forEachIndexed { rowIndex, row ->
-            Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(GAP)) {
-                GridHeader(row, grid.isAllele, lit = active?.rowIndex == rowIndex, Modifier.width(side).clearAndSetSemantics {})
-                grid.places.withIndex().filter { it.value.rowIndex == rowIndex }.forEach { (index, place) ->
-                    if (checked != null || onSelectCell == null) {
-                        CheckedCell(
-                            expected = checked?.expected?.getOrNull(index) ?: fill[index].orEmpty(),
-                            learner = if (checked != null) fill[index] else null,
-                            counted = checked?.counted?.contains(index) == true,
-                            grid = grid,
-                            compact = compact,
-                        )
-                    } else {
-                        CellButton(
-                            number = index + 1,
-                            place = place,
-                            value = fill[index],
-                            active = activeCell == index,
-                            grid = grid,
-                            compact = compact,
-                            onClick = { onSelectCell(index) },
-                        )
+            grid.rows.values.forEachIndexed { rowIndex, row ->
+                Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(GAP)) {
+                    GridHeader(row, grid.isAllele, lit = active?.rowIndex == rowIndex, Modifier.width(side).clearAndSetSemantics {})
+                    grid.places.withIndex().filter { it.value.rowIndex == rowIndex }.forEach { (index, place) ->
+                        if (checked != null || onSelectCell == null) {
+                            CheckedCell(
+                                expected = checked?.expected?.getOrNull(index) ?: fill[index].orEmpty(),
+                                learner = if (checked != null) fill[index] else null,
+                                counted = checked?.counted?.contains(index) == true,
+                                grid = grid,
+                                compact = compact,
+                            )
+                        } else {
+                            CellButton(
+                                number = index + 1,
+                                place = place,
+                                value = fill[index],
+                                active = activeCell == index,
+                                grid = grid,
+                                compact = compact,
+                                onClick = { onSelectCell(index) },
+                            )
+                        }
                     }
                 }
             }
@@ -587,6 +598,8 @@ private fun GridPalette(
 }
 
 private const val ROOMY_COLUMNS = 3
+private const val MAX_SIDE_SHARE = 0.3f
+private val MIN_SQUARE: Dp = 48.dp
 private val ROOMY_HEIGHT: Dp = 72.dp
 private val GAP = 8.dp
 private val CORNER = 12.dp
