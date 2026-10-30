@@ -26,6 +26,7 @@ struct PlanRouteLink<Label: View>: View {
         sheetOpen.open(route)
       } label: {
         label
+          .disclosureChevron()
       }
       .foregroundStyle(.primary)
     } else if route.presentation == .push {
@@ -37,6 +38,7 @@ struct PlanRouteLink<Label: View>: View {
         router.open(route)
       } label: {
         label
+          .disclosureChevron()
       }
       .foregroundStyle(.primary)
     }

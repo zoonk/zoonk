@@ -359,6 +359,7 @@ private struct PlanChapterRow: View {
       } label: {
         content
           .foregroundStyle(.primary)
+          .disclosureChevron()
       }
       .sheet(isPresented: $showsOutline, onDismiss: openPendingRoute) {
         FarTopicSheet(goal: context.goal, skillId: skillId, title: chapter.title)

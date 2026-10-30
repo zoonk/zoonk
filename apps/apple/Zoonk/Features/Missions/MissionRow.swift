@@ -243,10 +243,7 @@ struct MissionRow: View {
       }
 
       if opensSomewhere {
-        Image(systemName: "chevron.right")
-          .font(.footnote.weight(.semibold))
-          .foregroundStyle(.tertiary)
-          .accessibilityHidden(true)
+        DisclosureChevron()
       }
     }
     .accessibilityElement(children: .combine)

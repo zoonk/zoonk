@@ -617,6 +617,7 @@ struct NextOnPathSection: View {
         KindMark(kind: kind)
       }
     }
+    .disclosureChevron()
   }
 
   private func checkpointWhen(_ checkpoint: PlanPhase.Checkpoint) -> Text? {
@@ -651,6 +652,7 @@ struct NextOnPathSection: View {
         router.open(.exam)
       } label: {
         finish
+          .disclosureChevron()
       }
     } else {
       finish
@@ -763,6 +765,7 @@ struct PlanSettingsSection: View {
       } label: {
         label.foregroundStyle(.primary)
       }
+      .disclosureChevron()
     }
   }
 }
