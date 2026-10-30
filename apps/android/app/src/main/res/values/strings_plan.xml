@@ -53,7 +53,10 @@
     <string name="plan_roadmap_number_of">%1$d of %2$d</string>
     <string name="plan_roadmap_phase_of">phase %1$d of %2$d</string>
     <string name="plan_roadmap_from">From %1$s</string>
+    <!-- %1$s is the day the plan ends, such as "Nov 3", sometimes after "About". -->
     <string name="plan_roadmap_until">Until %1$s</string>
+    <!-- %1$s is the month the plan ends, such as "May" or "May 2027", sometimes after "About". -->
+    <string name="plan_roadmap_until_month">Until %1$s</string>
     <string name="plan_today">Today</string>
     <string name="plan_mock_exam">Mock exam</string>
     <string name="plan_phase_challenge">Phase challenge</string>
@@ -111,7 +114,10 @@
     <string name="plan_lessons_on_the_way">Lessons on the way</string>
     <string name="plan_skipped_known">Skipped because you already know it</string>
     <string name="plan_going_deeper">Going deeper into an earlier topic</string>
+    <!-- %1$s is a day this month, such as "Nov 3". -->
     <string name="plan_far_from">From %1$s</string>
+    <!-- %1$s is a month, such as "May" or "May 2027". -->
+    <string name="plan_far_from_month">From %1$s</string>
     <plurals name="plan_far_lessons">
         <item quantity="one">%d lesson</item>
         <item quantity="other">%d lessons</item>
@@ -120,7 +126,10 @@
         <item quantity="one">About %d lesson</item>
         <item quantity="other">About %d lessons</item>
     </plurals>
+    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a day this month, such as "Nov 3". -->
     <string name="plan_far_count_from">%1$s · from %2$s</string>
+    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "May" or "May 2027". -->
+    <string name="plan_far_count_from_month">%1$s · from %2$s</string>
     <!-- A far topic's sheet: why its lessons aren't there yet. -->
     <string name="plan_far_explain">A topic\'s lessons are planned two weeks before you get to it. You can see this one\'s now.</string>
     <!-- Writes a far topic's lessons now. -->
@@ -763,7 +772,10 @@
     <string name="plan_finish_around">You finish around %1$s.</string>
     <string name="plan_finish_working">Working out when you\'d finish…</string>
     <string name="plan_covers_whole_goal">Covers your whole goal.</string>
+    <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_everything_by">Your time covers everything by %1$s</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_everything_by_month">Your time covers everything by %1$s</string>
     <string name="plan_covered_not_enough">%1$s a day isn\'t enough time to cover your goal.</string>
     <string name="plan_covered_exam_most_asked">%1$s a day studies every topic of the exam, the ones that come up most in more depth.</string>
     <string name="plan_covered_exam_less_depth">%1$s a day studies every topic of the exam, some of them in less depth.</string>
@@ -776,8 +788,14 @@
     <string name="plan_try_again">Try again</string>
     <string name="plan_find_building">Your plan is still being built. Try again in a moment.</string>
     <string name="plan_find_failed">We couldn\'t work out the time needed.</string>
+    <!-- %1$s is a daily time, such as "30 min"; %2$s is a day, such as "May 5". -->
     <string name="plan_find_covers">%1$s a day covers everything in depth by %2$s.</string>
+    <!-- %1$s is a daily time, such as "30 min"; %2$s is a month and year, such as "May 2027". -->
+    <string name="plan_find_covers_month">%1$s a day covers everything in depth by %2$s.</string>
+    <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_find_none">No amount of time a day covers everything in depth by %1$s.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_find_none_month">No amount of time a day covers everything in depth by %1$s.</string>
     <string name="plan_find_every_topic">%1$s a day studies every topic, some in less depth.</string>
     <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
     <string name="plan_find_fitting_date">At %1$s a day, your plan covers everything by %2$s.</string>
@@ -792,9 +810,15 @@
     <string name="plan_full_course_on_exam">%1$s Until the exam, what comes up most comes first.</string>
     <string name="plan_full_course_on_exam_unknown_end">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
     <string name="plan_finish">At %1$s a day, you finish in %2$s.</string>
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="plan_finish_after_exam">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
+    <string name="plan_finish_after_exam_month">At %1$s a day, you finish in %2$s, after the exam in %3$s.</string>
     <string name="plan_full_course_rule_exam">Until the exam, nothing changes: what comes up most comes first, with mocks and the final stretch. What doesn\'t fit comes after it.</string>
+    <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_full_course_rule_goal">Your deadline of %1$s comes off your plan. You can set one again anytime.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_full_course_rule_goal_month">Your deadline of %1$s comes off your plan. You can set one again anytime.</string>
     <string name="plan_study_everything">Study everything</string>
     <string name="plan_study_everything_exam_description">Every topic, even after the exam, at your own pace.</string>
     <string name="plan_study_everything_goal_description">Every part of your goal, at your own pace, with no end date.</string>

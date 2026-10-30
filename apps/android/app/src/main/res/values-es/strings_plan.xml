@@ -256,9 +256,11 @@
   "plan_exam_date_label": "6d66c48aa216d597e9f1de130c31ac53aed1d10b60d7bd4984c65ca5d985b826",
   "plan_exam_day": "5f93cb66f01a1e3f3de68af3daf89a66137764ca5d7c4bd8d71c9471a4136d55",
   "plan_eyebrow": "08c65de9f81b17c6eea2825ae91fbb8bcd55819998907b8636da2bde03ca44c3",
-  "plan_far_count_from": "2dc4e4e737af4531066dcce73e9398f05bd3c0a47500fce63cfe97cf2d1992b2",
+  "plan_far_count_from": "5171e08c65afc027fb99b7f8639d96380d0f7339b8dcc738122db5fc6104e4b8",
+  "plan_far_count_from_month": "e4d39217287709c479f173c8775d2647e6040730278745049d450d20007e5e92",
   "plan_far_explain": "1276fcf6683d40e351215188f720a140f9027250ac02589ad44c84f9f3b42734",
-  "plan_far_from": "df05bbba65570ceec3da1aaa215896d9933153295ebaabe0176d9abd8d496eda",
+  "plan_far_from": "0c850b7c647ddab3a2a63cfbdd28a4eb4864e87549081dfbae5228e95c825d07",
+  "plan_far_from_month": "31f97982c310f54723271aa771e517f15403694a802b7d71336dd619bbca01cb",
   "plan_far_lessons": "fc52e7a1e40cf1979ca65e5fe26196432dbfd4ef6122cfb495700cb0f81d63c1",
   "plan_far_lessons_about": "2627e9c4078358bbd04caf8af5c69256fc3278469b38b8c9eb1edf8908a6074b",
   "plan_far_nothing_left": "05125737f4c764a64189cb7efac3484fd4da4b31db038b70c7f4d1166373366a",
@@ -267,15 +269,18 @@
   "plan_far_writing": "beb2cc3d16821e2e7c71b1430cee52c37e9ad0cb8e84cb0e7bb92a21dc6d42d6",
   "plan_find": "2d842d35c3f8c3a2c2a7ec86618b516708d0831993192be5e64f697425bc949c",
   "plan_find_building": "15f700c1b08e4c06b7a91719213703fd2e22cd939f52414913cf6664467effe5",
-  "plan_find_covers": "093d2071cbe2ac64690d63c59fcc5ca0a483897e8347ca6353445ea461f867e4",
+  "plan_find_covers": "792e0c846b67692c45c34524965e5b5e72c9ecef11a4f5d8787eac9992ac4336",
+  "plan_find_covers_month": "5f7a79c021a5d1c256224170c411d6c372dad46e1fed11cd258e7db4f315a634",
   "plan_find_every_topic": "390ce4d29224da289c1d27dafbebe45087d71c50435d3b4c2d56e0f38aadc721",
   "plan_find_failed": "4f534db77f1950e1a717cc42af4a17d63b471d4b6ae49a6c8f8ca4f7cb8db783",
   "plan_find_fitting_date": "9ec13fc5ab2b92667a6e542cfc1061aa1f36430cf92491a7405ab3873c7ba863",
   "plan_find_no_date": "416ec464ba5e71be258c7f282a8dd33d2cf0c58844c837af3a5ca3af3c28f4cc",
-  "plan_find_none": "43e31c5f1fd3f80d95430f31aae24fe17669f630f457d3b2a26214c3184402f1",
+  "plan_find_none": "692f835950aaf2556a867368a73b6b6e354302fc192ea46fe91e24d06699b3de",
+  "plan_find_none_month": "7695f8ff9a4c7ba42b0e62653d616073467acfb14560ebabb4134a4d8bdea1a1",
   "plan_finding": "9a4fe60d951251436576f36d7337b85acbbb28be280e97ea7f60d5aab3935eb6",
   "plan_finish": "a6c1e372a262687e5bbebecd6564090ac323067b2d4fcf934aceb803a761d01a",
-  "plan_finish_after_exam": "2f1a4279fc407f55723be62d6611e7f93f5f6256136fc0ea7bb8379ebd1d37ce",
+  "plan_finish_after_exam": "1a48744a6a091a5f1c83a05b93779a9e8417c10fbb2dec0495e385411c6ba172",
+  "plan_finish_after_exam_month": "425b6e266279c718ed84b8c89d2fc3560d81a48a6a0359833bbd391c383a6d1f",
   "plan_finish_around": "5a1d75afa87194be0abcbda048d1515cb4f16dd43918d0769d580de32de98e8a",
   "plan_finish_working": "2aea2791b22b43249568ecf02de45ddb7b8e487998bae2fb86b35f6a536328f4",
   "plan_finished_title": "725c7e10b447c14fc3d4042c38bd9aa8c535ae571e4876d8c2445cafad9bbcbd",
@@ -290,7 +295,8 @@
   "plan_full_course_on_exam": "abd5a7e5956da204866782c52754d7711996a52e7fbbce1cd3e7ca23f229f6d0",
   "plan_full_course_on_exam_unknown_end": "d5a5fb5c7003dfb8f2f7ee16a59bf72efa10988845a282f14fd2043887d817bc",
   "plan_full_course_rule_exam": "bbb8e47c48e4269bd598da6da457c326898bc686fc183d8504aa98d634412d28",
-  "plan_full_course_rule_goal": "e35c4d0ae81f7ff3ae9d1f79b0776c9c00a4964ba2aa13a9e3bb414d380b20e0",
+  "plan_full_course_rule_goal": "f8a7833aa244ebe999a89e6bffc2257030906f90d22ba13d6c38373411c28364",
+  "plan_full_course_rule_goal_month": "d48887db776f00c02bb84a844a35cec039802eb3bc53f16e0bad563bff5358e3",
   "plan_full_course_switch": "42d1fb62b9667cd23e00f9a40422642156a69e55d89fa81e3c24b9ae1bd2ad44",
   "plan_full_reviews": "9edc9802a3ba2034499aff339449436d62cf23d20bc4a8c694d023d37058ff7d",
   "plan_full_reviews_done": "c6414315aad64eb6af4c484f2e54897dd16feba945ef8ca1ef441a21e0954ac3",
@@ -427,7 +433,8 @@
   "plan_roadmap_from": "962cdc237eceeeb5bf1a841136830270434469c79dda408bc8c63aa5bc3bb42d",
   "plan_roadmap_number_of": "4d2104b20d042f5727102957807b2e90972cc8779fb14458aa09261c6fa823cb",
   "plan_roadmap_phase_of": "4ca0f8a2e0ba0e246ec5a97fd3c69d3efff824c9d092b8640f29b81a2a79de30",
-  "plan_roadmap_until": "de38838a4e379eff40d381d23335ebd85438951a8f41e12d114fb09cb1665533",
+  "plan_roadmap_until": "8be15009c017932a6ea1285d25c6a458d3307f6c4372e79c9a77ce4d8f3181df",
+  "plan_roadmap_until_month": "7de1ad54f4ca90ccd23d3a5354927c463e6e245072c809aead3399c7d2ac395b",
   "plan_saturdays": "45930d51bbf62c9a1971e9aef93af0a162b8503ec5ac778cfe920169e380801e",
   "plan_save": "4e837c388fe4537c3e02f16c358de2b2665c3452982901283f7d958d5e5bd934",
   "plan_save_choices": "a528207fb237d3ee5fb933e1eecfa1a10a7df01b7a815b6a2c834818303b4102",
@@ -488,7 +495,8 @@
   "plan_thursdays": "c11ed5612988dd59962680cd2e9470b4ad39f410f968c01ab745cd19dc808587",
   "plan_time_a_day": "233a9c0ed0d8f22a7fb6ae3ce9377187ad305267147d01999b243476a4acd987",
   "plan_time_a_day_label": "2cb155a40fcb43499847f04f5f643949947ace3e6ee376dbe08930a29af56bca",
-  "plan_time_covers_everything_by": "ed12f5f0bd7538358da011a768f06ffa185056b3bf2aeb9c86fb41844378d015",
+  "plan_time_covers_everything_by": "6844f3eea86a29d8f293662902206a1ab41cbeae26b88b2e6e7dd12fbad231a8",
+  "plan_time_covers_everything_by_month": "bf44b6344d5c488d403f9016649a93f481a0c4ffefa6305ed678294b0d666a1a",
   "plan_time_covers_everything_in_depth": "69ad8afb33cbae44128ac11fd8d2927e8fa20bb7a828cb022695ec07cfb12ab4",
   "plan_time_on_weekends": "448512f3ce9b605b17865484f8825f31363e5983bdff225828912c2f627af56f",
   "plan_time_weekends": "6ab096cba36f56c61f36148d736583a082df4a3b97b686f986caf4438e25e78e",
@@ -605,7 +613,10 @@
     <string name="plan_roadmap_number_of">%1$d de %2$d</string>
     <string name="plan_roadmap_phase_of">fase %1$d de %2$d</string>
     <string name="plan_roadmap_from">Desde %1$s</string>
-    <string name="plan_roadmap_until">Hasta %1$s</string>
+    <!-- %1$s is the day the plan ends, such as "Nov 3", sometimes after "About". -->
+    <string name="plan_roadmap_until">Hasta el %1$s</string>
+    <!-- %1$s is the month the plan ends, such as "May" or "May 2027", sometimes after "About". -->
+    <string name="plan_roadmap_until_month">Hasta %1$s</string>
     <string name="plan_today">Hoy</string>
     <string name="plan_mock_exam">Simulacro</string>
     <string name="plan_phase_challenge">Desafío de la fase</string>
@@ -647,6 +658,7 @@
     </plurals>
     <string name="plan_challenge_left_out">Desafío omitido</string>
     <string name="plan_continues_today">Continúa hoy</string>
+    <!-- %1$s is the day the plan resumes, such as "Nov 3". -->
     <string name="plan_continues_on">Continúa %1$s</string>
     <string name="plan_more_lessons_challenge_on">Pronto habrá más lecciones · desafío %1$s</string>
     <string name="plan_more_lessons_on_the_way">Pronto habrá más lecciones</string>
@@ -663,7 +675,10 @@
     <string name="plan_lessons_on_the_way">Pronto habrá lecciones</string>
     <string name="plan_skipped_known">Se ha saltado porque ya lo sabías</string>
     <string name="plan_going_deeper">Profundizando en un tema anterior</string>
-    <string name="plan_far_from">Desde %1$s</string>
+    <!-- %1$s is a day this month, such as "Nov 3". -->
+    <string name="plan_far_from">A partir del %1$s</string>
+    <!-- %1$s is a month, such as "May" or "May 2027". -->
+    <string name="plan_far_from_month">A partir de %1$s</string>
     <plurals name="plan_far_lessons">
         <item quantity="one">%d lección</item>
         <item quantity="many">%d lecciones</item>
@@ -674,7 +689,10 @@
         <item quantity="many">Aproximadamente %d lecciones</item>
         <item quantity="other">Aproximadamente %d lecciones</item>
     </plurals>
-    <string name="plan_far_count_from">%1$s · desde %2$s</string>
+    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a day this month, such as "Nov 3". -->
+    <string name="plan_far_count_from">%1$s · a partir del %2$s</string>
+    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "May" or "May 2027". -->
+    <string name="plan_far_count_from_month">%1$s · a partir de %2$s</string>
     <!-- A far topic's sheet: why its lessons aren't there yet. -->
     <string name="plan_far_explain">Las lecciones de cada tema se planifican dos semanas antes de que llegues a él. Ya puedes ver las de este tema.</string>
     <!-- Writes a far topic's lessons now. -->
@@ -689,9 +707,11 @@
         <item quantity="other">%d capítulos más</item>
     </plurals>
     <string name="plan_show_fewer_chapters">Mostrar menos capítulos</string>
+    <!-- %1$s is one or more subject or area names, separated by commas. -->
     <string name="plan_lessons_being_written_from">Se están preparando las lecciones de %1$s.</string>
     <string name="plan_unit_lessons_being_written">Se están preparando más lecciones para esta unidad.</string>
     <string name="plan_phase_lessons_being_written">Se están preparando más lecciones para esta fase.</string>
+    <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Ganado</string>
     <string name="plan_challenge_next_session">En tu próxima sesión</string>
     <string name="plan_challenge_after_previous">Después del desafío anterior</string>
@@ -841,7 +861,7 @@
     <string name="plan_your_level">Tu nivel</string>
     <!-- Under a language goal's level when all of its skills (reading, listening, speaking, writing) are at the same level. -->
     <string name="plan_even_across_skills">Igualado en todas las habilidades</string>
-    <!-- Under a language goal's level: the skill that is highest, such as "Reading leads". -->
+    <!-- Under a language goal's level: the skill where the learner's level is highest, such as "Reading leads". -->
     <string name="plan_skill_leads">%1$s destaca</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
     <string name="plan_no_lessons_studied_yet">Aún no has estudiado ninguna lección</string>
@@ -939,8 +959,11 @@
     <string name="plan_change_read_guide_on">Hemos leído la guía oficial del examen: tu plan puede seguir sus partes, con el examen previsto para el %1$s.</string>
     <string name="plan_change_read_notice">Hemos leído la convocatoria: tu plan puede seguir sus asignaturas y temas.</string>
     <string name="plan_change_read_guide">Hemos leído la guía oficial del examen: tu plan puede seguir sus partes y temas.</string>
+    <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_likely_date">La fecha probable del examen es ahora %1$s.</string>
+    <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_notice_says">La convocatoria dice %1$s.</string>
+    <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_calendar_says">El calendario oficial del examen dice %1$s.</string>
     <string name="plan_change_notice_sets_date">La convocatoria fija el examen para el %1$s.</string>
     <string name="plan_change_calendar_sets_date">El calendario oficial fija el examen para el %1$s.</string>
@@ -964,10 +987,13 @@
     <string name="plan_change_days_time">%1$s: %2$s al día.</string>
     <string name="plan_change_light_week">Una semana más ligera a partir del %1$s, con la mitad de tiempo.</string>
     <string name="plan_change_weekly_challenge_moved">El desafío semanal se ha trasladado al %1$s.</string>
+    <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
     <string name="plan_change_activities_left_out">Se ha omitido de tus lecciones: %1$s.</string>
+    <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
     <string name="plan_change_activities_back">Se ha vuelto a incluir en tus lecciones: %1$s.</string>
     <string name="plan_change_more_practice">Más práctica a partir de ahora.</string>
     <string name="plan_change_more_explanation">Más explicaciones a partir de ahora.</string>
+    <!-- "The basics" are the simple parts of topics the learner already does well, not the plan's prerequisites. -->
     <string name="plan_change_harder">Más dificultad a partir de ahora: práctica más exigente y se saltan los conceptos básicos que ya dominas.</string>
     <string name="plan_change_easier">Material más fácil a partir de ahora.</string>
     <string name="plan_change_usual_difficulty">Lecciones con la dificultad habitual a partir de ahora.</string>
@@ -1008,7 +1034,9 @@
     </plurals>
     <string name="plan_change_more_time_for">Más tiempo para %1$s.</string>
     <string name="plan_change_less_time_for">Menos tiempo para %1$s.</string>
+    <!-- %1$s is one or more of the exam's areas joined as a list, such as "Math" or "Math and History". -->
     <string name="plan_change_areas_left_out">Se ha omitido del plan: %1$s.</string>
+    <!-- %1$s is one or more of the exam's areas joined as a list, such as "Math" or "Math and History". -->
     <string name="plan_change_areas_back">Se ha vuelto a incluir en el plan: %1$s.</string>
     <string name="plan_change_start_past_basics">Empezar después de los conceptos básicos: %1$s.</string>
     <string name="plan_change_start_from_basics">Volver a empezar por los conceptos básicos: %1$s.</string>
@@ -1097,6 +1125,7 @@
     <string name="plan_change_phase_dates_lessons">Algunas lecciones llevan más o menos tiempo del previsto. Cambiar las fechas de tus fases permite hacer más lecciones antes de la fecha de tu objetivo.</string>
     <string name="plan_change_phase_dates_room">Un desafío de la fase cae en un día en el que no hay tiempo para hacerlo. Cambiar las fechas de tus fases permite hacerle sitio.</string>
     <string name="plan_change_phase_ends">%1$s termina el %2$s en lugar del %3$s.</string>
+    <!-- %1$s is a phase's name; %2$s is its new end date and %3$s the old one, such as "November 8". -->
     <string name="plan_change_phase_end_row">%1$s: %2$s (antes %3$s)</string>
     <string name="plan_change_ends_instead">Termina el %1$s en lugar del %2$s.</string>
     <!-- %1$s and %2$s are days, like "May 5". -->
@@ -1158,6 +1187,7 @@
     </plurals>
     <string name="plan_change_unwritten">Lecciones aún sin preparar: %1$s.</string>
     <string name="plan_change_left_out">Lecciones omitidas: %1$s.</string>
+    <!-- %1$s lists up to three of the lessons left out by title, such as "Fractions, Ratios and Percentages". -->
     <string name="plan_change_left_out_include">Entre las lecciones omitidas se incluyen %1$s.</string>
     <plurals name="plan_change_adds">
         <item quantity="one">Añade %d lección</item>
@@ -1208,6 +1238,7 @@
     <string name="plan_change_after">Después del cambio</string>
     <string name="plan_change_goal_date_line">Fecha del objetivo: %1$s</string>
     <string name="plan_change_plan_ends">El plan termina: %1$s</string>
+    <!-- %1$s is a phase or an exam area; %2$s is the day it ends, such as "Nov 3". -->
     <string name="plan_change_until">%1$s hasta %2$s</string>
     <plurals name="plan_change_area_to_go">
         <item quantity="one">%1$s: queda %2$d lección</item>
@@ -1226,6 +1257,7 @@
     <string name="plan_pick_date">Elige una fecha</string>
     <string name="plan_save">Guardar</string>
     <string name="plan_use_this_date">Usar esta fecha</string>
+    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="plan_weekend_time_differs">Otro tiempo los fines de semana</string>
     <string name="plan_time_on_weekends">Tiempo los fines de semana</string>
     <string name="plan_exam_choice_left_out">Elige cuál vas a hacer. Hasta entonces, tu plan omite %1$s.</string>
@@ -1240,11 +1272,13 @@
         <item quantity="many">%1$d requisitos previos, %2$s según tus elecciones.</item>
         <item quantity="other">%1$d requisitos previos, %2$s según tus elecciones.</item>
     </plurals>
+    <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
     <plurals name="plan_bases_deep">
         <item quantity="one">%1$d requisito previo, %2$s en profundidad.</item>
         <item quantity="many">%1$d requisitos previos, %2$s en profundidad.</item>
         <item quantity="other">%1$d requisitos previos, %2$s en profundidad.</item>
     </plurals>
+    <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
     <plurals name="plan_bases_quick">
         <item quantity="one">%1$d requisito previo, %2$s para su lección rápida.</item>
         <item quantity="many">%1$d requisitos previos, %2$s para una lección rápida de cada uno.</item>
@@ -1255,6 +1289,7 @@
         <item quantity="many">%1$d requisitos previos, todos saltados.</item>
         <item quantity="other">%1$d requisitos previos, todos saltados.</item>
     </plurals>
+    <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
     <plurals name="plan_bases_essential">
         <item quantity="one">%1$d requisito previo, %2$s para lo esencial.</item>
         <item quantity="many">%1$d requisitos previos, %2$s para lo esencial de cada uno.</item>
@@ -1361,7 +1396,10 @@
     <string name="plan_finish_around">Terminarás hacia %1$s.</string>
     <string name="plan_finish_working">Calculando cuándo terminarías…</string>
     <string name="plan_covers_whole_goal">Abarca todo tu objetivo.</string>
-    <string name="plan_time_covers_everything_by">Tu tiempo te permite abarcarlo todo para %1$s</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_everything_by">Te da tiempo a cubrirlo todo para el %1$s</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_everything_by_month">Te da tiempo a cubrirlo todo para %1$s</string>
     <string name="plan_covered_not_enough">%1$s al día no es suficiente para abarcar todo tu objetivo.</string>
     <string name="plan_covered_exam_most_asked">Con %1$s al día estudiarás todos los temas del examen, con más profundidad los que aparecen con más frecuencia.</string>
     <string name="plan_covered_exam_less_depth">Con %1$s al día estudiarás todos los temas del examen, algunos con menos profundidad.</string>
@@ -1374,23 +1412,37 @@
     <string name="plan_try_again">Volver a intentarlo</string>
     <string name="plan_find_building">Tu plan aún se está preparando. Vuelve a intentarlo dentro de un momento.</string>
     <string name="plan_find_failed">No hemos podido calcular el tiempo necesario.</string>
-    <string name="plan_find_covers">Con %1$s al día lo abarcarás todo en profundidad para %2$s.</string>
-    <string name="plan_find_none">No hay tiempo diario suficiente para abarcarlo todo en profundidad para %1$s.</string>
+    <!-- %1$s is a daily time, such as "30 min"; %2$s is a day, such as "May 5". -->
+    <string name="plan_find_covers">Con %1$s al día, lo cubres todo en profundidad para el %2$s.</string>
+    <!-- %1$s is a daily time, such as "30 min"; %2$s is a month and year, such as "May 2027". -->
+    <string name="plan_find_covers_month">Con %1$s al día, lo cubres todo en profundidad para %2$s.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_find_none">Por mucho tiempo que dediques al día, no podrás cubrirlo todo en profundidad para el %1$s.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_find_none_month">Por mucho tiempo que dediques al día, no podrás cubrirlo todo en profundidad para %1$s.</string>
     <string name="plan_find_every_topic">Con %1$s al día estudiarás todos los temas, algunos con menos profundidad.</string>
+    <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
     <string name="plan_find_fitting_date">Con %1$s al día, tu plan lo abarca todo para %2$s.</string>
     <string name="plan_find_no_date">No hemos podido encontrar una fecha para abarcarlo todo.</string>
     <string name="plan_note_covers_everything">Lo abarca todo</string>
     <string name="plan_note_every_topic">Todos los temas</string>
     <string name="plan_move_date">Cambia la fecha para abarcarlo todo</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Cambia la fecha a %1$s</string>
     <string name="plan_full_course_switch">Estudia todo, incluso después del examen</string>
     <string name="plan_full_course_off">Lo que no quepa antes del examen se omite de tu plan.</string>
     <string name="plan_full_course_on_exam">%1$s Hasta el examen, lo que aparece con más frecuencia va primero.</string>
     <string name="plan_full_course_on_exam_unknown_end">Hasta el examen, lo que aparece con más frecuencia va primero. Lo que no quepa queda para después.</string>
     <string name="plan_finish">Con %1$s al día, terminarás en %2$s.</string>
-    <string name="plan_finish_after_exam">Con %1$s al día, terminarás en %2$s, después del examen del %3$s.</string>
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
+    <string name="plan_finish_after_exam">Con %1$s al día, terminas en %2$s, después del examen del %3$s.</string>
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
+    <string name="plan_finish_after_exam_month">Con %1$s al día, terminas en %2$s, después del examen de %3$s.</string>
     <string name="plan_full_course_rule_exam">Hasta el examen, nada cambia: lo que más suele caer va primero, con simulacros y la recta final. Lo que no quepa se estudia después.</string>
-    <string name="plan_full_course_rule_goal">La fecha límite del %1$s se elimina de tu plan. Puedes volver a fijar una cuando quieras.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_full_course_rule_goal">Se elimina de tu plan la fecha límite del %1$s. Puedes volver a fijar una cuando quieras.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_full_course_rule_goal_month">Se elimina de tu plan la fecha límite de %1$s. Puedes volver a fijar una cuando quieras.</string>
     <string name="plan_study_everything">Estudiar todo</string>
     <string name="plan_study_everything_exam_description">Todos los temas, incluso después del examen, a tu ritmo.</string>
     <string name="plan_study_everything_goal_description">Todo el contenido de tu objetivo, a tu ritmo y sin fecha límite.</string>

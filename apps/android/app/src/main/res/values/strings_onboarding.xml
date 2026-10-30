@@ -312,8 +312,10 @@
         <item quantity="one">About %d day</item>
         <item quantity="other">About %d days</item>
     </plurals>
-    <!-- When a plan without a date ends at the learner's pace. %1$s is a date, such as "November 8", or a month and year, such as "March 2027", so the wording must fit both. -->
+    <!-- When a plan without a date ends at the learner's pace. %1$s is a day, such as "Nov 8". -->
     <string name="onboarding_reveal_until_about">Until about %1$s</string>
+    <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
+    <string name="onboarding_reveal_until_about_month">Until about %1$s</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_daily">%1$s a day</string>
     <!-- Under a plan without a date that holds every part of a learn goal. -->
@@ -378,8 +380,10 @@
     <string name="onboarding_reveal_covers_exam_after">%1$s a day doesn\'t reach every topic by the exam: the ones that come up least come after it.</string>
     <string name="onboarding_reveal_covers_exam_left_out">%1$s a day doesn\'t reach every topic: the ones that come up least are left out.</string>
     <string name="onboarding_reveal_covers_goal_left_out">%1$s a day doesn\'t reach every part of your goal: what comes last in your path is left out.</string>
-    <!-- %1$s is a duration, %2$s a month, %3$s the exam\'s date. -->
+    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="onboarding_reveal_full_course_finish">At %1$s a day, you finish in %2$s, after the exam on %3$s. Until the exam, what comes up most comes first.</string>
+    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
+    <string name="onboarding_reveal_full_course_finish_month">At %1$s a day, you finish in %2$s, after the exam in %3$s. Until the exam, what comes up most comes first.</string>
     <string name="onboarding_reveal_full_course">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
     <plurals name="onboarding_reveal_modules">
         <item quantity="one">%d module</item>
@@ -560,8 +564,10 @@
     <string name="onboarding_full_course">Study everything, even after the exam</string>
     <string name="onboarding_full_course_rule">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
     <string name="onboarding_full_course_until_exam">Until the exam, what comes up most comes first.</string>
-    <!-- %1$s is a daily time, %2$s a month and year, %3$s the exam\'s date. -->
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="onboarding_full_course_finish">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
+    <string name="onboarding_full_course_finish_month">At %1$s a day, you finish in %2$s, after the exam in %3$s.</string>
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="onboarding_weekend_time">Different time on weekends</string>
     <string name="onboarding_schedule_time_label">Time a day</string>
@@ -577,24 +583,42 @@
     <string name="onboarding_schedule_split_one">This goal gets %1$s a day and your other goal %2$s.</string>
     <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
     <string name="onboarding_schedule_split_many">This goal gets %1$s a day and your other goals %2$s together.</string>
-    <!-- %1$s is a date, such as "November 8". -->
+    <!-- %1$s is a day, such as "May 5". -->
     <string name="onboarding_schedule_takes_exam_all">What it takes to cover all your exam topics by %1$s.</string>
-    <!-- %1$s is a date, such as "November 8". -->
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="onboarding_schedule_takes_exam_all_month">What it takes to cover all your exam topics by %1$s.</string>
+    <!-- %1$s is a day, such as "May 5". -->
     <string name="onboarding_schedule_takes_goal_all">What it takes to cover your whole goal by %1$s.</string>
-    <!-- %1$s is a date, such as "November 8". -->
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="onboarding_schedule_takes_goal_all_month">What it takes to cover your whole goal by %1$s.</string>
+    <!-- %1$s is a day, such as "May 5". -->
     <string name="onboarding_schedule_covers_exam_all">Covers all your exam topics by %1$s.</string>
-    <!-- %1$s is a date, such as "November 8". -->
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="onboarding_schedule_covers_exam_all_month">Covers all your exam topics by %1$s.</string>
+    <!-- %1$s is a day, such as "May 5". -->
     <string name="onboarding_schedule_covers_goal_all">Covers your whole goal by %1$s.</string>
-    <!-- %1$s is a date, such as "November 8". -->
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="onboarding_schedule_covers_goal_all_month">Covers your whole goal by %1$s.</string>
+    <!-- %1$s is a day, such as "May 5". -->
     <string name="onboarding_schedule_reaches_exam">Reaches every exam topic by %1$s, some in less depth.</string>
-    <!-- %1$s is a date, such as "November 8". -->
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="onboarding_schedule_reaches_exam_month">Reaches every exam topic by %1$s, some in less depth.</string>
+    <!-- %1$s is a day, such as "May 5". -->
     <string name="onboarding_schedule_reaches_goal">Reaches every part of your goal by %1$s, some in less depth.</string>
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a date, such as "November 8". -->
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="onboarding_schedule_reaches_goal_month">Reaches every part of your goal by %1$s, some in less depth.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
     <string name="onboarding_schedule_share_exam">Covers about %1$s of your exam topics in depth by %2$s, what comes up most first.</string>
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a date, such as "November 8". -->
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
+    <string name="onboarding_schedule_share_exam_month">Covers about %1$s of your exam topics in depth by %2$s, what comes up most first.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
     <string name="onboarding_schedule_share_goal">Covers about %1$s of your goal in depth by %2$s, what matters most first.</string>
-    <!-- %1$s is a date, such as "November 8". -->
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
+    <string name="onboarding_schedule_share_goal_month">Covers about %1$s of your goal in depth by %2$s, what matters most first.</string>
+    <!-- %1$s is a day, such as "May 5". -->
     <string name="onboarding_schedule_past_date">Your date, %1$s, has passed. You can choose a new one on the next screen.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="onboarding_schedule_past_date_month">Your date, %1$s, has passed. You can choose a new one on the next screen.</string>
     <string name="onboarding_schedule_no_days">Choose at least one study day.</string>
     <string name="onboarding_schedule_working">Working out the time your goal needs…</string>
     <string name="onboarding_schedule_find_failed">We couldn\'t work out the time your goal needs.</string>

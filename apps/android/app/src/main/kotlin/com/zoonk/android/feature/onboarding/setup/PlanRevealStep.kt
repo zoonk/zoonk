@@ -269,7 +269,7 @@ private fun FactsLine(facts: RevealFacts) {
             },
             end?.let {
                 stringResource(
-                    R.string.onboarding_reveal_until_about,
+                    if (facts.endAsMonth) R.string.onboarding_reveal_until_about_month else R.string.onboarding_reveal_until_about,
                     formatDate(it, locale, if (facts.endAsMonth) DateStyle.Month else DateStyle.Day),
                 )
             },
@@ -612,7 +612,11 @@ private fun CoverageWords(
                 val targetDate = plan.schedule.targetDate?.toJavaLocalDate()
                 if (coverage.end != null && targetDate != null) {
                     stringResource(
-                        R.string.onboarding_reveal_full_course_finish,
+                        if (plan.schedule.targetDateNamedMonth) {
+                            R.string.onboarding_reveal_full_course_finish_month
+                        } else {
+                            R.string.onboarding_reveal_full_course_finish
+                        },
                         time,
                         formatDate(coverage.end, locale, DateStyle.Month),
                         formatDate(targetDate, locale, if (plan.schedule.targetDateNamedMonth) DateStyle.Month else DateStyle.LongYear),

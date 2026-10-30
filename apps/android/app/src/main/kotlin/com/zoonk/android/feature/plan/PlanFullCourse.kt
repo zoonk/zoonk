@@ -87,7 +87,7 @@ internal fun finishText(
         )
     return if (course.isExam) {
         stringResource(
-            R.string.plan_finish_after_exam,
+            if (course.targetDateNamedMonth) R.string.plan_finish_after_exam_month else R.string.plan_finish_after_exam,
             time,
             month,
             goalDate(course.targetDate, course.targetDateNamedMonth, page.today, DateStyle.LongYear),
@@ -105,7 +105,10 @@ private fun fullCourseRule(
     if (course.isExam) {
         stringResource(R.string.plan_full_course_rule_exam)
     } else {
-        stringResource(R.string.plan_full_course_rule_goal, goalDate(course.targetDate, course.targetDateNamedMonth, today))
+        stringResource(
+            if (course.targetDateNamedMonth) R.string.plan_full_course_rule_goal_month else R.string.plan_full_course_rule_goal,
+            goalDate(course.targetDate, course.targetDateNamedMonth, today),
+        )
     }
 
 /** Main's `FullCourseSwitch`, under an exam's time a day. */

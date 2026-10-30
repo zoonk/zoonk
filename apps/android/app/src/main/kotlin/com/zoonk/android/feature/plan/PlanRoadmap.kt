@@ -332,7 +332,12 @@ private fun PhaseBand(
         page.finish
             ?.takeIf {
                 isLast
-            }?.let { stringResource(R.string.plan_roadmap_until, planDate(it.date, page.today, it.estimate, it.month).spoken) }
+            }?.let {
+                stringResource(
+                    if (it.month) R.string.plan_roadmap_until_month else R.string.plan_roadmap_until,
+                    planDate(it.date, page.today, it.estimate, it.month).spoken,
+                )
+            }
     val label = listOfNotNull(name + phaseStateWords(phase.state), from, until).joinToString(". ")
     val (container, content) =
         when (phase.state) {

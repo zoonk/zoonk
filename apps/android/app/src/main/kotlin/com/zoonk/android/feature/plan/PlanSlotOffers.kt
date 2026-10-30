@@ -271,9 +271,10 @@ internal fun FitLessonsSuggestion(slot: Slot) {
             ?.toInt() ?: 0
     val title =
         if (offer?.fits == true && target != null) {
+            val month = page.plan.schedule.targetDateNamedMonth
             stringResource(
-                R.string.plan_time_covers_everything_by,
-                goalDate(target.toJavaLocalDate(), page.plan.schedule.targetDateNamedMonth, page.today),
+                if (month) R.string.plan_time_covers_everything_by_month else R.string.plan_time_covers_everything_by,
+                goalDate(target.toJavaLocalDate(), month, page.today),
             )
         } else {
             pluralStringResource(R.plurals.plan_more_lessons_fit, lessons, lessons)

@@ -139,23 +139,25 @@ fun farTopicLine(
     nextDate: LocalDate?,
     today: LocalDate = LocalDate.now(),
 ): String? {
+    val month = nextDate != null && (nextDate.year != today.year || nextDate.month != today.month)
     val start =
         nextDate?.let {
             val locale = currentLocale()
             when {
-                it.year == today.year && it.month == today.month -> formatDay(it, "MMMd", locale)
+                !month -> formatDay(it, "MMMd", locale)
                 it.year == today.year -> formatDay(it, "MMMM", locale)
                 else -> formatDay(it, "yMMMM", locale)
             }
         }
-    if (lessons == null) return start?.let { stringResource(R.string.plan_far_from, it) }
+    if (lessons == null) return start?.let { stringResource(if (month) R.string.plan_far_from_month else R.string.plan_far_from, it) }
     val count =
         if (lessons == 1) {
             pluralStringResource(R.plurals.plan_far_lessons, lessons, lessons)
         } else {
             pluralStringResource(R.plurals.plan_far_lessons_about, lessons, lessons)
         }
-    return start?.let { stringResource(R.string.plan_far_count_from, count, it) } ?: count
+    return start?.let { stringResource(if (month) R.string.plan_far_count_from_month else R.string.plan_far_count_from, count, it) }
+        ?: count
 }
 
 @Composable

@@ -370,15 +370,20 @@ private fun lineWords(
 ): AnnotatedString {
     val locale = currentLocale()
     val shown = date?.let { goalDate(it.date, it.namedMonth, DateStyle.Long) }.orEmpty()
+    val month = date?.namedMonth == true
     val time = formatMinutes(minutes ?: 0, locale)
     val text =
         when (line) {
             is TimeLine.Everything -> {
                 stringResource(
                     when {
+                        line.suggested && exam && month -> R.string.onboarding_schedule_takes_exam_all_month
                         line.suggested && exam -> R.string.onboarding_schedule_takes_exam_all
+                        line.suggested && month -> R.string.onboarding_schedule_takes_goal_all_month
                         line.suggested -> R.string.onboarding_schedule_takes_goal_all
+                        exam && month -> R.string.onboarding_schedule_covers_exam_all_month
                         exam -> R.string.onboarding_schedule_covers_exam_all
+                        month -> R.string.onboarding_schedule_covers_goal_all_month
                         else -> R.string.onboarding_schedule_covers_goal_all
                     },
                     shown,
@@ -386,20 +391,31 @@ private fun lineWords(
             }
 
             TimeLine.EveryTopic -> {
-                val reaches = if (exam) R.string.onboarding_schedule_reaches_exam else R.string.onboarding_schedule_reaches_goal
+                val reaches =
+                    when {
+                        exam && month -> R.string.onboarding_schedule_reaches_exam_month
+                        exam -> R.string.onboarding_schedule_reaches_exam
+                        month -> R.string.onboarding_schedule_reaches_goal_month
+                        else -> R.string.onboarding_schedule_reaches_goal
+                    }
                 stringResource(reaches, shown)
             }
 
             is TimeLine.Share -> {
                 stringResource(
-                    if (exam) R.string.onboarding_schedule_share_exam else R.string.onboarding_schedule_share_goal,
+                    when {
+                        exam && month -> R.string.onboarding_schedule_share_exam_month
+                        exam -> R.string.onboarding_schedule_share_exam
+                        month -> R.string.onboarding_schedule_share_goal_month
+                        else -> R.string.onboarding_schedule_share_goal
+                    },
                     formatPercent(line.share, locale),
                     shown,
                 )
             }
 
             TimeLine.PastDate -> {
-                stringResource(R.string.onboarding_schedule_past_date, shown)
+                stringResource(if (month) R.string.onboarding_schedule_past_date_month else R.string.onboarding_schedule_past_date, shown)
             }
 
             is TimeLine.Finish -> {
@@ -474,7 +490,7 @@ private fun FullCourseToggle(
 
             end != null -> {
                 stringResource(
-                    R.string.onboarding_full_course_finish,
+                    if (end.exam.namedMonth) R.string.onboarding_full_course_finish_month else R.string.onboarding_full_course_finish,
                     formatMinutes(end.minutes, locale),
                     formatDate(end.end.toJavaLocalDate(), locale, DateStyle.Month),
                     goalDate(end.exam.date, end.exam.namedMonth, DateStyle.LongYear),

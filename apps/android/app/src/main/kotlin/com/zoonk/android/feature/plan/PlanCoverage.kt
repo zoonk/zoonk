@@ -87,14 +87,20 @@ internal fun timeCoversText(
     targetDate: LocalDate,
     namedMonth: Boolean,
     today: LocalDate,
-): String = stringResource(R.string.plan_find_covers, formatMinutes(minutes, currentLocale()), goalDate(targetDate, namedMonth, today))
+): String =
+    stringResource(
+        if (namedMonth) R.string.plan_find_covers_month else R.string.plan_find_covers,
+        formatMinutes(minutes, currentLocale()),
+        goalDate(targetDate, namedMonth, today),
+    )
 
 @Composable
 internal fun noTimeCoversText(
     targetDate: LocalDate,
     namedMonth: Boolean,
     today: LocalDate,
-): String = stringResource(R.string.plan_find_none, goalDate(targetDate, namedMonth, today))
+): String =
+    stringResource(if (namedMonth) R.string.plan_find_none_month else R.string.plan_find_none, goalDate(targetDate, namedMonth, today))
 
 @Composable
 internal fun everyTopicText(minutes: Int): String = stringResource(R.string.plan_find_every_topic, formatMinutes(minutes, currentLocale()))
@@ -150,9 +156,10 @@ internal fun DailyCoverage(
             Text(
                 text =
                     if (plan.fitOffer?.fits == true && target != null) {
+                        val month = plan.schedule.targetDateNamedMonth
                         stringResource(
-                            R.string.plan_time_covers_everything_by,
-                            goalDate(target.toJavaLocalDate(), plan.schedule.targetDateNamedMonth, page.today),
+                            if (month) R.string.plan_time_covers_everything_by_month else R.string.plan_time_covers_everything_by,
+                            goalDate(target.toJavaLocalDate(), month, page.today),
                         )
                     } else {
                         coveredText(plan, coverage)
