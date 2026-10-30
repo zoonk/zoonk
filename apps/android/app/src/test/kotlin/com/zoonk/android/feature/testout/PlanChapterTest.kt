@@ -13,9 +13,14 @@ class PlanChapterTest {
     private val id = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1f01"
 
     private fun phases(vararg rows: List<String>): List<PlanPhase> {
-        val json = rows.mapIndexed { index, chapters -> phase(index, "Phase $index", "current", "2026-10-01", "2026-11-01", 0, 10, chapters) }
-        return plan(""""phases":[${json.joinToString(",")}]""").phases
+        val json = rows.mapIndexed(::currentPhase).joinToString(",")
+        return plan(""""phases":[$json]""").phases
     }
+
+    private fun currentPhase(
+        index: Int,
+        chapters: List<String>,
+    ) = phase(index, "Phase $index", "current", "2026-10-01", "2026-11-01", done = 0, total = 10, chapters = chapters)
 
     @Test
     fun namesTheChapterWithTheLessonsItStillHasOnThePlan() {
