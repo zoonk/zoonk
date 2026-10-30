@@ -25,6 +25,9 @@ Zoonk helps anyone learn anything, especially people in small towns, under-resou
 - In Trickster duels, “broken” counts shield plates broken by right answers; “held” means the shield withstood this attempt.
 - Write a glossary term's abbreviation (such as “BP”) only where the source abbreviates it; “+10 Brain Power” keeps the full name.
 - An activity's chip (“Estimate first”, “Reply”, “Spot the pattern”) tells the learner what to do: write it as an instruction to them.
+- Mid-sentence, capitalize a feature name only where the English does: “Energy”, “Library” and “Brain Power” keep their capital; “your buddy”, “phase challenge” and “weekly challenge” don't.
+- “Sure” and “unsure” say how confident the learner was in an answer (“the answers you were sure of”), not certainty or safety.
+- “q” abbreviates “questions” only in English: write the word.
 - Keep the brand name “Zoonk” unchanged. Use each locale's glossary consistently across web, lesson player, Apple, and Android catalogs, including inflected forms.
 
 ## Plan language
@@ -36,5 +39,6 @@ Zoonk helps anyone learn anything, especially people in small towns, under-resou
 ## Placeholder context
 
 - Learners can choose buddy names and goal titles. Their gender and number are unknown; use neutral wording around names and the word for “goal” when a title needs agreement.
+- The learner's gender is unknown too: prefer wording that doesn't mark it, such as “quand tu veux” over “quand tu es prêt”.
 - Duration placeholders such as “{time}” already include localized units; do not add units around them.
-- Keep a count’s placeholder (“#” or “%d”) in every plural form, “one” included, where English puts it: “%d goal at a time” becomes “%d meta por vez”, never a literal “1”, a spelled-out number, or “uma meta por vez (%d)”.
+- Write every plural form, “one” included, as the natural sentence for its number: keep the count's placeholder (“#” or “%d”) and make the nouns and verbs agree with that number, as in “one {Falta # aula} other {Faltam # aulas}”. Never drop a form, write a literal “1” or a spelled-out number, put the count in parentheses, rebuild the sentence as “Label: %d”, or add words to only one form.

@@ -3,10 +3,10 @@
 ## Voice and locale
 
 - Use Brazilian Portuguese (pt-BR) and informal “você”.
-- Prefer everyday speech: “a gente” for “we”, “te ajuda” for “helps you”, and “criar ela/ele” rather than “criá-la/o”.
-- Use Zoonk as masculine: “o Zoonk”, “no Zoonk”. Inside sentences, use “o Plus” and “o Zoonk Plus”.
-- Localize illustrative exam examples for Brazil: Enem, vestibular, concursos públicos, and prova da OAB.
-- Treat “Poder Mental” as a product name without an article in short labels and headings.
+- Prefer everyday speech: “a gente” for “we”, “te ajuda” for “helps you”, and no clitic object pronouns: “criar ela”, “ajustar ele”, “você usa”, not “criá-la”, “ajustá-lo”, “você a usa”.
+- “Zoonk”, “Plus” and “Zoonk Plus” always take the masculine article, at the start of a sentence too and joined to prepositions: “O Zoonk cria”, “Com o Zoonk”, “pelo Zoonk”, “os limites do Plus”. “Get Plus”: “assinar o Plus”, not “mudar para o Plus”.
+- Localize illustrative exam examples for Brazil: Enem, vestibular, concursos públicos, and prova da OAB. Write “Enem” even where the English says “ENEM”: “o Enem de novembro”.
+- Treat “Poder Mental” as a product name without an article in short labels and headings. Amounts take “de”: “+10 de Poder Mental”.
 
 ## Glossary
 
@@ -19,29 +19,34 @@
 - “goal” (the learner's goal): “meta”; goal of a call, lesson, or activity: “objetivo”
 - “start a goal”: “começar uma meta”
 - “session” (study): “sessão”
-- “check” (an answer): “conferir”; “grade” (an essay) and “fix” (a mistake): “corrigir”
+- “check” (an answer): “conferir”; “grade” (an essay) and “fix” (a mistake): “corrigir”; an essay's grade: “correção”
 - “say” (the learner speaking aloud in pronunciation or speaking practice): “falar”, as in “Fale em voz alta”; words left to say again: “repetir”, as in “Repita 2 palavras”
 - “write” (Zoonk generating content): “criar”; learner writing: “escrever”
 - “share” (personal facts): “contar”
-- “questions” (counts): “perguntas”; an exam item being discussed: “questão”
+- “question” in a lesson, practice or chat: “pergunta”; an exam or mock exam item, numbered or in exam advice: “questão”, as in “Questão 12 de 90”, “acertar as questões fáceis”
+- “task” (a speaking exam's task): “tarefa”, as in “cartão de tarefa”; “atividade” is a lesson activity
+- “examiner” / “other candidate” (the AI's roles in a speaking exam): “examinador” / “outro candidato”
 - “practice questions”: “perguntas de prática”, not “perguntas práticas”
 - “options” (multiple choice): “alternativas”
-- “guess” (the learner's answer before the real one shows): “palpite”; “estimate” (an estimated score): “estimativa”
+- “guess”, and the learner's “estimate” before the real answer shows (“Estimate first”): “palpite”; a blind guess on an exam question: “chutar”; an estimated score: “estimativa”
 - “security check”: “sistema de segurança”; “verificação” is used for emailed codes
 - “picture” / “image”: “imagem”, not “figura”
 - “learning path”: “trilha”
-- “prerequisite”: “base”, not “pré-requisito”
+- “prerequisite”: “base”, not “pré-requisito”; a subject's “basics”: “o básico”, never “base”
 - Prerequisite choices “In depth” / “Essentials” / “Quick lesson” / “Skip”: “A fundo” / “Essencial” / “Aula rápida” / “Pular”
 - “Brain Power”: “Poder Mental”
 - “BP”: “PM”
-- “score”: “pontuação”, not “nota”
-- “again”: “de novo”, not “novamente”
+- “score”, including an exam's “band”: “pontuação”, not “nota” or “faixa” (a belt); the admission cut-off keeps its fixed name, “nota de corte”
+- “again”, including “Retry” and “retrying”: “de novo”, as in “Tentar de novo”, not “novamente”
 - “listening”: “escuta”
 - “Speaking”: “Conversação”
 - “Free” (subscription name): “Grátis”
 - “language”: “idioma”
 - “card”: “cartão”, not “carta”
-- “hello@zoonk.com”: “contato@zoonk.com”
+- “badge”: “insígnia”; the Trickster's “trap”: “pegadinha”
+- “musicianship”: “formação musical”
+- “email”: “e-mail”
+- “hello@zoonk.com”: “contato@zoonk.com”; “contact hello@zoonk.com”: “mande um e-mail para contato@zoonk.com”, not “entre em contato pelo contato@zoonk.com”
 
 ## Feature names and states
 
@@ -77,7 +82,7 @@
 - “Needs adjusting”: “Precisa de ajustes”
 - “Too tight”: “Apertado demais”
 - “Even across skills”: “Habilidades no mesmo nível”
-- “left out”: “ficar de fora”, not “pulado” or “ignorado”
+- “left out”: “ficar de fora”, not “pulado” or “ignorado”; “Out of your plan” and “Not in your plan” give no reason: “Fora do seu plano”
 - “skipped” (known through placement): “pulado”, not “ignorado”
 - “Daily time”: “Tempo diário”, not “Tempo por dia”
 
