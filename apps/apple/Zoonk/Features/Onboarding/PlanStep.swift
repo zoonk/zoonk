@@ -292,8 +292,11 @@ private struct PlanReveal: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(PlanStore.self) private var plans
+  @Environment(TodayStore.self) private var today
   @State private var adjusting: AdjustPlanSheet.Section?
   @State private var showsTopics = false
+  @State private var openingToday: Task<Void, Never>?
+  @State private var showsTodayProgress = false
 
   var body: some View {
     let goal = learnerGoal
@@ -336,14 +339,20 @@ private struct PlanReveal: View {
 
       Section {
         VStack(spacing: 12) {
-          Button {
-            router.showRoot(of: .today)
-          } label: {
-            Text("Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
-              .frame(maxWidth: .infinity)
+          Button(action: openToday) {
+            HStack {
+              if showsTodayProgress {
+                ProgressView()
+              }
+
+              Text(
+                "Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
+            }
+            .frame(maxWidth: .infinity)
           }
           .buttonStyle(.mainAction)
           .keyboardShortcut(.defaultAction)
+          .disabled(showsTodayProgress)
 
           Button {
             adjusting = .top
@@ -415,12 +424,36 @@ private struct PlanReveal: View {
       }
     }
     .loads(syllabus, refreshable: false)
+    .onDisappear { openingToday?.cancel() }
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: plans)
     }
     .sheet(isPresented: $showsTopics) {
       if let structure {
         SyllabusTopicsSheet(syllabus: structure)
+      }
+    }
+  }
+
+  /// Today shows once it has read the new plan's day; a read slower than a moment shows on Start.
+  private func openToday() {
+    guard openingToday == nil else {
+      return
+    }
+
+    openingToday = Task {
+      let progress = Task {
+        try await Task.sleep(for: .milliseconds(400))
+        showsTodayProgress = true
+      }
+
+      await today.today.load()
+      progress.cancel()
+      showsTodayProgress = false
+      openingToday = nil
+
+      if !Task.isCancelled {
+        router.showRoot(of: .today)
       }
     }
   }
