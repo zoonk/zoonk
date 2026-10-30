@@ -32,7 +32,7 @@ struct SearchScreen: View {
         }
       }
 
-      if let results = catalogResults, !results.isEmpty {
+      if let results = catalogResults {
         Section {
           ForEach(results.courses) { course in
             NavigationLink(value: CourseDestination.course(CourseReference(course))) {
@@ -126,11 +126,7 @@ struct SearchScreen: View {
   }
 
   private var catalogResults: CatalogSearchResults? {
-    guard text != nil, case .loaded(let results) = catalog.searchState else {
-      return nil
-    }
-
-    return results
+    catalog.search(query: query)?.value
   }
 
   private var fallback: SearchGroup? {
@@ -138,12 +134,10 @@ struct SearchScreen: View {
   }
 
   private func searchCatalog() async {
-    guard text != nil else {
-      catalog.clearSearch()
+    guard let results = catalog.search(query: query) else {
       return
     }
 
-    catalog.prepareSearch(query: query)
     let plan = syllabus
     let exam = exam
     async let planLoaded: Void = { await plan?.load() }()
@@ -155,7 +149,7 @@ struct SearchScreen: View {
       return
     }
 
-    await catalog.searchCatalog(query: query)
+    await results.load()
     await planLoaded
     await examLoaded
   }

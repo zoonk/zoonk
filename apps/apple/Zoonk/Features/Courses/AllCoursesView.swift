@@ -11,10 +11,8 @@ struct AllCoursesView: View {
 
   var body: some View {
     Group {
-      if catalogText(searchText) != nil {
-        CourseCatalogSearchResultsView(
-          query: searchText,
-          retry: { await catalog.searchCatalog(query: searchText, force: true) })
+      if let results = catalog.search(query: searchText) {
+        CourseCatalogSearchResultsView(query: searchText, results: results)
       } else {
         browseCatalog
       }
@@ -54,12 +52,9 @@ struct AllCoursesView: View {
   }
 
   private func updateSearchResults() async {
-    guard catalogText(searchText) != nil else {
-      catalog.clearSearch()
+    guard let results = catalog.search(query: searchText) else {
       return
     }
-
-    catalog.prepareSearch(query: searchText)
 
     do {
       try await Task.sleep(for: .milliseconds(250))
@@ -67,11 +62,7 @@ struct AllCoursesView: View {
       return
     }
 
-    guard !Task.isCancelled else {
-      return
-    }
-
-    await catalog.searchCatalog(query: searchText)
+    await results.load()
   }
 }
 

@@ -20,7 +20,7 @@ final class CourseCatalogStoreTests: XCTestCase {
     XCTAssertEqual(store.courses(category: nil).state, .idle)
     XCTAssertEqual(store.course(id: Course.testFixture.id).state, .idle)
     XCTAssertEqual(store.chapter(.testFixture).state, .idle)
-    XCTAssertEqual(store.searchState, .idle)
+    XCTAssertEqual(store.search(query: "stars")?.state, .idle)
     XCTAssertFalse(store.isLoadingMore)
     XCTAssertNil(store.loadMoreFailure)
   }
@@ -301,56 +301,39 @@ final class CourseCatalogStoreTests: XCTestCase {
       language: "en",
       session: .preview(account: makeCourseCatalogTestAccount()))
 
-    await store.searchCatalog(query: "  stars  ")
+    await store.search(query: "  stars  ")?.load()
 
-    XCTAssertEqual(store.searchState, .loaded(.testFixture))
+    XCTAssertEqual(store.search(query: "stars")?.state, .loaded(.testFixture))
     let searchQueries = await api.searchQueries
     XCTAssertEqual(searchQueries, [CatalogSearchQuery(language: "en", query: "stars")])
   }
 
-  func testBlankCatalogSearchReturnsToIdleWithoutRequestingTheAPI() async {
-    let api = CourseCatalogAPIStub(searchResults: [.success(.testFixture)])
-    let store = CourseCatalogStore(api: api, language: "en")
+  func testBlankTextHasNoSearch() {
+    let store = CourseCatalogStore(api: CourseCatalogAPIStub(), language: "en")
 
-    await store.searchCatalog(query: "  \n")
-
-    XCTAssertEqual(store.searchState, .idle)
-    let searchQueries = await api.searchQueries
-    XCTAssertEqual(searchQueries, [])
+    XCTAssertNil(store.search(query: "  \n"))
   }
 
-  func testPreparingANewQueryClearsPreviousSearchFeedbackBeforeRequesting() async {
-    let responses: [Result<CatalogSearchResults, Error>] = [
-      .success(.testFixture),
-      .success(CatalogSearchResults(chapters: [], courses: [])),
-      .failure(APIError.network),
-    ]
+  func testEachQueryKeepsItsOwnResults() async {
+    let planets = CatalogSearchResults(chapters: [], courses: [])
+    let api = CourseCatalogAPIStub(searchResults: [.success(.testFixture), .success(planets)])
+    let store = CourseCatalogStore(api: api, language: "en")
 
-    for response in responses {
-      let api = CourseCatalogAPIStub(searchResults: [response, .success(.testFixture)])
-      let store = CourseCatalogStore(api: api, language: "en")
-      await store.searchCatalog(query: "stars")
-      XCTAssertNotEqual(store.searchState, .idle)
+    await store.search(query: "stars")?.load()
+    await store.search(query: "planets")?.load()
 
-      store.prepareSearch(query: "planets")
-
-      XCTAssertEqual(store.searchState, .idle)
-      await store.searchCatalog(query: "planets")
-      XCTAssertEqual(store.searchState, .loaded(.testFixture))
-      let queries = await api.searchQueries
-      XCTAssertEqual(queries.map(\.query), ["stars", "planets"])
-    }
+    XCTAssertEqual(store.search(query: "stars")?.state, .loaded(.testFixture))
+    XCTAssertEqual(store.search(query: "planets")?.state, .empty)
   }
 
-  func testPreparingTheSameNormalizedQueryPreservesSearchResults() async {
+  func testTheSameNormalizedQueryReusesItsResults() async {
     let api = CourseCatalogAPIStub(searchResults: [.success(.testFixture)])
     let store = CourseCatalogStore(api: api, language: "en")
-    await store.searchCatalog(query: "stars")
+    await store.search(query: "stars")?.load()
 
-    store.prepareSearch(query: "  stars\n")
-    await store.searchCatalog(query: "stars")
+    await store.search(query: "  stars\n")?.load()
 
-    XCTAssertEqual(store.searchState, .loaded(.testFixture))
+    XCTAssertEqual(store.search(query: "stars")?.state, .loaded(.testFixture))
     let queries = await api.searchQueries
     XCTAssertEqual(queries, [CatalogSearchQuery(language: "en", query: "stars")])
   }
@@ -369,9 +352,9 @@ final class CourseCatalogStoreTests: XCTestCase {
       })
     let store = CourseCatalogStore(api: api, language: "en")
 
-    let firstSearch = Task { await store.searchCatalog(query: "stars") }
+    let firstSearch = Task { await store.search(query: "stars")?.load() }
     await fulfillment(of: [firstSearchStarted], timeout: 1)
-    let secondSearch = Task { await store.searchCatalog(query: "planets") }
+    let secondSearch = Task { await store.search(query: "planets")?.load() }
     await fulfillment(of: [secondSearchStarted], timeout: 1)
 
     await api.resolveSearchRequest(at: 1, with: .testFixture)
@@ -379,7 +362,7 @@ final class CourseCatalogStoreTests: XCTestCase {
     await api.resolveSearchRequest(at: 0, with: CatalogSearchResults(chapters: [], courses: []))
     await firstSearch.value
 
-    XCTAssertEqual(store.searchState, .loaded(.testFixture))
+    XCTAssertEqual(store.search(query: "planets")?.state, .loaded(.testFixture))
   }
 
   private func waitForCourseRequests(_ count: Int, in api: SuspendedCourseCatalogAPI) async {

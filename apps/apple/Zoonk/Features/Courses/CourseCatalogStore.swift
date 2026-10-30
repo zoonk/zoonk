@@ -9,7 +9,6 @@ final class CourseCatalogStore {
 
   private(set) var isLoadingMore = false
   private(set) var loadMoreFailure: APIError?
-  private var search: CatalogSearch?
 
   @ObservationIgnored private let api: any CourseCatalogAPIClient
   @ObservationIgnored private let cache: AppCache
@@ -17,6 +16,7 @@ final class CourseCatalogStore {
   @ObservationIgnored private var chapters: [CatalogChapterKey: Resource<ChapterDetail>] = [:]
   @ObservationIgnored private var courseDetails: [String: Resource<CourseDetail>] = [:]
   @ObservationIgnored private var pages: [CourseCategory?: Resource<CourseCatalogPage>] = [:]
+  @ObservationIgnored private var searches: [String: Resource<CatalogSearchResults>] = [:]
 
   @ObservationIgnored let categoryCounts: Resource<CourseCategoryCounts>
 
@@ -27,10 +27,6 @@ final class CourseCatalogStore {
     categoryCounts = cache.resource(audience: .everyone, maxAge: Self.catalogMaxAge) { _ in
       try await api.countCourses(language: language)
     }
-  }
-
-  var searchState: LoadState<CatalogSearchResults> {
-    search?.results.state ?? .idle
   }
 
   func courses(category: CourseCategory?) -> Resource<CourseCatalogPage> {
@@ -136,43 +132,24 @@ final class CourseCatalogStore {
     return resource
   }
 
-  func prepareSearch(query: String) {
-    guard catalogText(query) != search?.query.query else {
-      return
+  /// Nil for blank text.
+  func search(query: String) -> Resource<CatalogSearchResults>? {
+    guard let text = catalogText(query) else {
+      return nil
     }
 
-    clearSearch()
-  }
-
-  func searchCatalog(query: String, force: Bool = false) async {
-    guard let text = catalogText(query) else {
-      clearSearch()
-      return
+    if let resource = searches[text] {
+      return resource
     }
 
     let query = CatalogSearchQuery(language: language, query: text)
-
-    if search?.query != query {
-      search = CatalogSearch(
-        query: query,
-        results: cache.resource(audience: .everyone, isEmpty: \.isEmpty) { [api] _ in
-          try await api.searchCatalog(query: query)
-        })
+    let resource: Resource<CatalogSearchResults> = cache.resource(
+      audience: .everyone, isEmpty: \.isEmpty
+    ) { [api] _ in
+      try await api.searchCatalog(query: query)
     }
-
-    guard let results = search?.results else {
-      return
-    }
-
-    if force {
-      await results.refresh()
-    } else {
-      await results.load()
-    }
-  }
-
-  func clearSearch() {
-    search = nil
+    searches[text] = resource
+    return resource
   }
 
   private func merge(
@@ -186,11 +163,6 @@ final class CourseCatalogStore {
       hasMore: nextPage.hasMore,
       nextCursor: nextPage.nextCursor)
   }
-}
-
-private struct CatalogSearch {
-  let query: CatalogSearchQuery
-  let results: Resource<CatalogSearchResults>
 }
 
 private func loadChapterDetail(

@@ -1,14 +1,12 @@
 import SwiftUI
 
 struct CourseCatalogSearchResultsView: View {
-  @Environment(CourseCatalogStore.self) private var catalog
-
   let query: String
-  let retry: @MainActor () async -> Void
+  let results: Resource<CatalogSearchResults>
 
   var body: some View {
     Group {
-      switch catalog.searchState {
+      switch results.state {
       case .idle, .loading:
         ProgressView()
           .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -22,7 +20,9 @@ struct CourseCatalogSearchResultsView: View {
       case .empty:
         ContentUnavailableView.search(text: query)
       case .failed(let failure):
-        CatalogFailureRecoveryView(context: .catalog, failure: failure, retry: retry)
+        CatalogFailureRecoveryView(context: .catalog, failure: failure) {
+          await results.refresh()
+        }
       }
     }
     .modifier(ReadableResults())
