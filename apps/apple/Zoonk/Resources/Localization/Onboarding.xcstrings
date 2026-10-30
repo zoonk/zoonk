@@ -12520,6 +12520,35 @@
         }
       }
     },
+    "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then." : {
+      "comment" : "Under a plan without a date that holds the whole goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan deckt dein ganzes Ziel ab. Um früher fertig zu sein, plane täglich mehr Zeit ein oder wähl ein Datum. Dann plant er das Wichtigste so ein, dass du es bis dahin schaffst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan cubre todos los aspectos de tu objetivo. Para terminar antes, dedica más tiempo al día o elige una fecha y el plan se ajustará para que estudies lo más importante antes de esa fecha."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan couvre tous les aspects de ton objectif. Pour finir plus tôt, consacre-lui plus de temps chaque jour ou choisis une date pour qu’il se concentre sur l’essentiel d’ici là."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano cobre todas as partes da sua meta. Para terminar antes, aumente o tempo diário ou escolha uma data para ele incluir o que mais importa dentro desse prazo."
+          }
+        }
+      }
+    },
     "Your plan gets you ready by the first day." : {
       "comment" : "Under an exam's dates over several days",
       "localizations" : {
@@ -12864,6 +12893,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu texto"
+          }
+        }
+      }
+    },
+    "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then." : {
+      "comment" : "Under a plan without a date that the time a day limits",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine tägliche Lernzeit bestimmt, wie viel dein Plan abdeckt. Um mehr zu schaffen oder früher fertig zu sein, plane täglich mehr Zeit ein oder wähl ein Datum. Dann plant er das Wichtigste so ein, dass du es bis dahin schaffst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El tiempo que dedicas al día determina hasta dónde llega tu plan. Para abarcar más o terminar antes, dedica más tiempo al día o elige una fecha y el plan se ajustará para que estudies lo más importante antes de esa fecha."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le temps que tu consacres chaque jour à ton plan détermine ce qu’il couvre. Pour aller plus loin ou finir plus tôt, consacre-lui plus de temps chaque jour ou choisis une date pour qu’il se concentre sur l’essentiel d’ici là."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O tempo diário define até onde seu plano vai. Para ir além ou terminar antes, aumente esse tempo ou escolha uma data para ele incluir o que mais importa dentro desse prazo."
           }
         }
       }
