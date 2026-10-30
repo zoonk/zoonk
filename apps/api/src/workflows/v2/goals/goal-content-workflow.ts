@@ -230,15 +230,35 @@ async function buildGoal({
   return { goalId, speculativeLessonIds, status: "built" };
 }
 
-async function loadInitialCurriculum(input: GoalContentInput) {
+async function loadInitialCurriculum({
+  input,
+  workflowRunId,
+}: {
+  input: GoalContentInput;
+  workflowRunId: string;
+}) {
   const initial = await loadGoalCurriculumStep(input.goalId);
 
-  if (!input.rebuild && initial?.startedCourse && !initial.hasPlanGraph) {
-    await prepareCourseGoalPlanStep({ goalId: input.goalId, platform: input.platform ?? null });
-    return loadGoalCurriculumStep(input.goalId);
+  if (!initial) {
+    return null;
   }
 
-  return initial;
+  const goalId = input.goalId;
+  const analytics = { distinctId: initial.goal.userId, goalId, platform: input.platform };
+  const context = { analytics, workflowRunId };
+
+  if (input.rebuild || !initial.startedCourse || initial.hasPlanGraph) {
+    return { context, initial };
+  }
+
+  try {
+    await prepareCourseGoalPlanStep({ goalId: input.goalId, platform: input.platform ?? null });
+    const prepared = await loadGoalCurriculumStep(goalId);
+    return prepared ? { context, initial: prepared } : null;
+  } catch (error) {
+    await reportBuildFailure({ context, goalId });
+    throw error;
+  }
 }
 
 export async function goalContentWorkflow(input: GoalContentInput): Promise<GoalContentResult> {
@@ -261,9 +281,9 @@ export async function goalContentWorkflow(input: GoalContentInput): Promise<Goal
   await recordGoalRunStep({ generationId: workflowRunId, goalId });
   await goalProgressStep({ entityId: goalId, status: "started", step: "understandGoal" });
 
-  const initial = await loadInitialCurriculum(input);
+  const loaded = await loadInitialCurriculum({ input, workflowRunId });
 
-  if (!initial) {
+  if (!loaded) {
     await goalProgressStep(
       { entityId: goalId, reason: "notFound", status: "error", step: WORKFLOW_ERROR_STEP },
       { last: true },
@@ -272,8 +292,7 @@ export async function goalContentWorkflow(input: GoalContentInput): Promise<Goal
     return { goalId, speculativeLessonIds: [], status: "missing" };
   }
 
-  const analytics = { distinctId: initial.goal.userId, goalId, platform: input.platform };
-  const context = { analytics, workflowRunId };
+  const { context, initial } = loaded;
 
   const rebuild = Boolean(input.rebuild);
 

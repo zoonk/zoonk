@@ -579,6 +579,45 @@ describe(goalContentWorkflow, () => {
     },
   );
 
+  it("reports a course plan's failed preparation for the learner who asked", async () => {
+    const course = await courseFixture({ isPublished: true, visibility: "public" });
+
+    const { goal } = await newGoal({
+      details: { courseStart: { chapterId: null } },
+      primaryCourseId: course.id,
+    });
+
+    // The workflow runtime exposes an exhausted step as a rejection.
+    const preparation = vi
+      .spyOn(planSteps, "prepareCourseGoalPlanStep")
+      .mockRejectedValueOnce(new Error("Course plan unavailable"));
+
+    try {
+      await expect(goalContentWorkflow({ goalId: goal.id, platform: "ios" })).rejects.toThrow(
+        "Course plan unavailable",
+      );
+
+      expect(getStreamedEvents().at(-1)).toMatchObject({
+        reason: "aiGenerationFailed",
+        status: "error",
+      });
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+      ).resolves.toMatchObject({ buildFailedAt: expect.any(Date) });
+
+      expect(trackServerEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          distinctId: goal.userId,
+          name: "Generation Failed",
+          shared: expect.objectContaining({ platform: "ios" }),
+        }),
+      );
+    } finally {
+      preparation.mockRestore();
+    }
+  });
+
   it(
     "makes the goal ready even when the questions written ahead for placement fail",
     { timeout: TIMEOUT },
