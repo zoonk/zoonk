@@ -142,8 +142,8 @@ internal fun ExamSpeakingResult(
                             stringResource(
                                 R.string.conversation_criterion_line,
                                 criterionGloss(criterion.key, criterion.name),
-                                bandText(grade.bandLow, grade.bandHigh, criterion),
-                                standingText(levelStanding(grade.bandLow, grade.bandHigh, criterion.levelMark), task.level.value),
+                                estimateText(grade.estimate),
+                                standingText(grade.standing, task.level.value),
                             ),
                         official = criterion.name,
                         evidence = grade.evidence,
@@ -211,18 +211,16 @@ private fun CriterionRow(
                 style = MaterialTheme.typography.bodyMedium,
             )
         } else {
-            val standing = levelStanding(grade.bandLow, grade.bandHigh, criterion.levelMark)
+            val standing = grade.standing
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    bandText(grade.bandLow, grade.bandHigh, criterion),
+                    estimateText(grade.estimate),
                     style = MaterialTheme.typography.titleSmall.copy(fontFamily = FontFamily.Monospace),
                 )
                 Text(
                     standingText(standing, level),
                     color =
-                        if (standing ==
-                            LevelStanding.At
-                        ) {
+                        if (standing == ExamSpeakingFeedbackCriteriaInner.Standing.AT) {
                             MaterialTheme.colorScheme.tertiary
                         } else {
                             MaterialTheme.colorScheme.onSurfaceVariant

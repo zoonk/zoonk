@@ -41,10 +41,11 @@ import com.zoonk.android.ui.richtext.RichTable
 import com.zoonk.android.ui.richtext.SpokenText
 import com.zoonk.android.ui.richtext.TableAlign
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.models.ExamSpeakingFeedbackCriteriaInner
 import com.zoonk.api.models.ExamSpeakingTask
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.SpeakingCard
-import com.zoonk.api.models.SpeakingCriterion
+import com.zoonk.api.models.SpeakingEstimate
 import com.zoonk.api.models.SpeakingTask
 import kotlinx.coroutines.delay
 import java.util.Locale
@@ -111,72 +112,53 @@ fun spokenList(
 fun examTaskTitle(task: ExamSpeakingTask) =
     stringResource(R.string.conversation_exam_task_title, task.title, task.number.toString(), task.taskCount.toString())
 
-enum class LevelStanding { At, Near, Below }
-
-/** Core's `getLevelStanding`: the estimate's middle at the level's mark is at it, its top alone near it. */
-fun levelStanding(
-    bandLow: Double,
-    bandHigh: Double,
-    levelMark: Double,
-): LevelStanding =
-    when {
-        (bandLow + bandHigh) / 2 >= levelMark -> LevelStanding.At
-        bandHigh >= levelMark -> LevelStanding.Near
-        else -> LevelStanding.Below
-    }
-
 @Composable
 internal fun standingText(
-    standing: LevelStanding,
+    standing: ExamSpeakingFeedbackCriteriaInner.Standing,
     level: String,
 ) = stringResource(
     when (standing) {
-        LevelStanding.At -> R.string.conversation_at_level
-        LevelStanding.Near -> R.string.conversation_near_level
-        LevelStanding.Below -> R.string.conversation_below_level
+        ExamSpeakingFeedbackCriteriaInner.Standing.AT -> R.string.conversation_at_level
+        ExamSpeakingFeedbackCriteriaInner.Standing.NEAR -> R.string.conversation_near_level
+        ExamSpeakingFeedbackCriteriaInner.Standing.BELOW -> R.string.conversation_below_level
     },
     level,
 )
 
-/** Main's `useBandText`: letters for Goethe, points where the exam counts them, else the band of its scale. */
+/** Main's `useEstimateText`: Goethe's letters best first, else the range of the scale or of the task's points. */
 @Composable
-internal fun bandText(
-    bandLow: Double,
-    bandHigh: Double,
-    criterion: SpeakingCriterion,
-): String {
+internal fun estimateText(estimate: SpeakingEstimate): String {
     val locale = currentLocale()
 
     fun number(value: Double) = formatNumber((value * 100).roundToInt() / 100.0, locale)
 
     fun span(
-        low: String,
-        high: String,
-    ) = if (low == high) low else "$low–$high"
+        first: String,
+        last: String,
+    ) = if (first == last) first else "$first–$last"
 
-    val points = criterion.points
-    return when {
-        criterion.display == SpeakingCriterion.Display.LETTER -> {
-            span(LETTERS.getOrElse(bandHigh.roundToInt()) { "" }, LETTERS.getOrElse(bandLow.roundToInt()) { "" })
+    return when (estimate) {
+        is SpeakingEstimate.LetterWrapper -> {
+            span(estimate.value.high, estimate.value.low)
         }
 
-        criterion.display == SpeakingCriterion.Display.POINTS && points != null -> {
-            fun at(band: Double) = points.getOrElse(band.roundToInt()) { 0.0 }
+        is SpeakingEstimate.PointsWrapper -> {
             stringResource(
                 R.string.conversation_band_points,
-                span(number(at(bandLow)), number(at(bandHigh))),
-                number(points.lastOrNull() ?: 0.0),
+                span(number(estimate.value.low), number(estimate.value.high)),
+                number(estimate.value.max),
             )
         }
 
-        else -> {
-            stringResource(R.string.conversation_band, span(number(bandLow), number(bandHigh)), number(criterion.maxBand.toDouble()))
+        is SpeakingEstimate.BandWrapper -> {
+            stringResource(
+                R.string.conversation_band,
+                span(number(estimate.value.low), number(estimate.value.high)),
+                number(estimate.value.max),
+            )
         }
     }
 }
-
-/** Goethe's letters by band: 0 is E, 4 is A. */
-private val LETTERS = listOf("E", "D", "C", "B", "A")
 
 /** The card a task is done from, in the exam's language; [compact] keeps it short beside a call. */
 @Composable

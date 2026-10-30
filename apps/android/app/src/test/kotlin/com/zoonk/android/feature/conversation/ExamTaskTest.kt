@@ -83,6 +83,25 @@ class ExamTaskTest {
     }
 
     @Test
+    fun theResultShowsEachEstimateAndStandingAsTheServerGivesThem() {
+        val graded =
+            """
+            {"brainPower":8,"passed":true,"spokenSeconds":120,"stars":0,"feedback":{"kind":"examSpeaking","brief":false,"heard":true,"focus":"range",
+            "criteria":[{"criterion":"fluency","bandLow":2,"bandHigh":3,"evidence":"Spoke steadily.","tip":"Keep going.",
+                         "standing":"below","estimate":{"display":"points","high":15,"low":10.5,"max":20}},
+                        {"criterion":"range","bandLow":1,"bandHigh":2,"evidence":"Few linking words.","tip":"Use sin embargo.",
+                         "standing":"at","estimate":{"display":"letter","high":"B","low":"C"}}]}}
+            """.trimIndent()
+        harness.api.stored = examConversation(harness.id, result = graded)
+        show()
+
+        compose.onNodeWithText("10.5–15 of 20 points").assertExists()
+        compose.onNodeWithText("Below B2").assertExists()
+        compose.onNodeWithText("B–C").assertExists()
+        compose.onNodeWithText("At B2").assertExists()
+    }
+
+    @Test
     fun anotherTryWritesANewCardAndOpensIt() {
         harness.api.stored =
             examConversation(harness.id, result = """{"brainPower":0,"passed":false,"spokenSeconds":0,"stars":0,"feedback":null}""")
