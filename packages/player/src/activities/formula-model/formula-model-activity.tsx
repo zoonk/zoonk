@@ -37,13 +37,13 @@ function expectedPoint({
   content,
   expected,
   format,
-  inputs,
+  submitted,
 }: {
   axis: Fields["variables"][number];
   content: Content;
   expected: FormulaModelProps["expected"];
   format: ReturnType<typeof useFormatNumber>;
-  inputs: ModelValues;
+  submitted: FormulaModelProps["answer"];
 }) {
   const { check } = content;
 
@@ -52,10 +52,15 @@ function expectedPoint({
   }
 
   const input = check.inputs?.find((item) => item.name === axis.name);
-  const submitted = computeActivityValue(content, { inputs, output: check.output });
 
   return {
-    label: format(expected.value, exactAnswerFormat({ check, value: submitted ?? undefined })),
+    label: format(
+      expected.value,
+      exactAnswerFormat({
+        check,
+        value: submitted?.kind === "numeric" ? submitted.value : undefined,
+      }),
+    ),
     x: input?.value ?? axis.initial,
     y: expected.value,
   };
@@ -69,6 +74,7 @@ export function FormulaModelActivity(props: FormulaModelProps) {
 }
 
 function FormulaModelBoard({
+  answer,
   axis,
   charted,
   content,
@@ -98,8 +104,8 @@ function FormulaModelBoard({
 
     if (check.kind === "numeric") {
       const inputs = { ...nextSliders, ...nextEvents };
-      const answer = computeActivityValue(content, { inputs, output: check.output });
-      onAnswerChange(answer === null ? null : { kind: "numeric", value: answer });
+      const value = computeActivityValue(content, { inputs, output: check.output });
+      onAnswerChange(value === null ? null : { kind: "numeric", value });
     }
   }
 
@@ -146,9 +152,7 @@ function FormulaModelBoard({
           view.delta === 0 ? null : format(view.delta, { signed: true, unit: charted.unit })
         }
         expected={
-          isChecked
-            ? expectedPoint({ axis, content, expected, format, inputs: { ...sliders, ...events } })
-            : null
+          isChecked ? expectedPoint({ axis, content, expected, format, submitted: answer }) : null
         }
         formatTick={(value) => format(value, { compact: true, unit: charted.unit })}
         formatX={formatX}
