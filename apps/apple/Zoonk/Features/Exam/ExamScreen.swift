@@ -928,8 +928,9 @@ private struct SpeakingMockSection: View {
         }
       } else {
         Button {
-          start.start(
-            .case3(.init(goalId: goalId, kind: .speakingMock)), voice: voice, router: router)
+          start.start(.case3(.init(goalId: goalId, kind: .speakingMock)), voice: voice) {
+            router.open(.conversation(conversationId: $0))
+          }
         } label: {
           if start.isStarting {
             Text("Starting…", tableName: "Exam", comment: "The speaking mock is starting")

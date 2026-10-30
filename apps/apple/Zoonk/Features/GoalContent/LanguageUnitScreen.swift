@@ -286,9 +286,10 @@ private struct LanguageUnitContent: View {
   @ViewBuilder
   private var practice: some View {
     if let conversation = unit.conversation {
-      UnitPracticeCallSection(
+      PracticeCallSection(
         conversation: conversation, chapterId: unit.unit.chapterId, goalId: unit.goalId,
-        minutes: $callMinutes, start: callStart)
+        minutes: $callMinutes, start: callStart
+      ) { router.open(.conversation(conversationId: $0)) }
     }
 
     if !unit.grammarTips.isEmpty {
@@ -399,8 +400,8 @@ private struct LanguageUnitContent: View {
   }
 }
 
-private struct UnitPracticeCallSection: View {
-  @Environment(AppRouter.self) private var router
+/// A unit's practice call: its length, and Start. Shared by the unit page and the buddy's offer.
+struct PracticeCallSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(VoiceServices.self) private var voice
 
@@ -409,6 +410,7 @@ private struct UnitPracticeCallSection: View {
   let goalId: String?
   @Binding var minutes: Int?
   let start: CallStart
+  let onStarted: (String) -> Void
 
   var body: some View {
     let isPlus = learner.summary.value?.tier == .plus
@@ -501,7 +503,7 @@ private struct UnitPracticeCallSection: View {
       return
     }
 
-    start.start(input, voice: voice, router: router)
+    start.start(input, voice: voice, onStarted: onStarted)
   }
 }
 

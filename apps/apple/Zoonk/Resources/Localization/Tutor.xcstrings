@@ -1262,6 +1262,35 @@
         }
       }
     },
+    "Calls are paused for everyone right now. Try again later." : {
+      "comment" : "The buddy offers a practice call while calls are paused for everyone",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespräche sind gerade für niemanden verfügbar. Versuch es später noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora mismo las llamadas están en pausa para todo el mundo. Vuelve a intentarlo más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les appels sont suspendus pour tout le monde en ce moment. Réessaie plus tard."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As conversas estão pausadas para todo mundo no momento. Tente de novo mais tarde."
+          }
+        }
+      }
+    },
     "Change to your plan" : {
       "comment" : "Title of a plan change the buddy proposed",
       "localizations" : {

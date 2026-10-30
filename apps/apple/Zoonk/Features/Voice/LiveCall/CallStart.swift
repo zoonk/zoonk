@@ -9,10 +9,10 @@ final class CallStart {
   private(set) var refusal: CallReservation?
   @ObservationIgnored private var task: Task<Void, Never>?
 
-  /// Only from the learner's tap: it writes the call's card.
+  /// Only from the learner's tap: it writes the call's card. `onStarted` gets the new call's id.
   func start(
     _ input: Components.Schemas.LanguageConversationStartInput, voice: VoiceServices,
-    router: AppRouter
+    onStarted: @escaping (String) -> Void
   ) {
     guard !isStarting else {
       return
@@ -27,7 +27,7 @@ final class CallStart {
 
       switch result {
       case .done(.done(let id)):
-        router.open(.conversation(conversationId: id))
+        onStarted(id)
       case .done(.refused(let refusal)):
         self.refusal = CallReservation(refusal: refusal)
       case .failed:

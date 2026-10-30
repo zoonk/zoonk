@@ -88,11 +88,13 @@ struct TutorPanel: View {
 /// After a missed answer it says the buddy's name, when asking helps most.
 struct TutorAskButton: View {
   @Environment(LearnerSummaryStore.self) private var summary
+  @Environment(\.tutorPlaces) private var places
 
   let scope: TutorScope
   var quote: String?
 
   @State private var isPresented = false
+  @State private var placeAfterPanel: TutorPlace?
 
   var body: some View {
     let name = summary.buddyDisplayName
@@ -120,8 +122,24 @@ struct TutorAskButton: View {
     }
     .buttonStyle(.bordered)
     .accessibilityLabel(Text(scope.askLabel(name)))
-    .sheet(isPresented: $isPresented) {
+    // The panel gives way to the place it opens, which would otherwise open under it.
+    .sheet(isPresented: $isPresented, onDismiss: openPlaceAfterPanel) {
       TutorPanel(scope: scope, quote: quote)
+        .environment(
+          \.tutorPlaces,
+          TutorPlaces { place in
+            placeAfterPanel = place
+            isPresented = false
+          })
     }
+  }
+
+  private func openPlaceAfterPanel() {
+    guard let placeAfterPanel else {
+      return
+    }
+
+    self.placeAfterPanel = nil
+    places.open(placeAfterPanel)
   }
 }
