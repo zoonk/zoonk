@@ -74,7 +74,7 @@ struct TodayDayView: View {
     .task(id: followedLessonIDs) {
       await store.followWriting(lessonIDs: followedLessonIDs)
     }
-    .task(id: view.isAwaitingOutlines && !isCovered) {
+    .task(id: view.isAwaitingOutlines && !isCovered ? view : nil) {
       await rereadWhileOutlining()
     }
     .onDisappear {
@@ -299,8 +299,9 @@ struct TodayDayView: View {
   }
 
   /// The API names no run for a day's outlines (one can wait for its course before any run starts),
-  /// so Today reads the day again as main's `usePoll` does: ten minutes at most, then it says it's
-  /// taking longer. Not while a task covers Today.
+  /// so Today reads the day again as main's `usePoll` does: through the learner's 15-minute ask for
+  /// lessons plus one read, again from each read that changes the day, then it says it's taking
+  /// longer. Not while a task covers Today.
   private func rereadWhileOutlining() async {
     writingStalled = false
 
@@ -308,7 +309,7 @@ struct TodayDayView: View {
       return
     }
 
-    let deadline = ContinuousClock.now + .seconds(600)
+    let deadline = ContinuousClock.now + .seconds(905)
 
     while ContinuousClock.now < deadline {
       do {
