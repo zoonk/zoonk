@@ -18,7 +18,7 @@ const slots =
   Number(process.env.ZOONK_QUEUE_SLOTS) ||
   Math.max(1, Math.floor(totalmem() / GIGABYTE / GIGABYTES_PER_JOB));
 
-type QueueTurn = { environment: NodeJS.ProcessEnv; release: () => void };
+type QueueTurn = { environment: { ZOONK_QUEUE_TICKET: string }; release: () => void };
 
 type Ticket = { createdAt: number; name: string };
 
