@@ -14,7 +14,11 @@ import { type StudyScheduleAt } from "../planner/daily-time-plans";
 import { weighGraphForExam } from "../planner/exam-weights";
 import { getShownPhaseEnds } from "../planner/kept-phase-ends";
 import { sizeLanguageGraph } from "../planner/language-size";
-import { isPhaseDatesMoveWorth, mayCostToKeepPhaseDates } from "../planner/phase-dates-move";
+import {
+  getPhaseDatesMoveMode,
+  isPhaseDatesMoveWorth,
+  mayCostToKeepPhaseDates,
+} from "../planner/phase-dates-move";
 import { type PlanBases } from "../planner/plan-bases";
 import { type PlanEffect } from "../planner/plan-effect";
 import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
@@ -120,7 +124,14 @@ async function layOutUnmetPhaseDates({
     return null;
   }
 
-  const laidOut = await computePlan({ ...request, keepPhaseDates: false });
+  const mode = getPhaseDatesMoveMode({
+    kept: built,
+    mode: request.mode,
+    shown: kept,
+    today: request.context.today,
+  });
+
+  const laidOut = await computePlan({ ...request, keepPhaseDates: false, mode });
   return isPhaseDatesMoveWorth({ graph, kept: built, moved: laidOut.built }) ? laidOut : null;
 }
 

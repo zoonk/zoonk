@@ -412,6 +412,38 @@ describe("phase dates through system refreshes", () => {
     expect(last && end && last <= end).toBe(true);
   });
 
+  it("keeps a new learner's challenge this week after lessons that land longer than planned, without asking", async () => {
+    vi.setSystemTime(new Date("2020-09-28T12:00:00Z"));
+
+    const { goal, library, outline, plan } = await setup({
+      challengeTaken: false,
+      skills: [
+        { lessons: 2, phase: 0 },
+        { lessons: 0, phase: 0, size: 3 },
+        { lessons: 6, phase: 1 },
+        { lessons: 0, phase: 1, size: 5 },
+      ],
+      targetDate: FAR,
+    });
+
+    const [planned] = await readPhaseEnds(plan.id);
+
+    expect(planned && planned <= "2020-10-04").toBe(true);
+
+    await outline({ outline: { count: 3, minutes: 12 }, skill: 1 });
+    await refreshGoalPlan({ goalId: goal.id });
+
+    const [[end], [challenge], last] = await Promise.all([
+      readPhaseEnds(plan.id),
+      readChallengeDates(plan.id),
+      readLastLessonDay({ phase: 0, planId: plan.id, skills: library.graph.skills }),
+    ]);
+
+    expect(challenge).toBe(end);
+    expect(last && end && last <= end).toBe(true);
+    await expect(readProposals(plan.id)).resolves.toHaveLength(0);
+  });
+
   it("keeps the rest of a stand-in whose first lesson landed in its time this week", async () => {
     vi.setSystemTime(new Date("2020-09-28T12:00:00Z"));
 
