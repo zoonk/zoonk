@@ -69,6 +69,8 @@ import com.zoonk.android.feature.memory.MemoryStore
 import com.zoonk.android.feature.mindmaps.LiveMindMapApi
 import com.zoonk.android.feature.mindmaps.MindMapStore
 import com.zoonk.android.feature.mistakes.LiveMistakesApi
+import com.zoonk.android.feature.mistakes.LiveNotebookApi
+import com.zoonk.android.feature.mistakes.MistakesNotebookStore
 import com.zoonk.android.feature.mistakes.MistakesStore
 import com.zoonk.android.feature.mock.LiveMockApi
 import com.zoonk.android.feature.mock.MockStore
@@ -268,6 +270,7 @@ class AppContainer private constructor(
     // Practice and checks (lane L6).
     val questionBlocks = QuestionBlockStore(LiveQuestionBlockApi(api), cache, timeZone)
     val mistakes = MistakesStore(LiveMistakesApi(api), cache, timeZone)
+    val mistakesNotebook = MistakesNotebookStore(LiveNotebookApi(api), cache, sessions, timeZone)
     val checkpoints = CheckpointStore(LiveCheckpointApi(api), cache, timeZone)
     val challenges = ChallengeStore(LiveChallengeApi(api), cache, timeZone)
     val testOuts = TestOutStore(LiveTestOutApi(api), cache, drafts, timeZone)

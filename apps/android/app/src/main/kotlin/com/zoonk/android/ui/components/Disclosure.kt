@@ -12,7 +12,7 @@ fun DisclosureRow(
     title: String,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
-    leading: @Composable () -> Unit,
+    leading: (@Composable () -> Unit)?,
     modifier: Modifier = Modifier,
     count: Int? = null,
     content: @Composable () -> Unit,

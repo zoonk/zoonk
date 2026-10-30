@@ -11,4 +11,42 @@
     <string name="mistakes_not_found_description">They may have been fixed or removed.</string>
     <string name="mistakes_nothing_title">Nothing to practice yet</string>
     <string name="mistakes_nothing_description">Mistakes come back for practice from the day after you make them.</string>
+    <string name="mistakes_notebook_title">Mistakes notebook</string>
+    <plurals name="mistakes_ready">
+        <item quantity="one">%d ready to practice</item>
+        <item quantity="other">%d ready to practice</item>
+    </plurals>
+    <plurals name="mistakes_tomorrow">
+        <item quantity="one">%d available tomorrow</item>
+        <item quantity="other">%d available tomorrow</item>
+    </plurals>
+    <plurals name="mistakes_fixed_count">
+        <item quantity="one">%d fixed</item>
+        <item quantity="other">%d fixed</item>
+    </plurals>
+    <string name="mistakes_come_back_tomorrow">Mistakes come back for practice from the day after you make them.</string>
+    <string name="mistakes_practice">Practice mistakes</string>
+    <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
+    <string name="mistakes_tab_open">To fix</string>
+    <!-- The notebook's tab of mistakes the learner fixed in practice. -->
+    <string name="mistakes_tab_fixed">Fixed</string>
+    <!-- Mistakes on questions that aren't tied to a skill. -->
+    <string name="mistakes_other_questions">Other questions</string>
+    <string name="mistakes_empty_open">Nothing to fix right now. Mistakes from your lessons and reviews show up here.</string>
+    <string name="mistakes_empty_fixed">Mistakes you fix in practice show up here.</string>
+    <string name="mistakes_show_more">Show more</string>
+    <string name="mistakes_more_failed">That didn\'t load. Try again.</string>
+    <!-- Why the learner got a question wrong: they didn't know the content yet. Not missing course content. -->
+    <string name="mistakes_cause_gap">Content gap</string>
+    <!-- Why the learner got a question wrong: they misread the question. -->
+    <string name="mistakes_cause_misread">Misread</string>
+    <string name="mistakes_cause_trap">Fell for a trap</string>
+    <string name="mistakes_cause_time">Ran out of time</string>
+    <string name="mistakes_cause_guess">Guessed</string>
+    <string name="mistakes_cause_unsorted">Not sorted yet</string>
+    <!-- %1$s is why the learner got the question wrong, such as "Misread". -->
+    <string name="mistakes_cause_fixed">%1$s · Fixed</string>
+    <string name="mistakes_practice_tomorrow">Practice tomorrow</string>
+    <string name="mistakes_practice_skill">Practice this skill</string>
+    <string name="mistakes_open_lesson">Open the lesson</string>
 </resources>

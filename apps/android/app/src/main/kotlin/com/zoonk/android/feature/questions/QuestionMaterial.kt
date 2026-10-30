@@ -49,6 +49,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -69,16 +70,25 @@ import java.time.ZoneOffset
 fun ItemSupport(
     question: Question,
     modifier: Modifier = Modifier,
+) = ItemSupport(question.context, question.image, question.visual, modifier)
+
+@Composable
+fun ItemSupport(
+    context: String?,
+    image: QuestionImage?,
+    visual: LessonVisual?,
+    modifier: Modifier = Modifier,
+    contextStyle: TextStyle = MaterialTheme.typography.bodyLarge,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        question.context?.let { ItemText(it, style = MaterialTheme.typography.bodyLarge) }
-        question.image?.let { image ->
+        context?.let { ItemText(it, style = contextStyle) }
+        image?.let { image ->
             Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 // Main caps a question's picture at 55% of the window, as a lesson's hero.
                 PrivatePicture(image.url, image.alt, image.width, image.height, PictureFrame.Hero)
             }
         }
-        question.visual?.let { LessonVisual(it) }
+        visual?.let { LessonVisual(it) }
     }
 }
 

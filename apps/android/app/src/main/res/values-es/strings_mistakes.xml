@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mistakes_cause_fixed": "54dcd63e1ddb390b41183d2cf42dac0976bca94b25a191a1c7f12f18ba1f2315",
+  "mistakes_cause_gap": "66d9ee4940d5eaf4b3d5c27dbee566799dc2b575d156106fa5b800a49a6d80e7",
+  "mistakes_cause_guess": "645e68f3accf80d260570c19d418c7b748add3e9394890cb96d6a03a53a75523",
+  "mistakes_cause_misread": "bc914f8635a0149e3a9a2c537e34754fedc9253f26f5150bc09cfd93c77bb650",
+  "mistakes_cause_time": "55c5babcddf633c38cef375db0fd3eeb4e4dad8a5519dbb09bbb5c0491a0938b",
+  "mistakes_cause_trap": "5cbc5ea7477dea950bd6bbe6aaf7a9a488ad612766d7447dc666ec985adb8df9",
+  "mistakes_cause_unsorted": "eac95f8a300f8f881801ea4e29d36f3d87b4423fd3b1cedfdeca2a81e75329a2",
+  "mistakes_come_back_tomorrow": "1916ee3f5c6d4e2771ca22a1300879c06e2bd9f6c768a391143970e59754b312",
+  "mistakes_empty_fixed": "bdf1fef53e4b56cab8b17e74be47000dc347af6021430c675146d9583edbb0ea",
+  "mistakes_empty_open": "d4ad5c6207483138ffa9a975f0fa0568a7b40a603a5da4600cab6b04aa07b86f",
+  "mistakes_fixed_count": "21a4bba25e159ed23827f45da58e395fa4650afed2d5e233873d1db9c989f825",
+  "mistakes_more_failed": "a156ad3bc96201c836d9bbc713898f82aabe9c0cbc76095affe8d4853ca80189",
   "mistakes_not_found_description": "7979e3624aff3ad7d9d3b5f763a65293274423332915aaf4498c1cce84e3bb8f",
+  "mistakes_notebook_title": "fa16b30c899b9d8f4851c469e13896feb34dfee57ee3409940748d9cc85e271f",
   "mistakes_nothing_description": "85cfd59ed67bd03f07f54056e49dd128d21c38c7d512b556e279bc95b3e99366",
   "mistakes_nothing_title": "ef7dccdbfc65183c0306c8de80d565f0d682174423430a123072828359827b8f",
+  "mistakes_open_lesson": "53cf9444aa62cf5c7810f116c7e7eb91453a73aba9f9a9019a40cdca34e8be3d",
+  "mistakes_other_questions": "d13642f084ee9afedda41da3929d0883c379aca7378d6f582a098b056e00ced6",
+  "mistakes_practice": "7caec670c3a7730563c9054a631b5eafb8893a36611e664b9b17a777996b478c",
   "mistakes_practice_comes_back": "2f8aa50fd8a9ac2bdaec7a08e78abcfa87394deb4053c860a2367ede13527b28",
   "mistakes_practice_end": "794a05f59a7bd24e1d7713b16bbf1a4a093bbaecad9dcfd881390a90f9ee8a6e",
   "mistakes_practice_fixed": "359d4c4bfa5dff995bf2474902ee064caec8307572f048ce1f49b05cc10820d8",
-  "mistakes_practice_title": "e3820f9cc6c6850516df19a3c19e4fa2f0550169d5a10dedf0c3782684a668f9"
+  "mistakes_practice_skill": "a9b54de63f859e017264a48adba2430d5fd39517f1d7cb8b7a3df4c5b5df3b92",
+  "mistakes_practice_title": "e3820f9cc6c6850516df19a3c19e4fa2f0550169d5a10dedf0c3782684a668f9",
+  "mistakes_practice_tomorrow": "91a8bde803f35a2ce3665230e4d0b26e73bb47b67ba3fb3689eabec1484cef38",
+  "mistakes_ready": "437811bfaf93aaaa2f5170ec45391ca747f7835abc2294faa436f09d31c1b71d",
+  "mistakes_show_more": "45b16433397b1e8928f987a566228052a9c5cdd47c916ecf81b9cf75c38dd4ff",
+  "mistakes_tab_fixed": "66f569aba50ec576228b92b14888c5058c35029d32d3784b52ef9d24677aca4f",
+  "mistakes_tab_open": "1248564e111b35af6060236a48f82d29c7141c328a133554fc930a7e80f806d1",
+  "mistakes_tomorrow": "898b8dde2384381bd4438262663a652e28f326e195dbb0977328012ced90e208"
 }
 -->
 <resources>
@@ -23,4 +46,45 @@
     <string name="mistakes_not_found_description">Puede que se hayan corregido o eliminado.</string>
     <string name="mistakes_nothing_title">Aún no hay nada que practicar</string>
     <string name="mistakes_nothing_description">Los errores vuelven para practicarlos a partir del día siguiente.</string>
+    <string name="mistakes_notebook_title">Cuaderno de errores</string>
+    <plurals name="mistakes_ready">
+        <item quantity="one">%d disponible para practicar</item>
+        <item quantity="many">%d disponibles para practicar</item>
+        <item quantity="other">%d disponibles para practicar</item>
+    </plurals>
+    <plurals name="mistakes_tomorrow">
+        <item quantity="one">%d disponible mañana</item>
+        <item quantity="many">%d disponibles mañana</item>
+        <item quantity="other">%d disponibles mañana</item>
+    </plurals>
+    <plurals name="mistakes_fixed_count">
+        <item quantity="one">%d corregido</item>
+        <item quantity="many">%d corregidos</item>
+        <item quantity="other">%d corregidos</item>
+    </plurals>
+    <string name="mistakes_come_back_tomorrow">Los errores vuelven para practicarlos a partir del día siguiente.</string>
+    <string name="mistakes_practice">Practicar errores</string>
+    <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
+    <string name="mistakes_tab_open">Por corregir</string>
+    <!-- The notebook's tab of mistakes the learner fixed in practice. -->
+    <string name="mistakes_tab_fixed">Corregidos</string>
+    <!-- Mistakes on questions that aren't tied to a skill. -->
+    <string name="mistakes_other_questions">Otras preguntas</string>
+    <string name="mistakes_empty_open">Ahora no hay nada que corregir. Aquí aparecen los errores de tus lecciones y repasos.</string>
+    <string name="mistakes_empty_fixed">Aquí aparecen los errores que corriges al practicar.</string>
+    <string name="mistakes_show_more">Mostrar más</string>
+    <string name="mistakes_more_failed">No se ha podido cargar. Inténtalo de nuevo.</string>
+    <!-- Why the learner got a question wrong: they didn't know the content yet. Not missing course content. -->
+    <string name="mistakes_cause_gap">Aún no lo sabía</string>
+    <!-- Why the learner got a question wrong: they misread the question. -->
+    <string name="mistakes_cause_misread">He leído mal la pregunta</string>
+    <string name="mistakes_cause_trap">Caí en una trampa</string>
+    <string name="mistakes_cause_time">Se me acabó el tiempo</string>
+    <string name="mistakes_cause_guess">Lo hice al azar</string>
+    <string name="mistakes_cause_unsorted">Aún sin clasificar</string>
+    <!-- %1$s is why the learner got the question wrong, such as "Misread". -->
+    <string name="mistakes_cause_fixed">%1$s · Corregido</string>
+    <string name="mistakes_practice_tomorrow">Practica mañana</string>
+    <string name="mistakes_practice_skill">Practicar esta habilidad</string>
+    <string name="mistakes_open_lesson">Abrir la lección</string>
 </resources>
