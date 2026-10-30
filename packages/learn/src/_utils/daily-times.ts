@@ -18,7 +18,6 @@ const DAILY_TIMES = [
   ...everyStep({ from: QUARTER_HOURS_UNTIL + HALF_HOUR, step: HALF_HOUR, to: MAX_DAILY_MINUTES }),
 ];
 
-/** The times shown stay in the list even off its steps, such as a suggested 35 minutes. */
 export function getDailyTimes(...shown: (number | null)[]): number[] {
   const own = shown.filter((time) => time !== null);
   return [...new Set([...DAILY_TIMES, ...own])].toSorted((a, b) => a - b);

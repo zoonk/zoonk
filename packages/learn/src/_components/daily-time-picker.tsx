@@ -158,7 +158,6 @@ function DailyTimeReadout({
   );
 }
 
-/** The time a day as one large readout that opens the platform's own list of times. */
 export function DailyTimePicker({
   minutes,
   ...props
@@ -170,7 +169,6 @@ export function DailyTimePicker({
   return <DailyTimeReadout minutes={minutes} {...props} />;
 }
 
-/** For a plain form: the picked time goes with it as `name`. */
 export function DailyTimeField({ defaultMinutes, name }: { defaultMinutes: number; name: string }) {
   const t = useExtracted();
   const [minutes, setMinutes] = useState(defaultMinutes);
