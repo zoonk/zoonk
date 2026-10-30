@@ -49,8 +49,8 @@
   "essay_supporting_texts": "0b463bbf91ed65f3707de2de5d864b71b35ead28be07355a6ba23da8af3cde14",
   "essay_the_case": "f330964d9a93ab6e07be4c6b17e851951b63959aa4c4a9ebe82a06a20b45a3eb",
   "essay_title": "a6195ac16e7e620cc8f34f0358bf7b0f95ee4ed7ad0857e5cd4a69b31b07a461",
-  "essay_title_ap": "6762fc1752be1902e018d74331184ede197d596ee3f7612671a34248a2949e25",
-  "essay_title_enem": "932d64a3f15fcdc1bc134fd7c5a76e0ee3b35c9a921c2574e03a8c499262f6ee",
+  "essay_title_ap": "6a70ee615458bfcd3d6a47e4773da4b1683974419fc4df8348d3d2972702db5a",
+  "essay_title_enem": "aaf24e15afba62c8ac5f1e9c970998ae5e21a42f068bdb7c62d833267a4efe9f",
   "essay_too_short": "b83521b4dc9afaaa5d790f1386770f7bc0a4f8086c6d6f573723e39e7f8b8d4d",
   "essay_too_short_detail": "be9ceba63c14231de5d2a9e288b6c8730f8b4282bc92170fbfb3c9a3b7ca8759",
   "essay_what_to_rewrite": "044a045d2ac0a7fe8e34bc7763ed3ef2e8f42fabcffa96f1dd611b2c68852d76",
@@ -87,8 +87,8 @@
     <string name="essay_full_marks">Bei dieser Schätzung erhält jedes Kriterium die volle Punktzahl.</string>
     <!-- The header of a writing block graded by the item's own criteria, or by the OAB exam's. -->
     <string name="essay_title">Schreibübung</string>
-    <string name="essay_title_ap">Freie Antwort · AP-Bewertungskriterien</string>
-    <string name="essay_title_enem">Aufsatz · ENEM-Bewertungskriterien</string>
+    <string name="essay_title_ap">Freitextantwort · AP-Bewertungsrichtlinien</string>
+    <string name="essay_title_enem">Aufsatz · ENEM-Bewertungsraster</string>
     <string name="essay_supporting_texts">Begleittexte</string>
     <!-- The texts an ENEM essay prompt gives to motivate the essay. -->
     <string name="essay_motivating_texts">Impulstexte</string>

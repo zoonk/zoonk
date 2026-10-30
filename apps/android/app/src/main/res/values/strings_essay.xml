@@ -27,8 +27,8 @@
     <string name="essay_full_marks">Every criterion has full marks in this estimate.</string>
     <!-- The header of a writing block graded by the item's own criteria, or by the OAB exam's. -->
     <string name="essay_title">Writing practice</string>
-    <string name="essay_title_ap">Free response · AP scoring guidelines</string>
-    <string name="essay_title_enem">Essay · ENEM rubric</string>
+    <string name="essay_title_ap">Free response · AP scoring guidelines</string>
+    <string name="essay_title_enem">Essay · ENEM rubric</string>
     <string name="essay_supporting_texts">Supporting texts</string>
     <!-- The texts an ENEM essay prompt gives to motivate the essay. -->
     <string name="essay_motivating_texts">Motivating texts</string>
