@@ -1,9 +1,16 @@
 package com.zoonk.android.feature.catalog
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -20,6 +27,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.CourseChapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -82,6 +90,20 @@ class CatalogFlowTest {
         rule.onNodeWithText("Build my plan").performClick()
 
         assertEquals(AppRoute.CourseStart(COURSE, dailyMinutes = 15), navigator.currentRoute)
+    }
+
+    @Test
+    fun theOutlineKeepsItsLevelsClosedUntilTheLearnersLevelOpensInPlace() {
+        var openLevel by mutableStateOf<CourseChapter.Level?>(null)
+        show { _, navigator, _ -> CourseOutline(navigator, COURSE, chapters(), plan = null, lead = null, openLevel = openLevel) }
+
+        level("Overview").assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Collapsed"))
+        level("Beginner").assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Collapsed"))
+
+        openLevel = CourseChapter.Level.BEGINNER
+
+        level("Beginner").assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Expanded"))
+        level("Overview").assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Collapsed"))
     }
 
     @Test
@@ -163,4 +185,6 @@ class CatalogFlowTest {
         rule.onNodeWithText("Math").assertIsDisplayed()
         rule.onNodeWithText("Law").assertDoesNotExist()
     }
+
+    private fun level(title: String) = rule.onNode(hasText(title) and hasClickAction())
 }

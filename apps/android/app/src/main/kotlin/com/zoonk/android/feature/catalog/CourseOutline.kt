@@ -31,6 +31,8 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.format.currentLocale
@@ -43,6 +45,7 @@ import com.zoonk.api.models.CoursePlanEstimateAnyOf1
 import com.zoonk.api.models.CoursePlanEstimateAnyOf1AreasInner
 import com.zoonk.api.models.CoursePlanEstimateAnyOf1ChaptersInner
 import com.zoonk.api.models.CoursePlanExample
+import com.zoonk.api.models.LearnerSummary
 import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.roundToLong
 
@@ -68,6 +71,7 @@ internal fun CourseOutline(
     chapters: List<CourseChapter>,
     plan: CoursePlanExample?,
     lead: String?,
+    openLevel: CourseChapter.Level?,
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
@@ -134,7 +138,7 @@ internal fun CourseOutline(
                 chapters
                     .groupBy { it.level }
                     .entries
-                    .forEachIndexed { index, (level, levelChapters) ->
+                    .forEach { (level, levelChapters) ->
                         val chapterWeeks = levelChapters.mapNotNull { weeks[it.id.toString()] }.filter { it.first != null }
                         val first = chapterWeeks.minOfOrNull { it.first!! }
                         val last = chapterWeeks.maxOfOrNull { it.second ?: it.first!! }
@@ -165,7 +169,7 @@ internal fun CourseOutline(
                                     span,
                                 ).joinToString(SEPARATOR),
                             closedSummary = levelChapters.take(CHAPTERS_NAMED).joinToString(SEPARATOR) { it.title },
-                            initiallyOpen = index == 0,
+                            openByDefault = level == openLevel,
                         ) {
                             ChapterRows(navigator, courseId, levelChapters, numbers) { chapter ->
                                 weeks[chapter.id.toString()]?.first?.let {
@@ -221,7 +225,7 @@ private fun AreaOutline(
             aside = pluralStringResource(R.plurals.catalog_chapters, areaChapters.size, areaChapters.size),
             closedSummary = areaFitText(estimate.areas.firstOrNull { it.area == area }, areaChapters, rows),
             openSummary = true,
-            initiallyOpen = false,
+            openByDefault = false,
         ) {
             ChapterRows(navigator, courseId, ordered(areaChapters), numbers, mark)
         }
@@ -341,17 +345,18 @@ private fun areaChapterMark(
     return listOfNotNull(span, detail).joinToString(SEPARATOR)
 }
 
-/** Main's `RouteZone`: a disclosure whose closed state names what's inside. */
+/** Main's `RouteZone`: a disclosure whose closed state names what's inside; it follows [openByDefault] until tapped. */
 @Composable
 internal fun OutlineZone(
     title: String,
     aside: String,
     closedSummary: String?,
-    initiallyOpen: Boolean,
+    openByDefault: Boolean,
     openSummary: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    var open by rememberSaveable(title) { mutableStateOf(initiallyOpen) }
+    var toggled by rememberSaveable(title) { mutableStateOf<Boolean?>(null) }
+    val open = toggled ?: openByDefault
     val state = stringResource(if (open) R.string.catalog_expanded else R.string.catalog_collapsed)
 
     Column {
@@ -363,7 +368,7 @@ internal fun OutlineZone(
                     .clickable(
                         onClickLabel = stringResource(if (open) R.string.catalog_collapse else R.string.catalog_expand),
                         role = Role.Button,
-                    ) { open = !open }
+                    ) { toggled = !open }
                     .semantics { stateDescription = state }
                     .padding(vertical = 14.dp),
             verticalAlignment = Alignment.Top,
@@ -493,3 +498,23 @@ private fun OutlineChapterRow(
 
 private const val CHAPTERS_NAMED = 3
 private const val CHAPTERS_SHOWN = 6
+
+/**
+ * The level a course's outline opens at: the learner's plan's level in the course, the first for
+ * anyone else or when the summary can't be read, and none while a session's summary is on its way,
+ * so the learner's level opens without another one closing above it.
+ */
+internal fun outlineLevel(
+    chapters: List<CourseChapter>,
+    courseId: String,
+    hasSession: Boolean,
+    summary: LoadState<LearnerSummary>,
+): CourseChapter.Level? {
+    if (hasSession && (summary == LoadState.Idle || summary == LoadState.Loading)) return null
+    val level =
+        summary.value
+            ?.goals
+            ?.find { it.courseId?.toString() == courseId }
+            ?.courseLevel
+    return CourseChapter.Level.entries.find { it.value == level?.value } ?: chapters.firstOrNull()?.level
+}

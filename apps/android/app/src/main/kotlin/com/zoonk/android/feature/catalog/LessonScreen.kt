@@ -188,7 +188,7 @@ private fun LessonMore(
                 title = stringResource(R.string.catalog_what_you_learn),
                 aside = pluralStringResource(R.plurals.catalog_ideas, ideas.size, ideas.size),
                 closedSummary = null,
-                initiallyOpen = false,
+                openByDefault = false,
             ) {
                 Column(Modifier.padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     ideas.forEach { idea ->
@@ -213,7 +213,7 @@ private fun LessonMore(
                     pluralStringResource(R.plurals.catalog_plan_lessons, chapter.lessons.size, chapter.lessons.size) + SEPARATOR +
                         formatTotalDuration(minutes.toDouble(), locale),
                 closedSummary = null,
-                initiallyOpen = false,
+                openByDefault = false,
             ) {
                 Column(Modifier.padding(bottom = 16.dp)) {
                     ChapterLessonRows(navigator, courseId, place, currentLessonId = lessonId)

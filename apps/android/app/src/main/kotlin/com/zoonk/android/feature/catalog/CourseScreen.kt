@@ -52,6 +52,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
@@ -272,7 +273,17 @@ private fun LazyListScope.courseContent(
     }
 
     item(key = "outline", contentType = "outline") {
-        CourseOutline(navigator, courseId, detail.chapters, plan, lead = course.description.takeIf { it != promise })
+        val session by app.sessions.state.collectAsStateWithLifecycle()
+        val summary by app.learnerSummary.summary.collectShown()
+        val hasSession = session is SessionState.SignedIn || session == SessionState.Restoring
+        CourseOutline(
+            navigator,
+            courseId,
+            detail.chapters,
+            plan,
+            lead = course.description.takeIf { it != promise },
+            openLevel = outlineLevel(detail.chapters, courseId, hasSession, summary),
+        )
     }
 
     item(key = "closing", contentType = "closing") { CourseClosing(app, navigator, courseId, pace) }
