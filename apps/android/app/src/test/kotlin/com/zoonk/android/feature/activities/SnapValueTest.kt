@@ -34,6 +34,18 @@ class SnapValueTest {
     }
 
     @Test
+    fun aSliderReachesItsMaximumWhenItsStepsDoNot() {
+        val uneven = SnapRange(0.0, 10.0, 3.0)
+        assertEquals(4, sliderStops(uneven))
+        assertEquals(listOf(0.0, 3.0, 6.0, 9.0, 10.0), (0..4).map { sliderValue(it, uneven) })
+        assertEquals(listOf(0, 3, 4), listOf(0.0, 9.0, 10.0).map { sliderStop(it, uneven) })
+
+        assertEquals(24, sliderStops(range))
+        assertEquals(12.0, sliderValue(24, range), 0.0)
+        assertEquals(10, sliderStops(SnapRange(0.0, 1.0, 0.1)))
+    }
+
+    @Test
     fun keysMoveLikeANativeSlider() {
         assertEquals(5.5, valueAfterKey(Key.DirectionRight, 5.0, range))
         assertEquals(4.5, valueAfterKey(Key.DirectionDown, 5.0, range))

@@ -59,8 +59,8 @@ fun ActivitySlider(
             )
         }
         ActivitySliderTrack(
-            position = jsRound((clamp(value, range.min, range.max) - range.min) / range.step).toInt(),
-            positions = jsRound((range.max - range.min) / range.step).toInt(),
+            position = sliderStop(value, range),
+            positions = sliderStops(range),
             enabled = !disabled,
             fill = MaterialTheme.zoonk.vizAccent,
             modifier =
@@ -68,7 +68,7 @@ fun ActivitySlider(
                     contentDescription = label
                     stateDescription = valueText
                 },
-            onPositionChange = { onValueChange(snapToStep(range.min + it * range.step, range)) },
+            onPositionChange = { onValueChange(sliderValue(it, range)) },
         )
         Box(Modifier.clearAndSetSemantics {}) { scale() }
     }

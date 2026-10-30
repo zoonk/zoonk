@@ -3,6 +3,7 @@ package com.zoonk.android.feature.activities
 import androidx.compose.ui.input.key.Key
 import com.zoonk.android.ui.components.cleanFloat
 import kotlin.math.abs
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
@@ -36,6 +37,22 @@ fun snapToStep(
     val steps = jsRound((clamp(value, range.min, range.max) - range.min) / range.step)
     return clamp(cleanFloat(range.min + steps * range.step), range.min, range.max)
 }
+
+/** A slider's stops: its whole steps from [SnapRange.min], plus [SnapRange.max] when they don't land on it, which main's End key reaches. */
+fun sliderStops(range: SnapRange): Int {
+    val steps = (range.max - range.min) / range.step
+    return if (isMultiple(range.max - range.min, range.step)) jsRound(steps).toInt() else floor(steps).toInt() + 1
+}
+
+fun sliderStop(
+    value: Double,
+    range: SnapRange,
+): Int = if (value >= range.max) sliderStops(range) else jsRound((clamp(value, range.min, range.max) - range.min) / range.step).toInt()
+
+fun sliderValue(
+    stop: Int,
+    range: SnapRange,
+): Double = if (stop >= sliderStops(range)) range.max else snapToStep(range.min + stop * range.step, range)
 
 /** Moves like a native slider: arrows a step, Page Up and Down ten, Home and End to the ends; other keys give null. */
 fun valueAfterKey(
