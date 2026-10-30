@@ -20,11 +20,15 @@ export type LearnerTier = "free" | "guest" | "plus";
 export type LearnerSummaryGoal = {
   /** Set only while the goal follows its course, so that course's page offers to continue it. */
   courseId: string | null;
+  /** The chapter of the goal's next lesson in that course, so its page marks it; null until it's written. */
+  courseChapterId: string | null;
   /** The level of the goal's next lesson in that course, so its page opens there; null with no course. */
   courseLevel: CourseLevel | null;
   dailyMinutes: number;
   id: string;
   isActive: boolean;
+  /** Questions are left before its plan is set, so continuing it opens its setup instead of Today. */
+  isSettingUp: boolean;
   kind: GoalKind;
   status: GoalStatus;
   /** `YYYY-MM-DD`, or null for a goal without a date. */

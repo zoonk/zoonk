@@ -14,6 +14,8 @@ export type PlanPhaseFacts = {
    * whose skill the graph doesn't map to another course (its skill's level).
    */
   nextLevel: CourseLevel | null;
+  /** The primary course's chapter that holds that lesson; null for a stand-in not written yet. */
+  nextChapterId: string | null;
   phases: unknown;
   planId: string;
   userId: string;
@@ -48,8 +50,12 @@ export async function loadPlanPhaseFacts(
         WHERE i.plan_id = p.id AND i.status = 'todo'
           AND i.kind::text = ANY(${LESSON_WORK_KINDS}::text[])
       ) AS "firstTodoPhaseBesideChallenges",
-      (
-        SELECT COALESCE(cc.level::text, s.level::text) FROM plan_items i
+      next.level AS "nextLevel",
+      next.chapter_id AS "nextChapterId"
+    FROM plans p
+    JOIN goals g ON g.id = p.goal_id
+    LEFT JOIN LATERAL (
+        SELECT COALESCE(cc.level::text, s.level::text) AS level, cc.chapter_id FROM plan_items i
         LEFT JOIN course_chapters cc
           ON cc.chapter_id = i.chapter_id AND cc.course_id = g.primary_course_id
         LEFT JOIN skills s ON s.id = i.skill_id
@@ -71,9 +77,7 @@ export async function loadPlanPhaseFacts(
           )
         ORDER BY i.scheduled_for ASC NULLS LAST, i.position ASC
         LIMIT 1
-      ) AS "nextLevel"
-    FROM plans p
-    JOIN goals g ON g.id = p.goal_id
+    ) next ON true
     WHERE ${where}`;
 }
 

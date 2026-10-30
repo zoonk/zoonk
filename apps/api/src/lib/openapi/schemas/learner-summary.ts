@@ -8,6 +8,13 @@ const millisecondsSchema = z.int().meta({ description: "Milliseconds since the e
 
 const learnerSummaryGoalSchema = z
   .object({
+    courseChapterId: z
+      .uuid()
+      .nullable()
+      .meta({
+        description:
+          "The chapter of `courseId`'s course that holds the goal's next lesson, so that course's page marks where the learner is; null when `courseId` is null, the goal has no lesson left, or its next lesson isn't written into a chapter yet",
+      }),
     courseId: z
       .uuid()
       .nullable()
@@ -25,6 +32,12 @@ const learnerSummaryGoalSchema = z
     dailyMinutes: z.int(),
     id: z.uuid(),
     isActive: z.boolean().meta({ description: "The goal the tabs show" }),
+    isSettingUp: z
+      .boolean()
+      .meta({
+        description:
+          "Questions are left before the goal's plan is set, so continuing it opens its setup instead of Today",
+      }),
     kind: z.enum(GoalKind),
     status: z.enum(GoalStatus),
     targetDate: z.iso.date().nullable(),

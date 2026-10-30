@@ -20,11 +20,13 @@ class LearnerAccessTest {
         kind: LearnerSummaryGoal.Kind,
         status: LearnerSummaryGoal.Status = LearnerSummaryGoal.Status.ACTIVE,
     ) = LearnerSummaryGoal(
+        courseChapterId = null,
         courseId = null,
         courseLevel = null,
         dailyMinutes = 20,
         id = UUID.randomUUID(),
         isActive = true,
+        isSettingUp = false,
         kind = kind,
         status = status,
         targetDate = null,

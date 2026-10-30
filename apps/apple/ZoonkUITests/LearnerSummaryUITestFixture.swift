@@ -15,6 +15,7 @@ let learnerSummaryUITestJSON = """
         "dailyMinutes": 30,
         "id": "0b6c4c1e-7a39-4c6e-9f43-2f8f1f0c5a11",
         "isActive": true,
+        "isSettingUp": false,
         "kind": "learn",
         "status": "active",
         "targetDate": null,

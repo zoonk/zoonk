@@ -22,6 +22,7 @@ import { hasSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speak
 import { countReadyMistakes } from "../../mistakes/mistake-availability";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getSession } from "../../users/get-session";
+import { isGoalSetupLeft } from "../../view-models/onboarding/onboarding-steps";
 import { getAnswerTimeZone } from "../_utils/owned-goal";
 import { readLearningProfile } from "../facts/learning-profile";
 import { getRequestInstant } from "../facts/request-instant";
@@ -61,20 +62,26 @@ function toSummaryGoals({
   return goals
     .filter((goal) => goal.status !== "archived")
     .toSorted((a, b) => Number(b.id === activeGoalId) - Number(a.id === activeGoalId))
-    .map((goal) => ({
-      courseId: followsCourse(goal) ? goal.primaryCourseId : null,
-      courseLevel: followsCourse(goal)
-        ? (phaseFacts.find((facts) => facts.goalId === goal.id)?.nextLevel ?? null)
-        : null,
-      dailyMinutes: goal.dailyMinutes,
-      id: goal.id,
-      isActive: goal.id === activeGoalId,
-      kind: goal.kind,
-      status: goal.status,
-      targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
-      targetLanguage: goal.targetLanguage,
-      title: goal.title,
-    }));
+    .map((goal) => {
+      const next = followsCourse(goal)
+        ? phaseFacts.find((facts) => facts.goalId === goal.id)
+        : undefined;
+
+      return {
+        courseChapterId: next?.nextChapterId ?? null,
+        courseId: followsCourse(goal) ? goal.primaryCourseId : null,
+        courseLevel: next?.nextLevel ?? null,
+        dailyMinutes: goal.dailyMinutes,
+        id: goal.id,
+        isActive: goal.id === activeGoalId,
+        isSettingUp: isGoalSetupLeft(goal),
+        kind: goal.kind,
+        status: goal.status,
+        targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
+        targetLanguage: goal.targetLanguage,
+        title: goal.title,
+      };
+    });
 }
 
 function getRecentSessionRange(now: Date) {

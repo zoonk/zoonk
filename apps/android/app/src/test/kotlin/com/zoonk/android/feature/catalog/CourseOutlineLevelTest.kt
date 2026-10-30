@@ -17,8 +17,8 @@ class CourseOutlineLevelTest {
     ): LearnerSummaryGoal =
         ApiJson.decodeFromString(
             """
-            {"courseId":"$courseId","courseLevel":${level?.let { "\"$it\"" } ?: "null"},"dailyMinutes":15,
-             "id":"7a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d","isActive":true,"kind":"learn","status":"active",
+            {"courseChapterId":null,"courseId":"$courseId","courseLevel":${level?.let { "\"$it\"" } ?: "null"},"dailyMinutes":15,
+             "id":"7a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d","isActive":true,"isSettingUp":false,"kind":"learn","status":"active",
              "targetDate":null,"targetLanguage":null,"title":"Atoms"}
             """.trimIndent(),
         )

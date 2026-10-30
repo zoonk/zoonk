@@ -40303,6 +40303,13 @@
       "LearnerSummaryGoal": {
         "type": "object",
         "properties": {
+          "courseChapterId": {
+            "nullable": true,
+            "description": "The chapter of `courseId`'s course that holds the goal's next lesson, so that course's page marks where the learner is; null when `courseId` is null, the goal has no lesson left, or its next lesson isn't written into a chapter yet",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "courseId": {
             "nullable": true,
             "description": "The Library course the goal follows while it's active and not an explanation, so that course's page offers to continue it instead of starting it again; null for any other goal",
@@ -40334,6 +40341,10 @@
           "isActive": {
             "type": "boolean",
             "description": "The goal the tabs show"
+          },
+          "isSettingUp": {
+            "type": "boolean",
+            "description": "Questions are left before the goal's plan is set, so continuing it opens its setup instead of Today"
           },
           "kind": {
             "type": "string",
@@ -40368,11 +40379,13 @@
           }
         },
         "required": [
+          "courseChapterId",
           "courseId",
           "courseLevel",
           "dailyMinutes",
           "id",
           "isActive",
+          "isSettingUp",
           "kind",
           "status",
           "targetDate",

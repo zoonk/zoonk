@@ -280,6 +280,11 @@ describe(getLearnerSummary, () => {
 
     expect(first?.goals.map((entry) => entry.courseLevel)).toStrictEqual(["intermediate", null]);
 
+    expect(first?.goals.map((entry) => entry.courseChapterId)).toStrictEqual([
+      intermediate.id,
+      null,
+    ]);
+
     await prisma.planItem.updateMany({
       data: { status: "done" },
       where: { chapterId: intermediate.id, planId: plan.id },
@@ -287,7 +292,30 @@ describe(getLearnerSummary, () => {
 
     const later = await getLearnerSummary();
 
-    expect(later?.goals[0]?.courseLevel).toBe("advanced");
+    expect(later?.goals[0]).toMatchObject({ courseChapterId: null, courseLevel: "advanced" });
+  });
+
+  it("says which goals still have setup questions, so continuing one opens its setup", async () => {
+    const course = await courseFixture({ isPublished: true });
+    const courseStart = { chapterId: null };
+
+    const { user } = await learnerWithGoal({
+      details: { answered: ["level"], courseStart, level: "basic" },
+      primaryCourseId: course.id,
+    });
+
+    await goalFixture({
+      details: {
+        answered: ["level", "targetDate", "placement", "schedule"],
+        courseStart,
+        level: "basic",
+      },
+      userId: user.id,
+    });
+
+    const summary = await getLearnerSummary();
+
+    expect(summary?.goals.map((goal) => goal.isSettingUp)).toStrictEqual([true, false]);
   });
 
   it("takes the level only from the course the goal follows, never from another course in its plan", async () => {
