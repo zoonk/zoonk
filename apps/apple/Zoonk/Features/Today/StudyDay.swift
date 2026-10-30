@@ -292,10 +292,27 @@ struct StudyBlock: Decodable, Equatable, Sendable {
 struct StudyWeek: Decodable, Equatable, Sendable {
   struct Day: Decodable, Equatable, Sendable {
     let date: String
+    /// What the learner's plans give the day; 0 on a day without study.
+    let goalMinutes: Double
     let hitGoal: Bool
     let isToday: Bool
     let kind: String
+    let minutes: Int
     let studied: Bool
+
+    /// Main's `getDayShare`: how much of the day's goal was studied. A day the plan gave no time
+    /// that the learner studied anyway fills whole.
+    var share: Double {
+      if hitGoal {
+        return 1
+      }
+
+      if goalMinutes == 0 {
+        return studied ? 1 : 0
+      }
+
+      return min(1, Double(minutes) / goalMinutes)
+    }
   }
 
   struct Time: Decodable, Equatable, Sendable {

@@ -573,11 +573,18 @@ struct TodayWeekSection: View {
   }
 
   var body: some View {
+    // Main's `useWeekDate`: the week marks the current day even while a lesson carries the
+    // previous day's session.
+    let localDate = week.days.first(where: \.isToday)?.date ?? view.session.localDate
+
     Section {
       HStack {
         ForEach(week.days, id: \.date) { day in
-          WeekDayMark(day: day, localDate: view.session.localDate)
-            .frame(maxWidth: .infinity)
+          WeekDayMark(
+            day: day, localDate: localDate,
+            challenge: view.weeklyChallenge.flatMap { $0.date == day.date ? $0 : nil }
+          )
+          .frame(maxWidth: .infinity)
         }
       }
       .dynamicTypeSize(...DynamicTypeSize.accessibility1)
@@ -680,54 +687,125 @@ private struct WeekChallengeRow: View {
 private struct WeekDayMark: View {
   let day: StudyWeek.Day
   let localDate: String
+  /// The week's challenge, when it falls on this day.
+  let challenge: TodayView.WeeklyChallenge?
+
+  @ScaledMetric(relativeTo: .title3) private var ringSize = 26.0
 
   var body: some View {
     let date = studyDate(day.date)
 
     VStack(spacing: 4) {
-      symbol
-        .font(.title3)
+      ring
+        .frame(width: ringSize, height: ringSize)
 
       Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
         .font(.caption2.weight(day.isToday ? .bold : .regular))
         .foregroundStyle(day.isToday ? .primary : .secondary)
     }
     .accessibilityElement(children: .ignore)
-    .accessibilityLabel(
-      Text(
-        "\(date?.formatted(.studyDay.weekday(.wide)) ?? day.date): \(status)", tableName: "Today",
-        comment: "A day of the week and how it went"))
+    .accessibilityLabel(label(weekday: date?.formatted(.studyDay.weekday(.wide)) ?? day.date))
   }
 
-  /// Main's `DayRing`: a study day gone by without study reads as missed, and days outside the
-  /// plan as a dash.
+  /// Main's `DayRing`: filled by the share of the day's goal studied, its track dashed for a study
+  /// day gone by without study, and a dash for a day outside the plan.
   @ViewBuilder
-  private var symbol: some View {
-    if day.hitGoal {
-      Image(systemName: "checkmark.circle")
-        .foregroundStyle(.success)
-    } else if day.studied {
-      Image(systemName: "circle.lefthalf.filled")
-        .foregroundStyle(.success)
-    } else if day.kind == "exam" || day.kind == "deadline" {
-      Image(systemName: "graduationcap")
-        .foregroundStyle(.primary)
-    } else if (day.kind == "beforeStart" || day.kind == "afterEnd") && !day.isToday {
+  private var ring: some View {
+    if !day.studied && (day.kind == "beforeStart" || day.kind == "afterEnd") && !day.isToday {
       Image(systemName: "minus")
         .foregroundStyle(.quaternary)
-    } else if day.kind == "rest" {
-      Image(systemName: "moon")
-        .foregroundStyle(.tertiary)
-    } else if day.isToday {
-      Image(systemName: "circle")
-        .fontWeight(.semibold)
-        .foregroundStyle(.secondary)
-    } else if day.kind == "study" && day.date < localDate {
-      Image(systemName: "circle.dashed")
-        .foregroundStyle(.secondary)
     } else {
-      Image(systemName: "circle")
-        .foregroundStyle(.quaternary)
+      let lineWidth = ringSize / 12
+
+      ZStack {
+        Circle()
+          .stroke(
+            .primary.opacity(trackOpacity),
+            style: StrokeStyle(lineWidth: lineWidth, dash: isMissed ? [lineWidth, lineWidth] : []))
+
+        if day.share > 0 {
+          Circle()
+            .trim(from: 0, to: day.share)
+            .stroke(.success, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+            .rotationEffect(.degrees(-90))
+        }
+
+        mark
+          .font(.caption2.weight(.bold))
+      }
+      .padding(lineWidth / 2)
+    }
+  }
+
+  @ViewBuilder
+  private var mark: some View {
+    if day.hitGoal {
+      Image(systemName: "checkmark")
+        .foregroundStyle(.success)
+    } else if !day.studied && (day.kind == "exam" || day.kind == "deadline") {
+      Image(systemName: "graduationcap")
+        .foregroundStyle(.primary)
+    } else if let kind = challengeKind, day.share == 0 {
+      KindMark(kind: kind)
+    }
+  }
+
+  private var isMissed: Bool {
+    day.kind == "study" && !day.studied && !day.isToday && day.date < localDate
+  }
+
+  private var trackOpacity: Double {
+    if day.isToday || isMissed {
+      return 0.25
+    }
+
+    return day.kind == "rest" ? 0.06 : 0.1
+  }
+
+  /// A mock the learner's plan doesn't include leaves its day to a full review of every topic.
+  private var challengeKind: LearnKind? {
+    guard let challenge else {
+      return nil
+    }
+
+    if challenge.kind == "mock" {
+      return challenge.requiresPlus ? .review : .mock
+    }
+
+    return .challenge
+  }
+
+  private func label(weekday: String) -> Text {
+    guard let challengeName else {
+      return Text(
+        "\(weekday): \(status)", tableName: "Today",
+        comment: "A day of the week, then how it went or the challenge it holds")
+    }
+
+    return day.date > localDate
+      ? Text(
+        "\(weekday): \(challengeName)", tableName: "Today",
+        comment: "A day of the week, then how it went or the challenge it holds")
+      : Text(
+        "\(weekday): \(challengeName), \(status)", tableName: "Today",
+        comment: "A day of the week, the challenge it holds, such as a mock exam, and how it went")
+  }
+
+  private var challengeName: String? {
+    switch challengeKind {
+    case .review:
+      String(
+        localized: "full review", table: "Today",
+        comment: "A day's challenge in a spoken day label: a full review of every topic")
+    case .mock:
+      String(
+        localized: "mock exam", table: "Today", comment: "A day's challenge in a spoken day label")
+    case .challenge:
+      String(
+        localized: "weekly challenge", table: "Today",
+        comment: "A day's challenge in a spoken day label")
+    default:
+      nil
     }
   }
 

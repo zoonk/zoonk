@@ -19,6 +19,24 @@ final class TodayDecodingTests: XCTestCase {
     XCTAssertEqual(week.studyDayCount, 7)
   }
 
+  func testADayFillsByTheShareOfItsGoalStudied() throws {
+    let days = try anaTodayView().session.week.days
+
+    XCTAssertEqual(days.map(\.share), [1, 1, 1.0 / 45, 0, 0, 0, 0])
+  }
+
+  func testADayWithoutPlannedTimeFillsWholeOnceStudied() {
+    func day(goalMinutes: Double, minutes: Int, studied: Bool) -> StudyWeek.Day {
+      StudyWeek.Day(
+        date: "2026-10-31", goalMinutes: goalMinutes, hitGoal: false, isToday: false, kind: "rest",
+        minutes: minutes, studied: studied)
+    }
+
+    XCTAssertEqual(day(goalMinutes: 0, minutes: 3, studied: true).share, 1)
+    XCTAssertEqual(day(goalMinutes: 0, minutes: 0, studied: false).share, 0)
+    XCTAssertEqual(day(goalMinutes: 20, minutes: 30, studied: true).share, 1)
+  }
+
   func testTheWeeksNumbersWrapOnlyBetweenWholeValues() {
     let line = TodayWeekSection.numbers(
       days: "4 of 7 days", time: (studied: "2 hrs 14 min", planned: "5 hrs 13 min"))

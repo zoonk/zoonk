@@ -693,7 +693,7 @@
       }
     },
     "%@: %@" : {
-      "comment" : "A day of the week and how it went",
+      "comment" : "A day of the week, then how it went or the challenge it holds",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -723,6 +723,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@: %2$@"
+          }
+        }
+      }
+    },
+    "%@: %@, %@" : {
+      "comment" : "A day of the week, the challenge it holds, such as a mock exam, and how it went",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@, %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@, %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ : %@, %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@, %@"
           }
         }
       }
@@ -4320,6 +4349,35 @@
         }
       }
     },
+    "full review" : {
+      "comment" : "A day's challenge in a spoken day label: a full review of every topic",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vollständige Wiederholung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "revisión completa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "révision complète"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "revisão completa"
+          }
+        }
+      }
+    },
     "Get today's lessons" : {
       "comment" : "Asks for the day's lessons, which aren't written yet",
       "localizations" : {
@@ -4996,6 +5054,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Simulado"
+          }
+        }
+      }
+    },
+    "mock exam" : {
+      "comment" : "A day's challenge in a spoken day label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probeprüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "simulado"
           }
         }
       }
@@ -8613,6 +8700,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Desafio semanal"
+          }
+        }
+      }
+    },
+    "weekly challenge" : {
+      "comment" : "A day's challenge in a spoken day label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wöchentliche Herausforderung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "desafío semanal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "défi hebdomadaire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "desafio semanal"
           }
         }
       }
