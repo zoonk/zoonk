@@ -10,7 +10,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -39,6 +38,7 @@ import com.zoonk.android.feature.activities.ActivityCanvasLabel
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.player.model.ActivityStepContent
+import com.zoonk.android.feature.player.steps.GhostAction
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf31Fields
@@ -76,6 +76,7 @@ private class Board(
     val spell = KeyboardFretboard.spelling(listOf(target, start))
     val expected = KeyboardFretboard.expectedPitches(props.expected, target.pitches)
     val initialPitches = KeyboardFretboard.initialPitches(props.answer, isInteraction, byEar, start, target)
+    val playsTarget = byEar && !props.cantListen
 }
 
 @Composable
@@ -120,7 +121,7 @@ private fun PianoBoard(
         notes = shown.map(board.spell),
         isRevealed = props.isChecked,
         labels = labels,
-        onPlayTarget = { audio.play(KeyboardFretboard.targetSound(board.target), MusicInstrument.Piano) },
+        onPlayTarget = { audio.play(KeyboardFretboard.targetSound(board.target), MusicInstrument.Piano) }.takeIf { board.playsTarget },
         onHear = {
             audio.play(
                 MusicSound.together(shown.map { KeyboardFretboard.KEYBOARD_FROM + it }, gap = KeyboardFretboard.CHORD_GAP),
@@ -139,6 +140,7 @@ private fun PianoBoard(
         enabled = !props.isLocked,
     )
 
+    if (board.byEar && !props.isChecked) SoundAsText(board.target, props, audio.isUnavailable, labels)
     if (board.showsGuitar) GuitarMirror(shown, board.spell, isChecked = board.showsAnswer, labels = labels)
 }
 
@@ -193,7 +195,7 @@ private fun GuitarOnlyBoard(
         notes = played.map(board.spell),
         isRevealed = props.isChecked,
         labels = labels,
-        onPlayTarget = { audio.play(KeyboardFretboard.targetSound(board.target), MusicInstrument.Guitar) },
+        onPlayTarget = { audio.play(KeyboardFretboard.targetSound(board.target), MusicInstrument.Guitar) }.takeIf { board.playsTarget },
         onHear = {
             audio.play(MusicSound.together(KeyboardFretboard.midis(voicing), gap = KeyboardFretboard.STRUM_GAP), MusicInstrument.Guitar)
         },
@@ -216,6 +218,7 @@ private fun GuitarOnlyBoard(
     )
 
     if (!props.isChecked) FretWindow(firstFret, enabled = !props.isLocked) { firstFret = it }
+    if (board.byEar && !props.isChecked) SoundAsText(board.target, props, audio.isUnavailable, labels)
 
     if (board.showsAnswer) {
         GuitarMirror(
@@ -256,14 +259,14 @@ private fun FretWindow(
     }
 }
 
-/** Found by ear, the target isn't named until it's answered; a learner who can't listen can read its notes instead. */
+/** Found by ear, the target isn't named until it's answered. */
 @Composable
 private fun KeyboardFretboardHeader(
     board: Board,
     notes: List<String>,
     isRevealed: Boolean,
     labels: MusicLabels,
-    onPlayTarget: () -> Unit,
+    onPlayTarget: (() -> Unit)?,
     onHear: () -> Unit,
 ) {
     val isHidden = board.byEar && !isRevealed
@@ -303,22 +306,21 @@ private fun KeyboardFretboardHeader(
             )
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (board.byEar) MusicSoundButton(stringResource(R.string.activities_music_play_sound), onPlayTarget)
+            onPlayTarget?.let { MusicSoundButton(stringResource(R.string.activities_music_play_sound), it) }
             MusicSoundButton(stringResource(R.string.activities_music_hear_it), onHear, enabled = notes.isNotEmpty())
         }
     }
-
-    if (isHidden) SoundAsText(board.target, labels)
 }
 
+/** Main's "I can't talk now", for a sound: a learner who can't listen reads its notes, at once when the sound can't play. */
 @Composable
 private fun SoundAsText(
     target: NoteTarget,
+    props: ActivityProps,
+    isSoundUnavailable: Boolean,
     labels: MusicLabels,
 ) {
-    var isShown by rememberSaveable { mutableStateOf(false) }
-
-    if (isShown) {
+    if (props.cantListen || isSoundUnavailable) {
         val spoken = stringResource(R.string.activities_music_sound_notes, labels.spokenList(target.spelling))
         Text(
             stringResource(R.string.activities_music_sound_notes, labels.displayList(target.spelling)),
@@ -328,8 +330,14 @@ private fun SoundAsText(
             },
             style = MaterialTheme.typography.bodyMedium,
         )
-    } else {
-        TextButton(onClick = { isShown = true }) { Text(stringResource(R.string.activities_music_show_notes)) }
+    }
+
+    if (props.isLocked) return
+
+    if (props.cantListen) {
+        GhostAction(R.drawable.ic_hearing, stringResource(R.string.activities_music_can_listen_now)) { props.onCantListenChange(false) }
+    } else if (!isSoundUnavailable) {
+        GhostAction(R.drawable.ic_hearing_disabled, stringResource(R.string.activities_music_cant_listen_now)) { props.onCantListenChange(true) }
     }
 }
 

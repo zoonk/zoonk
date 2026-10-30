@@ -36,8 +36,10 @@
     <string name="activities_music_play_sound">Play the sound</string>
     <!-- Plays the notes on the keys. -->
     <string name="activities_music_hear_it">Hear it</string>
-    <!-- For a learner who can't play sound: shows the notes to find by ear as text. -->
-    <string name="activities_music_show_notes">Can\'t listen? Show the notes</string>
+    <!-- On a screen to find a sound by ear: shows the sound's notes as text instead, for the rest of the day. -->
+    <string name="activities_music_cant_listen_now">I can\'t listen now</string>
+    <!-- After "I can't listen now": goes back to finding sounds by ear. -->
+    <string name="activities_music_can_listen_now">I can listen now</string>
     <!-- The notes the sound plays, as text, like "The sound plays: C, G". -->
     <string name="activities_music_sound_notes">The sound plays: %1$s</string>
     <!-- Under an instrument when the device couldn't play sound. -->

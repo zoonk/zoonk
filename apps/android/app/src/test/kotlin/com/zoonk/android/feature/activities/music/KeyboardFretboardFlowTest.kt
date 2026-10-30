@@ -120,12 +120,28 @@ class KeyboardFretboardFlowTest {
     }
 
     @Test
-    fun aLearnerWhoCantListenReadsTheNotesInstead() {
-        play("keyboardFretboard.byEar", isCorrect = true)
+    fun aLearnerWhoCantListenReadsEverySoundForTheRestOfTheDay() {
+        harness.play(
+            listOf(
+                ActivityFixtures.step("keyboardFretboard.byEar", id = "byEar"),
+                ActivityFixtures.step("keyboardFretboard.byEarChoice", id = "byEarChoice"),
+            ),
+        ) {
+            grade = { stepId, _ -> checkResult(true, expected = ActivityFixtures.expected("keyboardFretboard.$stepId")) }
+        }
 
-        rule.onNodeWithText("Can't listen? Show the notes").performScrollTo().performClick()
-
+        rule.onNodeWithText("I can't listen now").performScrollTo().performClick()
         shows("The sound plays: C, G")
+        rule.onNodeWithText("Play the sound").assertDoesNotExist()
+        key("C").performScrollTo().performClick()
+        key("G").performScrollTo().performClick()
+        harness.tap("Check")
+        harness.tap("Continue")
+
+        shows("The sound plays: A, C, E")
+        rule.onNodeWithText("I can listen now").performScrollTo().performClick()
+        rule.onNodeWithText("The sound plays: A, C, E").assertDoesNotExist()
+        shows("Play the sound")
     }
 
     @Test

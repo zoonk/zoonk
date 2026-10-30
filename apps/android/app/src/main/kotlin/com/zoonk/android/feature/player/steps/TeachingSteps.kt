@@ -505,7 +505,7 @@ internal fun ExplainFirstButton(
 
 /** Main's ghost actions line their icon up with the column's text. */
 @Composable
-private fun GhostAction(
+internal fun GhostAction(
     icon: Int,
     label: String,
     onClick: () -> Unit,

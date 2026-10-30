@@ -22,6 +22,8 @@ data class ActivityProps(
     val phase: ActivityPhase,
     val isLocked: Boolean,
     val onAnswerChange: (ActivityAnswer?) -> Unit,
+    val cantListen: Boolean = false,
+    val onCantListenChange: (Boolean) -> Unit = {},
 ) {
     val isChecked: Boolean get() = phase == ActivityPhase.Checked
 }

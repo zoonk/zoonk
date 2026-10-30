@@ -300,6 +300,10 @@ class LanguageStepsFlowTest {
 
                 override fun setCantTalk(chosen: Boolean) = Unit
 
+                override val cantListen = false
+
+                override fun setCantListen(chosen: Boolean) = Unit
+
                 override suspend fun gradeSpoken(
                     stepId: String,
                     recording: VoiceRecording,

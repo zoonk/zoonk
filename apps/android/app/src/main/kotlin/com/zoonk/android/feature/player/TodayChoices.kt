@@ -6,17 +6,18 @@ import kotlinx.coroutines.flow.first
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
-enum class TodayChoice { CantWrite, CantTalk }
+enum class TodayChoice { CantWrite, CantTalk, CantListen }
 
 @Serializable
 private data class ChosenOn(
     val cantWrite: String? = null,
     val cantTalk: String? = null,
+    val cantListen: String? = null,
 )
 
 /**
- * "Can't write now" and "I can't talk now" last the rest of the learner's day on this device, and
- * survive the app closing; each account keeps its own.
+ * "Can't write now", "I can't talk now" and "I can't listen now" last the rest of the learner's day
+ * on this device, and survive the app closing; each account keeps its own.
  */
 class TodayChoices(
     private val drafts: DraftStore,
@@ -42,6 +43,7 @@ class TodayChoices(
             when (choice) {
                 TodayChoice.CantWrite -> current.copy(cantWrite = day)
                 TodayChoice.CantTalk -> current.copy(cantTalk = day)
+                TodayChoice.CantListen -> current.copy(cantListen = day)
             },
         )
     }
@@ -52,6 +54,7 @@ class TodayChoices(
         when (choice) {
             TodayChoice.CantWrite -> cantWrite
             TodayChoice.CantTalk -> cantTalk
+            TodayChoice.CantListen -> cantListen
         }
 
     private companion object {

@@ -184,6 +184,10 @@ fun LessonPlayer(
 
                 override fun setCantTalk(chosen: Boolean) = viewModel.setCantTalk(chosen)
 
+                override val cantListen get() = viewModel.cantListen
+
+                override fun setCantListen(chosen: Boolean) = viewModel.setCantListen(chosen)
+
                 override suspend fun gradeSpoken(
                     stepId: String,
                     recording: VoiceRecording,

@@ -39,6 +39,11 @@ interface StepActions {
 
     fun setCantTalk(chosen: Boolean)
 
+    /** The day's "I can't listen now", which shows a sound to find by ear as its notes. */
+    val cantListen: Boolean
+
+    fun setCantListen(chosen: Boolean)
+
     suspend fun gradeSpoken(
         stepId: String,
         recording: VoiceRecording,

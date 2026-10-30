@@ -168,7 +168,17 @@ internal fun ActivityView(
         renderer?.let {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 it.canvas(
-                    ActivityProps(content.content, shownAnswer, result?.expected, result?.isCorrect, phase, locked, onAnswerChange),
+                    ActivityProps(
+                        content.content,
+                        shownAnswer,
+                        result?.expected,
+                        result?.isCorrect,
+                        phase,
+                        locked,
+                        onAnswerChange,
+                        actions.cantListen,
+                        actions::setCantListen,
+                    ),
                 )
                 if (it.showsData(content.content)) ActivityDataNote(frame)
             }

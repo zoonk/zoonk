@@ -270,6 +270,15 @@ class LessonPlayerViewModel(
         owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantTalk, chosen) } }
     }
 
+    /** "I can't listen now": a sound to find by ear is shown as its notes for the rest of the day on this device. */
+    private val listenChoice = mutableStateOf(false)
+    val cantListen: Boolean get() = listenChoice.value
+
+    fun setCantListen(chosen: Boolean) {
+        listenChoice.value = chosen
+        owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantListen, chosen) } }
+    }
+
     /**
      * Grades a spoken screen's take on the server; the recorder says what went wrong, and the
      * screen goes back to waiting for another take.
@@ -425,6 +434,7 @@ class LessonPlayerViewModel(
             state = reduce(state, LessonAction.SkipWriting(opening = true), started)
         }
         talkChoice.value = session != null && choices.isChosen(session, TodayChoice.CantTalk)
+        listenChoice.value = session != null && choices.isChosen(session, TodayChoice.CantListen)
 
         return state.withFirstAnswer(started)
     }

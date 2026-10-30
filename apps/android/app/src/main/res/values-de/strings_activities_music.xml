@@ -11,6 +11,8 @@
   "activities_music_bars": "12e0ae8f7b9dd37f04dbafc8307f0a8db00e1352e17c11a75088ddf5cfd37b7a",
   "activities_music_bpm": "00acbb10c22ce0c7650747539f9d56315006d4b7eadb06eded61f679eb515683",
   "activities_music_by_ear": "3449157757c87226fbe55b1793a9d86f39237afe9a2010b778c5f75fcaf49962",
+  "activities_music_can_listen_now": "699f416316d161021a389fe43df1efdedac34699c8ea5aa93da1c52c424aab22",
+  "activities_music_cant_listen_now": "fc0ea7a5621621b4b07ea5fa946de68582dc4291d5a21c02f90fb99a2a8aeb9b",
   "activities_music_check_sound_again": "52221b90aa1acd3030da64613bb8720dffb0d5e60cc9f6cc7a4c8c0321de00dc",
   "activities_music_chord_augmented": "edcb3e25672bd750c89c6eb0ffd31e3a381c511d9024c7cad7b6f139bc21cc4c",
   "activities_music_chord_diminished": "abf91baf13f58b6fdfe46d10002497a2658c72a9755c71cf32b8d19d6a251134",
@@ -53,7 +55,6 @@
   "activities_music_same_chord_guitar": "af8d9e3ae2b17e97cd531bb75b0f76df4fcb8a3f6de1c4575f74d0c9c8c19ad4",
   "activities_music_same_notes_guitar": "cd6c79dd5682bbf27b154fd6b0cb02ff514afff999f9ff7c884ce4eb252f0f92",
   "activities_music_show_as": "696341eee34ff6dd805a765bec3f4920e07423fb9727df1d947332e7befa2e9b",
-  "activities_music_show_notes": "b13790dbb49ab894222a25f6a5c78887c1ebef3f4233c670b4a3e5596117997f",
   "activities_music_skip_for_now": "66e8385897b4b827780881621bc29daec7ab940aee9387becd54b5df92902254",
   "activities_music_sound_check_failed": "c28eef09e814987cfa93ee20bb343cce59f7f215344e061c0c4fb57db445240d",
   "activities_music_sound_check_intro": "1fedb502d02104b9052922ea562d3bb514ee1e2d681286d8322329fe78194385",
@@ -117,8 +118,10 @@
     <string name="activities_music_play_sound">Ton abspielen</string>
     <!-- Plays the notes on the keys. -->
     <string name="activities_music_hear_it">Anhören</string>
-    <!-- For a learner who can't play sound: shows the notes to find by ear as text. -->
-    <string name="activities_music_show_notes">Du kannst nicht hören? Noten anzeigen</string>
+    <!-- On a screen to find a sound by ear: shows the sound's notes as text instead, for the rest of the day. -->
+    <string name="activities_music_cant_listen_now">Ich kann gerade nicht zuhören</string>
+    <!-- After "I can't listen now": goes back to finding sounds by ear. -->
+    <string name="activities_music_can_listen_now">Ich kann wieder zuhören</string>
     <!-- The notes the sound plays, as text, like "The sound plays: C, G". -->
     <string name="activities_music_sound_notes">Der Ton spielt: %1$s</string>
     <!-- Under an instrument when the device couldn't play sound. -->
