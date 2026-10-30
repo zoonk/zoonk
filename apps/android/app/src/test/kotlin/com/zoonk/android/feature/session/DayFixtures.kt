@@ -82,6 +82,7 @@ internal fun day(
         extraTime = StudyExtraTime(available = false, lessons = emptyList(), minutes = 10, reason = null),
         catchUp = null,
         lessonsComing = false,
+        lessonsToPrepare = false,
         plusLessons = emptyList(),
         week =
             StudySessionWeek(

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "today_activities_so_far": "be52ce7b8409d298e320d233f89813c07f153466a9e5c0b6e33249bf9a8b16a8",
   "today_already_know_this": "b4f82395b6a7fb04be59685d2a3e08886bbab01e7cc1234ccbe451351414ca9b",
   "today_behind": "9e65906606afc28a3fd5b2dbd56f4fe72c2346f4aced72fb5d01e5e91b5e4af7",
   "today_behind_exam": "5527b6582839abc80fc8b8a1f9bfa7c8e621c8caedad12dd4684aaf3c4b36d85",
@@ -15,6 +14,10 @@
   "today_catch_up_today": "5041a5ff5585f994b562a57b5c25cf11f1ddd8695637664066912f25dd0219b5",
   "today_catch_up_tomorrow": "dfc2dd4245cd0d226e3ea02b5bb786513ade4409f89d889424c4e31fd0e5be6b",
   "today_choose_focus": "52c1b5c5ce85426cc237a2123a37aed3f9001710bd28b9828e3d1138b49d63ac",
+  "today_coming_not_written": "66c6351619833281f16d994066903c2aa72dfa8b0b28acde167b4c0101740a08",
+  "today_coming_stalled": "e0bb2a98ded92ba6a52c29109c979e9e27fc0c352982d7d0e296ace4c13e145e",
+  "today_coming_title": "fc0c0a5ac89f0f1232bd3b1b11467af97b55bdd410e7afcbe646bbbcf85a8677",
+  "today_coming_writing": "a296acde76c4cfa9bdaa9f15e68f8cfcba0440a23a569c1c88cf0500472bd95b",
   "today_connection_lost": "807ea361545d07d4329436570747cd93f73c5039e94ac188f0f1544e8c44f9e6",
   "today_connection_lost_detail": "fd4b8006c65266f5f3af348beb6ad2ba87363c93a8de83f217402a93f9c954d0",
   "today_continue_explanation": "e3c5b209073ff221dfc527bd42dfb79805436a49acf263dbc42ba48458c289b9",
@@ -57,7 +60,6 @@
   "today_keep_learning_failed": "9b9bc27c9d8e19d0f137428e28c94ce6422a6f7abe23d820279da1254cbd5f46",
   "today_keep_my_time": "e667c32351f32012b0b2d845d150b796311cb60df1d3bb9d03d55147ed212590",
   "today_lessons_not_written": "25514812613cece6555872c969a8192d9619467834dacdc2bab39b18e6ddf216",
-  "today_lessons_so_far": "3902c02426b390ae8fee27bff5d63e355bae38f762d5e47fcc83ab854ae8dd07",
   "today_limit": "0fc8735b09d478eb4fa5640baafa798207aa5627e5fac84a9b2be2f9536a30bb",
   "today_mistakes_notebook": "536f561cc0979f2b969c6ff8b749d4d8d047f6c6bec7976d43d5c946be14994f",
   "today_mistakes_ready": "4c0de7ee5f72a8d51f12e0f9d8ef952fbd5fc02c8ca78413f89ec2453e72f0d7",
@@ -243,14 +245,6 @@
     <string name="today_fresh_start_welcome_back_trial_ended">Willkommen zurück! Heute dauert es etwa %1$s, damit du gut wieder einsteigen kannst.</string>
     <string name="today_fresh_start_new_phase">Heute beginnt eine neue Phase, zuerst mit einer leichten Aufwärmübung.</string>
     <string name="today_fresh_start_new_week">Eine neue Woche. Heute geht es mit einer leichten Aufwärmübung los.</string>
-    <plurals name="today_lessons_so_far">
-        <item quantity="one">Bisher %d Lektion · weitere folgen</item>
-        <item quantity="other">Bisher %d Lektionen · weitere folgen</item>
-    </plurals>
-    <plurals name="today_activities_so_far">
-        <item quantity="one">Bisher %d Aktivität · weitere folgen</item>
-        <item quantity="other">Bisher %d Aktivitäten · weitere folgen</item>
-    </plurals>
     <plurals name="today_done_count">
         <item quantity="one">%d erledigt</item>
         <item quantity="other">%d erledigt</item>
@@ -483,4 +477,12 @@
     <string name="today_progress_known">Bekannt</string>
     <!-- A legend label in the progress card, and a small tag on a subject's row: lessons or a subject planned for today. -->
     <string name="today_progress_today">Heute</string>
+    <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
+    <string name="today_coming_title">Deine nächsten Lektionen</string>
+    <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
+    <string name="today_coming_writing">Wir erstellen sie für dich…</string>
+    <!-- Under "Your next lessons" when their writing has taken a while. -->
+    <string name="today_coming_stalled">Dauert länger als üblich</string>
+    <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
+    <string name="today_coming_not_written">Noch nicht erstellt.</string>
 </resources>

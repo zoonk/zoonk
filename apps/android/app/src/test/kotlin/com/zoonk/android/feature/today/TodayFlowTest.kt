@@ -13,6 +13,7 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -60,6 +61,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
@@ -69,6 +71,8 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
 import java.util.UUID
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
@@ -83,6 +87,7 @@ class TodayFlowTest {
     private val lesson = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d31"
     private val lessonBlock = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d41"
     private val reviewBlock = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d42"
+    private val goal = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"
 
     private var language by mutableStateOf<LoadState<LanguageToday>?>(null)
     private var research by mutableStateOf<LoadState<GoalResearch>?>(null)
@@ -132,7 +137,8 @@ class TodayFlowTest {
             )
         val today = decodeFixture<Today>("today", "session" to day, *todayFields.toTypedArray())
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
-        val store = TodayStore(NoTodayApi, cache, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate), timeZone = { "UTC" })
+        todayApi.shown = today
+        val store = TodayStore(todayApi, cache, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate), timeZone = { "UTC" })
         val viewModel =
             TodayViewModel(
                 StudyOpener(
@@ -337,14 +343,23 @@ class TodayFlowTest {
         render("today-progress-tablet-font200")
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h1000dp-xxhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderComingLessonsOnAPhone() =
+        render("today-coming-not-written-phone") { show("blocks" to practiceOnly(), "lessonsToPrepare" to true) }
+
     /** Review renders, written only with `-Pzoonk.shots=<folder>`. No goldens. */
     private fun render(
         name: String,
         exam: Boolean = false,
+        shown: (() -> Unit)? = null,
     ) {
         val folder = System.getProperty("zoonk.shots").orEmpty()
         assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
-        if (exam) {
+        if (shown != null) {
+            shown()
+        } else if (exam) {
             val goal = fixture("today")["goal"]?.let { JsonObject(it.jsonObject + ("kind" to JsonPrimitive("exam"))) }
             val preparation =
                 buildJsonObject {
@@ -377,6 +392,57 @@ class TodayFlowTest {
                 .compress(Bitmap.CompressFormat.PNG, 100, it)
         }
     }
+
+    @Test
+    fun aPracticeOnlyDayWhoseLessonsAreBeingWrittenHoldsTheirPlaceInTheList() {
+        show("blocks" to practiceOnly(), "lessonsComing" to true)
+
+        rule.onNodeWithText("Your next lessons").assertExists()
+        rule.onNodeWithText("Being written for you…").assertExists()
+        rule.onAllNodesWithText("Start session").onFirst().assertExists()
+    }
+
+    @Test
+    fun aPracticeOnlyDayNobodyIsWritingOffersTodaysLessonsWhileStartSessionStaysItsAction() {
+        show("blocks" to practiceOnly(), "lessonsToPrepare" to true)
+
+        rule.onNodeWithText("Not written yet.", substring = true).assertExists()
+        rule.onNodeWithText("Get today's lessons").performClick()
+        rule.waitForIdle()
+
+        assertEquals(listOf(UUID.fromString(goal)), todayApi.prepared)
+        rule.onAllNodesWithText("Start session").onFirst().assertExists()
+    }
+
+    @Test
+    fun aDayLeftOpenWaitsOutTheLearnersAskBeforeSayingItsTakingLonger() {
+        show("blocks" to practiceOnly(), "lessonsComing" to true)
+
+        rule.mainClock.advanceTimeBy(10.minutes.plus(30.seconds).inWholeMilliseconds)
+        rule.onNodeWithText("Being written for you…").assertExists()
+
+        rule.mainClock.advanceTimeBy(5.minutes.inWholeMilliseconds)
+        rule.onNodeWithText("Taking longer than usual").assertExists()
+        val reads = todayApi.reads
+        assertTrue("read $reads times", reads >= 181)
+
+        rule.mainClock.advanceTimeBy(5.minutes.inWholeMilliseconds)
+        assertEquals(reads, todayApi.reads)
+    }
+
+    private fun practiceOnly() =
+        JsonArray(
+            listOf(
+                fixture(
+                    "study-block",
+                    "id" to reviewBlock,
+                    "kind" to "review",
+                    "screen" to "session",
+                    "position" to 0,
+                    "estimatedMinutes" to 8,
+                ),
+            ),
+        )
 
     private fun lessonsProgress(
         done: Int,
@@ -444,11 +510,21 @@ class TodayFlowTest {
         ) = Unit
     }
 
-    private object NoTodayApi : TodayApi {
+    private val todayApi = ShownTodayApi()
+
+    /** Reads Today as the test shows it, so a poll reads the same day again. */
+    private class ShownTodayApi : TodayApi {
+        var shown: Today? = null
+        var reads = 0
+        val prepared = mutableListOf<UUID>()
+
         override suspend fun today(
             session: AuthenticatedSession,
             timeZone: String,
-        ): Today = error("Shown from the test's read")
+        ): Today {
+            reads++
+            return shown ?: error("Shown from the test's read")
+        }
 
         override suspend fun brainPower(session: AuthenticatedSession): Long? = null
 
@@ -492,7 +568,9 @@ class TodayFlowTest {
         override suspend fun prepareLessons(
             session: AuthenticatedSession,
             goalId: UUID,
-        ) = error("Not used")
+        ) {
+            prepared += goalId
+        }
 
         override suspend fun answerSuggestedGoal(
             session: AuthenticatedSession,

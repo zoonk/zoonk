@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "today_activities_so_far": "5586534339e84838abe01f3d705b370127d81e556dd838a04aa41a5bfd33f697",
   "today_already_know_this": "0ab1ea2d5a5d6377352855a7868af064f28c1680febad0f441a0e8b991e87dc1",
   "today_behind": "76bbe8fc0a52405d3d71e0aaa7dad7d272ed81c1fd65bfa712ec8d97e5463aca",
   "today_behind_exam": "a74a35f6be9b02ef0beaff8417aea995356a1466b02ac2d08529b45b113cb92f",
@@ -15,6 +14,10 @@
   "today_catch_up_today": "c6286382439036112201dac9d8c7fba1f2431e20deee9d6f51b3faec1b20b19b",
   "today_catch_up_tomorrow": "92b00a41ec740452aadf69ed9678f4d3b95abc8d797ab10a13633ef7d9fa4e6c",
   "today_choose_focus": "860d97fd02b7c5daddf7c15e19cbe7952883bacad460f609b36b3fb5b6ff3852",
+  "today_coming_not_written": "a9bf89ac41d895767c6602b2e75cb1508e99c80a1562237befa2bd5dbb4f37eb",
+  "today_coming_stalled": "dd69f59ae2b061a641b0bc9e52db86560b85a8fc54e529b32f391a138f5a3979",
+  "today_coming_title": "980878d5649b82d3861c10cf3ed61ec6629e7d6732aa554aa04374c9643c941b",
+  "today_coming_writing": "46ea1f8c5ef79d2c84de5125192bc3a416991788afff946003633752df3e1534",
   "today_connection_lost": "17ae1220ab6744533c222894bce3bdbd18535ad726526ae78ee0af4f825f23e0",
   "today_connection_lost_detail": "5c025dbdbc242cacc5899174e1361cdc7b67e75240e41dba0b4421ac017df51a",
   "today_continue_explanation": "a31d58b1c10fa1a4a9a0727dfae2ca99834d7ce8c86db3654646dfc1a8b21361",
@@ -57,7 +60,6 @@
   "today_keep_learning_failed": "4a8aaa1afdc1211e0e7d16c41e91dce42bbf1b4422b903e35fd724e930fe4c05",
   "today_keep_my_time": "ffc14057b4b11be582d567d06b49d857b02338d68d45b3abb417a1a58822c1bf",
   "today_lessons_not_written": "e522eccf1b080e07d8804c11bd0a493ae8fa84f8266b2e255e5b67298ca02f9a",
-  "today_lessons_so_far": "40aaa992d9a0a29c2aa932b353266e70caa4871932528d742648ae66ccef6518",
   "today_limit": "b5f25ed7afbb4abd8a57c36be38d0b34c5b7add59740e6fa16dc9f6b5bd67fac",
   "today_mistakes_notebook": "607690686e6d99b3d3657370c402bca72522bc438a8aeba76e1039ec6855c8be",
   "today_mistakes_ready": "2ca518aa9cf55785e333c829913c348e58113813f4dd5b6ac5e1d6c06aec0ce4",
@@ -249,16 +251,6 @@
     <string name="today_fresh_start_welcome_back_trial_ended">Bon retour ! La séance d’aujourd’hui dure environ %1$s, pour reprendre en douceur.</string>
     <string name="today_fresh_start_new_phase">Une nouvelle phase commence aujourd’hui, avec un petit échauffement pour démarrer.</string>
     <string name="today_fresh_start_new_week">Une nouvelle semaine commence. Aujourd’hui, place à un petit échauffement.</string>
-    <plurals name="today_lessons_so_far">
-        <item quantity="one">%d leçon pour l’instant · d’autres suivront</item>
-        <item quantity="many">%d leçons pour l’instant · d’autres suivront</item>
-        <item quantity="other">%d leçons pour l’instant · d’autres suivront</item>
-    </plurals>
-    <plurals name="today_activities_so_far">
-        <item quantity="one">%d activité pour l’instant · d’autres suivront</item>
-        <item quantity="many">%d activités pour l’instant · d’autres suivront</item>
-        <item quantity="other">%d activités pour l’instant · d’autres suivront</item>
-    </plurals>
     <plurals name="today_done_count">
         <item quantity="one">%d terminé</item>
         <item quantity="many">%d terminés</item>
@@ -502,4 +494,12 @@
     <string name="today_progress_known">Déjà acquis</string>
     <!-- A legend label in the progress card, and a small tag on a subject's row: lessons or a subject planned for today. -->
     <string name="today_progress_today">Aujourd’hui</string>
+    <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
+    <string name="today_coming_title">Tes prochaines leçons</string>
+    <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
+    <string name="today_coming_writing">On les prépare pour toi…</string>
+    <!-- Under "Your next lessons" when their writing has taken a while. -->
+    <string name="today_coming_stalled">Ça prend plus de temps que d’habitude</string>
+    <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
+    <string name="today_coming_not_written">Pas encore préparées.</string>
 </resources>

@@ -103,13 +103,13 @@ internal fun TodayDay(
     onboarding: OnboardingStore? = null,
 ) {
     val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-    val stalled =
+    val poll =
         pollWhile(
             active = read.day.isWaitingForLessons(read.today.lessonStatus),
             read = today,
             context = Triple(read.today.goal.id, read.day.localDate, read.day.sessionId),
-        ).stalled
-    val model = remember(read, stalled) { TodayDayModel(read, stalled) }
+        )
+    val model = remember(read, poll.stalled) { TodayDayModel(read, poll.stalled) }
     val activity = LocalActivity.current
     DisposableEffect(viewModel) { onDispose { if (activity?.isChangingConfigurations != true) viewModel.endVisit() } }
     val scope = rememberCoroutineScope()
@@ -136,6 +136,7 @@ internal fun TodayDay(
             scope.launch {
                 today.refresh()
                 pulled = false
+                poll.restart()
             }
         },
         modifier = Modifier.fillMaxSize().padding(padding),

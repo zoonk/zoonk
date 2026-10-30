@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -19,6 +20,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
@@ -35,10 +37,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.collapse
 import androidx.compose.ui.semantics.expand
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.LinkAnnotation
@@ -128,10 +132,6 @@ internal fun LazyListScope.todaySession(
         plusLessons(day.plusLessons, actions, visible = day.plusLessons.size)
     }
 
-    if (day.lessonsComing) {
-        item(key = "so-far", contentType = "note") { DaySoFar(model, Modifier.pageItem().padding(top = 8.dp)) }
-    }
-
     item(key = "status", contentType = "status") { TodayDayStatus(model, actions, Modifier.pageItem().padding(top = 12.dp)) }
 
     if (model.upNext.isNotEmpty()) {
@@ -197,7 +197,8 @@ private fun LazyListScope.sessionQueue(
     val foldsDone = !wide && queue.done.size > PHONE_DONE_ROWS
     val marked = queue.after.indexOfLast { model.countsTowardMission(it) } + 1
     val rows = (if (wide) WIDE_UPCOMING_ROWS else PHONE_UPCOMING_ROWS).coerceAtLeast(marked)
-    val upcoming = queue.after.size + model.day.plusLessons.size
+    val coming = if (model.day.lessonsComing || model.day.lessonsToPrepare) 1 else 0
+    val upcoming = queue.after.size + coming + model.day.plusLessons.size
     val more = (upcoming - rows).coerceAtLeast(0)
     val shownAfter = if (folds.moreOpen) queue.after else queue.after.take(rows)
     val pending = (viewModel.pending as? TodayTap.Step)?.position
@@ -236,10 +237,14 @@ private fun LazyListScope.sessionQueue(
         )
     }
 
+    if (coming > 0 && (folds.moreOpen || queue.after.size < rows)) {
+        item(key = "coming", contentType = "coming") { ComingLessonsRow(model, viewModel, actions, Modifier.pageItem()) }
+    }
+
     plusLessons(
         model.day.plusLessons,
         actions,
-        visible = if (folds.moreOpen) model.day.plusLessons.size else (rows - queue.after.size).coerceAtLeast(0),
+        visible = if (folds.moreOpen) model.day.plusLessons.size else (rows - queue.after.size - coming).coerceAtLeast(0),
     )
 
     if (more > 0) {
@@ -273,6 +278,58 @@ private fun LazyListScope.plusLessons(
                 style = MaterialTheme.typography.titleSmall,
             )
             PlusMark()
+        }
+    }
+}
+
+/**
+ * Holds the place of the day's lessons that aren't written yet: Today reads again until they land
+ * while they're outlined, and asks the learner for them while nobody is.
+ */
+@Composable
+private fun ComingLessonsRow(
+    model: TodayDayModel,
+    viewModel: TodayViewModel,
+    actions: TodayActionHandlers,
+    modifier: Modifier,
+) {
+    RowFrame(isNext = false, busy = false, onClick = null, modifier = modifier) {
+        RowMark { KindMark(LearnKind.Lesson) }
+        Column(Modifier.weight(1f)) {
+            Text(
+                text = stringResource(R.string.today_coming_title),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleSmall,
+            )
+            if (model.day.lessonsToPrepare) {
+                FlowRow(itemVerticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        stringResource(R.string.today_coming_not_written),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    TextButton(onClick = actions.prepare, enabled = viewModel.pending != TodayTap.Prepare) {
+                        Text(stringResource(R.string.today_get_lessons))
+                    }
+                }
+                if (viewModel.failed == TodayTap.Prepare) {
+                    Text(
+                        stringResource(R.string.today_save_failed),
+                        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            } else {
+                Text(
+                    stringResource(if (model.writingStalled) R.string.today_coming_stalled else R.string.today_coming_writing),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
         }
     }
 }
@@ -680,29 +737,6 @@ private fun DayMeta(
             DayTime(model, MaterialTheme.typography.titleLarge)
         }
     }
-}
-
-/** How many parts the day holds so far: "More on the way" read as a delivery already running. */
-@Composable
-private fun DaySoFar(
-    model: TodayDayModel,
-    modifier: Modifier,
-) {
-    val steps = model.day.steps
-    val count = steps.size
-    val text =
-        if (steps.all { it.kind == StudyBlock.Kind.LEARN }) {
-            pluralStringResource(R.plurals.today_lessons_so_far, count, count)
-        } else {
-            pluralStringResource(R.plurals.today_activities_so_far, count, count)
-        }
-
-    Text(
-        text = text,
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-    )
 }
 
 @Composable

@@ -14,7 +14,6 @@ import com.zoonk.android.data.Resource
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.TimeSource
 
 /** [stalled] once polling gave up; [restart] starts it over, as Reconnect does. */
 internal class PollState(
@@ -24,8 +23,10 @@ internal class PollState(
 
 /**
  * Reads [read] again every 5 seconds while [active] and the app is in the foreground, as main does
- * while lessons are written, and gives up after 3 failed reads in a row or 10 minutes. A new
- * [context] (another goal or day) starts over.
+ * while lessons are written. It gives up after 3 failed reads in a row, or once a learner's ask for
+ * lessons could have lapsed with nothing new shown: the server stops waiting on an ask after 15
+ * minutes, so the read one interval later shows the day without it. A read that shows something new
+ * waits that long again. A new [context] (another goal or day) starts over.
  */
 @Composable
 internal fun pollWhile(
@@ -41,17 +42,19 @@ internal fun pollWhile(
         stalled = false
         if (!active) return@LaunchedEffect
 
-        val started = TimeSource.Monotonic.markNow()
         var failures = 0
+        var unchanged = 0
 
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (!stalled) {
                 delay(INTERVAL)
                 val revision = read.revision
+                val shown = read.state.value
                 read.refresh()
                 // A refresh that fails keeps what's shown, so an unchanged revision is how a failure shows.
                 failures = if (read.revision == revision) failures + 1 else 0
-                stalled = failures >= MAX_FAILURES || started.elapsedNow() >= TIMEOUT
+                unchanged = if (read.state.value == shown) unchanged + 1 else 0
+                stalled = failures >= MAX_FAILURES || unchanged >= READS_UNTIL_ASK_LAPSES
             }
         }
     }
@@ -60,5 +63,8 @@ internal fun pollWhile(
 }
 
 private val INTERVAL = 5.seconds
-private val TIMEOUT = 10.minutes
+
+/** Main's `OUTLINE_STALE_AFTER_MS`. */
+private val ASK_LAPSES_AFTER = 15.minutes
+private val READS_UNTIL_ASK_LAPSES = (ASK_LAPSES_AFTER / INTERVAL).toInt() + 1
 private const val MAX_FAILURES = 3

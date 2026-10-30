@@ -49,14 +49,6 @@
     <string name="today_fresh_start_new_phase">A new phase starts today, with an easy warm-up first.</string>
     <string name="today_fresh_start_new_week">A fresh week. Today starts with an easy warm-up.</string>
 
-    <plurals name="today_lessons_so_far">
-        <item quantity="one">%d lesson so far · more as you go</item>
-        <item quantity="other">%d lessons so far · more as you go</item>
-    </plurals>
-    <plurals name="today_activities_so_far">
-        <item quantity="one">%d activity so far · more as you go</item>
-        <item quantity="other">%d activities so far · more as you go</item>
-    </plurals>
     <plurals name="today_done_count">
         <item quantity="one">%d done</item>
         <item quantity="other">%d done</item>
@@ -293,4 +285,12 @@
     <string name="today_progress_known">Known</string>
     <!-- A legend label in the progress card, and a small tag on a subject's row: lessons or a subject planned for today. -->
     <string name="today_progress_today">Today</string>
+    <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
+    <string name="today_coming_title">Your next lessons</string>
+    <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
+    <string name="today_coming_writing">Being written for you…</string>
+    <!-- Under "Your next lessons" when their writing has taken a while. -->
+    <string name="today_coming_stalled">Taking longer than usual</string>
+    <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
+    <string name="today_coming_not_written">Not written yet.</string>
 </resources>
