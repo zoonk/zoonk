@@ -144,7 +144,11 @@ struct TodayDayView: View {
           }
         }
       }
-    case .examAccess, .examChoice, .suggestedGoal, .uploadRequest, nil:
+    case .examAccess:
+      Section {
+        FreeWeekOverNotice()
+      }
+    case .examChoice, .suggestedGoal, .uploadRequest, nil:
       EmptyView()
     }
   }
