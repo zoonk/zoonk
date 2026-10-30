@@ -45,6 +45,10 @@ function getAnsweredByWords(understanding: Extract<GoalUnderstanding, { route: "
   return understanding.dailyMinutes === undefined ? [] : ["schedule"];
 }
 
+export function isNamedExam(goal: UnderstoodGoal): goal is UnderstoodGoal & { examName: string } {
+  return goal.kind === "exam" && Boolean(goal.examName);
+}
+
 /** Offer conflicting official notice dates without replacing the learner's month; never offer estimates. */
 function getOfferedNoticeDay({
   dates,
@@ -80,25 +84,24 @@ async function toGoalView({
 }): Promise<UnderstoodGoalView> {
   const { language, onboardingId, today } = context;
 
-  const exam =
-    goal.kind === "exam" && goal.examName
-      ? await findExamFacts({
-          allowSearch: context.allowDateSearch,
-          analytics: { contentScope: "personal", distinctId: context.userId },
-          exam: {
-            examMonth: goal.examMonth,
-            examName: goal.examName,
-            examYear: goal.examYear,
-            institution: goal.institution,
-            role: goal.targetPosition,
-            targetLanguage: goal.targetLanguage ?? null,
-            words: context.goal,
-          },
-          language,
-          lookUpDate: !goal.targetDate,
-          today,
-        })
-      : null;
+  const exam = isNamedExam(goal)
+    ? await findExamFacts({
+        allowSearch: context.allowDateSearch,
+        analytics: { contentScope: "personal", distinctId: context.userId },
+        exam: {
+          examMonth: goal.examMonth,
+          examName: goal.examName,
+          examYear: goal.examYear,
+          institution: goal.institution,
+          role: goal.targetPosition,
+          targetLanguage: goal.targetLanguage ?? null,
+          words: context.goal,
+        },
+        language,
+        lookUpDate: !goal.targetDate,
+        today,
+      })
+    : null;
 
   const details = compactDetails({
     answered,

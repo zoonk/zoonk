@@ -8,7 +8,7 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
 import { completeDraft, parseStoredUnderstanding } from "./_utils/onboarding-draft";
 import { saveUnderstanding } from "./_utils/understanding-cache";
-import { getLearnerToday } from "./_utils/understanding-view";
+import { getLearnerToday, isNamedExam } from "./_utils/understanding-view";
 
 /** System-workflow input only, after prepareGoalUnderstandingRun authorized the learner; does not read a session. */
 export type UnderstandingRunDraft = {
@@ -85,6 +85,10 @@ export async function readGoalWords(
     provenance: { model, promptVersion, runId },
     result: intent.data.intent === "unsafe" ? { route: "unsafe" } : understood.data,
   };
+}
+
+export function readsExamDates(understanding: GoalUnderstanding): boolean {
+  return understanding.route === "goals" && understanding.goals.some(isNamedExam);
 }
 
 export type UnderstoodLanguagePair = { language: string; targetLanguage: string };

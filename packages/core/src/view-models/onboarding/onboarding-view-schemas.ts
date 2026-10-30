@@ -99,7 +99,7 @@ export const onboardingDraftViewSchema = z
       .nullable()
       .meta({
         description:
-          "The run reading the words, followed live at `GET /v1/generations/{generationId}/events` (`readGoal`, `findExamDates`, then `understandingReady`); null when none is needed or none started yet",
+          "The run reading the words, followed live at `GET /v1/generations/{generationId}/events` (`readGoal`, `findExamDates` when the words name an exam, then `understandingReady`); null when none is needed or none started yet",
       }),
     goalId: z
       .uuid()

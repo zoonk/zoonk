@@ -89,11 +89,38 @@ describe(goalUnderstandingWorkflow, () => {
 
     expect(getStreamedEvents()).toStrictEqual([
       { entityId: draft.id, status: "started", step: "readGoal" },
-      { entityId: draft.id, status: "started", step: "findExamDates" },
       { entityId: draft.id, status: "completed", step: "understandingReady" },
     ]);
 
     expect(start).not.toHaveBeenCalled();
+  });
+
+  it("checks the exam's dates only for words that name an exam", async () => {
+    mockModels({
+      understanding: {
+        followUps: [],
+        goals: [
+          {
+            examName: "IELTS",
+            kind: "exam",
+            subject: "English",
+            targetDate: "2027-05-03",
+            title: "Pass the IELTS",
+          },
+        ],
+        route: "goals",
+      },
+    });
+
+    const draft = await createDraft({ prompt: `pass the IELTS ${randomUUID()}` });
+
+    await goalUnderstandingWorkflow({ draftId: draft.id });
+
+    expect(getStreamedEvents()).toStrictEqual([
+      { entityId: draft.id, status: "started", step: "readGoal" },
+      { entityId: draft.id, status: "started", step: "findExamDates" },
+      { entityId: draft.id, status: "completed", step: "understandingReady" },
+    ]);
   });
 
   it("starts writing a language goal's level test once the card is ready", async () => {

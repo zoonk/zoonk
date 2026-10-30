@@ -6,6 +6,7 @@ import {
   failUnderstandingDraft,
   loadUnderstandingDraft,
   readGoalWords,
+  readsExamDates,
   recordUnderstandingRun,
 } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
@@ -43,7 +44,10 @@ export async function completeUnderstandingStep(input: {
   "use step";
 
   await using stream = createStepStream<UnderstandingStreamStep>();
-  await stream.status({ entityId: input.draft.id, status: "started", step: "findExamDates" });
+
+  if (readsExamDates(input.read.result)) {
+    await stream.status({ entityId: input.draft.id, status: "started", step: "findExamDates" });
+  }
 
   return await completeUnderstandingDraft({ draft: input.draft, ...input.read });
 }
