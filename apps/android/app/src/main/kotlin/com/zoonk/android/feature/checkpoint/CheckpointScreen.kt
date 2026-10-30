@@ -5,7 +5,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,8 +26,6 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -61,7 +57,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
@@ -114,7 +109,9 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Checkpoint
 import com.zoonk.api.models.CheckpointPhase
@@ -266,31 +263,25 @@ internal fun DuelPlay(
         onClose = viewModel::close,
         title = { LessonTitle(stringResource(if (read.isBoss) R.string.checkpoint_trickster else R.string.checkpoint_weekly)) },
         bottomBar = { ActionBarWidth { DuelActions(state, score, question, viewModel) } },
+        aside = if (empty) null else TaskAside { DuelAside(read, score, trickster) },
     ) { padding ->
-        BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
-            val wide = maxWidth >= ASIDE_FROM
-            Row(Modifier.fillMaxSize()) {
-                Column(
-                    Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        if (!empty) {
-                            if (read.isBoss && !wide) ShieldBar(read, state, score, question) else DuelSegments(read, state, question)
-                        }
-                        when {
-                            question != null -> key(question.itemId) { QuestionCard(read, state, score, question, viewModel) }
-                            empty -> QuestionsRemoved(eyebrow(read.checkpoint))
-                            else -> DuelOver(state, score)
-                        }
-                    }
+        val wide = taskAsideBeside()
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                if (!empty) {
+                    if (read.isBoss && !wide) ShieldBar(read, state, score, question) else DuelSegments(read, state, question)
                 }
-                if (wide && !empty) {
-                    VerticalDivider()
-                    Column(
-                        Modifier.width(ASIDE_WIDTH).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) { DuelAside(read, score, trickster) }
+                when {
+                    question != null -> key(question.itemId) { QuestionCard(read, state, score, question, viewModel) }
+                    empty -> QuestionsRemoved(eyebrow(read.checkpoint))
+                    else -> DuelOver(state, score)
                 }
             }
         }
@@ -696,79 +687,71 @@ internal fun DuelResult(
             .orEmpty()
     var reviewing by rememberSaveable { mutableStateOf(false) }
 
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-
     TaskScaffold(
         onClose = viewModel::close,
         title = { LessonTitle(eyebrow(checkpoint)) },
         bottomBar = {
             ActionBarWidth {
                 ActionFlow { width ->
-                    if (answers.isNotEmpty() && !wide) {
+                    if (answers.isNotEmpty() && !taskAsideBeside()) {
                         OutlinedButton(onClick = { reviewing = true }) { Text(stringResource(R.string.checkpoint_review)) }
                     }
                     Button(onClick = viewModel::close, modifier = width) { Text(stringResource(R.string.practice_continue)) }
                 }
             }
         },
+        aside = outcome?.let { TaskAside { ResultDetails(duel, won) } },
     ) { padding ->
-        Row(Modifier.fillMaxSize().padding(padding)) {
-            Column(
-                Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                    if (outcome == null) {
-                        QuestionsRemoved(eyebrow = null)
-                        return@Column
-                    }
-                    // A result opened again shows how it ended, still: the moment played when it was won or lost.
-                    if (duel.read.isBoss) {
-                        CelebrationScope(
-                            play = duel.state.completion != null,
-                        ) { TricksterArt(Modifier.size(104.dp), beaten = won, reacts = true) }
-                    }
-                    Text(
-                        text =
-                            stringResource(
-                                when {
-                                    !duel.read.isBoss -> R.string.checkpoint_weekly_done
-                                    won -> R.string.checkpoint_beat
-                                    else -> R.string.checkpoint_not_this_time
-                                },
-                            ),
-                        modifier = Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
-                    val passMark =
-                        duel.state.completion
-                            ?.checkpoint
-                            ?.passMark
-                            ?.toInt()
-                    MomentReadouts(
-                        brainPower = 0,
-                        score = MomentScore(outcome.total, outcome.correct),
-                        facts =
-                            listOfNotNull(
-                                passMark?.takeIf { !won }?.let {
-                                    pluralStringResource(R.plurals.checkpoint_right_to_win_of, it, it, duel.read.questions.size)
-                                },
-                            ),
-                    )
-                    duel.state.completion?.let { DayMoment(it, buddy.look, buddy.name) }
-                    if (!wide) ResultDetails(duel, won)
-                    if (wide && answers.isNotEmpty()) Review(duel, answers, app)
+        val wide = taskAsideBeside()
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                if (outcome == null) {
+                    QuestionsRemoved(eyebrow = null)
+                    return@Column
                 }
-            }
-            // From a tablet the details sit beside the outcome and its answers, as main's aside.
-            if (wide && outcome != null) {
-                VerticalDivider()
-                Column(
-                    Modifier.width(ASIDE_WIDTH).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    ResultDetails(duel, won)
+                // A result opened again shows how it ended, still: the moment played when it was won or lost.
+                if (duel.read.isBoss) {
+                    CelebrationScope(
+                        play = duel.state.completion != null,
+                    ) { TricksterArt(Modifier.size(104.dp), beaten = won, reacts = true) }
                 }
+                Text(
+                    text =
+                        stringResource(
+                            when {
+                                !duel.read.isBoss -> R.string.checkpoint_weekly_done
+                                won -> R.string.checkpoint_beat
+                                else -> R.string.checkpoint_not_this_time
+                            },
+                        ),
+                    modifier = Modifier.semantics { heading() },
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                val passMark =
+                    duel.state.completion
+                        ?.checkpoint
+                        ?.passMark
+                        ?.toInt()
+                MomentReadouts(
+                    brainPower = 0,
+                    score = MomentScore(outcome.total, outcome.correct),
+                    facts =
+                        listOfNotNull(
+                            passMark?.takeIf { !won }?.let {
+                                pluralStringResource(R.plurals.checkpoint_right_to_win_of, it, it, duel.read.questions.size)
+                            },
+                        ),
+                )
+                duel.state.completion?.let { DayMoment(it, buddy.look, buddy.name) }
+                if (!wide) ResultDetails(duel, won)
+                if (wide && answers.isNotEmpty()) Review(duel, answers, app)
             }
         }
     }
@@ -968,6 +951,4 @@ private fun ReviewItem(
 
 private fun StudyQuestionAnswer.toAnswer(): Answer? = runCatching { recode<StudyQuestionAnswer, Answer>() }.getOrNull()
 
-private val ASIDE_FROM = 840.dp
-private val ASIDE_WIDTH = 360.dp
 private val CONTENT_WIDTH = 640.dp

@@ -3,7 +3,6 @@ package com.zoonk.android.feature.challenge
 import android.text.format.DateFormat
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -87,7 +84,9 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.formatTimeOfDay
+import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Challenge
 import com.zoonk.api.models.MockLeftOut
@@ -319,31 +318,18 @@ private fun IntroScreen(
     ui: ChallengeUi,
     actions: ChallengeActions,
 ) {
+    val aside = asideFor(challenge)
+
     TaskScaffold(
         onClose = actions::close,
         bottomBar = { ActionBarWidth { ChallengeFooter(challenge, ui, actions) } },
+        aside = aside?.let { TaskAside(title = it.title) { it.content(false) } },
     ) { padding ->
-        BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
-            val wide = maxWidth >= ASIDE_FROM
-            val aside = asideFor(challenge)
-            Row(Modifier.fillMaxSize()) {
-                CenteredColumn(Modifier.weight(1f)) {
-                    Intro(challenge)
-                    if (!wide) aside?.content?.invoke(true)
-                    // A card this size scrolls with the intro; the bar under it keeps only its action.
-                    if (plusRequired(challenge, ui)) PlusRequiredNotice(challenge)
-                }
-                if (wide && aside != null) {
-                    VerticalDivider()
-                    Column(
-                        Modifier.width(ASIDE_WIDTH).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        SectionHeader(aside.title)
-                        aside.content(false)
-                    }
-                }
-            }
+        CenteredColumn(Modifier.padding(padding)) {
+            Intro(challenge)
+            if (!taskAsideBeside()) aside?.content?.invoke(true)
+            // A card this size scrolls with the intro; the bar under it keeps only its action.
+            if (plusRequired(challenge, ui)) PlusRequiredNotice(challenge)
         }
     }
 }
@@ -996,6 +982,4 @@ private fun StatusLine(
 }
 
 private const val DAYS_IN_A_WEEK = 7
-private val ASIDE_FROM = 840.dp
-private val ASIDE_WIDTH = 360.dp
 private val CONTENT_WIDTH = 640.dp

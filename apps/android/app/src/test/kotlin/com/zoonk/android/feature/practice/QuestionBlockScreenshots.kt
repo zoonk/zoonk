@@ -52,24 +52,6 @@ class QuestionBlockScreenshots {
     @Before
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
 
-    private val passage =
-        JsonObject(
-            mapOf(
-                "count" to JsonPrimitive(2),
-                "id" to JsonPrimitive("6b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"),
-                "kind" to JsonPrimitive("text"),
-                "listening" to kotlinx.serialization.json.JsonNull,
-                "position" to JsonPrimitive(0),
-                "source" to JsonPrimitive("Adapted from IBGE"),
-                "text" to
-                    JsonPrimitive(
-                        "Recife grew along its rivers. Merchants built warehouses where the tide reached, and the port tied the city to the sea for three centuries.",
-                    ),
-                "title" to JsonPrimitive("The port of Recife"),
-                "visual" to kotlinx.serialization.json.JsonNull,
-            ),
-        )
-
     private val timeMachine =
         JsonObject(
             mapOf(
@@ -196,7 +178,7 @@ class QuestionBlockScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tabletPassageBeside() {
-        show("tablet-passage", questions = arrayOf(planet("set" to passage), next))
+        show("tablet-passage", questions = arrayOf(planet("set" to PASSAGE), next))
     }
 
     private val missions =

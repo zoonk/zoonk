@@ -22,7 +22,8 @@ import androidx.window.core.layout.WindowSizeClass
  * pane fits, [mainPane] is told so (`supportingPaneBeside` false) and shows the supporting content
  * its own way, below its content or in a sheet, as main does under `lg`. With [panesTouch], the panes
  * meet without Material's room between them, for an aside that starts with its own hairline, so the
- * page's lists reach that hairline as they reach the window's edge.
+ * page's lists reach that hairline as they reach the window's edge. With [halfWidth], the supporting
+ * pane takes half the room, for a long passage.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -30,6 +31,7 @@ fun PageWithSupportingPane(
     supportingPane: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     panesTouch: Boolean = false,
+    halfWidth: Boolean = false,
     mainPane: @Composable (supportingPaneBeside: Boolean) -> Unit,
 ) {
     BoxWithConstraints(modifier) {
@@ -40,7 +42,7 @@ fun PageWithSupportingPane(
             directive = navigator.scaffoldDirective,
             value = navigator.scaffoldValue,
             mainPane = { AnimatedPane { mainPane(supportingPaneBeside) } },
-            supportingPane = { AnimatedPane { supportingPane() } },
+            supportingPane = { AnimatedPane(if (halfWidth) Modifier.preferredWidth(HALF) else Modifier) { supportingPane() } },
         )
     }
 }
@@ -73,3 +75,5 @@ private fun paneDirective(
         shouldAutoFocusCurrentDestination = false,
     )
 }
+
+private const val HALF = 0.5f

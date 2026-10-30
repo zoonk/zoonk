@@ -8,30 +8,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -59,9 +51,10 @@ import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.api.models.ExamSpeakingTask
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationIntro
@@ -72,9 +65,9 @@ internal val CALL_COLUMN = 640.dp
 private val AVATAR_MIN = 40.dp
 
 /**
- * A call's task frame: its [content] in one column, and [aside] beside it, full height behind a
- * hairline, where there's room (main's task aside from `lg`); where there isn't, [content] is told
- * so and shows it inline. On wide windows the main action sits at its own width at the bar's end.
+ * A call's task frame: its [content] in one column, and [aside] beside it where there's room (main's
+ * task aside from `lg`); where there isn't, [content] is told so and shows it inline. On wide
+ * windows the main action sits at its own width at the bar's end.
  */
 @Composable
 internal fun CallFrame(
@@ -88,53 +81,33 @@ internal fun CallFrame(
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
     val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-    val frame: @Composable (Boolean) -> Unit = { beside ->
-        TaskScaffold(
-            onClose = onClose,
-            modifier = modifier,
-            title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-            exitConfirmation = exitConfirmation,
-            bottomBar =
-                bottomBar?.let { bar ->
-                    {
-                        CompositionLocalProvider(LocalWideBar provides wide) {
-                            Box(
-                                Modifier.fillMaxWidth(),
-                                Alignment.Center,
-                            ) { Box(Modifier.widthIn(max = CALL_COLUMN), Alignment.CenterEnd) { bar() } }
-                        }
+    TaskScaffold(
+        onClose = onClose,
+        modifier = modifier,
+        title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        exitConfirmation = exitConfirmation,
+        bottomBar =
+            bottomBar?.let { bar ->
+                {
+                    CompositionLocalProvider(LocalWideBar provides wide) {
+                        Box(
+                            Modifier.fillMaxWidth(),
+                            Alignment.Center,
+                        ) { Box(Modifier.widthIn(max = CALL_COLUMN), Alignment.CenterEnd) { bar() } }
                     }
-                },
-        ) { padding ->
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize().padding(padding),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-            ) { content(beside) }
-        }
+                }
+            },
+        aside = aside?.let { TaskAside(content = it) },
+    ) { padding ->
+        val beside = taskAsideBeside()
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize().padding(padding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+        ) { content(beside) }
     }
-    if (aside == null) {
-        frame(false)
-        return
-    }
-    PageWithSupportingPane(
-        supportingPane = {
-            Row(Modifier.fillMaxSize()) {
-                VerticalDivider()
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Vertical + WindowInsetsSides.End))
-                        .padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                    content = aside,
-                )
-            }
-        },
-    ) { beside -> frame(beside) }
 }
 
 /** Whether the bar is on a wide window, where its main action keeps its own width. */

@@ -19,6 +19,7 @@ import com.zoonk.api.models.StudyBlockDetail
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -28,6 +29,24 @@ internal const val PRACTICE_SESSION = "1b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
 internal const val PRACTICE_BLOCK = "2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
 
 internal fun strings(vararg values: String) = JsonArray(values.map(::JsonPrimitive))
+
+internal val PASSAGE =
+    JsonObject(
+        mapOf(
+            "count" to JsonPrimitive(2),
+            "id" to JsonPrimitive("6b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"),
+            "kind" to JsonPrimitive("text"),
+            "listening" to JsonNull,
+            "position" to JsonPrimitive(0),
+            "source" to JsonPrimitive("Adapted from IBGE"),
+            "text" to
+                JsonPrimitive(
+                    "Recife grew along its rivers. Merchants built warehouses where the tide reached, and the port tied the city to the sea for three centuries.",
+                ),
+            "title" to JsonPrimitive("The port of Recife"),
+            "visual" to JsonNull,
+        ),
+    )
 
 internal fun blockQuestion(
     itemId: String,

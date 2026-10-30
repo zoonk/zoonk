@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -28,10 +29,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
@@ -48,14 +52,14 @@ class QuestionBlockFlowTest {
             CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
         )
 
-    private fun show() {
-        val detail =
-            blockDetail(
-                listOf(
-                    blockQuestion(FIRST, "question" to "Which is a planet?", "options" to strings("Mars", "Moon")),
-                    blockQuestion(SECOND, "question" to "Which is a star?", "options" to strings("Sun", "Venus")),
-                ),
-            )
+    private fun show(
+        questions: List<JsonObject> =
+            listOf(
+                blockQuestion(FIRST, "question" to "Which is a planet?", "options" to strings("Mars", "Moon")),
+                blockQuestion(SECOND, "question" to "Which is a star?", "options" to strings("Sun", "Venus")),
+            ),
+    ) {
+        val detail = blockDetail(questions)
         val viewModel = practiceViewModel(cache(), detail) { studyFeedback(isCorrect = true, explanation = "Mars orbits the Sun.") }
         val read = viewModel.started()
 
@@ -105,6 +109,16 @@ class QuestionBlockFlowTest {
 
         rule.onNodeWithText("Which is a star?").assertExists()
         rule.onNodeWithText("Check").assertIsNotEnabled()
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp")
+    fun aPassageBesideTheQuestionKeepsCheckUnderTheQuestion() {
+        show(listOf(blockQuestion(FIRST, "question" to "Which is a planet?", "options" to strings("Mars", "Moon"), "set" to PASSAGE)))
+
+        val check = rule.onNodeWithText("Check").getBoundsInRoot()
+        val passage = rule.onNodeWithText("Recife grew", substring = true, useUnmergedTree = true).getBoundsInRoot()
+        assertTrue("Check ends at ${check.right}, the passage starts at ${passage.left}", check.right < passage.left)
     }
 
     @Test

@@ -27,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,11 +57,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.state.ToggleableState
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -72,10 +69,10 @@ import com.zoonk.android.feature.questions.formatClock
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
-import com.zoonk.android.ui.scaffold.supportingPaneBeside
+import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.MockExamCurrent
@@ -102,53 +99,56 @@ internal fun MockRunnerView(
     // Keys reach the focused field first, so the runner's shortcuts never take its typing; a new question takes them back.
     LaunchedEffect(question.itemId) { focus.requestFocus() }
 
-    BoxWithConstraints {
-        val sheetBeside = supportingPaneBeside(maxWidth)
-        LaunchedEffect(sheetBeside) { if (sheetBeside) sheetOpen = false }
-
-        TaskScaffold(
-            onClose = onClose,
-            modifier = Modifier.focusRequester(focus).focusable().onKeyEvent { runnerKey(it, viewModel, run) },
-            title = {
-                if (sheetBeside) {
-                    Text(mockTitle(run.view.number), Modifier.semantics { heading() }, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                } else {
-                    SectionClock(current.deadline)
+    TaskScaffold(
+        onClose = onClose,
+        modifier = Modifier.focusRequester(focus).focusable().onKeyEvent { runnerKey(it, viewModel, run) },
+        title = {
+            if (taskAsideBeside()) {
+                Text(mockTitle(run.view.number), Modifier.semantics { heading() }, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            } else {
+                SectionClock(current.deadline)
+            }
+        },
+        actions = {
+            if (!taskAsideBeside()) {
+                val label = stringResource(R.string.mock_answer_sheet)
+                TextButton(onClick = { sheetOpen = true }, Modifier.semantics { contentDescription = label }) {
+                    Text(stringResource(R.string.mock_sheet))
                 }
-            },
-            actions = {
-                if (!sheetBeside) {
-                    val label = stringResource(R.string.mock_answer_sheet)
-                    TextButton(onClick = { sheetOpen = true }, Modifier.semantics { contentDescription = label }) {
-                        Text(stringResource(R.string.mock_sheet))
+            }
+        },
+        bottomBar = { RunnerActions(viewModel, run, handIn, wide = taskAsideBeside()) },
+        aside =
+            TaskAside(
+                title = stringResource(R.string.mock_answer_sheet),
+                footer = {
+                    OutlinedButton(onClick = handIn, enabled = !run.pending, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.mock_hand_in))
                     }
-                }
+                },
+            ) {
+                SheetCounts(run)
+                SectionClock(current.deadline, large = true)
+                AnswerSheet(run, onPick = viewModel::go)
             },
-            bottomBar = if (sheetBeside) null else ({ RunnerActions(viewModel, run, handIn, wide = false) }),
-        ) { padding ->
-            PageWithSupportingPane(
-                modifier = Modifier.padding(padding),
-                supportingPane = { SheetPane(viewModel, run, current, handIn) },
-            ) { beside ->
-                Column(Modifier.fillMaxSize()) {
-                    // The whole pane scrolls, margins included, with the question held to a readable column.
-                    Box(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-                        Column(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth()) {
-                            RunnerProgress(run, titled = !beside, onQuestionTimeUp = viewModel::timeOutQuestion)
-                            Column(Modifier.padding(detailPagePadding()), verticalArrangement = Arrangement.spacedBy(24.dp)) {
-                                key(question.question.set?.id) { MockRecording(viewModel, run, question, audio) }
-                                key(question.itemId) { MockQuestionCard(viewModel, run, question) }
-                                if (!beside) {
-                                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                        QuestionMap(run, onPick = viewModel::go)
-                                        SheetLegend()
-                                        MovesNote(run.moves)
-                                    }
-                                }
-                            }
+    ) { padding ->
+        val beside = taskAsideBeside()
+        LaunchedEffect(beside) { if (beside) sheetOpen = false }
+
+        // The whole pane scrolls, margins included, with the question held to a readable column.
+        Box(Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+            Column(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth()) {
+                RunnerProgress(run, titled = !beside, onQuestionTimeUp = viewModel::timeOutQuestion)
+                Column(Modifier.padding(detailPagePadding()), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                    key(question.question.set?.id) { MockRecording(viewModel, run, question, audio) }
+                    key(question.itemId) { MockQuestionCard(viewModel, run, question) }
+                    if (!beside) {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            QuestionMap(run, onPick = viewModel::go)
+                            SheetLegend()
+                            MovesNote(run.moves)
                         }
                     }
-                    if (beside) PaneFooter { RunnerActions(viewModel, run, handIn, wide = true) }
                 }
             }
         }
@@ -164,7 +164,7 @@ internal fun MockRunnerView(
                     Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
-                    AnswerSheetHeader(run, MaterialTheme.typography.titleLarge)
+                    AnswerSheetHeader(run)
                     AnswerSheet(
                         run,
                         onPick = {
@@ -192,53 +192,21 @@ internal fun MockRunnerView(
     if (confirming) HandInDialog(run, onDismiss = { confirming = false }, onHandIn = { viewModel.submitSection() })
 }
 
-/** Main's sheet aside: the answer sheet and its clock beside the question, Hand in pinned at its foot. */
 @Composable
-private fun SheetPane(
-    viewModel: MockRunnerViewModel,
-    run: MockRun,
-    current: MockExamCurrent,
-    onHandIn: () -> Unit,
-) {
-    val label = stringResource(R.string.mock_answer_sheet)
-
-    Row {
-        VerticalDivider()
-        Column(Modifier.fillMaxSize().semantics { paneTitle = label }) {
-            Column(
-                Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(detailPagePadding()),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-            ) {
-                AnswerSheetHeader(run, MaterialTheme.typography.titleMedium)
-                SectionClock(current.deadline, large = true)
-                AnswerSheet(run, onPick = viewModel::go)
-            }
-            PaneFooter {
-                OutlinedButton(onClick = onHandIn, enabled = !run.pending, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.mock_hand_in))
-                }
-            }
-        }
+private fun AnswerSheetHeader(run: MockRun) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(stringResource(R.string.mock_answer_sheet), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+        SheetCounts(run)
     }
 }
 
 @Composable
-private fun AnswerSheetHeader(
-    run: MockRun,
-    style: TextStyle,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(R.string.mock_answer_sheet), Modifier.semantics { heading() }, style = style)
-        Text(
-            sheetCounts(run.counts),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-        )
-    }
+private fun SheetCounts(run: MockRun) {
+    Text(
+        sheetCounts(run.counts),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+    )
 }
 
 /** Keys as on main, once however long they're held: the arrows move, Enter goes on, F flags, numbers pick. */

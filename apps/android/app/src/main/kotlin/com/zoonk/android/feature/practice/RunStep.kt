@@ -3,21 +3,17 @@ package com.zoonk.android.feature.practice
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -74,7 +70,9 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.FeedbackSubmissionContext
 import kotlinx.serialization.Serializable
@@ -124,6 +122,7 @@ internal fun RunFrame(
     content: @Composable ColumnScope.(inlineSet: Boolean, asideShown: Boolean) -> Unit,
 ) {
     val focus = remember { FocusRequester() }
+    val set = question?.set?.takeIf { it.listening == null }
 
     LaunchedEffect(Unit) { focus.requestFocus() }
 
@@ -142,8 +141,13 @@ internal fun RunFrame(
         actions = { report?.let { ReportProblemMenu(app, it) } },
         closeLabel = closeLabel,
         bottomBar = actions?.let { { ActionBarWidth(it) } },
+        // A passage takes the rail over the run's own pane, as main's aside.
+        aside =
+            set?.let { TaskAside(half = isLongText(it.text)) { ItemSetText(it, inAside = true) } }
+                ?: aside?.let { TaskAside(content = it) },
     ) { padding ->
-        RunLayout(question, Modifier.padding(padding), header = progress, aside = aside, content = content)
+        val beside = taskAsideBeside()
+        RunLayout(Modifier.padding(padding), header = progress) { content(set == null || !beside, set == null && aside != null && beside) }
     }
 }
 
@@ -191,54 +195,21 @@ internal fun RunMeter(
 
 @Composable
 private fun RunLayout(
-    question: Question?,
     modifier: Modifier,
     header: @Composable () -> Unit,
-    aside: (@Composable ColumnScope.() -> Unit)?,
-    content: @Composable ColumnScope.(inlineSet: Boolean, asideShown: Boolean) -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
-    BoxWithConstraints(modifier.fillMaxSize()) {
-        val wide = maxWidth >= ASIDE_FROM
-        val set = question?.set?.takeIf { it.listening == null && wide }
-
-        Row(Modifier.fillMaxSize()) {
-            // The progress stays over the question, in its pane, when a passage shows beside it.
-            Column(Modifier.weight(1f)) {
-                header()
-                Column(
-                    Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(vertical = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        content(set == null, set == null && aside != null && wide)
-                    }
-                }
-            }
-
-            if (set != null) {
-                VerticalDivider()
-                // A rail beside the question, half the window only for a long passage, as main's aside.
-                val rail = if (isLongText(set.text)) Modifier.weight(1f) else Modifier.width(ASIDE_WIDTH)
-                Column(
-                    rail
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 24.dp, vertical = 8.dp),
-                ) { ItemSetText(set, inAside = true) }
-            } else if (aside != null && wide) {
-                VerticalDivider()
-                Column(
-                    Modifier
-                        .width(ASIDE_WIDTH)
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    content = aside,
-                )
-            }
+    Column(modifier.fillMaxSize()) {
+        header()
+        Column(
+            Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(16.dp), content = content)
         }
     }
 }
@@ -479,6 +450,4 @@ private val DraftSaver =
         restore = { it.takeIf(String::isNotEmpty)?.let { json -> ApiJson.decodeFromString(Draft.serializer(), json) } },
     )
 
-private val ASIDE_FROM = 840.dp
-private val ASIDE_WIDTH = 360.dp
 private const val READ_ALPHA = 0.25f

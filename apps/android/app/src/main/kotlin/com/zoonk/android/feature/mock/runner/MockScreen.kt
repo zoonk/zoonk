@@ -23,7 +23,6 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,7 +39,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -65,8 +63,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
-import com.zoonk.android.ui.scaffold.DockedActionBar
-import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -206,8 +203,7 @@ internal fun MockStepFrame(
     onClose: () -> Unit,
     actions: @Composable () -> Unit,
     title: @Composable () -> Unit = {},
-    aside: (@Composable ColumnScope.() -> Unit)? = null,
-    asideTitle: String = "",
+    aside: TaskAside? = null,
     content: @Composable () -> Unit,
 ) {
     TaskScaffold(
@@ -219,16 +215,8 @@ internal fun MockStepFrame(
                 actions()
             }
         },
-    ) { padding ->
-        if (aside == null) {
-            StepColumn(Modifier.padding(padding), content)
-        } else {
-            PageWithSupportingPane(
-                modifier = Modifier.padding(padding),
-                supportingPane = { StepAside(asideTitle, aside) },
-            ) { StepColumn(Modifier, content) }
-        }
-    }
+        aside = aside,
+    ) { padding -> StepColumn(Modifier.padding(padding), content) }
 }
 
 @Composable
@@ -245,27 +233,6 @@ private fun StepColumn(
                 .padding(detailPagePadding()),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) { content() }
-    }
-}
-
-@Composable
-private fun StepAside(
-    title: String,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    Row {
-        VerticalDivider()
-        Column(
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(detailPagePadding())
-                .semantics { paneTitle = title },
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-            content()
-        }
     }
 }
 
@@ -344,12 +311,6 @@ internal fun MockActionBar(content: @Composable ColumnScope.() -> Unit) {
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Column(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
     }
-}
-
-/** A pane's pinned actions, as the task's own bar draws them, so two panes' feet line up. */
-@Composable
-internal fun PaneFooter(content: @Composable () -> Unit) {
-    DockedActionBar { Box(Modifier.fillMaxWidth().padding(16.dp)) { content() } }
 }
 
 /** A step's main action. Busy, it keeps its ink and shows a wheel, as main's does. */
@@ -503,8 +464,14 @@ private fun MockBreak(
                 modifier = Modifier.fillMaxWidth(),
             )
         },
-        aside = if (run.view.sections.size > 1) ({ SheetSections(run, titled = false) }) else null,
-        asideTitle = stringResource(R.string.mock_sections),
+        aside =
+            if (run.view.sections.size >
+                1
+            ) {
+                TaskAside(title = stringResource(R.string.mock_sections)) { SheetSections(run, titled = false) }
+            } else {
+                null
+            },
     ) {
         StepHeader {
             StepTitle(stringResource(R.string.mock_break))

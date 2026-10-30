@@ -16,7 +16,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -31,8 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.paneTitle
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,7 +42,6 @@ import com.zoonk.android.feature.mock.runner.MockActionBar
 import com.zoonk.android.feature.mock.runner.MockRun
 import com.zoonk.android.feature.mock.runner.MockRunStore
 import com.zoonk.android.feature.mock.runner.MockRunnerViewModel
-import com.zoonk.android.feature.mock.runner.PaneFooter
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
@@ -58,11 +54,10 @@ import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LocalStepHeading
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.stepHeading
-import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
@@ -242,20 +237,15 @@ internal fun MockResult(
                     }
                 }
             }
-            // Beside the aside, the actions belong to the steps' pane, as main's task footer.
-            val actionsInPane = hasAside && wide
-
             CelebrationScope(play = !viewModel.openedFinished) {
                 TaskScaffold(
                     onClose = if (placement) onContinue else navigator::closeTask,
                     title = { StepDots(shown.size, position) },
                     actions = { TutorAskButton(TutorScope.Mock(blockId), app, navigator, worded = false) },
-                    bottomBar = if (actionsInPane) null else actions,
-                ) { padding ->
-                    if (hasAside) {
-                        PageWithSupportingPane(
-                            modifier = Modifier.padding(padding),
-                            supportingPane = {
+                    bottomBar = actions,
+                    aside =
+                        if (hasAside) {
+                            TaskAside(title = stringResource(R.string.mock_result_after)) {
                                 ResultAside(preparation) {
                                     if (offered.isNotEmpty()) {
                                         view.adapt?.let { adapt ->
@@ -268,17 +258,11 @@ internal fun MockResult(
                                         AsideSection(stringResource(R.string.mock_result_now)) { MistakesRow(mistakes) }
                                     }
                                 }
-                            },
-                        ) {
-                            Column(Modifier.fillMaxSize()) {
-                                Box(Modifier.weight(1f)) { step() }
-                                if (actionsInPane) PaneFooter(actions)
                             }
-                        }
-                    } else {
-                        Box(Modifier.padding(padding)) { step() }
-                    }
-                }
+                        } else {
+                            null
+                        },
+                ) { padding -> Box(Modifier.padding(padding)) { step() } }
             }
         }
 
@@ -351,26 +335,14 @@ private fun ResultAside(
     preparation: MockResultPreparation?,
     rest: @Composable ColumnScope.() -> Unit,
 ) {
-    val label = stringResource(R.string.mock_result_after)
-    Row {
-        VerticalDivider()
-        Column(
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(detailPagePadding())
-                .semantics { paneTitle = label },
-            verticalArrangement = Arrangement.spacedBy(28.dp),
-        ) {
-            SectionLabel(label)
-            preparation?.let {
-                AsideSection(stringResource(R.string.mock_result_your_preparation)) {
-                    PreparationNumbers(it, MaterialTheme.typography.headlineMedium)
-                    PreparationMeter(it)
-                }
+    Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
+        preparation?.let {
+            AsideSection(stringResource(R.string.mock_result_your_preparation)) {
+                PreparationNumbers(it, MaterialTheme.typography.headlineMedium)
+                PreparationMeter(it)
             }
-            rest()
         }
+        rest()
     }
 }
 
