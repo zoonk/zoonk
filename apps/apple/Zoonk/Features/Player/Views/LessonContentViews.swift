@@ -70,8 +70,14 @@ struct LessonQuestionText: View {
   }
 }
 
+extension EnvironmentValues {
+  /// A question's picture is at most 40% of the screen's height, as on main.
+  @Entry var questionPictureMaxHeight: CGFloat = .infinity
+}
+
 struct LessonPictureView: View {
   @Environment(\.privateImageLoader) private var privateImages
+  @Environment(\.questionPictureMaxHeight) private var questionPictureMaxHeight
   @Environment(SessionStore.self) private var session
 
   let image: LessonStepImage?
@@ -85,7 +91,7 @@ struct LessonPictureView: View {
       picture(url: url, image: image)
     } else if let alt, isPending {
       LessonPicturePlaceholder(alt: asks ? alt : nil, saysItIsDrawing: true)
-        .pictureFrame(aspectRatio: LessonPicturePlaceholder.aspectRatio)
+        .pictureFrame(aspectRatio: LessonPicturePlaceholder.aspectRatio, maxHeight: maxHeight)
     } else if let alt, asks {
       Label {
         Text(alt)
@@ -98,6 +104,10 @@ struct LessonPictureView: View {
       .padding()
       .background(.fill.tertiary, in: .rect(cornerRadius: 16))
     }
+  }
+
+  private var maxHeight: CGFloat {
+    asks ? questionPictureMaxHeight : .infinity
   }
 
   private func picture(url: URL, image: LessonStepImage) -> some View {
@@ -122,7 +132,9 @@ struct LessonPictureView: View {
         }
       }
     }
-    .pictureFrame(aspectRatio: aspectRatio ?? LessonPicturePlaceholder.aspectRatio)
+    .pictureFrame(
+      aspectRatio: aspectRatio ?? LessonPicturePlaceholder.aspectRatio, maxHeight: maxHeight
+    )
     .accessibilityElement()
     .accessibilityLabel(Text(alt ?? ""))
     .accessibilityAddTraits(.isImage)
@@ -191,19 +203,21 @@ struct LessonPicturePlaceholder: View {
 }
 
 extension View {
-  /// A picture's shape at the width it's offered; whatever holds its place gets the same frame.
-  func pictureFrame(aspectRatio: CGFloat) -> some View {
-    PictureFrameLayout(aspectRatio: aspectRatio) { self }
+  /// A picture's shape at the width it's offered, no taller than `maxHeight`; whatever holds its
+  /// place gets the same frame.
+  func pictureFrame(aspectRatio: CGFloat, maxHeight: CGFloat = .infinity) -> some View {
+    PictureFrameLayout(aspectRatio: aspectRatio, maxHeight: maxHeight) { self }
       .clipShape(.rect(cornerRadius: 16))
-      .frame(maxWidth: .infinity)
+      .frame(maxWidth: .infinity, alignment: .leading)
   }
 }
 
 private struct PictureFrameLayout: Layout {
   let aspectRatio: CGFloat
+  let maxHeight: CGFloat
 
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-    let width = proposal.replacingUnspecifiedDimensions().width
+    let width = min(proposal.replacingUnspecifiedDimensions().width, maxHeight * aspectRatio)
     return CGSize(width: width, height: width / aspectRatio)
   }
 

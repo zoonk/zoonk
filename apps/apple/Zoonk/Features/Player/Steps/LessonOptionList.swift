@@ -12,6 +12,8 @@ struct LessonOption: Identifiable, Hashable {
 
 /// Number keys pick them on a hardware keyboard, as on main.
 struct LessonOptionList: View {
+  @Environment(\.questionPictureMaxHeight) private var questionPictureMaxHeight
+
   let options: [LessonOption]
   let selectedId: String?
   let isChecked: Bool
@@ -81,7 +83,8 @@ struct LessonOptionList: View {
         LessonPictureView(image: picture, alt: option.pictureAlt, isPending: false, asks: true)
       } else {
         LessonPicturePlaceholder(alt: option.pictureAlt, isDrawing: picturesPending)
-          .pictureFrame(aspectRatio: LessonPicturePlaceholder.aspectRatio)
+          .pictureFrame(
+            aspectRatio: LessonPicturePlaceholder.aspectRatio, maxHeight: questionPictureMaxHeight)
       }
 
       // Its name would give the answer away, so it shows once the answer is checked, as on main.
