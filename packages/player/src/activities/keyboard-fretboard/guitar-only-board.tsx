@@ -22,6 +22,7 @@ import {
   initialPitches,
   pitchSpelling,
   targetPitches,
+  targetSpelling,
   targetSound,
   voicingFor,
   voicingMidis,
@@ -123,7 +124,7 @@ export function GuitarOnlyBoard({
         <SoundAsText
           cantListen={cantListen}
           isAnswering={phase === "answering"}
-          notes={targetPitches(fields.target).map((pitch) => spell(pitch))}
+          notes={targetSpelling(fields.target)}
           onCantListenChange={setCantListen}
           soundUnavailable={guitar.status === "unavailable"}
         />

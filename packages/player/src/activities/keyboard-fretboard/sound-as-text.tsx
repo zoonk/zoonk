@@ -43,27 +43,15 @@ export function SoundAsText({
         </p>
       )}
 
-      {isAnswering && cantListen && (
+      {isAnswering && (cantListen || !soundUnavailable) && (
         <Button
           className={COLUMN_GHOST_ACTION_CLASS}
-          onClick={() => onCantListenChange(false)}
+          onClick={() => onCantListenChange(!cantListen)}
           size="sm"
           variant="ghost"
         >
-          <EarIcon aria-hidden="true" />
-          {t("I can listen now")}
-        </Button>
-      )}
-
-      {isAnswering && !cantListen && !soundUnavailable && (
-        <Button
-          className={COLUMN_GHOST_ACTION_CLASS}
-          onClick={() => onCantListenChange(true)}
-          size="sm"
-          variant="ghost"
-        >
-          <EarOffIcon aria-hidden="true" />
-          {t("I can't listen now")}
+          {cantListen ? <EarIcon aria-hidden="true" /> : <EarOffIcon aria-hidden="true" />}
+          {cantListen ? t("I can listen now") : t("I can't listen now")}
         </Button>
       )}
     </>

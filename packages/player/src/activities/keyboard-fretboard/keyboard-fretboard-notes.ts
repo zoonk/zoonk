@@ -41,7 +41,7 @@ export function targetPitches(target?: NoteTarget): number[] {
   return pitches ?? [];
 }
 
-function targetSpelling(target: NoteTarget | undefined): string[] {
+export function targetSpelling(target: NoteTarget | undefined): string[] {
   if (!target) {
     return [];
   }

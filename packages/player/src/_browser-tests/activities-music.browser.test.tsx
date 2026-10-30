@@ -3,7 +3,7 @@ import {
   activityContentFixtures,
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
@@ -19,6 +19,11 @@ import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { CANT_LISTEN_TODAY } from "../lesson/use-today-choice";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
+
+vi.mock("smplr", () => {
+  const instrument = () => ({ ready: Promise.resolve(), start: vi.fn(), stop: vi.fn() });
+  return { Soundfont: instrument, SplendidGrandPiano: instrument };
+});
 
 const DEVICE_DELAY_KEY = "zoonk:rhythm-device-delay";
 
@@ -173,18 +178,24 @@ describe("music activities", () => {
   });
 
   it("keyboard by ear: a learner who can't listen reads its notes for the rest of the day", async () => {
-    const first = openActivity({ content: byEar, template: "keyboardFretboard" });
+    const descending = {
+      ...byEar,
+      fields: { ...byEar.fields, target: { kind: "notes", notes: ["G", "C"] } },
+    };
+
+    const first = openActivity({ content: descending, template: "keyboardFretboard" });
     await page.getByRole("button", { name: "I can't listen now" }).click();
-    await expect.element(page.getByText("The sound plays: C, G").first()).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "I can listen now" })).toHaveFocus();
+    await expect.element(page.getByText("The sound plays: G, C").first()).toBeVisible();
     await expectCount(page.getByRole("button", { name: "Play the sound" }), 0);
 
     first.unmount();
-    openActivity({ content: byEar, template: "keyboardFretboard" });
-    await expect.element(page.getByText("The sound plays: C, G").first()).toBeVisible();
+    openActivity({ content: descending, template: "keyboardFretboard" });
+    await expect.element(page.getByText("The sound plays: G, C").first()).toBeVisible();
 
     await page.getByRole("button", { name: "I can listen now" }).click();
     await expect.element(page.getByRole("button", { name: "Play the sound" })).toBeVisible();
-    await expectCount(page.getByText("The sound plays: C, G"), 0);
+    await expectCount(page.getByText("The sound plays: G, C"), 0);
   });
 
   it("keyboard by ear: naming a chord wrong shows the chord that played", async () => {

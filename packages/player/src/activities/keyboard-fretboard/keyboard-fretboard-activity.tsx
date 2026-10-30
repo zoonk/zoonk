@@ -23,6 +23,7 @@ import {
   pitchSpelling,
   pitchesToNotes,
   targetPitches,
+  targetSpelling,
   targetSound,
   togglePitch,
 } from "./keyboard-fretboard-notes";
@@ -107,7 +108,7 @@ function PianoBoard(props: KeyboardFretboardProps) {
         <SoundAsText
           cantListen={cantListen}
           isAnswering={phase === "answering"}
-          notes={target.map((pitch) => spell(pitch))}
+          notes={targetSpelling(fields.target)}
           onCantListenChange={setCantListen}
           soundUnavailable={piano.status === "unavailable"}
         />
