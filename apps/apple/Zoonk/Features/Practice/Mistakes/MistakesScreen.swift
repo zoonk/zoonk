@@ -29,15 +29,27 @@ struct MistakesScreen: View {
 
       Section {
         Picker(selection: $showsFixed) {
-          Text(
-            "To fix \(list?.counts.open ?? 0)", tableName: "Practice",
-            comment: "Notebook list of open mistakes, with its count."
-          )
+          // Without a count until the list is read, rather than a 0 that isn't true.
+          Group {
+            if let counts = list?.counts {
+              Text(
+                "To fix \(counts.open)", tableName: "Practice",
+                comment: "Notebook list of open mistakes, with its count.")
+            } else {
+              Text("To fix", tableName: "Practice", comment: "Notebook list of open mistakes.")
+            }
+          }
           .tag(false)
-          Text(
-            "Fixed \(list?.counts.fixed ?? 0)", tableName: "Practice",
-            comment: "Notebook list of fixed mistakes, with its count."
-          )
+
+          Group {
+            if let counts = list?.counts {
+              Text(
+                "Fixed \(counts.fixed)", tableName: "Practice",
+                comment: "Notebook list of fixed mistakes, with its count.")
+            } else {
+              Text("Fixed", tableName: "Practice", comment: "Notebook list of fixed mistakes.")
+            }
+          }
           .tag(true)
         } label: {
           Text(

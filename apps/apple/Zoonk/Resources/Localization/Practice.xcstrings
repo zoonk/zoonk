@@ -2917,6 +2917,35 @@
         }
       }
     },
+    "Fixed" : {
+      "comment" : "Notebook list of fixed mistakes.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Korrigiert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Corregidos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Corrigées"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Corrigidos"
+          }
+        }
+      }
+    },
     "Fixed %lld" : {
       "comment" : "Notebook list of fixed mistakes, with its count.",
       "localizations" : {
@@ -7128,6 +7157,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O tempo acabou. Conta como erro, então vai aparecer de novo."
+          }
+        }
+      }
+    },
+    "To fix" : {
+      "comment" : "Notebook list of open mistakes.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch offen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por corregir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À corriger"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para corrigir"
           }
         }
       }
