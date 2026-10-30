@@ -152,15 +152,12 @@ private fun AreaGrid(
                             Size(maxOf(cell.width, 1f), maxOf(cell.height, 1f)),
                             CornerRadius(CELL_RADIUS.toPx()),
                         )
-                        if (minOf(cell.width, cell.height) >= MIN_LABEL_CELL.toPx()) {
-                            val style = cellStyle(cellStyles, minOf(cell.width, cell.height))
-                            centered(
-                                measurer,
-                                format(columnPart * rowPart),
-                                style.withTabularFigures().copy(fontWeight = FontWeight.SemiBold, color = ink),
-                                corner + Offset(cell.width / 2, cell.height / 2),
-                            )
-                        }
+                        val room = Size(cell.width - CELL_PADDING.toPx() * 2, cell.height - CELL_PADDING.toPx() * 2)
+                        cellStyles
+                            .drop(cellStyleIndex(minOf(cell.width, cell.height)))
+                            .map { measurer.measure(format(columnPart * rowPart), it.withTabularFigures().copy(fontWeight = FontWeight.SemiBold, color = ink)) }
+                            .firstOrNull { it.size.width <= room.width && it.size.height <= room.height }
+                            ?.let { drawText(it, topLeft = corner + Offset((cell.width - it.size.width) / 2, (cell.height - it.size.height) / 2)) }
                     }
                 }
                 widths.forEachIndexed { index, part ->
@@ -311,15 +308,12 @@ private fun CutHandle(
     }
 }
 
-/** Main's cell text: big in big cells, small in small ones. */
-private fun DrawScope.cellStyle(
-    styles: List<TextStyle>,
-    size: Float,
-): TextStyle =
+/** Main's cell text: big in big cells, small in small ones; a smaller one where a long product or large text wouldn't fit. */
+private fun DrawScope.cellStyleIndex(size: Float): Int =
     when {
-        size >= BIG_CELL.toPx() -> styles[0]
-        size >= MEDIUM_CELL.toPx() -> styles[1]
-        else -> styles[2]
+        size >= BIG_CELL.toPx() -> 0
+        size >= MEDIUM_CELL.toPx() -> 1
+        else -> 2
     }
 
 private fun DrawScope.centered(
@@ -344,7 +338,7 @@ private val MIN_GRID = 140.dp
 private val MAX_GRID = 260.dp
 private val CELL_GAP = 2.dp
 private val CELL_RADIUS = 6.dp
-private val MIN_LABEL_CELL = 20.dp
+private val CELL_PADDING = 2.dp
 private val BIG_CELL = 64.dp
 private val MEDIUM_CELL = 36.dp
 private val BRACKET_GAP = 12.dp
