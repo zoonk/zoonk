@@ -229,6 +229,16 @@ private fun ModelEvents(
     onToggle: (String) -> Unit,
 ) {
     val label = stringResource(R.string.activities_math_formula_what_if_events)
+    val scheme = MaterialTheme.colorScheme
+    val colors =
+        FilterChipDefaults.filterChipColors(
+            containerColor = scheme.surface,
+            labelColor = scheme.onSurface,
+            iconColor = scheme.onSurface,
+            selectedContainerColor = scheme.primary,
+            selectedLabelColor = scheme.onPrimary,
+            selectedLeadingIconColor = scheme.onPrimary,
+        )
     FlowRow(
         Modifier.semantics { contentDescription = label },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -240,6 +250,7 @@ private fun ModelEvents(
                 onClick = { onToggle(event.name) },
                 label = { Text(event.label) },
                 enabled = !disabled,
+                colors = colors,
                 leadingIcon = {
                     Icon(
                         painterResource(if (on) R.drawable.ic_check else R.drawable.ic_add),
