@@ -269,24 +269,21 @@ struct LevelTestStep: View {
 
 extension LevelTest.Question {
   /// Main's wait for a listening message the bank's run is still voicing: reads the test every few
-  /// seconds until the clip comes or can't (the run stopped making it, or three reads in a row failed
-  /// or showed another question). Without a clip, the play button asks for one.
+  /// seconds until the clip comes or can't (the run stopped making it, or three reads in a row failed),
+  /// and returns nil once the test moved on to another question. Without a clip, the play button asks
+  /// for one.
   @MainActor
   func waitingForAudio(
     every interval: Duration = .seconds(3), read: @MainActor () async throws -> LevelTest
-  ) async throws -> Self {
+  ) async throws -> Self? {
     var failures = 0
 
     while failures < 3 {
       try await Task.sleep(for: interval)
 
       do {
-        let shown = try await read().next?.question
-
-        // The API's first read after an answer can still show the question before it.
-        guard let shown, shown.id == id else {
-          failures += 1
-          continue
+        guard let shown = try await read().next?.question, shown.id == id else {
+          return nil
         }
 
         guard shown.audioPending else {

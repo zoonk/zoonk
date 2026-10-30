@@ -89,28 +89,14 @@ final class LevelTestAudioTests: XCTestCase {
     XCTAssertEqual(reads.calls, 6)
   }
 
-  func testAReadFromBeforeTheAnswerDoesntEndTheWait() async throws {
-    let reads = Reads([
-      .success(test(showing: question(id: "reading-1"))),
-      .success(test(showing: question(audio: Self.clip))),
-    ])
-
-    let shown = try await question(pending: true).waitingForAudio(every: .zero) {
-      try reads.next()
-    }
-
-    XCTAssertEqual(shown, question(audio: Self.clip))
-    XCTAssertEqual(reads.calls, 2)
-  }
-
-  func testThreeReadsShowingAnotherQuestionEndTheWait() async throws {
+  func testAReadShowingAnotherQuestionEndsTheWait() async throws {
     let reads = Reads([.success(test(showing: question(id: "reading-2")))])
 
     let shown = try await question(pending: true).waitingForAudio(every: .zero) {
       try reads.next()
     }
 
-    XCTAssertEqual(shown, question())
-    XCTAssertEqual(reads.calls, 3)
+    XCTAssertNil(shown)
+    XCTAssertEqual(reads.calls, 1)
   }
 }
