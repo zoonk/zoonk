@@ -8,8 +8,9 @@ import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { cn } from "@zoonk/ui/lib/utils";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
-import { useId, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { AnswersSaveError } from "../_components/save-error";
+import { focusStepTitle } from "../_components/steps";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TASK_MAIN_ACTION_CLASS, TaskActions } from "../_components/task-layout";
 import { isLongText } from "../questions/long-text";
@@ -267,14 +268,24 @@ function EssayModes({ onGraded }: { onGraded: (draft: EssayDraft) => void }) {
   const { drafts } = useEssayScreen();
   const [mode, setMode] = useState<"grade" | "write">(drafts.length > 0 ? "grade" : "write");
   const grade = drafts[0]?.grade;
+  const gradeArrived = useRef(false);
 
   const writer = useEssayWriter((draft, { editedSince }) => {
     onGraded(draft);
 
     if (!editedSince) {
+      gradeArrived.current = true;
       setMode("grade");
     }
   });
+
+  // A screen reader stays on the Send button that just left, so the arriving grade takes its focus.
+  useEffect(() => {
+    if (mode === "grade" && gradeArrived.current) {
+      gradeArrived.current = false;
+      focusStepTitle(document.body);
+    }
+  }, [mode]);
 
   return mode === "grade" && grade ? (
     <EssayGradeSteps grade={grade} onRewrite={() => setMode("write")} />
