@@ -71,7 +71,7 @@
     <!-- Skips the alphabet lesson for a learner who reads the script. -->
     <string name="language_alphabet_skip">I can already read it</string>
     <string name="language_alphabet_skip_failed">That didn\'t save. Try again.</string>
-    <!-- Opens the words to say again. -->
+    <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">Say them</string>
     <!-- Opens the noticed typos. -->
     <string name="language_typos_open">Open</string>

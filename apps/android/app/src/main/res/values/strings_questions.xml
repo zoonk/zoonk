@@ -36,7 +36,7 @@
     <string name="questions_invalid_integer">Type a whole number, like 12.</string>
     <string name="questions_feedback_label">Answer feedback</string>
     <string name="questions_correct">Correct!</string>
-    <!-- Verdict on a wrong answer. It means "that isn't right", not "almost" or "better luck next time". -->
+    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
     <string name="questions_not_quite">Not quite</string>
     <string name="questions_left_blank">Left blank</string>
     <string name="questions_dont_know_yet">I don\'t know yet</string>

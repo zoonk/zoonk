@@ -109,11 +109,11 @@
     <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
     <string name="tutor_offer_mock_by_subject">Whenever you want: a full exam day, half a day or one subject</string>
     <string name="tutor_offer_mock_plus">Mock exams come with Plus: whenever you want, and every week in your plan.</string>
-    <!-- Describes essay practice in the plan, not an instruction to the learner. -->
+    <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_weekly">Practiced every week in your plan, each draft graded.</string>
-    <!-- Describes essay practice in the plan, not an instruction to the learner. -->
+    <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_biweekly">Practiced every other week in your plan, each draft graded.</string>
-    <!-- Describes essay practice in the plan, not an instruction to the learner. -->
+    <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_final_weeks">Practiced in the final weeks before the exam, each draft graded.</string>
     <string name="tutor_offer_essay_plus">Essay practice with grading comes with Plus.</string>
     <string name="tutor_offer_mistakes">Mistakes notebook</string>
@@ -135,6 +135,7 @@
     <string name="tutor_offer_plus">Plus</string>
     <string name="tutor_offer_plus_description">What Plus includes and its price.</string>
     <string name="tutor_offer_plus_subscribed">Your plan and its billing.</string>
+    <!-- Button that opens the Zoonk Plus page, with what Plus includes and its price. Not "see more". -->
     <string name="tutor_offer_see_plus">See Plus</string>
     <string name="tutor_offer_manage">Manage</string>
 

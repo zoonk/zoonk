@@ -32,7 +32,7 @@
     <string name="player_verdict_correct">Correct!</string>
     <string name="player_verdict_guess">Here\'s the answer</string>
     <string name="player_verdict_guess_right">Good guess!</string>
-    <!-- Verdict on a wrong answer. It means "that isn't right", not "almost" or "better luck next time". -->
+    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
     <string name="player_verdict_incorrect">Not quite</string>
     <string name="player_verdict_sample_answer">Here\'s a good answer</string>
     <string name="player_verdict_typo">Right, watch the spelling</string>
@@ -76,6 +76,7 @@
     <string name="player_in_your_own_words">In your own words</string>
     <string name="player_cant_write_now">Can\'t write now</string>
     <string name="player_dont_know_yet">I don\'t know yet</string>
+    <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Explain first</string>
     <string name="player_check_failed">We couldn\'t check your answer this time. Try again.</string>
     <string name="player_still_checking">Still checking. This is taking longer than usual.</string>

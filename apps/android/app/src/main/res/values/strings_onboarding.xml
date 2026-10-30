@@ -2,8 +2,9 @@
 <resources>
     <!-- Title of the screen where a learner writes their goal. -->
     <string name="onboarding_start_title">What do you want to achieve?</string>
+    <!-- Under the title. "Tell us in your own words" asks the learner to describe their goal. -->
     <string name="onboarding_start_description">Tell us in your own words. We\'ll build the plan.</string>
-    <!-- Under the title when the goal starts from a plan someone shared. -->
+    <!-- Under the title when the goal starts from a plan someone shared. "Tell us in your own words" asks the learner to describe their goal. -->
     <string name="onboarding_start_description_shared">Tell us in your own words. Your plan starts from the plan someone shared with you.</string>
     <!-- Aside on wide screens. -->
     <string name="onboarding_how_it_works">How it works</string>
@@ -367,6 +368,7 @@
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">No exam date in %1$s</string>
     <string name="onboarding_reveal_free_week_over_title">Your free week of exam prep is over</string>
+    <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
     <string name="onboarding_reveal_free_week_over_body">Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.</string>
     <!-- What the learner\'s time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">%1$s a day isn\'t enough time to cover your goal.</string>

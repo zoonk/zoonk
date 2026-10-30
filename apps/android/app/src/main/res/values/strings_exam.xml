@@ -40,6 +40,7 @@
     <string name="exam_checklist_black_pen">A black pen with a clear barrel</string>
     <string name="exam_checklist_route">Your route there, with time to spare</string>
     <string name="exam_checklist_exam_time">When the gates close and the exam starts</string>
+    <!-- An item on the checklist before the exam: sleeping well the night before it. -->
     <string name="exam_checklist_sleep">A good night\'s sleep</string>
     <string name="exam_checklist_materials">What your teacher lets you bring, like a pen or a calculator</string>
     <string name="exam_tools_title">What you may use</string>

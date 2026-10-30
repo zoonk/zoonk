@@ -125,6 +125,7 @@
     <string name="subscription_answer_free_calls">Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)</string>
     <string name="subscription_question_unlimited">Is Plus really unlimited?</string>
     <string name="subscription_answer_unlimited">Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan.</string>
+    <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Read our fair use policy</string>
     <string name="subscription_question_cancel">What happens if I cancel?</string>
     <string name="subscription_answer_cancel">You keep Plus until the end of the period you already paid for. Then you\'re back on the free plan, and your goals and progress stay with you.</string>
