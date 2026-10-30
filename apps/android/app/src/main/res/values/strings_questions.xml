@@ -7,8 +7,9 @@
     </plurals>
     <string name="questions_true">True</string>
     <string name="questions_false">False</string>
-    <!-- How exams like Cebraspe word a statement's verdict. -->
+    <!-- An answer option judging a statement right, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
     <string name="questions_right">Right</string>
+    <!-- An answer option judging a statement wrong, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
     <string name="questions_wrong">Wrong</string>
     <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Leave blank</string>
@@ -35,6 +36,7 @@
     <string name="questions_invalid_integer">Type a whole number, like 12.</string>
     <string name="questions_feedback_label">Answer feedback</string>
     <string name="questions_correct">Correct!</string>
+    <!-- Verdict on a wrong answer. It means "that isn't right", not "almost" or "better luck next time". -->
     <string name="questions_not_quite">Not quite</string>
     <string name="questions_left_blank">Left blank</string>
     <string name="questions_dont_know_yet">I don\'t know yet</string>

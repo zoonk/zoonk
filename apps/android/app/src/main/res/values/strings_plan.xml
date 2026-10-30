@@ -95,6 +95,7 @@
     </plurals>
     <string name="plan_challenge_left_out">Challenge left out</string>
     <string name="plan_continues_today">Continues today</string>
+    <!-- %1$s is the day the plan resumes, such as "Nov 3". -->
     <string name="plan_continues_on">Continues %1$s</string>
     <string name="plan_more_lessons_challenge_on">More lessons on the way · challenge %1$s</string>
     <string name="plan_more_lessons_on_the_way">More lessons on the way</string>
@@ -133,9 +134,11 @@
         <item quantity="other">%d more chapters</item>
     </plurals>
     <string name="plan_show_fewer_chapters">Show fewer chapters</string>
+    <!-- %1$s is one or more subject or area names, separated by commas. -->
     <string name="plan_lessons_being_written_from">Lessons from %1$s are being written.</string>
     <string name="plan_unit_lessons_being_written">More lessons for this unit are being written.</string>
     <string name="plan_phase_lessons_being_written">More lessons for this phase are being written.</string>
+    <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Won</string>
     <string name="plan_challenge_next_session">In your next session</string>
     <string name="plan_challenge_after_previous">After the challenge before it</string>
@@ -274,7 +277,7 @@
     <string name="plan_your_level">Your level</string>
     <!-- Under a language goal's level when all of its skills (reading, listening, speaking, writing) are at the same level. -->
     <string name="plan_even_across_skills">Even across skills</string>
-    <!-- Under a language goal's level: the skill that is highest, such as "Reading leads". -->
+    <!-- Under a language goal's level: the skill where the learner's level is highest, such as "Reading leads". -->
     <string name="plan_skill_leads">%1$s leads</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
     <string name="plan_no_lessons_studied_yet">No lessons studied yet</string>
@@ -363,8 +366,11 @@
     <string name="plan_change_read_guide_on">We read the exam\'s official guide: your plan can follow its parts, with the exam on %1$s.</string>
     <string name="plan_change_read_notice">We read the exam notice: your plan can follow its subjects and topics.</string>
     <string name="plan_change_read_guide">We read the exam\'s official guide: your plan can follow its parts and topics.</string>
+    <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_likely_date">The exam\'s likely date is now %1$s.</string>
+    <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_notice_says">The exam notice says %1$s.</string>
+    <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_calendar_says">The exam\'s official calendar says %1$s.</string>
     <string name="plan_change_notice_sets_date">The exam notice sets the exam for %1$s.</string>
     <string name="plan_change_calendar_sets_date">The exam\'s official calendar sets the exam for %1$s.</string>
@@ -388,10 +394,13 @@
     <string name="plan_change_days_time">%1$s: %2$s a day.</string>
     <string name="plan_change_light_week">A light week from %1$s, at half the time.</string>
     <string name="plan_change_weekly_challenge_moved">The weekly challenge moved to %1$s.</string>
+    <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
     <string name="plan_change_activities_left_out">%1$s left out of your lessons.</string>
+    <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
     <string name="plan_change_activities_back">%1$s back in your lessons.</string>
     <string name="plan_change_more_practice">More practice from now on.</string>
     <string name="plan_change_more_explanation">More explanation from now on.</string>
+    <!-- "The basics" are the simple parts of topics the learner already does well, not the plan's prerequisites. -->
     <string name="plan_change_harder">Harder from now on: tougher practice, and the basics you already do well are skipped.</string>
     <string name="plan_change_easier">Easier material from now on.</string>
     <string name="plan_change_usual_difficulty">Lessons at the usual difficulty from now on.</string>
@@ -427,7 +436,9 @@
     </plurals>
     <string name="plan_change_more_time_for">More time for %1$s.</string>
     <string name="plan_change_less_time_for">Less time for %1$s.</string>
+    <!-- %1$s is one or more of the exam's areas joined as a list, such as "Math" or "Math and History". -->
     <string name="plan_change_areas_left_out">%1$s left out of the plan.</string>
+    <!-- %1$s is one or more of the exam's areas joined as a list, such as "Math" or "Math and History". -->
     <string name="plan_change_areas_back">%1$s back in the plan.</string>
     <string name="plan_change_start_past_basics">Starting past the basics: %1$s.</string>
     <string name="plan_change_start_from_basics">Starting from the basics again: %1$s.</string>
@@ -506,6 +517,7 @@
     <string name="plan_change_phase_dates_lessons">Some lessons take more or less time than planned. Moving your phase dates fits more of them before your goal\'s date.</string>
     <string name="plan_change_phase_dates_room">A phase\'s challenge falls on a day without room for it. Moving your phase dates gives it room.</string>
     <string name="plan_change_phase_ends">%1$s ends %2$s instead of %3$s.</string>
+    <!-- %1$s is a phase's name; %2$s is its new end date and %3$s the old one, such as "November 8". -->
     <string name="plan_change_phase_end_row">%1$s: %2$s (was %3$s)</string>
     <string name="plan_change_ends_instead">Ends %1$s instead of %2$s.</string>
     <!-- %1$s and %2$s are days, like "May 5". -->
@@ -559,6 +571,7 @@
     </plurals>
     <string name="plan_change_unwritten">Lessons not written yet: %1$s.</string>
     <string name="plan_change_left_out">Lessons left out: %1$s.</string>
+    <!-- %1$s lists up to three of the lessons left out by title, such as "Fractions, Ratios and Percentages". -->
     <string name="plan_change_left_out_include">Lessons left out include %1$s.</string>
     <plurals name="plan_change_adds">
         <item quantity="one">Adds %d lesson</item>
@@ -601,6 +614,7 @@
     <string name="plan_change_after">After the change</string>
     <string name="plan_change_goal_date_line">Goal date %1$s</string>
     <string name="plan_change_plan_ends">Plan ends %1$s</string>
+    <!-- %1$s is a phase or an exam area; %2$s is the day it ends, such as "Nov 3". -->
     <string name="plan_change_until">%1$s until %2$s</string>
     <plurals name="plan_change_area_to_go">
         <item quantity="one">%1$s: %2$d lesson to go</item>
@@ -619,6 +633,7 @@
     <string name="plan_pick_date">Pick a date</string>
     <string name="plan_save">Save</string>
     <string name="plan_use_this_date">Use this date</string>
+    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="plan_weekend_time_differs">Different time on weekends</string>
     <string name="plan_time_on_weekends">Time on weekends</string>
     <string name="plan_exam_choice_left_out">Pick the one you\'ll take. Until you do, your plan leaves %1$s out.</string>
@@ -632,10 +647,12 @@
         <item quantity="one">%1$d prerequisite, %2$s with your choice.</item>
         <item quantity="other">%1$d prerequisites, %2$s with your choices.</item>
     </plurals>
+    <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
     <plurals name="plan_bases_deep">
         <item quantity="one">%1$d prerequisite, %2$s in depth.</item>
         <item quantity="other">%1$d prerequisites, %2$s in depth.</item>
     </plurals>
+    <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
     <plurals name="plan_bases_quick">
         <item quantity="one">%1$d prerequisite, %2$s for its quick lesson.</item>
         <item quantity="other">%1$d prerequisites, %2$s for a quick lesson each.</item>
@@ -644,6 +661,7 @@
         <item quantity="one">%1$d prerequisite, skipped.</item>
         <item quantity="other">%1$d prerequisites, all skipped.</item>
     </plurals>
+    <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
     <plurals name="plan_bases_essential">
         <item quantity="one">%1$d prerequisite, %2$s for its essentials.</item>
         <item quantity="other">%1$d prerequisites, %2$s for their essentials.</item>
@@ -761,11 +779,13 @@
     <string name="plan_find_covers">%1$s a day covers everything in depth by %2$s.</string>
     <string name="plan_find_none">No amount of time a day covers everything in depth by %1$s.</string>
     <string name="plan_find_every_topic">%1$s a day studies every topic, some in less depth.</string>
+    <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
     <string name="plan_find_fitting_date">At %1$s a day, your plan covers everything by %2$s.</string>
     <string name="plan_find_no_date">We couldn\'t find a date that covers everything.</string>
     <string name="plan_note_covers_everything">Covers everything</string>
     <string name="plan_note_every_topic">Every topic</string>
     <string name="plan_move_date">Move your date to cover everything</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Move your date to %1$s</string>
     <string name="plan_full_course_switch">Study everything, even after the exam</string>
     <string name="plan_full_course_off">What doesn\'t fit by the exam is left out of your plan.</string>

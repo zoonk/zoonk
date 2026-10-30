@@ -21,6 +21,7 @@
     <string name="player_previous_screen">Previous screen</string>
 
     <string name="player_quick_check">Quick check · %1$s of %2$s</string>
+    <!-- Shown on a wrong answer the learner can still fix right away. "Not quite" means "that isn't right", not "better luck next time". -->
     <string name="player_notice_self_correct">Not quite. Look again and fix it yourself, then check.</string>
     <string name="player_notice_answer_not_saved">Your answer here didn\'t save. Answer it again to finish the lesson.</string>
     <string name="player_notice_picture_ready">This question was waiting for its picture. Answer it to finish the lesson.</string>
@@ -31,6 +32,7 @@
     <string name="player_verdict_correct">Correct!</string>
     <string name="player_verdict_guess">Here\'s the answer</string>
     <string name="player_verdict_guess_right">Good guess!</string>
+    <!-- Verdict on a wrong answer. It means "that isn't right", not "almost" or "better luck next time". -->
     <string name="player_verdict_incorrect">Not quite</string>
     <string name="player_verdict_sample_answer">Here\'s a good answer</string>
     <string name="player_verdict_typo">Right, watch the spelling</string>
@@ -93,6 +95,7 @@
     <string name="player_phase_write_line">Writing screen %1$d…</string>
     <string name="player_writing_note">It usually takes a minute or two. The lesson opens here as soon as it\'s ready.</string>
     <string name="player_ready_while_waiting">Ready while you wait</string>
+    <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
     <string name="player_ready_instead">Ready to do instead</string>
     <plurals name="player_review_ideas">
         <item quantity="one">Review %1$s idea</item>

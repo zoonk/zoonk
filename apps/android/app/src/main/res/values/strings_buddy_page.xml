@@ -36,6 +36,7 @@
     <string name="buddy_page_grows_young">Grows to Young at %1$s</string>
     <string name="buddy_page_grows_adult">Grows to Adult at %1$s</string>
     <string name="buddy_page_remembers">What %1$s remembers</string>
+    <!-- Under the buddy's glasses: the learner picks a pair they've earned, and the buddy wears it. -->
     <string name="buddy_page_glasses_description">Pick a pair you\'ve earned to wear it.</string>
 
     <string name="buddy_page_first_steps">First steps</string>

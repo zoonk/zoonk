@@ -8,8 +8,9 @@
     <string name="audio_here_is_what_it_says">%1$s Here\'s what it says:</string>
     <string name="audio_try_again">Try again</string>
     <string name="audio_record">Record</string>
-    <!-- Stops recording the learner. -->
+    <!-- Button that stops recording the learner, a short label like a media player's Stop. A hint names it: "Tap Stop to check." -->
     <string name="audio_record_stop">Stop</string>
+    <!-- Shown while recording the learner. "Stop" is the label of the button that stops recording, so use the same word as that button. -->
     <string name="audio_listening">Listening… Tap Stop to check.</string>
     <string name="audio_checking">Checking…</string>
     <string name="audio_checking_slow">Still checking. This is taking longer than usual.</string>

@@ -152,7 +152,7 @@
     <string name="exam_rule_irt">Missing an easy question costs more than missing a hard one, so solve the easy ones first.</string>
     <string name="exam_rule_raw_title">Each right answer counts one point</string>
     <string name="exam_rule_raw">Answer every question.</string>
-    <!-- %1$s and %2$s are exam_calibration_right: "In your mock exams: sure, 8 of 10 right. Unsure, 2 of 6 right." -->
+    <!-- How the learner did on the answers they marked as sure and on those they marked as unsure. %1$s and %2$s are counts like "8 of 10 right". -->
     <string name="exam_calibration">In your mock exams: sure, %1$s. Unsure, %2$s.</string>
     <plurals name="exam_calibration_right">
         <item quantity="one">%1$d of %2$d right</item>

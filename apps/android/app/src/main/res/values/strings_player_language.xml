@@ -5,7 +5,7 @@
     <string name="player_language_which_means_this">Which one means this?</string>
     <string name="player_language_what_do_you_hear">What do you hear?</string>
     <string name="player_language_play">Play</string>
-    <!-- Stops the sentence playing. -->
+    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
     <string name="player_language_stop">Stop</string>
     <string name="player_language_play_pronunciation">Play pronunciation</string>
     <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->

@@ -106,10 +106,14 @@
     <string name="tutor_offer_call">A short call out loud, at your level.</string>
     <string name="tutor_offer_mock">Take a mock exam</string>
     <string name="tutor_offer_mock_description">Whenever you want: a full exam day or half a day</string>
+    <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
     <string name="tutor_offer_mock_by_subject">Whenever you want: a full exam day, half a day or one subject</string>
     <string name="tutor_offer_mock_plus">Mock exams come with Plus: whenever you want, and every week in your plan.</string>
+    <!-- Describes essay practice in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_weekly">Practiced every week in your plan, each draft graded.</string>
+    <!-- Describes essay practice in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_biweekly">Practiced every other week in your plan, each draft graded.</string>
+    <!-- Describes essay practice in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_final_weeks">Practiced in the final weeks before the exam, each draft graded.</string>
     <string name="tutor_offer_essay_plus">Essay practice with grading comes with Plus.</string>
     <string name="tutor_offer_mistakes">Mistakes notebook</string>
@@ -122,6 +126,7 @@
         <item quantity="other">Say %d words again</item>
     </plurals>
     <string name="tutor_offer_logbook">Logbook</string>
+    <!-- Describes the Logbook: what the learner did this week compared with the week before, and what comes next. -->
     <string name="tutor_offer_logbook_description">What you did this week next to the last, and what comes next.</string>
     <string name="tutor_offer_memory">Memory</string>
     <string name="tutor_offer_memory_description">See, correct or delete what your buddy remembers about you.</string>

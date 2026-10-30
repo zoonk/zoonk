@@ -122,8 +122,9 @@
     <string name="onboarding_row_dates_estimated">From its usual dates. We\'ll tell you when the official ones are out.</string>
     <string name="onboarding_row_pick_date">Pick your date</string>
     <string name="onboarding_row_several_sittings">This exam is held several times a year. Until you pick one, your plan uses the first.</string>
-    <!-- %1$s is a date. -->
+    <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="onboarding_row_notice_says">The exam notice says %1$s.</string>
+    <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="onboarding_row_guide_says">The exam\'s official calendar says %1$s.</string>
 
     <!-- After a goal the learner typed turned out to be a question. -->
@@ -136,7 +137,7 @@
     <string name="onboarding_unclear_title">Tell us a bit more</string>
     <string name="onboarding_unclear_description">What do you want to learn or be able to do? For example: “pass the driving test”, “understand statistics for work” or “speak French on my trip”.</string>
     <string name="onboarding_write_again">Write my goal again</string>
-    <!-- %1$s is an instrument in the learner\'s words, like "guitar". -->
+    <!-- %1$s is an instrument's name, such as "guitar". -->
     <string name="onboarding_instrument_title">Lessons for playing %1$s are coming</string>
     <string name="onboarding_instrument_description">To teach you to play, we need to hear you play, and we\'re still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm.</string>
     <string name="onboarding_musicianship_card">Musicianship for %1$s: hear chords, read short melodies and keep the beat. No microphone needed.</string>
@@ -172,6 +173,7 @@
     <string name="onboarding_attach_sign_in">Create an account to add your own material.</string>
     <string name="onboarding_attach_failed">We couldn\'t add that. Try again in a moment.</string>
     <string name="onboarding_intent_title">What do you want to do?</string>
+    <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">Prepare for an exam</string>
     <string name="onboarding_intent_exam_description">Give a date and we\'ll plan up to it</string>
     <string name="onboarding_intent_understand">Understand this material</string>
@@ -230,8 +232,9 @@
     <!-- The two answers to a statement judged true or false. -->
     <string name="onboarding_placement_true">True</string>
     <string name="onboarding_placement_false">False</string>
-    <!-- The two answers to a statement judged right or wrong, for exams that word it so. -->
+    <!-- An answer option judging a statement right, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_right">Right</string>
+    <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Wrong</string>
     <string name="onboarding_placement_see_plan">See my plan</string>
     <plurals name="onboarding_placement_answered">
@@ -240,7 +243,7 @@
     </plurals>
     <string name="onboarding_placement_mock_done">Mock exam done</string>
     <string name="onboarding_placement_mock_set_title">Your mock exam set your starting point</string>
-    <!-- %d is how many questions the learner answered in the mock exam. -->
+    <!-- %d is how many questions the learner answered in the mock exam. "It" is the estimate of where the learner starts. -->
     <plurals name="onboarding_placement_mock_set_description">
         <item quantity="one">Based on %d answer. It gets more accurate every day.</item>
         <item quantity="other">Based on %d answers. It gets more accurate every day.</item>
@@ -248,6 +251,7 @@
     <string name="onboarding_placement_enough_title">That\'s enough questions for today</string>
     <string name="onboarding_placement_enough_description">Your first sessions ask a few more to fine-tune your plan.</string>
     <string name="onboarding_placement_set_title">Your starting point is set</string>
+    <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
     <string name="onboarding_placement_set_description">It gets more accurate every day.</string>
     <string name="onboarding_placement_unavailable_title">Let\'s skip the questions</string>
     <string name="onboarding_placement_unavailable_description">We couldn\'t prepare questions for this goal. Your first sessions will find your starting point instead.</string>
@@ -307,7 +311,7 @@
         <item quantity="one">About %d day</item>
         <item quantity="other">About %d days</item>
     </plurals>
-    <!-- When a plan without a date ends at the learner\'s pace. %1$s is a date or a month. -->
+    <!-- When a plan without a date ends at the learner's pace. %1$s is a date, such as "November 8", or a month and year, such as "March 2027", so the wording must fit both. -->
     <string name="onboarding_reveal_until_about">Until about %1$s</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_daily">%1$s a day</string>
@@ -360,7 +364,7 @@
     <string name="onboarding_reveal_notice_day_estimated">The exam\'s likely date is now %1$s.</string>
     <string name="onboarding_reveal_notice_day_notice">The exam notice says %1$s.</string>
     <string name="onboarding_reveal_notice_day_guide">The exam\'s official calendar says %1$s.</string>
-    <!-- %1$s is a month, such as "March 2027". -->
+    <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">No exam date in %1$s</string>
     <string name="onboarding_reveal_free_week_over_title">Your free week of exam prep is over</string>
     <string name="onboarding_reveal_free_week_over_body">Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.</string>
@@ -556,6 +560,7 @@
     <string name="onboarding_full_course_until_exam">Until the exam, what comes up most comes first.</string>
     <!-- %1$s is a daily time, %2$s a month and year, %3$s the exam\'s date. -->
     <string name="onboarding_full_course_finish">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
+    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="onboarding_weekend_time">Different time on weekends</string>
     <string name="onboarding_schedule_time_label">Time a day</string>
     <!-- %1$s is a duration, such as "30 min". -->

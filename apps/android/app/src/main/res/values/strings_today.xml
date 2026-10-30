@@ -40,7 +40,7 @@
 
     <string name="today_time_left">%1$s left</string>
     <string name="today_time_studied">%1$s studied</string>
-    <!-- %1$s and %2$s are formatted numbers: "2 of 5 done". -->
+    <!-- How many of today's session steps are done; %1$s and %2$s are formatted numbers: "2 of 5 done". -->
     <string name="today_steps_done">%1$s of %2$s done</string>
 
     <!-- %1$s is a duration, such as "55 min". -->
@@ -49,6 +49,7 @@
     <string name="today_fresh_start_new_phase">A new phase starts today, with an easy warm-up first.</string>
     <string name="today_fresh_start_new_week">A fresh week. Today starts with an easy warm-up.</string>
 
+    <!-- %d is how many of today's session steps are done. -->
     <plurals name="today_done_count">
         <item quantity="one">%d done</item>
         <item quantity="other">%d done</item>
@@ -196,7 +197,7 @@
     <string name="today_practice_with_buddy">Practice with %1$s</string>
     <string name="today_already_know_this">Already know this?</string>
     <string name="today_take_the_test">Take the test</string>
-    <!-- %1$s is a formatted count of lessons. -->
+    <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
     <string name="today_earlier_work">Earlier unfinished work · %1$s</string>
     <string name="today_earlier_work_detail">Start with these. Starting your session fits the plan to today\'s time.</string>
     <string name="today_practice_anytime">Practice anytime</string>
@@ -211,12 +212,13 @@
         <item quantity="one">%d available tomorrow</item>
         <item quantity="other">%d available tomorrow</item>
     </plurals>
-    <!-- %1$s is the mock's date, such as Nov 3. -->
+    <!-- %1$s is the mock's date, such as Nov 3. Today is shorter so time is set aside for that mock. -->
     <string name="today_mock_funding">Lighter day: saving time for the mock exam on %1$s</string>
-    <!-- %1$s is the mock's date, such as Nov 3. -->
+    <!-- %1$s is the mock's date, such as Nov 3. Zoonk sets time aside for that mock. -->
     <string name="today_mock_funding_welcome_back">Saving time for the mock exam on %1$s</string>
     <string name="today_take_mock">Take a mock exam</string>
     <string name="today_take_mock_detail">Whenever you want: a full exam day or half a day</string>
+    <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
     <string name="today_take_mock_detail_by_subject">Whenever you want: a full exam day, half a day or one subject</string>
     <string name="today_continue_mock">Continue your mock exam</string>
     <string name="today_continue_mock_detail">It\'s where you left it</string>
@@ -230,10 +232,12 @@
     <string name="today_insight_add_it">Add it</string>
     <string name="today_insight_no_thanks">No thanks</string>
     <string name="today_insight_keep_it">Keep it</string>
-    <!-- %1$s is a time of day, such as 7:00 PM. -->
+    <!-- %1$s is a time of day, such as "19:00". Moves the time of day the learner studies, not how long they study. -->
     <string name="today_insight_move_time">Move my study time to %1$s</string>
     <string name="today_insight_got_it">Got it</string>
+    <!-- Confirms that the time of day the learner studies moved, not how long they study. -->
     <string name="today_insight_time_moved">Study time moved.</string>
+    <!-- After declining to move it: the time of day the learner studies stays the same. -->
     <string name="today_insight_time_stays">Your study time stays the same.</string>
     <string name="today_plan_stays">Your plan stays as it was.</string>
     <string name="today_noted">Noted.</string>
@@ -248,6 +252,7 @@
     <string name="today_plan_suggestion">Plan suggestion</string>
     <string name="today_plan_apply">Apply</string>
     <string name="today_plan_use_my_date">Use my date anyway</string>
+    <!-- Declines a suggested change to the plan's dates and keeps the learner's own plan. -->
     <string name="today_plan_keep_mine">Keep mine</string>
     <string name="today_next_suggestion">Next suggestion</string>
     <string name="today_notice_falling_behind">Plan change</string>

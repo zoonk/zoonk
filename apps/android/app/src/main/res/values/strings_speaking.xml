@@ -34,7 +34,9 @@
     <string name="speaking_rated_on">Rated on %1$s.</string>
     <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s tasks on a call</string>
+    <!-- A band is the exam's score for each criterion. -->
     <string name="speaking_mock_ielts">A short speaking test with an examiner. After it, an estimated band for each criterion.</string>
+    <!-- A band is the exam's score for each criterion. -->
     <string name="speaking_mock_toefl">Repeat sentences, then a short interview with an examiner. After it, an estimated band from 1 to 6 for each criterion.</string>
     <string name="speaking_mock_start">Start the mock</string>
     <string name="speaking_mock_opens">Your mock opens as soon as it\'s ready.</string>

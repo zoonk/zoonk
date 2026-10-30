@@ -40,6 +40,7 @@
     <string name="generation_understanding_read_line_3">Checking if it\'s an exam, a language or a subject…</string>
     <string name="generation_understanding_dates">Checking the exam dates</string>
     <string name="generation_understanding_dates_line_1">Looking up the exam calendar…</string>
+    <!-- Shown while reading an exam's calendar. "Your year" is the year the learner takes the exam. -->
     <string name="generation_understanding_dates_line_2">Finding the dates for your year…</string>
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">Building your plan</string>

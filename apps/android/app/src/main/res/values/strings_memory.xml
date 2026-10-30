@@ -8,6 +8,7 @@
     <string name="memory_empty_off">Nothing here. Zoonk keeps no notes about you while memory is off.</string>
     <string name="memory_save_failed">That didn\'t save. Try again.</string>
     <string name="memory_category_goals">Goals</string>
+    <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
     <string name="memory_category_background">Background</string>
     <string name="memory_category_routine">Routine</string>
     <string name="memory_category_preferences">Preferences</string>
@@ -24,10 +25,12 @@
     <string name="memory_fact_options">Options for “%1$s”</string>
     <string name="memory_edit">Edit</string>
     <string name="memory_delete">Delete</string>
+    <!-- Title of the dialog that edits one fact Zoonk remembers about the learner. -->
     <string name="memory_edit_title">Edit memory</string>
     <string name="memory_edit_description">Say it the way it\'s true for you.</string>
     <string name="memory_edit_label">What Zoonk remembers</string>
     <string name="memory_download">Download my memory</string>
+    <!-- Everything Zoonk remembers about the learner, downloaded as one file. -->
     <string name="memory_download_description">Everything in your memory, as one file</string>
     <string name="memory_sensitive_note">Zoonk doesn\'t keep health, religion or other sensitive details unless you ask it to.</string>
     <string name="memory_updated">Memory updated:</string>

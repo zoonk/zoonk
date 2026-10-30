@@ -41,6 +41,7 @@
         <item quantity="one">%d question left</item>
         <item quantity="other">%d questions left</item>
     </plurals>
+    <!-- %d is how many right answers it takes to win the challenge, not how many are still missing. -->
     <plurals name="checkpoint_right_to_win">
         <item quantity="one">%d right to win</item>
         <item quantity="other">%d right to win</item>

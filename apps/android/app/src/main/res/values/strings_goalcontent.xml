@@ -175,6 +175,7 @@
     <string name="goalcontent_practice_daily_cap">That\'s all the bonus practice for today. Tomorrow\'s session picks this chapter up.</string>
     <string name="goalcontent_practice_nothing">Nothing to practice in this chapter yet.</string>
     <string name="goalcontent_practice_failed">That didn\'t work. Try again in a moment.</string>
+    <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->
     <string name="goalcontent_for_reference">For reference</string>
     <string name="goalcontent_chapter_summary">Chapter summary</string>
     <string name="goalcontent_skills">Skills</string>

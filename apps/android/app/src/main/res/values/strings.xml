@@ -42,7 +42,7 @@
     <string name="load_failed_try_again">Try again</string>
     <string name="suggestion_view">View</string>
     <string name="suggestion_save_failed">That didn\'t save. Try again.</string>
-    <!-- Under the daily time chips; opens a menu of every other daily study time. -->
+    <!-- Under the daily time chips; opens a menu of other amounts of daily study time, such as "45 min". Not a time of day. -->
     <string name="other_time">Other time…</string>
     <string name="disclosure_expanded">Expanded</string>
     <string name="disclosure_collapsed">Collapsed</string>

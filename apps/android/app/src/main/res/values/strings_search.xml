@@ -20,6 +20,7 @@
 
     <string name="search_continue">Continue today\'s session</string>
     <string name="search_take_mock">Take a mock exam</string>
+    <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
     <string name="search_take_mock_detail">Full, half or one subject</string>
     <string name="search_practice_mistakes">Practice your mistakes</string>
     <string name="search_ask_buddy">Ask %1$s…</string>
