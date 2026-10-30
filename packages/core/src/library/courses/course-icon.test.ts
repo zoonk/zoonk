@@ -5,7 +5,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { drawBlankImage, drawTestImage } from "../media/_test-utils/image-mocks";
-import { createCourseIcon } from "./course-icon";
+import { drawCourseIcon, saveCourseIcon } from "./course-icon";
 
 const ICON_URL = "https://blob.test/library/courses/immunology.webp";
 
@@ -27,7 +27,12 @@ function drawnIcon(
   return result as unknown as Awaited<ReturnType<typeof generateCourseIcon>>;
 }
 
-describe(createCourseIcon, () => {
+async function createCourseIcon(input: { courseId: string }) {
+  const icon = await drawCourseIcon(input);
+  return saveCourseIcon({ ...input, icon });
+}
+
+describe(drawCourseIcon, () => {
   beforeEach(() => {
     storeBlobUploads({ url: ICON_URL });
   });
@@ -63,6 +68,16 @@ describe(createCourseIcon, () => {
     });
 
     expect(vi.mocked(put).mock.calls[0]?.[0]).toBe(`library/courses/${course.slug}.webp`);
+  });
+
+  it("reuses a drawing after an upload fails", async () => {
+    const course = await courseFixture();
+    vi.mocked(generateCourseIcon).mockResolvedValue(drawnIcon(await drawTestImage()));
+    const icon = await drawCourseIcon({ courseId: course.id });
+    vi.mocked(put).mockRejectedValueOnce(new Error("upload failed"));
+    await expect(saveCourseIcon({ courseId: course.id, icon })).rejects.toThrow("upload failed");
+    await expect(saveCourseIcon({ courseId: course.id, icon })).resolves.toBe(ICON_URL);
+    expect(generateCourseIcon).toHaveBeenCalledOnce();
   });
 
   it("goes without an icon when every drawing is blank", async () => {

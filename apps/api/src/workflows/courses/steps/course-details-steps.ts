@@ -3,7 +3,7 @@ import {
   collectCourseContentTags,
 } from "@zoonk/core/cache/course-content";
 import { writeCourseDetails } from "@zoonk/core/library/courses/details";
-import { createCourseIcon } from "@zoonk/core/library/courses/icon";
+import { drawCourseIcon, saveCourseIcon } from "@zoonk/core/library/courses/icon";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 
 type CourseDetailsContext = {
@@ -31,12 +31,16 @@ export async function writeCourseDetailsStep(
   );
 }
 
-export async function createCourseIconStep(
+export async function drawCourseIconStep(context: CourseDetailsContext) {
+  "use step";
+  return drawCourseIcon({ analytics: toSharedAnalytics(context), courseId: context.courseId });
+}
+
+export async function saveCourseIconStep(
   context: CourseDetailsContext,
+  icon: Awaited<ReturnType<typeof drawCourseIcon>>,
 ): Promise<CourseContentWrite<string | null>> {
   "use step";
 
-  return collectCourseContentTags(() =>
-    createCourseIcon({ analytics: toSharedAnalytics(context), courseId: context.courseId }),
-  );
+  return collectCourseContentTags(() => saveCourseIcon({ courseId: context.courseId, icon }));
 }

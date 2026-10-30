@@ -79,23 +79,34 @@ function toIconProvenanceData(provenance: LibraryProvenance) {
 }
 
 /** Internal workflow bridge, not an app authorization boundary. */
-export async function createCourseIcon({
+export async function drawCourseIcon({
   analytics,
   courseId,
 }: {
   analytics?: IconAnalytics;
   courseId: string;
-}): Promise<string | null> {
+}): Promise<DrawnIcon | null> {
   const course = await prisma.course.findUnique({ where: { id: courseId } });
 
   if (!course || course.imageUrl || course.visibility !== "public" || course.targetLanguage) {
-    return course?.imageUrl ?? null;
+    return null;
   }
 
-  const icon = await drawIcon({ analytics, attempts: ICON_ATTEMPTS, course });
+  return drawIcon({ analytics, attempts: ICON_ATTEMPTS, course });
+}
 
-  if (!icon) {
-    return null;
+/** Internal workflow bridge, not an app authorization boundary. */
+export async function saveCourseIcon({
+  courseId,
+  icon,
+}: {
+  courseId: string;
+  icon: DrawnIcon | null;
+}): Promise<string | null> {
+  const course = await prisma.course.findUniqueOrThrow({ where: { id: courseId } });
+
+  if (course.imageUrl || !icon) {
+    return course.imageUrl;
   }
 
   const url = await uploadIcon({ image: icon.image, slug: course.slug });

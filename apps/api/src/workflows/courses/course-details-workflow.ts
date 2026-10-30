@@ -2,7 +2,11 @@ import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { claimRunToken, joinRun } from "../_shared/run-token";
-import { createCourseIconStep, writeCourseDetailsStep } from "./steps/course-details-steps";
+import {
+  drawCourseIconStep,
+  saveCourseIconStep,
+  writeCourseDetailsStep,
+} from "./steps/course-details-steps";
 
 export type CourseDetailsInput = {
   analytics?: ContentAnalytics;
@@ -14,6 +18,11 @@ export type CourseDetailsResult = {
   details: "failed" | "skipped" | "written";
   iconUrl: string | null;
 };
+
+async function createIcon(context: CourseDetailsInput & { workflowRunId: string }) {
+  const icon = await drawCourseIconStep(context);
+  return deliverCourseContent(saveCourseIconStep(context, icon));
+}
 
 export async function courseDetailsWorkflow(
   input: CourseDetailsInput,
@@ -39,7 +48,7 @@ export async function courseDetailsWorkflow(
   ]);
 
   const [icon] = await Promise.allSettled([
-    input.copyOnly ? Promise.resolve(null) : deliverCourseContent(createCourseIconStep(context)),
+    input.copyOnly ? Promise.resolve(null) : createIcon(context),
   ]);
 
   return {
@@ -57,9 +66,7 @@ export async function courseIconWorkflow(input: CourseDetailsInput): Promise<str
 
   const { workflowRunId } = getWorkflowMetadata();
 
-  const [icon] = await Promise.allSettled([
-    deliverCourseContent(createCourseIconStep({ ...input, workflowRunId })),
-  ]);
+  const [icon] = await Promise.allSettled([createIcon({ ...input, workflowRunId })]);
 
   return icon.status === "fulfilled" ? icon.value : null;
 }
