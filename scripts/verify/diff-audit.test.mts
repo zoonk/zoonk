@@ -104,6 +104,25 @@ describe("questioning a diff", () => {
     assert.deepEqual(names([loop, workflow]), ["Work per item 1", "Unpinned action 2"]);
   });
 
+  it("asks what a custom retry covers that the defaults miss", () => {
+    const step = file("apps/api/src/workflows/v2/lessons/steps/write.ts", [
+      "writeLessonStep.maxRetries = 1;",
+      "const written = await withAiRetry(() => write(input));",
+      'throw new RetryableError("Busy", { retryAfter: "1m" });',
+      "const options = { maxRetries: 5, model };",
+      "const MAX_ATTEMPTS = 3;",
+      "for(let attempt = 0; attempt < 3; attempt += 1) {",
+      "while (attempts < limit) {",
+      'response.headers.set("Retry-After", "5");',
+      "const wait = decision.retryAfterSeconds;",
+      "function getRetryAfter(headers: Headers) {",
+      "if (isRetryableTransferError(error)) {",
+      "for (const attempt of answers) {",
+    ]);
+
+    assert.deepEqual(names([step]), ["Custom retry 1,2,3,4,5,6,7"]);
+  });
+
   it("asks whether a migration is safe on production data", () => {
     const migration = file("packages/db/src/prisma/migrations/1_x/migration.sql", [
       'ALTER TABLE "goal" ADD COLUMN "focus" TEXT NOT NULL;',

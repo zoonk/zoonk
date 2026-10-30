@@ -16,4 +16,6 @@ export async function notifyCourseContentStep(tags: string[]): Promise<void> {
   }
 }
 
+// The default three retries all land within seconds, and nothing else sends this again: a short Main
+// outage would leave its course cache stale.
 notifyCourseContentStep.maxRetries = 30;

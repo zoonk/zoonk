@@ -106,6 +106,15 @@ export const ENGINEERING_RULES: Rule[] = [
     role: "engineering",
   },
   {
+    files: SERVER_SOURCE,
+    line: /\bmaxRetries\b|\bRetryableError\b|\b[A-Z_]*(?:RETRIES|ATTEMPTS)\b|\w*[Rr]etry(?!After|able)\w*\s*[(<]|\bfor\s*\(\s*let\s+\w*[Aa]ttempt|\bwhile\s*\([^)]*\b\w*[Aa]ttempt|["'](?:p-retry|async-retry)["']/u,
+    name: "Custom retry",
+    question:
+      "A Workflow step already retries a thrown error 3 times, and an AI call gets the AI SDK's retries and the Gateway's fallback models. What concrete failure do those defaults miss? If none, let the step throw (root `AGENTS.md`); if one, say it beside the code.",
+    role: "engineering",
+    side: "server",
+  },
+  {
     files: SOURCE,
     line: /\$transaction\(/u,
     name: "Transaction",

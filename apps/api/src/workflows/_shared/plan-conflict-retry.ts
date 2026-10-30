@@ -1,6 +1,7 @@
 import { sleep } from "workflow";
 import { repeatUntil } from "./repeat-until";
 
+/** Other runs can keep saving a goal's plan for minutes, so a step's quick default retries lose again. */
 const PLAN_CONFLICT_WAITS = ["5s", "15s", "45s", "2m", "2m"] as const;
 
 export type PlanStepOutcome<T> = { conflict: false; value: T } | { conflict: true };
