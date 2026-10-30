@@ -115,11 +115,15 @@ struct LessonStageView: View {
           }
         }
         .environment(\.isPaneSplit, spread != nil)
+        .environment(store.promptAudio)
         .onChange(of: pages != nil, initial: true) { _, isSpread in
           store.isSpread = isSpread
         }
       }
       .id(step.id)
+      .onChange(of: step.id, initial: true) {
+        store.promptAudio.enter()
+      }
       .task(id: step.id) {
         if step.hasExampleLineSlot {
           await store.loadExampleLine(stepId: step.id)

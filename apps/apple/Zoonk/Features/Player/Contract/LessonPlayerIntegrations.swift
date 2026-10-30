@@ -4,17 +4,24 @@ import SwiftUI
 // Each seam has a working default, so the player plays without the feature that owns it.
 
 /// A lesson screen gives its sounds its own owner (`owned(by:)`), so leaving it stops only them.
+/// `play` and `speak` return once the sound has played or was stopped.
 struct LessonAudio: Sendable {
   private var owner = "lesson"
-  private let playing: @MainActor @Sendable (URL, _ owner: String) async -> Void
+  private let playing: @MainActor @Sendable (URL, _ rate: Float, _ owner: String) async -> Void
   private let speaking:
-    (@MainActor @Sendable (_ text: String, _ language: String, _ owner: String) async -> Void)?
+    (
+      @MainActor @Sendable (
+        _ text: String, _ language: String, _ recording: URL?, _ rate: Float, _ owner: String
+      ) async -> Void
+    )?
   private let stopping: @MainActor @Sendable (_ owner: String) -> Void
 
   init(
-    play: @escaping @MainActor @Sendable (URL, _ owner: String) async -> Void,
+    play: @escaping @MainActor @Sendable (URL, _ rate: Float, _ owner: String) async -> Void,
     speak: (
-      @MainActor @Sendable (_ text: String, _ language: String, _ owner: String) async -> Void
+      @MainActor @Sendable (
+        _ text: String, _ language: String, _ recording: URL?, _ rate: Float, _ owner: String
+      ) async -> Void
     )?,
     stop: @escaping @MainActor @Sendable (_ owner: String) -> Void
   ) {
@@ -23,24 +30,36 @@ struct LessonAudio: Sendable {
     stopping = stop
   }
 
+  /// Slow enough to hear each sound, close enough to real speech to still sound like the word.
+  static let slowRate: Float = 0.7
+
+  /// Starts a recording and returns at once.
   static let system = LessonAudio(
-    play: { url, _ in SystemAudioPlayer.shared.play(url) },
+    play: { url, rate, _ in SystemAudioPlayer.shared.play(url, rate: rate) },
     speak: nil,
     stop: { _ in SystemAudioPlayer.shared.stop() })
 
-  /// Only on a tap. Without it, text without a recording has no sound button.
-  var speak: (@MainActor @Sendable (_ text: String, _ language: String) async -> Void)? {
+  /// Only on a tap. Reads text aloud, or plays its recording when it has one, reading the text when
+  /// the recording won't play. Without it, text without a recording has no sound button.
+  var speak:
+    (
+      @MainActor @Sendable (_ text: String, _ language: String, _ recording: URL?, _ rate: Float)
+        async -> Void
+    )?
+  {
     guard let speaking else {
       return nil
     }
 
     let owner = owner
-    return { text, language in await speaking(text, language, owner) }
+    return { text, language, recording, rate in
+      await speaking(text, language, recording, rate, owner)
+    }
   }
 
   @MainActor
-  func play(_ url: URL) async {
-    await playing(url, owner)
+  func play(_ url: URL, rate: Float = 1) async {
+    await playing(url, rate, owner)
   }
 
   /// A sound still loading never starts.
@@ -61,11 +80,11 @@ private final class SystemAudioPlayer {
   static let shared = SystemAudioPlayer()
   private var player: AVPlayer?
 
-  func play(_ url: URL) {
+  func play(_ url: URL, rate: Float) {
     try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
     let player = AVPlayer(url: url)
     self.player = player
-    player.play()
+    player.playImmediately(atRate: rate)
   }
 
   func stop() {

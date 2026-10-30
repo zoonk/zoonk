@@ -81,6 +81,7 @@ final class LessonPlayerStore {
   private var exampleLinesWriting: Task<Void, Never>?
   /// The device-graded answers being sent now, by screen, so finishing waits for them.
   private var saving: [String: Task<Void, Never>] = [:]
+  @ObservationIgnored let promptAudio = LessonPromptAudio()
 
   init(
     lessonId: String, studySessionId: String?, api: LessonPlayerAPI, cache: AppCache,

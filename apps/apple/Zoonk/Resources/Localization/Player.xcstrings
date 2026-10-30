@@ -2525,31 +2525,31 @@
         }
       }
     },
-    "Play" : {
-      "comment" : "Plays a word's or sentence's sound",
+    "Pause pronunciation" : {
+      "comment" : "Pauses a word's or sentence's sound",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abspielen"
+            "value" : "Aussprache pausieren"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reproducir"
+            "value" : "Pausar pronunciación"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Écouter"
+            "value" : "Mettre la prononciation en pause"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reproduzir"
+            "value" : "Pausar pronúncia"
           }
         }
       }
@@ -2637,6 +2637,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Toque"
+          }
+        }
+      }
+    },
+    "Play pronunciation" : {
+      "comment" : "Plays a word's or sentence's sound",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aussprache abspielen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproducir pronunciación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écouter la prononciation"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvir pronúncia"
           }
         }
       }

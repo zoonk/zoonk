@@ -4,9 +4,13 @@ import SwiftUI
 extension LessonAudio {
   static func voice(_ voice: VoiceServices) -> LessonAudio {
     LessonAudio(
-      play: { url, owner in await voice.player.play(.recording(url), owner: owner) },
-      speak: { text, language, owner in
-        await voice.player.play(.text(text, language: language), owner: owner)
+      play: { url, rate, owner in
+        await voice.player.play(.recording(url), rate: rate, owner: owner)
+      },
+      speak: { text, language, recording, rate, owner in
+        await voice.player.play(
+          .word(text, recording: recording, language: language), rate: rate, owner: owner,
+          fallback: recording == nil ? nil : (text, language))
       },
       stop: { owner in voice.player.stop(owner: owner) })
   }

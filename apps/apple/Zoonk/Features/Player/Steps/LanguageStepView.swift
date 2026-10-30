@@ -46,26 +46,106 @@ private struct ScreenChip: View {
   }
 }
 
+/// Main's prompt audio: a recording the screen is about (a word, a letter, a sentence to hear).
+/// It pauses when tapped again or on P, and once the learner has played one, the lesson's later
+/// prompts play on their own.
 struct LessonAudioButton: View {
   @Environment(\.lessonAudio) private var audio
+  @Environment(LessonPromptAudio.self) private var prompt: LessonPromptAudio?
 
   let url: String?
 
   var body: some View {
     if let url = url.flatMap(URL.init(string:)) {
+      let isPlaying = prompt?.playing == url
+
       Button {
-        Task { await audio.play(url) }
+        if let prompt {
+          prompt.toggle(url, audio: audio)
+        } else {
+          Task { await audio.play(url) }
+        }
       } label: {
         Label {
-          Text("Play", tableName: "Player", comment: "Plays a word's or sentence's sound")
+          if isPlaying {
+            Text(
+              "Pause pronunciation", tableName: "Player",
+              comment: "Pauses a word's or sentence's sound")
+          } else {
+            Text(
+              "Play pronunciation", tableName: "Player",
+              comment: "Plays a word's or sentence's sound"
+            )
+          }
         } icon: {
-          Image(systemName: "speaker.wave.2.fill")
+          Image(systemName: isPlaying ? "pause.fill" : "speaker.wave.2.fill")
         }
         .labelStyle(.iconOnly)
       }
       .buttonStyle(.bordered)
       .buttonBorderShape(.circle)
       .controlSize(.large)
+      .keyboardShortcut("p", modifiers: [])
+      .task(id: url) {
+        prompt?.autoplay(url, audio: audio)
+      }
+    }
+  }
+}
+
+/// Per lesson, above the layout, so folding or unfolding the screen neither stops nor replays its
+/// prompt. Main's `autoPlayAudio`: on after the learner's first play.
+@MainActor
+@Observable
+final class LessonPromptAudio {
+  private(set) var playing: URL?
+  @ObservationIgnored private var task: Task<Void, Never>?
+  @ObservationIgnored private var autoplays = false
+  @ObservationIgnored private var visit = 0
+  @ObservationIgnored private var autoplayedVisit: Int?
+
+  /// Another screen in view, whose sounds the lesson already stopped: its prompt may play on its own.
+  func enter() {
+    task?.cancel()
+    task = nil
+    playing = nil
+    visit += 1
+  }
+
+  func toggle(_ url: URL, audio: LessonAudio) {
+    if playing == url {
+      stop(audio: audio)
+    } else {
+      autoplays = true
+      autoplayedVisit = visit
+      play(url, audio: audio)
+    }
+  }
+
+  /// Once per visit to a screen, after the learner's first play.
+  func autoplay(_ url: URL, audio: LessonAudio) {
+    guard autoplays, autoplayedVisit != visit else { return }
+    autoplayedVisit = visit
+    play(url, audio: audio)
+  }
+
+  private func stop(audio: LessonAudio) {
+    guard playing != nil else { return }
+    task?.cancel()
+    task = nil
+    playing = nil
+    audio.stop()
+  }
+
+  private func play(_ url: URL, audio: LessonAudio) {
+    task?.cancel()
+    playing = url
+    task = Task {
+      await audio.play(url)
+
+      if !Task.isCancelled {
+        playing = nil
+      }
     }
   }
 }

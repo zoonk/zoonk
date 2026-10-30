@@ -81,7 +81,7 @@ private struct DialogueCanvas: View {
 
       if isChecked, let speak = audio.speak, let best = fields.replies.first(where: \.isBest) {
         Button {
-          Task { await speak(best.text, fields.language) }
+          Task { await speak(best.text, fields.language, nil, 1) }
         } label: {
           Label {
             Text(
@@ -135,7 +135,7 @@ private struct DialogueCanvas: View {
       if isThem {
         if let speak = audio.speak {
           Button {
-            Task { await speak(line.text, fields.language) }
+            Task { await speak(line.text, fields.language, nil, 1) }
           } label: {
             Label {
               Text(
