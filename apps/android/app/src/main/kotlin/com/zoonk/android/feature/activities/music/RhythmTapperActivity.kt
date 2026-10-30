@@ -154,6 +154,7 @@ private fun RhythmTapperActivity(props: ActivityProps) {
         } else {
             RhythmPractice(props, fields, run) {
                 run.stop()
+                check.stop()
                 props.onAnswerChange(null)
                 isCheckingSound = true
             }
