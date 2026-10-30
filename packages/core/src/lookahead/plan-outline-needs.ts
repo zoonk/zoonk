@@ -26,7 +26,7 @@ type PlanGoal = Pick<
 
 const DEFAULT_LEVEL: CourseBandNeed["level"] = "beginner";
 
-async function getHorizon({ days, goalId }: { days: number; goalId: string }): Promise<Date> {
+export async function getOutlineHorizon({ days, goalId }: { days: number; goalId: string }) {
   const goal = await prisma.goal.findUnique({ select: { timezone: true }, where: { id: goalId } });
   const timeZone = getAnswerTimeZone({ goal });
 
@@ -150,7 +150,7 @@ export async function listPlanOutlineNeeds({
   days: number;
   goalId: string;
 }): Promise<PlanOutlineNeed[]> {
-  const until = await getHorizon({ days, goalId });
+  const until = await getOutlineHorizon({ days, goalId });
   const standIns = await loadStandIns({ goalId, until });
 
   if (!standIns || standIns.skillIds.length === 0) {
@@ -325,7 +325,7 @@ export async function listSoonStandInCourseIds({
   days: number;
   goalId: string;
 }): Promise<string[]> {
-  const until = await getHorizon({ days, goalId });
+  const until = await getOutlineHorizon({ days, goalId });
   const standIns = await loadStandIns({ goalId, until });
 
   if (!standIns) {
@@ -345,7 +345,7 @@ export async function listPlanSkillIdsWithin({
   days: number;
   goalId: string;
 }): Promise<string[]> {
-  const until = await getHorizon({ days, goalId });
+  const until = await getOutlineHorizon({ days, goalId });
 
   const items = await prisma.planItem.findMany({
     distinct: ["skillId"],

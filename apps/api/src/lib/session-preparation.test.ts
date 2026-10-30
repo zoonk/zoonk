@@ -181,6 +181,89 @@ async function placedGuestFixture({
 
 type PlacedGuest = Awaited<ReturnType<typeof placedGuestFixture>>;
 
+/** The course wrote one lesson of the plan's topic and the learner studied it, so today holds only stand-ins of it. */
+async function partlyWrittenTopicFixture({ guest = true }: { guest?: boolean } = {}) {
+  const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
+  const yesterday = new Date(today.getTime() - 86_400_000);
+
+  const [user, course, chapter, topic] = await Promise.all([
+    userFixture(),
+    courseFixture({ outlineStatus: "completed" }),
+    libraryChapterFixture({ level: "beginner" }),
+    skillFixture({ level: "beginner" }),
+  ]);
+
+  const lesson = await libraryLessonFixture({ homeChapterId: chapter.id });
+
+  const [goal] = await Promise.all([
+    goalFixture({
+      details: { answered: ["level", "placement"], level: "A1" },
+      kind: "language",
+      language: "en",
+      primaryCourseId: course.id,
+      targetLanguage: "it",
+      timezone: TIME_ZONE,
+      userId: user.id,
+    }),
+    prisma.user.update({ data: { isAnonymous: guest }, where: { id: user.id } }),
+    courseChapterFixture({ chapterId: chapter.id, courseId: course.id, level: "beginner" }),
+    chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
+    lessonSkillFixture({ lessonId: lesson.id, skillId: topic.id }),
+  ]);
+
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [{ milestone: null, name: "Italiano" }],
+      skills: [
+        {
+          area: null,
+          courseIds: [course.id],
+          lessons: 5,
+          name: topic.name,
+          phase: 0,
+          skillId: topic.id,
+          weight: null,
+        },
+      ],
+    },
+  });
+
+  await Promise.all([
+    planItemFixture({
+      chapterId: chapter.id,
+      completedAt: yesterday,
+      lessonId: lesson.id,
+      planId: plan.id,
+      position: 0,
+      scheduledFor: yesterday,
+      skillId: topic.id,
+      status: "done",
+    }),
+    planItemFixture({ planId: plan.id, position: 1, scheduledFor: today, skillId: topic.id }),
+  ]);
+
+  if (guest) {
+    mockGuestSession(user.id);
+  } else {
+    mockSession(user.id);
+  }
+
+  return { course, goal, topic, user };
+}
+
+type PartlyWrittenTopic = Awaited<ReturnType<typeof partlyWrittenTopicFixture>>;
+
+async function readEmptyDay({ goal }: { goal: { id: string } }) {
+  const view = await getTodayView({ goalId: goal.id, timeZone: TIME_ZONE });
+
+  if (view.status !== "ready" || !view.today.session) {
+    throw new Error(`Today did not read for goal ${goal.id}`);
+  }
+
+  return view.today.session.emptyDay;
+}
+
 async function readCourse({ course }: PlacedGuest) {
   return prisma.course.findUniqueOrThrow({
     select: { outlineRunId: true, outlineStatus: true, updatedAt: true },
@@ -199,12 +282,14 @@ async function isDayComing({ goal }: PlacedGuest): Promise<boolean> {
   return session.lessonsComing || session.emptyDay === "lessonsComing";
 }
 
-async function startSessionFor({ goal, user }: PlacedGuest) {
+type GoalOwner = { goal: { id: string }; user: { id: string } };
+
+async function startSessionFor({ goal, user }: GoalOwner) {
   const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
   return startSessionPreparation({ sessionId: session.id });
 }
 
-async function scheduleSessionFor({ goal, user }: PlacedGuest) {
+async function scheduleSessionFor({ goal, user }: GoalOwner) {
   const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
   return scheduleSessionPreparation(session.id);
 }
@@ -369,6 +454,50 @@ describe("preparing a guest's lessons", () => {
       ]);
     },
   );
+
+  it.each([
+    [
+      "asked for the goal",
+      (topic: PartlyWrittenTopic) => startGoalPreparation({ goalId: topic.goal.id }),
+    ],
+    ["after a plan write", (topic: PartlyWrittenTopic) => scheduleGoalPreparation(topic.goal.id)],
+    ["asked for a session", startSessionFor],
+    ["after a session write", scheduleSessionFor],
+  ])(
+    "writes the next chapter of a topic the course wrote only part of, %s",
+    async (_when, prepare: (topic: PartlyWrittenTopic) => Promise<unknown>) => {
+      const topic = await partlyWrittenTopicFixture();
+
+      await prepare(topic);
+      await settle();
+
+      expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
+        expect.objectContaining({
+          bands: [
+            expect.objectContaining({
+              extend: [
+                expect.objectContaining({ skill: expect.objectContaining({ id: topic.topic.id }) }),
+              ],
+              level: "beginner",
+            }),
+          ],
+          courseId: topic.course.id,
+          forGuest: true,
+        }),
+      ]);
+    },
+  );
+
+  it("keeps the day's lessons coming after a guest asks for a partly written topic's lessons", async () => {
+    const topic = await partlyWrittenTopicFixture();
+
+    await expect(readEmptyDay(topic)).resolves.toBe("lessonsToPrepare");
+
+    await startGoalPreparation({ goalId: topic.goal.id });
+    await settle();
+
+    await expect(readEmptyDay(topic)).resolves.toBe("lessonsComing");
+  });
 });
 
 describe("preparing an account's lessons", () => {

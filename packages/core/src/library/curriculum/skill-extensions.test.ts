@@ -12,6 +12,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { OUTLINE_AHEAD_DAYS } from "../../lookahead/outline-ahead";
 import { unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
@@ -202,7 +203,9 @@ describe("skill extensions", () => {
   it("asks for the next chapter of a skill whose stand-in is due soon, in its course and band", async () => {
     const { chapter, course, goal, skill } = await setup();
 
-    await expect(listSkillExtensions({ goalId: goal.id, timeZone: "UTC" })).resolves.toStrictEqual([
+    await expect(
+      listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id }),
+    ).resolves.toStrictEqual([
       {
         bands: [
           {
@@ -252,7 +255,7 @@ describe("skill extensions", () => {
       .filter((item) => (item.scheduledFor ?? NOW) <= new Date("2020-10-12T00:00:00Z"))
       .map((item) => item.skillId);
 
-    const requests = await listSkillExtensions({ goalId: goal.id, timeZone: "UTC" });
+    const requests = await listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id });
 
     expect(requests.map((request) => request.courseId)).toStrictEqual([course.id]);
     expect(requests[0]?.bands).toHaveLength(1);
@@ -324,7 +327,7 @@ describe("skill extensions", () => {
       items.filter((item) => item.kind === "lesson" && !item.lessonId).map((item) => item.skillId),
     ).toStrictEqual(skills.map((skill) => skill.id));
 
-    const requests = await listSkillExtensions({ goalId: goal.id, timeZone: "UTC" });
+    const requests = await listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id });
 
     expect(
       requests[0]?.bands[0]?.extend?.map((extension) => [extension.skill.id, extension.lessons]),
@@ -340,9 +343,9 @@ describe("skill extensions", () => {
 
     expect(items.filter((item) => item.kind === "lesson" && !item.lessonId)).toStrictEqual([]);
 
-    await expect(listSkillExtensions({ goalId: goal.id, timeZone: "UTC" })).resolves.toStrictEqual(
-      [],
-    );
+    await expect(
+      listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id }),
+    ).resolves.toStrictEqual([]);
   });
 
   it("asks for nothing while the course's outline is being written", async () => {
@@ -350,17 +353,17 @@ describe("skill extensions", () => {
 
     await prisma.course.update({ data: { outlineStatus: "running" }, where: { id: course.id } });
 
-    await expect(listSkillExtensions({ goalId: goal.id, timeZone: "UTC" })).resolves.toStrictEqual(
-      [],
-    );
+    await expect(
+      listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id }),
+    ).resolves.toStrictEqual([]);
   });
 
   it("waits while the stand-in is more than two weeks away", async () => {
     const { goal } = await setup({ dailyMinutes: 5 });
 
-    await expect(listSkillExtensions({ goalId: goal.id, timeZone: "UTC" })).resolves.toStrictEqual(
-      [],
-    );
+    await expect(
+      listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id }),
+    ).resolves.toStrictEqual([]);
   });
 
   it("sizes the next chapter to the plan's stand-in, capped, after the chapters so far", async () => {

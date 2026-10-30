@@ -1,6 +1,11 @@
-import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
-import { outlinePlanAhead, whileLessonsAsked } from "../goals/goal-outlines";
+import {
+  listPlanOutlines,
+  startAll,
+  startPlanOutline,
+  whileLessonsAsked,
+} from "../goals/goal-outlines";
+import { readGoalLookaheadStep } from "../goals/steps/goal-lookahead-steps";
 
 export type GuestOutlineInput = {
   analytics: ContentAnalytics;
@@ -15,12 +20,18 @@ export async function guestOutlineWorkflow({
 }: GuestOutlineInput) {
   "use workflow";
 
-  const { workflowRunId } = getWorkflowMetadata();
-
   await whileLessonsAsked({
     goalId,
     lessonsAskedAt,
-    run: (started) =>
-      outlinePlanAhead({ context: { analytics, workflowRunId }, forGuest: true, goalId, started }),
+    run: async (started) => {
+      const { outlineDays } = await readGoalLookaheadStep(goalId);
+      const outlines = await listPlanOutlines({ days: outlineDays, goalId });
+
+      await startAll(
+        outlines.map((outline) =>
+          startPlanOutline({ analytics, forGuest: true, outline, started }),
+        ),
+      );
+    },
   });
 }

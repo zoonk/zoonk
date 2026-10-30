@@ -1,5 +1,5 @@
 import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
-import { OUTLINE_AHEAD_DAYS, OUTLINE_SOON_DAYS } from "@zoonk/core/lookahead/outline-ahead";
+import { OUTLINE_AHEAD_DAYS } from "@zoonk/core/lookahead/outline-ahead";
 import { type SessionPreparation } from "@zoonk/core/lookahead/session-preparation";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { start } from "workflow/api";
@@ -7,19 +7,18 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { type PlanStepOutcome, retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken } from "../_shared/run-token";
-import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
-import { startAll, whileLessonsAsked } from "../goals/goal-outlines";
+import {
+  listPlanOutlines,
+  startAll,
+  startPlanOutline,
+  whileLessonsAsked,
+} from "../goals/goal-outlines";
 import { preparePlacementItems, preparePlacementWeekItems } from "../goals/placement-items";
 import {
   listLessonFieldItemTargetsStep,
   prepareFieldItemsStep,
   readGoalField,
 } from "../goals/steps/field-items-steps";
-import {
-  listPlanOutlineNeedsStep,
-  listSoonStandInCourseIdsStep,
-  readPlanFirstSkillStep,
-} from "../goals/steps/goal-lookahead-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { prepareLanguageCallsStep } from "./steps/language-call-steps";
 import {
@@ -32,7 +31,6 @@ import {
   createSessionGenerationManifestStep,
   listSessionPreparationStep,
 } from "./steps/session-preparation-steps";
-import { listSkillExtensionsStep } from "./steps/skill-extension-steps";
 
 export type ClaimQuestions = {
   format: "multipleChoice" | "trueFalse";
@@ -97,17 +95,12 @@ async function startLessonWork({
     return input.lessonsAskedAt ? { conflict: true } : { conflict: false, value: null };
   }
 
-  const [preparation, extensions, outlines, soon, firstSkillId] = await Promise.all([
+  const [preparation, outlines] = await Promise.all([
     listSessionPreparationStep(input),
-    listSkillExtensionsStep(input),
-    listPlanOutlineNeedsStep({ days: OUTLINE_AHEAD_DAYS, goalId: input.goalId }),
-    listSoonStandInCourseIdsStep({ days: OUTLINE_SOON_DAYS, goalId: input.goalId }),
-    readPlanFirstSkillStep(input.goalId),
+    listPlanOutlines({ days: OUTLINE_AHEAD_DAYS, goalId: input.goalId }),
   ]);
 
-  const courseRequests = mergeCourseRequests([...extensions, ...outlines]);
   const { forExam, laterLessonIds, lessonIds } = preparation;
-  const soonCourseIds = new Set(soon);
 
   const manifest = await createSessionGenerationManifestStep({
     goalId: input.goalId,
@@ -136,45 +129,10 @@ async function startLessonWork({
           { analytics, forExam, lessonId, planGoalId: input.goalId, planManifest, wait: "later" },
         ]),
       ),
-    ...courseRequests.map(async (request) => {
-      await start(courseOutlineWorkflow, [
-        {
-          ...request,
-          analytics,
-          ...getOutlineWait({ courseId: request.courseId, firstSkillId, soonCourseIds }),
-        },
-      ]);
-
-      started.push(request.courseId);
-    }),
+    ...outlines.map((outline) => startPlanOutline({ analytics, outline, started })),
   ]);
 
   return { conflict: false, value: preparation };
-}
-
-function getOutlineWait({
-  courseId,
-  firstSkillId,
-  soonCourseIds,
-}: {
-  courseId: string;
-  firstSkillId: string | null;
-  soonCourseIds: ReadonlySet<string>;
-}): { background: boolean; waitedSkillId?: string } {
-  if (!soonCourseIds.has(courseId)) {
-    return { background: true };
-  }
-
-  return firstSkillId ? { background: false, waitedSkillId: firstSkillId } : { background: false };
-}
-
-type CourseRequest = Awaited<ReturnType<typeof listPlanOutlineNeedsStep>>[number];
-
-function mergeCourseRequests(requests: readonly CourseRequest[]): CourseRequest[] {
-  return [...Map.groupBy(requests, (request) => request.courseId).values()].flatMap(
-    ([first, ...rest]) =>
-      first ? [{ ...first, bands: [...first.bands, ...rest.flatMap((item) => item.bands)] }] : [],
-  );
 }
 
 function waitForWrittenLessons(lessonIds: string[]): Promise<number> {

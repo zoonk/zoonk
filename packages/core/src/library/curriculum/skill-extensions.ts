@@ -1,11 +1,8 @@
 import "server-only";
 import { type CourseLevel, type Goal, type LibraryVisibility, prisma } from "@zoonk/db";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { OUTLINE_AHEAD_DAYS } from "../../lookahead/outline-ahead";
-import { toPlanCourseScope } from "../../lookahead/plan-outline-needs";
+import { getOutlineHorizon, toPlanCourseScope } from "../../lookahead/plan-outline-needs";
 import { goalUsesTools } from "../../plans/_utils/plan-tools";
 import { loadGoalPlannerLessons } from "../../plans/_utils/planner-lessons";
-import { addDays } from "../../plans/planner/plan-calendar";
 import { type PlanGraphSkill, parsePlanGraph } from "../../plans/planner/plan-state";
 import { getStandInLessons } from "../../plans/planner/plan-units";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
@@ -167,9 +164,7 @@ export async function planSkillExtensions({
   return extensions.flatMap((extension) => planExtension({ extension, placements }));
 }
 
-async function loadSoonStandInSkillIds({ goalId, timeZone }: { goalId: string; timeZone: string }) {
-  const today = getDateInTimeZone({ date: new Date(), timeZone });
-
+async function loadSoonStandInSkillIds({ goalId, until }: { goalId: string; until: Date }) {
   const items = await prisma.planItem.findMany({
     distinct: ["skillId"],
     select: { skillId: true },
@@ -178,7 +173,7 @@ async function loadSoonStandInSkillIds({ goalId, timeZone }: { goalId: string; t
       kind: "lesson",
       lessonId: null,
       plan: { goalId },
-      scheduledFor: { lte: addDays(today, OUTLINE_AHEAD_DAYS) },
+      scheduledFor: { lte: until },
       skillId: { not: null },
       status: "todo",
     },
@@ -254,13 +249,13 @@ function getSkillCourseId({
   return skill.courseIds?.[0] ?? goal.primaryCourseId;
 }
 
-/** Internal workflow bridge: the goal must come from the learner's own session. */
+/** Internal workflow bridge: authorize goalId first. */
 export async function listSkillExtensions({
+  days,
   goalId,
-  timeZone,
 }: {
+  days: number;
   goalId: string;
-  timeZone: string;
 }): Promise<CourseExtensionRequest[]> {
   const goal = await prisma.goal.findUnique({
     select: {
@@ -283,7 +278,8 @@ export async function listSkillExtensions({
   }
 
   const graph = parsePlanGraph(goal.plan.graph);
-  const soon = await loadSoonStandInSkillIds({ goalId, timeZone });
+  const until = await getOutlineHorizon({ days, goalId });
+  const soon = await loadSoonStandInSkillIds({ goalId, until });
   const graphSkills = graph.skills.filter((skill) => soon.has(skill.skillId));
 
   const courseIds = [

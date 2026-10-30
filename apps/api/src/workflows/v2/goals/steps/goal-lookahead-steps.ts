@@ -4,6 +4,10 @@ import {
   setGoalPrimaryCourse,
 } from "@zoonk/core/library/curriculum/goal-primary-course";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import {
+  type CourseExtensionRequest,
+  listSkillExtensions,
+} from "@zoonk/core/library/curriculum/skill-extensions";
 import { type LearnerLookahead, getGoalLookahead } from "@zoonk/core/lookahead/learner-lookahead";
 import { endLessonsAsk } from "@zoonk/core/lookahead/lessons-ask";
 import {
@@ -136,6 +140,15 @@ export async function listPlanOutlineNeedsStep(input: {
   "use step";
 
   return listPlanOutlineNeeds(input);
+}
+
+export async function listSkillExtensionsStep(input: {
+  days: number;
+  goalId: string;
+}): Promise<CourseExtensionRequest[]> {
+  "use step";
+
+  return listSkillExtensions(input);
 }
 
 export async function endLessonsAskStep(input: {

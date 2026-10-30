@@ -1,15 +1,21 @@
 import { type CourseBandNeed, type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import { OUTLINE_SOON_DAYS } from "@zoonk/core/lookahead/outline-ahead";
 import { start } from "workflow/api";
+import { type ContentAnalytics } from "../_shared/content-analytics";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { type GoalRunContext } from "./goal-run-context";
 import {
   endLessonsAskStep,
   listPlanOutlineNeedsStep,
+  listSkillExtensionsStep,
+  listSoonStandInCourseIdsStep,
   readGoalLookaheadStep,
   readPlanFirstSkillStep,
 } from "./steps/goal-lookahead-steps";
 
 type OutlineCourse = { bands: CourseBandNeed[]; courseId: string; scope: CurriculumScope };
+
+type PlanOutline = OutlineCourse & { background: boolean; waitedSkillId?: string };
 
 /** Waits for every start, so the outlines that did start count, then fails like the first that didn't. */
 export async function startAll(starts: readonly Promise<unknown>[]): Promise<void> {
@@ -96,4 +102,65 @@ export async function outlinePlanAhead({
   ]);
 
   await startOutlines({ context, courses: needs, firstSkillId, forGuest, started });
+}
+
+function getOutlineWait({
+  courseId,
+  firstSkillId,
+  soonCourseIds,
+}: {
+  courseId: string;
+  firstSkillId: string | null;
+  soonCourseIds: ReadonlySet<string>;
+}): { background: boolean; waitedSkillId?: string } {
+  if (!soonCourseIds.has(courseId)) {
+    return { background: true };
+  }
+
+  return firstSkillId ? { background: false, waitedSkillId: firstSkillId } : { background: false };
+}
+
+function mergeCourseRequests(requests: readonly OutlineCourse[]): OutlineCourse[] {
+  return [...Map.groupBy(requests, (request) => request.courseId).values()].flatMap(
+    ([first, ...rest]) =>
+      first ? [{ ...first, bands: [...first.bands, ...rest.flatMap((item) => item.bands)] }] : [],
+  );
+}
+
+/** Untaught bands and partly written topics' next chapters the plan reaches within `days`; only today's are written in the foreground. */
+export async function listPlanOutlines({
+  days,
+  goalId,
+}: {
+  days: number;
+  goalId: string;
+}): Promise<PlanOutline[]> {
+  const [extensions, needs, soon, firstSkillId] = await Promise.all([
+    listSkillExtensionsStep({ days, goalId }),
+    listPlanOutlineNeedsStep({ days, goalId }),
+    listSoonStandInCourseIdsStep({ days: OUTLINE_SOON_DAYS, goalId }),
+    readPlanFirstSkillStep(goalId),
+  ]);
+
+  const soonCourseIds = new Set(soon);
+
+  return mergeCourseRequests([...extensions, ...needs]).map((course) => ({
+    ...course,
+    ...getOutlineWait({ courseId: course.courseId, firstSkillId, soonCourseIds }),
+  }));
+}
+
+export async function startPlanOutline({
+  analytics,
+  forGuest,
+  outline,
+  started,
+}: {
+  analytics: ContentAnalytics;
+  forGuest?: boolean;
+  outline: PlanOutline;
+  started: string[];
+}) {
+  await start(courseOutlineWorkflow, [{ ...outline, analytics, forGuest }]);
+  started.push(outline.courseId);
 }
