@@ -86,7 +86,13 @@ export async function prepareSelectedPlanSave({
 
   if (!computed) {
     const retained = candidate
-      ? await prepareRetainedPlanWrite({ computed: candidate, context })
+      ? await prepareRetainedPlanWrite({
+          computed: candidate,
+          context: {
+            ...context,
+            plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 },
+          },
+        })
       : null;
 
     return {

@@ -57,6 +57,8 @@ async function saved(planId: string) {
 }
 
 function assertFresh(plan: Awaited<ReturnType<typeof saved>>, userId: string) {
+  expect(plan.summary).toMatchObject({ basis: { layoutInputVersion: plan.inputVersion } });
+
   expect(
     readFreshPlanSummary({
       basis: {
