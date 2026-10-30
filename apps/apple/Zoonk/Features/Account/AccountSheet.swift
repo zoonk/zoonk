@@ -27,6 +27,7 @@ struct AccountSheet: View {
   @Environment(SessionStore.self) private var session
   @State private var isAppStoreSubscriptionManagementPresented = false
   @State private var isGooglePlayManagementPresented = false
+  @State private var isFeedbackPresented = false
   @State private var path = [AccountDestination]()
   @State private var isBeside = false
 
@@ -36,8 +37,7 @@ struct AccountSheet: View {
         accountContent(sectionOpen: AccountSectionOpen(shown: path.first, open: show))
       }
     } content: { isBeside in
-      // One stack in both layouts, so a page keeps what the learner typed or opened on it when
-      // the list comes or goes; beside the list, a section is always open over its root.
+      // Beside the list a section is always open over this root.
       NavigationStack(path: $path) {
         Group {
           if isBeside {
@@ -62,8 +62,8 @@ struct AccountSheet: View {
         openDefaultSectionBeside()
       }
     }
-    .onChange(of: session.state) { _, state in
-      reconcileNavigation(state)
+    .onChange(of: session.state) { previous, state in
+      reconcileNavigation(from: previous, to: state)
     }
     .onChange(of: path) {
       // Closing a deletion's result leaves nothing of the deleted account to show.
@@ -97,6 +97,9 @@ struct AccountSheet: View {
           "Explains how to manage a Google-owned subscription without linking to external purchasing"
       )
     }
+    .sheet(isPresented: $isFeedbackPresented) {
+      FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "account-menu"))
+    }
     .task {
       await session.reconcileSynchronizedCredential()
     }
@@ -119,7 +122,6 @@ struct AccountSheet: View {
     return isGuest ? !signsIn : !account.needsProfileSetup
   }
 
-  /// Beside the list a section replaces the open one in place, as in a sidebar.
   private func show(_ section: AccountDestination) {
     withTransaction(\.disablesAnimations, true) {
       path = [section]
@@ -133,8 +135,6 @@ struct AccountSheet: View {
     }
   }
 
-  /// A section beside the list is the page itself: it closes the sheet, with no way back to the
-  /// stack's empty root.
   private func page(_ destination: AccountDestination, isBeside: Bool) -> some View {
     let isSection = if case .deleteAccount = destination { false } else { true }
 
@@ -222,6 +222,7 @@ struct AccountSheet: View {
         SettingsHubView(
           account: account,
           sectionOpen: sectionOpen,
+          sendFeedback: { isFeedbackPresented = true },
           manageAppStoreSubscription: { isAppStoreSubscriptionManagementPresented = true },
           showGooglePlayManagement: { isGooglePlayManagementPresented = true }
         )
@@ -265,9 +266,14 @@ struct AccountSheet: View {
     Text("Account", tableName: "Account", comment: "Account sheet navigation title")
   }
 
-  /// Leaves a local deletion result visible until the user dismisses it.
-  private func reconcileNavigation(_ state: AccountSessionState) {
+  /// Leaves a local deletion result visible until the user dismisses it, and the open pages to
+  /// the same learner's updated account.
+  private func reconcileNavigation(
+    from previous: AccountSessionState, to state: AccountSessionState
+  ) {
     switch state {
+    case .signedIn(let account) where previous.account?.user.id == account.user.id:
+      break
     case .signedIn:
       path.removeAll()
     case .signedOut, .unavailable:
@@ -289,12 +295,12 @@ private struct SettingsHubView: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
-  @State private var isFeedbackPresented = false
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @ScaledMetric(relativeTo: .body) private var avatarSize = 40.0
 
   let account: CurrentAccount
   let sectionOpen: AccountSectionOpen?
+  let sendFeedback: () -> Void
   let manageAppStoreSubscription: () -> Void
   let showGooglePlayManagement: () -> Void
 
@@ -366,9 +372,7 @@ private struct SettingsHubView: View {
         }
         .foregroundStyle(.primary)
 
-        Button {
-          isFeedbackPresented = true
-        } label: {
+        Button(action: sendFeedback) {
           Text(
             "Send feedback", tableName: "Account",
             comment: "Settings row that opens the form to write to Zoonk")
@@ -402,9 +406,6 @@ private struct SettingsHubView: View {
       }
     }
     .loads(settings.preferences, settings.memory, refreshable: false)
-    .sheet(isPresented: $isFeedbackPresented) {
-      FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "account-menu"))
-    }
   }
 
   private var isGuest: Bool {

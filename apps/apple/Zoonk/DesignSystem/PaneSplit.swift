@@ -25,9 +25,7 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
     // A reader, so the panes are chosen in the same layout pass: a wide screen never shows the
     // one-column version first.
     GeometryReader { proxy in
-      let panes =
-        dynamicTypeSize.isAccessibilitySize
-        ? nil : PaneSpace(proxy).panes(primaryShare: primaryShare)
+      let panes = PaneSpace(proxy).panes(primaryShare: primaryShare, at: dynamicTypeSize)
 
       Group {
         if let panes {
@@ -68,9 +66,7 @@ struct PaneBeside<Pane: View, Content: View>: View {
 
   var body: some View {
     GeometryReader { proxy in
-      let panes =
-        isAvailable && !dynamicTypeSize.isAccessibilitySize
-        ? PaneSpace(proxy).panes(primaryShare: 0.5) : nil
+      let panes = isAvailable ? PaneSpace(proxy).panes(primaryShare: 0.5, at: dynamicTypeSize) : nil
 
       HStack(spacing: 0) {
         if let panes {
@@ -129,6 +125,11 @@ struct PaneSpace: Equatable {
       hinge = region.map { $0.frame.minX...$0.frame.maxX }
       fold = region?.isActive == true ? hinge : nil
     }
+  }
+
+  /// One column at accessibility text sizes, which the panes' phone layouts can't fit two of.
+  func panes(primaryShare: CGFloat, at dynamicTypeSize: DynamicTypeSize) -> Panes? {
+    dynamicTypeSize.isAccessibilitySize ? nil : panes(primaryShare: primaryShare)
   }
 
   /// Decided on the shares, so the hinge never collapses the panes; where there's a hinge, they meet
