@@ -32,6 +32,7 @@
 - “card”: “Karte”, not “Lernkarte”
 - “in a row” (right answers in a streak): “hintereinander”, not “in Folge”
 - “again”, including “Retry” and “Rematch”: “noch einmal”, not “erneut”
+- “longer than usual” (a wait): “länger als üblich”, not “länger als sonst”
 - “Ask about …” (to the buddy): “Frag etwas zu …”
 - “tap” (a beat the learner taps in a rhythm activity): “Schlag”, never “Tipp”
 - “examiner” / “another candidate” (the AI's roles in a speaking exam): “prüfende Person” / “andere teilnehmende Person”

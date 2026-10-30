@@ -5330,7 +5330,7 @@ msgstr "Vamos descobrir seu nível em {language}"
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "OAt3qi"
 msgid "About {time} of reading, listening and one sentence out loud, so your plan starts at your level."
-msgstr "São cerca de {time} de leitura e escuta, e uma frase em voz alta, para seu plano começar no seu nível."
+msgstr "Cerca de {time} para ler, escutar e falar uma frase em voz alta, para seu plano começar no seu nível."
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "Lqi6Xz"
@@ -9205,12 +9205,12 @@ msgstr "Ex.: relatórios, testes A/B"
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "9pdAsn"
 msgid "The days you picked can't cover everything in depth by your date. More study days would help."
-msgstr "Os dias que você escolheu não bastam para estudar tudo a fundo até a sua data. Mais dias de estudo ajudariam."
+msgstr "Com os dias que você escolheu, não dá para estudar tudo a fundo até a data definida. Mais dias de estudo ajudariam."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "xCMWWU"
 msgid "Covering everything in depth by your date takes {time} a day on the days you picked. More study days bring that down."
-msgstr "Para estudar tudo a fundo até a sua data, você precisa de {time} por dia nos dias que escolheu. Mais dias de estudo diminuem esse tempo."
+msgstr "Para estudar tudo a fundo até a data definida, você precisa de {time} por dia nos dias que escolheu. Mais dias de estudo reduzem esse tempo."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "YNFEUo"
@@ -9330,7 +9330,7 @@ msgstr "Esta meta fica com {main} por dia e sua outra meta com {other}."
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "L1otxC"
 msgid "This goal gets {main} a day and your other goals {other} together."
-msgstr "Esta meta fica com {main} por dia e suas outras metas, juntas, com {other}."
+msgstr "Esta meta fica com {main} por dia e suas outras metas com {other} no total."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "lOJOQa"

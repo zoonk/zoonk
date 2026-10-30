@@ -5330,7 +5330,7 @@ msgstr "Veamos tu nivel de {language}"
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "OAt3qi"
 msgid "About {time} of reading, listening and one sentence out loud, so your plan starts at your level."
-msgstr "Unos {time} de lectura, escucha y una frase en voz alta para que tu plan empiece en tu nivel."
+msgstr "En aproximadamente {time}, leerás, escucharás y dirás una frase en voz alta para que tu plan empiece a tu nivel."
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "Lqi6Xz"
@@ -9205,12 +9205,12 @@ msgstr "Por ejemplo, informes, pruebas A/B"
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "9pdAsn"
 msgid "The days you picked can't cover everything in depth by your date. More study days would help."
-msgstr "Los días que elegiste no alcanzan para abarcarlo todo en profundidad antes de tu fecha. Más días de estudio ayudarían."
+msgstr "Con los días que has elegido no da tiempo a estudiarlo todo a fondo para la fecha que has fijado. Añadir más días de estudio ayudaría."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "xCMWWU"
 msgid "Covering everything in depth by your date takes {time} a day on the days you picked. More study days bring that down."
-msgstr "Para abarcarlo todo en profundidad antes de tu fecha, hace falta dedicar {time} al día en los días que elegiste. Más días de estudio reducen ese tiempo."
+msgstr "Estudiarlo todo a fondo para la fecha que has fijado requiere {time} al día los días que has elegido. Añadir más días de estudio reduce ese tiempo."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "YNFEUo"
@@ -9325,12 +9325,12 @@ msgstr "No hemos podido calcular cuándo terminarías."
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "AHugH9"
 msgid "This goal gets {main} a day and your other goal {other}."
-msgstr "Este objetivo recibe {main} al día y tu otro objetivo, {other}."
+msgstr "Dedicas {main} al día a este objetivo y {other} a tu otro objetivo."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "L1otxC"
 msgid "This goal gets {main} a day and your other goals {other} together."
-msgstr "Este objetivo recibe {main} al día y tus otros objetivos, {other} en total."
+msgstr "Dedicas {main} al día a este objetivo y {other} en total a tus otros objetivos."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "lOJOQa"

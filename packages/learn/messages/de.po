@@ -5330,7 +5330,7 @@ msgstr "Finden wir dein Level in {language} heraus"
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "OAt3qi"
 msgid "About {time} of reading, listening and one sentence out loud, so your plan starts at your level."
-msgstr "Etwa {time} lesen, hören und einen Satz laut sprechen, damit dein Plan auf deinem Level beginnt."
+msgstr "Etwa {time} lang liest du, hörst zu und sprichst einen Satz laut, damit dein Plan auf deinem Level startet."
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "Lqi6Xz"
@@ -8515,7 +8515,7 @@ msgstr "Deine Antworten zu diesem Ziel werden gelöscht und du gibst noch einmal
 #: src/onboarding/steps-flow.tsx
 msgctxt "9RSqMB"
 msgid "{count, plural, one {Choose at least {time} a day for your # goal.} other {Choose at least {time} a day for your # goals.}}"
-msgstr "{count, plural, one {Wähle mindestens {time} am Tag für dein # Ziel.} other {Wähle mindestens {time} am Tag für deine # Ziele.}}"
+msgstr "{count, plural, one {Wähl mindestens {time} pro Tag für dein # Ziel.} other {Wähl mindestens {time} pro Tag für deine # Ziele.}}"
 
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "bv5Y_i"
@@ -9205,12 +9205,12 @@ msgstr "Z. B. Berichte, A/B-Tests"
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "9pdAsn"
 msgid "The days you picked can't cover everything in depth by your date. More study days would help."
-msgstr "Deine gewählten Tage reichen nicht, um bis zu deinem Datum alles gründlich abzudecken. Mehr Lerntage würden helfen."
+msgstr "Die gewählten Tage reichen nicht aus, um bis zu deinem Zieldatum alles gründlich zu lernen. Mehr Lerntage würden helfen."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "xCMWWU"
 msgid "Covering everything in depth by your date takes {time} a day on the days you picked. More study days bring that down."
-msgstr "Um bis zu deinem Datum alles gründlich abzudecken, brauchst du an deinen gewählten Tagen täglich {time}. Mehr Lerntage senken das."
+msgstr "An den gewählten Tagen brauchst du täglich {time}, um bis zu deinem Zieldatum alles gründlich zu lernen. Mit mehr Lerntagen brauchst du pro Tag weniger Zeit."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "YNFEUo"
@@ -9325,12 +9325,12 @@ msgstr "Wir konnten nicht berechnen, wann du fertig wärst."
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "AHugH9"
 msgid "This goal gets {main} a day and your other goal {other}."
-msgstr "Dieses Ziel bekommt {main} am Tag, dein anderes Ziel {other}."
+msgstr "Für dieses Ziel sind täglich {main} und für dein anderes Ziel {other} eingeplant."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "L1otxC"
 msgid "This goal gets {main} a day and your other goals {other} together."
-msgstr "Dieses Ziel bekommt {main} am Tag, deine anderen Ziele zusammen {other}."
+msgstr "Für dieses Ziel sind täglich {main} und für deine anderen Ziele zusammen {other} eingeplant."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "lOJOQa"
@@ -12623,7 +12623,7 @@ msgstr "Deine nächsten Lektionen"
 #: src/today/today-coming-lessons.tsx
 msgctxt "Bhd3E-"
 msgid "Taking longer than usual"
-msgstr "Dauert länger als üblich"
+msgstr "Wir brauchen länger als üblich"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
