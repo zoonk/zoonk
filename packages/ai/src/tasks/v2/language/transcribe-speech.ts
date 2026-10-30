@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { type OpenAITranscriptionModelOptions } from "@ai-sdk/openai";
 import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { transcribe } from "ai";
+import { NO_PROMPT_TRAINING } from "../../../data-protection";
 import { directOpenAI } from "../../../direct-providers";
 import { zoonkGateway } from "../../../gateway";
 import { computeCallCostUsd } from "../../../pricing/call-cost";
@@ -15,7 +16,6 @@ export const TRANSCRIPTION_MODELS = [
   "openai/gpt-transcribe",
   "google/gemini-3.5-transcribe",
   "microsoft/mai-transcribe-2",
-  "fish-audio/transcribe-1",
   "spacexai/grok-stt",
 ] as const;
 
@@ -80,9 +80,9 @@ async function transcribeWithModel({
   const result = await transcribe({
     audio,
     model: getTranscriptionModel(model),
-    ...(model.startsWith("openai/")
-      ? { providerOptions: { openai: getOpenAIOptions(language) } }
-      : {}),
+    providerOptions: model.startsWith("openai/")
+      ? { openai: getOpenAIOptions(language) }
+      : { gateway: NO_PROMPT_TRAINING },
   });
 
   return { audioSeconds: result.durationInSeconds, text: result.text.trim() };

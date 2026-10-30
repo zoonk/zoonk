@@ -54,7 +54,7 @@ describe(transcribeSpeech, () => {
     });
   });
 
-  it("falls back to Gemini through the gateway when OpenAI fails", async () => {
+  it("falls back to Gemini through the gateway, away from providers that train on it, when OpenAI fails", async () => {
     vi.mocked(transcribe)
       .mockRejectedValueOnce(new Error("OpenAI is down"))
       .mockResolvedValueOnce(heard("Tengo un pero"));
@@ -67,7 +67,9 @@ describe(transcribeSpeech, () => {
     ]);
 
     // Gemini detects the language itself and takes no OpenAI options.
-    expect(vi.mocked(transcribe).mock.calls[1]?.[0].providerOptions).toBeUndefined();
+    expect(vi.mocked(transcribe).mock.calls[1]?.[0].providerOptions).toStrictEqual({
+      gateway: { disallowPromptTraining: true },
+    });
 
     expect(result.data).toStrictEqual({ text: "Tengo un pero" });
 

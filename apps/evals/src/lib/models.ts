@@ -79,7 +79,6 @@ const TRANSCRIPTION_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-transcribe", name: "gpt-transcribe" },
   { id: "google/gemini-3.5-transcribe", name: "gemini-3.5-transcribe" },
   { id: "microsoft/mai-transcribe-2", name: "mai-transcribe-2" },
-  { id: "fish-audio/transcribe-1", name: "fish-audio-transcribe-1" },
   { id: "spacexai/grok-stt", name: "grok-stt" },
 ];
 

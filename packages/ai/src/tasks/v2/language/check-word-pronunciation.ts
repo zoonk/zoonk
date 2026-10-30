@@ -89,8 +89,6 @@ export async function checkWordPronunciation({
         output: Output.object({ schema }),
         providerOptions,
       }),
-    // A lesson's word, and the app's own clip of it, are Library content.
-    libraryInput: true,
     systemPrompt,
     task: "check-word-pronunciation",
   });

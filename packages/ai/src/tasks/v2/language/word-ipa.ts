@@ -74,8 +74,6 @@ export async function writeWordIpa({
         providerOptions,
         reasoning,
       }),
-    // A lesson's word, and the app's own clip of it, are Library content.
-    libraryInput: true,
     systemPrompt,
     task: "word-ipa",
   });

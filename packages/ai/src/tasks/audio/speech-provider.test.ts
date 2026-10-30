@@ -18,11 +18,12 @@ describe(generateSpeechWithProvider, () => {
     generateSpeechMock.mockResolvedValue({ audio: { uint8Array: audio }, providerMetadata });
   });
 
-  it("sends Gemini through AI Gateway as WAV, its language named in the instructions", async () => {
+  it("sends Gemini through AI Gateway as WAV at its tier, away from providers that train on it", async () => {
     const result = await generateSpeechWithProvider({
       instructions: "The following text is Italiano.",
       language: "it",
       model: "google/gemini-3.8-flash-tts",
+      serviceTier: "flex",
       text: "Ciao, come stai?",
       voice: "Kore",
     });
@@ -34,6 +35,7 @@ describe(generateSpeechWithProvider, () => {
       instructions: "The following text is Italiano.",
       model: { modelId: "google/gemini-3.8-flash-tts", provider: "gateway" },
       outputFormat: "wav",
+      providerOptions: { gateway: { disallowPromptTraining: true, serviceTier: "flex" } },
       text: "Ciao, come stai?",
       voice: "Kore",
     });
@@ -51,11 +53,12 @@ describe(generateSpeechWithProvider, () => {
     expect(generateSpeechMock.mock.calls[0]?.[0]).not.toHaveProperty("language");
   });
 
-  it("sends MAI-Voice through AI Gateway with Harper's voice for the language and no instructions", async () => {
+  it("sends MAI-Voice through AI Gateway with Harper's voice for the language, no instructions and no tier", async () => {
     await generateSpeechWithProvider({
       instructions: "The following text is Português Brasileiro.",
       language: "pt-BR",
       model: "microsoft/mai-voice-2.1-flash",
+      serviceTier: "flex",
       text: "Oi",
       voice: "Kore",
     });
@@ -63,6 +66,7 @@ describe(generateSpeechWithProvider, () => {
     expect(generateSpeechMock).toHaveBeenCalledExactlyOnceWith({
       model: { modelId: "microsoft/mai-voice-2.1-flash", provider: "gateway" },
       outputFormat: "wav",
+      providerOptions: { gateway: { disallowPromptTraining: true } },
       text: "Oi",
       voice: "pt-BR-Harper",
     });

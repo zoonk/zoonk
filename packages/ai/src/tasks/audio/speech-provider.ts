@@ -1,5 +1,6 @@
 import { type TTSVoice, getBaseLanguage, getMaiVoiceLocale } from "@zoonk/utils/languages";
 import { generateSpeech } from "ai";
+import { NO_PROMPT_TRAINING } from "../../data-protection";
 import { zoonkGateway } from "../../gateway";
 import { type ServiceTier } from "../../provider-options";
 import { type SpeechModelName, speechModels } from "./speech-models";
@@ -44,7 +45,9 @@ export async function generateSpeechWithProvider({
     ...(isMaiVoice ? {} : { instructions }),
     model: zoonkGateway.speechModel(model),
     outputFormat: "wav",
-    ...(serviceTier && !isMaiVoice ? { providerOptions: { gateway: { serviceTier } } } : {}),
+    providerOptions: {
+      gateway: { ...NO_PROMPT_TRAINING, ...(serviceTier && !isMaiVoice ? { serviceTier } : {}) },
+    },
     text,
     voice: isMaiVoice ? getMaiVoice(language) : voice,
   });
