@@ -59,6 +59,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.catalog.CatalogQuery
 import com.zoonk.android.feature.catalog.catalogLanguage
+import com.zoonk.android.feature.exam.ExamStore
 import com.zoonk.android.feature.feedback.rememberSendFeedback
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.today.TodayRead
@@ -70,9 +71,11 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.models.ExamMockSummary
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 /**
  * Main's command palette (DECISIONS #4): a Material `SearchBar` under the tab roots' top app bar,
@@ -308,15 +311,7 @@ private fun rememberSearchGroups(
         } else {
             null
         }
-    val mocks =
-        if (reading && activeGoalId != null && value?.places?.exam == true) {
-            app.search.mocks[activeGoalId]
-                .collectShown()
-                .value.value
-                .orEmpty()
-        } else {
-            emptyList()
-        }
+    val mocks = if (reading && activeGoalId != null && value?.places?.exam == true) searchedMocks(app.exams, activeGoalId) else emptyList()
 
     return searchGroups(
         text.text.toString().trim(),
@@ -329,6 +324,18 @@ private fun rememberSearchGroups(
         ),
     )
 }
+
+/** The exam goal's finished mocks, which search finds by their names, from the exam page's read. */
+@Composable
+internal fun searchedMocks(
+    exams: ExamStore,
+    goalId: UUID,
+): List<ExamMockSummary> =
+    exams.exam[goalId]
+        .collectShown()
+        .value.value
+        ?.mocks
+        .orEmpty()
 
 /** [highlighted] is what Enter opens, shown on its tint as main's palette highlights it. */
 @OptIn(ExperimentalMaterial3Api::class)

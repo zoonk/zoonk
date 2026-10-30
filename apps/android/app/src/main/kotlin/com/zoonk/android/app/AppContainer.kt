@@ -92,8 +92,6 @@ import com.zoonk.android.feature.pronunciation.LivePronunciationApi
 import com.zoonk.android.feature.pronunciation.PronunciationStore
 import com.zoonk.android.feature.questions.ListeningPlays
 import com.zoonk.android.feature.recap.RecapStore
-import com.zoonk.android.feature.search.LiveSearchApi
-import com.zoonk.android.feature.search.SearchStore
 import com.zoonk.android.feature.session.LiveStudyApi
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.StudySessionStore
@@ -290,7 +288,6 @@ class AppContainer private constructor(
                 .stateIn(scope, SharingStarted.Eagerly, LearnerAccess.Restoring)
 
     val catalog = CatalogStore(LiveCatalogApi(api), cache)
-    val search = SearchStore(LiveSearchApi(api), cache)
     val stats = StatsStore(LiveStatsApi(api), cache)
 
     // Exams and mocks (L7).
