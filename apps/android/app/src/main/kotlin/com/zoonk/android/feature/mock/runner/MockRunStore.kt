@@ -124,7 +124,12 @@ class LiveMockRunApi(
             perform {
                 api.clients(session).exams.saveMockAnswer(
                     UUID.fromString(blockId),
-                    MockAnswerInput(draft.answer?.recode<Answer, MockAnswer>(), draft.durationMs, draft.flagged, UUID.fromString(draft.itemId)),
+                    MockAnswerInput(
+                        draft.answer?.recode<Answer, MockAnswer>(),
+                        draft.durationMs,
+                        draft.flagged,
+                        UUID.fromString(draft.itemId),
+                    ),
                 )
             }
             SaveOutcome.Stored

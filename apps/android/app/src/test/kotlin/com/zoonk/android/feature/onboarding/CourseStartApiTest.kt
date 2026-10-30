@@ -42,7 +42,13 @@ class CourseStartApiTest {
 
     private suspend fun sent(level: LevelChoice?): String {
         server.enqueue(MockResponse.Builder().code(500).build())
-        runCatching { api.startCourse(ana, courseId, courseStartBody(chapterId = null, dailyMinutes = null, level = level, timeZone = "UTC")) }
+        runCatching {
+            api.startCourse(
+                ana,
+                courseId,
+                courseStartBody(chapterId = null, dailyMinutes = null, level = level, timeZone = "UTC"),
+            )
+        }
         val request = server.takeRequest(5, TimeUnit.SECONDS)!!
         assertEquals("/v1/courses/$courseId/goals", request.url.encodedPath)
         return request.body!!.utf8()
