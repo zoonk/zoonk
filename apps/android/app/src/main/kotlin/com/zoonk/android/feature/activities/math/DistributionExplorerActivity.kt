@@ -264,8 +264,15 @@ private fun DistributionPlot(
             )
             drawLine(border, Offset(x.range.first, axis), Offset(x.range.second, axis), AXIS_WIDTH.toPx())
             val pillHalves = listOf(from, to).map { it to measurer.measure(format(it), pillStyle).size.width / 2f + PILL_PADDING.toPx() }
-            distributionTicks(distribution, domain).forEach { tick ->
-                val label = measurer.measure(format(tick), labelStyle.copy(color = muted))
+            val ticks = distributionTicks(distribution, domain).map { it to measurer.measure(format(it), labelStyle.copy(color = muted)) }
+            val mean = (distribution as? NormalValue)?.value?.mean
+            spacedTicks(
+                ticks.map { x.toPixel(it.first) },
+                ticks.map { it.second.size.width / 2f },
+                TICK_GAP.toPx(),
+                anchor = ticks.indexOfFirst { it.first == mean }.coerceAtLeast(0),
+            ).forEach { index ->
+                val (tick, label) = ticks[index]
                 val clear =
                     pillHalves.all { (handle, half) ->
                         abs(x.toPixel(tick) - x.toPixel(handle)) >=

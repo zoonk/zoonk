@@ -88,6 +88,19 @@ internal fun distributionTicks(
         is UniformValue -> niceTicks(domain, UNIFORM_TICKS)
     }
 
+/** The ticks whose labels don't touch, kept outward from [anchor], so a crowded axis drops every other one around it. */
+internal fun spacedTicks(
+    centers: List<Float>,
+    halfWidths: List<Float>,
+    gap: Float,
+    anchor: Int,
+): List<Int> {
+    if (centers.isEmpty()) return emptyList()
+    val clear = { kept: Int, next: Int -> abs(centers[kept] - centers[next]) >= halfWidths[kept] + halfWidths[next] + gap }
+    val outward = { side: IntProgression -> side.fold(listOf(anchor)) { kept, next -> if (clear(kept.last(), next)) kept + next else kept }.drop(1) }
+    return outward(anchor - 1 downTo 0).reversed() + anchor + outward(anchor + 1 until centers.size)
+}
+
 private fun densityAt(
     distribution: Distribution,
     value: Double,

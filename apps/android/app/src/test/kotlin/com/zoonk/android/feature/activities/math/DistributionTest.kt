@@ -7,7 +7,7 @@ import org.junit.Test
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf9FieldsDistribution.PlayableLibraryStepAnyOfContentOneOf9FieldsDistributionOneOf1Value as UniformValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf9FieldsDistribution.PlayableLibraryStepAnyOfContentOneOf9FieldsDistributionOneOfValue as NormalValue
 
-/** Expected values are what main's `distribution.ts` and core's `distributionExplorer` value return for the same input. */
+/** Expected values are what main's `distribution.ts` and core's `distributionExplorer` value return for the same input; tick spacing is Android's own. */
 class DistributionTest {
     private val iq =
         NormalValue(
@@ -77,5 +77,14 @@ class DistributionTest {
     fun ticksMarkWholeSdsOrRoundValues() {
         assertEquals(listOf(55.0, 70.0, 85.0, 100.0, 115.0, 130.0, 145.0), distributionTicks(iq, 45.0..155.0))
         assertEquals(listOf(0.0, 2.5, 5.0, 7.5), distributionTicks(dice, -1.5..7.5))
+    }
+
+    @Test
+    fun aCrowdedAxisKeepsEveryOtherTickOutwardFromTheMean() {
+        val centers = listOf(0f, 30f, 60f, 90f, 120f)
+
+        assertEquals(listOf(0, 1, 2, 3, 4), spacedTicks(centers, List(5) { 10f }, 4f, anchor = 2))
+        assertEquals(listOf(0, 2, 4), spacedTicks(centers, List(5) { 20f }, 4f, anchor = 2))
+        assertEquals(listOf(1, 3), spacedTicks(centers.take(4), List(4) { 20f }, 4f, anchor = 1))
     }
 }
