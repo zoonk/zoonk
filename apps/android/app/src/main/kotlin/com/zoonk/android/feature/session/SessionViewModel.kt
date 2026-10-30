@@ -7,6 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.GenerationFollower
+import com.zoonk.android.data.GenerationKind
+import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.player.LessonWritingApi
@@ -17,6 +21,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -33,6 +38,7 @@ class SessionViewModel(
     private val writingApi: LessonWritingApi,
     private val cache: AppCache,
     private val readiness: suspend (AuthenticatedSession, UUID) -> LessonReadiness,
+    private val generations: () -> GenerationSource,
     private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     var busy by mutableStateOf<SessionAction?>(null)
@@ -44,9 +50,26 @@ class SessionViewModel(
 
     private var waiting: LessonWait? = null
 
-    /** The step's lesson while a run writes it: the next stop waits on its readiness alone. */
-    var lessonBeingWritten by mutableStateOf<UUID?>(null)
+    /** The shown step's lesson as its last readiness read found it, while the next stop waits on it. */
+    var lesson by mutableStateOf<LessonState?>(null)
         private set
+
+    private var followedRun: String? = null
+
+    private val follower =
+        GenerationFollower(
+            kind = GenerationKind.Lesson,
+            scope = viewModelScope,
+            source =
+                object : GenerationSource {
+                    override fun events(id: String) = generations().events(id)
+
+                    override suspend fun status(id: String) = generations().status(id)
+                },
+        )
+
+    /** The run writing the shown step's lesson. */
+    val run: StateFlow<GenerationRun> = follower.run
 
     var failed by mutableStateOf<SessionAction?>(null)
         private set
@@ -100,42 +123,51 @@ class SessionViewModel(
     }
 
     /**
-     * Reads [lessonId]'s readiness while a run writes it, and the day again only once that changes:
-     * a written lesson keeps the wait until the day shows it, so its step is offered as ready.
+     * Reads [lessonId]'s readiness every few seconds and follows the run writing it, reading the day
+     * again once it's written: the wait shows until the day does, so its step is offered as ready. A
+     * lesson nobody writes is waited on only when the learner [asked] for it, and a failed one isn't.
      */
-    suspend fun followWriting(
+    suspend fun followLesson(
         lessonId: UUID,
+        asked: Boolean,
         readDay: suspend () -> Unit,
     ) {
-        while (true) {
-            when (val read = cache.mutate { readiness(it, lessonId) }) {
-                MutationResult.Obsolete -> {
-                    lessonBeingWritten = null
-                    return
-                }
+        try {
+            while (true) {
+                when (val read = cache.mutate { readiness(it, lessonId) }) {
+                    MutationResult.Obsolete -> {
+                        return
+                    }
 
-                is MutationResult.Failed -> {}
+                    is MutationResult.Failed -> {}
 
-                is MutationResult.Done -> {
-                    when (read.value.status) {
-                        LessonReadiness.Status.GENERATING -> {
-                            lessonBeingWritten = lessonId
-                        }
-
-                        LessonReadiness.Status.READY -> {
+                    is MutationResult.Done -> {
+                        val status = read.value.status
+                        if (status == LessonReadiness.Status.READY) {
                             readDay()
+                        } else {
+                            lesson = LessonState(lessonId, status)
                         }
-
-                        else -> {
-                            if (lessonBeingWritten == lessonId) readDay()
-                            lessonBeingWritten = null
-                            return
-                        }
+                        if (status == LessonReadiness.Status.GENERATING) follow(read.value.generationId)
+                        if (status == LessonReadiness.Status.FAILED) return
+                        if (status == LessonReadiness.Status.NOT_STARTED && !asked) return
                     }
                 }
+                delay(LESSON_CHECK_MILLIS)
             }
-            delay(LESSON_CHECK_MILLIS)
+        } finally {
+            follower.stop()
+            followedRun = null
         }
+    }
+
+    /** Try again on a run whose updates stopped: it may still be writing. */
+    fun reconnect() = follower.retry()
+
+    private fun follow(generationId: String?) {
+        if (generationId == null || generationId == followedRun) return
+        followedRun = generationId
+        follower.follow(generationId)
     }
 
     fun lessonWritten(position: Long) {
@@ -188,6 +220,11 @@ class SessionViewModel(
 }
 
 internal const val LESSON_CHECK_MILLIS = 5_000L
+
+data class LessonState(
+    val id: UUID,
+    val status: LessonReadiness.Status,
+)
 
 private data class LessonWait(
     val position: Long,

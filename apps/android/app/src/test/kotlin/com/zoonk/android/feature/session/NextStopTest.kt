@@ -5,9 +5,13 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.requestFocus
@@ -17,13 +21,19 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.GenerationEvent
+import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.Generation
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -43,15 +53,33 @@ class NextStopTest {
     private val practice = step(1, kind = StudyBlock.Kind.PRACTICE, screen = StudyBlock.Screen.SESSION, lessonId = null)
     private var shown by mutableStateOf(waiting)
 
-    /** Readiness answers in order, then ready; null answers that the sign-in expired. */
+    /** Readiness answers in order, then [settled]; null answers that the sign-in expired. */
     private val statuses = mutableListOf<LessonReadiness.Status?>()
+    private var settled = LessonReadiness.Status.READY
     private var readinessReads = 0
+
+    /** What each read of the day shows of the step, in order; then its lesson written. */
+    private val dayReadsShow = mutableListOf<(DayStep) -> DayStep>()
+    private val written: (DayStep) -> DayStep = { it.copy(lessonId = it.lessonId ?: WRITTEN, screen = StudyBlock.Screen.LESSON) }
+    private val unchanged: (DayStep) -> DayStep = { it }
+    private val picked: (DayStep) -> DayStep = { it.copy(lessonId = WRITTEN) }
     private var dayReads = 0
-    private var dayShowsTheLessonWritten = true
-    private var staleDayReads = 0
+
+    private val generations =
+        object : GenerationSource {
+            override fun events(id: String): Flow<GenerationEvent> =
+                flow {
+                    emit(GenerationEvent(status = "completed", step = "planLesson"))
+                    emit(GenerationEvent(status = "started", step = "writeLesson"))
+                    awaitCancellation()
+                }
+
+            override suspend fun status(id: String) = Generation.Status.RUNNING
+        }
 
     /** A step whose lesson the plan hasn't picked yet, as the API sends it; returns a way to draw the screen anew. */
     private fun show(
+        asked: Boolean = true,
         onStop: (() -> Unit)? = null,
         alternative: DayStep? = null,
     ): () -> Unit {
@@ -65,13 +93,14 @@ class NextStopTest {
                 cache,
                 readiness = { _, _ ->
                     readinessReads++
-                    val status = if (statuses.isEmpty()) LessonReadiness.Status.READY else statuses.removeAt(0)
+                    val status = if (statuses.isEmpty()) settled else statuses.removeAt(0)
                     LessonReadiness(
                         alternative = null,
                         generationId = "run-1",
                         status = status ?: throw ApiException(ApiError.Unauthorized),
                     )
                 },
+                generations = { generations },
             )
         var drawn by mutableIntStateOf(0)
 
@@ -83,13 +112,12 @@ class NextStopTest {
                         day = day(steps = listOf(shown)),
                         step = shown,
                         goalId = GOAL,
+                        asked = asked,
                         notWritten = null,
                         alternative = alternative,
                         refresh = {
                             dayReads++
-                            if (dayShowsTheLessonWritten && dayReads > staleDayReads) {
-                                shown = shown.copy(lessonId = shown.lessonId ?: WRITTEN, screen = StudyBlock.Screen.LESSON)
-                            }
+                            shown = (dayReadsShow.removeFirstOrNull() ?: written)(shown)
                         },
                         onStop = onStop,
                         navigator = rememberAppNavigator(),
@@ -125,7 +153,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("Getting it ready…").assertExists()
+        rule.onNodeWithText("This lesson is being written for you. It's usually ready in about two minutes.").assertExists()
         rule.onNodeWithText("While you wait: Mixed practice").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
         assertEquals(0, dayReads)
@@ -142,13 +170,13 @@ class NextStopTest {
     @Test
     fun aWrittenLessonTheDayHasntCaughtUpOnKeepsTheWaitUntilItDoes() {
         statuses += LessonReadiness.Status.GENERATING
-        staleDayReads = 1
+        dayReadsShow += unchanged
         shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
         show()
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("Getting it ready…").assertExists()
+        rule.onNodeWithText("This lesson is being written for you. It's usually ready in about two minutes.").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(5_000)
@@ -172,18 +200,88 @@ class NextStopTest {
     }
 
     @Test
-    fun aRunThatFailsOffersStartAgainWithoutSayingTheLessonIsReady() {
+    fun aRunThatFailsSaysItDidntFinishInsteadOfOfferingStart() {
         statuses += listOf(LessonReadiness.Status.GENERATING, LessonReadiness.Status.FAILED)
-        dayShowsTheLessonWritten = false
         shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
         show()
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("Start").assertExists()
+        rule.onNodeWithText("This didn't finish").assertExists()
+        rule.onNodeWithText("Try again").assertExists()
+        rule.onNodeWithText("Start").assertDoesNotExist()
         rule.onNodeWithText("Your lesson is ready.").assertDoesNotExist()
-        assertEquals(1, dayReads)
         assertEquals(0, waits.size)
+    }
+
+    @Test
+    fun aLessonARunIsWritingShowsTheRunsPhasesAndWhatItTakes() {
+        settled = LessonReadiness.Status.GENERATING
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.waitForIdle()
+
+        rule
+            .onNodeWithContentDescription("Writing the lesson")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "in progress"))
+        rule.onNodeWithText("This lesson is being written for you. It's usually ready in about two minutes.").assertExists()
+    }
+
+    @Test
+    fun aRunStillWritingAfterFiveMinutesSaysItDidntFinish() {
+        settled = LessonReadiness.Status.GENERATING
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show()
+        rule.mainClock.advanceTimeBy(301_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("This didn't finish").assertExists()
+        rule.onNodeWithText("Try again").assertExists()
+    }
+
+    @Test
+    fun aStepTheLearnerAskedForThatDoesntStartSaysSoAfterTwentySeconds() {
+        dayReadsShow += List(10) { unchanged }
+        show()
+        rule.mainClock.advanceTimeBy(21_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("This didn't start").assertExists()
+        rule.onNodeWithText("Try again").assertExists()
+    }
+
+    @Test
+    fun aPickedLessonThatHasntStartedKeepsTheWaitTheLearnerAskedFor() {
+        statuses += listOf(LessonReadiness.Status.NOT_STARTED, LessonReadiness.Status.GENERATING)
+        dayReadsShow += picked
+        show()
+        rule.mainClock.advanceTimeBy(6_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("This lesson is being written for you. It's usually ready in about two minutes.").assertExists()
+        rule.onNodeWithText("Start").assertDoesNotExist()
+
+        rule.mainClock.advanceTimeBy(10_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Your lesson is ready.").assertExists()
+        assertEquals(1, waits.size)
+    }
+
+    @Test
+    fun aStepWithoutItsLessonTheLearnerDidntAskForOffersStart() {
+        show(asked = false)
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Start").assertExists()
+        rule.onNodeWithText("This lesson is being written for you. It's usually ready in about two minutes.").assertDoesNotExist()
+
+        rule.mainClock.advanceTimeBy(5_000)
+        rule.waitForIdle()
+
+        assertEquals(0, dayReads)
     }
 
     @Test

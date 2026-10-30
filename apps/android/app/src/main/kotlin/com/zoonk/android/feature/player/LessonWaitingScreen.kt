@@ -125,14 +125,7 @@ fun LessonWaitingScreen(
                 LessonWriting.Writing, LessonWriting.Ready -> {
                     val shown = if (current == LessonWriting.Ready) GenerationRun(status = GenerationRun.Status.Ready) else run
                     val failed = shown.status == GenerationRun.Status.Failed
-                    GenerationWait(GenerationKind.Lesson, shown, onRetry = viewModel::retry)
-                    if (!failed) {
-                        Text(
-                            stringResource(R.string.player_writing_note),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
+                    LessonWritingProgress(shown, viewModel::retry, stringResource(R.string.player_writing_note))
                     if (late || failed) alternative?.let { Alternative(it, instead = false, exits) }
                 }
 
@@ -164,6 +157,19 @@ fun LessonWaitingScreen(
                 }
             }
         }
+    }
+}
+
+/** A lesson's run while it's written, and what that takes, on the lesson page and the session's next stop. */
+@Composable
+fun LessonWritingProgress(
+    run: GenerationRun,
+    onRetry: (() -> Unit)?,
+    note: String,
+) {
+    GenerationWait(GenerationKind.Lesson, run, onRetry)
+    if (run.status != GenerationRun.Status.Failed) {
+        Text(note, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
     }
 }
 

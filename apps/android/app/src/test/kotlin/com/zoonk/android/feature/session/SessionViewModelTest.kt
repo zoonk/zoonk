@@ -45,6 +45,7 @@ class SessionViewModelTest {
             { _, _ -> },
             cache,
             readiness = { _, _ -> error("Not used") },
+            generations = { error("Not used") },
         )
     }
 

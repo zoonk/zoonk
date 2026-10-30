@@ -114,7 +114,7 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">Up next</string>
     <string name="session_next_start">Start</string>
-    <string name="session_next_getting_ready">Getting it ready…</string>
+    <string name="session_next_writing_note">This lesson is being written for you. It\'s usually ready in about two minutes.</string>
     <string name="session_next_lesson_ready">Your lesson is ready.</string>
     <string name="session_next_stop">Stop for today</string>
     <string name="session_next_stop_failed">We couldn\'t stop the session. Try again.</string>

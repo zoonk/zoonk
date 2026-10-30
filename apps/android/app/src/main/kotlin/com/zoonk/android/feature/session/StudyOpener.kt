@@ -310,10 +310,6 @@ class StudyOpener(
 /** A lesson step whose lesson is picked but not written, which a tap asks [StudyOpener] to write. */
 internal fun DayStep.isUnwrittenLesson(): Boolean = kind == StudyBlock.Kind.LEARN && screen == StudyBlock.Screen.SESSION && lessonId != null
 
-/** A lesson step whose lesson isn't made yet, which [StudyOpener] opens on the session screen to wait for it. */
-internal fun DayStep.waitsForItsLesson(): Boolean =
-    lessonId == null && (screen == StudyBlock.Screen.LESSON || (screen == StudyBlock.Screen.SESSION && kind == StudyBlock.Kind.LEARN))
-
 /** Names the shown step by its work, never by position alone, so a changed day never opens other work. */
 internal fun openDayBody(
     shownDate: LocalDate,

@@ -32,13 +32,13 @@
   "session_energy_max": "0ae36156b07f20cb0542c96d13f3546260944dd44549e2b9e5ddcd2b0d0bf7b7",
   "session_level_up": "103aaec73ea808e508820a536e7a91945b02c0f7dd52e0a966b19af43d8b59cc",
   "session_next_eyebrow": "85d4f662cf5696db68110c59f47ee87fe590679824969d65fa8694d5563bc326",
-  "session_next_getting_ready": "4c69eedb4ba162ed9bc83ff860a1906a048ba930d9e2ba01afc1ce21ae1c3613",
   "session_next_instead": "656d26b0d6d095fe89bc9ae59f053f090d58eeede384c457635b12aaa0e183fd",
   "session_next_lesson_ready": "7a01d4ec2b9d495db83acd08b9257b7aee015cf4a62988295b67966c1c4a9c81",
   "session_next_start": "3f280bf14e2b4c501ae76d10fcb78c66a294c88572e588ce77b46c1069eeb7ae",
   "session_next_stop": "fb866918fed036f4cb7e7b115333c93ba090ea981e2964581896d342e7fd5d95",
   "session_next_stop_failed": "215f669d94b4de038a638f60daa2a72ee7699d05071e96380aa62954c93db622",
   "session_next_while_waiting": "da48b440c101c98f2ed91d58210bbf7e77a15af9011d02f301ef316f2092d7f6",
+  "session_next_writing_note": "3b9eb86e1822bf1df2a4aa7b3bb179e64c93adb11dbd3c5b47ae071e2ed965e7",
   "session_opening_slow": "f9c63825fe3afdc0bf79b4929071f4b66028789e744f0b3fd5ea67fd0375f611",
   "session_opening_very_slow": "a52bf4df1ddcbedfed4fa631454db6595d4e078816d2f5fe6b49eb00e38d3871",
   "session_summary_back_on": "7dd438ecebf23d1dbfd1c66c195cf8aac7690d3c5399ddeb60013b234b40460c",
@@ -187,7 +187,7 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">Als Nächstes</string>
     <string name="session_next_start">Starten</string>
-    <string name="session_next_getting_ready">Wir bereiten alles vor…</string>
+    <string name="session_next_writing_note">Wir erstellen diese Lektion für dich. Sie ist normalerweise in etwa zwei Minuten fertig.</string>
     <string name="session_next_lesson_ready">Deine Lektion ist bereit.</string>
     <string name="session_next_stop">Für heute aufhören</string>
     <string name="session_next_stop_failed">Wir konnten die Lerneinheit nicht beenden. Versuch es noch einmal.</string>

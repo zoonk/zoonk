@@ -32,13 +32,13 @@
   "session_energy_max": "86ce469e1d4a1c34948658f5a4e00864c2e88969cd501775d6fd0f53c680d994",
   "session_level_up": "0c8e13eda0a22a045c2aaf87da1816439aeb43e29a3d30d719e64ba48f65bb48",
   "session_next_eyebrow": "9a4bd910739077c5b904e20667add82cd1cd301d47c83c455df82c7cd0abf073",
-  "session_next_getting_ready": "c4021b79857ae7bbf2a0b86b69767398fe8a6e0b012b8ee69090fd3e1d0e4241",
   "session_next_instead": "7aeff6ba9d09f5a27a60a008c5a230a035bb03ebb85d5a2fc9d5e125b6ed60e8",
   "session_next_lesson_ready": "8789126525b3bc8944fab8e6dd8b9dd871206aa546927b65956f74bd831e9d26",
   "session_next_start": "b8c4197a15a471311d41e0c915971af90009ddd117af1a9d3b7d75d79a391139",
   "session_next_stop": "4c56480b45f6b5ba26c3afab9c896a3df100370d55dbb2d70899bef0fe99a5d7",
   "session_next_stop_failed": "437a5fe9eab317b587ec64936e554bafeed09d5aa1c873325eba9ea1947679e8",
   "session_next_while_waiting": "11822e9b30e6ad11323637a9c796e69460de5acbd2ec8966346cfc08bdc9e67f",
+  "session_next_writing_note": "689184c899d3ea493f553cb170ccd38fffa7a9fee34897991174372556ce8c7d",
   "session_opening_slow": "c811d1d79512bddbfcb9454a09369afd262ba7c2e2035cce66902bc5e7c1e4df",
   "session_opening_very_slow": "15a33464fbace3a6ba4b5473646b57442d24462c07756dd9ffe4fa44ee727e87",
   "session_summary_back_on": "dcf2a31f2a777c47286939b88febcd9d3a64383858914aadc1425ec614a272a5",
@@ -197,7 +197,7 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">A continuación</string>
     <string name="session_next_start">Empezar</string>
-    <string name="session_next_getting_ready">Preparándolo…</string>
+    <string name="session_next_writing_note">Estamos preparando esta lección para ti. Suele estar lista en unos dos minutos.</string>
     <string name="session_next_lesson_ready">Tu lección está lista.</string>
     <string name="session_next_stop">Terminar por hoy</string>
     <string name="session_next_stop_failed">No hemos podido terminar la sesión. Inténtalo de nuevo.</string>

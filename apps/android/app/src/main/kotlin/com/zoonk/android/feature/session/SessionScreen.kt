@@ -35,17 +35,22 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.GenerationFailure
+import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.player.LessonNotWrittenNotice
 import com.zoonk.android.feature.player.LessonWriting
+import com.zoonk.android.feature.player.LessonWritingProgress
 import com.zoonk.android.feature.player.LiveLessonWritingApi
 import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.feature.today.stepsDone
@@ -56,6 +61,7 @@ import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
@@ -66,6 +72,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
@@ -98,6 +105,7 @@ fun SessionScreen(
                 LiveLessonWritingApi(app.api),
                 app.cache,
                 readiness = { session, lessonId -> app.lessonPlayer.api.readiness(session, lessonId.toString()) },
+                generations = { LiveGenerationSource(app.api, app.sessions.current) },
             )
         }
 
@@ -124,6 +132,7 @@ fun SessionScreen(
                     day,
                     step,
                     day.goalId ?: shown.today.goal.id,
+                    asked = false,
                     notWritten = null,
                     alternative = null,
                     refresh = null,
@@ -172,6 +181,7 @@ private fun SavedDay(
                     day = session.toDayView(),
                     step = step.toDayStep(),
                     goalId = session.goalId,
+                    asked = opened != null,
                     notWritten = opened?.let { app.studyOpener.notWritten(it.id) },
                     alternative = session.alternativeTo(step),
                     refresh = { app.studySessions.day[sessionId].refresh() },
@@ -280,17 +290,37 @@ internal fun NextStop(
     day: DayView,
     step: DayStep,
     goalId: UUID?,
+    asked: Boolean,
     notWritten: LessonWriting?,
     alternative: DayStep?,
     refresh: (suspend () -> Unit)?,
     onStop: (() -> Unit)?,
     navigator: AppNavigator,
 ) {
-    val rereading = refresh?.takeIf { step.waitsForItsLesson() }
-    val beingWritten = step.lessonId?.takeIf { refresh != null && step.isUnwrittenLesson() }
-    val waiting = rereading != null || (beingWritten != null && viewModel.lessonBeingWritten == beingWritten)
-    val busy = viewModel.busy != null
     val refusal = notWritten?.takeIf { step.isUnwrittenLesson() }
+    val unwritten = refresh != null && refusal == null && step.kind == StudyBlock.Kind.LEARN && step.screen != StudyBlock.Screen.LESSON
+    val watched = step.lessonId?.takeIf { unwritten }
+    val picking = unwritten && watched == null && asked
+    val known = viewModel.lesson?.takeIf { it.id == watched }?.status
+    val lesson =
+        when {
+            !unwritten -> null
+            known == LessonReadiness.Status.GENERATING -> NextStopLesson.Writing
+            known == LessonReadiness.Status.FAILED -> NextStopLesson.Failed
+            asked -> NextStopLesson.NotStarted
+            else -> null
+        }
+    val waiting = lesson != null
+    val run by viewModel.run.collectAsStateWithLifecycle()
+    var stuck by remember(step.position) { mutableStateOf<NextStopLesson?>(null) }
+    val failure =
+        when {
+            lesson == NextStopLesson.Failed -> GenerationFailure.Generation
+            lesson == null || stuck != lesson -> null
+            lesson == NextStopLesson.NotStarted -> GenerationFailure.NotStarted
+            else -> GenerationFailure.Generation
+        }
+    val busy = viewModel.busy != null
     val ready = !waiting && refusal == null
     val startsFor = goalId?.takeIf { ready }
     val written = startsFor != null && viewModel.writtenWhileWaiting == step.position
@@ -310,20 +340,27 @@ internal fun NextStop(
         }
     }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    LaunchedEffect(rereading != null) {
-        val reread = rereading ?: return@LaunchedEffect
+    LaunchedEffect(picking) {
+        val readDay = refresh?.takeIf { picking } ?: return@LaunchedEffect
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (true) {
                 delay(LESSON_CHECK_MILLIS)
-                reread()
+                readDay()
             }
         }
     }
-    LaunchedEffect(beingWritten) {
-        val lessonId = beingWritten ?: return@LaunchedEffect
+    LaunchedEffect(watched, asked) {
+        val lessonId = watched ?: return@LaunchedEffect
         val readDay = refresh ?: return@LaunchedEffect
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { viewModel.followWriting(lessonId, readDay) }
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { viewModel.followLesson(lessonId, asked, readDay) }
     }
+    val runWrote = run.status == GenerationRun.Status.Ready && lesson == NextStopLesson.Writing
+    LaunchedEffect(runWrote) { if (runWrote) refresh?.invoke() }
+    LaunchedEffect(lesson) {
+        delay(STUCK_AFTER_MILLIS[lesson] ?: return@LaunchedEffect)
+        stuck = lesson
+    }
+    val retry = { goalId?.let { viewModel.start(day, step, it) } }
 
     TaskScaffold(
         onClose = navigator::closeTask,
@@ -421,13 +458,16 @@ internal fun NextStop(
                         }
                     }
                     if (waiting) {
-                        Row(
-                            Modifier.padding(top = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            CircularProgressIndicator(Modifier.padding(2.dp))
-                            Text(stringResource(R.string.session_next_getting_ready), style = MaterialTheme.typography.bodyMedium)
+                        Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                            if (failure != null) {
+                                GenerationFailureNotice(failure, onRetry = { retry() })
+                            } else {
+                                LessonWritingProgress(
+                                    run = if (lesson == NextStopLesson.Writing) run else GenerationRun(),
+                                    onRetry = { if (run.failure == GenerationFailure.Connection) viewModel.reconnect() else retry() },
+                                    note = stringResource(R.string.session_next_writing_note),
+                                )
+                            }
                         }
                     }
                 }
@@ -499,4 +539,10 @@ private fun StudySession.alternativeTo(step: StudyBlock): DayStep? =
         }?.toDayStep()
 
 private val OPEN = setOf(StudyBlock.Status.ACTIVE, StudyBlock.Status.PENDING)
+
+/** Main's `NextStopLesson` while it isn't ready: what the next stop waits on. */
+private enum class NextStopLesson { NotStarted, Writing, Failed }
+
+/** Main's `STUCK_AFTER_MS`: when a wait that hasn't moved says so, with Try again. */
+private val STUCK_AFTER_MILLIS = mapOf(NextStopLesson.NotStarted to 20_000L, NextStopLesson.Writing to 300_000L)
 private val CONTENT_WIDTH = 640.dp
