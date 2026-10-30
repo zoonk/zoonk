@@ -121,6 +121,7 @@ internal fun RunFrame(
     actions: (@Composable () -> Unit)?,
     closeLabel: String? = null,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
+    asideTitle: String? = null,
     content: @Composable ColumnScope.(inlineSet: Boolean, asideShown: Boolean) -> Unit,
 ) {
     val focus = remember { FocusRequester() }
@@ -146,7 +147,7 @@ internal fun RunFrame(
         // A passage takes the rail over the run's own pane, as main's aside.
         aside =
             set?.let { TaskAside(half = isLongText(it.text)) { ItemSetText(it, inAside = true) } }
-                ?: aside?.let { TaskAside(content = it) },
+                ?: aside?.let { TaskAside(title = asideTitle, content = it) },
     ) { padding ->
         val beside = taskAsideBeside()
         RunLayout(Modifier.padding(padding), header = progress) { content(set == null || !beside, set == null && aside != null && beside) }

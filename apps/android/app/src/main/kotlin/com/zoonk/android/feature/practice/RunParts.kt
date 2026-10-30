@@ -31,6 +31,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.questions.ItemSet
 import com.zoonk.android.feature.questions.NoteRow
 import com.zoonk.android.feature.questions.QuestionFormat
@@ -209,11 +210,13 @@ internal fun RunFinished(
     saving: Boolean,
     onClose: () -> Unit,
     detail: String? = null,
+    headerTitle: String? = null,
     actions: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     TaskScaffold(
         onClose = onClose,
+        title = { headerTitle?.let { LessonTitle(it) } },
         bottomBar = {
             TaskActionBar {
                 if (actions != null) {
