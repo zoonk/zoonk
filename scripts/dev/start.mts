@@ -22,6 +22,10 @@ const lanMode = process.argv.includes("--lan");
 const productionMode = process.argv.includes("--production");
 const pnpmCommand = getPnpmCommand(process.env);
 
+// Sign-in codes go to the mailbox, so it runs with any app list.
+const apps = process.argv.slice(2).filter((argument) => !argument.startsWith("--"));
+const filters = apps.length > 0 ? [...apps, "mailbox"].map((app) => `--filter=${app}`) : [];
+
 async function runDevelopmentCommand({
   args,
   environment,
@@ -50,7 +54,10 @@ async function startDirectDevelopment(): Promise<CommandResult> {
   writeAppleDevelopmentConfiguration({ apiUrl: "http://localhost:4000", currentDirectory });
   writeAndroidDevelopmentConfiguration({ apiUrl: "http://localhost:4000", currentDirectory });
 
-  return runDevelopmentCommand({ args: ["exec", "turbo", "dev:direct"], environment: process.env });
+  return runDevelopmentCommand({
+    args: ["exec", "turbo", "dev:direct", ...filters],
+    environment: process.env,
+  });
 }
 
 /** Resolves shared service URLs once before Next.js captures public environment variables at startup or build. */
@@ -71,7 +78,7 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
   process.stdout.write(`Main: ${mainUrl}\nAPI: ${apiUrl}\nMailbox: ${mailboxUrl}\n`);
 
   return runDevelopmentCommand({
-    args: ["exec", "turbo", productionMode ? "start" : "dev"],
+    args: ["exec", "turbo", productionMode ? "start" : "dev", ...filters],
     environment: {
       ...environment,
       MAILBOX_URL: getMailboxCaptureUrl(mailboxUrl),
