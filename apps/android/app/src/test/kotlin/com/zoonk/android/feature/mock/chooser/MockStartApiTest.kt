@@ -3,6 +3,7 @@ package com.zoonk.android.feature.mock.chooser
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.apiHttpClient
+import com.zoonk.android.data.startOnLoopback
 import com.zoonk.api.models.MockShape
 import com.zoonk.api.models.PlacementMockOption
 import kotlinx.coroutines.test.runTest
@@ -24,7 +25,7 @@ class MockStartApiTest {
 
     @Before
     fun start() {
-        server.start()
+        server.startOnLoopback()
         api = LiveMockStartApi(ApiClients(server.url("/v1/"), apiHttpClient()))
     }
 

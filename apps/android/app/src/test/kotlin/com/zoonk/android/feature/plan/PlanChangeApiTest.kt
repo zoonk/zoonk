@@ -3,6 +3,7 @@ package com.zoonk.android.feature.plan
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.apiHttpClient
+import com.zoonk.android.data.startOnLoopback
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import mockwebserver3.MockResponse
@@ -23,7 +24,7 @@ class PlanChangeApiTest {
 
     @Before
     fun start() {
-        server.start()
+        server.startOnLoopback()
         api = LivePlanApi(ApiClients(server.url("/v1/"), apiHttpClient()))
     }
 

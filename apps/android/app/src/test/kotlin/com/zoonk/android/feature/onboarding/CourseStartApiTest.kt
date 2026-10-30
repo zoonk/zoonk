@@ -3,6 +3,7 @@ package com.zoonk.android.feature.onboarding
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.apiHttpClient
+import com.zoonk.android.data.startOnLoopback
 import com.zoonk.android.feature.onboarding.setup.LevelChoice
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
@@ -21,7 +22,7 @@ class CourseStartApiTest {
 
     @Before
     fun start() {
-        server.start()
+        server.startOnLoopback()
         api = LiveOnboardingApi(ApiClients(server.url("/v1/"), apiHttpClient()))
     }
 
