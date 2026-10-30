@@ -13,7 +13,7 @@ import { TaskMainLink } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { NoVerdictStep } from "./checkpoint-empty";
 import { useCheckpointEyebrow } from "./checkpoint-labels";
-import { hasResultRows } from "./checkpoint-result";
+import { type ResultRows, hasResultRows } from "./checkpoint-result";
 import { CheckpointResultDetails } from "./checkpoint-result-details";
 import {
   CheckpointReviewDrawer,
@@ -105,9 +105,8 @@ function DuelDayMoment() {
   );
 }
 
-function OutcomeStep({ showsReview }: { showsReview: boolean }) {
+function OutcomeStep({ rows, showsReview }: { rows: ResultRows; showsReview: boolean }) {
   const headline = useHeadline();
-  const hasDetails = hasResultRows(useResultRows());
 
   return (
     <StepCard className="gap-6">
@@ -120,9 +119,9 @@ function OutcomeStep({ showsReview }: { showsReview: boolean }) {
 
       <DuelDayMoment />
 
-      {hasDetails && (
+      {hasResultRows(rows) && (
         <div className="flex w-full flex-col gap-6 lg:hidden">
-          <CheckpointResultDetails />
+          <CheckpointResultDetails rows={rows} />
         </div>
       )}
 
@@ -148,7 +147,9 @@ export function CheckpointResultView() {
   return (
     <Steps
       aside={
-        hasDetails ? { children: <CheckpointResultDetails />, label: name, title: name } : null
+        hasDetails
+          ? { children: <CheckpointResultDetails rows={rows} />, label: name, title: name }
+          : null
       }
       exitHref={hrefs.exit}
       finalAction={
@@ -159,7 +160,11 @@ export function CheckpointResultView() {
       items={[
         {
           action: hasReview && !docked ? <CheckpointReviewDrawer /> : null,
-          content: outcome ? <OutcomeStep showsReview={hasReview && docked} /> : <NoVerdictStep />,
+          content: outcome ? (
+            <OutcomeStep rows={rows} showsReview={hasReview && docked} />
+          ) : (
+            <NoVerdictStep />
+          ),
           id: "outcome",
           moment: getCeremonyMoment({ milestone: ceremony, render: renderCeremony }),
         },

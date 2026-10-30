@@ -7,7 +7,7 @@ import { StepRow, StepRows } from "../_components/step-card";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { phaseNumber, usePhaseLabel } from "./checkpoint-labels";
 import { type ResultRows } from "./checkpoint-result";
-import { useIsWon, useResultRows, useRetry } from "./use-checkpoint-outcome";
+import { useIsWon, useRetry } from "./use-checkpoint-outcome";
 
 function DetailsSection({ children, title }: { children: React.ReactNode; title: string }) {
   return (
@@ -92,9 +92,8 @@ function NotWonDetails({ rows }: { rows: ResultRows }) {
   );
 }
 
-export function CheckpointResultDetails() {
+export function CheckpointResultDetails({ rows }: { rows: ResultRows }) {
   const won = useIsWon();
-  const rows = useResultRows();
 
   return won ? <WonDetails rows={rows} /> : <NotWonDetails rows={rows} />;
 }
