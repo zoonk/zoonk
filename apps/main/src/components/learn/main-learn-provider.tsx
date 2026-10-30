@@ -1,11 +1,10 @@
 "use client";
 
-import { getPathname } from "@/i18n/navigation";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { type LearnAdapters, LearnProvider } from "@zoonk/learn/provider";
-import { useLocale } from "next-intl";
 import { useMemo } from "react";
 import { LearningLink } from "./learning-link";
+import { useSignUpHref } from "./use-sign-up-href";
 
 const MAIN_LEARN_ADAPTERS: LearnAdapters = {
   analytics: { track: trackEvent },
@@ -20,14 +19,11 @@ const MAIN_LEARN_ADAPTERS: LearnAdapters = {
 };
 
 export function MainLearnProvider({ children }: { children: React.ReactNode }) {
-  const locale = useLocale();
+  const signUp = useSignUpHref();
 
   const adapters = useMemo(
-    () => ({
-      ...MAIN_LEARN_ADAPTERS,
-      routes: { ...MAIN_LEARN_ADAPTERS.routes, signUp: getPathname({ href: "/login", locale }) },
-    }),
-    [locale],
+    () => ({ ...MAIN_LEARN_ADAPTERS, routes: { ...MAIN_LEARN_ADAPTERS.routes, signUp } }),
+    [signUp],
   );
 
   return <LearnProvider adapters={adapters}>{children}</LearnProvider>;

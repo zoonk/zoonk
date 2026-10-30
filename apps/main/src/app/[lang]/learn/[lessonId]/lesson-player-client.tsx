@@ -5,6 +5,7 @@ import { LearningLink } from "@/components/learn/learning-link";
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { SessionCeremony } from "@/components/learn/session-ceremony";
+import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { useLessonSessionSlots } from "@/components/session/use-lesson-session-slots";
 import { redirect, useRouter } from "@/i18n/navigation";
 import { getTutorConfig } from "@/lib/learn/tutor-config";
@@ -34,8 +35,6 @@ import { useLocale } from "next-intl";
 import { useMemo, useState } from "react";
 import { completeLibraryLessonAction, getLessonPicturesAction } from "./lesson-player-actions";
 import { startLibraryLesson } from "./start-library-lesson";
-
-const ROUTES = { signUp: "/login", upgrade: "/subscription" };
 
 type LessonPlayerSlots = NonNullable<LessonPlayerProviderProps["slots"]>;
 
@@ -146,7 +145,12 @@ export function LessonPlayerClient({
     [buddy, endingSlots, sessionSlots],
   );
 
-  const routes = useMemo(() => ({ ...ROUTES, ...routing }), [routing]);
+  const signUp = useSignUpHref();
+
+  const routes = useMemo(
+    () => ({ ...routing, signUp, upgrade: "/subscription" }),
+    [routing, signUp],
+  );
 
   if (reopenedBlockId) {
     redirect({ href: `/session?block=${reopenedBlockId}`, locale });

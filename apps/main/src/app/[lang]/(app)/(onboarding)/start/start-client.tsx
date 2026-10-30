@@ -9,8 +9,8 @@ import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
 import { OnboardingEmbedded } from "@zoonk/learn/onboarding/frame";
 import {
   WEB_ONBOARDING_ACTIONS,
-  WEB_ONBOARDING_ROUTES,
   getPlanLinkOnboardingActions,
+  useWebOnboardingRoutes,
 } from "./onboarding-client-actions";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
@@ -34,6 +34,7 @@ export function StartClient({
   planId: string | null;
 }) {
   const navigation = useOnboardingNavigation();
+  const routes = useWebOnboardingRoutes();
   // An unknown summary leaves answers without a buddy identity until the actual one arrives.
   const learner = useLearnerSummary();
   const buddy = learner.status === "ready" ? learner.summary.buddy : undefined;
@@ -50,7 +51,7 @@ export function StartClient({
         initialDraft={initialDraft}
         navigation={navigation}
         needsAccount={needsAccount}
-        routes={WEB_ONBOARDING_ROUTES}
+        routes={routes}
         takesHandedOffGoal={!embedded}
       />
     </GenerationFollowerProvider>

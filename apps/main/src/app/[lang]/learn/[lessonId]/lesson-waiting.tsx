@@ -1,5 +1,6 @@
 "use client";
 
+import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { Link, useRouter } from "@/i18n/navigation";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import { type LessonRequest, useLessonWriting } from "@/lib/lessons/use-lesson-writing";
@@ -25,8 +26,6 @@ type LessonOutline = { description: string; estimatedMinutes: number; id: string
 const ALTERNATIVE_AFTER_MS = 15_000;
 
 const OPEN_RETRY_MS = 2000;
-
-const LIMIT_ROUTES = { signUp: "/login", upgrade: "/subscription" };
 
 function Alternative({
   alternative,
@@ -202,6 +201,7 @@ export function LessonWaiting({
   const writing = useLessonWriting({ initialRequest, lessonId: lesson.id });
   const { request } = writing;
   const [starting, setStarting] = useState(false);
+  const signUpHref = useSignUpHref();
 
   useOpenWhenReady(request.status === "ready");
 
@@ -234,7 +234,7 @@ export function LessonWaiting({
             linkComponent={Link}
             onRetry={writing.retry}
             reason={request}
-            routes={LIMIT_ROUTES}
+            routes={{ signUp: signUpHref, upgrade: "/subscription" }}
           />
           {alternative && <Alternative alternative={alternative} instead />}
         </>

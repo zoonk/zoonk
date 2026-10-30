@@ -9,7 +9,7 @@ import { type PlanActions } from "@zoonk/learn/journey";
 import { type RevealedPlan } from "@zoonk/learn/onboarding/actions";
 import { StepsFlow } from "@zoonk/learn/onboarding/steps";
 import { retryGenerationAction } from "../onboarding-actions";
-import { WEB_ONBOARDING_ACTIONS, WEB_ONBOARDING_ROUTES } from "../onboarding-client-actions";
+import { WEB_ONBOARDING_ACTIONS, useWebOnboardingRoutes } from "../onboarding-client-actions";
 import { useOnboardingNavigation } from "../use-onboarding-navigation";
 
 export function StepsClient(props: {
@@ -19,6 +19,7 @@ export function StepsClient(props: {
   planActions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
 }) {
   const navigation = useOnboardingNavigation();
+  const routes = useWebOnboardingRoutes();
   const goalId = props.onboarding.goal.id;
 
   const generation = useWorkflowRun({
@@ -39,7 +40,7 @@ export function StepsClient(props: {
       }}
       generation={generation}
       navigation={navigation}
-      routes={WEB_ONBOARDING_ROUTES}
+      routes={routes}
     />
   );
 }

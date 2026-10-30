@@ -1,3 +1,4 @@
+import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { getCourseHref } from "@/data/courses/course-href";
 import { getPathname } from "@/i18n/navigation";
 import { rememberLocale } from "@/i18n/remember-locale";
@@ -9,6 +10,7 @@ import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action
 import { type OnboardingActions, type OnboardingRoutes } from "@zoonk/learn/onboarding/actions";
 import { isValidLocale } from "@zoonk/utils/locale";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
+import { useMemo } from "react";
 import {
   answerLevelTestAction,
   finishLevelTestAction,
@@ -77,15 +79,19 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   understanding: WEB_UNDERSTANDING_ACTIONS,
 };
 
-export const WEB_ONBOARDING_ROUTES: OnboardingRoutes = {
+const WEB_ONBOARDING_ROUTES = {
   course: getCourseHref,
   focusTest: (goalId) => `/focus-test?goal=${goalId}`,
   mock: (mockId) => `/mock/${mockId}`,
   placementMock: (goalId) => `/mock/placement/${goalId}`,
   planLink: (planId) => `/plan-link/${planId}`,
-  signUp: "/login",
   today: "/today",
-};
+} satisfies Omit<OnboardingRoutes, "signUp">;
+
+export function useWebOnboardingRoutes(): OnboardingRoutes {
+  const signUp = useSignUpHref();
+  return useMemo(() => ({ ...WEB_ONBOARDING_ROUTES, signUp }), [signUp]);
+}
 
 export function getPlanLinkOnboardingActions(planId: string): OnboardingActions {
   return {

@@ -3,6 +3,7 @@
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useQuestionTutor } from "@/components/learn/use-question-tutor";
+import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
@@ -41,7 +42,6 @@ import { useLocale } from "next-intl";
 import { useCallback, useEffect, useEffectEvent, useTransition } from "react";
 
 const EXIT_HREF = "/today";
-const SIGN_UP_HREF = "/login";
 
 export function SessionBlockClient({
   detail,
@@ -229,6 +229,7 @@ export function SessionSummaryClient({
 }) {
   const navigation = useStudyNavigation(sessionId);
   const router = useRouter();
+  const signUpHref = useSignUpHref();
 
   return (
     <SessionSummary
@@ -244,7 +245,7 @@ export function SessionSummaryClient({
       renderCeremony={(milestone, onClose) => (
         <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
       )}
-      signUpHref={isGuest ? SIGN_UP_HREF : null}
+      signUpHref={isGuest ? signUpHref : null}
       stopped={stopped}
       summary={summary}
     />

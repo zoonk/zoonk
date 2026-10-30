@@ -1,6 +1,7 @@
 "use client";
 
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
 import { GuestLessonNext } from "@zoonk/learn/guest-ending";
 import { type ComponentProps, useMemo } from "react";
@@ -9,7 +10,15 @@ import { LessonPlayerClient } from "./lesson-player-client";
 
 type EndingSlots = NonNullable<ComponentProps<typeof LessonPlayerClient>["endingSlots"]>;
 
-function createGuestEnding({ fit, goal }: { fit: LessonFit | null; goal: string }): EndingSlots {
+function createGuestEnding({
+  fit,
+  goal,
+  signUpHref,
+}: {
+  fit: LessonFit | null;
+  goal: string;
+  signUpHref: string;
+}): EndingSlots {
   const start = fit?.course
     ? { chapterId: fit.course.startChapterId, courseId: fit.course.id }
     : null;
@@ -19,7 +28,7 @@ function createGuestEnding({ fit, goal }: { fit: LessonFit | null; goal: string 
       <GuestLessonNext
         fit={fit}
         plan={<GuestPlanStart goal={goal} start={start} />}
-        signUpHref="/login"
+        signUpHref={signUpHref}
       />
     ),
   };
@@ -30,7 +39,12 @@ export function GuestLessonPlayer({
   ...props
 }: Omit<ComponentProps<typeof LessonPlayerClient>, "endingSlots"> & { fit: LessonFit | null }) {
   const goal = fit?.course?.title ?? props.lesson.title;
-  const endingSlots = useMemo(() => createGuestEnding({ fit, goal }), [fit, goal]);
+  const signUpHref = useSignUpHref();
+
+  const endingSlots = useMemo(
+    () => createGuestEnding({ fit, goal, signUpHref }),
+    [fit, goal, signUpHref],
+  );
 
   return (
     <MainLearnProvider>
