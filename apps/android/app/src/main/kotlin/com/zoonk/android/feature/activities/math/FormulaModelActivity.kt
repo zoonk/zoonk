@@ -131,8 +131,7 @@ private fun FormulaModelBoard(
             expected =
                 numeric?.let { check ->
                     props.expected.numericValue?.takeIf { props.isChecked }?.let { y ->
-                        val submitted = formulaValue(fields, sliders + events, check.output) ?: check.answer
-                        val digits = exactFractionDigitsFor(check.answer, check.allowed, submitted)
+                        val digits = exactFractionDigitsFor(check.answer, check.allowed, props.answer.numericValue ?: check.answer)
                         AnswerPoint(
                             x = check.inputs?.find { it.name == axis.name }?.`value` ?: axis.initial,
                             y = y,
