@@ -18,7 +18,6 @@ import {
 } from "@zoonk/testing/fixtures/library-chapters";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
-import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -53,12 +52,12 @@ const TIMEOUT = 60_000;
 
 async function planWaitingGoal(
   idsByKey: Record<string, string>,
-  { started = true }: { started?: boolean } = {},
+  { setupComplete = true }: { setupComplete?: boolean } = {},
 ) {
   const user = await userFixture();
 
   const goal = await goalFixture({
-    details: started
+    details: setupComplete
       ? { answered: ["purpose", "level", "targetDate", "buddy", "placement", "schedule"] }
       : {},
     userId: user.id,
@@ -73,14 +72,10 @@ async function planWaitingGoal(
     graph: toGoalPlanGraph({ courseIdsByKey: {}, graph: recordedGraph, idsByKey }),
   });
 
-  if (started) {
-    await studySessionFixture({ goalId: goal.id, userId: user.id });
-  }
-
   return goal;
 }
 
-async function waitingGoal(options: { started?: boolean } = {}) {
+async function waitingGoal(options: { setupComplete?: boolean } = {}) {
   const skills = await Promise.all(
     recordedGraph.skills.map((skill) =>
       skillFixture({ description: skill.description, name: skill.name }),
@@ -867,7 +862,7 @@ describe(courseOutlineWorkflow, () => {
     { timeout: TIMEOUT },
     async () => {
       const [{ bandSkills, goal }, course] = await Promise.all([
-        waitingGoal({ started: false }),
+        waitingGoal({ setupComplete: false }),
         courseFixture({ outlineStatus: "pending", title: "Immunology" }),
       ]);
 
@@ -1092,8 +1087,6 @@ describe(courseOutlineWorkflow, () => {
           ],
         },
       });
-
-      await studySessionFixture({ goalId: goal.id, userId: user.id });
 
       const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
 

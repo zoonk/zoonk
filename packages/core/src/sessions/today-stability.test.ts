@@ -63,6 +63,7 @@ async function setupDayWithStandIn({
 
   const { goal } = await unplannedGoalFixture({
     dailyMinutes,
+    details: { answered: ["purpose", "level", "targetDate", "buddy", "placement", "schedule"] },
     primaryCourseId: course.id,
     settings: { startDate: "2026-09-30" },
     timezone: "UTC",
@@ -94,6 +95,7 @@ async function setupPlacedDay() {
 
   const { goal } = await unplannedGoalFixture({
     dailyMinutes: 30,
+    details: { answered: ["purpose", "level", "targetDate", "buddy", "placement", "schedule"] },
     primaryCourseId: course.id,
     settings: { startDate: "2026-09-30" },
     timezone: "UTC",

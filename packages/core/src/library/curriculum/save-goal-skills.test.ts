@@ -71,7 +71,7 @@ describe(linkGoalSkillPrerequisites, () => {
     await expect(listPrerequisiteIds(first.id)).resolves.toStrictEqual([previous.id]);
   });
 
-  it("invalidates every dependent plan once while publishing a graph", async () => {
+  it("marks every dependent layout stale once while publishing a graph", async () => {
     const [first, second, user] = await Promise.all([
       skillFixture(),
       skillFixture(),
@@ -101,7 +101,12 @@ describe(linkGoalSkillPrerequisites, () => {
       where: { id: { in: plans.map((plan) => plan.id) } },
     });
 
-    expect(saved.map((plan) => plan.inputVersion)).toStrictEqual([1, 1]);
+    expect(
+      saved.map(({ inputVersion, sourceVersion }) => ({ inputVersion, sourceVersion })),
+    ).toStrictEqual([
+      { inputVersion: 0, sourceVersion: 1 },
+      { inputVersion: 0, sourceVersion: 1 },
+    ]);
   });
 
   it("lets the newest graph decide the edges between its own skills", async () => {

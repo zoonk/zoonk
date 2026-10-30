@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import * as decisionTask from "@zoonk/ai/tasks/v2/identity/decision";
 import * as searchTermsTask from "@zoonk/ai/tasks/v2/identity/search-terms";
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -160,6 +161,14 @@ describe(createHomeChapterLessons, () => {
 
     const { lesson: taken } = await createLibraryLesson(earlier);
 
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+
+    const plan = await planFixture({
+      goalId: goal.id,
+      sourceSkillIds: [...first.skillIds, ...second.skillIds],
+    });
+
     const created = await createHomeChapterLessons({
       homeChapterId: chapter.id,
       lessons: [first, second],
@@ -174,6 +183,10 @@ describe(createHomeChapterLessons, () => {
     await expect(
       prisma.lesson.findUniqueOrThrow({ where: { id: created[1]?.lesson.id ?? "" } }),
     ).resolves.toMatchObject({ spec });
+
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(saved).toMatchObject({ inputVersion: plan.inputVersion, version: plan.version });
+    expect(saved.sourceVersion).toBeGreaterThan(plan.sourceVersion);
   });
 
   it("returns the lesson another request already created under a key", async () => {

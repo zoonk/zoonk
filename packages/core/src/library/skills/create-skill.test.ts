@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
@@ -67,6 +68,10 @@ describe(setSkillsPrerequisites, () => {
 
     const among = new Set<string>();
 
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id, sourceSkillIds: [skill.id] });
+
     await setSkillsPrerequisites({
       among,
       prerequisitesBySkill: new Map([[skill.id, [first.id, skill.id]]]),
@@ -82,5 +87,9 @@ describe(setSkillsPrerequisites, () => {
     expect(edges.map((edge) => edge.prerequisiteId).toSorted()).toStrictEqual(
       [first.id, second.id].toSorted(),
     );
+
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(saved).toMatchObject({ inputVersion: plan.inputVersion, version: plan.version });
+    expect(saved.sourceVersion).toBeGreaterThan(plan.sourceVersion);
   });
 });

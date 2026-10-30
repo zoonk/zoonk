@@ -1,14 +1,17 @@
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mockSession } from "../../_test-utils/mock-session";
+import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { pickSpeculativeLessons } from "../../lookahead/speculative-lessons";
 import { markPlanInputsUntil } from "../../plans/_test-utils/mark-plan-inputs";
 import { openStudyDay } from "../../sessions/open-study-day";
 import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-onboarding-question";
+import { getTodayView } from "../../view-models/today/get-today-view";
 import { mockDecision, mockSearchTerms, uniqueWord } from "../identity/_test-utils/identity-mocks";
 import {
   WAITING_START,
@@ -135,7 +138,6 @@ describe(replanGoalsWaitingOnSkills, () => {
   it("refreshes a completed setup before the learner opens the first study day", async () => {
     const skill = await skillFixture();
     const { goal, plan } = await waitingGoal(skill);
-    await prisma.studySession.deleteMany({ where: { goalId: goal.id } });
     const lessons = await outlineSkill(skill);
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     await replanWaitingGoal(goal.id);
@@ -158,6 +160,48 @@ describe(replanGoalsWaitingOnSkills, () => {
 
     await expect(plannedLessons(plan.id)).resolves.toStrictEqual(lessons);
   });
+
+  it.each(["running", "completed"] as const)(
+    "shows landed lessons without a coming row before a guest starts Today (%s outline)",
+    async (outlineStatus) => {
+      const skill = await skillFixture();
+      const { goal } = await waitingGoal(skill);
+      const course = await courseFixture({ outlineStatus: "running" });
+
+      await Promise.all([
+        prisma.goal.update({ data: { primaryCourseId: course.id }, where: { id: goal.id } }),
+        prisma.user.update({ data: { isAnonymous: true }, where: { id: goal.userId } }),
+        learningProfileFixture({ activeGoalId: goal.id, userId: goal.userId }),
+      ]);
+
+      mockGuestSession(goal.userId);
+      const before = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+      expect(before.status === "ready" && before.today.session).toMatchObject({
+        emptyDay: "lessonsComing",
+        status: "unstarted",
+      });
+
+      const lessons = await outlineSkill(skill);
+      await replanGoalsWaitingOnSkills({ goalIds: [goal.id], skillIds: [skill.id] });
+      await prisma.course.update({ data: { outlineStatus }, where: { id: course.id } });
+      const after = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+      const day = after.status === "ready" ? after.today.session : null;
+
+      expect(day).toMatchObject({
+        emptyDay: null,
+        lessonsComing: false,
+        lessonsToPrepare: false,
+        status: "unstarted",
+      });
+
+      expect(day?.blocks.some((block) => block.lessonId && lessons.includes(block.lessonId))).toBe(
+        true,
+      );
+
+      await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+    },
+  );
 
   it("picks newly published lessons in memory while onboarding still owns the saved plan", async () => {
     const skill = await skillFixture();

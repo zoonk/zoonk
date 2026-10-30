@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { type skillFixture } from "@zoonk/testing/fixtures/skills";
-import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { createGoalPlan } from "../../../plans/create-goal-plan";
 import { uniqueWord } from "../../identity/_test-utils/identity-mocks";
@@ -43,7 +42,6 @@ export async function waitingGoal(skill: Skill, { dailyMinutes }: { dailyMinutes
     },
   });
 
-  await studySessionFixture({ goalId: goal.id, localDate: WAITING_START, userId: user.id });
   return { goal, plan };
 }
 
