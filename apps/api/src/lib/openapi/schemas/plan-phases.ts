@@ -15,6 +15,7 @@ export const planPhaseSchema = z
   .object({
     challengeLeftOut: z
       .boolean()
+      .default(false)
       .meta({
         description:
           "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it: say there's no time for its challenge before the date, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study (placement found it known, or the plan holds none of its lessons) has no challenge and is never marked",
