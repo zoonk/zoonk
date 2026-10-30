@@ -70,6 +70,15 @@ describe(drawCourseIcon, () => {
     expect(vi.mocked(put).mock.calls[0]?.[0]).toBe(`library/courses/${course.slug}.webp`);
   });
 
+  it("skips saving an icon when its course was deleted after drawing", async () => {
+    const course = await courseFixture();
+    vi.mocked(generateCourseIcon).mockResolvedValue(drawnIcon(await drawTestImage()));
+    const icon = await drawCourseIcon({ courseId: course.id });
+    await prisma.course.delete({ where: { id: course.id } });
+    await expect(saveCourseIcon({ courseId: course.id, icon })).resolves.toBeNull();
+    expect(put).not.toHaveBeenCalled();
+  });
+
   it("reuses a drawing after an upload fails", async () => {
     const course = await courseFixture();
     vi.mocked(generateCourseIcon).mockResolvedValue(drawnIcon(await drawTestImage()));

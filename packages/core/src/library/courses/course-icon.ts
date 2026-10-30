@@ -103,10 +103,10 @@ export async function saveCourseIcon({
   courseId: string;
   icon: DrawnIcon | null;
 }): Promise<string | null> {
-  const course = await prisma.course.findUniqueOrThrow({ where: { id: courseId } });
+  const course = await prisma.course.findUnique({ where: { id: courseId } });
 
-  if (course.imageUrl || !icon) {
-    return course.imageUrl;
+  if (!course || course.imageUrl || !icon) {
+    return course?.imageUrl ?? null;
   }
 
   const url = await uploadIcon({ image: icon.image, slug: course.slug });
