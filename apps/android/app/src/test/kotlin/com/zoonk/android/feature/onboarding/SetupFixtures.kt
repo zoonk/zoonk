@@ -127,7 +127,9 @@ internal fun planOf(
         } ?: ""}${feasibility?.let { ""","feasibility":$it""" } ?: ""}
          ${numbers?.let { ""","numbers":$it""" } ?: ""},
          "schedule":{"dailyMinutes":$dailyMinutes,"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDateEstimated":false,
-           "targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":30,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,30,30,30,30,30,0]${targetDate?.let { ""","targetDate":"$it"""" } ?: ""}
+           "targetDateNamedMonth":false,
+           "shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":30,"weekend":null,"weekendDays":[]},
+           "weekdayMinutes":[0,30,30,30,30,30,0]${targetDate?.let { ""","targetDate":"$it"""" } ?: ""}
            ${noticeDay?.let { ""","noticeDay":$it""" } ?: ""}},
          "steering":{"difficultyBias":"standard","lessonsStudied":0,"practiceBias":"balanced","skippedActivities":[]},
          "tools":[],"week":{"days":[],"startDate":"$weekStart","endDate":"${weekStart.plusDays(6)}"},
