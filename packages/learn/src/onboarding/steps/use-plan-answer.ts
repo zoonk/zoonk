@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { type PollStatus, usePoll } from "../../_utils/use-poll";
-import { requestWithin } from "../../plan/use-time-to-cover";
 import { createRequestLane } from "./request-lane";
 
 const POLL_MS = 3000;
@@ -64,7 +63,7 @@ export function usePlanAnswer<Answer extends { ready: boolean }>({
     last: null,
   });
 
-  const lane = useRef(createRequestLane());
+  const lane = useRef(createRequestLane<Answer | null>());
   const answer = answered.byKey.get(key) ?? null;
 
   const poll = usePoll({
@@ -76,7 +75,7 @@ export function usePlanAnswer<Answer extends { ready: boolean }>({
         await settle(signal);
       }
 
-      const next = await lane.current({ request: () => requestWithin(ask), signal });
+      const next = await lane.current({ key, request: ask, signal });
 
       if (!next) {
         if (signal.aborted) {

@@ -1,37 +1,47 @@
+import { requestWithin } from "../../plan/use-time-to-cover";
+
+type Sent<Answer> = { answer: Promise<Answer>; key: string };
+
 /**
- * One request out at a time: a request asked while another is out waits its turn, and one whose
- * `signal` aborts while it waits is never sent, so of the requests asked meanwhile only the latest
- * goes.
+ * One request out at a time: asking again for the `key` that's out joins it, and asking for another
+ * waits until it settles, so one whose `signal` aborts meanwhile is never sent. An asker hears null
+ * once a request is too slow to wait for, but the lane stays held until that request settles.
  */
-export function createRequestLane() {
-  let out: Promise<unknown> | null = null;
+export function createRequestLane<Answer>() {
+  let out: Sent<Answer> | null = null;
 
-  async function waitTurn(): Promise<void> {
-    const turn = out;
-    await turn;
+  function send(key: string, request: () => Promise<Answer>): Sent<Answer> {
+    const sent = { answer: request(), key };
+    out = sent;
 
-    if (turn !== out) {
-      await waitTurn();
-    }
+    void sent.answer
+      .catch(() => null)
+      .finally(() => {
+        if (out === sent) {
+          out = null;
+        }
+      });
+
+    return sent;
   }
 
-  return async function askInTurn<Answer>({
-    request,
-    signal,
-  }: {
+  return async function askInTurn(asked: {
+    key: string;
     request: () => Promise<Answer>;
     signal: AbortSignal;
   }): Promise<Answer | null> {
-    if (out) {
-      await waitTurn();
+    const { key, request, signal } = asked;
+
+    if (out && out.key !== key) {
+      await out.answer.catch(() => null);
+      return askInTurn(asked);
     }
 
     if (signal.aborted) {
       return null;
     }
 
-    const answer = request();
-    out = answer.catch(() => null);
-    return answer;
+    const sent = out?.key === key ? out : send(key, request);
+    return requestWithin(() => sent.answer);
   };
 }
