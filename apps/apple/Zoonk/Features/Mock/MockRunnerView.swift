@@ -323,6 +323,9 @@ private struct MockEssayBox: View {
     VStack(alignment: .leading, spacing: 12) {
       Text((view.essayRubric ?? .custom).writingName)
         .font(.subheadline.weight(.medium))
+        .accessibilityHidden(true)
+
+      let words = EssayWords.count(text.wrappedValue)
 
       TextEditor(text: text)
         .frame(minHeight: 280)
@@ -331,10 +334,10 @@ private struct MockEssayBox: View {
         .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
         .disabled(isLocked)
         .accessibilityLabel(Text((view.essayRubric ?? .custom).writingName))
+        .accessibilityHint(EssayWords.hint(words))
 
-      let words = EssayWords.count(text.wrappedValue)
       if words > 0 {
-        Text("\(words) words", tableName: "Mock", comment: "An essay's word count")
+        EssayWords.text(words)
           .font(.caption.monospaced())
           .foregroundStyle(.secondary)
       }
@@ -625,12 +628,6 @@ private struct MockAnswerSheet: View {
     }
     .disabled(!run.moves.canOpen(index) || run.timeUp)
     .listRowBackground(isCurrent ? Color(.tertiarySystemFill) : nil)
-  }
-}
-
-enum EssayWords {
-  static func count(_ text: String) -> Int {
-    text.split(whereSeparator: \.isWhitespace).count
   }
 }
 

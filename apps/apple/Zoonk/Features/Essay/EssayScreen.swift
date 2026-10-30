@@ -274,16 +274,18 @@ private struct EssayContent: View {
       }
     }
 
+    let words = EssayWords.count(text)
+
     Section {
       TextEditor(text: textBinding)
         .frame(minHeight: 280)
         .accessibilityLabel(Text(boxLabel))
+        .accessibilityHint(EssayWords.hint(words))
     } header: {
       Text(boxLabel)
     } footer: {
-      let words = EssayWords.count(text)
       if words > 0 {
-        Text("\(words) words", tableName: "Essay", comment: "An essay's word count")
+        EssayWords.text(words)
           .monospacedDigit()
       }
     }
