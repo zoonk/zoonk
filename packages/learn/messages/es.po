@@ -9209,9 +9209,9 @@ msgid "This goal gets {main} a day and your other goal {other}."
 msgstr "Este objetivo recibe {main} al día y tu otro objetivo, {other}."
 
 #: src/onboarding/steps/schedule-line.tsx
-msgctxt "htrFnU"
-msgid "This goal gets {main} a day and each of your other goals {other}."
-msgstr "Este objetivo recibe {main} al día y cada uno de tus otros objetivos, {other}."
+msgctxt "L1otxC"
+msgid "This goal gets {main} a day and your other goals {other} together."
+msgstr "Este objetivo recibe {main} al día y tus otros objetivos, {other} en total."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "lOJOQa"

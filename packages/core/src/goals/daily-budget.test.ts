@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getBudgetForMainGoal, splitDailyBudget } from "./daily-budget";
+import { getBudgetForGoal, splitDailyBudget } from "./daily-budget";
 
 describe(splitDailyBudget, () => {
   it("gives the main goal twice each other goal's share and keeps the total", () => {
@@ -14,21 +14,21 @@ describe(splitDailyBudget, () => {
   });
 });
 
-describe(getBudgetForMainGoal, () => {
+describe(getBudgetForGoal, () => {
   it("gives the main goal exactly its time from the least day that does", () => {
-    expect(getBudgetForMainGoal({ count: 1, main: 45 })).toBe(45);
-    expect(getBudgetForMainGoal({ count: 2, main: 40 })).toBe(55);
-    expect(getBudgetForMainGoal({ count: 2, main: 50 })).toBe(70);
-    expect(getBudgetForMainGoal({ count: 3, main: 30 })).toBe(50);
+    expect(getBudgetForGoal({ count: 1, minutes: 45, place: 0 })).toBe(45);
+    expect(getBudgetForGoal({ count: 2, minutes: 40, place: 0 })).toBe(55);
+    expect(getBudgetForGoal({ count: 2, minutes: 50, place: 0 })).toBe(70);
+    expect(getBudgetForGoal({ count: 3, minutes: 30, place: 0 })).toBe(50);
   });
 
   it("never suggests a day shorter than every goal's minimum, so the saved times add up to it", () => {
-    expect(getBudgetForMainGoal({ count: 2, main: 5 })).toBe(10);
-    expect(getBudgetForMainGoal({ count: 3, main: 5 })).toBe(15);
+    expect(getBudgetForGoal({ count: 2, minutes: 5, place: 0 })).toBe(10);
+    expect(getBudgetForGoal({ count: 3, minutes: 5, place: 0 })).toBe(15);
 
     for (const count of [1, 2, 3]) {
       for (const main of [5, 10, 15, 40]) {
-        const budget = getBudgetForMainGoal({ count, main });
+        const budget = getBudgetForGoal({ count, minutes: main, place: 0 });
         const shares = splitDailyBudget({ budget, count });
 
         expect(shares[0]).toBe(main);
@@ -42,10 +42,38 @@ describe(getBudgetForMainGoal, () => {
 
     for (const count of [2, 3, 4]) {
       const mains = times.map(
-        (main) => splitDailyBudget({ budget: getBudgetForMainGoal({ count, main }), count })[0],
+        (main) =>
+          splitDailyBudget({
+            budget: getBudgetForGoal({ count, minutes: main, place: 0 }),
+            count,
+          })[0],
       );
 
       expect(mains).toStrictEqual(times);
+    }
+  });
+
+  it("gives a goal typed after the main one exactly its time, from the least day that does", () => {
+    expect(getBudgetForGoal({ count: 2, minutes: 40, place: 1 })).toBe(120);
+
+    const times = Array.from({ length: 48 }, (_, index) => (index + 1) * 5);
+
+    for (const [count, place] of [
+      [2, 1],
+      [3, 1],
+      [3, 2],
+    ] as const) {
+      const shares = times.map((minutes) => {
+        const budget = getBudgetForGoal({ count, minutes, place });
+        const split = splitDailyBudget({ budget, count });
+
+        return {
+          share: split[place],
+          sum: split.reduce((total, share) => total + share, 0) === budget,
+        };
+      });
+
+      expect(shares).toStrictEqual(times.map((share) => ({ share, sum: true })));
     }
   });
 });

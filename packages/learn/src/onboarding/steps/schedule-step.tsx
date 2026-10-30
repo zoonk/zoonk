@@ -13,6 +13,7 @@ import { NoticeReading } from "./notice-reading";
 import { PlanBuilding } from "./plan-building";
 import { type GoalDate, ScheduleLine } from "./schedule-line";
 import {
+  type GoalsTogether,
   getOffer,
   getSuggestedMinutes,
   getTooClose,
@@ -184,20 +185,20 @@ export function ScheduleStep({
   findTimeToCover,
   getTimeAdvice,
   goal,
-  goalCount,
   onAnswer,
   pending,
   recommendedMinutes,
   run,
+  together,
 }: ScheduleActions & {
   dated: boolean;
   exam?: boolean;
   goal: GoalView;
-  goalCount: number;
   onAnswer: (input: OnboardingAnswerInput) => void;
   pending: boolean;
   recommendedMinutes: number;
   run: GenerationRun | null;
+  together: GoalsTogether;
 }) {
   const t = useExtracted();
 
@@ -206,9 +207,9 @@ export function ScheduleStep({
     dated,
     exam,
     goal,
-    goalCount,
     paused: isRunStopped(run),
     recommendedMinutes,
+    together,
   });
 
   if (isWaiting({ gate: schedule.gate, run })) {

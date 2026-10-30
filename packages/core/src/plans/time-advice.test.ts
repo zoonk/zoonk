@@ -4,7 +4,7 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { getBudgetForMainGoal } from "../goals/daily-budget";
+import { getBudgetForGoal } from "../goals/daily-budget";
 import { updateGoal } from "../goals/update-goal";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
@@ -352,7 +352,7 @@ describe(getPlanTimeAdvice, () => {
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
     const found = await readPlanTime(goal.id);
     const main = found.recommendedMinutes ?? 0;
-    const day = getBudgetForMainGoal({ count: 2, main });
+    const day = getBudgetForGoal({ count: 2, minutes: main, place: 0 });
 
     await answerOnboardingQuestion({
       goalId: goal.id,
@@ -366,6 +366,39 @@ describe(getPlanTimeAdvice, () => {
         where: { id: { in: [goal.id, other.id] } },
       }),
     ).resolves.toStrictEqual([{ dailyMinutes: main }, { dailyMinutes: day - main }]);
+
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1 });
+  });
+
+  it("gives a goal typed after the main one the time found for it when the learner takes the day it needs", async () => {
+    const { goal, library, user } = await setup();
+    const onboardingId = randomUUID();
+
+    await prisma.goal.update({ data: { details: { onboardingId } }, where: { id: goal.id } });
+
+    const { goal: main } = await unplannedGoalFixture({
+      createdAt: new Date(NOW.getTime() - 1000),
+      details: { onboardingId },
+      userId: user.id,
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    const found = await readPlanTime(goal.id);
+    const minutes = found.recommendedMinutes ?? 0;
+    const day = getBudgetForGoal({ count: 2, minutes, place: 1 });
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { dailyMinutes: day, question: "schedule", timeZone: "UTC" },
+    });
+
+    await expect(
+      prisma.goal.findMany({
+        orderBy: { createdAt: "asc" },
+        select: { dailyMinutes: true },
+        where: { id: { in: [main.id, goal.id] } },
+      }),
+    ).resolves.toStrictEqual([{ dailyMinutes: day - minutes }, { dailyMinutes: minutes }]);
 
     await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1 });
   });

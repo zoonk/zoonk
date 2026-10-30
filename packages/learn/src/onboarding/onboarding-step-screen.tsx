@@ -174,9 +174,12 @@ export function OnboardingStepScreen({
           findTimeToCover={(week) => actions.findTimeToCover({ goalId: view.goal.id, ...week })}
           getTimeAdvice={(week) => actions.getTimeAdvice({ goalId: view.goal.id, ...week })}
           goal={view.goal}
-          goalCount={view.goalIds.length}
           recommendedMinutes={view.recommendedMinutes}
           run={run}
+          together={{
+            count: view.goalIds.length,
+            place: Math.max(0, view.goalIds.indexOf(view.goal.id)),
+          }}
         />
       );
     case "buddy":

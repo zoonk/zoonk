@@ -9209,9 +9209,9 @@ msgid "This goal gets {main} a day and your other goal {other}."
 msgstr "Esta meta fica com {main} por dia e sua outra meta com {other}."
 
 #: src/onboarding/steps/schedule-line.tsx
-msgctxt "htrFnU"
-msgid "This goal gets {main} a day and each of your other goals {other}."
-msgstr "Esta meta fica com {main} por dia e cada uma das suas outras metas com {other}."
+msgctxt "L1otxC"
+msgid "This goal gets {main} a day and your other goals {other} together."
+msgstr "Esta meta fica com {main} por dia e suas outras metas, juntas, com {other}."
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "lOJOQa"

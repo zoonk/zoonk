@@ -22,16 +22,24 @@ export function getLeastDailyBudget(count: number): number {
 }
 
 /**
- * The least day's time that gives the main goal exactly `main` minutes: a time worked out for the
- * main goal alone, as the day the goals typed with it share.
+ * The least day's time that gives the goal at `place` (the main one is 0) exactly `minutes`: a time
+ * worked out for that goal alone, as the day the goals typed with it share.
  */
-export function getBudgetForMainGoal({ count, main }: { count: number; main: number }): number {
-  const least = Math.max(main, getLeastDailyBudget(count));
+export function getBudgetForGoal({
+  count,
+  minutes,
+  place,
+}: {
+  count: number;
+  minutes: number;
+  place: number;
+}): number {
+  const least = Math.max(minutes, getLeastDailyBudget(count));
 
   const budgets = Array.from(
-    { length: Math.max(1, count) * (main / MINUTES_STEP) + 1 },
+    { length: Math.max(1, count) * (minutes / MINUTES_STEP) + 1 },
     (_, index) => least + index * MINUTES_STEP,
   );
 
-  return budgets.find((budget) => splitDailyBudget({ budget, count })[0] === main) ?? least;
+  return budgets.find((budget) => splitDailyBudget({ budget, count })[place] === minutes) ?? least;
 }

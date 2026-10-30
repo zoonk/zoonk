@@ -11,7 +11,7 @@ import {
   keepsFullCourse,
   toDayTime,
   toFindWeek,
-  toMainGoalWeek,
+  toGoalWeek,
   toPickedMinutes,
   toStudyWeek,
   waitsForSuggestion,
@@ -330,49 +330,75 @@ describe(toFindWeek, () => {
 });
 
 describe("goals typed together", () => {
-  it("asks the main goal's plan about its share of the day's time", () => {
+  const MAIN = { count: 2, place: 0 };
+  const SECOND = { count: 2, place: 1 };
+
+  it("asks the shown goal's plan about its share of the day's time", () => {
     expect(
-      toMainGoalWeek({
-        goalCount: 2,
+      toGoalWeek({
+        together: MAIN,
         week: { dailyMinutes: 60, studyDays: [1], weekendMinutes: 90 },
       }),
     ).toStrictEqual({ dailyMinutes: 40, studyDays: [1], weekendMinutes: 60 });
 
-    expect(toMainGoalWeek({ goalCount: 2, week: { studyDays: [1] } })).toStrictEqual({
+    expect(
+      toGoalWeek({
+        together: SECOND,
+        week: { dailyMinutes: 60, studyDays: [1], weekendMinutes: 90 },
+      }),
+    ).toStrictEqual({ dailyMinutes: 20, studyDays: [1], weekendMinutes: 30 });
+
+    expect(toGoalWeek({ together: MAIN, week: { studyDays: [1] } })).toStrictEqual({
       studyDays: [1],
     });
 
     expect(
-      toMainGoalWeek({ goalCount: 1, week: { dailyMinutes: 60, studyDays: [1] } }),
+      toGoalWeek({ together: { count: 1, place: 0 }, week: { dailyMinutes: 60, studyDays: [1] } }),
     ).toStrictEqual({ dailyMinutes: 60, studyDays: [1] });
   });
 
-  it("suggests the day's time that gives the main goal the time its plan found", () => {
-    expect(
-      toDayTime({ goalCount: 2, time: foundTime({ coreMinutes: 20, recommendedMinutes: 40 }) }),
-    ).toMatchObject({ coreMinutes: 25, recommendedMinutes: 55 });
+  it("suggests the day's time that gives the shown goal the time its plan found", () => {
+    const found = foundTime({ coreMinutes: 20, recommendedMinutes: 40 });
+
+    expect(toDayTime({ time: found, together: MAIN })).toMatchObject({
+      coreMinutes: 25,
+      recommendedMinutes: 55,
+    });
+
+    expect(toDayTime({ time: found, together: SECOND })).toMatchObject({
+      coreMinutes: 60,
+      recommendedMinutes: 120,
+    });
 
     expect(
-      toMainGoalWeek({ goalCount: 2, week: { dailyMinutes: 55, studyDays: [1] } }),
+      toGoalWeek({ together: SECOND, week: { dailyMinutes: 120, studyDays: [1] } }),
     ).toStrictEqual({ dailyMinutes: 40, studyDays: [1] });
 
-    expect(toDayTime({ goalCount: 1, time: foundTime() })).toStrictEqual(foundTime());
+    expect(toDayTime({ time: foundTime(), together: { count: 1, place: 0 } })).toStrictEqual(
+      foundTime(),
+    );
   });
 
   it("says how the day's time is shared only between goals typed together", () => {
-    expect(getDaySplit({ goalCount: 2, minutes: 60 })).toStrictEqual({
-      main: 40,
-      other: 20,
+    expect(getDaySplit({ minutes: 60, together: MAIN })).toStrictEqual({
+      mine: 40,
       others: 1,
+      rest: 20,
     });
 
-    expect(getDaySplit({ goalCount: 3, minutes: 50 })).toStrictEqual({
-      main: 30,
-      other: 10,
+    expect(getDaySplit({ minutes: 60, together: SECOND })).toStrictEqual({
+      mine: 20,
+      others: 1,
+      rest: 40,
+    });
+
+    expect(getDaySplit({ minutes: 50, together: { count: 3, place: 2 } })).toStrictEqual({
+      mine: 10,
       others: 2,
+      rest: 40,
     });
 
-    expect(getDaySplit({ goalCount: 1, minutes: 60 })).toBeNull();
-    expect(getDaySplit({ goalCount: 2, minutes: null })).toBeNull();
+    expect(getDaySplit({ minutes: 60, together: { count: 1, place: 0 } })).toBeNull();
+    expect(getDaySplit({ minutes: null, together: MAIN })).toBeNull();
   });
 });

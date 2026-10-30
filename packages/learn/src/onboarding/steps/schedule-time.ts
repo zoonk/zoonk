@@ -1,4 +1,4 @@
-import { getBudgetForMainGoal, splitDailyBudget } from "@zoonk/core/goals/daily-budget";
+import { getBudgetForGoal, splitDailyBudget } from "@zoonk/core/goals/daily-budget";
 import {
   type PlanSuggestedTime,
   type PlanTimeAdvice,
@@ -21,18 +21,21 @@ export type TimeLine =
   | { kind: "share"; share: number }
   | { kind: "working" };
 
-export type DaySplit = { main: number; other: number; others: number };
+/** The goals typed together share the day's time; `place` is the shown goal's among them, the main one 0. */
+export type GoalsTogether = { count: number; place: number };
 
-function getMainShare({ goalCount, minutes }: { goalCount: number; minutes: number }): number {
-  return splitDailyBudget({ budget: minutes, count: goalCount })[0] ?? minutes;
+export type DaySplit = { mine: number; others: number; rest: number };
+
+function getShare({ minutes, together }: { minutes: number; together: GoalsTogether }): number {
+  return splitDailyBudget({ budget: minutes, count: together.count })[together.place] ?? minutes;
 }
 
-/** Goals typed together share the day's time, the main one the most: its plan answers for its share. */
-export function toMainGoalWeek<Week extends StudyWeek & Pick<PlanTimeAdviceInput, "dailyMinutes">>({
-  goalCount,
+/** The goal's plan answers for its share of the day's time. */
+export function toGoalWeek<Week extends StudyWeek & Pick<PlanTimeAdviceInput, "dailyMinutes">>({
+  together,
   week,
 }: {
-  goalCount: number;
+  together: GoalsTogether;
   week: Week;
 }): Week {
   const { dailyMinutes, weekendMinutes } = week;
@@ -41,23 +44,25 @@ export function toMainGoalWeek<Week extends StudyWeek & Pick<PlanTimeAdviceInput
     ...week,
     ...(dailyMinutes === undefined
       ? {}
-      : { dailyMinutes: getMainShare({ goalCount, minutes: dailyMinutes }) }),
+      : { dailyMinutes: getShare({ minutes: dailyMinutes, together }) }),
     ...(weekendMinutes === undefined
       ? {}
-      : { weekendMinutes: getMainShare({ goalCount, minutes: weekendMinutes }) }),
+      : { weekendMinutes: getShare({ minutes: weekendMinutes, together }) }),
   };
 }
 
-/** The times the main goal's plan found, as the day's time that gives the main goal them. */
+/** The times the goal's plan found, as the day's time that gives the goal them. */
 export function toDayTime({
-  goalCount,
   time,
+  together,
 }: {
-  goalCount: number;
   time: PlanTimeToCover;
+  together: GoalsTogether;
 }): PlanTimeToCover {
-  const toDay = (main: number | null) =>
-    main === null ? null : getBudgetForMainGoal({ count: goalCount, main });
+  const toDay = (minutes: number | null) =>
+    minutes === null
+      ? null
+      : getBudgetForGoal({ count: together.count, minutes, place: together.place });
 
   return {
     ...time,
@@ -71,18 +76,21 @@ export function toDayTime({
 }
 
 export function getDaySplit({
-  goalCount,
   minutes,
+  together,
 }: {
-  goalCount: number;
   minutes: number | null;
+  together: GoalsTogether;
 }): DaySplit | null {
-  if (goalCount < 2 || minutes === null) {
+  if (together.count < 2 || minutes === null) {
     return null;
   }
 
-  const [main = minutes, other = 0] = splitDailyBudget({ budget: minutes, count: goalCount });
-  return { main, other, others: goalCount - 1 };
+  const shares = splitDailyBudget({ budget: minutes, count: together.count });
+  const mine = shares[together.place] ?? minutes;
+  const all = shares.reduce((sum, share) => sum + share, 0);
+
+  return { mine, others: together.count - 1, rest: all - mine };
 }
 
 export function toStudyWeek({

@@ -6,6 +6,7 @@ import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { useState } from "react";
 import { type PollStatus } from "../../_utils/use-poll";
 import {
+  type GoalsTogether,
   type StudyWeek,
   asksAboutTime,
   getDaySplit,
@@ -13,7 +14,7 @@ import {
   getTimeLine,
   toDayTime,
   toFindWeek,
-  toMainGoalWeek,
+  toGoalWeek,
   toStudyWeek,
   waitsForSuggestion,
 } from "./schedule-time";
@@ -59,23 +60,23 @@ function useFoundTime({
   ask,
   dated,
   days,
-  goalCount,
   paused,
+  together,
   weekend,
 }: {
   ask: ScheduleActions["findTimeToCover"];
   dated: boolean;
   days: number[];
-  goalCount: number;
   paused: boolean;
+  together: GoalsTogether;
   weekend: number | null;
 }) {
   const week = toFindWeek({ days, weekend });
 
   const covering = usePlanAnswer({
     ask: async () => {
-      const time = await ask(toMainGoalWeek({ goalCount, week }));
-      return time && toDayTime({ goalCount, time });
+      const time = await ask(toGoalWeek({ together, week }));
+      return time && toDayTime({ time, together });
     },
     enabled: dated && days.length > 0,
     key: JSON.stringify(week),
@@ -100,17 +101,17 @@ export function useSchedule({
   dated: datedGuess,
   exam,
   goal,
-  goalCount,
   paused,
   recommendedMinutes,
+  together,
 }: {
   actions: ScheduleActions;
   dated: boolean;
   exam: boolean;
   goal: GoalView;
-  goalCount: number;
   paused: boolean;
   recommendedMinutes: number;
+  together: GoalsTogether;
 }) {
   const [picked, setPicked] = useState<number | null>(null);
   const [fullCourse, setFullCourse] = useState(false);
@@ -121,8 +122,8 @@ export function useSchedule({
     ask: actions.findTimeToCover,
     dated: datedGuess,
     days: week.days,
-    goalCount,
     paused,
+    together,
     weekend: week.weekend,
   });
 
@@ -147,10 +148,7 @@ export function useSchedule({
   const timeAdvice = usePlanAnswer({
     ask: () =>
       actions.getTimeAdvice(
-        toMainGoalWeek({
-          goalCount,
-          week: { ...asked, dailyMinutes: minutes ?? recommendedMinutes },
-        }),
+        toGoalWeek({ together, week: { ...asked, dailyMinutes: minutes ?? recommendedMinutes } }),
       ),
     enabled:
       hasDays &&
@@ -182,7 +180,7 @@ export function useSchedule({
     picked,
     setFullCourse,
     setPicked,
-    split: hasDays ? getDaySplit({ goalCount, minutes }) : null,
+    split: hasDays ? getDaySplit({ minutes, together }) : null,
     stale:
       hasDays &&
       waitsForSuggestion({ failed: found.failed, first: found.first, found: found.found, picked }),

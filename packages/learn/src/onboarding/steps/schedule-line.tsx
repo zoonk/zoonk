@@ -170,12 +170,12 @@ function LineWords({
 function DaySplitWords({ split }: { split: DaySplit }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const main = formatDuration(split.main);
-  const other = formatDuration(split.other);
+  const main = formatDuration(split.mine);
+  const other = formatDuration(split.rest);
 
   return split.others === 1
     ? t("This goal gets {main} a day and your other goal {other}.", { main, other })
-    : t("This goal gets {main} a day and each of your other goals {other}.", { main, other });
+    : t("This goal gets {main} a day and your other goals {other} together.", { main, other });
 }
 
 function OfferLabel({ offer }: { offer: PlanSuggestedTime }) {
