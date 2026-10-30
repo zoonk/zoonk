@@ -2,15 +2,20 @@ package com.zoonk.android.feature.activities.music
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
@@ -36,13 +41,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.ui.theme.withTabularFigures
 
 /**
  * Main's `GuitarFretboard`, high E on top and the nut on the left in every language. With [onChange] each string is a radio
- * group (not played, open, or one of the frets shown) and one Tab stop whose arrows pick along it; without it the board shows
- * a shape and says it in words.
+ * group (not played, open, or one of the frets shown) and one Tab stop whose arrows pick along it, and frets stay wide enough
+ * to press, so a narrow window scrolls them sideways; without it the board shows a shape and says it in words.
  */
 @Composable
 internal fun GuitarFretboard(
@@ -65,28 +71,35 @@ internal fun GuitarFretboard(
         }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        Column(modifier.fillMaxWidth().then(shown)) {
-            Guitar.tuning.indices.reversed().forEach { string ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    StringName(labels.stringNames[string], nameWidth)
-                    if (onChange == null) {
-                        StringRow(string, voicing[string], frets, firstFret, markOf, nameOf)
-                    } else {
-                        StringPicker(string, voicing[string], frets, firstFret, labels, markOf, nameOf, enabled) { onChange(string, it) }
+        BoxWithConstraints(modifier.fillMaxWidth().then(shown)) {
+            val lead = nameWidth + if (onChange == null) INDICATOR_WIDTH else PICK_WIDTH * 2
+            val fretWidth = max(if (onChange == null) 0.dp else PICK_WIDTH, (maxWidth - lead) / Guitar.FRETBOARD_SPAN)
+
+            Column(Modifier.horizontalScroll(rememberScrollState())) {
+                Guitar.tuning.indices.reversed().forEach { string ->
+                    Row(Modifier.height(IntrinsicSize.Min), verticalAlignment = Alignment.CenterVertically) {
+                        StringName(labels.stringNames[string], nameWidth)
+                        if (onChange == null) {
+                            StringRow(string, voicing[string], frets, firstFret, fretWidth, markOf, nameOf)
+                        } else {
+                            StringPicker(string, voicing[string], frets, firstFret, fretWidth, labels, markOf, nameOf, enabled) {
+                                onChange(string, it)
+                            }
+                        }
                     }
                 }
-            }
 
-            Row(Modifier.clearAndSetSemantics {}) {
-                Box(Modifier.width(nameWidth + if (onChange == null) INDICATOR_WIDTH else PICK_WIDTH * 2))
-                frets.forEach { fret ->
-                    Text(
-                        "$fret",
-                        Modifier.weight(1f).padding(top = 4.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.labelSmall.withTabularFigures(),
-                    )
+                Row(Modifier.clearAndSetSemantics {}) {
+                    Box(Modifier.width(lead))
+                    frets.forEach { fret ->
+                        Text(
+                            "$fret",
+                            Modifier.width(fretWidth).padding(top = 4.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.labelSmall.withTabularFigures(),
+                        )
+                    }
                 }
             }
         }
@@ -107,33 +120,35 @@ private fun StringName(
 }
 
 @Composable
-private fun RowScope.StringRow(
+private fun StringRow(
     string: Int,
     fret: Int?,
     frets: List<Int>,
     firstFret: Int,
+    fretWidth: Dp,
     markOf: (Int) -> NoteMarkKind,
     nameOf: (Int) -> String,
 ) {
-    Box(Modifier.width(INDICATOR_WIDTH), contentAlignment = Alignment.Center) {
+    Box(Modifier.width(INDICATOR_WIDTH).fillMaxHeight(), contentAlignment = Alignment.Center) {
         when (fret) {
             null -> MutedMark(isPicked = true)
             0 -> OpenMark(isPicked = true)
         }
     }
     frets.forEachIndexed { index, it ->
-        FretCell(isFirst = index == 0, firstFret = firstFret, minHeight = SHOWN_HEIGHT) {
+        FretCell(isFirst = index == 0, firstFret = firstFret, width = fretWidth, minHeight = SHOWN_HEIGHT) {
             if (fret == it) NoteMark(markOf(string), nameOf(Guitar.noteMidi(string, it)))
         }
     }
 }
 
 @Composable
-private fun RowScope.StringPicker(
+private fun StringPicker(
     string: Int,
     current: Int?,
     frets: List<Int>,
     firstFret: Int,
+    fretWidth: Dp,
     labels: MusicLabels,
     markOf: (Int) -> NoteMarkKind,
     nameOf: (Int) -> String,
@@ -145,7 +160,7 @@ private fun RowScope.StringPicker(
 
     Row(
         Modifier
-            .weight(1f)
+            .fillMaxHeight()
             .selectableGroup()
             .semantics {
                 contentDescription = labels.string(string)
@@ -165,19 +180,15 @@ private fun RowScope.StringPicker(
 
             when (fret) {
                 null -> {
-                    Box(Modifier.width(PICK_WIDTH).heightIn(min = PICK_HEIGHT).then(pick), contentAlignment = Alignment.Center) {
-                        MutedMark(isPicked)
-                    }
+                    Box(Modifier.pickBox().then(pick), contentAlignment = Alignment.Center) { MutedMark(isPicked) }
                 }
 
                 0 -> {
-                    Box(Modifier.width(PICK_WIDTH).heightIn(min = PICK_HEIGHT).then(pick), contentAlignment = Alignment.Center) {
-                        OpenMark(isPicked)
-                    }
+                    Box(Modifier.pickBox().then(pick), contentAlignment = Alignment.Center) { OpenMark(isPicked) }
                 }
 
                 else -> {
-                    FretCell(isFirst = column == 2, firstFret = firstFret, minHeight = PICK_HEIGHT, modifier = pick) {
+                    FretCell(isFirst = column == 2, firstFret = firstFret, width = fretWidth, minHeight = PICK_HEIGHT, modifier = pick) {
                         if (isPicked) NoteMark(markOf(string), nameOf(Guitar.noteMidi(string, fret)))
                     }
                 }
@@ -186,11 +197,14 @@ private fun RowScope.StringPicker(
     }
 }
 
+private fun Modifier.pickBox(): Modifier = width(PICK_WIDTH).heightIn(min = PICK_HEIGHT).fillMaxHeight()
+
 /** One fret of one string: the string runs across it, the fret wire closes it, and the window's first fret starts at the nut. */
 @Composable
-private fun RowScope.FretCell(
+private fun FretCell(
     isFirst: Boolean,
     firstFret: Int,
+    width: Dp,
     minHeight: Dp,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
@@ -201,8 +215,9 @@ private fun RowScope.FretCell(
 
     Box(
         Modifier
-            .weight(1f)
+            .width(width)
             .heightIn(min = minHeight)
+            .fillMaxHeight()
             .drawBehind {
                 drawLine(string, Offset(0f, size.height / 2), Offset(size.width, size.height / 2), 1.dp.toPx())
                 drawWire(wire, size.width, 2.dp)

@@ -8,6 +8,7 @@ import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.assertWidthIsAtLeast
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -19,6 +20,7 @@ import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.requestFocus
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.LessonPlayerHarness
@@ -31,6 +33,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
 /** Main's music player tests for the keyboard and fretboard, played in the real player. */
 @RunWith(AndroidJUnit4::class)
@@ -166,6 +169,14 @@ class KeyboardFretboardFlowTest {
         gate.complete(Unit)
     }
 
+    @Test
+    @Config(qualifiers = "w360dp-h800dp")
+    fun everyFretIsWideEnoughToTapOnAPhone() {
+        harness.play(listOf(guitarChord))
+
+        fret("Fret 4, G sharp", string = "Low E string").assertWidthIsAtLeast(48.dp)
+    }
+
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun theKeysArePlayedWithAKeyboardOnly() {
@@ -186,13 +197,15 @@ class KeyboardFretboardFlowTest {
         assertTrue(sentNotes(), """"notes":["C4","D#4","G4"]""" in sentNotes())
     }
 
+    private fun fret(
+        position: String,
+        string: String,
+    ) = rule.onNode(hasContentDescription(position) and hasAnyAncestor(hasContentDescription(string)))
+
     private fun pickFret(
         position: String,
         string: String,
-    ) = rule
-        .onNode(hasContentDescription(position) and hasAnyAncestor(hasContentDescription(string)))
-        .performScrollTo()
-        .performClick()
+    ) = fret(position, string).performScrollTo().performClick()
 
     private val guitarChord =
         activityStep(
