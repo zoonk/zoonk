@@ -43,7 +43,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.player.LessonTitle
-import com.zoonk.android.feature.practice.ActionBarWidth
 import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ChoiceQuestionsRun
@@ -65,9 +64,10 @@ import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.MomentReadouts
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.scaffold.ActionFlow
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlinx.coroutines.launch
@@ -246,7 +246,7 @@ internal fun TestOutPreparing(
             if (waiting) {
                 null
             } else {
-                { ActionBarWidth { StartActions(viewModel, ui, plusRequired || ui.plusRequired, navigator) } }
+                { TaskActionBar { StartActions(viewModel, ui, plusRequired || ui.plusRequired, navigator) } }
             },
     ) { padding ->
         RunPage(Modifier.padding(padding)) {
@@ -281,7 +281,7 @@ private fun StartActions(
                     title = stringResource(R.string.subscription_free_week_over_title),
                     description = stringResource(R.string.subscription_free_week_over_description),
                 )
-                ActionFlow { width ->
+                TaskActions { width ->
                     Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = width) {
                         Text(stringResource(R.string.testout_see_plus))
                     }
@@ -299,7 +299,7 @@ private fun StartActions(
         }
 
         else -> {
-            ActionFlow { width ->
+            TaskActions { width ->
                 BusyButton(
                     stringResource(if (ui.starting) R.string.testout_starting else R.string.testout_start),
                     busy = ui.starting,
@@ -396,7 +396,7 @@ internal fun TestOutResult(
             detail = detail,
             actions = {
                 ActionColumn {
-                    ActionFlow { width -> Button(onClick = onClose, modifier = width) { Text(stringResource(R.string.testout_continue)) } }
+                    TaskActions { width -> Button(onClick = onClose, modifier = width) { Text(stringResource(R.string.testout_continue)) } }
                     if (canUndo) UndoAction(ui.undo, viewModel::undo)
                 }
             },

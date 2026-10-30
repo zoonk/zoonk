@@ -66,6 +66,7 @@ import com.zoonk.android.feature.mock.MockSummaryRow
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -309,7 +310,7 @@ private fun ChooserHero(
     action: @Composable () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(eyebrow, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
+        Eyebrow(eyebrow)
         Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall.copy(lineBreak = LineBreak.Heading))
         StatusLine(status, line)
         Box(Modifier.padding(top = 8.dp).mainActionWidth()) { action() }

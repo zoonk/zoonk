@@ -40,6 +40,7 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.SectionHeader
@@ -267,11 +268,7 @@ private fun SubjectHero(
         next?.let { { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(it) }, modifier) } }
 
     DetailHero(action) {
-        Text(
-            text = subjectEyebrow(syllabus, subject),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge,
-        )
+        Eyebrow(subjectEyebrow(syllabus, subject))
         Text(
             text = subject.name,
             modifier =

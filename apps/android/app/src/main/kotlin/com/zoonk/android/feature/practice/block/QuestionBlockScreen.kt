@@ -52,7 +52,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
-import com.zoonk.android.ui.scaffold.ActionFlow
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.StudyBlockDetail
@@ -278,7 +278,7 @@ private fun BlockActions(
 ) {
     when (run.phase) {
         RunPhase.FinishReady -> {
-            ActionFlow { width ->
+            TaskActions { width ->
                 Button(onClick = viewModel::finish, modifier = width) { Text(stringResource(R.string.practice_finish)) }
             }
         }
@@ -286,7 +286,7 @@ private fun BlockActions(
         RunPhase.FinishFailed -> {
             ActionColumn {
                 SaveErrorText()
-                ActionFlow { width ->
+                TaskActions { width ->
                     Button(onClick = viewModel::finish, modifier = width) { Text(stringResource(R.string.practice_try_again)) }
                 }
             }
@@ -295,7 +295,7 @@ private fun BlockActions(
         RunPhase.AlreadyAnswered -> {
             ActionColumn {
                 Text(stringResource(R.string.practice_already_answered), style = MaterialTheme.typography.bodyMedium)
-                ActionFlow { width ->
+                TaskActions { width ->
                     Button(onClick = viewModel::reread, modifier = width) { Text(stringResource(R.string.practice_continue)) }
                 }
             }

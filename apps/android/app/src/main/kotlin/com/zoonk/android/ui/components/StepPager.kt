@@ -20,7 +20,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.scaffold.ActionFlow
 
 /**
  * Main's `Steps`: a few steps one at a time, with back (a button and the system's back) and Continue,
@@ -44,7 +43,7 @@ fun StepPagerActions(
             }
         }
         Box(Modifier.weight(1f)) {
-            ActionFlow { main ->
+            TaskActions { main ->
                 if (index < count - 1) {
                     Button(onClick = { onIndexChange(index + 1) }, modifier = main) { Text(stringResource(R.string.steps_continue)) }
                 } else {

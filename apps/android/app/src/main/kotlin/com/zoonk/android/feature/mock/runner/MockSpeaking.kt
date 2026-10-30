@@ -30,6 +30,7 @@ import com.zoonk.android.feature.conversation.taskMinutes
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.DoneMark
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.MockExamCurrent
 import com.zoonk.api.models.SpeakingSectionTasksInner
@@ -58,23 +59,25 @@ internal fun MockSpeaking(
         onClose,
         title = { SectionClock(current.deadline) },
         actions = {
-            if (speaking == null) {
-                val starting = run.busy == MockStep.StartSpeaking
-                MockMainButton(
-                    stringResource(if (starting) R.string.mock_speaking_writing else R.string.mock_speaking_start),
-                    busy = starting,
-                    enabled = !run.pending,
-                    onClick = viewModel::startSpeaking,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            } else {
-                MockMainButton(
-                    stringResource(if (isLast) R.string.mock_hand_in_mock else R.string.mock_hand_in_section),
-                    busy = run.busy == MockStep.Submit,
-                    enabled = !run.pending,
-                    onClick = { confirming = true },
-                    modifier = Modifier.fillMaxWidth(),
-                )
+            TaskActions { main ->
+                if (speaking == null) {
+                    val starting = run.busy == MockStep.StartSpeaking
+                    MockMainButton(
+                        stringResource(if (starting) R.string.mock_speaking_writing else R.string.mock_speaking_start),
+                        busy = starting,
+                        enabled = !run.pending,
+                        onClick = viewModel::startSpeaking,
+                        modifier = main,
+                    )
+                } else {
+                    MockMainButton(
+                        stringResource(if (isLast) R.string.mock_hand_in_mock else R.string.mock_hand_in_section),
+                        busy = run.busy == MockStep.Submit,
+                        enabled = !run.pending,
+                        onClick = { confirming = true },
+                        modifier = main,
+                    )
+                }
             }
         },
     ) {

@@ -59,8 +59,11 @@ import com.zoonk.android.feature.questions.formatClock
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.StatusMessage
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.scaffold.TaskAside
@@ -210,7 +213,7 @@ internal fun MockStepFrame(
         onClose = onClose,
         title = title,
         bottomBar = {
-            MockActionBar {
+            TaskActionBar {
                 MockStepStatus(viewModel, run)
                 actions()
             }
@@ -305,14 +308,6 @@ internal fun MockStepStatus(
     }
 }
 
-/** A step's pinned actions keep to the task's column on wide windows, as main's footer does. */
-@Composable
-internal fun MockActionBar(content: @Composable ColumnScope.() -> Unit) {
-    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        Column(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
-    }
-}
-
 /** A step's main action. Busy, it keeps its ink and shows a wheel, as main's does. */
 @Composable
 internal fun MockMainButton(
@@ -348,11 +343,7 @@ internal fun MockMainButton(
 @Composable
 internal fun MockEyebrow(view: MockExam) {
     val shape = mockShapeLabel(view.purpose == MockExam.Purpose.PLACEMENT, view.shape)
-    Text(
-        if (shape.isEmpty()) stringResource(R.string.mock_label) else stringResource(R.string.mock_label_shape, shape),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.labelLarge,
-    )
+    Eyebrow(if (shape.isEmpty()) stringResource(R.string.mock_label) else stringResource(R.string.mock_label_shape, shape))
 }
 
 @Composable
@@ -390,18 +381,20 @@ private fun MockTimeUp(
         run,
         onClose,
         actions = {
-            MockMainButton(
-                text =
-                    when {
-                        handingIn -> stringResource(R.string.mock_handing_in)
-                        isLast -> stringResource(R.string.mock_see_how)
-                        else -> stringResource(R.string.mock_continue_section)
-                    },
-                busy = handingIn,
-                enabled = !run.pending,
-                onClick = viewModel::submitSection,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            TaskActions { main ->
+                MockMainButton(
+                    text =
+                        when {
+                            handingIn -> stringResource(R.string.mock_handing_in)
+                            isLast -> stringResource(R.string.mock_see_how)
+                            else -> stringResource(R.string.mock_continue_section)
+                        },
+                    busy = handingIn,
+                    enabled = !run.pending,
+                    onClick = viewModel::submitSection,
+                    modifier = main,
+                )
+            }
         },
     ) {
         StepHeader(R.drawable.ic_timer_off) {
@@ -425,13 +418,15 @@ private fun MockHandedIn(
         run,
         onClose,
         actions = {
-            MockMainButton(
-                text = stringResource(if (finishing) R.string.mock_grading else R.string.mock_see_how),
-                busy = finishing,
-                enabled = !run.pending,
-                onClick = viewModel::finish,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            TaskActions { main ->
+                MockMainButton(
+                    text = stringResource(if (finishing) R.string.mock_grading else R.string.mock_see_how),
+                    busy = finishing,
+                    enabled = !run.pending,
+                    onClick = viewModel::finish,
+                    modifier = main,
+                )
+            }
         },
     ) { StepHeader { StepTitle(stringResource(R.string.mock_handed_in_title)) } }
 }
@@ -456,13 +451,15 @@ private fun MockBreak(
         run,
         onClose,
         actions = {
-            MockMainButton(
-                stringResource(R.string.mock_start_next),
-                busy = run.busy == MockStep.EndBreak,
-                enabled = !run.pending,
-                onClick = viewModel::endBreak,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            TaskActions { main ->
+                MockMainButton(
+                    stringResource(R.string.mock_start_next),
+                    busy = run.busy == MockStep.EndBreak,
+                    enabled = !run.pending,
+                    onClick = viewModel::endBreak,
+                    modifier = main,
+                )
+            }
         },
         aside =
             if (run.view.sections.size >
@@ -528,13 +525,17 @@ private fun MockExpired(
         run,
         onClose,
         actions = {
-            Button(
-                onClick = {
-                    navigator.closeTask()
-                    navigator.open(run.view.planItemId?.let { AppRoute.Challenge(it.toString(), route.sessionId) } ?: AppRoute.MockChooser)
-                },
-                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
-            ) { Text(stringResource(R.string.mock_take_new)) }
+            TaskActions { main ->
+                Button(
+                    onClick = {
+                        navigator.closeTask()
+                        navigator.open(
+                            run.view.planItemId?.let { AppRoute.Challenge(it.toString(), route.sessionId) } ?: AppRoute.MockChooser,
+                        )
+                    },
+                    modifier = main.heightIn(min = 48.dp),
+                ) { Text(stringResource(R.string.mock_take_new)) }
+            }
         },
     ) {
         StepHeader(R.drawable.ic_timer_off) {

@@ -50,6 +50,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.DoneMark
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GoalRing
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
@@ -211,7 +212,7 @@ private fun StepHeader(
     detail: String? = null,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        if (eyebrow != null) Text(eyebrow, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
+        if (eyebrow != null) Eyebrow(eyebrow)
         Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
         if (detail != null) Text(detail, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
     }

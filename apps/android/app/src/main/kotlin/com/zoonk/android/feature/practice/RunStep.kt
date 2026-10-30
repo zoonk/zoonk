@@ -70,7 +70,8 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
-import com.zoonk.android.ui.scaffold.ActionFlow
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.taskAsideBeside
@@ -141,7 +142,7 @@ internal fun RunFrame(
         title = { LessonTitle(title) },
         actions = { report?.let { ReportProblemMenu(app, it) } },
         closeLabel = closeLabel,
-        bottomBar = actions?.let { { ActionBarWidth(it) } },
+        bottomBar = actions?.let { { TaskActionBar { it() } } },
         // A passage takes the rail over the run's own pane, as main's aside.
         aside =
             set?.let { TaskAside(half = isLongText(it.text)) { ItemSetText(it, inAside = true) } }
@@ -339,24 +340,24 @@ internal fun AnswerActions(
 
     when {
         phase is RunPhase.Checked -> {
-            ActionFlow { width ->
+            TaskActions { width ->
                 Button(onClick = { controls.next(questions) }, modifier = width) { Text(stringResource(R.string.practice_continue)) }
                 ask()
             }
         }
 
         run.stage == DrillStage.Ideas -> {
-            ActionFlow { width -> DrillStartButton(onStart = { controls.startDrill(questions) }, modifier = width) }
+            TaskActions { width -> DrillStartButton(onStart = { controls.startDrill(questions) }, modifier = width) }
         }
 
         run.stage == DrillStage.Reading -> {
-            ActionFlow { width -> ShowAnswersButton(onReveal = controls::reveal, modifier = width) }
+            TaskActions { width -> ShowAnswersButton(onReveal = controls::reveal, modifier = width) }
         }
 
         else -> {
             ActionColumn {
                 if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
-                ActionFlow { width ->
+                TaskActions { width ->
                     when (notSureOffer(question, every = notSureOnEvery)) {
                         NotSure.Drill -> {
                             NotSureButton(onClick = { controls.submit(question, Answer.DontKnow) }, enabled = run.canAnswer)

@@ -1,11 +1,9 @@
 package com.zoonk.android.feature.onboarding.setup
 
 import android.os.SystemClock
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -71,7 +69,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
-import com.zoonk.android.ui.components.DoneMark
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LabelChip
@@ -81,6 +79,7 @@ import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
+import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -594,19 +593,6 @@ internal fun FinishFailed(failed: Boolean) {
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )
-}
-
-@Composable
-internal fun Eyebrow(text: String) {
-    Text(text = text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
-}
-
-@Composable
-internal fun SuccessEyebrow(text: String) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        DoneMark()
-        Text(text = text, color = MaterialTheme.colorScheme.onTertiaryContainer, style = MaterialTheme.typography.titleSmall)
-    }
 }
 
 private fun String.labelCase() = replaceFirstChar { it.uppercase() }

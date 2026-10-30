@@ -34,6 +34,7 @@ import com.zoonk.android.feature.plan.shortDayRange
 import com.zoonk.android.feature.plan.shortFocusName
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.feature.subscription.PlusMark
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -60,11 +61,6 @@ internal fun TodayPageHeader(
         if (parts.isNotEmpty()) Eyebrow(AnnotatedString(parts.joinToString(SEPARATOR)))
         TitleRow(title, trailing)
     }
-}
-
-@Composable
-private fun Eyebrow(text: AnnotatedString) {
-    Text(text = text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
 }
 
 /** What sits beside the title moves under it when both don't fit, as at large font sizes. */

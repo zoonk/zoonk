@@ -80,6 +80,7 @@ import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
@@ -206,11 +207,7 @@ private fun Paper(
 @Composable
 private fun PaperHero(paper: SpeakingPaper) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            stringResource(R.string.speaking_eyebrow),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge,
-        )
+        Eyebrow(stringResource(R.string.speaking_eyebrow))
         Text(paper.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
         Text(
             pluralStringResource(

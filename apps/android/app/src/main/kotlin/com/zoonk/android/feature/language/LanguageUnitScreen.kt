@@ -70,6 +70,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.DisclosureRow
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDotLeading
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -292,7 +293,7 @@ private fun UnitHero(
 
     Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(eyebrow, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
+            Eyebrow(eyebrow)
             Text(info.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
             facts?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
         }

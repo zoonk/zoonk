@@ -31,7 +31,7 @@ import com.zoonk.android.feature.questions.QuestionAnswer
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.TrueFalseWords
-import com.zoonk.android.ui.scaffold.ActionFlow
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.ItemAnswerInput
@@ -63,7 +63,7 @@ internal fun UndoAction(
             style = MaterialTheme.typography.bodyMedium,
         )
     }
-    ActionFlow { width ->
+    TaskActions { width ->
         TextButton(
             onClick = onUndo,
             enabled = state != UndoState.Pending,
@@ -158,7 +158,7 @@ internal fun ChoiceQuestionsRun(
                 {
                     ActionColumn {
                         if (failed && !pending) SaveErrorText(onSend)
-                        ActionFlow { width ->
+                        TaskActions { width ->
                             if (question != null) {
                                 NotSureButton(onClick = { onAnswer(question, Answer.DontKnow) }, enabled = !locked, dontKnowYet = true)
                             }

@@ -32,6 +32,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.formatClock
 import com.zoonk.android.ui.format.currentLocale
@@ -244,11 +245,7 @@ internal fun ExamTaskIntro(
     CallFrame(title = { CallTitle(examTaskTitle(task)) }, onClose = onClose, bottomBar = actions, aside = { card() }) { beside ->
         item(key = "header") {
             Column(Modifier.callItem(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    taskMinutes(task.task.minutes.min, task.task.minutes.max),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelLarge,
-                )
+                Eyebrow(taskMinutes(task.task.minutes.min, task.task.minutes.max))
                 Text(
                     inLanguage(task.task.name, conversation.targetLanguage),
                     Modifier.semantics {

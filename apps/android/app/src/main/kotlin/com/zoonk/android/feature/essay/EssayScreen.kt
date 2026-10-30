@@ -73,7 +73,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.feature.player.leaveTaskFor
-import com.zoonk.android.feature.practice.ActionBarWidth
 import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunLoadFailed
@@ -93,9 +92,10 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.stepHeading
-import com.zoonk.android.ui.scaffold.ActionFlow
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -219,11 +219,11 @@ internal fun EssayWrite(
                 null
             },
         bottomBar = {
-            ActionBarWidth {
+            TaskActionBar {
                 ActionColumn {
                     StatusLine(ui.send, ui.gradesLeft)
                     if (finishFailed && !finishing) SaveErrorText(viewModel::finish)
-                    ActionFlow { width ->
+                    TaskActions { width ->
                         if (rewriting) {
                             OutlinedButton(
                                 onClick = viewModel::finish,
@@ -498,7 +498,7 @@ internal fun EssayGradeSteps(
             onClose = navigator::closeTask,
             title = { StepDots(count, shown) },
             bottomBar = {
-                ActionBarWidth {
+                TaskActionBar {
                     ActionColumn {
                         StepPagerActions(count, shown, onIndexChange = { index = it }) { main ->
                             OutlinedButton(onClick = viewModel::finish, enabled = !finishing) {

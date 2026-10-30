@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -18,7 +17,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +30,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.feature.questions.ItemSet
 import com.zoonk.android.feature.questions.NoteRow
@@ -46,10 +43,11 @@ import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.StatusMessage
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.scaffold.ActionFlow
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import java.time.Instant
@@ -217,11 +215,11 @@ internal fun RunFinished(
     TaskScaffold(
         onClose = onClose,
         bottomBar = {
-            ActionBarWidth {
+            TaskActionBar {
                 if (actions != null) {
                     actions()
                 } else {
-                    ActionFlow { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
+                    TaskActions { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
                 }
             }
         },
@@ -313,17 +311,6 @@ internal fun SaveErrorText(onRetry: (() -> Unit)? = null) {
 internal fun ActionColumn(content: @Composable ColumnScope.() -> Unit) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
 }
-
-/** As wide as the questions on a narrow window; across the window, its actions at the end, on a wide one (main's action bar). */
-@Composable
-internal fun ActionBarWidth(content: @Composable () -> Unit) {
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        Box(if (wide) Modifier.fillMaxWidth() else Modifier.widthIn(max = ACTIONS_WIDTH).fillMaxWidth()) { content() }
-    }
-}
-
-private val ACTIONS_WIDTH = 640.dp
 
 @Composable
 internal fun NoteText(text: String) {

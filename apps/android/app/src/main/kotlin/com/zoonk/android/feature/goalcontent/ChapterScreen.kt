@@ -58,6 +58,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.RoutePlaceholder
 import com.zoonk.android.ui.components.DisclosureRow
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -317,15 +318,13 @@ private fun ChapterHero(
         next?.let { { modifier -> ContinueButton(started = done > 0, onClick = { actions.openLesson(it.lessonId) }, modifier) } }
 
     DetailHero(action) {
-        Text(
+        Eyebrow(
             text =
                 if (subject == null) {
                     stringResource(R.string.goalcontent_chapter_number, number)
                 } else {
                     stringResource(R.string.goalcontent_subject_chapter, subject.name, number)
                 },
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge,
         )
         Text(
             text = chapter.chapter.title,

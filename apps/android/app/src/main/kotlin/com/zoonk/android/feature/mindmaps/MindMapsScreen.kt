@@ -63,6 +63,7 @@ import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
@@ -243,7 +244,7 @@ private fun MindMapsHero(
     navigator: AppNavigator,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(mindMaps.goal.title, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
+        Eyebrow(mindMaps.goal.title)
         Text(
             stringResource(R.string.navigation_mind_maps),
             Modifier.semantics { heading() },

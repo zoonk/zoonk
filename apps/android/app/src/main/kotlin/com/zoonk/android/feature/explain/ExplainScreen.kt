@@ -64,6 +64,7 @@ import com.zoonk.android.feature.player.model.toPlayableLesson
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
@@ -250,7 +251,7 @@ private fun ExplainHeading(
     title: String,
     subtitle: String? = null,
     eyebrow: @Composable () -> Unit = {
-        Text(quickExplanationLabel(), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
+        Eyebrow(quickExplanationLabel())
     },
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {

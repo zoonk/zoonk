@@ -50,7 +50,6 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
-import com.zoonk.android.feature.practice.ActionBarWidth
 import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ChoiceQuestionsRun
@@ -73,11 +72,12 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.scaffold.ActionFlow
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlinx.coroutines.launch
@@ -177,7 +177,7 @@ internal fun FocusTestIntro(
     TaskScaffold(
         onClose = navigator::closeTask,
         bottomBar = {
-            ActionBarWidth {
+            TaskActionBar {
                 if (refused != null) {
                     LimitNotice(
                         refused,
@@ -186,7 +186,7 @@ internal fun FocusTestIntro(
                         onSeePlus = { navigator.open(AppRoute.Subscription) },
                     )
                 } else {
-                    ActionFlow { width ->
+                    TaskActions { width ->
                         BusyButton(
                             stringResource(if (ui.starting) R.string.focustest_starting else R.string.focustest_start),
                             busy = ui.starting,
@@ -306,7 +306,7 @@ internal fun FocusTestResult(
             onClose = navigator::closeTask,
             title = { StepDots(count, shown) },
             bottomBar = {
-                ActionBarWidth {
+                TaskActionBar {
                     ActionColumn {
                         StepPagerActions(
                             count,

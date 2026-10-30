@@ -56,7 +56,6 @@ import com.zoonk.android.feature.mock.chooser.MockLeftOutNote
 import com.zoonk.android.feature.mock.mockDaySize
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.plan.lessonsText
-import com.zoonk.android.feature.practice.ActionBarWidth
 import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunLoadFailed
@@ -67,6 +66,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.characters.TricksterArt
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LimitNotice
@@ -75,6 +75,8 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -83,7 +85,6 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.formatTimeOfDay
-import com.zoonk.android.ui.scaffold.ActionFlow
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.taskAsideBeside
@@ -262,10 +263,10 @@ internal fun ChallengeMoved(
     TaskScaffold(
         onClose = navigator::closeTask,
         bottomBar = {
-            ActionBarWidth {
+            TaskActionBar {
                 ActionColumn {
                     MoveFailed(ui)
-                    ActionFlow { width ->
+                    TaskActions { width ->
                         OutlinedButton(onClick = viewModel::undoMove, enabled = !ui.moving) {
                             PendingLabel(ui.moving, stringResource(R.string.challenge_undo))
                         }
@@ -322,7 +323,7 @@ private fun IntroScreen(
 
     TaskScaffold(
         onClose = actions::close,
-        bottomBar = { ActionBarWidth { ChallengeFooter(challenge, ui, actions) } },
+        bottomBar = { TaskActionBar { ChallengeFooter(challenge, ui, actions) } },
         aside = aside?.let { TaskAside(title = it.title) { it.content(false) } },
     ) { padding ->
         CenteredColumn(Modifier.padding(padding)) {
@@ -531,7 +532,7 @@ private fun IntroHeading(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         eyebrow?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge) }
-        whenText?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge) }
+        whenText?.let { Eyebrow(it) }
         Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
         detail?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge) }
     }
@@ -711,7 +712,7 @@ private fun ChallengeFooter(
 
     ActionColumn {
         if (plusRequired(challenge, ui)) {
-            ActionFlow { width ->
+            TaskActions { width ->
                 Button(onClick = actions::seePlus, modifier = width) { Text(stringResource(R.string.challenge_see_plus)) }
             }
             return@ActionColumn
@@ -727,7 +728,7 @@ private fun ChallengeFooter(
                     challenge.status == Challenge.Status.READY && challenge.dailyLimitReached -> {
                         StatusLine(null, usedUpText(challenge, movable))
                         MoveFailed(ui)
-                        ActionFlow { width ->
+                        TaskActions { width ->
                             if (movable) {
                                 OutlinedButton(onClick = actions::toToday) { Text(stringResource(R.string.challenge_back_to_today)) }
                                 BusyButton(stringResource(R.string.challenge_move), ui.moving, !ui.starting, width, vm::moveToMonday)
@@ -745,7 +746,7 @@ private fun ChallengeFooter(
                     }
 
                     else -> {
-                        ActionFlow { width ->
+                        TaskActions { width ->
                             BusyButton(stringResource(R.string.challenge_continue), ui.starting, true, width, vm::start)
                         }
                     }
@@ -793,7 +794,7 @@ private fun ChallengeFooter(
         if (!ready) {
             MoveFailed(ui)
             if (movable) {
-                ActionFlow { width ->
+                TaskActions { width ->
                     OutlinedButton(onClick = vm::moveToMonday, enabled = !ui.moving && !ui.starting, modifier = width) {
                         PendingLabel(ui.moving, stringResource(R.string.challenge_move))
                     }
@@ -821,7 +822,7 @@ private fun StartActions(
         ui.slow -> StatusLine(null, stringResource(R.string.challenge_start_slow))
     }
     MoveFailed(ui)
-    ActionFlow { width ->
+    TaskActions { width ->
         if (movable) {
             OutlinedButton(onClick = vm::moveToMonday, enabled = !ui.moving && !ui.starting) {
                 PendingLabel(ui.moving, stringResource(R.string.challenge_move))
@@ -843,7 +844,7 @@ private fun SeeResult(
     actions: ChallengeActions,
 ) {
     if (challenge.blockId == null) return
-    ActionFlow { width ->
+    TaskActions { width ->
         Button(onClick = { actions.openBlock(challenge) }, modifier = width) { Text(stringResource(R.string.challenge_see_result)) }
     }
 }

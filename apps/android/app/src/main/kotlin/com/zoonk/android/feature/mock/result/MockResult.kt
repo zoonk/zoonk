@@ -38,7 +38,6 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.mock.runner.COLUMN_WIDTH
-import com.zoonk.android.feature.mock.runner.MockActionBar
 import com.zoonk.android.feature.mock.runner.MockRun
 import com.zoonk.android.feature.mock.runner.MockRunStore
 import com.zoonk.android.feature.mock.runner.MockRunnerViewModel
@@ -49,6 +48,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.CelebrationScope
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LocalStepHeading
@@ -56,6 +56,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
+import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -191,7 +192,7 @@ internal fun MockResult(
             }
 
             val actions: @Composable () -> Unit = {
-                MockActionBar {
+                TaskActionBar {
                     StepPagerActions(
                         count = shown.size,
                         index = position,

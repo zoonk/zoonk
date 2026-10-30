@@ -14,7 +14,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -37,6 +36,7 @@ import com.zoonk.android.feature.feedback.ReportProblemItem
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -92,12 +92,7 @@ private fun PlanEyebrow(page: PlanPageState) {
     val text = left?.let { stringResource(R.string.plan_eyebrow, page.goal.title, it.text) } ?: page.goal.title
     val spoken = left?.let { stringResource(R.string.plan_eyebrow, page.goal.title, it.spoken) } ?: page.goal.title
 
-    Text(
-        text = text,
-        modifier = Modifier.semantics { contentDescription = spoken },
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
+    Eyebrow(text, Modifier.semantics { contentDescription = spoken })
 }
 
 @Composable

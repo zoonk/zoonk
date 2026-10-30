@@ -43,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.plan.noticeDayText
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -64,26 +65,22 @@ import kotlin.math.floor
 @Composable
 internal fun ExamEyebrow(exam: ExamView) {
     val days = exam.daysLeft?.takeIf { it > 0 }?.toInt()
-    val style = MaterialTheme.typography.labelLarge
-    val color = MaterialTheme.colorScheme.onSurfaceVariant
 
     when {
         days == null -> {
-            Text(stringResource(R.string.exam_eyebrow), color = color, style = style)
+            Eyebrow(stringResource(R.string.exam_eyebrow))
         }
 
         exam.daysEstimated -> {
             val spoken = pluralStringResource(R.plurals.exam_eyebrow_days_left_about, days, days)
-            Text(
-                text = pluralStringResource(R.plurals.exam_eyebrow_days_left_estimated, days, days),
-                modifier = Modifier.semantics { contentDescription = spoken },
-                color = color,
-                style = style,
+            Eyebrow(
+                pluralStringResource(R.plurals.exam_eyebrow_days_left_estimated, days, days),
+                Modifier.semantics { contentDescription = spoken },
             )
         }
 
         else -> {
-            Text(pluralStringResource(R.plurals.exam_eyebrow_days_left, days, days), color = color, style = style)
+            Eyebrow(pluralStringResource(R.plurals.exam_eyebrow_days_left, days, days))
         }
     }
 }

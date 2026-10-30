@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.LanguageConversationIntro
@@ -64,14 +65,12 @@ internal fun CallIntro(
     ) { beside ->
         item(key = "header") {
             Column(Modifier.callItem(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
+                Eyebrow(
                     stringResource(
                         R.string.conversation_intro_meta,
                         formatMinutes(conversation.minutes.toInt(), locale),
                         conversation.level.value,
                     ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelLarge,
                 )
                 Text(conversation.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
                 Text(conversation.situation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)

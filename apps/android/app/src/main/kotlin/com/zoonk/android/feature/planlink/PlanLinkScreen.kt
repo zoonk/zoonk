@@ -51,6 +51,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.EmptyState
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -155,11 +156,7 @@ internal fun PlanLinkScreen(
 @Composable
 private fun Heading(link: PlanLink) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            stringResource(R.string.planlink_eyebrow),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge,
-        )
+        Eyebrow(stringResource(R.string.planlink_eyebrow))
         Text(
             link.outline.subject?.title ?: stringResource(R.string.planlink_study_plan),
             modifier = Modifier.semantics { heading() },

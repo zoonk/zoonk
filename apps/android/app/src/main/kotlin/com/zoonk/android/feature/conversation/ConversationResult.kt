@@ -54,6 +54,7 @@ import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.DiffKind
 import com.zoonk.android.ui.components.DiffLine
 import com.zoonk.android.ui.components.DiffLines
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
@@ -134,11 +135,7 @@ private fun StarsStep(
     StarsReadout(stars, settles = !lost && stars > 0, Modifier.clearAndSetSemantics { contentDescription = starsLabel })
 
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(
-            if (checkpoint) conversation.title else conversationTitle(conversation),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge,
-        )
+        Eyebrow(if (checkpoint) conversation.title else conversationTitle(conversation))
         val headline =
             when {
                 !checkpoint -> conversation.title

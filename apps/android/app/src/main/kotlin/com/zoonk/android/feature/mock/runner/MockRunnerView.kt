@@ -69,6 +69,7 @@ import com.zoonk.android.feature.questions.formatClock
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
@@ -353,7 +354,7 @@ private fun RunnerActions(
     val last = run.position >= run.questions.lastIndex
     val handingIn = run.busy == MockStep.Submit
 
-    MockActionBar {
+    TaskActionBar {
         MockStepStatus(viewModel, run)
         Row(
             Modifier.fillMaxWidth(),

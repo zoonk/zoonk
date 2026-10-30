@@ -68,7 +68,6 @@ import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.player.LessonTitle
-import com.zoonk.android.feature.practice.ActionBarWidth
 import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ListeningSet
@@ -97,6 +96,7 @@ import com.zoonk.android.ui.characters.TricksterActorState
 import com.zoonk.android.ui.characters.TricksterArt
 import com.zoonk.android.ui.characters.rememberTricksterActorState
 import com.zoonk.android.ui.components.CelebrationScope
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
@@ -106,9 +106,10 @@ import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMessage
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.scaffold.ActionFlow
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.taskAsideBeside
@@ -262,7 +263,7 @@ internal fun DuelPlay(
     TaskScaffold(
         onClose = viewModel::close,
         title = { LessonTitle(stringResource(if (read.isBoss) R.string.checkpoint_trickster else R.string.checkpoint_weekly)) },
-        bottomBar = { ActionBarWidth { DuelActions(state, score, question, viewModel) } },
+        bottomBar = { TaskActionBar { DuelActions(state, score, question, viewModel) } },
         aside = if (empty) null else TaskAside { DuelAside(read, score, trickster) },
     ) { padding ->
         val wide = taskAsideBeside()
@@ -382,7 +383,7 @@ private fun QuestionsRemoved(eyebrow: String?) {
             modifier = Modifier.size(24.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        eyebrow?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge) }
+        eyebrow?.let { Eyebrow(it) }
         Text(
             stringResource(R.string.checkpoint_removed_title),
             modifier = Modifier.semantics { heading() },
@@ -405,7 +406,7 @@ private fun DuelActions(
 ) {
     ActionColumn {
         if (state.error != null) SaveErrorText(onRetry = viewModel::retry.takeIf { !state.pending })
-        ActionFlow { width ->
+        TaskActions { width ->
             when {
                 question == null || state.feedback != null -> {
                     BusyButton(
@@ -691,8 +692,8 @@ internal fun DuelResult(
         onClose = viewModel::close,
         title = { LessonTitle(eyebrow(checkpoint)) },
         bottomBar = {
-            ActionBarWidth {
-                ActionFlow { width ->
+            TaskActionBar {
+                TaskActions { width ->
                     if (answers.isNotEmpty() && !taskAsideBeside()) {
                         OutlinedButton(onClick = { reviewing = true }) { Text(stringResource(R.string.checkpoint_review)) }
                     }

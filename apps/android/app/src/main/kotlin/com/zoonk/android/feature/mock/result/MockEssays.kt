@@ -29,6 +29,7 @@ import com.zoonk.android.feature.essay.writingName
 import com.zoonk.android.feature.mock.runner.EssayGrading
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.theme.zoonk
@@ -141,11 +142,6 @@ private fun PendingGrade(
         }
     StepDetail(line, if (grading == EssayGrading.Idle) Modifier else Modifier.semantics { liveRegion = LiveRegionMode.Assertive })
     OutlinedButton(onClick = onGrade) { Text(stringResource(R.string.mock_result_grade_it)) }
-}
-
-@Composable
-internal fun Eyebrow(text: String) {
-    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
 }
 
 private val SLOW_GRADING = 30.seconds
