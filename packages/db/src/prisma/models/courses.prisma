@@ -1,48 +1,49 @@
 /// A private course is built for one learner's too-specific goal: `userId` is its owner, and it is
 /// never indexed or reused.
 model Course {
-  id                   String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  familyId             String?           @map("family_id") @db.Uuid
-  family               CourseFamily?     @relation(fields: [familyId], references: [id], onDelete: SetNull)
-  organizationId       String?           @map("organization_id") @db.Uuid
-  organization         Organization?     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId               String?           @map("user_id") @db.Uuid
-  user                 User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  format               CourseFormat      @default(core)
-  isPublished          Boolean           @default(false) @map("is_published")
-  language             String            @db.VarChar(10)
+  id                   String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  familyId             String?              @map("family_id") @db.Uuid
+  family               CourseFamily?        @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  organizationId       String?              @map("organization_id") @db.Uuid
+  organization         Organization?        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId               String?              @map("user_id") @db.Uuid
+  user                 User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  format               CourseFormat         @default(core)
+  isPublished          Boolean              @default(false) @map("is_published")
+  language             String               @db.VarChar(10)
   slug                 String
   title                String
-  normalizedTitle      String            @map("normalized_title")
+  normalizedTitle      String               @map("normalized_title")
   description          String?
-  landingPage          Json?             @map("landing_page")
-  targetLanguage       String?           @map("target_language") @db.VarChar(10)
-  imageUrl             String?           @map("image_url")
-  userCount            Int               @default(0) @map("user_count")
-  visibility           LibraryVisibility @default(public)
-  outlineStatus        GenerationStatus? @map("outline_status")
-  outlineRunId         String?           @map("outline_run_id")
+  landingPage          Json?                @map("landing_page")
+  targetLanguage       String?              @map("target_language") @db.VarChar(10)
+  imageUrl             String?              @map("image_url")
+  userCount            Int                  @default(0) @map("user_count")
+  visibility           LibraryVisibility    @default(public)
+  outlineStatus        GenerationStatus?    @map("outline_status")
+  outlineRunId         String?              @map("outline_run_id")
   /// The `details*` and `icon*` columns name the runs that wrote those parts. Each is null when
   /// people wrote that part, when no model was needed, and for courses made before provenance.
   model                String?
-  promptVersion        String?           @map("prompt_version")
-  runId                String?           @map("run_id")
-  generatedAt          DateTime?         @map("generated_at")
-  detailsModel         String?           @map("details_model")
-  detailsPromptVersion String?           @map("details_prompt_version")
-  detailsRunId         String?           @map("details_run_id")
-  detailsGeneratedAt   DateTime?         @map("details_generated_at")
-  iconModel            String?           @map("icon_model")
-  iconPromptVersion    String?           @map("icon_prompt_version")
-  iconRunId            String?           @map("icon_run_id")
-  iconGeneratedAt      DateTime?         @map("icon_generated_at")
-  createdAt            DateTime          @default(now()) @map("created_at")
-  updatedAt            DateTime          @default(now()) @updatedAt @map("updated_at")
+  promptVersion        String?              @map("prompt_version")
+  runId                String?              @map("run_id")
+  generatedAt          DateTime?            @map("generated_at")
+  detailsModel         String?              @map("details_model")
+  detailsPromptVersion String?              @map("details_prompt_version")
+  detailsRunId         String?              @map("details_run_id")
+  detailsGeneratedAt   DateTime?            @map("details_generated_at")
+  iconModel            String?              @map("icon_model")
+  iconPromptVersion    String?              @map("icon_prompt_version")
+  iconRunId            String?              @map("icon_run_id")
+  iconGeneratedAt      DateTime?            @map("icon_generated_at")
+  createdAt            DateTime             @default(now()) @map("created_at")
+  updatedAt            DateTime             @default(now()) @updatedAt @map("updated_at")
   categories           CourseCategory[]
   courseChapters       CourseChapter[]
   homeChapters         Chapter[]
   goals                Goal[]
   examSkillGraphs      ExamSkillGraph[]
+  languageSkillGraphs  LanguageSkillGraph[]
   goFurtherLessons     Lesson[]
 
   @@unique([organizationId, slug], name: "orgSlug")

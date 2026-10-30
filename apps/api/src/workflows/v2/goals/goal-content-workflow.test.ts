@@ -1346,6 +1346,43 @@ describe(goalContentWorkflow, () => {
   );
 
   it(
+    "plans a later learner with the same language answers from the first one's graph, after their level test too",
+    { timeout: TIMEOUT },
+    async () => {
+      const answers = {
+        kind: "language" as const,
+        language: "pt",
+        prompt: "Quero ficar fluente em italiano",
+        targetLanguage: "it",
+        title: `Falar italiano com fluência ${crypto.randomUUID().slice(0, 8)}`,
+      };
+
+      const first = await newGoal({
+        ...answers,
+        details: { answered: ["reason", "level"], level: "basic" },
+      });
+
+      await goalContentWorkflow({ goalId: first.goal.id });
+      vi.mocked(generateSkillGraph).mockClear();
+
+      const later = await newGoal({
+        ...answers,
+        details: { answered: ["reason", "level"], level: "B1+", levelTest: { answers: [] } },
+      });
+
+      await goalContentWorkflow({ goalId: later.goal.id });
+
+      const [firstPlan, laterPlan] = await Promise.all([
+        prisma.plan.findUniqueOrThrow({ where: { goalId: first.goal.id } }),
+        prisma.plan.findUniqueOrThrow({ where: { goalId: later.goal.id } }),
+      ]);
+
+      expect(generateSkillGraph).not.toHaveBeenCalled();
+      expect(planSkillIdsOf(laterPlan)).toStrictEqual(planSkillIdsOf(firstPlan));
+    },
+  );
+
+  it(
     "writes a private course on the cheaper model for a goal too specific to share",
     { timeout: TIMEOUT },
     async () => {

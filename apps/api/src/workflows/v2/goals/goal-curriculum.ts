@@ -21,8 +21,8 @@ import {
   buildSkillGraphStep,
   checkGraphCoverageStep,
   linkSkillPrerequisitesStep,
-  saveExamSkillGraphStep,
   saveGoalSkillsStep,
+  saveSharedSkillGraphStep,
 } from "./steps/goal-curriculum-steps";
 import {
   findGoalCoursesStep,
@@ -156,7 +156,7 @@ async function createPlanAndOutlines({
   });
 
   if (!reused) {
-    await saveExamSkillGraphStep({ courseIdsByKey, graph, idsByKey, inputs, provenance, scope });
+    await saveSharedSkillGraphStep({ courseIdsByKey, graph, idsByKey, inputs, provenance, scope });
   }
 
   await setUpPlan({ goalId, tasks: setupTasks });

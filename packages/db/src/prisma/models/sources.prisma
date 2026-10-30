@@ -172,6 +172,25 @@ model ExamSkillGraph {
   @@map("exam_skill_graphs")
 }
 
+/// The first graph built for a shared language goal's prompt: every later goal with the same prompt
+/// plans from it, so the same answers give the same plan.
+model LanguageSkillGraph {
+  id              String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  promptKey       String   @unique @map("prompt_key")
+  /// The graph as plans store it (`PlanGraph`).
+  graph           Json
+  primaryCourseId String?  @map("primary_course_id") @db.Uuid
+  primaryCourse   Course?  @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
+  model           String
+  promptVersion   String   @map("prompt_version")
+  runId           String   @map("run_id")
+  generatedAt     DateTime @map("generated_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([primaryCourseId])
+  @@map("language_skill_graphs")
+}
+
 enum LearnerSourceOrigin {
   upload
   research

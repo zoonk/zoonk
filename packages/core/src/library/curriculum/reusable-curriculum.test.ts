@@ -27,7 +27,11 @@ import { type CurriculumScope } from "./curriculum-scope";
 import { resetExamSkillGraphForAdmin } from "./exam-skill-graph-reset";
 import { loadGoalCurriculumInputs } from "./goal-curriculum-inputs";
 import { toGoalPlanGraph } from "./goal-plan-graph";
-import { findReusableCurriculum, saveExamSkillGraph } from "./reusable-curriculum";
+import {
+  findReusableCurriculum,
+  saveExamSkillGraph,
+  saveLanguageSkillGraph,
+} from "./reusable-curriculum";
 
 const SHARED: CurriculumScope = {
   generalGoal: "Immunology board exam",
@@ -898,5 +902,131 @@ describe("saving an exam's graph again", () => {
     } as typeof built.graph);
 
     await expect(readPlan()).resolves.toMatchObject({ sourceVersion: plan.sourceVersion + 1 });
+  });
+});
+
+const ITALIAN = { answered: ["reason", "level"], prompt: "Quero ficar fluente em italiano" };
+
+/** Tests share database rows, so each test's learners answer with a title no other test uses. */
+function italianTitle(): string {
+  return `Falar italiano com fluência ${crypto.randomUUID().slice(0, 8)}`;
+}
+
+async function languageGoal({
+  details = { answered: ITALIAN.answered, level: "basic" },
+  title,
+}: {
+  details?: Record<string, unknown>;
+  title: string;
+}) {
+  const user = await userFixture();
+
+  const goal = await goalFixture({
+    details,
+    kind: "language",
+    language: "pt",
+    prompt: ITALIAN.prompt,
+    targetLanguage: "it",
+    title,
+    userId: user.id,
+  });
+
+  const inputs = await loadGoalCurriculumInputs(goal.id);
+
+  if (!inputs) {
+    throw new Error("The goal's curriculum inputs couldn't be read.");
+  }
+
+  return inputs;
+}
+
+function sharedScope(inputs: { goal: { title: string } }): CurriculumScope {
+  return { generalGoal: inputs.goal.title, language: "pt", ownerId: null, targetLanguage: "it" };
+}
+
+async function savedGraph(inputs: Awaited<ReturnType<typeof languageGoal>>) {
+  const [course, skills] = await Promise.all([
+    courseFixture({ language: "pt", targetLanguage: "it" }),
+    Promise.all([skillFixture(), skillFixture()]),
+  ]);
+
+  await prisma.goal.update({ data: { primaryCourseId: course.id }, where: { id: inputs.goal.id } });
+
+  const graph = {
+    phases: [{ milestone: "Conversar no dia a dia", name: "Primeiras conversas" }],
+    skills: skills.map((skill) => ({
+      area: "Italiano",
+      courseIds: [course.id],
+      lessons: 12,
+      name: skill.name,
+      phase: 0,
+      skillId: skill.id,
+      weight: null,
+    })),
+  };
+
+  await saveLanguageSkillGraph({
+    graph,
+    inputs,
+    provenance: {
+      generatedAt: new Date(),
+      model: "openai/gpt-6-sol",
+      promptVersion: "v1",
+      runId: crypto.randomUUID(),
+    },
+    scope: sharedScope(inputs),
+  });
+
+  return { course, skills };
+}
+
+describe("a shared language goal's graph", () => {
+  it("plans a later learner with the same answers from it, even once their level test is done", async () => {
+    const title = italianTitle();
+    const first = await languageGoal({ title });
+    const built = await savedGraph(first);
+
+    const later = await languageGoal({
+      details: { answered: ITALIAN.answered, level: "B1+", levelTest: { answers: [] } },
+      title,
+    });
+
+    const reused = await findReusableCurriculum({ inputs: later, scope: sharedScope(later) });
+
+    expect(reused?.idsByKey).toStrictEqual(idsOf(built.skills));
+    expect(reused?.primaryCourseId).toBe(built.course.id);
+  });
+
+  it("builds a new graph for a goal with other answers or a course of its own", async () => {
+    const title = italianTitle();
+    await savedGraph(await languageGoal({ title }));
+
+    const [other, owned] = await Promise.all([
+      languageGoal({ title: `${title} para viajar` }),
+      languageGoal({ title }),
+    ]);
+
+    await Promise.all([
+      expect(
+        findReusableCurriculum({ inputs: other, scope: sharedScope(other) }),
+      ).resolves.toBeNull(),
+      expect(
+        findReusableCurriculum({
+          inputs: owned,
+          scope: { ...sharedScope(owned), ownerId: owned.goal.userId },
+        }),
+      ).resolves.toBeNull(),
+    ]);
+  });
+
+  it("keeps the first of two graphs learners with the same answers saved at once", async () => {
+    const title = italianTitle();
+    const [first, second] = await Promise.all([languageGoal({ title }), languageGoal({ title })]);
+    const [one, two] = await Promise.all([savedGraph(first), savedGraph(second)]);
+    const later = await languageGoal({ title });
+
+    const reused = await findReusableCurriculum({ inputs: later, scope: sharedScope(later) });
+
+    expect([idsOf(one.skills), idsOf(two.skills)]).toContainEqual(reused?.idsByKey);
   });
 });

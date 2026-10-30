@@ -13,7 +13,10 @@ import {
   loadGoalCurriculumInputs,
 } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
-import { saveExamSkillGraph } from "@zoonk/core/library/curriculum/reusable-curriculum";
+import {
+  saveExamSkillGraph,
+  saveLanguageSkillGraph,
+} from "@zoonk/core/library/curriculum/reusable-curriculum";
 import {
   type GoalSkillGraph,
   linkGoalSkillPrerequisites,
@@ -259,7 +262,7 @@ export async function linkSkillPrerequisitesStep(input: {
   await linkGoalSkillPrerequisites(input);
 }
 
-export async function saveExamSkillGraphStep({
+export async function saveSharedSkillGraphStep({
   courseIdsByKey,
   graph,
   idsByKey,
@@ -276,7 +279,7 @@ export async function saveExamSkillGraphStep({
 }): Promise<void> {
   "use step";
 
-  await saveExamSkillGraph({
+  const shared = {
     graph: toGoalPlanGraph({ courseIdsByKey, graph, idsByKey }),
     inputs,
     provenance: {
@@ -286,5 +289,7 @@ export async function saveExamSkillGraphStep({
       runId: provenance.runId,
     },
     scope,
-  });
+  };
+
+  await Promise.all([saveExamSkillGraph(shared), saveLanguageSkillGraph(shared)]);
 }

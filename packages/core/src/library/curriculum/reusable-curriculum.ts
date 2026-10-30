@@ -1,4 +1,5 @@
 import "server-only";
+import { createHash } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
@@ -12,7 +13,7 @@ import { pinPlanGraphToCourse } from "./course-start-graph";
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalCurriculumInputs } from "./goal-curriculum-inputs";
 import { type PlanSkillGraph, buildPlanSkillGraph } from "./plan-skill-graph";
-import { isSharedExamGraph } from "./shared-graph-prompt";
+import { isSharedExamGraph, toScopedGraphPrompt } from "./shared-graph-prompt";
 
 export type ReusableCurriculum = PlanSkillGraph & { primaryCourseId: string | null };
 
@@ -134,6 +135,76 @@ async function findReusableExam({
   return exam?.blueprint.id === examBlueprintId ? examBlueprintId : null;
 }
 
+/** The same answers give a shared language goal the same prompt, so its first graph serves them all. */
+function findLanguageGraphKey({
+  inputs,
+  scope,
+}: {
+  inputs: SharedInputs;
+  scope: CurriculumScope;
+}): string | null {
+  if (
+    inputs.goal.kind !== "language" ||
+    scope.ownerId !== null ||
+    inputs.hasMaterial ||
+    inputs.startedCourse
+  ) {
+    return null;
+  }
+
+  const fields = Object.entries(toScopedGraphPrompt({ inputs, scope }))
+    .filter(([, value]) => value !== undefined)
+    .toSorted(([a], [b]) => a.localeCompare(b));
+
+  return createHash("sha256").update(JSON.stringify(fields)).digest("hex");
+}
+
+/** Internal workflow bridge: the goal must come from the learner's authorized run. */
+export async function saveLanguageSkillGraph({
+  graph,
+  inputs,
+  provenance,
+  scope,
+}: {
+  graph: PlanGraph;
+  inputs: SharedInputs;
+  provenance: { generatedAt: Date; model: string; promptVersion: string; runId: string };
+  scope: CurriculumScope;
+}): Promise<void> {
+  const promptKey = findLanguageGraphKey({ inputs, scope });
+
+  if (!promptKey || graph.skills.length === 0) {
+    return;
+  }
+
+  const goal = await prisma.goal.findUnique({
+    select: { primaryCourseId: true },
+    where: { id: inputs.goal.id },
+  });
+
+  await prisma.languageSkillGraph.createMany({
+    data: [{ ...provenance, graph, primaryCourseId: goal?.primaryCourseId ?? null, promptKey }],
+    skipDuplicates: true,
+  });
+}
+
+async function findStoredGraph({
+  inputs,
+  scope,
+}: {
+  inputs: SharedInputs;
+  scope: CurriculumScope;
+}) {
+  const examBlueprintId = await findReusableExam({ inputs, scope });
+
+  if (examBlueprintId) {
+    return prisma.examSkillGraph.findUnique({ where: { examBlueprintId } });
+  }
+
+  const promptKey = findLanguageGraphKey({ inputs, scope });
+  return promptKey ? prisma.languageSkillGraph.findUnique({ where: { promptKey } }) : null;
+}
+
 /** Internal workflow bridge: the goal must come from the learner's authorized run. */
 export async function findReusableCurriculum({
   inputs,
@@ -142,11 +213,7 @@ export async function findReusableCurriculum({
   inputs: SharedInputs;
   scope: CurriculumScope;
 }): Promise<ReusableCurriculum | null> {
-  const examBlueprintId = await findReusableExam({ inputs, scope });
-
-  const stored = examBlueprintId
-    ? await prisma.examSkillGraph.findUnique({ where: { examBlueprintId } })
-    : null;
+  const stored = await findStoredGraph({ inputs, scope });
 
   if (!stored) {
     return null;
