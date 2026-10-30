@@ -35,6 +35,20 @@ function parseInline(text: string): InlineMarkup[] {
   );
 }
 
+function toLines(segments: readonly InlineMarkup[]): InlineMarkup[][] {
+  return segments.reduce<InlineMarkup[][]>(
+    (lines, segment) =>
+      segment.text.split("\n").reduce((current, text, index) => {
+        const piece = text ? [{ ...segment, text }] : [];
+
+        return index === 0
+          ? [...current.slice(0, -1), [...(current.at(-1) ?? []), ...piece]]
+          : [...current, piece];
+      }, lines),
+    [[]],
+  );
+}
+
 function isBlank(line: string | undefined): boolean {
   return line === undefined || line.trim() === "";
 }
@@ -70,7 +84,13 @@ function readBlocks(lines: readonly string[], index: number): ItemTextBlock[] {
   }
 
   const end = findParagraphEnd(lines, index + 1);
-  const paragraph = lines.slice(index, end).map((line) => parseInline(line.trim()));
+
+  const text = lines
+    .slice(index, end)
+    .map((line) => line.trim())
+    .join("\n");
+
+  const paragraph = toLines(parseInline(text));
 
   return [{ kind: "paragraph", lines: paragraph }, ...readBlocks(lines, end)];
 }

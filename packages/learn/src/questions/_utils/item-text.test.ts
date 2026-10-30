@@ -94,6 +94,17 @@ describe(parseItemText, () => {
   });
 });
 
+describe("emphasis across a paragraph's lines", () => {
+  it("reads italics that open on one line and close on a later one", () => {
+    expect(parseItemText("_Na rádio,\nse fala._")).toStrictEqual([
+      {
+        kind: "paragraph",
+        lines: [[{ kind: "italic", text: "Na rádio," }], [{ kind: "italic", text: "se fala." }]],
+      },
+    ]);
+  });
+});
+
 describe(parseItemLine, () => {
   it("reads a command on one line with its emphasis and amounts kept together", () => {
     expect(parseItemLine("Quanto custa\n o *pacote* de 96,00 € ou 40 %?")).toStrictEqual([
