@@ -5,6 +5,7 @@ import { createRequire } from "node:module";
 export type StatementCounts = { statements: number; writes: number };
 
 const counters = new AsyncLocalStorage<StatementCounts[]>();
+const rowCounters = new AsyncLocalStorage<{ matching: string | null; rows: number }[]>();
 /** Resolve the very same pg instance that @zoonk/db's PrismaPg adapter uses. */
 const requireDatabaseDependency = createRequire(import.meta.resolve("@zoonk/db"));
 type DriverClient = { query: (...args: unknown[]) => unknown };
@@ -107,10 +108,10 @@ function queryText(input: unknown): string | null {
 /** Pool reads and checked-out transaction clients both pass through this driver boundary. */
 Client.prototype.query = function query(...args: unknown[]) {
   const active = counters.getStore();
-  const text = queryText(args[0]);
+  const statement = queryText(args[0]);
 
-  if (active && text) {
-    const counts = countSQL(text);
+  if (active && statement) {
+    const counts = countSQL(statement);
 
     active.forEach((counter) => {
       counter.statements += counts.statements;
@@ -118,7 +119,43 @@ Client.prototype.query = function query(...args: unknown[]) {
     });
   }
 
-  return Reflect.apply(originalQuery, this, args);
+  const reading = rowCounters.getStore();
+
+  if (!reading) {
+    return Reflect.apply(originalQuery, this, args);
+  }
+
+  const text = queryText(args[0]) ?? "";
+
+  const count = (result: { rowCount?: number | null } | undefined) => {
+    reading.forEach((counter) => {
+      if (counter.matching === null || text.includes(counter.matching)) {
+        counter.rows += result?.rowCount ?? 0;
+      }
+    });
+  };
+
+  const callback = args.at(-1);
+
+  // pg's pool queries a checked-out client with a callback; direct client queries return a promise.
+  if (typeof callback === "function") {
+    return Reflect.apply(originalQuery, this, [
+      ...args.slice(0, -1),
+      (error: unknown, result: { rowCount?: number | null } | undefined) => {
+        count(result);
+        Reflect.apply(callback, undefined, [error, result]);
+      },
+    ]);
+  }
+
+  const returned: unknown = Reflect.apply(originalQuery, this, args);
+
+  return returned instanceof Promise
+    ? returned.then((result: { rowCount?: number | null }) => {
+        count(result);
+        return result;
+      })
+    : returned;
 };
 
 /**
@@ -135,6 +172,24 @@ export async function countDatabaseStatements<T>(callback: () => Promise<T>) {
   });
 
   return { ...counts, result };
+}
+
+/**
+ * Rows the statements returned or touched (only those whose SQL contains `matching`, when given), to
+ * bound reads that grow with what a learner has.
+ */
+export async function countDatabaseRows<T>(
+  callback: () => Promise<T>,
+  matching: string | null = null,
+) {
+  const counts = { matching, rows: 0 };
+
+  const result = await rowCounters.run([...(rowCounters.getStore() ?? []), counts], async () => {
+    const value = await callback();
+    return value;
+  });
+
+  return { result, rows: counts.rows };
 }
 
 /** A capability budget also forbids mutating statements, even ones later rolled back. */
