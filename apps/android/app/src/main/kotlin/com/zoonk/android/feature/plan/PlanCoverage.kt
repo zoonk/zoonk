@@ -4,15 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +30,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -380,16 +375,3 @@ internal fun Modifier.coverageTimeChip(
 ): Modifier =
     then(if (minutes == offered) Modifier.focusRequester(focus.offeredTime) else Modifier)
         .then(if (minutes == picked) Modifier.focusRequester(focus.pickedTime) else Modifier)
-
-/** A button's label with a spinner before it while its work runs, as main's `PendingLabel`. */
-@Composable
-internal fun RowScope.PendingLabel(
-    pending: Boolean,
-    text: String,
-) {
-    if (pending) {
-        CircularProgressIndicator(modifier = Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-    }
-    Text(text)
-}

@@ -60,7 +60,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.PageLoading
 import com.zoonk.android.feature.goalcontent.WithPlanGoal
-import com.zoonk.android.feature.plan.PendingLabel
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -68,6 +67,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold

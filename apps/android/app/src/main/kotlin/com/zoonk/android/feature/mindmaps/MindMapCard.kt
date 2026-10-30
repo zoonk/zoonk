@@ -37,13 +37,13 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
-import com.zoonk.android.feature.plan.PendingLabel
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.api.models.AllowanceItem

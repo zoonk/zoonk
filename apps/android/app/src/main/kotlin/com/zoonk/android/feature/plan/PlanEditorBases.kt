@@ -40,6 +40,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
