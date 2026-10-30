@@ -8,6 +8,7 @@ struct LessonStageView: View {
 
   private static let verdictId = "verdict"
   private static let checkNoteId = "check-note"
+  private static let turnId = "turn"
 
   /// A verdict that counts: a hook's guess is never wrong and "I don't know yet" has none.
   private func countedVerdict(_ step: LessonStep) -> Bool? {
@@ -70,6 +71,7 @@ struct LessonStageView: View {
                 }
 
                 LessonStepView(step: step, state: state, store: store, part: .turn)
+                  .id(Self.turnId)
 
                 if spread == nil {
                   LessonStepNotes(step: step, store: store)
@@ -106,6 +108,17 @@ struct LessonStageView: View {
             .onChange(of: state.notice == .selfCorrect || state.checkFailed) { _, hasNote in
               if hasNote {
                 scroll.scrollTo(Self.checkNoteId, anchor: .bottom)
+              }
+            }
+            // Raising the keyboard reveals only a field's text; the learner's turn shows whole above
+            // the action bar instead. Typing to Ask leaves the lesson where it is.
+            .task {
+              for await _ in NotificationCenter.default.notifications(
+                named: UIResponder.keyboardDidShowNotification)
+              where !store.isAsking {
+                withAnimation {
+                  scroll.scrollTo(Self.turnId, anchor: .bottom)
+                }
               }
             }
           }
