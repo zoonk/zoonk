@@ -9,11 +9,15 @@ struct ShellToolbar: ViewModifier {
 
   let isShown: Bool
 
+  /// When a screen's own items crowd the bar, iOS 27 moves the level into the overflow menu before
+  /// the account.
   func body(content: Content) -> some View {
-    if isShown {
-      content.toolbar { items }
-    } else {
+    if !isShown {
       content
+    } else if #available(iOS 27, *) {
+      content.toolbar { items(account: account.visibilityPriority(.high)) }
+    } else {
+      content.toolbar { items(account: account) }
     }
   }
 
@@ -24,7 +28,7 @@ struct ShellToolbar: ViewModifier {
   }
 
   @ToolbarContentBuilder
-  private var items: some ToolbarContent {
+  private func items(account: some ToolbarContent) -> some ToolbarContent {
     switch session.state {
     case .restoring where session.authenticatedSession == nil:
       ToolbarItem(placement: .topBarTrailing) {
@@ -63,13 +67,17 @@ struct ShellToolbar: ViewModifier {
         ToolbarSpacer(.fixed, placement: .topBarTrailing)
       }
 
-      ToolbarItem(placement: .topBarTrailing) {
-        AccountToolbarButton {
-          router.present(.account)
-        }
-      }
-      .sharedBackgroundVisibility(.hidden)
+      account
     }
+  }
+
+  private var account: some ToolbarContent {
+    ToolbarItem(placement: .topBarTrailing) {
+      AccountToolbarButton {
+        router.present(.account)
+      }
+    }
+    .sharedBackgroundVisibility(.hidden)
   }
 }
 
