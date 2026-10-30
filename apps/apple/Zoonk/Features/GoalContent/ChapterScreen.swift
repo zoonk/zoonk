@@ -395,18 +395,7 @@ private struct ChapterReferenceSection: View {
             }
           }
 
-          ForEach(chapter.summaries) { summary in
-            VStack(alignment: .leading, spacing: 4) {
-              Text(summary.title)
-                .font(.headline)
-
-              ForEach(summary.ideas, id: \.self) { idea in
-                Text((try? AttributedString(markdown: idea)) ?? AttributedString(idea))
-                  .font(.subheadline)
-                  .foregroundStyle(.secondary)
-              }
-            }
-          }
+          LessonSummaries(summaries: chapter.summaries)
         } label: {
           Label {
             Text(
@@ -434,6 +423,26 @@ private struct ChapterReferenceSection: View {
     case .learning: return Text("Learning", tableName: "Plan", comment: "A skill being learned")
     case .solid: return Text("Solid", tableName: "Plan", comment: "A skill learned well")
     case .mastered: return Text("Mastered", tableName: "Plan", comment: "A skill mastered")
+    }
+  }
+}
+
+/// The finished lessons' summary cards, as rows of a disclosure.
+struct LessonSummaries: View {
+  let summaries: [GoalChapter.Summary]
+
+  var body: some View {
+    ForEach(summaries) { summary in
+      VStack(alignment: .leading, spacing: 4) {
+        Text(summary.title)
+          .font(.headline)
+
+        ForEach(summary.ideas, id: \.self) { idea in
+          Text((try? AttributedString(markdown: idea)) ?? AttributedString(idea))
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+      }
     }
   }
 }

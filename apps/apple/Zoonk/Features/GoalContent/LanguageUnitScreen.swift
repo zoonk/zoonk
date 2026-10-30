@@ -37,6 +37,19 @@ struct LanguageUnit: Decodable, Equatable, Sendable {
     let skill: Skill
   }
 
+  /// A pattern noticed in the unit's recent mistakes; `typos` when they were slips.
+  struct Pattern: Decodable, Equatable, Sendable {
+    let id: String
+    let kind: String
+    let title: String
+  }
+
+  /// Mispronounced words due to be said again today; `words` names the first few.
+  struct Pronunciation: Decodable, Equatable, Sendable {
+    let count: Int
+    let words: [String]
+  }
+
   struct Tip: Decodable, Equatable, Hashable, Sendable {
     let text: String
     let title: String
@@ -62,6 +75,10 @@ struct LanguageUnit: Decodable, Equatable, Sendable {
   let grammarTips: [Tip]
   let lessons: [Lesson]
   let mistakes: [Mistake]
+  let pattern: Pattern?
+  let pronunciation: Pronunciation?
+  /// The finished lessons' summary cards, in lesson order.
+  let summaries: [GoalChapter.Summary]
   let unit: Unit
   let words: Words?
 }
@@ -241,17 +258,24 @@ private struct LanguageUnitContent: View {
     }
 
     if !unit.unit.objectives.isEmpty {
+      let finished = !lessons.isEmpty && done == lessons.count
+
       Section {
-        ForEach(unit.unit.objectives, id: \.self) { objective in
+        ForEach(unit.unit.objectives.prefix(3), id: \.self) { objective in
           Label {
             Text(objective)
           } icon: {
-            Image(systemName: "checkmark.circle")
-              .foregroundStyle(.secondary)
+            StatusMark(status: finished ? .done : .todo)
           }
         }
       } header: {
-        Text("You'll be able to", tableName: "Plan", comment: "Section of what a unit teaches")
+        if finished {
+          Text(
+            "I can already…", tableName: "Plan", comment: "Section of what a finished unit taught")
+        } else {
+          Text(
+            "By the end of this unit", tableName: "Plan", comment: "Section of what a unit teaches")
+        }
       }
     }
 
@@ -318,6 +342,20 @@ private struct LanguageUnitContent: View {
       }
     }
 
+    if !unit.summaries.isEmpty {
+      Section {
+        DisclosureGroup {
+          LessonSummaries(summaries: unit.summaries)
+        } label: {
+          Label {
+            Text("Unit summary", tableName: "Plan", comment: "Folds a unit's lesson summaries")
+          } icon: {
+            Image(systemName: "checklist")
+          }
+        }
+      }
+    }
+
     if unit.canTestOut {
       Section {
         Button {
@@ -370,6 +408,59 @@ private struct LanguageUnitContent: View {
       } header: {
         Text("Your mistakes", tableName: "Plan", comment: "Section of a unit's mistakes")
       }
+    }
+
+    if unit.pattern != nil || unit.pronunciation != nil {
+      Section {
+        if let pattern = unit.pattern {
+          Button {
+            router.open(.pattern(patternId: pattern.id))
+          } label: {
+            if pattern.kind == "typos" {
+              practiceRow(
+                title: Text("Just typos", tableName: "Plan", comment: "Recent mistakes were slips"),
+                detail: Text(
+                  "Your recent mistakes were slips, not a rule to learn.", tableName: "Plan",
+                  comment: "Explains a pattern of typos"),
+                systemImage: "keyboard")
+            } else {
+              practiceRow(
+                title: Text(
+                  "We noticed a pattern", tableName: "Plan",
+                  comment: "A rule the learner keeps getting wrong, noticed in the unit's mistakes"),
+                detail: Text(pattern.title), systemImage: "sparkles")
+            }
+          }
+        }
+
+        if let pronunciation = unit.pronunciation {
+          Button {
+            router.open(.pronunciation(goalId: unit.goalId))
+          } label: {
+            practiceRow(
+              title: Text(
+                "Say \(pronunciation.count) words again", tableName: "Plan",
+                comment: "Mispronounced words due to be said again today"),
+              detail: Text(pronunciation.words.formatted(.list(type: .and))),
+              systemImage: "mic")
+          }
+        }
+      }
+    }
+  }
+
+  private func practiceRow(title: Text, detail: Text, systemImage: String) -> some View {
+    Label {
+      VStack(alignment: .leading, spacing: 2) {
+        title
+          .foregroundStyle(.primary)
+        detail
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+          .lineLimit(1)
+      }
+    } icon: {
+      Image(systemName: systemImage)
     }
   }
 

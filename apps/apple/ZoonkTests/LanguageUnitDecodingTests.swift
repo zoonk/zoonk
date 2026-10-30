@@ -24,6 +24,23 @@ final class LanguageUnitDecodingTests: XCTestCase {
     XCTAssertEqual(unit.mistakes.first?.skill, .words)
   }
 
+  func testAUnitsReferenceAndPracticeShortcutsDecode() throws {
+    let generated = try JSONDecoder().decode(
+      Components.Schemas.LanguageUnit.self,
+      from: Data(
+        unitWithoutCharacter
+          .replacing(#""pattern": null"#, with: noticedPattern)
+          .replacing(
+            #""pronunciation": null"#, with: #""pronunciation": {"count": 3, "words": ["rent"]}"#
+          )
+          .replacing(#""summaries": []"#, with: summary).utf8))
+    let unit: LanguageUnit = try PracticeJSON.recode(generated)
+
+    XCTAssertEqual(unit.pattern?.kind, "pattern")
+    XCTAssertEqual(unit.pronunciation?.count, 3)
+    XCTAssertEqual(unit.summaries.first?.ideas, ["Rent is paid monthly"])
+  }
+
   func testAUnitOutsideAnyPlanDecodes() throws {
     let generated = try JSONDecoder().decode(
       Components.Schemas.LanguageUnit.self,
@@ -43,6 +60,16 @@ private let matchingMistake = #"""
   "mistakes": [{"answer": "rent → aluguel; landlord → caução", "correctAnswer": null,
     "explanation": null, "id": "01a1864a-0abe-725b-acf7-bbd04b0068c0",
     "question": "Ligue cada palavra ao significado", "skill": "words"}]
+  """#
+
+private let noticedPattern = #"""
+  "pattern": {"id": "01a1864a-0abe-725b-acf7-bbd04b0068c1", "kind": "pattern",
+    "title": "Per month comes after the amount"}
+  """#
+
+private let summary = #"""
+  "summaries": [{"ideas": ["Rent is paid monthly"],
+    "lessonId": "01a126ee-ad4a-7567-a576-dcfbdadf7dff", "title": "Aluguel mensal ou semanal"}]
   """#
 
 private let unitWithoutCharacter = #"""
