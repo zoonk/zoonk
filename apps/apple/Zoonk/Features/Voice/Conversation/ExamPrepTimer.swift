@@ -57,7 +57,7 @@ struct ExamPrepTimer: View {
   private func clock(from start: Date) -> some View {
     let deadline = start.addingTimeInterval(task.prepMinutes * 60)
 
-    return TimelineView(.explicit([deadline])) { context in
+    return TimelineView(.explicit([start, deadline])) { context in
       if context.date >= deadline {
         Text(
           "Preparation time is over. Start the call when you're ready.", tableName: "Voice",
