@@ -468,7 +468,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Linha %lld, sua para editar"
+            "value" : "Linha %lld, para você editar"
           }
         }
       }
@@ -572,7 +572,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch nicht ganz"
+            "value" : "Nicht ganz"
           }
         },
         "es" : {
@@ -590,7 +590,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não"
+            "value" : "Não é bem isso"
           }
         }
       }
@@ -688,7 +688,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stelle zuerst eine Vermutung auf. Gehe dann einen Schritt weiter, um zu sehen, was passiert."
+            "value" : "Überleg erst, was passieren wird. Geh dann einen Schritt weiter und schau nach."
           }
         },
         "es" : {
@@ -1838,10 +1838,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Seu resultado: %lld linha"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Seu resultado, total de linhas: %lld"
+                  "value" : "Seu resultado: %lld linhas"
                 }
               }
             }

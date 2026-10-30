@@ -71,7 +71,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Listo"
+            "value" : "Hecho"
           }
         },
         "fr" : {
@@ -495,7 +495,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "you@example.com"
+            "value" : "voce@example.com"
           }
         }
       }

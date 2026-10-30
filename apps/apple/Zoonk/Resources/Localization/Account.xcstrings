@@ -19,7 +19,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@/%2$@ mensajes del Compañero usados hoy"
+            "value" : "%1$@/%2$@ mensajes usados hoy con tu compañero"
           }
         },
         "fr" : {
@@ -124,7 +124,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O sistema de segurança bloqueou esta solicitação. Tente de novo ou entre em contato pelo contato@zoonk.com."
+            "value" : "O sistema de segurança bloqueou essa solicitação. Tente de novo ou entre em contato pelo e-mail contato@zoonk.com."
           }
         }
       }
@@ -315,13 +315,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un Compañero de estudio con IA para cuando te quedes atascado"
+            "value" : "Un compañero de estudio con IA para cuando te atasques"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un Compagnon d’apprentissage IA quand tu bloques"
+            "value" : "Un compagnon d’étude IA pour t’aider quand tu bloques"
           }
         },
         "pt" : {
@@ -460,7 +460,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nutzernamen ändern"
+            "value" : "Benutzernamen ändern"
           }
         },
         "en" : {
@@ -1035,7 +1035,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Listo"
+            "value" : "Hecho"
           }
         },
         "fr" : {
@@ -1221,7 +1221,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo o que Zoonk guarda sobre você em um só arquivo"
+            "value" : "Tudo que o Zoonk guarda sobre você, em um só arquivo"
           }
         }
       }
@@ -1383,7 +1383,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más tiempo para llamadas de expresión oral"
+            "value" : "Más tiempo en las llamadas de expresión oral"
           }
         },
         "fr" : {
@@ -1418,7 +1418,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo te llaman Zoonk y tu Compañero"
+            "value" : "Cómo te llaman Zoonk y tu compañero"
           }
         },
         "fr" : {
@@ -1430,7 +1430,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como Zoonk e seu Parceiro chamam você"
+            "value" : "Como o Zoonk e seu parceiro te chamam"
           }
         }
       }
@@ -2468,7 +2468,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Melde dich bei dem Zoonk-Konto an, mit dem dieser App Store-Kauf verknüpft ist, oder wende dich an den Support."
+            "value" : "Meld dich mit dem Zoonk-Konto an, zu dem dieser App Store-Kauf gehört, oder hol dir Hilfe beim Support."
           }
         },
         "es" : {
@@ -2515,7 +2515,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Assine Zoonk Plus"
+            "value" : "Assine o Zoonk Plus"
           }
         }
       }
@@ -2817,7 +2817,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta assinatura é gerenciada por Zoonk. Fale com o suporte se precisar de ajuda para alterar ou cancelar a assinatura."
+            "value" : "O Zoonk gerencia esta assinatura. Fale com o suporte se precisar de ajuda para alterar ou cancelar."
           }
         }
       }
@@ -3188,25 +3188,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "you@example.com"
+            "value" : "du@example.com"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "you@example.com"
+            "value" : "tu@example.com"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "you@example.com"
+            "value" : "toi@example.com"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "voce@exemplo.com"
+            "value" : "voce@example.com"
           }
         }
       }
@@ -3304,7 +3304,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Plan"
+            "value" : "Dein Tarif"
           }
         },
         "es" : {
@@ -3316,7 +3316,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan"
+            "value" : "Ta formule"
           }
         },
         "pt" : {
@@ -3531,13 +3531,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes données Zoonk ont été supprimées, mais Apple n’a pas pu confirmer que son autorisation avait été retirée. Pour terminer, retire Zoonk de Connexion avec Apple."
+            "value" : "Tes données Zoonk ont été supprimées, mais Apple n’a pas pu confirmer le retrait de l’autorisation accordée à Zoonk. Retire Zoonk de « Se connecter avec Apple » pour terminer."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar que a autorização foi removida. Para terminar, remova Zoonk do Sign in with Apple."
+            "value" : "Seus dados do Zoonk foram excluídos, mas Apple não conseguiu confirmar a remoção da autorização. Remova o Zoonk de Iniciar sessão com Apple para concluir."
           }
         }
       }
@@ -3548,7 +3548,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk hat deine App Store-Käufe geprüft, aber derzeit ist kein aktives Plus-Abo dabei."
+            "value" : "Zoonk hat deine App Store-Käufe geprüft, aber keiner davon schaltet derzeit Plus frei."
           }
         },
         "es" : {
@@ -3566,7 +3566,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk conferiu suas compras na App Store, mas nenhuma delas dá acesso ao Plus no momento."
+            "value" : "O Zoonk conferiu suas compras via App Store, mas nenhuma dá acesso ao Plus no momento."
           }
         }
       }
@@ -3595,7 +3595,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk não conseguiu se conectar. Confira sua conexão e tente de novo."
+            "value" : "O Zoonk não conseguiu se conectar. Confira sua conexão e tente de novo."
           }
         }
       }
@@ -3624,7 +3624,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk não conseguiu excluir sua conta. Tente de novo ou entre em contato pelo contato@zoonk.com."
+            "value" : "O Zoonk não conseguiu excluir sua conta. Tente de novo ou entre em contato pelo e-mail contato@zoonk.com."
           }
         }
       }
@@ -3653,7 +3653,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk não conseguiu carregar sua conta. Seu acesso continua salvo com segurança."
+            "value" : "O Zoonk não conseguiu carregar sua conta. Sua sessão continua salva com segurança."
           }
         }
       }
@@ -3682,7 +3682,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk não conseguiu enviar o código de verificação. Tente de novo ou entre em contato pelo contato@zoonk.com."
+            "value" : "O Zoonk não conseguiu enviar o código de verificação. Tente de novo ou entre em contato pelo e-mail contato@zoonk.com."
           }
         }
       }
@@ -3711,7 +3711,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk não conseguiu conectar você à sua conta. Tente de novo ou entre em contato pelo contato@zoonk.com."
+            "value" : "Não foi possível entrar no Zoonk. Tente de novo ou entre em contato pelo e-mail contato@zoonk.com."
           }
         }
       }

@@ -71,7 +71,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ist größer geworden!"
+            "value" : "Neue Stufe für %@!"
           }
         },
         "es" : {
@@ -862,7 +862,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma semana sem estudar"
+            "value" : "Uma semana de pausa"
           }
         }
       }
@@ -931,7 +931,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wieder da: %@"
+            "value" : "Wieder am %@"
           }
         },
         "en" : {
@@ -1251,7 +1251,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por hoje é só"
+            "value" : "Por enquanto é só"
           }
         }
       }
@@ -1639,7 +1639,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es zeigt deine Woche in Zahlen und die Fähigkeit, bei der du die größten Fortschritte gemacht hast."
+            "value" : "Er zeigt deine Woche in Zahlen und die Fähigkeit, die du am meisten verbessert hast."
           }
         },
         "es" : {
@@ -1895,7 +1895,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "solde : %lld"
+            "value" : "bilan net : %lld"
           }
         },
         "pt" : {
@@ -2139,7 +2139,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fase %1$lld · %2$@ concluído"
+            "value" : "Fase %1$lld · %2$@ concluída"
           }
         }
       }
@@ -2598,7 +2598,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lunettes étoilées !"
+            "value" : "Lunettes en forme d’étoiles !"
           }
         },
         "pt" : {
@@ -2714,7 +2714,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Día de estudio"
+            "value" : "Has estudiado"
           }
         },
         "fr" : {
@@ -3331,19 +3331,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Brille aufsetzen"
+            "value" : "Aufsetzen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ponerle las gafas"
+            "value" : "Pónselas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lui mettre"
+            "value" : "Les lui mettre"
           }
         },
         "pt" : {
@@ -3360,7 +3360,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wochenzusammenfassung · %@"
+            "value" : "Wochenrückblick · %@"
           }
         },
         "es" : {
@@ -3372,7 +3372,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Récapitulatif de la semaine · %@"
+            "value" : "Bilan de la semaine · %@"
           }
         },
         "pt" : {
@@ -3621,7 +3621,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine erste Zusammenfassung kommt am Sonntag"
+            "value" : "Dein erster Wochenrückblick kommt am Sonntag"
           }
         },
         "es" : {

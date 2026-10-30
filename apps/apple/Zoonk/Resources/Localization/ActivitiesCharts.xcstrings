@@ -1114,7 +1114,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: ligações usadas: %2$lld de %#@bonds@"
+            "value" : "%1$@: %2$lld de %#@bonds@"
           },
           "substitutions" : {
             "bonds" : {
@@ -1122,10 +1122,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg ligação"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg"
+                      "value" : "%arg ligações"
                     }
                   }
                 }
@@ -1318,10 +1324,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld átomo tem ligações livres, indicadas por pontos."
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Átomos com ligações abertas, representadas por pontos: %lld."
+                  "value" : "%lld átomos têm ligações livres, indicadas por pontos."
                 }
               }
             }
@@ -3200,7 +3212,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrastra un vértice para moverlo de una casilla en una casilla."
+            "value" : "Arrastra un vértice para moverlo de casilla en casilla."
           }
         },
         "fr" : {
@@ -4569,7 +4581,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mehrmals wiederholen"
+            "value" : "Eine bestimmte Anzahl von Malen wiederholen"
           }
         },
         "es" : {
@@ -4865,7 +4877,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seiten: %1$@, zusammen mit einem Umfang von %2$@."
+            "value" : "Seitenlängen: %1$@, das ergibt einen Umfang von %2$@."
           }
         },
         "en" : {
@@ -5138,7 +5150,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teile beide Seiten in %lld gleich große Gruppen"
+            "value" : "Teil beide Seiten in %lld gleich große Gruppen auf"
           }
         },
         "es" : {
@@ -5666,7 +5678,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reiße die Ecken ab und lege sie nebeneinander"
+            "value" : "Reiß die Ecken ab und leg sie nebeneinander"
           }
         },
         "es" : {
@@ -6206,7 +6218,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Situaciones hipotéticas"
+            "value" : "Sucesos hipotéticos"
           }
         },
         "fr" : {

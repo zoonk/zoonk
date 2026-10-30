@@ -246,13 +246,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Lektion wurde aus deinem Plan übersprungen."
+                  "value" : "%lld Lektion wurde aus deinem Plan entfernt."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Lektionen wurden aus deinem Plan übersprungen."
+                  "value" : "%lld Lektionen wurden aus deinem Plan entfernt."
                 }
               }
             }
@@ -282,13 +282,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld lección se ha saltado de tu plan."
+                  "value" : "Se ha quitado %lld lección de tu plan."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld lecciones se han saltado de tu plan."
+                  "value" : "Se han quitado %lld lecciones de tu plan."
                 }
               }
             }
@@ -486,7 +486,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %2$lld brisées"
+            "value" : "%1$lld sur %2$lld en morceaux"
           }
         },
         "pt" : {
@@ -645,7 +645,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@count@ bonnes réponses sur %2$lld pour gagner"
+            "value" : "%#@count@ sur %2$lld pour gagner"
           },
           "substitutions" : {
             "count" : {
@@ -656,13 +656,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg"
+                      "value" : "%arg bonne réponse"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg"
+                      "value" : "%arg bonnes réponses"
                     }
                   }
                 }
@@ -1062,10 +1062,16 @@
         "de" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld richtige Antwort zum Sieg"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld richtige Antworten für den Sieg"
+                  "value" : "%lld richtige Antworten zum Sieg"
                 }
               }
             }
@@ -1303,13 +1309,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld sujet"
+                  "value" : "%lld matière"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld sujets"
+                  "value" : "%lld matières"
                 }
               }
             }
@@ -1668,7 +1674,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unas preguntas sobre una idea que no acertaste."
+            "value" : "Unas preguntas sobre un concepto que no te ha quedado claro."
           }
         },
         "fr" : {
@@ -1703,7 +1709,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quelques questions sur chaque sujet. Ceux dont tu as le plus besoin viennent en premier et sont approfondis."
+            "value" : "Quelques questions par matière. Les matières dont tu as le plus besoin passent en premier et sont étudiées plus en profondeur."
           }
         },
         "pt" : {
@@ -1778,7 +1784,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Live-Gespräch, in dem du deinen Standpunkt erklärst. Sprich oder schreibe."
+            "value" : "Ein Live-Gespräch, in dem du dich verständlich machst. Sprich oder schreib."
           }
         },
         "es" : {
@@ -1842,7 +1848,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una respuesta incorrecta anula una correcta. ¿No estás seguro? Déjala en blanco."
+            "value" : "Un fallo anula un acierto. ¿Tienes dudas? Déjala en blanco."
           }
         },
         "fr" : {
@@ -1970,7 +1976,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comentário sobre a resposta"
+            "value" : "Feedback da resposta"
           }
         }
       }
@@ -2430,19 +2436,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No conocía la idea"
+            "value" : "Falta de conocimientos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notion inconnue"
+            "value" : "Lacune"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não sabia o conteúdo"
+            "value" : "Falta de conhecimento"
           }
         }
       }
@@ -2639,7 +2645,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton énergie a atteint %lld %%."
+            "value" : "L’Énergie a atteint %lld %%."
           }
         },
         "pt" : {
@@ -2859,7 +2865,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schließe ab, um dein Ergebnis zu sehen."
+            "value" : "Schließ den Block ab, um dein Ergebnis zu sehen."
           }
         },
         "es" : {
@@ -2888,7 +2894,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schließe mit deinen bisherigen Antworten ab: Sie bestimmen, welche Themen dein Plan vertieft."
+            "value" : "Schließ den Test mit deinen bisherigen Antworten ab: Sie bestimmen auch so, welche Inhalte dein Plan vertieft."
           }
         },
         "es" : {
@@ -3138,7 +3144,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boa escolha. É melhor dizer que você não tem certeza do que dar um palpite."
+            "value" : "Boa escolha. Dizer que você não tem certeza é melhor do que chutar."
           }
         }
       }
@@ -3167,7 +3173,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deu um palpite"
+            "value" : "Chute"
           }
         }
       }
@@ -3453,10 +3459,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Apareceu # vez nas suas respostas recentes."
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Nas suas respostas recentes, esse padrão apareceu %lld vez(es)."
+                  "value" : "Apareceu %lld vezes nas suas respostas recentes."
                 }
               }
             }
@@ -3801,7 +3813,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Type d’erreur"
+            "value" : "Erreur récurrente"
           }
         },
         "pt" : {
@@ -4108,13 +4120,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Auf %@ verschoben"
+            "value" : "Verschoben auf %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Movido al %@"
+            "value" : "Se ha aplazado al %@"
           }
         },
         "fr" : {
@@ -4126,7 +4138,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passou para %@"
+            "value" : "Adiado para %@"
           }
         }
       }
@@ -4406,19 +4418,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nicht ganz"
+            "value" : "Leider nicht"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No del todo"
+            "value" : "Esta vez no"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas tout à fait"
+            "value" : "Ce n’est pas ça"
           }
         },
         "pt" : {
@@ -5178,7 +5190,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "T’entraîner sur ce point · %@"
+            "value" : "Réviser cette erreur · %@"
           }
         },
         "pt" : {
@@ -5610,7 +5622,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeit war knapp"
+            "value" : "Zeit abgelaufen"
           }
         },
         "es" : {
@@ -6865,13 +6877,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Gespräch zur Einheit"
+            "value" : "Gespräch zur Einheit"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La propuesta de la unidad"
+            "value" : "La llamada de la unidad"
           }
         },
         "fr" : {
@@ -6883,7 +6895,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conversa da unidade"
+            "value" : "A conversa da unidade"
           }
         }
       }
@@ -6923,7 +6935,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Themen zählen besonders viel, und hier hast du die meisten Fehler gemacht. Dein Plan behandelt sie jetzt ausführlicher. Alle anderen Themen bleiben darin."
+            "value" : "Diese Fächer zählen besonders viel, und hier hast du die meisten Fehler gemacht. Dein Plan behandelt sie jetzt ausführlicher, und alle anderen Themen bleiben enthalten."
           }
         },
         "es" : {
@@ -7010,7 +7022,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieses Thema zählt besonders viel, und hier hast du die meisten Fehler gemacht. Dein Plan behandelt es jetzt ausführlicher. Alle anderen Themen bleiben darin."
+            "value" : "Dieses Fach zählt besonders viel, und hier hast du die meisten Fehler gemacht. Dein Plan behandelt es jetzt ausführlicher, und alle anderen Themen bleiben enthalten."
           }
         },
         "es" : {
@@ -7289,7 +7301,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Insígnia de caçador de armadilhas"
+            "value" : "Insígnia de caça-pegadinhas"
           }
         }
       }
@@ -7631,7 +7643,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "On a repéré une erreur qui se répète"
+            "value" : "On a repéré une erreur récurrente"
           }
         },
         "pt" : {
@@ -8536,7 +8548,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já ouviu todas as vezes disponíveis. Responda com o que ouviu."
+            "value" : "Você já usou todas as reproduções. Responda com base no que ouviu."
           }
         }
       }

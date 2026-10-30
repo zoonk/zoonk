@@ -418,13 +418,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld zusätzlicher Tipp."
+                  "value" : "%lld zusätzlicher Schlag."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld zusätzliche Tipps."
+                  "value" : "%lld zusätzliche Schläge."
                 }
               }
             }
@@ -454,13 +454,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pulsación de más."
+                  "value" : "%lld toque de más."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pulsaciones de más."
+                  "value" : "%lld toques de más."
                 }
               }
             }
@@ -487,10 +487,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld toque extra."
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Toques extras: %lld."
+                  "value" : "%lld toques extras."
                 }
               }
             }
@@ -735,7 +741,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un rythme de %1$lld pas, avec un temps tous les %2$lld pas. Appuie aux pas %3$@, en suivant le clic qui marque chaque temps."
+            "value" : "Un rythme de %1$lld cases, avec un temps toutes les %2$lld cases. Appuie sur les cases %3$@, avec un clic à chaque temps."
           }
         },
         "pt" : {
@@ -1530,7 +1536,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "oder drücke die Leertaste"
+            "value" : "oder drück die Leertaste"
           }
         },
         "es" : {
@@ -1832,7 +1838,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Omitir por ahora"
+            "value" : "Saltar por ahora"
           }
         },
         "fr" : {
@@ -2058,7 +2064,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tipp %1$lld kam %2$lld ms zu früh."
+            "value" : "Schlag %1$lld kam %2$lld ms zu früh."
           }
         },
         "en" : {
@@ -2093,7 +2099,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tipp %1$lld kam %2$lld ms zu spät."
+            "value" : "Schlag %1$lld kam %2$lld ms zu spät."
           }
         },
         "en" : {
@@ -2128,7 +2134,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tipp %lld wurde ausgelassen."
+            "value" : "Schlag %lld wurde verpasst."
           }
         },
         "es" : {

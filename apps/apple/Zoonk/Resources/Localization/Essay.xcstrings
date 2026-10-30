@@ -242,7 +242,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redação · Critérios do ENEM"
+            "value" : "Redação · critérios do Enem"
           }
         }
       }
@@ -300,7 +300,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nesta estimativa, todos os critérios receberam a nota máxima."
+            "value" : "Todos os critérios têm pontuação máxima nesta estimativa."
           }
         }
       }
@@ -543,19 +543,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anregende Texte"
+            "value" : "Ausgangstexte"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Textos motivadores"
+            "value" : "Textos de apoyo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Textes de référence"
+            "value" : "Textes d’appui"
           }
         },
         "pt" : {
@@ -822,7 +822,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver a nota"
+            "value" : "Ver a correção"
           }
         }
       }
@@ -949,7 +949,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das hat nicht geklappt. Versuch es in einem Moment noch einmal."
+            "value" : "Das hat nicht geklappt. Versuch es gleich noch einmal."
           }
         },
         "es" : {
@@ -978,7 +978,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das hat nicht geklappt. Dein Text ist noch da. Versuch es in einem Moment noch einmal."
+            "value" : "Das hat nicht geklappt. Dein Text ist noch da. Versuch es gleich noch einmal."
           }
         },
         "es" : {
@@ -1054,7 +1054,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O texto não carregou"
+            "value" : "A redação não carregou"
           }
         }
       }
@@ -1112,7 +1112,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este texto não está aqui"
+            "value" : "Essa redação não está aqui"
           }
         }
       }
@@ -1431,7 +1431,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua última nota"
+            "value" : "Sua última correção"
           }
         }
       }

@@ -1873,13 +1873,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Quelques questions rapides sur le domaine %lld pour que ton plan passe ce que tu connais déjà. Il n’y a pas de Score, et tu peux tout à fait répondre « Je ne sais pas encore »."
+                  "value" : "Quelques questions rapides sur %lld domaine pour que ton plan saute ce que tu sais déjà. Il n’y a pas de score, et tu peux tout à fait répondre « Je ne sais pas encore »."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Quelques questions rapides sur les %lld domaines pour que ton plan passe ce que tu connais déjà. Il n’y a pas de Score, et tu peux tout à fait répondre « Je ne sais pas encore »."
+                  "value" : "Quelques questions rapides sur %lld domaines pour que ton plan saute ce que tu sais déjà. Il n’y a pas de score, et tu peux tout à fait répondre « Je ne sais pas encore »."
                 }
               }
             }
@@ -1975,7 +1975,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "unas %@ de estudio"
+            "value" : "aproximadamente %@ de estudio"
           }
         },
         "fr" : {
@@ -2441,7 +2441,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frag zu deinem Material"
+            "value" : "Frag etwas zu deinem Material"
           }
         },
         "es" : {
@@ -2496,10 +2496,34 @@
     "At %@ a day, you finish in %@, after the exam in %@." : {
       "comment" : "When an exam plan that studies everything ends; the second and third arguments are months like 'May 2027'",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit %1$@ am Tag bist du im %2$@ fertig, also nach der Prüfung im %3$@."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "At %1$@ a day, you finish in %2$@, after the exam in %3$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con %1$@ al día, terminas en %2$@, después del examen de %3$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec %1$@ par jour, tu termines en %2$@, après l’examen prévu en %3$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com %1$@ por dia, você termina em %2$@, depois da prova em %3$@."
           }
         }
       }
@@ -2510,7 +2534,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit %1$@ täglich bist du in %2$@ fertig, nach der Prüfung am %3$@."
+            "value" : "Mit %1$@ am Tag bist du im %2$@ fertig, also nach der Prüfung am %3$@."
           }
         },
         "en" : {
@@ -2522,19 +2546,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con %1$@ al día, terminarás en %2$@, después del examen del %3$@."
+            "value" : "Con %1$@ al día, terminas en %2$@, después del examen del %3$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À raison de %1$@ par jour, tu termines dans %2$@, après l’examen du %3$@."
+            "value" : "Avec %1$@ par jour, tu termines en %2$@, après l’examen du %3$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com %1$@ por dia, você termina em %2$@, depois da prova em %3$@."
+            "value" : "Com %1$@ por dia, você termina em %2$@, depois da prova no dia %3$@."
           }
         }
       }
@@ -3000,7 +3024,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige a tu Compañero"
+            "value" : "Elige a tu compañero"
           }
         },
         "fr" : {
@@ -3197,7 +3221,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deckt bis %2$@ etwa %1$@ deiner Prüfungsthemen gründlich ab, die häufigsten zuerst."
+            "value" : "Damit lernst du etwa %1$@ deiner Prüfungsthemen bis zum %2$@ gründlich, die häufigsten zuerst."
           }
         },
         "en" : {
@@ -3209,19 +3233,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abarca en profundidad aproximadamente el %1$@ de los temas de tu examen antes del %2$@, empezando por los que más suelen aparecer."
+            "value" : "Cubre en profundidad aproximadamente %1$@ del temario de tu examen para el %2$@, empezando por los temas más frecuentes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couvre en profondeur environ %1$@ des sujets de ton examen d’ici %2$@, en commençant par les plus fréquents."
+            "value" : "Tu étudies en profondeur environ %1$@ des sujets de ton examen d’ici le %2$@, en commençant par les plus fréquents."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cobre cerca de %1$@ dos tópicos da sua prova a fundo até %2$@, começando pelo que mais cai."
+            "value" : "Você estuda a fundo cerca de %1$@ dos tópicos da sua prova até %2$@, começando pelo que mais cai."
           }
         }
       }
@@ -3229,10 +3253,34 @@
     "Covers about %@ of your exam topics in depth by the start of %@, what comes up most first." : {
       "comment" : "The share of an exam the time a day covers by its date; the second argument is the month the learner named, like 'May 2027'",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit lernst du etwa %1$@ deiner Prüfungsthemen bis Anfang %2$@ gründlich, die häufigsten zuerst."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Covers about %1$@ of your exam topics in depth by the start of %2$@, what comes up most first."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubre en profundidad aproximadamente %1$@ del temario de tu examen para el inicio de %2$@, empezando por los temas más frecuentes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu étudies en profondeur environ %1$@ des sujets de ton examen d’ici début %2$@, en commençant par les plus fréquents."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você estuda a fundo cerca de %1$@ dos tópicos da sua prova até o início de %2$@, começando pelo que mais cai."
           }
         }
       }
@@ -3243,7 +3291,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deckt bis %2$@ etwa %1$@ deines Ziels gründlich ab, das Wichtigste zuerst."
+            "value" : "Damit lernst du etwa %1$@ der Inhalte für dein Ziel bis zum %2$@ gründlich, das Wichtigste zuerst."
           }
         },
         "en" : {
@@ -3255,19 +3303,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abarca en profundidad aproximadamente el %1$@ de tu objetivo antes del %2$@, empezando por lo más importante."
+            "value" : "Cubre en profundidad aproximadamente %1$@ del contenido de tu objetivo para el %2$@, empezando por lo más importante."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couvre en profondeur environ %1$@ de ton objectif d’ici %2$@, en commençant par l’essentiel."
+            "value" : "Tu étudies en profondeur environ %1$@ de ce que tu veux apprendre d’ici le %2$@, en commençant par l’essentiel."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cobre cerca de %1$@ da sua meta a fundo até %2$@, começando pelo que é mais importante."
+            "value" : "Você estuda a fundo cerca de %1$@ do conteúdo da sua meta até %2$@, começando pelo que mais importa."
           }
         }
       }
@@ -3275,10 +3323,34 @@
     "Covers about %@ of your goal in depth by the start of %@, what matters most first." : {
       "comment" : "The share of a goal the time a day covers by its date; the second argument is the month the learner named, like 'May 2027'",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit lernst du etwa %1$@ der Inhalte für dein Ziel bis Anfang %2$@ gründlich, das Wichtigste zuerst."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Covers about %1$@ of your goal in depth by the start of %2$@, what matters most first."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubre en profundidad aproximadamente %1$@ del contenido de tu objetivo para el inicio de %2$@, empezando por lo más importante."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu étudies en profondeur environ %1$@ de ce que tu veux apprendre d’ici début %2$@, en commençant par l’essentiel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você estuda a fundo cerca de %1$@ do conteúdo da sua meta até o início de %2$@, começando pelo que mais importa."
           }
         }
       }
@@ -3289,31 +3361,57 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deckt alle deine Prüfungsthemen bis %@ ab."
+            "value" : "Damit lernst du bis zum %@ alle Prüfungsthemen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abarca todos los temas de tu examen antes del %@."
+            "value" : "Cubre todo el temario de tu examen para el %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couvre tous les sujets de ton examen d’ici %@."
+            "value" : "Tu étudies tous les sujets de ton examen d’ici le %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cobre todos os tópicos da sua prova até %@."
+            "value" : "Você estuda todos os tópicos da sua prova até %@."
           }
         }
       }
     },
     "Covers all your exam topics by the start of %@." : {
-      "comment" : "The time a day picked covers a whole exam; the argument is the month the learner named, like 'May 2027'"
+      "comment" : "The time a day picked covers a whole exam; the argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit lernst du bis Anfang %@ alle Prüfungsthemen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubre todo el temario de tu examen para el inicio de %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu étudies tous les sujets de ton examen d’ici début %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você estuda todos os tópicos da sua prova até o início de %@."
+          }
+        }
+      }
     },
     "Covers your whole goal by %@." : {
       "comment" : "The time a day picked covers a whole goal; the argument is a date like 'May 5, 2027'",
@@ -3321,31 +3419,57 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deckt dein ganzes Ziel bis %@ ab."
+            "value" : "Damit lernst du bis zum %@ alles für dein Ziel."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abarca todo tu objetivo antes del %@."
+            "value" : "Cubre todo el contenido de tu objetivo para el %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couvre tout ton objectif d’ici %@."
+            "value" : "Tu étudies tout ce que tu veux apprendre d’ici le %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cobre toda a sua meta até %@."
+            "value" : "Você estuda todo o conteúdo da sua meta até %@."
           }
         }
       }
     },
     "Covers your whole goal by the start of %@." : {
-      "comment" : "The time a day picked covers a whole goal; the argument is the month the learner named, like 'May 2027'"
+      "comment" : "The time a day picked covers a whole goal; the argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit lernst du bis Anfang %@ alles für dein Ziel."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubre todo el contenido de tu objetivo para el inicio de %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu étudies tout ce que tu veux apprendre d’ici début %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você estuda todo o conteúdo da sua meta até o início de %@."
+          }
+        }
+      }
     },
     "Create a free account" : {
       "comment" : "Opens sign-up; a guest's plan and progress come with them",
@@ -3759,7 +3883,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Z. B. Sachbearbeiter, Verwaltungsbeamter"
+            "value" : "Z. B. Sachbearbeitung, Verwaltungsfachkraft"
           }
         },
         "es" : {
@@ -3794,7 +3918,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por ejemplo, nivel 7, 100 puntos"
+            "value" : "P. ej., banda 7, 100 puntos"
           }
         },
         "fr" : {
@@ -3806,7 +3930,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ex.: nível 7, 100 pontos"
+            "value" : "Ex.: pontuação 7, 100 pontos"
           }
         }
       }
@@ -4426,7 +4550,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir erstellen deine Fragen"
+            "value" : "Wir bereiten deine Fragen vor"
           }
         },
         "es" : {
@@ -4815,7 +4939,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je connais bien le sujet"
+            "value" : "Je m’y connais bien"
           }
         },
         "pt" : {
@@ -5093,7 +5217,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Letzter Grenzwert"
+            "value" : "Zuletzt nötiger Score"
           }
         },
         "es" : {
@@ -5180,25 +5304,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lektionen zum Spielen von %@ kommen bald"
+            "value" : "Lektionen für %@ sind bald da"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pronto habrá lecciones para tocar %@"
+            "value" : "Pronto habrá lecciones de %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Des leçons pour jouer de %@ arrivent bientôt"
+            "value" : "Bientôt des leçons pour cet instrument : %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Em breve, aulas para tocar %@"
+            "value" : "Aulas para tocar %@ vêm aí"
           }
         }
       }
@@ -5708,25 +5832,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kennst du das Alphabet noch nicht? Überspringe den Test. Deine erste Lerneinheit beginnt mit einer kurzen Lektion zum Lesen des Alphabets."
+            "value" : "Du kennst das Alphabet noch nicht? Überspring den Test. Deine erste Lerneinheit beginnt mit einer kurzen Lektion, in der du die Buchstaben lesen lernst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿No conoces su alfabeto? Sáltate la prueba. Tu primera sesión empezará con una breve lección para aprender a leerlo."
+            "value" : "¿No conoces su alfabeto? Sáltate la prueba. Tu primera sesión empieza con una breve lección para aprender a leerlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu ne connais pas encore son alphabet ? Passe le test. Ta première séance commencera par une courte leçon pour apprendre à le lire."
+            "value" : "Tu ne connais pas encore cet alphabet ? Saute le test. Ta première séance commence par une courte leçon pour apprendre à le lire."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não conhece o alfabeto desse idioma? Pule o teste. Sua primeira sessão começa com uma aula rápida para aprender a lê-lo."
+            "value" : "Ainda não conhece esse alfabeto? Pule o teste. Sua primeira sessão começa com uma aula rápida de leitura."
           }
         }
       }
@@ -5801,13 +5925,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no conozco bien ninguna"
+            "value" : "Aún ninguna"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun pour le moment"
+            "value" : "Aucune pour l’instant"
           }
         },
         "pt" : {
@@ -5830,7 +5954,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No estoy seguro, quiero una prueba rápida"
+            "value" : "No lo sé, hazme una prueba rápida"
           }
         },
         "fr" : {
@@ -6033,7 +6157,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprobar el bac"
+            "value" : "Aprobar la PAU"
           }
         },
         "fr" : {
@@ -6207,13 +6331,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprobar el SAT"
+            "value" : "Aprobar unas oposiciones"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réussir le SAT"
+            "value" : "Réussir le bac"
           }
         },
         "pt" : {
@@ -6242,7 +6366,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "réussir le SAT, parler %@…"
+            "value" : "réussir le bac, parler %@…"
           }
         },
         "pt" : {
@@ -6549,13 +6673,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Auf eine Prüfung vorbereiten"
+            "value" : "Für eine Prüfung lernen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparar un examen"
+            "value" : "Prepararme para un examen"
           }
         },
         "fr" : {
@@ -6584,7 +6708,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparar un examen sobre mi material: %@"
+            "value" : "Prepararme para un examen sobre mi material: %@"
           }
         },
         "fr" : {
@@ -6723,31 +6847,57 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Behandelt bis %@ jedes Prüfungsthema, manche weniger gründlich."
+            "value" : "Damit kommen bis zum %@ alle Prüfungsthemen dran, manche weniger ausführlich."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llega a todos los temas de tu examen antes del %@, algunos con menos profundidad."
+            "value" : "Cubre todo el temario de tu examen para el %@, con menos profundidad en algunos temas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aborde tous les sujets de ton examen d’ici %@, certains moins en profondeur."
+            "value" : "Tu abordes tous les sujets de ton examen d’ici le %@, mais certains moins en détail."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cobre todos os tópicos da sua prova até %@, alguns com menos profundidade."
+            "value" : "Você estuda todos os tópicos da sua prova até %@, alguns com menos profundidade."
           }
         }
       }
     },
     "Reaches every exam topic by the start of %@, some in less depth." : {
-      "comment" : "The time a day brings every exam topic in; the argument is the month the learner named, like 'May 2027'"
+      "comment" : "The time a day brings every exam topic in; the argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit kommen bis Anfang %@ alle Prüfungsthemen dran, manche weniger ausführlich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubre todo el temario de tu examen para el inicio de %@, con menos profundidad en algunos temas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu abordes tous les sujets de ton examen d’ici début %@, mais certains moins en détail."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você estuda todos os tópicos da sua prova até o início de %@, alguns com menos profundidade."
+          }
+        }
+      }
     },
     "Reaches every part of your goal by %@, some in less depth." : {
       "comment" : "The time a day brings every part of a goal in; the argument is a date like 'May 5, 2027'",
@@ -6755,31 +6905,57 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Behandelt bis %@ alle Teile deines Ziels, manche weniger gründlich."
+            "value" : "Damit kommen bis zum %@ alle Inhalte für dein Ziel dran, manche weniger ausführlich."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llega a todas las partes de tu objetivo antes del %@, algunas con menos profundidad."
+            "value" : "Cubre todo el contenido de tu objetivo para el %@, con menos profundidad en algunas partes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aborde toutes les parties de ton objectif d’ici %@, certaines moins en profondeur."
+            "value" : "Tu abordes tout ce que tu veux apprendre d’ici le %@, mais certains points moins en détail."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cobre todas as partes da sua meta até %@, algumas com menos profundidade."
+            "value" : "Você estuda todo o conteúdo da sua meta até %@, algumas partes com menos profundidade."
           }
         }
       }
     },
     "Reaches every part of your goal by the start of %@, some in less depth." : {
-      "comment" : "The time a day brings every part of a goal in; the argument is the month the learner named, like 'May 2027'"
+      "comment" : "The time a day brings every part of a goal in; the argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit kommen bis Anfang %@ alle Inhalte für dein Ziel dran, manche weniger ausführlich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubre todo el contenido de tu objetivo para el inicio de %@, con menos profundidad en algunas partes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu abordes tout ce que tu veux apprendre d’ici début %@, mais certains points moins en détail."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você estuda todo o conteúdo da sua meta até o início de %@, algumas partes com menos profundidade."
+          }
+        }
+      }
     },
     "Read it again" : {
       "comment" : "Reads the changed words again",
@@ -7327,7 +7503,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver Plus"
+            "value" : "Ver o Plus"
           }
         }
       }
@@ -7501,7 +7677,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passer le test"
+            "value" : "Sauter le test"
           }
         },
         "pt" : {
@@ -8278,25 +8454,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das waren genug Fragen für heute"
+            "value" : "Für heute haben wir genug Antworten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por hoy ya hay suficientes preguntas"
+            "value" : "Por hoy ya has respondido suficientes preguntas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "C’est assez de questions pour aujourd’hui"
+            "value" : "On a assez de réponses pour aujourd’hui"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por hoje, chega de perguntas"
+            "value" : "Você já respondeu o suficiente por hoje"
           }
         }
       }
@@ -8423,13 +8599,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In der Prüfungsausschreibung steht %@."
+            "value" : "Die Prüfungsausschreibung nennt den %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La convocatoria indica %@."
+            "value" : "La convocatoria del examen indica el %@."
           }
         },
         "fr" : {
@@ -8452,13 +8628,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im offiziellen Prüfungskalender steht %@."
+            "value" : "Der offizielle Prüfungskalender nennt den %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El calendario oficial del examen indica %@."
+            "value" : "El calendario oficial del examen indica el %@."
           }
         },
         "fr" : {
@@ -8470,7 +8646,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O calendário oficial da prova informa %@."
+            "value" : "O calendário oficial da prova indica %@."
           }
         }
       }
@@ -8481,7 +8657,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Free-Tarif kannst du ein Ziel zurzeit verfolgen. Um ein weiteres zu starten, pausiere dein aktuelles Ziel über das Menü in deinem Plan. Schnelle Fragen kannst du jederzeit stellen."
+            "value" : "Im kostenlosen Tarif kannst du ein Ziel gleichzeitig verfolgen. Um ein anderes zu starten, pausier dein aktuelles Ziel über das Menü in deinem Plan. Kurze Fragen kannst du jederzeit stellen."
           }
         },
         "es" : {
@@ -8510,7 +8686,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Free-Tarif kannst du ein Ziel zurzeit verfolgen. Um dieses Ziel zu starten, pausiere dein aktuelles Ziel über das Menü in deinem Plan oder hol dir Plus."
+            "value" : "Im kostenlosen Tarif kannst du ein Ziel gleichzeitig verfolgen. Um dieses Ziel zu starten, pausier dein aktuelles Ziel über das Menü in deinem Plan oder hol dir Plus."
           }
         },
         "es" : {
@@ -9293,13 +9469,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bis etwa %@"
+            "value" : "Bis etwa zum %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hasta aproximadamente %@"
+            "value" : "Hasta aproximadamente el %@"
           }
         },
         "fr" : {
@@ -9311,13 +9487,39 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até cerca de %@"
+            "value" : "Até por volta de %@"
           }
         }
       }
     },
     "Until sometime in %@" : {
-      "comment" : "When a plan without a date ends at this pace; the argument is a month like 'October 2027'"
+      "comment" : "When a plan without a date ends at this pace; the argument is a month like 'October 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voraussichtlich im %@ fertig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta algún momento de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jusqu’en %@ environ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Até algum momento de %@"
+          }
+        }
+      }
     },
     "Until the exam, what comes up most comes first." : {
       "comment" : "What an exam plan that studies everything does before the exam",
@@ -10079,25 +10281,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Was erhoffst du dir davon?"
+            "value" : "Was möchtest du damit erreichen?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Qué quieres conseguir con ello?"
+            "value" : "¿Qué quieres conseguir?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qu’en attends-tu ?"
+            "value" : "Qu’aimerais-tu en tirer ?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que você quer com isso?"
+            "value" : "O que você quer alcançar com isso?"
           }
         }
       }
@@ -10195,31 +10397,57 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "So viel Zeit brauchst du, um alle Prüfungsthemen bis %@ abzudecken."
+            "value" : "So viel Lernzeit brauchst du täglich, um bis zum %@ alle Prüfungsthemen zu lernen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El tiempo necesario para abarcar todos los temas de tu examen antes del %@."
+            "value" : "El tiempo necesario para cubrir todo el temario de tu examen de aquí al %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le temps nécessaire pour couvrir tous les sujets de ton examen d’ici %@."
+            "value" : "Le temps nécessaire pour étudier tous les sujets de ton examen d’ici le %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O tempo necessário para cobrir todos os tópicos da sua prova até %@."
+            "value" : "O tempo necessário para estudar todos os tópicos da sua prova até %@."
           }
         }
       }
     },
     "What it takes to cover all your exam topics by the start of %@." : {
-      "comment" : "Why the time a day the plan suggests for an exam; the argument is the month the learner named, like 'May 2027'"
+      "comment" : "Why the time a day the plan suggests for an exam; the argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "So viel Lernzeit brauchst du täglich, um bis Anfang %@ alle Prüfungsthemen zu lernen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El tiempo necesario para cubrir todo el temario de tu examen de aquí al inicio de %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le temps nécessaire pour étudier tous les sujets de ton examen d’ici début %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O tempo necessário para estudar todos os tópicos da sua prova até o início de %@."
+          }
+        }
+      }
     },
     "What it takes to cover your whole goal by %@." : {
       "comment" : "Why the time a day the plan suggests for a goal; the argument is a date like 'May 5, 2027'",
@@ -10227,31 +10455,57 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "So viel Zeit brauchst du, um dein ganzes Ziel bis %@ abzudecken."
+            "value" : "So viel Lernzeit brauchst du täglich, um bis zum %@ alles für dein Ziel zu lernen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El tiempo necesario para abarcar todo tu objetivo antes del %@."
+            "value" : "El tiempo necesario para cubrir todo el contenido de tu objetivo de aquí al %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le temps nécessaire pour couvrir tout ton objectif d’ici %@."
+            "value" : "Le temps nécessaire pour étudier tout ce que tu veux apprendre d’ici le %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O tempo necessário para cobrir toda a sua meta até %@."
+            "value" : "O tempo necessário para estudar todo o conteúdo da sua meta até %@."
           }
         }
       }
     },
     "What it takes to cover your whole goal by the start of %@." : {
-      "comment" : "Why the time a day the plan suggests for a goal; the argument is the month the learner named, like 'May 2027'"
+      "comment" : "Why the time a day the plan suggests for a goal; the argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "So viel Lernzeit brauchst du täglich, um bis Anfang %@ alles für dein Ziel zu lernen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El tiempo necesario para cubrir todo el contenido de tu objetivo de aquí al inicio de %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le temps nécessaire pour étudier tout ce que tu veux apprendre d’ici début %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O tempo necessário para estudar todo o conteúdo da sua meta até o início de %@."
+          }
+        }
+      }
     },
     "What score do you need?" : {
       "comment" : "Onboarding question for an exam goal",
@@ -11077,19 +11331,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du bist voraussichtlich um den %@ fertig."
+            "value" : "Du bist voraussichtlich im %@ fertig."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminarás alrededor del %@."
+            "value" : "Terminas hacia %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu termineras vers %@."
+            "value" : "Tu termines vers %@."
           }
         },
         "pt" : {
@@ -11147,7 +11401,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "selon toi"
+            "value" : "tu as dit"
           }
         },
         "pt" : {
@@ -11889,31 +12143,57 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Zieldatum, %@, ist vorbei. Auf der nächsten Seite kannst du ein neues wählen."
+            "value" : "Dein Termin am %@ ist vorbei. Auf der nächsten Seite kannst du einen neuen wählen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu fecha, %@, ya ha pasado. Puedes elegir otra en la siguiente pantalla."
+            "value" : "La fecha que has elegido, el %@, ya ha pasado. Puedes elegir otra en la siguiente pantalla."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La date que tu as choisie, %@, est passée. Tu peux en choisir une nouvelle sur l’écran suivant."
+            "value" : "La date choisie, le %@, est passée. Tu peux en choisir une autre à l’écran suivant."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua data, %@, já passou. Você pode escolher outra na próxima tela."
+            "value" : "A data que você escolheu, %@, já passou. Você pode escolher outra na próxima tela."
           }
         }
       }
     },
     "Your date, the start of %@, has passed. You can choose a new one on the next screen." : {
-      "comment" : "The goal's date has passed; the argument is the month the learner named, like 'May 2027'"
+      "comment" : "The goal's date has passed; the argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Termin Anfang %@ ist vorbei. Auf der nächsten Seite kannst du einen neuen wählen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fecha que has elegido, el inicio de %@, ya ha pasado. Puedes elegir otra en la siguiente pantalla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La date choisie, début %@, est passée. Tu peux en choisir une autre à l’écran suivant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A data que você escolheu, o início de %@, já passou. Você pode escolher outra na próxima tela."
+          }
+        }
+      }
     },
     "Your exam is on %@" : {
       "comment" : "An exam's date",
@@ -12333,25 +12613,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Plan lässt die Grundlagen dieser Themen aus. Ein kurzer Test bestimmt deinen Einstieg in die weiteren Inhalte."
+            "value" : "Dein Plan überspringt die Grundlagen dieser Fächer. Ein kurzer Test zeigt, wo du in den anderen stehst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan empieza después de los conceptos básicos de esas asignaturas. Una prueba rápida determina tu punto de partida en las demás."
+            "value" : "Tu plan da por sabidos los conceptos básicos de esas asignaturas. Una prueba rápida determina tu nivel en las demás."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan passe les bases de ces sujets. Un test rapide détermine ton point de départ pour la suite."
+            "value" : "Ton plan saute les bases des matières choisies. Un test rapide détermine ton niveau dans les autres."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano começa depois da base dessas matérias. Um teste rápido define seu ponto de partida no restante."
+            "value" : "Seu plano pula o básico dessas matérias. Um teste rápido identifica seu nível nas outras."
           }
         }
       }
@@ -12507,25 +12787,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Prüfungsziel"
+            "value" : "Dein Ziel"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu meta para el examen"
+            "value" : "Tu objetivo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton objectif d’examen"
+            "value" : "Ton objectif"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua meta para a prova"
+            "value" : "Sua meta"
           }
         }
       }
@@ -12577,13 +12857,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk n’enseigne rien qui pourrait te faire du mal ou en faire aux autres, ni les jeux d’argent ou les façons de tricher. Y a-t-il autre chose que tu aimerais apprendre ?"
+            "value" : "Zoonk ne propose pas de leçons sur ce qui pourrait te nuire ou nuire aux autres, sur les jeux d’argent ou sur la triche. Y a-t-il autre chose que tu aimerais apprendre ?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk não ensina nada que possa machucar você ou outras pessoas, jogos de azar ou formas de trapacear. Tem outra coisa que você gostaria de aprender?"
+            "value" : "O Zoonk não ensina nada que possa fazer mal a você ou a outras pessoas, nem jogos de azar ou formas de trapacear. Tem outra coisa que você gostaria de aprender?"
           }
         }
       }

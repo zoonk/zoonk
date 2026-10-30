@@ -433,7 +433,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sobre este tema"
+            "value" : "Sobre esta asignatura"
           }
         },
         "fr" : {
@@ -445,7 +445,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sobre esta matéria"
+            "value" : "Sobre essa matéria"
           }
         }
       }
@@ -700,7 +700,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poser une question à %@ sur cette question"
+            "value" : "Interroger %@ sur cette question"
           }
         },
         "pt" : {
@@ -746,25 +746,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frag %@ zu diesem Thema"
+            "value" : "Frag %@ etwas zu diesem Fach"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pregunta a %@ sobre este tema"
+            "value" : "Pregunta a %@ sobre esta asignatura"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poser une question à %@ sur ce sujet"
+            "value" : "Interroger %@ sur cette matière"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pergunte para %@ sobre esta matéria"
+            "value" : "Pergunte para %@ sobre essa matéria"
           }
         }
       }
@@ -932,7 +932,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pose une question sur cette question"
+            "value" : "Poser une question à ce sujet"
           }
         },
         "pt" : {
@@ -961,7 +961,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pose une question sur cette question…"
+            "value" : "Pose une question à ce sujet…"
           }
         },
         "pt" : {
@@ -1007,25 +1007,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frag zu diesem Thema…"
+            "value" : "Frag etwas zu diesem Fach…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pregunta sobre este tema…"
+            "value" : "Pregunta sobre esta asignatura…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pose une question sur ce sujet…"
+            "value" : "Pose une question sur cette matière…"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pergunte sobre esta matéria…"
+            "value" : "Pergunte sobre essa matéria…"
           }
         }
       }
@@ -1210,25 +1210,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stell Fragen zu diesem Thema"
+            "value" : "Stell Fragen zu diesem Fach"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haz preguntas sobre este tema"
+            "value" : "Haz preguntas sobre esta asignatura"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pose des questions sur ce sujet"
+            "value" : "Poser des questions sur cette matière"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tire dúvidas sobre esta matéria"
+            "value" : "Faça perguntas sobre essa matéria"
           }
         }
       }
@@ -1564,7 +1564,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Mi plan cubre todo el tema?"
+            "value" : "¿Mi plan cubre toda la asignatura?"
           }
         },
         "fr" : {
@@ -2245,7 +2245,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis les sujets à approfondir ou passe un court test qui les choisira pour toi."
+            "value" : "Choisis les matières à approfondir, ou passe un court test qui les choisira pour toi."
           }
         },
         "pt" : {
@@ -2514,13 +2514,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voir Plus"
+            "value" : "Découvrir Plus"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver o Plus"
+            "value" : "Conhecer o Plus"
           }
         }
       }
@@ -2537,7 +2537,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consulta, corrige o elimina lo que tu Compañero recuerda sobre ti."
+            "value" : "Consulta, corrige o elimina lo que tu compañero recuerda de ti."
           }
         },
         "fr" : {
@@ -2937,7 +2937,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir denken nach…"
+            "value" : "Ich denke nach…"
           }
         },
         "es" : {
@@ -3175,7 +3175,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erkläre mir diese Antwort Schritt für Schritt"
+            "value" : "Erklär mir diese Antwort Schritt für Schritt"
           }
         },
         "es" : {
@@ -3535,7 +3535,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Que me reste-t-il à étudier sur ce sujet ?"
+            "value" : "Que me reste-t-il à étudier ici ?"
           }
         },
         "pt" : {

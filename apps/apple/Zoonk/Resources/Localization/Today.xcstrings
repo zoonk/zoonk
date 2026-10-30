@@ -489,7 +489,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ restantes"
+            "value" : "Il reste %@"
           }
         },
         "pt" : {
@@ -1260,10 +1260,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Queda %arg"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg pendientes"
+                      "value" : "Quedan %arg"
                     }
                   }
                 }
@@ -1313,7 +1319,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "Faltam %arg"
+                      "value" : "%arg para concluir"
                     }
                   }
                 }
@@ -2191,13 +2197,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld question sur tous les sujets, en commençant par ceux que tu maîtrises le moins"
+                  "value" : "%lld question par sujet, tes points faibles d’abord"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld questions sur tous les sujets, en commençant par ceux que tu maîtrises le moins"
+                  "value" : "%lld questions par sujet, tes points faibles d’abord"
                 }
               }
             }
@@ -2831,7 +2837,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ eine Frage stellen"
+            "value" : "%@ etwas fragen"
           }
         },
         "es" : {
@@ -3371,7 +3377,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar configuração"
+            "value" : "Continuar a configuração"
           }
         }
       }
@@ -4046,25 +4052,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es entsteht aus deinen Angaben."
+            "value" : "Er entsteht aus dem, was du uns erzählst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo preparamos a partir de lo que nos cuentas."
+            "value" : "Tu plan se basa en lo que nos cuentas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il est préparé à partir de ce que tu nous dis."
+            "value" : "Ton plan est créé à partir de ce que tu nous dis."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ela é feita com base no que você conta para a gente."
+            "value" : "A gente cria seu plano com o que você conta."
           }
         }
       }
@@ -4279,7 +4285,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Datum aus der Prüfungsbekanntmachung behalten"
+            "value" : "Termin aus der Ankündigung beibehalten"
           }
         },
         "en" : {
@@ -4407,25 +4413,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weniger für heute geplant: Zeit für die Probeprüfung zu %@"
+            "value" : "Leichterer Tag: Wir halten Zeit für die Probeprüfung am %@ frei"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Día más ligero: reservamos tiempo para el simulacro de %@"
+            "value" : "Día más ligero: reservamos tiempo para el simulacro del %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Journée allégée : du temps réservé pour l’examen blanc de %@"
+            "value" : "Journée allégée : on réserve du temps pour l’examen blanc du %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dia mais leve para reservar tempo para o simulado de %@"
+            "value" : "Dia mais leve: reservando tempo para o simulado de %@"
           }
         }
       }
@@ -4706,13 +4712,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Heute keine Wiederholungen fällig · %lld Frage zu deinen schwierigsten Themen"
+                  "value" : "Heute keine Wiederholungen fällig · %lld Frage zu deinen schwächsten Themen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Heute keine Wiederholungen fällig · %lld Fragen zu deinen schwierigsten Themen"
+                  "value" : "Heute keine Wiederholungen fällig · %lld Fragen zu deinen schwächsten Themen"
                 }
               }
             }
@@ -5222,7 +5228,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "S’entraîner sur %@"
+            "value" : "S’entraîner : %@"
           }
         },
         "pt" : {
@@ -5251,7 +5257,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "S’entraîner sur un point récurrent"
+            "value" : "Réviser une erreur récurrente"
           }
         },
         "pt" : {
@@ -5491,13 +5497,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Practica la escritura"
+            "value" : "Practica la expresión escrita"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "S’entraîner à la rédaction"
+            "value" : "S’entraîner à rédiger"
           }
         },
         "pt" : {
@@ -5717,7 +5723,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut gegen den Trickser antreten"
+            "value" : "Noch einmal gegen den Trickser antreten"
           }
         },
         "es" : {
@@ -5862,25 +5868,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeit für die Probeprüfung zu %@ freihalten"
+            "value" : "Wir halten Zeit für die Probeprüfung am %@ frei"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reservamos tiempo para el simulacro de %@"
+            "value" : "Reservamos tiempo para el simulacro del %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du temps est réservé pour l’examen blanc de %@"
+            "value" : "On réserve du temps pour l’examen blanc du %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardando tempo para o simulado de %@"
+            "value" : "Reservando tempo para o simulado de %@"
           }
         }
       }
@@ -5986,7 +5992,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wörter aussprechen"
+            "value" : "Aussprechen"
           }
         },
         "en" : {
@@ -5998,19 +6004,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Decirlas"
+            "value" : "Dilas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les redire"
+            "value" : "Les dire à voix haute"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repetir palavras"
+            "value" : "Repetir as palavras"
           }
         }
       }
@@ -6230,7 +6236,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lección corta antes de volver a intentarlo"
+            "value" : "Lección breve antes de la revancha"
           }
         },
         "fr" : {
@@ -6294,7 +6300,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passé"
+            "value" : "Sauté"
           }
         },
         "pt" : {
@@ -6525,13 +6531,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Lerne %lld Minute"
+                  "value" : "%lld Minute lernen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Lerne %lld Minuten"
+                  "value" : "%lld Minuten lernen"
                 }
               }
             }
@@ -6861,7 +6867,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit dem Free-Tarif kannst du ein Ziel auf einmal verfolgen. Pausiere dein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus für mehr Ziele."
+            "value" : "Im kostenlosen Tarif kannst du jeweils ein Ziel verfolgen. Pausier dein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus für mehr Ziele."
           }
         },
         "es" : {
@@ -7485,7 +7491,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous avons remarqué une difficulté récurrente"
+            "value" : "On a repéré une erreur récurrente"
           }
         },
         "pt" : {
@@ -7787,7 +7793,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entraînement à l’écrit"
+            "value" : "Entraînement à la rédaction"
           }
         },
         "pt" : {

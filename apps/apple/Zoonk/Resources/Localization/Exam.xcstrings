@@ -516,7 +516,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trage dein offizielles Ergebnis ein, sobald es da ist. Du kannst es später ändern."
+            "value" : "Trag dein offizielles Ergebnis ein, sobald es da ist. Du kannst es später ändern."
           }
         },
         "es" : {
@@ -1264,7 +1264,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acertar as perguntas fáceis vale mais"
+            "value" : "Acertar as questões fáceis vale mais"
           }
         }
       }
@@ -1333,7 +1333,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "So funktioniert die Bewertung"
+            "value" : "So wird der Score berechnet"
           }
         },
         "es" : {
@@ -1444,7 +1444,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nos seus simulados: com certeza, %1$lld de %2$lld certas. Sem certeza, %3$lld de %4$lld certas."
+            "value" : "Nos seus simulados: quando você tinha certeza, %1$lld de %2$lld acertos. Quando tinha dúvida, %3$lld de %4$lld acertos."
           }
         }
       }
@@ -1531,7 +1531,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Errar uma pergunta fácil custa mais pontos do que errar uma difícil, então resolva as fáceis primeiro."
+            "value" : "Errar uma questão fácil custa mais do que errar uma difícil, então resolva as fáceis primeiro."
           }
         }
       }
@@ -1687,13 +1687,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kein Prüfungstermin in %@"
+            "value" : "Kein Prüfungstermin im %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay fecha de examen en %@"
+            "value" : "No hay convocatoria en %@"
           }
         },
         "fr" : {
@@ -1728,7 +1728,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun domaine n’a beaucoup évolué pour l’instant."
+            "value" : "Les résultats par matière ont encore peu évolué."
           }
         },
         "pt" : {
@@ -1908,7 +1908,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repita frases e depois faça uma breve entrevista com um examinador. Ao final, você recebe uma nota estimada de 1 a 6 para cada critério."
+            "value" : "Repita frases e depois faça uma entrevista curta com um examinador. Ao final, você recebe uma pontuação estimada de 1 a 6 para cada critério."
           }
         }
       }
@@ -2360,7 +2360,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das hat nicht geklappt. Versuch es in einem Moment noch einmal."
+            "value" : "Das hat nicht geklappt. Versuch es gleich noch einmal."
           }
         },
         "es" : {
@@ -2447,25 +2447,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In der Prüfungsausschreibung steht %@."
+            "value" : "Laut Prüfungsankündigung ist der Termin am %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La convocatoria del examen indica %@."
+            "value" : "Según la convocatoria, el examen es el %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’avis d’examen indique %@."
+            "value" : "L’avis d’examen indique le %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O edital informa %@."
+            "value" : "O edital marca a prova para %@."
           }
         }
       }
@@ -2476,19 +2476,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der voraussichtliche Prüfungstermin ist jetzt %@."
+            "value" : "Der voraussichtliche Prüfungstermin ist jetzt der %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La fecha probable del examen es ahora %@."
+            "value" : "Ahora, la fecha probable del examen es el %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La date probable de l’examen est désormais %@."
+            "value" : "La date probable de l’examen est désormais le %@."
           }
         },
         "pt" : {
@@ -2505,25 +2505,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im offiziellen Prüfungskalender steht %@."
+            "value" : "Laut offiziellem Prüfungskalender ist der Termin am %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El calendario oficial del examen indica %@."
+            "value" : "Según el calendario oficial, el examen es el %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le calendrier officiel de l’examen indique %@."
+            "value" : "Le calendrier officiel de l’examen indique le %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O calendário oficial da prova informa %@."
+            "value" : "O calendário oficial da prova indica %@."
           }
         }
       }
@@ -2592,7 +2592,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Probeprüfung konnte nicht gestartet werden. Versuch es in einem Moment noch einmal."
+            "value" : "Die Probeprüfung ist nicht gestartet. Versuch es gleich noch einmal."
           }
         },
         "es" : {
@@ -2981,7 +2981,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les tendances par sujet apparaîtront lorsque tes examens blancs auront posé assez de nouvelles questions sur chacun d’eux."
+            "value" : "Les tendances par matière s’affichent une fois que tes examens blancs t’ont posé assez de nouvelles questions dans chaque matière."
           }
         },
         "pt" : {
@@ -3027,19 +3027,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ wählen"
+            "value" : "Den %@ übernehmen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar %@"
+            "value" : "Usar el %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisir %@"
+            "value" : "Choisir le %@"
           }
         },
         "pt" : {
@@ -3739,7 +3739,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suas notas nos simulados, de %1$lld%% a %2$lld%%"
+            "value" : "Suas pontuações nos simulados, de %1$lld%% a %2$lld%%"
           }
         }
       }
@@ -3895,7 +3895,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Gesamtpunktzahl (1 bis 6)"
+            "value" : "Dein Gesamtbandwert (1 bis 6)"
           }
         },
         "es" : {
@@ -3907,13 +3907,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton niveau global (1 à 6)"
+            "value" : "Ton score global (de 1 à 6)"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua faixa de pontuação total (1 a 6)"
+            "value" : "Sua pontuação total (de 1 a 6)"
           }
         }
       }
@@ -3959,7 +3959,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las respuestas de las que no estás seguro restan más de lo que suman: déjalas en blanco."
+            "value" : "Las respuestas de las que dudas restan más de lo que suman: déjalas en blanco."
           }
         },
         "fr" : {

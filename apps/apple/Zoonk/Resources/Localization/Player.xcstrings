@@ -147,7 +147,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has emparejado todas las parejas. Pulsa Comprobar para continuar."
+            "value" : "Has formado todas las parejas. Pulsa Comprobar para seguir."
           }
         },
         "fr" : {
@@ -257,7 +257,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frag nach"
+            "value" : "Frage stellen"
           }
         },
         "es" : {
@@ -994,25 +994,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erst erklären"
+            "value" : "Erst erklären lassen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver la explicación primero"
+            "value" : "Explícamelo primero"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voir l’explication d’abord"
+            "value" : "Voir d’abord l’explication"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver explicação primeiro"
+            "value" : "Explique primeiro"
           }
         }
       }
@@ -1835,7 +1835,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heute nicht mehr schreiben."
+            "value" : "Heute keine Schreibaufgaben mehr."
           }
         },
         "es" : {
@@ -1911,7 +1911,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não corrigida desta vez"
+            "value" : "Não conferida desta vez"
           }
         }
       }
@@ -1951,19 +1951,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nicht ganz"
+            "value" : "Das stimmt noch nicht"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No es del todo correcto"
+            "value" : "No es eso"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas tout à fait"
+            "value" : "Ce n’est pas ça"
           }
         },
         "pt" : {
@@ -2276,25 +2276,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Speichere deinen Fortschritt. Eine kurze Wiederholung hilft dir später, das Gelernte zu behalten."
+            "value" : "Speicher deinen Fortschritt. Später kommt eine kurze Wiederholung, damit das Gelernte hängen bleibt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guarda tu progreso y tendrás un repaso rápido para ayudarte a recordarlo."
+            "value" : "Guarda tu progreso y más adelante tendrás un repaso breve para recordar mejor lo aprendido."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enregistre ta progression et une courte révision reviendra pour t’aider à retenir."
+            "value" : "Enregistre ta progression : tu retrouveras plus tard une courte révision pour mieux retenir."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salve seu progresso e faça uma revisão rápida depois para ajudar a fixar o que aprendeu."
+            "value" : "Salve seu progresso e a gente traz uma revisão rápida depois para te ajudar a fixar o que aprendeu."
           }
         }
       }
@@ -2340,13 +2340,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardado en tu Cuaderno de errores"
+            "value" : "Guardado en tu cuaderno de errores"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajouté à ton Carnet d’erreurs"
+            "value" : "Ajoutée à ton carnet d’erreurs"
           }
         },
         "pt" : {
@@ -2427,7 +2427,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Situación completada"
+            "value" : "Escenario completado"
           }
         },
         "fr" : {
@@ -2955,7 +2955,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esas son todas las lecciones nuevas de este mes"
+            "value" : "No te quedan más lecciones nuevas para este mes"
           }
         },
         "fr" : {
@@ -2984,7 +2984,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esas son todas las lecciones nuevas de hoy"
+            "value" : "No te quedan más lecciones nuevas para hoy"
           }
         },
         "fr" : {
@@ -3216,7 +3216,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto es complicado. Tu Compañero puede explicártelo de otra manera."
+            "value" : "Esto es difícil. Tu compañero puede explicártelo de otra forma."
           }
         },
         "fr" : {
@@ -3732,25 +3732,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wieder schreiben"
+            "value" : "Noch einmal schreiben"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a preparar"
+            "value" : "Volver a escribir"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Écrire à nouveau"
+            "value" : "Reprendre l’écriture"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voltar a escrever"
+            "value" : "Escrever de novo"
           }
         }
       }
@@ -3761,7 +3761,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schreibe deine Antwort"
+            "value" : "Schreib deine Antwort"
           }
         },
         "es" : {
@@ -4301,7 +4301,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk cria a aula quando você começa. Isso leva um ou dois minutos."
+            "value" : "O Zoonk cria a aula quando você começa. Leva um ou dois minutos."
           }
         }
       }

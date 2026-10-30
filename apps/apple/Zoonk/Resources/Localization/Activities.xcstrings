@@ -234,7 +234,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ führte hier nicht direkt zu %2$@. Versuch eine andere Verbindung."
+            "value" : "%1$@ hat hier nicht direkt zu %2$@ geführt. Versuch eine andere Verbindung."
           }
         },
         "en" : {
@@ -246,13 +246,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En este caso, %1$@ no llevó directamente a %2$@. Prueba otra conexión."
+            "value" : "Aquí, %1$@ no ha llevado directamente a %2$@. Prueba otra relación."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ici, %1$@ n’a pas directement mené à %2$@. Essaie un autre lien."
+            "value" : "Ici, %1$@ n’a pas mené directement à %2$@. Essaie un autre lien."
           }
         },
         "pt" : {
@@ -601,7 +601,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, con pareja"
+            "value" : "%@, emparejada"
           }
         },
         "fr" : {
@@ -2056,7 +2056,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ziehe die Schritte in die richtige Reihenfolge oder tippe auf einen Schritt und dann auf seinen Platz."
+            "value" : "Zieh die Schritte in die richtige Reihenfolge oder tipp erst auf einen Schritt und dann auf seinen Platz."
           }
         },
         "es" : {
@@ -2178,7 +2178,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prueba"
+            "value" : "Pruebas"
           }
         },
         "fr" : {
@@ -3397,7 +3397,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Danach zeigen: %@"
+            "value" : "Nachher-Zustand anzeigen: %@"
           }
         },
         "es" : {
@@ -3409,7 +3409,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afficher l’état après : %@"
+            "value" : "Voir l’après : %@"
           }
         },
         "pt" : {
@@ -4547,7 +4547,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elegiste %@"
+            "value" : "Has elegido %@"
           }
         },
         "fr" : {
@@ -4605,7 +4605,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Marcaste: %@."
+            "value" : "Has marcado: %@."
           }
         },
         "fr" : {
@@ -4640,7 +4640,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dijiste: %1$@, %2$@"
+            "value" : "Has dicho: %1$@, %2$@"
           }
         },
         "fr" : {

@@ -25,7 +25,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@ d’énergie"
+            "value" : "%1$@ · %2$@ d’Énergie"
           }
         },
         "pt" : {
@@ -199,7 +199,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Aucune énergie enregistrée"
+            "value" : "%@ · Aucune Énergie enregistrée"
           }
         },
         "pt" : {
@@ -1006,6 +1006,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Falta %lld"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -1033,7 +1039,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Faltam %lld"
+                  "value" : "Falta ganhar %lld"
                 }
               }
             }
@@ -1374,7 +1380,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jeder Tag"
+            "value" : "Jeder Tag passt"
           }
         },
         "es" : {
@@ -1386,7 +1392,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tous les jours"
+            "value" : "N’importe quel jour"
           }
         },
         "pt" : {
@@ -1554,19 +1560,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hasta hoy"
+            "value" : "Desde hoy hacia atrás"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En remontant à partir d’aujourd’hui"
+            "value" : "En remontant depuis aujourd’hui"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Contado a partir de hoje"
+            "value" : "De hoje para trás"
           }
         }
       }
@@ -2018,7 +2024,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tarde"
+            "value" : "Tarde-noche"
           }
         },
         "fr" : {
@@ -3074,7 +3080,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Habitudes"
+            "value" : "Tendances"
           }
         },
         "pt" : {
@@ -3103,7 +3109,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Habitudes · 90 jours"
+            "value" : "Tendances · 90 jours"
           }
         },
         "pt" : {
@@ -3497,25 +3503,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spanne über die Woche"
+            "value" : "Spanne im Wochenverlauf"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diferencia durante la semana"
+            "value" : "Rango semanal"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Écart sur la semaine"
+            "value" : "Fourchette des scores sur la semaine"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Variação durante a semana"
+            "value" : "Variação na semana"
           }
         }
       }
@@ -4569,7 +4575,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes scores varient de 0 point selon le jour, donc tous les jours se valent."
+            "value" : "Avec 0 point d’écart entre les jours, n’importe quel jour convient."
           }
         },
         "pt" : {
@@ -4751,7 +4757,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes scores varient de 0 point selon le moment de la journée, donc tous les moments se valent."
+            "value" : "Tes résultats sont identiques à toute heure, donc tu peux étudier quand tu veux."
           }
         },
         "pt" : {

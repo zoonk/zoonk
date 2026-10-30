@@ -416,7 +416,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sprachliche Richtigkeit"
+            "value" : "Korrektheit"
           }
         },
         "es" : {
@@ -428,7 +428,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Correction"
+            "value" : "Précision"
           }
         },
         "pt" : {
@@ -793,7 +793,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gespräche in der Sprache, die du lernst, auf deinem Niveau."
+            "value" : "Gespräche in der Sprache, die du lernst, passend zu deinem Level."
           }
         },
         "es" : {
@@ -1286,7 +1286,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Flüssigkeit"
+            "value" : "Redefluss"
           }
         },
         "es" : {
@@ -1327,7 +1327,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fluidité et cohérence"
+            "value" : "Aisance et cohérence"
           }
         },
         "pt" : {
@@ -1547,7 +1547,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gesprächsführung"
+            "value" : "Interaktion"
           }
         },
         "es" : {
@@ -2197,25 +2197,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diesen Monat bleibt nicht genug Gesprächszeit für diese Aufgabe"
+            "value" : "Für diese Aufgabe hast du diesen Monat nicht mehr genug Gesprächszeit"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No queda suficiente tiempo de llamada este mes para esta tarea"
+            "value" : "No te queda suficiente tiempo de llamada este mes para esta tarea"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas assez de temps d’appel ce mois-ci pour cette activité"
+            "value" : "Pas assez de temps d’appel ce mois-ci pour cette tâche"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não há tempo de conversa suficiente neste mês para esta atividade"
+            "value" : "O tempo de conversa que resta no mês não basta para essa tarefa"
           }
         }
       }
@@ -2226,25 +2226,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heute bleibt nicht genug Gesprächszeit für diese Aufgabe"
+            "value" : "Für diese Aufgabe hast du heute nicht mehr genug Gesprächszeit"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No queda suficiente tiempo de llamada hoy para esta tarea"
+            "value" : "No te queda suficiente tiempo de llamada hoy para esta tarea"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas assez de temps d’appel aujourd’hui pour cette activité"
+            "value" : "Pas assez de temps d’appel aujourd’hui pour cette tâche"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não há tempo de conversa suficiente hoje para esta atividade"
+            "value" : "O tempo de conversa que resta hoje não basta para essa tarefa"
           }
         }
       }
@@ -2325,7 +2325,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rien de dit cette fois"
+            "value" : "Aucune réponse cette fois-ci"
           }
         },
         "pt" : {
@@ -2354,7 +2354,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rien à redire"
+            "value" : "Aucun mot à répéter"
           }
         },
         "pt" : {
@@ -2487,7 +2487,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gesamtband"
+            "value" : "Gesamtbandwert"
           }
         },
         "es" : {
@@ -2505,7 +2505,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nota geral"
+            "value" : "Pontuação geral"
           }
         }
       }
@@ -2795,7 +2795,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avaliado por %@"
+            "value" : "Avaliação com base em %@"
           }
         }
       }
@@ -2963,7 +2963,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dis-le encore"
+            "value" : "Dis-le à nouveau"
           }
         },
         "pt" : {
@@ -3009,7 +3009,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Optionen für diese Runde"
+            "value" : "Seitenoptionen"
           }
         },
         "es" : {
@@ -3183,7 +3183,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sprich oder schreibe. Das Mikrofon wird nur während des Gesprächs verwendet."
+            "value" : "Sprich oder schreib. Das Mikrofon wird nur während des Gesprächs genutzt."
           }
         },
         "es" : {
@@ -3288,7 +3288,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A prática de conversação está incluída no Plus: faça todas as tarefas da prova em uma conversa e receba uma estimativa baseada nos critérios oficiais após cada uma."
+            "value" : "O Plus inclui a prática de conversação: você faz cada tarefa da prova em uma conversa e recebe uma estimativa com base nos critérios oficiais depois de cada uma."
           }
         }
       }
@@ -3636,7 +3636,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exercices"
+            "value" : "Tâches"
           }
         },
         "pt" : {
@@ -3984,7 +3984,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’exercice n’a pas démarré. Réessaie dans un instant."
+            "value" : "La tâche n’a pas démarré. Réessaie dans un instant."
           }
         },
         "pt" : {
@@ -4320,7 +4320,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schreibe deine Antwort"
+            "value" : "Schreib deine Antwort"
           }
         },
         "es" : {
@@ -4349,7 +4349,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einheiten-Herausforderung"
+            "value" : "Herausforderung zur Einheit"
           }
         },
         "es" : {
@@ -4697,7 +4697,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit einer anderen Person in der Prüfung (KI)"
+            "value" : "Mit einer anderen teilnehmenden Person (KI)"
           }
         },
         "es" : {
@@ -4767,7 +4767,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trabaja ahora: %@"
+            "value" : "Ahora céntrate en: %@"
           }
         },
         "fr" : {

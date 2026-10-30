@@ -77,7 +77,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prépare un plan pour tout le sujet"
+            "value" : "Créer un plan pour toute la matière"
           }
         },
         "pt" : {
@@ -100,7 +100,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Listo"
+            "value" : "Hecho"
           }
         },
         "fr" : {

@@ -1703,7 +1703,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prépare ton plan et Zoonk créera les chapitres et les leçons de ce cours pour toi, en partant de ton niveau."
+            "value" : "Crée ton plan et Zoonk prépare les chapitres et les leçons de ce cours pour toi, en partant de ton niveau."
           }
         },
         "pt" : {
@@ -1720,7 +1720,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wirtschaft"
+            "value" : "Betriebswirtschaft"
           }
         },
         "es" : {
@@ -1732,7 +1732,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entreprise"
+            "value" : "Commerce et gestion"
           }
         },
         "pt" : {
@@ -1929,7 +1929,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "bis %1$@, mit %2$@ pro Tag von Montag bis Freitag, die häufigsten Themen zuerst: %#@lessons@ bereits im Kurs, weitere werden erstellt, sobald du sie erreichst."
+            "value" : "bis zum %1$@, mit %2$@ pro Tag, montags bis freitags, die häufigsten Prüfungsinhalte zuerst: %#@lessons@ schon im Kurs, weitere werden erstellt, sobald du so weit bist."
           },
           "substitutions" : {
             "lessons" : {
@@ -1985,7 +1985,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "para %1$@, con %2$@ al día de lunes a viernes y lo que más suele caer primero: %#@lessons@ ya disponibles en el curso, y se prepararán más a medida que avances."
+            "value" : "para el %1$@, con %2$@ al día, de lunes a viernes y empezando por lo que más sale en el examen: el curso ya tiene %#@lessons@ y se preparan más a medida que avanzas."
           },
           "substitutions" : {
             "lessons" : {
@@ -2013,7 +2013,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "d’ici %1$@, à raison de %2$@ par jour, du lundi au vendredi, en commençant par les sujets les plus fréquents : %#@lessons@ déjà dans le cours, et d’autres préparées au fur et à mesure."
+            "value" : "d’ici le %1$@, à raison de %2$@ par jour, du lundi au vendredi, en commençant par ce qui revient le plus souvent : %#@lessons@ déjà dans le cours, et d’autres préparées au fil de ta progression."
           },
           "substitutions" : {
             "lessons" : {
@@ -2041,7 +2041,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "até %1$@, com %2$@ por dia, de segunda a sexta, começando pelo que mais cai: %#@lessons@ já no curso, e outras criadas conforme você avança."
+            "value" : "até %1$@, com %2$@ por dia, de segunda a sexta, começando pelo que mais cai: %#@lessons@ já no curso, e mais aulas criadas conforme você avança."
           },
           "substitutions" : {
             "lessons" : {
@@ -2074,7 +2074,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "bis %1$@, mit %2$@ pro Tag von Montag bis Freitag, die häufigsten Themen zuerst: Lektionen werden erstellt, sobald du sie erreichst."
+            "value" : "bis zum %1$@, mit %2$@ pro Tag, montags bis freitags, die häufigsten Prüfungsinhalte zuerst: Lektionen werden erstellt, sobald du so weit bist."
           }
         },
         "en" : {
@@ -2086,13 +2086,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "para %1$@, con %2$@ al día de lunes a viernes y lo que más suele caer primero: las lecciones se prepararán a medida que avances."
+            "value" : "para el %1$@, con %2$@ al día, de lunes a viernes y empezando por lo que más sale en el examen: las lecciones se preparan a medida que avanzas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "d’ici %1$@, à raison de %2$@ par jour, du lundi au vendredi, en commençant par les sujets les plus fréquents : des leçons préparées au fur et à mesure."
+            "value" : "d’ici le %1$@, à raison de %2$@ par jour, du lundi au vendredi, en commençant par ce qui revient le plus souvent : des leçons préparées au fil de ta progression."
           }
         },
         "pt" : {
@@ -2759,7 +2759,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wirtschaft"
+            "value" : "Volkswirtschaft"
           }
         },
         "es" : {
@@ -3090,7 +3090,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fortgeschritten"
+            "value" : "Mittelstufe"
           }
         },
         "es" : {
@@ -3618,7 +3618,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De este tiempo, %@ corresponde a después del examen."
+            "value" : "Ese total incluye %@ después del examen."
           }
         },
         "fr" : {
@@ -4160,7 +4160,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comece por um curso ou conte para Zoonk para o que você está se preparando."
+            "value" : "Comece por um curso ou conte ao Zoonk para o que você está se preparando."
           }
         }
       }
@@ -4189,7 +4189,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comece aqui e Zoonk cria as aulas para o seu nível."
+            "value" : "Comece aqui e o Zoonk cria as aulas para o seu nível."
           }
         }
       }
@@ -4928,7 +4928,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com Zoonk, seu plano começa neste capítulo e se encaixa na sua rotina."
+            "value" : "Com o Zoonk, seu plano começa neste capítulo e se encaixa na sua rotina."
           }
         }
       }
@@ -4957,7 +4957,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com Zoonk, seu plano começa no seu nível e se encaixa na sua rotina."
+            "value" : "Com o Zoonk, seu plano começa no seu nível e se encaixa na sua rotina."
           }
         }
       }

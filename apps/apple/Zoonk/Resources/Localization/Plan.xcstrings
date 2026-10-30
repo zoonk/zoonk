@@ -292,7 +292,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ am Tag reichen nicht aus, um dein Ziel zu bearbeiten."
+            "value" : "Mit %@ pro Tag reicht die Zeit nicht für dein Ziel."
           }
         },
         "es" : {
@@ -501,25 +501,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vorerst %@. Wähle den Tag, sobald du ihn kennst."
+            "value" : "Vorerst bleibt es bei %@. Wähl den Tag, sobald du ihn kennst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por ahora, %@. Elige el día cuando lo sepas."
+            "value" : "%@ por ahora. Elige el día cuando lo sepas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ pour l’instant. Choisis le jour quand tu le connaîtras."
+            "value" : "Pour l’instant, %@. Précise le jour quand tu le connaîtras."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ por enquanto. Escolha o dia quando souber."
+            "value" : "Por enquanto, %@. Escolha o dia quando souber."
           }
         }
       }
@@ -600,7 +600,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ retiré de tes leçons."
+            "value" : "On a laissé de côté %@ dans tes leçons."
           }
         },
         "pt" : {
@@ -716,7 +716,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: Welche Option wählst du?"
+            "value" : "%@: Was wählst du?"
           }
         },
         "es" : {
@@ -728,13 +728,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ : quelle option vas-tu choisir ?"
+            "value" : "%@ : quelle option choisis-tu ?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: qual alternativa você vai escolher?"
+            "value" : "%@: qual você vai fazer?"
           }
         }
       }
@@ -1039,13 +1039,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld dia adiantado"
+                  "value" : "%lld dia à frente"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld dias adiantado"
+                  "value" : "%lld dias à frente"
                 }
               }
             }
@@ -2691,7 +2691,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fases concluídas: %1$lld de %#@phases@"
+            "value" : "%1$lld de %#@phases@"
           },
           "substitutions" : {
             "phases" : {
@@ -2702,13 +2702,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg fase"
+                      "value" : "%arg fase concluída"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg fases"
+                      "value" : "%arg fases concluídas"
                     }
                   }
                 }
@@ -2796,7 +2796,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld bonnes réponses sur %#@answered@"
+            "value" : "Tu as répondu juste %1$lld fois sur %#@answered@"
           },
           "substitutions" : {
             "answered" : {
@@ -2853,6 +2853,12 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Thema"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -3136,13 +3142,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld compétence que tu maîtrises déjà"
+                  "value" : "%lld compétence déjà acquise"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld compétences que tu maîtrises déjà"
+                  "value" : "%lld compétences déjà acquises"
                 }
               }
             }
@@ -3723,7 +3729,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma aula rápida mostra como, bem antes de você precisar."
+            "value" : "Uma aula curta ensina como usar, pouco antes de você precisar."
           }
         }
       }
@@ -4881,7 +4887,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passe deinen Plan an"
+            "value" : "Plan anpassen"
           }
         },
         "es" : {
@@ -4893,13 +4899,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajuste ton plan"
+            "value" : "Ajuster ton plan"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajuste seu plano"
+            "value" : "Ajustar seu plano"
           }
         }
       }
@@ -5258,7 +5264,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit %1$@ täglich deckt dein Plan bis %2$@ alles ab."
+            "value" : "Mit %1$@ pro Tag würde dein Plan bis zum %2$@ alles abdecken."
           }
         },
         "en" : {
@@ -5276,7 +5282,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À raison de %1$@ par jour, ton plan couvre tout d’ici le %2$@."
+            "value" : "Avec %1$@ par jour, ton plan couvre tout d’ici le %2$@."
           }
         },
         "pt" : {
@@ -5290,10 +5296,34 @@
     "At %@ a day, your plan covers everything by the start of %@." : {
       "comment" : "The time a day Find found, which a tap applies; the second argument is the month the learner named, like 'May 2027'",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit %1$@ pro Tag würde dein Plan bis Anfang %2$@ alles abdecken."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "At %1$@ a day, your plan covers everything by the start of %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con %1$@ al día, tu plan cubre todo para el inicio de %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec %1$@ par jour, ton plan couvre tout d’ici début %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com %1$@ por dia, seu plano cobre tudo até o início de %2$@."
           }
         }
       }
@@ -5339,7 +5369,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por detrás"
+            "value" : "Con retraso"
           }
         },
         "fr" : {
@@ -5838,7 +5868,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elegir conocimientos previos"
+            "value" : "Elegir requisitos previos"
           }
         },
         "fr" : {
@@ -6006,25 +6036,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geht %@ weiter"
+            "value" : "Weiter am %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continúa %@"
+            "value" : "Continúa el %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reprend %@"
+            "value" : "Se poursuit le %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continua %@"
+            "value" : "Continua em %@"
           }
         }
       }
@@ -6267,19 +6297,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Datum auf %@ verschoben."
+            "value" : "Termin auf den %@ verschoben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La fecha se ha cambiado a %@."
+            "value" : "La fecha se ha cambiado al %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Date reportée au %@."
+            "value" : "Date changée pour le %@."
           }
         },
         "pt" : {
@@ -6418,7 +6448,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otro tiempo los fines de semana"
+            "value" : "Tiempo distinto los fines de semana"
           }
         },
         "fr" : {
@@ -6528,7 +6558,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Endet %1$@ statt %2$@."
+            "value" : "Würde am %1$@ statt am %2$@ enden."
           }
         },
         "en" : {
@@ -6540,19 +6570,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termina %1$@ en lugar de %2$@."
+            "value" : "Terminaría el %1$@ en vez del %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se termine %1$@ au lieu de %2$@."
+            "value" : "Se termine le %1$@ au lieu du %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termina %1$@ em vez de %2$@."
+            "value" : "Termina em %1$@, em vez de %2$@."
           }
         }
       }
@@ -6563,7 +6593,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Endet voraussichtlich um %1$@ statt um %2$@."
+            "value" : "Würde etwa am %1$@ statt am %2$@ enden."
           }
         },
         "en" : {
@@ -6575,19 +6605,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termina alrededor de %1$@ en lugar de %2$@."
+            "value" : "Terminaría sobre el %1$@ en vez del %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se termine vers %1$@ au lieu de %2$@."
+            "value" : "Fin prévue vers le %1$@ au lieu du %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termina por volta de %1$@ em vez de %2$@."
+            "value" : "Termina por volta de %1$@, em vez de %2$@."
           }
         }
       }
@@ -7132,7 +7162,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Me concentrer sur ces matières"
+            "value" : "Privilégier ces matières"
           }
         },
         "pt" : {
@@ -7161,13 +7191,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour référence"
+            "value" : "À consulter"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para consultar"
+            "value" : "Para consulta"
           }
         }
       }
@@ -7341,7 +7371,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mais difíceis a partir de agora: práticas mais desafiadoras e o básico que você já domina fica de fora."
+            "value" : "Mais difícil daqui para frente: prática mais desafiadora, pulando o básico que você já domina."
           }
         }
       }
@@ -7364,7 +7394,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voici quoi étudier ensuite."
+            "value" : "Voici ce que tu vas étudier ensuite."
           }
         },
         "pt" : {
@@ -7468,7 +7498,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ich kann sie schon lesen"
+            "value" : "Ich kann das Alphabet schon lesen"
           }
         },
         "es" : {
@@ -7486,7 +7516,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Já sei ler"
+            "value" : "Já sei ler esse alfabeto"
           }
         }
       }
@@ -7735,7 +7765,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El cambio se ha aplicado a tu plan desde tu próximo día de estudio. La sesión de hoy se queda como está."
+            "value" : "Se ha incluido en tu plan a partir de tu próximo día de estudio. La sesión de hoy no cambia."
           }
         },
         "fr" : {
@@ -7816,13 +7846,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Plan"
+            "value" : "Im Zeitplan"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Siguiendo el ritmo"
+            "value" : "Al día"
           }
         },
         "fr" : {
@@ -8212,7 +8242,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aulas que ficam de fora: %#@lessons@: %2$@."
+            "value" : "Deixa de fora %#@lessons@: %2$@."
           },
           "substitutions" : {
             "lessons" : {
@@ -8220,10 +8250,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg aula"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg"
+                      "value" : "%arg aulas"
                     }
                   }
                 }
@@ -9349,25 +9385,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verschiebe dein Zieldatum auf %@"
+            "value" : "Verschieb deinen Termin auf den %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambia la fecha a %@"
+            "value" : "Cambia tu fecha al %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reporter ta date au %@"
+            "value" : "Décaler ta date au %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mudar sua data para %@"
+            "value" : "Mudar a data para %@"
           }
         }
       }
@@ -9523,31 +9559,57 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bis %@ kannst du nicht alles gründlich lernen, egal wie viel Zeit du täglich investierst."
+            "value" : "Bis zum %@ lässt sich nicht alles gründlich lernen, egal wie viel Zeit du täglich einplanst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay tiempo diario suficiente para estudiar todo en profundidad antes de %@."
+            "value" : "Por mucho que estudies al día, no es posible cubrirlo todo a fondo para el %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Même en y consacrant tout ton temps, tu ne peux pas tout étudier en profondeur d’ici le %@."
+            "value" : "Tu ne peux pas tout approfondir d’ici le %@, quel que soit le temps consacré chaque jour."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nenhum tempo diário é suficiente para estudar tudo a fundo até %@."
+            "value" : "Mesmo aumentando o tempo diário, não dá para estudar tudo a fundo até %@."
           }
         }
       }
     },
     "No amount of time a day covers everything in depth by the start of %@." : {
-      "comment" : "Find found no time a day that covers everything; the argument is the month the learner named, like 'May 2027'"
+      "comment" : "Find found no time a day that covers everything; the argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis Anfang %@ lässt sich nicht alles gründlich lernen, egal wie viel Zeit du täglich einplanst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por mucho que estudies al día, no es posible cubrirlo todo a fondo para el inicio de %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux pas tout approfondir d’ici début %@, quel que soit le temps consacré chaque jour."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mesmo aumentando o tempo diário, não dá para estudar tudo a fundo até o início de %@."
+          }
+        }
+      }
     },
     "No change this week" : {
       "comment" : "Preparation didn't move this week",
@@ -9683,7 +9745,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sans installation pour %@ : tu apprendras avec des exemples."
+            "value" : "Pas d’installation pour %@ : tu apprendras avec des exemples."
           }
         },
         "pt" : {
@@ -9990,13 +10052,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Plan"
+            "value" : "Im Zeitplan"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sigues el ritmo"
+            "value" : "Al día"
           }
         },
         "fr" : {
@@ -10164,13 +10226,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Zieldatum ist vorbei"
+            "value" : "Nach dem Zieldatum"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La fecha ya ha pasado"
+            "value" : "Tu fecha ya ha pasado"
           }
         },
         "fr" : {
@@ -10692,7 +10754,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conocimientos previos"
+            "value" : "Requisitos previos"
           }
         },
         "fr" : {
@@ -10715,7 +10777,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voraussetzungen, die du gelernt hast, zählen weiterhin als gelernt."
+            "value" : "Was du an Grundlagen schon gelernt hast, zählt weiterhin."
           }
         },
         "es" : {
@@ -10808,7 +10870,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprensión lectora"
+            "value" : "Lectura"
           }
         },
         "fr" : {
@@ -11423,7 +11485,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Omitido porque ya lo sabes"
+            "value" : "Saltado porque ya lo sabías"
           }
         },
         "fr" : {
@@ -11858,7 +11920,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mach den Test und überspringe das Kapitel"
+            "value" : "Mach den Test und überspring das Kapitel"
           }
         },
         "es" : {
@@ -11887,7 +11949,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mach den Test und überspringe die Einheit"
+            "value" : "Mach den Test und überspring die Einheit"
           }
         },
         "es" : {
@@ -12090,25 +12152,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In der Prüfungsausschreibung steht %@."
+            "value" : "In der Prüfungsankündigung steht der %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La convocatoria del examen indica %@."
+            "value" : "Según la convocatoria, el examen es el %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’avis d’examen indique %@."
+            "value" : "L’avis d’examen indique le %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O edital da prova informa a data %@."
+            "value" : "O edital diz que a prova é em %@."
           }
         }
       }
@@ -12119,19 +12181,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der voraussichtliche Prüfungstermin ist jetzt %@."
+            "value" : "Der voraussichtliche Prüfungstermin ist jetzt der %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La fecha probable del examen es ahora %@."
+            "value" : "La fecha probable del examen es ahora el %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La date probable de l’examen est désormais %@."
+            "value" : "L’examen devrait maintenant avoir lieu le %@."
           }
         },
         "pt" : {
@@ -12148,25 +12210,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im offiziellen Prüfungskalender steht %@."
+            "value" : "Im offiziellen Prüfungskalender steht der %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El calendario oficial del examen indica %@."
+            "value" : "Según el calendario oficial, el examen es el %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le calendrier officiel de l’examen indique %@."
+            "value" : "Le calendrier officiel de l’examen indique le %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O calendário oficial da prova informa a data %@."
+            "value" : "O calendário oficial marca a prova para %@."
           }
         }
       }
@@ -12177,7 +12239,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Free-Tarif kannst du ein Ziel auf einmal verfolgen. Pausiere dein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus für mehr."
+            "value" : "Im kostenlosen Tarif kannst du nur ein Ziel gleichzeitig verfolgen. Pausier dein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus für mehr Ziele."
           }
         },
         "es" : {
@@ -12247,7 +12309,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les sujets que tu choisis passent en premier et sont approfondis."
+            "value" : "Les matières que tu choisis passent en premier et sont étudiées plus en profondeur."
           }
         },
         "pt" : {
@@ -12334,7 +12396,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce sujet ne figure pas dans ton plan"
+            "value" : "Cette matière n’est pas dans ton plan"
           }
         },
         "pt" : {
@@ -12856,19 +12918,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "bis %@"
+            "value" : "bis zum %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hasta %@"
+            "value" : "hasta el %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "jusqu’à %@"
+            "value" : "jusqu’au %@"
           }
         },
         "pt" : {
@@ -12897,7 +12959,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "jusqu’à ~%@"
+            "value" : "jusqu’au %@ environ"
           }
         },
         "pt" : {
@@ -13094,7 +13156,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El tiempo de los fines de semana ha cambiado a %@."
+            "value" : "El tiempo de estudio del fin de semana se ha cambiado a %@."
           }
         },
         "fr" : {
@@ -13216,7 +13278,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sujets prioritaires"
+            "value" : "Matières à privilégier"
           }
         },
         "pt" : {
@@ -13558,19 +13620,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hast du"
+            "value" : "Schon vorhanden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo tienes"
+            "value" : "Ya lo tienes"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu l’as"
+            "value" : "Tu l’as déjà"
           }
         },
         "pt" : {
@@ -13669,7 +13731,33 @@
       }
     },
     "Your %@ deadline comes off your plan. You can set one again anytime." : {
-      "comment" : "Says the goal's deadline was dropped; the argument is the month the learner named, like 'May 2027'"
+      "comment" : "Says the goal's deadline was dropped; the argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Termin für %@ wurde aus dem Plan entfernt. Du kannst jederzeit wieder einen festlegen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha quitado de tu plan la fecha límite de %@. Puedes volver a fijar una cuando quieras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’échéance prévue pour %@ a été retirée de ton plan. Tu peux en fixer une à tout moment."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O prazo de %@ foi removido do seu plano. Você pode definir outro quando quiser."
+          }
+        }
+      }
     },
     "Your answers choose for you" : {
       "comment" : "What the focus test does",
@@ -13830,25 +13918,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Zieldatum %@ wird aus deinem Plan entfernt. Du kannst jederzeit wieder eines festlegen."
+            "value" : "Dein Termin am %@ wurde aus dem Plan entfernt. Du kannst jederzeit wieder einen festlegen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se elimina la fecha límite del %@ de tu plan. Puedes fijar otra cuando quieras."
+            "value" : "Se ha quitado de tu plan la fecha límite del %@. Puedes volver a fijar una cuando quieras."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’échéance du %@ est retirée de ton plan. Tu peux en définir une nouvelle à tout moment."
+            "value" : "L’échéance du %@ a été retirée de ton plan. Tu peux en fixer une à tout moment."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O prazo de %@ é removido do seu plano. Você pode definir outro quando quiser."
+            "value" : "O prazo de %@ foi removido do seu plano. Você pode definir outro quando quiser."
           }
         }
       }
@@ -14532,13 +14620,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Zeit reicht für alles bis %@"
+            "value" : "Mit deiner Lernzeit schaffst du alles bis zum %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tienes tiempo para cubrirlo todo antes de %@"
+            "value" : "Con tu tiempo diario puedes cubrirlo todo para el %@"
           }
         },
         "fr" : {
@@ -14550,13 +14638,39 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu tempo é suficiente para estudar tudo até %@"
+            "value" : "Com seu tempo diário, dá para estudar tudo até %@"
           }
         }
       }
     },
     "Your time covers everything by the start of %@" : {
-      "comment" : "Title of the offer that brings the whole goal in; the argument is the month the learner named, like 'May 2027'"
+      "comment" : "Title of the offer that brings the whole goal in; the argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit deiner Lernzeit schaffst du alles bis Anfang %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con tu tiempo diario puedes cubrirlo todo para el inicio de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as le temps de tout étudier d’ici début %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com seu tempo diário, dá para estudar tudo até o início de %@"
+          }
+        }
+      }
     },
     "Your time covers everything, so we recommend each prerequisite in depth." : {
       "comment" : "The app's recommendation for prerequisites",

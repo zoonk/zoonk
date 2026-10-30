@@ -480,7 +480,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cerebro con piernas"
+            "value" : "Cerebro con patas"
           }
         },
         "fr" : {
@@ -886,7 +886,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erkläre mir meinen letzten Fehler"
+            "value" : "Erklär mir meinen letzten Fehler"
           }
         },
         "es" : {
@@ -915,7 +915,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schließe 50 Wiederholungen ab"
+            "value" : "50 Wiederholungen abschließen"
           }
         },
         "es" : {
@@ -944,7 +944,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schließe an 7 verschiedenen Tagen alle Missionen ab"
+            "value" : "An 7 verschiedenen Tagen alle Missionen abschließen"
           }
         },
         "es" : {
@@ -973,13 +973,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schließe deine erste wöchentliche Herausforderung ab"
+            "value" : "Deine erste wöchentliche Herausforderung abschließen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completa tu primer Desafío semanal"
+            "value" : "Completa tu primer desafío semanal"
           }
         },
         "fr" : {
@@ -1246,7 +1246,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salut ! Je suis %@, ton Compagnon d’apprentissage IA. Pose-moi tes questions sur ce que tu étudies ou dis-moi ce que tu aimerais changer dans ton plan."
+            "value" : "Salut ! Je suis %@, ton compagnon d’étude IA. Pose-moi tes questions sur ce que tu étudies, ou dis-moi ce que tu aimerais changer dans ton plan."
           }
         },
         "pt" : {
@@ -1275,7 +1275,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salut ! Je suis %@, ton Compagnon d’apprentissage IA. Qu’aimerais-tu apprendre et pour quand ? Je te préparerai un plan pour chaque jour d’ici là."
+            "value" : "Salut ! Je suis %@, ton compagnon d’étude IA. Qu’est-ce que tu veux apprendre, et pour quand ? Je te préparerai un plan pour chaque jour d’ici là."
           }
         },
         "pt" : {
@@ -1443,13 +1443,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambiar mi hora de estudio a %@"
+            "value" : "Cambiar mi hora de estudio a las %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Déplacer mon temps d’étude à %@"
+            "value" : "Déplacer mon heure d’étude à %@"
           }
         },
         "pt" : {
@@ -1681,7 +1681,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réussir l’Abitur"
+            "value" : "Réussir le bac"
           }
         },
         "pt" : {
@@ -1791,13 +1791,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprobar el SAT"
+            "value" : "Aprobar la PAU"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réussir le SAT"
+            "value" : "Réussir le bac"
           }
         },
         "pt" : {
@@ -2023,13 +2023,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hora de estudio cambiada."
+            "value" : "Se ha cambiado tu hora de estudio."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Temps d’étude déplacé."
+            "value" : "Heure d’étude modifiée."
           }
         },
         "pt" : {
@@ -2058,7 +2058,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Étudier aujourd’hui permet de garder ton énergie."
+            "value" : "Étudier aujourd’hui préserve ton Énergie."
           }
         },
         "pt" : {
@@ -2255,7 +2255,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido guardar tu Compañero. Vuelve a intentarlo."
+            "value" : "No hemos podido guardar tu compañero. Inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -2516,7 +2516,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gana tu primer Desafío de la fase"
+            "value" : "Gana tu primer desafío de la fase"
           }
         },
         "fr" : {
@@ -2632,13 +2632,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu Compañero"
+            "value" : "Tu compañero"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton Compagnon"
+            "value" : "Ton compagnon"
           }
         },
         "pt" : {
@@ -2748,7 +2748,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu Compañero de estudio · %@"
+            "value" : "Tu compañero de estudio · %@"
           }
         },
         "fr" : {
@@ -2777,19 +2777,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu tiempo de estudio seguirá igual."
+            "value" : "Tu hora de estudio sigue igual."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta durée d’étude reste inchangée."
+            "value" : "Ton heure d’étude reste la même."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu tempo de estudo continua o mesmo."
+            "value" : "Seu horário de estudo continua o mesmo."
           }
         }
       }
