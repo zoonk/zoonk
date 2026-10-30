@@ -123,8 +123,9 @@ internal fun ActivityView(
     }
     // After Android closes the app in the background, a canvas gets its saved work back but the player doesn't get its answer.
     LaunchedEffect(step.id) { if (activityAnswer == null && result == null) kept?.let(onAnswerChange) }
+    val shownAnswer = activityAnswer ?: kept.takeIf { result == null }
     val checkFirst = renderer?.checkFirst?.invoke(content.content) == true
-    val check = @Composable { ActivityCheckArea(frame.check, activityAnswer, phase, locked, onAnswerChange) }
+    val check = @Composable { ActivityCheckArea(frame.check, shownAnswer, phase, locked, onAnswerChange) }
 
     QuestionScene {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -137,7 +138,7 @@ internal fun ActivityView(
         renderer?.let {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 it.canvas(
-                    ActivityProps(content.content, activityAnswer, result?.expected, result?.isCorrect, phase, locked, onAnswerChange),
+                    ActivityProps(content.content, shownAnswer, result?.expected, result?.isCorrect, phase, locked, onAnswerChange),
                 )
                 if (it.showsData(content.content)) ActivityDataNote(frame)
             }
