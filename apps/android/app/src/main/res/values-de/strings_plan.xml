@@ -87,6 +87,7 @@
   "plan_change_days_time": "7a6bbfe99db83897b895dd692d74b97d7274afe033fb84a3a3b8f73bac73c6b5",
   "plan_change_easier": "761c4c6398b3d39c98756d9f28956703226a4fde70c63e2e086258e079d0b0e0",
   "plan_change_ends_around_instead": "b4ec44538f810b11fd2604377f0461b706b712782f84033d5f330b85cbecc828",
+  "plan_change_ends_around_instead_month": "bf72e86e09929487925e95dd1cfc727fa2b2b4def71aee32d2955e38391f2ac7",
   "plan_change_ends_at_exam": "5dff8b229f040887f24125f43e2ab2c6fca7d012dc2678cb877a52bb4da614d8",
   "plan_change_ends_instead": "0a9543e682c113d9f9cd6aa8b4d3252f817476ff6895ea8c80dce8d1da5573d4",
   "plan_change_exam_choice": "af3d9477bd3a2206fe36ace65626a9e4777f9454977bea46bc92c30fe2cd2a9a",
@@ -1044,7 +1045,10 @@
     <string name="plan_change_phase_ends">%1$s endet am %2$s statt am %3$s.</string>
     <string name="plan_change_phase_end_row">%1$s: %2$s (bisher %3$s)</string>
     <string name="plan_change_ends_instead">Endet am %1$s statt am %2$s.</string>
+    <!-- %1$s and %2$s are days, like "May 5". -->
     <string name="plan_change_ends_around_instead">Endet etwa am %1$s statt am %2$s.</string>
+    <!-- %1$s and %2$s are months and years, like "March 2027". -->
+    <string name="plan_change_ends_around_instead_month">Endet etwa im %1$s statt im %2$s.</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="plan_change_finish_around">Du bist etwa im %1$s fertig.</string>
     <string name="plan_change_start_area_on">Du beginnst %1$s am %2$s.</string>

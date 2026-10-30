@@ -183,6 +183,28 @@ class PlanChangeWordsTest {
     }
 
     @Test
+    @Config(qualifiers = "de")
+    fun aNewEndOfAPlanWithoutADateReadsAsADay() {
+        val change = planChange(effect = effect(""""endDateBefore":"2024-01-10","endDateAfter":"2024-03-05""""))
+
+        assertEquals(
+            listOf("Endet etwa am 5. März 2024 statt am 10. Jan. 2024."),
+            words({ planChangeAppliedEffect(change, targetDate = null, fullCourse = false) }),
+        )
+    }
+
+    @Test
+    @Config(qualifiers = "de")
+    fun aNewEndPastTheExamReadsAsAMonth() {
+        val change = planChange(effect = effect(""""endDateBefore":"2024-01-10","endDateAfter":"2024-03-05""""))
+
+        assertEquals(
+            listOf("Endet etwa im März 2024 statt im Januar 2024."),
+            words({ planChangeAppliedEffect(change, targetDate = LocalDate.of(2024, 1, 5), fullCourse = true) }),
+        )
+    }
+
+    @Test
     fun theDiffShowsNowAndAfterTheChangeExceptOnItsLessonLines() {
         val change = planChange(effect = effect(""""lessonsAdded":2,"endDateBefore":"2027-01-10","endDateAfter":"2027-01-20""""))
         compose.setContent { ZoonkTheme { PlanEffectDiff(change.effect, goalDate = GoalDateMove(LocalDate.of(2027, 2, 1), null)) } }

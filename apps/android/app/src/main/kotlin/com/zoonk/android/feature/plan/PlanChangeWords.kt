@@ -758,19 +758,17 @@ private fun appliedEndText(
     if (removesDate) return stringResource(R.string.plan_change_finish_around, formatDate(after, locale, DateStyle.Month))
     val before = effect.endDateBefore?.toJavaLocalDate() ?: return null
     shownEndMove(effect) ?: return null
+    val byMonth = targetDate != null
 
-    @Composable
-    fun shown(date: LocalDate) =
-        if (targetDate !=
-            null
-        ) {
-            formatDate(date, locale, DateStyle.Month)
-        } else {
-            formatPlanDate(date, LocalDate.now(), locale)
-        }
+    fun shown(date: LocalDate) = if (byMonth) formatDate(date, locale, DateStyle.Month) else formatPlanDate(date, LocalDate.now(), locale)
     val afterText = shown(after)
     val beforeText = shown(before)
-    return if (afterText == beforeText) null else stringResource(R.string.plan_change_ends_around_instead, afterText, beforeText)
+    if (afterText == beforeText) return null
+    return stringResource(
+        if (byMonth) R.string.plan_change_ends_around_instead_month else R.string.plan_change_ends_around_instead,
+        afterText,
+        beforeText,
+    )
 }
 
 @Composable

@@ -508,7 +508,10 @@
     <string name="plan_change_phase_ends">%1$s ends %2$s instead of %3$s.</string>
     <string name="plan_change_phase_end_row">%1$s: %2$s (was %3$s)</string>
     <string name="plan_change_ends_instead">Ends %1$s instead of %2$s.</string>
+    <!-- %1$s and %2$s are days, like "May 5". -->
     <string name="plan_change_ends_around_instead">Ends around %1$s instead of %2$s.</string>
+    <!-- %1$s and %2$s are months and years, like "March 2027". -->
+    <string name="plan_change_ends_around_instead_month">Ends around %1$s instead of %2$s.</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="plan_change_finish_around">You finish around %1$s.</string>
     <string name="plan_change_start_area_on">You start %1$s on %2$s.</string>
