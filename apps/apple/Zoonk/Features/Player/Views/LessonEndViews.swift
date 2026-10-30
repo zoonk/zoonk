@@ -50,17 +50,21 @@ struct LessonCompletionView: View {
 
   @ViewBuilder
   private var moment: some View {
-    Group {
-      if completion.testedOut {
-        Text(
-          "You already knew this", tableName: "Player",
-          comment: "Title after \"I already know this\" passed every check")
-      } else {
-        Text("Lesson complete", tableName: "Player", comment: "Title at the end of a lesson")
+    if completion.status == .ready {
+      finishReady
+    } else {
+      Group {
+        if completion.testedOut {
+          Text(
+            "You already knew this", tableName: "Player",
+            comment: "Title after \"I already know this\" passed every check")
+        } else {
+          Text("Lesson complete", tableName: "Player", comment: "Title at the end of a lesson")
+        }
       }
+      .font(.largeTitle.weight(.bold))
+      .accessibilityAddTraits(.isHeader)
     }
-    .font(.largeTitle.weight(.bold))
-    .accessibilityAddTraits(.isHeader)
 
     switch completion.status {
     case .ready:
@@ -79,6 +83,25 @@ struct LessonCompletionView: View {
         readouts(summary)
           .celebratesOnce(id: summary)
       }
+    }
+  }
+
+  /// Saved answers can reopen a lesson at its end, but finishing may start memory work, so it waits
+  /// for the learner's tap.
+  private var finishReady: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text(
+        "Nothing left to answer", tableName: "Player",
+        comment: "Title of a lesson opened again with every step answered, before Finish saves it"
+      )
+      .font(.title2.bold())
+      .accessibilityAddTraits(.isHeader)
+
+      Text(
+        "Finish to see how it went.", tableName: "Player",
+        comment: "Under the title of a lesson opened again with every step answered"
+      )
+      .foregroundStyle(.secondary)
     }
   }
 

@@ -1487,6 +1487,35 @@
         }
       }
     },
+    "Finish to see how it went." : {
+      "comment" : "Under the title of a lesson opened again with every step answered",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließ die Lektion ab, um dein Ergebnis zu sehen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termina para ver cómo te ha ido."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termine pour voir tes résultats."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conclua para ver como foi."
+          }
+        }
+      }
+    },
     "Follow the questions" : {
       "comment" : "What the learner does in an activity, named above its prompt",
       "localizations" : {
@@ -2614,6 +2643,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ainda não. Olhe de novo, corrija e depois confira."
+          }
+        }
+      }
+    },
+    "Nothing left to answer" : {
+      "comment" : "Title of a lesson opened again with every step answered, before Finish saves it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles beantwortet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No queda nada por responder"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as répondu à tout"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada mais para responder"
           }
         }
       }
