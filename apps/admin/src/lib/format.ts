@@ -1,3 +1,7 @@
+export function capitalize(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 export function formatDate(date: Date | string | null | undefined): string {
   return date ? new Date(date).toLocaleDateString("en") : "—";
 }

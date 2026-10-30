@@ -2,6 +2,12 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import {
+  DetailActions,
+  DetailHero,
+  DetailHeroText,
+  DetailTitle,
+} from "@zoonk/ui/components/detail";
+import {
   GenerationTimelineDescription,
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
@@ -12,13 +18,7 @@ import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
-import {
-  DETAIL_PRIMARY_CLASS,
-  DetailActions,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "../_components/detail-page";
+import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { Page, PageEyebrow } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";

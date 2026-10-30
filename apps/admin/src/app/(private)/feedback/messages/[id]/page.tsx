@@ -1,41 +1,38 @@
-import { AdminBreadcrumb } from "@/components/admin-breadcrumb";
-import { AdminSectionSkeleton } from "@/components/admin-section";
 import {
-  Container,
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-} from "@zoonk/ui/components/container";
+  AdminDetailBody,
+  AdminDetailHeader,
+  AdminDetailHeaderSkeleton,
+  AdminDetailPage,
+} from "@/components/admin-detail";
+import { AdminSectionSkeleton } from "@/components/admin-section";
+import { getFeedbackMessage } from "@/data/feedback/get-feedback-message";
+import { capitalize, formatDateTime } from "@/lib/format";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { MessageDetail } from "./message-detail";
+import { feedbackStatusLabels, getLearnerLabel } from "../../_utils/feedback-labels";
+import { type FeedbackMessage, MessageDetail } from "./message-detail";
+import { MessageStatusForm } from "./message-status-form";
 
-export const metadata: Metadata = { title: "Feedback Message" };
+export const metadata: Metadata = { title: "Feedback message" };
+
+const MESSAGE_PARENTS = [{ href: "/feedback/messages", label: "Feedback" }];
 
 export default function FeedbackMessagePage({ params }: PageProps<"/feedback/messages/[id]">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <AdminBreadcrumb
-            current="Message"
-            parents={[
-              { href: "/feedback", label: "Feedback" },
-              { href: "/feedback/messages", label: "Messages" },
-            ]}
-          />
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <ContainerBody className="mx-auto w-full max-w-4xl gap-8">
-        <Suspense fallback={<MessageDetailSkeleton />}>
-          <MessageDetailContent params={params} />
-        </Suspense>
-      </ContainerBody>
-    </Container>
+    <AdminDetailPage>
+      <Suspense fallback={<MessageDetailSkeleton />}>
+        <MessageDetailContent params={params} />
+      </Suspense>
+    </AdminDetailPage>
   );
+}
+
+function getMessageTitle({ email, user }: FeedbackMessage): string {
+  const sender = user ? getLearnerLabel(user) : email;
+  return sender ? `Message from ${sender}` : "Message";
 }
 
 async function MessageDetailContent({
@@ -47,15 +44,46 @@ async function MessageDetailContent({
     notFound();
   }
 
-  return <MessageDetail id={id} />;
+  const message = await getFeedbackMessage(id);
+
+  if (!message) {
+    notFound();
+  }
+
+  return (
+    <>
+      <AdminDetailHeader
+        actions={<MessageStatusForm currentStatus={message.status} messageId={message.id} />}
+        facts={[
+          feedbackStatusLabels[message.status],
+          `Sent ${formatDateTime(message.createdAt)}`,
+          message.context.platform && capitalize(message.context.platform),
+        ]}
+        parents={MESSAGE_PARENTS}
+        title={getMessageTitle(message)}
+      />
+
+      <AdminDetailBody>
+        <MessageDetail message={message} />
+      </AdminDetailBody>
+    </>
+  );
 }
 
 function MessageDetailSkeleton() {
   return (
     <>
-      <AdminSectionSkeleton />
-      <AdminSectionSkeleton />
-      <AdminSectionSkeleton />
+      <AdminDetailHeaderSkeleton actions="buttons" parents={MESSAGE_PARENTS} />
+
+      <AdminDetailBody>
+        <AdminSectionSkeleton>
+          <div className="flex max-w-3xl flex-col gap-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-4/5" />
+          </div>
+        </AdminSectionSkeleton>
+        <AdminSectionSkeleton rows={7} />
+      </AdminDetailBody>
     </>
   );
 }

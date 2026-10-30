@@ -2,6 +2,7 @@
 
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { Button } from "@zoonk/ui/components/button";
+import { DetailActions, DetailHero, DetailHeroText } from "@zoonk/ui/components/detail";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
@@ -9,12 +10,7 @@ import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Fragment, useState } from "react";
-import {
-  DETAIL_PRIMARY_CLASS,
-  DetailActions,
-  DetailHero,
-  DetailHeroText,
-} from "../../_components/detail-page";
+import { DETAIL_PRIMARY_CLASS } from "../../_components/detail-page";
 import { PageSectionTitle } from "../../_components/page";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import { daysUntilIsoDate } from "../../_utils/iso-date";

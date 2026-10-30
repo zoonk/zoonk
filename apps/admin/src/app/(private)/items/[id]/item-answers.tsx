@@ -1,5 +1,5 @@
 import { AdminSection } from "@/components/admin-section";
-import { DetailField } from "@/components/detail-field";
+import { DetailField, DetailFields } from "@/components/detail-field";
 import { countItemMistakes } from "@/data/items/get-item";
 import {
   getItemAccuracy,
@@ -23,7 +23,7 @@ export async function ItemAnswers({ itemId }: { itemId: string }) {
       description="From learners' answers, without accounts left out of analytics."
       title="Answers"
     >
-      <dl className="divide-y">
+      <DetailFields>
         <DetailField label="Attempts">
           <span className="tabular-nums">{stats.attempts}</span>
         </DetailField>
@@ -34,7 +34,7 @@ export async function ItemAnswers({ itemId }: { itemId: string }) {
         <DetailField label="Fixed mistakes">
           <span className="tabular-nums">{mistakes.fixed}</span>
         </DetailField>
-      </dl>
+      </DetailFields>
     </AdminSection>
   );
 }

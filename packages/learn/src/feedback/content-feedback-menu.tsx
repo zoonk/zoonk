@@ -2,6 +2,7 @@
 
 import { type FeedbackTarget } from "@zoonk/core/feedback/contract";
 import { Button } from "@zoonk/ui/components/button";
+import { DETAIL_MENU_TRIGGER_CLASS, DetailMenu } from "@zoonk/ui/components/detail";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +11,6 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon } from "lucide-react";
 import { useEffect, useId } from "react";
-import { DETAIL_MENU_TRIGGER_CLASS, DetailMenu } from "../_components/detail-page";
 import { TASK_HEADER_ICON_CLASS } from "../_components/task-header";
 import { useContentFeedback } from "./feedback-context";
 import { ReportProblemItem } from "./report-problem-item";

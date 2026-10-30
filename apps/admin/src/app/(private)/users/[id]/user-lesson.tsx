@@ -1,5 +1,5 @@
 import { AdminSection } from "@/components/admin-section";
-import { DetailField } from "@/components/detail-field";
+import { DetailField, DetailFields } from "@/components/detail-field";
 import { getUser } from "@/data/users/get-user";
 import {
   type UserLearningKindStat,
@@ -34,7 +34,7 @@ export async function UserLesson({ userId }: { userId: string }) {
 
   return (
     <AdminSection title="Learning">
-      <dl className="divide-y">
+      <DetailFields>
         <DetailField label="Brain power">
           {progress ? Number(progress.totalBrainPower).toLocaleString() : "0"}
         </DetailField>
@@ -66,7 +66,7 @@ export async function UserLesson({ userId }: { userId: string }) {
             ? members.map((member) => `${member.organization.name} (${member.role})`).join(", ")
             : "—"}
         </DetailField>
-      </dl>
+      </DetailFields>
 
       <LessonKindBreakdown rows={learningStats.lessonKinds} />
     </AdminSection>

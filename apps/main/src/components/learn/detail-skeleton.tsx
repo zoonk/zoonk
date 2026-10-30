@@ -1,5 +1,6 @@
 import { PAGE_COLUMN_CLASS, PageTitle } from "@zoonk/learn/page";
 import { PageWithAside } from "@zoonk/learn/shell";
+import { DetailHero, DetailHeroText } from "@zoonk/ui/components/detail";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
@@ -9,8 +10,8 @@ const DEFAULT_ROWS = 5;
 
 function HeroSkeleton({ title }: { title?: string }) {
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-6">
-      <div className="flex flex-col gap-1">
+    <DetailHero>
+      <DetailHeroText>
         <span className="flex h-4 items-center">
           <Skeleton className="h-3 w-36 rounded-sm" />
         </span>
@@ -22,12 +23,12 @@ function HeroSkeleton({ title }: { title?: string }) {
         <span className="flex h-5 items-end">
           <Skeleton className="h-3 w-48 rounded-sm" />
         </span>
-      </div>
+      </DetailHeroText>
       <div className="flex gap-2">
         <Skeleton className="h-11 flex-1 rounded-lg md:w-32 md:flex-none" />
         <Skeleton className="size-11 rounded-lg" />
       </div>
-    </div>
+    </DetailHero>
   );
 }
 

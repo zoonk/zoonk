@@ -3,6 +3,13 @@
 import { type CurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { type NoticedPattern } from "@zoonk/core/view-models/language/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import {
+  DetailActions,
+  DetailFacts,
+  DetailHero,
+  DetailHeroText,
+  DetailTitle,
+} from "@zoonk/ui/components/detail";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
@@ -12,14 +19,9 @@ import { useExtracted } from "next-intl";
 import { Fragment, useState } from "react";
 import {
   DETAIL_PRIMARY_CLASS,
-  DetailActions,
   DetailAside,
   DetailContent,
-  DetailFacts,
-  DetailHero,
-  DetailHeroText,
   DetailLayout,
-  DetailTitle,
 } from "../_components/detail-page";
 import {
   LIST_ROW_INTERACTIVE_CLASS,

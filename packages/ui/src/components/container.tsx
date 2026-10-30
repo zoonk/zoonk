@@ -29,12 +29,14 @@ export function Container({ children, className, variant }: ContainerProps) {
 
 const PAGE_INSET_CLASS = "px-4 sm:px-8 lg:px-10";
 
-const containerHeaderVariants = cva(cn("flex items-end justify-between gap-4", PAGE_INSET_CLASS), {
+export const CONTAINER_HEADER_EDGES_CLASS = cn(PAGE_INSET_CLASS, "pt-4 sm:pt-6 lg:pt-8");
+
+const containerHeaderVariants = cva("flex items-end justify-between gap-4", {
   defaultVariants: { variant: "page" },
   variants: {
     variant: {
-      page: "pt-0",
-      sidebar: "pt-4 sm:pt-6 lg:pt-8 [&_[data-slot=container-title]:first-child]:pt-5",
+      page: cn(PAGE_INSET_CLASS, "pt-0"),
+      sidebar: cn(CONTAINER_HEADER_EDGES_CLASS, "[&_[data-slot=container-title]:first-child]:pt-5"),
     },
   },
 });

@@ -1,12 +1,10 @@
 import { AdminJson } from "@/components/admin-json";
 import { AdminSection } from "@/components/admin-section";
-import { DetailField } from "@/components/detail-field";
+import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
-import { type AdminItem, getItem } from "@/data/items/get-item";
+import { type AdminItem } from "@/data/items/get-item";
 import { formatDateTime } from "@/lib/format";
-import { ITEM_FORMAT_LABELS, getItemLabel } from "@/lib/item-label";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 
 const CALIBRATION_DIGITS = 2;
 
@@ -14,32 +12,15 @@ function formatCalibration(value: number | null): string {
   return value === null ? "—" : value.toFixed(CALIBRATION_DIGITS);
 }
 
-export async function ItemOverview({ itemId }: { itemId: string }) {
-  "use cache: private";
-
-  const item = await getItem(itemId);
-
-  if (!item) {
-    notFound();
-  }
-
+export function ItemOverview({ item }: { item: AdminItem }) {
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold">{getItemLabel(item)}</h2>
-        <AdminJson label="Content" value={item.content} />
-      </div>
-
-      <AdminSection title="Item">
-        <dl className="divide-y">
+    <>
+      <AdminSection title="Details">
+        <DetailFields>
           <DetailField label="Skill">
             <Link className="hover:underline" href={`/skills/${item.skill.id}`} prefetch>
               {item.skill.name}
             </Link>
-          </DetailField>
-          <DetailField label="Format">{ITEM_FORMAT_LABELS[item.format]}</DetailField>
-          <DetailField label="Language">
-            <span className="uppercase">{item.language}</span>
           </DetailField>
           <DetailField label="Field">{item.field ?? "General"}</DetailField>
           <DetailField label="Exam">
@@ -58,13 +39,14 @@ export async function ItemOverview({ itemId }: { itemId: string }) {
           <DetailField label="Discrimination">{formatCalibration(item.discrimination)}</DetailField>
           <DetailField label="Created">{formatDateTime(item.createdAt)}</DetailField>
           <DetailField label="Updated">{formatDateTime(item.updatedAt)}</DetailField>
-        </dl>
+        </DetailFields>
+        <AdminJson label="Content" value={item.content} />
       </AdminSection>
 
       <AdminSection title="Provenance">
         <ProvenanceFields provenance={item} />
       </AdminSection>
-    </div>
+    </>
   );
 }
 
@@ -75,7 +57,7 @@ function ItemSource({ item }: { item: AdminItem }) {
   }
 
   return (
-    <span className="flex flex-col items-end gap-0.5">
+    <span className="flex flex-col gap-0.5">
       <Link className="hover:underline" href={`/sources/${item.source.id}`} prefetch>
         {item.source.title ?? "Private upload"}
       </Link>

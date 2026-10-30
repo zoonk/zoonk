@@ -15,15 +15,15 @@ export function LessonHeldBack({ lesson }: { lesson: Lesson }) {
   }
 
   return (
-    <div className="flex flex-col items-end gap-2">
+    <div className="flex flex-col gap-2">
       <span>
         {drafts.length} of {MAX_LESSON_DRAFTS} drafts
         {lesson.setAsideAt ? ` · set aside ${formatDateTime(lesson.setAsideAt)}` : ""}
       </span>
 
-      <ol className="flex flex-col items-end gap-2">
+      <ol className="flex flex-col gap-2">
         {drafts.map((draft) => (
-          <li className="flex flex-col items-end gap-0.5" key={draft.runId + draft.heldBackAt}>
+          <li className="flex flex-col gap-0.5" key={draft.runId + draft.heldBackAt}>
             <span className="text-muted-foreground text-xs">
               {draft.model} · {formatDateTime(draft.heldBackAt)}
             </span>

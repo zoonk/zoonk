@@ -2,16 +2,9 @@
 
 import { type SpeakingPaperView } from "@zoonk/core/language/exam-speaking/contract";
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
+import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
-import {
-  DetailAside,
-  DetailContent,
-  DetailFacts,
-  DetailHero,
-  DetailHeroText,
-  DetailLayout,
-  DetailTitle,
-} from "../../_components/detail-page";
+import { DetailAside, DetailContent, DetailLayout } from "../../_components/detail-page";
 import { KindDot } from "../../_components/kind-tile";
 import {
   ListRowContent,

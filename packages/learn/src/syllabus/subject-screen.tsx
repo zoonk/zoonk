@@ -1,17 +1,19 @@
 "use client";
 
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
-import { useExtracted, useFormatter } from "next-intl";
 import {
   DetailActions,
-  DetailAside,
-  DetailContent,
-  DetailContinueLink,
   DetailFacts,
   DetailHero,
   DetailHeroText,
-  DetailLayout,
   DetailTitle,
+} from "@zoonk/ui/components/detail";
+import { useExtracted, useFormatter } from "next-intl";
+import {
+  DetailAside,
+  DetailContent,
+  DetailContinueLink,
+  DetailLayout,
   useDoneShare,
 } from "../_components/detail-page";
 import {

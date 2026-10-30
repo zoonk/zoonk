@@ -1,32 +1,22 @@
 import { AdminJson } from "@/components/admin-json";
 import { AdminSection } from "@/components/admin-section";
-import { DetailField } from "@/components/detail-field";
+import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
-import { getMedia } from "@/data/media/get-media";
+import { type AdminMediaAsset } from "@/data/media/get-media";
 import { formatDateTime } from "@/lib/format";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { formatMediaSize } from "../_utils/media-format";
 import { MediaPreview } from "../media-preview";
 
-export async function MediaOverview({ mediaAssetId }: { mediaAssetId: string }) {
-  "use cache: private";
-
-  const asset = await getMedia(mediaAssetId);
-
-  if (!asset) {
-    notFound();
-  }
-
+export function MediaOverview({ asset }: { asset: AdminMediaAsset }) {
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-3">
-        <h2 className="font-mono text-sm font-semibold break-all">{asset.reuseKey}</h2>
+    <>
+      <AdminSection title="Preview">
         <MediaPreview asset={asset} size="full" />
-      </div>
+      </AdminSection>
 
-      <AdminSection title="Asset">
-        <dl className="divide-y">
+      <AdminSection title="Details">
+        <DetailFields>
           <DetailField label="URL">
             <a
               className="break-all hover:underline"
@@ -37,10 +27,6 @@ export async function MediaOverview({ mediaAssetId }: { mediaAssetId: string }) 
               {asset.url}
             </a>
           </DetailField>
-          <DetailField label="Kind">
-            <span className="capitalize">{asset.kind}</span>
-          </DetailField>
-          <DetailField label="MIME type">{asset.mimeType ?? "—"}</DetailField>
           <DetailField label="Language">
             <span className="uppercase">{asset.language ?? "Any"}</span>
           </DetailField>
@@ -60,7 +46,7 @@ export async function MediaOverview({ mediaAssetId }: { mediaAssetId: string }) 
             )}
           </DetailField>
           <DetailField label="Created">{formatDateTime(asset.createdAt)}</DetailField>
-        </dl>
+        </DetailFields>
       </AdminSection>
 
       <AdminSection title="Prompt">
@@ -73,6 +59,6 @@ export async function MediaOverview({ mediaAssetId }: { mediaAssetId: string }) 
       <AdminSection title="Provenance">
         <ProvenanceFields provenance={asset} />
       </AdminSection>
-    </div>
+    </>
   );
 }

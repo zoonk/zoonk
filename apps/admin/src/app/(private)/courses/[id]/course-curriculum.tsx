@@ -99,9 +99,9 @@ export async function CourseCurriculum({ courseId }: { courseId: string }) {
         <div className="flex flex-col gap-6">
           {[...levels].map(([level, chapters]) => (
             <section className="flex flex-col gap-3" key={level}>
-              <h4 className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+              <h3 className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
                 {level}
-              </h4>
+              </h3>
               <ol className="flex flex-col gap-4">
                 {chapters.map((placement) => (
                   <CurriculumChapter

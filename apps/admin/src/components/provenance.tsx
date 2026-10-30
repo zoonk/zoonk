@@ -1,4 +1,5 @@
 import { formatDateTime } from "@/lib/format";
+import { DetailField, DetailFields } from "./detail-field";
 
 const RUN_ID_PREFIX_LENGTH = 8;
 
@@ -27,24 +28,20 @@ export function ProvenanceLine({ provenance }: { provenance: ProvenanceValue }) 
 }
 
 export function ProvenanceFields({ provenance }: { provenance: ProvenanceValue }) {
-  const fields = [
+  const ids = [
     { label: "Model", value: provenance.model },
     { label: "Prompt version", value: provenance.promptVersion },
     { label: "Run", value: provenance.runId },
-    {
-      label: "Generated",
-      value: provenance.generatedAt ? formatDateTime(provenance.generatedAt) : null,
-    },
   ];
 
   return (
-    <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-xs">
-      {fields.map((field) => (
-        <div className="contents" key={field.label}>
-          <dt className="text-muted-foreground">{field.label}</dt>
-          <dd className="font-mono break-all">{field.value ?? "—"}</dd>
-        </div>
+    <DetailFields>
+      {ids.map((field) => (
+        <DetailField key={field.label} label={field.label}>
+          {field.value ? <span className="font-mono text-xs break-all">{field.value}</span> : "—"}
+        </DetailField>
       ))}
-    </dl>
+      <DetailField label="Generated">{formatDateTime(provenance.generatedAt)}</DetailField>
+    </DetailFields>
   );
 }

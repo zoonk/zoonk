@@ -1,35 +1,30 @@
-import { AdminBreadcrumb } from "@/components/admin-breadcrumb";
-import { AdminSectionSkeleton } from "@/components/admin-section";
 import {
-  Container,
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-} from "@zoonk/ui/components/container";
+  AdminDetailBody,
+  AdminDetailHeader,
+  AdminDetailHeaderSkeleton,
+  AdminDetailPage,
+} from "@/components/admin-detail";
+import { AdminSectionSkeleton } from "@/components/admin-section";
+import { getExam } from "@/data/exams/get-exam";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { FreshnessCommandForm } from "../../sources/freshness-command-form";
 import { ExamEditionHistory } from "./exam-edition-history";
 import { ExamOverview } from "./exam-overview";
 
 export const metadata: Metadata = { title: "Exam" };
 
+const EXAM_PARENTS = [{ href: "/exams", label: "Exams" }];
+
 export default function ExamDetailPage({ params }: PageProps<"/exams/[id]">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <AdminBreadcrumb current="Exam" parents={[{ href: "/exams", label: "Exams" }]} />
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <ContainerBody className="gap-8">
-        <Suspense fallback={<ExamDetailSkeleton />}>
-          <ExamDetailContent params={params} />
-        </Suspense>
-      </ContainerBody>
-    </Container>
+    <AdminDetailPage>
+      <Suspense fallback={<ExamDetailSkeleton />}>
+        <ExamDetailContent params={params} />
+      </Suspense>
+    </AdminDetailPage>
   );
 }
 
@@ -40,15 +35,28 @@ async function ExamDetailContent({ params }: Pick<PageProps<"/exams/[id]">, "par
     notFound();
   }
 
+  const exam = await getExam(id);
+
+  if (!exam) {
+    notFound();
+  }
+
   return (
     <>
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <ExamOverview examBlueprintId={id} />
-      </Suspense>
+      <AdminDetailHeader
+        actions={<FreshnessCommandForm targetId={exam.id} targetKind="exam" />}
+        facts={[exam.board, exam.role, exam.country, exam.language.toUpperCase()]}
+        parents={EXAM_PARENTS}
+        title={exam.name}
+      />
 
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <ExamEditionHistory examBlueprintId={id} />
-      </Suspense>
+      <AdminDetailBody>
+        <ExamOverview exam={exam} />
+
+        <Suspense fallback={<AdminSectionSkeleton description />}>
+          <ExamEditionHistory examBlueprintId={exam.id} />
+        </Suspense>
+      </AdminDetailBody>
     </>
   );
 }
@@ -56,8 +64,12 @@ async function ExamDetailContent({ params }: Pick<PageProps<"/exams/[id]">, "par
 function ExamDetailSkeleton() {
   return (
     <>
-      <AdminSectionSkeleton />
-      <AdminSectionSkeleton />
+      <AdminDetailHeaderSkeleton actions="buttons" parents={EXAM_PARENTS} />
+
+      <AdminDetailBody>
+        <AdminSectionSkeleton rows={10} />
+        <AdminSectionSkeleton />
+      </AdminDetailBody>
     </>
   );
 }

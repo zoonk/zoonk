@@ -1,12 +1,13 @@
-import { AdminBreadcrumb } from "@/components/admin-breadcrumb";
+import {
+  AdminDetailBody,
+  AdminDetailHeader,
+  AdminDetailHeaderSkeleton,
+  AdminDetailPage,
+} from "@/components/admin-detail";
 import { AdminSectionSkeleton } from "@/components/admin-section";
 import { ReviewFlagNotice } from "@/components/review-flag-notice";
-import {
-  Container,
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-} from "@zoonk/ui/components/container";
+import { getItem } from "@/data/items/get-item";
+import { ITEM_FORMAT_LABELS, getItemLabel } from "@/lib/item-label";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -17,21 +18,15 @@ import { ItemOverview } from "./item-overview";
 
 export const metadata: Metadata = { title: "Item" };
 
+const ITEM_PARENTS = [{ href: "/items", label: "Items" }];
+
 export default function ItemDetailPage({ params }: PageProps<"/items/[id]">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <AdminBreadcrumb current="Item" parents={[{ href: "/items", label: "Items" }]} />
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <ContainerBody className="gap-8">
-        <Suspense fallback={<ItemDetailSkeleton />}>
-          <ItemDetailContent params={params} />
-        </Suspense>
-      </ContainerBody>
-    </Container>
+    <AdminDetailPage>
+      <Suspense fallback={<ItemDetailSkeleton />}>
+        <ItemDetailContent params={params} />
+      </Suspense>
+    </AdminDetailPage>
   );
 }
 
@@ -42,23 +37,35 @@ async function ItemDetailContent({ params }: Pick<PageProps<"/items/[id]">, "par
     notFound();
   }
 
+  const item = await getItem(id);
+
+  if (!item) {
+    notFound();
+  }
+
   return (
     <>
-      <Suspense fallback={null}>
-        <ReviewFlagNotice target={{ itemId: id }} />
-      </Suspense>
+      <AdminDetailHeader
+        facts={[ITEM_FORMAT_LABELS[item.format], item.language.toUpperCase()]}
+        parents={ITEM_PARENTS}
+        title={getItemLabel(item)}
+      />
 
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <ItemOverview itemId={id} />
-      </Suspense>
+      <AdminDetailBody>
+        <Suspense fallback={null}>
+          <ReviewFlagNotice target={{ itemId: item.id }} />
+        </Suspense>
 
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <ItemAnswers itemId={id} />
-      </Suspense>
+        <ItemOverview item={item} />
 
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <ItemExplanations itemId={id} />
-      </Suspense>
+        <Suspense fallback={<AdminSectionSkeleton description />}>
+          <ItemAnswers itemId={item.id} />
+        </Suspense>
+
+        <Suspense fallback={<AdminSectionSkeleton />}>
+          <ItemExplanations itemId={item.id} />
+        </Suspense>
+      </AdminDetailBody>
     </>
   );
 }
@@ -66,9 +73,12 @@ async function ItemDetailContent({ params }: Pick<PageProps<"/items/[id]">, "par
 function ItemDetailSkeleton() {
   return (
     <>
-      <AdminSectionSkeleton />
-      <AdminSectionSkeleton />
-      <AdminSectionSkeleton />
+      <AdminDetailHeaderSkeleton parents={ITEM_PARENTS} />
+
+      <AdminDetailBody>
+        <AdminSectionSkeleton rows={8} />
+        <AdminSectionSkeleton />
+      </AdminDetailBody>
     </>
   );
 }

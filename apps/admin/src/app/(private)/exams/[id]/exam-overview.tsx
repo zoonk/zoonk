@@ -1,12 +1,10 @@
 import { AdminJson } from "@/components/admin-json";
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
-import { DetailField } from "@/components/detail-field";
+import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
-import { getExam } from "@/data/exams/get-exam";
+import { type AdminExam } from "@/data/exams/get-exam";
 import { formatDateTime } from "@/lib/format";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { FreshnessCommandForm } from "../../sources/freshness-command-form";
 import { formatExamDate } from "../_utils/format-exam-date";
 import { ReadNoticeAgainForm } from "./read-notice-again-form";
 import { ResetExamSkillGraphForm } from "./reset-exam-skill-graph-form";
@@ -18,34 +16,13 @@ function countGraphSkills(graph: unknown): number {
   return Array.isArray(skills) ? skills.length : 0;
 }
 
-export async function ExamOverview({ examBlueprintId }: { examBlueprintId: string }) {
-  "use cache: private";
-
-  const exam = await getExam(examBlueprintId);
-
-  if (!exam) {
-    notFound();
-  }
-
+export function ExamOverview({ exam }: { exam: AdminExam }) {
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold">{exam.name}</h2>
-        <p className="text-muted-foreground text-sm">
-          {[exam.board, exam.role, exam.country].filter(Boolean).join(" · ")}
-        </p>
-      </div>
-
-      <AdminSection
-        action={<FreshnessCommandForm targetId={exam.id} targetKind="exam" />}
-        title="Exam"
-      >
-        <dl className="divide-y">
+    <>
+      <AdminSection title="Details">
+        <DetailFields>
           <DetailField label="Identity key">
             <span className="font-mono text-xs">{exam.identityKey}</span>
-          </DetailField>
-          <DetailField label="Language">
-            <span className="uppercase">{exam.language}</span>
           </DetailField>
           <DetailField label="Exam date">{formatExamDate(exam.examDate)}</DetailField>
           <DetailField label="Registration ends">
@@ -66,7 +43,7 @@ export async function ExamOverview({ examBlueprintId }: { examBlueprintId: strin
           <DetailField label="Items">{exam._count.items}</DetailField>
           <DetailField label="Created">{formatDateTime(exam.createdAt)}</DetailField>
           <DetailField label="Updated">{formatDateTime(exam.updatedAt)}</DetailField>
-        </dl>
+        </DetailFields>
       </AdminSection>
 
       <AdminSection
@@ -74,7 +51,7 @@ export async function ExamOverview({ examBlueprintId }: { examBlueprintId: strin
         description="Read from its notice once and reused whatever prompt version read it. Read again to redo it with today's instructions."
         title="Blueprint"
       >
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col">
           <AdminJson label="Current edition" value={exam.edition} />
           <AdminJson label="Structure" value={exam.structure} />
           <AdminJson label="Topic frequency" value={exam.topicFrequency} />
@@ -87,7 +64,7 @@ export async function ExamOverview({ examBlueprintId }: { examBlueprintId: strin
         title="Skill graph"
       >
         {exam.skillGraph ? (
-          <dl className="divide-y">
+          <DetailFields>
             <DetailField label="Skills">{countGraphSkills(exam.skillGraph.graph)}</DetailField>
             <DetailField label="Generated">
               {formatDateTime(exam.skillGraph.generatedAt)}
@@ -96,7 +73,7 @@ export async function ExamOverview({ examBlueprintId }: { examBlueprintId: strin
             <DetailField label="Prompt version">
               <span className="font-mono text-xs">{exam.skillGraph.promptVersion}</span>
             </DetailField>
-          </dl>
+          </DetailFields>
         ) : (
           <AdminSectionEmpty>
             No skill graph yet: the exam&apos;s next learner writes one.
@@ -107,6 +84,6 @@ export async function ExamOverview({ examBlueprintId }: { examBlueprintId: strin
       <AdminSection title="Provenance">
         <ProvenanceFields provenance={exam} />
       </AdminSection>
-    </div>
+    </>
   );
 }

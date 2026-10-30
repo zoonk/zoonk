@@ -1,17 +1,15 @@
 "use client";
 
 import { type ExamView } from "@zoonk/core/exams/view/contract";
-import { useExtracted, useFormatter } from "next-intl";
 import {
   DetailActions,
-  DetailAside,
-  DetailContent,
   DetailFacts,
   DetailHero,
   DetailHeroText,
-  DetailLayout,
   DetailTitle,
-} from "../_components/detail-page";
+} from "@zoonk/ui/components/detail";
+import { useExtracted, useFormatter } from "next-intl";
+import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { PageEyebrow } from "../_components/page";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";

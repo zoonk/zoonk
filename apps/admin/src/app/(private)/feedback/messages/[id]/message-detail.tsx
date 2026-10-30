@@ -1,16 +1,11 @@
 import { AdminSection } from "@/components/admin-section";
-import { DetailField } from "@/components/detail-field";
+import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
-import { getFeedbackMessage } from "@/data/feedback/get-feedback-message";
-import { formatDateTime } from "@/lib/format";
+import { type getFeedbackMessage } from "@/data/feedback/get-feedback-message";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { feedbackContentKindLabels } from "../../_utils/feedback-labels";
-import { MessageSender } from "../message-sender";
-import { MessageStatusBadge } from "../message-status-badge";
-import { MessageStatusForm } from "./message-status-form";
+import { feedbackContentKindLabels, getLearnerLabel } from "../../_utils/feedback-labels";
 
-type FeedbackMessage = NonNullable<Awaited<ReturnType<typeof getFeedbackMessage>>>;
+export type FeedbackMessage = NonNullable<Awaited<ReturnType<typeof getFeedbackMessage>>>;
 
 function MessageContent({ message }: { message: FeedbackMessage }) {
   const { context } = message;
@@ -31,64 +26,59 @@ function MessageContent({ message }: { message: FeedbackMessage }) {
   );
 }
 
-function MessageContext({ message }: { message: FeedbackMessage }) {
-  const { context } = message;
-
-  return (
-    <AdminSection title="Context">
-      <dl className="divide-y">
-        <DetailField label="Screen">{context.screen ?? "—"}</DetailField>
-        <DetailField label="URL">
-          <span className="font-mono text-xs break-all">{context.url ?? "—"}</span>
-        </DetailField>
-        <DetailField label="Platform">{context.platform ?? "—"}</DetailField>
-        <DetailField label="App version">{context.appVersion ?? "—"}</DetailField>
-        <DetailField label="Content">
-          <MessageContent message={message} />
-        </DetailField>
-        <DetailField label="Content id">
-          <span className="font-mono text-xs">{context.contentId ?? "—"}</span>
-        </DetailField>
-      </dl>
-
-      {context.provenance ? (
-        <div className="mt-4">
-          <ProvenanceFields provenance={context.provenance} />
-        </div>
-      ) : null}
-    </AdminSection>
-  );
-}
-
-export async function MessageDetail({ id }: { id: string }) {
-  const message = await getFeedbackMessage(id);
-
-  if (!message) {
-    notFound();
+function MessageSenderField({ message }: { message: FeedbackMessage }) {
+  if (!message.user) {
+    return message.email ?? "Unknown sender";
   }
 
   return (
     <>
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-xl font-semibold tracking-tight">Message</h1>
-          <p className="text-muted-foreground text-sm">Sent {formatDateTime(message.createdAt)}</p>
-        </div>
-        <MessageStatusBadge status={message.status} />
-      </header>
+      <Link className="hover:underline" href={`/users/${message.user.id}`} prefetch>
+        {getLearnerLabel(message.user)}
+      </Link>
+      <span className="text-muted-foreground block">{message.email ?? message.user.email}</span>
+    </>
+  );
+}
 
-      <AdminSection
-        action={<MessageStatusForm currentStatus={message.status} messageId={message.id} />}
-        title="Message"
-      >
+export function MessageDetail({ message }: { message: FeedbackMessage }) {
+  const { context } = message;
+
+  return (
+    <>
+      <AdminSection title="Message">
         <p className="max-w-3xl leading-7 wrap-break-word whitespace-pre-wrap">{message.message}</p>
       </AdminSection>
 
-      <AdminSection title="Sender">
-        <MessageSender email={message.email} user={message.user} />
+      <AdminSection title="Details">
+        <DetailFields>
+          <DetailField label="Sender">
+            <MessageSenderField message={message} />
+          </DetailField>
+          <DetailField label="Screen">{context.screen ?? "—"}</DetailField>
+          <DetailField label="URL">
+            <span className="break-all">{context.url ?? "—"}</span>
+          </DetailField>
+          <DetailField label="Platform">{context.platform ?? "—"}</DetailField>
+          <DetailField label="App version">{context.appVersion ?? "—"}</DetailField>
+          <DetailField label="Content">
+            <MessageContent message={message} />
+          </DetailField>
+          <DetailField label="Content id">
+            {context.contentId ? (
+              <span className="font-mono text-xs">{context.contentId}</span>
+            ) : (
+              "—"
+            )}
+          </DetailField>
+        </DetailFields>
       </AdminSection>
 
-      <MessageContext message={message} />
+      {context.provenance ? (
+        <AdminSection title="Content provenance">
+          <ProvenanceFields provenance={context.provenance} />
+        </AdminSection>
+      ) : null}
     </>
   );
 }

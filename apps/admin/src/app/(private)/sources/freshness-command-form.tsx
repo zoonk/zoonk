@@ -38,20 +38,24 @@ export function FreshnessCommandForm({
   const [state, formAction] = useActionState(sendFreshnessCommandAction, INITIAL_STATE);
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="flex flex-col gap-1 md:items-end">
       <div className="flex gap-2">
         <form action={formAction}>
           <input name="command" type="hidden" value="checkNow" />
           <input name="targetId" type="hidden" value={targetId} />
           <input name="targetKind" type="hidden" value={targetKind} />
-          <AdminActionSubmitButton icon={<RefreshCwIcon />}>Check now</AdminActionSubmitButton>
+          <AdminActionSubmitButton icon={<RefreshCwIcon />} size="lg">
+            Check now
+          </AdminActionSubmitButton>
         </form>
 
         <form action={formAction}>
           <input name="command" type="hidden" value="stop" />
           <input name="targetId" type="hidden" value={targetId} />
           <input name="targetKind" type="hidden" value={targetKind} />
-          <AdminActionSubmitButton icon={<CircleStopIcon />}>Stop</AdminActionSubmitButton>
+          <AdminActionSubmitButton icon={<CircleStopIcon />} size="lg">
+            Stop
+          </AdminActionSubmitButton>
         </form>
       </div>
 
@@ -59,8 +63,8 @@ export function FreshnessCommandForm({
         aria-live="polite"
         className={
           state.error
-            ? "text-destructive-text max-w-80 text-right text-xs empty:hidden"
-            : "text-muted-foreground max-w-80 text-right text-xs empty:hidden"
+            ? "text-destructive-text max-w-80 text-xs empty:hidden md:text-right"
+            : "text-muted-foreground max-w-80 text-xs empty:hidden md:text-right"
         }
         key={state.submissionId}
       >

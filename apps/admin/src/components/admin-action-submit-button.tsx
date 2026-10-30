@@ -7,14 +7,16 @@ import { useFormStatus } from "react-dom";
 export function AdminActionSubmitButton({
   children,
   icon,
+  size = "sm",
 }: {
   children: React.ReactNode;
   icon: React.ReactNode;
+  size?: "lg" | "sm";
 }) {
   const status = useFormStatus();
 
   return (
-    <Button disabled={status.pending} size="sm" type="submit" variant="outline">
+    <Button disabled={status.pending} size={size} type="submit" variant="outline">
       {status.pending ? <Loader2Icon className="animate-spin" /> : icon}
       {children}
     </Button>

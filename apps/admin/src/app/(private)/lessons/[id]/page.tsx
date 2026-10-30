@@ -1,41 +1,34 @@
-import { AdminBreadcrumb } from "@/components/admin-breadcrumb";
+import {
+  AdminDetailBody,
+  AdminDetailHeader,
+  AdminDetailHeaderSkeleton,
+  AdminDetailPage,
+} from "@/components/admin-detail";
 import { AdminSectionSkeleton } from "@/components/admin-section";
 import { ReviewFlagNotice } from "@/components/review-flag-notice";
 import { getLibraryLesson } from "@/data/lessons/get-library-lesson";
-import {
-  Container,
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { capitalize } from "@/lib/format";
+import { libraryLessonStatusLabels } from "@/lib/library-lesson-filters";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { LessonLanguageResources } from "./lesson-language-resources";
 import { LessonScreens } from "./lesson-screens";
-import { LessonSummary } from "./lesson-summary";
+import { LessonOutline, LessonSummary } from "./lesson-summary";
 import { LessonVersions } from "./lesson-versions";
 
 export const metadata: Metadata = { title: "Lesson" };
 
+const LESSON_PARENTS = [{ href: "/lessons", label: "Lessons" }];
+
 export default function LibraryLessonPage({ params }: PageProps<"/lessons/[id]">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <AdminBreadcrumb current="Lesson" parents={[{ href: "/lessons", label: "Lessons" }]} />
-          <ContainerTitle>Lesson</ContainerTitle>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <ContainerBody className="gap-8">
-        <Suspense fallback={<LessonSkeleton />}>
-          <LessonContent params={params} />
-        </Suspense>
-      </ContainerBody>
-    </Container>
+    <AdminDetailPage>
+      <Suspense fallback={<LessonSkeleton />}>
+        <LessonContent params={params} />
+      </Suspense>
+    </AdminDetailPage>
   );
 }
 
@@ -56,11 +49,27 @@ async function LessonContent({ params }: Pick<PageProps<"/lessons/[id]">, "param
 
   return (
     <>
-      <ReviewFlagNotice target={{ lessonId: lesson.id }} />
-      <LessonSummary lesson={lesson} />
-      <LessonVersions steps={lesson.steps} />
-      <LessonScreens answers={detail.answers} steps={lesson.steps} />
-      <LessonLanguageResources sentences={lesson.sentences} words={lesson.words} />
+      <AdminDetailHeader
+        facts={[
+          libraryLessonStatusLabels[lesson.contentStatus],
+          lesson.targetLanguage
+            ? `${lesson.language.toUpperCase()} → ${lesson.targetLanguage.toUpperCase()}`
+            : lesson.language.toUpperCase(),
+          capitalize(lesson.level),
+          `${lesson.estimatedMinutes} min`,
+        ]}
+        parents={LESSON_PARENTS}
+        title={lesson.title}
+      />
+
+      <AdminDetailBody>
+        <ReviewFlagNotice target={{ lessonId: lesson.id }} />
+        <LessonSummary lesson={lesson} />
+        <LessonOutline lesson={lesson} />
+        <LessonVersions steps={lesson.steps} />
+        <LessonScreens answers={detail.answers} steps={lesson.steps} />
+        <LessonLanguageResources sentences={lesson.sentences} words={lesson.words} />
+      </AdminDetailBody>
     </>
   );
 }
@@ -68,9 +77,12 @@ async function LessonContent({ params }: Pick<PageProps<"/lessons/[id]">, "param
 function LessonSkeleton() {
   return (
     <>
-      <AdminSectionSkeleton />
-      <AdminSectionSkeleton />
-      <AdminSectionSkeleton />
+      <AdminDetailHeaderSkeleton parents={LESSON_PARENTS} />
+
+      <AdminDetailBody>
+        <AdminSectionSkeleton rows={10} />
+        <AdminSectionSkeleton />
+      </AdminDetailBody>
     </>
   );
 }

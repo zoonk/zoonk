@@ -1,11 +1,13 @@
-import { AdminBreadcrumb } from "@/components/admin-breadcrumb";
-import { AdminSectionSkeleton } from "@/components/admin-section";
 import {
-  Container,
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-} from "@zoonk/ui/components/container";
+  AdminDetailBody,
+  AdminDetailHeader,
+  AdminDetailHeaderSkeleton,
+  AdminDetailPage,
+} from "@/components/admin-detail";
+import { AdminSectionSkeleton } from "@/components/admin-section";
+import { getMedia } from "@/data/media/get-media";
+import { capitalize } from "@/lib/format";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -15,21 +17,15 @@ import { MediaUsage } from "./media-usage";
 
 export const metadata: Metadata = { title: "Media asset" };
 
+const MEDIA_PARENTS = [{ href: "/media", label: "Media" }];
+
 export default function MediaDetailPage({ params }: PageProps<"/media/[id]">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <AdminBreadcrumb current="Media asset" parents={[{ href: "/media", label: "Media" }]} />
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <ContainerBody className="gap-8">
-        <Suspense fallback={<MediaDetailSkeleton />}>
-          <MediaDetailContent params={params} />
-        </Suspense>
-      </ContainerBody>
-    </Container>
+    <AdminDetailPage>
+      <Suspense fallback={<MediaDetailSkeleton />}>
+        <MediaDetailContent params={params} />
+      </Suspense>
+    </AdminDetailPage>
   );
 }
 
@@ -40,15 +36,28 @@ async function MediaDetailContent({ params }: Pick<PageProps<"/media/[id]">, "pa
     notFound();
   }
 
+  const asset = await getMedia(id);
+
+  if (!asset) {
+    notFound();
+  }
+
   return (
     <>
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <MediaOverview mediaAssetId={id} />
-      </Suspense>
+      <AdminDetailHeader
+        facts={[asset.mimeType ?? capitalize(asset.kind)]}
+        parents={MEDIA_PARENTS}
+        title={asset.reuseKey}
+        titleClassName="font-mono text-xl font-semibold break-all"
+      />
 
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <MediaUsage mediaAssetId={id} />
-      </Suspense>
+      <AdminDetailBody>
+        <MediaOverview asset={asset} />
+
+        <Suspense fallback={<AdminSectionSkeleton description />}>
+          <MediaUsage mediaAssetId={asset.id} />
+        </Suspense>
+      </AdminDetailBody>
     </>
   );
 }
@@ -56,8 +65,14 @@ async function MediaDetailContent({ params }: Pick<PageProps<"/media/[id]">, "pa
 function MediaDetailSkeleton() {
   return (
     <>
-      <AdminSectionSkeleton />
-      <AdminSectionSkeleton />
+      <AdminDetailHeaderSkeleton parents={MEDIA_PARENTS} />
+
+      <AdminDetailBody>
+        <AdminSectionSkeleton>
+          <Skeleton className="h-96 w-72 max-w-full rounded-lg" />
+        </AdminSectionSkeleton>
+        <AdminSectionSkeleton rows={9} />
+      </AdminDetailBody>
     </>
   );
 }

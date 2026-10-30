@@ -1,5 +1,5 @@
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
-import { DetailField } from "@/components/detail-field";
+import { DetailField, DetailFields } from "@/components/detail-field";
 import { getUserLearningProfile } from "@/data/users/get-user-learning-profile";
 
 export async function UserLearningProfile({ userId }: { userId: string }) {
@@ -10,7 +10,7 @@ export async function UserLearningProfile({ userId }: { userId: string }) {
   return (
     <AdminSection title="Learning profile">
       {profile ? (
-        <dl className="divide-y">
+        <DetailFields>
           <DetailField label="Buddy">
             {[profile.buddyName, profile.buddyKind].filter(Boolean).join(" · ") || "—"}
           </DetailField>
@@ -20,7 +20,7 @@ export async function UserLearningProfile({ userId }: { userId: string }) {
           <DetailField label="Daily limit">
             {profile.dailyLimitMinutes ? `${profile.dailyLimitMinutes} min` : "—"}
           </DetailField>
-        </dl>
+        </DetailFields>
       ) : (
         <AdminSectionEmpty>No learning profile yet.</AdminSectionEmpty>
       )}

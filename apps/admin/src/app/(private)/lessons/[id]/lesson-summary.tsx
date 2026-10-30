@@ -1,6 +1,6 @@
 import { AdminJson } from "@/components/admin-json";
 import { AdminSection } from "@/components/admin-section";
-import { DetailField } from "@/components/detail-field";
+import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
 import { type LibraryLessonDetail } from "@/data/lessons/get-library-lesson";
 import { formatDateTime } from "@/lib/format";
@@ -16,7 +16,7 @@ function LessonChapters({ lesson }: { lesson: Lesson }) {
   }
 
   return (
-    <ul className="flex flex-col items-end gap-1">
+    <ul className="flex flex-col gap-1">
       {lesson.chapters.map(({ chapter }) => (
         <li key={chapter.id}>
           {chapter.title}
@@ -33,25 +33,20 @@ function LessonChapters({ lesson }: { lesson: Lesson }) {
 
 export function LessonSummary({ lesson }: { lesson: Lesson }) {
   return (
-    <AdminSection description={lesson.description} title={lesson.title}>
-      <dl className="divide-y">
-        <DetailField label="Content">{libraryLessonStatusLabels[lesson.contentStatus]}</DetailField>
+    <AdminSection title="Details">
+      <DetailFields>
+        <DetailField label="Description">{lesson.description || "—"}</DetailField>
         <DetailField label="Held back">
           <LessonHeldBack lesson={lesson} />
         </DetailField>
         <DetailField label="Spec">{libraryLessonStatusLabels[lesson.specStatus]}</DetailField>
-        <DetailField label="Language">
-          {lesson.language}
-          {lesson.targetLanguage ? ` → ${lesson.targetLanguage}` : ""} · {lesson.level} ·{" "}
-          {lesson.estimatedMinutes} min
-        </DetailField>
         <DetailField label="Visibility">
           {lesson.owner ? (
             <Link className="underline" href={`/users/${lesson.owner.id}`}>
               Private to {lesson.owner.name || lesson.owner.email}
             </Link>
           ) : (
-            lesson.visibility
+            <span className="capitalize">{lesson.visibility}</span>
           )}
         </DetailField>
         <DetailField label="Can do">{lesson.canDo ?? "—"}</DetailField>
@@ -59,24 +54,33 @@ export function LessonSummary({ lesson }: { lesson: Lesson }) {
           <LessonChapters lesson={lesson} />
         </DetailField>
         <DetailField label="Skills">
-          {lesson.skills.length > 0
-            ? lesson.skills.map(({ skill }) => (
-                <Link className="ml-2 underline" href={`/skills/${skill.id}`} key={skill.id}>
+          {lesson.skills.length > 0 ? (
+            <span className="flex flex-wrap gap-x-3 gap-y-1">
+              {lesson.skills.map(({ skill }) => (
+                <Link className="underline" href={`/skills/${skill.id}`} key={skill.id}>
                   {skill.name}
                 </Link>
-              ))
-            : "—"}
+              ))}
+            </span>
+          ) : (
+            "—"
+          )}
         </DetailField>
         <DetailField label="In plans">
           {lesson._count.planItems} plan items · {lesson._count.studyBlocks} session blocks ·{" "}
           {lesson._count.questionThreads} question threads
         </DetailField>
         <DetailField label="Updated">{formatDateTime(lesson.updatedAt)}</DetailField>
-      </dl>
+      </DetailFields>
+    </AdminSection>
+  );
+}
 
-      <div className="mt-4 flex flex-col gap-3">
-        <span className="text-muted-foreground text-xs font-medium">Outline written by</span>
-        <ProvenanceFields provenance={lesson} />
+export function LessonOutline({ lesson }: { lesson: Lesson }) {
+  return (
+    <AdminSection title="Outline">
+      <ProvenanceFields provenance={lesson} />
+      <div className="flex flex-col">
         <AdminJson label="Spec" value={lesson.spec} />
         <AdminJson label="Summary card" value={lesson.summary} />
       </div>

@@ -2,25 +2,29 @@
 
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
 import { Button } from "@zoonk/ui/components/button";
 import { unbanUserAction } from "./_actions/unban-user";
 
-export function UnbanUserDialog({ userId, userName }: { userId: string; userName: string }) {
+export function UnbanUserDialog({
+  onOpenChange,
+  open,
+  userId,
+  userName,
+}: {
+  onOpenChange: (open: boolean) => void;
+  open: boolean;
+  userId: string;
+  userName: string;
+}) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger render={<Button variant="outline" size="sm" />}>
-        Unban user
-      </AlertDialogTrigger>
-
+    <AlertDialog onOpenChange={onOpenChange} open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Unban {userName}?</AlertDialogTitle>
@@ -29,12 +33,17 @@ export function UnbanUserDialog({ userId, userName }: { userId: string; userName
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <form action={unbanUserAction}>
+        <form
+          action={async (formData) => {
+            await unbanUserAction(formData);
+            onOpenChange(false);
+          }}
+        >
           <input type="hidden" name="userId" value={userId} />
 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction type="submit">Unban User</AlertDialogAction>
+            <Button type="submit">Unban user</Button>
           </AlertDialogFooter>
         </form>
       </AlertDialogContent>

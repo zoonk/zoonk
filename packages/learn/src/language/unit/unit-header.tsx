@@ -1,16 +1,15 @@
 "use client";
 
 import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract";
-import { useExtracted } from "next-intl";
 import {
   DetailActions,
-  DetailContinueLink,
   DetailFacts,
   DetailHero,
   DetailHeroText,
   DetailTitle,
-  useDoneShare,
-} from "../../_components/detail-page";
+} from "@zoonk/ui/components/detail";
+import { useExtracted } from "next-intl";
+import { DetailContinueLink, useDoneShare } from "../../_components/detail-page";
 import { PageEyebrow } from "../../_components/page";
 import { useFormatDuration } from "../../_utils/time-format";
 import { ContentFeedbackMenu } from "../../feedback/content-feedback-menu";

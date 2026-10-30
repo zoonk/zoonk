@@ -1,5 +1,5 @@
 import { AdminSection } from "@/components/admin-section";
-import { DetailField } from "@/components/detail-field";
+import { DetailField, DetailFields } from "@/components/detail-field";
 import { SubscriptionStatusBadge } from "@/components/subscription-status-badge";
 import { getUserSubscriptions } from "@/data/users/get-user-subscriptions";
 import { getSubscriptionProviderLabel, getSubscriptionStatusLabel } from "@/lib/subscription";
@@ -35,7 +35,7 @@ function UserSubscriptionDetails({ subscriptions }: { subscriptions: UserSubscri
   const subscription = subscriptions.active;
 
   return (
-    <dl className="divide-y">
+    <DetailFields>
       <DetailField label="Plan">
         <span className="capitalize">{subscription?.plan ?? "Free"}</span>
       </DetailField>
@@ -47,7 +47,7 @@ function UserSubscriptionDetails({ subscriptions }: { subscriptions: UserSubscri
       <IncompleteCheckoutField subscription={subscriptions.incomplete} />
       <LastCancellationField subscription={subscriptions.canceled} />
       <StripeCustomerField subscription={subscription} />
-    </dl>
+    </DetailFields>
   );
 }
 

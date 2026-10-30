@@ -27,21 +27,23 @@ export function MessageStatusForm({
   const [state, formAction] = useActionState(updateMessageStatusAction, INITIAL_STATE);
 
   return (
-    <div className="flex flex-col items-end gap-1">
-      <div className="flex flex-wrap justify-end gap-2">
+    <div className="flex flex-col gap-1 md:items-end">
+      <div className="flex flex-wrap gap-2 md:justify-end">
         {statusActions
           .filter((action) => action.status !== currentStatus)
           .map((action) => (
             <form action={formAction} key={action.status}>
               <input name="messageId" type="hidden" value={messageId} />
               <input name="status" type="hidden" value={action.status} />
-              <AdminActionSubmitButton icon={action.icon}>{action.label}</AdminActionSubmitButton>
+              <AdminActionSubmitButton icon={action.icon} size="lg">
+                {action.label}
+              </AdminActionSubmitButton>
             </form>
           ))}
       </div>
       <span
         aria-live="polite"
-        className="text-destructive-text text-right text-xs empty:hidden"
+        className="text-destructive-text text-xs empty:hidden md:text-right"
         key={state.submissionId}
       >
         {state.error}

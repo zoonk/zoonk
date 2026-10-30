@@ -9,12 +9,14 @@ import {
 import Link from "next/link";
 import { Fragment } from "react";
 
+export type AdminBreadcrumbParent = { href: string; label: string };
+
 export function AdminBreadcrumb({
   current,
   parents,
 }: {
-  current: string;
-  parents: { href: string; label: string }[];
+  current: React.ReactNode;
+  parents: AdminBreadcrumbParent[];
 }) {
   return (
     <Breadcrumb>
@@ -22,15 +24,18 @@ export function AdminBreadcrumb({
         {parents.map((parent) => (
           <Fragment key={parent.href}>
             <BreadcrumbItem>
-              <BreadcrumbLink render={<Link href={parent.href} prefetch />}>
+              <BreadcrumbLink
+                className="hit-area relative"
+                render={<Link href={parent.href} prefetch />}
+              >
                 {parent.label}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
           </Fragment>
         ))}
-        <BreadcrumbItem>
-          <BreadcrumbPage>{current}</BreadcrumbPage>
+        <BreadcrumbItem className="min-w-0 flex-1">
+          <BreadcrumbPage className="max-w-sm truncate">{current}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

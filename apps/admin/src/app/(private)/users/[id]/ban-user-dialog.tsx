@@ -2,14 +2,12 @@
 
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
@@ -17,13 +15,19 @@ import { Label } from "@zoonk/ui/components/label";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { banUserAction } from "./_actions/ban-user";
 
-export function BanUserDialog({ userId, userName }: { userId: string; userName: string }) {
+export function BanUserDialog({
+  onOpenChange,
+  open,
+  userId,
+  userName,
+}: {
+  onOpenChange: (open: boolean) => void;
+  open: boolean;
+  userId: string;
+  userName: string;
+}) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger render={<Button variant="outline" size="sm" />}>
-        Ban user
-      </AlertDialogTrigger>
-
+    <AlertDialog onOpenChange={onOpenChange} open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Ban {userName}?</AlertDialogTitle>
@@ -32,7 +36,12 @@ export function BanUserDialog({ userId, userName }: { userId: string; userName: 
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <form action={banUserAction}>
+        <form
+          action={async (formData) => {
+            await banUserAction(formData);
+            onOpenChange(false);
+          }}
+        >
           <input type="hidden" name="userId" value={userId} />
 
           <div className="flex flex-col gap-4">
@@ -49,9 +58,9 @@ export function BanUserDialog({ userId, userName }: { userId: string; userName: 
 
           <AlertDialogFooter className="mt-6">
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction type="submit" variant="destructive">
+            <Button type="submit" variant="destructive">
               Ban user
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </form>
       </AlertDialogContent>

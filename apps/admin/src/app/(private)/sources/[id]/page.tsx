@@ -1,16 +1,17 @@
-import { AdminBreadcrumb } from "@/components/admin-breadcrumb";
+import {
+  AdminDetailBody,
+  AdminDetailHeader,
+  AdminDetailHeaderSkeleton,
+  AdminDetailPage,
+} from "@/components/admin-detail";
 import { AdminSectionSkeleton } from "@/components/admin-section";
 import { getSource } from "@/data/sources/get-source";
-import {
-  Container,
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-} from "@zoonk/ui/components/container";
+import { capitalize } from "@/lib/format";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { FreshnessCommandForm } from "../freshness-command-form";
 import { SourceChangeNotices } from "./source-change-notices";
 import { SourceCitations } from "./source-citations";
 import { SourcePrivateDetails } from "./source-private-details";
@@ -18,21 +19,15 @@ import { SourcePublicDetails } from "./source-public-details";
 
 export const metadata: Metadata = { title: "Source" };
 
+const SOURCE_PARENTS = [{ href: "/sources", label: "Sources" }];
+
 export default function SourceDetailPage({ params }: PageProps<"/sources/[id]">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <AdminBreadcrumb current="Source" parents={[{ href: "/sources", label: "Sources" }]} />
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <ContainerBody className="gap-8">
-        <Suspense fallback={<SourceDetailSkeleton />}>
-          <SourceDetailContent params={params} />
-        </Suspense>
-      </ContainerBody>
-    </Container>
+    <AdminDetailPage>
+      <Suspense fallback={<SourceDetailSkeleton />}>
+        <SourceDetailContent params={params} />
+      </Suspense>
+    </AdminDetailPage>
   );
 }
 
@@ -44,44 +39,57 @@ async function SourceDetailContent({ params }: Pick<PageProps<"/sources/[id]">, 
     notFound();
   }
 
-  return (
-    <>
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <SourceOverview sourceId={id} />
-      </Suspense>
-
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <SourceChangeNotices sourceId={id} />
-      </Suspense>
-
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <SourceCitations sourceId={id} />
-      </Suspense>
-    </>
-  );
-}
-
-async function SourceOverview({ sourceId }: { sourceId: string }) {
-  "use cache: private";
-
-  const source = await getSource(sourceId);
+  const source = await getSource(id);
 
   if (!source) {
     notFound();
   }
 
-  return source.visibility === "private" ? (
-    <SourcePrivateDetails source={source} />
-  ) : (
-    <SourcePublicDetails source={source} />
+  const facts = [capitalize(source.kind), source.language.toUpperCase()];
+
+  return (
+    <>
+      {source.visibility === "private" ? (
+        <AdminDetailHeader facts={facts} parents={SOURCE_PARENTS} title="Private upload" />
+      ) : (
+        <AdminDetailHeader
+          actions={
+            source.url ? <FreshnessCommandForm targetId={source.id} targetKind="source" /> : null
+          }
+          facts={[source.publisher, ...facts]}
+          parents={SOURCE_PARENTS}
+          title={source.title}
+        />
+      )}
+
+      <AdminDetailBody>
+        {source.visibility === "private" ? (
+          <SourcePrivateDetails source={source} />
+        ) : (
+          <SourcePublicDetails source={source} />
+        )}
+
+        <Suspense fallback={<AdminSectionSkeleton description />}>
+          <SourceChangeNotices sourceId={source.id} />
+        </Suspense>
+
+        <Suspense fallback={<AdminSectionSkeleton description />}>
+          <SourceCitations sourceId={source.id} />
+        </Suspense>
+      </AdminDetailBody>
+    </>
   );
 }
 
 function SourceDetailSkeleton() {
   return (
     <>
-      <AdminSectionSkeleton />
-      <AdminSectionSkeleton />
+      <AdminDetailHeaderSkeleton actions="buttons" parents={SOURCE_PARENTS} />
+
+      <AdminDetailBody>
+        <AdminSectionSkeleton rows={7} />
+        <AdminSectionSkeleton />
+      </AdminDetailBody>
     </>
   );
 }

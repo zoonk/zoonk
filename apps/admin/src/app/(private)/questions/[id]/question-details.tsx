@@ -1,3 +1,4 @@
+import { DetailField, DetailFields } from "@/components/detail-field";
 import { getRunAiUsage } from "@/data/ai/get-run-ai-usage";
 import { type getLessonQuestion } from "@/data/questions/get-lesson-question";
 import { formatUsd } from "@/lib/ai-format";
@@ -7,18 +8,17 @@ import {
   getAdminQuestionLessonContext,
 } from "@/lib/lesson-question";
 import Link from "next/link";
-import { QuestionDetailField } from "./question-detail-field";
 
 type LessonQuestionDetail = NonNullable<Awaited<ReturnType<typeof getLessonQuestion>>>;
 
 function QuestionLessonFields({ context }: { context: AdminQuestionLessonContext | null }) {
   if (!context) {
-    return <QuestionDetailField label="Lesson">Deleted lesson</QuestionDetailField>;
+    return <DetailField label="Lesson">Deleted lesson</DetailField>;
   }
 
   return (
     <>
-      <QuestionDetailField label="Course">
+      <DetailField label="Course">
         {context.course ? (
           <Link className="hover:underline" href={`/courses/${context.course.id}`} prefetch>
             {context.course.title}
@@ -26,13 +26,13 @@ function QuestionLessonFields({ context }: { context: AdminQuestionLessonContext
         ) : (
           "—"
         )}
-      </QuestionDetailField>
-      <QuestionDetailField label="Chapter">{context.chapterTitle ?? "—"}</QuestionDetailField>
-      <QuestionDetailField label="Lesson">
+      </DetailField>
+      <DetailField label="Chapter">{context.chapterTitle ?? "—"}</DetailField>
+      <DetailField label="Lesson">
         <Link className="hover:underline" href={context.lessonHref} prefetch>
           {context.lessonLabel}
         </Link>
-      </QuestionDetailField>
+      </DetailField>
     </>
   );
 }
@@ -43,39 +43,29 @@ export async function QuestionDetails({ question }: { question: LessonQuestionDe
   const usage = question.runId ? await getRunAiUsage(question.runId) : null;
 
   return (
-    <dl className="divide-y">
-      <QuestionDetailField label="User">
+    <DetailFields>
+      <DetailField label="User">
         <Link className="hover:underline" href={`/users/${user.id}`} prefetch>
           {user.name || user.username || "User"}
         </Link>
         <span className="text-muted-foreground block">{user.email}</span>
-      </QuestionDetailField>
+      </DetailField>
       <QuestionLessonFields context={getAdminQuestionLessonContext(question.thread)} />
-      <QuestionDetailField label="Context">
+      <DetailField label="Context">
         {getAdminQuestionContextLabel({
           contextKind: question.contextKind,
           stepNumber: question.stepNumber,
         })}
-      </QuestionDetailField>
-      <QuestionDetailField label="Model">
-        {question.model ?? question.requestedModel ?? "—"}
-      </QuestionDetailField>
-      <QuestionDetailField label="Provider">{question.provider ?? "—"}</QuestionDetailField>
-      <QuestionDetailField label="Input tokens">
-        {usage?.inputTokens.toLocaleString() ?? "—"}
-      </QuestionDetailField>
-      <QuestionDetailField label="Output tokens">
-        {usage?.outputTokens.toLocaleString() ?? "—"}
-      </QuestionDetailField>
-      <QuestionDetailField label="Cost">
+      </DetailField>
+      <DetailField label="Model">{question.model ?? question.requestedModel ?? "—"}</DetailField>
+      <DetailField label="Provider">{question.provider ?? "—"}</DetailField>
+      <DetailField label="Input tokens">{usage?.inputTokens.toLocaleString() ?? "—"}</DetailField>
+      <DetailField label="Output tokens">{usage?.outputTokens.toLocaleString() ?? "—"}</DetailField>
+      <DetailField label="Cost">
         {usage?.costUsd === null || usage?.costUsd === undefined ? "—" : formatUsd(usage.costUsd)}
-      </QuestionDetailField>
-      <QuestionDetailField label="Finish reason">
-        {question.finishReason ?? "—"}
-      </QuestionDetailField>
-      <QuestionDetailField label="Updated">
-        {question.updatedAt.toLocaleString()}
-      </QuestionDetailField>
-    </dl>
+      </DetailField>
+      <DetailField label="Finish reason">{question.finishReason ?? "—"}</DetailField>
+      <DetailField label="Updated">{question.updatedAt.toLocaleString()}</DetailField>
+    </DetailFields>
   );
 }

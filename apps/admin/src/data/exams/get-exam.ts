@@ -26,3 +26,5 @@ const cachedGetExam = cacheAdminData(async (examBlueprintId: string) => {
 export async function getExam(examBlueprintId: string) {
   return cachedGetExam(examBlueprintId);
 }
+
+export type AdminExam = NonNullable<Awaited<ReturnType<typeof getExam>>>;

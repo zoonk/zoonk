@@ -7,7 +7,9 @@ export function AdminEditForm({ className, ...props }: React.ComponentProps<"for
 }
 
 export function AdminEditFormActions({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("flex items-center gap-2", className)} {...props} />;
+  return (
+    <div className={cn("flex flex-wrap items-center gap-x-3 gap-y-2", className)} {...props} />
+  );
 }
 
 export function AdminEditFormFeedback({
@@ -20,7 +22,7 @@ export function AdminEditFormFeedback({
   successMessage: string | null;
 }) {
   return (
-    <div className="min-h-5">
+    <div className="min-w-0">
       <FieldDynamicDescription key={submissionId} successMessage={successMessage} />
       {error && <FieldError>{error}</FieldError>}
     </div>
@@ -31,20 +33,24 @@ export function AdminEditFormSkeleton({ className, ...props }: React.ComponentPr
   return <div className={cn("flex max-w-2xl flex-col gap-7", className)} {...props} />;
 }
 
-export function AdminEditFormSkeletonField() {
+export function AdminEditFormSkeletonField({
+  descriptionClassName,
+}: {
+  descriptionClassName?: string;
+}) {
   return (
-    <div className="flex flex-col gap-2">
-      <Skeleton className="h-4 w-28" />
-      <Skeleton className="h-9 w-full" />
+    <div className="flex flex-col gap-1">
+      <span className="flex h-lh items-center text-sm leading-snug">
+        <Skeleton className="h-3.5 w-28" />
+      </span>
+      <Skeleton className="h-11 w-full rounded-lg" />
+      <span className={cn("flex h-lh items-start text-sm leading-normal", descriptionClassName)}>
+        <Skeleton className="mt-1 h-3.5 w-3/4" />
+      </span>
     </div>
   );
 }
 
 export function AdminEditFormSkeletonActions() {
-  return (
-    <div className="flex gap-2">
-      <Skeleton className="h-9 w-20 rounded-full" />
-      <Skeleton className="h-9 w-32 rounded-full" />
-    </div>
-  );
+  return <Skeleton className="h-9 w-32 rounded-lg" />;
 }

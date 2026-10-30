@@ -2,16 +2,9 @@
 
 import { type GoalMindMapView, type GoalMindMapsView } from "@zoonk/core/mind-maps/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
-import {
-  DetailAside,
-  DetailContent,
-  DetailFacts,
-  DetailHero,
-  DetailHeroText,
-  DetailLayout,
-  DetailTitle,
-} from "../_components/detail-page";
+import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { type MindMapLimit, MindMapLimitNotice } from "../_components/help-limit-notice";
 import {
   PageEyebrow,
