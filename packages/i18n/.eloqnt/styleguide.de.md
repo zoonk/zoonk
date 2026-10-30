@@ -8,6 +8,7 @@
 - Lines saying what Zoonk is doing while it works speak as “wir” (“Wir erstellen Seite 3…”), never as an infinitive or an imperative to the learner. The buddy speaks as “ich”.
 - Imperatives in sentences use the short “du” form: “Versuch es noch einmal.”, not “Versuche”.
 - Buttons, links and menu actions use the infinitive without an article: “Neues Ziel starten”, “Noch einmal versuchen”, not “Ein neues Ziel starten” or “Versuch es noch einmal”.
+- Hyphenate a compound that contains a name or several words: “App-Store-Abo”, “Google-Play-Kauf”, “Zoonk-App”.
 
 ## Glossary
 
