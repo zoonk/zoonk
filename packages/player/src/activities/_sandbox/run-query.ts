@@ -1,4 +1,5 @@
 import { type ActivityCell } from "@zoonk/core/library/activities/expected-answer";
+import { MAX_QUERY_ROWS } from "@zoonk/core/library/activities/program-limits";
 import {
   type SqlTable,
   sqlSetupStatements,
@@ -11,7 +12,7 @@ export type QueryResult = { columns: string[]; rows: ActivityCell[][] };
 export type QueryRun =
   | { result: QueryResult; status: "done" }
   | { message: string; status: "error" }
-  | { status: "timeout" | "unavailable" };
+  | { status: "timeout" | "tooManyRows" | "unavailable" };
 
 export async function runQuery({
   query,
@@ -28,6 +29,10 @@ export async function runQuery({
 
   if (outcome.status === "done") {
     const table = outcome.table ?? { columns: [], rows: [] };
+
+    if (table.rows.length > MAX_QUERY_ROWS) {
+      return { status: "tooManyRows" };
+    }
 
     return {
       result: {

@@ -73,6 +73,10 @@ export function SqlPlaygroundActivity({
       return run.message;
     }
 
+    if (run.status === "tooManyRows") {
+      return t("The query returned too many rows. Is a join missing its condition?");
+    }
+
     return run.status === "timeout"
       ? t("The query took more than {seconds} seconds and was stopped.", {
           seconds: String(PROGRAM_TIME_LIMIT_MS.sql / MS_PER_SECOND),

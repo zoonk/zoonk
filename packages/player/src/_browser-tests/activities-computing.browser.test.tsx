@@ -153,6 +153,22 @@ describe("computing activities", () => {
     await expect.element(page.getByText("OR keeps rows that pass either test.")).toBeVisible();
   });
 
+  it("SQL playground: a join without its condition returns too many rows to check", async () => {
+    openActivity({ template: "sqlPlayground" });
+
+    await page
+      .getByRole("textbox", { name: "Your query" })
+      .fill("SELECT a.name FROM countries a, countries b, countries c, countries d;");
+
+    await page.getByRole("button", { name: "Run" }).click();
+
+    await expect
+      .element(page.getByText("The query returned too many rows. Is a join missing its condition?"))
+      .toBeVisible();
+
+    await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
+  });
+
   it("pattern tester: examples pass as the pattern grows", async () => {
     openActivity({ template: "patternTester" });
     const pattern = page.getByRole("textbox", { name: "Your pattern" });

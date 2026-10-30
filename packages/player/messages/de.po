@@ -2654,6 +2654,11 @@ msgid "Nothing marked yet."
 msgstr "Noch nichts markiert."
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
+msgctxt "1YOoLk"
+msgid "The query returned too many rows. Is a join missing its condition?"
+msgstr "Die Abfrage hat zu viele Zeilen zurückgegeben. Fehlt bei einer Verknüpfung die Bedingung?"
+
+#: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "3f2LxP"
 msgid "The query took more than {seconds} seconds and was stopped."
 msgstr "Die Abfrage hat länger als {seconds} Sekunden gedauert und wurde gestoppt."
