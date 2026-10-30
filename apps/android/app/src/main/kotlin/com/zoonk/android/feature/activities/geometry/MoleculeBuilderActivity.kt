@@ -88,7 +88,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLi
 val moleculeBuilderRenderer =
     ActivityRenderer(
         badge = { ActivityBadge(R.string.activities_geometry_badge_build_it, R.drawable.ic_science) },
-        canvas = { MoleculeBuilderActivity(it) },
+        canvas = { if (it.isExploring) ExploredMolecule(it) else MoleculeBuilderActivity(it) },
     )
 
 private data class Builder(
@@ -133,13 +133,7 @@ private fun MoleculeBuilderActivity(props: ActivityProps) {
     var history by rememberSaveable(stateSaver = historySaver) { mutableStateOf(emptyList()) }
     var announcement by rememberSaveable { mutableStateOf("") }
     val names = elementNames()
-    val atomName = { atom: BuildAtom ->
-        resources.getString(
-            R.string.activities_geometry_molecule_atom,
-            names[atom.element] ?: atom.element,
-            atom.id.dropWhile { !it.isDigit() },
-        )
-    }
+    val atomName = atomNamer(resources, names)
     val enabled = !props.isLocked
     val build = builder.build
     val nameIn = { within: MoleculeBuild, id: String ->
@@ -294,6 +288,23 @@ private fun MoleculeBuilderActivity(props: ActivityProps) {
             val elements = props.expected.moleculeElements ?: target
             Molecule.findStructure(elements)?.let { MoleculeExample(it, atomName) }
         }
+    }
+}
+
+@Composable
+private fun ExploredMolecule(props: ActivityProps) {
+    val formula = (props.content as MoleculeBuilderContent).value.fields.formula
+    val target = Molecule.parseFormula(formula).orEmpty()
+    val structure = remember(formula) { Molecule.findStructure(target) }
+    val atomName = atomNamer(LocalResources.current, elementNames())
+
+    ActivityCanvas {
+        Text(
+            Molecule.formulaText(target, target.keys.toList()),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
+        )
+        structure?.let { MoleculeStructure(it, atomName) }
     }
 }
 
@@ -593,43 +604,51 @@ private fun MoleculeExample(
     structure: MoleculeBuild,
     atomName: (BuildAtom) -> String,
 ) {
-    val density = LocalDensity.current
-    val resources = LocalResources.current
-    val layout = remember(structure) { MoleculeLayout.of(structure) }
-    val total = Molecule.bondTotal(structure)
-
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         Text(
             stringResource(R.string.activities_geometry_molecule_example),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
         )
-        BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            val padding = MoleculeLayout.ATOM_RADIUS + FIT_MARGIN
-            val left = layout.values.minOf { it.x } - padding
-            val top = layout.values.minOf { it.y } - padding
-            val spanX = layout.values.maxOf { it.x } + padding - left
-            val spanY = layout.values.maxOf { it.y } + padding - top
-            val width = minOf(maxWidth, EXAMPLE_WIDTH)
-            val scale = with(density) { width.toPx() } / spanX.toFloat()
-            val shown = layout.mapValues { (_, point) -> Offset(((point.x - left) * scale).toFloat(), ((point.y - top) * scale).toFloat()) }
-            MoleculeDrawing(
-                structure,
-                shown,
-                selectedId = null,
-                scale = scale,
-                modifier =
-                    Modifier.size(width, width * (spanY / spanX).toFloat()).semantics {
-                        contentDescription = describeBuild(structure, atomName, resources)
-                    },
-            )
-        }
-        Text(
-            pluralStringResource(R.plurals.activities_geometry_molecule_bonds_in_all, total, total),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
+        MoleculeStructure(structure, atomName)
+    }
+}
+
+@Composable
+private fun MoleculeStructure(
+    structure: MoleculeBuild,
+    atomName: (BuildAtom) -> String,
+) {
+    val density = LocalDensity.current
+    val resources = LocalResources.current
+    val layout = remember(structure) { MoleculeLayout.of(structure) }
+    val total = Molecule.bondTotal(structure)
+
+    BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        val padding = MoleculeLayout.ATOM_RADIUS + FIT_MARGIN
+        val left = layout.values.minOf { it.x } - padding
+        val top = layout.values.minOf { it.y } - padding
+        val spanX = layout.values.maxOf { it.x } + padding - left
+        val spanY = layout.values.maxOf { it.y } + padding - top
+        val width = minOf(maxWidth, EXAMPLE_WIDTH)
+        val scale = with(density) { width.toPx() } / spanX.toFloat()
+        val shown = layout.mapValues { (_, point) -> Offset(((point.x - left) * scale).toFloat(), ((point.y - top) * scale).toFloat()) }
+        MoleculeDrawing(
+            structure,
+            shown,
+            selectedId = null,
+            scale = scale,
+            modifier =
+                Modifier.size(width, width * (spanY / spanX).toFloat()).semantics {
+                    contentDescription = describeBuild(structure, atomName, resources)
+                },
         )
     }
+    Text(
+        pluralStringResource(R.plurals.activities_geometry_molecule_bonds_in_all, total, total),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
+    )
 }
 
 private fun bondText(
@@ -662,6 +681,18 @@ private fun describeBuild(
             .map { resources.getString(R.string.activities_geometry_molecule_loose, atomName(it)) }
     return (bonds + loose).joinToString(" ")
 }
+
+private fun atomNamer(
+    resources: Resources,
+    names: Map<String, String>,
+): (BuildAtom) -> String =
+    { atom ->
+        resources.getString(
+            R.string.activities_geometry_molecule_atom,
+            names[atom.element] ?: atom.element,
+            atom.id.dropWhile { !it.isDigit() },
+        )
+    }
 
 @Composable
 private fun elementNames(): Map<String, String> =

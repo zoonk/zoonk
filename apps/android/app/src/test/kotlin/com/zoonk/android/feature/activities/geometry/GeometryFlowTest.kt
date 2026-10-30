@@ -34,6 +34,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
+import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonStepAnswer
 import org.junit.Assert.assertEquals
@@ -253,6 +254,15 @@ class GeometryFlowTest {
 
         shows("One correct build")
         shows("4 bonds in all, counting a double bond as two.")
+    }
+
+    @Test
+    fun moleculeBuilderExploredShowsOneBuildWithNothingToAdd() {
+        harness.play(listOf(ActivityFixtures.exploreStep("moleculeBuilder"), summaryStep("end")))
+
+        shows("4 bonds in all, counting a double bond as two.")
+        rule.onNodeWithContentDescription("Add Carbon").assertDoesNotExist()
+        rule.onNodeWithText("One correct build").assertDoesNotExist()
     }
 
     @Test
