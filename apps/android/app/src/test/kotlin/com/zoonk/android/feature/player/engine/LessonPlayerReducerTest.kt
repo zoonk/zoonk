@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.player.engine
 
+import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.checkStep
 import com.zoonk.android.feature.player.explanationStep
 import com.zoonk.android.feature.player.fillBlankStep
@@ -539,6 +540,51 @@ class LessonPlayerReducerTest {
     }
 
     @Test
+    fun aQuestionTakesAnswersWhileAnOptionalPictureIsDrawnAndKeepsThemWhenItLands() {
+        val drawing = checkWithPicture("q").copy(imagePending = true, pictureWaitStartedAt = 0)
+        val waiting = play(listOf(drawing, summaryStep("end")), started(), LessonAction.SelectAnswer("q", LessonAnswer.Check("right")))
+
+        assertEquals(true, waiting.screen().primary?.enabled)
+
+        val drawn = waiting.then(LessonAction.PicturesRead(listOf(checkWithPicture("q").copy(image = PICTURE)), openedAt = 0))
+
+        assertEquals(PICTURE, drawn.currentStep?.image)
+        assertEquals(LessonAnswer.Check("right"), drawn.answers["q"])
+    }
+
+    @Test
+    fun anActivityAskingAboutAPicturesNumberedPartsWaitsForIt() {
+        val timeline = ActivityFixtures.step("timeline", id = "parts")
+        val content = timeline.content as StepContent.Activity
+        val parts = PictureDescription(alt = "A cell", prompt = "A cell", parts = listOf("Nucleus", "Wall"))
+        val drawing =
+            timeline.copy(
+                content = content.copy(frame = content.frame.copy(image = parts)),
+                imagePending = true,
+                pictureWaitStartedAt = 0,
+            )
+        val answer = LessonAnswer.Activity(checkNotNull(ActivityFixtures.rightAnswer("timeline")))
+
+        val waiting = play(listOf(drawing, summaryStep("end")), started(), LessonAction.SelectAnswer("parts", answer))
+
+        assertEquals(false, waiting.screen().primary?.enabled)
+    }
+
+    @Test
+    fun aLabeledDiagramWhosePictureNeverCameIsLeftOut() {
+        val diagram =
+            ActivityFixtures
+                .step(
+                    "labeledDiagram",
+                    id = "diagram",
+                ).copy(image = null, imagePending = true, pictureWaitStartedAt = 0)
+        val opened = play(listOf(explanationStep("idea"), diagram, summaryStep("end")), started())
+
+        val waitOver = reduce(opened, LessonAction.PicturesRead(emptyList(), openedAt = 0), 300_000)
+        assertEquals(listOf("idea", "end"), waitOver.queue)
+    }
+
+    @Test
     fun aNumberedPictureQuestionWhosePictureNeverCameIsLeftOut() {
         val drawing = numberedCheckStep("parts").copy(imagePending = true, pictureWaitStartedAt = 0)
         val opened = play(listOf(explanationStep("idea"), drawing, summaryStep("end")), started())
@@ -553,13 +599,18 @@ class LessonPlayerReducerTest {
 
 private val PICTURE = StepImage("picture", "https://api.zoonk.test/v1/files/picture", "A cell", 800, 1000)
 
-private fun numberedCheckStep(id: String): LessonStep {
+private fun numberedCheckStep(id: String) = checkWithPicture(id, parts = listOf("Nucleus", "Wall"))
+
+private fun checkWithPicture(
+    id: String,
+    parts: List<String>? = null,
+): LessonStep {
     val check = checkStep(id)
     val content = (check.content as StepContent.Check).content
     return check.copy(
         content =
             StepContent.Check(
-                content.copy(image = PictureDescription(alt = "A cell", prompt = "A cell", parts = listOf("Nucleus", "Wall"))),
+                content.copy(image = PictureDescription(alt = "A cell", prompt = "A cell", parts = parts)),
             ),
     )
 }

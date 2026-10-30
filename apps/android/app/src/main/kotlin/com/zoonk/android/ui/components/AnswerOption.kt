@@ -46,7 +46,8 @@ fun AnswerOptionGroup(
  * One option of a question (main's `AnswerOption`): its number key (for keyboards, so TalkBack
  * skips it), its words and, once checked, the word its result shows. An option among several
  * picks is a [Role.Checkbox]; [tag] replaces the result's word (an order step's place). A [glyph]
- * marks the key in place of its number, as main's net-scored statements (✓, ✗, –).
+ * marks the key in place of its number, as main's net-scored statements (✓, ✗, –). The key sits on
+ * the words' first line, or at the top with [keyAtTop].
  */
 @Composable
 fun AnswerOption(
@@ -59,6 +60,7 @@ fun AnswerOption(
     role: Role = Role.RadioButton,
     tag: (@Composable () -> Unit)? = null,
     glyph: Painter? = null,
+    keyAtTop: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val tone = answerTone(picked, result)
@@ -80,9 +82,9 @@ fun AnswerOption(
                 ).padding(horizontal = 14.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        NumberKey(marker, glyph, Modifier.alignByBaseline())
+        NumberKey(marker, glyph, if (keyAtTop) Modifier else Modifier.alignByBaseline())
         TagBesideOrUnder(
-            modifier = Modifier.weight(1f).alignByBaseline(),
+            modifier = Modifier.weight(1f).then(if (keyAtTop) Modifier else Modifier.alignByBaseline()),
             content = content,
             tag = tag ?: { if (result != null) AnswerTag(picked, result) },
         )

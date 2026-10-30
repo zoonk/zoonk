@@ -11,6 +11,7 @@ import com.zoonk.android.feature.player.model.ActivityFrame
 import com.zoonk.android.feature.player.model.ActivityStepContent
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ActivityExpectedAnswer
@@ -20,6 +21,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf11Value as LabeledDiagramContent
 
 /** Main's activity fixtures with core's expected end state and value, from `pnpm --filter android fixtures:activities`. */
 object ActivityFixtures {
@@ -95,13 +97,17 @@ object ActivityFixtures {
         return step(if (check == null) written else JsonObject(written + ("check" to check)), id)
     }
 
-    /** A step of content a fixture doesn't have, written as the API sends it. */
+    /** A step of content a fixture doesn't have, written as the API sends it; a labeled diagram's picture is drawn, as in main's `activityStep`. */
     fun step(
         json: JsonElement,
         id: String,
     ): LessonStep {
         val content = ApiJson.decodeFromJsonElement(ActivityStepContent.serializer(), json)
         val frame = ApiJson.decodeFromJsonElement(ActivityFrame.serializer(), json)
-        return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null))
+        val picture =
+            (content as? LabeledDiagramContent)?.let {
+                StepImage("$id-picture", "https://api.zoonk.test/v1/files/$id-picture", it.value.fields.picture.alt, 1024, 1280)
+            }
+        return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null), image = picture)
     }
 }

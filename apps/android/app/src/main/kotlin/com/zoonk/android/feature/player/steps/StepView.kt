@@ -10,6 +10,7 @@ import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.challengeProgress
+import com.zoonk.android.feature.player.engine.isRequiredPictureDrawing
 import com.zoonk.android.feature.player.engine.pickChallengeChoice
 import com.zoonk.android.feature.player.language.LanguageStepView
 import com.zoonk.android.feature.player.language.LessonLanguage
@@ -66,7 +67,7 @@ fun StepView(
 ) {
     val answer = state.answers[step.id]
     val result = state.results[step.id]
-    val locked = state.phase != LessonPhase.Playing
+    val locked = state.phase != LessonPhase.Playing || step.isRequiredPictureDrawing
 
     when (val content = step.content) {
         is StepContent.Guess -> GuessHookView(step, content, answer, result, locked, actions)
@@ -101,6 +102,8 @@ fun keyPick(
     index: Int,
     state: LessonPlayerState,
 ): KeyPick? {
+    if (step.isRequiredPictureDrawing) return null
+
     val content = step.content
     if (content is StepContent.Challenge) {
         val progress =

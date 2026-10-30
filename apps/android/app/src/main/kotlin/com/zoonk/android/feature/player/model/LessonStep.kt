@@ -203,4 +203,5 @@ data class ActivityFrame(
     val prompt: String,
     val check: ActivityCheck,
     val data: ActivityData? = null,
+    val image: PictureDescription? = null,
 )

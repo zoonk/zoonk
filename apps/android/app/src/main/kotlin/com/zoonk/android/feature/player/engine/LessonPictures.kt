@@ -3,11 +3,16 @@ package com.zoonk.android.feature.player.engine
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.PictureDescription
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf11Value as LabeledDiagramContent
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf11Fields as LabeledDiagramFields
 
 /** Core's picture wait, which covers the drawing's retries. */
 private const val PICTURE_WAIT_MS = 300_000L
 
-/** The picture a screen asks for; an explanation's is only a picture, never a question's. */
+/**
+ * The picture a screen asks for (core's `getStepImageRequest`): a labeled diagram's numbers its parts
+ * ahead of any other an activity asks for; an explanation's is only a picture, never a question's.
+ */
 val LessonStep.askedPicture: PictureDescription?
     get() =
         when (val content = content) {
@@ -16,12 +21,29 @@ val LessonStep.askedPicture: PictureDescription?
             is StepContent.Fact -> content.content.image
             is StepContent.WorkedExample -> content.content.image
             is StepContent.Explanation -> content.content.image
+            is StepContent.Activity -> (content.content as? LabeledDiagramContent)?.value?.fields?.labeledPicture() ?: content.frame.image
             else -> null
         }
 
-/** A question about numbered parts of a picture can't be answered without it. */
+private fun LabeledDiagramFields.labeledPicture() =
+    PictureDescription(
+        alt = picture.alt,
+        prompt = picture.prompt,
+        parts =
+            parts.map {
+                it.part
+            },
+    )
+
+/** A question about numbered parts of a picture can't be answered without it; any other picture is optional. */
 private val LessonStep.asksNumberedPicture: Boolean
     get() = content !is StepContent.Explanation && !askedPicture?.parts.isNullOrEmpty()
+
+/** A check's pending pictures may be only its options'; any other screen's are its own. */
+val LessonStep.isOwnPictureDrawing: Boolean
+    get() = imagePending && image == null && (content !is StepContent.Check || askedPicture != null)
+
+val LessonStep.isRequiredPictureDrawing: Boolean get() = isOwnPictureDrawing && asksNumberedPicture
 
 fun LessonStep.isWaitingForPicture(
     openedAt: Long,

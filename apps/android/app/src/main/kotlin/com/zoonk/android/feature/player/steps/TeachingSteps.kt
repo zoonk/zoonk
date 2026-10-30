@@ -65,6 +65,7 @@ import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.format.currentLocale
@@ -246,6 +247,8 @@ internal fun CheckView(
         }
 
         val pictured = screen.step?.takeIf { check.options.any { it.picture != null } }
+        // Picture options sit side by side until a description still being drawn doesn't fit its frame there.
+        var crowded by remember(pictured?.id) { mutableStateOf(false) }
         ChoiceOptions(
             options = check.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
             selectedId = (answer as? LessonAnswer.Check)?.optionId,
@@ -253,10 +256,13 @@ internal fun CheckView(
             isGuess = false,
             locked = locked,
             onSelect = { id -> actions.select(id?.let(LessonAnswer::Check)) },
-            columns = if (pictured != null) 2 else 1,
+            columns = if (pictured != null && !crowded) 2 else 1,
+            keysAtTop = pictured != null,
             optionContent =
                 if (pictured != null) {
-                    { option -> PictureOption(pictured, check.options.first { it.id == option.id }, isChecked = result != null) }
+                    { option ->
+                        PictureOption(pictured, check.options.first { it.id == option.id }, isChecked = result != null) { crowded = true }
+                    }
                 } else {
                     { RichInlineText(text = it.text, style = MaterialTheme.typography.bodyLarge) }
                 },
@@ -527,7 +533,8 @@ data class ChoiceOption(
 /**
  * Options picked by a tap or a number key; tapping a pick again clears it. Once checked, only the
  * right option and a wrong pick stay, marked, unless [keepsEveryOption] (a guess keeps every option
- * too). [columns] lays them out as a grid, as picture options are.
+ * too). [columns] lays them out as a grid, as picture options are; [keysAtTop] keeps each number at
+ * the top beside a picture, which has no line of words to sit on.
  */
 @Composable
 fun ChoiceOptions(
@@ -538,6 +545,7 @@ fun ChoiceOptions(
     locked: Boolean,
     onSelect: (String?) -> Unit,
     columns: Int = 1,
+    keysAtTop: Boolean = false,
     keepsEveryOption: Boolean = false,
     optionContent: @Composable (ChoiceOption) -> Unit = { RichInlineText(text = it.text, style = MaterialTheme.typography.bodyLarge) },
 ) {
@@ -566,6 +574,7 @@ fun ChoiceOptions(
                         result = item.result,
                         modifier = Modifier.weight(1f),
                         enabled = !locked && !isChecked,
+                        keyAtTop = keysAtTop,
                         onClick = { onSelect(if (item.picked) null else item.option.id) },
                     ) { optionContent(item.option) }
                 }
@@ -588,6 +597,7 @@ private fun PictureOption(
     step: LessonStep,
     option: CheckOption,
     isChecked: Boolean,
+    onDescriptionOverflow: () -> Unit,
 ) {
     val image = step.optionPictures[option.id]
     val alt = option.picture?.alt ?: option.text
@@ -599,7 +609,21 @@ private fun PictureOption(
             }
 
             step.imagePending -> {
-                PicturePending(PictureFrame.Question)
+                PendingPicture(PictureFrame.Question, Modifier.fillMaxWidth()) {
+                    Icon(
+                        painterResource(R.drawable.ic_image),
+                        contentDescription = stringResource(R.string.player_drawing_picture),
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        alt,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
+                        textAlign = TextAlign.Center,
+                        onTextLayout = { if (it.hasVisualOverflow) onDescriptionOverflow() },
+                    )
+                }
             }
 
             else -> {

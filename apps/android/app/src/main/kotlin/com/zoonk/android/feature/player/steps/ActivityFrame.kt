@@ -72,6 +72,7 @@ import com.zoonk.android.feature.activities.sorting.timelineRenderer
 import com.zoonk.android.feature.activities.stepSolverRenderer
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
+import com.zoonk.android.feature.player.engine.isRequiredPictureDrawing
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityCheck
 import com.zoonk.android.feature.player.model.ActivityFrame
@@ -167,7 +168,7 @@ internal fun ActivityView(
     val renderer = activityRenderers[frame.template]
     val phase = if (result == null) ActivityPhase.Answering else ActivityPhase.Checked
     val activityAnswer = (answer as? LessonAnswer.Activity)?.answer
-    val locked = state.phase != LessonPhase.Playing
+    val locked = state.phase != LessonPhase.Playing || step.isRequiredPictureDrawing
     var kept by rememberSaveable(step.id, stateSaver = KeptAnswer) { mutableStateOf<ActivityAnswer?>(null) }
     val onAnswerChange = { next: ActivityAnswer? ->
         if (!locked) {
