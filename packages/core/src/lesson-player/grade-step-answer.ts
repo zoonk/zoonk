@@ -7,13 +7,13 @@ import { gradeChallengePath } from "../library/challenges/challenge-run";
 import { type SelectedAnswer } from "../player/contracts/_utils/selected-answer-schema";
 import { checkStepAnswer } from "../player/contracts/check-step-answer";
 import { type SerializedStep } from "../player/contracts/prepare-lesson-data";
+import { type LessonStepAnswer } from "./contract";
 import {
-  type LessonStepAnswer,
   type PlayableLanguageStep,
   type PlayableLibraryStep,
   type PlayableSpokenAnswerStep,
   type PlayableTeachingStepOf,
-} from "./contract";
+} from "./playable-lesson";
 
 export type GradedStepAnswer = {
   answerText: string | null;

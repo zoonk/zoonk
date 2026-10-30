@@ -1,8 +1,5 @@
-import {
-  type LessonPicture,
-  type LessonStepCheckResult,
-  type LessonSupport,
-} from "@zoonk/core/lesson-player/contract";
+import { type LessonStepCheckResult, type LessonSupport } from "@zoonk/core/lesson-player/contract";
+import { type LessonPicture } from "@zoonk/core/lesson-player/playable-lesson";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
 import { orderLessonOpening } from "./_utils/lesson-opening";
 import {

@@ -8,11 +8,13 @@ import {
   loadLearnerVersions,
 } from "../../library/variants/learner-versions";
 import {
+  type PlayableExplanationStep,
   type PlayableLibraryLesson,
   type PlayableLibraryStep,
   type PlayableTeachingStepOf,
   type TeachingStepKind,
-} from "../contract";
+} from "../playable-lesson";
+import { withExploreExpected } from "./playable-step";
 
 function withContent<TKind extends TeachingStepKind>({
   step,
@@ -28,7 +30,7 @@ function withContent<TKind extends TeachingStepKind>({
 type VersionedStep =
   | PlayableTeachingStepOf<"challenge">
   | PlayableTeachingStepOf<"check">
-  | PlayableTeachingStepOf<"explanation">
+  | PlayableExplanationStep
   | PlayableTeachingStepOf<"workedExample">;
 
 const VERSIONED_KINDS = new Set<string>(["challenge", "check", "explanation", "workedExample"]);
@@ -58,7 +60,7 @@ function toSeenStep({
     case "check":
       return withContent({ step, version });
     case "explanation":
-      return withContent({ step, version });
+      return withExploreExpected(withContent({ step, version }));
     case "workedExample":
       return withContent({ step, version });
     default:

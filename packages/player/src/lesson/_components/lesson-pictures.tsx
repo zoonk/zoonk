@@ -1,6 +1,6 @@
 "use client";
 
-import { type LessonPicture } from "@zoonk/core/lesson-player/contract";
+import { type LessonPicture } from "@zoonk/core/lesson-player/playable-lesson";
 import { asksNumberedPicture } from "@zoonk/core/lesson-player/picture-policy";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";

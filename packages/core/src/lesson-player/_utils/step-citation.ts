@@ -1,7 +1,7 @@
 import { type Source, type Step } from "@zoonk/db";
 import { getMaterialUnit } from "../../library/sources/material-pages";
 import { toSourceCitation } from "../../library/sources/source-citation";
-import { type LessonStepCitation, type PlayableLibraryStep } from "../contract";
+import { type LessonStepCitation, type PlayableLibraryStep } from "../playable-lesson";
 
 type CitedRow = Pick<Step, "sourcePage"> & {
   source: Pick<

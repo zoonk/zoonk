@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { challengeCaseFixture } from "@zoonk/testing/fixtures/challenge-contents";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -10,8 +11,8 @@ import {
   stepOfKind,
 } from "../../lesson-player/_test-utils/playable-lesson-setup";
 import { checkLessonStep } from "../../lesson-player/check-lesson-step";
-import { type PlayableLibraryStep } from "../../lesson-player/contract";
 import { getPlayableLibraryLesson } from "../../lesson-player/get-playable-library-lesson";
+import { type PlayableLibraryStep } from "../../lesson-player/playable-lesson";
 import { pickToolVersion } from "./learner-versions";
 
 const SPREADSHEET = "Spreadsheet (Google Sheets or Excel)";
@@ -126,6 +127,30 @@ describe("personal versions of shared lessons", () => {
     });
 
     expect(contentOf(served, "check")).toStrictEqual(check.content);
+  });
+
+  it("gives a tool version's explore the solved end state of its own content", async () => {
+    const { lesson, steps } = await setupLearner({ choice: "have" });
+    const explanation = stepOfKind(steps, "explanation");
+
+    await stepVariantFixture({
+      content: {
+        ...toolExplanation,
+        explore: { fields: activityContentFixtures.processOrder.fields, template: "processOrder" },
+      },
+      key: "spreadsheet",
+      kind: "tool",
+      stepId: explanation.id,
+    });
+
+    const served = await readServed(lesson.id);
+
+    expect(stepOfKind(served, "explanation")).toMatchObject({
+      exploreExpected: {
+        answer: { ids: ["absorb", "split", "store", "calvin", "starch"], kind: "order" },
+        kind: "interaction",
+      },
+    });
   });
 
   it("serves the no-install version to a learner who installs nothing", async () => {

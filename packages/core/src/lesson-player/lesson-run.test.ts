@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { type PlayableLibraryStep } from "./contract";
 import { isAnswerableStep, tallyLessonRun } from "./lesson-run";
+import { type PlayableLibraryStep } from "./playable-lesson";
 
 function step(id: string, kind: PlayableLibraryStep["kind"]) {
   return { id, kind };

@@ -1,4 +1,4 @@
-import { type LessonPicture } from "@zoonk/core/lesson-player/contract";
+import { type LessonPicture } from "@zoonk/core/lesson-player/playable-lesson";
 import { type LessonPlayerState } from "../lesson-player-state";
 
 export function restorePicturedSteps(

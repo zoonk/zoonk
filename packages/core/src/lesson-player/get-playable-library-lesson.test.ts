@@ -19,6 +19,13 @@ import { validateActivity } from "../library/activities/validate-activity";
 import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
 
+function exploring(template: "formulaModel" | "processOrder", fields: unknown) {
+  return {
+    content: { ...playableStepContent.explanation, explore: { fields, template } },
+    kind: "explanation" as const,
+  };
+}
+
 describe(getPlayableLibraryLesson, () => {
   beforeEach(() => {
     mockSession(randomUUID());
@@ -152,6 +159,32 @@ describe(getPlayableLibraryLesson, () => {
     expect(
       steps.map((step) => (step.kind === "activity" ? step.minTolerance : undefined)),
     ).toStrictEqual([{ kind: "relative", value: 0.1 }, null]);
+  });
+
+  it("sends an explanation's explore with its solved end state only when its template checks the end state", async () => {
+    const { formulaModel, processOrder } = activityContentFixtures;
+
+    const { lesson } = await playableLessonFixture({
+      steps: [
+        exploring("processOrder", processOrder.fields),
+        exploring("formulaModel", formulaModel.fields),
+        "explanation",
+      ],
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = result?.status === "ready" ? result.lesson.steps : [];
+
+    expect(
+      steps.map((step) => (step.kind === "explanation" ? step.exploreExpected : undefined)),
+    ).toStrictEqual([
+      {
+        answer: { ids: ["absorb", "split", "store", "calvin", "starch"], kind: "order" },
+        kind: "interaction",
+      },
+      undefined,
+      undefined,
+    ]);
   });
 
   it("serves language screens with the pair's translation, note, sound tip and word banks", async () => {

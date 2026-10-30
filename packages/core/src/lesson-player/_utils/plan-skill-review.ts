@@ -4,8 +4,8 @@ import { loadLessonPlanSkillIds } from "../../learner/_utils/lesson-plan-skills"
 import { applyAnswerToLearnerSkill } from "../../learner/_utils/update-learner-skill";
 import { gradeLessonAnswers } from "../../learner/answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../../learner/fsrs-scheduler";
-import { type PlayableLibraryStep } from "../contract";
 import { isAnswerableStep } from "../lesson-run";
+import { type PlayableLibraryStep } from "../playable-lesson";
 import { type loadPlayedLesson } from "./load-played-lesson";
 
 /** Include answers from every unfinished sitting, not only the current run. */

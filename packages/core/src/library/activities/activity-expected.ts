@@ -1,5 +1,10 @@
 import { type ActivityExpected } from "./activity-expected-answer";
-import { type ActivityStepContent, getActivityTemplate } from "./activity-templates";
+import {
+  type ActivityStepContent,
+  type ExploreActivityContent,
+  exploresSolved,
+  getActivityTemplate,
+} from "./activity-templates";
 
 export function getActivityExpected(content: ActivityStepContent): ActivityExpected | null {
   const { check } = content;
@@ -16,4 +21,17 @@ export function getActivityExpected(content: ActivityStepContent): ActivityExpec
   const answer = getActivityTemplate(content.template)?.computeExpected(content.fields) ?? null;
 
   return answer ? { answer, kind: "interaction" } : null;
+}
+
+/** An explanation's explore shows its solved end state when its template checks only that end state. */
+export function getExploreExpected(explore: ExploreActivityContent): ActivityExpected | null {
+  if (!exploresSolved(explore.template)) {
+    return null;
+  }
+
+  return getActivityExpected({
+    ...explore,
+    check: { explanation: "", kind: "interaction" },
+    prompt: "",
+  });
 }

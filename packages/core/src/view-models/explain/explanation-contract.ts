@@ -1,4 +1,4 @@
-import { type PlayableLibraryLesson } from "../../lesson-player/contract";
+import { type PlayableLibraryLesson } from "../../lesson-player/playable-lesson";
 
 /** Navigate by slugs; Build a plan uses the course id with POST /v1/courses/{courseId}/goals. */
 type ExplanationCourse = {

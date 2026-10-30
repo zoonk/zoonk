@@ -6,8 +6,9 @@ import {
 import { matchTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
 import { gradeChallengePath } from "../../library/challenges/challenge-run";
 import { matchSpokenAnswer } from "../../library/language/spoken-answer-match";
-import { type LessonStepAnswer, type PlayableLibraryStep } from "../contract";
+import { type LessonStepAnswer } from "../contract";
 import { type GradedStepAnswer, gradeStepAnswer } from "../grade-step-answer";
+import { type PlayableLibraryStep } from "../playable-lesson";
 
 export type LessonAnswerVerdict = Pick<GradedStepAnswer, "expected"> & {
   answerText: string | null;

@@ -2,13 +2,13 @@ import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-conte
 import { describe, expect, it } from "vitest";
 import { parseStepContent } from "../library/steps/contract/step-contract";
 import { serializeExerciseSteps } from "../player/contracts/prepare-lesson-data";
+import { gradeStepAnswer } from "./grade-step-answer";
 import {
   type PlayableActivityStep,
   type PlayableLanguageStep,
   type PlayableTeachingStepOf,
   type TeachingStepKind,
-} from "./contract";
-import { gradeStepAnswer } from "./grade-step-answer";
+} from "./playable-lesson";
 
 function teachingStep<TKind extends TeachingStepKind>(
   kind: TKind,

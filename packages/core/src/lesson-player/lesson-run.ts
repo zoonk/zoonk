@@ -1,4 +1,4 @@
-import { type PlayableLibraryStep } from "./contract";
+import { type PlayableLibraryStep } from "./playable-lesson";
 
 const READ_ONLY_KINDS = new Set<PlayableLibraryStep["kind"]>([
   "alphabet",

@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { deduplicateNormalizedTexts } from "@zoonk/utils/string";
-import { type PlayableLibraryStep, type PlayableWordHints } from "../contract";
+import { type PlayableLibraryStep, type PlayableWordHints } from "../playable-lesson";
 import { type LessonPairResources, type PlayableStepRow, toPlayableSteps } from "./playable-step";
 
 const NO_RESOURCES: LessonPairResources = {

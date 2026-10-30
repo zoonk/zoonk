@@ -1,7 +1,7 @@
 import {
   type PlayableLibraryLesson,
   type PlayableTeachingStepOf,
-} from "@zoonk/core/lesson-player/contract";
+} from "@zoonk/core/lesson-player/playable-lesson";
 import { MathMarkupProvider } from "@zoonk/learn/rich-text/math-provider";
 import { SpeechPlayerProvider, type VoiceText } from "@zoonk/learn/speech/provider";
 import { type ComponentProps, type ReactNode } from "react";

@@ -1,4 +1,4 @@
-import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/contract";
+import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/playable-lesson";
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";

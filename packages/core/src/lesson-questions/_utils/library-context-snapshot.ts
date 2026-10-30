@@ -7,8 +7,9 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { findOpenedVersion, findPlayableLessonRow } from "../../lesson-player/_utils/lesson-rows";
 import { loadPlayableSteps } from "../../lesson-player/_utils/load-playable-steps";
-import { type LessonStepAnswer, type PlayableLibraryStep } from "../../lesson-player/contract";
+import { type LessonStepAnswer } from "../../lesson-player/contract";
 import { gradeStepAnswer } from "../../lesson-player/grade-step-answer";
+import { type PlayableLibraryStep } from "../../lesson-player/playable-lesson";
 import { type LessonScopeContextInput } from "../contract";
 import { type LibraryQuestionLesson } from "./question-access";
 

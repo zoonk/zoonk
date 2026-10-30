@@ -1,5 +1,6 @@
-import { type TeachingStepKind } from "@zoonk/core/lesson-player/contract";
+import { type TeachingStepKind } from "@zoonk/core/lesson-player/playable-lesson";
 import { lessonTutorSuggestionSchema } from "@zoonk/core/lesson-questions/contract";
+import { activityExpectedSchema } from "@zoonk/core/library/activities/expected-answer";
 import { toleranceSchema } from "@zoonk/core/library/activities/schemas";
 import { stepContentSchemas } from "@zoonk/core/library/steps/contract";
 import { EXERCISE_KINDS } from "@zoonk/core/player/contracts/exercise-content";
@@ -108,6 +109,11 @@ const activityStepSchema = teachingStepSchema("activity").extend({
     }),
 });
 
+// A ref to the named union needs an allOf wrapper to be optional, which strict clients can't decode; its options stay refs.
+const explanationStepSchema = teachingStepSchema("explanation").extend({
+  exploreExpected: z.discriminatedUnion("kind", activityExpectedSchema.options).optional(),
+});
+
 const spokenAnswerStepSchema = teachingStepSchema("spokenAnswer").extend({
   listening: serializedStepSchema
     .nullable()
@@ -122,7 +128,7 @@ const playableStepSchema = z
     activityStepSchema,
     teachingStepSchema("challenge"),
     teachingStepSchema("check"),
-    teachingStepSchema("explanation"),
+    explanationStepSchema,
     teachingStepSchema("hook"),
     spokenAnswerStepSchema,
     teachingStepSchema("summary"),

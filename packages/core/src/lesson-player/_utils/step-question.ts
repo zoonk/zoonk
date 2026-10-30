@@ -1,4 +1,4 @@
-import { type PlayableLibraryStep } from "../contract";
+import { type PlayableLibraryStep } from "../playable-lesson";
 
 function joinContext(context: string | undefined, question: string): string {
   return context ? `${context}\n\n${question}` : question;

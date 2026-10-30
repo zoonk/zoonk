@@ -1,4 +1,4 @@
-import { type PlayableStepImage } from "@zoonk/core/lesson-player/contract";
+import { type PlayableStepImage } from "@zoonk/core/lesson-player/playable-lesson";
 import { type VoiceText } from "@zoonk/learn/speech/provider";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { expect } from "vitest";

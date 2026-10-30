@@ -1,7 +1,7 @@
 import {
   type PlayableLibraryLesson,
   type PlayableLibraryStep,
-} from "@zoonk/core/lesson-player/contract";
+} from "@zoonk/core/lesson-player/playable-lesson";
 import { isExploreTemplate } from "@zoonk/core/library/activities/templates";
 import { type ExerciseKind } from "@zoonk/core/player/contracts/exercise-content";
 import {

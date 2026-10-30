@@ -1,4 +1,4 @@
-import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/contract";
+import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/playable-lesson";
 import {
   type CreateLessonQuestionInput,
   type LessonQuestionMemoryChange,

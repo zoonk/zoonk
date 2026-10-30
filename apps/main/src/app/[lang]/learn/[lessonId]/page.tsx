@@ -4,12 +4,12 @@ import { readLessonWritingRequest } from "@/lib/lessons/lesson-writing-href";
 import { type LessonRequest } from "@/lib/lessons/use-lesson-writing";
 import { FIRST_ANSWER_PARAM, ORIGIN_PARAM, readCatalogOrigin } from "@/lib/public/public-hrefs";
 import { getLessonSessionContext } from "@/lib/session/lesson-session-context";
-import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/contract";
 import {
   type PlayableLibraryLessonResult,
   getLibraryLessonOutline,
   getPlayableLibraryLesson,
 } from "@zoonk/core/lesson-player/get";
+import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/playable-lesson";
 import { getLessonProgress } from "@zoonk/core/lesson-player/progress";
 import { getLessonSupport } from "@zoonk/core/lesson-player/support";
 import { getChallengeTeam } from "@zoonk/core/library/challenges/get-team";

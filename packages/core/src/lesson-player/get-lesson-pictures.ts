@@ -5,7 +5,7 @@ import { canViewLibraryRow } from "../library/_utils/library-visibility";
 import { safeParseStepContent } from "../library/steps/contract/step-contract";
 import { getSession } from "../users/get-session";
 import { getOptionPictures, getStepImage } from "./_utils/screen-pictures";
-import { type LessonPicture } from "./contract";
+import { type LessonPicture } from "./playable-lesson";
 
 /** Fresh read for stepIds only; returns empty unless a learner or guest session can see the lesson. */
 export async function getLessonPictures({

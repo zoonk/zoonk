@@ -1,10 +1,9 @@
 "use client";
 
-import { getActivityExpected } from "@zoonk/core/library/activities/expected";
+import { getExploreExpected } from "@zoonk/core/library/activities/expected";
 import {
   type ActivityStepContent,
   type ExploreActivityContent,
-  exploresSolved,
 } from "@zoonk/core/library/activities/templates";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { Suspense } from "react";
@@ -14,16 +13,6 @@ import { activityRenderers } from "./activity-registry";
 
 function toCanvasContent(content: ExploreActivityContent): ActivityStepContent {
   return { ...content, check: { kind: "choice", options: [], question: "" }, prompt: "" };
-}
-
-function exploredEndState(content: ExploreActivityContent) {
-  return exploresSolved(content.template)
-    ? getActivityExpected({
-        ...content,
-        check: { explanation: "", kind: "interaction" },
-        prompt: "",
-      })
-    : null;
 }
 
 function noAnswer() {
@@ -47,7 +36,7 @@ export function ActivityExplore({
           <Canvas
             answer={null}
             content={toCanvasContent(content)}
-            expected={exploredEndState(content)}
+            expected={getExploreExpected(content)}
             labelId={labelId}
             onAnswerChange={noAnswer}
             phase="explore"

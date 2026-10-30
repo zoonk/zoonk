@@ -3,7 +3,7 @@ import {
   type PlayableTeachingStep,
   type PlayableTeachingStepOf,
   type TeachingStepKind,
-} from "@zoonk/core/lesson-player/contract";
+} from "@zoonk/core/lesson-player/playable-lesson";
 import { type LessonStepResult } from "../lesson-player-types";
 
 function teachingStep<TKind extends TeachingStepKind>(

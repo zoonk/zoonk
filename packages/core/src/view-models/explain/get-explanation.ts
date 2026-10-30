@@ -3,8 +3,8 @@ import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { hasStudyGoal } from "../../goals/_utils/study-goal";
 import { getOwnedGoal } from "../../learner/get-owned-goal";
-import { type PlayableLibraryLesson } from "../../lesson-player/contract";
 import { getPlayableLibraryLesson } from "../../lesson-player/get-playable-library-lesson";
+import { type PlayableLibraryLesson } from "../../lesson-player/playable-lesson";
 import { readRelatedQuestions } from "../../library/explanations/save-explanation";
 import { type ExplanationView } from "./explanation-contract";
 

@@ -3,12 +3,12 @@ import {
   getOptionPictureRequests,
   getStepImageRequest,
 } from "../../library/media/_utils/step-image-request";
-import { type PlayableStepImage } from "../contract";
 import {
   isPictureLateForRun,
   isPicturePending,
   shouldOmitNumberedPicture,
 } from "../picture-policy";
+import { type PlayableStepImage } from "../playable-lesson";
 
 type PictureRow = {
   generatedAt: Date;

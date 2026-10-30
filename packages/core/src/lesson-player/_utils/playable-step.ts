@@ -8,6 +8,7 @@ import {
 } from "@zoonk/db";
 import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { logError } from "@zoonk/utils/logger";
+import { getExploreExpected } from "../../library/activities/activity-expected";
 import { getActivityTemplate } from "../../library/activities/activity-templates";
 import { safeParseStepContent } from "../../library/steps/contract/step-contract";
 import { type ExerciseKind, isExerciseKind } from "../../player/contracts/exercise-content";
@@ -18,6 +19,7 @@ import {
 } from "../../player/contracts/prepare-lesson-data";
 import {
   type PlayableActivityStep,
+  type PlayableExplanationStep,
   type PlayableLanguageStep,
   type PlayableLibraryStep,
   type PlayableSpokenAnswerStep,
@@ -25,7 +27,7 @@ import {
   type PlayableTeachingStepOf,
   type PlayableWordHints,
   type TeachingStepKind,
-} from "../contract";
+} from "../playable-lesson";
 import { getScreenPictures } from "./screen-pictures";
 import { getStepCitation, markExplanationsNotInMaterial } from "./step-citation";
 
@@ -108,6 +110,21 @@ function buildActivityStep(row: PlayableStepRow): PlayableActivityStep | null {
   );
 }
 
+/** The explore's solved end state follows the explanation's content, a learner's own version included. */
+export function withExploreExpected(
+  step: PlayableTeachingStepOf<"explanation">,
+): PlayableExplanationStep {
+  const { explore } = step.content;
+  const exploreExpected = explore ? getExploreExpected(explore) : null;
+
+  return { ...step, exploreExpected: exploreExpected ?? undefined };
+}
+
+function buildExplanationStep(row: PlayableStepRow): PlayableExplanationStep | null {
+  const step = buildTeachingStep("explanation", row);
+  return step && withExploreExpected(step);
+}
+
 function buildSpokenAnswerStep({
   listening,
   row,
@@ -136,7 +153,7 @@ function toTeachingStep({
     case "check":
       return buildTeachingStep("check", row);
     case "explanation":
-      return buildTeachingStep("explanation", row);
+      return buildExplanationStep(row);
     case "hook":
       return buildTeachingStep("hook", row);
     case "spokenAnswer":

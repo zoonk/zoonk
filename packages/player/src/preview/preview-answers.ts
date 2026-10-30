@@ -1,4 +1,4 @@
-import { type PlayableLibraryStep } from "@zoonk/core/lesson-player/contract";
+import { type PlayableLibraryStep } from "@zoonk/core/lesson-player/playable-lesson";
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
 import { type ActivityExpectedAnswer } from "@zoonk/core/library/activities/expected-answer";
 import {

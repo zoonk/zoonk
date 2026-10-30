@@ -61415,6 +61415,28 @@
                 "type": "integer",
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
+              },
+              "exploreExpected": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ActivityExpectedChoice"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ActivityExpectedInteraction"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ActivityExpectedNumeric"
+                  }
+                ],
+                "type": "object",
+                "discriminator": {
+                  "propertyName": "kind",
+                  "mapping": {
+                    "choice": "#/components/schemas/ActivityExpectedChoice",
+                    "interaction": "#/components/schemas/ActivityExpectedInteraction",
+                    "numeric": "#/components/schemas/ActivityExpectedNumeric"
+                  }
+                }
               }
             },
             "required": [
@@ -68754,6 +68776,516 @@
           }
         ]
       },
+      "ActivityExpectedChoice": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "choice"
+            ]
+          },
+          "optionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "optionId"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedInteraction": {
+        "type": "object",
+        "properties": {
+          "answer": {
+            "$ref": "#/components/schemas/ActivityExpectedAnswer"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "interaction"
+            ]
+          }
+        },
+        "required": [
+          "answer",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedAnswer": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ActivityExpectedAssignment"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedCurveShift"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedFormula"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedGrid"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedLinks"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedMolecule"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedOrder"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedOutput"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedPitchClasses"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedRegex"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedRhythm"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedRows"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedSelection"
+          }
+        ],
+        "type": "object",
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "assignment": "#/components/schemas/ActivityExpectedAssignment",
+            "curveShift": "#/components/schemas/ActivityExpectedCurveShift",
+            "formula": "#/components/schemas/ActivityExpectedFormula",
+            "grid": "#/components/schemas/ActivityExpectedGrid",
+            "links": "#/components/schemas/ActivityExpectedLinks",
+            "molecule": "#/components/schemas/ActivityExpectedMolecule",
+            "order": "#/components/schemas/ActivityExpectedOrder",
+            "output": "#/components/schemas/ActivityExpectedOutput",
+            "pitchClasses": "#/components/schemas/ActivityExpectedPitchClasses",
+            "regex": "#/components/schemas/ActivityExpectedRegex",
+            "rhythm": "#/components/schemas/ActivityExpectedRhythm",
+            "rows": "#/components/schemas/ActivityExpectedRows",
+            "selection": "#/components/schemas/ActivityExpectedSelection"
+          }
+        }
+      },
+      "ActivityExpectedAssignment": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "assignment"
+            ]
+          },
+          "pairs": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "What goes in each slot the canvas names (a numbered part, a blank, an item), by its key"
+          }
+        },
+        "required": [
+          "kind",
+          "pairs"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedCurveShift": {
+        "type": "object",
+        "properties": {
+          "curve": {
+            "type": "string",
+            "description": "The id of the line that moves"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "down",
+              "left",
+              "right",
+              "up"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "curveShift"
+            ]
+          }
+        },
+        "required": [
+          "curve",
+          "direction",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedFormula": {
+        "type": "object",
+        "properties": {
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "inputs": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "number"
+                  },
+                  "description": "Each variable's value"
+                },
+                "output": {
+                  "type": "number",
+                  "description": "What the formula gives for those inputs"
+                }
+              },
+              "required": [
+                "inputs",
+                "output"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Inputs a right formula turns into these outputs"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "formula"
+            ]
+          },
+          "tolerance": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "absolute",
+                  "relative"
+                ]
+              },
+              "value": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "kind",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "examples",
+          "kind",
+          "tolerance"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedGrid": {
+        "type": "object",
+        "properties": {
+          "cells": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "grid"
+            ]
+          }
+        },
+        "required": [
+          "cells",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedLinks": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "links"
+            ]
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string"
+                },
+                "to": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "from",
+                "to"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "kind",
+          "links"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedMolecule": {
+        "type": "object",
+        "properties": {
+          "elements": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            },
+            "description": "How many atoms of each element the molecule has"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "molecule"
+            ]
+          }
+        },
+        "required": [
+          "elements",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedOrder": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Every item's id, in order"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "order"
+            ]
+          }
+        },
+        "required": [
+          "ids",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedOutput": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "output"
+            ]
+          },
+          "output": {
+            "type": "string",
+            "description": "What the program prints"
+          }
+        },
+        "required": [
+          "kind",
+          "output"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedPitchClasses": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "pitchClasses"
+            ]
+          },
+          "pitchClasses": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "The notes to play, as pitch classes from 0 (C) to 11 (B)"
+          }
+        },
+        "required": [
+          "kind",
+          "pitchClasses"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedRegex": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "regex"
+            ]
+          },
+          "shouldMatch": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "shouldNotMatch": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "kind",
+          "shouldMatch",
+          "shouldNotMatch"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedRhythm": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "rhythm"
+            ]
+          },
+          "tapTimesMs": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "When each tap falls"
+          },
+          "toleranceMs": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "kind",
+          "tapTimesMs",
+          "toleranceMs"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedRows": {
+        "type": "object",
+        "properties": {
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "rows"
+            ]
+          },
+          "orderMatters": {
+            "type": "boolean"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string",
+                    "nullable": true,
+                    "enum": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "columns",
+          "kind",
+          "orderMatters",
+          "rows"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedSelection": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The ids to select, in any order"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "selection"
+            ]
+          }
+        },
+        "required": [
+          "ids",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedNumeric": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "numeric"
+            ]
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "kind",
+          "value"
+        ],
+        "additionalProperties": false
+      },
       "LessonTutorSuggestion": {
         "type": "object",
         "properties": {
@@ -69737,516 +70269,6 @@
             "numeric": "#/components/schemas/ActivityExpectedNumeric"
           }
         }
-      },
-      "ActivityExpectedChoice": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "choice"
-            ]
-          },
-          "optionId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "kind",
-          "optionId"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedInteraction": {
-        "type": "object",
-        "properties": {
-          "answer": {
-            "$ref": "#/components/schemas/ActivityExpectedAnswer"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "interaction"
-            ]
-          }
-        },
-        "required": [
-          "answer",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedAnswer": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/ActivityExpectedAssignment"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedCurveShift"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedFormula"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedGrid"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedLinks"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedMolecule"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedOrder"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedOutput"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedPitchClasses"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedRegex"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedRhythm"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedRows"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedSelection"
-          }
-        ],
-        "type": "object",
-        "discriminator": {
-          "propertyName": "kind",
-          "mapping": {
-            "assignment": "#/components/schemas/ActivityExpectedAssignment",
-            "curveShift": "#/components/schemas/ActivityExpectedCurveShift",
-            "formula": "#/components/schemas/ActivityExpectedFormula",
-            "grid": "#/components/schemas/ActivityExpectedGrid",
-            "links": "#/components/schemas/ActivityExpectedLinks",
-            "molecule": "#/components/schemas/ActivityExpectedMolecule",
-            "order": "#/components/schemas/ActivityExpectedOrder",
-            "output": "#/components/schemas/ActivityExpectedOutput",
-            "pitchClasses": "#/components/schemas/ActivityExpectedPitchClasses",
-            "regex": "#/components/schemas/ActivityExpectedRegex",
-            "rhythm": "#/components/schemas/ActivityExpectedRhythm",
-            "rows": "#/components/schemas/ActivityExpectedRows",
-            "selection": "#/components/schemas/ActivityExpectedSelection"
-          }
-        }
-      },
-      "ActivityExpectedAssignment": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "assignment"
-            ]
-          },
-          "pairs": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "What goes in each slot the canvas names (a numbered part, a blank, an item), by its key"
-          }
-        },
-        "required": [
-          "kind",
-          "pairs"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedCurveShift": {
-        "type": "object",
-        "properties": {
-          "curve": {
-            "type": "string",
-            "description": "The id of the line that moves"
-          },
-          "direction": {
-            "type": "string",
-            "enum": [
-              "down",
-              "left",
-              "right",
-              "up"
-            ]
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "curveShift"
-            ]
-          }
-        },
-        "required": [
-          "curve",
-          "direction",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedFormula": {
-        "type": "object",
-        "properties": {
-          "examples": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "inputs": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "number"
-                  },
-                  "description": "Each variable's value"
-                },
-                "output": {
-                  "type": "number",
-                  "description": "What the formula gives for those inputs"
-                }
-              },
-              "required": [
-                "inputs",
-                "output"
-              ],
-              "additionalProperties": false
-            },
-            "description": "Inputs a right formula turns into these outputs"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "formula"
-            ]
-          },
-          "tolerance": {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "absolute",
-                  "relative"
-                ]
-              },
-              "value": {
-                "type": "number",
-                "minimum": 0
-              }
-            },
-            "required": [
-              "kind",
-              "value"
-            ],
-            "additionalProperties": false
-          }
-        },
-        "required": [
-          "examples",
-          "kind",
-          "tolerance"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedGrid": {
-        "type": "object",
-        "properties": {
-          "cells": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "grid"
-            ]
-          }
-        },
-        "required": [
-          "cells",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedLinks": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "links"
-            ]
-          },
-          "links": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "from": {
-                  "type": "string"
-                },
-                "to": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "from",
-                "to"
-              ],
-              "additionalProperties": false
-            }
-          }
-        },
-        "required": [
-          "kind",
-          "links"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedMolecule": {
-        "type": "object",
-        "properties": {
-          "elements": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "number"
-            },
-            "description": "How many atoms of each element the molecule has"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "molecule"
-            ]
-          }
-        },
-        "required": [
-          "elements",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedOrder": {
-        "type": "object",
-        "properties": {
-          "ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Every item's id, in order"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "order"
-            ]
-          }
-        },
-        "required": [
-          "ids",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedOutput": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "output"
-            ]
-          },
-          "output": {
-            "type": "string",
-            "description": "What the program prints"
-          }
-        },
-        "required": [
-          "kind",
-          "output"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedPitchClasses": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "pitchClasses"
-            ]
-          },
-          "pitchClasses": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            },
-            "description": "The notes to play, as pitch classes from 0 (C) to 11 (B)"
-          }
-        },
-        "required": [
-          "kind",
-          "pitchClasses"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedRegex": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "regex"
-            ]
-          },
-          "shouldMatch": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "shouldNotMatch": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "kind",
-          "shouldMatch",
-          "shouldNotMatch"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedRhythm": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "rhythm"
-            ]
-          },
-          "tapTimesMs": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            },
-            "description": "When each tap falls"
-          },
-          "toleranceMs": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "kind",
-          "tapTimesMs",
-          "toleranceMs"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedRows": {
-        "type": "object",
-        "properties": {
-          "columns": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "rows"
-            ]
-          },
-          "orderMatters": {
-            "type": "boolean"
-          },
-          "rows": {
-            "type": "array",
-            "items": {
-              "type": "array",
-              "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "string",
-                    "nullable": true,
-                    "enum": [
-                      null
-                    ]
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "required": [
-          "columns",
-          "kind",
-          "orderMatters",
-          "rows"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedSelection": {
-        "type": "object",
-        "properties": {
-          "ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "The ids to select, in any order"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "selection"
-            ]
-          }
-        },
-        "required": [
-          "ids",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedNumeric": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "numeric"
-            ]
-          },
-          "value": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "kind",
-          "value"
-        ],
-        "additionalProperties": false
       },
       "LessonRegeneration": {
         "type": "object",

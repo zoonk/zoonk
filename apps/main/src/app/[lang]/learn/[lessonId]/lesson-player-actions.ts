@@ -2,8 +2,8 @@
 
 import { completeLibraryLesson } from "@zoonk/core/lesson-player/complete";
 import { libraryLessonCompletionInputSchema } from "@zoonk/core/lesson-player/completion-input-contract";
-import { type LessonPicture } from "@zoonk/core/lesson-player/contract";
 import { getLessonPictures } from "@zoonk/core/lesson-player/pictures";
+import { type LessonPicture } from "@zoonk/core/lesson-player/playable-lesson";
 import { type LessonCompletionOutcome } from "@zoonk/player/lesson/types";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";

@@ -1,5 +1,5 @@
-import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/contract";
 import { gradeStepAnswer } from "@zoonk/core/lesson-player/grade";
+import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/playable-lesson";
 import { NOTHING_REACHED } from "@zoonk/core/sessions/reached";
 import { type LessonPlayerAdapters, type LessonStartOutcome } from "../lesson/lesson-player-types";
 

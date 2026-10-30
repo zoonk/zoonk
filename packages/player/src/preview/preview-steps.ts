@@ -6,7 +6,7 @@ import {
   type PlayableStepImage,
   type PlayableTeachingStepOf,
   type TeachingStepKind,
-} from "@zoonk/core/lesson-player/contract";
+} from "@zoonk/core/lesson-player/playable-lesson";
 import { getActivityTemplate } from "@zoonk/core/library/activities/templates";
 import {
   type ChartVisual,

@@ -12,7 +12,7 @@ import { getSession } from "../users/get-session";
 import { withLearnerLessonVersions } from "./_utils/learner-lesson-versions";
 import { playableStepInclude } from "./_utils/lesson-rows";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
-import { type PlayableLibraryLesson } from "./contract";
+import { type PlayableLibraryLesson } from "./playable-lesson";
 
 type LessonOutline = Pick<
   PlayableLibraryLesson,

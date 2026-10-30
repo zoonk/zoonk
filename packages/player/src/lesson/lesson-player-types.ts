@@ -1,11 +1,13 @@
 import {
-  type LessonPicture,
   type LessonStepAnswer,
   type LessonStepCheckResult,
   type LibraryLessonCompletion,
   type LibraryLessonRun,
-  type PlayableLibraryLesson,
 } from "@zoonk/core/lesson-player/contract";
+import {
+  type LessonPicture,
+  type PlayableLibraryLesson,
+} from "@zoonk/core/lesson-player/playable-lesson";
 import { type SpokenAnswerGrade } from "@zoonk/core/library/language/spoken-answer-contract";
 
 export type {
@@ -14,7 +16,7 @@ export type {
   PlayableLibraryStep,
   PlayableStepImage,
   PlayableWordHints,
-} from "@zoonk/core/lesson-player/contract";
+} from "@zoonk/core/lesson-player/playable-lesson";
 
 export type { LessonTutorConfig } from "./tutor/lesson-tutor-context";
 

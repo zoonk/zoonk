@@ -1,6 +1,6 @@
 "use client";
 
-import { type LessonStepCitation } from "@zoonk/core/lesson-player/contract";
+import { type LessonStepCitation } from "@zoonk/core/lesson-player/playable-lesson";
 import { useCitationLabel } from "@zoonk/learn/citation-label";
 import { SourcesChip } from "@zoonk/learn/sources-chip";
 import { FileQuestionIcon, FileTextIcon } from "lucide-react";
