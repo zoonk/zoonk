@@ -94,6 +94,7 @@
     <string name="generation_understanding_read_line_3">Conferindo se é uma prova, um idioma ou uma matéria…</string>
     <string name="generation_understanding_dates">Conferindo as datas da prova</string>
     <string name="generation_understanding_dates_line_1">Buscando o calendário da prova…</string>
+    <!-- Shown while reading an exam's calendar. "Your year" is the year the learner takes the exam. -->
     <string name="generation_understanding_dates_line_2">Buscando as datas deste ano…</string>
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">Montando seu plano</string>

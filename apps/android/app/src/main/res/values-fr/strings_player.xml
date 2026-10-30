@@ -189,6 +189,7 @@
     <string name="player_action_start">Commencer</string>
     <string name="player_previous_screen">Écran précédent</string>
     <string name="player_quick_check">Vérification rapide · %1$s sur %2$s</string>
+    <!-- Shown on a wrong answer the learner can still fix right away. "Not quite" means "that isn't right", not "better luck next time". -->
     <string name="player_notice_self_correct">Pas tout à fait. Regarde à nouveau et corrige toi-même, puis vérifie.</string>
     <string name="player_notice_answer_not_saved">Ta réponse à cette question n’a pas été enregistrée. Réponds à nouveau pour terminer la leçon.</string>
     <string name="player_notice_picture_ready">Cette question attendait son image. Réponds-y pour terminer la leçon.</string>
@@ -198,6 +199,7 @@
     <string name="player_verdict_correct">Correct !</string>
     <string name="player_verdict_guess">Voici la réponse</string>
     <string name="player_verdict_guess_right">Bien deviné !</string>
+    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
     <string name="player_verdict_incorrect">Pas tout à fait</string>
     <string name="player_verdict_sample_answer">Voici une bonne réponse</string>
     <string name="player_verdict_typo">Correct, attention à l’orthographe</string>
@@ -242,6 +244,7 @@
     <string name="player_in_your_own_words">Avec tes propres mots</string>
     <string name="player_cant_write_now">Je ne peux pas écrire maintenant</string>
     <string name="player_dont_know_yet">Je ne sais pas encore</string>
+    <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Explique d’abord</string>
     <string name="player_check_failed">Nous n’avons pas pu vérifier ta réponse cette fois. Réessaie.</string>
     <string name="player_still_checking">Vérification en cours. Cela prend plus de temps que d’habitude.</string>
@@ -260,6 +263,7 @@
     <string name="player_phase_write_line">Préparation de l’écran %1$d…</string>
     <string name="player_writing_note">Cela prend généralement une ou deux minutes. La leçon s’ouvrira ici dès qu’elle sera prête.</string>
     <string name="player_ready_while_waiting">À faire en attendant</string>
+    <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
     <string name="player_ready_instead">À faire à la place</string>
     <plurals name="player_review_ideas">
         <item quantity="one">Réviser %1$s idée</item>

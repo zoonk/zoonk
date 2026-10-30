@@ -189,6 +189,7 @@
     <string name="player_action_start">Starten</string>
     <string name="player_previous_screen">Vorherige Seite</string>
     <string name="player_quick_check">Kurzcheck · %1$s von %2$s</string>
+    <!-- Shown on a wrong answer the learner can still fix right away. "Not quite" means "that isn't right", not "better luck next time". -->
     <string name="player_notice_self_correct">Noch nicht ganz. Schau noch einmal hin und korrigier es selbst. Prüf dann deine Antwort.</string>
     <string name="player_notice_answer_not_saved">Deine Antwort wurde hier nicht gespeichert. Beantworte die Frage noch einmal, um die Lektion abzuschließen.</string>
     <string name="player_notice_picture_ready">Das Bild zu dieser Frage hat noch gefehlt. Beantworte die Frage, um die Lektion abzuschließen.</string>
@@ -198,6 +199,7 @@
     <string name="player_verdict_correct">Richtig!</string>
     <string name="player_verdict_guess">Hier ist die Antwort</string>
     <string name="player_verdict_guess_right">Gut geraten!</string>
+    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
     <string name="player_verdict_incorrect">Noch nicht ganz</string>
     <string name="player_verdict_sample_answer">Hier ist eine gute Antwort</string>
     <string name="player_verdict_typo">Richtig, achte auf die Rechtschreibung</string>
@@ -240,6 +242,7 @@
     <string name="player_in_your_own_words">In deinen eigenen Worten</string>
     <string name="player_cant_write_now">Ich kann gerade nicht schreiben</string>
     <string name="player_dont_know_yet">Ich weiß es noch nicht</string>
+    <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Erkläre zuerst</string>
     <string name="player_check_failed">Wir konnten deine Antwort diesmal nicht prüfen. Versuch es noch einmal.</string>
     <string name="player_still_checking">Wir prüfen noch. Das dauert länger als üblich.</string>
@@ -258,6 +261,7 @@
     <string name="player_phase_write_line">Wir erstellen Seite %1$d…</string>
     <string name="player_writing_note">Das dauert normalerweise ein bis zwei Minuten. Die Lektion öffnet sich hier, sobald sie fertig ist.</string>
     <string name="player_ready_while_waiting">Bereit für die Wartezeit</string>
+    <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
     <string name="player_ready_instead">Bereit als Alternative</string>
     <plurals name="player_review_ideas">
         <item quantity="one">%1$s Inhalt wiederholen</item>

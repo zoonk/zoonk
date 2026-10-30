@@ -220,6 +220,7 @@
     <string name="subscription_answer_free_calls">Llamadas de práctica, con límites más bajos que en Plus (las tareas de expresión oral para exámenes están incluidas en Plus)</string>
     <string name="subscription_question_unlimited">¿Es Plus realmente ilimitado?</string>
     <string name="subscription_answer_unlimited">Casi. Las lecciones, los objetivos y tu Compañero solo tienen límites para detener bots y herramientas automatizadas, no a quienes están aprendiendo. Las llamadas de expresión oral tienen límites diarios y mensuales, más altos que en el plan gratuito.</string>
+    <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Lee nuestra política de uso responsable</string>
     <string name="subscription_question_cancel">¿Qué pasa si cancelo?</string>
     <string name="subscription_answer_cancel">Conservas Plus hasta el final del periodo que ya has pagado. Después vuelves al plan gratuito y conservas tus objetivos y tu progreso.</string>

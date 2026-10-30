@@ -99,6 +99,7 @@
         <item quantity="one">Noch %d Frage</item>
         <item quantity="other">Noch %d Fragen</item>
     </plurals>
+    <!-- %d is how many right answers it takes to win the challenge, not how many are still missing. -->
     <plurals name="checkpoint_right_to_win">
         <item quantity="one">Noch %d richtige Antwort zum Sieg</item>
         <item quantity="other">Noch %d richtige Antworten zum Sieg</item>

@@ -125,6 +125,7 @@
     <string name="stats_see_all">Ver tudo</string>
     <string name="stats_best_day">Melhor dia</string>
     <string name="stats_best_time">Melhor horário</string>
+    <!-- Noun row label for how much the scores varied over the week; its value is the range from the lowest to the highest weekday score, such as "62%–80%". -->
     <string name="stats_week_spread">Distribuição na semana</string>
     <string name="stats_range">%1$s–%2$s</string>
     <string name="stats_brain_power">Poder Mental</string>
@@ -139,6 +140,7 @@
     <string name="stats_to_go">Faltam %1$s</string>
     <string name="stats_next_belt">Próxima faixa</string>
     <string name="stats_belt_at">%1$s com %2$s de Poder Mental</string>
+    <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">Todas as faixas conquistadas</string>
     <string name="stats_belt_earned">Conquistada</string>
     <string name="stats_belt_current">Atual</string>
@@ -170,6 +172,7 @@
         <item quantity="other">Atividades: %1$s</item>
     </plurals>
     <string name="stats_day_no_study">%1$s · Sem estudo</string>
+    <!-- %1$s is a date; %2$s is how many activities the learner did that day, as in "Nov 3 · 4 activities". -->
     <plurals name="stats_day_activities">
         <item quantity="one">%1$s · Atividades: %2$s</item>
         <item quantity="many">%1$s · Atividades: %2$s</item>
@@ -183,6 +186,7 @@
     <string name="stats_of_all_answers">De todas as suas respostas</string>
     <string name="stats_correct_of_total">%1$s de %2$s</string>
     <string name="stats_period">Período</string>
+    <!-- Under "Period", a number of days such as "90 days": the stats count those days back from today. -->
     <string name="stats_back_from_today">Até hoje</string>
     <plurals name="stats_days">
         <item quantity="one">%1$s dia</item>
@@ -225,9 +229,11 @@
     <string name="stats_throughout_day">Ao longo do dia</string>
     <string name="stats_any_day">Qualquer dia</string>
     <string name="stats_any_time">Qualquer horário</string>
+    <!-- Answers given from midnight to 6 AM. -->
     <string name="stats_night">Madrugada</string>
     <string name="stats_morning">Manhã</string>
     <string name="stats_afternoon">Tarde</string>
+    <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">Noite</string>
     <plurals name="stats_days_even">
         <item quantity="one">A diferença entre seus dias é de até %1$d ponto, então qualquer dia serve.</item>

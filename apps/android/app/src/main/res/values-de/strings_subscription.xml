@@ -209,6 +209,7 @@
     <string name="subscription_answer_free_calls">Übungsgespräche mit niedrigeren Limits als bei Plus (Sprechaufgaben für Prüfungen gibt es mit Plus)</string>
     <string name="subscription_question_unlimited">Ist Plus wirklich unbegrenzt?</string>
     <string name="subscription_answer_unlimited">Fast. Für Lektionen, Ziele und deinen Kumpel gibt es nur Limits, um Bots und automatisierte Tools zu stoppen, nicht aber Lernende. Für Gespräche gibt es tägliche und monatliche Limits, die höher sind als im Free-Tarif.</string>
+    <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Lies unsere Richtlinie zur fairen Nutzung</string>
     <string name="subscription_question_cancel">Was passiert, wenn ich kündige?</string>
     <string name="subscription_answer_cancel">Du behältst Plus bis zum Ende des Zeitraums, für den du bereits bezahlt hast. Danach wechselst du zurück zum Free-Tarif und behältst deine Ziele und deinen Fortschritt.</string>

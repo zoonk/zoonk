@@ -94,6 +94,7 @@
     <string name="generation_understanding_read_line_3">Vérification du type d’objectif : examen, langue ou sujet…</string>
     <string name="generation_understanding_dates">Vérification des dates d’examen</string>
     <string name="generation_understanding_dates_line_1">Recherche du calendrier des examens…</string>
+    <!-- Shown while reading an exam's calendar. "Your year" is the year the learner takes the exam. -->
     <string name="generation_understanding_dates_line_2">Recherche des dates pour ton année…</string>
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">Création de ton plan</string>

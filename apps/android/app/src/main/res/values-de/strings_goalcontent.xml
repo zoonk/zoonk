@@ -273,6 +273,7 @@
     <string name="goalcontent_practice_daily_cap">Das war die zusätzliche Übung für heute. In deiner morgigen Lerneinheit geht es mit diesem Kapitel weiter.</string>
     <string name="goalcontent_practice_nothing">In diesem Kapitel gibt es noch nichts zu üben.</string>
     <string name="goalcontent_practice_failed">Das hat nicht geklappt. Versuch es gleich noch einmal.</string>
+    <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->
     <string name="goalcontent_for_reference">Zum Nachschlagen</string>
     <string name="goalcontent_chapter_summary">Kapitelzusammenfassung</string>
     <string name="goalcontent_skills">Fähigkeiten</string>

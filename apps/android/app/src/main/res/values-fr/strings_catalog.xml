@@ -148,7 +148,7 @@
     <string name="catalog_subject_tech">Technologie</string>
     <string name="catalog_title">Explorer les cours</string>
     <string name="catalog_category_title">Cours : %1$s</string>
-    <!-- The goal box's example after "I want to", so it starts in lowercase. -->
+    <!-- The goal box's example after "I want to", so it starts in lowercase. "Data analyst" is the job the learner wants. -->
     <string name="catalog_goal_example">devenir analyste de données d’ici juin</string>
     <string name="catalog_subtitle">Commence par un cours ou dis à Zoonk ce que tu prépares.</string>
     <string name="catalog_all">Tout</string>
@@ -202,6 +202,7 @@
         <item quantity="many">pour terminer tout le cours en partant de zéro, à raison de %1$d minutes par jour, du lundi au vendredi.</item>
         <item quantity="other">pour terminer tout le cours en partant de zéro, à raison de %1$d minutes par jour, du lundi au vendredi.</item>
     </plurals>
+    <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="catalog_plan_finish_around">En commençant aujourd’hui, tu terminerais vers le %1$s.</string>
     <string name="catalog_plan_today">Aujourd’hui</string>
     <plurals name="catalog_plan_lessons">

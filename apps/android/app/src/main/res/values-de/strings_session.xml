@@ -117,6 +117,7 @@
         <item quantity="one">%d Frage, ohne Hinweise</item>
         <item quantity="other">%d Fragen, ohne Hinweise</item>
     </plurals>
+    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic, weakest first. -->
     <plurals name="session_block_full_review_questions">
         <item quantity="one">%d Frage zu allen Themen, deine schwächsten zuerst</item>
         <item quantity="other">%d Fragen zu allen Themen, deine schwächsten zuerst</item>

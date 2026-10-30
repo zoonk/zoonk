@@ -68,6 +68,7 @@
     <string name="search_group_new_goal">Neues Ziel</string>
     <string name="search_continue">Heutige Lerneinheit fortsetzen</string>
     <string name="search_take_mock">Probeprüfung machen</string>
+    <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
     <string name="search_take_mock_detail">Ganz, halb oder ein Fach</string>
     <string name="search_practice_mistakes">Deine Fehler üben</string>
     <string name="search_ask_buddy">Frag %1$s…</string>

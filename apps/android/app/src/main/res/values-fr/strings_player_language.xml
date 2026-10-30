@@ -38,7 +38,7 @@
     <string name="player_language_which_means_this">Lequel veut dire ça ?</string>
     <string name="player_language_what_do_you_hear">Qu’entends-tu ?</string>
     <string name="player_language_play">Écouter</string>
-    <!-- Stops the sentence playing. -->
+    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
     <string name="player_language_stop">Arrêter</string>
     <string name="player_language_play_pronunciation">Écouter la prononciation</string>
     <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->

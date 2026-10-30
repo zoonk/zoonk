@@ -222,10 +222,14 @@
     <string name="tutor_offer_call">Un court appel à l’oral, à ton niveau.</string>
     <string name="tutor_offer_mock">Passer un examen blanc</string>
     <string name="tutor_offer_mock_description">Quand tu veux : une journée entière ou une demi-journée d’examen</string>
+    <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
     <string name="tutor_offer_mock_by_subject">Quand tu veux : une journée entière, une demi-journée ou une matière d’examen</string>
     <string name="tutor_offer_mock_plus">Les examens blancs sont inclus dans Plus : quand tu veux et chaque semaine dans ton plan.</string>
+    <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_weekly">Un entraînement chaque semaine dans ton plan, avec chaque texte corrigé.</string>
+    <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_biweekly">Un entraînement toutes les deux semaines dans ton plan, avec chaque texte corrigé.</string>
+    <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_final_weeks">Un entraînement pendant les dernières semaines avant l’examen, avec chaque texte corrigé.</string>
     <string name="tutor_offer_essay_plus">L’entraînement à la rédaction avec correction est inclus dans Plus.</string>
     <string name="tutor_offer_mistakes">Carnet d’erreurs</string>
@@ -240,6 +244,7 @@
         <item quantity="other">Redis %d mots</item>
     </plurals>
     <string name="tutor_offer_logbook">Journal de bord</string>
+    <!-- Describes the Logbook: what the learner did this week compared with the week before, and what comes next. -->
     <string name="tutor_offer_logbook_description">Ce que tu as fait cette semaine et la précédente, et ce qui vient ensuite.</string>
     <string name="tutor_offer_memory">Mémoire</string>
     <string name="tutor_offer_memory_description">Consulte, corrige ou supprime ce que ton Compagnon retient de toi.</string>
@@ -248,6 +253,7 @@
     <string name="tutor_offer_plus">Plus</string>
     <string name="tutor_offer_plus_description">Ce que comprend Plus et son prix.</string>
     <string name="tutor_offer_plus_subscribed">Ta formule et sa facturation.</string>
+    <!-- Button that opens the Zoonk Plus page, with what Plus includes and its price. Not "see more". -->
     <string name="tutor_offer_see_plus">Découvrir Plus</string>
     <string name="tutor_offer_manage">Gérer</string>
     <!-- A card's title naming the change the buddy suggests: a noun phrase, not an action. -->

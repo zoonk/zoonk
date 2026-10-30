@@ -74,7 +74,9 @@
     <string name="speaking_rated_on">Se evalúa según %1$s.</string>
     <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s tareas en una llamada</string>
+    <!-- A band is the exam's score for each criterion. -->
     <string name="speaking_mock_ielts">Una breve prueba de expresión oral con un examinador. Después, recibirás una banda estimada para cada criterio.</string>
+    <!-- A band is the exam's score for each criterion. -->
     <string name="speaking_mock_toefl">Repite frases y haz una breve entrevista con un examinador. Después, recibirás una banda estimada del 1 al 6 para cada criterio.</string>
     <string name="speaking_mock_start">Empezar el simulacro</string>
     <string name="speaking_mock_opens">Tu simulacro se abrirá en cuanto esté listo.</string>

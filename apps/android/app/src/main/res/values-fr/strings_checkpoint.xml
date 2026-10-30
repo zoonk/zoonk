@@ -104,6 +104,7 @@
         <item quantity="many">Encore %d questions</item>
         <item quantity="other">Encore %d questions</item>
     </plurals>
+    <!-- %d is how many right answers it takes to win the challenge, not how many are still missing. -->
     <plurals name="checkpoint_right_to_win">
         <item quantity="one">Encore %d bonne réponse pour gagner</item>
         <item quantity="many">Encore %d bonnes réponses pour gagner</item>

@@ -84,7 +84,7 @@
     <string name="mock_chooser_see_plus">Plus ansehen</string>
     <string name="mock_chooser_plus">Mit Plus kannst du jederzeit Probeprüfungen machen und jede Woche eine in deinem Plan.</string>
     <string name="mock_chooser_one_subject">Ein Fach</string>
-    <!-- After a mock's parts or subjects, when it leaves the exam day's written part out. -->
+    <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
     <string name="mock_chooser_objective_only">nur der objektive Teil</string>
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
     <string name="mock_chooser_written">+ %1$s</string>

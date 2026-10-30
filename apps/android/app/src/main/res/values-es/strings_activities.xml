@@ -94,7 +94,7 @@
     <string name="activities_guess_too_big">Tu suposición es unas %1$s veces mayor que el valor real.</string>
     <!-- How many times smaller the guess was than the real value, like "3.5". -->
     <string name="activities_guess_too_small">Tu suposición es unas %1$s veces menor que el valor real.</string>
-    <!-- Shows the state after the change, named like "With the assembly line". -->
+    <!-- Button that shows the "after" state of a before-and-after comparison; %1$s names it, like "With the assembly line". -->
     <string name="activities_before_after_show">Mostrar el después: %1$s</string>
     <string name="activities_before_after_no_change">Sin cambios</string>
     <!-- How a fact shrank, like "3 times less". -->
@@ -139,7 +139,7 @@
     <string name="activities_find_error_wrong_step">El paso incorrecto es el %1$d.</string>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Pasos</string>
-    <!-- Before why a pick is wrong, like "Not quite: that adds the tax first." -->
+    <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
     <string name="activities_solver_not_quite">No del todo:</string>
     <!-- Before why the right pick is right. -->
     <string name="activities_solver_right">Correcto:</string>

@@ -325,6 +325,7 @@
     <string name="conversation_criterion_vocabulary">Vocabulário</string>
     <string name="conversation_criterion_pronunciation">Pronúncia</string>
     <string name="conversation_criterion_questions">Perguntas e respostas</string>
+    <!-- A speaking exam criterion: how varied the learner's vocabulary and grammar are. -->
     <string name="conversation_criterion_range">Variedade de linguagem</string>
     <string name="conversation_criterion_task">Realização da tarefa</string>
     <!-- An estimate on the exam's scale for points, such as "18–20 of 25 points". -->

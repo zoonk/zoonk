@@ -67,6 +67,7 @@
     <string name="language_unit_progress">Fortschritt</string>
     <string name="language_unit_practice">Üben</string>
     <string name="language_unit_mistakes">Deine Fehler</string>
+    <!-- Heading over material to look things up in, such as grammar tips and words, rather than lessons to do. -->
     <string name="language_unit_reference">Zum Nachschlagen</string>
     <string name="language_unit_grammar_tips">Grammatiktipps</string>
     <string name="language_unit_words">Wörter in dieser Einheit</string>
@@ -123,7 +124,7 @@
     <!-- Skips the alphabet lesson for a learner who reads the script. -->
     <string name="language_alphabet_skip">Ich kann es schon lesen</string>
     <string name="language_alphabet_skip_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
-    <!-- Opens the words to say again. -->
+    <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">Sprich sie aus</string>
     <!-- Opens the noticed typos. -->
     <string name="language_typos_open">Öffnen</string>

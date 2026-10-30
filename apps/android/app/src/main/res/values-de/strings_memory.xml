@@ -45,6 +45,7 @@
     <string name="memory_empty_off">Hier ist nichts. Zoonk speichert keine Notizen über dich, solange Erinnerungen ausgeschaltet sind.</string>
     <string name="memory_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <string name="memory_category_goals">Ziele</string>
+    <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
     <string name="memory_category_background">Hintergrund</string>
     <string name="memory_category_routine">Alltag</string>
     <string name="memory_category_preferences">Vorlieben</string>
@@ -61,10 +62,12 @@
     <string name="memory_fact_options">Optionen für „%1$s“</string>
     <string name="memory_edit">Bearbeiten</string>
     <string name="memory_delete">Löschen</string>
+    <!-- Title of the dialog that edits one fact Zoonk remembers about the learner. -->
     <string name="memory_edit_title">Erinnerung bearbeiten</string>
     <string name="memory_edit_description">Formuliere es so, wie es für dich stimmt.</string>
     <string name="memory_edit_label">Was Zoonk sich merkt</string>
     <string name="memory_download">Meine Erinnerungen herunterladen</string>
+    <!-- Everything Zoonk remembers about the learner, downloaded as one file. -->
     <string name="memory_download_description">Alles, was du in deinen Erinnerungen gespeichert hast, als eine Datei</string>
     <string name="memory_sensitive_note">Zoonk speichert keine Angaben zu Gesundheit, Religion oder andere sensible Daten, außer wenn du darum bittest.</string>
     <string name="memory_updated">Erinnerungen aktualisiert:</string>

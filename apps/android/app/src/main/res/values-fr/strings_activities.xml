@@ -94,7 +94,7 @@
     <string name="activities_guess_too_big">Ton estimation est environ %1$s fois trop grande.</string>
     <!-- How many times smaller the guess was than the real value, like "3.5". -->
     <string name="activities_guess_too_small">Ton estimation est environ %1$s fois trop petite.</string>
-    <!-- Shows the state after the change, named like "With the assembly line". -->
+    <!-- Button that shows the "after" state of a before-and-after comparison; %1$s names it, like "With the assembly line". -->
     <string name="activities_before_after_show">Afficher après : %1$s</string>
     <string name="activities_before_after_no_change">Aucun changement</string>
     <!-- How a fact shrank, like "3 times less". -->
@@ -139,7 +139,7 @@
     <string name="activities_find_error_wrong_step">L’étape incorrecte est l’étape %1$d.</string>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Étapes</string>
-    <!-- Before why a pick is wrong, like "Not quite: that adds the tax first." -->
+    <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
     <string name="activities_solver_not_quite">Pas tout à fait :</string>
     <!-- Before why the right pick is right. -->
     <string name="activities_solver_right">Correct :</string>

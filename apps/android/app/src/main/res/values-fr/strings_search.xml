@@ -68,6 +68,7 @@
     <string name="search_group_new_goal">Nouvel objectif</string>
     <string name="search_continue">Continuer la séance du jour</string>
     <string name="search_take_mock">Passer un examen blanc</string>
+    <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
     <string name="search_take_mock_detail">Complet, moitié ou une seule matière</string>
     <string name="search_practice_mistakes">Réviser tes erreurs</string>
     <string name="search_ask_buddy">Demander à %1$s…</string>

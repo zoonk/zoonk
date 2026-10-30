@@ -103,7 +103,7 @@
     <string name="load_failed_try_again">Tentar de novo</string>
     <string name="suggestion_view">Ver</string>
     <string name="suggestion_save_failed">Não foi possível salvar. Tente de novo.</string>
-    <!-- Under the daily time chips; opens a menu of every other daily study time. -->
+    <!-- Under the daily time chips; opens a menu of other amounts of daily study time, such as "45 min". Not a time of day. -->
     <string name="other_time">Outro horário…</string>
     <string name="disclosure_expanded">Expandido</string>
     <string name="disclosure_collapsed">Recolhido</string>

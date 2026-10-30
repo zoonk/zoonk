@@ -38,7 +38,7 @@
     <string name="player_language_which_means_this">¿Cuál significa esto?</string>
     <string name="player_language_what_do_you_hear">¿Qué oyes?</string>
     <string name="player_language_play">Reproducir</string>
-    <!-- Stops the sentence playing. -->
+    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
     <string name="player_language_stop">Detener</string>
     <string name="player_language_play_pronunciation">Reproducir pronunciación</string>
     <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->

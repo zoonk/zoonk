@@ -220,6 +220,7 @@
     <string name="subscription_answer_free_calls">Appels d’entraînement avec des limites plus basses que Plus (les tâches d’expression orale pour les examens sont incluses dans Plus)</string>
     <string name="subscription_question_unlimited">Plus est-il vraiment illimité ?</string>
     <string name="subscription_answer_unlimited">Presque. Les leçons, les objectifs et ton Compagnon ont des limites qui visent uniquement à bloquer les robots et les outils automatisés, pas les personnes qui apprennent. Les appels d’expression orale ont des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite.</string>
+    <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Lire notre politique d’utilisation équitable</string>
     <string name="subscription_question_cancel">Que se passe-t-il si je résilie ?</string>
     <string name="subscription_answer_cancel">Tu gardes Plus jusqu’à la fin de la période déjà payée. Tu repasses ensuite à la formule gratuite et tu conserves tes objectifs et ta progression.</string>

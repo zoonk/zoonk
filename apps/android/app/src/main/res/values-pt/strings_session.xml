@@ -123,6 +123,7 @@
         <item quantity="many">%d perguntas, sem dicas</item>
         <item quantity="other">%d perguntas, sem dicas</item>
     </plurals>
+    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic, weakest first. -->
     <plurals name="session_block_full_review_questions">
         <item quantity="one">%d pergunta sobre cada tópico, começando pelos que você menos domina</item>
         <item quantity="many">%d perguntas sobre cada tópico, começando pelos que você menos domina</item>

@@ -104,6 +104,7 @@
         <item quantity="many">%d perguntas restantes</item>
         <item quantity="other">%d perguntas restantes</item>
     </plurals>
+    <!-- %d is how many right answers it takes to win the challenge, not how many are still missing. -->
     <plurals name="checkpoint_right_to_win">
         <item quantity="one">%d acerto para vencer</item>
         <item quantity="many">%d acertos para vencer</item>

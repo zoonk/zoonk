@@ -75,8 +75,9 @@
     </plurals>
     <string name="questions_true">Verdadeiro</string>
     <string name="questions_false">Falso</string>
-    <!-- How exams like Cebraspe word a statement's verdict. -->
+    <!-- An answer option judging a statement right, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
     <string name="questions_right">Certo</string>
+    <!-- An answer option judging a statement wrong, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
     <string name="questions_wrong">Errado</string>
     <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Deixar em branco</string>
@@ -104,6 +105,7 @@
     <string name="questions_invalid_integer">Digite um número inteiro, como 12.</string>
     <string name="questions_feedback_label">Resultado da resposta</string>
     <string name="questions_correct">Correto!</string>
+    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
     <string name="questions_not_quite">Não foi dessa vez</string>
     <string name="questions_left_blank">Deixou em branco</string>
     <string name="questions_dont_know_yet">Ainda não sei</string>

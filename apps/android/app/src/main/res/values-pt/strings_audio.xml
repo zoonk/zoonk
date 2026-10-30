@@ -29,8 +29,9 @@
     <string name="audio_here_is_what_it_says">%1$s Veja o que o áudio diz:</string>
     <string name="audio_try_again">Tentar de novo</string>
     <string name="audio_record">Gravar</string>
-    <!-- Stops recording the learner. -->
+    <!-- Button that stops recording the learner, a short label like a media player's Stop. A hint names it: "Tap Stop to check." -->
     <string name="audio_record_stop">Parar</string>
+    <!-- Shown while recording the learner. "Stop" is the label of the button that stops recording, so use the same word as that button. -->
     <string name="audio_listening">Ouvindo… Toque em Parar para conferir.</string>
     <string name="audio_checking">Conferindo…</string>
     <string name="audio_checking_slow">Ainda estamos conferindo. Está demorando mais que o normal.</string>

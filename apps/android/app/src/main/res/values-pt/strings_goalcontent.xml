@@ -290,6 +290,7 @@
     <string name="goalcontent_practice_daily_cap">Por hoje, a prática extra acabou. A sessão de amanhã continua este capítulo.</string>
     <string name="goalcontent_practice_nothing">Ainda não há nada para praticar neste capítulo.</string>
     <string name="goalcontent_practice_failed">Não deu certo. Tente de novo daqui a pouco.</string>
+    <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->
     <string name="goalcontent_for_reference">Para consultar</string>
     <string name="goalcontent_chapter_summary">Resumo do capítulo</string>
     <string name="goalcontent_skills">Habilidades</string>

@@ -220,6 +220,7 @@
     <string name="subscription_answer_free_calls">Conversas de prática com limites menores que no Plus (tarefas de conversação para provas estão incluídas no Plus)</string>
     <string name="subscription_question_unlimited">O Plus é mesmo ilimitado?</string>
     <string name="subscription_answer_unlimited">Quase. As aulas, metas e conversas com seu Parceiro têm limites só para impedir robôs e ferramentas automatizadas, não quem está aprendendo. As conversas de prática têm limites diários e mensais, maiores que no plano Grátis.</string>
+    <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Leia nossa política de uso justo</string>
     <string name="subscription_question_cancel">O que acontece se eu cancelar?</string>
     <string name="subscription_answer_cancel">Você mantém o Plus até o fim do período que já pagou. Depois, volta para o plano Grátis e mantém suas metas e seu progresso.</string>

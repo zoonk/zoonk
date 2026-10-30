@@ -68,6 +68,7 @@
     <string name="search_group_new_goal">Nova meta</string>
     <string name="search_continue">Continuar a sessão de hoje</string>
     <string name="search_take_mock">Fazer um simulado</string>
+    <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
     <string name="search_take_mock_detail">Completo, metade ou uma matéria</string>
     <string name="search_practice_mistakes">Praticar o que você errou</string>
     <string name="search_ask_buddy">Pergunte para %1$s…</string>

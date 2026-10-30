@@ -161,6 +161,7 @@
     <string name="exam_checklist_black_pen">Un bolígrafo negro de cuerpo transparente</string>
     <string name="exam_checklist_route">La ruta para llegar, con tiempo de sobra</string>
     <string name="exam_checklist_exam_time">La hora de cierre de puertas y de inicio del examen</string>
+    <!-- An item on the checklist before the exam: sleeping well the night before it. -->
     <string name="exam_checklist_sleep">Dormir bien la noche anterior</string>
     <string name="exam_checklist_materials">Lo que tu profesor te permita llevar, como un bolígrafo o una calculadora</string>
     <string name="exam_tools_title">Qué puedes usar</string>
@@ -279,7 +280,7 @@
     <string name="exam_rule_irt">Fallar una pregunta fácil penaliza más que fallar una difícil, así que resuelve primero las fáciles.</string>
     <string name="exam_rule_raw_title">Cada respuesta correcta cuenta un punto</string>
     <string name="exam_rule_raw">Responde a todas las preguntas.</string>
-    <!-- %1$s and %2$s are exam_calibration_right: "In your mock exams: sure, 8 of 10 right. Unsure, 2 of 6 right." -->
+    <!-- How the learner did on the answers they marked as sure and on those they marked as unsure. %1$s and %2$s are counts like "8 of 10 right". -->
     <string name="exam_calibration">En tus simulacros: con seguridad, %1$s. Sin seguridad, %2$s.</string>
     <plurals name="exam_calibration_right">
         <item quantity="one">%1$d de %2$d correctas</item>

@@ -91,6 +91,7 @@
     <string name="buddy_page_grows_young">Devient jeune à %1$s</string>
     <string name="buddy_page_grows_adult">Devient adulte à %1$s</string>
     <string name="buddy_page_remembers">Ce que %1$s retient</string>
+    <!-- Under the buddy's glasses: the learner picks a pair they've earned, and the buddy wears it. -->
     <string name="buddy_page_glasses_description">Choisis une paire gagnée pour la porter.</string>
     <string name="buddy_page_first_steps">Premiers pas</string>
     <string name="buddy_page_first_steps_done">Tu as essayé tout ce que ton plan utilise.</string>

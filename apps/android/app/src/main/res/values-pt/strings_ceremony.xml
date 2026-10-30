@@ -51,6 +51,7 @@
     <string name="ceremony_glasses_new">Óculos novos!</string>
     <string name="ceremony_glasses_new_detail">Eles vêm com seu parceiro.</string>
     <string name="ceremony_continue">Continuar</string>
+    <!-- Button after earning glasses: puts them on the learner's buddy. -->
     <string name="ceremony_wear">Usar</string>
     <string name="ceremony_not_now">Agora não</string>
 </resources>

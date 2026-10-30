@@ -73,7 +73,9 @@
     <string name="speaking_rated_on">Bewertet nach %1$s.</string>
     <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s Aufgaben in einem Gespräch</string>
+    <!-- A band is the exam's score for each criterion. -->
     <string name="speaking_mock_ielts">Eine kurze mündliche Prüfung mit einer prüfenden Person. Danach gibt es für jedes Kriterium eine geschätzte Bandstufe.</string>
+    <!-- A band is the exam's score for each criterion. -->
     <string name="speaking_mock_toefl">Wiederhole Sätze und führe dann ein kurzes Gespräch mit einer prüfenden Person. Danach gibt es für jedes Kriterium eine geschätzte Bandstufe von 1 bis 6.</string>
     <string name="speaking_mock_start">Probeprüfung starten</string>
     <string name="speaking_mock_opens">Deine Probeprüfung öffnet sich, sobald sie bereit ist.</string>

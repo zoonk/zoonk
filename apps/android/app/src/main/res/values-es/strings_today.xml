@@ -244,13 +244,14 @@
     <string name="today_exam_today">%1$s hoy</string>
     <string name="today_time_left">Quedan %1$s</string>
     <string name="today_time_studied">%1$s de estudio</string>
-    <!-- %1$s and %2$s are formatted numbers: "2 of 5 done". -->
+    <!-- How many of today's session steps are done; %1$s and %2$s are formatted numbers: "2 of 5 done". -->
     <string name="today_steps_done">%1$s de %2$s completados</string>
     <!-- %1$s is a duration, such as "55 min". -->
     <string name="today_fresh_start_welcome_back">¡Te damos la bienvenida de nuevo! Hoy tienes menos trabajo, unos %1$s, para que te resulte fácil retomar el ritmo.</string>
     <string name="today_fresh_start_welcome_back_trial_ended">¡Te damos la bienvenida de nuevo! Hoy te llevará unos %1$s, para que te resulte fácil retomar el ritmo.</string>
     <string name="today_fresh_start_new_phase">Hoy empieza una nueva fase, con un calentamiento sencillo para empezar.</string>
     <string name="today_fresh_start_new_week">Una nueva semana. Hoy empiezas con un calentamiento sencillo.</string>
+    <!-- %d is how many of today's session steps are done. -->
     <plurals name="today_done_count">
         <item quantity="one">%d completados</item>
         <item quantity="many">%d completados</item>
@@ -402,7 +403,7 @@
     <string name="today_practice_with_buddy">Practicar con %1$s</string>
     <string name="today_already_know_this">¿Ya sabes esto?</string>
     <string name="today_take_the_test">Hacer la prueba</string>
-    <!-- %1$s is a formatted count of lessons. -->
+    <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
     <string name="today_earlier_work">Trabajo anterior sin terminar · %1$s</string>
     <string name="today_earlier_work_detail">Empieza por aquí. Al iniciar tu sesión, el plan se ajusta al tiempo que tienes hoy.</string>
     <string name="today_practice_anytime">Practica cuando quieras</string>
@@ -419,12 +420,13 @@
         <item quantity="many">Mañana podrás acceder a %d</item>
         <item quantity="other">Mañana podrás acceder a %d</item>
     </plurals>
-    <!-- %1$s is the mock's date, such as Nov 3. -->
+    <!-- %1$s is the mock's date, such as Nov 3. Today is shorter so time is set aside for that mock. -->
     <string name="today_mock_funding">Día más ligero: ahorramos tiempo para el simulacro del %1$s</string>
-    <!-- %1$s is the mock's date, such as Nov 3. -->
+    <!-- %1$s is the mock's date, such as Nov 3. Zoonk sets time aside for that mock. -->
     <string name="today_mock_funding_welcome_back">Ahorramos tiempo para el simulacro del %1$s</string>
     <string name="today_take_mock">Haz un simulacro</string>
     <string name="today_take_mock_detail">Cuando quieras: un día completo de examen o medio día</string>
+    <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
     <string name="today_take_mock_detail_by_subject">Cuando quieras: un día completo de examen, medio día o una asignatura</string>
     <string name="today_continue_mock">Continúa tu simulacro</string>
     <string name="today_continue_mock_detail">Está donde lo dejaste</string>
@@ -438,10 +440,12 @@
     <string name="today_insight_add_it">Añadir</string>
     <string name="today_insight_no_thanks">No, gracias</string>
     <string name="today_insight_keep_it">Mantenerlo</string>
-    <!-- %1$s is a time of day, such as 7:00 PM. -->
+    <!-- %1$s is a time of day, such as "19:00". Moves the time of day the learner studies, not how long they study. -->
     <string name="today_insight_move_time">Cambiar mi tiempo de estudio a %1$s</string>
     <string name="today_insight_got_it">Entendido</string>
+    <!-- Confirms that the time of day the learner studies moved, not how long they study. -->
     <string name="today_insight_time_moved">Tiempo de estudio cambiado.</string>
+    <!-- After declining to move it: the time of day the learner studies stays the same. -->
     <string name="today_insight_time_stays">Tu tiempo de estudio sigue igual.</string>
     <string name="today_plan_stays">Tu plan sigue como estaba.</string>
     <string name="today_noted">Anotado.</string>
@@ -456,6 +460,7 @@
     <string name="today_plan_suggestion">Sugerencia para el plan</string>
     <string name="today_plan_apply">Aplicar</string>
     <string name="today_plan_use_my_date">Usar mi fecha de todos modos</string>
+    <!-- Declines a suggested change to the plan's dates and keeps the learner's own plan. -->
     <string name="today_plan_keep_mine">Mantener el mío</string>
     <string name="today_next_suggestion">Siguiente sugerencia</string>
     <string name="today_notice_falling_behind">Cambio en el plan</string>
