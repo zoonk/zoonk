@@ -10,7 +10,6 @@
       "BETTER_AUTH_SECRET",
       "BLOB_*",
       "CRON_SECRET",
-      "DATABASE_*",
       "E2E_API_URL",
       "E2E_TESTING",
       "GOOGLE_*",
@@ -22,6 +21,7 @@
       "SENTRY_AUTH_TOKEN",
       "STRIPE_*",
       "VERCEL_*",
+      "!VERCEL_PLUGIN_*",
       "PORTLESS_*",
       "PRIVATE_BLOB_*",
       "ZOONK_DEV_PROJECT"
@@ -30,6 +30,7 @@
     "passThroughEnv": [
       "APP_CACHE_SECRET",
       "CODEX_SANDBOX",
+      "DATABASE_*",
       "MAIN_CACHE_BYPASS_SECRET",
       "ZOONK_DEV_LAUNCHER_PID",
       "ZOONK_QUERY_LOG"
@@ -46,6 +47,7 @@
     "//#quality:fix": { "dependsOn": ["//#lint:fix", "//#format:fix"] },
     "build": {
       "dependsOn": ["db:generate", "^build"],
+      "env": ["DATABASE_*"],
       "outputs": [
         ".next/**",
         "!.next/cache/**",
@@ -57,6 +59,7 @@
     },
     "build:e2e": {
       "dependsOn": ["db:generate", "^build:e2e"],
+      "env": ["DATABASE_*"],
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.e2e.local"],
       "outputs": [
         ".next-e2e/**",
@@ -102,7 +105,7 @@
     "start": { "cache": false, "dependsOn": ["build", "^start"], "persistent": true },
     "test": {
       "dependsOn": ["db:generate", "^db:setup:test", "transit"],
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.test.local"]
+      "inputs": ["$TURBO_DEFAULT$"]
     },
     "test:watch": {
       "cache": false,
