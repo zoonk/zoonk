@@ -15,7 +15,7 @@ msgstr "Antwortmöglichkeiten"
 #: src/_components/answer-option.tsx
 msgctxt "ihtBFm"
 msgid "Your guess"
-msgstr "Dein Tipp"
+msgstr "Deine Vermutung"
 
 #: src/_components/answer-option.tsx
 #: src/essay/essay-labels.tsx
@@ -397,7 +397,7 @@ msgstr "<number>+{points}</number> <words>Brain Power</words>"
 #: src/_components/moment-readouts.tsx
 msgctxt "b73TgX"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} sounded right} one {<number>#</number> of {answered} sounded right} other {<number>#</number> of {answered} sounded right}}"
-msgstr "{correct, plural, =0 {<number>#</number> von {answered} richtig ausgesprochen} one {<number>#</number> von {answered} klang richtig} other {<number>#</number> von {answered} klangen richtig}}"
+msgstr "{correct, plural, =0 {<number>#</number> von {answered} Wörtern richtig ausgesprochen} one {<number>#</number> von {answered} Wörtern richtig ausgesprochen} other {<number>#</number> von {answered} Wörtern richtig ausgesprochen}}"
 
 #: src/_components/moment-readouts.tsx
 msgctxt "mA2Wor"
@@ -839,7 +839,7 @@ msgstr "Heutige Missionen"
 #: src/buddies/buddy-glasses-picker.tsx
 msgctxt "JZBlWy"
 msgid "{current, plural, =0 {# of {target} days with every mission done} one {# of {target} days with every mission done} other {# of {target} days with every mission done}}"
-msgstr "{current, plural, =0 {Bisher an # von {target} Tagen alle Missionen erledigt} other {An # von {target} Tagen alle Missionen erledigt}}"
+msgstr "{current, plural, =0 {An # von {target} Tagen alle Missionen erledigt} other {Alle Missionen an # von {target} Tagen erledigt}}"
 
 #: src/buddies/buddy-glasses-picker.tsx
 msgctxt "0YvqkI"
@@ -1210,7 +1210,7 @@ msgstr "{belt}!"
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "6Vl5-v"
 msgid "{buddy} grew up!"
-msgstr "Neue Wachstumsstufe für {buddy}!"
+msgstr "{buddy} ist gewachsen!"
 
 #. Puts the new glasses on the learner's buddy. The buddy wears them, not the learner.
 #: src/ceremonies/use-ceremony-copy.ts
@@ -1740,13 +1740,13 @@ msgstr "+{points}"
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "fX7dJB"
 msgid "Finishing"
-msgstr "Abschließen"
+msgstr "Für den Abschluss"
 
 #. Heading of a reward row: the Brain Power that winning this challenge earns. Not something still to win.
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "b4H0QH"
 msgid "Winning"
-msgstr "Gewinnen"
+msgstr "Für den Sieg"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
@@ -2877,7 +2877,7 @@ msgstr "{answered, number} von {questions, number} beantwortet"
 #: src/exam/exam-scoring-section.tsx
 msgctxt "y6LdtC"
 msgid "In your mock exams: sure, {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Unsure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr "In deinen Probeprüfungen: bei „sicher“ {sureRight, plural, =0 {# richtige Antworten von {sureAnswered}} other {# von {sureAnswered} richtig}}. Bei „unsicher“ {unsureRight, plural, =0 {# richtige Antworten von {unsureAnswered}} other {# von {unsureAnswered} richtig}}."
+msgstr "In deinen Probeprüfungen: Bei „sicher“ {sureRight, plural, =0 {# von {sureAnswered} richtig} other {# von {sureAnswered} richtig}}. Bei „unsicher“ {unsureRight, plural, =0 {# von {unsureAnswered} richtig} other {# von {unsureAnswered} richtig}}."
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "4YDliw"
@@ -6685,7 +6685,7 @@ msgstr "Mehr anzeigen"
 #: src/mistakes/mistakes-row.tsx
 msgctxt "lLGcbO"
 msgid "{ready, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}} · {tomorrow, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{ready, plural, =0 {# zum Üben bereit} other {# bereit zum Üben}} · {tomorrow, plural, =0 {# morgen zum Üben verfügbar} other {# morgen verfügbar}}"
+msgstr "{ready, plural, =0 {# zum Üben bereit} one {# zum Üben bereit} other {# zum Üben bereit}} · {tomorrow, plural, =0 {# ab morgen verfügbar} one {# ab morgen verfügbar} other {# ab morgen verfügbar}}"
 
 #: src/mistakes/mistakes-row.tsx
 msgctxt "AMKpbi"
@@ -6748,7 +6748,7 @@ msgstr "Rückmeldung zur Antwort"
 #: src/mistakes/practice-step.tsx
 msgctxt "HJwk2o"
 msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
-msgstr "{count, plural, =0 {Keine Fehler korrigiert} one {Fehler korrigiert. Er wird aus deinem Fehlerheft entfernt.} other {# Fehler korrigiert. Sie werden aus deinem Fehlerheft entfernt.}}"
+msgstr "{count, plural, =0 {# Fehler korrigiert} one {# Fehler korrigiert. Er verschwindet aus deinem Fehlerheft.} other {# Fehler korrigiert. Sie verschwinden aus deinem Fehlerheft.}}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
@@ -7182,7 +7182,7 @@ msgstr "{name} kann nicht Teil einer Probeprüfung sein: Es ist eine praktische 
 #: src/mock/mock-notes.tsx
 msgctxt "f32E8d"
 msgid "The exam's practical test can't be part of a mock."
-msgstr "Der praktische Prüfungsteil kann nicht Teil einer Probeprüfung sein."
+msgstr "Der praktische Teil der Prüfung kann nicht in einer Probeprüfung vorkommen."
 
 #: src/mock/mock-notes.tsx
 msgctxt "VNWPif"
@@ -7428,7 +7428,7 @@ msgstr "Zeit"
 #: src/mock/mock-result-insights.tsx
 msgctxt "jSIlJG"
 msgid "{seconds, plural, =0 {# seconds} one {# second} other {# seconds}} per {area} question. Aim for {target} or less."
-msgstr "{seconds, plural, =0 {# Sekunden je Frage} one {# Sekunde pro Frage} other {# Sekunden pro Frage}} im Bereich {area}. Ziel: {target} oder weniger."
+msgstr "{seconds, plural, =0 {# Sekunden} one {# Sekunde} other {# Sekunden}} pro Frage in {area}. Versuch, auf {target} oder weniger zu kommen."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "bll9Ms"
@@ -9736,7 +9736,7 @@ msgstr "Empfehlung einholen"
 #: src/plan/plan-bases-choices.tsx
 msgctxt "Lp5uON"
 msgid "In depth"
-msgstr "Vertieft"
+msgstr "Ausführlich"
 
 #: src/plan/plan-bases-choices.tsx
 msgctxt "eXbuB9"
@@ -10473,7 +10473,7 @@ msgstr "Einstieg nach den Grundlagen: {areas}."
 #: src/plan/use-area-sentence.ts
 msgctxt "XMTtKV"
 msgid "Starting from the basics again: {areas}."
-msgstr "Noch einmal bei den Grundlagen beginnen: {areas}."
+msgstr "Wieder bei den Grundlagen: {areas}."
 
 #: src/plan/use-area-start-texts.ts
 msgctxt "TkZSZs"
@@ -11290,19 +11290,19 @@ msgstr "{days}: täglich {time}"
 #: src/plan/use-weekday-texts.ts
 msgctxt "yZoT4v"
 msgid "Weekly mocks move to {day}."
-msgstr "Die wöchentlichen Probeprüfungen würden auf {day} verschoben."
+msgstr "Wöchentliche Probeprüfungen werden auf {day} verlegt."
 
 #. {day} is a weekday, like "Monday".
 #: src/plan/use-weekday-texts.ts
 msgctxt "qshyFl"
 msgid "Weekly challenges move to {day}."
-msgstr "Die wöchentlichen Herausforderungen würden auf {day} verschoben."
+msgstr "Wöchentliche Herausforderungen werden auf {day} verlegt."
 
 #. {date} is a weekday and day, like "Monday, May 5".
 #: src/plan/use-weekday-texts.ts
 msgctxt "y3TJi_"
 msgid "Your next mock moves to {date}."
-msgstr "Deine nächste Probeprüfung würde auf {date} verschoben."
+msgstr "Deine nächste Probeprüfung wird auf {date} verlegt."
 
 #: src/plan/written-cadence.tsx
 msgctxt "8T3kjt"
@@ -13168,7 +13168,7 @@ msgstr "{count, plural, one {Fehler korrigiert} other {Fehler korrigiert}}"
 #: src/week/logbook-sections.tsx
 msgctxt "_-ONf9"
 msgid "{count, plural, one {Trap hunter badge} other {Trap hunter badges}}"
-msgstr "{count, plural, other {Fallenjäger-Abzeichen}}"
+msgstr "{count, plural, one {Fallenjäger-Abzeichen} other {Fallenjäger-Abzeichen}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "iMjjOH"

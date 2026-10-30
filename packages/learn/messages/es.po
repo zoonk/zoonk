@@ -397,7 +397,7 @@ msgstr "<number>+{points}</number> <words>Poder Mental</words>"
 #: src/_components/moment-readouts.tsx
 msgctxt "b73TgX"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} sounded right} one {<number>#</number> of {answered} sounded right} other {<number>#</number> of {answered} sounded right}}"
-msgstr "{correct, plural, =0 {Has pronunciado bien <number>#</number> de {answered}} one {<number>#</number> de {answered} bien pronunciada} other {<number>#</number> de {answered} bien pronunciadas}}"
+msgstr "{correct, plural, =0 {<number>#</number> de {answered} han sonado bien} one {<number>#</number> de {answered} ha sonado bien} other {<number>#</number> de {answered} han sonado bien}}"
 
 #: src/_components/moment-readouts.tsx
 msgctxt "mA2Wor"
@@ -839,7 +839,7 @@ msgstr "Misiones de hoy"
 #: src/buddies/buddy-glasses-picker.tsx
 msgctxt "JZBlWy"
 msgid "{current, plural, =0 {# of {target} days with every mission done} one {# of {target} days with every mission done} other {# of {target} days with every mission done}}"
-msgstr "{current, plural, =0 {# de {target} días con todas las misiones completadas} other {# de {target} días completando todas las misiones}}"
+msgstr "{current, plural, =0 {# de {target} días con todas las misiones completadas} one {# de {target} días con todas las misiones completadas} other {# de {target} días con todas las misiones completadas}}"
 
 #: src/buddies/buddy-glasses-picker.tsx
 msgctxt "0YvqkI"
@@ -1210,7 +1210,7 @@ msgstr "¡{belt}!"
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "6Vl5-v"
 msgid "{buddy} grew up!"
-msgstr "¡Nueva etapa de crecimiento para {buddy}!"
+msgstr "¡{buddy} ha crecido!"
 
 #. Puts the new glasses on the learner's buddy. The buddy wears them, not the learner.
 #: src/ceremonies/use-ceremony-copy.ts
@@ -1740,13 +1740,13 @@ msgstr "+{points}"
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "fX7dJB"
 msgid "Finishing"
-msgstr "Por completar"
+msgstr "Al completar"
 
 #. Heading of a reward row: the Brain Power that winning this challenge earns. Not something still to win.
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "b4H0QH"
 msgid "Winning"
-msgstr "Por ganar"
+msgstr "Al ganar"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
@@ -1850,7 +1850,7 @@ msgstr "Fase completada"
 #: src/checkpoints/checkpoint-result-details.tsx
 msgctxt "DhzEc-"
 msgid "Trap hunter badge"
-msgstr "Insignia de cazatrampas"
+msgstr "Insignia de cazador de trampas"
 
 #: src/checkpoints/checkpoint-result-details.tsx
 msgctxt "n27vLl"
@@ -2877,7 +2877,7 @@ msgstr "{answered, number} de {questions, number} respondidas"
 #: src/exam/exam-scoring-section.tsx
 msgctxt "y6LdtC"
 msgid "In your mock exams: sure, {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Unsure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr "En tus simulacros: con seguridad, {sureRight, plural, =0 {# respuestas correctas de {sureAnswered}} one {# acierto de {sureAnswered}} other {# aciertos de {sureAnswered}}}. Con dudas, {unsureRight, plural, =0 {# respuestas correctas de {unsureAnswered}} one {# acierto de {unsureAnswered}} other {# aciertos de {unsureAnswered}}}."
+msgstr "En tus simulacros: cuando no tenías dudas, {sureRight, plural, =0 {# aciertos de {sureAnswered}} one {# acierto de {sureAnswered}} other {# aciertos de {sureAnswered}}}. Cuando tenías dudas, {unsureRight, plural, =0 {# aciertos de {unsureAnswered}} one {# acierto de {unsureAnswered}} other {# aciertos de {unsureAnswered}}}."
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "4YDliw"
@@ -6748,7 +6748,7 @@ msgstr "Comentarios sobre la respuesta"
 #: src/mistakes/practice-step.tsx
 msgctxt "HJwk2o"
 msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
-msgstr "{count, plural, =0 {Ningún error corregido} one {Error corregido. Desaparece de tu cuaderno.} other {# errores corregidos. Desaparecen de tu cuaderno.}}"
+msgstr "{count, plural, =0 {# errores corregidos} one {# error corregido. Se elimina de tu cuaderno.} other {# errores corregidos. Se eliminan de tu cuaderno.}}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
@@ -9736,7 +9736,7 @@ msgstr "Obtener una recomendación"
 #: src/plan/plan-bases-choices.tsx
 msgctxt "Lp5uON"
 msgid "In depth"
-msgstr "En profundidad"
+msgstr "A fondo"
 
 #: src/plan/plan-bases-choices.tsx
 msgctxt "eXbuB9"
@@ -10488,13 +10488,13 @@ msgstr "Empiezas {area} el {after}."
 #: src/plan/use-area-start-texts.ts
 msgctxt "Kp3Vrm"
 msgid "You still start {area} on {after}."
-msgstr "El inicio de {area} seguiría siendo el {after}."
+msgstr "La fecha de inicio de {area} sigue siendo el {after}."
 
 #. {after} is a day, like "May 5".
 #: src/plan/use-area-start-texts.ts
 msgctxt "AOIzyB"
 msgid "You still finish {area} around {after}, with all its lessons: everything fits by your date."
-msgstr "Aún podrías terminar {area} hacia el {after}, con todas sus lecciones: todo cabe dentro de tu plazo."
+msgstr "Terminas {area} hacia el {after}, como antes, con todas sus lecciones: todo encaja en tu plazo."
 
 #. {after} and {before} are days, like "May 5".
 #: src/plan/use-area-start-texts.ts
@@ -10506,19 +10506,19 @@ msgstr "En {area} habrá aproximadamente {count, plural, one {# lección más} o
 #: src/plan/use-area-start-texts.ts
 msgctxt "WncCQq"
 msgid "{area} gets {count, plural, one {# more lesson} other {# more lessons}}, so you finish it around {after} instead of {before}."
-msgstr "En {area} tendrías {count, plural, one {# lección más} other {# lecciones más}}, así que terminarías hacia el {after} en vez del {before}."
+msgstr "{area} pasa a tener {count, plural, one {# lección más} other {# lecciones más}}, así que terminas hacia el {after} en lugar del {before}."
 
 #. {after} and {before} are days, like "May 5".
 #: src/plan/use-area-start-texts.ts
 msgctxt "_Q4kxN"
 msgid "{area} has {count, plural, one {# lesson} other {# lessons}} fewer to go, so you finish it around {after} instead of {before}."
-msgstr "Para terminar {area} necesitarías {count, plural, one {# lección menos} other {# lecciones menos}}, así que terminarías hacia el {after} en vez del {before}."
+msgstr "En {area} {count, plural, one {te queda # lección menos} other {te quedan # lecciones menos}}, así que terminas hacia el {after} en lugar del {before}."
 
 #. {after} and {before} are days, like "May 5".
 #: src/plan/use-area-start-texts.ts
 msgctxt "KerAfr"
 msgid "You finish {area} around {after} instead of {before}."
-msgstr "Terminarías {area} hacia el {after} en vez del {before}."
+msgstr "Terminas {area} hacia el {after} en lugar del {before}."
 
 #: src/plan/use-area-start-texts.ts
 msgctxt "4W5VPZ"
@@ -10668,7 +10668,7 @@ msgstr "Más explicaciones a partir de ahora."
 #: src/plan/use-change-sentence.ts
 msgctxt "ZIyDwb"
 msgid "{count, plural, one {{skills} comes into your plan.} other {{skills} come into your plan.}}"
-msgstr "{count, plural, one {{skills} se añadiría a tu plan.} other {{skills} se añadirían a tu plan.}}"
+msgstr "{count, plural, one {{skills} se incorpora a tu plan.} other {{skills} se incorporan a tu plan.}}"
 
 #. The goal's date moved, earlier or later. {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
@@ -10916,13 +10916,13 @@ msgstr "Lecciones que se omitirían: {names}."
 #: src/plan/use-effect-text.ts
 msgctxt "IUkTus"
 msgid "Ends {after} instead of {before}."
-msgstr "Terminaría el {after} en vez del {before}."
+msgstr "Termina el {after} en lugar del {before}."
 
 #. In the month form, {after} and {before} are months, like "May 2027"; otherwise days, like "May 5".
 #: src/plan/use-effect-text.ts
 msgctxt "OZ4Mxp"
 msgid "{dateKind, select, month {Ends around {after} instead of {before}.} other {Ends around {after} instead of {before}.}}"
-msgstr "{dateKind, select, month {Terminaría hacia {after} en vez de {before}.} other {Terminaría hacia el {after} en vez del {before}.}}"
+msgstr "{dateKind, select, month {Termina hacia {after} en lugar de {before}.} other {Termina hacia el {after} en lugar del {before}.}}"
 
 #: src/plan/use-estimate-sentence.ts
 msgctxt "FJ-d5Y"
@@ -11743,7 +11743,7 @@ msgstr "Error corregido. Se elimina de tu cuaderno."
 #: src/session/question-block/question-feedback.tsx
 msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
-msgstr "Se ha guardado en tus errores"
+msgstr "Guardado en tu cuaderno de errores"
 
 #: src/session/question-block/question-feedback.tsx
 msgctxt "Kvx6Wm"
@@ -11940,7 +11940,7 @@ msgstr "{time} hasta ahora"
 #: src/session/summary/summary-rewards.tsx
 msgctxt "okdNHx"
 msgid "{buddy}, happy with today"
-msgstr "La alegría de {buddy} por lo que has estudiado hoy"
+msgstr "{buddy}, feliz con lo que has estudiado hoy"
 
 #: src/session/summary/summary-rewards.tsx
 msgctxt "ajfhRp"
@@ -13168,7 +13168,7 @@ msgstr "{count, plural, one {error corregido} other {errores corregidos}}"
 #: src/week/logbook-sections.tsx
 msgctxt "_-ONf9"
 msgid "{count, plural, one {Trap hunter badge} other {Trap hunter badges}}"
-msgstr "{count, plural, one {insignia de cazador de trampas} other {insignias de cazador de trampas}}"
+msgstr "{count, plural, one {Insignia de cazador de trampas} other {Insignias de cazador de trampas}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "iMjjOH"

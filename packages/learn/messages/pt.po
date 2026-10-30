@@ -397,7 +397,7 @@ msgstr "<number>+{points}</number> <words>Poder Mental</words>"
 #: src/_components/moment-readouts.tsx
 msgctxt "b73TgX"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} sounded right} one {<number>#</number> of {answered} sounded right} other {<number>#</number> of {answered} sounded right}}"
-msgstr "{correct, plural, =0 {<number>#</number> de {answered} palavras bem pronunciadas} one {<number>#</number> de {answered} bem pronunciada} other {<number>#</number> de {answered} bem pronunciadas}}"
+msgstr "{correct, plural, =0 {<number>#</number> de {answered} com a pronúncia certa} other {<number>#</number> de {answered} com a pronúncia certa}}"
 
 #: src/_components/moment-readouts.tsx
 msgctxt "mA2Wor"
@@ -494,13 +494,13 @@ msgstr "Você já usou seu tempo de estudo de hoje. Vai ficar para sua próxima 
 #: src/_components/study-time-used-up.tsx
 msgctxt "-Eq2VH"
 msgid "You've reached today's study time. It'll be here tomorrow."
-msgstr "Você já usou seu tempo de estudo de hoje. Vai estar aqui amanhã."
+msgstr "Você já usou seu tempo de estudo de hoje. Fica para amanhã."
 
 #. Study time is the learner's daily amount. "It" is the call or challenge they opened. {day} is a weekday, like "Monday".
 #: src/_components/study-time-used-up.tsx
 msgctxt "--X_qb"
 msgid "You've reached today's study time. It'll be here on {day}."
-msgstr "Você já usou seu tempo de estudo de hoje. Vai estar aqui {day}."
+msgstr "Você já usou seu tempo de estudo de hoje. Fica para {day}."
 
 #: src/_components/study-time-used-up.tsx
 #: src/challenge/challenge-moved-screen.tsx
@@ -839,7 +839,7 @@ msgstr "Missões de hoje"
 #: src/buddies/buddy-glasses-picker.tsx
 msgctxt "JZBlWy"
 msgid "{current, plural, =0 {# of {target} days with every mission done} one {# of {target} days with every mission done} other {# of {target} days with every mission done}}"
-msgstr "{current, plural, =0 {# de {target} dias com todas as missões feitas} other {# de {target} dias com todas as missões concluídas}}"
+msgstr "{current, plural, =0 {# de {target} dias com todas as missões concluídas} other {# de {target} dias com todas as missões concluídas}}"
 
 #: src/buddies/buddy-glasses-picker.tsx
 msgctxt "0YvqkI"
@@ -1740,13 +1740,13 @@ msgstr "+{points}"
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "fX7dJB"
 msgid "Finishing"
-msgstr "Por concluir"
+msgstr "Ao concluir"
 
 #. Heading of a reward row: the Brain Power that winning this challenge earns. Not something still to win.
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "b4H0QH"
 msgid "Winning"
-msgstr "Por vencer"
+msgstr "Ao vencer"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
@@ -1850,7 +1850,7 @@ msgstr "Fase concluída"
 #: src/checkpoints/checkpoint-result-details.tsx
 msgctxt "DhzEc-"
 msgid "Trap hunter badge"
-msgstr "Insígnia Caça-pegadinhas"
+msgstr "Insígnia de caça a pegadinhas"
 
 #: src/checkpoints/checkpoint-result-details.tsx
 msgctxt "n27vLl"
@@ -2877,7 +2877,7 @@ msgstr "{answered, number} de {questions, number} respondidas"
 #: src/exam/exam-scoring-section.tsx
 msgctxt "y6LdtC"
 msgid "In your mock exams: sure, {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Unsure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr "Nos seus simulados: quando teve certeza, {sureRight, plural, =0 {nenhum acerto (# de {sureAnswered})} one {# acerto em {sureAnswered}} other {# acertos em {sureAnswered}}}. Quando ficou em dúvida, {unsureRight, plural, =0 {nenhum acerto (# de {unsureAnswered})} one {# acerto em {unsureAnswered}} other {# acertos em {unsureAnswered}}}."
+msgstr "Nos seus simulados: quando tinha certeza, {sureRight, plural, =0 {# acertos em {sureAnswered}} one {# acerto em {sureAnswered}} other {# acertos em {sureAnswered}}}. Quando estava em dúvida, {unsureRight, plural, =0 {# acertos em {unsureAnswered}} one {# acerto em {unsureAnswered}} other {# acertos em {unsureAnswered}}}."
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "4YDliw"
@@ -6748,7 +6748,7 @@ msgstr "Feedback da resposta"
 #: src/mistakes/practice-step.tsx
 msgctxt "HJwk2o"
 msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
-msgstr "{count, plural, =0 {Nenhum erro corrigido} one {# erro corrigido. Ele sai do seu caderno.} other {# erros corrigidos. Eles saem do seu caderno.}}"
+msgstr "{count, plural, =0 {# erros corrigidos} one {# erro corrigido. Ele sai do seu caderno.} other {# erros corrigidos. Eles saem do seu caderno.}}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
@@ -8755,7 +8755,7 @@ msgstr "Seu simulado definiu seu ponto de partida"
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "DYttBE"
 msgid "Based on {count, plural, one {your # answer} other {your # answers}}. It gets more accurate every day."
-msgstr "Com base {count, plural, one {na sua # resposta} other {nas suas # respostas}}. Fica mais preciso a cada dia."
+msgstr "Com base {count, plural, one {em # resposta sua} other {em # respostas suas}}. Seu ponto de partida fica mais preciso a cada dia."
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "HiDu8F"
@@ -11743,7 +11743,7 @@ msgstr "Erro corrigido. Ele sai do seu caderno."
 #: src/session/question-block/question-feedback.tsx
 msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
-msgstr "Salvo no seu Caderno de erros"
+msgstr "Salvo no seu caderno de erros"
 
 #: src/session/question-block/question-feedback.tsx
 msgctxt "Kvx6Wm"
@@ -12587,7 +12587,7 @@ msgstr "O que mudou"
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
-msgstr "{done, plural, =0 {Concluídos: # de {total, number}} one {# de {total, number} concluído} other {# de {total, number} concluídos}}"
+msgstr "{done, plural, =0 {# de {total, number} concluídos} one {# de {total, number} concluído} other {# de {total, number} concluídos}}"
 
 #: src/today/today-day-progress.tsx
 msgctxt "RQRGjK"
