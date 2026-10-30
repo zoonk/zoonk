@@ -1,3 +1,7 @@
+import {
+  type PlanTimeToCover,
+  type PlanTimeToCoverInput,
+} from "@zoonk/core/plans/time-advice-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
@@ -94,6 +98,67 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
   await expect(page.getByText("45 min a day", { exact: true })).toBeVisible();
   await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeHidden();
+});
+
+test("waits for the time new study days need before saving the suggestion", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const goal = await createMappedGoal(noProgressUser.id);
+  const targetDate = new Date(Date.now() + 60 * 86_400_000);
+
+  await prisma.goal.update({
+    data: {
+      details: { answered: ANSWERED.filter((step) => step !== "schedule"), subject: "algebra" },
+      targetDate,
+    },
+    where: { id: goal.id },
+  });
+
+  const release = Promise.withResolvers<null>();
+
+  await page.route(`**/v1/goals/${goal.id}/plan/time-to-cover`, async (route) => {
+    const week: PlanTimeToCoverInput = JSON.parse(route.request().postData() ?? "{}");
+    const fewerDays = (week.studyDays?.length ?? 0) < 5;
+
+    if (fewerDays) {
+      await release.promise;
+    }
+
+    const minutes = fewerDays ? 45 : 30;
+
+    const json: PlanTimeToCover = {
+      coreMinutes: null,
+      fittingDate: null,
+      pastDate: false,
+      readingNotice: false,
+      ready: true,
+      recommendedMinutes: minutes,
+      suggested: { kind: "everything", minutes },
+      targetDate: targetDate.toISOString().slice(0, 10),
+      targetDateNamedMonth: false,
+    };
+
+    await route.fulfill({ json });
+  });
+
+  await page.goto(`/start/${goal.id}`);
+  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
+
+  const time = page.getByLabel("Time a day", { exact: true });
+  const next = page.getByRole("button", { exact: true, name: "Continue" });
+
+  await expect(time).toHaveValue("30");
+  await page.getByRole("button", { exact: true, name: "Friday" }).click();
+  await expect(next).toBeDisabled();
+
+  release.resolve(null);
+  await expect(time).toHaveValue("45");
+  await next.click();
+  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+
+  const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+  expect(saved.dailyMinutes).toBe(45);
 });
 
 test("an exam's plan waits on the reveal while its notice is read, then shows on its own", async ({

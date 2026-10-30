@@ -15,6 +15,7 @@ import {
   toFindWeek,
   toMainGoalWeek,
   toStudyWeek,
+  waitsForSuggestion,
 } from "./schedule-time";
 import { getStartingDays } from "./study-week";
 import { usePlanAnswer } from "./use-plan-answer";
@@ -182,6 +183,9 @@ export function useSchedule({
     setFullCourse,
     setPicked,
     split: hasDays ? getDaySplit({ goalCount, minutes }) : null,
+    stale:
+      hasDays &&
+      waitsForSuggestion({ failed: found.failed, first: found.first, found: found.found, picked }),
     timeAdvice,
     week,
   };

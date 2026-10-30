@@ -14,6 +14,7 @@ import {
   toMainGoalWeek,
   toPickedMinutes,
   toStudyWeek,
+  waitsForSuggestion,
 } from "./schedule-time";
 
 const PAST_DATE = { pastDate: true, recommendedMinutes: null, suggested: null };
@@ -118,6 +119,28 @@ describe(getShownMinutes, () => {
     { first: null, settled: true },
   ])("falls back to the screen's own time when no suggestion comes: %o", ({ first, settled }) => {
     expect(getShownMinutes({ ...SHOWN, first, found: first, settled })).toBe(60);
+  });
+});
+
+describe(waitsForSuggestion, () => {
+  const WAITING = { failed: false, first: foundTime(), found: null, picked: null };
+
+  it("waits while the suggestion shown is still the one for the days before", () => {
+    expect(waitsForSuggestion(WAITING)).toBe(true);
+  });
+
+  it("goes on with the plan's answer for the days shown, or the learner's own time", () => {
+    expect(waitsForSuggestion({ ...WAITING, found: foundTime({ recommendedMinutes: 50 }) })).toBe(
+      false,
+    );
+
+    expect(waitsForSuggestion({ ...WAITING, picked: 35 })).toBe(false);
+  });
+
+  it("never waits for an answer that isn't coming, or on a time that doesn't follow one", () => {
+    expect(waitsForSuggestion({ ...WAITING, failed: true })).toBe(false);
+    expect(waitsForSuggestion({ ...WAITING, first: null })).toBe(false);
+    expect(waitsForSuggestion({ ...WAITING, first: foundTime(PAST_DATE) })).toBe(false);
   });
 });
 

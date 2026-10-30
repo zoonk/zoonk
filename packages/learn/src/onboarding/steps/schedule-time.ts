@@ -154,6 +154,21 @@ export function getShownMinutes({
   return getSuggestedMinutes(found) ?? firstSuggested;
 }
 
+/** The time shown is a suggestion it follows, still the one for the days before: Continue waits for the new one. */
+export function waitsForSuggestion({
+  failed,
+  first,
+  found,
+  picked,
+}: {
+  failed: boolean;
+  first: PlanTimeToCover | null;
+  found: PlanTimeToCover | null;
+  picked: number | null;
+}): boolean {
+  return picked === null && found === null && !failed && getSuggestedMinutes(first) !== null;
+}
+
 /** Picking the suggested time again follows the suggestion as the days change, where it's followed. */
 export function toPickedMinutes({
   first,

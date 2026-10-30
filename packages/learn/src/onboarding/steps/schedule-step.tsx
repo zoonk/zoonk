@@ -65,11 +65,6 @@ function getScheduleAnswer({
   };
 }
 
-function isStale({ dated, found, picked }: Schedule): boolean {
-  const asking = !found.found && !found.failed && found.last !== null;
-  return picked === null && dated && asking;
-}
-
 function PlanWait({
   gate,
   goal,
@@ -104,7 +99,7 @@ function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule })
             }),
           )
         }
-        stale={isStale(schedule)}
+        stale={schedule.stale}
         suggested={getSuggestedMinutes(found.found)}
       />
 
@@ -226,7 +221,7 @@ export function ScheduleStep({
           onAnswer(answer);
         }
       }}
-      pending={pending}
+      pending={pending || schedule.stale}
       rail={<PlanReceipt goal={goal} />}
       title={t("How much time can you study each day?")}
     >
