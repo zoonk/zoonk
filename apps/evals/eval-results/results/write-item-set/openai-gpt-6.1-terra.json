@@ -133,11 +133,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Make the judgments turn on case-specific facts rather than categorical doctrinal claims, and identify a public servant responsible for an administrative decision. A case-dependent comparison of the effects of annulment and revocation would also strengthen coverage of the requested skill.",
           "kind": "potentialImprovements",
@@ -217,11 +213,7 @@
           "kind": "majorErrors",
           "score": 6
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Increase the range of reading demands. Questions 1, 2 and 4 largely restate individual sentences; one could instead require integrating information across sentences while retaining an unambiguous True/False/Not Given judgment.",
           "kind": "potentialImprovements",
@@ -292,11 +284,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Question 2's explanation for 1.70 s is incorrect. Friction alone would produce a deceleration of 2 m/s² and a total time of 2.40 s, not 1.70 s. The listed value instead follows from incorrectly subtracting friction from the downslope gravitational component: 1 + 2.8/(6 − 2) = 1.70 s. Its reason and misconception should describe that sign error.",
           "kind": "minorErrors",

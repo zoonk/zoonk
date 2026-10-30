@@ -50,21 +50,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The reasons for drills 1, 2, and 5 quote the supplied text correctly but do not themselves cite the article reference, as required. The correct references appear in the separate reference fields, so this is a minor traceability issue rather than a legal error.",
           "kind": "minorErrors",
           "score": 9
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Cebraspe-style right/wrong statements in Brazilian Portuguese on article 5 of the Brazilian Constitution (caput and items II, III, XI and XLII). True statements repeat or faithfully paraphrase the given text; false ones change exactly one element, as Cebraspe does (for example \"todos\" to \"quase todos\", \"durante o dia\" to \"a qualquer hora\", \"determinação judicial\" to \"determinação policial\", \"inafiançável\" to \"afiançável\"), and their misconception names that trap. Check every statement against the given text, not memory, and that roughly half are false.",
@@ -152,11 +144,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Several distractors are weak board-style traps: controller-to-controller notification is conspicuously implausible, while “evidence for the delay” and “details of the delay” are vague alternatives rather than sharp legal contrasts. Some traps also depart from the specifically requested deadline, notification-party, risk-exception, and documentation-scope elements. The first true statement paraphrases the article, and the false statement beginning “That documentation” lacks a self-contained antecedent.",
           "kind": "minorErrors",
@@ -247,11 +235,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The first drill's distractor counting the deadline for posse from the date of posse is circular and readily dismissible. Although it changes only one element, it is less effective than a plausible competing starting point.",
           "kind": "minorErrors",
@@ -345,21 +329,9 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Cebraspe-style right/wrong statements in Brazilian Portuguese on article 37 of the Brazilian Constitution: the five principles in the caput, access by public examination (II), validity of up to two years extendable once for an equal period (III), priority of approved candidates (IV) and the nullity of acts that ignore II and III (§ 2º). False statements change one element (such as \"prorrogável uma vez\" to \"prorrogável duas vezes\", \"de até dois anos\" to \"de dois anos\", dropping the exception for commissioned posts). Check every statement against the given text.",

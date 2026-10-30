@@ -36,11 +36,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The response never addresses the learner as “you.” Also, exampleLineIdea and image are null, so it does not literally meet the requirement that every field be filled.",
           "kind": "minorErrors",
@@ -106,11 +102,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The everyday example helps, but the version is only a little simpler overall. Unlike the original, it does not explicitly label more people/less time as inverse and more boxes/more time as direct. It leaves those terms together in the final sentence, making the learner infer their meanings.",
           "kind": "minorErrors",
@@ -246,11 +238,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The explanation is only modestly deeper. Calling $80 the baseline identifies the reference but does not explain why the increase is measured against what you originally paid. The conversion step still gives an instruction rather than explaining why 0.25 means 25%.",
           "kind": "minorErrors",
@@ -275,18 +263,12 @@
               "problem": "A concert ticket went from $80 to $100. By what percent did the price change?",
               "result": "The price rose 25%.",
               "steps": [
-                {
-                  "math": "100 - 80 = 20",
-                  "text": "Find the change: new price minus old price."
-                },
+                { "math": "100 - 80 = 20", "text": "Find the change: new price minus old price." },
                 {
                   "math": "\\frac{20}{80} = 0.25",
                   "text": "Divide the change by the starting price."
                 },
-                {
-                  "math": "0.25 = 25\\%",
-                  "text": "Write it as a percent."
-                }
+                { "math": "0.25 = 25\\%", "text": "Write it as a percent." }
               ],
               "title": "From $80 to $100"
             },
@@ -331,11 +313,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The explanation adds real depth, but it neither explicitly names the uncertainty principle nor provides the requested limit or more technical example. It also leaves exampleLineIdea and image null despite the requirement that every field be filled. The writing does not address the learner as “você.”",
           "kind": "minorErrors",
@@ -401,11 +379,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "There is no check asking what the spreadsheet shows or returns, as required by the tool-version expectations.",
           "kind": "minorErrors",
@@ -507,10 +481,7 @@
                   "math": "\\frac{20}{80} = 0{,}25",
                   "text": "Divida a variação pelo preço inicial."
                 },
-                {
-                  "math": "0{,}25 = 25\\%",
-                  "text": "Escreva como porcentagem."
-                }
+                { "math": "0{,}25 = 25\\%", "text": "Escreva como porcentagem." }
               ],
               "title": "De R$ 80 para R$ 100"
             },
@@ -554,11 +525,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "“After you press Enter” makes the read-only framing slightly ambiguous. The opening “Imagine” keeps this from being a clear instruction to use the learner’s device, but the hypothetical framing should continue throughout.",
           "kind": "minorErrors",
@@ -623,11 +590,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The question retains “Em A4, você digita” rather than simply showing the formula already in A4 and asking what the cell would display. “Imagine” makes this hypothetical, so it does not require actual device use, but the typing-centered wording is not quite the requested read-only presentation.",
           "kind": "minorErrors",
@@ -656,12 +619,7 @@
                   "reason": "SOMA junta 10 + 20 + 30 = 60.",
                   "text": "60"
                 },
-                {
-                  "id": "thirty",
-                  "isCorrect": false,
-                  "reason": "Somou só A1 e A2.",
-                  "text": "30"
-                },
+                { "id": "thirty", "isCorrect": false, "reason": "Somou só A1 e A2.", "text": "30" },
                 {
                   "id": "formula",
                   "isCorrect": false,

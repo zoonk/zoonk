@@ -53,25 +53,16 @@
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "IELTS Listening Part 1 for an English-speaking learner: a phone or face-to-face conversation between two people in an everyday social context (booking, registering, enquiring), at the real length of about 4 to 5 minutes (600 words or more) even though only 5 of the part's 10 questions are asked, with form or note completion answered in no more than two words and/or a number. The answers are names (spelled out letter by letter), numbers, dates, prices or addresses said in the recording; one or two answers come right after a speaker corrects themselves. Accepted answers include the spelled name and numbers as digits, each within the two-word limit and listed once. Speakers mix the British and Australian accents listed.",
         "id": "en-ielts-part-1-form-completion-1",
         "userInput": {
-          "accents": [
-            "British English",
-            "Australian English"
-          ],
+          "accents": ["British English", "Australian English"],
           "count": 5,
           "exam": "IELTS",
-          "formats": [
-            "typed"
-          ],
+          "formats": ["typed"],
           "language": "en",
           "level": "band 6",
           "plays": 1,
@@ -132,11 +123,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The implied-meaning question tests an explicitly stated detail: Trevor directly says background noise could make the guest difficult to hear. It therefore provides limited assessment of inference, although its answer is correct.",
           "kind": "minorErrors",
@@ -152,16 +139,10 @@
         "expectations": "TOEFL iBT \"Listen to a Conversation\" for a Brazilian learner: a campus conversation between a student and a professor or staff member, about 2 to 3 minutes, with 4-option multiple-choice questions on the main purpose, details and a speaker's attitude or implied meaning, in English. Reasons and misconceptions are in Brazilian Portuguese. Speakers use North American English, with a British or Australian accent allowed.",
         "id": "pt-toefl-campus-conversation-1",
         "userInput": {
-          "accents": [
-            "American English",
-            "British English",
-            "Australian English"
-          ],
+          "accents": ["American English", "British English", "Australian English"],
           "count": 4,
           "exam": "TOEFL iBT",
-          "formats": [
-            "multipleChoice"
-          ],
+          "formats": ["multipleChoice"],
           "language": "pt",
           "level": "B2",
           "optionCount": 4,
@@ -227,11 +208,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The sentence “prestar una cosa exige cuidarla y devolverla a tiempo” confuses lending with borrowing; “pedir prestada una cosa” is needed. The corresponding Portuguese explanation repeats this imprecision. Several answers are made unusually easy by explicit rejection of the distractors, limiting the B2 challenge, particularly for questions labeled hard.",
           "kind": "minorErrors",
@@ -247,15 +224,10 @@
         "expectations": "DELE B2 Prueba de comprensión auditiva, Tarea 5, for a Brazilian learner: a monologue in Spanish (a talk, a lecture or a testimony on radio), about 3 minutes, with 3-option multiple-choice questions in Spanish, played twice. Wrong options use what the speaker also says or a near-paraphrase that changes a detail. Reasons and misconceptions are in Brazilian Portuguese. The Spanish is Spain's or Latin America's as the accents list.",
         "id": "pt-dele-b2-tarea-5-monologue-1",
         "userInput": {
-          "accents": [
-            "Castilian Spanish",
-            "Mexican Spanish"
-          ],
+          "accents": ["Castilian Spanish", "Mexican Spanish"],
           "count": 5,
           "exam": "DELE B2",
-          "formats": [
-            "multipleChoice"
-          ],
+          "formats": ["multipleChoice"],
           "language": "pt",
           "level": "B2",
           "optionCount": 3,
@@ -337,14 +309,10 @@
         "expectations": "Cambridge B2 First Listening Part 2 for an English-speaking learner: one speaker talking for 3 to 4 minutes about their work, a hobby or an experience, with sentence completion: each question is a sentence with a gap, filled with a word or short phrase the speaker says. Gaps target concrete details with distractors nearby (two things mentioned, one corrected). Exactly 6 questions; accepted answers fit a short phrase and are listed once. Played twice. British English.",
         "id": "en-cambridge-first-part-2-sentence-completion-1",
         "userInput": {
-          "accents": [
-            "British English"
-          ],
+          "accents": ["British English"],
           "count": 6,
           "exam": "Cambridge B2 First",
-          "formats": [
-            "typed"
-          ],
+          "formats": ["typed"],
           "language": "en",
           "level": "B2",
           "plays": 2,
@@ -401,11 +369,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "A few lines feel written to support the questions rather than arising naturally from the conversation. In particular, Clara announces that the books will not be free although nobody has suggested giving them away. Niklas also later says he will bring the games after already saying he has packed them.",
           "kind": "minorErrors",
@@ -421,14 +385,10 @@
         "expectations": "Goethe-Zertifikat B1 Hören Teil 3 for a Brazilian learner: an everyday conversation in German between two people (friends planning something, or colleagues), about 3 minutes, with richtig/falsch statements in German about what was said, about half true. Played once. False statements change one heard detail. Reasons in Brazilian Portuguese.",
         "id": "pt-goethe-b1-horen-teil-3-1",
         "userInput": {
-          "accents": [
-            "Standard German"
-          ],
+          "accents": ["Standard German"],
           "count": 6,
           "exam": "Goethe-Zertifikat B1",
-          "formats": [
-            "trueFalse"
-          ],
+          "formats": ["trueFalse"],
           "language": "pt",
           "level": "B1",
           "plays": 1,
@@ -508,11 +468,7 @@
           "accents": [],
           "count": 10,
           "exam": "IELTS Academic",
-          "formats": [
-            "multipleChoice",
-            "trueFalse",
-            "typed"
-          ],
+          "formats": ["multipleChoice", "trueFalse", "typed"],
           "language": "pt",
           "level": null,
           "plays": 1,
@@ -577,11 +533,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The frequent switching between multiple-choice and completion questions makes the question set less like an IELTS paper, which normally groups questions under shared instructions. Several multiple-choice stems also closely repeat the recording's wording, limiting the expected paraphrase challenge.",
           "kind": "minorErrors",
@@ -600,11 +552,7 @@
           "accents": [],
           "count": 10,
           "exam": "IELTS Academic",
-          "formats": [
-            "multipleChoice",
-            "trueFalse",
-            "typed"
-          ],
+          "formats": ["multipleChoice", "trueFalse", "typed"],
           "language": "pt",
           "level": null,
           "plays": 1,

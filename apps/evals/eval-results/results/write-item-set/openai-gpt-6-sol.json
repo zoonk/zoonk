@@ -133,11 +133,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Rewrite the false items so their judgments turn on facts supplied only by the case. For example, propose revocation of Iara's authorization without repeating its defect, or assert that the conditions for direct execution against Wesley are satisfied without restating those conditions.",
           "kind": "potentialImprovements",
@@ -212,11 +208,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The passage contains 241 words, falling nine words short of the required 250–350-word range.",
           "kind": "minorErrors",
@@ -297,11 +289,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Make the Newton's-laws question depend on a preceding stage or a coupled-body interaction while retaining one shared setup. Also show how the turning-point distance becomes 12 m in the explanations: the powered stage ends at 8 m/s, followed by another 4 m uphill. Explicitly checking that the 12 N downslope weight component exceeds the 8 N maximum static friction would complete the explanation of why the return motion begins.",
           "kind": "potentialImprovements",

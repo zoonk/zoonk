@@ -3,72 +3,34 @@
   "results": [
     {
       "steps": [
-        {
-          "conclusion": "Wrong: official domain",
-          "kind": "majorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Wrong: official domain",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Wrong: official domain",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
+        { "conclusion": "Wrong: official domain", "kind": "majorErrors", "score": 9 },
+        { "conclusion": "Wrong: official domain", "kind": "minorErrors", "score": 9 },
+        { "conclusion": "Wrong: official domain", "kind": "potentialImprovements", "score": 9 }
       ],
       "testCase": {
         "expected": {
           "country": "BR",
-          "domains": [
-            "gov.br/receitafederal",
-            "receita"
-          ],
+          "domains": ["gov.br/receitafederal", "receita"],
           "language": "pt",
-          "nameIncludes": [
-            "imposto de renda",
-            "irpf"
-          ]
+          "nameIncludes": ["imposto de renda", "irpf"]
         },
         "id": "irpf-2027-1",
         "language": "pt",
-        "userInput": {
-          "goal": "declarar meu imposto de renda 2027 sozinho",
-          "topic": "regulation"
-        }
+        "userInput": { "goal": "declarar meu imposto de renda 2027 sozinho", "topic": "regulation" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
           "country": "ZZ",
-          "domains": [
-            "nextjs.org"
-          ],
+          "domains": ["nextjs.org"],
           "language": "en",
-          "nameIncludes": [
-            "next.js",
-            "nextjs"
-          ]
+          "nameIncludes": ["next.js", "nextjs"]
         },
         "id": "nextjs-1",
         "language": "en",
@@ -80,21 +42,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
@@ -108,14 +58,9 @@
             "edx.org"
           ],
           "language": "en",
-          "nameIncludes": [
-            "quantum"
-          ],
+          "nameIncludes": ["quantum"],
           "noQueries": false,
-          "otherCountries": [
-            "GB",
-            "ZZ"
-          ]
+          "otherCountries": ["GB", "ZZ"]
         },
         "id": "syllabus-quantum-mechanics-1",
         "language": "en",
@@ -128,39 +73,18 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
           "country": "US",
-          "domains": [
-            "aacnnursing.org",
-            "ncsbn.org",
-            "nln.org",
-            ".edu"
-          ],
+          "domains": ["aacnnursing.org", "ncsbn.org", "nln.org", ".edu"],
           "language": "en",
-          "nameIncludes": [
-            "nursing"
-          ],
+          "nameIncludes": ["nursing"],
           "noQueries": false,
-          "otherCountries": [
-            "ZZ"
-          ]
+          "otherCountries": ["ZZ"]
         },
         "id": "syllabus-career-nursing-1",
         "language": "en",
@@ -173,31 +97,16 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
           "country": "ZZ",
           "domains": [],
           "language": "en",
-          "nameIncludes": [
-            "minecraft",
-            "redstone"
-          ],
+          "nameIncludes": ["minecraft", "redstone"],
           "noQueries": true
         },
         "id": "syllabus-none-minecraft-1",
@@ -211,37 +120,16 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
           "country": "BR",
-          "domains": [
-            "usp.br",
-            "unicamp.br",
-            "ufrj.br",
-            "ufmg.br",
-            "unesp.br",
-            "gov.br"
-          ],
+          "domains": ["usp.br", "unicamp.br", "ufrj.br", "ufmg.br", "unesp.br", "gov.br"],
           "language": "pt",
-          "nameIncludes": [
-            "calculo"
-          ],
+          "nameIncludes": ["calculo"],
           "noQueries": false
         },
         "id": "syllabus-calculo-1",
@@ -255,21 +143,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
@@ -284,9 +160,7 @@
             "gov.br"
           ],
           "language": "pt",
-          "nameIncludes": [
-            "dados"
-          ],
+          "nameIncludes": ["dados"],
           "noQueries": false
         },
         "id": "syllabus-career-dados-1",
@@ -300,30 +174,16 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
           "country": "BR",
           "domains": [],
           "language": "pt",
-          "nameIncludes": [
-            "free fire"
-          ],
+          "nameIncludes": ["free fire"],
           "noQueries": true
         },
         "id": "syllabus-none-free-fire-1",

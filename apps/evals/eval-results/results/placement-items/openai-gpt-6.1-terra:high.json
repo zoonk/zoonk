@@ -150,21 +150,9 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Placement questions in US English for three Digital SAT skills, each with two SAT-style multiple-choice questions (concise context, a direct question, 4 options, distractors from real slips such as sign errors or dividing by the new value). The math must be right. Each question tests only its own skill, and a skill's two questions use different situations and ask different things.",
@@ -248,11 +236,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The table-reading pair is demanding for the explicitly beginner-level skill. The cooler question requires filtering by two constraints and then minimizing price; the delivery question requires two row-and-column lookups followed by subtraction. Neither provides the straightforward, one-step entry point required for beginners.",
           "kind": "minorErrors",
@@ -439,11 +423,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The classification question's distractor based on interpreting 0,25 billion as 125 million lacks a clear, realistic error mechanism: its feedback states the mistaken value without explaining how a learner would obtain it. Some contexts are also thin, particularly the unspecified report being classified into unexplained monetary bands.",
           "kind": "minorErrors",

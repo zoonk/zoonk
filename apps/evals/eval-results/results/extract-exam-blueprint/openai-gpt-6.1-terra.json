@@ -22,67 +22,19 @@
       "testCase": {
         "expected": {
           "facts": [
-            {
-              "kind": "questionCount",
-              "value": 180
-            },
-            {
-              "date": "2026-11-08",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "date": "2026-11-15",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "date": "2026-06-05",
-              "dateKind": "registrationEnd",
-              "kind": "date"
-            },
-            {
-              "kind": "subject",
-              "name": "Linguagens",
-              "questions": 45
-            },
-            {
-              "kind": "subject",
-              "name": "Matemática",
-              "questions": 45
-            },
-            {
-              "kind": "choice",
-              "options": [
-                "Inglês",
-                "Espanhol"
-              ],
-              "partOf": "Linguagens"
-            },
-            {
-              "format": "multipleChoice",
-              "kind": "format"
-            },
-            {
-              "format": "essay",
-              "kind": "format"
-            },
-            {
-              "kind": "scoring",
-              "method": "itemResponseTheory"
-            },
-            {
-              "kind": "timeLimit",
-              "minutes": 330
-            },
-            {
-              "kind": "timeLimit",
-              "minutes": 300
-            },
-            {
-              "kind": "testedLanguage",
-              "language": null
-            }
+            { "kind": "questionCount", "value": 180 },
+            { "date": "2026-11-08", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-11-15", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-06-05", "dateKind": "registrationEnd", "kind": "date" },
+            { "kind": "subject", "name": "Linguagens", "questions": 45 },
+            { "kind": "subject", "name": "Matemática", "questions": 45 },
+            { "kind": "choice", "options": ["Inglês", "Espanhol"], "partOf": "Linguagens" },
+            { "format": "multipleChoice", "kind": "format" },
+            { "format": "essay", "kind": "format" },
+            { "kind": "scoring", "method": "itemResponseTheory" },
+            { "kind": "timeLimit", "minutes": 330 },
+            { "kind": "timeLimit", "minutes": 300 },
+            { "kind": "testedLanguage", "language": null }
           ]
         },
         "id": "enem-2026-1",
@@ -119,10 +71,7 @@
       "testCase": {
         "expected": {
           "facts": [
-            {
-              "kind": "subject",
-              "name": "Ciências da Natureza e suas Tecnologias"
-            },
+            { "kind": "subject", "name": "Ciências da Natureza e suas Tecnologias" },
             {
               "kind": "topic",
               "subject": "Ciências da Natureza e suas Tecnologias",
@@ -179,53 +128,17 @@
       "testCase": {
         "expected": {
           "facts": [
-            {
-              "kind": "questionCount",
-              "value": 150
-            },
-            {
-              "kind": "section",
-              "questions": 35
-            },
-            {
-              "kind": "section",
-              "questions": 45
-            },
-            {
-              "kind": "section",
-              "questions": 70
-            },
-            {
-              "format": "trueFalse",
-              "kind": "format"
-            },
-            {
-              "kind": "scoring",
-              "method": "wrongCancelsRight"
-            },
-            {
-              "kind": "wrongPenalty",
-              "value": 1
-            },
-            {
-              "kind": "timeLimit",
-              "minutes": 240
-            },
-            {
-              "date": "2026-11-22",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "date": "2026-08-26",
-              "dateKind": "registrationStart",
-              "kind": "date"
-            },
-            {
-              "date": "2026-09-17",
-              "dateKind": "registrationEnd",
-              "kind": "date"
-            }
+            { "kind": "questionCount", "value": 150 },
+            { "kind": "section", "questions": 35 },
+            { "kind": "section", "questions": 45 },
+            { "kind": "section", "questions": 70 },
+            { "format": "trueFalse", "kind": "format" },
+            { "kind": "scoring", "method": "wrongCancelsRight" },
+            { "kind": "wrongPenalty", "value": 1 },
+            { "kind": "timeLimit", "minutes": 240 },
+            { "date": "2026-11-22", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-08-26", "dateKind": "registrationStart", "kind": "date" },
+            { "date": "2026-09-17", "dateKind": "registrationEnd", "kind": "date" }
           ]
         },
         "id": "tcdf-2026-1",
@@ -262,46 +175,15 @@
       "testCase": {
         "expected": {
           "facts": [
-            {
-              "date": "2027-01-17",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "format": "trueFalse",
-              "kind": "format"
-            },
-            {
-              "kind": "scoring",
-              "method": "wrongCancelsRight"
-            },
-            {
-              "kind": "section",
-              "minutes": 300,
-              "questions": 180
-            },
-            {
-              "kind": "subject",
-              "name": "Língua Portuguesa"
-            },
-            {
-              "kind": "subject",
-              "name": "Linguística"
-            },
-            {
-              "kind": "subject",
-              "name": "Ciência Política"
-            },
-            {
-              "group": "P1",
-              "kind": "group",
-              "subject": "Língua Portuguesa"
-            },
-            {
-              "group": "P2",
-              "kind": "group",
-              "subject": "Linguística"
-            },
+            { "date": "2027-01-17", "dateKind": "exam", "kind": "date" },
+            { "format": "trueFalse", "kind": "format" },
+            { "kind": "scoring", "method": "wrongCancelsRight" },
+            { "kind": "section", "minutes": 300, "questions": 180 },
+            { "kind": "subject", "name": "Língua Portuguesa" },
+            { "kind": "subject", "name": "Linguística" },
+            { "kind": "subject", "name": "Ciência Política" },
+            { "group": "P1", "kind": "group", "subject": "Língua Portuguesa" },
+            { "group": "P2", "kind": "group", "subject": "Linguística" },
             {
               "kind": "topic",
               "subject": "Língua Portuguesa",

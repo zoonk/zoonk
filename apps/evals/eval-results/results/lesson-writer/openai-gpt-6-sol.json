@@ -90,95 +90,70 @@
                 "activityTemplate": null,
                 "brief": "Set up the model: V(x) = 0 for 0 < x < L and V = ∞ outside, so ψ = 0 outside the box. Continuity of ψ then gives the boundary conditions ψ(0) = 0 and ψ(L) = 0, just like a guitar string pinned at both ends.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Potential diagram: a flat floor from 0 to L with infinitely tall walls, with ψ = 0 marked outside and pinned points at x = 0 and x = L."
               },
               {
                 "activityTemplate": null,
                 "brief": "Inside the box the equation becomes −(ħ²/2m)ψ'' = Eψ, which is ψ'' = −k²ψ with k = √(2mE)/ħ. Its general solution is ψ(x) = A sin kx + B cos kx, the same oscillation as a vibrating string.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "The learner applies ψ(0) = 0 to ψ = A sin kx + B cos kx and chooses which term survives. Include the tempting wrong answer 'the cos term survives because cos is maximal at 0', and give feedback that cos 0 = 1 forces B = 0.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Work through ψ(L) = 0: A sin kL = 0, and A ≠ 0 (otherwise there is no particle), so kL = nπ. Exclude n = 0 because ψ would vanish, and exclude negative n because they give the same state up to a sign. Substitute k_n = nπ/L into E = ħ²k²/2m to get E_n = n²π²ħ²/(2mL²) = n²h²/(8mL²).",
                 "kind": "workedExample",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": "A step-by-step derivation column with the key condition sin kL = 0 highlighted and the allowed k_n shown as evenly spaced points on a k axis."
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask why the lowest state is n = 1 rather than n = 0. Include the tempting wrong answer 'n = 0 is the ground state with zero energy', and explain that n = 0 gives ψ ≡ 0, so the particle can never be at rest and has a zero-point energy E_1 > 0.",
                 "kind": "check",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Normalizing ∫|ψ|²dx = 1 over the box gives A = √(2/L), so ψ_n(x) = √(2/L) sin(nπx/L). These are standing waves: ψ_n fits n half-wavelengths into L and has n − 1 interior nodes, and the level spacing grows as E_n ∝ n².",
                 "kind": "explanation",
-                "skills": [
-                  2
-                ],
+                "skills": [2],
                 "visual": "Energy ladder with levels at 1, 4, 9 and 16 times E_1, with ψ_1 to ψ_4 drawn on each rung and their nodes marked."
               },
               {
                 "activityTemplate": "formulaModel",
                 "brief": "The learner moves a slider for n from 1 to 6 and watches ψ_n(x) and |ψ_n|² redraw, with E_n/E_1 displayed. Then ask how many nodes ψ_4 has (3) and what E_3/E_1 is (9, not 3).",
                 "kind": "activity",
-                "skills": [
-                  1,
-                  2
-                ],
+                "skills": [1, 2],
                 "visual": "Graph of ψ_n(x) and |ψ_n(x)|² on 0 to L with an n slider and a live readout of E_n/E_1."
               },
               {
                 "activityTemplate": null,
                 "brief": "Treat an electron in a box with L = 1.0 nm: E_1 = h²/(8m_eL²) ≈ 6.0 × 10⁻²⁰ J ≈ 0.38 eV, and E_2 = 4E_1 ≈ 1.50 eV. The 2 → 1 photon has ΔE = 3E_1 ≈ 1.13 eV, so λ = hc/ΔE ≈ 1100 nm, in the near infrared.",
                 "kind": "workedExample",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "The learner calculates E_1 for the same electron in a box half as wide, with L = 0.5 nm, and picks the answer ≈ 1.5 eV. Include the tempting wrong answer ≈ 0.75 eV, which assumes E ∝ 1/L instead of 1/L².",
                 "kind": "check",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Return to the quantum dots and model the confinement energy as a particle in a box, E ∝ 1/L². The learner predicts by what factor the confinement contribution grows from a 6 nm dot to a 3 nm dot (a factor of 4) and explains why smaller dots emit bluer light.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1,
-                  2
-                ],
+                "skills": [0, 1, 2],
                 "visual": "Side-by-side energy ladders for a 6 nm and a 3 nm box drawn to scale, with the emitted photon arrows colored red and blue."
               }
             ],
@@ -270,11 +245,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "There are two small beginner-level clarity gaps: PATH is defined after the instruction that first uses it, rather than before, and the final check introduces “script” without explaining that it is a file containing Python instructions.",
           "kind": "minorErrors",
@@ -311,45 +282,35 @@
                 "activityTemplate": null,
                 "brief": "Get the free Python 3 installer for Windows from python.org (Downloads, then the Windows button), never from another site.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "The python.org downloads page with the Windows download button highlighted."
               },
               {
                 "activityTemplate": null,
                 "brief": "Run the installer and tick 'Add python.exe to PATH' before Install Now. PATH is the list of places the terminal looks for programs.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "The installer's first screen with the 'Add python.exe to PATH' box ticked and Install Now highlighted."
               },
               {
                 "activityTemplate": null,
                 "brief": "The installer finished, but python still opens the Microsoft Store. Ask what went wrong. Tempting wrong answer: the download was broken. Right: the PATH box wasn't ticked, so run the installer again and choose Modify.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Check it works in three moves: open Terminal from the Start menu, type python --version and read 'Python 3.x', then type python and print('Hello') and see Hello, and leave with exit().",
                 "kind": "workedExample",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A Windows Terminal window showing python --version and a print line."
               },
               {
                 "activityTemplate": null,
                 "brief": "The next chapter asks the learner to run a script. They type python --version and see 'Python 3.13.1'. Ask what that tells them. Tempting wrong answer: Python still isn't installed.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -419,11 +380,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Several beginner terms lack the required explanation: the hook uses 'federal tax return' before defining it, and 'interest and penalties' are never explained. Definitions also lack everyday comparisons. In the deadline check, the April 15, 2027 feedback corrects the date but does not explain why that answer might seem tempting.",
           "kind": "minorErrors",
@@ -460,37 +417,28 @@
                 "activityTemplate": null,
                 "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
                 "kind": "explanation",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
                 "kind": "check",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],
@@ -573,11 +521,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Preserve the planned scenarios but require a fresh decision: ask learners to diagnose someone's explanation of the sale, and change the application order size so they must determine a new split. Naming a market order and an appropriate Fidelity market-depth view would also make the application more concrete.",
           "kind": "potentialImprovements",
@@ -652,54 +596,42 @@
                 "activityTemplate": null,
                 "brief": "Show that the $20 offer covers only 10 shares, like a store shelf with just 10 items at that price. Buying more shares requires another offer.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A shelf-like row of 10 shares labeled $20 each, followed by a separate row of 20 shares labeled $21 each."
               },
               {
                 "activityTemplate": null,
                 "brief": "A buy order for 25 shares takes the 10 available at $20, then 15 of the shares offered at $21. The order reaches a higher price because it uses up the shares at $20.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "The 25-share order filling the $20 row first, then part of the $21 row."
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask which order reaches the $21 offer: a buy order for 5 shares or one for 25 shares. Include the tempting wrong answer that both orders pay $20 for every share.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "The direction reverses for a large sale: if buyers want 8 shares at $19 and 20 more at $18, selling 12 shares reaches the lower price. The seller gets $19 for the first 8 and $18 for the next 4.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Two rows of buyers, labeled 8 shares at $19 and 20 shares at $18, with a 12-share sale reaching both rows."
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask why selling 12 shares does not get $19 for every share. Include the tempting wrong answer that the first buyer's price applies to the entire order.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "In a stock account, you see 10 shares offered at $20 and 20 at $21, then place a buy order for 25. Ask which shares would trade at each price and why the later shares cost more.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -769,11 +701,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The compound-interest explanation gives the yearly interest amounts without showing how to calculate a percentage of the updated balance. For beginners expected to calculate the next example themselves, this leaves a small instructional gap.",
           "kind": "minorErrors",
@@ -809,36 +737,28 @@
                 "activityTemplate": null,
                 "brief": "Compound interest: each year's interest is added to the balance, so next year's 10% is taken on more money. Year 1 adds $100, year 2 adds $110, year 3 adds $121.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A curve of the balance growing year by year: $1,000 at the start, $1,100, $1,210 and $1,331 after 3 years."
               },
               {
                 "activityTemplate": null,
                 "brief": "Kai saves $2,000 at 5% a year with interest kept in. Ask for the balance after 2 years: $2,205. Tempting wrong answer: $2,200 (5% of $2,000 twice).",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Simple interest pays 10% of the first $1,000 every year: $1,300 after 3 years, against $1,331 with compound interest. Show both balances side by side.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Lena compares two accounts for $1,500 over 2 years at 4%: simple or compound. Ask how much more the compound one pays: $2.40. Tempting wrong answer: $0.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -908,11 +828,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The explanation does not unpack why the formula divides the rate by 100 and adds 1, and the check introduces “percentage points” without explaining it. Also, the comparison check supplies both dollar increases in its options, so learners can choose the larger number without understanding compound growth.",
           "kind": "minorErrors",
@@ -948,27 +864,21 @@
                 "activityTemplate": "formulaModel",
                 "brief": "Show the balance of $1,000 after 20 years as the yearly rate moves from 0% to 12% (balance = 1000 × (1 + rate/100)^20), starting at 5%. The curve bends upward: going from 4% to 8% more than doubles the gain. The learner moves the rate and watches the balance.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask which grows more over 20 years: raising the rate from 2% to 4% or from 8% to 10%. Answer: 8% to 10% (about $1,994 more against $705). Tempting wrong answer: they're the same, both 2 points.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Ana can keep $5,000 for 20 years at 4% or at 6%. Ask how much more the 6% option ends with: $16,036 against $10,956, so $5,080 more. Tempting wrong answer: $2,000 (2% of $5,000 for 20 years without compounding).",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -1044,11 +954,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Screen 2 introduces atria, ventricles, and septum together despite the one-new-term-per-screen expectation. It also switches from 'atria' in the text to 'atrium' in the diagram without explaining the relationship. The text never explicitly names the right atrium and left atrium, so those diagram labels do not have the required matching names in the text. Screen 3 is a recall-only check: its answer directly repeats the earlier statement about the left ventricle.",
           "kind": "minorErrors",
@@ -1084,27 +990,21 @@
                 "activityTemplate": "labeledDiagram",
                 "brief": "Show a picture of the heart seen from the front with the right atrium, left atrium, right ventricle, left ventricle and septum numbered and named. The two atria on top receive blood; the two ventricles below pump it out; the septum is the wall between the two sides. The heart is seen from the front, so its right side is on the viewer's left.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask which chamber pumps blood out to the whole body. Answer: the left ventricle. Tempting wrong answer: the right ventricle, because it's drawn on the viewer's left.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A doctor hears a hole in the wall between the two ventricles. Ask what that wall is called and why a hole there mixes blood from the two sides: the septum. Tempting wrong answer: the atrium.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -1221,36 +1121,28 @@
                 "activityTemplate": null,
                 "brief": "O servidor nomeado por concurso para cargo efetivo fica estável após três anos de efetivo exercício, e só se for aprovado na avaliação especial de desempenho feita por uma comissão.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pedro completou três anos no cargo, mas a comissão ainda não fez a avaliação especial: ele já é estável? Pegadinha: achar que o tempo basta.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Estável não quer dizer que nunca perde o cargo: por falta ou mau desempenho, perde por sentença judicial transitada em julgado, processo administrativo com ampla defesa ou avaliação periódica de desempenho.",
                 "kind": "explanation",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Uma servidora estável da prefeitura de Recife é acusada de uma falta grave: o chefe pode demiti-la no mesmo dia, sem processo? Pegadinha: achar que o chefe decide sozinho.",
                 "kind": "application",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               }
             ],
@@ -1328,11 +1220,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The explanations compress several technical ideas without enough beginner support. Screen 2 does not explain what activating glucose means. Screen 3 introduces NADH, electrons, and the respiratory chain without explaining electrons or providing an everyday comparison for NADH's transport role. These are clarity problems, not errors in the ATP accounting.",
           "kind": "minorErrors",
@@ -1379,36 +1267,28 @@
                 "activityTemplate": null,
                 "brief": "A glicólise acontece no citoplasma (o C do macete CMC). Fase de investimento: a célula gasta 2 ATP para ativar a glicose, como o empréstimo do slide.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Fase de rendimento: produz 4 ATP e 2 NADH (que levam elétrons à cadeia respiratória).",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte o saldo de ATP por glicose, com a pegadinha de responder 4.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte onde a glicólise acontece, com a pegadinha da mitocôndria.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -1518,37 +1398,28 @@
                 "activityTemplate": null,
                 "brief": "A table puts each record in a row: find the row, then read the column you need. Use the same letters table (May 40, June 30, July 45).",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A bar chart of letters answered per month (May 35, June 36, July 40). The learner says in which month more letters were answered than received (June: 36 answered, 30 received). Tempting wrong answer: July, the tallest bar.",
                 "kind": "check",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Data shows only what was recorded: answering more letters than were received in June doesn't mean a mistake, since some may have arrived in May.",
                 "kind": "explanation",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A table of bikes available at a station by hour (7h: 9, 8h: 5, 9h: 9). The learner picks the two hours with the same number. Tempting wrong answer: 8h and 9h.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -1666,27 +1537,21 @@
                 "activityTemplate": "processOrder",
                 "brief": "Mostre as etapas da fotossíntese em ordem, cada uma com por que vem depois da anterior: a clorofila absorve a luz; a água é quebrada e libera oxigênio; a energia fica guardada em ATP e NADPH; o ciclo de Calvin usa essa energia para fixar o gás carbônico em açúcar; o açúcar é guardado como amido.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte o que acontece com o ciclo de Calvin numa planta que passou a noite toda no escuro. Resposta: ele para em pouco tempo, porque depende do ATP e do NADPH feitos com a luz. Resposta tentadora: continua igual, porque não usa luz diretamente.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Numa estufa, Bruno aumenta o gás carbônico do ar. Pergunte qual etapa ele acelera e por quê: a fixação do gás carbônico no ciclo de Calvin, se houver luz. Resposta tentadora: a quebra da água.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -1762,11 +1627,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The Hibérnia check highlights an instruction to tap cities rather than the decisive evidence that Rome never conquered Ireland. It also largely recalls a fact explicitly supplied in Londinium's reveal. The geographical term 'península' is introduced without explanation for beginners.",
           "kind": "minorErrors",
@@ -1802,27 +1663,21 @@
                 "activityTemplate": "mapExplorer",
                 "brief": "Mostre no mapa do Império Romano em 117 as cidades de Roma, Cartago (norte da África), Alexandria (Egito), Londinium (Britânia) e Antioquia (Síria), cada uma com o que mostra sobre o tamanho do império ao ser tocada. Todas ficam em volta do Mediterrâneo, que os romanos chamavam de 'nosso mar', menos Londinium.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte qual destas terras ficava fora do império em 117: Cartago, Antioquia ou a Hibérnia, a atual Irlanda. Resposta: a Hibérnia, que Roma nunca conquistou. Resposta tentadora: Antioquia, por ficar tão a leste.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Lívia planeja uma viagem de estudo por cidades que foram romanas. Pergunte qual roteiro fica todo dentro do império de 117: Lisboa, Cartago e Alexandria. Resposta tentadora: um roteiro com Moscou.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -1898,11 +1753,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The Murilo check has weaker distractors: denying that lawyer selection is an OAB attribution contradicts the question's own premise, while making human-rights protection depend on a delayed proceeding is less plausible than confusing institutional and corporate purposes. The corporate-purpose explanation also lacks a concrete example, and the phrase about improving legal culture and institutions remains abstract.",
           "kind": "minorErrors",
@@ -1944,63 +1795,49 @@
                 "activityTemplate": null,
                 "brief": "Raimundo sugere que a OAB, diante da demora de um processo, passe a decidir o recurso no lugar dos juízes. Peça que o aluno julgue a proposta: a resposta correta é que cobrar melhorias na Justiça não autoriza a OAB a julgar; inclua como alternativa tentadora que combater a demora lhe dá esse poder.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a finalidade institucional como a atuação voltada ao interesse de todos, não apenas ao de uma profissão. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Complete o alcance do art. 44, I, do Estatuto da Advocacia: a OAB deve pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas. Use a cobrança de providências contra atrasos como exemplo, sem confundi-la com o poder de decidir processos.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Thaís afirma que a OAB só pode cobrar rapidez da Justiça se também demonstrar que alguma lei foi aplicada incorretamente. Peça que o aluno julgue a afirmação: ela é incorreta, pois a rápida administração da justiça é uma finalidade prevista por si; a resposta tentadora é tratar as duas atuações do art. 44, I, como requisitos cumulativos.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a finalidade corporativa como a atuação referente aos profissionais da advocacia. Pelo art. 44, II, do Estatuto da Advocacia, cabe à OAB promover, com exclusividade, a representação, a defesa, a seleção e a disciplina dos advogados em toda a República Federativa do Brasil; explique que a exclusividade qualifica essas atribuições, não limita todas as finalidades da OAB aos advogados.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Murilo lê que a OAB atua com exclusividade na seleção de advogados e conclui que ela não pode defender direitos humanos de pessoas que não sejam advogadas. Peça que o aluno identifique o erro: a exclusividade do art. 44, II, não elimina a finalidade institucional do inciso I; inclua como alternativa tentadora a aplicação da exclusividade a toda atuação da OAB.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Sabrina analisa três pedidos dirigidos à OAB: cobrar providências diante de violações de direitos humanos, promover a seleção de advogados e assumir o julgamento de recursos atrasados. Peça que escolha a classificação completa: o primeiro corresponde ao art. 44, I, o segundo ao art. 44, II, e o terceiro não decorre dessas finalidades. Inclua como alternativa tentadora classificar os dois primeiros como corporativos por serem dirigidos à OAB.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -2070,11 +1907,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Some legal vocabulary is insufficiently explained for beginners, particularly “coisa móvel” and “penalmente imputável.” The culpability screen introduces both culpability and imputability without clearly translating the latter into everyday language. The Davi and final application checks also have null bases despite earlier teaching that supplies the decisive rules about age and examining justification before culpability.",
           "kind": "minorErrors",
@@ -2093,10 +1926,7 @@
           "chapterTitle": "Culpabilidade e responsabilidade pessoal",
           "courseTitle": "Direito Penal",
           "exams": [
-            {
-              "name": "Concurso TJ-SP",
-              "style": "multipleChoice: Questões de múltipla escolha."
-            }
+            { "name": "Concurso TJ-SP", "style": "multipleChoice: Questões de múltipla escolha." }
           ],
           "language": "pt",
           "level": "beginner",
@@ -2116,90 +1946,70 @@
                 "activityTemplate": null,
                 "brief": "Tainá é acusada de pegar a bicicleta de outra pessoa, mas afirma que a bicicleta é dela. Pergunte qual informação deve ser verificada primeiro: a quem pertence a bicicleta (correta), se Tainá estava com pressa ou se alguém ficou irritado com ela.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente tipicidade como o encaixe inicial entre o fato e a descrição da lei. No furto, a lei exige que a coisa móvel retirada pertença a outra pessoa (art. 155 do Código Penal); pegar a própria bicicleta não preenche essa descrição.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explique que um fato pode corresponder à descrição da lei e, ainda assim, ser permitido nas circunstâncias. Chame de ilicitude a contrariedade do fato ao direito: é a segunda pergunta, feita somente depois da tipicidade.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a legítima defesa: repelir agressão injusta, atual ou iminente, com meios necessários usados moderadamente pode afastar a ilicitude (arts. 23, II, e 25 do Código Penal). Compare a reação necessária com continuar a agredir depois que o perigo acabou.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Edson causa uma lesão ao empurrar, com a força necessária, alguém que estava prestes a agredir outra pessoa. Peça a conclusão: o fato não corresponde à descrição de lesão, corresponde mas a reação afasta a ilicitude (correta), ou só seria permitido se Edson conhecesse o agressor; a primeira opção é a confusão a explorar.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "decisionTree",
                 "brief": "Apresente culpabilidade como a possibilidade de responsabilizar pessoalmente alguém por um fato típico e ilícito. Mostre uma árvore para explorar, sem pedir resposta: o fato corresponde à descrição legal? Se não, pare; se sim, há causa que afaste a ilicitude? Se sim, pare; se não, a pessoa pode ser responsabilizada? Se não, falta culpabilidade; se sim, os três elementos estão presentes. Um menor de 18 anos não é penalmente imputável (art. 27 do Código Penal).",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Resolva passo a passo: Marília, adulta, danifica intencionalmente uma vitrine alheia porque sofre coação moral irresistível. O fato se enquadra no dano (art. 163 do Código Penal); não foi apresentada causa que afaste a ilicitude; a coação moral irresistível impede sua responsabilização pessoal (art. 22). Conclua: fato típico e ilícito, mas sem culpabilidade.",
                 "kind": "workedExample",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Davi, de 17 anos, danifica intencionalmente o celular alheio por vingança, sem circunstância que permita o ato. Peça que classifique o fato com menos ajuda que no exemplo: típico e ilícito, mas sem culpabilidade (correta); atípico porque Davi é menor de idade; ou lícito porque Davi é menor de idade. Aplique os arts. 163 e 27 do Código Penal.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "decisionTree",
                 "brief": "Raíssa, adulta, causa uma lesão ao imobilizar com força moderada quem agredia naquele momento uma colega; era a força necessária para interromper a agressão. Peça ao aluno que percorra as perguntas da árvore: lesão descrita na lei, sim; causa que afasta a ilicitude, sim, legítima defesa (arts. 23, II, e 25 do Código Penal). A pergunta sobre culpabilidade não precisa ser percorrida; o resultado é fato típico, mas não ilícito.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Num registro de ocorrência, Fábio lê que uma pessoa de 17 anos causou uma lesão ao repelir, com força necessária e moderada, uma agressão injusta que estava acontecendo. Peça que escolha qual dado resolve primeiro a análise após reconhecer a lesão (a reação à agressão ou a idade) e classifique o fato: a legítima defesa afasta a ilicitude antes que seja preciso examinar a culpabilidade; a alternativa tentadora é pular diretamente para a idade (arts. 23, II, 25 e 27 do Código Penal).",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -2314,72 +2124,56 @@
                 "activityTemplate": null,
                 "brief": "Em Macapá, Nayara registra 1.000 unidades de energia nas algas, 120 nos crustáceos que as comem e 14 nos peixes que comem os crustáceos. Mostre esses valores em um gráfico de barras e pergunte: se a energia continuar diminuindo, qual valor poderia aparecer no grupo que come esses peixes? Opções: 10, 120, 140, 1.000 ou 1.140 unidades; revele 10 assim que você escolher, sem explicar o motivo ainda.",
                 "kind": "hook",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Mostre que a luz do Sol é a principal entrada de energia nessa sequência: as algas usam parte dela para produzir alimento, no qual fica energia disponível para outros seres vivos. Use a comparação com carregar uma bateria: nem toda a luz recebida fica guardada.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explique a respiração celular como o uso do alimento pelo organismo para manter o corpo funcionando, semelhante a um motor que usa combustível e libera calor. Além dessa energia liberada, partes que não são comidas não passam ao consumidor seguinte daquele caminho.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Renan, em Maringá, afirma que a energia diminui entre um grupo e outro porque é destruída durante a respiração celular. Peça que você avalie a afirmação e escolha a correção: parte da energia é liberada ao ambiente como calor; inclua como alternativa tentadora que toda a energia do alimento passa intacta ao próximo consumidor.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a pirâmide de energia como uma forma de comparar a energia disponível em cada nível trófico: sua base é maior porque a cada transferência chega menos energia ao grupo seguinte. Mostre um gráfico de barras com plantas: 900 unidades; insetos que as comem: 108; aves que comem os insetos: 15.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Esclareça que a diminuição não segue uma porcentagem obrigatória: quanto fica disponível ao próximo grupo depende, entre outras coisas, do alimento consumido e da energia usada pelos organismos. Portanto, não se deve aplicar automaticamente uma regra de transferência de 10% a toda sequência.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "categorize",
                 "brief": "Em uma sequência de taboas → caramujos → marrecos, peça que você separe os destinos da energia em «pode chegar ao próximo consumidor desse caminho» e «não chega ao próximo consumidor desse caminho». Use como itens: energia no corpo de caramujos comidos pelos marrecos; energia nas partes das taboas comidas pelos caramujos; calor liberado pelos caramujos; energia nas partes das taboas que nenhum caramujo come. A distinção importante é que algo não consumido nesse caminho não desaparece.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Em Petrolina, Jussara avalia um açude com plantas aquáticas, moluscos que as comem, peixes pequenos que comem os moluscos e peixes predadores que comem os peixes pequenos. Mostre um gráfico de barras com 12.000, 1.600, 180 e 21 unidades de energia nesses grupos, respectivamente. Para obter mais energia na pesca a partir da mesma base de plantas, peça que você escolha entre capturar peixes pequenos ou predadores e justifique usando os dados e a perda de energia nas transferências; inclua a opção tentadora de escolher predadores por estarem no topo da sequência.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -2501,82 +2295,63 @@
                 "activityTemplate": null,
                 "brief": "Com referência de 20,0 cm, o grupo X leu 22,0; 22,1; 22,2 cm e o grupo Y leu 19,0; 20,0; 21,0 cm. Mostre as leituras numa tabela e pergunte qual grupo tem leituras mais agrupadas, mesmo longe da referência. Resposta: X; inclua como alternativa tentadora escolher Y por estar perto da referência.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a precisão como o agrupamento das leituras: quanto mais próximas umas das outras, maior a precisão. Use X e Y do caso anterior e deixe claro que a precisão sozinha não diz se o resultado está perto da referência.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a exatidão como a proximidade do resultado central à referência: Y se distribui em torno de 20,0 cm, e X se agrupa em torno de 22,1 cm. Mostre que agrupar leituras e acertar o alvo são avaliações diferentes.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Com referência de 100,0 g, o sensor C leu 98,0; 100,0; 102,0 g e o sensor D leu 103,0; 103,1; 103,2 g. Pergunte qual sensor repete quase o mesmo resultado, mas exige investigar seu desvio da referência. Resposta: D; inclua como alternativa tentadora escolher C por ter uma leitura igual à referência.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a incerteza como a margem que comunica a variação observada: com leituras de 8,0; 8,2; 8,4 cm, o meio entre os extremos é 8,2 cm e metade da distância entre eles é 0,2 cm, então a estimativa é 8,2 ± 0,2 cm. Esclareça que essa margem não garante que a referência esteja dentro dela.",
                 "kind": "explanation",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Jussara mede uma peça três vezes e obtém 18,6; 18,8; 19,0 mm. Mostre passo a passo o meio entre a menor e a maior leitura (18,8 mm), a distância entre os extremos (0,4 mm) e metade dela como margem (0,2 mm), chegando a 18,8 ± 0,2 mm.",
                 "kind": "workedExample",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Dê três leituras da mesma medida, 11,7; 11,9; 12,1 cm, e peça o resultado central com a margem pelo procedimento de Jussara. Resposta: 11,9 ± 0,2 cm; inclua como alternativa tentadora 11,9 ± 0,4 cm, que usa a distância inteira entre os extremos como margem.",
                 "kind": "check",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Kauã estima a incerteza de 31,6; 32,0; 32,4 °C em quatro passos: o meio dos extremos é 32,0 °C; a distância entre eles é 0,4 °C; a metade é 0,2 °C; o resultado é 32,0 ± 0,2 °C. Peça que você encontre o primeiro passo errado: a distância é 0,8 °C, então o resultado é 32,0 ± 0,4 °C; inclua como alternativa tentadora apontar o último passo.",
                 "kind": "check",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Na Termolab, em Joinville, Tainá escolhe um sensor para peças de referência 50,0 mm: o resultado central deve ficar a no máximo 0,2 mm dela, e a margem estimada deve ser de no máximo 0,2 mm. Mostre numa tabela as leituras do sensor A (49,5; 49,6; 49,7 mm) e do sensor B (49,8; 50,0; 50,2 mm) e peça que você escolha o sensor que atende às duas condições, com os resultados aproximados de A e B. Resposta: B (A: 49,6 ± 0,1 mm; B: 50,0 ± 0,2 mm); inclua como alternativa tentadora escolher A por ter a menor margem.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],
@@ -2654,11 +2429,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "There are two clarity gaps: “hemácia” is used without an everyday explanation, and the bacteria example jumps from 0,6 × 10⁴ to 6 × 10³ without explaining why moving the comma right requires decreasing the exponent. The first check's basis explains exponent signs but omits the coefficient range, so it cannot resolve the tempting, numerically equivalent answer 62 × 10⁻⁴.",
           "kind": "minorErrors",
@@ -2694,64 +2465,49 @@
                 "activityTemplate": null,
                 "brief": "Explique a forma a × 10ⁿ, com a de 1 até menos de 10: conte quantas casas a vírgula anda e para que lado. Mostre 203.000.000 = 2,03 × 10⁸ e 0,0000075 = 7,5 × 10⁻⁶.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Resolva passo a passo: escreva a distância da Terra à Lua, 384.400 km, como 3,844 × 10⁵ km; depois a espessura de uma folha de papel, 0,00045 m, como 4,5 × 10⁻⁴ m.",
                 "kind": "workedExample",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça que escreva 0,0062 em notação científica: 6,2 × 10⁻³. Inclua 62 × 10⁻⁴ (o decimal não fica entre 1 e 10) e 6,2 × 10³ (sinal do expoente trocado) como erros tentadores.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Para multiplicar, multiplique os decimais e some os expoentes; se o decimal passar de 10, ajuste a potência. Mostre (3,5 × 10⁴) × (2,4 × 10³) = 8,4 × 10⁷.",
                 "kind": "explanation",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Resolva passo a passo: uma bactéria mede 2,5 × 10⁻⁶ m; quantas cabem enfileiradas em 1,5 × 10⁻² m? Divida os decimais (1,5 ÷ 2,5 = 0,6), subtraia os expoentes (−2 − (−6) = 4) e ajuste: 0,6 × 10⁴ = 6 × 10³, ou 6.000 bactérias.",
                 "kind": "workedExample",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça que calcule (4,0 × 10⁵) × (2,5 × 10⁻²): 1,0 × 10⁴. Inclua 10 × 10³ (decimal não ajustado) e 1,0 × 10⁻¹⁰ (expoentes multiplicados em vez de somados) como erros tentadores.",
                 "kind": "check",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Um texto de prova diz que o Sol fica a 1,496 × 10⁸ km da Terra e a Lua a 3,844 × 10⁵ km. Peça que estime quantas vezes o Sol está mais longe: cerca de 389 vezes (1,496 ÷ 3,844 ≈ 0,389 e 10⁸ ÷ 10⁵ = 10³).",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],
@@ -2829,11 +2585,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The caption options in the hook and the Otávio check are not italicized, contrary to the explicit requirement. The hook reveal also repeats its caption without italics. The application question says “Qual cena combina com a legenda?” but never refers to “a imagem,” as required for every picture-based question.",
           "kind": "minorErrors",
@@ -2869,36 +2621,28 @@
                 "activityTemplate": null,
                 "brief": "A caption is the text that goes with a picture, like a label: it should say what the picture shows. Check three things in both: who or what, the action, and details like color and quantity.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "The picture shows Otávio standing next to a blue bicycle; he isn't riding it. The learner picks the caption that fits. Tempting wrong caption: 'Otávio rides a blue bicycle' (right color and object, wrong action).",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Otávio standing still next to a blue bicycle, both feet on the ground."
               },
               {
                 "activityTemplate": null,
                 "brief": "Quantity matters too: three boxes stacked fit 'Três caixas empilhadas', not 'Duas caixas empilhadas'.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Two scenes side by side, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of it. The learner picks which scene fits 'Nayara coloca um livro na caixa vermelha'. Tempting wrong answer: scene 2 (same box and book, opposite action).",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Two panels labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box."
               }
             ],
@@ -3008,36 +2752,28 @@
                 "activityTemplate": null,
                 "brief": "Apresente o gráfico de barras: cada barra representa uma categoria, e um número maior pede uma barra mais comprida. Mostre três categorias com 2, 5 e 7 ocorrências em barras que partem do mesmo ponto.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça ao aluno que escolha o gráfico para os dados visita 6, telefonema 3 e mensagem 8; mostre as três opções como gráficos de barras com os nomes visíveis. A correta mantém 6–3–8; inclua a opção tentadora 6–8–3.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Nomes compridos ficam apertados sob barras em pé; com barras deitadas, há espaço para o nome ao lado de cada uma sem mudar os valores. Compare duas versões dos mesmos dados: atendimento presencial 5, pedido pelo aplicativo 8 e retirada com agendamento 3.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Para entrega na portaria do prédio 7 e retirada em horário combinado 4, peça que o aluno escolha entre dois desenhos com os mesmos comprimentos: barras deitadas com nomes inteiros ou barras em pé com nomes cortados. A segunda é tentadora porque os comprimentos estão certos.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -3107,11 +2843,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The beginner-language requirements are not fully met: the hook uses “arches” and “columns” without explaining them, and the explanation introduces three technical style names on one screen despite the one-new-term requirement. The visible features help, but everyday comparisons are missing.",
           "kind": "minorErrors",
@@ -3147,27 +2879,21 @@
                 "activityTemplate": null,
                 "brief": "Three styles of church doorway: Romanesque (round arch, thick walls, small openings), Gothic (pointed arch, thin columns, tall) and Baroque (twisting columns, curves and rich decoration). The arch's shape is the first thing to look at.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Show three doorways, one of each style, and ask which one is Gothic. Tempting wrong answer: the Baroque one, because it is the most decorated.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Ana visits a church in Lisbon whose doorway has a round arch set in thick walls. Ask which style it most likely is (Romanesque) and why. Tempting wrong answer: Gothic, because the church is old.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -3277,27 +3003,21 @@
                 "activityTemplate": null,
                 "brief": "The flower's parts for seeds: stamens make pollen; the stigma on top of the pistil catches it; the ovary at the pistil's base holds the ovules that become seeds, and it grows into the fruit. Petals only attract insects.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A flower cut in half lengthwise, with the petals, stamens, stigma and ovary labeled."
               },
               {
                 "activityTemplate": null,
                 "brief": "Show a flower cut in half with its petal, stamen, stigma and ovary numbered, and ask which number is the ovary. Tempting wrong answer: the stigma, at the top of the same stalk.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A flower cut in half lengthwise, with the petal, stamen, stigma and ovary numbered."
               },
               {
                 "activityTemplate": null,
                 "brief": "Leo cuts a young pea pod open and finds tiny peas in a row. Ask which part of the flower the pod grew from (the ovary) and what the peas were (the ovules). Tempting wrong answer: the petals.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -3367,11 +3087,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The sweater check's basis quotes only the drying rule. That sentence rules out the dryer options but does not distinguish the correct answer from the hot-machine-wash option, which also ends with laying the sweater flat. The highlighted feedback therefore does not fully resolve the question.",
           "kind": "minorErrors",
@@ -3407,27 +3123,21 @@
                 "activityTemplate": null,
                 "brief": "A care tag says how to wash and dry a piece without damaging it. 'Cold' means water up to about 86 °F; heat and rubbing shrink wool. 'Tumble dry low' allows the dryer on low heat, while 'Lay flat to dry' means no dryer at all: tumbling shrinks the piece and hanging it wet stretches it.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "The picture shows a sweater's care tag reading 'HAND WASH COLD. LAY FLAT TO DRY.' Ask what the tag says. Tempting wrong answer: 'Tumble dry low' (taking low heat as safe for any piece).",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A wool sweater on a bed, its sewn-in care tag turned out and reading 'HAND WASH COLD. LAY FLAT TO DRY.'"
               },
               {
                 "activityTemplate": null,
                 "brief": "Leo's new cotton hoodie has a tag that says 'Machine wash cold. Tumble dry low.' He wants to dry it with his towels on high heat. Ask what he should do (dry it on low, separately if the towels need high heat). Tempting wrong answer: high heat is fine because the tag allows the dryer.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -3497,11 +3207,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The banking application uses “support tickets” without explaining that these are requests for help from customers. This introduces unnecessary jargon for beginners.",
           "kind": "minorErrors",
@@ -3537,37 +3243,28 @@
                 "activityTemplate": null,
                 "brief": "A UX goal names the change in people's experience ('fewer people give up at payment'), not the design that might cause it ('add a progress bar'). Explain with the checkout example.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask which of three statements is a UX goal. Tempting wrong answer: 'Redesign the payment button', a solution phrased like a goal.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "findError",
                 "brief": "Spot the AI's mistake: a designer asked an AI assistant to turn interview notes into a UX goal for a food delivery app. The assistant's four steps read the notes, find that people abandon orders when the delivery fee appears late, then in step 2 decide the goal is 'show the fee on the home screen' (the mistake: a solution, not a change in experience), and in steps 3 and 4 build the success measure and the summary on that wrong goal.",
                 "kind": "activity",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Application: in a banking app, support tickets show people can't find where to change their card limit. Ask the learner to pick the UX goal among options that mix goals and solutions.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],
@@ -3651,11 +3348,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The explanation introduces câmaras, átrios, ventrículos and septo together, contrary to the one-new-term-per-screen requirement, and lacks the requested everyday comparisons. Although their meanings are explained, this concentrates vocabulary for beginners. The chamber-to-body check directly repeats the explanation rather than requiring the learner to apply it.",
           "kind": "minorErrors",
@@ -3691,38 +3384,28 @@
                 "activityTemplate": null,
                 "brief": "O coração tem quatro câmaras: dois átrios em cima, que recebem o sangue, e dois ventrículos embaixo, que bombeiam. O lado direito manda sangue para os pulmões; o esquerdo, para o corpo todo. O septo separa os dois lados.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Coração visto de frente, com os átrios em cima, os ventrículos embaixo e o septo no meio."
               },
               {
                 "activityTemplate": "labeledDiagram",
                 "brief": "O aprendiz arrasta os nomes átrio direito, átrio esquerdo, ventrículo direito, ventrículo esquerdo e septo para o desenho do coração visto de frente. Confusão provável: trocar direito e esquerdo, já que o lado direito do coração fica à esquerda de quem olha.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte qual câmara bombeia o sangue para o corpo todo. Resposta tentadora: o ventrículo direito. Certa: o ventrículo esquerdo, que tem a parede mais grossa porque empurra o sangue mais longe.",
                 "kind": "check",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Num exame, o médico ouve um sopro causado por um furo no septo. Pergunte o que acontece com o sangue. Resposta certa: sangue do lado esquerdo passa para o direito, e o sangue que vai para o corpo e para os pulmões se mistura.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],
@@ -3846,36 +3529,28 @@
                 "activityTemplate": null,
                 "brief": "A major chord is a root, a major third (4 half steps up) and a fifth: C, E, G. Lower the middle note one half step and you get a minor chord: C, Eb, G. Major sounds bright; minor sounds darker.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "keyboardFretboard",
                 "brief": "By ear: the app plays an A minor chord (A, C, E) together, without naming it. The learner picks whether it was major or minor, then sees it on the keys. Tempting wrong answer: major, from not hearing the lowered third.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask which note changes when C major becomes C minor. Correct: E drops to Eb. Tempting wrong answer: G drops to Gb, the top note.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Maya plays G, B, D on her keyboard for a sad song and it sounds too bright. Ask which single key she should change (B to Bb) and why.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -3951,11 +3626,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The bread application correctly predicts increased supply and a lower price, but never explicitly connects this to shifting the supply curve right, as required. The explanation also states that reduced supply moves the crossing upward and left without explaining the intermediate mechanism: fewer eggs are available at the old price, pushing price up while the quantity buyers purchase falls.",
           "kind": "minorErrors",
@@ -3991,36 +3662,28 @@
                 "activityTemplate": null,
                 "brief": "O preço de equilíbrio fica onde a curva de oferta cruza a de demanda. Menos galinhas é menos oferta: a curva de oferta vai para a esquerda, e o cruzamento sobe para um preço maior com menos ovos vendidos.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "lineCrossing",
                 "brief": "O aprendiz arrasta a curva certa para mostrar a gripe aviária (oferta para a esquerda) e vê o novo preço de equilíbrio. Use números de exemplo marcados como exemplo. Erro tentador: mover a demanda para a direita, porque o preço subiu.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte o que acontece com o preço e a quantidade de ovos se uma dieta da moda fizer muita gente comer mais ovos. Certa: demanda para a direita, preço e quantidade sobem. Tentadora: a oferta aumenta.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Uma padaria em Recife vê o preço do trigo cair depois de uma safra recorde. Pergunte o que acontece com a oferta de pão e o seu preço, e por quê.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -4096,11 +3759,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The explanation introduces three technical terms—alleles, dominant, and Punnett square—on one screen, contrary to the one-new-term requirement. The application has a null basis even though earlier simulation feedback explains that half is each seed's chance, not a promise of exactly 50. The grid's 3-in-4 feedback is weak: counting Pp as white would ordinarily make all four boxes white, not three.",
           "kind": "minorErrors",
@@ -4136,37 +3795,28 @@
                 "activityTemplate": null,
                 "brief": "Each parent passes one of its two alleles. P (purple) is dominant over p (white): Pp is purple, only pp is white. A Pp × pp cross gives Pp or pp, each half the time.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "combinationGrid",
                 "brief": "The learner fills the Punnett square for a purple Pp plant crossed with a white pp plant, then answers what share of the seeds grow white flowers (1 in 2). Tempting wrong answer: 1 in 4, from remembering the Pp × Pp cross.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "randomSimulation",
                 "brief": "Chance mode: plant batches of 100 seeds from the same Pp × pp cross, each white with chance 1/2. The learner guesses how often a batch has exactly 50 white flowers, then runs many batches: they land near 50, rarely on it (about 8% of the time). Tempting wrong answer: most of the time.",
                 "kind": "activity",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A gardener gets 47 white flowers out of 100 seeds from a Pp × pp cross. Ask whether the 1 in 2 prediction was wrong. Correct: no, chance spreads results around 50.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],
@@ -4255,11 +3905,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Several technical references are not unpacked for a beginner: CMC is not expanded, and elétrons and cadeia respiratória appear without an everyday explanation. The explanation screens also introduce multiple technical terms together, contrary to the clarity requirements.",
           "kind": "minorErrors",
@@ -4296,36 +3942,28 @@
                 "activityTemplate": null,
                 "brief": "A glicólise acontece no citoplasma (o C do macete CMC). Fase de investimento: a célula gasta 2 ATP para ativar a glicose, como o empréstimo do slide.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Fase de rendimento: produz 4 ATP e 2 NADH (que levam elétrons à cadeia respiratória).",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte o saldo de ATP por glicose, com a pegadinha de responder 4.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte onde a glicólise acontece, com a pegadinha da mitocôndria.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -4435,36 +4073,28 @@
                 "activityTemplate": null,
                 "brief": "A tree key asks one question at a time about what you can see. First: needles or broad leaves? Needles in bundles mean a pine; single needles on the twig mean a spruce or fir. Broad leaves with rounded lobes mean an oak; pointed lobes mean a maple.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A simple tree key drawn as branches: needles or broad leaves, then bundles or single needles, then rounded or pointed lobes."
               },
               {
                 "activityTemplate": "decisionTree",
                 "brief": "The learner walks a key to name the tree from a leaf they can see: long needles growing in bundles of two. Likely mistake: stopping at needles and saying spruce, without checking whether they grow in bundles.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A pine twig with long needles growing in bundles of two, close up."
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask which question a key should ask first about a maple leaf. Tempting wrong answer: whether its lobes are pointed. Right: whether it has needles or broad leaves, because a key narrows from the broadest feature down.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "On a walk, a friend finds a broad leaf with rounded lobes. Ask which tree the key leads to and why. Right: an oak, because broad leaves with rounded lobes lead there.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -4540,11 +4170,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The first check is recall-only: asking which part controls entry directly retrieves the preceding definition of the membrane. The substance-arriving context does not require a prediction or inference. This triggers the cap of 8 for one recall-only check.",
           "kind": "minorErrors",
@@ -4580,54 +4206,42 @@
                 "activityTemplate": null,
                 "brief": "A membrana é o contorno da célula: separa o dentro do fora e controla o que entra e o que sai. Compare com o portão de um condomínio que deixa passar só quem pode.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Uma célula com a membrana em destaque no contorno."
               },
               {
                 "activityTemplate": null,
                 "brief": "O material genético guarda as instruções que a célula usa para funcionar e se dividir. Compare com o caderno de receitas de uma cozinha.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte qual parte decide se uma substância entra na célula. Inclua a resposta tentadora, mas errada, de que é o material genético, por guardar as instruções.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "O citoplasma preenche todo o espaço entre a membrana e o material genético: um gel feito quase todo de água, onde acontece boa parte do trabalho da célula, como tirar energia do açúcar.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Uma célula com a membrana, o citoplasma preenchendo o interior e o material genético, as três partes rotuladas."
               },
               {
                 "activityTemplate": null,
                 "brief": "Descreva uma célula que perdeu quase todo o citoplasma e pergunte o que deixa de acontecer nela. Inclua a resposta tentadora, mas errada, de que ela só perde o formato.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles. Pergunte o que Iara precisa acrescentar, onde deve desenhar e por que isso completa o esquema. Inclua a resposta tentadora, mas errada, de desenhar uma segunda membrana por dentro.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -4697,11 +4311,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The first scored check introduces `for n in range(...): print(n)` without explaining how `n` takes each number and `print(n)` runs once for each one. For beginners who have never used loops, this skips the bridge between understanding range's numbers and predicting a loop's output.",
           "kind": "minorErrors",
@@ -4737,36 +4347,28 @@
                 "activityTemplate": null,
                 "brief": "range(start, stop) starts at start and stops before stop: range(1, 5) gives 1, 2, 3, 4. To reach 5, the stop is 6. The count of numbers is stop minus start.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "The numbers 1 to 6 on a line, with range(1, 5) highlighting 1 to 4 and 5 left out."
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask what for n in range(2, 6): print(n) prints. Tempting wrong answer: 2, 3, 4, 5, 6. Right: 2, 3, 4, 5, because the stop isn't included.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "codeRunner",
                 "brief": "The learner fixes a Python loop that should print the numbers 1 to 5, one per line, but uses range(1, 5). Only the loop line is editable. Likely mistakes: range(0, 5), which prints 0 to 4, and range(1, 5) left as it is.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A countdown uses for n in range(10, 0, -1). Ask what the last number printed is. Tempting wrong answer: 0. Right: 1, because the stop is still left out when counting down.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -4882,87 +4484,63 @@
                 "activityTemplate": null,
                 "brief": "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes."
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
                 "kind": "explanation",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
                 "kind": "workedExample",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
                 "kind": "check",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
                 "kind": "explanation",
-                "skills": [
-                  2
-                ],
+                "skills": [2],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
                 "kind": "workedExample",
-                "skills": [
-                  0,
-                  2
-                ],
+                "skills": [0, 2],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
                 "kind": "check",
-                "skills": [
-                  0,
-                  2
-                ],
+                "skills": [0, 2],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1,
-                  2
-                ],
+                "skills": [0, 1, 2],
                 "visual": null
               }
             ],
@@ -5088,83 +4666,63 @@
                 "activityTemplate": null,
                 "brief": "Start concrete: a movie ticket went from $20 to $25. The change is new minus old: $25 - $20 = $5. Explain that $5 alone doesn't tell us if that's a big jump, because $5 on a $20 ticket feels bigger than $5 on a $500 TV.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Two bars side by side: a $20 bar and a $25 bar, with the extra $5 piece highlighted on top."
               },
               {
                 "activityTemplate": null,
                 "brief": "Introduce percent change: compare the change to the ORIGINAL price, like asking 'how many cents of change per dollar we started with?' Show the recipe piece by piece: change ÷ original × 100. Stress that 'original' means the starting value, before the change.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "The formula 'percent change = (new − old) ÷ old × 100' with each piece labeled: 'the change', 'the starting value', 'turn into percent'."
               },
               {
                 "activityTemplate": null,
                 "brief": "Work the ticket example step by step: change = 25 - 20 = 5; divide by original 20: 5 ÷ 20 = 0.25; times 100 = 25%. So the price went up 25%.",
                 "kind": "workedExample",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Learner calculates: a salary rose from $2,000 to $2,300 a month. What's the percent increase? Correct: 15%. Include the tempting wrong answer 13% (dividing $300 by the new salary $2,300).",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Show a decrease: a jacket goes from $80 to $60. Change = 60 - 80 = -20; -20 ÷ 80 = -0.25; × 100 = -25%. A minus sign means the price went down 25%. Point out we still divide by the starting price, $80.",
                 "kind": "workedExample",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A bar for $80 with the top $20 section shaded and crossed out, leaving $60, labeled '20 out of 80 = 25% off'."
               },
               {
                 "activityTemplate": null,
                 "brief": "Learner calculates: a video game drops from $50 to $40. What's the percent change? Correct: a 20% decrease. Include the tempting wrong answer 25% (dividing $10 by the new price $40).",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Return to the hook: $100 drops 50% to $50. A 50% rise from $50 is only $25, giving $75, not $100. To get back, the price must rise $50 on a base of $50: 50 ÷ 50 = 100%. The starting value changed, so the same dollar amount is a bigger percent.",
                 "kind": "explanation",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": "Before-and-after: left, $100 bar with half removed (−50% of 100); right, $50 bar doubled back to $100 (+100% of 50)."
               },
               {
                 "activityTemplate": "guessReveal",
                 "brief": "A stock falls 20%, from $100 to $80. Learner commits to an estimate of the percent rise needed to get back to $100, then sees the real answer: $20 ÷ $80 = 25%. Many will guess 20%; show how far off they were and why.",
                 "kind": "activity",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Your monthly pay of $3,000 is cut 10% during a slow season, then raised 10% later. Learner calculates each step ($3,000 → $2,700 → $2,970), finds they're still $30 short, and works out the percent rise actually needed from $2,700 to get back to $3,000 (about 11.1%).",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],
@@ -5288,54 +4846,42 @@
                 "activityTemplate": null,
                 "brief": "Troque a imagem de uma bolinha dando voltas pela de uma região onde o elétron pode ser encontrado. Essa região é chamada de nuvem eletrônica; ela não é uma trilha nem uma nuvem de matéria comum.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica."
               },
               {
                 "activityTemplate": null,
                 "brief": "Explique que a atração puxa o elétron para perto, mas concentrar sua nuvem num espaço minúsculo exige mais energia. Compare com apertar algo que resiste a ficar confinado, sem sugerir que exista uma mola dentro do átomo.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A mesma nuvem em dois tamanhos: espalhada ao redor do núcleo e muito comprimida junto a ele, com indicação de que comprimir exige energia."
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte por que a atração do núcleo não basta para deixar o elétron espremido nele. Inclua a resposta tentadora, mas errada, de que o elétron escapa porque gira rápido como um planeta.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Mostre que o arranjo mais estável combina a atração pelo núcleo com o custo de confinar demais o elétron. Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Núcleo cercado por uma nuvem de tamanho definido, contrastada com um ponto minúsculo no centro marcado como concentração excessiva."
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça ao aprendiz que identifique o erro na frase: «O elétron não cai porque o núcleo o empurra para longe». Inclua como alternativa correta que o núcleo atrai o elétron, mas concentrá-lo demais exige energia.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Um celular é feito de átomos que não desabam sobre seus núcleos. Peça ao aprendiz que explique isso a alguém que imagina os elétrons como bolinhas prestes a cair, usando as ideias de atração, nuvem e custo de confinamento.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],

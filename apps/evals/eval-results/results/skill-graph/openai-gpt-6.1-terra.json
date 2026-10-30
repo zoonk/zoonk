@@ -217,9 +217,7 @@
                 "group": "Dia 1",
                 "name": "Redação",
                 "questions": null,
-                "topics": [
-                  "Texto dissertativo-argumentativo sobre um problema social"
-                ],
+                "topics": ["Texto dissertativo-argumentativo sobre um problema social"],
                 "weight": null
               },
               {
@@ -900,23 +898,14 @@
                 "group": "Bloco II (36 itens)",
                 "name": "Estatística",
                 "questions": null,
-                "topics": [
-                  "Estatística descritiva",
-                  "Probabilidade",
-                  "Inferência"
-                ],
+                "topics": ["Estatística descritiva", "Probabilidade", "Inferência"],
                 "weight": null
               },
               {
                 "group": "Bloco II (36 itens)",
                 "name": "Raciocínio Lógico",
                 "questions": null,
-                "topics": [
-                  "Proposições e equivalências",
-                  "Argumentos",
-                  "Conjuntos",
-                  "Contagem"
-                ],
+                "topics": ["Proposições e equivalências", "Argumentos", "Conjuntos", "Contagem"],
                 "weight": null
               },
               {
@@ -937,11 +926,7 @@
                 "group": "Bloco III (24 itens)",
                 "name": "Contabilidade Geral",
                 "questions": null,
-                "topics": [
-                  "Patrimônio",
-                  "Registros contábeis",
-                  "Demonstrações contábeis"
-                ],
+                "topics": ["Patrimônio", "Registros contábeis", "Demonstrações contábeis"],
                 "weight": null
               }
             ],
@@ -956,11 +941,7 @@
                 "subject": "Língua Portuguesa",
                 "topic": "Reescrita de frases e parágrafos do texto"
               },
-              {
-                "level": "medium",
-                "subject": "Informática",
-                "topic": "Segurança da informação"
-              },
+              { "level": "medium", "subject": "Informática", "topic": "Segurança da informação" },
               {
                 "level": "low",
                 "subject": "Contabilidade Geral",

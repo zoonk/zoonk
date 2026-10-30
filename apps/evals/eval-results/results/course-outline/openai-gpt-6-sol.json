@@ -69,11 +69,7 @@
           "kind": "majorErrors",
           "score": 6
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Preserve the distinct chapter title, eight short lessons, and relevant skill tag. Replace the tense-focused opening with concrete interview exchanges, and use short A1–A2 English examples to establish the intended difficulty. Keep the useful emphasis on truthful contributions, but embed AI checking within preparation for an English interview answer rather than making general verification the lesson's endpoint.",
           "kind": "potentialImprovements",
@@ -292,11 +288,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Two descriptions need greater physical precision. Tipping depends on the vertical projection of the center of mass falling outside the support base, not simply the center of mass moving outside it. Simple harmonic motion requires acceleration directly proportional to displacement and opposite in direction; saying it merely grows with displacement does not distinguish SHM from other restoring-force motions.",
           "kind": "minorErrors",
@@ -413,11 +405,7 @@
           "kind": "majorErrors",
           "score": 6
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Strengthen paper-exam transfer with short certo/errado comparisons that ask learners to justify distinctions between CTC, attention and transducers, and between audio-grounded observations and unsupported multimodal inferences.",
           "kind": "potentialImprovements",
@@ -520,11 +508,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Several lessons are thin fragments of the summary: the three nucleus lessons each teach essentially one short factual statement, and the standalone vacuole lesson adds little beyond identifying the structure. This creates unnecessary lesson transitions in an otherwise appropriately small course.",
           "kind": "minorErrors",
@@ -859,12 +843,7 @@
             {
               "area": "Matemática",
               "chapters": [
-                {
-                  "lessons": [
-                    "Leitura de gráficos"
-                  ],
-                  "title": "Estatística"
-                },
+                { "lessons": ["Leitura de gráficos"], "title": "Estatística" },
                 {
                   "lessons": [
                     "Eixos truncados",
@@ -933,12 +912,7 @@
             {
               "area": "Ciências Humanas",
               "chapters": [
-                {
-                  "lessons": [
-                    "A Primeira República"
-                  ],
-                  "title": "Brasil República"
-                },
+                { "lessons": ["A Primeira República"], "title": "Brasil República" },
                 {
                   "lessons": [
                     "Os limites da alternância presidencial",
@@ -974,12 +948,7 @@
             {
               "area": "Redação",
               "chapters": [
-                {
-                  "lessons": [
-                    "As cinco competências"
-                  ],
-                  "title": "Redação"
-                },
+                { "lessons": ["As cinco competências"], "title": "Redação" },
                 {
                   "lessons": [
                     "Desvios de norma na competência I",
@@ -1165,11 +1134,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The qubit description is ambiguous: saying its 'possible test outcomes are not limited to a prewritten zero or one' can suggest that reading a qubit produces outcomes beyond the two binary results. Distinguish the quantum state from its readout: the state is not simply a predetermined classical bit, but a standard binary measurement returns zero or one.",
           "kind": "minorErrors",
@@ -1300,11 +1265,7 @@
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Overview: 3 to 6 chapters of big ideas in plain words, no formulas or equations\n      - Big ideas, judged by category rather than by any one example: scarcity and choices; markets and prices; the financial system (money, banks and credit); core ideas of macroeconomics such as output, growth, inflation, unemployment and public finances; trade with other countries; and how people actually decide. Brazilian examples are welcome\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "pt-economia-overview-1",
-        "userInput": {
-          "courseTitle": "Economia",
-          "language": "pt",
-          "level": "overview"
-        }
+        "userInput": { "courseTitle": "Economia", "language": "pt", "level": "overview" }
       }
     },
     {
@@ -1388,15 +1349,9 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Beginner band of statistics, judged by category rather than by any one example: describing data (types of variables, tables and charts, center, spread and position), probability and distributions at a beginner level, sampling and bias, relationships between variables (correlation is not causation), and a first look at inference (estimation and hypothesis testing)\n      - Level fit: inference stays at a beginner's first look; several separate test procedures (t tests for different designs, ANOVA, chi-square) go past the band and are a level-fit error\n      - Practical work with spreadsheets and real data should appear, and a field AI is changing should include checking analyses and charts made with AI tools\n      - Formulas may appear where the idea needs them, explained in everyday words\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "tool": "planilha|excel|sheets|calc"
-        },
+        "expected": { "tool": "planilha|excel|sheets|calc" },
         "id": "pt-estatistica-beginner-1",
-        "userInput": {
-          "courseTitle": "Estatística",
-          "language": "pt",
-          "level": "beginner"
-        }
+        "userInput": { "courseTitle": "Estatística", "language": "pt", "level": "beginner" }
       }
     },
     {
@@ -1462,11 +1417,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Product-team collaboration is mostly presented as documentation, justification, and implementation checking; beginners receive little explicit instruction on collaborating with product management and engineering to negotiate scope or feasibility. 'Alvos de toque e limites de tempo' combines distinct accessibility mechanisms rather than one tightly focused lesson. Within the AI chapter, privacy precautions come after lessons involving research records, although learners should apply those precautions before submitting records.",
           "kind": "minorErrors",
@@ -1480,15 +1431,9 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Beginner band of UX design for career changers: research, problem framing, information architecture, interaction, visual design, prototyping, testing and the work with a product team\n      - No two lessons of a chapter teach the same distinction: \"a need is not a product goal\", \"a goal is not a solution\" and \"a solution is not a result\" belong in one lesson; \"a symptom is not a problem\" and \"a symptom is not its cause\" too. Each lesson has its own move: a new idea, a procedure, a harder case or applying earlier ideas together\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "tool": "figma|figjam|penpot"
-        },
+        "expected": { "tool": "figma|figjam|penpot" },
         "id": "pt-ux-beginner-distinct-lessons-1",
-        "userInput": {
-          "courseTitle": "Design de UX",
-          "language": "pt",
-          "level": "beginner"
-        }
+        "userInput": { "courseTitle": "Design de UX", "language": "pt", "level": "beginner" }
       }
     },
     {
@@ -1572,9 +1517,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Spain Spanish (not Latin American Spanish), for example \"ordenador\" and \"fichero\" or \"archivo\" in their European use\n      - Beginner band of Python programming: running Python and the tools to write it, variables and types, strings, conditionals, loops, functions, lists, dictionaries and other collections, reading and writing files, errors and exceptions, modules and packages, virtual environments, basic testing, and a small real program\n      - Programming is a field AI is changing: lessons must include working with AI assistants (describing a task, reading and reviewing generated code, finding the bug in AI code) and favor concepts and debugging over memorizing syntax\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "tool": "python"
-        },
+        "expected": { "tool": "python" },
         "id": "es-python-beginner-1",
         "userInput": {
           "courseTitle": "Programación en Python",
@@ -1646,11 +1589,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The outline leans toward a textbook topic sequence rather than short stories, especially in the fields and technology chapters. Lessons such as 'The Standard Model' and 'Quantum error correction' describe concepts without a concrete situation or puzzle to carry the explanation. A few outcomes are also underspecified: 'Describe what a superposition allows before measurement' gives little indication of what a successful answer demonstrates.",
           "kind": "minorErrors",
@@ -1665,11 +1604,7 @@
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - Overview for a curious adult: 3 to 6 chapters, plain words, no formulas, equations or notation\n      - Big ideas, judged by category rather than by any one example: the quantum foundations (quantization, wave-particle duality, uncertainty, superposition and measurement), what quantum physics says about atoms and matter, entanglement, and at least one modern application of quantum effects (a technology people use, or quantum computing)\n      - Lessons are short stories about one idea each, not a textbook sequence\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "en-quantum-physics-overview-1",
-        "userInput": {
-          "courseTitle": "Quantum physics",
-          "language": "en",
-          "level": "overview"
-        }
+        "userInput": { "courseTitle": "Quantum physics", "language": "en", "level": "overview" }
       }
     }
   ],

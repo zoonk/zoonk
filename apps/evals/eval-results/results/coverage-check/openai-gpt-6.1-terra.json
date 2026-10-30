@@ -3,21 +3,9 @@
   "results": [
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
@@ -90,21 +78,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
@@ -171,21 +147,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
@@ -258,26 +222,12 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "gaps": []
-        },
+        "expected": { "gaps": [] },
         "id": "es-python-no-gaps-1",
         "userInput": {
           "goal": "Aprender a programar en Python",
@@ -336,40 +286,15 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
-          "examWeights": [
-            {
-              "key": "linear-equations",
-              "max": 5,
-              "min": 4
-            }
-          ],
-          "gapWeights": [
-            {
-              "max": 4,
-              "min": 2
-            }
-          ],
-          "gaps": [
-            "Expression of ideas"
-          ]
+          "examWeights": [{ "key": "linear-equations", "max": 5, "min": 4 }],
+          "gapWeights": [{ "max": 4, "min": 2 }],
+          "gaps": ["Expression of ideas"]
         },
         "id": "en-sat-blueprint-weights-1",
         "userInput": {
@@ -431,49 +356,23 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
-          "gaps": [
-            "5 Sistemas eleitorais"
-          ],
+          "gaps": ["5 Sistemas eleitorais"],
           "placements": [
-            {
-              "key": "crase",
-              "topics": [
-                "5.7 Emprego do sinal indicativo de crase"
-              ]
-            },
-            {
-              "key": "concordancia",
-              "topics": [
-                "5.5 Concordância verbal e nominal"
-              ]
-            }
+            { "key": "crase", "topics": ["5.7 Emprego do sinal indicativo de crase"] },
+            { "key": "concordancia", "topics": ["5.5 Concordância verbal e nominal"] }
           ]
         },
         "id": "pt-camara-notice-topics-1",
         "userInput": {
           "examOutline": {
             "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
-            "notes": [
-              "Scoring: cada item errado anula um item certo"
-            ],
+            "notes": ["Scoring: cada item errado anula um item certo"],
             "subjects": [
               {
                 "group": "Conhecimentos básicos (P1)",
@@ -513,9 +412,7 @@
               "name": "Interpretar textos de gêneros variados",
               "examWeight": 4,
               "area": "Língua Portuguesa",
-              "topics": [
-                "1 Compreensão e interpretação de textos de gêneros variados"
-              ]
+              "topics": ["1 Compreensão e interpretação de textos de gêneros variados"]
             },
             {
               "description": "Aplicar as regras de ortografia.",
@@ -523,9 +420,7 @@
               "name": "Aplicar as regras de ortografia",
               "examWeight": 3,
               "area": "Língua Portuguesa",
-              "topics": [
-                "3 Domínio da ortografia"
-              ]
+              "topics": ["3 Domínio da ortografia"]
             },
             {
               "description": "Empregar o acento grave indicativo de crase.",
@@ -549,9 +444,7 @@
               "name": "Comparar regimes políticos",
               "examWeight": 3,
               "area": "Ciência Política",
-              "topics": [
-                "1 Regimes políticos"
-              ]
+              "topics": ["1 Regimes políticos"]
             },
             {
               "description": "Distinguir sistemas e formas de governo.",
@@ -559,9 +452,7 @@
               "name": "Distinguir sistemas e formas de governo",
               "examWeight": 3,
               "area": "Ciência Política",
-              "topics": [
-                "2 Sistemas e formas de governo"
-              ]
+              "topics": ["2 Sistemas e formas de governo"]
             }
           ]
         }

@@ -3,65 +3,20 @@
   "results": [
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
-          "calls": {
-            "chapters": [
-              8
-            ]
-          },
-          "directions": {
-            "chapters": [
-              10
-            ]
-          },
-          "lost": {
-            "chapters": [
-              15,
-              null
-            ]
-          },
-          "restaurant": {
-            "chapters": [
-              12
-            ]
-          },
-          "routine": {
-            "chapters": [
-              4
-            ]
-          },
-          "stay": {
-            "chapters": [
-              14
-            ]
-          },
-          "symptoms": {
-            "chapters": [
-              15
-            ]
-          },
-          "weather": {
-            "chapters": [
-              null
-            ]
-          }
+          "calls": { "chapters": [8] },
+          "directions": { "chapters": [10] },
+          "lost": { "chapters": [15, null] },
+          "restaurant": { "chapters": [12] },
+          "routine": { "chapters": [4] },
+          "stay": { "chapters": [14] },
+          "symptoms": { "chapters": [15] },
+          "weather": { "chapters": [null] }
         },
         "id": "pt-italian-beginner-band-repeats-1",
         "userInput": {
@@ -274,59 +229,19 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
-          "allergy": {
-            "chapters": [
-              13
-            ]
-          },
-          "calls": {
-            "chapters": [
-              null
-            ]
-          },
-          "directions": {
-            "chapters": [
-              null
-            ]
-          },
-          "restaurant": {
-            "chapters": [
-              13
-            ]
-          },
-          "stay": {
-            "chapters": [
-              16
-            ]
-          },
-          "symptoms": {
-            "chapters": [
-              null
-            ]
-          },
-          "weather": {
-            "chapters": [
-              null
-            ]
-          }
+          "allergy": { "chapters": [13] },
+          "calls": { "chapters": [null] },
+          "directions": { "chapters": [null] },
+          "restaurant": { "chapters": [13] },
+          "stay": { "chapters": [16] },
+          "symptoms": { "chapters": [null] },
+          "weather": { "chapters": [null] }
         },
         "id": "pt-italian-beginner-band-continued-1",
         "userInput": {
@@ -517,41 +432,31 @@
               "description": "Escolher no cardápio, tirar dúvidas sobre ingredientes, pedir e pagar a conta.",
               "key": "restaurant",
               "name": "Pedir uma refeição em um restaurante",
-              "taughtIn": [
-                12
-              ]
+              "taughtIn": [12]
             },
             {
               "description": "Confirmar a reserva, fazer o check-in e perguntar pelos serviços da hospedagem.",
               "key": "stay",
               "name": "Hospedar-se em um hotel",
-              "taughtIn": [
-                15
-              ]
+              "taughtIn": [15]
             },
             {
               "description": "Abrir uma ligação, dizer o motivo, pedir repetição e confirmar os dados ouvidos.",
               "key": "calls",
               "name": "Resolver um assunto breve por telefone",
-              "taughtIn": [
-                8
-              ]
+              "taughtIn": [8]
             },
             {
               "description": "Perguntar como chegar a um lugar e acompanhar um percurso explicado.",
               "key": "directions",
               "name": "Pedir e seguir indicações na cidade",
-              "taughtIn": [
-                10
-              ]
+              "taughtIn": [10]
             },
             {
               "description": "Dizer onde dói e há quanto tempo, e entender orientações simples de cuidado.",
               "key": "symptoms",
               "name": "Descrever sintomas em uma consulta",
-              "taughtIn": [
-                17
-              ]
+              "taughtIn": [17]
             },
             {
               "description": "Dizer a que você é alérgico, perguntar pelos ingredientes e pedir um prato sem eles.",
@@ -569,55 +474,17 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
-          "argue": {
-            "chapters": [
-              7
-            ]
-          },
-          "complaint": {
-            "chapters": [
-              11
-            ]
-          },
-          "doubts": {
-            "chapters": [
-              4
-            ]
-          },
-          "interview": {
-            "chapters": [
-              12,
-              null
-            ]
-          },
-          "story": {
-            "after": [
-              1,
-              2
-            ],
-            "chapters": [
-              2,
-              null
-            ]
-          }
+          "argue": { "chapters": [7] },
+          "complaint": { "chapters": [11] },
+          "doubts": { "chapters": [4] },
+          "interview": { "chapters": [12, null] },
+          "story": { "after": [1, 2], "chapters": [2, null] }
         },
         "id": "pt-italian-intermediate-placed-learner-1",
         "userInput": {
@@ -784,65 +651,20 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": {
-          "allergies": {
-            "chapters": [
-              13
-            ]
-          },
-          "intercity": {
-            "chapters": [
-              12
-            ]
-          },
-          "package": {
-            "chapters": [
-              null
-            ]
-          },
-          "past": {
-            "chapters": [
-              11
-            ]
-          },
-          "phone": {
-            "chapters": [
-              9
-            ]
-          },
-          "sounds": {
-            "chapters": [
-              1,
-              2
-            ]
-          },
-          "symptoms": {
-            "chapters": [
-              10
-            ]
-          },
-          "transit": {
-            "chapters": [
-              5
-            ]
-          }
+          "allergies": { "chapters": [13] },
+          "intercity": { "chapters": [12] },
+          "package": { "chapters": [null] },
+          "past": { "chapters": [11] },
+          "phone": { "chapters": [9] },
+          "sounds": { "chapters": [1, 2] },
+          "symptoms": { "chapters": [10] },
+          "transit": { "chapters": [5] }
         },
         "id": "en-german-beginner-band-repeats-1",
         "userInput": {

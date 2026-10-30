@@ -55,11 +55,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Use a non-price context for one percentage question while retaining its inverse calculation. For electricity, retain the useful contrast between variable operating schedules and variable power, but make one question ask for an allowable operating time or a comparison between usage plans. A non-unit tariff in the washing-machine item would also make the conversion from energy to cost meaningful.",
           "kind": "potentialImprovements",
@@ -336,11 +332,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Difficulty differentiation is limited. In particular, the nepotism and traffic-fine items labeled hard are straightforward applications with conspicuous cues, rather than clearly more demanding judgments than the medium items.",
           "kind": "minorErrors",
@@ -533,11 +525,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The difficulty progression is weaker than the labels suggest. The percent-change question labeled hard requires only selecting the endpoints and calculating 20/200, while the hard linear-model question directly interprets two coefficients. These offer limited additional challenge for intermediate-level placement.",
           "kind": "minorErrors",
@@ -827,11 +815,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Make the difficulty progression substantive rather than relying on larger numbers and difficulty labels. For example, have one percentage question require selecting the appropriate total from a short table, and one per-capita question compare calculated averages. Use a population or readership setting for one large-number question to distinguish it from the construction-budget question.",
           "kind": "potentialImprovements",
@@ -920,11 +904,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The second question largely supplies the reasoning needed to answer it: the context explicitly says the text does not support attributing the increase only to publicity. This makes the comparison less demanding than the intermediate skill suggests. Some alternatives also advertise their weakness through extreme commitments, such as rereading until time expires or filling the answer sheet only if time remains.",
           "kind": "minorErrors",

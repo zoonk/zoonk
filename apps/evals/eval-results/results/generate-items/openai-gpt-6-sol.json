@@ -220,11 +220,7 @@
           "kind": "majorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "For a modest progression in difficulty, one prompt could ask the learner to combine two safety points in a short patient explanation, such as the prescribed dose and timing. Keep the independently checkable key points and the under-one-minute response length.",
           "kind": "potentialImprovements",
@@ -296,11 +292,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The difficulty progression is weak for an intermediate set. The supposedly hard third item explicitly states that the withheld information is protected by legal confidentiality, making the publicity exception straightforward. The second item similarly supplies nearly every condition needed to approve the simplification.",
           "kind": "minorErrors",
@@ -390,11 +382,7 @@
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Digital SAT Math student-produced-response items in English on percent change, stored as math data. The variable ranges must keep every new version sensible, the solution expression must compute the answer and the common mistakes must be real (for example dividing by the new value instead of the original).",
@@ -470,16 +458,8 @@
           "kind": "majorErrors",
           "score": 6
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Digital SAT Math student-produced-response (grid-in) items in English whose answers are fractions such as 2/3 or 5/8, stored as math data. The answer box takes a fraction or a decimal, so no question asks to round, the answer for every combination of the variable ranges is a positive value that fits a grid-in, and the common mistakes are real (inverting the fraction, using the part instead of the remainder).",
@@ -490,10 +470,7 @@
             "name": "Digital SAT Math",
             "optionCount": 4,
             "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing.",
-            "entry": {
-              "kind": "fraction",
-              "places": null
-            }
+            "entry": { "kind": "fraction", "places": null }
           },
           "format": "numeric",
           "language": "en",
@@ -554,21 +531,9 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "No items: \"Words in Context\" is a Digital SAT Reading and Writing skill, choosing the most precise word for a passage, so it has no problem whose answer is one number the learner works out. The right output is an empty items list. Any item fails the case, above all one that forces a number onto the skill (counting words or letters, a line number, a year, a share of a passage).",
@@ -576,10 +541,7 @@
         "userInput": {
           "count": 3,
           "examFormat": {
-            "entry": {
-              "kind": "fraction",
-              "places": null
-            },
+            "entry": { "kind": "fraction", "places": null },
             "name": "Digital SAT",
             "optionCount": 4,
             "style": "Reading and Writing: short passages, each with one question and 4 options (A to D). Math: a short context or equation with 4 options, or a student-produced numeric response typed into a grid."
@@ -648,11 +610,7 @@
           "kind": "majorErrors",
           "score": 6
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Show the simultaneous equations in the alloy solution before presenting the derived expression. Use the missing third item for a different stoichiometric task, such as a limiting-reagent calculation, to broaden practice.",
           "kind": "potentialImprovements",
@@ -668,10 +626,7 @@
             "name": "JEE Main",
             "optionCount": 4,
             "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
-            "entry": {
-              "kind": "integer",
-              "places": null
-            }
+            "entry": { "kind": "integer", "places": null }
           },
           "format": "numeric",
           "language": "en",
@@ -732,16 +687,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Make the validity of the motion intervals explicit in the worked explanations: in item 1, show that the next meeting always occurs after reversal because speed > 2*other_speed throughout the ranges; in item 3, explain that relative velocity changes from positive to negative at 2*duration, establishing the maximum separation before overtaking.",
           "kind": "potentialImprovements",
@@ -757,10 +704,7 @@
             "name": "JEE Advanced",
             "optionCount": 4,
             "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
-            "entry": {
-              "kind": "integer",
-              "places": null
-            }
+            "entry": { "kind": "integer", "places": null }
           },
           "format": "numeric",
           "language": "en",
@@ -911,11 +855,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Replace the directly readable acceleration statement with a claim requiring both graph interpretation and accumulated displacement, such as a comparison of positions at different times. Strengthen the second item's direction statement by asking about a meeting-dependent quantity that requires actually solving the relative motion.",
           "kind": "potentialImprovements",
@@ -1073,11 +1013,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Items 1 and 3 test percent increase in essentially the same way, using counts and identical distractor patterns. The easy/medium/hard labels also do not reflect a meaningful progression: all three require the same straightforward calculation.",
           "kind": "minorErrors",
@@ -1154,11 +1090,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "All three questions give a percentage and a single base amount, then ask directly for the resulting monetary amount. Different percentages introduce some computational variety, but the repeated task structure triggers the skill-fit cap for questions testing the same thing the same way.",
           "kind": "minorErrors",
@@ -1483,16 +1415,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The first item's feedback could reinforce why temperatures closer to zero are warmer. Using a different everyday context for the second item would also broaden the set beyond two freezer scenarios.",
           "kind": "potentialImprovements",
@@ -1568,11 +1492,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Make the difficulty progression substantive rather than mainly changing the cell part. For example, replace one identification-and-function item with a simple prediction about what happens when the membrane cannot control substance movement. Keep the explicit one-or-two-sentence limit and independently checkable key points.",
           "kind": "potentialImprovements",
@@ -1731,11 +1651,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Part (a) describes one trial as the reference for every changed condition, which obscures the need to compare inhibitor-present and inhibitor-absent trials at the same substrate concentration when evaluating inhibition. Part (d) asks students to predict an outcome already explicitly reported in the table, weakening the prediction task.",
           "kind": "minorErrors",
@@ -1825,11 +1741,7 @@
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "One ENEM essay prompt (redação) in Brazilian Portuguese: a theme with short motivating texts and the standard command for a dissertative-argumentative text with an intervention proposal. The rubric uses ENEM's five competencies, and since ENEM's grid doesn't give its rows points of their own, every row's points is null.",
@@ -1900,21 +1812,9 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "ENEM-style Natural Sciences items in US English about household electricity use (energy is power times time, in kWh, and its cost). Each item has a short everyday support text and 5 options; distractors come from typical mistakes such as not converting watts to kilowatts or minutes to hours, or using the wrong number of days. All learner-facing text must be in English.",
@@ -1986,21 +1886,9 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "ENEM-style Mathematics items in Brazilian Portuguese about successive percentage changes. Distractors should come from typical mistakes such as adding the percentages (10% + 20% = 30%) or applying the second change to the original value. Every item needs 5 options. People and towns come from CAST, a different person and town in each item, and no reason points at an option by its place (\"a segunda\", \"alternativa B\"): each names the option by what it says.",
@@ -2072,11 +1960,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Item 2 introduces two legal problems rather than the requested single trap: revocation cannot operate retroactively, and a permit whose effects were exhausted by the completed event is not subject to revocation. The feedback explains only retroactivity, leaving the second problem unaddressed.",
           "kind": "minorErrors",
@@ -2242,16 +2126,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The sign-error feedback could be more instructional by showing the correct expression alongside the mistaken one. For example, in item 2, explicitly contrast 2(x - 4) = 2x - 8 with the incorrect positive constant.",
           "kind": "potentialImprovements",

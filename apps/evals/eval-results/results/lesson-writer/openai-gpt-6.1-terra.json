@@ -50,11 +50,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "“Progress bar” is used in the opening question and explanation without explaining what it is. For beginners, briefly describe it as an indicator showing how much of checkout is finished.",
           "kind": "minorErrors",
@@ -90,37 +86,28 @@
                 "activityTemplate": null,
                 "brief": "A UX goal names the change in people's experience ('fewer people give up at payment'), not the design that might cause it ('add a progress bar'). Explain with the checkout example.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask which of three statements is a UX goal. Tempting wrong answer: 'Redesign the payment button', a solution phrased like a goal.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "findError",
                 "brief": "Spot the AI's mistake: a designer asked an AI assistant to turn interview notes into a UX goal for a food delivery app. The assistant's four steps read the notes, find that people abandon orders when the delivery fee appears late, then in step 2 decide the goal is 'show the fee on the home screen' (the mistake: a solution, not a change in experience), and in steps 3 and 4 build the success measure and the summary on that wrong goal.",
                 "kind": "activity",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Application: in a banking app, support tickets show people can't find where to change their card limit. Ask the learner to pick the UX goal among options that mix goals and solutions.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],
@@ -244,38 +231,28 @@
                 "activityTemplate": null,
                 "brief": "O coração tem quatro câmaras: dois átrios em cima, que recebem o sangue, e dois ventrículos embaixo, que bombeiam. O lado direito manda sangue para os pulmões; o esquerdo, para o corpo todo. O septo separa os dois lados.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Coração visto de frente, com os átrios em cima, os ventrículos embaixo e o septo no meio."
               },
               {
                 "activityTemplate": "labeledDiagram",
                 "brief": "O aprendiz arrasta os nomes átrio direito, átrio esquerdo, ventrículo direito, ventrículo esquerdo e septo para o desenho do coração visto de frente. Confusão provável: trocar direito e esquerdo, já que o lado direito do coração fica à esquerda de quem olha.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte qual câmara bombeia o sangue para o corpo todo. Resposta tentadora: o ventrículo direito. Certa: o ventrículo esquerdo, que tem a parede mais grossa porque empurra o sangue mais longe.",
                 "kind": "check",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Num exame, o médico ouve um sopro causado por um furo no septo. Pergunte o que acontece com o sangue. Resposta certa: sangue do lado esquerdo passa para o direito, e o sangue que vai para o corpo e para os pulmões se mistura.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],
@@ -359,11 +336,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The explanation overloads one beginner screen with root, fifth, major third, half step, and flat notation. It uses “half steps” before defining them, and the interval definitions lack the required everyday comparisons. The musical content is correct, but this presentation falls short of the one-new-term-per-screen expectation.",
           "kind": "minorErrors",
@@ -399,36 +372,28 @@
                 "activityTemplate": null,
                 "brief": "A major chord is a root, a major third (4 half steps up) and a fifth: C, E, G. Lower the middle note one half step and you get a minor chord: C, Eb, G. Major sounds bright; minor sounds darker.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "keyboardFretboard",
                 "brief": "By ear: the app plays an A minor chord (A, C, E) together, without naming it. The learner picks whether it was major or minor, then sees it on the keys. Tempting wrong answer: major, from not hearing the lowered third.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask which note changes when C major becomes C minor. Correct: E drops to Eb. Tempting wrong answer: G drops to Gb, the top note.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Maya plays G, B, D on her keyboard for a sad song and it sounds too bright. Ask which single key she should change (B to Bb) and why.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -504,11 +469,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The explanation introduces supply, demand, curves, and equilibrium together, without the required everyday comparisons. It also states the curve slopes and equilibrium changes without fully explaining their mechanism. The diet check's basis quote supports the rightward shift but does not explain why both equilibrium price and quantity rise.",
           "kind": "minorErrors",
@@ -544,36 +505,28 @@
                 "activityTemplate": null,
                 "brief": "O preço de equilíbrio fica onde a curva de oferta cruza a de demanda. Menos galinhas é menos oferta: a curva de oferta vai para a esquerda, e o cruzamento sobe para um preço maior com menos ovos vendidos.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "lineCrossing",
                 "brief": "O aprendiz arrasta a curva certa para mostrar a gripe aviária (oferta para a esquerda) e vê o novo preço de equilíbrio. Use números de exemplo marcados como exemplo. Erro tentador: mover a demanda para a direita, porque o preço subiu.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte o que acontece com o preço e a quantidade de ovos se uma dieta da moda fizer muita gente comer mais ovos. Certa: demanda para a direita, preço e quantidade sobem. Tentadora: a oferta aumenta.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Uma padaria em Recife vê o preço do trigo cair depois de uma safra recorde. Pergunte o que acontece com a oferta de pão e o seu preço, e por quê.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -649,11 +602,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The explanation introduces several technical terms together—gene, allele, dominant, and Punnett square—without the required everyday comparisons. The application has a null basis even though the earlier simulation feedback explicitly explains that chance spreads counts around 50.",
           "kind": "minorErrors",
@@ -689,37 +638,28 @@
                 "activityTemplate": null,
                 "brief": "Each parent passes one of its two alleles. P (purple) is dominant over p (white): Pp is purple, only pp is white. A Pp × pp cross gives Pp or pp, each half the time.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "combinationGrid",
                 "brief": "The learner fills the Punnett square for a purple Pp plant crossed with a white pp plant, then answers what share of the seeds grow white flowers (1 in 2). Tempting wrong answer: 1 in 4, from remembering the Pp × Pp cross.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "randomSimulation",
                 "brief": "Chance mode: plant batches of 100 seeds from the same Pp × pp cross, each white with chance 1/2. The learner guesses how often a batch has exactly 50 white flowers, then runs many batches: they land near 50, rarely on it (about 8% of the time). Tempting wrong answer: most of the time.",
                 "kind": "activity",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A gardener gets 47 white flowers out of 100 seeds from a Pp × pp cross. Ask whether the 1 in 2 prediction was wrong. Correct: no, chance spreads results around 50.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],
@@ -808,11 +748,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The explanations introduce several technical terms together rather than one at a time. CMC is referenced without expanding the mnemonic, and NADH, electrons and the respiratory chain receive compressed definitions without everyday comparisons. The location check is recall-only: the laboratory setting does not change the task of repeating the previously stated location.",
           "kind": "minorErrors",
@@ -849,36 +785,28 @@
                 "activityTemplate": null,
                 "brief": "A glicólise acontece no citoplasma (o C do macete CMC). Fase de investimento: a célula gasta 2 ATP para ativar a glicose, como o empréstimo do slide.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Fase de rendimento: produz 4 ATP e 2 NADH (que levam elétrons à cadeia respiratória).",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte o saldo de ATP por glicose, com a pegadinha de responder 4.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte onde a glicólise acontece, com a pegadinha da mitocôndria.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -948,11 +876,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The explanation introduces 'needle bundles' without explaining that the needles grow together from a shared base. That distinction is essential to using the key, but it becomes concrete only in the activity's image description.",
           "kind": "minorErrors",
@@ -988,36 +912,28 @@
                 "activityTemplate": null,
                 "brief": "A tree key asks one question at a time about what you can see. First: needles or broad leaves? Needles in bundles mean a pine; single needles on the twig mean a spruce or fir. Broad leaves with rounded lobes mean an oak; pointed lobes mean a maple.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A simple tree key drawn as branches: needles or broad leaves, then bundles or single needles, then rounded or pointed lobes."
               },
               {
                 "activityTemplate": "decisionTree",
                 "brief": "The learner walks a key to name the tree from a leaf they can see: long needles growing in bundles of two. Likely mistake: stopping at needles and saying spruce, without checking whether they grow in bundles.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A pine twig with long needles growing in bundles of two, close up."
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask which question a key should ask first about a maple leaf. Tempting wrong answer: whether its lobes are pointed. Right: whether it has needles or broad leaves, because a key narrows from the broadest feature down.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "On a walk, a friend finds a broad leaf with rounded lobes. Ask which tree the key leads to and why. Right: an oak, because broad leaves with rounded lobes lead there.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -1093,21 +1009,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The application has a null basis even though screen 5 explicitly states that cytoplasm fills the space between the membrane and genetic material; that sentence should be its basis. The first check essentially asks learners to recall which part controls entry, without requiring a meaningful inference from its context.",
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese, for a beginner learning biology as a hobby, with no exam to prepare for\n      - The membrane separates the inside from the outside and controls what enters and leaves; the cytoplasm fills the space between the membrane and the genetic material and is where much of the cell's work happens; the genetic material holds the instructions\n      - No screen is a `typedAnswer`: every check and the application are answered by picking (code flags a typed answer, since this lesson's learners take no exam that asks written answers)\n      - The application keeps Iara's diagram from the brief, and its options say what she adds, where and why (the cytoplasm, filling the space between the membrane and the genetic material), with the second-membrane trap and a reason on every option\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
@@ -1133,54 +1041,42 @@
                 "activityTemplate": null,
                 "brief": "A membrana é o contorno da célula: separa o dentro do fora e controla o que entra e o que sai. Compare com o portão de um condomínio que deixa passar só quem pode.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Uma célula com a membrana em destaque no contorno."
               },
               {
                 "activityTemplate": null,
                 "brief": "O material genético guarda as instruções que a célula usa para funcionar e se dividir. Compare com o caderno de receitas de uma cozinha.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte qual parte decide se uma substância entra na célula. Inclua a resposta tentadora, mas errada, de que é o material genético, por guardar as instruções.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "O citoplasma preenche todo o espaço entre a membrana e o material genético: um gel feito quase todo de água, onde acontece boa parte do trabalho da célula, como tirar energia do açúcar.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Uma célula com a membrana, o citoplasma preenchendo o interior e o material genético, as três partes rotuladas."
               },
               {
                 "activityTemplate": null,
                 "brief": "Descreva uma célula que perdeu quase todo o citoplasma e pergunte o que deixa de acontecer nela. Inclua a resposta tentadora, mas errada, de que ela só perde o formato.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles. Pergunte o que Iara precisa acrescentar, onde deve desenhar e por que isso completa o esquema. Inclua a resposta tentadora, mas errada, de desenhar uma segunda membrana por dentro.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -1250,11 +1146,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The lesson assumes familiarity with loop syntax despite targeting learners who have never used loops. It never explains that `for n` takes each number in turn or that `print(n)` runs once for each number. This leaves beginners to infer how the ranges become printed output.",
           "kind": "minorErrors",
@@ -1290,36 +1182,28 @@
                 "activityTemplate": null,
                 "brief": "range(start, stop) starts at start and stops before stop: range(1, 5) gives 1, 2, 3, 4. To reach 5, the stop is 6. The count of numbers is stop minus start.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "The numbers 1 to 6 on a line, with range(1, 5) highlighting 1 to 4 and 5 left out."
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask what for n in range(2, 6): print(n) prints. Tempting wrong answer: 2, 3, 4, 5, 6. Right: 2, 3, 4, 5, because the stop isn't included.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "codeRunner",
                 "brief": "The learner fixes a Python loop that should print the numbers 1 to 5, one per line, but uses range(1, 5). Only the loop line is editable. Likely mistakes: range(0, 5), which prints 0 to 4, and range(1, 5) left as it is.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A countdown uses for n in range(10, 0, -1). Ask what the last number printed is. Tempting wrong answer: 0. Right: 1, because the stop is still left out when counting down.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
@@ -1435,87 +1319,63 @@
                 "activityTemplate": null,
                 "brief": "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes."
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
                 "kind": "explanation",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
                 "kind": "workedExample",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
                 "kind": "check",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
                 "kind": "explanation",
-                "skills": [
-                  2
-                ],
+                "skills": [2],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
                 "kind": "workedExample",
-                "skills": [
-                  0,
-                  2
-                ],
+                "skills": [0, 2],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
                 "kind": "check",
-                "skills": [
-                  0,
-                  2
-                ],
+                "skills": [0, 2],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1,
-                  2
-                ],
+                "skills": [0, 1, 2],
                 "visual": null
               }
             ],
@@ -1641,83 +1501,63 @@
                 "activityTemplate": null,
                 "brief": "Start concrete: a movie ticket went from $20 to $25. The change is new minus old: $25 - $20 = $5. Explain that $5 alone doesn't tell us if that's a big jump, because $5 on a $20 ticket feels bigger than $5 on a $500 TV.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Two bars side by side: a $20 bar and a $25 bar, with the extra $5 piece highlighted on top."
               },
               {
                 "activityTemplate": null,
                 "brief": "Introduce percent change: compare the change to the ORIGINAL price, like asking 'how many cents of change per dollar we started with?' Show the recipe piece by piece: change ÷ original × 100. Stress that 'original' means the starting value, before the change.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "The formula 'percent change = (new − old) ÷ old × 100' with each piece labeled: 'the change', 'the starting value', 'turn into percent'."
               },
               {
                 "activityTemplate": null,
                 "brief": "Work the ticket example step by step: change = 25 - 20 = 5; divide by original 20: 5 ÷ 20 = 0.25; times 100 = 25%. So the price went up 25%.",
                 "kind": "workedExample",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Learner calculates: a salary rose from $2,000 to $2,300 a month. What's the percent increase? Correct: 15%. Include the tempting wrong answer 13% (dividing $300 by the new salary $2,300).",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Show a decrease: a jacket goes from $80 to $60. Change = 60 - 80 = -20; -20 ÷ 80 = -0.25; × 100 = -25%. A minus sign means the price went down 25%. Point out we still divide by the starting price, $80.",
                 "kind": "workedExample",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A bar for $80 with the top $20 section shaded and crossed out, leaving $60, labeled '20 out of 80 = 25% off'."
               },
               {
                 "activityTemplate": null,
                 "brief": "Learner calculates: a video game drops from $50 to $40. What's the percent change? Correct: a 20% decrease. Include the tempting wrong answer 25% (dividing $10 by the new price $40).",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Return to the hook: $100 drops 50% to $50. A 50% rise from $50 is only $25, giving $75, not $100. To get back, the price must rise $50 on a base of $50: 50 ÷ 50 = 100%. The starting value changed, so the same dollar amount is a bigger percent.",
                 "kind": "explanation",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": "Before-and-after: left, $100 bar with half removed (−50% of 100); right, $50 bar doubled back to $100 (+100% of 50)."
               },
               {
                 "activityTemplate": "guessReveal",
                 "brief": "A stock falls 20%, from $100 to $80. Learner commits to an estimate of the percent rise needed to get back to $100, then sees the real answer: $20 ÷ $80 = 25%. Many will guess 20%; show how far off they were and why.",
                 "kind": "activity",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Your monthly pay of $3,000 is cut 10% during a slow season, then raised 10% later. Learner calculates each step ($3,000 → $2,700 → $2,970), finds they're still $30 short, and works out the percent rise actually needed from $2,700 to get back to $3,000 (about 11.1%).",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],
@@ -1841,54 +1681,42 @@
                 "activityTemplate": null,
                 "brief": "Troque a imagem de uma bolinha dando voltas pela de uma região onde o elétron pode ser encontrado. Essa região é chamada de nuvem eletrônica; ela não é uma trilha nem uma nuvem de matéria comum.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica."
               },
               {
                 "activityTemplate": null,
                 "brief": "Explique que a atração puxa o elétron para perto, mas concentrar sua nuvem num espaço minúsculo exige mais energia. Compare com apertar algo que resiste a ficar confinado, sem sugerir que exista uma mola dentro do átomo.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "A mesma nuvem em dois tamanhos: espalhada ao redor do núcleo e muito comprimida junto a ele, com indicação de que comprimir exige energia."
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte por que a atração do núcleo não basta para deixar o elétron espremido nele. Inclua a resposta tentadora, mas errada, de que o elétron escapa porque gira rápido como um planeta.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Mostre que o arranjo mais estável combina a atração pelo núcleo com o custo de confinar demais o elétron. Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Núcleo cercado por uma nuvem de tamanho definido, contrastada com um ponto minúsculo no centro marcado como concentração excessiva."
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça ao aprendiz que identifique o erro na frase: «O elétron não cai porque o núcleo o empurra para longe». Inclua como alternativa correta que o núcleo atrai o elétron, mas concentrá-lo demais exige energia.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Um celular é feito de átomos que não desabam sobre seus núcleos. Peça ao aprendiz que explique isso a alguém que imagina os elétrons como bolinhas prestes a cair, usando as ideias de atração, nuvem e custo de confinamento.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],

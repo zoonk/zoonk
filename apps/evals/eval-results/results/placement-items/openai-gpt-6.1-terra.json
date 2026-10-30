@@ -50,11 +50,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Several distractors are weak for intermediate learners, especially habeas corpus to collect a debt, obtain a diploma, or access a public contract. These repeatedly introduce freedom-of-movement remedies without any contextual reason to confuse them with the appropriate remedy, making elimination too easy.",
           "kind": "minorErrors",

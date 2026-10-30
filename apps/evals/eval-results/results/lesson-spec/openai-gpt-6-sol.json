@@ -50,16 +50,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Specify short corrective feedback for the checks, especially why the recovery calculation starts at $90 rather than $120. In the salary application, consider adding 5.88% as a distractor to test division by the ending salary directly.",
           "kind": "potentialImprovements",
@@ -245,18 +237,9 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Percent of a quantity"
-            },
-            {
-              "order": "after",
-              "title": "Discounts and markups"
-            },
-            {
-              "order": "after",
-              "title": "Percentage points"
-            }
+            { "order": "before", "title": "Percent of a quantity" },
+            { "order": "after", "title": "Discounts and markups" },
+            { "order": "after", "title": "Percentage points" }
           ],
           "chapterTitle": "Fractions and percentages",
           "courseTitle": "Mathematics",
@@ -265,9 +248,7 @@
           "lessonDescription": "Work out how much a price or a salary went up or down in percent, and why a 50% drop needs a 100% rise to recover.",
           "lessonTitle": "Percent change",
           "level": "beginner",
-          "skills": [
-            "Calculate a percent change"
-          ]
+          "skills": ["Calculate a percent change"]
         }
       }
     },
@@ -515,18 +496,9 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Razão e escala"
-            },
-            {
-              "order": "before",
-              "title": "Grandezas proporcionais"
-            },
-            {
-              "order": "after",
-              "title": "Porcentagem"
-            }
+            { "order": "before", "title": "Razão e escala" },
+            { "order": "before", "title": "Grandezas proporcionais" },
+            { "order": "after", "title": "Porcentagem" }
           ],
           "chapterTitle": "Razão e proporção",
           "courseTitle": "Matemática",
@@ -592,11 +564,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Several data-based teaching screens lack the required display instructions: the median examples do not specify a displayed arrangement of the middle values, the IQR examples do not specify displayed lower and upper halves, and the variance calculation lacks a table connecting values, differences, and squares. Several introductions also state the name and definition before presenting the concrete example. The final explanatory screen in the variance lesson repeats the previously taught distinction between squared units and original units rather than adding a new learning task.",
           "kind": "minorErrors",
@@ -787,18 +755,9 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Types of data"
-            },
-            {
-              "order": "before",
-              "title": "Histograms"
-            },
-            {
-              "order": "after",
-              "title": "Box plots"
-            }
+            { "order": "before", "title": "Types of data" },
+            { "order": "before", "title": "Histograms" },
+            { "order": "after", "title": "Box plots" }
           ],
           "chapterTitle": "Describing data",
           "courseTitle": "Statistics",
@@ -1112,9 +1071,7 @@
           "lessonDescription": "See how a large buy or sell order can use up the shares offered at one price and reach a less favorable one.",
           "lessonTitle": "Large orders and price impact",
           "level": "overview",
-          "skills": [
-            "Explain the price impact of an order"
-          ]
+          "skills": ["Explain the price impact of an order"]
         }
       }
     },
@@ -1167,16 +1124,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The worked example could explicitly show 100 × 1.10 × 0.90 = 99 alongside the changing prices, making the factor-chaining method more visible before independent practice. Briefly connecting this result back to the hook's R$ 198 would also close the opening question.",
           "kind": "potentialImprovements",
@@ -1368,9 +1317,7 @@
                 "Quanto é 20% de R$ 150?",
                 "Numa turma de 40 alunos, 25% usam óculos. Quantos são?"
               ],
-              "ideas": [
-                "Para achar 20% de um valor, multiplique o valor por 0,20."
-              ],
+              "ideas": ["Para achar 20% de um valor, multiplique o valor por 0,20."],
               "order": "before",
               "title": "Porcentagem de um valor"
             },
@@ -1401,9 +1348,7 @@
           "lessonDescription": "Entenda por que um aumento de 10% seguido de um desconto de 10% não volta ao preço inicial e calcule variações acumuladas.",
           "lessonTitle": "Aumentos e descontos sucessivos",
           "level": "beginner",
-          "skills": [
-            "Calcular aumentos e descontos sucessivos"
-          ]
+          "skills": ["Calcular aumentos e descontos sucessivos"]
         }
       }
     },
@@ -1651,14 +1596,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Sujeito e predicado"
-            },
-            {
-              "order": "after",
-              "title": "Concordância nominal"
-            }
+            { "order": "before", "title": "Sujeito e predicado" },
+            { "order": "after", "title": "Concordância nominal" }
           ],
           "chapterTitle": "Concordância",
           "courseTitle": "Língua Portuguesa",
@@ -1667,10 +1606,7 @@
           "lessonDescription": "Reconheça quando o verbo concorda com um sujeito que vem depois dele, com nomes coletivos e com o verbo haver no sentido de existir.",
           "lessonTitle": "Concordância verbal em casos difíceis",
           "level": "intermediate",
-          "skills": [
-            "Julgar a concordância verbal",
-            "Aplicar a concordância do verbo haver"
-          ]
+          "skills": ["Julgar a concordância verbal", "Aplicar a concordância do verbo haver"]
         }
       }
     },
@@ -1918,14 +1854,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "after",
-              "title": "Órgãos da OAB"
-            },
-            {
-              "order": "after",
-              "title": "Natureza jurídica da OAB"
-            }
+            { "order": "after", "title": "Órgãos da OAB" },
+            { "order": "after", "title": "Natureza jurídica da OAB" }
           ],
           "chapterTitle": "Estrutura e competências da OAB",
           "courseTitle": "Estatuto da Advocacia e da OAB, Regulamento Geral e Código de Ética e Disciplina da OAB",
@@ -1940,9 +1870,7 @@
           "lessonDescription": "As finalidades que o Estatuto dá à OAB, na defesa da ordem jurídica e na representação dos advogados.",
           "lessonTitle": "Finalidades da OAB",
           "level": "beginner",
-          "skills": [
-            "Identificar as finalidades da OAB"
-          ]
+          "skills": ["Identificar as finalidades da OAB"]
         }
       }
     },
@@ -2190,10 +2118,7 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "after",
-              "title": "Afirmação atribuída e relato do autor"
-            }
+            { "order": "after", "title": "Afirmação atribuída e relato do autor" }
           ],
           "chapterTitle": "Atribuição de informações em textos ingleses",
           "courseTitle": "Língua inglesa",
@@ -2208,9 +2133,7 @@
           "lessonDescription": "Como as aspas e os verbos de fala mostram quem disse cada frase de um texto em inglês.",
           "lessonTitle": "Citações diretas e autoria",
           "level": "intermediate",
-          "skills": [
-            "Identificar quem disse uma citação direta"
-          ]
+          "skills": ["Identificar quem disse uma citação direta"]
         }
       }
     },
@@ -2281,9 +2204,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - Plural spelling rules are clear in words (a rule and examples), so no screen has a picture; a short table of examples is fine but not required\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "none"
-        },
+        "expected": { "pictures": "none" },
         "id": "visual-en-plural-nouns-grammar-1",
         "userInput": {
           "activityTemplates": [
@@ -2467,9 +2388,7 @@
           "lessonDescription": "Add -s or -es to make nouns plural, and change -y to -ies.",
           "lessonTitle": "Regular plural nouns",
           "level": "beginner",
-          "skills": [
-            "Spell regular plural nouns with -s, -es and -ies"
-          ]
+          "skills": ["Spell regular plural nouns with -s, -es and -ies"]
         }
       }
     },
@@ -2522,16 +2441,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Clarify that the calculations use an ideal lever, ignoring the bar's weight and friction. Describe the calculated force as the balancing threshold, with slightly more force needed to begin raising a stationary load.",
           "kind": "potentialImprovements",
@@ -2540,9 +2451,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - A lever must be seen: a picture of the bar, the fulcrum, the load and the effort with their distances; an activity where the learner moves the fulcrum or a weight also fits\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "any"
-        },
+        "expected": { "pictures": "any" },
         "id": "visual-en-lever-1",
         "userInput": {
           "activityTemplates": [
@@ -2726,9 +2635,7 @@
           "lessonDescription": "See why pushing farther from the fulcrum lifts more with less force.",
           "lessonTitle": "How a lever multiplies force",
           "level": "beginner",
-          "skills": [
-            "Relate a lever's arm lengths to the force it needs"
-          ]
+          "skills": ["Relate a lever's arm lengths to the force it needs"]
         }
       }
     },
@@ -2781,11 +2688,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The explanation briefs introduce the names and definitions of noun phrase, verb phrase, and syntax tree before presenting their concrete examples. This reverses the required concrete-to-name progression, although the examples that follow keep the lesson understandable.",
           "kind": "minorErrors",
@@ -2799,9 +2702,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - A sentence's tree (S splitting into a noun phrase and a verb phrase, and so on) is a structure to see: a picture of the tree with its labels, never a tree described in words\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "some"
-        },
+        "expected": { "pictures": "some" },
         "id": "visual-en-syntax-tree-1",
         "userInput": {
           "activityTemplates": [
@@ -2985,9 +2886,7 @@
           "lessonDescription": "Break a sentence into its noun phrase and verb phrase and draw the tree.",
           "lessonTitle": "Syntax trees",
           "level": "intermediate",
-          "skills": [
-            "Split a simple sentence into a noun phrase and a verb phrase"
-          ]
+          "skills": ["Split a simple sentence into a noun phrase and a verb phrase"]
         }
       }
     },
@@ -3058,9 +2957,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - A formation is a layout on the field: a picture of the field with the players' positions in a 4-3-3 (and a 4-4-2 to compare, as one picture labeled 1 and 2 when compared)\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "some"
-        },
+        "expected": { "pictures": "some" },
         "id": "visual-en-soccer-formation-1",
         "userInput": {
           "activityTemplates": [
@@ -3244,9 +3141,7 @@
           "lessonDescription": "See how a 4-3-3 spreads defenders, midfielders and forwards on the field.",
           "lessonTitle": "The 4-3-3 formation",
           "level": "overview",
-          "skills": [
-            "Describe the lines of a 4-3-3 formation"
-          ]
+          "skills": ["Describe the lines of a 4-3-3 formation"]
         }
       }
     },
@@ -3317,9 +3212,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Growth over the years is data: a line chart (or a table) of the balance year by year with exact values in the brief, visual null; no picture is needed for it\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "any"
-        },
+        "expected": { "pictures": "any" },
         "id": "visual-pt-juros-compostos-1",
         "userInput": {
           "activityTemplates": [
@@ -3503,9 +3396,7 @@
           "lessonDescription": "Entenda por que os juros compostos crescem mais rápido que os simples.",
           "lessonTitle": "Juros compostos",
           "level": "beginner",
-          "skills": [
-            "Calcular o montante com juros compostos"
-          ]
+          "skills": ["Calcular o montante com juros compostos"]
         }
       }
     },
@@ -3563,11 +3454,7 @@
           "kind": "majorErrors",
           "score": 6
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Supply the actual candidate captions for the final application to make its implementation more consistent. In the warmth diagram, explicitly distinguish incoming sunlight from outgoing heat through labeled arrow styles.",
           "kind": "potentialImprovements",
@@ -3576,9 +3463,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - Comparing Earth and Mars needs seeing them: one picture with both planets, labeled 1 and 2, at their relative sizes and colors; their numbers (diameter, distance from the Sun, length of a year) are a table, not a picture\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "some"
-        },
+        "expected": { "pictures": "some" },
         "id": "visual-en-earth-mars-1",
         "userInput": {
           "activityTemplates": [
@@ -3762,9 +3647,7 @@
           "lessonDescription": "Compare the size, distance and air of Earth and Mars.",
           "lessonTitle": "Earth and Mars compared",
           "level": "beginner",
-          "skills": [
-            "Compare Earth and Mars by size, distance from the Sun and atmosphere"
-          ]
+          "skills": ["Compare Earth and Mars by size, distance from the Sun and atmosphere"]
         }
       }
     },
@@ -3822,11 +3705,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Include the First Continental Congress in the timeline practice, since the final application requires learners to position it relative to the port closure. A static timeline with exact dates can show the within-1774 order that the whole-year activity template cannot distinguish.",
           "kind": "potentialImprovements",
@@ -3835,9 +3714,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - The dated events from the Stamp Act (1765) to the Declaration of Independence (1776) are a timeline with exact dates in the brief, visual null; no picture is needed for them\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "any"
-        },
+        "expected": { "pictures": "any" },
         "id": "visual-en-road-to-revolution-1",
         "userInput": {
           "activityTemplates": [
@@ -4021,9 +3898,7 @@
           "lessonDescription": "Follow the decade of laws and protests that led the colonies to break away.",
           "lessonTitle": "The road to revolution",
           "level": "beginner",
-          "skills": [
-            "Order the main events from 1765 to 1776"
-          ]
+          "skills": ["Order the main events from 1765 to 1776"]
         }
       }
     },
@@ -4081,11 +3956,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Add a prediction about changing the box width, such as doubling L at fixed n and identifying that the energy falls to one-fourth. This would directly reinforce the inverse-square dependence alongside the existing checks on quantization and energy gaps.",
           "kind": "potentialImprovements",
@@ -4314,18 +4185,9 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "The time-independent Schrödinger equation"
-            },
-            {
-              "order": "after",
-              "title": "Quantum tunneling"
-            },
-            {
-              "order": "after",
-              "title": "The quantum harmonic oscillator"
-            }
+            { "order": "before", "title": "The time-independent Schrödinger equation" },
+            { "order": "after", "title": "Quantum tunneling" },
+            { "order": "after", "title": "The quantum harmonic oscillator" }
           ],
           "chapterTitle": "The Schrödinger equation",
           "courseTitle": "Quantum mechanics",
@@ -4334,9 +4196,7 @@
           "lessonDescription": "Solve the time-independent Schrödinger equation for a particle trapped in a one-dimensional box and see why its energy comes in steps.",
           "lessonTitle": "Particle in a box",
           "level": "advanced",
-          "skills": [
-            "Derive the energy levels of a particle in a box"
-          ]
+          "skills": ["Derive the energy levels of a particle in a box"]
         }
       }
     },
@@ -4627,18 +4487,9 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "A luz em pacotes"
-            },
-            {
-              "order": "before",
-              "title": "Onda ou partícula?"
-            },
-            {
-              "order": "after",
-              "title": "O princípio da incerteza"
-            }
+            { "order": "before", "title": "A luz em pacotes" },
+            { "order": "before", "title": "Onda ou partícula?" },
+            { "order": "after", "title": "O princípio da incerteza" }
           ],
           "chapterTitle": "O átomo por dentro",
           "courseTitle": "Física quântica",
@@ -4647,9 +4498,7 @@
           "lessonDescription": "Descubra por que o elétron não despenca no núcleo e por que isso faz os átomos, e você, existirem.",
           "lessonTitle": "Por que o elétron não cai no núcleo",
           "level": "overview",
-          "skills": [
-            "Explicar por que o elétron não cai no núcleo"
-          ]
+          "skills": ["Explicar por que o elétron não cai no núcleo"]
         }
       }
     },
@@ -4702,11 +4551,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The Alexandria–Rome check largely repeats the journey and conclusion already supplied in the preceding explanation, rather than requiring transfer. Also, the third screen discusses Europe, Africa, and the European and eastern Mediterranean shores, but its picture brief does not explicitly identify all those places and margins.",
           "kind": "minorErrors",
@@ -4720,9 +4565,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Where the empire reached is shown on a map: a picture of a map with the places the screens name, or a map activity from the catalog (the Roman Empire base map); places listed only in words fail\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "any"
-        },
+        "expected": { "pictures": "any" },
         "id": "visual-pt-mapa-imperio-romano-1",
         "userInput": {
           "activityTemplates": [
@@ -4949,9 +4792,7 @@
           "lessonDescription": "Veja no mapa como Roma passou a controlar todo o Mediterrâneo e por que isso importava.",
           "lessonTitle": "A expansão do Império Romano",
           "level": "beginner",
-          "skills": [
-            "Localizar no mapa as regiões do Império Romano em seu auge"
-          ]
+          "skills": ["Localizar no mapa as regiões do Império Romano em seu auge"]
         }
       }
     },
@@ -5022,9 +4863,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A covalent bond is shown: a picture of the atoms sharing a pair of electrons (water or H₂), and a molecule-building activity from the catalog also fits for a check\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "any"
-        },
+        "expected": { "pictures": "any" },
         "id": "visual-pt-ligacao-covalente-1",
         "userInput": {
           "activityTemplates": [
@@ -5251,9 +5090,7 @@
           "lessonDescription": "Veja como os átomos compartilham elétrons para formar moléculas como a água.",
           "lessonTitle": "Ligação covalente",
           "level": "beginner",
-          "skills": [
-            "Representar uma ligação covalente simples"
-          ]
+          "skills": ["Representar uma ligação covalente simples"]
         }
       }
     },
@@ -5311,11 +5148,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Specify feedback for the footprint check: A is correct because the same weight is spread over a larger contact area. This would make the intended causal explanation more reliable for the writer.",
           "kind": "potentialImprovements",
@@ -5324,9 +5157,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The camel's adaptations are features of its body: a picture of the camel with the features the lesson names labeled (humps, long eyelashes, wide feet, nostrils that close)\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "some"
-        },
+        "expected": { "pictures": "some" },
         "id": "visual-pt-camelo-adaptacoes-1",
         "userInput": {
           "activityTemplates": [
@@ -5553,9 +5384,7 @@
           "lessonDescription": "Descubra como o corpo do camelo o ajuda a sobreviver no deserto.",
           "lessonTitle": "Adaptações do camelo ao deserto",
           "level": "beginner",
-          "skills": [
-            "Relacionar características do camelo à vida no deserto"
-          ]
+          "skills": ["Relacionar características do camelo à vida no deserto"]
         }
       }
     },
@@ -5626,9 +5455,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The demand curve moving right and the new price are shown, not only described: a line chart with example prices and quantities before and after (marked as an example), the lines-and-crossing template with demand moving right (explored or as an activity), or a picture of the two curves and the shift\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "any"
-        },
+        "expected": { "pictures": "any" },
         "id": "visual-pt-deslocamento-demanda-1",
         "userInput": {
           "activityTemplates": [
@@ -5815,9 +5642,7 @@
           "lessonDescription": "Entenda o que desloca a curva de demanda e como o preço de equilíbrio muda com isso.",
           "lessonTitle": "Deslocamentos da curva de demanda",
           "level": "intermediate",
-          "skills": [
-            "Prever o novo equilíbrio após um deslocamento da demanda"
-          ]
+          "skills": ["Prever o novo equilíbrio após um deslocamento da demanda"]
         }
       }
     },
@@ -5888,9 +5713,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - Telling the styles apart is about how buildings look: one picture with a Romanesque and a Gothic church, labeled 1 and 2, showing round versus pointed arches, thick walls versus tall windows and flying buttresses, or a question whose options each show one church alone\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "some"
-        },
+        "expected": { "pictures": "some" },
         "id": "visual-en-gothic-romanesque-1",
         "userInput": {
           "activityTemplates": [
@@ -6077,9 +5900,7 @@
           "lessonDescription": "Spot the arches, walls and windows that set the two styles apart.",
           "lessonTitle": "Romanesque and Gothic churches",
           "level": "beginner",
-          "skills": [
-            "Identify Romanesque and Gothic features in a church"
-          ]
+          "skills": ["Identify Romanesque and Gothic features in a church"]
         }
       }
     },
@@ -6343,9 +6164,7 @@
           "lessonTitle": "Aula rápida: Classificar normas constitucionais quanto à eficácia",
           "level": "intermediate",
           "quick": true,
-          "skills": [
-            "Classificar normas constitucionais quanto à eficácia"
-          ]
+          "skills": ["Classificar normas constitucionais quanto à eficácia"]
         }
       }
     },
@@ -6596,14 +6415,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Consultoria, assessoria e direção jurídicas"
-            },
-            {
-              "order": "after",
-              "title": "Cargos e funções incompatíveis"
-            }
+            { "order": "before", "title": "Consultoria, assessoria e direção jurídicas" },
+            { "order": "after", "title": "Cargos e funções incompatíveis" }
           ],
           "chapterTitle": "Atividade da advocacia e suas restrições",
           "courseTitle": "Estatuto da Advocacia e da OAB, Regulamento Geral e Código de Ética e Disciplina da OAB",
@@ -6618,9 +6431,7 @@
           "lessonDescription": "A diferença entre a proibição total de advogar e a proibição parcial, e os casos de cada uma no Estatuto.",
           "lessonTitle": "Incompatibilidade e impedimento",
           "level": "intermediate",
-          "skills": [
-            "Distinguir incompatibilidade de impedimento"
-          ]
+          "skills": ["Distinguir incompatibilidade de impedimento"]
         }
       }
     },
@@ -6673,16 +6484,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Strengthen the worked example with a user observation explaining why customers need to resume checkout without reentering details. This would make the rewritten goal evidence-based rather than an assumed interpretation of the requested Save for later button.",
           "kind": "potentialImprovements",
@@ -6871,14 +6674,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "People, tasks and context"
-            },
-            {
-              "order": "after",
-              "title": "Product metrics tied to tasks"
-            }
+            { "order": "before", "title": "People, tasks and context" },
+            { "order": "after", "title": "Product metrics tied to tasks" }
           ],
           "chapterTitle": "UX goals and outcomes",
           "courseTitle": "UX Design",
@@ -7154,9 +6951,7 @@
           "lessonTitle": "Aula rápida: Relacionar estrutura proteica e função",
           "level": "intermediate",
           "quick": true,
-          "skills": [
-            "Relacionar estrutura proteica e função"
-          ]
+          "skills": ["Relacionar estrutura proteica e função"]
         }
       }
     },
@@ -7209,16 +7004,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The final application could specify complete competing plans and feedback for each, giving the writer more guidance while preserving the realistic filing-versus-payment decision.",
           "kind": "potentialImprovements",
@@ -7407,14 +7194,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Tax brackets"
-            },
-            {
-              "order": "before",
-              "title": "Deductions and credits"
-            }
+            { "order": "before", "title": "Tax brackets" },
+            { "order": "before", "title": "Deductions and credits" }
           ],
           "chapterTitle": "Income taxes",
           "courseTitle": "Personal finance",
@@ -7423,10 +7204,7 @@
           "lessonDescription": "When a federal tax return is due, and what an extension does and doesn't delay.",
           "lessonTitle": "Federal tax deadlines and extensions",
           "level": "beginner",
-          "skills": [
-            "Know the federal tax filing deadline",
-            "Use a filing extension correctly"
-          ],
+          "skills": ["Know the federal tax filing deadline", "Use a filing extension correctly"],
           "sources": "<page ref=\"S1:1\" of=\"IRS, When to file\">\nIndividual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.\nIf you can't file by the due date, you can get an automatic 6-month extension of time to file, to October 15, 2026, by filing Form 4868 by April 15, 2026.\nAn extension gives you more time to file, not more time to pay. You must pay the tax you owe by April 15, 2026 to avoid interest and penalties.\n</page>"
         }
       }
@@ -7678,14 +7456,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Cargos, empregos e funções públicas"
-            },
-            {
-              "order": "after",
-              "title": "Regime disciplinar"
-            }
+            { "order": "before", "title": "Cargos, empregos e funções públicas" },
+            { "order": "after", "title": "Regime disciplinar" }
           ],
           "chapterTitle": "Agentes públicos",
           "courseTitle": "Direito Administrativo",
@@ -7949,18 +7721,9 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Ordenar y filtrar datos"
-            },
-            {
-              "order": "before",
-              "title": "Funciones SUMAR.SI y CONTAR.SI"
-            },
-            {
-              "order": "after",
-              "title": "Gráficos a partir de tablas"
-            }
+            { "order": "before", "title": "Ordenar y filtrar datos" },
+            { "order": "before", "title": "Funciones SUMAR.SI y CONTAR.SI" },
+            { "order": "after", "title": "Gráficos a partir de tablas" }
           ],
           "chapterTitle": "Resumir datos",
           "courseTitle": "Análisis de datos con hojas de cálculo",
@@ -8043,11 +7806,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Written for candidates of the exam in EXAMS, finishing secondary school: checks are planned like that exam's contextualized multiple-choice questions on proteins and enzymes\n      - No \"Spot the AI's mistake\": an exam lesson never frames an activity as an AI assistant's answer\n      - The explanation of how an enzyme works in steps (the substrate fits the active site, the reaction, the products leave and the enzyme is free again) shows them with a template to explore, such as the steps of a process in order, rather than a strip of drawings or text alone; a picture plans only what no template draws (a protein's folded shape, the active site's fit)\n      - An activity, if any, is one whose interaction is the skill (ordering the enzyme's steps, sorting changes that do or don't alter a protein's shape), never decoration\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "avoidTemplates": [
-            "findError"
-          ]
-        },
+        "expected": { "avoidTemplates": ["findError"] },
         "id": "pt-enzimas-exam-prep-activities-1",
         "userInput": {
           "activityTemplates": [
@@ -8228,14 +7987,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Carboidratos e lipídios"
-            },
-            {
-              "order": "after",
-              "title": "Nucleotídeos, ácidos nucleicos e ATP"
-            }
+            { "order": "before", "title": "Carboidratos e lipídios" },
+            { "order": "after", "title": "Nucleotídeos, ácidos nucleicos e ATP" }
           ],
           "chapterTitle": "Biomoléculas e funções celulares",
           "courseTitle": "Biologia",
@@ -8250,10 +8003,7 @@
           "lessonDescription": "Como a sequência de aminoácidos dá forma a uma proteína e como uma enzima encaixa a molécula que transforma.",
           "lessonTitle": "Proteínas e enzimas",
           "level": "intermediate",
-          "skills": [
-            "Relacionar estrutura proteica e função",
-            "Explicar a ação de uma enzima"
-          ]
+          "skills": ["Relacionar estrutura proteica e função", "Explicar a ação de uma enzima"]
         }
       }
     },
@@ -8306,11 +8056,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The final application can be solved by adding reaction and braking distances and reading the travel time, without recognizing any proportional relationship. Also, the classification check and final application specify a correct answer and a distractor but leave the required five-option ENEM format incomplete.",
           "kind": "minorErrors",
@@ -8324,12 +8070,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Written for candidates of the exam in EXAMS, finishing secondary school, with checks like that exam's contextualized questions that read tables and graphs\n      - No \"Spot the AI's mistake\": an exam lesson never frames an activity as an AI assistant's answer\n      - The explanations of how one quantity changes with another (directly proportional, inversely proportional, with the square) let the learner see it: a template to explore where a slider changes one quantity and the other follows on a curve, or a chart with exact values; never a picture carrying the numbers\n      - An activity, if any, is one whose interaction is the skill (moving a value and saying how the other changed, reading a relation off a table or a curve)\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "avoidTemplates": [
-            "categorize",
-            "findError"
-          ]
-        },
+        "expected": { "avoidTemplates": ["categorize", "findError"] },
         "id": "pt-relacoes-grandezas-exam-prep-activities-1",
         "userInput": {
           "activityTemplates": [
@@ -8510,14 +8251,8 @@
             }
           ],
           "chapterLessons": [
-            {
-              "order": "before",
-              "title": "Inclinação e área em gráficos físicos"
-            },
-            {
-              "order": "after",
-              "title": "Componentes e soma de vetores"
-            }
+            { "order": "before", "title": "Inclinação e área em gráficos físicos" },
+            { "order": "after", "title": "Componentes e soma de vetores" }
           ],
           "chapterTitle": "Grandezas físicas e representações",
           "courseTitle": "Física",
@@ -8606,9 +8341,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - The screens that explain where each lobe is and what it does show the brain with those lobes (one picture of the brain with its lobes labeled, the lobe in question highlighted on each screen, or a labeled diagram whose picture numbers the lobes); a lesson that names the lobes in words only fails\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "some"
-        },
+        "expected": { "pictures": "some" },
         "id": "visual-en-brain-lobes-1",
         "userInput": {
           "activityTemplates": [
@@ -8795,10 +8528,7 @@
           "lessonDescription": "Find the frontal, parietal, temporal and occipital lobes and their jobs.",
           "lessonTitle": "The lobes of the brain",
           "level": "beginner",
-          "skills": [
-            "Locate the four lobes of the brain",
-            "Match each lobe to its main job"
-          ]
+          "skills": ["Locate the four lobes of the brain", "Match each lobe to its main job"]
         }
       }
     },
@@ -8869,9 +8599,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Comparing a Renaissance and a Baroque painting needs the two paintings shown: one picture with both, labeled 1 and 2, describing what each shows (composition, light, movement); a question about them is fine since the skill is reading artworks\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "some"
-        },
+        "expected": { "pictures": "some" },
         "id": "visual-pt-comparar-pinturas-1",
         "userInput": {
           "activityTemplates": [
@@ -9058,9 +8786,7 @@
           "lessonDescription": "Compare a calma e o equilíbrio do Renascimento com o drama e a luz forte do Barroco.",
           "lessonTitle": "Renascimento e Barroco: comparando pinturas",
           "level": "beginner",
-          "skills": [
-            "Comparar a composição e a luz de pinturas renascentistas e barrocas"
-          ]
+          "skills": ["Comparar a composição e a luz de pinturas renascentistas e barrocas"]
         }
       }
     },
@@ -9131,9 +8857,7 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - The cycle's stages (evaporation, condensation, precipitation, collection) are shown, not only named: a picture of the cycle with its stages, and/or a labeled diagram (one picture with the stages numbered) to name them, as an activity or explored on an explanation\n    \n\n  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only\n  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show\n  - A planned picture names every part, place or label its screen talks about; no decorative picture\n  - Don't evaluate JSON formatting; estimated minutes are computed by code\n",
-        "expected": {
-          "pictures": "any"
-        },
+        "expected": { "pictures": "any" },
         "id": "visual-en-water-cycle-1",
         "userInput": {
           "activityTemplates": [
@@ -9320,9 +9044,7 @@
           "lessonDescription": "Follow water from the ocean to the clouds and back as rain and rivers.",
           "lessonTitle": "The water cycle",
           "level": "beginner",
-          "skills": [
-            "Describe the stages of the water cycle in order"
-          ]
+          "skills": ["Describe the stages of the water cycle in order"]
         }
       }
     }
