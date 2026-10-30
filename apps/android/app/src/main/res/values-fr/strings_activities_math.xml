@@ -6,9 +6,27 @@
   "activities_math_area_split_width": "310b90128aa1a74b7dc3cf2273efb502b5d382a8c80f1b855bcb6c6a20159524",
   "activities_math_area_total": "62183e38218382f77c56ad3071810ba18b0a592fae1f39bc6c759d7742b393d4",
   "activities_math_badge_explore": "8d9dadb65a99c9cf577b2df6253dd331444462d9baf6f190e9654ddf444e4522",
+  "activities_math_badge_hands_on": "4e54e674bdad3c6d10c3685a9df83a8b61bb8be9db7168617671673ffc77657f",
   "activities_math_badge_place_it": "5bce98b9660cbc81099e306d7ea2bf9a8d77a3b41cf2dd0cc1d6a9a908dfa2c1",
   "activities_math_badge_split_it": "dad4bd3ae32ebb7e5b46616b51884faf64be007c779b1b33e5f979278087a3b9",
   "activities_math_badge_try_it": "80c88ef2d45d244ec4f4f55637f090402978c9c339c4cb4c5a3edf2963ae99d4",
+  "activities_math_balance_description": "723b8bf6c8c3d1c0f8d986c9a1c90c1c6836ffd5e711aef01219f43db44b3b0b",
+  "activities_math_balance_done": "d85f78fc06374852f94b05cee8f9c2388e89d01186ba4012862ac0cc076d238e",
+  "activities_math_balance_heavier": "71570469251f7b7f4aa653b0bc07e8fea9ae759cd8930dec920a719935e2751c",
+  "activities_math_balance_left_heavier": "c9ecf30f9acf5adcfab90c710954f5db005487e5d5c4c1f517d208bcad26f502",
+  "activities_math_balance_left_side": "54a483c6906370568ced1370e1466ff3659afcdbe00261be4a7253ae8f5f8c4d",
+  "activities_math_balance_level": "b26bfb54460ef0852f5af1e55e65f6dd602f866da417c469a358e6bb545c484d",
+  "activities_math_balance_next": "8cd6393f96e5939c164d546619e5accdd7c6232f98dbcdb9d75bb8903e63e41f",
+  "activities_math_balance_not_quite": "0df6e216e1116cc1073b9873f56ca20daf69effbbfd8ff534e1e974613d98e7c",
+  "activities_math_balance_pick_move": "838b854108e46acd0239976595e55f725e1cf5528b5f4c4838ebf956dc66e394",
+  "activities_math_balance_right_heavier": "a79b86766f759ccc2271962729ad1b1e2f642dc52d3440e07164cf5736b4245b",
+  "activities_math_balance_right_side": "1e7bfadc54226330601d74aed042d6aa65ae9cebff233499f87bc533005302a5",
+  "activities_math_balance_split": "aa8f9db14996e71938f7908493b50b8210fc74e0eab5c669d5d20a46a94c0ff1",
+  "activities_math_balance_step": "808953aca2efcfbbb348368302cfa12c029a966ec41fe45c3419c621474baf93",
+  "activities_math_balance_steps": "9bfde537cd7de448c4e119337098ed578131ef337b4db5f6a14df41072a5c33e",
+  "activities_math_balance_take_left": "ac74f5ba81c6f0c36d706e84c98f9e32076981e25724ab07feea58d6419856ee",
+  "activities_math_balance_take_right": "e2ded367f648d89b815dfeb0d0084ac7f74be201ded2374b714bf596457f998b",
+  "activities_math_balance_undo": "63f7c3fa08c9ae8a221a1392e8dab6440139db735f149e2484288b28410e5217",
   "activities_math_distribution_handle_value": "958ee6eef9b182298f30172e0763685d5a1e7d23bf39b448e93c8749e955d054",
   "activities_math_distribution_lower": "f4ed62d4af238a4ced20e6424f1a873615ab0edb6baf140b8f2d70b2acf17e0a",
   "activities_math_distribution_normal": "4d5cd6fba1aab440aa7101caa43be321f4c6a9738cf2dacf72b48fddc46e2b5c",
@@ -43,6 +61,8 @@
     <string name="activities_math_badge_place_it">Place-le</string>
     <!-- A badge on an activity whose sliders change a model's results. -->
     <string name="activities_math_badge_try_it">Essaie</string>
+    <!-- A short badge on an activity where the learner takes blocks off a balance scale by hand. -->
+    <string name="activities_math_badge_hands_on">Manipulation</string>
     <!-- A short badge on an activity where the learner drags handles along a distribution's curve; one word where the language allows. -->
     <string name="activities_math_badge_explore">Explore</string>
     <!-- A badge on an activity where the learner splits a rectangle or a bar into easy parts. -->
@@ -113,4 +133,38 @@
     <string name="activities_math_area_split_width">Découpage sur la largeur</string>
     <!-- A handle that moves where the rectangle's height is split, for TalkBack. -->
     <string name="activities_math_area_split_height">Découpage sur la hauteur</string>
+    <!-- What the balance shows, for TalkBack: each pan as an expression, like "A balance. Left pan: 4x + 1. Right pan: 2x + 7." -->
+    <string name="activities_math_balance_description">Une balance. Plateau de gauche : %1$s. Plateau de droite : %2$s.</string>
+    <!-- After the balance's description, for TalkBack, when both pans weigh the same. -->
+    <string name="activities_math_balance_level">Les plateaux sont au même niveau.</string>
+    <!-- After the balance's description, for TalkBack, when the left pan weighs more. -->
+    <string name="activities_math_balance_left_heavier">Le plateau de gauche est plus lourd.</string>
+    <!-- After the balance's description, for TalkBack, when the right pan weighs more. -->
+    <string name="activities_math_balance_right_heavier">Le plateau de droite est plus lourd.</string>
+    <!-- A short label under the pan of a balance scale that weighs more. -->
+    <string name="activities_math_balance_heavier">Plus lourd</string>
+    <!-- Before a hint after a move that tipped the scale, like "Not quite: Take the same off both sides." -->
+    <string name="activities_math_balance_not_quite">Pas tout à fait :</string>
+    <!-- The name of the buttons that take things off the scale's left pan. -->
+    <string name="activities_math_balance_left_side">Côté gauche</string>
+    <!-- The name of the buttons that take things off the scale's right pan. -->
+    <string name="activities_math_balance_right_side">Côté droit</string>
+    <!-- A button, for TalkBack: take one of something off the left pan, like "Take off the left side: One bag of rice". -->
+    <string name="activities_math_balance_take_left">Retirer du côté gauche : %1$s</string>
+    <!-- A button, for TalkBack: take one of something off the right pan, like "Take off the right side: 1 kg". -->
+    <string name="activities_math_balance_take_right">Retirer du côté droit : %1$s</string>
+    <!-- A button that divides both pans into as many equal groups as there are bags, like "Split both sides into 2 equal groups". -->
+    <string name="activities_math_balance_split">Diviser les deux côtés en %1$s groupes égaux</string>
+    <!-- A button that takes back the last move on the balance. -->
+    <string name="activities_math_balance_undo">Annuler</string>
+    <!-- The name of the list of a balance problem's worked steps, for TalkBack. -->
+    <string name="activities_math_balance_steps">Étapes de la solution</string>
+    <!-- Before a worked step the learner has reached, for TalkBack. -->
+    <string name="activities_math_balance_done">Fait :</string>
+    <!-- Before the worked step the learner hasn't reached yet, for TalkBack. -->
+    <string name="activities_math_balance_next">À suivre :</string>
+    <!-- A worked step: the move, then the equation it gives, like "Take 2 bags off each side: 2x + 1 = 7". -->
+    <string name="activities_math_balance_step">%1$s : %2$s</string>
+    <!-- The name of the list of moves to pick from when solving an equation step by step, for TalkBack. -->
+    <string name="activities_math_balance_pick_move">Choisis la prochaine action</string>
 </resources>

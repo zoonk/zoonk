@@ -4,6 +4,8 @@
     <string name="activities_math_badge_place_it">Place it</string>
     <!-- A badge on an activity whose sliders change a model's results. -->
     <string name="activities_math_badge_try_it">Try it</string>
+    <!-- A short badge on an activity where the learner takes blocks off a balance scale by hand. -->
+    <string name="activities_math_badge_hands_on">Hands on</string>
     <!-- A short badge on an activity where the learner drags handles along a distribution's curve; one word where the language allows. -->
     <string name="activities_math_badge_explore">Explore</string>
     <!-- A badge on an activity where the learner splits a rectangle or a bar into easy parts. -->
@@ -77,4 +79,38 @@
     <string name="activities_math_area_split_width">Split across the width</string>
     <!-- A handle that moves where the rectangle's height is split, for TalkBack. -->
     <string name="activities_math_area_split_height">Split across the height</string>
+    <!-- What the balance shows, for TalkBack: each pan as an expression, like "A balance. Left pan: 4x + 1. Right pan: 2x + 7." -->
+    <string name="activities_math_balance_description">A balance. Left pan: %1$s. Right pan: %2$s.</string>
+    <!-- After the balance's description, for TalkBack, when both pans weigh the same. -->
+    <string name="activities_math_balance_level">The pans are level.</string>
+    <!-- After the balance's description, for TalkBack, when the left pan weighs more. -->
+    <string name="activities_math_balance_left_heavier">The left pan is heavier.</string>
+    <!-- After the balance's description, for TalkBack, when the right pan weighs more. -->
+    <string name="activities_math_balance_right_heavier">The right pan is heavier.</string>
+    <!-- A short label under the pan of a balance scale that weighs more. -->
+    <string name="activities_math_balance_heavier">Heavier</string>
+    <!-- Before a hint after a move that tipped the scale, like "Not quite: Take the same off both sides." -->
+    <string name="activities_math_balance_not_quite">Not quite:</string>
+    <!-- The name of the buttons that take things off the scale's left pan. -->
+    <string name="activities_math_balance_left_side">Left side</string>
+    <!-- The name of the buttons that take things off the scale's right pan. -->
+    <string name="activities_math_balance_right_side">Right side</string>
+    <!-- A button, for TalkBack: take one of something off the left pan, like "Take off the left side: One bag of rice". -->
+    <string name="activities_math_balance_take_left">Take off the left side: %1$s</string>
+    <!-- A button, for TalkBack: take one of something off the right pan, like "Take off the right side: 1 kg". -->
+    <string name="activities_math_balance_take_right">Take off the right side: %1$s</string>
+    <!-- A button that divides both pans into as many equal groups as there are bags, like "Split both sides into 2 equal groups". -->
+    <string name="activities_math_balance_split">Split both sides into %1$s equal groups</string>
+    <!-- A button that takes back the last move on the balance. -->
+    <string name="activities_math_balance_undo">Undo</string>
+    <!-- The name of the list of a balance problem's worked steps, for TalkBack. -->
+    <string name="activities_math_balance_steps">Solution steps</string>
+    <!-- Before a worked step the learner has reached, for TalkBack. -->
+    <string name="activities_math_balance_done">Done:</string>
+    <!-- Before the worked step the learner hasn't reached yet, for TalkBack. -->
+    <string name="activities_math_balance_next">Next:</string>
+    <!-- A worked step: the move, then the equation it gives, like "Take 2 bags off each side: 2x + 1 = 7". -->
+    <string name="activities_math_balance_step">%1$s: %2$s</string>
+    <!-- The name of the list of moves to pick from when solving an equation step by step, for TalkBack. -->
+    <string name="activities_math_balance_pick_move">Pick the next move</string>
 </resources>

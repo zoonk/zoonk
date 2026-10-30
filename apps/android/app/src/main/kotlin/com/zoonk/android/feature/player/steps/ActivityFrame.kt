@@ -44,6 +44,7 @@ import com.zoonk.android.feature.activities.dialogueSimulatorRenderer
 import com.zoonk.android.feature.activities.findErrorRenderer
 import com.zoonk.android.feature.activities.guessRevealRenderer
 import com.zoonk.android.feature.activities.math.areaModelRenderer
+import com.zoonk.android.feature.activities.math.balanceRenderer
 import com.zoonk.android.feature.activities.math.distributionExplorerRenderer
 import com.zoonk.android.feature.activities.math.formulaModelRenderer
 import com.zoonk.android.feature.activities.math.numberLineRenderer
@@ -105,6 +106,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
     mapOf(
         "areaModel" to areaModelRenderer,
         "argumentBuilder" to argumentBuilderRenderer,
+        "balance" to balanceRenderer,
         "beforeAfter" to beforeAfterRenderer,
         "categorize" to categorizeRenderer,
         "causeEffectChain" to causeEffectChainRenderer,

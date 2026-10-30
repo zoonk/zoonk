@@ -170,6 +170,8 @@ class MathFlowTest {
 
     private fun described(text: String) = rule.onNode(hasContentDescription(text, substring = true)).assertExists()
 
+    private fun take(button: String) = rule.onNode(hasContentDescription(button, substring = true)).performScrollTo().performClick()
+
     @Test
     fun formulaModelMovingTheRateProducesTheValueToCheck() {
         play("formulaModel", isCorrect = true)
@@ -259,6 +261,29 @@ class MathFlowTest {
         harness.tap("Check")
 
         assertEquals(1, harness.api.checks.size)
+    }
+
+    @Test
+    fun balanceOneSidedMovesTipTheScaleAndEqualMovesSolveIt() {
+        play("balance", isCorrect = true)
+        val hint = "Take the same off both sides."
+
+        take("Take off the left side: One bag of rice")
+        rule.onNodeWithText(hint, substring = true).assertIsDisplayed()
+        rule.onNodeWithText("Undo").performScrollTo().performClick()
+        rule.onNodeWithText(hint, substring = true).assertDoesNotExist()
+
+        repeat(2) {
+            take("Take off the left side: One bag of rice")
+            take("Take off the right side: One bag of rice")
+        }
+        take("Take off the left side: 1 kg")
+        take("Take off the right side: 1 kg")
+        rule.onNodeWithText("Split both sides into 2 equal groups").performScrollTo().performClick()
+        typedValue("3")
+        harness.tap("Check")
+
+        assertEquals(3.0, sentValue())
     }
 
     private fun precisionStep(): LessonStep {
