@@ -35,7 +35,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
-import com.zoonk.android.feature.conversation.PracticeConversation
+import com.zoonk.android.feature.conversation.PracticeCallSheet
+import com.zoonk.android.feature.conversation.rememberPracticeCallState
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppRoute
@@ -247,19 +248,26 @@ private fun ConversationCallOffer(
     routes: TutorRoutes,
     modifier: Modifier,
 ) {
-    val character = offer.call.character
+    val call = offer.call
+    val character = call.character
+    val state = rememberPracticeCallState(call.defaultMinutes)
 
     OfferCard(
         title = offer.unitTitle,
         description =
-            if (character != null) {
-                stringResource(R.string.tutor_offer_call_with, character.name, character.role)
-            } else {
-                stringResource(R.string.tutor_offer_call)
+            when {
+                call.paused -> stringResource(R.string.tutor_offer_call_paused)
+                character != null -> stringResource(R.string.tutor_offer_call_with, character.name, character.role)
+                else -> stringResource(R.string.tutor_offer_call)
             },
         tile = { KindDot(LearnKind.Conversation) },
         modifier = modifier,
-    ) { PracticeConversation(offer.call, offer.chapterId, offer.goalId, routes.startCall, routes.open) }
+    ) {
+        if (!call.paused) {
+            OfferButton(stringResource(R.string.tutor_offer_practice)) { state.sheetOpen = true }
+            PracticeCallSheet(call, offer.chapterId, offer.goalId, routes.startCall, routes.open, state)
+        }
+    }
 }
 
 @Composable

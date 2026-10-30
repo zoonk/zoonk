@@ -1651,7 +1651,6 @@ msgid "Skills"
 msgstr "Skills"
 
 #: src/chapter/chapter-screen.tsx
-#: src/conversation/tutor-feature-offers.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/use-short-plan.ts
@@ -2105,6 +2104,11 @@ msgctxt "0Azlrb"
 msgid "Manage"
 msgstr "Manage"
 
+#: src/conversation/tutor-offer-card.tsx
+msgctxt "offers.KV-O0y"
+msgid "Practice"
+msgstr "Practice"
+
 #: src/conversation/tutor-plan-change.tsx
 msgctxt "LTNKL8"
 msgid "1 week"
@@ -2179,6 +2183,11 @@ msgstr "Choose where to focus"
 msgctxt "TuQ18m"
 msgid "Choose"
 msgstr "Choose"
+
+#: src/conversation/tutor-tool-offer.tsx
+msgctxt "T4Jya7"
+msgid "Calls are paused for everyone right now. Try again later."
+msgstr "Calls are paused for everyone right now. Try again later."
 
 #: src/conversation/tutor-tool-offer.tsx
 msgctxt "N-VHbS"

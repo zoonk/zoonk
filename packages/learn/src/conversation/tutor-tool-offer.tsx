@@ -1,9 +1,9 @@
 "use client";
 
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
-import { Button } from "@zoonk/ui/components/button";
 import { CrosshairIcon, FastForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useState } from "react";
 import { KindDot } from "../_components/kind-tile";
 import { PlusNotice } from "../_components/plus-lock";
 import {
@@ -11,7 +11,7 @@ import {
   TestOutStartStatus,
   useTestOutStart,
 } from "../_components/test-out-start-link";
-import { PracticeConversation } from "../language/unit/practice-conversation";
+import { PracticeCallSheet } from "../language/unit/practice-conversation";
 import { useMockEntryDescription } from "../mock/mock-entry";
 import {
   EssayOffer,
@@ -21,7 +21,7 @@ import {
   PronunciationOffer,
   StartGoalOffer,
 } from "./tutor-feature-offers";
-import { OfferCard, OfferLink, OfferTile } from "./tutor-offer-card";
+import { OfferButton, OfferCard, OfferLink, OfferTile, usePracticeVerb } from "./tutor-offer-card";
 
 /** `startConversation` resolves to false when the call didn't start. */
 export type TutorToolActions = {
@@ -69,15 +69,9 @@ function ChapterTestOffer({
       }
       title={t("Test: {chapter}", { chapter: offer.chapterTitle })}
     >
-      <Button
-        className="self-start"
-        disabled={test.opening}
-        focusableWhenDisabled
-        onClick={test.start}
-        variant="outline"
-      >
+      <OfferButton disabled={test.opening} focusableWhenDisabled onClick={test.start}>
         {test.opening ? t("Opening the test…") : t("Take the test")}
-      </Button>
+      </OfferButton>
       <TestOutStartStatus isPending={test.isPending} result={test.result} />
     </OfferCard>
   );
@@ -103,6 +97,26 @@ function ChooseFocusOffer({ href }: { href: string }) {
   );
 }
 
+function CallOfferDescription({
+  call,
+}: {
+  call: Extract<TutorToolOffer, { kind: "conversationCall" }>["call"];
+}) {
+  const t = useExtracted();
+  const { character } = call;
+
+  if (call.paused) {
+    return t("Calls are paused for everyone right now. Try again later.");
+  }
+
+  return character
+    ? t("A short call out loud with {name}, {role}.", {
+        name: character.name,
+        role: character.role,
+      })
+    : t("A short call out loud, at your level.");
+}
+
 function ConversationCallOffer({
   actions,
   offer,
@@ -110,19 +124,13 @@ function ConversationCallOffer({
   actions: TutorToolActions;
   offer: Extract<TutorToolOffer, { kind: "conversationCall" }>;
 }) {
-  const t = useExtracted();
-  const { character } = offer.call;
+  const practice = usePracticeVerb();
+  const [open, setOpen] = useState(false);
+  const { paused } = offer.call;
 
   return (
     <OfferCard
-      description={
-        character
-          ? t("A short call out loud with {name}, {role}.", {
-              name: character.name,
-              role: character.role,
-            })
-          : t("A short call out loud, at your level.")
-      }
+      description={<CallOfferDescription call={offer.call} />}
       tile={
         <OfferTile>
           <KindDot kind="conversation" />
@@ -130,12 +138,25 @@ function ConversationCallOffer({
       }
       title={offer.unitTitle}
     >
-      <PracticeConversation
-        conversation={offer.call}
-        onStart={(minutes) =>
-          actions.startConversation({ chapterId: offer.chapterId, goalId: offer.goalId, minutes })
-        }
-      />
+      {!paused && (
+        <>
+          <OfferButton aria-haspopup="dialog" onClick={() => setOpen(true)}>
+            {practice}
+          </OfferButton>
+          <PracticeCallSheet
+            conversation={offer.call}
+            onOpenChange={setOpen}
+            onStart={(minutes) =>
+              actions.startConversation({
+                chapterId: offer.chapterId,
+                goalId: offer.goalId,
+                minutes,
+              })
+            }
+            open={open}
+          />
+        </>
+      )}
     </OfferCard>
   );
 }

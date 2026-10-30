@@ -16,7 +16,7 @@ import { PlusNotice } from "../_components/plus-lock";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { SubjectIcon } from "../syllabus/subject-icon";
-import { OfferCard, OfferLink, OfferTile } from "./tutor-offer-card";
+import { OfferCard, OfferLink, OfferTile, usePracticeVerb } from "./tutor-offer-card";
 
 type Offer<Kind extends TutorToolOffer["kind"]> = Extract<TutorToolOffer, { kind: Kind }>;
 
@@ -161,6 +161,7 @@ export function PronunciationOffer({
 }) {
   const t = useExtracted();
   const format = useFormatter();
+  const practice = usePracticeVerb();
 
   return (
     <OfferCard
@@ -174,7 +175,7 @@ export function PronunciationOffer({
         count: offer.count,
       })}
     >
-      <OfferLink href={href}>{t("Practice")}</OfferLink>
+      <OfferLink href={href}>{practice}</OfferLink>
     </OfferCard>
   );
 }

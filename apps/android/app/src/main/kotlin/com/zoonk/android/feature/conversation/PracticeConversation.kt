@@ -159,7 +159,6 @@ fun PracticeConversation(
     state: PracticeCallState = rememberPracticeCallState(call.defaultMinutes),
 ) = PracticeConversation(call, chapterId, goalId, app.conversations::start, navigator::open, modifier, state)
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PracticeConversation(
     call: LanguagePracticeCall,
@@ -170,8 +169,7 @@ internal fun PracticeConversation(
     modifier: Modifier = Modifier,
     state: PracticeCallState = rememberPracticeCallState(call.defaultMinutes),
 ) {
-    val character = call.character
-    val with = character?.let { stringResource(R.string.conversation_practice_with, it.name, it.role) }
+    val with = call.character?.let { stringResource(R.string.conversation_practice_with, it.name, it.role) }
 
     ListItem(
         headlineContent = { Text(stringResource(R.string.conversation_practice)) },
@@ -182,26 +180,40 @@ internal fun PracticeConversation(
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
     )
 
-    if (state.sheetOpen) {
-        ModalBottomSheet(onDismissRequest = { state.sheetOpen = false }) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 24.dp)
-                    .navigationBarsPadding(),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        stringResource(R.string.conversation_practice),
-                        Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                    with?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
-                }
-                CallSetup(call, chapterId, goalId, start, open, state)
+    PracticeCallSheet(call, chapterId, goalId, start, open, state)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun PracticeCallSheet(
+    call: LanguagePracticeCall,
+    chapterId: UUID,
+    goalId: UUID?,
+    start: suspend (CallRequest) -> CallStart,
+    open: (AppRoute) -> Unit,
+    state: PracticeCallState,
+) {
+    if (!state.sheetOpen) return
+    val with = call.character?.let { stringResource(R.string.conversation_practice_with, it.name, it.role) }
+
+    ModalBottomSheet(onDismissRequest = { state.sheetOpen = false }) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 24.dp)
+                .navigationBarsPadding(),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    stringResource(R.string.conversation_practice),
+                    Modifier.semantics { heading() },
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                with?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
             }
+            CallSetup(call, chapterId, goalId, start, open, state)
         }
     }
 }

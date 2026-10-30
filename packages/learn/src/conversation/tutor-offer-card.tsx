@@ -1,7 +1,8 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { PlusMark } from "../_components/plus-lock";
 import { SURFACE_CLASS } from "../_components/surface";
@@ -53,6 +54,16 @@ export function OfferLink({ children, href }: { children: React.ReactNode; href:
       {children}
     </LearnLink>
   );
+}
+
+export function OfferButton({ className, ...props }: React.ComponentProps<typeof Button>) {
+  return <Button className={cn("self-start", className)} size="sm" variant="outline" {...props} />;
+}
+
+/** The catalog's other "Practice" names a section, which some languages say differently from the verb. */
+export function usePracticeVerb() {
+  const t = useExtracted("offers");
+  return t("Practice");
 }
 
 export function OfferTile({

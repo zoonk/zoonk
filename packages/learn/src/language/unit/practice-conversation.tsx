@@ -144,6 +144,55 @@ function CallSetup({
   );
 }
 
+export function PracticeCallSheet({
+  conversation,
+  onOpenChange,
+  onStart,
+  open,
+}: {
+  conversation: LanguageUnitView["conversation"];
+  onOpenChange: (open: boolean) => void;
+  onStart: (minutes: number) => Promise<boolean>;
+  open: boolean;
+}) {
+  const t = useExtracted();
+  const { character } = conversation;
+
+  const start = async (minutes: number) => {
+    const started = await onStart(minutes);
+
+    if (started) {
+      // The router preserves this page: returning opens a fresh setup, never its pending start.
+      onOpenChange(false);
+    }
+
+    return started;
+  };
+
+  return (
+    <Drawer onOpenChange={onOpenChange} open={open}>
+      <DrawerPopup>
+        <DrawerHeader className="flex-row items-start gap-3">
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+            <DrawerTitle className="text-xl font-semibold">
+              {t("Practice a conversation")}
+            </DrawerTitle>
+            {character && (
+              <DrawerDescription>
+                {t("with {name} · {role}", { name: character.name, role: character.role })}
+              </DrawerDescription>
+            )}
+          </div>
+          <DrawerCloseButton />
+        </DrawerHeader>
+        <DrawerContent className="pt-3">
+          {open && <CallSetup conversation={conversation} onStart={start} />}
+        </DrawerContent>
+      </DrawerPopup>
+    </Drawer>
+  );
+}
+
 export function PracticeConversation({
   conversation,
   onStart,
@@ -154,17 +203,6 @@ export function PracticeConversation({
   const t = useExtracted();
   const [open, setOpen] = useState(false);
   const { character } = conversation;
-
-  const start = async (minutes: number) => {
-    const started = await onStart(minutes);
-
-    if (started) {
-      // The router preserves this page: returning opens a fresh setup, never its pending start.
-      setOpen(false);
-    }
-
-    return started;
-  };
 
   return (
     <>
@@ -186,26 +224,12 @@ export function PracticeConversation({
         </ListRowContent>
       </ListRowButton>
 
-      <Drawer onOpenChange={setOpen} open={open}>
-        <DrawerPopup>
-          <DrawerHeader className="flex-row items-start gap-3">
-            <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <DrawerTitle className="text-xl font-semibold">
-                {t("Practice a conversation")}
-              </DrawerTitle>
-              {character && (
-                <DrawerDescription>
-                  {t("with {name} · {role}", { name: character.name, role: character.role })}
-                </DrawerDescription>
-              )}
-            </div>
-            <DrawerCloseButton />
-          </DrawerHeader>
-          <DrawerContent className="pt-3">
-            {open && <CallSetup conversation={conversation} onStart={start} />}
-          </DrawerContent>
-        </DrawerPopup>
-      </Drawer>
+      <PracticeCallSheet
+        conversation={conversation}
+        onOpenChange={setOpen}
+        onStart={onStart}
+        open={open}
+      />
     </>
   );
 }

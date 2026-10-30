@@ -87,6 +87,7 @@
     <string name="tutor_offer_choose">Choose</string>
     <string name="tutor_offer_start">Start</string>
     <string name="tutor_offer_practice">Practice</string>
+    <string name="tutor_offer_call_paused">Calls are paused for everyone right now. Try again later.</string>
     <string name="tutor_offer_start_goal">Start a new goal</string>
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>

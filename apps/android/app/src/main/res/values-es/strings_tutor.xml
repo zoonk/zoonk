@@ -49,6 +49,7 @@
   "tutor_no_answer": "458870b69ca8c44a6dc285ce049acad7b06ba912f4ab9cf6fd43d3fec98ceb92",
   "tutor_not_answered": "44e129f55e3e68fdd747d5f0f2246a512e84042fc5ddd632f3977257406dae39",
   "tutor_offer_call": "2cb34373cea3659a61d1deab565554b0d400514059dd01fe7f76715413b33902",
+  "tutor_offer_call_paused": "0f8011dc4137bb3c2473ab2f46140f0306e1f059a7699b4f7187a621ca582dd0",
   "tutor_offer_call_with": "d45caeac4e20175e4cbe943904fbb4422eace7044d0c3946b1a739a921014588",
   "tutor_offer_catalog_course": "043637b9e7a2f93e82db1e77797afb4fff9f25ba5a6780c52400dfaf24eea50f",
   "tutor_offer_chapter_test": "779d86b1e170d827a79a16ef547c6839ef6f70ab39bcb7138341b6f4db37796c",
@@ -201,6 +202,7 @@
     <string name="tutor_offer_choose">Elegir</string>
     <string name="tutor_offer_start">Empezar</string>
     <string name="tutor_offer_practice">Practicar</string>
+    <string name="tutor_offer_call_paused">Las llamadas están en pausa para todo el mundo ahora mismo. Vuelve a intentarlo más tarde.</string>
     <string name="tutor_offer_start_goal">Empezar un nuevo objetivo</string>
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">«%1$s»</string>

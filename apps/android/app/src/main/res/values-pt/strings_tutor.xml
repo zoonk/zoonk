@@ -49,6 +49,7 @@
   "tutor_no_answer": "d59b66c67865a67f2731570cc6816cb7ace8cb01076641673f2fd870feb6dd94",
   "tutor_not_answered": "c9dc4673bcac9bbcf9975a5a1dac698f5dfa5ccc061eb768d6de59ea9869a515",
   "tutor_offer_call": "a71d006ee3f783b69ec6dc085f660fdcd59e91167efb608231db305ca1b45008",
+  "tutor_offer_call_paused": "2e142d731207b1c8df875f9f33e4444acc2b0b8baaec803fc3905e581d4f119f",
   "tutor_offer_call_with": "0cabf8f9efce26e90fc4f8ee6cd49f93305f05e41f98b950eccbbdeeba75bc2f",
   "tutor_offer_catalog_course": "65f875bbe68643c163c1aa221d2f1470aeb0bf5d58c9691d3fd6814ce19f0a0b",
   "tutor_offer_chapter_test": "4431ccac9cdb8bdcb8c26ec61b6191d64ba05da9abbafbe95ca40b52f9fa8132",
@@ -201,6 +202,7 @@
     <string name="tutor_offer_choose">Escolher</string>
     <string name="tutor_offer_start">Começar</string>
     <string name="tutor_offer_practice">Praticar</string>
+    <string name="tutor_offer_call_paused">As conversas estão em pausa para todo mundo no momento. Tente de novo mais tarde.</string>
     <string name="tutor_offer_start_goal">Começar uma nova meta</string>
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>

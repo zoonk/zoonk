@@ -228,13 +228,30 @@ class TutorPanelTest {
             """.trimIndent(),
         )
 
-        compose.onNodeWithText("Practice a conversation").performScrollTo().performClick()
+        compose.onNodeWithText("A short call out loud with Lucía, Waiter.").assertExists()
+        compose.onNodeWithText("with Lucía · Waiter").assertDoesNotExist()
+        compose.onNodeWithText("Practice a conversation").assertDoesNotExist()
+        compose.onNodeWithText("Practice").performScrollTo().performClick()
         compose.onNodeWithText("2\u00A0min").performClick()
         compose.onNodeWithText("Start the call").performClick()
         compose.waitForIdle()
 
         assertEquals(listOf<CallRequest>(CallRequest.Practice(UUID.fromString(CHAPTER), UUID.fromString(GOAL), 2)), calls)
         assertEquals(listOf<AppRoute>(AppRoute.Conversation(CALL.toString())), opened)
+    }
+
+    @Test
+    fun aPausedCallOfferSaysSoWithNothingToTap() {
+        showOffer(
+            """
+            {"kind":"conversationCall","chapterId":"$CHAPTER","goalId":"$GOAL","unitTitle":"At the café",
+             "call":{"character":{"name":"Lucía","role":"Waiter"},"defaultMinutes":3,"limit":null,"minutes":[1,2,3],"paused":true,"plusMinutes":[5]}}
+            """.trimIndent(),
+        )
+
+        compose.onNodeWithText("Calls are paused for everyone right now. Try again later.").assertExists()
+        compose.onNodeWithText("Practice a conversation").assertDoesNotExist()
+        compose.onNodeWithText("Practice").assertDoesNotExist()
     }
 
     @Test
