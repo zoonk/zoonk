@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.activities.music
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.indication
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
@@ -96,9 +96,11 @@ internal fun PianoKeyboard(
                 if (onPress == null) {
                     Modifier.clearAndSetSemantics { contentDescription = label }
                 } else {
-                    val marked = keys.filter { it.midi in marks }.map { it.center(whiteWidth) }
+                    val marked = keys.filter { it.midi in openingMarks }.map { it.center(whiteWidth) }
                     val opening = if (marked.isEmpty()) 0.dp else (marked.min() + marked.max()) / 2 - maxWidth / 2
-                    val scroll = rememberScrollState(with(LocalDensity.current) { opening.roundToPx().coerceAtLeast(0) })
+                    val openingPx = with(LocalDensity.current) { opening.roundToPx().coerceAtLeast(0) }
+                    // A resize changes every key's width, so an earlier offset no longer shows the same keys.
+                    val scroll = remember(maxWidth) { ScrollState(openingPx) }
 
                     Modifier.fadingHorizontalScroll(scroll).semantics {
                         contentDescription = label
