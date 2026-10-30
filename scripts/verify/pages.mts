@@ -43,6 +43,7 @@ const { positionals, values } = parseArgs({
     early: { default: false, type: "boolean" },
     email: { type: "string" },
     intruder: { type: "string" },
+    "local-storage": { multiple: true, type: "string" },
     nav: { default: false, type: "boolean" },
     "no-prefetch": { default: false, type: "boolean" },
     out: { type: "string" },
@@ -82,11 +83,25 @@ const mailboxUrl =
     ? getMailboxCaptureUrl(getServiceUrl({ currentDirectory: repository, serviceName: "mailbox" }))
     : "";
 
-const storageState = values.email
+const signedIn = values.email
   ? await signIn({ baseUrl, email: values.email, mailboxUrl })
   : undefined;
 
-const learner = storageState ? await readLearner(baseUrl, storageState) : null;
+const learner = signedIn ? await readLearner(baseUrl, signedIn) : null;
+
+/** `--local-storage name=value` sets what the page keeps on the device, such as a collapsed sidebar. */
+const localStorage = (values["local-storage"] ?? []).map((pair) => {
+  const [name = "", ...value] = pair.split("=");
+  return { name, value: value.join("=") };
+});
+
+const storageState =
+  localStorage.length > 0
+    ? {
+        cookies: signedIn?.cookies ?? [],
+        origins: [{ localStorage, origin: new URL(baseUrl).origin }],
+      }
+    : signedIn;
 
 const intruder = values.intruder
   ? await signIn({ baseUrl, email: values.intruder, mailboxUrl })
