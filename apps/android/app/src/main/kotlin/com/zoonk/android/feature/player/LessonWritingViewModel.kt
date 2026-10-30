@@ -244,11 +244,7 @@ class LessonWritingViewModel(
                 try {
                     WriteOutcome.Started(store.api.write(current, lessonId))
                 } catch (e: ApiException) {
-                    if (e.code == SET_ASIDE) {
-                        WriteOutcome.Refused(LessonWriting.SetAside)
-                    } else {
-                        e.toLessonRefusal()?.let { WriteOutcome.Refused(LessonWriting.Refused(it)) } ?: throw e
-                    }
+                    WriteOutcome.Refused(e.toNotWritten() ?: throw e)
                 }
             }
 
@@ -275,8 +271,8 @@ class LessonWritingViewModel(
 
         data object Failed : WriteOutcome
     }
-
-    private companion object {
-        const val SET_ASIDE = "LESSON_SET_ASIDE"
-    }
 }
+
+/** Why the API won't write a lesson: set aside by its checks, or a refusal the learner should see; null for anything worth retrying. */
+fun ApiException.toNotWritten(): LessonWriting? =
+    if (code == "LESSON_SET_ASIDE") LessonWriting.SetAside else toLessonRefusal()?.let(LessonWriting::Refused)

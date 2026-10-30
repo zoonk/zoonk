@@ -6,8 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.Milestone
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -16,9 +18,13 @@ import java.util.UUID
 
 enum class SessionAction { Start, Stop, KeepGoing, ExtraTime }
 
-/** The session screen's taps, one at a time: its only writes, so opening the screen changes nothing. */
+/**
+ * The session screen's taps, one at a time (its only writes, so opening the screen changes nothing),
+ * and what the screen keeps across a rotation.
+ */
 class SessionViewModel(
     private val opener: StudyOpener,
+    private val sessions: StudySessionStore,
 ) : ViewModel() {
     var busy by mutableStateOf<SessionAction?>(null)
         private set
@@ -26,25 +32,48 @@ class SessionViewModel(
     var failed by mutableStateOf<SessionAction?>(null)
         private set
 
-    /** The summary's ceremony from when it shows until it's closed: showing it marks it shown, so reading the summary again leaves it out. */
-    var ceremony by mutableStateOf<Milestone?>(null)
-        private set
-
-    var ceremonyClosed by mutableStateOf(false)
-        private set
+    private var heldCeremony by mutableStateOf<Milestone?>(null)
+    private var ceremonyClosed by mutableStateOf(false)
+    private var rereading: Job? = null
 
     private val opened = Channel<AppRoute>(Channel.BUFFERED)
 
     /** Where a tap leads, in place of the session screen. */
     val routes: Flow<AppRoute> = opened.receiveAsFlow()
 
+    /**
+     * The ceremony to show over a summary whose read has [read], held from [holdCeremony] until
+     * [closeCeremony]: showing it marks it shown, so reading the summary again leaves it out.
+     */
+    fun ceremony(read: Milestone?): Milestone? = heldCeremony ?: read?.takeUnless { ceremonyClosed }
+
     fun holdCeremony(milestone: Milestone) {
-        if (!ceremonyClosed) ceremony = milestone
+        if (!ceremonyClosed) heldCeremony = milestone
     }
 
     fun closeCeremony() {
-        ceremony = null
+        heldCeremony = null
         ceremonyClosed = true
+    }
+
+    /**
+     * A summary with work left was read before that work was added elsewhere: reading the day and the
+     * summary again shows it. A day still without a next step leaves out work Today replaces, such as
+     * a challenge Plus no longer covers, so the learner goes there.
+     */
+    fun readUnfinished(sessionId: UUID) {
+        if (rereading?.isActive == true) return
+
+        rereading =
+            viewModelScope.launch {
+                val day = sessions.day[sessionId]
+                val summary = sessions.summary[sessionId]
+                day.refresh()
+                summary.refresh()
+                val dayNow = day.state.value.value
+                val summaryNow = summary.state.value.value
+                if (dayNow?.nextBlockId == null && summaryNow?.finished == false) opened.send(AppRoute.Today)
+            }
     }
 
     fun start(

@@ -123,6 +123,7 @@ class TodayFlowTest {
             TodayViewModel(
                 StudyOpener(
                     StartingApi(),
+                    { _, _ -> error("Not used") },
                     cache,
                     timeZone = { "UTC" },
                     scope =

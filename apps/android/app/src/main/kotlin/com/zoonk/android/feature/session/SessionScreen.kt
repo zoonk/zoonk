@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +32,8 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.SessionCeremony
+import com.zoonk.android.feature.player.LessonNotWrittenNotice
+import com.zoonk.android.feature.player.LessonWriting
 import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -66,7 +69,7 @@ fun SessionScreen(
                 (route.blockId == null || read.day.steps.any { it.id?.toString() == route.blockId })
         }
     val sessionId = route.sessionId?.let(UUID::fromString) ?: shown?.day?.sessionId
-    val viewModel = viewModel(key = "session:${sessionId ?: route.goalId}") { SessionViewModel(app.studyOpener) }
+    val viewModel = viewModel(key = "session:${sessionId ?: route.goalId}") { SessionViewModel(app.studyOpener, app.studySessions) }
 
     LaunchedEffect(viewModel) {
         viewModel.routes.collect {
@@ -92,9 +95,10 @@ fun SessionScreen(
                     step,
                     day.goalId ?: shown.today.goal.id,
                     asked = false,
+                    notWritten = null,
                     refresh = null,
                     onStop = null,
-                    onClose = navigator::closeTask,
+                    navigator = navigator,
                 )
             }
         }
@@ -139,9 +143,10 @@ private fun SavedDay(
                     step = step.toDayStep(),
                     goalId = session.goalId,
                     asked = opened != null,
+                    notWritten = opened?.let { app.studyOpener.notWritten(it.id) },
                     refresh = { app.studySessions.day[sessionId].refresh() },
                     onStop = if (session.sessionBar.completed > 0) ({ viewModel.stop(sessionId) }) else null,
-                    onClose = navigator::closeTask,
+                    navigator = navigator,
                 )
             }
         }
@@ -186,23 +191,13 @@ private fun SessionSummaryContent(
         return
     }
 
-    // The day was read before work was added elsewhere: reading both again shows that work's next step.
     if (!stopped && !summary.finished) {
-        LaunchedEffect(session.id) {
-            val day = app.studySessions.day[session.id]
-            val again = app.studySessions.summary[session.id]
-            day.refresh()
-            again.refresh()
-            val dayNow = day.state.value.value
-            val summaryNow = again.state.value.value
-            // This read leaves out work Today replaces, such as a challenge Plus no longer covers.
-            if (dayNow?.nextBlockId == null && summaryNow?.finished == false) navigator.open(AppRoute.Today)
-        }
+        LaunchedEffect(session.id) { viewModel.readUnfinished(session.id) }
         SessionLoading(navigator::closeTask)
         return
     }
 
-    (viewModel.ceremony ?: summary.ceremony?.takeUnless { viewModel.ceremonyClosed })?.let { milestone ->
+    viewModel.ceremony(summary.ceremony)?.let { milestone ->
         LaunchedEffect(milestone) { viewModel.holdCeremony(milestone) }
         SessionCeremony(app, milestone, viewModel::closeCeremony)
         return
@@ -243,8 +238,9 @@ private fun SessionSummaryContent(
 /**
  * The day's next step, or the one a tap opened when its lesson isn't made yet. That wait reads the
  * day again until the lesson is there, then opens it, since the tap asked for it; a link or a
- * screen restored later waits for Start instead. [refresh] is null on a day not opened yet, which
- * has no lesson to wait for; [onStop] once the session has work done.
+ * screen restored later waits for Start instead. [notWritten] says, in place of Start, why the API
+ * wouldn't write the lesson the tap asked for. [refresh] is null on a day not opened yet, which has
+ * no lesson to wait for; [onStop] once the session has work done.
  */
 @Composable
 private fun NextStop(
@@ -253,15 +249,16 @@ private fun NextStop(
     step: DayStep,
     goalId: UUID?,
     asked: Boolean,
+    notWritten: LessonWriting?,
     refresh: (suspend () -> Unit)?,
     onStop: (() -> Unit)?,
-    onClose: () -> Unit,
+    navigator: AppNavigator,
 ) {
     val rereading = refresh?.takeIf { step.waitsForItsLesson() }
     val waiting = rereading != null
     var waited by remember(step.id) { mutableStateOf(false) }
     val busy = viewModel.busy != null
-    val startsFor = goalId?.takeIf { !waiting }
+    val startsFor = goalId?.takeIf { !waiting && notWritten == null }
 
     LaunchedEffect(waiting) {
         val reread = rereading ?: return@LaunchedEffect
@@ -276,7 +273,7 @@ private fun NextStop(
     }
 
     TaskScaffold(
-        onClose = onClose,
+        onClose = navigator::closeTask,
         bottomBar =
             if (startsFor != null || onStop != null) {
                 {
@@ -326,6 +323,21 @@ private fun NextStop(
                 blockDetail(
                     step,
                 )?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
+                notWritten?.let { reason ->
+                    Surface(
+                        Modifier.padding(top = 16.dp).fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        shape = MaterialTheme.shapes.medium,
+                    ) {
+                        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            LessonNotWrittenNotice(
+                                reason,
+                                onRetry = { goalId?.let { viewModel.start(day, step, it) } },
+                                onOpen = navigator::open,
+                            )
+                        }
+                    }
+                }
                 if (waiting) {
                     Row(
                         Modifier.padding(top = 16.dp),

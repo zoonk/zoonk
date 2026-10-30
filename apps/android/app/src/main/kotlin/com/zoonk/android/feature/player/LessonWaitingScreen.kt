@@ -146,12 +146,20 @@ fun LessonWaitingScreen(
                 }
 
                 LessonWriting.SetAside -> {
-                    Notice(stringResource(R.string.player_set_aside_title), stringResource(R.string.player_set_aside_description))
+                    LessonNotWrittenNotice(current, viewModel::start, exits::open)
                     alternative?.let { Alternative(it, instead = true, exits) }
                 }
 
                 is LessonWriting.Refused -> {
-                    WritingRefused(current.refusal, viewModel::start, exits)
+                    when (current.refusal) {
+                        is LessonRefusal.Limited, LessonRefusal.PlusRequired -> {
+                            LessonNotWrittenNotice(current, viewModel::start, exits::open)
+                        }
+
+                        LessonRefusal.NotFound, LessonRefusal.Failed, LessonRefusal.NotInApp -> {
+                            LessonAccessScreen(current.refusal, viewModel::start, exits)
+                        }
+                    }
                     alternative?.let { Alternative(it, instead = true, exits) }
                 }
             }
@@ -159,20 +167,23 @@ fun LessonWaitingScreen(
     }
 }
 
-/** Main's `LessonNotWrittenNotice`: the shared limit notice, or Plus's free week being over. */
+/**
+ * Main's `LessonNotWrittenNotice`: a lesson its checks set aside, the shared limit notice with a
+ * slow-down's Try again, or Plus's free week being over; other refusals show nothing here.
+ */
 @Composable
-private fun WritingRefused(
-    refusal: LessonRefusal,
+fun LessonNotWrittenNotice(
+    writing: LessonWriting,
     onRetry: () -> Unit,
-    exits: LessonPlayerExits,
+    onOpen: (AppRoute) -> Unit,
 ) {
-    when (refusal) {
+    when (val refusal = (writing as? LessonWriting.Refused)?.refusal) {
         is LessonRefusal.Limited -> {
             LimitNotice(
                 limit = refusal.limit,
                 subject = LimitSubject.Lessons,
-                onCreateAccount = { exits.open(AppRoute.Login) },
-                onSeePlus = { exits.open(AppRoute.Subscription) },
+                onCreateAccount = { onOpen(AppRoute.Login) },
+                onSeePlus = { onOpen(AppRoute.Subscription) },
             )
             if (refusal.limit is Limit.SlowDown) FilledTonalButton(onClick = onRetry) { Text(stringResource(R.string.player_try_again)) }
         }
@@ -182,11 +193,13 @@ private fun WritingRefused(
                 stringResource(R.string.subscription_free_week_over_title),
                 stringResource(R.string.subscription_free_week_over_description),
             )
-            FilledTonalButton(onClick = { exits.open(AppRoute.Subscription) }) { Text(stringResource(R.string.player_see_plus)) }
+            FilledTonalButton(onClick = { onOpen(AppRoute.Subscription) }) { Text(stringResource(R.string.player_see_plus)) }
         }
 
-        LessonRefusal.NotFound, LessonRefusal.Failed, LessonRefusal.NotInApp -> {
-            LessonAccessScreen(refusal, onRetry, exits)
+        else -> {
+            if (writing == LessonWriting.SetAside) {
+                Notice(stringResource(R.string.player_set_aside_title), stringResource(R.string.player_set_aside_description))
+            }
         }
     }
 }

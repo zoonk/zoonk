@@ -6,7 +6,11 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.recode
+import com.zoonk.android.feature.player.LessonWriting
+import com.zoonk.android.feature.player.engine.LessonRefusal
+import com.zoonk.android.feature.player.toNotWritten
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenStudyDayRequestTarget
 import com.zoonk.api.models.OpenStudyDayRequestTargetOneOf
@@ -85,10 +89,16 @@ interface StudyApi {
  */
 class StudyOpener(
     private val api: StudyApi,
+    private val writeLesson: suspend (AuthenticatedSession, String) -> LessonGeneration,
     private val cache: AppCache,
     private val timeZone: () -> String,
     private val scope: CoroutineScope,
 ) {
+    private val refusals = mutableMapOf<UUID, LessonWriting>()
+
+    /** Why the API wouldn't write the lesson a tap asked for on this block, for the session's step to say. */
+    fun notWritten(blockId: UUID): LessonWriting? = refusals[blockId]
+
     suspend fun open(
         day: DayView,
         step: DayStep,
@@ -172,9 +182,8 @@ class StudyOpener(
         val blockId = step.id ?: return null
         val lessonId = step.lessonId
 
-        // The lesson's page writes it with its own wait and retry; preparing too would compete with that request.
         if (step.kind == StudyBlock.Kind.LEARN && step.screen == StudyBlock.Screen.SESSION && lessonId != null) {
-            return AppRoute.Lesson(lessonId.toString(), sessionId.toString())
+            return unwritten(session, sessionId, blockId, lessonId)
         }
 
         val waits = AppRoute.Session(blockId = blockId.toString(), sessionId = sessionId.toString())
@@ -221,6 +230,30 @@ class StudyOpener(
                 }
             }
         }
+    }
+
+    /**
+     * Main's `useOpenUnwrittenLesson`: the tap asks once for the lesson, whose page then follows its
+     * writing; one written already starts its block. Preparing too would compete with this request
+     * and hide its refusal.
+     */
+    private suspend fun unwritten(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+        blockId: UUID,
+        lessonId: UUID,
+    ): AppRoute? {
+        val lesson = AppRoute.Lesson(lessonId.toString(), sessionId.toString())
+        val generation =
+            try {
+                writeLesson(session, lessonId.toString())
+            } catch (e: ApiException) {
+                refusals[blockId] = e.toNotWritten()?.takeUnless { it == LessonWriting.Refused(LessonRefusal.NotFound) } ?: throw e
+                return AppRoute.Session(blockId = blockId.toString(), sessionId = sessionId.toString())
+            }
+
+        refusals -= blockId
+        return if (generation.status == LessonGeneration.Status.READY) started(session, sessionId, blockId) { lesson } else lesson
     }
 
     /**

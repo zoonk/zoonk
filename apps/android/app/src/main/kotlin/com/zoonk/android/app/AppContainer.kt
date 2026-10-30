@@ -225,7 +225,7 @@ class AppContainer private constructor(
     }
     val today = TodayStore(LiveTodayApi(api), cache, scope, timeZone)
     private val studyApi = LiveStudyApi(api)
-    val studyOpener = StudyOpener(studyApi, cache, timeZone, scope)
+    val studyOpener = StudyOpener(studyApi, lessonPlayer.api::write, cache, timeZone, scope)
     val studySessions = StudySessionStore(studyApi, cache, timeZone)
     val recap =
         RecapStore(

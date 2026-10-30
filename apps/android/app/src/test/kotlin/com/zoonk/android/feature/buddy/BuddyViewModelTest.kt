@@ -77,7 +77,7 @@ class BuddyViewModelTest {
                     BuddyStore(NoBuddyApi, cache, { "UTC" }, cache.resource(Audience.SignedIn) { learnerSummary() }, backgroundScope),
                     LearningProfileStore(NoProfileApi, cache),
                     TodayStore(today, cache, backgroundScope, { "UTC" }),
-                    StudyOpener(NoStudyApi, cache, { "UTC" }, backgroundScope),
+                    StudyOpener(NoStudyApi, { _, _ -> error("Not used") }, cache, { "UTC" }, backgroundScope),
                 )
 
             vm.openMission(MissionOpens.Block(blockId = BLOCK, position = null), GOAL)

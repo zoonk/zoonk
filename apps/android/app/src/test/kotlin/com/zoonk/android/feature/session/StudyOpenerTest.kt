@@ -6,13 +6,15 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.player.LessonWriting
+import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.ApiRequestJson
+import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
-import com.zoonk.api.models.StudySession
-import com.zoonk.api.models.StudySessionSummary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -22,9 +24,9 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.UUID
 
@@ -32,85 +34,9 @@ import java.util.UUID
 class StudyOpenerTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
 
-    private class FakeStudyApi : StudyApi {
-        val opened = mutableListOf<OpenStudyDayRequest>()
-        val started = mutableListOf<UUID>()
-        val prepared = mutableListOf<UUID>()
-        val stopped = mutableListOf<UUID>()
-        var target: JsonObject? = null
-        var targetStatus = "resolved"
-        var startError: String? = null
-        var session: StudySession = decodeFixture("study-session")
-        var openedSession: JsonObject? = null
-
-        override suspend fun openDay(
-            session: AuthenticatedSession,
-            goalId: UUID,
-            body: OpenStudyDayRequest,
-        ): OpenedStudyDay {
-            opened += body
-            val day = openedSession
-            return decodeFixture(
-                "opened-study-day",
-                "session" to (day ?: fixture("study-session")),
-                *listOfNotNull(day?.let { "sessionId" to it.getValue("id") }).toTypedArray(),
-                "target" to target,
-                "targetStatus" to targetStatus,
-            )
-        }
-
-        override suspend fun session(
-            session: AuthenticatedSession,
-            sessionId: UUID,
-            timeZone: String,
-        ): StudySession = this.session
-
-        override suspend fun stop(
-            session: AuthenticatedSession,
-            sessionId: UUID,
-            timeZone: String,
-        ) {
-            stopped += sessionId
-        }
-
-        override suspend fun summary(
-            session: AuthenticatedSession,
-            sessionId: UUID,
-            timeZone: String,
-        ): StudySessionSummary = error("Not used")
-
-        override suspend fun addExtraBlock(
-            session: AuthenticatedSession,
-            sessionId: UUID,
-        ): StudyBlock = error("Not used")
-
-        override suspend fun catchUp(
-            session: AuthenticatedSession,
-            sessionId: UUID,
-            timeZone: String,
-        ) = Unit
-
-        override suspend fun startBlock(
-            session: AuthenticatedSession,
-            sessionId: UUID,
-            blockId: UUID,
-            timeZone: String,
-        ) {
-            startError?.let { throw ApiException(ApiError.Unavailable, it) }
-            started += blockId
-        }
-
-        override suspend fun prepare(
-            session: AuthenticatedSession,
-            sessionId: UUID,
-        ) {
-            prepared += sessionId
-        }
-    }
-
-    private fun TestScope.opener(api: StudyApi): StudyOpener {
+    private fun TestScope.opener(api: FakeStudyApi): StudyOpener {
         val scope = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
-        return StudyOpener(api, AppCache(FakeSession(ana), scope), timeZone = { "America/Sao_Paulo" }, scope = scope)
+        return StudyOpener(api, api::writeLesson, AppCache(FakeSession(ana), scope), timeZone = { "America/Sao_Paulo" }, scope = scope)
     }
 
     @Test
@@ -124,6 +50,7 @@ class StudyOpenerTest {
             assertEquals(MutationResult.Done(AppRoute.Lesson(lesson.lessonId.toString(), SESSION.toString())), result)
             assertEquals(listOf(blockId(0)), api.started)
             assertEquals(emptyList<OpenStudyDayRequest>(), api.opened)
+            assertEquals(emptyList<String>(), api.written)
         }
 
     @Test
@@ -139,7 +66,7 @@ class StudyOpenerTest {
         }
 
     @Test
-    fun aLessonStillBeingWrittenOpensItsWaitWithoutStartingOrPreparing() =
+    fun anUnwrittenLessonsTapAsksToWriteItOnceAndOpensItsPageToFollowTheWriting() =
         runTest {
             val api = FakeStudyApi()
             val lesson = step(0, screen = StudyBlock.Screen.SESSION)
@@ -147,9 +74,62 @@ class StudyOpenerTest {
             val result = opener(api).open(day(listOf(lesson)), lesson, next = false, goalId = GOAL)
 
             assertEquals(MutationResult.Done(AppRoute.Lesson(lesson.lessonId.toString(), SESSION.toString())), result)
+            assertEquals(listOf(lesson.lessonId.toString()), api.written)
             advanceUntilIdle()
             assertEquals(emptyList<UUID>(), api.started)
             assertEquals(emptyList<UUID>(), api.prepared)
+        }
+
+    @Test
+    fun aLessonWrittenBeforeTheTapStartsItsBlockAndOpens() =
+        runTest {
+            val api = FakeStudyApi()
+            api.generation = LessonGeneration(generationId = null, status = LessonGeneration.Status.READY)
+            val lesson = step(0, screen = StudyBlock.Screen.SESSION)
+
+            val result = opener(api).open(day(listOf(lesson)), lesson, next = false, goalId = GOAL)
+
+            assertEquals(MutationResult.Done(AppRoute.Lesson(lesson.lessonId.toString(), SESSION.toString())), result)
+            assertEquals(listOf(blockId(0)), api.started)
+        }
+
+    @Test
+    fun aRefusedWriteOpensTheSessionsStepWithWhyUntilAWriteGoesThrough() =
+        runTest {
+            val api = FakeStudyApi()
+            val lesson = step(0, screen = StudyBlock.Screen.SESSION)
+            val opener = opener(api)
+            val step = MutationResult.Done(AppRoute.Session(blockId = blockId(0).toString(), sessionId = SESSION.toString()))
+
+            api.writeError = ApiException(ApiError.Unavailable, "PLUS_REQUIRED", status = 403)
+            assertEquals(step, opener.open(day(listOf(lesson)), lesson, next = false, goalId = GOAL))
+            assertEquals(LessonWriting.Refused(LessonRefusal.PlusRequired), opener.notWritten(blockId(0)))
+
+            api.writeError = ApiException(ApiError.Unavailable, "LESSON_SET_ASIDE", status = 409)
+            assertEquals(step, opener.open(day(listOf(lesson)), lesson, next = false, goalId = GOAL))
+            assertEquals(LessonWriting.SetAside, opener.notWritten(blockId(0)))
+
+            api.writeError = ApiException(ApiError.Unavailable, "SLOW_DOWN", status = 429)
+            assertEquals(step, opener.open(day(listOf(lesson)), lesson, next = false, goalId = GOAL))
+            assertEquals(LessonWriting.Refused(LessonRefusal.Limited(Limit.SlowDown(60))), opener.notWritten(blockId(0)))
+
+            api.writeError = null
+            opener.open(day(listOf(lesson)), lesson, next = false, goalId = GOAL)
+            assertEquals(null, opener.notWritten(blockId(0)))
+            assertEquals(emptyList<UUID>(), api.started)
+        }
+
+    @Test
+    fun aWriteThatFailsOrFindsNoLessonFailsTheTap() =
+        runTest {
+            val api = FakeStudyApi()
+            val lesson = step(0, screen = StudyBlock.Screen.SESSION)
+
+            api.writeError = ApiException(ApiError.NotFound, status = 404)
+            assertTrue(opener(api).open(day(listOf(lesson)), lesson, next = false, goalId = GOAL) is MutationResult.Failed)
+
+            api.writeError = ApiException(ApiError.Network)
+            assertTrue(opener(api).open(day(listOf(lesson)), lesson, next = false, goalId = GOAL) is MutationResult.Failed)
         }
 
     @Test
