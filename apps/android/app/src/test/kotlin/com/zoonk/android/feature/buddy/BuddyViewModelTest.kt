@@ -12,20 +12,16 @@ import com.zoonk.android.feature.session.StudyApi
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
-import com.zoonk.android.feature.today.TodayApi
+import com.zoonk.android.feature.today.FakeTodayApi
 import com.zoonk.android.feature.today.TodayStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.BuddyStatus
-import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.LearningProfile
-import com.zoonk.api.models.MistakeListAvailability
-import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.StudySessionSummary
-import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -86,66 +82,6 @@ class BuddyViewModelTest {
             assertEquals(2, today.reads)
             assertEquals(AppRoute.QuestionBlock(SESSION.toString(), BLOCK.toString()), vm.routes.first())
         }
-
-    private class FakeTodayApi(
-        private val answers: List<Today>,
-    ) : TodayApi {
-        var reads = 0
-
-        override suspend fun today(
-            session: AuthenticatedSession,
-            timeZone: String,
-        ) = answers[minOf(reads++, answers.lastIndex)]
-
-        override suspend fun brainPower(session: AuthenticatedSession): Long? = null
-
-        override suspend fun prepareLessons(
-            session: AuthenticatedSession,
-            goalId: UUID,
-        ) = Unit
-
-        override suspend fun mistakes(
-            session: AuthenticatedSession,
-            goalId: UUID,
-        ) = MistakeListAvailability(ready = 0, tomorrow = 0)
-
-        override suspend fun mocks(
-            session: AuthenticatedSession,
-            goalId: UUID,
-        ): MockOptions = error("Not used")
-
-        override suspend fun language(
-            session: AuthenticatedSession,
-            goalId: UUID,
-        ): LanguageToday = error("Not used")
-
-        override suspend fun resumePreview(
-            session: AuthenticatedSession,
-            goalId: UUID,
-        ) = false
-
-        override suspend fun onboardingLeft(
-            session: AuthenticatedSession,
-            goalId: UUID,
-        ) = false
-
-        override suspend fun resume(
-            session: AuthenticatedSession,
-            goalId: UUID,
-        ) = Unit
-
-        override suspend fun answerInsight(
-            session: AuthenticatedSession,
-            insightId: UUID,
-            accepted: Boolean,
-        ) = Unit
-
-        override suspend fun answerSuggestedGoal(
-            session: AuthenticatedSession,
-            suggestionId: UUID,
-            accepted: Boolean,
-        ): SuggestedGoal = error("Not used")
-    }
 
     private object NoBuddyApi : BuddyApi {
         override suspend fun status(

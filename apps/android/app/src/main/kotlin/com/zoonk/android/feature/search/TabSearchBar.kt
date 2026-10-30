@@ -59,7 +59,9 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.catalog.CatalogQuery
 import com.zoonk.android.feature.catalog.catalogLanguage
+import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.today.TodayRead
+import com.zoonk.android.feature.today.TodayStore
 import com.zoonk.android.feature.today.nextStep
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -137,7 +139,7 @@ internal fun SearchPanel(
     val scope = rememberCoroutineScope()
     val snackbars = LocalSnackbarHostState.current
     val switcher = viewModel { GoalSwitcherViewModel(app) }
-    val search = viewModel { SearchViewModel(app) }
+    val search = viewModel { SearchViewModel(app.today, app.studyOpener) }
     val continueFailed = stringResource(R.string.search_continue_failed)
     val signOutFailed = stringResource(R.string.account_sign_out_failed)
     val expanded = state.currentValue == SearchBarValue.Expanded
@@ -222,8 +224,11 @@ internal fun SearchPanel(
 }
 
 class SearchViewModel(
-    private val app: AppContainer,
+    private val today: TodayStore,
+    private val opener: StudyOpener,
 ) : ViewModel() {
+    private var opening = false
+
     /**
      * Opens today's next step as Today's Start does. With no day read to start from, [open] gets
      * null and Today shows where the day stands; the same when the day changed meanwhile.
@@ -232,7 +237,8 @@ class SearchViewModel(
         open: (AppRoute?) -> Unit,
         failed: () -> Unit,
     ) {
-        val read = app.today.today.state.value.value as? TodayRead.Day
+        if (opening) return
+        val read = today.today.state.value.value as? TodayRead.Day
         val step = read?.day?.nextStep
 
         if (read == null || step == null) {
@@ -240,11 +246,16 @@ class SearchViewModel(
             return
         }
 
+        opening = true
         viewModelScope.launch {
-            when (val result = app.studyOpener.open(read.day, step, next = true, read.today.goal.id)) {
-                is MutationResult.Done -> open(result.value)
-                is MutationResult.Failed -> failed()
-                MutationResult.Obsolete -> Unit
+            try {
+                when (val result = opener.open(read.day, step, next = true, read.today.goal.id)) {
+                    is MutationResult.Done -> open(result.value)
+                    is MutationResult.Failed -> failed()
+                    MutationResult.Obsolete -> Unit
+                }
+            } finally {
+                opening = false
             }
         }
     }
