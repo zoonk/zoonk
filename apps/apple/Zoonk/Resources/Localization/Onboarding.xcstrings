@@ -2493,8 +2493,19 @@
         }
       }
     },
+    "At %@ a day, you finish in %@, after the exam in %@." : {
+      "comment" : "When an exam plan that studies everything ends; the second and third arguments are months like 'May 2027'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "At %1$@ a day, you finish in %2$@, after the exam in %3$@."
+          }
+        }
+      }
+    },
     "At %@ a day, you finish in %@, after the exam on %@." : {
-      "comment" : "When an exam plan that studies everything ends",
+      "comment" : "When an exam plan that studies everything ends; the second argument is a month like 'May 2027', the third a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3181,7 +3192,7 @@
       }
     },
     "Covers about %@ of your exam topics in depth by %@, what comes up most first." : {
-      "comment" : "The share of an exam the time a day covers by its date",
+      "comment" : "The share of an exam the time a day covers by its date; the second argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3215,8 +3226,19 @@
         }
       }
     },
+    "Covers about %@ of your exam topics in depth by the start of %@, what comes up most first." : {
+      "comment" : "The share of an exam the time a day covers by its date; the second argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers about %1$@ of your exam topics in depth by the start of %2$@, what comes up most first."
+          }
+        }
+      }
+    },
     "Covers about %@ of your goal in depth by %@, what matters most first." : {
-      "comment" : "The share of a goal the time a day covers by its date",
+      "comment" : "The share of a goal the time a day covers by its date; the second argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3250,8 +3272,19 @@
         }
       }
     },
+    "Covers about %@ of your goal in depth by the start of %@, what matters most first." : {
+      "comment" : "The share of a goal the time a day covers by its date; the second argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers about %1$@ of your goal in depth by the start of %2$@, what matters most first."
+          }
+        }
+      }
+    },
     "Covers all your exam topics by %@." : {
-      "comment" : "The time a day picked covers a whole exam",
+      "comment" : "The time a day picked covers a whole exam; the argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3279,8 +3312,11 @@
         }
       }
     },
+    "Covers all your exam topics by the start of %@." : {
+      "comment" : "The time a day picked covers a whole exam; the argument is the month the learner named, like 'May 2027'"
+    },
     "Covers your whole goal by %@." : {
-      "comment" : "The time a day picked covers a whole goal",
+      "comment" : "The time a day picked covers a whole goal; the argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3307,6 +3343,9 @@
           }
         }
       }
+    },
+    "Covers your whole goal by the start of %@." : {
+      "comment" : "The time a day picked covers a whole goal; the argument is the month the learner named, like 'May 2027'"
     },
     "Create a free account" : {
       "comment" : "Opens sign-up; a guest's plan and progress come with them",
@@ -6679,7 +6718,7 @@
       }
     },
     "Reaches every exam topic by %@, some in less depth." : {
-      "comment" : "The time a day brings every exam topic in",
+      "comment" : "The time a day brings every exam topic in; the argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6707,8 +6746,11 @@
         }
       }
     },
+    "Reaches every exam topic by the start of %@, some in less depth." : {
+      "comment" : "The time a day brings every exam topic in; the argument is the month the learner named, like 'May 2027'"
+    },
     "Reaches every part of your goal by %@, some in less depth." : {
-      "comment" : "The time a day brings every part of a goal in",
+      "comment" : "The time a day brings every part of a goal in; the argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6735,6 +6777,9 @@
           }
         }
       }
+    },
+    "Reaches every part of your goal by the start of %@, some in less depth." : {
+      "comment" : "The time a day brings every part of a goal in; the argument is the month the learner named, like 'May 2027'"
     },
     "Read it again" : {
       "comment" : "Reads the changed words again",
@@ -9243,7 +9288,7 @@
       }
     },
     "Until about %@" : {
-      "comment" : "When a plan without a date ends at this pace",
+      "comment" : "When a plan without a date ends at this pace; the argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9270,6 +9315,9 @@
           }
         }
       }
+    },
+    "Until sometime in %@" : {
+      "comment" : "When a plan without a date ends at this pace; the argument is a month like 'October 2027'"
     },
     "Until the exam, what comes up most comes first." : {
       "comment" : "What an exam plan that studies everything does before the exam",
@@ -10142,7 +10190,7 @@
       }
     },
     "What it takes to cover all your exam topics by %@." : {
-      "comment" : "Why the time a day the plan suggests for an exam",
+      "comment" : "Why the time a day the plan suggests for an exam; the argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10170,8 +10218,11 @@
         }
       }
     },
+    "What it takes to cover all your exam topics by the start of %@." : {
+      "comment" : "Why the time a day the plan suggests for an exam; the argument is the month the learner named, like 'May 2027'"
+    },
     "What it takes to cover your whole goal by %@." : {
-      "comment" : "Why the time a day the plan suggests for a goal",
+      "comment" : "Why the time a day the plan suggests for a goal; the argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10198,6 +10249,9 @@
           }
         }
       }
+    },
+    "What it takes to cover your whole goal by the start of %@." : {
+      "comment" : "Why the time a day the plan suggests for a goal; the argument is the month the learner named, like 'May 2027'"
     },
     "What score do you need?" : {
       "comment" : "Onboarding question for an exam goal",
@@ -11018,7 +11072,7 @@
       }
     },
     "You finish around %@." : {
-      "comment" : "When a goal without a date finishes at the time picked",
+      "comment" : "When a goal without a date finishes at the time picked; the argument is a month like 'May 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11830,7 +11884,7 @@
       }
     },
     "Your date, %@, has passed. You can choose a new one on the next screen." : {
-      "comment" : "The goal's date has passed",
+      "comment" : "The goal's date has passed; the argument is a date like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11857,6 +11911,9 @@
           }
         }
       }
+    },
+    "Your date, the start of %@, has passed. You can choose a new one on the next screen." : {
+      "comment" : "The goal's date has passed; the argument is the month the learner named, like 'May 2027'"
     },
     "Your exam is on %@" : {
       "comment" : "An exam's date",

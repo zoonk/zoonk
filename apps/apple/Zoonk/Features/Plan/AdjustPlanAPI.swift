@@ -141,6 +141,7 @@ struct PlanTimeToCover: Decodable, Equatable, Sendable {
   let ready: Bool
   let recommendedMinutes: Int?
   let targetDate: String?
+  let targetDateNamedMonth: Bool
 }
 
 struct PlanBasesAdvice: Decodable, Equatable, Sendable {

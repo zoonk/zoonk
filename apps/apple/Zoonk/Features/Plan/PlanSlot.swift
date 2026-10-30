@@ -170,17 +170,34 @@ struct PlanSuggestionSection: View {
     }
   }
 
+  private func fitTitle(fits: Bool) -> Text {
+    let schedule = context.plan.schedule
+
+    guard fits, let targetDate = schedule.targetDate else {
+      return Text(
+        "More lessons fit in your time", tableName: "Plan",
+        comment: "Title of the offer that brings more lessons in")
+    }
+
+    let date = PlanDate.text(
+      targetDate, today: context.plan.today, month: schedule.targetDateNamedMonth)
+
+    return schedule.targetDateNamedMonth
+      ? Text(
+        "Your time covers everything by the start of \(date)", tableName: "Plan",
+        comment:
+          "Title of the offer that brings the whole goal in; the argument is the month the learner named, like 'May 2027'"
+      )
+      : Text(
+        "Your time covers everything by \(date)", tableName: "Plan",
+        comment:
+          "Title of the offer that brings the whole goal in; the argument is a date like 'May 5'")
+  }
+
   @ViewBuilder
   private func fitLessons(_ item: PlanSlotItem) -> some View {
     if let offer = context.plan.fitOffer {
-      let title =
-        offer.fits && context.plan.schedule.targetDate != nil
-        ? Text(
-          "Your time covers everything by \(PlanDate.text(context.plan.schedule.targetDate ?? "", today: context.plan.today))",
-          tableName: "Plan", comment: "Title of the offer that brings the whole goal in")
-        : Text(
-          "More lessons fit in your time", tableName: "Plan",
-          comment: "Title of the offer that brings more lessons in")
+      let title = fitTitle(fits: offer.fits)
 
       card(title: title, systemImage: "sparkles", description: nil) {
         if offer.canApply {

@@ -496,7 +496,7 @@
       }
     },
     "%@ for now. Pick the day when you know it." : {
-      "comment" : "A month the learner named stands until they pick the day",
+      "comment" : "A month the learner named stands until they pick the day; the argument is the month the learner named, like 'May 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5253,7 +5253,7 @@
       }
     },
     "At %@ a day, your plan covers everything by %@." : {
-      "comment" : "The time a day Find found, which a tap applies",
+      "comment" : "The time a day Find found, which a tap applies; the second argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5283,6 +5283,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Com %1$@ por dia, seu plano cobre tudo até %2$@."
+          }
+        }
+      }
+    },
+    "At %@ a day, your plan covers everything by the start of %@." : {
+      "comment" : "The time a day Find found, which a tap applies; the second argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "At %1$@ a day, your plan covers everything by the start of %2$@."
           }
         }
       }
@@ -9507,7 +9518,7 @@
       }
     },
     "No amount of time a day covers everything in depth by %@." : {
-      "comment" : "Find found no time a day that covers everything",
+      "comment" : "Find found no time a day that covers everything; the argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9534,6 +9545,9 @@
           }
         }
       }
+    },
+    "No amount of time a day covers everything in depth by the start of %@." : {
+      "comment" : "Find found no time a day that covers everything; the argument is the month the learner named, like 'May 2027'"
     },
     "No change this week" : {
       "comment" : "Preparation didn't move this week",
@@ -13654,6 +13668,9 @@
         }
       }
     },
+    "Your %@ deadline comes off your plan. You can set one again anytime." : {
+      "comment" : "Says the goal's deadline was dropped; the argument is the month the learner named, like 'May 2027'"
+    },
     "Your answers choose for you" : {
       "comment" : "What the focus test does",
       "localizations" : {
@@ -13808,7 +13825,7 @@
       }
     },
     "Your deadline of %@ comes off your plan. You can set one again anytime." : {
-      "comment" : "Says the goal's deadline was dropped",
+      "comment" : "Says the goal's deadline was dropped; the argument is a date like 'May 5, 2027' or 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -14510,7 +14527,7 @@
       }
     },
     "Your time covers everything by %@" : {
-      "comment" : "Title of the offer that brings the whole goal in",
+      "comment" : "Title of the offer that brings the whole goal in; the argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -14537,6 +14554,9 @@
           }
         }
       }
+    },
+    "Your time covers everything by the start of %@" : {
+      "comment" : "Title of the offer that brings the whole goal in; the argument is the month the learner named, like 'May 2027'"
     },
     "Your time covers everything, so we recommend each prerequisite in depth." : {
       "comment" : "The app's recommendation for prerequisites",

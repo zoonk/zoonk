@@ -154,20 +154,53 @@ struct PlanTimeSection: View {
 
   @ViewBuilder
   private func foundRows(_ time: PlanTimeToCover) -> some View {
-    if let minutes = time.recommendedMinutes, let date = time.targetDate ?? plan.schedule.targetDate
-    {
+    let goalDate =
+      time.targetDate.map { (date: $0, namedMonth: time.targetDateNamedMonth) }
+      ?? plan.schedule.targetDate.map { (date: $0, namedMonth: plan.schedule.targetDateNamedMonth) }
+
+    if let minutes = time.recommendedMinutes, let goalDate {
+      let time = planDurationText(minutes: Double(minutes))
+      let namedMonth = goalDate.namedMonth
+      let date = PlanDate.text(goalDate.date, today: plan.today, month: namedMonth)
+
       Button {
         Task { await setMinutes(minutes) }
       } label: {
-        Text(
-          "At \(planDurationText(minutes: Double(minutes))) a day, your plan covers everything by \(PlanDate.text(date, today: plan.today)).",
-          tableName: "Plan", comment: "The time a day Find found, which a tap applies")
+        if namedMonth {
+          Text(
+            "At \(time) a day, your plan covers everything by the start of \(date).",
+            tableName: "Plan",
+            comment:
+              "The time a day Find found, which a tap applies; the second argument is the month the learner named, like 'May 2027'"
+          )
+        } else {
+          Text(
+            "At \(time) a day, your plan covers everything by \(date).", tableName: "Plan",
+            comment:
+              "The time a day Find found, which a tap applies; the second argument is a date like 'May 5'"
+          )
+        }
       }
     } else if let date = plan.schedule.targetDate {
-      Text(
-        "No amount of time a day covers everything in depth by \(PlanDate.text(date, today: plan.today)).",
-        tableName: "Plan", comment: "Find found no time a day that covers everything"
-      )
+      let namedMonth = plan.schedule.targetDateNamedMonth
+      let date = PlanDate.text(date, today: plan.today, month: namedMonth)
+
+      Group {
+        if namedMonth {
+          Text(
+            "No amount of time a day covers everything in depth by the start of \(date).",
+            tableName: "Plan",
+            comment:
+              "Find found no time a day that covers everything; the argument is the month the learner named, like 'May 2027'"
+          )
+        } else {
+          Text(
+            "No amount of time a day covers everything in depth by \(date).", tableName: "Plan",
+            comment:
+              "Find found no time a day that covers everything; the argument is a date like 'May 5'"
+          )
+        }
+      }
       .font(.subheadline)
       .foregroundStyle(.secondary)
     }

@@ -267,7 +267,10 @@ struct ScheduleQuestion: View {
 
       return Text(
         "You finish around \(Text(month).fontWeight(.medium).foregroundStyle(.primary)).",
-        tableName: "Onboarding", comment: "When a goal without a date finishes at the time picked")
+        tableName: "Onboarding",
+        comment:
+          "When a goal without a date finishes at the time picked; the argument is a month like 'May 2027'"
+      )
     }
 
     return Text(verbatim: announcement(shown))
@@ -296,65 +299,163 @@ struct ScheduleQuestion: View {
 
   private func statusWords(_ shown: Shown) -> String? {
     let time = duration(shown.minutes ?? view.recommendedMinutes)
-    let date = goalDate(shown).map { PlanDate.longText($0.isoDate, month: $0.namedMonth) }
+    let goal = goalDate(shown)
+    let date = goal.map { PlanDate.longText($0.isoDate, month: $0.namedMonth) }
+    let namedMonth = goal?.namedMonth == true
 
     switch shown.line {
     case .everything(let suggested):
       return date.map { date in
-        switch (suggested, isExam) {
-        case (true, true):
+        switch (suggested, isExam, namedMonth) {
+        case (true, true, false):
           String(
             localized: "What it takes to cover all your exam topics by \(date).",
-            table: "Onboarding", comment: "Why the time a day the plan suggests for an exam")
-        case (true, false):
+            table: "Onboarding",
+            comment:
+              "Why the time a day the plan suggests for an exam; the argument is a date like 'May 5, 2027'"
+          )
+        case (true, true, true):
+          String(
+            localized: "What it takes to cover all your exam topics by the start of \(date).",
+            table: "Onboarding",
+            comment:
+              "Why the time a day the plan suggests for an exam; the argument is the month the learner named, like 'May 2027'"
+          )
+        case (true, false, false):
           String(
             localized: "What it takes to cover your whole goal by \(date).", table: "Onboarding",
-            comment: "Why the time a day the plan suggests for a goal")
-        case (false, true):
+            comment:
+              "Why the time a day the plan suggests for a goal; the argument is a date like 'May 5, 2027'"
+          )
+        case (true, false, true):
+          String(
+            localized: "What it takes to cover your whole goal by the start of \(date).",
+            table: "Onboarding",
+            comment:
+              "Why the time a day the plan suggests for a goal; the argument is the month the learner named, like 'May 2027'"
+          )
+        case (false, true, false):
           String(
             localized: "Covers all your exam topics by \(date).", table: "Onboarding",
-            comment: "The time a day picked covers a whole exam")
-        case (false, false):
+            comment:
+              "The time a day picked covers a whole exam; the argument is a date like 'May 5, 2027'"
+          )
+        case (false, true, true):
+          String(
+            localized: "Covers all your exam topics by the start of \(date).", table: "Onboarding",
+            comment:
+              "The time a day picked covers a whole exam; the argument is the month the learner named, like 'May 2027'"
+          )
+        case (false, false, false):
           String(
             localized: "Covers your whole goal by \(date).", table: "Onboarding",
-            comment: "The time a day picked covers a whole goal")
+            comment:
+              "The time a day picked covers a whole goal; the argument is a date like 'May 5, 2027'"
+          )
+        case (false, false, true):
+          String(
+            localized: "Covers your whole goal by the start of \(date).", table: "Onboarding",
+            comment:
+              "The time a day picked covers a whole goal; the argument is the month the learner named, like 'May 2027'"
+          )
         }
       }
     case .everyTopic:
       return date.map { date in
-        isExam
-          ? String(
+        switch (isExam, namedMonth) {
+        case (true, false):
+          String(
             localized: "Reaches every exam topic by \(date), some in less depth.",
-            table: "Onboarding", comment: "The time a day brings every exam topic in")
-          : String(
+            table: "Onboarding",
+            comment:
+              "The time a day brings every exam topic in; the argument is a date like 'May 5, 2027'"
+          )
+        case (true, true):
+          String(
+            localized: "Reaches every exam topic by the start of \(date), some in less depth.",
+            table: "Onboarding",
+            comment:
+              "The time a day brings every exam topic in; the argument is the month the learner named, like 'May 2027'"
+          )
+        case (false, false):
+          String(
             localized: "Reaches every part of your goal by \(date), some in less depth.",
-            table: "Onboarding", comment: "The time a day brings every part of a goal in")
+            table: "Onboarding",
+            comment:
+              "The time a day brings every part of a goal in; the argument is a date like 'May 5, 2027'"
+          )
+        case (false, true):
+          String(
+            localized:
+              "Reaches every part of your goal by the start of \(date), some in less depth.",
+            table: "Onboarding",
+            comment:
+              "The time a day brings every part of a goal in; the argument is the month the learner named, like 'May 2027'"
+          )
+        }
       }
     case .share(let share):
       let percent = share.formatted(.percent.precision(.fractionLength(0)))
 
       return date.map { date in
-        isExam
-          ? String(
+        switch (isExam, namedMonth) {
+        case (true, false):
+          String(
             localized:
               "Covers about \(percent) of your exam topics in depth by \(date), what comes up most first.",
-            table: "Onboarding", comment: "The share of an exam the time a day covers by its date")
-          : String(
+            table: "Onboarding",
+            comment:
+              "The share of an exam the time a day covers by its date; the second argument is a date like 'May 5, 2027'"
+          )
+        case (true, true):
+          String(
+            localized:
+              "Covers about \(percent) of your exam topics in depth by the start of \(date), what comes up most first.",
+            table: "Onboarding",
+            comment:
+              "The share of an exam the time a day covers by its date; the second argument is the month the learner named, like 'May 2027'"
+          )
+        case (false, false):
+          String(
             localized:
               "Covers about \(percent) of your goal in depth by \(date), what matters most first.",
-            table: "Onboarding", comment: "The share of a goal the time a day covers by its date")
+            table: "Onboarding",
+            comment:
+              "The share of a goal the time a day covers by its date; the second argument is a date like 'May 5, 2027'"
+          )
+        case (false, true):
+          String(
+            localized:
+              "Covers about \(percent) of your goal in depth by the start of \(date), what matters most first.",
+            table: "Onboarding",
+            comment:
+              "The share of a goal the time a day covers by its date; the second argument is the month the learner named, like 'May 2027'"
+          )
+        }
       }
     case .pastDate:
       return date.map { date in
-        String(
-          localized:
-            "Your date, \(date), has passed. You can choose a new one on the next screen.",
-          table: "Onboarding", comment: "The goal's date has passed")
+        namedMonth
+          ? String(
+            localized:
+              "Your date, the start of \(date), has passed. You can choose a new one on the next screen.",
+            table: "Onboarding",
+            comment:
+              "The goal's date has passed; the argument is the month the learner named, like 'May 2027'"
+          )
+          : String(
+            localized:
+              "Your date, \(date), has passed. You can choose a new one on the next screen.",
+            table: "Onboarding",
+            comment: "The goal's date has passed; the argument is a date like 'May 5, 2027'")
       }
     case .finish(let endDate):
       return String(
         localized: "You finish around \(PlanDate.longText(endDate, month: true)).",
-        table: "Onboarding", comment: "When a goal without a date finishes at the time picked")
+        table: "Onboarding",
+        comment:
+          "When a goal without a date finishes at the time picked; the argument is a month like 'May 2027'"
+      )
     case .noFinish:
       return String(
         localized:
@@ -425,10 +526,23 @@ struct ScheduleQuestion: View {
         table: "Onboarding", comment: "What an exam plan that studies everything does")
     }
 
-    let finish = String(
-      localized:
-        "At \(duration(minutes)) a day, you finish in \(PlanDate.longText(end, month: true)), after the exam on \(PlanDate.longText(date.isoDate, month: date.namedMonth)).",
-      table: "Onboarding", comment: "When an exam plan that studies everything ends")
+    let time = duration(minutes)
+    let finishMonth = PlanDate.longText(end, month: true)
+    let exam = PlanDate.longText(date.isoDate, month: date.namedMonth)
+    let finish =
+      date.namedMonth
+      ? String(
+        localized: "At \(time) a day, you finish in \(finishMonth), after the exam in \(exam).",
+        table: "Onboarding",
+        comment:
+          "When an exam plan that studies everything ends; the second and third arguments are months like 'May 2027'"
+      )
+      : String(
+        localized: "At \(time) a day, you finish in \(finishMonth), after the exam on \(exam).",
+        table: "Onboarding",
+        comment:
+          "When an exam plan that studies everything ends; the second argument is a month like 'May 2027', the third a date like 'May 5, 2027'"
+      )
 
     let until = String(
       localized: "Until the exam, what comes up most comes first.", table: "Onboarding",

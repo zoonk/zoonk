@@ -315,11 +315,18 @@ private struct PlanReveal: View {
     } else if schedule.targetDate == nil, let endDate = plan.estimate.endDate {
       // The month when it's far off; the day within a few weeks, so it never reads "October" in October.
       let isNear = PlanDate.days(from: plan.week.startDate, to: endDate) <= 42
+      let end = PlanDate.text(endDate, today: plan.today, month: !isNear)
       facts.append(
-        String(
-          localized:
-            "Until about \(PlanDate.text(endDate, today: plan.today, month: !isNear))",
-          table: "Onboarding", comment: "When a plan without a date ends at this pace"))
+        isNear
+          ? String(
+            localized: "Until about \(end)", table: "Onboarding",
+            comment:
+              "When a plan without a date ends at this pace; the argument is a date like 'May 5'")
+          : String(
+            localized: "Until sometime in \(end)", table: "Onboarding",
+            comment:
+              "When a plan without a date ends at this pace; the argument is a month like 'October 2027'"
+          ))
     }
 
     facts.append(

@@ -84,7 +84,10 @@ struct PlanDateSection: View {
       if namedMonth, let date = schedule.targetDate {
         Text(
           "\(PlanDate.text(date, today: plan.today, month: true)) for now. Pick the day when you know it.",
-          tableName: "Plan", comment: "A month the learner named stands until they pick the day")
+          tableName: "Plan",
+          comment:
+            "A month the learner named stands until they pick the day; the argument is the month the learner named, like 'May 2027'"
+        )
       } else if schedule.targetDate == nil && !isExam {
         Text(
           "No deadline: you study everything at your own pace.", tableName: "Plan",
@@ -157,9 +160,20 @@ struct PlanDateSection: View {
       what: String(
         localized: "Every part of your goal, at your own pace, with no end date.", table: "Plan",
         comment: "What dropping the deadline does"),
-      sentence: String(
-        localized: "Your deadline of \(shown) comes off your plan. You can set one again anytime.",
-        table: "Plan", comment: "Says the goal's deadline was dropped")
+      sentence: namedMonth
+        ? String(
+          localized: "Your \(shown) deadline comes off your plan. You can set one again anytime.",
+          table: "Plan",
+          comment:
+            "Says the goal's deadline was dropped; the argument is the month the learner named, like 'May 2027'"
+        )
+        : String(
+          localized:
+            "Your deadline of \(shown) comes off your plan. You can set one again anytime.",
+          table: "Plan",
+          comment:
+            "Says the goal's deadline was dropped; the argument is a date like 'May 5, 2027' or 'May 5'"
+        )
     ) { isPreviewing, ask in
       Button(action: ask) {
         LabeledContent {
