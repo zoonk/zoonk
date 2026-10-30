@@ -109,11 +109,7 @@ struct AccountSheet: View {
   }
 
   private var closeButton: some View {
-    Button(action: dismiss.callAsFunction) {
-      Image(systemName: "xmark")
-    }
-    .accessibilityLabel(
-      Text("Close", tableName: "Account", comment: "Closes the account sheet"))
+    Button(role: .close, action: dismiss.callAsFunction)
   }
 
   private var isGuest: Bool {
