@@ -61,7 +61,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.max
 import com.zoonk.android.R
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindDot
@@ -71,6 +70,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlanPhase
 import kotlinx.datetime.toJavaLocalDate
+import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -91,7 +91,8 @@ internal fun PlanRoadmap(
     if (phases.size < 2) return
 
     BoxWithConstraints(modifier.fillMaxWidth()) {
-        if (maxWidth < FULL_ROADMAP_WIDTH) {
+        val bandsFit = MIN_BAND_WIDTH * phases.size + BAND_GAP * (phases.size - 1) <= maxWidth
+        if (maxWidth < FULL_ROADMAP_WIDTH || !bandsFit) {
             RoadmapCompact(page, phases, onOpenPath)
         } else {
             RoadmapFull(page, phases, links, maxWidth)
@@ -354,7 +355,8 @@ private class BandLayout(
 /**
  * Main's bands: each drawn to its phase's time but never narrower than its name's longest word, and
  * every band in the row as tall as the one whose name takes the most lines. When the longest words
- * don't fit the row, each band keeps only the floor and its name hyphenates.
+ * don't fit the row, each band keeps only the floor and its name hyphenates. Sizes are whole pixels
+ * rounded as the band's padding and the row's gaps round them, so a name measured to fit does.
  */
 @Composable
 private fun bandLayout(
@@ -371,14 +373,15 @@ private fun bandLayout(
             maxWidth: Int = Constraints.Infinity,
         ) = measurer.measure(name.text, style, constraints = Constraints(maxWidth = maxWidth), placeholders = name.placeholders)
 
-        val padding = (BAND_PADDING_X * 2).toPx()
-        val narrowest = MIN_BAND_WIDTH.toPx()
-        val gap = BAND_GAP.toPx()
-        val words = names.map { max(narrowest, measure(it).multiParagraph.intrinsics.minIntrinsicWidth + padding) }
-        val minimums = if (words.sum() + gap * (names.size - 1) <= width.toPx()) words else List(names.size) { narrowest }
-        val widths = weightedWidths(weights, width.toPx(), minimums, gap).map { floor(it) }
-        val text = names.indices.maxOfOrNull { measure(names[it], (widths[it] - padding).roundToInt().coerceAtLeast(0)).size.height } ?: 0
-        return BandLayout(widths.map { it.toDp() }, max(BAND_HEIGHT, text.toDp() + BAND_PADDING_Y * 2))
+        val padding = BAND_PADDING_X.roundToPx() * 2
+        val narrowest = MIN_BAND_WIDTH.roundToPx()
+        val gap = BAND_GAP.roundToPx()
+        val total = width.roundToPx()
+        val words = names.map { max(narrowest, ceil(measure(it).multiParagraph.intrinsics.minIntrinsicWidth).toInt() + padding) }
+        val minimums = if (words.sum() + gap * (names.size - 1) <= total) words else List(names.size) { narrowest }
+        val widths = weightedWidths(weights, total.toFloat(), minimums.map(Int::toFloat), gap.toFloat()).map { floor(it).toInt() }
+        val text = names.indices.maxOfOrNull { measure(names[it], (widths[it] - padding).coerceAtLeast(0)).size.height } ?: 0
+        return BandLayout(widths.map { it.toDp() }, max(BAND_HEIGHT.roundToPx(), text + BAND_PADDING_Y.roundToPx() * 2).toDp())
     }
 }
 
