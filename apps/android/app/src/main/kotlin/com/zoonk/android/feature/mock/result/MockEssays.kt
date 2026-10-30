@@ -111,7 +111,7 @@ private fun UngradedEssay(
     if (essay.status == MockEssay.Status.PENDING) PendingGrade(grading, onGrade)
 }
 
-/** Grading is started by the hand-in; here it shows going, and offers Grade it again after a limit or a failure. */
+/** Grading is started by the hand-in; here it shows going, and offers Grade it again while it can still go through. */
 @Composable
 private fun PendingGrade(
     grading: EssayGrading,
@@ -141,7 +141,7 @@ private fun PendingGrade(
             else -> stringResource(R.string.mock_result_not_graded)
         }
     StepDetail(line, if (grading == EssayGrading.Idle) Modifier else Modifier.semantics { liveRegion = LiveRegionMode.Assertive })
-    OutlinedButton(onClick = onGrade) { Text(stringResource(R.string.mock_result_grade_it)) }
+    if (grading != EssayGrading.LimitReached) OutlinedButton(onClick = onGrade) { Text(stringResource(R.string.mock_result_grade_it)) }
 }
 
 private val SLOW_GRADING = 30.seconds
