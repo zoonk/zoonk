@@ -31,6 +31,7 @@ final class VoiceRecorder {
   @ObservationIgnored private var meter: Task<Void, Never>?
   @ObservationIgnored private var interruption: (any NSObjectProtocol)?
   @ObservationIgnored private var onRecorded: (@MainActor (VoiceRecording) -> Void)?
+  @ObservationIgnored private var acquisition = 0
 
   var isRecording: Bool {
     if case .recording = status {
@@ -53,17 +54,21 @@ final class VoiceRecorder {
     }
 
     status = .acquiring
+    acquisition += 1
+    let mine = acquisition
+    let isAllowed = await AVAudioApplication.requestRecordPermission()
 
-    guard await AVAudioApplication.requestRecordPermission() else {
+    guard acquisition == mine else {
+      return false
+    }
+
+    guard isAllowed else {
       status = .denied
       return false
     }
 
-    guard status == .acquiring, let recorder = makeRecorder() else {
-      if status == .acquiring {
-        status = .idle
-      }
-
+    guard let recorder = makeRecorder() else {
+      status = .idle
       return false
     }
 
@@ -91,7 +96,13 @@ final class VoiceRecorder {
   }
 
   func cancel() {
+    acquisition += 1
     onRecorded = nil
+
+    if status == .acquiring {
+      status = .idle
+    }
+
     recorder?.stop()
   }
 
