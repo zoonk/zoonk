@@ -94,7 +94,6 @@ private fun DrawScope.drawMarkBorder(
     drawCircle(color, radius = size.minDimension / 2 - width / 2, style = Stroke(width, pathEffect = dash))
 }
 
-/** Main's `ActivitySoundButton`: plays a sound, named by what it plays. */
 @Composable
 internal fun MusicSoundButton(
     text: String,

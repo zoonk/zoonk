@@ -199,7 +199,6 @@ private fun StringPicker(
 
 private fun Modifier.pickBox(): Modifier = width(PICK_WIDTH).heightIn(min = PICK_HEIGHT).fillMaxHeight()
 
-/** One fret of one string: the string runs across it, the fret wire closes it, and the window's first fret starts at the nut. */
 @Composable
 private fun FretCell(
     isFirst: Boolean,

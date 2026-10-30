@@ -61,7 +61,6 @@ val notationPlayerRenderer =
         canvas = { NotationPlayerActivity(it) },
     )
 
-/** Main's `practiceTempos`: the tempo with two slower ones to practice at, rounded to 5 bpm. */
 fun practiceTempos(tempo: Int): List<Int> =
     (SLOWER_SHARES.map { (tempo * it / TEMPO_STEP).roundToInt() * TEMPO_STEP } + tempo).distinct().sorted()
 
