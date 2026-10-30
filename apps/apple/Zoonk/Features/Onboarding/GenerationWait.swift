@@ -27,7 +27,6 @@ struct GenerationWait: Equatable, Sendable {
   let kind: Kind
   private(set) var phases: [Phase]
   private(set) var isDone = false
-  private(set) var joinedGenerationID: String?
 
   init(kind: Kind) {
     self.kind = kind
@@ -58,8 +57,6 @@ struct GenerationWait: Equatable, Sendable {
       if event.status == "completed" || event.status == "started" {
         isDone = true
       }
-    case .join:
-      joinedGenerationID = event.entityID
     case .phase(let id):
       guard let index = phases.firstIndex(where: { $0.id == id }) else {
         return
@@ -86,7 +83,6 @@ struct GenerationWait: Equatable, Sendable {
   private enum Place {
     case phase(String)
     case done
-    case join
   }
 
   private static func place(of step: String, kind: Kind) -> Place? {
@@ -94,7 +90,6 @@ struct GenerationWait: Equatable, Sendable {
     case (.understanding, "readGoal"): .phase("read")
     case (.understanding, "findExamDates"): .phase("dates")
     case (.understanding, "understandingReady"): .done
-    case (.understanding, "joinRunningUnderstanding"): .join
     case (.curriculum, "understandGoal"): .phase("goal")
     case (.curriculum, "readExamNotice"): .phase("notice")
     case (.curriculum, "buildSkillGraph"): .phase("skills")
@@ -104,14 +99,11 @@ struct GenerationWait: Equatable, Sendable {
     case (.curriculum, "goalReady"), (.curriculum, "outlineCourses"),
       (.curriculum, "prepareFirstLessons"):
       .done
-    case (.curriculum, "joinRunningGoal"): .join
     case (.explanation, "classifyQuestion"): .phase("read")
     case (.explanation, "findExplanation"): .phase("find")
     case (.explanation, "writeExplanation"): .phase("write")
     case (.explanation, "explanationReady"): .done
-    case (.explanation, "joinRunningExplanation"): .join
-    case (.levelTestBank, "writeLevelTestBank"), (.levelTestBank, "joinLevelTestBank"):
-      .phase("bank")
+    case (.levelTestBank, "writeLevelTestBank"): .phase("bank")
     case (.levelTestBank, "levelTestBankReady"): .done
     default: nil
     }
@@ -296,8 +288,7 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
 
   private enum Ending {
     case ready
-    /// The stream ended without saying so: the run's status says how it went.
-    case ended(String)
+    case stopped
     /// The stream broke and gave up reconnecting: the run may still be working.
     case lost
   }
@@ -311,16 +302,14 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
         current.apply(event)
         wait = current
 
-        if let joined = current.joinedGenerationID {
-          return await follow(joined)
-        }
-
         if current.isDone {
-          return .ready
+          break
         }
       }
 
-      return .ended(id)
+      return .ready
+    } catch is GenerationStopped {
+      return .stopped
     } catch {
       return .lost
     }
@@ -330,19 +319,12 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
     switch ending {
     case .ready:
       await read()
+    case .stopped where restart != nil:
+      failure = .generation
+    case .stopped:
+      await read()
     case .lost:
       failure = .connection
-    case .ended(let id):
-      switch try? await onboarding.generationStatus(id: id) {
-      case .completed:
-        await read()
-      case .stopped where restart != nil:
-        failure = .generation
-      case .stopped:
-        await read()
-      case .working, nil:
-        failure = .connection
-      }
     }
   }
 

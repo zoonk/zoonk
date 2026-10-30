@@ -196,11 +196,11 @@ struct ExamAPI {
     return .refused(limit)
   }
 
-  /// A step that errors, or a stream that ends before the questions are ready, fails the wait.
+  /// A run that ends before the questions are ready fails the wait.
   func waitForQuestions(token: String, generationId: String) async throws {
-    for try await event in clients.generationEvents(id: generationId, token: token) {
-      if event.step == "mockQuestionsReady", event.status == "completed" { return }
-      if event.status == "error" { throw APIError.unavailable }
+    for try await event in clients.generationEvents(id: generationId, token: token)
+    where event.step == "mockQuestionsReady" && event.status == "completed" {
+      return
     }
 
     throw APIError.unavailable

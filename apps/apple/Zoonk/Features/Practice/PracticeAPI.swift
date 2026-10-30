@@ -540,13 +540,13 @@ struct PracticeAPI: Sendable {
     }
   }
 
-  /// A step that errors, or a stream that ends without the ready step, fails the wait.
+  /// A run that ends without the ready step fails the wait.
   func waitForQuestions(token: String, generationId: String?, readyStep: String) async throws {
     guard let generationId else { return }
 
-    for try await event in clients.generationEvents(id: generationId, token: token) {
-      if event.step == readyStep, event.status == "completed" { return }
-      if event.status == "error" { throw APIError.unavailable }
+    for try await event in clients.generationEvents(id: generationId, token: token)
+    where event.step == readyStep && event.status == "completed" {
+      return
     }
 
     throw APIError.unavailable
