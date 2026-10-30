@@ -299,7 +299,9 @@ final class OnboardingStore {
 
   /// A name can't nest folders or climb out with "..", and its own id keeps two files of the same
   /// name apart.
-  func attachFile(_ file: URL) async throws -> AttachedSource {
+  func attachFile(_ file: URL, goal: (id: String, language: String)? = nil) async throws
+    -> AttachedSource
+  {
     guard let userID = session.account?.user.id else {
       throw OnboardingError.signUpRequired
     }
@@ -309,7 +311,7 @@ final class OnboardingStore {
 
     return try await cache.onboardingWrite { [api] identity in
       try await api.upload(file: file, pathname: pathname, token: identity.bearerToken)
-      return try await api.attach(.file(pathname), token: identity.bearerToken)
+      return try await api.attach(.file(pathname, goal: goal), token: identity.bearerToken)
     }
   }
 

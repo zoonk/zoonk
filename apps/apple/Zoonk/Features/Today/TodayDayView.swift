@@ -19,6 +19,8 @@ struct TodayDayView: View {
   @State private var examChecklist: Set<ExamView.ChecklistItem> = []
   @State private var examChoice: PlanEditor?
   @State private var adjusting: AdjustPlanSheet.Section?
+  @State private var answeredUpload: TodayView.UploadRequest?
+  @State private var uploadDraft = MaterialDraft()
 
   enum Tap: Equatable {
     case block(Int)
@@ -165,7 +167,15 @@ struct TodayDayView: View {
       if let suggestion = view.suggestedGoal {
         SuggestedGoalSection(suggestion: suggestion)
       }
-    case .uploadRequest, nil:
+    case .uploadRequest:
+      if let request = answeredUpload ?? view.uploadRequest {
+        TodayUploadRequestSection(
+          request: request, answered: answeredUpload != nil, draft: $uploadDraft
+        ) {
+          answeredUpload = request
+        }
+      }
+    case nil:
       EmptyView()
     }
   }
@@ -310,6 +320,7 @@ struct TodayDayView: View {
   private func startVisit() {
     shownNotice = view.notice
     examChoice = nil
+    answeredUpload = nil
     store.dropAnsweredPlanChange()
   }
 }

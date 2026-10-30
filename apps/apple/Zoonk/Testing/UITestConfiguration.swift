@@ -448,6 +448,14 @@
       throw APIError.network
     }
 
+    func answerUploadRequest(token: String, goalID: String, sourceIDs: [String]) async throws {
+      throw APIError.network
+    }
+
+    func dismissUploadRequest(token: String, goalID: String) async throws {
+      throw APIError.network
+    }
+
     func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {
       throw APIError.network
     }

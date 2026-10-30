@@ -175,6 +175,19 @@ final class TodayStore {
     }
   }
 
+  func answer(_ request: TodayView.UploadRequest, sourceID: String) async -> MutationResult<Void> {
+    await cache.mutate(invalidating: [.goals]) { identity in
+      try await api.answerUploadRequest(
+        token: identity.bearerToken, goalID: request.goalId, sourceIDs: [sourceID])
+    }
+  }
+
+  func dismiss(_ request: TodayView.UploadRequest) async -> MutationResult<Void> {
+    await cache.mutate(invalidating: [.goals]) { identity in
+      try await api.dismissUploadRequest(token: identity.bearerToken, goalID: request.goalId)
+    }
+  }
+
   func catchUp(in view: TodayView) async -> MutationResult<Void> {
     await cache.mutate(invalidating: [.goals, .userSession]) { identity in
       let sessionID = try await keptSessionID(in: view, token: identity.bearerToken)

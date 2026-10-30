@@ -209,3 +209,170 @@ struct TodayAdjustPlanSheet: View {
     .loads(plan, refreshable: false)
   }
 }
+
+/// Main's `UploadRequestClient`: research couldn't read the official document or class material,
+/// so the learner can upload it, and research reads it instead, or dismiss the ask.
+struct TodayUploadRequestSection: View {
+  @Environment(TodayStore.self) private var store
+
+  let request: TodayView.UploadRequest
+  /// Answered here, it thanks the learner while they stay, whatever Today reads since.
+  let answered: Bool
+  @Binding var draft: MaterialDraft
+  let onAnswered: () -> Void
+
+  @State private var isDismissing = false
+  @State private var isDismissed = false
+  @State private var failed = false
+
+  var body: some View {
+    if !isDismissed {
+      Section {
+        Label {
+          VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+              .font(.headline)
+            Text(description)
+              .foregroundStyle(.secondary)
+          }
+        } icon: {
+          Image(systemName: "doc.text.magnifyingglass")
+        }
+
+        if answered {
+          Text(
+            "Thanks. We're reading it now, and your plan will update in a few minutes.",
+            tableName: "Today",
+            comment: "After the learner uploaded the document research asked for")
+        } else {
+          MaterialAttachControls(goal: (request.goalId, request.language), draft: $draft) {
+            Label {
+              Text(action)
+            } icon: {
+              Image(systemName: "arrow.up.doc")
+            }
+          } onAttached: { source in
+            if case .failed(let error) = await store.answer(request, sourceID: source.id) {
+              throw error
+            }
+
+            onAnswered()
+          }
+
+          Button(action: dismiss) {
+            Text("Not now", tableName: "Today", comment: "Dismisses the ask for a document")
+          }
+          .disabled(isDismissing)
+
+          if failed {
+            Text(
+              "That didn't save. Try again.", tableName: "Today",
+              comment: "A change couldn't be saved"
+            )
+            .font(.footnote)
+            .foregroundStyle(.destructive)
+          }
+        }
+      }
+    }
+  }
+
+  private func dismiss() {
+    isDismissing = true
+    failed = false
+
+    Task {
+      switch await store.dismiss(request) {
+      case .done:
+        isDismissed = true
+      case .failed:
+        failed = true
+      case .obsolete:
+        break
+      }
+
+      isDismissing = false
+    }
+  }
+
+  private var isNotice: Bool { request.examDocument == .notice }
+
+  private var title: String {
+    switch (request.reason, request.goalKind) {
+    case (.classMaterial, _):
+      String(
+        localized: "Add your class material", table: "Today",
+        comment: "Asks for a class's material, since the teacher's test isn't published")
+    case (_, let kind) where kind != .exam:
+      String(
+        localized: "We couldn't find the official source", table: "Today",
+        comment: "Research found no official source for the goal")
+    case (.unverified, _):
+      String(
+        localized: "We couldn't confirm the exam's details", table: "Today",
+        comment: "What research found didn't match the exam")
+    case (.noOfficialSource, _):
+      isNotice
+        ? String(
+          localized: "We couldn't find the official notice", table: "Today",
+          comment: "Research found no exam notice")
+        : String(
+          localized: "We couldn't find the official guide", table: "Today",
+          comment: "Research found no official guide for a language certificate")
+    }
+  }
+
+  private var description: String {
+    switch (request.reason, request.goalKind) {
+    case (.classMaterial, _):
+      String(
+        localized:
+          "Your teacher's test isn't published anywhere. Upload the slides, notes or list of topics so your plan follows your class.",
+        table: "Today", comment: "Why a class's material is asked for")
+    case (_, let kind) where kind != .exam:
+      String(
+        localized: "Upload the official text or guide you study from so your lessons follow it.",
+        table: "Today", comment: "Why the goal's official source is asked for")
+    case (.unverified, _):
+      isNotice
+        ? String(
+          localized:
+            "What we found didn't match the exam's details. Upload the official notice so your plan follows the real exam.",
+          table: "Today", comment: "Why the exam notice is asked for")
+        : String(
+          localized:
+            "What we found didn't match the exam's details. Upload the official guide so your plan follows the real exam.",
+          table: "Today", comment: "Why a language certificate's official guide is asked for")
+    case (.noOfficialSource, _):
+      isNotice
+        ? String(
+          localized: "Upload the notice so your plan follows the real exam.", table: "Today",
+          comment: "Why the exam notice is asked for")
+        : String(
+          localized: "Upload the official guide so your plan follows the real exam.",
+          table: "Today", comment: "Why a language certificate's official guide is asked for")
+    }
+  }
+
+  private var action: String {
+    if request.reason == .classMaterial {
+      return String(
+        localized: "Upload your material", table: "Today",
+        comment: "Opens the ways to add a class's material")
+    }
+
+    if request.goalKind != .exam {
+      return String(
+        localized: "Upload a document", table: "Today",
+        comment: "Opens the ways to add the goal's official source")
+    }
+
+    return isNotice
+      ? String(
+        localized: "Upload the notice", table: "Today",
+        comment: "Opens the ways to add the exam notice")
+      : String(
+        localized: "Upload the official guide", table: "Today",
+        comment: "Opens the ways to add a language certificate's official guide")
+  }
+}

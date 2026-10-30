@@ -520,7 +520,7 @@ private func today(session: StudyDay, planChange: TodayView.PlanChange? = nil) t
       #"{"dateEstimated":false,"daysLeft":null,"id":"g1","kind":"learn","title":"Goal"}"#),
     insight: nil, lessonStatus: [:], mockFunding: nil, notice: nil, pattern: nil,
     planChange: planChange, progress: nil, session: session, sourceChange: nil,
-    studiedToday: false, suggestedGoal: nil, weeklyChallenge: nil)
+    studiedToday: false, suggestedGoal: nil, uploadRequest: nil, weeklyChallenge: nil)
 }
 
 private func opened(target: StudyBlock) throws -> OpenedStudyDay {
@@ -661,6 +661,9 @@ private actor StudyAPIStub: StudyAPIClient {
   func prepareLessons(token: String, goalID: String) async throws {
     preparedGoals.append(goalID)
   }
+
+  func answerUploadRequest(token: String, goalID: String, sourceIDs: [String]) async throws {}
+  func dismissUploadRequest(token: String, goalID: String) async throws {}
 
   func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {}
   func markMilestoneShown(token: String, milestoneID: String) async throws {}

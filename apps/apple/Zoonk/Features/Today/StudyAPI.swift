@@ -35,6 +35,9 @@ protocol StudyAPIClient: Sendable {
   func prepareSession(token: String, sessionID: String) async throws
   /// Only on the learner's tap, since it outlines the day's lessons with AI.
   func prepareLessons(token: String, goalID: String) async throws
+  /// Only on the learner's tap: research reads their uploads instead of searching again.
+  func answerUploadRequest(token: String, goalID: String, sourceIDs: [String]) async throws
+  func dismissUploadRequest(token: String, goalID: String) async throws
   func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws
   func markMilestoneShown(token: String, milestoneID: String) async throws
   func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap
@@ -357,6 +360,38 @@ struct StudyAPI: StudyAPIClient {
 
   func prepareLessons(token: String, goalID: String) async throws {
     try await OnboardingAPI(clients: clients).prepareLessons(goalID: goalID, token: token)
+  }
+
+  func answerUploadRequest(token: String, goalID: String, sourceIDs: [String]) async throws {
+    try await clients.perform(token: token) { client in
+      switch try await client.createResearch(
+        body: .json(.init(goalId: goalID, sourceIds: sourceIDs)))
+      {
+      case .accepted:
+        return
+      case .unauthorized:
+        throw APIError.unauthorized
+      case .notFound:
+        throw APIError.notFound
+      default:
+        throw APIError.unavailable
+      }
+    }
+  }
+
+  func dismissUploadRequest(token: String, goalID: String) async throws {
+    try await clients.perform(token: token) { client in
+      switch try await client.dismissGoalUploadRequest(path: .init(goalId: goalID)) {
+      case .noContent:
+        return
+      case .unauthorized:
+        throw APIError.unauthorized
+      case .notFound:
+        throw APIError.notFound
+      default:
+        throw APIError.unavailable
+      }
+    }
   }
 
   func markMilestoneShown(token: String, milestoneID: String) async throws {

@@ -27,15 +27,35 @@ struct AttachedSource: Decodable, Equatable, Identifiable, Sendable {
 
 struct MaterialInput: Encodable, Sendable {
   let kind: String
-  let language = OnboardingAPI.language
+  var goalId: String?
+  var language = OnboardingAPI.language
   var text: String?
   var url: String?
   var pathname: String?
 
-  static func text(_ text: String) -> MaterialInput { MaterialInput(kind: "text", text: text) }
-  static func link(_ url: String) -> MaterialInput { MaterialInput(kind: "link", url: url) }
-  static func file(_ pathname: String) -> MaterialInput {
-    MaterialInput(kind: "file", pathname: pathname)
+  static func text(_ text: String, goal: (id: String, language: String)? = nil) -> MaterialInput {
+    MaterialInput(kind: "text", text: text).attached(to: goal)
+  }
+
+  static func link(_ url: String, goal: (id: String, language: String)? = nil) -> MaterialInput {
+    MaterialInput(kind: "link", url: url).attached(to: goal)
+  }
+
+  static func file(_ pathname: String, goal: (id: String, language: String)? = nil)
+    -> MaterialInput
+  {
+    MaterialInput(kind: "file", pathname: pathname).attached(to: goal)
+  }
+
+  private func attached(to goal: (id: String, language: String)?) -> MaterialInput {
+    guard let goal else {
+      return self
+    }
+
+    var input = self
+    input.goalId = goal.id
+    input.language = goal.language
+    return input
   }
 }
 

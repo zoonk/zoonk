@@ -132,6 +132,22 @@ struct TodayView: Decodable, Equatable, Sendable {
     let title: String
   }
 
+  /// The document research couldn't read, asked of the learner until they upload or dismiss it.
+  struct UploadRequest: Decodable, Equatable, Sendable {
+    enum Reason: String, Decodable, Sendable {
+      case classMaterial
+      case noOfficialSource
+      case unverified
+    }
+
+    let examDocument: ExamDocument
+    let goalId: String
+    let goalKind: Goal.Kind
+    /// The goal's language, which uploads are read in.
+    let language: String
+    let reason: Reason
+  }
+
   let earlierWork: [EarlierWork]
   let exam: ExamMoment?
   let examChoice: ExamChoice?
@@ -150,6 +166,7 @@ struct TodayView: Decodable, Equatable, Sendable {
   let sourceChange: String?
   let studiedToday: Bool
   let suggestedGoal: SuggestedGoal?
+  let uploadRequest: UploadRequest?
   let weeklyChallenge: WeeklyChallenge?
 
   func isBeingWritten(_ block: StudyBlock) -> Bool {

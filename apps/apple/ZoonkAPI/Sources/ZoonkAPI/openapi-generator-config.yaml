@@ -67,6 +67,7 @@ filter:
     - createPlanExamChoice
     - createPlanQuestion
     - createPlanToolChoice
+    - createResearch
     - createSkillOutlineGeneration
     - createSpokenAnswer
     - createStepAnswerExplanation
