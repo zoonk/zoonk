@@ -2,7 +2,7 @@
 
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { type GoalError, useGoalLimitMessage } from "../goal-errors";
 import { type CreateGoalsOutcome } from "../onboarding-actions";
 
@@ -16,10 +16,24 @@ function useCreateError() {
       : t("We couldn't save your goal. Try again in a moment.");
 }
 
+/** A goal made while its screen was hidden (the learner went to another page) opens when they're back on it. */
 export function useGoalCreation() {
   const createError = useCreateError();
   const [error, setError] = useState<GoalError | null>(null);
   const [isCreating, startCreating] = useTransition();
+  const shown = useRef(false);
+  const madeWhileHidden = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    shown.current = true;
+    const open = madeWhileHidden.current;
+    madeWhileHidden.current = null;
+    open?.();
+
+    return () => {
+      shown.current = false;
+    };
+  }, []);
 
   const create = ({
     onCreated,
@@ -34,7 +48,14 @@ export function useGoalCreation() {
       const outcome: CreateGoalsOutcome = data ?? { status: "failed" };
 
       if (outcome.status === "created") {
-        onCreated(outcome.goalId);
+        const open = () => onCreated(outcome.goalId);
+
+        if (shown.current) {
+          open();
+        } else {
+          madeWhileHidden.current = open;
+        }
+
         return;
       }
 
