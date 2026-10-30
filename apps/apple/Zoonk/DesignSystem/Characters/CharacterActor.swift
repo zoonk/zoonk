@@ -29,6 +29,7 @@ struct CharacterActor<Art: CharacterArt>: View {
   var cue: ActCue<Art.ActName>?
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.actLandings) private var landings
 
   @State private var landed: Art.Expression?
   @State private var playing: Playing?
@@ -75,6 +76,7 @@ struct CharacterActor<Art: CharacterArt>: View {
         cueTask?.cancel()
         cueTask = Task { await play(cue.act) }
       }
+      .onChange(of: landings) { land() }
       .onDisappear { cueTask?.cancel() }
   }
 
@@ -142,6 +144,33 @@ struct CharacterActor<Art: CharacterArt>: View {
     guard let playing else { return }
     landed = playing.act.to ?? playing.from
     self.playing = nil
+  }
+}
+
+extension EnvironmentValues {
+  /// Counts the learner's taps, Returns and Escapes where characters act: each lands an act under
+  /// way at once, so it never plays on behind what the learner does next.
+  @Entry var actLandings = 0
+}
+
+extension View {
+  /// Main's `landOnInput`, for a screen whose characters act.
+  func landsActsOnInput() -> some View {
+    modifier(LandsActsOnInput())
+  }
+}
+
+private struct LandsActsOnInput: ViewModifier {
+  @State private var landings = 0
+
+  func body(content: Content) -> some View {
+    content
+      .environment(\.actLandings, landings)
+      .simultaneousGesture(TapGesture().onEnded { landings += 1 })
+      .onKeyPress(keys: [.return, .escape], phases: .down) { _ in
+        landings += 1
+        return .ignored
+      }
   }
 }
 

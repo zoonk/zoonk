@@ -35,6 +35,7 @@ struct MilestoneCeremony: View {
       }
       .scenePadding()
     }
+    .landsActsOnInput()
     .task(id: milestone.id) {
       await sessions.markShown(milestone)
     }

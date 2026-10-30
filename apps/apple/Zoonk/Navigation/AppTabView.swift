@@ -14,6 +14,7 @@ struct AppTabView: View {
           .ignoresSafeArea()
       } else {
         tabs
+          .landsActsOnInput()
       }
     }
     .environment(\.isCoveredByTask, !router.tasks.isEmpty)

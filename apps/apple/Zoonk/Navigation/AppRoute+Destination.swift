@@ -193,6 +193,7 @@ struct PresentedTask: View {
     let isHidden = router.isHidden(taskAt: depth)
 
     route.destination
+      .landsActsOnInput()
       .opacity(isHidden ? 0 : 1)
       .accessibilityHidden(isHidden)
       .presentationBackground(isHidden ? AnyShapeStyle(.clear) : AnyShapeStyle(.background))
