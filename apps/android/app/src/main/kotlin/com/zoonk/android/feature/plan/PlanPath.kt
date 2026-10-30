@@ -63,6 +63,7 @@ internal fun PathSection(
     links: PlanLinks,
     modifier: Modifier = Modifier,
     alphabet: (@Composable () -> Unit)? = null,
+    brief: Boolean = false,
 ) {
     val phases = page.plan.phases
     val roadmap = page.plan.roadmapPhases
@@ -89,13 +90,13 @@ internal fun PathSection(
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             beforeFinish.forEachIndexed { position, phase ->
                 if (position > 0) HorizontalDivider()
-                PhaseItem(page, phase, phase.index == lastIndex, phase.index == openIndex, links)
+                PhaseItem(page, phase, phase.index == lastIndex, phase.index == openIndex, links, brief)
             }
             HorizontalDivider()
             FinishItem(page)
             afterExam.forEach { phase ->
                 HorizontalDivider()
-                PhaseItem(page, phase, isLast = false, open = phase.index == openIndex, links = links)
+                PhaseItem(page, phase, isLast = false, open = phase.index == openIndex, links = links, brief = brief)
             }
         }
     }
@@ -108,6 +109,7 @@ private fun PhaseItem(
     isLast: Boolean,
     open: Boolean,
     links: PlanLinks,
+    brief: Boolean,
 ) {
     val name = phaseName(phase, page.mocksRequirePlus)
     val own = phase.ownChapter(name)
@@ -127,7 +129,7 @@ private fun PhaseItem(
                 nextChapter = own.takeIf { isNext },
             )
             if (open) {
-                phase.checkpoint?.let { CheckpointRow(page, it, links, indent = nested) }
+                phase.checkpoint?.let { CheckpointRow(page, it, links, indent = nested, brief = brief) }
                 WritingAheadLine(phase.chapters, unit = page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE, indent = nested)
             }
         }
@@ -146,7 +148,7 @@ private fun PhaseItem(
 
     Column {
         PhaseRow(page, phase, isLast, open, onClick = { expanded = !expanded }, expanded = expanded, byPlace = byPlace && expanded)
-        if (expanded) PhaseChapters(page, phase.chapters, phase.checkpoint, links, indent = nested)
+        if (expanded) PhaseChapters(page, phase.chapters, phase.checkpoint, links, indent = nested, brief = brief)
     }
 }
 
@@ -248,6 +250,7 @@ private fun phaseMeta(
             stringResource(R.string.plan_challenge_left_out)
         }
     }
+    if (phase.challengeLeftOut) return stringResource(R.string.plan_challenge_no_time)
     if (phase.state != PlanPhase.State.CURRENT || open) return null
 
     val writing = phase.chapters.any { it.writing }
@@ -356,6 +359,7 @@ internal fun PhaseChapters(
     checkpoint: PlanPhaseCheckpoint?,
     links: PlanLinks,
     indent: Dp = 0.dp,
+    brief: Boolean = false,
 ) {
     var showAll by rememberSaveable { mutableStateOf(false) }
     val rows = chapters.filterNot { it.isWritingAhead }
@@ -383,7 +387,7 @@ internal fun PhaseChapters(
                 leading = { Icon(painterResource(if (showAll) R.drawable.ic_remove else R.drawable.ic_add), contentDescription = null) },
             )
         }
-        checkpoint?.let { CheckpointRow(page, it, links, indent) }
+        checkpoint?.let { CheckpointRow(page, it, links, indent, brief) }
         WritingAheadLine(chapters, indent = indent)
     }
 }
@@ -458,12 +462,14 @@ internal fun WritingAheadLine(
     )
 }
 
+/** [brief] leaves out what a challenge is in a list of every phase's, where it would repeat. */
 @Composable
 internal fun CheckpointRow(
     page: PlanPageState,
     checkpoint: PlanPhaseCheckpoint,
     links: PlanLinks,
     indent: Dp = 0.dp,
+    brief: Boolean = false,
 ) {
     val done = checkpoint.state == PlanPhaseCheckpoint.State.DONE
     // A locked one is never in a session, so it keeps its planned day.
@@ -478,6 +484,23 @@ internal fun CheckpointRow(
             else -> null
         }
     val planItemId = checkpoint.planItemId?.toString()
+    val lines =
+        listOfNotNull(
+            if (brief || done) {
+                null
+            } else {
+                stringResource(
+                    if (page.goal.kind ==
+                        LearnerSummaryGoal.Kind.LANGUAGE
+                    ) {
+                        R.string.plan_challenge_live_call
+                    } else {
+                        R.string.plan_challenge_questions
+                    },
+                )
+            },
+            if (planItemId == null && !done) stringResource(R.string.plan_challenge_opens_after_lessons) else null,
+        )
 
     ListRow(
         headline = {
@@ -489,7 +512,7 @@ internal fun CheckpointRow(
         onClick = planItemId?.let { { links.challenge(it) } },
         indent = indent,
         leading = { Trickster(Modifier.size(markSize())) },
-        supporting = if (planItemId == null && !done) ({ Text(stringResource(R.string.plan_challenge_opens_after_lessons)) }) else null,
+        supporting = if (lines.isEmpty()) null else ({ Column { lines.forEach { Text(it) } } }),
         meta =
             if (checkpoint.locked || trailing != null) {
                 {

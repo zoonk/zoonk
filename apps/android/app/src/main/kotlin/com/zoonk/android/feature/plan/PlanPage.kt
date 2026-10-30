@@ -429,6 +429,7 @@ private fun PathSheet(
             page,
             links,
             Modifier.verticalScroll(rememberScrollState()).padding(start = SHEET_MARGIN, end = SHEET_MARGIN, bottom = 32.dp),
+            brief = true,
         )
     }
 }

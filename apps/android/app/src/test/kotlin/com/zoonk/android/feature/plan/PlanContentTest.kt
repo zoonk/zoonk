@@ -1,14 +1,19 @@
 package com.zoonk.android.feature.plan
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.getBoundsInRoot
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasScrollToKeyAction
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
@@ -23,8 +28,11 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanPhase
+import com.zoonk.api.models.PlanStatus
 import com.zoonk.api.models.Syllabus
 import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
@@ -43,6 +51,7 @@ class PlanContentTest {
     private lateinit var navigator: AppNavigator
     private val statuses = mutableListOf<GoalUpdateInput.Status>()
     private val farTopics = mutableListOf<FarTopic>()
+    private val adjusted = mutableListOf<PlanSection?>()
 
     private fun show(
         status: String = "active",
@@ -66,6 +75,7 @@ class PlanContentTest {
                     resume = resume,
                     isSaving = false,
                     onSetStatus = { statuses += it },
+                    onAdjust = { adjusted += it },
                 )
             }
         }
@@ -162,6 +172,73 @@ class PlanContentTest {
     }
 
     @Test
+    fun aPhaseChallengeSaysWhatItIs() {
+        show()
+
+        compose.onAllNodesWithText("Questions on this phase, with no hints").onFirst().assertIsDisplayed()
+    }
+
+    @Test
+    fun aLanguageUnitsChallengeIsALiveCall() {
+        show(kind = "language")
+
+        compose.onAllNodesWithText("A live call where you get your point across").onFirst().assertIsDisplayed()
+        compose.onAllNodesWithText("Questions on this phase, with no hints").assertCountEquals(0)
+    }
+
+    @Test
+    fun theListOfEveryPhaseLeavesOutWhatAChallengeIs() {
+        show(structure = modulesSyllabus())
+
+        compose.onNode(hasClickLabel("Your path")).performClick()
+
+        compose.onNode(hasText("Phase challenge") and hasAnyAncestor(isDialog())).assertExists()
+        compose.onAllNodes(hasText("Questions on this phase, with no hints") and hasAnyAncestor(isDialog())).assertCountEquals(0)
+    }
+
+    @Test
+    fun aPhaseWhoseChallengeHasNoTimeBeforeTheDateSaysSoUntilItIsPast() {
+        val plan = learnPlan()
+        show(
+            plan =
+                plan.copy(
+                    phases =
+                        plan.phases.map { phase ->
+                            when (phase.index) {
+                                0L -> phase.copy(state = PlanPhase.State.UNFINISHED, challengeLeftOut = true)
+                                1L, 3L -> phase.copy(challengeLeftOut = true)
+                                else -> phase
+                            }
+                        },
+                ),
+        )
+
+        compose.onAllNodesWithText("No time for this phase's challenge before your date").assertCountEquals(2)
+        compose.onNodeWithText("Challenge left out").assertIsDisplayed()
+    }
+
+    @Test
+    fun aPlanWithEveryLessonDoneAndAChallengeWithNoTimeAsksToAdjustIt() {
+        val plan = learnPlan()
+        show(
+            plan =
+                plan.copy(
+                    phases =
+                        plan.phases.map { phase ->
+                            phase.copy(lessonsDone = phase.lessonsTotal, challengeLeftOut = phase.index == 3L)
+                        },
+                    status = ApiJson.decodeFromString<PlanStatus>("""{"kind":"needsAdjusting","options":["addTime","moveDate"]}"""),
+                ),
+        )
+
+        compose.onNodeWithText("Too tight").assertIsDisplayed()
+        compose.onNodeWithText("Your plan no longer fits in the time left.").assertIsDisplayed()
+        compose.onNodeWithText("Adjust").performClick()
+
+        assertEquals(listOf<PlanSection?>(null), adjusted)
+    }
+
+    @Test
     fun anotherPhaseOpensOnTap() {
         show()
 
@@ -226,4 +303,7 @@ class PlanContentTest {
 
         compose.runOnIdle { assertEquals(AppRoute.Subject("data"), navigator.currentRoute) }
     }
+
+    private fun hasClickLabel(label: String) =
+        SemanticsMatcher("click label $label") { it.config.getOrNull(SemanticsActions.OnClick)?.label == label }
 }

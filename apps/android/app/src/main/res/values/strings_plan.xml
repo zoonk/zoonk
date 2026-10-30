@@ -101,6 +101,8 @@
         <item quantity="other">%d lessons were left out</item>
     </plurals>
     <string name="plan_challenge_left_out">Challenge left out</string>
+    <!-- On a phase of the learner's plan: the plan has no room for its challenge before their goal's date. -->
+    <string name="plan_challenge_no_time">No time for this phase\'s challenge before your date</string>
     <string name="plan_continues_today">Continues today</string>
     <!-- %1$s is the day the plan resumes, such as "Nov 3". -->
     <string name="plan_continues_on">Continues %1$s</string>
@@ -156,6 +158,8 @@
     <string name="plan_challenge_next_session">In your next session</string>
     <string name="plan_challenge_after_previous">After the challenge before it</string>
     <string name="plan_challenge_opens_after_lessons">Opens after this phase\'s lessons</string>
+    <string name="plan_challenge_questions">Questions on this phase, with no hints</string>
+    <string name="plan_challenge_live_call">A live call where you get your point across</string>
     <string name="plan_mock_next_sitting">Mock exam for the next sitting</string>
     <plurals name="plan_mock_exams_count">
         <item quantity="one">%d mock exam</item>
