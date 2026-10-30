@@ -42,15 +42,19 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
   );
 }
 
+/** `brief` leaves out what a challenge is in a list of every phase's, where it would repeat. */
 export function CheckpointRow({
+  brief = false,
   checkpoint,
   links,
 }: {
+  brief?: boolean;
   checkpoint: PlanPhaseCheckpointView;
   links: JourneyPathLinks;
 }) {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
+  const { goal } = usePlanScreen();
   const isDone = checkpoint.state === "done";
   // A locked one is never in a session, so it keeps its planned day.
   const when = checkpoint.locked ? "date" : checkpoint.when;
@@ -61,20 +65,28 @@ export function CheckpointRow({
       <span className={PATH_ROW_LEADING_CLASS}>
         <Trickster className="-m-1 size-5" />
       </span>
-      <span
-        className={cn(
-          "flex min-w-0 flex-1 items-center gap-2 font-medium",
-          isDone && "text-muted-foreground",
+      <span className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3">
+        <span
+          className={cn("flex items-center gap-2 font-medium", isDone && "text-muted-foreground")}
+        >
+          {t("Phase challenge")}
+          {checkpoint.locked && <PlusMark />}
+        </span>
+
+        <span className={cn(EVENT_DATE_CLASS, !onDate && "font-sans")}>
+          {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
+          {!isDone && when === "nextSession" && t("In your next session")}
+          {!isDone && when === "queued" && t("After the challenge before it")}
+          {onDate && checkpoint.date && formatPlanDate(checkpoint.date)}
+        </span>
+
+        {!brief && !isDone && (
+          <span className="text-muted-foreground col-span-2 text-xs text-pretty">
+            {goal.kind === "language"
+              ? t("A live call where you get your point across")
+              : t("Questions on this phase, with no hints")}
+          </span>
         )}
-      >
-        {t("Phase challenge")}
-        {checkpoint.locked && <PlusMark />}
-      </span>
-      <span className={cn(EVENT_DATE_CLASS, !onDate && "font-sans")}>
-        {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
-        {!isDone && when === "nextSession" && t("In your next session")}
-        {!isDone && when === "queued" && t("After the challenge before it")}
-        {onDate && checkpoint.date && formatPlanDate(checkpoint.date)}
       </span>
     </EventRow>
   );

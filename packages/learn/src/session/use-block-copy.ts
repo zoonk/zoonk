@@ -129,6 +129,11 @@ export function useBlockDetail() {
 
     const phase = getChallengePhase(block);
 
+    // A language unit's challenge is a live call, with no questions.
+    if (block.checkpoint && !block.checkpoint.mock && block.questions === 0) {
+      return phase ? t("{phase} · a live call", { phase }) : t("A live call");
+    }
+
     if (phase) {
       return t("{phase} · {count, plural, one {# question} other {# questions}}, no hints", {
         count: block.questions,

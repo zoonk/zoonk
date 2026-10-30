@@ -1375,9 +1375,9 @@ msgid "{count, plural, one {# right to win} other {# right to win}}"
 msgstr "{count, plural, one {# acerto para vencer} other {# acertos para vencer}}"
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "Aw7qrt"
-msgid "You'll see right or wrong after each answer, and why at the end, with the traps he set."
-msgstr "Você verá se acertou ou errou após cada resposta e, no final, a explicação e as pegadinhas que ele preparou."
+msgctxt "KSWWEF"
+msgid "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day."
+msgstr "Você vai saber se acertou ou errou após cada resposta e, no final, vai entender por quê e conhecer as armadilhas que ele preparou. Se ele vencer, você pode disputar uma revanche no dia seguinte."
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
@@ -3872,6 +3872,16 @@ msgstr "Venceu"
 msgctxt "lqBoRy"
 msgid "After the challenge before it"
 msgstr "Depois do desafio anterior"
+
+#: src/journey/journey-phase-events.tsx
+msgctxt "zHMlZo"
+msgid "A live call where you get your point across"
+msgstr "Uma conversa ao vivo em que você se faz entender"
+
+#: src/journey/journey-phase-events.tsx
+msgctxt "yK6jNb"
+msgid "Questions on this phase, with no hints"
+msgstr "Perguntas sobre esta fase, sem dicas"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "jcz36l"
@@ -12031,6 +12041,16 @@ msgstr "{count, plural, one {# pergunta} other {# perguntas}} · {titles}"
 msgctxt "BeE-47"
 msgid "Short lesson before the rematch"
 msgstr "Aula rápida antes da revanche"
+
+#: src/session/use-block-copy.ts
+msgctxt "yl8kH0"
+msgid "{phase} · a live call"
+msgstr "{phase} · uma conversa ao vivo"
+
+#: src/session/use-block-copy.ts
+msgctxt "HS4tNy"
+msgid "A live call"
+msgstr "Uma conversa ao vivo"
 
 #: src/session/use-block-copy.ts
 msgctxt "NARnnE"

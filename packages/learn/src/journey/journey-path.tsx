@@ -143,7 +143,7 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
             )}
             {checkpoint && (
               <li>
-                <CheckpointRow checkpoint={checkpoint} links={links} />
+                <CheckpointRow brief checkpoint={checkpoint} links={links} />
               </li>
             )}
           </ul>

@@ -66,7 +66,7 @@ function TricksterIntro() {
 
       <DuelBriefing
         rule={t(
-          "You'll see right or wrong after each answer, and why at the end, with the traps he set.",
+          "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day.",
         )}
       />
     </StepCard>

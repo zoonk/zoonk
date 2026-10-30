@@ -29,13 +29,15 @@ export const NO_FOLD: RowFold = { hidden: false, phone: false, wide: false };
 const ROW_OPEN_CLASS =
   "flex min-w-0 text-left outline-none after:absolute after:top-1/2 after:h-full after:min-h-11 after:-translate-y-1/2 after:rounded-[0.625rem] focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50 disabled:cursor-default";
 
+/** A challenge says what it is, since a learner meets one before they've ever taken one. */
 function useRowLabel() {
   const t = useExtracted();
+  const detail = useBlockDetail();
   const isCatchingUp = useIsCatchingUp();
 
   const part = (block: DayStep): string | null => {
     if (!isCatchingUp(block)) {
-      return block.subject ?? getChallengePhase(block);
+      return block.subject ?? (block.checkpoint ? detail(block) : null);
     }
 
     return block.subject
