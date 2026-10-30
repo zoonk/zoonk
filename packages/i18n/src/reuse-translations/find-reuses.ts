@@ -36,7 +36,6 @@ type Occurrence<CatalogType extends Catalog> = {
   english: English;
 };
 
-/** Short labels can need different forms in different places, so they match only with the same context. */
 const MIN_WORDS_WITHOUT_CONTEXT = 3;
 
 function occurrencesOf<CatalogType extends Catalog>(catalogs: CatalogType[]) {
@@ -64,6 +63,18 @@ function hasSameKinds<CatalogType extends Catalog>(
   });
 }
 
+function hasSameContext<CatalogType extends Catalog>(
+  candidate: Occurrence<CatalogType>,
+  target: Occurrence<CatalogType>,
+) {
+  const { comment } = target.message;
+
+  return (
+    candidate.message.comment === comment ||
+    (!comment && target.english.words >= MIN_WORDS_WITHOUT_CONTEXT)
+  );
+}
+
 function findTranslation<CatalogType extends Catalog>({
   target,
   candidates,
@@ -81,8 +92,7 @@ function findTranslation<CatalogType extends Catalog>({
       (candidate) =>
         hasTranslation(candidate.message, locale) &&
         hasSameKinds(candidate, target) &&
-        (target.english.words >= MIN_WORDS_WITHOUT_CONTEXT ||
-          candidate.message.comment === target.message.comment),
+        hasSameContext(candidate, target),
     )
     .toSorted((first, second) => rank(first.catalog) - rank(second.catalog))
     .map((candidate) =>
@@ -98,6 +108,10 @@ function findTranslation<CatalogType extends Catalog>({
 /**
  * Fills each of the package's missing translations with an existing translation of the same English from any catalog,
  * picked from its own package first, then in `PACKAGES` order. Plurals and selects are left out.
+ *
+ * A translator comment marks a message whose context matters, so a message with one reuses only a translation with that
+ * same comment. One without reuses any translation when it has three or more words; a shorter label can need different
+ * forms in different places, so it reuses only one without a comment either.
  */
 export function findReuses<CatalogType extends Catalog>({
   catalogs,

@@ -97,6 +97,22 @@ describe(findReuses, () => {
     ]);
   });
 
+  it("matches a commented message only with the same comment, whatever its length", () => {
+    const android = catalog("android", [
+      {
+        comment: "Holds a day, like May 4",
+        english: "Until about {arg1}",
+        translations: { pt: "Até por volta de {arg1}" },
+      },
+      { comment: "Holds a month, like May 2027", english: "Until about {arg1}" },
+      { english: "Until about {arg1}" },
+    ]);
+
+    expect(translations(findReuses({ catalogs: [android], packageName: "android" }))).toStrictEqual(
+      [{ id: "android-2", locale: "pt", name: "android", translation: "Até por volta de {arg1}" }],
+    );
+  });
+
   it("leaves plurals and selects to Eloqnt", () => {
     const main = catalog("main", [
       {
