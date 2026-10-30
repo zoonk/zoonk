@@ -33753,6 +33753,10 @@
             "type": "string",
             "description": "The run writing the content: stream GET /generations/{generationId}/events"
           },
+          "setAside": {
+            "type": "boolean",
+            "description": "A `failed` lesson its quality checks set aside: it's never written again, so show that instead of offering to write it"
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -33761,12 +33765,13 @@
               "notStarted",
               "failed"
             ],
-            "description": "`generating`: stream the run for live progress. `notStarted` or `failed`: POST /library/lessons/{lessonId}/generations to write it now"
+            "description": "`generating`: stream the run for live progress. `notStarted`, or `failed` and not `setAside`: POST /library/lessons/{lessonId}/generations to write it now"
           }
         },
         "required": [
           "alternative",
           "generationId",
+          "setAside",
           "status"
         ],
         "additionalProperties": false

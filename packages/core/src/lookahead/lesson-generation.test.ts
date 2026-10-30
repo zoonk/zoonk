@@ -282,6 +282,7 @@ describe(getLessonWaitingState, () => {
       state: {
         alternative: { kind: "lesson", lessonId: next.id, title: "Ready one" },
         generationId: runId,
+        setAside: false,
         status: "generating",
       },
       status: "ready",
@@ -314,8 +315,31 @@ describe(getLessonWaitingState, () => {
     });
 
     await expect(getLessonWaitingState({ lessonId: ready.id })).resolves.toStrictEqual({
-      state: { alternative: null, generationId: null, status: "ready" },
+      state: { alternative: null, generationId: null, setAside: false, status: "ready" },
       status: "ready",
+    });
+  });
+
+  it("says a failed lesson its checks set aside apart from one that can be written again", async () => {
+    const { user } = await learnerWithPlan();
+
+    const [setAside, retryable] = await Promise.all([
+      libraryLessonFixture({
+        contentStatus: "failed",
+        heldBackDrafts: [heldBackDraftFixture(), heldBackDraftFixture(), heldBackDraftFixture()],
+        setAsideAt: new Date(),
+      }),
+      libraryLessonFixture({ contentStatus: "failed" }),
+    ]);
+
+    mockSession(user.id);
+
+    await expect(getLessonWaitingState({ lessonId: setAside.id })).resolves.toMatchObject({
+      state: { setAside: true, status: "failed" },
+    });
+
+    await expect(getLessonWaitingState({ lessonId: retryable.id })).resolves.toMatchObject({
+      state: { setAside: false, status: "failed" },
     });
   });
 });

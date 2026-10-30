@@ -38,7 +38,7 @@ function hasLessonChanged({
 
 /**
  * Reads the whole session only when the lesson changed; a failed wait always does, since the
- * readiness contract can't tell a retryable failure from a lesson set aside.
+ * session read is what shows a set-aside lesson's notice.
  */
 function useWaitingCheck({
   actions,

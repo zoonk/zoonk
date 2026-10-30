@@ -152,7 +152,7 @@ class FakeLessonPlayerApi(
         lessonId: String,
     ): LessonReadiness {
         val status = readinessStates.removeFirstOrNull() ?: throw ApiException(ApiError.Network)
-        return ApiJson.decodeFromString("""{"alternative":null,"generationId":"gen-1","status":"$status"}""")
+        return ApiJson.decodeFromString("""{"alternative":null,"generationId":"gen-1","setAside":false,"status":"$status"}""")
     }
 
     override suspend fun write(

@@ -56,6 +56,7 @@ class NextStopTest {
     /** Readiness answers in order, then [settled]; null answers that the sign-in expired. */
     private val statuses = mutableListOf<LessonReadiness.Status?>()
     private var settled = LessonReadiness.Status.READY
+    private var setAside = false
     private var readinessReads = 0
 
     /** What each read of the day shows of the step, in order; then its lesson written. */
@@ -97,6 +98,7 @@ class NextStopTest {
                     LessonReadiness(
                         alternative = null,
                         generationId = "run-1",
+                        setAside = setAside,
                         status = status ?: throw ApiException(ApiError.Unauthorized),
                     )
                 },

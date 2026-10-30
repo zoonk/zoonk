@@ -17,6 +17,8 @@ type LessonWaitingState = {
   generationId: string | null;
   /** Null when the lesson is ready, or when nothing else is ready either. */
   alternative: ReadyAlternative | null;
+  /** A failed lesson its checks set aside: it's never written again, so there's nothing to retry. */
+  setAside: boolean;
 };
 
 export type LessonWaitingResult =
@@ -81,13 +83,17 @@ export async function getLessonWaitingState({
   }
 
   if (state.status === "ready") {
-    return { state: { alternative: null, generationId: null, status: "ready" }, status: "ready" };
+    return {
+      state: { alternative: null, generationId: null, setAside: false, status: "ready" },
+      status: "ready",
+    };
   }
 
   return {
     state: {
       alternative: await findReadyAlternative({ lessonId, userId: viewer.userId }),
       generationId: state.status === "generating" ? state.runId : null,
+      setAside: state.status === "failed" && state.setAside,
       status: state.status,
     },
     status: "ready",

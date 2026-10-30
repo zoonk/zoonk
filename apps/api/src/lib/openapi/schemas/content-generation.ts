@@ -42,11 +42,17 @@ export const lessonReadinessSchema = z
           "Something ready to do instead of waiting: the plan's next written lesson, or due reviews. Null when the lesson is ready or nothing else is",
       }),
     generationId: generationIdSchema.nullable(),
+    setAside: z
+      .boolean()
+      .meta({
+        description:
+          "A `failed` lesson its quality checks set aside: it's never written again, so show that instead of offering to write it",
+      }),
     status: z
       .enum(["ready", "generating", "notStarted", "failed"])
       .meta({
         description:
-          "`generating`: stream the run for live progress. `notStarted` or `failed`: POST /library/lessons/{lessonId}/generations to write it now",
+          "`generating`: stream the run for live progress. `notStarted`, or `failed` and not `setAside`: POST /library/lessons/{lessonId}/generations to write it now",
       }),
   })
   .meta({ id: "LessonReadiness" });

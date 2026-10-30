@@ -263,8 +263,8 @@ final class GenerationEventsTests: XCTestCase {
   func testFollowingAWritingLessonWaitsForTheRunItsReadinessNamesThenReadsItAgain() async throws {
     let transport = LessonWritingTransport(
       readiness: [
-        #"{"alternative":null,"generationId":"run-1","status":"generating"}"#,
-        #"{"alternative":null,"generationId":null,"status":"ready"}"#,
+        #"{"alternative":null,"generationId":"run-1","setAside":false,"status":"generating"}"#,
+        #"{"alternative":null,"generationId":null,"setAside":false,"status":"ready"}"#,
       ],
       events: #"data: {"status":"started","step":"writeLesson"}"# + "\n\n"
         + #"data: {"entityId":"lesson-1","status":"completed","step":"lessonReady"}"# + "\n\n")
