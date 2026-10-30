@@ -303,8 +303,9 @@ internal class FakeOnboardingApi : OnboardingApi {
 
     val coverAsks = mutableListOf<PlanTimeToCoverInput>()
 
-    /** Holds every time search after the first until it completes. */
+    /** Holds every time search after the first [coverGateAfter] until it completes. */
     var coverGate: CompletableDeferred<Unit>? = null
+    var coverGateAfter = 1
 
     override suspend fun timeToCover(
         session: AuthenticatedSession,
@@ -312,7 +313,7 @@ internal class FakeOnboardingApi : OnboardingApi {
         input: PlanTimeToCoverInput,
     ): PlanTimeToCover {
         coverAsks += input
-        if (coverAsks.size > 1) coverGate?.await()
+        if (coverAsks.size > coverGateAfter) coverGate?.await()
         return cover(input)
     }
 

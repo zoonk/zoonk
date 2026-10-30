@@ -345,6 +345,64 @@ class GoalSetupFlowTest {
     }
 
     @Test
+    fun daysChangedBeforeTheFirstTimeArrivesAskOnlyOnceItHas() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { coverOf(recommended = 45) }
+        api.coverGate = CompletableDeferred()
+        api.coverGateAfter = 0
+        show()
+
+        for (day in listOf("Friday", "Thursday")) {
+            rule.onNodeWithContentDescription(day).performScrollTo().performClick()
+            rule.mainClock.advanceTimeBy(1_000)
+        }
+        api.coverGate?.complete(Unit)
+        rule.mainClock.advanceTimeBy(1_000)
+
+        assertEquals(listOf(5, 3), api.coverAsks.map { it.studyDays.orEmpty().size })
+    }
+
+    @Test
+    fun aWeekWithNoDaysIsNeverAskedAbout() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { coverOf(recommended = 45) }
+        show()
+
+        for (day in listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")) {
+            rule.onNodeWithContentDescription(day).performScrollTo().performClick()
+        }
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.onNodeWithContentDescription("Monday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+
+        assertTrue(api.coverAsks.none { it.studyDays.orEmpty().isEmpty() })
+        assertEquals(listOf(1L), api.coverAsks.last().studyDays)
+    }
+
+    @Test
+    fun aTimeThatTimedOutKeepsTheLastSuggestionThroughRecreation() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { input -> coverOf(recommended = if (input.studyDays.orEmpty().size == 5) 45 else 50) }
+        api.coverGate = CompletableDeferred()
+        api.coverGateAfter = 2
+        val restoration = StateRestorationTester(rule)
+        show(restoration = restoration)
+
+        rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.onNodeWithContentDescription("Time a day, 50\u00A0min").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Thursday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(46_000)
+        rule.onNodeWithText("We couldn't work out the time your goal needs.").performScrollTo().assertIsDisplayed()
+
+        restoration.emulateSavedInstanceStateRestore()
+        rule.mainClock.advanceTimeBy(1_000)
+
+        rule.onNodeWithContentDescription("Time a day, 50\u00A0min").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("We couldn't work out the time your goal needs.").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
     fun aDatedGoalWaitsForItsPlanBeforeAskingTheTime() {
         api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
         api.generationId = { "run-1" }
