@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "listening_collapsed": "611da949add6d2209e8376293a66670b7e325d9b3e2d8734e110c1555be3509d",
   "listening_elapsed": "8e07b03646241698e352b5dc0415d0321c1e8e133b0c8426f6e2ed53afac0c9b",
-  "listening_expanded": "1e5d0a41e38a79833e97fe652e6b4ce81d18a450e838c248cdea671308725816",
   "listening_failed": "3e43004a432aef8ed54403af66add41ccd84053047a54a9d06a13e99f3ccc1d6",
   "listening_note_free": "bd0177ab3c16fc7eb381797dbf2a1d9fe1266f2c37a3b8b2700f0737bbc0046a",
   "listening_note_once": "bc7419656769d86afbb82bda28e8907fb603bf628fa8a676e6ea0d67eee26461",
@@ -43,6 +41,4 @@
         <item quantity="other">Preguntas sobre esta grabación (%d)</item>
     </plurals>
     <string name="listening_transcript">Transcripción</string>
-    <string name="listening_expanded">Desplegado</string>
-    <string name="listening_collapsed">Plegado</string>
 </resources>

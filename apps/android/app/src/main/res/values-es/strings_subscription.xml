@@ -15,9 +15,7 @@
   "subscription_answer_free_lead": "41a8381d60b351c1341aa76ee4f66b8efc05a16220265af490336f1aec5058ea",
   "subscription_answer_free_lessons": "a9ca7bc299eb99551fba36a249e63b08d0c07a16080ed99a2f046b2a7e5b3304",
   "subscription_answer_free_uploads": "af02c7e45410183e9f67b8908dbceff4702474f4723a670b827c34571b1b73ca",
-  "subscription_answer_hidden": "5ba0d637c529e4990a883fc4a7138db65d266df980df5f95b837f1fdb7bb10a7",
   "subscription_answer_refund": "d64a82f6ccd39eec67cbb22e7e2f0d93167289e2a556e0c9f49326a6abaa995e",
-  "subscription_answer_shown": "52cfc5d30fce5f149a4df63bd6129acaff012f28f9374d407e409c6c5246d7b0",
   "subscription_answer_unlimited": "89b5edbdf58c498c4d1afede3e30b3254aea6b814cf22c5de7f75a28d4f0afc3",
   "subscription_available_with_plus": "8812b4079aa6602eb03d804bbc74e68b4f855e9b199aeff4f0c59126294c9b4e",
   "subscription_benefit_buddy": "cf3092503dff8d58e928eb01dbaf06fd7e7f9b5f92f5ca708978d15e01bef7af",
@@ -175,9 +173,6 @@
     <string name="subscription_questions_email">contacto@zoonk.com</string>
     <string name="subscription_show_answer">mostrar la respuesta</string>
     <string name="subscription_hide_answer">ocultar la respuesta</string>
-    <!-- What TalkBack says about a question: its answer is showing or not. -->
-    <string name="subscription_answer_shown">Expandida</string>
-    <string name="subscription_answer_hidden">Contraída</string>
     <string name="subscription_question_free">¿Qué incluye el plan gratis?</string>
     <plurals name="subscription_answer_free_guest_lead">
         <item quantity="one">Empieza gratis con %d lección, sin necesidad de crear una cuenta. Con una cuenta gratuita, tendrás:</item>

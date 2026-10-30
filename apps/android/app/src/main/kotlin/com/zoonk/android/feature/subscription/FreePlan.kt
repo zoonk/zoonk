@@ -203,7 +203,7 @@ private fun Question(
     answer: @Composable () -> Unit,
 ) {
     var open by rememberSaveable(question) { mutableStateOf(initiallyOpen) }
-    val state = stringResource(if (open) R.string.subscription_answer_shown else R.string.subscription_answer_hidden)
+    val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
 
     HorizontalDivider()
     Row(

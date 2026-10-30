@@ -393,7 +393,7 @@ private fun Fold(
     onToggle: () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    val state = stringResource(if (open) R.string.listening_expanded else R.string.listening_collapsed)
+    val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FilledTonalButton(onClick = onToggle, modifier = Modifier.semantics { stateDescription = state }) {

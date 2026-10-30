@@ -20,6 +20,4 @@
         <item quantity="other">Questions on this recording (%d)</item>
     </plurals>
     <string name="listening_transcript">Transcript</string>
-    <string name="listening_expanded">Expanded</string>
-    <string name="listening_collapsed">Collapsed</string>
 </resources>

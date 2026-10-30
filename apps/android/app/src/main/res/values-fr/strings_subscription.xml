@@ -15,9 +15,7 @@
   "subscription_answer_free_lead": "6d24da9fe3189a69b14935526f572a8bf42040e81eb7ce7477567ea0d7a41454",
   "subscription_answer_free_lessons": "1acb9eecff8a89bd88b17e74909dc49f1a13da36eda463e7431c2cffa1e9e27a",
   "subscription_answer_free_uploads": "cdca4c8d6b2358c6df87cc960ee248cbedca341d70eb51b7060855e6fc491116",
-  "subscription_answer_hidden": "b5bd02eddd0ab239a908f1723d3489fbadff9d1052e4cf967b024af33a2f1776",
   "subscription_answer_refund": "796100a7df45ec1552bb12bb3e7c1fc32f2b78cb82e6d072586d1bdb6d9c0dc1",
-  "subscription_answer_shown": "6d9fc68f7a6940d5ad502c73e90baaa0a77d59d3560ded8c2e72d8b05b4fc471",
   "subscription_answer_unlimited": "ddaa7ade6d12c40364ee1a549f78d688292b5faaac8e128dd38403eb999db2a3",
   "subscription_available_with_plus": "7cd7b0aaee2632e2489afa3f3f925647a7c42923529005cf98f9bd78c9820013",
   "subscription_benefit_buddy": "e3d3d539c397a67a6435cf8f5930eb73dc6c6b049178a63cc1c67c601f671e6a",
@@ -175,9 +173,6 @@
     <string name="subscription_questions_email">hello@zoonk.com</string>
     <string name="subscription_show_answer">afficher la réponse</string>
     <string name="subscription_hide_answer">masquer la réponse</string>
-    <!-- What TalkBack says about a question: its answer is showing or not. -->
-    <string name="subscription_answer_shown">Déplié</string>
-    <string name="subscription_answer_hidden">Replié</string>
     <string name="subscription_question_free">Que comprend la formule gratuite ?</string>
     <plurals name="subscription_answer_free_guest_lead">
         <item quantity="one">Commence gratuitement avec %d leçon, sans compte. Avec un compte gratuit, tu as accès à :</item>

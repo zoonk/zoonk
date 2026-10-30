@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "listening_collapsed": "c3c48cb9aa3c920ead1ab4ccc8ef732c21dabedc2132b982aaad6dae5ade69f9",
   "listening_elapsed": "6f47bf5671695979e4510a4684a812547395ff4feb0b9f12777545dd4ab90f2c",
-  "listening_expanded": "54e88f2481f0b9f59c32713f55df2914b663873d00154e97d35b54b85573c514",
   "listening_failed": "49998d8d808511752d1978fa285a9490eae445e1c36b7b3e8d9df260ad81da88",
   "listening_note_free": "ebd68e819ac4898c96a17ba6e7d2fb36643d5a4f87c8ac5b08e489080131b7ce",
   "listening_note_once": "ec4b7974b7ac6ca51179dc99888c0b5635081e690a85888f2f19b115414a3d9b",
@@ -43,6 +41,4 @@
         <item quantity="other">Questions sur cet enregistrement (%d)</item>
     </plurals>
     <string name="listening_transcript">Transcription</string>
-    <string name="listening_expanded">Déplié</string>
-    <string name="listening_collapsed">Replié</string>
 </resources>

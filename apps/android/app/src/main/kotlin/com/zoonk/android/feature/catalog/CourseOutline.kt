@@ -357,7 +357,7 @@ internal fun OutlineZone(
 ) {
     var toggled by rememberSaveable(title) { mutableStateOf<Boolean?>(null) }
     val open = toggled ?: openByDefault
-    val state = stringResource(if (open) R.string.catalog_expanded else R.string.catalog_collapsed)
+    val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
 
     Column {
         HorizontalDivider()

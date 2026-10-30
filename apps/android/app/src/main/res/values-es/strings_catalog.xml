@@ -21,7 +21,6 @@
   "catalog_closing_start": "2f88f93b834f95a71adabde51c0cf6efaf06715e0e5e0216a8bc01dfaf4c164a",
   "catalog_closing_steps": "bb8d7235df60222de7c1600cc01edc10554e968968cb8333ebc2f6ed3176d665",
   "catalog_collapse": "37b85fe3729b7ed11e3ea48e774d1bdcd684c07113756bbf5d6b1edfaddafde8",
-  "catalog_collapsed": "1d52d9df490b9b067d3bbc72574250181db54bf56508ffd1a785a10e7c990ec6",
   "catalog_continue_lesson": "82f5788b29a86a4b73e2afde7b50c6e10b932d72b30fb875c9b52da68b47f842",
   "catalog_continue_plan": "b0b9c279a4554aec64f6a58c9e7ceca7c6eda359eb035547855af12ab2931ffe",
   "catalog_course_meta": "92041bb7a37b82589ba4c478b6874221e0787d6d333bc3aa31554c3bf49e2bd0",
@@ -34,7 +33,6 @@
   "catalog_exam_on_today": "36bead4d6a3e5f6671d2f2aad54fee508a5ddc8d07e5736daa62ad68cd24b51e",
   "catalog_example_plan": "3c9ef06e8bc03291e3bbd74256170671be92042bb5963c771d32c6190355f29e",
   "catalog_expand": "1c84c872240a1f1fceb062fb190a2a230a6262b24203bf1ed7141eb25e05724c",
-  "catalog_expanded": "880196e56c7cee4a607aad39e588f33f2a3c7ff0546a6df846cf716a361f3ce1",
   "catalog_go_to_chapter": "3b9f0b4ae6a4d254d6bb7107dd93c0b1303c4cd345636854cb346a57181a57c3",
   "catalog_goal_example": "be8a1452f332af8eb46c0d37fc2837b3bac0da6c93c9f79c6844a93310204f1b",
   "catalog_guess_first": "eee9efc49720b74b98bbcaa1427e53eef566f63ba4623013ee1a2a2da9e680ae",
@@ -279,8 +277,6 @@
     <string name="catalog_show_fewer_chapters">Mostrar menos capítulos</string>
     <string name="catalog_expand">Expandir</string>
     <string name="catalog_collapse">Contraer</string>
-    <string name="catalog_expanded">Expandido</string>
-    <string name="catalog_collapsed">Contraído</string>
     <string name="catalog_left_out">Omitido</string>
     <plurals name="catalog_chapters_left_out">
         <item quantity="one">%1$d capítulo omitido</item>

@@ -143,8 +143,6 @@
     <string name="catalog_show_fewer_chapters">Show fewer chapters</string>
     <string name="catalog_expand">Expand</string>
     <string name="catalog_collapse">Collapse</string>
-    <string name="catalog_expanded">Expanded</string>
-    <string name="catalog_collapsed">Collapsed</string>
     <string name="catalog_left_out">Left out</string>
     <plurals name="catalog_chapters_left_out">
         <item quantity="one">%1$d chapter left out</item>

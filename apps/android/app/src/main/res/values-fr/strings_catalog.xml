@@ -21,7 +21,6 @@
   "catalog_closing_start": "bfac1b789aaa42ea3fe7dabb1d0832beff94554966d25839812dbabb09f14000",
   "catalog_closing_steps": "77394bf2c258fa3c008f734ea25249507da072b64287dbf71acfe32023c3b88d",
   "catalog_collapse": "f408e130b3d4ba9105a0baf631c96e57f110c1104b60da19c211a90a576c94c5",
-  "catalog_collapsed": "ed3f987673c50017ecfc067d6a74fe96abaf498237c9177c6a62fba0f7d14b7b",
   "catalog_continue_lesson": "78e92b10b837b7063ea07f56cf59cd7dcbcb5a119afb0391a135e92df84ae9ae",
   "catalog_continue_plan": "400261e62be2284b8d6e70b2894f000b542bbef77abc83a9279415a84d362cb1",
   "catalog_course_meta": "11b4a50ddeb14b2d602d082a48bdc6d0ea96080fee3f29d301b02ed920e947a7",
@@ -34,7 +33,6 @@
   "catalog_exam_on_today": "0a1d59bfbbd9ee9dbb0f21dffbd12943fa601a2174f434c76fa80a88bf270339",
   "catalog_example_plan": "d0bca5a90450318690e1794ea46049b0397d1166be7e1be1e0e3cab5fd18ccee",
   "catalog_expand": "64721faeb3011ab9296571eba5329b3ddec6736e8f05427e3b47aa7b20ecad44",
-  "catalog_expanded": "52543aaf013dcde0d92b2dee7b43da3ce5958896451f8f75068e93da40c46a4c",
   "catalog_go_to_chapter": "52fcec3ad65effd7d992610ca319420b71fb01d5a6f7047a288d8bad344283f5",
   "catalog_goal_example": "04ddc77c23fe994f5ad59b48452508ca15836a072944b9060cf560d6f9fbd5ad",
   "catalog_guess_first": "3d4233e72116501c49abe323782b7ac87de577a147b9054639e7553f65fbe6ee",
@@ -279,8 +277,6 @@
     <string name="catalog_show_fewer_chapters">Afficher moins de chapitres</string>
     <string name="catalog_expand">Développer</string>
     <string name="catalog_collapse">Réduire</string>
-    <string name="catalog_expanded">Développé</string>
-    <string name="catalog_collapsed">Réduit</string>
     <string name="catalog_left_out">Laissé de côté</string>
     <plurals name="catalog_chapters_left_out">
         <item quantity="one">%1$d chapitre laissé de côté</item>
