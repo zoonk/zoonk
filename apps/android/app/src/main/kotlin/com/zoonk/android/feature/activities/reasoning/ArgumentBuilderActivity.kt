@@ -112,6 +112,7 @@ private fun ArgumentBuilderActivity(props: ActivityProps) {
         evidenceId = evidence
         reasoningId = reasoning
         props.onAnswerChange(if (evidence != null && reasoning != null) selectionAnswer(listOf(evidence, reasoning)) else null)
+        announcement = ""
         moves++
     }
 

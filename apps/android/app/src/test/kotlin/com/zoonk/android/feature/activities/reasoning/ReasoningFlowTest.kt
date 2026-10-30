@@ -266,9 +266,12 @@ class ReasoningFlowTest {
     fun argumentBuilderAWeakQuoteNamesTheStrongerOne() {
         play("argumentBuilder", isCorrect = false)
 
+        val announced = hasContentDescription("Evidence: “O brawling love!”")
         candidate("O brawling love").performScrollTo().performClick()
         rule.onNode(hasContentDescription("Take the quote out")).performScrollTo().performClick()
+        rule.onNode(announced).assertDoesNotExist()
         candidate("O brawling love").performScrollTo().performClick()
+        rule.onNode(announced).assertExists()
         candidate("Juliet herself").performScrollTo().performClick()
         harness.tap("Check")
 
