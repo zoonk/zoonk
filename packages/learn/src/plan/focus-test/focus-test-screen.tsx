@@ -157,10 +157,29 @@ function FocusTestWaiting({ run }: { run: GenerationRun }) {
   );
 }
 
+function FocusTestLimited({ limit }: { limit: HelpLimit }) {
+  const t = useExtracted();
+  const routes = useLearnRoutes();
+
+  return (
+    <div className="flex flex-col gap-3">
+      {/* oxlint-disable-next-line jsx-a11y/heading-has-content -- An h2 under the test's header, with the title's text. */}
+      <GenerationTimelineTitle render={<h2 />}>
+        {t("Some questions couldn't be written")}
+      </GenerationTimelineTitle>
+      <GenerationTimelineDescription>
+        {t("Finish with the answers you gave: they still choose where your plan goes deeper.")}
+      </GenerationTimelineDescription>
+      <HelpLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
+    </div>
+  );
+}
+
 function FocusTestRun({
   buddy,
   closeHref,
   doneHref,
+  limit,
   onSubmit,
   onUndo,
   renderCeremony,
@@ -170,6 +189,7 @@ function FocusTestRun({
   buddy?: LearnBuddy | null;
   closeHref: string;
   doneHref: string;
+  limit: HelpLimit | null;
   onSubmit: (answers: ChoiceQuestionAnswer[]) => Promise<FocusTestOutcome | null>;
   onUndo: (changeId: string) => Promise<boolean>;
   renderCeremony?: MomentCeremony;
@@ -186,9 +206,9 @@ function FocusTestRun({
   const upcoming =
     writing && questions.length < total
       ? {
-          ended: writing.status === "failed" || writing.status === "ready",
+          ended: limit !== null || writing.status === "failed" || writing.status === "ready",
           total,
-          waiting: <FocusTestWaiting run={writing} />,
+          waiting: limit ? <FocusTestLimited limit={limit} /> : <FocusTestWaiting run={writing} />,
         }
       : null;
 
@@ -263,7 +283,7 @@ export function FocusTestScreen({
     setRunning(true);
   }
 
-  if (preparing?.run && !ready && !running) {
+  if (preparing?.run && !preparing.limit && !ready && !running) {
     return <FocusTestWriting closeHref={closeHref} run={preparing.run} />;
   }
 
@@ -273,6 +293,7 @@ export function FocusTestScreen({
         buddy={buddy}
         closeHref={closeHref}
         doneHref={doneHref}
+        limit={preparing?.limit ?? null}
         onSubmit={onSubmit}
         onUndo={onUndo}
         renderCeremony={renderCeremony}

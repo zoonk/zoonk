@@ -8,6 +8,7 @@ import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { FocusTestScreen, type FocusTestView, isFocusTestComplete } from "@zoonk/learn/focus-test";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
+import { type HelpLimit } from "@zoonk/learn/help-limit";
 import { useState, useTransition } from "react";
 import { submitFocusTestAction } from "./focus-test-actions";
 import {
@@ -53,6 +54,7 @@ function WritingFocusTest({
 }) {
   const router = useRouter();
   const [isReading, startReading] = useTransition();
+  const [limit, setLimit] = useState<HelpLimit | null>(null);
   const showWritten = () => startReading(() => router.refresh());
 
   const run = useWorkflowRun({
@@ -65,6 +67,8 @@ function WritingFocusTest({
       if (writing.status === "ready") {
         showWritten();
       }
+
+      setLimit(writing.status === "refused" ? writing.limit : null);
 
       return writing.status === "writing" ? writing.generationId : null;
     },
@@ -79,7 +83,7 @@ function WritingFocusTest({
       doneHref={page.doneHref}
       onSubmit={submitFocusTestAction.bind(null, page.goalId)}
       onUndo={(changeId) => decidePlanChangeAction(page.goalId, { changeId, status: "undone" })}
-      preparing={{ limit: null, onStart: () => run.retry?.(), run: shown, starting: false }}
+      preparing={{ limit, onStart: () => run.retry?.(), run: shown, starting: false }}
       renderCeremony={(milestone, onClose) => (
         <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
       )}
