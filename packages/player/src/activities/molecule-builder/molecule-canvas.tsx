@@ -65,13 +65,15 @@ function AtomFace({
   atom,
   build,
   isSelected,
+  showsBondStatus,
 }: {
   atom: BuildAtom;
   build: Build;
   isSelected: boolean;
+  showsBondStatus: boolean;
 }) {
   const style = elementStyle(atom.element);
-  const fill = atomFill(build, atom);
+  const fill = showsBondStatus ? atomFill(build, atom) : "open";
   const open = Math.max(valenceOf(atom.element) - bondsUsed(build, atom.id), 0);
 
   return (
@@ -138,6 +140,7 @@ export function MoleculeCanvas({
   layout,
   onAtomPress,
   selectedId,
+  showsBondStatus = true,
 }: {
   atomLabel: (atom: BuildAtom) => string;
   build: Build;
@@ -147,6 +150,7 @@ export function MoleculeCanvas({
   layout: Layout;
   onAtomPress?: (id: string) => void;
   selectedId: string | null;
+  showsBondStatus?: boolean;
 }) {
   return (
     <svg
@@ -170,7 +174,14 @@ export function MoleculeCanvas({
           return null;
         }
 
-        const face = <AtomFace atom={atom} build={build} isSelected={selectedId === atom.id} />;
+        const face = (
+          <AtomFace
+            atom={atom}
+            build={build}
+            isSelected={selectedId === atom.id}
+            showsBondStatus={showsBondStatus}
+          />
+        );
 
         return onAtomPress ? (
           <g

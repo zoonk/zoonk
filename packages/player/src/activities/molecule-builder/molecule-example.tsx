@@ -10,7 +10,13 @@ import { type Build, bondTotal } from "./molecule-model";
 import { useAtomName } from "./use-atom-name";
 import { useBuildDescription } from "./use-build-description";
 
-function MoleculeStructure({ structure }: { structure: Build }) {
+function MoleculeStructure({
+  showsBondStatus,
+  structure,
+}: {
+  showsBondStatus: boolean;
+  structure: Build;
+}) {
   const t = useExtracted();
   const nameOf = useAtomName();
   const describe = useBuildDescription();
@@ -25,6 +31,7 @@ function MoleculeStructure({ structure }: { structure: Build }) {
         fit
         layout={layoutBuild({ atoms: structure.atoms, bonds: structure.bonds })}
         selectedId={null}
+        showsBondStatus={showsBondStatus}
       />
 
       <p className="text-muted-foreground text-sm">
@@ -47,7 +54,7 @@ export function MoleculeExample({ target }: { target: ElementCounts }) {
   return (
     <div className="flex flex-col gap-2 border-t pt-3">
       <p className="text-sm font-medium">{t("One correct build")}</p>
-      <MoleculeStructure structure={structure} />
+      <MoleculeStructure showsBondStatus structure={structure} />
     </div>
   );
 }
@@ -66,7 +73,7 @@ export function ExploredMolecule({
   return (
     <ActivityCanvas labelId={labelId}>
       <ActivityCanvasLabel className="text-sm">{formula}</ActivityCanvasLabel>
-      {structure && <MoleculeStructure structure={structure} />}
+      {structure && <MoleculeStructure showsBondStatus={false} structure={structure} />}
     </ActivityCanvas>
   );
 }
