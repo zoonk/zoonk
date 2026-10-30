@@ -77,6 +77,7 @@ internal fun CourseOutline(
     openLevel: CourseChapter.Level?,
     levels: List<CourseResourceLevelsInner>,
     goal: LearnerSummaryGoal?,
+    examples: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
@@ -102,7 +103,7 @@ internal fun CourseOutline(
         Column(Modifier.widthIn(max = COLUMN_WIDTH), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SectionTitle(stringResource(R.string.catalog_outline), facts = facts)
 
-            if (pace != null && goal == null) {
+            if (pace != null && examples) {
                 val text =
                     if (dated != null && examDate != null) {
                         stringResource(
@@ -134,7 +135,7 @@ internal fun CourseOutline(
             chapters.isEmpty() -> {}
 
             dated != null -> {
-                AreaOutline(navigator, courseId, chapters, numbers, dated, examples = goal == null, hereChapter = hereChapter)
+                AreaOutline(navigator, courseId, chapters, numbers, dated, examples = examples, hereChapter = hereChapter)
             }
 
             else -> {
@@ -157,7 +158,7 @@ internal fun CourseOutline(
                     val last = chapterWeeks.maxOfOrNull { it.second ?: it.first!! }
                     val span =
                         when {
-                            goal != null || first == null || last == null -> {
+                            !examples || first == null || last == null -> {
                                 null
                             }
 
@@ -186,7 +187,7 @@ internal fun CourseOutline(
                         openByDefault = level == openLevel,
                     ) {
                         ChapterRows(navigator, courseId, levelChapters, numbers, hereChapter) { chapter ->
-                            weeks[chapter.id.toString()]?.first?.takeIf { goal == null }?.let {
+                            weeks[chapter.id.toString()]?.first?.takeIf { examples }?.let {
                                 stringResource(
                                     R.string.catalog_chapter_week,
                                     formatNumber(it.toDouble(), locale),
@@ -576,6 +577,13 @@ private fun UnwrittenLevel(
 private const val CHAPTERS_NAMED = 3
 private const val CHAPTERS_SHOWN = 6
 
+/** Main's `CourseExampleNumbers`: the example plan's numbers are for someone deciding, so they wait for a session's summary. */
+internal fun showsExamples(
+    courseId: String,
+    hasSession: Boolean,
+    summary: LoadState<LearnerSummary>,
+): Boolean = !isSummaryOnItsWay(hasSession, summary) && summary.value?.goalOnCourse(courseId) == null
+
 /**
  * The level a course's outline opens at: the learner's plan's level in the course, the first for
  * anyone else or when the summary can't be read, and none while a session's summary is on its way,
@@ -587,7 +595,7 @@ internal fun outlineLevel(
     hasSession: Boolean,
     summary: LoadState<LearnerSummary>,
 ): CourseChapter.Level? {
-    if (hasSession && (summary == LoadState.Idle || summary == LoadState.Loading)) return null
+    if (isSummaryOnItsWay(hasSession, summary)) return null
     val level =
         summary.value
             ?.goals
@@ -595,3 +603,8 @@ internal fun outlineLevel(
             ?.courseLevel
     return CourseChapter.Level.entries.find { it.value == level?.value } ?: chapters.firstOrNull()?.level
 }
+
+private fun isSummaryOnItsWay(
+    hasSession: Boolean,
+    summary: LoadState<LearnerSummary>,
+): Boolean = hasSession && (summary == LoadState.Idle || summary == LoadState.Loading)

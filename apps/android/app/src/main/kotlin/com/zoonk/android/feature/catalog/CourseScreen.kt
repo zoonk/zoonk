@@ -285,6 +285,7 @@ private fun LazyListScope.courseContent(
             openLevel = outlineLevel(detail.chapters, courseId, hasSession, summary),
             levels = course.levels,
             goal = summary.value?.goalOnCourse(courseId),
+            examples = showsExamples(courseId, hasSession, summary),
         )
     }
 

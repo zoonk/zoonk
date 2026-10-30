@@ -109,6 +109,7 @@ class CatalogFlowTest {
                 openLevel = openLevel,
                 levels = course().levels,
                 goal = null,
+                examples = true,
             )
         }
 

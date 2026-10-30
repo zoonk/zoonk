@@ -49,6 +49,7 @@ class CourseOutlinePlaceTest {
                     openLevel = openLevel,
                     levels = levels.map { level(it) },
                     goal = goal,
+                    examples = goal == null,
                     modifier = Modifier.verticalScroll(rememberScrollState()),
                 )
             }

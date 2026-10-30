@@ -7,7 +7,9 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CourseChapter
 import com.zoonk.api.models.LearnerSummaryGoal
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CourseOutlineLevelTest {
@@ -55,6 +57,16 @@ class CourseOutlineLevelTest {
             CourseChapter.Level.OVERVIEW,
             outlineLevel(chapters(), COURSE, hasSession = true, summary = learner(goal(OTHER_COURSE, "beginner"), goal(COURSE, null))),
         )
+    }
+
+    @Test
+    fun theExampleWeeksWaitForASessionsSummaryAndHideForAPlanOnTheCourse() {
+        assertTrue(showsExamples(COURSE, hasSession = false, summary = LoadState.Idle))
+        assertFalse(showsExamples(COURSE, hasSession = true, summary = LoadState.Idle))
+        assertFalse(showsExamples(COURSE, hasSession = true, summary = LoadState.Loading))
+        assertTrue(showsExamples(COURSE, hasSession = true, summary = LoadState.Failed(ApiError.Network)))
+        assertTrue(showsExamples(COURSE, hasSession = true, summary = learner(goal(OTHER_COURSE, "beginner"))))
+        assertFalse(showsExamples(COURSE, hasSession = true, summary = learner(goal(COURSE, "beginner"))))
     }
 
     private companion object {
