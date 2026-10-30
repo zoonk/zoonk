@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.feedback
 
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,10 +26,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.openWebPage
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
@@ -82,7 +81,7 @@ fun HelpScreen(
                                 trailingContent = { Icon(painterResource(R.drawable.ic_open_in_new), contentDescription = null) },
                                 modifier =
                                     Modifier.clickable(role = Role.Button) {
-                                        CustomTabsIntent.Builder().build().launchUrl(context, url.toUri())
+                                        openWebPage(context, url)
                                     },
                             )
                         }

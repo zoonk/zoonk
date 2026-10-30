@@ -170,6 +170,11 @@ class SignInViewModel(
         }
     }
 
+    fun failApple() {
+        work = null
+        failure = AccountFailure.SignIn
+    }
+
     /**
      * Back from Apple. The page closing without an answer clears nothing: a browser without Auth
      * Tab returns its answer through the App Link meanwhile, and clearing the pending sign-in would

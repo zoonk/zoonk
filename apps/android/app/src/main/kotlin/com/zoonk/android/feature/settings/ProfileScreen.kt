@@ -2,7 +2,6 @@ package com.zoonk.android.feature.settings
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,12 +41,12 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.account.ProfileFields
@@ -275,7 +274,7 @@ private fun DeletionDialogs(
                 text = { Text(stringResource(R.string.settings_apple_not_revoked)) },
                 confirmButton = { TextButton(onClick = profile::finish) { Text(stringResource(R.string.settings_done)) } },
                 dismissButton = {
-                    TextButton(onClick = { CustomTabsIntent.Builder().build().launchUrl(context, APPLE_ID_MANAGE_URL.toUri()) }) {
+                    TextButton(onClick = { openWebPage(context, APPLE_ID_MANAGE_URL) }) {
                         Text(stringResource(R.string.settings_manage_apple))
                     }
                 },

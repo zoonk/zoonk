@@ -40,7 +40,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -52,6 +52,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.conversation.CallRequest
@@ -453,7 +454,7 @@ private fun ExternalLink(
     url: String,
     onDismiss: () -> Unit,
 ) {
-    val uri = LocalUriHandler.current
+    val context = LocalContext.current
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -470,7 +471,7 @@ private fun ExternalLink(
             TextButton(
                 onClick = {
                     onDismiss()
-                    uri.openUri(url)
+                    openWebPage(context, url)
                 },
             ) { Text(stringResource(R.string.tutor_link_open)) }
         },

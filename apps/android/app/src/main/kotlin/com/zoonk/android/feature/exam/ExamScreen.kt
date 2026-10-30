@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.exam
 
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,12 +37,12 @@ import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
@@ -232,7 +231,7 @@ private fun LazyListScope.examSections(
                 openTask = null,
                 start = app.conversations::start,
                 open = navigator::open,
-                openWeb = { CustomTabsIntent.Builder().build().launchUrl(context, it.toUri()) },
+                openWeb = { openWebPage(context, it) },
                 from = FROM_EXAM,
             )
         }

@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.account
 
+import android.content.ActivityNotFoundException
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.annotation.DrawableRes
@@ -164,7 +165,11 @@ internal fun Methods(
         ) {
             scope.launch {
                 val url = signIn.startApple() ?: return@launch
-                AuthTabIntent.Builder().build().launch(apple, url.toUri(), APPLE_RETURN_HOST, APPLE_RETURN_PATH)
+                try {
+                    AuthTabIntent.Builder().build().launch(apple, url.toUri(), APPLE_RETURN_HOST, APPLE_RETURN_PATH)
+                } catch (_: ActivityNotFoundException) {
+                    signIn.failApple()
+                }
             }
         }
     }

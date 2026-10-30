@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.questions
 
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,8 +51,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.zoonk.android.R
+import com.zoonk.android.app.openWebPage
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
@@ -252,7 +251,7 @@ private fun SourcesChip(
                 action =
                     url?.let {
                         {
-                            TextButton(onClick = { CustomTabsIntent.Builder().build().launchUrl(context, it.toUri()) }) {
+                            TextButton(onClick = { openWebPage(context, it) }) {
                                 Text(stringResource(R.string.questions_open_source))
                                 Icon(
                                     painterResource(R.drawable.ic_open_in_new),

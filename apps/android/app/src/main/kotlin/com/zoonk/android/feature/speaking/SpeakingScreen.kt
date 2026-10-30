@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.speaking
 
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,10 +53,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
@@ -121,7 +120,7 @@ fun SpeakingScreen(
             SpeakingActions(
                 start = app.conversations::start,
                 open = navigator::open,
-                openWeb = { CustomTabsIntent.Builder().build().launchUrl(context, it.toUri()) },
+                openWeb = { openWebPage(context, it) },
             )
         }
 

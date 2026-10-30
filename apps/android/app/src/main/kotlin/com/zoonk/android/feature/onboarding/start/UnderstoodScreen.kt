@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.onboarding.start
 
 import android.text.format.DateFormat
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -56,8 +55,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.zoonk.android.R
+import com.zoonk.android.app.openWebPage
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
@@ -298,7 +297,7 @@ private fun RowNote(row: UnderstoodRow) {
                     LinkAnnotation.Clickable(
                         tag = source.url,
                         styles = TextLinkStyles(SpanStyle(color = muted, textDecoration = TextDecoration.Underline)),
-                        linkInteractionListener = { CustomTabsIntent.Builder().build().launchUrl(context, source.url.toUri()) },
+                        linkInteractionListener = { openWebPage(context, source.url) },
                     ),
                 ) { append("$sourceText ↗") }
             }

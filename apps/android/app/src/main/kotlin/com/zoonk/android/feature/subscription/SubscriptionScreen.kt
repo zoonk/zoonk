@@ -1,8 +1,6 @@
 package com.zoonk.android.feature.subscription
 
-import android.content.ActivityNotFoundException
 import androidx.activity.compose.LocalActivity
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,12 +50,13 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.launchWebPage
+import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
@@ -204,8 +203,10 @@ internal fun CurrentPlan(
             if (provider == GOOGLE) {
                 Button(
                     onClick = {
-                        val url = "https://play.google.com/store/account/subscriptions?sku=$PLUS_PRODUCT_ID&package=${context.packageName}"
-                        CustomTabsIntent.Builder().build().launchUrl(context, url.toUri())
+                        openWebPage(
+                            context,
+                            "https://play.google.com/store/account/subscriptions?sku=$PLUS_PRODUCT_ID&package=${context.packageName}",
+                        )
                     },
                 ) { Text(stringResource(R.string.subscription_manage_google)) }
             }
@@ -243,12 +244,7 @@ private fun WebPlusCancellation(
                 scope.launch {
                     when (val result = open()) {
                         is MutationResult.Done -> {
-                            try {
-                                CustomTabsIntent.Builder().build().launchUrl(context, result.value.toUri())
-                                awaitingReturn = true
-                            } catch (_: ActivityNotFoundException) {
-                                failed = true
-                            }
+                            if (launchWebPage(context, result.value)) awaitingReturn = true else failed = true
                         }
 
                         is MutationResult.Failed -> {

@@ -60,7 +60,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -168,7 +171,20 @@ fun ZoonkApp(
     val pictures = remember(session) { PrivatePictures(app.images, (session as? SessionState.SignedIn)?.session) }
 
     // Search opens over any page, so it shares the frame's snackbars.
-    CompositionLocalProvider(LocalSnackbarHostState provides snackbars, LocalPrivatePictures provides pictures) {
+    val context = LocalContext.current
+    // Text links with no handler of their own open through the same opener as every other link.
+    val links =
+        remember(context) {
+            object : UriHandler {
+                override fun openUri(uri: String) = openWebPage(context, uri)
+            }
+        }
+
+    CompositionLocalProvider(
+        LocalSnackbarHostState provides snackbars,
+        LocalPrivatePictures provides pictures,
+        LocalUriHandler provides links,
+    ) {
         val sendFeedback = rememberSendFeedback(app, "sidebar")
 
         SearchHost(app, navigator, signedIn) {

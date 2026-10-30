@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.settings
 
 import android.content.Context
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,10 +36,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.zoonk.android.R
+import com.zoonk.android.app.openWebPage
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -85,6 +84,7 @@ private fun LicenseSheet(
     onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
+    val openPage = { url: String -> openWebPage(context, url) }
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(
@@ -98,7 +98,7 @@ private fun LicenseSheet(
         ) {
             Text(library.name, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
             library.website?.let { website ->
-                TextButton(onClick = { openWeb(context, website) }) { Text(stringResource(R.string.settings_licenses_website)) }
+                TextButton(onClick = { openPage(website) }) { Text(stringResource(R.string.settings_licenses_website)) }
             }
             library.licenses.forEach { license ->
                 HorizontalDivider()
@@ -108,7 +108,7 @@ private fun LicenseSheet(
                     Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 } else {
                     license.url?.let { url ->
-                        TextButton(onClick = { openWeb(context, url) }) { Text(stringResource(R.string.settings_licenses_read)) }
+                        TextButton(onClick = { openPage(url) }) { Text(stringResource(R.string.settings_licenses_read)) }
                     }
                 }
             }
@@ -129,8 +129,3 @@ private fun readLibraries(context: Context): List<Library> {
         .libraries
         .sortedBy { it.name.lowercase() }
 }
-
-private fun openWeb(
-    context: Context,
-    url: String,
-) = CustomTabsIntent.Builder().build().launchUrl(context, url.toUri())

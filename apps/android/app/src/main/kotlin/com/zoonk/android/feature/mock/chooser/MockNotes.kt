@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.mock.chooser
 
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
@@ -18,8 +17,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.zoonk.android.R
+import com.zoonk.android.app.openWebPage
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.MockLeftOut
 import com.zoonk.api.models.MockSizeSource
@@ -87,7 +86,7 @@ private fun pastEditionLine(source: MockSizeSourcePastEdition): AnnotatedString 
             LinkAnnotation.Clickable(
                 tag = url,
                 styles = TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline)),
-                linkInteractionListener = { CustomTabsIntent.Builder().build().launchUrl(context, url.toUri()) },
+                linkInteractionListener = { openWebPage(context, url) },
             ),
         ) { append(publisher) }
         append(text.substring(start + publisher.length))

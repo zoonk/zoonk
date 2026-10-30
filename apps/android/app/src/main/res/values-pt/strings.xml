@@ -58,7 +58,8 @@
   "task_leave": "177cb39387567943127b8e077274966476e8573f7f4bec70580fe56164773c57",
   "test_out_skip_chapter": "959fcd03ac16cbd73942e953c1f1d33fa7bf225c482740ee1e450e180f4ae972",
   "test_out_skip_unit": "146dc4caf6779fdf3d7eb8e3d8fb62df68e8f7d3cb80994ff331771d4353d621",
-  "test_out_title": "ec2c7ef6ecff571ff05931dd8c3e275821c334ef7a4909a70210ecfe1e11f5a2"
+  "test_out_title": "ec2c7ef6ecff571ff05931dd8c3e275821c334ef7a4909a70210ecfe1e11f5a2",
+  "web_page_unavailable": "8c983c577339f6cd0d82ff9991b0a07471d2d73151f42eaaa870c436163c136b"
 }
 -->
 <resources>
@@ -126,4 +127,6 @@
     <string name="not_found_go_home">Ir para a página inicial</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
+    <!-- A toast, which shows at most two short lines: a link did nothing because the phone has no browser to open it. Keep it as short as the English. -->
+    <string name="web_page_unavailable">Não dá para abrir a página. E-mail: contato@zoonk.com</string>
 </resources>

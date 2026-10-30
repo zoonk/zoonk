@@ -2,7 +2,6 @@ package com.zoonk.android.feature.exam
 
 import android.icu.text.ListFormatter
 import androidx.annotation.DrawableRes
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -34,8 +33,8 @@ import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.zoonk.android.R
+import com.zoonk.android.app.openWebPage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
@@ -294,7 +293,7 @@ private fun CutoffRow(
 
     ScoringRow(R.drawable.ic_target, stringResource(R.string.exam_cutoff_title, score)) {
         Text(
-            linked(source, site, cutoff.source.url) { CustomTabsIntent.Builder().build().launchUrl(context, it.toUri()) },
+            linked(source, site, cutoff.source.url) { openWebPage(context, it) },
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
