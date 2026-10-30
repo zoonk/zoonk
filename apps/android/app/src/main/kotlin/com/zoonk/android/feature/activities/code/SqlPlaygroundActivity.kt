@@ -3,7 +3,6 @@ package com.zoonk.android.feature.activities.code
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -60,6 +59,7 @@ import com.zoonk.android.feature.activities.ActivityReason
 import com.zoonk.android.feature.activities.ActivityReasons
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.interaction
+import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.fractionDigitsFor
@@ -295,7 +295,7 @@ private fun SqlRowsTable(
         val natural = naturalWidths.fold(0.dp) { sum, width -> sum + width }
         val tableWidth = maxOf(natural, maxWidth)
         val widths = naturalWidths.map { it * (tableWidth / natural) }
-        Column(Modifier.horizontalScroll(rememberScrollState())) {
+        Column(Modifier.fadingHorizontalScroll(rememberScrollState())) {
             Row(Modifier.background(colors.surfaceContainer)) {
                 columns.forEachIndexed { index, name ->
                     Text(

@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -105,7 +105,7 @@ internal fun RichTable(
 
         Box(
             Modifier
-                .horizontalScroll(scroll)
+                .fadingHorizontalScroll(scroll)
                 .onFocusChanged { focused = it.isFocused }
                 .onKeyEvent { event ->
                     val step = arrowStep(event, rtl)

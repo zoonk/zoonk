@@ -2,7 +2,6 @@ package com.zoonk.android.feature.activities.music
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -43,6 +42,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 
@@ -76,7 +76,7 @@ internal fun GuitarFretboard(
             val lead = nameWidth + if (onChange == null) INDICATOR_WIDTH else PICK_WIDTH * 2
             val fretWidth = max(if (onChange == null) 0.dp else PICK_WIDTH, (maxWidth - lead) / Guitar.FRETBOARD_SPAN)
 
-            Column(Modifier.horizontalScroll(rememberScrollState())) {
+            Column(Modifier.fadingHorizontalScroll(rememberScrollState())) {
                 Guitar.tuning.indices.reversed().forEach { string ->
                     Row(Modifier.height(IntrinsicSize.Min), verticalAlignment = Alignment.CenterVertically) {
                         StringName(labels.stringNames[string], nameWidth)

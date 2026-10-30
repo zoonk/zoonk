@@ -2,7 +2,6 @@ package com.zoonk.android.feature.activities.code
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -47,6 +46,7 @@ import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
+import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.richtext.RichText
@@ -273,7 +273,7 @@ private fun CodeRunnerOutput(
             Text(
                 run.errorOutput,
                 Modifier
-                    .horizontalScroll(rememberScrollState())
+                    .fadingHorizontalScroll(rememberScrollState())
                     .semantics { liveRegion = LiveRegionMode.Polite },
                 color = colors.onSurfaceVariant,
                 softWrap = false,
@@ -304,7 +304,7 @@ private fun OutputText(
 ) {
     Text(
         text,
-        modifier.horizontalScroll(rememberScrollState()),
+        modifier.fadingHorizontalScroll(rememberScrollState()),
         color = color,
         softWrap = false,
         style = MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold),

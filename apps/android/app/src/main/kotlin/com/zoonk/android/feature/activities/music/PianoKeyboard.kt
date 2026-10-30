@@ -2,7 +2,6 @@ package com.zoonk.android.feature.activities.music
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -43,6 +42,7 @@ import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.theme.LightTheme
 
 private class PianoKey(
@@ -100,7 +100,7 @@ internal fun PianoKeyboard(
                     val opening = if (marked.isEmpty()) 0.dp else (marked.min() + marked.max()) / 2 - maxWidth / 2
                     val scroll = rememberScrollState(with(LocalDensity.current) { opening.roundToPx().coerceAtLeast(0) })
 
-                    Modifier.horizontalScroll(scroll).semantics {
+                    Modifier.fadingHorizontalScroll(scroll).semantics {
                         contentDescription = label
                         isTraversalGroup = true
                     }

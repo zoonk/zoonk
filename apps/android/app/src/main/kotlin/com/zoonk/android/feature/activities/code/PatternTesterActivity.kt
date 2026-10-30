@@ -2,7 +2,6 @@ package com.zoonk.android.feature.activities.code
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,6 +59,7 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.richtext.RichText
@@ -346,7 +346,7 @@ private fun SampleRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(marked, Modifier.weight(1f).horizontalScroll(rememberScrollState()), softWrap = false, style = codeTextStyle())
+        Text(marked, Modifier.weight(1f).fadingHorizontalScroll(rememberScrollState()), softWrap = false, style = codeTextStyle())
         if (failing && status != null) {
             Text(
                 status,

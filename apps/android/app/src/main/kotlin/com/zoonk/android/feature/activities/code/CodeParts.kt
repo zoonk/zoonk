@@ -2,7 +2,6 @@ package com.zoonk.android.feature.activities.code
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -76,6 +75,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
+import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.zoonk
 
@@ -131,7 +131,7 @@ internal fun CodeBlock(
     BoxWithConstraints(modifier.fillMaxWidth().semantics { contentDescription = label }) {
         Column(
             Modifier
-                .horizontalScroll(rememberScrollState())
+                .fadingHorizontalScroll(rememberScrollState())
                 .widthIn(min = maxWidth)
                 .width(IntrinsicSize.Max),
             verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -302,7 +302,7 @@ internal fun CodeEditor(
             onValueChange = onValueChange,
             modifier =
                 Modifier
-                    .horizontalScroll(rememberScrollState())
+                    .fadingHorizontalScroll(rememberScrollState())
                     .padding(horizontal = EDITOR_PADDING, vertical = 12.dp)
                     .widthIn(min = inner)
                     .heightIn(min = 48.dp)
@@ -367,7 +367,7 @@ internal fun SnippetBar(
         Modifier
             .fillMaxWidth()
             .semantics { contentDescription = label }
-            .horizontalScroll(rememberScrollState()),
+            .fadingHorizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         snippets.forEach { snippet ->
