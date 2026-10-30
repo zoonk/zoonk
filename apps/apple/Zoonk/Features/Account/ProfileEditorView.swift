@@ -7,6 +7,7 @@ struct ProfileEditorView: View {
   @State private var name: String
   @State private var username: String
   @State private var isChangingUsername = false
+  @State private var usernameCheck: UsernameCheck?
 
   let account: CurrentAccount
   let isRequiredSetup: Bool
@@ -77,10 +78,7 @@ struct ProfileEditorView: View {
         } header: {
           Text("Username", tableName: "Account", comment: "Profile username field label")
         } footer: {
-          Text(
-            "3-30 characters. Letters, numbers, and underscores only.",
-            tableName: "Account",
-            comment: "Username requirements below the profile field")
+          usernameHint
         }
       } else {
         Section {
@@ -184,9 +182,13 @@ struct ProfileEditorView: View {
 
       if let suggestion {
         username = suggestion
+        usernameCheck = UsernameCheck(username: normalizedUsername, status: .available)
       } else {
         isChangingUsername = true
       }
+    }
+    .task(id: normalizedUsername) {
+      await checkUsername()
     }
     .onChange(of: session.failure) {
       if session.failure == .usernameTaken {
@@ -212,6 +214,70 @@ struct ProfileEditorView: View {
 
   private var showsUsernameField: Bool {
     !isRequiredSetup || isChangingUsername
+  }
+
+  private var usernameStatus: UsernameStatus {
+    .of(
+      normalizedUsername, current: (account.user.username ?? "").lowercased(), check: usernameCheck)
+  }
+
+  @ViewBuilder
+  private var usernameHint: some View {
+    switch usernameStatus {
+    case .checking:
+      HStack(spacing: 6) {
+        ProgressView()
+          .controlSize(.mini)
+        Text("Checking…", tableName: "Account", comment: "While a typed username is being checked")
+      }
+    case .available:
+      Text(
+        "\(normalizedUsername) is available", tableName: "Account",
+        comment: "The typed username is free; the argument is the username"
+      )
+      .foregroundStyle(.success)
+    case .taken:
+      Text(
+        "\(normalizedUsername) is already taken", tableName: "Account",
+        comment: "Another account has the typed username; the argument is the username"
+      )
+      .foregroundStyle(.destructive)
+    case .idle:
+      usernameRules
+    case .invalid:
+      usernameRules
+        .foregroundStyle(.destructive)
+    }
+  }
+
+  private var usernameRules: Text {
+    Text(
+      "3-30 characters. Letters, numbers, and underscores only.",
+      tableName: "Account",
+      comment: "Username requirements below the profile field")
+  }
+
+  private func checkUsername() async {
+    let candidate = normalizedUsername
+
+    guard usernameStatus == .checking else {
+      return
+    }
+
+    do {
+      try await Task.sleep(for: .milliseconds(300))
+    } catch {
+      return
+    }
+
+    let isAvailable = await session.isUsernameAvailable(candidate)
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    let status: UsernameStatus = isAvailable.map { $0 ? .available : .taken } ?? .idle
+    usernameCheck = UsernameCheck(username: candidate, status: status)
   }
 
   private func save() {
@@ -240,14 +306,8 @@ struct ProfileEditorView: View {
   }
 
   private var isValid: Bool {
-    let allowedCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_")
-    let hasSupportedCharacters = normalizedUsername.unicodeScalars.allSatisfy {
-      allowedCharacters.contains($0)
-    }
-
-    return !normalizedName.isEmpty
-      && 3...30 ~= normalizedUsername.count
-      && hasSupportedCharacters
+    !normalizedName.isEmpty && UsernameStatus.isWellFormed(normalizedUsername)
+      && usernameStatus.canSave
   }
 }
 

@@ -41,6 +41,8 @@ protocol AccountAPIClient {
   func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount
   /// The account's username, or an available one made from its email; nil when none is free.
   func getUsernameSuggestion(token: String) async throws -> String?
+  /// Advisory: saving the profile can still find it taken.
+  func isUsernameAvailable(_ username: String) async throws -> Bool
 }
 
 extension AccountAPIClient {
@@ -254,6 +256,19 @@ struct AccountAPI {
       return try response.body.json.username
     case .unauthorized:
       throw AccountAPIError.unauthorized
+    default:
+      throw AccountAPIError.invalidResponse
+    }
+  }
+
+  func isUsernameAvailable(_ username: String) async throws -> Bool {
+    let output = try await perform { client in
+      try await client.getUsernameAvailability(path: .init(username: username))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json.isAvailable
     default:
       throw AccountAPIError.invalidResponse
     }

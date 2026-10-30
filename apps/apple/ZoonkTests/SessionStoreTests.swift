@@ -1320,6 +1320,10 @@ extension AccountAPIClient {
   func getUsernameSuggestion(token: String) async throws -> String? {
     throw AccountAPIError.invalidResponse
   }
+
+  func isUsernameAvailable(_ username: String) async throws -> Bool {
+    throw AccountAPIError.invalidResponse
+  }
 }
 
 @MainActor

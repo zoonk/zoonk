@@ -299,6 +299,11 @@ final class SessionStore {
     return try? await api.getUsernameSuggestion(token: authenticatedSession.bearerToken)
   }
 
+  /// Nil when the check didn't answer; saving decides then.
+  func isUsernameAvailable(_ username: String) async -> Bool? {
+    try? await api.isUsernameAvailable(username)
+  }
+
   func updateProfile(name: String, username: String) async -> Bool {
     guard let authenticatedSession else {
       state = .signedOut
