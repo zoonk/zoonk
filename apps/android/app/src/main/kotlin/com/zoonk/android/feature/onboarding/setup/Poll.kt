@@ -106,7 +106,8 @@ internal class PlanAnswer<T>(
  * a row ask once; [paused] stops asking again a plan whose run stopped. The first and last answers,
  * the ask out and a failed ask outlive the screen's recreation, as the choices they decide do. The
  * latest enabled [query] goes once the ask out comes back, whose answer still counts, so abandoned
- * ones are never sent; an ask unanswered for 45 seconds fails while it's still out.
+ * ones are never sent; an ask unanswered for 45 seconds fails while it's still out. [resources] must
+ * send one ask at a time themselves, since a setup left and opened again doesn't know what's out.
  */
 @Composable
 internal fun <Q : Any, T : Any> rememberPlanAnswer(

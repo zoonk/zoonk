@@ -385,6 +385,25 @@ class GoalSetupFlowTest {
     }
 
     @Test
+    fun daysChangedOnAReopenedSetupWaitForTheTimeSearchLeftOut() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { coverOf(recommended = 45) }
+        api.coverGate = CompletableDeferred()
+        show()
+
+        rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+        screen++
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.onNodeWithContentDescription("Thursday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+        api.coverGate?.complete(Unit)
+        rule.mainClock.advanceTimeBy(1_000)
+
+        assertEquals(1, api.coverMostAtOnce)
+    }
+
+    @Test
     fun aFirstTimeThatLandsAfterTheDaysChangedAndTheScreenIsRebuiltStillStartsIt() {
         api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
         api.cover = { input -> coverOf(recommended = if (input.studyDays.orEmpty().size == 5) 45 else null) }
