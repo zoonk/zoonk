@@ -8,7 +8,7 @@
   "pattern_just_typos": "fd48f9cffa7518679c34d5353eff4d1086068d73f4bcf7955b12bd7835a5a2b0",
   "pattern_keep_going": "4bd8b7f096823b8efd02414d9f858de099f553f67c60f76d4581929ca1df0c89",
   "pattern_noticed": "6b459af3c41efeb747ce267004beeb4279b907dd851e4d02d739e73b8115ae83",
-  "pattern_practice": "e100732844971c650d3353a3fa7bbe2acbc66a4fb14b6804f9adb2d267fad210",
+  "pattern_practice": "0f1f4632bef4543f8b35e2d841e03c94567117bea4ba38732a895001b11df64b",
   "pattern_quoted": "4dc0de4a5839552c2b5e23d354ea3a463208f95b847fd62da2d1dc2ad7e6f59f",
   "pattern_rule": "767d96689a01ddf44a903b7b9f0b451fd1b75869e70b0805a37a924b47ba886b",
   "pattern_see_how_you_did": "372e09b978d18970cb6182c8dc17fedbf8ae5e79d6181781a73b61418fdfc21e",
@@ -32,8 +32,8 @@
         <item quantity="many">Ha aparecido %d veces en tus respuestas recientes.</item>
         <item quantity="other">Ha aparecido %d veces en tus respuestas recientes.</item>
     </plurals>
-    <!-- Starts a short practice of the rule. %1$s is how long it takes, like "3 min". -->
-    <string name="pattern_practice">Practicar · %1$s</string>
+    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
+    <string name="pattern_practice">Practicar esta regla · %1$s</string>
     <!-- Heads the learner's other sentences that show the same mistake. -->
     <string name="pattern_also_came_up">También ha aparecido en</string>
     <!-- A sentence the learner said or wrote, in quotation marks. -->

@@ -9,8 +9,8 @@
         <item quantity="one">It came up once in your recent answers.</item>
         <item quantity="other">It came up %d times in your recent answers.</item>
     </plurals>
-    <!-- Starts a short practice of the rule. %1$s is how long it takes, like "3 min". -->
-    <string name="pattern_practice">Practice this · %1$s</string>
+    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
+    <string name="pattern_practice">Practice this · %1$s</string>
     <!-- Heads the learner's other sentences that show the same mistake. -->
     <string name="pattern_also_came_up">Also came up in</string>
     <!-- A sentence the learner said or wrote, in quotation marks. -->
