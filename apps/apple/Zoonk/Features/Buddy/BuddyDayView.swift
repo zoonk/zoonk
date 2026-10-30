@@ -25,24 +25,30 @@ struct BuddyDayView: View {
       energy
 
       if let today = status.today, !today.missions.isEmpty {
+        let earned = today.fullMeal.earned
+
         Section {
           MissionsSummary(
             missions: today.missions.compactMap(StudyMission.init), bonus: today.fullMeal.bonus,
-            earned: today.fullMeal.earned
+            earned: earned
           )
           .listRowSeparator(.hidden, edges: .bottom)
 
-          ForEach(Array(today.missions.enumerated()), id: \.offset) { _, mission in
-            if let row = StudyMission(mission) {
-              MissionRow(mission: row, buddyName: name) {
-                if let opens = mission.opens?.value1 {
-                  places.open(.mission(opens))
+          if !earned {
+            ForEach(Array(today.missions.enumerated()), id: \.offset) { _, mission in
+              if let row = StudyMission(mission) {
+                MissionRow(mission: row, buddyName: name) {
+                  if let opens = mission.opens?.value1 {
+                    places.open(.mission(opens))
+                  }
                 }
               }
             }
           }
         } header: {
-          Text("Today's missions", tableName: "Buddy", comment: "Section of the day's missions")
+          if !earned {
+            Text("Today's missions", tableName: "Buddy", comment: "Section of the day's missions")
+          }
         }
       }
 

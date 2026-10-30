@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Main's `MissionsCard` head, the same on Today and the buddy's day: the buddy ringed by today's
-/// missions, what's left and its time, the reward and the track, or the reward already earned.
 struct MissionsSummary: View {
   @Environment(LearnerSummaryStore.self) private var learner
 
