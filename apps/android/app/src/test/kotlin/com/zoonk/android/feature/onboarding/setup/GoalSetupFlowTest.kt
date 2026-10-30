@@ -12,6 +12,8 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -403,6 +405,14 @@ class GoalSetupFlowTest {
         rule.mainClock.advanceTimeBy(1_000)
 
         rule.onNodeWithContentDescription("Time a day, 50\u00A0min").assertIsDisplayed()
+        rule
+            .onNodeWithText("This goal gets 35\u00A0min a day and your other goal 15\u00A0min.", substring = true)
+            .performScrollTo()
+            .assertIsDisplayed()
+
+        rule.onNodeWithContentDescription("Time a day, 50\u00A0min").performClick()
+        rule.onAllNodesWithText("50\u00A0min").onLast().performClick()
+
         rule
             .onNodeWithText("This goal gets 35\u00A0min a day and your other goal 15\u00A0min.", substring = true)
             .performScrollTo()

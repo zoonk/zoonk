@@ -151,8 +151,8 @@ internal fun ColumnScope.ScheduleStep(
             ?.let { ShownDate(it, shownFound.targetDateNamedMonth) }
     val answers = listOf(covering.answer, covering.last, covering.first)
     val choose = { next: Int, followed: PlanTimeToCover? ->
+        pickedSplit = daySplit(next, timeChoices, answers) ?: pickedSplit.takeIf { next == picked }
         picked = pickedMinutes(first, followed, next)
-        pickedSplit = daySplit(next, timeChoices, answers)
     }
     val pick = { next: Int -> choose(next, shownFound) }
     val stale = hasDays && waitsForSuggestion(findFailed, first, found, picked)
