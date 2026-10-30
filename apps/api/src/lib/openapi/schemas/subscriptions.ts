@@ -40,3 +40,14 @@ export const freePlanResponseSchema = z
     description: "What the free plan includes, for pricing pages. Null means no cap.",
     id: "FreePlan",
   });
+
+export const stripeSubscriptionCancellationSchema = z
+  .object({
+    url: z
+      .url()
+      .meta({
+        description:
+          "Stripe's page that cancels the subscription; open it in a browser. Plus stays until the paid period ends, and Stripe returns to main's subscription page",
+      }),
+  })
+  .meta({ id: "StripeSubscriptionCancellation" });

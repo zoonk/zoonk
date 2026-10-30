@@ -1,3 +1,4 @@
+import SafariServices
 import StoreKit
 import SwiftUI
 
@@ -388,7 +389,21 @@ struct PlusBenefits: View {
 /// Main's current plan for a subscription Zoonk manages: the stores' own are managed in the
 /// stores.
 struct PlusStatusView: View {
-  let subscription: AccountSubscription
+  @Environment(SessionStore.self) private var session
+  @State private var cancellationURL: URL?
+  @State private var cancellationFailed = false
+  @State private var opening: Task<Void, Never>?
+
+  /// As it was when the screen opened, until the account says otherwise.
+  let opened: AccountSubscription
+
+  init(subscription: AccountSubscription) {
+    opened = subscription
+  }
+
+  private var subscription: AccountSubscription {
+    session.account?.account.subscription ?? opened
+  }
 
   var body: some View {
     List {
@@ -424,20 +439,72 @@ struct PlusStatusView: View {
           comment: "What Zoonk Plus includes, in one line")
       }
 
-      Section {
-        Link(destination: AccountLinks.support) {
-          Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
+      if subscription.provider == "stripe" {
+        if subscription.cancelAt == nil {
+          Section {
+            Button {
+              opening = Task { await openCancellation() }
+            } label: {
+              Text(
+                "Cancel subscription", tableName: "Account",
+                comment: "Opens the page that cancels Plus bought on the web")
+            }
+            .disabled(opening != nil)
+          } footer: {
+            if cancellationFailed {
+              Text(
+                "Unable to manage your subscription. Contact us at hello@zoonk.com",
+                tableName: "Account", comment: "Opening the web subscription's cancellation failed"
+              )
+              .foregroundStyle(.destructive)
+            }
+          }
         }
-      } footer: {
-        Text(
-          "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
-          tableName: "Account", comment: "Where a subscription Zoonk manages is changed")
+      } else {
+        Section {
+          Link(destination: AccountLinks.support) {
+            Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
+          }
+        } footer: {
+          Text(
+            "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
+            tableName: "Account", comment: "Where a subscription Zoonk manages is changed")
+        }
+      }
+    }
+    .onDisappear {
+      opening?.cancel()
+      opening = nil
+    }
+    .sheet(
+      isPresented: Binding(
+        get: { cancellationURL != nil }, set: { if !$0 { cancellationURL = nil } }),
+      onDismiss: {
+        Task { await session.reconcileSynchronizedCredential() }
+      }
+    ) {
+      if let cancellationURL {
+        SafariView(url: cancellationURL)
+          .ignoresSafeArea()
       }
     }
     .navigationTitle(
       Text("Subscription", tableName: "Account", comment: "Account option for subscription")
     )
     .toolbarTitleDisplayMode(.inline)
+  }
+
+  private func openCancellation() async {
+    cancellationFailed = false
+    let url = await session.webPlusCancellationURL()
+    opening = nil
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    cancellationURL = url
+    cancellationFailed = url == nil
   }
 
   private var dateLine: Text? {
@@ -667,4 +734,15 @@ private struct PlusQuestions: View {
     }
     .foregroundStyle(.secondary)
   }
+}
+
+/// Stripe's pages open in Safari's in-app browser, which the learner closes when done.
+private struct SafariView: UIViewControllerRepresentable {
+  let url: URL
+
+  func makeUIViewController(context: Context) -> SFSafariViewController {
+    SFSafariViewController(url: url)
+  }
+
+  func updateUIViewController(_ controller: SFSafariViewController, context: Context) {}
 }

@@ -12453,6 +12453,66 @@
         }
       }
     },
+    "/me/subscriptions/stripe/cancellation": {
+      "post": {
+        "description": "For Plus bought on the web: the page where the learner confirms canceling it. Store subscriptions are canceled in their store.",
+        "operationId": "createStripeSubscriptionCancellation",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Start canceling a web subscription",
+        "tags": [
+          "Subscriptions"
+        ],
+        "responses": {
+          "200": {
+            "description": "Stripe's cancellation page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StripeSubscriptionCancellation"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No active web subscription to cancel",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/subscriptions/apple/notifications": {
       "post": {
         "operationId": "createAppleSubscriptionNotification",
@@ -72902,6 +72962,20 @@
         "required": [
           "currentAccount",
           "isActive"
+        ],
+        "additionalProperties": false
+      },
+      "StripeSubscriptionCancellation": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Stripe's page that cancels the subscription; open it in a browser. Plus stays until the paid period ends, and Stripe returns to main's subscription page"
+          }
+        },
+        "required": [
+          "url"
         ],
         "additionalProperties": false
       },

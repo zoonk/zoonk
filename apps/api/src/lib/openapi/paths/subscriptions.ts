@@ -10,9 +10,14 @@ import {
   badRequestResponse,
   conflictResponse,
   internalErrorResponse,
+  notFoundResponse,
   unauthorizedResponse,
 } from "../schemas/responses";
-import { freePlanResponseSchema, storeSubscriptionResponseSchema } from "../schemas/subscriptions";
+import {
+  freePlanResponseSchema,
+  storeSubscriptionResponseSchema,
+  stripeSubscriptionCancellationSchema,
+} from "../schemas/subscriptions";
 import { AUTHENTICATED_SECURITY, PUBLIC_SECURITY } from "../security";
 
 export const subscriptionPaths = {
@@ -72,6 +77,25 @@ export const subscriptionPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Reconcile a Google Play subscription",
+      tags: ["Subscriptions"],
+    },
+  },
+  "/me/subscriptions/stripe/cancellation": {
+    post: {
+      description:
+        "For Plus bought on the web: the page where the learner confirms canceling it. Store subscriptions are canceled in their store.",
+      operationId: "createStripeSubscriptionCancellation",
+      responses: {
+        "200": {
+          content: { "application/json": { schema: stripeSubscriptionCancellationSchema } },
+          description: "Stripe's cancellation page",
+        },
+        "401": unauthorizedResponse,
+        "404": { ...notFoundResponse, description: "No active web subscription to cancel" },
+        "500": internalErrorResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Start canceling a web subscription",
       tags: ["Subscriptions"],
     },
   },

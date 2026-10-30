@@ -72,6 +72,7 @@ filter:
     - createSpokenAnswer
     - createStepAnswerExplanation
     - createStepCheck
+    - createStripeSubscriptionCancellation
     - createStudyAnswer
     - createStudyBlockCompletion
     - createStudyBlockStart

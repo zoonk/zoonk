@@ -540,6 +540,7 @@
     "./subscriptions/google-play-notification": "./src/subscriptions/process-google-play-notification.ts",
     "./subscriptions/google-play-renewal": "./src/subscriptions/check-google-play-renewal.ts",
     "./subscriptions/google-play-sync": "./src/subscriptions/sync-google-play-subscription.ts",
+    "./subscriptions/web-plus-cancellation": "./src/subscriptions/web-plus-cancellation.ts",
     "./users/current": "./src/users/current-user.ts",
     "./users/delete-current": "./src/users/delete-current-user.ts",
     "./users/export": "./src/users/export-current-user-data.ts",

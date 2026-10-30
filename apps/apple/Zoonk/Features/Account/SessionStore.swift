@@ -304,6 +304,24 @@ final class SessionStore {
     try? await api.isUsernameAvailable(username)
   }
 
+  /// Nil when it didn't load, there's no web subscription to cancel, or the session ended
+  /// meanwhile; an unauthorized answer signs that session out.
+  func webPlusCancellationURL() async -> URL? {
+    guard let authenticatedSession else {
+      return nil
+    }
+
+    do {
+      let url = try await api.webPlusCancellationURL(token: authenticatedSession.bearerToken)
+      return self.authenticatedSession == authenticatedSession ? url : nil
+    } catch AccountAPIError.unauthorized {
+      await expire(authenticatedSession)
+      return nil
+    } catch {
+      return nil
+    }
+  }
+
   func updateProfile(name: String, username: String) async -> Bool {
     guard let authenticatedSession else {
       state = .signedOut

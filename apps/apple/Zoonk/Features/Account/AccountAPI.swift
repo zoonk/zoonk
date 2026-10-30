@@ -43,6 +43,8 @@ protocol AccountAPIClient {
   func getUsernameSuggestion(token: String) async throws -> String?
   /// Advisory: saving the profile can still find it taken.
   func isUsernameAvailable(_ username: String) async throws -> Bool
+  /// Stripe's page that cancels Plus bought on the web.
+  func webPlusCancellationURL(token: String) async throws -> URL
 }
 
 extension AccountAPIClient {
@@ -269,6 +271,25 @@ struct AccountAPI {
     switch output {
     case .ok(let response):
       return try response.body.json.isAvailable
+    default:
+      throw AccountAPIError.invalidResponse
+    }
+  }
+
+  func webPlusCancellationURL(token: String) async throws -> URL {
+    let output = try await perform(token: token) { client in
+      try await client.createStripeSubscriptionCancellation()
+    }
+
+    switch output {
+    case .ok(let response):
+      guard let url = URL(string: try response.body.json.url) else {
+        throw AccountAPIError.invalidResponse
+      }
+
+      return url
+    case .unauthorized:
+      throw AccountAPIError.unauthorized
     default:
       throw AccountAPIError.invalidResponse
     }
