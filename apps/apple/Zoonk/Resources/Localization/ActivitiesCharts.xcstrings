@@ -4581,7 +4581,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine bestimmte Anzahl von Malen wiederholen"
+            "value" : "Bestimmte Anzahl an Wiederholungen"
           }
         },
         "es" : {
@@ -6218,7 +6218,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sucesos hipotéticos"
+            "value" : "Situaciones hipotéticas"
           }
         },
         "fr" : {

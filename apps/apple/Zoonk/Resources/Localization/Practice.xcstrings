@@ -3462,7 +3462,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Apareceu # vez nas suas respostas recentes."
+                  "value" : "Apareceu %lld vez nas suas respostas recentes."
                 }
               },
               "other" : {

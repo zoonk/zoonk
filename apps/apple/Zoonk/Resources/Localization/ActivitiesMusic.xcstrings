@@ -369,10 +369,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld compasso"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Compassos: %lld"
+                  "value" : "%lld compassos"
                 }
               }
             }
@@ -582,10 +588,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld nota"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Notas: %lld"
+                  "value" : "%lld notas"
                 }
               }
             }
@@ -706,10 +718,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld repetição"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Repetições: %lld"
+                  "value" : "%lld repetições"
                 }
               }
             }

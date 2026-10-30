@@ -6558,7 +6558,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Würde am %1$@ statt am %2$@ enden."
+            "value" : "Endet am %1$@ statt am %2$@."
           }
         },
         "en" : {
@@ -6570,7 +6570,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminaría el %1$@ en vez del %2$@."
+            "value" : "Termina el %1$@ en lugar del %2$@."
           }
         },
         "fr" : {
@@ -6593,7 +6593,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Würde etwa am %1$@ statt am %2$@ enden."
+            "value" : "Endet etwa am %1$@ statt am %2$@."
           }
         },
         "en" : {
@@ -6605,7 +6605,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminaría sobre el %1$@ en vez del %2$@."
+            "value" : "Termina alrededor del %1$@ en lugar del %2$@."
           }
         },
         "fr" : {
@@ -8103,7 +8103,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aulas que ficam de fora: %#@lessons@, como %2$@."
+            "value" : "Deixa %#@lessons@ de fora, como %2$@."
           },
           "substitutions" : {
             "lessons" : {
@@ -8111,10 +8111,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg aula"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg"
+                      "value" : "%arg aulas"
                     }
                   }
                 }
@@ -8347,10 +8353,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Deixa %lld aula de fora."
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Aulas que ficam de fora: %lld."
+                  "value" : "Deixa %lld aulas de fora."
                 }
               }
             }

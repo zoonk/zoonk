@@ -3537,7 +3537,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seus dados do Zoonk foram excluídos, mas Apple não conseguiu confirmar a remoção da autorização. Remova o Zoonk de Iniciar sessão com Apple para concluir."
+            "value" : "Seus dados do Zoonk foram excluídos, mas Apple não conseguiu confirmar que a autorização foi removida. Remova o Zoonk de Iniciar sessão com a Apple para concluir."
           }
         }
       }
@@ -3548,7 +3548,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk hat deine App Store-Käufe geprüft, aber keiner davon schaltet derzeit Plus frei."
+            "value" : "Zoonk hat deine App Store-Käufe geprüft, aber keiner davon schaltet aktuell Plus frei."
           }
         },
         "es" : {

@@ -5228,7 +5228,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "S’entraîner : %@"
+            "value" : "S’entraîner en %@"
           }
         },
         "pt" : {

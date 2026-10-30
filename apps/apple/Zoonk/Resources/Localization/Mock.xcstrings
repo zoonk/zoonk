@@ -5712,13 +5712,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Fragen zu # Fach mit der höchsten Gewichtung. In den ersten Tagen kommen die übrigen dran."
+                  "value" : "# Fach mit der höchsten Gewichtung. In deinen ersten Tagen kommen die übrigen dran."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Fragen zu %lld Fächern mit der höchsten Gewichtung. In den ersten Tagen kommen die übrigen dran."
+                  "value" : "%lld Fächer mit der höchsten Gewichtung. In deinen ersten Tagen kommen die übrigen dran."
                 }
               }
             }
