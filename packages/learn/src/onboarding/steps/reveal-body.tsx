@@ -3,6 +3,7 @@
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -33,7 +34,7 @@ import { RevealNoticeDay } from "./reveal-notice-day";
 
 /**
  * Today is prefetched only once the learner reaches for it, when the plan is final: opening it
- * builds the day once.
+ * builds the day once. A Today still on its way shows on the button, not as a tap that did nothing.
  */
 function StartButton({ href }: { href: string }) {
   const t = useExtracted();
@@ -45,13 +46,20 @@ function StartButton({ href }: { href: string }) {
     <span className="contents" onFocus={reach} onPointerDown={reach} onPointerEnter={reach}>
       <LearnLink
         aria-keyshortcuts="Enter"
-        className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
+        className={cn(DETAIL_PRIMARY_CLASS, "group/start font-[560]")}
         href={href}
         prefetch={reached}
         ref={ref}
       >
         {t("Start")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+        <ShortcutKbd className="group-has-data-link-pending/start:hidden" tone="inverse">
+          ⏎
+        </ShortcutKbd>
+        <Spinner
+          aria-hidden="true"
+          className="hidden group-has-data-link-pending/start:block"
+          data-icon="inline-end"
+        />
       </LearnLink>
     </span>
   );
