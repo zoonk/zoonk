@@ -7,22 +7,8 @@ struct AllCoursesView: View {
   @State private var leadingPageMargin: CGFloat?
 
   @Binding var category: CourseCategory?
-  let searchText: String
 
   var body: some View {
-    Group {
-      if let results = catalog.search(query: searchText) {
-        CourseCatalogSearchResultsView(query: searchText, results: results)
-      } else {
-        browseCatalog
-      }
-    }
-    .task(id: searchText) {
-      await updateSearchResults()
-    }
-  }
-
-  private var browseCatalog: some View {
     List {
       GoalStartEntry(isBoxOnly: true)
         .listSectionMargins(.trailing, leadingPageMargin)
@@ -51,19 +37,6 @@ struct AllCoursesView: View {
     .loads(catalog.courses(category: category), catalog.categoryCounts)
   }
 
-  private func updateSearchResults() async {
-    guard let results = catalog.search(query: searchText) else {
-      return
-    }
-
-    do {
-      try await Task.sleep(for: .milliseconds(250))
-    } catch {
-      return
-    }
-
-    await results.load()
-  }
 }
 
 /// An empty category would only lead to "Start a goal", which the box above already offers. The

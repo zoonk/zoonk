@@ -2525,35 +2525,6 @@
         }
       }
     },
-    "Chapters" : {
-      "comment" : "Heading above matching chapter search results.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kapitel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Capítulos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chapitres"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Capítulos"
-          }
-        }
-      }
-    },
     "Check your connection and try again." : {
       "comment" : "Recovery guidance for an offline catalog request.",
       "localizations" : {
@@ -2840,35 +2811,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Curso indisponível"
-          }
-        }
-      }
-    },
-    "Courses" : {
-      "comment" : "Heading above matching course search results.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kurse"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cursos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cursos"
           }
         }
       }
@@ -4221,64 +4163,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ciências"
-          }
-        }
-      }
-    },
-    "Search all courses" : {
-      "comment" : "Searches the public catalog, including chapters.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle Kurse durchsuchen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar en todos los cursos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rechercher dans tous les cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar em todos os cursos"
-          }
-        }
-      }
-    },
-    "Searching the catalog" : {
-      "comment" : "Accessibility status while catalog search results load.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Katalog wird durchsucht"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscando en el catálogo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recherche dans le catalogue en cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscando no catálogo"
           }
         }
       }
