@@ -97,6 +97,7 @@ export function usePlanAnswer<Answer extends { ready: boolean }>({
         last: next,
       }));
     },
+    timeoutMs: Infinity,
   });
 
   return {

@@ -75,7 +75,7 @@ function PlanWait({
   goal: GoalView;
   run: GenerationRun | null;
 }) {
-  if (gate.last?.readingNotice) {
+  if (gate.last?.readingNotice && gate.status !== "failed" && !isRunStopped(run)) {
     return <NoticeReading document={getExamDocument(goal)} lastNotice={false} />;
   }
 
