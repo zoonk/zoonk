@@ -221,7 +221,11 @@ class KeyboardFretboardFlowTest {
     private fun pickFret(
         position: String,
         string: String,
-    ) = fret(position, string).performScrollTo().performClick()
+    ) {
+        // performScrollTo scrolls only the closest scrolling parent, the neck, so the lesson is scrolled to the neck first.
+        rule.onNodeWithContentDescription("Guitar strings").performScrollTo()
+        fret(position, string).performScrollTo().performClick()
+    }
 
     private val guitarChord =
         activityStep(
