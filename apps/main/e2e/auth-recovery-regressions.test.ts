@@ -2,6 +2,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser, generateOneTimeToken } from "@zoonk/e2e/fixtures/users";
 import { mockCentralAuthTransport, mockCentralSignOut } from "./auth-transport";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 import { createStudyDay } from "./study-day";
 
 test("signing in with a real token lands a learner on an interactive Today", async ({
@@ -41,7 +42,9 @@ test("logout ends the app session and signs out centrally before login can reope
 
   try {
     await page.goto("/settings");
-    await page.getByRole("button", { name: /User menu$/u }).click();
+    const userMenu = page.getByRole("button", { name: /User menu$/u });
+    await expectHydrated(userMenu);
+    await userMenu.click();
     await page.getByRole("menuitem", { exact: true, name: "Log out" }).click();
     await expect(page).toHaveURL(new URL("/", baseURL).href);
     expect(centralSignOut).toEqual(["POST"]);
