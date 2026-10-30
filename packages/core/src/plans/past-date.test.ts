@@ -220,3 +220,43 @@ describe("a plan whose date came with lessons left", () => {
     expect(view?.end).toStrictEqual({ kind: "finished" });
   });
 });
+
+describe("a plan made after its date", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(DAY_AFTER);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("shows no phase as done, since nothing was studied", async () => {
+    const user = await userFixture();
+
+    const library = await planLibraryFixture({
+      phases: ["Basics", "Core"],
+      skills: [
+        { area: "Atoms", lessons: 6, phase: 0 },
+        { area: "Light", lessons: 6, phase: 1 },
+      ],
+    });
+
+    const { goal } = await unplannedGoalFixture({
+      dailyMinutes: 30,
+      details: { placementDeclined: true },
+      kind: "learn",
+      settings: { startDate: "2020-10-20" },
+      targetDate: DATE,
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    mockSession(user.id);
+
+    const view = await readPlan();
+
+    expect(view?.phases.map((phase) => phase.state)).not.toContain("done");
+  });
+});

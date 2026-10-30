@@ -124,7 +124,8 @@ export function getPhaseStates({
       : inPhase.filter((item) => item.kind !== "boss");
 
     const leftOut = phaseChallengesRequired && phase.challengeLeftOut === true;
+    const finished = !leftOut && inPhase.length > 0 && isPhaseFinished(required);
 
-    return getProgressState({ current, finished: !leftOut && isPhaseFinished(required), index });
+    return getProgressState({ current, finished, index });
   });
 }
