@@ -321,13 +321,10 @@ private struct ExamHero: View {
 
     let times = Set(exam.days.map(\.startTime))
     let shared = times.count == 1 ? exam.days.first?.startTime : nil
-    // The Plan's date rule: the year shows beyond the next twelve months.
-    let farOff = Calendar.current.date(byAdding: .year, value: 1, to: .now) ?? .now
     let days = dates.map { day, date in
       var style = Date.FormatStyle.studyDay.month(.abbreviated).day()
       if dates.count == 1 { style = style.weekday(.abbreviated) }
-      if date > farOff { style = style.year() }
-      let text = date.formatted(style)
+      let text = date.formatted(withFarOffYear(style, for: date))
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
       return time.map { "\(text) · \($0)" } ?? text
     }
@@ -832,7 +829,9 @@ private struct ExamFormatSection: View {
       }
 
       if let date {
-        Text(date.formatted(.studyDay.weekday(.abbreviated).month(.abbreviated).day()))
+        Text(
+          date.formatted(
+            withFarOffYear(.studyDay.weekday(.abbreviated).month(.abbreviated).day(), for: date)))
       } else {
         Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
       }
@@ -852,6 +851,12 @@ private struct ExamFormatSection: View {
       "\(names) · \(count)", tableName: "Exam",
       comment: "An exam day's parts, then how many questions they have")
   }
+}
+
+/// The Plan's date rule: the year shows beyond the next twelve months.
+private func withFarOffYear(_ style: Date.FormatStyle, for date: Date) -> Date.FormatStyle {
+  let farOff = Calendar.current.date(byAdding: .year, value: 1, to: .now) ?? .now
+  return date > farOff ? style.year() : style
 }
 
 private struct ExamMapSection: View {
