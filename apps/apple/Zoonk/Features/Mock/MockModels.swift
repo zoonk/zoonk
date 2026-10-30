@@ -192,6 +192,17 @@ struct MockResult: Hashable, Decodable, Sendable {
   var topics: [Topic]
   var total: Int
   var unansweredAtTimeout: Int
+
+  /// Since the learner's previous mock; nil when it rounds to zero. A half rounds up, as main's
+  /// `Math.round` does.
+  var change: Int? {
+    guard let current = irt?.score ?? net?.net, let previous else {
+      return nil
+    }
+
+    let change = Int((current - previous + 0.5).rounded(.down))
+    return change == 0 ? nil : change
+  }
 }
 
 struct NetCalibration: Hashable, Decodable, Sendable {

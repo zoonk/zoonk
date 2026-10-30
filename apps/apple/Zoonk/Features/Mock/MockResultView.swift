@@ -280,13 +280,9 @@ private struct MockScoreSections: View {
   }
 
   private var delta: (text: String, up: Bool)? {
-    guard let current = result.irt?.score ?? result.net?.net, let previous = result.previous,
-      current != previous
-    else {
+    guard let change = result.change else {
       return nil
     }
-
-    let change = Int((current - previous).rounded())
 
     return change > 0
       ? (
