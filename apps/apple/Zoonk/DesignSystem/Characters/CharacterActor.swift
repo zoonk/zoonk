@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit.UIGestureRecognizerSubclass
 
 protocol CharacterArt {
   associatedtype Expression: Hashable & Sendable
@@ -174,8 +175,9 @@ private struct LandsActsOnInput: ViewModifier {
   }
 }
 
-/// A SwiftUI tap gesture here would cancel the touch a list row needs to open, so a tap only
-/// listens, as main's capture-phase click listener does.
+/// Hears each tap without taking part in it, as main's capture-phase click listener does: a SwiftUI
+/// tap gesture here cancels the touch a list row needs, and a tap recognizer that recognizes keeps
+/// the iPad sidebar from moving between its Study places.
 private struct PassingTap: UIGestureRecognizerRepresentable {
   let action: () -> Void
 
@@ -183,24 +185,51 @@ private struct PassingTap: UIGestureRecognizerRepresentable {
     PassingTapRecognizer()
   }
 
-  func handleUIGestureRecognizerAction(_ recognizer: PassingTapRecognizer, context: Context) {
-    if recognizer.state == .ended {
-      action()
-    }
+  func updateUIGestureRecognizer(_ recognizer: PassingTapRecognizer, context: Context) {
+    recognizer.action = action
   }
 }
 
-private final class PassingTapRecognizer: UITapGestureRecognizer {
+/// Fails as its touch ends, so it never recognizes. A touch that moves is a scroll or a drag, not a
+/// click, so it lands nothing.
+private final class PassingTapRecognizer: UIGestureRecognizer {
+  var action: () -> Void = {}
+  private var start: CGPoint?
+
   init() {
     super.init(target: nil, action: nil)
-    cancelsTouchesInView = false
     delaysTouchesEnded = false
   }
 
-  override func canPrevent(_ preventedGestureRecognizer: UIGestureRecognizer) -> Bool {
-    false
+  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
+    start = touches.first?.location(in: nil)
   }
 
+  override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
+    guard let start, let point = touches.first?.location(in: nil) else {
+      return
+    }
+
+    if hypot(point.x - start.x, point.y - start.y) > 10 {
+      state = .failed
+    }
+  }
+
+  override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
+    action()
+    state = .failed
+  }
+
+  override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent) {
+    state = .failed
+  }
+
+  override func reset() {
+    super.reset()
+    start = nil
+  }
+
+  /// A button's gesture would otherwise fail it before the touch ends.
   override func canBePrevented(by preventingGestureRecognizer: UIGestureRecognizer) -> Bool {
     false
   }

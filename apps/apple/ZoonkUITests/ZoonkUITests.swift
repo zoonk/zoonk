@@ -416,6 +416,21 @@ final class ZoonkUITests: XCTestCase {
           "Expected Study to open the mistakes notebook")
       }
 
+      // A sidebar lists them, and one opens from another.
+      let sidebarPlaces = app.collectionViews.cells
+      let firstPlace = sidebarPlaces.matching(
+        NSPredicate(format: "label BEGINSWITH %@", "Mistakes notebook")
+      ).firstMatch
+      if firstPlace.exists, firstPlace.isHittable {
+        for place in ["Mistakes notebook", "Statistics"] {
+          sidebarPlaces.matching(NSPredicate(format: "label BEGINSWITH %@", place)).firstMatch
+            .tap()
+          XCTAssertTrue(
+            app.navigationBars[place].firstMatch.waitForExistence(timeout: 5),
+            "Expected the sidebar to open \(place)")
+        }
+      }
+
       app.primaryNavigationItem("Today").tap()
       openStatistics(in: app)
       XCTAssertTrue(
