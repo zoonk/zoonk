@@ -553,7 +553,16 @@ class OnboardingScreenshots {
         ) {
             val store = rememberStore(api)
             SetupColumn {
-                PlanRevealStep(examGoal(), isGuest, libraryCourse = null, run, onRetryRun = {}, store, rememberAppNavigator())
+                PlanRevealStep(
+                    examGoal(),
+                    isGuest,
+                    libraryCourse = null,
+                    run,
+                    onRetryRun = {},
+                    store,
+                    rememberAppNavigator(),
+                    AppRoute.GoalSetup(GOAL_ID),
+                )
             }
         }
 

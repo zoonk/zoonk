@@ -30,6 +30,7 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.StepState
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
+import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.examGoal
 import com.zoonk.android.feature.onboarding.feasibilityOf
@@ -90,7 +91,7 @@ class PlanRevealStepFlowTest {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    PlanRevealStep(goal, isGuest, libraryCourse, run(), onRetryRun = null, store, navigator, prepareToday)
+                    PlanRevealStep(goal, isGuest, libraryCourse, run(), onRetryRun = null, store, navigator, SETUP, prepareToday)
                 }
             }
         }
@@ -107,6 +108,7 @@ class PlanRevealStepFlowTest {
         rule.onNodeWithText("Final stretch").performScrollTo().assertIsDisplayed()
 
         navigator.select(AppTab.Plan)
+        navigator.open(SETUP)
         rule.onNodeWithText("Start").performScrollTo().performClick()
         rule.mainClock.advanceTimeByFrame()
 
@@ -157,6 +159,7 @@ class PlanRevealStepFlowTest {
         val today = CompletableDeferred<Unit>()
         show(prepareToday = { today.await() })
         navigator.select(AppTab.Plan)
+        navigator.open(SETUP)
 
         rule.onNodeWithText("Start").performScrollTo().performClick()
         rule.mainClock.advanceTimeBy(500)
@@ -176,6 +179,7 @@ class PlanRevealStepFlowTest {
         val restoration = StateRestorationTester(rule)
         show(prepareToday = { today.await() }, restoration = restoration)
         navigator.select(AppTab.Plan)
+        navigator.open(SETUP)
 
         rule.onNodeWithText("Start").performScrollTo().performClick()
         rule.mainClock.advanceTimeBy(100)
@@ -191,10 +195,9 @@ class PlanRevealStepFlowTest {
         val today = CompletableDeferred<Unit>()
         show(prepareToday = { today.await() })
         navigator.select(AppTab.Plan)
-        navigator.open(AppRoute.CatalogCourse("course"))
+        navigator.open(SETUP)
 
         rule.onNodeWithText("Start").performScrollTo().performClick()
-        rule.mainClock.advanceTimeByFrame()
         navigator.back()
         today.complete(Unit)
         rule.waitForIdle()
@@ -206,6 +209,7 @@ class PlanRevealStepFlowTest {
     fun adjustingWhileTodayLoadsKeepsTheLearnerWhereTheyWent() {
         val today = CompletableDeferred<Unit>()
         show(prepareToday = { today.await() })
+        navigator.open(SETUP)
 
         rule.onNodeWithText("Start").performScrollTo().performClick()
         rule.onNodeWithText("Adjust").performScrollTo().performClick()
@@ -316,6 +320,7 @@ class PlanRevealStepFlowTest {
 
     private companion object {
         const val POLL_MILLIS = 3_500L
+        val SETUP = AppRoute.GoalSetup(GOAL_ID)
         const val LIBRARY_COURSE = "44444444-4444-4444-8444-444444444444"
     }
 }

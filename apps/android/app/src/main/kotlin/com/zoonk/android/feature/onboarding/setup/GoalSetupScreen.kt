@@ -174,7 +174,7 @@ fun GoalSetupScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
-                        step?.let { SetupStep(it, shown.value, vm, store, isGuest, navigator, asideBeside, prepareToday) }
+                        step?.let { SetupStep(it, shown.value, vm, store, isGuest, navigator, route, asideBeside, prepareToday) }
                     }
                 }
 
@@ -196,6 +196,7 @@ private fun ColumnScope.SetupStep(
     store: OnboardingStore,
     isGuest: Boolean,
     navigator: AppNavigator,
+    route: AppRoute.GoalSetup,
     asideBeside: Boolean,
     prepareToday: suspend () -> Unit,
 ) {
@@ -207,7 +208,7 @@ private fun ColumnScope.SetupStep(
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 
     CompositionLocalProvider(LocalPlanStart provides planStart) {
-        QuestionStep(step, view, vm, store, isGuest, navigator, subject, pending, run, onRetryRun, asideBeside, prepareToday)
+        QuestionStep(step, view, vm, store, isGuest, navigator, route, subject, pending, run, onRetryRun, asideBeside, prepareToday)
     }
 }
 
@@ -219,6 +220,7 @@ private fun ColumnScope.QuestionStep(
     store: OnboardingStore,
     isGuest: Boolean,
     navigator: AppNavigator,
+    route: AppRoute.GoalSetup,
     subject: String,
     pending: Boolean,
     run: GenerationRun,
@@ -341,7 +343,7 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.PLAN -> {
-            PlanRevealStep(view.goal, isGuest, view.libraryCourse, run, onRetryRun, store, navigator, prepareToday)
+            PlanRevealStep(view.goal, isGuest, view.libraryCourse, run, onRetryRun, store, navigator, route, prepareToday)
         }
     }
 }

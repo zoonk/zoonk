@@ -99,6 +99,7 @@ internal fun ColumnScope.PlanRevealStep(
     onRetryRun: (() -> Unit)?,
     store: OnboardingStore,
     navigator: AppNavigator,
+    here: AppRoute,
     prepareToday: suspend () -> Unit = {},
 ) {
     val goalId = goal.id.toString()
@@ -113,7 +114,6 @@ internal fun ColumnScope.PlanRevealStep(
     var starting by remember { mutableStateOf(false) }
     LaunchedEffect(opening) {
         if (!opening) return@LaunchedEffect
-        val from = navigator.currentRoute
         val progress =
             launch {
                 delay(TODAY_PROGRESS_DELAY)
@@ -126,7 +126,7 @@ internal fun ColumnScope.PlanRevealStep(
             starting = false
         }
         opening = false
-        if (navigator.currentRoute == from) {
+        if (navigator.currentRoute == here) {
             navigator.closeSection()
             navigator.open(AppRoute.Today)
         }
