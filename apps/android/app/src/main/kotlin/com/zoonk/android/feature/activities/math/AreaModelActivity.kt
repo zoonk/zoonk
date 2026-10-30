@@ -155,9 +155,19 @@ private fun AreaGrid(
                         val room = Size(cell.width - CELL_PADDING.toPx() * 2, cell.height - CELL_PADDING.toPx() * 2)
                         cellStyles
                             .drop(cellStyleIndex(minOf(cell.width, cell.height)))
-                            .map { measurer.measure(format(columnPart * rowPart), it.withTabularFigures().copy(fontWeight = FontWeight.SemiBold, color = ink)) }
-                            .firstOrNull { it.size.width <= room.width && it.size.height <= room.height }
-                            ?.let { drawText(it, topLeft = corner + Offset((cell.width - it.size.width) / 2, (cell.height - it.size.height) / 2)) }
+                            .map {
+                                measurer.measure(
+                                    format(columnPart * rowPart),
+                                    it.withTabularFigures().copy(fontWeight = FontWeight.SemiBold, color = ink),
+                                )
+                            }.firstOrNull { it.size.width <= room.width && it.size.height <= room.height }
+                            ?.let {
+                                drawText(
+                                    it,
+                                    topLeft =
+                                        corner + Offset((cell.width - it.size.width) / 2, (cell.height - it.size.height) / 2),
+                                )
+                            }
                     }
                 }
                 widths.forEachIndexed { index, part ->

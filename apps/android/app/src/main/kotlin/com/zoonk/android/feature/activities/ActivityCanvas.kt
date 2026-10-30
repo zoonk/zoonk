@@ -75,7 +75,10 @@ fun ActivityCanvas(
 
 /** The canvas's color on the screen, for what has to blend into it, like a label's halo. */
 @Composable
-fun activityCanvasColor(): Color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = CANVAS_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
+fun activityCanvasColor(): Color =
+    MaterialTheme.colorScheme.surfaceContainerHigh
+        .copy(alpha = CANVAS_ALPHA)
+        .compositeOver(MaterialTheme.colorScheme.surface)
 
 /** Main's canvas header: its labels, then the live readout beside them, or under them when they need the room. */
 @Composable

@@ -189,7 +189,6 @@ private fun Modifier.inPlot(bounds: Rect) =
 
 private fun Offset.along(orientation: PlaceOrientation): Float = if (orientation == PlaceOrientation.Horizontal) x else y
 
-/** TalkBack's adjust actions move one [SnapRange.step] at a time. */
 /** Main's focus ring: around the knob in its own shape, a round dot or a pill. */
 private fun DrawScope.drawFocusRing(color: Color) {
     val gap = FOCUS_GAP.toPx()
@@ -202,6 +201,7 @@ private fun DrawScope.drawFocusRing(color: Color) {
     )
 }
 
+/** TalkBack's adjust actions move one [SnapRange.step] at a time. */
 private fun rangeInfo(
     value: Double,
     range: SnapRange,

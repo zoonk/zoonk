@@ -95,7 +95,9 @@ internal fun spacedTicks(
 ): List<Int> {
     if (centers.isEmpty()) return emptyList()
     val clear = { kept: Int, next: Int -> abs(centers[kept] - centers[next]) >= halfWidths[kept] + halfWidths[next] + gap }
-    val outward = { side: IntProgression -> side.fold(listOf(anchor)) { kept, next -> if (clear(kept.last(), next)) kept + next else kept }.drop(1) }
+    val outward = { side: IntProgression ->
+        side.fold(listOf(anchor)) { kept, next -> if (clear(kept.last(), next)) kept + next else kept }.drop(1)
+    }
     return outward(anchor - 1 downTo 0).reversed() + anchor + outward(anchor + 1 until centers.size)
 }
 

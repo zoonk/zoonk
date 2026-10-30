@@ -182,11 +182,23 @@ private fun ChanceSimulation(
 
     ActivityCanvas(description = description) {
         ActivityCanvasHeader(
-            readout = { if (running) ActivityReadout(percent(share), Modifier.clearAndSetSemantics {}, color = MaterialTheme.zoonk.vizAccent) },
+            readout = {
+                if (running) {
+                    ActivityReadout(
+                        percent(share),
+                        Modifier.clearAndSetSemantics {},
+                        color = MaterialTheme.zoonk.vizAccent,
+                    )
+                }
+            },
         ) {
             Text(runsLabel, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
             ActivityCanvasLabel(fields.hitLabel)
-            if (running && guessLabel != null) Text(guessLabel, style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium))
+            if (running &&
+                guessLabel != null
+            ) {
+                Text(guessLabel, style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium))
+            }
         }
         when {
             !running -> {

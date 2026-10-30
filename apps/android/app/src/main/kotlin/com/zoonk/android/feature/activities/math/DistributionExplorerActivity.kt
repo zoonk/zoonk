@@ -128,7 +128,9 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
         )
 
     ActivityCanvas(description = listOfNotNull(shape, shares, targetLabel.takeIf { props.isChecked }).joinToString(" ")) {
-        ActivityCanvasHeader(readout = { ActivityReadout(percent(between), Modifier.clearAndSetSemantics {}, color = MaterialTheme.zoonk.vizAccent) }) {
+        ActivityCanvasHeader(readout = {
+            ActivityReadout(percent(between), Modifier.clearAndSetSemantics {}, color = MaterialTheme.zoonk.vizAccent)
+        }) {
             Text(
                 stringResource(R.string.activities_math_distribution_range, fields.valueLabel, format(low), format(high)),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
