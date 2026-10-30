@@ -76,6 +76,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
+import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.zoonk
 
 /** The app's one sandbox; the lesson screen provides it. */
@@ -166,7 +167,8 @@ internal fun CodeLine(
             }
 
             CodeLineTone.Editable -> {
-                Modifier.background(colors.surface, shape).border(1.dp, MaterialTheme.zoonk.vizAccent.copy(alpha = EDGE_ALPHA), shape)
+                val edge = if (LocalMoreContrast.current) 1f else EDGE_ALPHA
+                Modifier.background(colors.surface, shape).border(1.dp, MaterialTheme.zoonk.vizAccent.copy(alpha = edge), shape)
             }
 
             CodeLineTone.Error -> {

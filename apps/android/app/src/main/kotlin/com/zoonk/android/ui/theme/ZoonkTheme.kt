@@ -38,6 +38,7 @@ fun ZoonkTheme(
     CompositionLocalProvider(
         LocalZoonkColors provides scheme.zoonk,
         LocalLightScheme provides if (moreContrast) LightMoreContrast else Light,
+        LocalMoreContrast provides moreContrast,
     ) {
         MaterialTheme(colorScheme = scheme.material, content = content)
     }
@@ -52,6 +53,9 @@ fun LightTheme(content: @Composable () -> Unit) {
         MaterialTheme(colorScheme = scheme.material, content = content)
     }
 }
+
+/** Main's `contrast-more:`: marks drawn translucent for a quiet look draw solid instead. */
+val LocalMoreContrast = staticCompositionLocalOf { false }
 
 /** The web has one more-contrast mode, so medium and high contrast share it. */
 @Composable
