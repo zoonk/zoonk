@@ -305,17 +305,7 @@ private struct LessonChartView: View {
         }
       }
       .chartYScale(domain: .automatic(includesZero: chart.axisStart == nil || chart.axisStart == 0))
-      .chartYAxis {
-        AxisMarks { value in
-          AxisGridLine()
-          AxisTick()
-          AxisValueLabel {
-            if let y = value.as(Double.self) {
-              Text(verbatim: ActivityNumberFormat.format(y, compact: true))
-            }
-          }
-        }
-      }
+      .lessonValueAxis()
       .chartYAxisLabel(chart.unit.map { "\(chart.valueLabel) (\($0))" } ?? chart.valueLabel)
       .chartXAxisLabel(chart.categoryLabel)
       .chartLegend(chart.series.count > 1 ? .visible : .hidden)
@@ -325,6 +315,22 @@ private struct LessonChartView: View {
         Text(source)
           .font(.caption)
           .foregroundStyle(.secondary)
+      }
+    }
+  }
+}
+
+extension View {
+  func lessonValueAxis() -> some View {
+    chartYAxis {
+      AxisMarks { value in
+        AxisGridLine()
+        AxisTick()
+        AxisValueLabel {
+          if let y = value.as(Double.self) {
+            Text(verbatim: ActivityNumberFormat.format(y, compact: true))
+          }
+        }
       }
     }
   }

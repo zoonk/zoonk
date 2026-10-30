@@ -185,6 +185,7 @@ struct PracticeVisualView: View {
           }
         }
         .chartLegend(chart.series.count > 1 ? .visible : .hidden)
+        .lessonValueAxis()
         .chartYAxisLabel(chart.unit.map { "\(chart.valueLabel) (\($0))" } ?? chart.valueLabel)
         .chartXAxisLabel(chart.categoryLabel)
         .frame(minHeight: 200)
