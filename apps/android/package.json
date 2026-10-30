@@ -5,6 +5,7 @@
   "scripts": {
     "fixtures:activities": "tsx scripts/activities/export-fixtures.mts",
     "i18n": "node scripts/i18n/translate.mts",
+    "i18n:accept": "node scripts/i18n/accept.mts",
     "i18n:lint": "node scripts/i18n/check-catalogs.mts && eloqnt lint --strict",
     "palette": "node scripts/theme/generate-palette.mts",
     "sandbox": "node scripts/sandbox/generate-sandbox-page.mts",

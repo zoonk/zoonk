@@ -72,7 +72,7 @@ pnpm --filter android i18n:lint  # Check completeness and freshness without tran
 
 Root `pnpm i18n` includes Android. For targeted retranslation, add `--id navigation_today`. Translation uses the shared Codex CLI configuration; CI validates committed translations without model credentials.
 
-Eloqnt owns target XML and fingerprint comments; don't edit them manually. Supported locales live in [locale.ts](../../packages/utils/src/locale.ts). The [codec](scripts/i18n/tracked-android-xml.mts) and [Compose lint rule](lint-checks/src/main/kotlin/com/zoonk/lint/HardcodedComposeTextDetector.kt) define freshness and hardcoded-text checks. Custom composables should use the text parameter names recognized by that rule; dynamic/API text still needs human review.
+Eloqnt owns target XML and fingerprint comments. Hand-edit a translation only as the reported last resort the [translation rules](../../AGENTS.md#translations) allow. After checking it against the current English, run `pnpm --filter android i18n:accept --locale pt --id navigation_today` to re-fingerprint just those ids in those locales, then `pnpm --filter android i18n:lint`, which still fails every other stale translation. Supported locales live in [locale.ts](../../packages/utils/src/locale.ts). The [codec](scripts/i18n/tracked-android-xml.mts) and [Compose lint rule](lint-checks/src/main/kotlin/com/zoonk/lint/HardcodedComposeTextDetector.kt) define freshness and hardcoded-text checks. Custom composables should use the text parameter names recognized by that rule; dynamic/API text still needs human review.
 
 ## Verification
 
