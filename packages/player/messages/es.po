@@ -1942,7 +1942,7 @@ msgstr "{count, plural, one {# enlace} other {# enlaces}}"
 #: src/activities/molecule-builder/molecule-palette.tsx
 msgctxt "MRYE3Y"
 msgid "Remove {atom}"
-msgstr "Eliminar {atom}"
+msgstr "Quitar {atom}"
 
 #: src/activities/molecule-builder/molecule-palette.tsx
 msgctxt "E6Wo-S"
@@ -2447,7 +2447,7 @@ msgstr "El 95 % de las muestras queda entre"
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "tXYVJd"
 msgid "{from} to {to}"
-msgstr "De {from} a {to}"
+msgstr "{from} a {to}"
 
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "Dv2Fkx"
@@ -3197,7 +3197,7 @@ msgstr "Siguiente lección"
 #: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "XHHt5U"
 msgid "You already knew this"
-msgstr "Esto ya lo sabías"
+msgstr "Ya lo sabías"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "_DUim9"
@@ -3207,7 +3207,7 @@ msgstr "Lección completada"
 #: src/lesson/completion/lesson-completion-ready.tsx
 msgctxt "2O2sfp"
 msgid "Finish"
-msgstr "Finalizar"
+msgstr "Terminar"
 
 #: src/lesson/controls/ask-buddy-offer.tsx
 msgctxt "j5DG16"
@@ -3542,7 +3542,7 @@ msgstr "Bien hecho"
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "A4Mc64"
 msgid "To improve"
-msgstr "Para mejorar"
+msgstr "Por mejorar"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "uaHswU"
@@ -4163,7 +4163,7 @@ msgstr "Abrir enlace"
 #: src/questions/tutor-suggestion-words.ts
 msgctxt "tutorSuggestions.s6QqT3"
 msgid "I want to go deeper"
-msgstr "Quiero profundizar más"
+msgstr "Quiero profundizar"
 
 #: src/questions/tutor-suggestion-words.ts
 msgctxt "tutorSuggestions.KPsIMl"
@@ -4198,7 +4198,7 @@ msgstr "¿Por qué he fallado estas preguntas?"
 #: src/questions/use-tutor-suggestions.ts
 msgctxt "pSjxNB"
 msgid "Why am I studying this today?"
-msgstr "¿Por qué estudio esto hoy?"
+msgstr "¿Por qué estoy estudiando esto hoy?"
 
 #: src/questions/use-tutor-suggestions.ts
 msgctxt "jbL50j"

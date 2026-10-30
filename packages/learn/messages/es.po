@@ -1289,7 +1289,7 @@ msgstr "Aún se está iniciando. Está tardando más de lo habitual."
 #: src/questions/test-out-preparing.tsx
 msgctxt "RFCwI6"
 msgid "Starting…"
-msgstr "Iniciando…"
+msgstr "Empezando…"
 
 #: src/challenge/challenge-footer.tsx
 #: src/mock/mock-chooser.tsx
@@ -1315,7 +1315,7 @@ msgstr "Con Plus tienes simulacros cuando quieras y uno cada semana en tu plan."
 #: src/mock/mock-screen.tsx
 msgctxt "zDR51u"
 msgid "See how it went"
-msgstr "Ver cómo ha ido"
+msgstr "Ver qué tal ha ido"
 
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-verdict.tsx
@@ -3666,7 +3666,7 @@ msgstr "Objetivo en pausa: {goal}"
 #: src/journey/pace-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
-msgstr "No hay nada previsto hasta que lo reanudes."
+msgstr "No hay nada previsto hasta que lo retomes."
 
 #: src/journey/journey-chapters.tsx
 msgctxt "CQYCqB"
@@ -4013,7 +4013,7 @@ msgstr "No hay nada planificado"
 #: src/journey/pace-details.tsx
 msgctxt "C2iTEH"
 msgid "Paused"
-msgstr "Pausado"
+msgstr "En pausa"
 
 #: src/journey/pace-details.tsx
 msgctxt "Z35MUj"
@@ -6773,7 +6773,7 @@ msgstr "Aún no lo sé"
 #: src/session/question-block/question-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
-msgstr "Comentarios sobre la respuesta"
+msgstr "Comentarios sobre tu respuesta"
 
 #. "Your notebook" is the learner's Mistakes notebook.
 #: src/mistakes/practice-step.tsx
@@ -8640,7 +8640,7 @@ msgstr "Lo básico"
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "h9kQ0S"
 msgid "We'll skip what you already know"
-msgstr "Omitiremos lo que ya sabes"
+msgstr "Saltaremos lo que ya sabes"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "koLFLL"
@@ -8650,7 +8650,7 @@ msgstr "Ya lo he estudiado"
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "47D0tB"
 msgid "Only what's new or hard"
-msgstr "Solo lo nuevo o difícil"
+msgstr "Solo lo nuevo o lo difícil"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "BY-vT3"

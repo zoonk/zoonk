@@ -501,7 +501,7 @@ msgstr "Este é um exemplo. Seu plano segue suas respostas, então pode começar
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "npIkqE"
 msgid "Start free, no account needed."
-msgstr "Comece grátis, sem precisar criar uma conta."
+msgstr "Comece grátis, sem precisar de uma conta."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 msgctxt "XUON71"
@@ -914,7 +914,7 @@ msgstr "Continuar"
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
 msgctxt "wRaHK-"
 msgid "Your plan at a glance"
-msgstr "Seu plano em resumo"
+msgstr "Resumo do seu plano"
 
 #: src/app/[lang]/(app)/(learn)/speaking/page.tsx
 msgctxt "LdUCtG"
@@ -954,7 +954,7 @@ msgstr "As aulas, revisões e práticas de cada dia para sua meta."
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "vr-vFm"
 msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "O plano Grátis permite uma meta por vez. Pause sua outra meta para retomar esta ou assine o Plus para ter mais."
+msgstr "O plano Grátis acompanha uma meta por vez. Pause sua outra meta para retomar esta ou assine o Plus para acompanhar mais metas."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"
@@ -1045,7 +1045,7 @@ msgstr "Quanto você já sabe?"
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "eePhP0"
 msgid "It only changes where your plan starts."
-msgstr "Isso só muda onde seu plano começa."
+msgstr "Isso só muda o ponto de partida do seu plano."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "C1D9a4"
@@ -1174,7 +1174,7 @@ msgstr "Baixar"
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 msgctxt "owirfw"
 msgid "We couldn't prepare the download. Try again."
-msgstr "Não foi possível preparar o download. Tente de novo."
+msgstr "A gente não conseguiu preparar o download. Tente de novo."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 msgctxt "I4oZQq"
@@ -1223,7 +1223,7 @@ msgstr "Seu nome, nome de usuário e conta."
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"
 msgid "Checking..."
-msgstr "Conferindo…"
+msgstr "Verificando…"
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "9N4_rz"
@@ -2030,7 +2030,7 @@ msgstr "Fundamentos"
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "planPhases.PFt14a"
 msgid "Fill the gaps"
-msgstr "Preencher as lacunas"
+msgstr "Preencher lacunas"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "planPhases.KV-O0y"
@@ -2304,7 +2304,7 @@ msgstr "Nível {level} → {target}"
 #: src/app/[lang]/(home)/_components/hero-window.tsx
 msgctxt "dPX7wH"
 msgid "On pace"
-msgstr "No ritmo certo"
+msgstr "No ritmo"
 
 #: src/app/[lang]/(home)/_components/hero-window.tsx
 msgctxt "I_pvBN"
@@ -2455,7 +2455,7 @@ msgstr "Fazendo pedidos em um café"
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "NMkS59"
 msgid "Renting a flat"
-msgstr "Alugando um apartamento"
+msgstr "Alugar um apartamento"
 
 #: src/app/[lang]/(home)/_components/placed-plans.tsx
 msgctxt "JrZJR9"
@@ -2545,7 +2545,7 @@ msgstr "Predadores comem menos que suas presas"
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
-msgstr "Correta"
+msgstr "Correto"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "BxleoZ"
@@ -2911,7 +2911,7 @@ msgstr "O básico"
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "h9kQ0S"
 msgid "We'll skip what you already know"
-msgstr "A gente pula o que você já sabe"
+msgstr "A gente vai pular o que você já sabe"
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "koLFLL"
@@ -2936,7 +2936,7 @@ msgstr "Se adapta às suas respostas, cerca de {time}"
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "PAwSdR"
 msgid "Not sure, give me a quick test"
-msgstr "Não sei, quero um teste rápido"
+msgstr "Não sei, quero fazer um teste rápido"
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "ZATSm-"
@@ -3643,7 +3643,7 @@ msgstr "Seu plano precisa de um documento"
 #: src/components/learn/upload-request-client.tsx
 msgctxt "osDDWB"
 msgid "Thanks. We're reading it now, and your plan will update in a few minutes."
-msgstr "Obrigado! A gente está lendo o documento, e seu plano será atualizado em alguns minutos."
+msgstr "Obrigado. A gente está lendo o material, e seu plano será atualizado em alguns minutos."
 
 #: src/components/learn/upload-request-client.tsx
 msgctxt "p4N05H"

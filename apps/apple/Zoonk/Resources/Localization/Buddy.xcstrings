@@ -385,7 +385,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Créer mon plan"
+            "value" : "Préparer mon plan"
           }
         },
         "pt" : {
@@ -681,7 +681,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu gagnes de l’énergie dès ta première leçon, puis à mesure que tu apprends."
+            "value" : "Tu gagnes de l’Énergie dès ta première leçon et à mesure que tu apprends."
           }
         },
         "pt" : {

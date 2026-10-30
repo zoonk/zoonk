@@ -979,7 +979,7 @@ msgstr "Terminé"
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
-msgstr "Rien n’est prévu tant que tu ne le reprends pas."
+msgstr "Rien n’est prévu tant que tu ne reprends pas cet objectif."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "CSgdxh"
@@ -1063,7 +1063,7 @@ msgstr "Pour l’instant, {minutes, plural, one {# minute} other {# minutes}} pa
 #: src/components/public/start-plan-link.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
-msgstr "Créer mon plan"
+msgstr "Préparer mon plan"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
@@ -2545,7 +2545,7 @@ msgstr "Les prédateurs mangent moins que leurs proies"
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
-msgstr "Bonne réponse"
+msgstr "Correct"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "BxleoZ"
@@ -2926,7 +2926,7 @@ msgstr "Seulement ce qui est nouveau ou difficile"
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "BY-vT3"
 msgid "I know it well"
-msgstr "Je m’y connais bien"
+msgstr "Je le connais bien"
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "MLAAq8"
@@ -2936,7 +2936,7 @@ msgstr "S’adapte à tes réponses, environ {time}"
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "PAwSdR"
 msgid "Not sure, give me a quick test"
-msgstr "Je ne sais pas, je veux un test rapide"
+msgstr "Je ne sais pas, propose-moi un test rapide"
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "ZATSm-"
@@ -3068,7 +3068,7 @@ msgstr "D’hier"
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "1ooK0d"
 msgid "Every day"
-msgstr "Chaque jour"
+msgstr "Tous les jours"
 
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "ZuAnCp"
@@ -3185,7 +3185,7 @@ msgstr "Aller à l’accueil"
 #: src/app/[lang]/essay/[blockId]/page.tsx
 msgctxt "Jo0iJd"
 msgid "Writing practice"
-msgstr "Entraînement à la rédaction"
+msgstr "Entraînement à l’écriture"
 
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
 msgctxt "UOYMne"
@@ -3345,7 +3345,7 @@ msgstr "Politique de confidentialité"
 #: src/app/[lang]/pronunciation/page.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
-msgstr "Dis-le encore"
+msgstr "Redis-le"
 
 #: src/app/[lang]/session/page.tsx
 msgctxt "hnntJl"
@@ -3967,7 +3967,7 @@ msgstr "Découvrir Plus"
 #: src/components/public/course-start-failure.tsx
 msgctxt "MO6156"
 msgid "Go to your Plan"
-msgstr "Accéder à ton plan"
+msgstr "Voir ton plan"
 
 #: src/components/public/course-start-failure.tsx
 msgctxt "6qTSET"

@@ -954,7 +954,7 @@ msgstr "Las lecciones, los repasos y la práctica de cada día para tu objetivo.
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "vr-vFm"
 msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "El plan gratuito permite seguir un objetivo cada vez. Pon en pausa tu otro objetivo para retomar este, o consigue Plus para seguir más."
+msgstr "El plan gratuito permite seguir un objetivo a la vez. Pausa tu otro objetivo para retomar este o consigue Plus para seguir más."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"
@@ -979,7 +979,7 @@ msgstr "Completado"
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
-msgstr "No hay nada planeado hasta que lo retomes."
+msgstr "No hay nada previsto hasta que lo retomes."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "CSgdxh"
@@ -1063,7 +1063,7 @@ msgstr "Por ahora, {minutes, plural, one {# minuto} other {# minutos}} al día. 
 #: src/components/public/start-plan-link.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
-msgstr "Crear mi plan"
+msgstr "Preparar mi plan"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
@@ -1207,7 +1207,7 @@ msgstr "Nombre"
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "vLl7z0"
 msgid "3-30 characters. Letters, numbers, and underscores only."
-msgstr "Entre 3 y 30 caracteres. Solo letras, números y guiones bajos."
+msgstr "De 3 a 30 caracteres. Solo letras, números y guiones bajos."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -2545,7 +2545,7 @@ msgstr "Los depredadores comen menos que sus presas"
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
-msgstr "Correcta"
+msgstr "Correcto"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "BxleoZ"
@@ -2722,7 +2722,7 @@ msgstr "SUM sumó las ventas de cada cliente, así que no aparecieron las region
 #: src/app/[lang]/(home)/_components/practice-job.tsx
 msgctxt "8Gu0rE"
 msgid "Practice this skill"
-msgstr "Practica esta habilidad"
+msgstr "Practicar esta habilidad"
 
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "jX9yWL"
@@ -2866,7 +2866,7 @@ msgstr "Zu"
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "AcKlQI"
 msgid "Explain it more simply"
-msgstr "Explícamelo más sencillo"
+msgstr "Explícamelo de forma más sencilla"
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "s6QqT3"
@@ -2916,7 +2916,7 @@ msgstr "Saltaremos lo que ya sabes"
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "koLFLL"
 msgid "I studied it before"
-msgstr "Ya lo estudié antes"
+msgstr "Ya lo he estudiado"
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "47D0tB"
@@ -3068,7 +3068,7 @@ msgstr "Pendiente de ayer"
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "1ooK0d"
 msgid "Every day"
-msgstr "Cada día"
+msgstr "Todos los días"
 
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "ZuAnCp"
@@ -3330,7 +3330,7 @@ msgstr "Ahora mismo no puedes empezar otro objetivo. Primero termina o pausa uno
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
 msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
-msgstr "Algo ha fallado. Vuelve a intentarlo dentro de un momento."
+msgstr "No ha funcionado. Inténtalo de nuevo en un momento."
 
 #: src/app/[lang]/privacy/page.tsx
 msgctxt "afKQHy"
@@ -3345,7 +3345,7 @@ msgstr "Política de privacidad"
 #: src/app/[lang]/pronunciation/page.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
-msgstr "Dilo otra vez"
+msgstr "Dilo de nuevo"
 
 #: src/app/[lang]/session/page.tsx
 msgctxt "hnntJl"

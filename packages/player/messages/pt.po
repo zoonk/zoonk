@@ -241,7 +241,7 @@ msgstr "Resposta:"
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
-msgstr "Feedback sobre a resposta"
+msgstr "Feedback da resposta"
 
 #: src/activities/_components/activity-guess-comparison.tsx
 msgctxt "iNWAkL"
@@ -928,7 +928,7 @@ msgstr "Antes da primeira linha"
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "E_7YOR"
 msgid "Step {current} of {total}"
-msgstr "Passo {current} de {total}"
+msgstr "Etapa {current} de {total}"
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "yNCbcT"

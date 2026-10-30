@@ -501,7 +501,7 @@ msgstr "Ein Beispiel. Dein Plan richtet sich nach deinen Antworten und kann dahe
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "npIkqE"
 msgid "Start free, no account needed."
-msgstr "Kostenlos starten, ohne Konto."
+msgstr "Starte kostenlos, ohne Konto."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 msgctxt "XUON71"
@@ -954,7 +954,7 @@ msgstr "Tägliche Lektionen, Wiederholungen und Übungen für dein Ziel."
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "vr-vFm"
 msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "Mit dem kostenlosen Tarif verfolgst du jeweils ein Ziel. Pausier dein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus für mehr Ziele."
+msgstr "Im kostenlosen Tarif kannst du jeweils ein Ziel verfolgen. Pausier dein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus für mehr Ziele."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"
@@ -1019,7 +1019,7 @@ msgstr "In Einrichtung"
 #: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 msgctxt "irPOsS"
 msgid "A mock exam to find your level"
-msgstr "Eine Probeprüfung, um dein Level zu finden"
+msgstr "Eine Probeprüfung, um dein Level zu bestimmen"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "8Dn3GJ"
@@ -2288,7 +2288,7 @@ msgstr "Beispielziele"
 #: src/app/[lang]/(home)/_components/hero-window.tsx
 msgctxt "goalSwitcher.aefUZL"
 msgid "{time} a day"
-msgstr "{time} pro Tag"
+msgstr "{time} am Tag"
 
 #: src/app/[lang]/(home)/_components/hero-window.tsx
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
@@ -2460,7 +2460,7 @@ msgstr "Eine Wohnung mieten"
 #: src/app/[lang]/(home)/_components/placed-plans.tsx
 msgctxt "JrZJR9"
 msgid "Bank and phone"
-msgstr "Bank und Telefon"
+msgstr "Bank und Handy"
 
 #: src/app/[lang]/(home)/_components/placed-plans.tsx
 msgctxt "Wfs1md"
@@ -2896,7 +2896,7 @@ msgstr "Von Anfang an, mit Beispielen aus dem Alltag"
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "pIPmbB"
 msgid "Nothing, I'm just starting"
-msgstr "Nichts, ich fange gerade erst an"
+msgstr "Noch nichts, ich fange gerade erst an"
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "uzFoxW"
@@ -2936,7 +2936,7 @@ msgstr "Passt sich deinen Antworten an, etwa {time}"
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "PAwSdR"
 msgid "Not sure, give me a quick test"
-msgstr "Nicht sicher, gib mir einen kurzen Test"
+msgstr "Ich bin mir nicht sicher, teste mich kurz"
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "ZATSm-"
@@ -3643,7 +3643,7 @@ msgstr "Dein Plan braucht ein Dokument"
 #: src/components/learn/upload-request-client.tsx
 msgctxt "osDDWB"
 msgid "Thanks. We're reading it now, and your plan will update in a few minutes."
-msgstr "Danke. Wir lesen es jetzt und dein Plan wird in wenigen Minuten aktualisiert."
+msgstr "Danke. Wir lesen das Dokument jetzt und dein Plan wird in wenigen Minuten aktualisiert."
 
 #: src/components/learn/upload-request-client.tsx
 msgctxt "p4N05H"

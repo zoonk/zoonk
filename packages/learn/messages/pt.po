@@ -3615,7 +3615,7 @@ msgstr "Criando a aula"
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
 msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "No plano Grátis, você acompanha uma meta por vez. Pause sua outra meta para retomar esta ou assine o Plus para acompanhar mais."
+msgstr "O plano Grátis acompanha uma meta por vez. Pause sua outra meta para retomar esta ou assine o Plus para acompanhar mais metas."
 
 #: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
@@ -11619,7 +11619,7 @@ msgstr "Estudar mais {minutes} minutos"
 #: src/session/study-moment.tsx
 msgctxt "GgV_JT"
 msgid "Review on {date}"
-msgstr "Revisar em {date}"
+msgstr "Revisão em {date}"
 
 #: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx

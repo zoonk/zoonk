@@ -2447,7 +2447,7 @@ msgstr "95 % des échantillons donnent un résultat dans cette plage"
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "tXYVJd"
 msgid "{from} to {to}"
-msgstr "De {from} à {to}"
+msgstr "{from} à {to}"
 
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "Dv2Fkx"
@@ -2798,7 +2798,7 @@ msgstr "{year}. Ta réponse : {guess}"
 #: src/activities/timeline/timeline-event-card.tsx
 msgctxt "fTQI64"
 msgid "Your guess: {guess}"
-msgstr "Ta réponse : {guess}"
+msgstr "Ton estimation : {guess}"
 
 #: src/activities/timeline/timeline-gaps.tsx
 msgctxt "h3FNGb"
@@ -3197,7 +3197,7 @@ msgstr "Leçon suivante"
 #: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "XHHt5U"
 msgid "You already knew this"
-msgstr "Tu savais déjà tout ça"
+msgstr "Tu savais déjà ça"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "_DUim9"
@@ -3294,7 +3294,7 @@ msgstr "Enregistré dans ton carnet d’erreurs · à revoir à la fin de cette 
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
-msgstr "Enregistré dans ton carnet d’erreurs"
+msgstr "Ajouté à ton carnet d’erreurs"
 
 #. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx

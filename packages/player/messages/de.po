@@ -3315,7 +3315,7 @@ msgstr "Dieser Gedanke kommt {when, select, today {bei einer Wiederholung späte
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GVY4V5"
 msgid "{count} right in a row"
-msgstr "{count} richtig hintereinander"
+msgstr "{count} richtige Antworten hintereinander"
 
 #: src/lesson/feedback/lesson-spoken-words.tsx
 msgctxt "xdf2SR"
@@ -3395,7 +3395,7 @@ msgstr "Antwort ansehen"
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "zDR51u"
 msgid "See how it went"
-msgstr "Ansehen, wie es gelaufen ist"
+msgstr "Ergebnis ansehen"
 
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "mOFG3K"
@@ -3447,7 +3447,7 @@ msgstr "Hilfe zu dieser Seite"
 #: src/lesson/lesson-leave.tsx
 msgctxt "-D1SOt"
 msgid "Leave for now?"
-msgstr "Vorerst aufhören?"
+msgstr "Fürs Erste aufhören?"
 
 #: src/lesson/lesson-leave.tsx
 msgctxt "evHhXy"
@@ -3462,7 +3462,7 @@ msgstr "Weiterschreiben"
 #: src/lesson/lesson-leave.tsx
 msgctxt "fnihsY"
 msgid "Leave"
-msgstr "Aufhören"
+msgstr "Verlassen"
 
 #: src/lesson/lesson-player-header.tsx
 msgctxt "fp5tEg"
@@ -3726,7 +3726,7 @@ msgstr "In deinen eigenen Worten"
 #: src/lesson/steps/typed-answer-step.tsx
 msgctxt "h5CuXu"
 msgid "I don't know yet"
-msgstr "Ich weiß es noch nicht"
+msgstr "Das weiß ich noch nicht"
 
 #: src/lesson/steps/word-hints.tsx
 msgctxt "YgghdL"

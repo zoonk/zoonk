@@ -3240,13 +3240,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crear mi plan"
+            "value" : "Preparar mi plan"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Créer mon plan"
+            "value" : "Préparer mon plan"
           }
         },
         "pt" : {

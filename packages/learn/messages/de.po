@@ -1696,7 +1696,7 @@ msgstr "Richtig!"
 #: src/session/question-block/question-feedback.tsx
 msgctxt "--l7ni"
 msgid "Not quite"
-msgstr "Nicht ganz richtig"
+msgstr "Das stimmt so nicht"
 
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "5qf9VW"
@@ -2517,7 +2517,7 @@ msgstr "Dein Text bleibt auf diesem Gerät und ist noch da, wenn du zurückkomms
 #: src/essay/essay-screen.tsx
 msgctxt "-D1SOt"
 msgid "Leave for now?"
-msgstr "Erst mal aufhören?"
+msgstr "Fürs Erste aufhören?"
 
 #: src/exam/exam-checklist.tsx
 msgctxt "56-8Dh"
@@ -3666,7 +3666,7 @@ msgstr "{goal} ist pausiert"
 #: src/journey/pace-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
-msgstr "Bis du dein Ziel fortsetzt, wird nichts geplant."
+msgstr "Bis du dein Ziel fortsetzt, ist nichts geplant."
 
 #: src/journey/journey-chapters.tsx
 msgctxt "CQYCqB"
@@ -5173,7 +5173,7 @@ msgstr "Aufgaben aus {exam} im Gespräch"
 #: src/language/exam-speaking/speaking-practice-screen.tsx
 msgctxt "LdUCtG"
 msgid "Speaking practice"
-msgstr "Sprechübungen"
+msgstr "Sprechen üben"
 
 #: src/language/exam-speaking/speaking-practice-screen.tsx
 msgctxt "xeIdwV"
@@ -8422,7 +8422,7 @@ msgstr "So funktioniert’s"
 #: src/onboarding/how-it-works.tsx
 msgctxt "npIkqE"
 msgid "Start free, no account needed."
-msgstr "Starte kostenlos, ganz ohne Konto."
+msgstr "Starte kostenlos, ohne Konto."
 
 #: src/onboarding/library-course-offer.tsx
 msgctxt "JHbf4S"
@@ -8645,7 +8645,7 @@ msgstr "Wir überspringen, was du schon weißt"
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "koLFLL"
 msgid "I studied it before"
-msgstr "Ich habe das schon einmal gelernt"
+msgstr "Ich habe mich schon damit beschäftigt"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "47D0tB"
@@ -8665,7 +8665,7 @@ msgstr "Passt sich deinen Antworten an, etwa {time}"
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "PAwSdR"
 msgid "Not sure, give me a quick test"
-msgstr "Ich bin mir nicht sicher, mach einen kurzen Test mit mir"
+msgstr "Ich bin mir nicht sicher, teste mich kurz"
 
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "xzvcZt"
@@ -12101,7 +12101,7 @@ msgstr "Kurze Wiederholung"
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.aefUZL"
 msgid "{time} a day"
-msgstr "{time} pro Tag"
+msgstr "{time} am Tag"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.8PP61v"

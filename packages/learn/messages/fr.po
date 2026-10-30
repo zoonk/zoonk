@@ -1656,7 +1656,7 @@ msgstr "Compétences"
 #: src/plan/use-short-plan.ts
 msgctxt "KV-O0y"
 msgid "Practice"
-msgstr "S’entraîner"
+msgstr "Entraînement"
 
 #: src/chapter/chapter-screen.tsx
 #: src/journey/journey-hero.tsx
@@ -1696,7 +1696,7 @@ msgstr "Correct !"
 #: src/session/question-block/question-feedback.tsx
 msgctxt "--l7ni"
 msgid "Not quite"
-msgstr "Pas tout à fait"
+msgstr "Ce n’est pas ça"
 
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "5qf9VW"
@@ -5944,7 +5944,7 @@ msgstr "Télécharger"
 #: src/memory/memory-screen.tsx
 msgctxt "owirfw"
 msgid "We couldn't prepare the download. Try again."
-msgstr "Le téléchargement n’a pas pu être préparé. Réessaie."
+msgstr "Impossible de préparer le téléchargement. Réessaie."
 
 #: src/memory/memory-screen.tsx
 msgctxt "kxonMZ"
@@ -6633,7 +6633,7 @@ msgstr "À réviser demain"
 #: src/mistakes/mistake-entry.tsx
 msgctxt "8Gu0rE"
 msgid "Practice this skill"
-msgstr "Travailler cette compétence"
+msgstr "S’entraîner sur cette compétence"
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "UuiQw6"
@@ -7365,13 +7365,13 @@ msgstr "{count, plural, one {Réviser l’erreur} other {Réviser les # erreurs}
 #: src/mock/mock-result-actions.tsx
 msgctxt "u82Vi2"
 msgid "Continue today's session"
-msgstr "Continuer la séance d’aujourd’hui"
+msgstr "Continuer la séance du jour"
 
 #: src/mock/mock-result-answers.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
-msgstr "Correctes"
+msgstr "Bonnes réponses"
 
 #: src/mock/mock-result-answers.tsx
 msgctxt "y2fpaL"
@@ -8272,7 +8272,7 @@ msgstr "Ex. : pourquoi la glycolyse ne produit-elle que 2 ATP nets ?"
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "ZT0z9z"
 msgid "Ask"
-msgstr "Poser la question"
+msgstr "Poser une question"
 
 #: src/onboarding/entry/paste-link.tsx
 msgctxt "JBWS0c"
@@ -8640,7 +8640,7 @@ msgstr "Les bases"
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "h9kQ0S"
 msgid "We'll skip what you already know"
-msgstr "On sautera ce que tu sais déjà"
+msgstr "On sautera ce que tu connais déjà"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "koLFLL"
@@ -8987,7 +8987,7 @@ msgstr "Ce que tu veux en retirer"
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "eePhP0"
 msgid "It only changes where your plan starts."
-msgstr "Cela détermine seulement le point de départ de ton plan."
+msgstr "Cela change seulement le point de départ de ton plan."
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "8s-b4U"
@@ -11602,7 +11602,7 @@ msgstr "{document, select, notice {Nous n’avons pas trouvé l’avis officiel}
 #: src/research/upload-request-card.tsx
 msgctxt "osDDWB"
 msgid "Thanks. We're reading it now, and your plan will update in a few minutes."
-msgstr "Merci. Nous lisons ton document et ton plan sera mis à jour dans quelques minutes."
+msgstr "Merci. Nous le lisons et ton plan sera mis à jour dans quelques minutes."
 
 #: src/research/upload-request-card.tsx
 msgctxt "n1aLEA"
@@ -11619,7 +11619,7 @@ msgstr "Étudier {minutes} minutes de plus"
 #: src/session/study-moment.tsx
 msgctxt "GgV_JT"
 msgid "Review on {date}"
-msgstr "À revoir le {date}"
+msgstr "À réviser le {date}"
 
 #: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
@@ -11774,7 +11774,7 @@ msgstr "Erreur corrigée. Elle est retirée de ton carnet d’erreurs."
 #: src/session/question-block/question-feedback.tsx
 msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
-msgstr "Ajoutée à ton carnet d’erreurs"
+msgstr "Ajouté à ton carnet d’erreurs"
 
 #: src/session/question-block/question-feedback.tsx
 msgctxt "Kvx6Wm"
@@ -11790,7 +11790,7 @@ msgstr "Sans réponse"
 #: src/session/summary/summary-rewards.tsx
 msgctxt "GVY4V5"
 msgid "{count} right in a row"
-msgstr "{count} bonnes réponses de suite"
+msgstr "{count} bonnes réponses d’affilée"
 
 #: src/session/question-block/question-feedback.tsx
 msgctxt "amJs-w"
