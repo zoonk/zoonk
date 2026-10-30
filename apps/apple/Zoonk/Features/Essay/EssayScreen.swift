@@ -111,11 +111,27 @@ private struct EssayContent: View {
   var body: some View {
     Group {
       if isWriting {
-        writeForm
+        PaneSplit {
+          Form {
+            promptSections
+          }
+        } secondary: {
+          Form {
+            writeSections
+          }
+          .safeAreaBar(edge: .bottom) { actionBar }
+        } single: {
+          Form {
+            promptSections
+            writeSections
+          }
+          .safeAreaBar(edge: .bottom) { actionBar }
+        }
       } else if let grade = essay.drafts.first?.grade {
         List {
           EssayGradeSections(grade: grade)
         }
+        .safeAreaBar(edge: .bottom) { actionBar }
       }
     }
     .toolbar {
@@ -148,107 +164,110 @@ private struct EssayContent: View {
         "Your text stays on this device, here when you come back.", tableName: "Essay",
         comment: "Unsent text is kept")
     }
-    .safeAreaBar(edge: .bottom) {
-      VStack(spacing: 10) {
-        statusLine
-        HStack(spacing: 12) {
-          if !essay.drafts.isEmpty {
-            Button {
-              Task { await finish() }
-            } label: {
-              Text("Skip the rewrite", tableName: "Essay", comment: "Goes on without rewriting")
-            }
-            .buttonStyle(.bordered)
-            .controlSize(.large)
-            .disabled(finishing || status == .grading)
-          }
+  }
 
-          if isWriting {
-            Button {
-              Task { await send() }
-            } label: {
-              if status == .grading {
-                Text("Grading…", tableName: "Essay", comment: "A draft is being graded")
-              } else if essay.drafts.isEmpty {
-                Text("Send for grading", tableName: "Essay", comment: "Sends a draft")
-              } else {
-                Text("Grade the rewrite", tableName: "Essay", comment: "Sends a rewrite")
-              }
-            }
-            .buttonStyle(.mainAction)
-            .controlSize(.large)
-            .disabled(!canSend)
-          } else {
-            Button {
-              writing = true
-            } label: {
-              Text("Rewrite", tableName: "Essay", comment: "Rewrites the essay")
-            }
-            .buttonStyle(.mainAction)
-            .controlSize(.large)
-            .keyboardShortcut(.defaultAction)
+  private var actionBar: some View {
+    VStack(spacing: 10) {
+      statusLine
+      HStack(spacing: 12) {
+        if !essay.drafts.isEmpty {
+          Button {
+            Task { await finish() }
+          } label: {
+            Text("Skip the rewrite", tableName: "Essay", comment: "Goes on without rewriting")
           }
+          .buttonStyle(.bordered)
+          .controlSize(.large)
+          .disabled(finishing || status == .grading)
+        }
+
+        if isWriting {
+          Button {
+            Task { await send() }
+          } label: {
+            if status == .grading {
+              Text("Grading…", tableName: "Essay", comment: "A draft is being graded")
+            } else if essay.drafts.isEmpty {
+              Text("Send for grading", tableName: "Essay", comment: "Sends a draft")
+            } else {
+              Text("Grade the rewrite", tableName: "Essay", comment: "Sends a rewrite")
+            }
+          }
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+          .disabled(!canSend)
+        } else {
+          Button {
+            writing = true
+          } label: {
+            Text("Rewrite", tableName: "Essay", comment: "Rewrites the essay")
+          }
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+          .keyboardShortcut(.defaultAction)
         }
       }
-      .scenePadding(.horizontal)
-      .padding(.vertical, 10)
-      .keepsOffFold()
+    }
+    .scenePadding(.horizontal)
+    .padding(.vertical, 10)
+    .keepsOffFold()
+  }
+
+  @ViewBuilder
+  private var promptSections: some View {
+    if let context = essay.context, !context.isEmpty {
+      Section {
+        ItemText(context)
+          .font(.callout)
+      } header: {
+        Text(essay.rubric.textsLabel)
+      }
+    }
+
+    Section {
+      ItemText(essay.question)
+        .font(.headline)
     }
   }
 
-  private var writeForm: some View {
-    Form {
-      if let context = essay.context, !context.isEmpty {
-        Section {
-          ItemText(context)
-            .font(.callout)
-        } header: {
-          Text(essay.rubric.textsLabel)
-        }
-      }
-
+  @ViewBuilder
+  private var writeSections: some View {
+    if let grade = essay.drafts.first?.grade, grade.zeroReason != .tooShort {
       Section {
-        ItemText(essay.question)
-          .font(.headline)
-      }
-
-      if let grade = essay.drafts.first?.grade, grade.zeroReason != .tooShort {
-        Section {
-          if let next = grade.nextStep {
-            VStack(alignment: .leading, spacing: 4) {
-              if let criterion = grade.nextStepCriterion {
-                Text("Next step: \(criterion.name)", tableName: "Essay", comment: "Rewrite guide")
-                  .font(.headline)
-              }
-              Text(next.text)
+        if let next = grade.nextStep {
+          VStack(alignment: .leading, spacing: 4) {
+            if let criterion = grade.nextStepCriterion {
+              Text("Next step: \(criterion.name)", tableName: "Essay", comment: "Rewrite guide")
+                .font(.headline)
             }
-          } else {
-            Text(
-              "Every criterion has full marks in this estimate.", tableName: "Essay",
-              comment: "Full marks")
+            Text(next.text)
           }
-          Button {
-            writing = false
-          } label: {
-            Text("See the grade", tableName: "Essay", comment: "Back to the last grade")
-          }
-        } header: {
-          Text("Your last grade", tableName: "Essay", comment: "The last grade while rewriting")
+        } else {
+          Text(
+            "Every criterion has full marks in this estimate.", tableName: "Essay",
+            comment: "Full marks")
         }
-      }
-
-      Section {
-        TextEditor(text: textBinding)
-          .frame(minHeight: 280)
-          .accessibilityLabel(Text(boxLabel))
+        Button {
+          writing = false
+        } label: {
+          Text("See the grade", tableName: "Essay", comment: "Back to the last grade")
+        }
       } header: {
-        Text(boxLabel)
-      } footer: {
-        let words = EssayWords.count(text)
-        if words > 0 {
-          Text("\(words) words", tableName: "Essay", comment: "An essay's word count")
-            .monospacedDigit()
-        }
+        Text("Your last grade", tableName: "Essay", comment: "The last grade while rewriting")
+      }
+    }
+
+    Section {
+      TextEditor(text: textBinding)
+        .frame(minHeight: 280)
+        .accessibilityLabel(Text(boxLabel))
+    } header: {
+      Text(boxLabel)
+    } footer: {
+      let words = EssayWords.count(text)
+      if words > 0 {
+        Text("\(words) words", tableName: "Essay", comment: "An essay's word count")
+          .monospacedDigit()
       }
     }
   }
