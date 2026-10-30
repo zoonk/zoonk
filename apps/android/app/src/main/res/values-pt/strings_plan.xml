@@ -53,8 +53,11 @@
   "plan_catch_up": "6f8effa353ecf513a273772d83ff0f965c1eed57fd82cdd310f0106de78405dc",
   "plan_challenge_after_previous": "f74f1e655e8f59729d131bb95c217a63404812735919b7e771b86b9f96617b33",
   "plan_challenge_left_out": "b7e0911d53ea18b5d526a902aa12aa4fc0516c5c0c669d354bd1fbb7dbe55c9a",
+  "plan_challenge_live_call": "25d6c2a37dbf92f76fb3e6efe8d396b67a418a8479f012839cc6b74ef6e28f05",
   "plan_challenge_next_session": "52db1943e627b5a9dca06d92eed62366570fd00772e7fb0db47f0b2df4e146eb",
+  "plan_challenge_no_time": "7b63680cd1d49310432ec90e587503df906b8d7ea8aa3a1179702e34f87f569e",
   "plan_challenge_opens_after_lessons": "ea550065ad7b470b5b73ec5923866f2230fa1dc92d896cb316cac1d68bac5922",
+  "plan_challenge_questions": "7a140c5261ec64b1696041742481e51703b3863fbfa80811966c2265d68c070c",
   "plan_challenge_won": "5d29f10f16b42e06c2e46302282923ffb5ea297d688aec780436df66c61cd3d7",
   "plan_change_about_more_fit": "96606ef501c1afbbcecfbc6088847c60a760d2e95ddf49fb2136f4b93c7c91a8",
   "plan_change_about_more_lessons": "730c4566a7d02a47c856732f906cf7dec21fe075dcd10b02e749a5f6a784d722",
@@ -663,6 +666,8 @@
         <item quantity="other">%d aulas ficaram de fora</item>
     </plurals>
     <string name="plan_challenge_left_out">Desafio ficou de fora</string>
+    <!-- On a phase of the learner's plan: the plan has no room for its challenge before their goal's date. -->
+    <string name="plan_challenge_no_time">Sem tempo para o desafio desta fase antes da data da sua meta</string>
     <string name="plan_continues_today">Continua hoje</string>
     <!-- %1$s is the day the plan resumes, such as "Nov 3". -->
     <string name="plan_continues_on">Continua em %1$s</string>
@@ -722,6 +727,8 @@
     <string name="plan_challenge_next_session">Na sua próxima sessão</string>
     <string name="plan_challenge_after_previous">Depois do desafio anterior</string>
     <string name="plan_challenge_opens_after_lessons">Disponível após as aulas desta fase</string>
+    <string name="plan_challenge_questions">Perguntas desta fase, sem dicas</string>
+    <string name="plan_challenge_live_call">Uma conversa ao vivo para você se fazer entender</string>
     <string name="plan_mock_next_sitting">Simulado para a próxima aplicação da prova</string>
     <plurals name="plan_mock_exams_count">
         <item quantity="one">%d simulado</item>
