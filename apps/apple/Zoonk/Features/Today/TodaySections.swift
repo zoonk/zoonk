@@ -517,7 +517,7 @@ struct TodayWeekSection: View {
 
     if let line = Self.numbers(days: days, time: hasTime ? (studied, planned) : nil) {
       Text(verbatim: line)
-        .monospacedDigit()
+        .font(.footnote.monospacedDigit())
         .accessibilityLabel(
           [
             days,
