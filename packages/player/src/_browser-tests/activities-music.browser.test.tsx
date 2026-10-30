@@ -41,7 +41,9 @@ const RHYTHM_TAPS_MS = rhythmTapTimes(QUICK_RHYTHM.fields);
 const REAL_TIME_TEST_TIMEOUT_MS = 30_000;
 
 const PHONE = { height: 812, width: 375 };
+const PHONE_LANDSCAPE = { height: 375, width: 812 };
 const HALF_TAP_TARGET_PX = 21;
+const SUBPIXEL_PX = 1;
 
 const { byEar, byEarChoice } = engineModeFixtures.keyboardFretboard;
 
@@ -64,6 +66,17 @@ function exploredStep(id: string) {
   }
 
   return entry.screen("explore");
+}
+
+function cutOffKeys(names: string[]) {
+  const shown = document
+    .querySelector("[data-slot='piano-keyboard-scroll']")
+    ?.getBoundingClientRect();
+
+  return names.filter((name) => {
+    const key = pianoKey(name).element().getBoundingClientRect();
+    return !shown || key.left < shown.left - SUBPIXEL_PX || key.right > shown.right + SUBPIXEL_PX;
+  });
 }
 
 function tapsLandOn(key: Element) {
@@ -245,20 +258,29 @@ describe("music activities", () => {
       });
 
       await expect.element(pianoKey("A")).toHaveAttribute("aria-pressed", "true");
-
-      const edges = pianoKey("C")
-        .element()
-        .closest("[data-slot='piano-keyboard-scroll']")
-        ?.getBoundingClientRect();
-
-      for (const name of ["A", "C", "E"]) {
-        const key = pianoKey(name).element().getBoundingClientRect();
-        expect(key.left, `${name} is cut off`).toBeGreaterThanOrEqual(edges?.left ?? Infinity);
-        expect(key.right, `${name} is cut off`).toBeLessThanOrEqual(edges?.right ?? -Infinity);
-      }
+      expect(cutOffKeys(["A", "C", "E"])).toStrictEqual([]);
 
       const keys = page.getByRole("group", { name: "Piano keys" }).getByRole("button").elements();
       expect(keys.filter((key) => !tapsLandOn(key))).toStrictEqual([]);
+    });
+  });
+
+  it("keyboard: a chord off the keyboard's start stays in view when the phone turns upright", async () => {
+    const gMajor = {
+      ...activityContentFixtures.keyboardFretboard,
+      fields: {
+        ...activityContentFixtures.keyboardFretboard.fields,
+        start: { kind: "chord", quality: "major", root: "G" },
+      },
+    };
+
+    await atViewport(PHONE_LANDSCAPE, async () => {
+      openActivity({ content: gMajor, template: "keyboardFretboard" });
+      await expect.element(pianoKey("B")).toHaveAttribute("aria-pressed", "true");
+      expect(cutOffKeys(["D", "G", "B"])).toStrictEqual([]);
+
+      await page.viewport(PHONE.width, PHONE.height);
+      await expect.poll(() => cutOffKeys(["D", "G", "B"])).toStrictEqual([]);
     });
   });
 

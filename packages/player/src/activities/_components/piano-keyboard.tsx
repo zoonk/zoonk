@@ -103,7 +103,14 @@ export function PianoKeyboard({
     }
 
     const middle = (opening.from + opening.to) / 2 / whiteCount;
-    scroller.scrollLeft = middle * scroller.scrollWidth - scroller.clientWidth / 2;
+
+    // A resize changes every key's width, so an earlier offset no longer shows the same keys.
+    const observer = new ResizeObserver(() => {
+      scroller.scrollLeft = middle * scroller.scrollWidth - scroller.clientWidth / 2;
+    });
+
+    observer.observe(scroller);
+    return () => observer.disconnect();
   }, [opening, whiteCount]);
 
   const keyboard = (
