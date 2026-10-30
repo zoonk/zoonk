@@ -46,6 +46,8 @@ private class PianoKey(
     val whiteIndex: Int,
 )
 
+private fun PianoKey.center(whiteWidth: Dp): Dp = if (isBlack) whiteWidth * whiteIndex else whiteWidth * (whiteIndex + HALF)
+
 private fun layoutKeys(
     from: Int,
     to: Int,
@@ -56,8 +58,8 @@ private fun layoutKeys(
 
 /**
  * Main's `PianoKeyboard`, low notes on the left in every language. With [onPress] each key toggles and the keyboard is one
- * Tab stop whose arrows move between keys; keys stay wide enough to press, so a narrow window scrolls them sideways.
- * Without it the keyboard is a picture that [label] describes.
+ * Tab stop whose arrows move between keys; keys stay wide enough to press, so a narrow window scrolls them sideways, opening
+ * on the marked keys. Without it the keyboard is a picture that [label] describes.
  */
 @Composable
 internal fun PianoKeyboard(
@@ -86,7 +88,11 @@ internal fun PianoKeyboard(
                 if (onPress == null) {
                     Modifier.clearAndSetSemantics { contentDescription = label }
                 } else {
-                    Modifier.horizontalScroll(rememberScrollState()).semantics {
+                    val marked = keys.filter { it.midi in marks }.map { it.center(whiteWidth) }
+                    val opening = if (marked.isEmpty()) 0.dp else (marked.min() + marked.max()) / 2 - maxWidth / 2
+                    val scroll = rememberScrollState(with(LocalDensity.current) { opening.roundToPx().coerceAtLeast(0) })
+
+                    Modifier.horizontalScroll(scroll).semantics {
                         contentDescription = label
                         isTraversalGroup = true
                     }
