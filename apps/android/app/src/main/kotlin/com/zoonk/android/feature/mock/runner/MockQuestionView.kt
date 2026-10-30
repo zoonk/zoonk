@@ -34,14 +34,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -247,34 +244,33 @@ private fun EssayAnswer(
     val text = (draft?.answer as? Answer.Text)?.text.orEmpty()
     val words = WORDS.findAll(text).count()
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedTextField(
-            value = text,
-            onValueChange = { if (it.length <= MAX_ESSAY_CHARACTERS) viewModel.write(Answer.Text(it)) },
-            modifier = Modifier.fillMaxWidth().heightIn(min = ESSAY_HEIGHT),
-            readOnly = run.pending,
-            label = {
-                Text(
-                    stringResource(
-                        if (run.view.essayRubric ==
-                            MockExam.EssayRubric.ENEM
-                        ) {
-                            R.string.mock_your_essay
-                        } else {
-                            R.string.questions_your_answer
-                        },
-                    ),
-                )
-            },
-            minLines = ESSAY_LINES,
-        )
-        Text(
-            if (words > 0) pluralStringResource(R.plurals.mock_words, words, words) else "",
-            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-        )
-    }
+    OutlinedTextField(
+        value = text,
+        onValueChange = { if (it.length <= MAX_ESSAY_CHARACTERS) viewModel.write(Answer.Text(it)) },
+        modifier = Modifier.fillMaxWidth().heightIn(min = ESSAY_HEIGHT),
+        readOnly = run.pending,
+        label = {
+            Text(
+                stringResource(
+                    if (run.view.essayRubric ==
+                        MockExam.EssayRubric.ENEM
+                    ) {
+                        R.string.mock_your_essay
+                    } else {
+                        R.string.questions_your_answer
+                    },
+                ),
+            )
+        },
+        // The field's own line, so TalkBack reads the count with the field, not on every word.
+        supportingText = {
+            Text(
+                if (words > 0) pluralStringResource(R.plurals.mock_words, words, words) else "",
+                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+            )
+        },
+        minLines = ESSAY_LINES,
+    )
 }
 
 /** A recording keeps playing while the learner answers its questions, as in the exam: it's keyed by its set. */
