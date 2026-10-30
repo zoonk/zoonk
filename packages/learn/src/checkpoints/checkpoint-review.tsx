@@ -99,7 +99,14 @@ function ReviewItem({
           {answer.isCorrect ? (
             <CheckIcon aria-label={t("Correct")} className="size-4" role="img" />
           ) : (
-            <XIcon aria-label={t("Not quite")} className="size-4" role="img" />
+            <XIcon
+              aria-label={t({
+                description: "Marks the learner's answer as wrong.",
+                message: "Not quite",
+              })}
+              className="size-4"
+              role="img"
+            />
           )}
         </LineMarker>
 

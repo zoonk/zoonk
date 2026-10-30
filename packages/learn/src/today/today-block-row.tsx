@@ -39,8 +39,12 @@ function useRowLabel() {
     }
 
     return block.subject
-      ? t("Catching up · {subject}", { subject: block.subject })
-      : t("Catching up");
+      ? t({
+          description: "A lesson left from an earlier day.",
+          message: "Catching up · {subject}",
+          values: { subject: block.subject },
+        })
+      : t({ description: "A lesson left from an earlier day.", message: "Catching up" });
   };
 
   return (block: DayStep): string | null => {

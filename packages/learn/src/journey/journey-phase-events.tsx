@@ -71,7 +71,7 @@ export function CheckpointRow({
         {checkpoint.locked && <PlusMark />}
       </span>
       <span className={cn(EVENT_DATE_CLASS, !onDate && "font-sans")}>
-        {isDone && t("Won")}
+        {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
         {!isDone && when === "nextSession" && t("In your next session")}
         {!isDone && when === "queued" && t("After the challenge before it")}
         {onDate && checkpoint.date && formatPlanDate(checkpoint.date)}

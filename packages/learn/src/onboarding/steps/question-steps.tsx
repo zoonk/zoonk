@@ -63,11 +63,17 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
       subject={subject}
       onContinue={() => purpose && submit(purpose)}
       pending={pending}
-      title={t("What do you want from it?")}
+      title={t({
+        description: "Asks what the learner hopes to get out of learning this subject.",
+        message: "What do you want from it?",
+      })}
     >
       <ChoiceList
         choices={choices}
-        label={t("What you want from it")}
+        label={t({
+          description: "Asks what the learner hopes to get out of learning this subject.",
+          message: "What you want from it",
+        })}
         onChange={setPurpose}
         onPick={pick}
         readOnly={pending}

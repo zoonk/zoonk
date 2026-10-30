@@ -161,7 +161,10 @@ export function GenerationFailureNotice({
     generation: {
       action: t("Try again"),
       description: t("Something went wrong on our side."),
-      title: t("This didn't finish"),
+      title: t({
+        description: "Preparing this content failed. It is not still running.",
+        message: "This didn't finish",
+      }),
     },
     notStarted: {
       action: t("Try again"),

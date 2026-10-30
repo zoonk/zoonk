@@ -47,11 +47,20 @@ function usePrepFact() {
     }
 
     return task.prepShared
-      ? t("{time} to prepare tasks {tasks}", {
-          tasks: format.list(task.prepShared.tasks.map(String), { type: "conjunction" }),
-          time: formatDuration(Math.round(task.prepShared.minutes)),
+      ? t({
+          description:
+            "Time the learner gets to prepare before answering these speaking exam tasks. {tasks} lists task numbers.",
+          message: "{time} to prepare tasks {tasks}",
+          values: {
+            tasks: format.list(task.prepShared.tasks.map(String), { type: "conjunction" }),
+            time: formatDuration(Math.round(task.prepShared.minutes)),
+          },
         })
-      : t("{time} to prepare", { time: formatDuration(Math.round(task.prepMinutes)) });
+      : t({
+          description: "Time the learner gets to prepare before answering a speaking exam task.",
+          message: "{time} to prepare",
+          values: { time: formatDuration(Math.round(task.prepMinutes)) },
+        });
   };
 }
 

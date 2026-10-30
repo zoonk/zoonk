@@ -108,7 +108,11 @@ export function CallProblem({
         footer={
           <TaskActions>
             <TaskMainButton onClick={onTakeover}>
-              {t("End that call and start this one")}
+              {t({
+                description:
+                  "Another call is still running: this ends it and starts the call on this screen.",
+                message: "End that call and start this one",
+              })}
             </TaskMainButton>
           </TaskActions>
         }

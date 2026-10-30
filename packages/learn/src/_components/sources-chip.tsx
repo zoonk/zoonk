@@ -27,7 +27,11 @@ export function SourcesChip({ citation }: { citation: SourceCitation }) {
         }
       >
         <BookOpenCheckIcon aria-hidden="true" data-icon="inline-start" />
-        {t("Sources · Checked {date}", { date: month })}
+        {t({
+          description: '{date} is a month and year, like "May 2026".',
+          message: "Sources · Checked {date}",
+          values: { date: month },
+        })}
       </PopoverTrigger>
 
       <PopoverContent align="start" className="gap-3">
@@ -35,8 +39,16 @@ export function SourcesChip({ citation }: { citation: SourceCitation }) {
           <PopoverTitle>{citation.title}</PopoverTitle>
           <PopoverDescription>
             {citation.publisher
-              ? t("{publisher} · Checked {date}", { date: day, publisher: citation.publisher })
-              : t("Checked {date}", { date: day })}
+              ? t({
+                  description: '{date} is a full date, like "May 5, 2026".',
+                  message: "{publisher} · Checked {date}",
+                  values: { date: day, publisher: citation.publisher },
+                })
+              : t({
+                  description: '{date} is a full date, like "May 5, 2026".',
+                  message: "Checked {date}",
+                  values: { date: day },
+                })}
           </PopoverDescription>
         </PopoverHeader>
 

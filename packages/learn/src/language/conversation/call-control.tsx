@@ -21,7 +21,12 @@ function useCallStatus({ call, name }: { call: LiveCall; name: string }) {
     return t("Muted");
   }
 
-  return call.isPlaying ? t("{name} is talking…", { name }) : t("Listening…");
+  return call.isPlaying
+    ? t("{name} is talking…", { name })
+    : t({
+        description: "Call status while Zoonk listens to the learner speak.",
+        message: "Listening…",
+      });
 }
 
 export function CallStatus({ call, name }: { call: LiveCall; name: string }) {

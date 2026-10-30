@@ -204,13 +204,15 @@ function PenaltyRule() {
     );
   }
 
-  return t(
-    "A wrong answer costs {share} of a right one, so leave a question blank when you're less than {breakEven} sure.",
-    {
+  return t({
+    description: '{share} and {breakEven} are percentages, like "25%".',
+    message:
+      "A wrong answer costs {share} of a right one, so leave a question blank when you're less than {breakEven} sure.",
+    values: {
       breakEven: formatShare(getBreakEven(challenge.wrongPenalty)),
       share: formatShare(challenge.wrongPenalty),
     },
-  );
+  });
 }
 
 function MockIntro() {

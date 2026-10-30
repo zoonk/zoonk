@@ -110,10 +110,19 @@ export function useCeremonyCopy({
       return {
         action: continueLabel,
         detail: stageLine,
-        title: t("{buddy} grew up!", { buddy: buddyName }),
+        title: t({
+          description: "The buddy reached its next growth stage, Young or Adult.",
+          message: "{buddy} grew up!",
+          values: { buddy: buddyName },
+        }),
       };
     case "glasses":
-      return { ...glasses, action: canWear ? t("Wear them") : continueLabel };
+      return {
+        ...glasses,
+        action: canWear
+          ? t({ description: "Puts the new glasses on the learner's buddy.", message: "Wear them" })
+          : continueLabel,
+      };
     case "badge":
       return { action: continueLabel, detail: "", title: "" };
     default:

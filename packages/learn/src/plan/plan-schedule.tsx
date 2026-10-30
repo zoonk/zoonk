@@ -79,12 +79,17 @@ function DailyCoverage({
                   back), so it says so. */}
               {plan.fitOffer?.fits && plan.schedule.targetDate ? (
                 <p>
-                  {t("Your time covers everything by {date}", {
-                    date: formatGoalDate({
-                      isoDate: plan.schedule.targetDate,
-                      namedMonth: plan.schedule.targetDateNamedMonth,
-                      style: "long",
-                    }),
+                  {t({
+                    description:
+                      '{date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.',
+                    message: "Your time covers everything by {date}",
+                    values: {
+                      date: formatGoalDate({
+                        isoDate: plan.schedule.targetDate,
+                        namedMonth: plan.schedule.targetDateNamedMonth,
+                        style: "long",
+                      }),
+                    },
                   })}
                 </p>
               ) : (

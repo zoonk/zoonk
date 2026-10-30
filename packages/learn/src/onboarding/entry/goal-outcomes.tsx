@@ -260,7 +260,12 @@ export function InstrumentGoal({
 
       <OnboardingHeading>
         <OnboardingTitle>
-          {t("Lessons for playing {instrument} are coming", { instrument })}
+          {t({
+            description:
+              '{instrument} names what the learner wants to play, or singing, like "guitar".',
+            message: "Lessons for playing {instrument} are coming",
+            values: { instrument },
+          })}
         </OnboardingTitle>
         <OnboardingDescription>
           {t(
@@ -274,10 +279,13 @@ export function InstrumentGoal({
           <MusicIcon aria-hidden="true" className="size-5" />
         </span>
         <p>
-          {t(
-            "Musicianship for {instrument}: hear chords, read short melodies and keep the beat. No microphone needed.",
-            { instrument },
-          )}
+          {t({
+            description:
+              '{instrument} names what the learner wants to play, or singing, like "guitar".',
+            message:
+              "Musicianship for {instrument}: hear chords, read short melodies and keep the beat. No microphone needed.",
+            values: { instrument },
+          })}
         </p>
       </div>
 

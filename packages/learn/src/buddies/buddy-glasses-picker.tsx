@@ -38,10 +38,12 @@ function CountLine({
   const t = useExtracted();
 
   return glasses === "catEye"
-    ? t(
-        "{current, plural, =0 {# of {target} days with every mission done} one {# of {target} days with every mission done} other {# of {target} days with every mission done}}",
-        { current, target: String(target) },
-      )
+    ? t({
+        description: "{target} is 7, so a noun that counts it stays plural in every form.",
+        message:
+          "{current, plural, =0 {# of {target} days with every mission done} one {# of {target} days with every mission done} other {# of {target} days with every mission done}}",
+        values: { current, target: String(target) },
+      })
     : t("{current} of {target} reviews", { current: String(current), target: String(target) });
 }
 

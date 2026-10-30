@@ -135,7 +135,12 @@ function ImproveStep({
       {improve && <BetterWay improve={improve} language={language} />}
 
       {missed.length > 0 && (
-        <ChecklistRows aria-label={t("Goals still to get across")}>
+        <ChecklistRows
+          aria-label={t({
+            description: "The call's goals, things to say, that the learner hasn't said yet.",
+            message: "Goals still to get across",
+          })}
+        >
           {missed.map((objective) => (
             <ChecklistRow done={false} key={objective.label} lang={language}>
               {objective.label}

@@ -116,7 +116,11 @@ function PhaseResume({ phase }: { phase: PlanPhaseView }) {
     <span className="text-muted-foreground text-xs">
       {resumes === today
         ? t("Continues today")
-        : t("Continues {date}", { date: formatPlanDate(resumes) })}
+        : t({
+            description: 'When this phase continues. {date} is a day, like "May 5".',
+            message: "Continues {date}",
+            values: { date: formatPlanDate(resumes) },
+          })}
     </span>
   );
 }

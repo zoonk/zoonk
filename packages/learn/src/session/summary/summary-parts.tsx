@@ -118,7 +118,11 @@ function ComesBackDetail({ comesBack }: { comesBack: StudySessionSummary["comesB
     format.dateTime(date, { day: "numeric", month: "short", timeZone: "UTC" }),
   );
 
-  return t("Back {days}", { days: format.list(days, { type: "conjunction" }) });
+  return t({
+    description: 'When the skills to review come back. {days} lists days, like "May 5 and May 7".',
+    message: "Back {days}",
+    values: { days: format.list(days, { type: "conjunction" }) },
+  });
 }
 
 function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }) {

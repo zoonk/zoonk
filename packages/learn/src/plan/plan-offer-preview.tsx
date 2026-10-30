@@ -140,7 +140,10 @@ export function OfferPreview({
 
       {!unchanged && feasibility?.fits && (
         <SuggestionDescription>
-          {t("Your plan then covers everything in depth.")}
+          {t({
+            description: '"Then" means "with this change".',
+            message: "Your plan then covers everything in depth.",
+          })}
         </SuggestionDescription>
       )}
 
@@ -212,8 +215,11 @@ export function useAnswerOffer() {
       return {
         description: intent === "date" || !none ? [covered] : [covered, none],
         operations: [{ kind: "setTargetDate", targetDate: fittingDate }],
-        title: t("Your time covers everything by {date}", {
-          date: formatDate(fittingDate, "long"),
+        title: t({
+          description:
+            '{date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.',
+          message: "Your time covers everything by {date}",
+          values: { date: formatDate(fittingDate, "long") },
         }),
       };
     }

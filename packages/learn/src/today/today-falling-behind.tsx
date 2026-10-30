@@ -102,7 +102,10 @@ function BehindChoices({
     focus: behind.canFocus && link("focus", actions.chooseFocusHref, t("Choose where to focus")),
     keep: (
       <SuggestionAction disabled={isPending} key="keep" onClick={keep} variant={variant("keep")}>
-        {t("Keep my time")}
+        {t({
+          description: "Keeps the learner's daily study time as it is.",
+          message: "Keep my time",
+        })}
       </SuggestionAction>
     ),
     studyEverything: link("studyEverything", actions.studyEverythingHref, t("Study everything")),

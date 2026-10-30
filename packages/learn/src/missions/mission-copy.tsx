@@ -45,7 +45,7 @@ export function useMissionName(buddy: Pick<LearnBuddy, "kind" | "name"> | null) 
       case "mock":
         return t("Take the mock");
       case "essay":
-        return t("Practice writing");
+        return t({ description: "A mission to practice an essay.", message: "Practice writing" });
       case "practice":
         return t("Practice");
       case "fixMistake":

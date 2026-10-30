@@ -42,7 +42,15 @@ export function useMockOptionDetail() {
         : null;
 
     const covers = option.covers ? format.list(option.covers, { type: "conjunction" }) : null;
-    const objective = option.objectiveOnly && !covers ? t("objective part only") : null;
+
+    const objective =
+      option.objectiveOnly && !covers
+        ? t({
+            description:
+              "The mock leaves out the exam's written part and has only its questions with set answers.",
+            message: "objective part only",
+          })
+        : null;
 
     return [covers, subjects, written, objective].filter(Boolean).join(" · ");
   };
@@ -53,9 +61,11 @@ export function useMockOptionSize() {
   const duration = useFormatDuration();
 
   return (option: Pick<MockOptionView, "estimatedMinutes" | "questions">): string =>
-    t("{count} q · ~{time}", {
-      count: String(option.questions),
-      time: duration(option.estimatedMinutes),
+    t({
+      description:
+        "{count} is a number of questions in a mock exam, and {time} about how long it takes.",
+      message: "{count} q · ~{time}",
+      values: { count: String(option.questions), time: duration(option.estimatedMinutes) },
     });
 }
 
@@ -100,7 +110,11 @@ export function usePlacementLengthChoices({
         option.length === recommended
           ? t("About {time} (recommended)", { time })
           : t("About {time}", { time }),
-      trailing: t("{count} q", { count: String(option.questions) }),
+      trailing: t({
+        description: "{count} is a number of questions in a mock exam.",
+        message: "{count} q",
+        values: { count: String(option.questions) },
+      }),
       value: option.length,
     };
   });

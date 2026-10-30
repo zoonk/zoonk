@@ -159,7 +159,12 @@ export function TodayDayStatus({ className }: { className?: string }) {
     case "limit":
       return (
         <TodayStatusLine className={className} icon={<HourglassIcon />}>
-          <TodayStatusSentence>{t("That's today's study time.")}</TodayStatusSentence>
+          <TodayStatusSentence>
+            {t({
+              description: "Study time is the learner's daily amount, all studied today.",
+              message: "That's today's study time.",
+            })}
+          </TodayStatusSentence>
           <SeeYouClause />
         </TodayStatusLine>
       );

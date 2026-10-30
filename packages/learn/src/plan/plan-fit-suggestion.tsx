@@ -21,12 +21,17 @@ export function FitLessonsSuggestion({ item }: { item: SlotItem }) {
 
   const title =
     offer?.fits && targetDate
-      ? t("Your time covers everything by {date}", {
-          date: formatGoalDate({
-            isoDate: targetDate,
-            namedMonth: targetDateNamedMonth,
-            style: "long",
-          }),
+      ? t({
+          description:
+            '{date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.',
+          message: "Your time covers everything by {date}",
+          values: {
+            date: formatGoalDate({
+              isoDate: targetDate,
+              namedMonth: targetDateNamedMonth,
+              style: "long",
+            }),
+          },
         })
       : t(
           "{count, plural, one {# more lesson fits in your time} other {# more lessons fit in your time}}",

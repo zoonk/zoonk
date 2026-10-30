@@ -49,7 +49,11 @@ function PlanStartNotice({ run }: { run: GenerationRun }) {
           : t("Building your plan stopped")}
       </AlertTitle>
       <AlertDescription>
-        {t("Your answers are saved. Try again so it's ready when you finish.")}
+        {t({
+          description:
+            '"It" is the learner\'s plan. "When you finish" means finishing these setup questions.',
+          message: "Your answers are saved. Try again so it's ready when you finish.",
+        })}
       </AlertDescription>
       {run.retry && (
         <Button

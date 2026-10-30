@@ -254,7 +254,10 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
         aria-label={t("Answer sheet")}
         render={<Button className="shrink-0 lg:hidden" size="sm" variant="outline" />}
       >
-        {t("Sheet")}
+        {t({
+          description: "Short label of a small button that opens the mock exam's answer sheet.",
+          message: "Sheet",
+        })}
       </DrawerTrigger>
 
       <DrawerPopup>

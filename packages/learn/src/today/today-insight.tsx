@@ -50,7 +50,12 @@ function useInsightChoices(insight: MemoryInsightView) {
 
   if (insight.kind === "scheduleIdea") {
     return {
-      accept: t("Move my study time to {time}", { time: insight.studyTime ?? "" }),
+      accept: t({
+        description:
+          'Study time is the time of day the learner studies. {time} is a time of day, like "20:00".',
+        message: "Move my study time to {time}",
+        values: { time: insight.studyTime ?? "" },
+      }),
       dismiss: t("Not now"),
     };
   }
@@ -68,7 +73,15 @@ function useAnsweredText(insight: MemoryInsightView) {
     }
 
     if (insight.kind === "scheduleIdea") {
-      return answer === "accepted" ? t("Study time moved.") : t("Your study time stays the same.");
+      return answer === "accepted"
+        ? t({
+            description: "The time of day the learner studies changed.",
+            message: "Study time moved.",
+          })
+        : t({
+            description: "The time of day the learner studies stays the same.",
+            message: "Your study time stays the same.",
+          });
     }
 
     return t("Noted.");

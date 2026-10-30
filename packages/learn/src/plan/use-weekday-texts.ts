@@ -44,8 +44,16 @@ export function useWeeklyEventsText() {
     const day = formatWeekday(moved.after);
 
     return moved.kind === "mock"
-      ? t("Weekly mocks move to {day}.", { day })
-      : t("Weekly challenges move to {day}.", { day });
+      ? t({
+          description: '{day} is a weekday, like "Monday".',
+          message: "Weekly mocks move to {day}.",
+          values: { day },
+        })
+      : t({
+          description: '{day} is a weekday, like "Monday".',
+          message: "Weekly challenges move to {day}.",
+          values: { day },
+        });
   };
 }
 
@@ -57,7 +65,11 @@ export function useNextMockText() {
     const moved = effect?.nextMock;
 
     return moved
-      ? t("Your next mock moves to {date}.", { date: formatDate(moved.after, "weekdayDay") })
+      ? t({
+          description: '{date} is a weekday and day, like "Monday, May 5".',
+          message: "Your next mock moves to {date}.",
+          values: { date: formatDate(moved.after, "weekdayDay") },
+        })
       : null;
   };
 }

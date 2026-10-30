@@ -48,7 +48,11 @@ export function CallIntro({ call }: { call: ChallengeCall }) {
   return (
     <StepCard>
       <IntroHeading
-        detail={t("A live call where you get your point across. Speak or type.")}
+        detail={t({
+          description:
+            'A call in the language the learner studies. "Get your point across" means make yourself understood.',
+          message: "A live call where you get your point across. Speak or type.",
+        })}
         eyebrow={eyebrow}
         title={call.title ?? t("The unit's call")}
       />
@@ -76,7 +80,13 @@ export function WonCallIntro() {
 
   return (
     <StepCard>
-      <IntroHeading eyebrow={eyebrow} title={t("Challenge passed")} />
+      <IntroHeading
+        eyebrow={eyebrow}
+        title={t({
+          description: "The learner passed this challenge, not just finished it.",
+          message: "Challenge passed",
+        })}
+      />
 
       {result && (
         <TaskMeta

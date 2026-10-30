@@ -125,8 +125,19 @@ export function SpeakingPrompt({
 
       <p aria-live="polite" className="text-muted-foreground text-sm">
         {pending && t("Listening to what you said…")}
-        {!pending && isRecording && t("Recording… Press Stop when you're done.")}
-        {!pending && !isRecording && (error ?? t("Press Record and say it out loud"))}
+        {!pending &&
+          isRecording &&
+          t({
+            description: '"Stop" is the label of the record button.',
+            message: "Recording… Press Stop when you're done.",
+          })}
+        {!pending &&
+          !isRecording &&
+          (error ??
+            t({
+              description: '"Record" is the label of the record button.',
+              message: "Press Record and say it out loud",
+            }))}
       </p>
     </div>
   );

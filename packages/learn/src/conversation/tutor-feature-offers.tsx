@@ -97,9 +97,18 @@ export function EssayOffer({ href, offer }: { href: string; offer: Offer<"essay"
   const locked = offer.access === "plusRequired";
 
   const descriptions: Record<Offer<"essay">["cadence"], string> = {
-    biweekly: t("Practiced every other week in your plan, each draft graded."),
-    finalWeeks: t("Practiced in the final weeks before the exam, each draft graded."),
-    weekly: t("Practiced every week in your plan, each draft graded."),
+    biweekly: t({
+      description: "Describes how often essay practice comes in the learner's plan.",
+      message: "Practiced every other week in your plan, each draft graded.",
+    }),
+    finalWeeks: t({
+      description: "Describes how often essay practice comes in the learner's plan.",
+      message: "Practiced in the final weeks before the exam, each draft graded.",
+    }),
+    weekly: t({
+      description: "Describes how often essay practice comes in the learner's plan.",
+      message: "Practiced every week in your plan, each draft graded.",
+    }),
   };
 
   return (

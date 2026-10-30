@@ -11,7 +11,12 @@ function useMaterialGoal() {
     const titles = attached.map((source) => source.title || t("my notes")).join(", ");
 
     return intent === "exam"
-      ? t("Prepare for an exam on my material: {titles}", { titles })
+      ? t({
+          description:
+            "The learner's goal, in their words: preparing themselves for an exam. {titles} lists the titles of their study material.",
+          message: "Prepare for an exam on my material: {titles}",
+          values: { titles },
+        })
       : t("Understand my material: {titles}", { titles });
   };
 }

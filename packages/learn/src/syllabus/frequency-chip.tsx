@@ -31,7 +31,10 @@ export function FrequencyChip({
         className,
       )}
     >
-      {t("Appears a lot")}
+      {t({
+        description: "Marks a topic that comes up often in the exam.",
+        message: "Appears a lot",
+      })}
     </span>
   );
 }

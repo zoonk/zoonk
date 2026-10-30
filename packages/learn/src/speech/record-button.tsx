@@ -41,7 +41,15 @@ export function RecordButton({
       ) : (
         <MicIcon aria-hidden="true" />
       )}
-      {recording ? t("Stop") : t("Record")}
+      {recording
+        ? t({
+            description: "Stops a recording. Hints tell the learner to press it by this name.",
+            message: "Stop",
+          })
+        : t({
+            description: "Starts a recording. Hints tell the learner to press it by this name.",
+            message: "Record",
+          })}
       {recording && (
         // The clock moves every second, so it stays out of the button's name.
         <span aria-hidden="true" className="text-muted-foreground font-mono tabular-nums">

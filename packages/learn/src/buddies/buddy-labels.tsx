@@ -108,8 +108,14 @@ export function BuddyGlassesHowToEarn({ glasses }: { glasses: BuddyGlasses }) {
     case "monocle":
       return t("Win the final challenge");
     case "round":
-      return t("Comes with your buddy");
+      return t({
+        description: "How the learner gets the round glasses: every buddy has them.",
+        message: "Comes with your buddy",
+      });
     default:
-      return t("Comes with your buddy");
+      return t({
+        description: "How the learner gets the round glasses: every buddy has them.",
+        message: "Comes with your buddy",
+      });
   }
 }

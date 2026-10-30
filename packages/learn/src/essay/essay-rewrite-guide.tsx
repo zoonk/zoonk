@@ -20,7 +20,12 @@ export function CriteriaInView() {
 
   return (
     <section className="hidden flex-col gap-1 lg:flex">
-      <PageSectionTitle>{t("Your last grade")}</PageSectionTitle>
+      <PageSectionTitle>
+        {t({
+          description: "The grade of the learner's last essay draft.",
+          message: "Your last grade",
+        })}
+      </PageSectionTitle>
       <CriteriaRows grade={grade} rubric={essay.rubric} />
     </section>
   );

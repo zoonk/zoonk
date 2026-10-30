@@ -101,7 +101,10 @@ export function OtherTimeSelect({
         setChosen(next);
         onPick(next);
       }}
-      placeholder={t("Other time…")}
+      placeholder={t({
+        description: "Placeholder of a menu with more amounts of daily study time.",
+        message: "Other time…",
+      })}
       value={chosen === minutes ? chosen : null}
     />
   );

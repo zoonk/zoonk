@@ -10,7 +10,11 @@ export function useCriterionName() {
       case "c1":
         return t("Formal writing");
       case "c2":
-        return t("Topic and references");
+        return t({
+          description:
+            "Enem essay competence 2: addressing the set topic and drawing on outside knowledge.",
+          message: "Topic and references",
+        });
       case "c3":
         return t("Argument");
       case "c4":

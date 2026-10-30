@@ -260,7 +260,13 @@ function useLessonCopy(): KindCopy<"lesson"> {
     phases: {
       plan: {
         label: t("Planning the lesson"),
-        lines: [t("Choosing what to cover…"), t("Picking the best way to explain it…")],
+        lines: [
+          t("Choosing what to cover…"),
+          t({
+            description: 'Zoonk at work on a lesson. "It" is the lesson\'s topic.',
+            message: "Picking the best way to explain it…",
+          }),
+        ],
       },
       write: {
         label: t("Writing the lesson"),

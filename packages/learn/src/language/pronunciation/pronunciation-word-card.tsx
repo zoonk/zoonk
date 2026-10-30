@@ -158,8 +158,19 @@ export function RecorderStatus({
     <div className="flex flex-col items-start gap-3">
       <p aria-live="polite" className="text-muted-foreground text-sm">
         {pending && t("Listening to how it sounded…")}
-        {!pending && recording && t("Recording… Press Stop when you're done.")}
-        {!pending && !recording && (message ?? t("Press Record and say the word out loud"))}
+        {!pending &&
+          recording &&
+          t({
+            description: '"Stop" is the label of the record button.',
+            message: "Recording… Press Stop when you're done.",
+          })}
+        {!pending &&
+          !recording &&
+          (message ??
+            t({
+              description: '"Record" is the label of the record button.',
+              message: "Press Record and say the word out loud",
+            }))}
       </p>
 
       {notice === "signUpRequired" && <CreateAccountLink />}

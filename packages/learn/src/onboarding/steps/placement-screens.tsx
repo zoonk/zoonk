@@ -177,10 +177,12 @@ export function PlacementDone({
       <PlacementOutcome done={done} onContinue={onContinue} pending={pending}>
         <OnboardingTitle>{t("Your mock exam set your starting point")}</OnboardingTitle>
         <OnboardingDescription>
-          {t(
-            "Based on {count, plural, one {your # answer} other {your # answers}}. It gets more accurate every day.",
-            { count: answered },
-          )}
+          {t({
+            description: '"It" is the learner\'s starting point, named in the title.',
+            message:
+              "Based on {count, plural, one {your # answer} other {your # answers}}. It gets more accurate every day.",
+            values: { count: answered },
+          })}
         </OnboardingDescription>
       </PlacementOutcome>
     );
@@ -194,7 +196,10 @@ export function PlacementDone({
       <OnboardingDescription>
         {forToday
           ? t("Your first sessions ask a few more to fine-tune your plan.")
-          : t("It gets more accurate every day.")}
+          : t({
+              description: '"It" is the learner\'s starting point, named in the title.',
+              message: "It gets more accurate every day.",
+            })}
       </OnboardingDescription>
     </PlacementOutcome>
   );

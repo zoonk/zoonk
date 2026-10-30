@@ -238,7 +238,12 @@ function EssayWriteScreen({
       aside={
         texts || criteria
           ? {
-              label: texts ? textsLabel : t("Your last grade"),
+              label: texts
+                ? textsLabel
+                : t({
+                    description: "The grade of the learner's last essay draft.",
+                    message: "Your last grade",
+                  }),
               title: texts ? textsLabel : undefined,
             }
           : null

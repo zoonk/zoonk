@@ -124,7 +124,9 @@ function ChoiceGrade({ feedback }: { feedback: ChoiceFeedback }) {
   return (
     <FeedbackPanel aria-live="polite" role="status">
       <FeedbackVerdict tone={feedback.isCorrect ? "right" : "wrong"}>
-        {feedback.isCorrect ? t("Correct!") : t("Not quite")}
+        {feedback.isCorrect
+          ? t("Correct!")
+          : t({ description: "Marks the learner's answer as wrong.", message: "Not quite" })}
       </FeedbackVerdict>
       {feedback.explanation && (
         <FeedbackExplanation>

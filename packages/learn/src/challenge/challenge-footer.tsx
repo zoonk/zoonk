@@ -236,8 +236,15 @@ function WeeklyUsedUpLine({ movable }: { movable: boolean }) {
   return (
     <StudyTimeUsedUpNote>
       {movable
-        ? t("You've reached today's study time. Move it to Monday to keep it.")
-        : t("You've reached today's study time.")}
+        ? t({
+            description:
+              'Study time is the learner\'s daily amount. "It" is this weekly challenge.',
+            message: "You've reached today's study time. Move it to Monday to keep it.",
+          })
+        : t({
+            description: "Study time is the learner's daily amount.",
+            message: "You've reached today's study time.",
+          })}
     </StudyTimeUsedUpNote>
   );
 }

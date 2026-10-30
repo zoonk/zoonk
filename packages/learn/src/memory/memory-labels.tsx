@@ -12,7 +12,11 @@ export function MemoryCategoryName({ category }: { category: MemoryCategory }) {
     case "goals":
       return t("Goals");
     case "background":
-      return t("Background");
+      return t({
+        description:
+          "A category of what Zoonk remembers about the learner: their studies, job, school year and the languages they speak.",
+        message: "Background",
+      });
     case "routine":
       return t("Routine");
     case "preferences":

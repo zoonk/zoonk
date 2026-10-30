@@ -45,32 +45,44 @@ export function useAreaEndTexts() {
       const dates = { after: formatDate(after, "long"), area, before: formatDate(before, "long") };
 
       if (after === before) {
-        return t(
-          "You still finish {area} around {after}, with all its lessons: everything fits by your date.",
-          dates,
-        );
+        return t({
+          description: '{after} is a day, like "May 5".',
+          message:
+            "You still finish {area} around {after}, with all its lessons: everything fits by your date.",
+          values: dates,
+        });
       }
 
       if (lessonsGained > 0 && after > before) {
         return estimated
-          ? t(
-              "{area} gets about {count, plural, one {# more lesson} other {# more lessons}}, so you finish it around {after} instead of {before}.",
-              { ...dates, count: lessonsGained },
-            )
-          : t(
-              "{area} gets {count, plural, one {# more lesson} other {# more lessons}}, so you finish it around {after} instead of {before}.",
-              { ...dates, count: lessonsGained },
-            );
+          ? t({
+              description: '{after} and {before} are days, like "May 5".',
+              message:
+                "{area} gets about {count, plural, one {# more lesson} other {# more lessons}}, so you finish it around {after} instead of {before}.",
+              values: { ...dates, count: lessonsGained },
+            })
+          : t({
+              description: '{after} and {before} are days, like "May 5".',
+              message:
+                "{area} gets {count, plural, one {# more lesson} other {# more lessons}}, so you finish it around {after} instead of {before}.",
+              values: { ...dates, count: lessonsGained },
+            });
       }
 
       if (lessonsGained < 0 && after < before) {
-        return t(
-          "{area} has {count, plural, one {# lesson} other {# lessons}} fewer to go, so you finish it around {after} instead of {before}.",
-          { ...dates, count: -lessonsGained },
-        );
+        return t({
+          description: '{after} and {before} are days, like "May 5".',
+          message:
+            "{area} has {count, plural, one {# lesson} other {# lessons}} fewer to go, so you finish it around {after} instead of {before}.",
+          values: { ...dates, count: -lessonsGained },
+        });
       }
 
-      return t("You finish {area} around {after} instead of {before}.", dates);
+      return t({
+        description: '{after} and {before} are days, like "May 5".',
+        message: "You finish {area} around {after} instead of {before}.",
+        values: dates,
+      });
     });
   };
 }

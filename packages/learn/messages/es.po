@@ -392,6 +392,7 @@ msgctxt "XjzZDx"
 msgid "<number>+{points}</number> <words>Brain Power</words>"
 msgstr "<number>+{points}</number> <words>Poder Mental</words>"
 
+#. Counts words the learner said aloud in pronunciation practice.
 #: src/_components/moment-readouts.tsx
 msgctxt "b73TgX"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} sounded right} one {<number>#</number> of {answered} sounded right} other {<number>#</number> of {answered} sounded right}}"
@@ -445,16 +446,19 @@ msgctxt "IIe6nO"
 msgid "To review"
 msgstr "Por repasar"
 
+#. {date} is a month and year, like "May 2026".
 #: src/_components/sources-chip.tsx
 msgctxt "x8PRvI"
 msgid "Sources · Checked {date}"
 msgstr "Fuentes · Comprobadas el {date}"
 
+#. {date} is a full date, like "May 5, 2026".
 #: src/_components/sources-chip.tsx
 msgctxt "vQuiMG"
 msgid "{publisher} · Checked {date}"
 msgstr "{publisher} · Comprobado el {date}"
 
+#. {date} is a full date, like "May 5, 2026".
 #: src/_components/sources-chip.tsx
 msgctxt "Aoy3jt"
 msgid "Checked {date}"
@@ -479,16 +483,19 @@ msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Volver"
 
+#. Study time is the learner's daily amount. "It" is the call or challenge they opened.
 #: src/_components/study-time-used-up.tsx
 msgctxt "jwkazv"
 msgid "You've reached today's study time. It'll be in your next session."
 msgstr "Has alcanzado el tiempo de estudio de hoy. Estará disponible en tu próxima sesión."
 
+#. Study time is the learner's daily amount. "It" is the call or challenge they opened.
 #: src/_components/study-time-used-up.tsx
 msgctxt "-Eq2VH"
 msgid "You've reached today's study time. It'll be here tomorrow."
 msgstr "Has alcanzado el tiempo de estudio de hoy. Estará disponible aquí mañana."
 
+#. Study time is the learner's daily amount. "It" is the call or challenge they opened. {day} is a weekday, like "Monday".
 #: src/_components/study-time-used-up.tsx
 msgctxt "--X_qb"
 msgid "You've reached today's study time. It'll be here on {day}."
@@ -538,6 +545,7 @@ msgctxt "vnQGJG"
 msgid "Take the test and skip the unit"
 msgstr "Haz la prueba y sáltate la unidad"
 
+#. A switch to study a different amount of time a day on weekends.
 #: src/_components/weekend-time.tsx
 msgctxt "f4Zmb7"
 msgid "Different time on weekends"
@@ -826,6 +834,7 @@ msgctxt "IFviMa"
 msgid "Today's missions"
 msgstr "Misiones de hoy"
 
+#. {target} is 7, so a noun that counts it stays plural in every form.
 #: src/buddies/buddy-glasses-picker.tsx
 msgctxt "JZBlWy"
 msgid "{current, plural, =0 {# of {target} days with every mission done} one {# of {target} days with every mission done} other {# of {target} days with every mission done}}"
@@ -836,6 +845,7 @@ msgctxt "0YvqkI"
 msgid "{current} of {target} reviews"
 msgstr "{current} de {target} repasos"
 
+#. The learner's buddy wears the glasses.
 #: src/buddies/buddy-glasses-sheet.tsx
 msgctxt "O7-3Od"
 msgid "Pick a pair you've earned to wear it."
@@ -1019,6 +1029,7 @@ msgctxt "JNjStC"
 msgid "Win the final challenge"
 msgstr "Gana el desafío final"
 
+#. How the learner gets the round glasses: every buddy has them.
 #: src/buddies/buddy-labels.tsx
 msgctxt "QRnLkX"
 msgid "Comes with your buddy"
@@ -1193,11 +1204,13 @@ msgctxt "8chScl"
 msgid "{belt}!"
 msgstr "¡{belt}!"
 
+#. The buddy reached its next growth stage, Young or Adult.
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "6Vl5-v"
 msgid "{buddy} grew up!"
 msgstr "¡{buddy} ha crecido!"
 
+#. Puts the new glasses on the learner's buddy.
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "d5UGw8"
 msgid "Wear them"
@@ -1210,6 +1223,7 @@ msgctxt "oTjSo7"
 msgid "What to get across"
 msgstr "Qué debes comunicar"
 
+#. A call in the language the learner studies. "Get your point across" means make yourself understood.
 #: src/challenge/challenge-call-intro.tsx
 msgctxt "PK57-W"
 msgid "A live call where you get your point across. Speak or type."
@@ -1236,6 +1250,7 @@ msgctxt "u4uS38"
 msgid "{count} to win"
 msgstr "{count} para ganar"
 
+#. The learner passed this challenge, not just finished it.
 #: src/challenge/challenge-call-intro.tsx
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "odjFY1"
@@ -1310,11 +1325,13 @@ msgctxt "zgw8mc"
 msgid "Mock exams come with Plus: whenever you want, and every week in your plan."
 msgstr "Con Plus tienes simulacros cuando quieras y uno cada semana en tu plan."
 
+#. Study time is the learner's daily amount. "It" is this weekly challenge.
 #: src/challenge/challenge-footer.tsx
 msgctxt "4jTLf0"
 msgid "You've reached today's study time. Move it to Monday to keep it."
 msgstr "Has alcanzado el tiempo de estudio de hoy. Pasa el desafío al lunes para conservarlo."
 
+#. Study time is the learner's daily amount.
 #: src/challenge/challenge-footer.tsx
 msgctxt "PjSBHJ"
 msgid "You've reached today's study time."
@@ -1450,6 +1467,7 @@ msgctxt "6T3tHN"
 msgid "A wrong answer cancels a right one, so leave a statement blank when you're not sure."
 msgstr "Una respuesta incorrecta anula una correcta, así que deja el enunciado en blanco si no estás seguro."
 
+#. {share} and {breakEven} are percentages, like "25%".
 #: src/challenge/challenge-intro.tsx
 msgctxt "mUS0LF"
 msgid "A wrong answer costs {share} of a right one, so leave a question blank when you're less than {breakEven} sure."
@@ -1670,6 +1688,7 @@ msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "¡Correcto!"
 
+#. Marks the learner's answer as wrong.
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 #: src/checkpoints/checkpoint-review.tsx
 #: src/questions/choice-question.tsx
@@ -1715,11 +1734,13 @@ msgctxt "HiOz-P"
 msgid "+{points}"
 msgstr "+{points}"
 
+#. Labels the Brain Power the learner earns for finishing this weekly challenge.
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "fX7dJB"
 msgid "Finishing"
 msgstr "Por completar"
 
+#. Labels the Brain Power the learner earns for winning this challenge.
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "b4H0QH"
 msgid "Winning"
@@ -1989,16 +2010,19 @@ msgctxt "Zt_vKl"
 msgid "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus."
 msgstr "Con el plan gratuito puedes seguir un objetivo a la vez: pausa tu objetivo actual desde su menú o sigue varios con Plus."
 
+#. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "t3Qrnl"
 msgid "Practiced every other week in your plan, each draft graded."
 msgstr "Practicarás cada dos semanas en tu plan y se evaluará cada borrador."
 
+#. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "zVDbmM"
 msgid "Practiced in the final weeks before the exam, each draft graded."
 msgstr "Practicarás en las últimas semanas antes del examen y se evaluará cada borrador."
 
+#. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "akAdXf"
 msgid "Practiced every week in your plan, each draft graded."
@@ -2289,6 +2313,7 @@ msgctxt "CNjg8R"
 msgid "Formal writing"
 msgstr "Escritura formal"
 
+#. Enem essay competence 2: addressing the set topic and drawing on outside knowledge.
 #: src/essay/essay-labels.tsx
 msgctxt "smqOAn"
 msgid "Topic and references"
@@ -2395,6 +2420,7 @@ msgctxt "rUq4jt"
 msgid "The case"
 msgstr "El caso"
 
+#. The grade of the learner's last essay draft.
 #: src/essay/essay-rewrite-guide.tsx
 #: src/essay/essay-screen.tsx
 msgctxt "OAkBl1"
@@ -2844,6 +2870,7 @@ msgctxt "H9K5g4"
 msgid "{answered, number} of {questions, number} answered"
 msgstr "{answered, number} de {questions, number} respondidas"
 
+#. "Sure" and "unsure" group the answers the learner was sure or unsure of.
 #: src/exam/exam-scoring-section.tsx
 msgctxt "y6LdtC"
 msgid "In your mock exams: sure, {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Unsure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
@@ -2859,6 +2886,7 @@ msgctxt "B6Kom0"
 msgid "Your unsure answers still earn points: keep answering them."
 msgstr "Tus respuestas también suman puntos cuando dudas: sigue respondiendo."
 
+#. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
 msgctxt "zQR3dq"
 msgid "Answer only when you're more than {share} sure."
@@ -2869,6 +2897,7 @@ msgctxt "CtVWjT"
 msgid "A wrong answer cancels a right one"
 msgstr "Una respuesta incorrecta anula una correcta"
 
+#. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
 msgctxt "lJLTFK"
 msgid "A wrong answer costs {share} of a right one"
@@ -3088,6 +3117,7 @@ msgctxt "feedback.IVDs_9"
 msgid "Your email, for our reply"
 msgstr "Tu correo electrónico, para responderte"
 
+#. An example email address in an empty field. Adapt it to the language.
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.OiSL94"
 msgid "myemail@gmail.com"
@@ -3244,6 +3274,7 @@ msgctxt "YXnM-X"
 msgid "Something went wrong on our side."
 msgstr "Algo ha fallado por nuestra parte."
 
+#. Preparing this content failed. It is not still running.
 #: src/generation/generation-wait.tsx
 msgctxt "0fLHBg"
 msgid "This didn't finish"
@@ -3558,6 +3589,7 @@ msgctxt "UfNh0L"
 msgid "Choosing what to cover…"
 msgstr "Eligiendo qué incluir…"
 
+#. Zoonk at work on a lesson. "It" is the lesson's topic.
 #: src/generation/use-generation-copy.ts
 msgctxt "0rFPyc"
 msgid "Picking the best way to explain it…"
@@ -3816,6 +3848,7 @@ msgctxt "L_oGIZ"
 msgid "Not in your plan"
 msgstr "Fuera de tu plan"
 
+#. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
 msgctxt "J15Qzq"
 msgid "Won"
@@ -4006,6 +4039,7 @@ msgctxt "M6MlNv"
 msgid "Continues today"
 msgstr "Continúa hoy"
 
+#. When this phase continues. {date} is a day, like "May 5".
 #: src/journey/path-phase-row.tsx
 msgctxt "-DKe0Q"
 msgid "Continues {date}"
@@ -4396,6 +4430,7 @@ msgctxt "WjL1yk"
 msgid "{name} is talking…"
 msgstr "{name} está hablando…"
 
+#. Call status while Zoonk listens to the learner speak.
 #: src/language/conversation/call-control.tsx
 msgctxt "GdiyKL"
 msgid "Listening…"
@@ -4470,6 +4505,7 @@ msgctxt "hFgARl"
 msgid "Calls are paused"
 msgstr "Las llamadas están pausadas"
 
+#. Another call is still running: this ends it and starts the call on this screen.
 #: src/language/conversation/call-problem.tsx
 msgctxt "MAatFa"
 msgid "End that call and start this one"
@@ -4753,6 +4789,7 @@ msgctxt "A4Mc64"
 msgid "To improve"
 msgstr "Por mejorar"
 
+#. The call's goals, things to say, that the learner hasn't said yet.
 #: src/language/conversation/conversation-result.tsx
 msgctxt "oFz2zz"
 msgid "Goals still to get across"
@@ -5122,11 +5159,13 @@ msgctxt "3wsc3Q"
 msgid "{min}–{max} min"
 msgstr "{min}–{max} min"
 
+#. Time the learner gets to prepare before answering these speaking exam tasks. {tasks} lists task numbers.
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "w8F7sL"
 msgid "{time} to prepare tasks {tasks}"
 msgstr "{time} para preparar las tareas {tasks}"
 
+#. Time the learner gets to prepare before answering a speaking exam task.
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "S7Y0tA"
 msgid "{time} to prepare"
@@ -5192,12 +5231,14 @@ msgctxt "2IdQrb"
 msgid "Listening to what you said…"
 msgstr "Escuchando lo que has dicho…"
 
+#. "Stop" is the label of the record button.
 #: src/language/level-test/level-test-parts.tsx
 #: src/language/pronunciation/pronunciation-word-card.tsx
 msgctxt "Vi6bgi"
 msgid "Recording… Press Stop when you're done."
 msgstr "Grabando… Pulsa Detener cuando termines."
 
+#. "Record" is the label of the record button.
 #: src/language/level-test/level-test-parts.tsx
 msgctxt "_lLAdM"
 msgid "Press Record and say it out loud"
@@ -5539,6 +5580,7 @@ msgctxt "VcLERf"
 msgid "Listening to how it sounded…"
 msgstr "Escuchando cómo ha sonado…"
 
+#. "Record" is the label of the record button.
 #: src/language/pronunciation/pronunciation-word-card.tsx
 msgctxt "we8m4p"
 msgid "Press Record and say the word out loud"
@@ -5746,6 +5788,7 @@ msgctxt "XjSodK"
 msgid "Edit memory"
 msgstr "Editar recuerdo"
 
+#. "It" is the note Zoonk keeps about the learner, edited in this dialog.
 #: src/memory/memory-fact-row.tsx
 msgctxt "RmRxzU"
 msgid "Say it the way it's true for you."
@@ -5771,6 +5814,7 @@ msgctxt "K3r6DQ"
 msgid "Delete"
 msgstr "Eliminar"
 
+#. A category of what Zoonk remembers about the learner: their studies, job, school year and the languages they speak.
 #: src/memory/memory-labels.tsx
 msgctxt "XQZA8e"
 msgid "Background"
@@ -6220,6 +6264,7 @@ msgctxt "missions.T8ny0q"
 msgid "Take the mock"
 msgstr "Haz el simulacro"
 
+#. A mission to practice an essay.
 #: src/missions/mission-copy.tsx
 msgctxt "missions.udesEE"
 msgid "Practice writing"
@@ -6433,6 +6478,7 @@ msgctxt "0gBkBl"
 msgid "Missions done"
 msgstr "Misiones completadas"
 
+#. "It" is the question: it comes back in later practice.
 #: src/mistakes/drill/drill-answer-notes.tsx
 msgctxt "thfSv-"
 msgid "Time's up. It counts as a miss, so it comes back."
@@ -6765,6 +6811,7 @@ msgctxt "cFcHmf"
 msgid "Answer sheet"
 msgstr "Hoja de respuestas"
 
+#. Short label of a small button that opens the mock exam's answer sheet.
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "OWfUXC"
 msgid "Sheet"
@@ -7185,11 +7232,13 @@ msgctxt "wWPWJY"
 msgid "This mock shows how many you got right."
 msgstr "Este simulacro muestra cuántas preguntas has acertado."
 
+#. The mock leaves out the exam's written part and has only its questions with set answers.
 #: src/mock/mock-option-labels.ts
 msgctxt "rkZNO0"
 msgid "objective part only"
 msgstr "solo la parte objetiva"
 
+#. {count} is a number of questions in a mock exam, and {time} about how long it takes.
 #: src/mock/mock-option-labels.ts
 msgctxt "7wpzd1"
 msgid "{count} q · ~{time}"
@@ -7220,6 +7269,7 @@ msgctxt "AIzXTP"
 msgid "About {time} (recommended)"
 msgstr "Unos {time} (recomendado)"
 
+#. {count} is a number of questions in a mock exam.
 #: src/mock/mock-option-labels.ts
 msgctxt "7G7WCP"
 msgid "{count} q"
@@ -8014,6 +8064,7 @@ msgctxt "nOrf4S"
 msgid "Create an account so we can let you know."
 msgstr "Crea una cuenta para que podamos avisarte."
 
+#. {instrument} names what the learner wants to play, or singing, like "guitar".
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "qG3mZH"
 msgid "Lessons for playing {instrument} are coming"
@@ -8024,6 +8075,7 @@ msgctxt "xR84Dg"
 msgid "To teach you to play, we need to hear you play, and we're still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm."
 msgstr "Para enseñarte a tocar, necesitamos escucharte, y aún estamos desarrollando esa función. Apúntate a la lista de espera y empieza hoy con formación musical: lectura de partituras, entrenamiento auditivo y ritmo."
 
+#. {instrument} names what the learner wants to play, or singing, like "guitar".
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "irzzdg"
 msgid "Musicianship for {instrument}: hear chords, read short melodies and keep the beat. No microphone needed."
@@ -8050,6 +8102,7 @@ msgctxt "lMKRgM"
 msgid "Create a free account to start another goal"
 msgstr "Crea una cuenta gratis para empezar otro objetivo"
 
+#. Creating an account keeps the plan and progress the learner made as a guest.
 #: src/onboarding/entry/guest-goal-gate.tsx
 msgctxt "LCl_qZ"
 msgid "Without an account, you can follow one goal. Your plan and progress come with you."
@@ -8060,6 +8113,7 @@ msgctxt "6dvkek"
 msgid "my notes"
 msgstr "mis apuntes"
 
+#. The learner's goal, in their words: preparing themselves for an exam. {titles} lists the titles of their study material.
 #: src/onboarding/entry/material-goal.ts
 msgctxt "eblSlT"
 msgid "Prepare for an exam on my material: {titles}"
@@ -8075,6 +8129,7 @@ msgctxt "2CSyac"
 msgid "Give a date and we'll plan up to it"
 msgstr "Indica una fecha y prepararemos un plan hasta entonces"
 
+#. The learner preparing themselves for an exam.
 #: src/onboarding/entry/material-intent.tsx
 msgctxt "QWGFJl"
 msgid "Prepare for an exam"
@@ -8423,6 +8478,7 @@ msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
 msgstr "Tu Compañero crece a medida que aprendes."
 
+#. Placeholder of a menu with more amounts of daily study time.
 #: src/onboarding/steps/daily-minutes.tsx
 msgctxt "QegAWn"
 msgid "Other time…"
@@ -8682,6 +8738,7 @@ msgctxt "RcbDkF"
 msgid "Your mock exam set your starting point"
 msgstr "Tu simulacro ha definido tu punto de partida"
 
+#. "It" is the learner's starting point, named in the title.
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "DYttBE"
 msgid "Based on {count, plural, one {your # answer} other {your # answers}}. It gets more accurate every day."
@@ -8702,6 +8759,7 @@ msgctxt "_8ObLn"
 msgid "Your first sessions ask a few more to fine-tune your plan."
 msgstr "En tus primeras sesiones responderás algunas preguntas más para afinar tu plan."
 
+#. "It" is the learner's starting point, named in the title.
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "tZjvcn"
 msgid "It gets more accurate every day."
@@ -8799,6 +8857,7 @@ msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "La preparación de tu plan se ha detenido"
 
+#. "It" is the learner's plan. "When you finish" means finishing these setup questions.
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "09Xo2h"
 msgid "Your answers are saved. Try again so it's ready when you finish."
@@ -8869,11 +8928,13 @@ msgctxt "dLth3B"
 msgid "Pick what motivates you most."
 msgstr "Elige lo que más te motive."
 
+#. Asks what the learner hopes to get out of learning this subject.
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "u-tiM5"
 msgid "What do you want from it?"
 msgstr "¿Qué quieres conseguir?"
 
+#. Asks what the learner hopes to get out of learning this subject.
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "VFiUAH"
 msgid "What you want from it"
@@ -9921,6 +9982,7 @@ msgctxt "6Due7K"
 msgid "You finish around {month}."
 msgstr "Terminas hacia {month}."
 
+#. {date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-schedule.tsx
@@ -10050,6 +10112,7 @@ msgctxt "tV4o-5"
 msgid "Your plan is updated."
 msgstr "Tu plan se ha actualizado."
 
+#. "Then" means "with this change".
 #: src/plan/plan-offer-preview.tsx
 msgctxt "edZO_c"
 msgid "Your plan then covers everything in depth."
@@ -10401,26 +10464,31 @@ msgctxt "Kp3Vrm"
 msgid "You still start {area} on {after}."
 msgstr "Sigues empezando {area} el {after}."
 
+#. {after} is a day, like "May 5".
 #: src/plan/use-area-start-texts.ts
 msgctxt "AOIzyB"
 msgid "You still finish {area} around {after}, with all its lessons: everything fits by your date."
 msgstr "Sigues terminando {area} alrededor del {after}, con todas sus lecciones: todo cabe antes de tu fecha."
 
+#. {after} and {before} are days, like "May 5".
 #: src/plan/use-area-start-texts.ts
 msgctxt "jUTbla"
 msgid "{area} gets about {count, plural, one {# more lesson} other {# more lessons}}, so you finish it around {after} instead of {before}."
 msgstr "{area} tendrá unas {count, plural, one {# lección más} other {# lecciones más}}, así que terminarás alrededor del {after} en lugar del {before}."
 
+#. {after} and {before} are days, like "May 5".
 #: src/plan/use-area-start-texts.ts
 msgctxt "WncCQq"
 msgid "{area} gets {count, plural, one {# more lesson} other {# more lessons}}, so you finish it around {after} instead of {before}."
 msgstr "{area} tendrá {count, plural, one {# lección más} other {# lecciones más}}, así que terminarás alrededor del {after} en lugar del {before}."
 
+#. {after} and {before} are days, like "May 5".
 #: src/plan/use-area-start-texts.ts
 msgctxt "_Q4kxN"
 msgid "{area} has {count, plural, one {# lesson} other {# lessons}} fewer to go, so you finish it around {after} instead of {before}."
 msgstr "En {area} te {count, plural, one {queda # lección menos} other {quedan # lecciones menos}}, así que terminarás alrededor del {after} en lugar del {before}."
 
+#. {after} and {before} are days, like "May 5".
 #: src/plan/use-area-start-texts.ts
 msgctxt "KerAfr"
 msgid "You finish {area} around {after} instead of {before}."
@@ -10576,6 +10644,7 @@ msgctxt "ZIyDwb"
 msgid "{count, plural, one {{skills} comes into your plan.} other {{skills} come into your plan.}}"
 msgstr "{count, plural, other {{skills} se incorpora a tu plan.}}"
 
+#. The goal's date moved, earlier or later. {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
 #: src/plan/use-choice-sentence.ts
 msgctxt "FunQxr"
@@ -10603,11 +10672,13 @@ msgctxt "5m7gA2"
 msgid "Your plan changed."
 msgstr "Tu plan ha cambiado."
 
+#. {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
 msgctxt "Fvg-A-"
 msgid "{document, select, notice {We read the exam notice: your plan can follow its subjects, with the exam around {date}.} other {We read the exam's official guide: your plan can follow its parts, with the exam around {date}.}}"
 msgstr "{document, select, notice {Hemos leído la convocatoria: tu plan puede seguir sus asignaturas, con el examen alrededor de {date}.} other {Hemos leído la guía oficial del examen: tu plan puede seguir sus partes, con el examen alrededor de {date}.}}"
 
+#. {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
 msgctxt "DbbM04"
 msgid "{document, select, notice {We read the exam notice: your plan can follow its subjects, with the exam on {date}.} other {We read the exam's official guide: your plan can follow its parts, with the exam on {date}.}}"
@@ -10815,11 +10886,13 @@ msgctxt "GOzVd7"
 msgid "Lessons left out: {names}."
 msgstr "Lecciones que se omitirían: {names}."
 
+#. {after} and {before} are days, like "May 5".
 #: src/plan/use-effect-text.ts
 msgctxt "IUkTus"
 msgid "Ends {after} instead of {before}."
 msgstr "Termina el {after} en lugar del {before}."
 
+#. {after} and {before} are both days, like "May 5", or both months, like "May 2027".
 #: src/plan/use-effect-text.ts
 msgctxt "006n7B"
 msgid "Ends around {after} instead of {before}."
@@ -11107,6 +11180,7 @@ msgctxt "XnimdQ"
 msgid "Windows"
 msgstr "Windows"
 
+#. {date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.
 #: src/plan/use-time-to-cover.ts
 msgctxt "BkRrj9"
 msgid "{time} a day covers everything in depth by {date}."
@@ -11132,6 +11206,7 @@ msgctxt "fgq47T"
 msgid "Finding the time…"
 msgstr "Calculando el tiempo…"
 
+#. {date} is a day, like "May 5".
 #: src/plan/use-time-to-cover.ts
 msgctxt "JgIAib"
 msgid "At {time} a day, your plan covers everything by {date}."
@@ -11142,16 +11217,19 @@ msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "No hemos podido encontrar una fecha para cubrirlo todo."
 
+#. {date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.
 #: src/plan/use-time-to-cover.ts
 msgctxt "4HljXi"
 msgid "No amount of time a day covers everything in depth by {date}."
 msgstr "No es posible estudiar todo en profundidad para {date}, por mucho tiempo que dediques al día."
 
+#. A note beside a daily time saying what it achieves.
 #: src/plan/use-time-to-cover.ts
 msgctxt "IPzR8B"
 msgid "Covers everything"
 msgstr "Cubre todo"
 
+#. A note beside a daily time saying what it achieves.
 #: src/plan/use-time-to-cover.ts
 msgctxt "OUc_Xr"
 msgid "Every topic"
@@ -11182,16 +11260,19 @@ msgctxt "2oT8vO"
 msgid "{days}: {time} a day."
 msgstr "{days}: {time} al día."
 
+#. {day} is a weekday, like "Monday".
 #: src/plan/use-weekday-texts.ts
 msgctxt "yZoT4v"
 msgid "Weekly mocks move to {day}."
 msgstr "Los simulacros semanales pasan a {day}."
 
+#. {day} is a weekday, like "Monday".
 #: src/plan/use-weekday-texts.ts
 msgctxt "qshyFl"
 msgid "Weekly challenges move to {day}."
 msgstr "Los desafíos semanales pasan a {day}."
 
+#. {date} is a weekday and day, like "Monday, May 5".
 #: src/plan/use-weekday-texts.ts
 msgctxt "y3TJi_"
 msgid "Your next mock moves to {date}."
@@ -11365,6 +11446,7 @@ msgctxt "aBn-KM"
 msgid "The lessons are back in your plan."
 msgstr "Las lecciones vuelven a estar en tu plan."
 
+#. The learner passed this chapter's test. "It" is the chapter.
 #: src/questions/test-out-run.tsx
 msgctxt "nPTmVb"
 msgid "{lessons, plural, =0 {Your plan already skips it.} one {# lesson is off your plan.} other {# lessons are off your plan.}}"
@@ -11801,6 +11883,7 @@ msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "Completado en {time}"
 
+#. When the skills to review come back. {days} lists days, like "May 5 and May 7".
 #: src/session/summary/summary-parts.tsx
 msgctxt "KxAe8j"
 msgid "Back {days}"
@@ -11826,6 +11909,7 @@ msgctxt "kMpuxF"
 msgid "{time} so far"
 msgstr "{time} hasta ahora"
 
+#. Image description: the buddy is happy with what the learner studied today.
 #: src/session/summary/summary-rewards.tsx
 msgctxt "okdNHx"
 msgid "{buddy}, happy with today"
@@ -12011,11 +12095,13 @@ msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "Pestañas de estudio"
 
+#. Stops a recording. Hints tell the learner to press it by this name.
 #: src/speech/record-button.tsx
 msgctxt "q_uwLT"
 msgid "Stop"
 msgstr "Detener"
 
+#. Starts a recording. Hints tell the learner to press it by this name.
 #: src/speech/record-button.tsx
 msgctxt "7Y6Yvq"
 msgid "Record"
@@ -12046,6 +12132,7 @@ msgctxt "VCI_Bp"
 msgid "Here's what it says:"
 msgstr "Esto es lo que dice:"
 
+#. Marks a topic that comes up often in the exam.
 #: src/syllabus/frequency-chip.tsx
 msgctxt "5ZjoJT"
 msgid "Appears a lot"
@@ -12121,6 +12208,7 @@ msgctxt "kK7vYa"
 msgid "You took this subject out of your plan."
 msgstr "Has quitado esta asignatura de tu plan."
 
+#. "It" is the subject this page shows.
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "cneAlM"
 msgid "It doesn't fit in the time you have."
@@ -12402,11 +12490,13 @@ msgctxt "WKZJxb"
 msgid "We couldn't open your next lessons. Try again."
 msgstr "No hemos podido abrir tus próximas lecciones. Inténtalo de nuevo."
 
+#. A lesson left from an earlier day.
 #: src/today/today-block-row.tsx
 msgctxt "afsNpC"
 msgid "Catching up · {subject}"
 msgstr "Ponte al día · {subject}"
 
+#. A lesson left from an earlier day.
 #: src/today/today-block-row.tsx
 msgctxt "tj4pFE"
 msgid "Catching up"
@@ -12557,6 +12647,7 @@ msgctxt "FyQP44"
 msgid "Today's lessons aren't written yet."
 msgstr "Las lecciones de hoy aún no están preparadas."
 
+#. Study time is the learner's daily amount, all studied today.
 #: src/today/today-day-status.tsx
 msgctxt "nQ6arV"
 msgid "That's today's study time."
@@ -12577,6 +12668,7 @@ msgctxt "vzcvDF"
 msgid "You've done every lesson in your plan, or already know it."
 msgstr "Has completado todas las lecciones de tu plan o ya sabías su contenido."
 
+#. Lessons left unfinished on earlier days. {count} is how many.
 #: src/today/today-earlier-work.tsx
 msgctxt "ylqDtY"
 msgid "Earlier unfinished work · {count}"
@@ -12622,6 +12714,7 @@ msgctxt "eH7xFh"
 msgid "More time or a later date"
 msgstr "Más tiempo o una fecha posterior"
 
+#. Keeps the learner's daily study time as it is.
 #: src/today/today-falling-behind.tsx
 msgctxt "-0WD6T"
 msgid "Keep my time"
@@ -12672,6 +12765,7 @@ msgctxt "xNg7nj"
 msgid "Keep it"
 msgstr "Mantener el cambio"
 
+#. Study time is the time of day the learner studies. {time} is a time of day, like "20:00".
 #: src/today/today-insight.tsx
 msgctxt "YSLbSf"
 msgid "Move my study time to {time}"
@@ -12688,11 +12782,13 @@ msgctxt "PxpLj-"
 msgid "Your plan stays as it was."
 msgstr "Tu plan sigue como estaba."
 
+#. The time of day the learner studies changed.
 #: src/today/today-insight.tsx
 msgctxt "ohsYeu"
 msgid "Study time moved."
 msgstr "Hora de estudio cambiada."
 
+#. The time of day the learner studies stays the same.
 #: src/today/today-insight.tsx
 msgctxt "6ek4zK"
 msgid "Your study time stays the same."

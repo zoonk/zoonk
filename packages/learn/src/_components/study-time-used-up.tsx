@@ -14,15 +14,26 @@ function BackOn({ nextStudyDate, today }: NextStudyDay) {
   const formatDate = useFormatIsoDate();
 
   if (!nextStudyDate || !today) {
-    return t("You've reached today's study time. It'll be in your next session.");
+    return t({
+      description:
+        'Study time is the learner\'s daily amount. "It" is the call or challenge they opened.',
+      message: "You've reached today's study time. It'll be in your next session.",
+    });
   }
 
   if (daysBetween(today, nextStudyDate) === 1) {
-    return t("You've reached today's study time. It'll be here tomorrow.");
+    return t({
+      description:
+        'Study time is the learner\'s daily amount. "It" is the call or challenge they opened.',
+      message: "You've reached today's study time. It'll be here tomorrow.",
+    });
   }
 
-  return t("You've reached today's study time. It'll be here on {day}.", {
-    day: formatDate(nextStudyDate, "weekday"),
+  return t({
+    description:
+      'Study time is the learner\'s daily amount. "It" is the call or challenge they opened. {day} is a weekday, like "Monday".',
+    message: "You've reached today's study time. It'll be here on {day}.",
+    values: { day: formatDate(nextStudyDate, "weekday") },
   });
 }
 

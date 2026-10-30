@@ -27,7 +27,12 @@ export function GuestGoalGate({ routes }: { routes: OnboardingRoutes }) {
       <OnboardingHeading>
         <OnboardingTitle>{t("Create a free account to start another goal")}</OnboardingTitle>
         <OnboardingDescription>
-          {t("Without an account, you can follow one goal. Your plan and progress come with you.")}
+          {t({
+            description:
+              "Creating an account keeps the plan and progress the learner made as a guest.",
+            message:
+              "Without an account, you can follow one goal. Your plan and progress come with you.",
+          })}
         </OnboardingDescription>
       </OnboardingHeading>
 

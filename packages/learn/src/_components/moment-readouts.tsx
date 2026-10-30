@@ -53,10 +53,12 @@ function ScoreWords({ score }: { score: MomentScore }) {
   };
 
   return score.spoken
-    ? t.rich(
-        "{correct, plural, =0 {<number>#</number> of {answered} sounded right} one {<number>#</number> of {answered} sounded right} other {<number>#</number> of {answered} sounded right}}",
+    ? t.rich({
+        description: "Counts words the learner said aloud in pronunciation practice.",
+        message:
+          "{correct, plural, =0 {<number>#</number> of {answered} sounded right} one {<number>#</number> of {answered} sounded right} other {<number>#</number> of {answered} sounded right}}",
         values,
-      )
+      })
     : t.rich(
         "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}",
         values,

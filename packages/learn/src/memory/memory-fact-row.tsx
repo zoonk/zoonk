@@ -49,7 +49,12 @@ function EditFactDialog({
       <DialogContent closeLabel={t("Close")}>
         <DialogHeader>
           <DialogTitle>{t("Edit memory")}</DialogTitle>
-          <DialogDescription>{t("Say it the way it's true for you.")}</DialogDescription>
+          <DialogDescription>
+            {t({
+              description: '"It" is the note Zoonk keeps about the learner, edited in this dialog.',
+              message: "Say it the way it's true for you.",
+            })}
+          </DialogDescription>
         </DialogHeader>
 
         <form

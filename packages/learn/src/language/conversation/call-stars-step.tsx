@@ -65,7 +65,12 @@ function useHeadline({
     return conversation.title;
   }
 
-  return result.passed ? t("Challenge passed") : t("Not this time");
+  return result.passed
+    ? t({
+        description: "The learner passed this challenge, not just finished it.",
+        message: "Challenge passed",
+      })
+    : t("Not this time");
 }
 
 function CallFacts({

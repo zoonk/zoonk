@@ -32,15 +32,17 @@ function Calibration() {
   return (
     <>
       <ListRowDescription className="text-foreground pt-1">
-        {t(
-          "In your mock exams: sure, {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Unsure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}.",
-          {
+        {t({
+          description: '"Sure" and "unsure" group the answers the learner was sure or unsure of.',
+          message:
+            "In your mock exams: sure, {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Unsure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}.",
+          values: {
             sureAnswered: String(calibration.sure.answered),
             sureRight: calibration.sure.right,
             unsureAnswered: String(calibration.unsure.answered),
             unsureRight: calibration.unsure.right,
           },
-        )}
+        })}
       </ListRowDescription>
       {calibration.advice === "blankUnsure" && (
         <ListRowDescription>
@@ -69,14 +71,18 @@ function useScoringRule(): { rule: string; title: string } | null {
   switch (rule) {
     case "net":
       return {
-        rule: t("Answer only when you're more than {share} sure.", {
-          share: formatShare(getBreakEven(wrongPenalty)),
+        rule: t({
+          description: '{share} is a percentage, like "25%".',
+          message: "Answer only when you're more than {share} sure.",
+          values: { share: formatShare(getBreakEven(wrongPenalty)) },
         }),
         title:
           wrongPenalty === 1
             ? t("A wrong answer cancels a right one")
-            : t("A wrong answer costs {share} of a right one", {
-                share: formatShare(wrongPenalty),
+            : t({
+                description: '{share} is a percentage, like "25%".',
+                message: "A wrong answer costs {share} of a right one",
+                values: { share: formatShare(wrongPenalty) },
               }),
       };
     case "irt":

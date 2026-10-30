@@ -69,7 +69,12 @@ export function useChoiceSentence() {
     switch (operation.kind) {
       case "setTargetDate":
         return operation.targetDate
-          ? t("Date moved to {date}.", { date: formatDate(operation.targetDate, "long") })
+          ? t({
+              description:
+                'The goal\'s date moved, earlier or later. {date} is a day, like "May 5".',
+              message: "Date moved to {date}.",
+              values: { date: formatDate(operation.targetDate, "long") },
+            })
           : t("No deadline: you study everything at your own pace.");
       case "setFullCourse":
         return operation.fullCourse

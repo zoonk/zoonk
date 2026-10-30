@@ -17,7 +17,10 @@ export function MaterialIntentChoice({
   const choices: Choice<MaterialIntent>[] = [
     {
       description: t("Give a date and we'll plan up to it"),
-      label: t("Prepare for an exam"),
+      label: t({
+        description: "The learner preparing themselves for an exam.",
+        message: "Prepare for an exam",
+      }),
       value: "exam",
     },
     {

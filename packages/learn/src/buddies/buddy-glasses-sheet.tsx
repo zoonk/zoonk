@@ -37,7 +37,12 @@ export function BuddyGlassesSheet({
       <DrawerPopup>
         <DrawerHeader>
           <DrawerTitle className="text-xl font-semibold">{t("Glasses")}</DrawerTitle>
-          <DrawerDescription>{t("Pick a pair you've earned to wear it.")}</DrawerDescription>
+          <DrawerDescription>
+            {t({
+              description: "The learner's buddy wears the glasses.",
+              message: "Pick a pair you've earned to wear it.",
+            })}
+          </DrawerDescription>
         </DrawerHeader>
 
         <DrawerContent className="flex flex-col gap-3">

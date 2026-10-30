@@ -22,7 +22,10 @@ export function DrillAnswerNotes({
       {timedOut && (
         <p className="flex items-start gap-2 text-sm">
           <TimerOffIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-          {t("Time's up. It counts as a miss, so it comes back.")}
+          {t({
+            description: '"It" is the question: it comes back in later practice.',
+            message: "Time's up. It counts as a miss, so it comes back.",
+          })}
         </p>
       )}
 

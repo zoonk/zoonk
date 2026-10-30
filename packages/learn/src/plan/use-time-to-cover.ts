@@ -63,13 +63,18 @@ export function useTimeToCoverTexts() {
     }: { minutes: number } & Pick<PlanTimeToCover, "targetDateNamedMonth"> & {
         targetDate: string;
       }) =>
-      t("{time} a day covers everything in depth by {date}.", {
-        date: formatGoalDate({
-          isoDate: targetDate,
-          namedMonth: targetDateNamedMonth,
-          style: "long",
-        }),
-        time: formatDuration(minutes),
+      t({
+        description:
+          '{date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.',
+        message: "{time} a day covers everything in depth by {date}.",
+        values: {
+          date: formatGoalDate({
+            isoDate: targetDate,
+            namedMonth: targetDateNamedMonth,
+            style: "long",
+          }),
+          time: formatDuration(minutes),
+        },
       }),
     everyTopic: (minutes: number) =>
       t("{time} a day studies every topic, some in less depth.", { time: formatDuration(minutes) }),
@@ -77,28 +82,42 @@ export function useTimeToCoverTexts() {
     find: t("Find the time that covers everything"),
     finding: t("Finding the time…"),
     fittingDate: ({ dailyMinutes, fittingDate }: { dailyMinutes: number; fittingDate: string }) =>
-      t("At {time} a day, your plan covers everything by {date}.", {
-        date: formatDate(fittingDate, "long"),
-        time: formatDuration(dailyMinutes),
+      t({
+        description: '{date} is a day, like "May 5".',
+        message: "At {time} a day, your plan covers everything by {date}.",
+        values: { date: formatDate(fittingDate, "long"), time: formatDuration(dailyMinutes) },
       }),
     noDate: t("We couldn't find a date that covers everything."),
     none: ({
       targetDate,
       targetDateNamedMonth,
     }: Pick<PlanTimeToCover, "targetDateNamedMonth"> & { targetDate: string }) =>
-      t("No amount of time a day covers everything in depth by {date}.", {
-        date: formatGoalDate({
-          isoDate: targetDate,
-          namedMonth: targetDateNamedMonth,
-          style: "long",
-        }),
+      t({
+        description:
+          '{date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.',
+        message: "No amount of time a day covers everything in depth by {date}.",
+        values: {
+          date: formatGoalDate({
+            isoDate: targetDate,
+            namedMonth: targetDateNamedMonth,
+            style: "long",
+          }),
+        },
       }),
     note: (answer: TimeToCoverAnswer, minutes: number): string | null => {
       if (getOfferedMinutes(answer) !== minutes) {
         return null;
       }
 
-      return answer.kind === "covers" ? t("Covers everything") : t("Every topic");
+      return answer.kind === "covers"
+        ? t({
+            description: "A note beside a daily time saying what it achieves.",
+            message: "Covers everything",
+          })
+        : t({
+            description: "A note beside a daily time saying what it achieves.",
+            message: "Every topic",
+          });
     },
     tryAgain: t("Try again"),
   };

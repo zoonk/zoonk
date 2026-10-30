@@ -25,7 +25,10 @@ export function WeekendTime({
     <div className="flex flex-col gap-3" data-slot="weekend-time">
       <div className="flex min-h-11 items-center justify-between gap-3">
         <label className={cn("cursor-pointer", className)} htmlFor={switchId}>
-          {t("Different time on weekends")}
+          {t({
+            description: "A switch to study a different amount of time a day on weekends.",
+            message: "Different time on weekends",
+          })}
         </label>
         <Switch
           checked={checked}

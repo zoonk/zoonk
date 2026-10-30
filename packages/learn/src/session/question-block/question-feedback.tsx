@@ -174,7 +174,10 @@ export function useVerdict({
     return { label: t("I don't know yet"), tone: "neutral" as const };
   }
 
-  return { label: t("Not quite"), tone: "wrong" as const };
+  return {
+    label: t({ description: "Marks the learner's answer as wrong.", message: "Not quite" }),
+    tone: "wrong" as const,
+  };
 }
 
 function StreakNote({ streak }: { streak: number }) {

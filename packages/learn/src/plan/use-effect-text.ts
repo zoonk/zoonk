@@ -28,9 +28,10 @@ function useChangeEffectText() {
       return null;
     }
 
-    return t("Ends {after} instead of {before}.", {
-      after: formatDate(move.after, "long"),
-      before: formatDate(move.before, "long"),
+    return t({
+      description: '{after} and {before} are days, like "May 5".',
+      message: "Ends {after} instead of {before}.",
+      values: { after: formatDate(move.after, "long"), before: formatDate(move.before, "long") },
     });
   };
 }
@@ -65,7 +66,12 @@ function usePlanEndEffectText() {
       return null;
     }
 
-    return t("Ends around {after} instead of {before}.", { after, before });
+    return t({
+      description:
+        '{after} and {before} are both days, like "May 5", or both months, like "May 2027".',
+      message: "Ends around {after} instead of {before}.",
+      values: { after, before },
+    });
   };
 }
 
@@ -112,9 +118,11 @@ function useAppliedEndText() {
 
     return shown(after) === shown(before)
       ? null
-      : t("Ends around {after} instead of {before}.", {
-          after: shown(after),
-          before: shown(before),
+      : t({
+          description:
+            '{after} and {before} are both days, like "May 5", or both months, like "May 2027".',
+          message: "Ends around {after} instead of {before}.",
+          values: { after: shown(after), before: shown(before) },
         });
   };
 }

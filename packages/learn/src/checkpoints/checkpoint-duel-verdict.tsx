@@ -37,7 +37,9 @@ export function Verdict({
   return (
     <FeedbackPanel aria-live="polite" role="status">
       <FeedbackVerdict tone={isCorrect ? "right" : "wrong"}>
-        {isCorrect ? t("Correct!") : t("Not quite")}
+        {isCorrect
+          ? t("Correct!")
+          : t({ description: "Marks the learner's answer as wrong.", message: "Not quite" })}
       </FeedbackVerdict>
 
       {!isCorrect && !decision && (

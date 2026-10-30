@@ -197,7 +197,16 @@ function PrizeRow() {
       <StepRow>
         <BrainIcon aria-hidden="true" />
         <span className="min-w-0 flex-1 font-medium">
-          {isWeekly ? t("Finishing") : t("Winning")}
+          {isWeekly
+            ? t({
+                description:
+                  "Labels the Brain Power the learner earns for finishing this weekly challenge.",
+                message: "Finishing",
+              })
+            : t({
+                description: "Labels the Brain Power the learner earns for winning this challenge.",
+                message: "Winning",
+              })}
         </span>
         <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
           {value}

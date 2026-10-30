@@ -61,10 +61,12 @@ function useResultDetail({ outcome, undone }: { outcome: GradedTestOut; undone: 
     return t("The lessons are back in your plan.");
   }
 
-  return t(
-    "{lessons, plural, =0 {Your plan already skips it.} one {# lesson is off your plan.} other {# lessons are off your plan.}}",
-    { lessons: outcome.skippedLessons },
-  );
+  return t({
+    description: 'The learner passed this chapter\'s test. "It" is the chapter.',
+    message:
+      "{lessons, plural, =0 {Your plan already skips it.} one {# lesson is off your plan.} other {# lessons are off your plan.}}",
+    values: { lessons: outcome.skippedLessons },
+  });
 }
 
 function ResultStep({
