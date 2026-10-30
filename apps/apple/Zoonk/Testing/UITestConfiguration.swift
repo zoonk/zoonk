@@ -430,11 +430,15 @@
       throw APIError.network
     }
 
-    func lessonStatus(token: String, lessonID: String) async throws -> String {
+    func lessonReadiness(token: String, lessonID: String) async throws
+      -> Components.Schemas.LessonReadiness
+    {
       throw APIError.network
     }
 
-    func followWriting(token: String, lessonID: String, run: String?) async throws -> String {
+    func followWriting(token: String, lessonID: String, run: String?) async throws
+      -> Components.Schemas.LessonReadiness
+    {
       throw APIError.network
     }
 

@@ -50,6 +50,8 @@ final class TodayStore {
   /// reads them as being written; main's Today stops saying so once its wait gives up. Asking for
   /// one again clears it.
   private var stalledLessons: [String: AuthenticatedSession] = [:]
+  /// Lessons whose readiness said their checks set them aside: they're never written again.
+  private var setAsideLessons: [String: AuthenticatedSession] = [:]
 
   @ObservationIgnored private let api: any StudyAPIClient
   @ObservationIgnored private let cache: AppCache
@@ -121,9 +123,9 @@ final class TodayStore {
     await withTaskGroup { group in
       for lessonID in lessonIDs {
         group.addTask {
-          let status = try? await api.followWriting(
+          let lesson = try? await api.followWriting(
             token: owner.bearerToken, lessonID: lessonID, run: nil)
-          await self.followed(lessonID, endedAs: status, owner: owner)
+          await self.followed(lessonID, endedAs: lesson?.status.rawValue, owner: owner)
         }
       }
     }
@@ -185,7 +187,15 @@ final class TodayStore {
     return opened.sessionID
   }
 
+  /// What the learner's tap was told, or that the lesson's checks set it aside once its readiness
+  /// says so, as main's next stop reads it.
   func writing(for block: StudyBlock) -> LessonWriting? {
+    if let lessonID = block.lessonId,
+      setAsideLessons[lessonID].map({ $0 == cache.session.authenticatedSession }) == true
+    {
+      return .setAside
+    }
+
     guard let blockID = block.id, let asked = writings[blockID],
       asked.owner == cache.session.authenticatedSession
     else {
@@ -193,6 +203,10 @@ final class TodayStore {
     }
 
     return asked.writing
+  }
+
+  func setAside(lessonID: String, owner: AuthenticatedSession) {
+    setAsideLessons[lessonID] = owner
   }
 
   /// A step that couldn't open fails after Today is read again, so the learner sees why.
@@ -469,7 +483,7 @@ final class TodayStore {
       return block.screen
     }
 
-    return try await api.lessonStatus(token: token, lessonID: lessonID) == "ready"
+    return try await api.lessonReadiness(token: token, lessonID: lessonID).status == .ready
       ? .lesson : .session
   }
 

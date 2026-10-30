@@ -1991,6 +1991,35 @@
         }
       }
     },
+    "It didn't pass our quality checks, so your plan goes on without it." : {
+      "comment" : "A lesson its quality checks set aside",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie hat unsere Qualitätsprüfungen nicht bestanden. Dein Plan wird deshalb ohne sie fortgesetzt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No ha superado nuestros controles de calidad, así que tu plan sigue adelante sin ella."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elle ne répondait pas à nos critères de qualité, donc ton plan continue sans elle."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ela não passou no nosso controle de qualidade, então seu plano segue sem ela."
+          }
+        }
+      }
+    },
     "It shows your week in numbers and the skill that grew the most." : {
       "comment" : "What the weekly summary shows",
       "localizations" : {
@@ -3300,35 +3329,6 @@
         }
       }
     },
-    "This lesson can't be written now, so your plan goes on without it." : {
-      "comment" : "A lesson set aside by its checks",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Lektion kann gerade nicht erstellt werden. Dein Plan geht ohne sie weiter."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se puede preparar esta lección ahora, así que tu plan continúa sin ella."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cette leçon ne peut pas être préparée pour le moment. Ton plan continue sans elle."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não dá para criar esta aula agora, então seu plano continua sem ela."
-          }
-        }
-      }
-    },
     "This lesson is being written for you. It's usually ready in about two minutes." : {
       "comment" : "A lesson being written",
       "localizations" : {
@@ -3354,6 +3354,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estamos criando esta aula para você. Ela costuma ficar pronta em cerca de dois minutos."
+          }
+        }
+      }
+    },
+    "This lesson isn't available" : {
+      "comment" : "A lesson its quality checks set aside",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Lektion ist nicht verfügbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta lección no está disponible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette leçon n’est pas disponible"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta aula não está disponível"
           }
         }
       }

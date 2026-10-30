@@ -110,21 +110,36 @@ final class StudySessionStore {
     }
   }
 
-  /// `ready`, `generating`, `notStarted` or `failed`.
-  func lessonStatus(lessonID: String) async -> String? {
-    guard let token = cache.session.authenticatedSession?.bearerToken else {
-      return nil
+  func lessonReadiness(lessonID: String) async -> Components.Schemas.LessonReadiness? {
+    await read(lessonID) { token in
+      try await api.lessonReadiness(token: token, lessonID: lessonID)
     }
-
-    return try? await api.lessonStatus(token: token, lessonID: lessonID)
   }
 
-  /// The lesson's status once no run writes it.
-  func followWriting(lessonID: String, run: String?) async -> String? {
-    guard let token = cache.session.authenticatedSession?.bearerToken else {
+  /// How the lesson stands once no run writes it.
+  func followWriting(lessonID: String, run: String?) async -> Components.Schemas.LessonReadiness? {
+    await read(lessonID) { token in
+      try await api.followWriting(token: token, lessonID: lessonID, run: run)
+    }
+  }
+
+  /// A lesson its checks set aside shows as such on the next stop from then on. A read answered
+  /// after its learner left is dropped.
+  private func read(
+    _ lessonID: String,
+    _ readiness: (_ token: String) async throws -> Components.Schemas.LessonReadiness
+  ) async -> Components.Schemas.LessonReadiness? {
+    guard let owner = cache.session.authenticatedSession,
+      let lesson = try? await readiness(owner.bearerToken),
+      owner == cache.session.authenticatedSession
+    else {
       return nil
     }
 
-    return try? await api.followWriting(token: token, lessonID: lessonID, run: run)
+    if lesson.setAside {
+      today.setAside(lessonID: lessonID, owner: owner)
+    }
+
+    return lesson
   }
 }

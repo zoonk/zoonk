@@ -337,7 +337,7 @@ final class LessonPlayerStore {
   private func followWriting(
     _ outline: LessonOutline, run: String?, identity: AuthenticatedSession
   ) async {
-    let status = await signingOutOnUnauthorized(identity) {
+    let lesson = await signingOutOnUnauthorized(identity) {
       try await api.followWriting(id: outline.id, run: run, token: identity.bearerToken)
     }
 
@@ -345,7 +345,7 @@ final class LessonPlayerStore {
       return
     }
 
-    switch status {
+    switch lesson?.status {
     case .ready: await load(refresh: true)
     case .failed, nil: screen = .waiting(outline, .failed)
     case .generating, .notStarted: screen = .waiting(outline, .notStarted)

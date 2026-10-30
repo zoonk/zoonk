@@ -272,9 +272,9 @@ final class GenerationEventsTests: XCTestCase {
       clients: APIClientFactory(
         baseURL: try XCTUnwrap(URL(string: "https://api.zoonk.test")), transport: transport))
 
-    let status = try await api.followWriting(id: "lesson-1", run: nil, token: "learner-token")
+    let lesson = try await api.followWriting(id: "lesson-1", run: nil, token: "learner-token")
 
-    XCTAssertEqual(status, .ready)
+    XCTAssertEqual(lesson.status, .ready)
     let requests = await transport.requests
     XCTAssertEqual(
       requests,
@@ -283,6 +283,24 @@ final class GenerationEventsTests: XCTestCase {
         "/v1/generations/run-1/events?startIndex=0",
         "/v1/library/lessons/lesson-1/readiness",
       ])
+  }
+
+  func testFollowingALessonItsChecksSetAsideSaysSoOnceItsRunEnds() async throws {
+    let transport = LessonWritingTransport(
+      readiness: [
+        #"{"alternative":null,"generationId":"run-1","setAside":false,"status":"generating"}"#,
+        #"{"alternative":null,"generationId":null,"setAside":true,"status":"failed"}"#,
+      ],
+      events: #"data: {"status":"started","step":"writeLesson"}"# + "\n\n"
+        + #"data: {"status":"error","step":"workflowError"}"# + "\n\n")
+    let api = LessonPlayerAPI(
+      clients: APIClientFactory(
+        baseURL: try XCTUnwrap(URL(string: "https://api.zoonk.test")), transport: transport))
+
+    let lesson = try await api.followWriting(id: "lesson-1", run: nil, token: "learner-token")
+
+    XCTAssertEqual(lesson.status, .failed)
+    XCTAssertTrue(lesson.setAside)
   }
 }
 

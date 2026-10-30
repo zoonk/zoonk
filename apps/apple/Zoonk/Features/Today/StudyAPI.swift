@@ -27,13 +27,15 @@ protocol StudyAPIClient: Sendable {
   func stop(token: String, sessionID: String, timeZone: String) async throws
   func getSession(token: String, sessionID: String) async throws -> StudyDay
   func getSummary(token: String, sessionID: String) async throws -> SessionSummary
-  func lessonStatus(token: String, lessonID: String) async throws -> String
+  func lessonReadiness(token: String, lessonID: String) async throws
+    -> Components.Schemas.LessonReadiness
   func languageCheckpointCall(token: String, blockID: String) async throws
     -> LanguageCheckpointCall
   /// Only on the learner's tap, since it runs AI.
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome
-  /// The lesson's status once no run writes it; `run` is the one the learner's tap started.
-  func followWriting(token: String, lessonID: String, run: String?) async throws -> String
+  /// How the lesson stands once no run writes it; `run` is the one the learner's tap started.
+  func followWriting(token: String, lessonID: String, run: String?) async throws
+    -> Components.Schemas.LessonReadiness
   func prepareSession(token: String, sessionID: String) async throws
   /// Only on the learner's tap, since it outlines the day's lessons with AI.
   func prepareLessons(token: String, goalID: String) async throws
@@ -89,10 +91,6 @@ private struct BlockStartBody: Encodable {
 }
 
 private struct StatusBody: Encodable {
-  let status: String
-}
-
-private struct LessonReadiness: Decodable {
   let status: String
 }
 
@@ -260,20 +258,10 @@ struct StudyAPI: StudyAPIClient {
     }
   }
 
-  func lessonStatus(token: String, lessonID: String) async throws -> String {
-    try await clients.perform(token: token) { client in
-      switch try await client.getLibraryLessonReadiness(path: .init(lessonId: lessonID)) {
-      case .ok(let response):
-        let readiness: LessonReadiness = try StudyJSON.recode(try response.body.json)
-        return readiness.status
-      case .unauthorized:
-        throw APIError.unauthorized
-      case .notFound:
-        throw APIError.notFound
-      default:
-        throw APIError.unavailable
-      }
-    }
+  func lessonReadiness(token: String, lessonID: String) async throws
+    -> Components.Schemas.LessonReadiness
+  {
+    try await LessonPlayerAPI(clients: clients).getReadiness(id: lessonID, token: token)
   }
 
   func languageCheckpointCall(token: String, blockID: String) async throws
@@ -304,9 +292,10 @@ struct StudyAPI: StudyAPIClient {
     try await LessonPlayerAPI(clients: clients).writeLesson(id: lessonID, token: token)
   }
 
-  func followWriting(token: String, lessonID: String, run: String?) async throws -> String {
+  func followWriting(token: String, lessonID: String, run: String?) async throws
+    -> Components.Schemas.LessonReadiness
+  {
     try await LessonPlayerAPI(clients: clients).followWriting(id: lessonID, run: run, token: token)
-      .rawValue
   }
 
   func getLanguageToday(token: String, goalID: String) async throws -> LanguageTodayView {

@@ -240,6 +240,22 @@ private struct NextStopView: View {
             open(next)
           }
         }
+      } else if writing == .setAside {
+        Section {
+          ContentUnavailableView {
+            Label {
+              Text(
+                "This lesson isn't available", tableName: "Session",
+                comment: "A lesson its quality checks set aside")
+            } icon: {
+              Image(systemName: "exclamationmark.circle")
+            }
+          } description: {
+            Text(
+              "It didn't pass our quality checks, so your plan goes on without it.",
+              tableName: "Session", comment: "A lesson its quality checks set aside")
+          }
+        }
       }
     }
   }
@@ -336,7 +352,7 @@ private struct NextStopView: View {
   }
 
   private var lessonLine: AnyView? {
-    guard next?.kind == .learn else {
+    guard next?.kind == .learn, writing != .setAside else {
       return nil
     }
 
@@ -345,15 +361,6 @@ private struct NextStopView: View {
         Text(
           "Your lesson is ready.", tableName: "Session",
           comment: "A lesson written while the learner waited, offered with Start"))
-    }
-
-    if writing == .setAside {
-      return AnyView(
-        Text(
-          "This lesson can't be written now, so your plan goes on without it.",
-          tableName: "Session", comment: "A lesson set aside by its checks"
-        )
-        .foregroundStyle(.secondary))
     }
 
     if writing == .failed || lessonStatus == "failed" {
@@ -455,18 +462,19 @@ private struct NextStopView: View {
     }
   }
 
-  /// A run that ended without writing the lesson reads as failed, with Try again. Only the plan's
+  /// A run that ended without writing the lesson reads as failed, with Try again, unless its checks
+  /// set it aside: that one is never written again, so it isn't read again. Only the plan's
   /// preparation has no run to follow yet (it picks the lesson, then starts writing it), so that
   /// wait reads again for a few minutes at most.
   private func followLesson() async {
-    guard let next, next.kind == .learn else {
+    guard let next, next.kind == .learn, writing != .setAside else {
       lessonStatus = nil
       return
     }
 
     for _ in 0..<60 {
       if let lessonID = next.lessonId {
-        lessonStatus = await store.lessonStatus(lessonID: lessonID)
+        lessonStatus = await store.lessonReadiness(lessonID: lessonID)?.status.rawValue
 
         if lessonStatus == "generating" || (writing?.run != nil && lessonStatus != "ready") {
           lessonStatus = "generating"
@@ -476,7 +484,7 @@ private struct NextStopView: View {
             return
           }
 
-          lessonStatus = followed ?? "failed"
+          lessonStatus = followed?.status.rawValue ?? "failed"
         }
 
         if lessonStatus == "ready" {

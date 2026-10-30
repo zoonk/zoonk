@@ -285,7 +285,7 @@ struct LessonPlayerAPI: Sendable {
   /// lesson names its run only once the run claims it) and returns how it stands once none does:
   /// `failed` when a run ended without writing it, as main's waits give up on a stalled lesson.
   func followWriting(id: String, run: String?, token: String) async throws
-    -> Components.Schemas.LessonReadiness.StatusPayload
+    -> Components.Schemas.LessonReadiness
   {
     var followed: String
 
@@ -295,7 +295,7 @@ struct LessonPlayerAPI: Sendable {
       let readiness = try await getReadiness(id: id, token: token)
 
       guard let generationId = readiness.generationId else {
-        return readiness.status
+        return readiness
       }
 
       followed = generationId
@@ -310,15 +310,16 @@ struct LessonPlayerAPI: Sendable {
       } catch {}
 
       try Task.checkCancellation()
-      let readiness = try await getReadiness(id: id, token: token)
+      var readiness = try await getReadiness(id: id, token: token)
 
       if readiness.status == .ready {
-        return .ready
+        return readiness
       }
 
       guard readiness.status == .generating, let next = readiness.generationId, next != followed
       else {
-        return .failed
+        readiness.status = .failed
+        return readiness
       }
 
       followed = next

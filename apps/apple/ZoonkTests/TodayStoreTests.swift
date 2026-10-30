@@ -185,6 +185,61 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(starts, [], "starting would prepare the session and race the request")
   }
 
+  func testALessonItsChecksSetAsideShowsSoOnTheNextStopInsteadOfTryAgain() async throws {
+    let read = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
+    let followed = try block(position: 1, kind: "learn", id: "b2", lessonID: "l2")
+    let api = StudyAPIStub(
+      readiness: try decode(
+        #"{"alternative":null,"generationId":null,"setAside":true,"status":"failed"}"#))
+    let cache = signedInCache()
+    let today = TodayStore(api: api, cache: cache)
+    let store = StudySessionStore(api: api, cache: cache, today: today)
+
+    _ = await store.lessonReadiness(lessonID: "l1")
+    _ = await store.followWriting(lessonID: "l2", run: "run-1")
+
+    XCTAssertEqual(today.writing(for: read), .setAside)
+    XCTAssertEqual(today.writing(for: followed), .setAside, "its checks set it aside as it waited")
+
+    await cache.session.expire(try XCTUnwrap(cache.session.authenticatedSession))
+
+    XCTAssertNil(today.writing(for: read), "only for the learner who read it")
+  }
+
+  func testALessonReadAnsweredAfterItsLearnerLeftIsDropped() async throws {
+    let api = StudyAPIStub(
+      readiness: try decode(
+        #"{"alternative":null,"generationId":null,"setAside":true,"status":"failed"}"#),
+      holdsReadiness: true)
+    let cache = signedInCache()
+    let store = StudySessionStore(api: api, cache: cache, today: TodayStore(api: api, cache: cache))
+
+    let read = Task { await store.lessonReadiness(lessonID: "l1") }
+    await api.waitForHeldReadiness()
+    await cache.session.expire(try XCTUnwrap(cache.session.authenticatedSession))
+    await api.releaseReadiness()
+    let lesson = await read.value
+
+    XCTAssertNil(lesson, "another learner may be signed in by now")
+  }
+
+  func testAFailedLessonItsChecksDidntSetAsideStaysOneToTryAgain() async throws {
+    let read = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
+    let followed = try block(position: 1, kind: "learn", id: "b2", lessonID: "l2")
+    let api = StudyAPIStub(
+      readiness: try decode(
+        #"{"alternative":null,"generationId":null,"setAside":false,"status":"failed"}"#))
+    let cache = signedInCache()
+    let today = TodayStore(api: api, cache: cache)
+    let store = StudySessionStore(api: api, cache: cache, today: today)
+
+    _ = await store.lessonReadiness(lessonID: "l1")
+    _ = await store.followWriting(lessonID: "l2", run: "run-1")
+
+    XCTAssertNil(today.writing(for: read))
+    XCTAssertNil(today.writing(for: followed))
+  }
+
   func testAStepWhoseLessonIsntPickedYetPreparesTheSession() async throws {
     let api = StudyAPIStub()
     let store = TodayStore(api: api, cache: signedInCache())
@@ -666,6 +721,9 @@ private actor StudyAPIStub: StudyAPIClient {
   private let holdsOpening: Bool
   private var heldOpening: CheckedContinuation<Void, Never>?
   private var openingWaiter: CheckedContinuation<Void, Never>?
+  private let holdsReadiness: Bool
+  private var heldReadiness: CheckedContinuation<Void, Never>?
+  private var readinessWaiter: CheckedContinuation<Void, Never>?
   private(set) var openedTargets: [String] = []
   private(set) var startedBlocks: [String] = []
   private(set) var writtenLessons: [String] = []
@@ -675,6 +733,7 @@ private actor StudyAPIStub: StudyAPIClient {
   private(set) var todayReads = 0
   private let unwrittenLessons: Set<String>
   private let unreachableLessons: Set<String>
+  private let readiness: Components.Schemas.LessonReadiness
   private var holdsNextTodayRead = false
   private var failsTodayReads = false
   private var heldTodayRead: CheckedContinuation<Void, Never>?
@@ -685,10 +744,15 @@ private actor StudyAPIStub: StudyAPIClient {
     call: LanguageCheckpointCall = .notLanguage(.init(status: .notLanguage)),
     today: TodayContent = .goalNotActive, session: StudyDay? = nil,
     decided: TodayView.PlanChange? = nil, holdsOpening: Bool = false,
-    unwrittenLessons: Set<String> = [], unreachableLessons: Set<String> = []
+    unwrittenLessons: Set<String> = [], unreachableLessons: Set<String> = [],
+    readiness: Components.Schemas.LessonReadiness = .init(
+      alternative: nil, generationId: nil, setAside: false, status: .ready),
+    holdsReadiness: Bool = false
   ) {
     self.unwrittenLessons = unwrittenLessons
     self.unreachableLessons = unreachableLessons
+    self.readiness = readiness
+    self.holdsReadiness = holdsReadiness
     self.session = session
     self.decided = decided
     self.opened = opened
@@ -718,6 +782,19 @@ private actor StudyAPIStub: StudyAPIClient {
   func releaseOpening() {
     heldOpening?.resume()
     heldOpening = nil
+  }
+
+  func waitForHeldReadiness() async {
+    guard heldReadiness == nil else {
+      return
+    }
+
+    await withCheckedContinuation { readinessWaiter = $0 }
+  }
+
+  func releaseReadiness() {
+    heldReadiness?.resume()
+    heldReadiness = nil
   }
 
   func failTodayReads() {
@@ -816,17 +893,31 @@ private actor StudyAPIStub: StudyAPIClient {
     throw APIError.unavailable
   }
 
-  func lessonStatus(token: String, lessonID: String) async throws -> String {
+  func lessonReadiness(token: String, lessonID: String) async throws
+    -> Components.Schemas.LessonReadiness
+  {
     readinessReads.append(lessonID)
-    return "ready"
+
+    if holdsReadiness {
+      await withCheckedContinuation { continuation in
+        heldReadiness = continuation
+        readinessWaiter?.resume()
+        readinessWaiter = nil
+      }
+    }
+
+    return readiness
   }
 
-  func followWriting(token: String, lessonID: String, run: String?) async throws -> String {
+  func followWriting(token: String, lessonID: String, run: String?) async throws
+    -> Components.Schemas.LessonReadiness
+  {
     if unreachableLessons.contains(lessonID) {
       throw APIError.network
     }
 
-    return unwrittenLessons.contains(lessonID) ? "failed" : "ready"
+    return unwrittenLessons.contains(lessonID)
+      ? .init(alternative: nil, generationId: nil, setAside: false, status: .failed) : readiness
   }
 
   func languageCheckpointCall(token: String, blockID: String) async throws
