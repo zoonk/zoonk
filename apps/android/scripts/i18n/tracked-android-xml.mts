@@ -15,7 +15,7 @@ function decodeXml(content: string) {
 }
 
 const COMMENTED_RESOURCE =
-  /<!--(?<comment>(?:(?!-->)[\s\S])*)-->\s*<(?:string|plurals|string-array)\b[^>]*?\bname="(?<name>[^"]+)"/gu;
+  /<!--(?<comment>(?:(?!-->)[\s\S])*)-->\s*<(?:string|plurals|string-array)\b[^>]*?\bname\s*=\s*(?<quote>["'])(?<name>.+?)\k<quote>/gu;
 
 /** The Android codec keeps a resource's comment for the XML but doesn't give it to translators. */
 function withTranslatorComments(xml: string, messages: ReturnType<typeof decodeXml>) {

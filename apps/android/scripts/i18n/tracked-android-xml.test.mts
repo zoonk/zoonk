@@ -244,7 +244,7 @@ test("translators get each resource's comment as its description", () => {
   <string name="title">Home</string>
   <string name="greeting">Hello, %1$s!</string>
   <!-- Skill levels. -->
-  <string-array name="levels"><item>Beginner</item><item>Advanced</item></string-array>
+  <string-array name = 'levels'><item>Beginner</item><item>Advanced</item></string-array>
 </resources>`;
 
   assert.deepEqual(
