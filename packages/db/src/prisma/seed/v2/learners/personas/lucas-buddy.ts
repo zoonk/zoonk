@@ -53,7 +53,11 @@ export const lucasBuddy: SeedLearner = {
     course: physicsCourse,
     createdDay: -18,
     dailyMinutes: 15,
-    details: { level: "nada ainda", purpose: "overview" },
+    details: {
+      answered: ["purpose", "targetDate", "level", "buddy", "placement", "schedule"],
+      level: "nada ainda",
+      purpose: "overview",
+    },
     key: "quantum-overview",
     kind: "learn",
     plan: {

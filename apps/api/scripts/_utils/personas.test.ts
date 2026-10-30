@@ -1,6 +1,9 @@
 import { randomUUID } from "node:crypto";
+import { getLearnerSummary } from "@zoonk/core/learner/summary";
+import { getSession } from "@zoonk/core/users/session";
 import { prisma } from "@zoonk/db";
 import { writeSeedV2 } from "@zoonk/db/seed/v2";
+import { listSeedPersonas } from "@zoonk/db/seed/v2/personas";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -11,6 +14,8 @@ import { getDateInTimeZone, getHourInTimeZone } from "@zoonk/utils/time-zone";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { clonePersona, createPersona } from "./personas";
 import { findTestLearners, removeTestLearner } from "./test-learners";
+
+vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
 
 const NOVEMBER = 10;
 const SUNDAY = 0;
@@ -160,12 +165,57 @@ function describePlan(
   };
 }
 
+async function readPersonaSummary(userId: string) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+
+  vi.mocked(getSession).mockResolvedValue(
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Summary reads identity and session times, not Better Auth's entire session.
+    {
+      session: {
+        createdAt: new Date(),
+        expiresAt: new Date("2099-01-01"),
+        id: randomUUID(),
+        token: randomUUID(),
+        updatedAt: new Date(),
+        userId,
+      },
+      user,
+    } as Awaited<ReturnType<typeof getSession>>,
+  );
+
+  return getLearnerSummary();
+}
+
 describe("persona command", () => {
   beforeAll(async () => {
     await writeSeedV2(prisma);
   }, 120_000);
 
+  it.each(listSeedPersonas({ now: new Date() }))(
+    "$key has finished goal setup in the shared seed",
+    async ({ email }) => {
+      const user = await prisma.user.findUniqueOrThrow({ where: { email } });
+      const summary = await readPersonaSummary(user.id);
+
+      expect(summary?.goals).toStrictEqual([
+        expect.objectContaining({ isActive: true, isSettingUp: false }),
+      ]);
+    },
+  );
+
   describe(createPersona, () => {
+    it.each(["ana", "lucas", "marcos", "maya", "pedro", "sam"])(
+      "%s has finished goal setup in a fresh copy",
+      async (name) => {
+        const { userId } = await createPersona({ name });
+        const summary = await readPersonaSummary(userId);
+
+        expect(summary?.goals).toStrictEqual([
+          expect.objectContaining({ isActive: true, isSettingUp: false }),
+        ]);
+      },
+    );
+
     it("rewinds a persona to the day its plan was made, before anything after placement", () =>
       atStudyClocks(async () => {
         const { email, userId } = await createPersona({ day: 1, name: "ana" });

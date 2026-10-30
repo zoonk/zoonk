@@ -42,7 +42,10 @@ export const guest: SeedLearner = {
     course: physicsCourse,
     createdDay: 0,
     dailyMinutes: 10,
-    details: { purpose: "overview" },
+    details: {
+      answered: ["purpose", "targetDate", "level", "buddy", "placement", "schedule"],
+      purpose: "overview",
+    },
     key: "quantum-basics",
     kind: "learn",
     plan: {

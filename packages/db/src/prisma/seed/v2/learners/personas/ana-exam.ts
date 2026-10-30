@@ -214,6 +214,7 @@ function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoa
     createdDay: -14,
     dailyMinutes: 45,
     details: {
+      answered: ["target", "targetDate", "level", "buddy", "placement", "schedule"],
       course: "Medicina",
       exam: "ENEM",
       examYear: edition.year,

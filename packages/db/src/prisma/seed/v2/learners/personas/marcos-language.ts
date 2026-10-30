@@ -68,6 +68,7 @@ const marcos: SeedLearner = {
     createdDay: -28,
     dailyMinutes: 25,
     details: {
+      answered: ["reason", "targetDate", "level", "buddy", "placement", "schedule"],
       level: "A2",
       reason: "Mudança para Toronto com a esposa",
       skillLevels: { listening: "A2", reading: "B1", speaking: "A2", writing: "A2" },

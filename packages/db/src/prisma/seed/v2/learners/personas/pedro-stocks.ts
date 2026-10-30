@@ -41,7 +41,11 @@ export const pedroStocks: SeedLearner = {
     course: stockMarketCourse,
     createdDay: -6,
     dailyMinutes: 15,
-    details: { purpose: "overview", reason: "Quer aprender a investir o primeiro salário" },
+    details: {
+      answered: ["purpose", "targetDate", "level", "buddy", "placement", "schedule"],
+      purpose: "overview",
+      reason: "Quer aprender a investir o primeiro salário",
+    },
     key: "stock-market",
     kind: "learn",
     plan: {
