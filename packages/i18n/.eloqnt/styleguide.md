@@ -27,4 +27,4 @@ Zoonk helps anyone learn anything, especially first-time learners in small towns
 - Buddy names and goal titles are the learner's choice, with unknown gender and number: use neutral wording around them.
 - The learner's gender is unknown: prefer wording that doesn't mark it.
 - Duration placeholders such as `{time}` already include their unit.
-- Keep the count (“#” or “%d”) in every plural form, “one” included, never a literal “1” or a spelled-out number.
+- Keep the count (“#” or “%d”) inside the sentence of every plural form, “one” included: never a literal “1”, a spelled-out number, a “Label: #” rebuild, or words added to only one form.

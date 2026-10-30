@@ -26,6 +26,7 @@
 - “Use of language” (a speaking exam criterion): “Uso de la lengua”
 - “card”: “tarjeta”, not “carta”
 - “link” (between a cause and its effect): “relación”, not “conexión”
+- “Free” (subscription name): “Gratis”
 - “Get Plus”: “pásate a Plus”, not “hazte Plus”
 - “hello@zoonk.com”: “contacto@zoonk.com”
 
