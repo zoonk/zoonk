@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAX_PROGRAM_OUTPUT_LENGTH, MAX_QUERY_ROWS } from "./programs/program-limits";
 import { MAX_DEVICE_DELAY_MS, MIN_DEVICE_DELAY_MS } from "./templates/_utils/music";
 
 const MAX_ANSWER_ITEMS = 200;
@@ -6,7 +7,8 @@ const MAX_ANSWER_TEXT = 2000;
 
 const answerTextSchema = z.string().max(MAX_ANSWER_TEXT);
 const answerIdsSchema = z.array(answerTextSchema).max(MAX_ANSWER_ITEMS);
-const cellSchema = z.union([answerTextSchema, z.number(), z.null()]);
+const programTextSchema = z.string().max(MAX_PROGRAM_OUTPUT_LENGTH);
+const cellSchema = z.union([programTextSchema, z.number(), z.null()]);
 
 export const activityAnswerSchema = z.discriminatedUnion("kind", [
   z
@@ -47,7 +49,7 @@ export const activityAnswerSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("notes"), notes: answerIdsSchema }).strict(),
   z.object({ kind: z.literal("numeric"), value: z.number() }).strict(),
   z.object({ ids: answerIdsSchema, kind: z.literal("order") }).strict(),
-  z.object({ kind: z.literal("output"), output: answerTextSchema }).strict(),
+  z.object({ kind: z.literal("output"), output: programTextSchema }).strict(),
   z.object({ kind: z.literal("pattern"), pattern: answerTextSchema }).strict(),
   z
     .object({
@@ -68,7 +70,7 @@ export const activityAnswerSchema = z.discriminatedUnion("kind", [
     .object({
       columns: answerIdsSchema,
       kind: z.literal("rows"),
-      rows: z.array(z.array(cellSchema).max(MAX_ANSWER_ITEMS)).max(MAX_ANSWER_ITEMS),
+      rows: z.array(z.array(cellSchema).max(MAX_ANSWER_ITEMS)).max(MAX_QUERY_ROWS),
     })
     .strict(),
   z.object({ ids: answerIdsSchema, kind: z.literal("selection") }).strict(),

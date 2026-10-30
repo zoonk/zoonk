@@ -25078,7 +25078,7 @@
                       },
                       "output": {
                         "type": "string",
-                        "maxLength": 2000
+                        "maxLength": 10000
                       }
                     },
                     "required": [
@@ -25163,7 +25163,7 @@
                             "anyOf": [
                               {
                                 "type": "string",
-                                "maxLength": 2000
+                                "maxLength": 10000
                               },
                               {
                                 "type": "number"

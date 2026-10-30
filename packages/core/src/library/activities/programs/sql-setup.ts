@@ -1,4 +1,5 @@
 import { type ActivityCell } from "../activity-expected-answer";
+import { capProgramText } from "./program-limits";
 
 type ColumnType = "integer" | "real" | "text";
 
@@ -37,9 +38,9 @@ export function sqlSetupStatements(tables: readonly SqlTable[]): SqlStatement[] 
 }
 
 export function toSqlCell(value: unknown): ActivityCell {
-  if (value === null || typeof value === "number" || typeof value === "string") {
+  if (value === null || typeof value === "number") {
     return value;
   }
 
-  return JSON.stringify(value) ?? "";
+  return capProgramText(typeof value === "string" ? value : (JSON.stringify(value) ?? ""));
 }
