@@ -6,7 +6,8 @@ import { repeatUntil } from "../_shared/repeat-until";
 import {
   type LanguagePair,
   levelTestBankProgressStep,
-  prepareLevelTestBankAudioStep,
+  listLevelTestPassagesStep,
+  voiceLevelTestPassageStep,
   writeLevelTestBankStep,
 } from "./steps/level-test-bank-steps";
 
@@ -49,7 +50,19 @@ export async function levelTestBankWorkflow(
     return status;
   }
 
-  await prepareLevelTestBankAudioStep({ ...input, workflowRunId });
+  const passages = await listLevelTestPassagesStep(pair);
+
+  await Promise.allSettled(
+    passages.map((text) =>
+      voiceLevelTestPassageStep({
+        analytics: input.analytics,
+        language: pair.targetLanguage,
+        text,
+        workflowRunId,
+      }),
+    ),
+  );
+
   return status;
 }
 

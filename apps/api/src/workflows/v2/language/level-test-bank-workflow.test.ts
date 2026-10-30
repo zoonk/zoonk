@@ -47,6 +47,18 @@ function bankFrom(passage: string): Written {
   };
 }
 
+function voicedAudio(): Awaited<ReturnType<typeof generateLanguageAudio>> {
+  return {
+    data: {
+      audio: new Uint8Array([1, 2, 3]),
+      durationMs: 2400,
+      format: "mp3",
+      provenance: bankFrom("voice").provenance,
+    },
+    error: null,
+  };
+}
+
 function freshPair() {
   return { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };
 }
@@ -59,15 +71,7 @@ describe(levelTestBankWorkflow, () => {
   beforeEach(() => {
     vi.mocked(generateLevelTestBank).mockReset();
 
-    vi.mocked(generateLanguageAudio).mockResolvedValue({
-      data: {
-        audio: new Uint8Array([1, 2, 3]),
-        durationMs: 2400,
-        format: "mp3",
-        provenance: bankFrom("voice").provenance,
-      },
-      error: null,
-    });
+    vi.mocked(generateLanguageAudio).mockResolvedValue(voicedAudio());
 
     vi.mocked(put).mockImplementation(async (pathname) => ({
       contentDisposition: "inline",
@@ -112,16 +116,6 @@ describe(levelTestBankWorkflow, () => {
     const pair = freshPair();
     const audio = Promise.withResolvers<Awaited<ReturnType<typeof generateLanguageAudio>>>();
 
-    const voiced = {
-      data: {
-        audio: new Uint8Array([1, 2, 3]),
-        durationMs: 2400,
-        format: "mp3" as const,
-        provenance: bankFrom("voice").provenance,
-      },
-      error: null,
-    };
-
     vi.mocked(generateLevelTestBank).mockResolvedValue(bankFrom(crypto.randomUUID()));
     vi.mocked(generateLanguageAudio).mockReturnValue(audio.promise);
     const writing = levelTestBankWorkflow({ pair });
@@ -135,11 +129,11 @@ describe(levelTestBankWorkflow, () => {
       "levelTestBankReady:completed",
     ]);
 
-    audio.resolve(voiced);
+    audio.resolve(voicedAudio());
     await expect(writing).resolves.toStrictEqual({ status: "written" });
   });
 
-  it("does not report a failed test after its questions are ready if background audio fails", async () => {
+  it("finishes with its questions ready when no clip can be voiced", async () => {
     const pair = freshPair();
     vi.mocked(generateLevelTestBank).mockResolvedValue(bankFrom(crypto.randomUUID()));
 
@@ -148,7 +142,7 @@ describe(levelTestBankWorkflow, () => {
       error: new Error("Voice unavailable"),
     });
 
-    await expect(levelTestBankWorkflow({ pair })).rejects.toThrow("placement audio");
+    await expect(levelTestBankWorkflow({ pair })).resolves.toStrictEqual({ status: "written" });
 
     expect(streamedSteps()).toStrictEqual([
       "writeLevelTestBank:started",
@@ -156,6 +150,36 @@ describe(levelTestBankWorkflow, () => {
     ]);
 
     expect(generateLevelTestBank).toHaveBeenCalledOnce();
+  });
+
+  it("keeps the clips that were voiced when another one fails, and voices only the missing one on the pair's next run", async () => {
+    const pair = freshPair();
+    const passage = crypto.randomUUID();
+    vi.mocked(generateLevelTestBank).mockResolvedValue(bankFrom(passage));
+    const failing = `${passage} B1`;
+
+    vi.mocked(generateLanguageAudio).mockImplementation(async ({ text }) =>
+      text === failing ? { data: null, error: new Error("Voice unavailable") } : voicedAudio(),
+    );
+
+    await expect(levelTestBankWorkflow({ pair })).resolves.toStrictEqual({ status: "written" });
+
+    const clips = await prisma.mediaAsset.findMany({
+      orderBy: { prompt: "asc" },
+      select: { prompt: true },
+      where: { prompt: { startsWith: passage } },
+    });
+
+    expect(clips.map((clip) => clip.prompt)).toStrictEqual(
+      TEST_LEVELS.map((level) => `${passage} ${level}`).filter((text) => text !== failing),
+    );
+
+    vi.mocked(generateLanguageAudio).mockClear();
+    await expect(levelTestBankWorkflow({ pair })).resolves.toStrictEqual({ status: "ready" });
+
+    expect(vi.mocked(generateLanguageAudio).mock.calls.map(([input]) => input.text)).toStrictEqual([
+      failing,
+    ]);
   });
 
   it("joins the run already writing the pair", async () => {

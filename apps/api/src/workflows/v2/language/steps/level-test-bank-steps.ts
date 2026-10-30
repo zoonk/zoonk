@@ -1,5 +1,8 @@
 import { progressStep } from "@/workflows/_shared/stream-status";
-import { prepareLevelTestBankAudio } from "@zoonk/core/language/level-test/prepare-audio";
+import {
+  listLevelTestPassagesToVoice,
+  voiceLevelTestPassage,
+} from "@zoonk/core/language/level-test/prepare-audio";
 import { writeLevelTestBank } from "@zoonk/core/language/level-test/write-bank";
 import { type LevelTestBankStepName } from "@zoonk/core/library/generation/steps";
 import { type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
@@ -39,25 +42,35 @@ export async function writeLevelTestBankStep({
   return status;
 }
 
-export async function prepareLevelTestBankAudioStep({
+export async function listLevelTestPassagesStep(pair: LanguagePair): Promise<string[]> {
+  "use step";
+
+  return listLevelTestPassagesToVoice(pair);
+}
+
+/** One clip per step, so a failed clip retries alone and never fails the test. */
+export async function voiceLevelTestPassageStep({
   analytics,
-  pair,
+  language,
+  text,
   workflowRunId,
 }: {
   analytics?: ContentAnalytics;
-  pair: LanguagePair;
+  language: string;
+  text: string;
   workflowRunId: string;
 }): Promise<void> {
   "use step";
 
   await withAiRetry(() =>
-    prepareLevelTestBankAudio({
+    voiceLevelTestPassage({
       analytics: {
         distinctId: analytics?.distinctId,
         goalId: analytics?.goalId,
         traceId: workflowRunId,
       },
-      pair,
+      language,
+      text,
     }),
   );
 }
