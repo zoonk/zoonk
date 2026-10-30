@@ -35,7 +35,6 @@ import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.PlacementCompletionInput
-import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
@@ -43,7 +42,6 @@ import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.Source
-import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.UploadTokenRequest
 import com.zoonk.api.models.UploadTokenRequestPayload
 import kotlinx.coroutines.Dispatchers
@@ -220,16 +218,6 @@ interface OnboardingApi {
         session: AuthenticatedSession,
         mockId: String,
     )
-
-    suspend fun plan(
-        session: AuthenticatedSession,
-        goalId: String,
-    ): Plan
-
-    suspend fun syllabus(
-        session: AuthenticatedSession,
-        goalId: String,
-    ): Syllabus
 
     /** Reading it never starts writing the language pair's questions. */
     suspend fun levelTest(
@@ -506,16 +494,6 @@ class LiveOnboardingApi(
     ) {
         perform { api.clients(session).exams.finishMock(UUID.fromString(mockId), MockTimeZoneInput(TimeZone.getDefault().id)) }
     }
-
-    override suspend fun plan(
-        session: AuthenticatedSession,
-        goalId: String,
-    ) = perform { api.clients(session).plans.getGoalPlan(UUID.fromString(goalId)) }
-
-    override suspend fun syllabus(
-        session: AuthenticatedSession,
-        goalId: String,
-    ) = perform { api.clients(session).learner.getGoalSyllabus(UUID.fromString(goalId)) }
 
     override suspend fun levelTest(
         session: AuthenticatedSession,

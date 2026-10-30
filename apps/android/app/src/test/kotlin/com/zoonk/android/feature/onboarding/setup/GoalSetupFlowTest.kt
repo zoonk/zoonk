@@ -37,8 +37,12 @@ import com.zoonk.android.feature.onboarding.adviceOf
 import com.zoonk.android.feature.onboarding.coverOf
 import com.zoonk.android.feature.onboarding.levelTestOf
 import com.zoonk.android.feature.onboarding.placementOf
+import com.zoonk.android.feature.onboarding.planOf
 import com.zoonk.android.feature.onboarding.setupView
+import com.zoonk.android.feature.onboarding.syllabusOf
 import com.zoonk.android.feature.onboarding.trueFalseQuestion
+import com.zoonk.android.feature.plan.FakePlanApi
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -75,6 +79,11 @@ class GoalSetupFlowTest {
     val rule: ComposeContentTestRule = createComposeRule()
 
     private val api = FakeOnboardingApi()
+    private val planApi =
+        FakePlanApi().apply {
+            shownPlan = planOf()
+            shownSyllabus = syllabusOf(emptyList(), kind = "modules")
+        }
     private lateinit var navigator: AppNavigator
 
     @get:Rule
@@ -99,18 +108,15 @@ class GoalSetupFlowTest {
         restoration: StateRestorationTester? = null,
     ) {
         val session = FakeSession(ana)
-        val store =
-            OnboardingStore(
-                api,
-                AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
-                session,
-            ) { SignInResult.SignedIn }
+        val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+        val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
+        val plans = PlanStore(planApi, cache)
         val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
         setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 CompositionLocalProvider(LocalSetupDrafts provides drafts) {
-                    key(screen) { GoalSetupScreen(AppRoute.GoalSetup(goalId), store, isGuest = false, navigator) }
+                    key(screen) { GoalSetupScreen(AppRoute.GoalSetup(goalId), store, plans, isGuest = false, navigator) }
                 }
             }
         }

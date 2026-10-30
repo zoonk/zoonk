@@ -27,11 +27,9 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationRun
-import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.StepState
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
-import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.examGoal
 import com.zoonk.android.feature.onboarding.feasibilityOf
 import com.zoonk.android.feature.onboarding.numbersOf
@@ -39,6 +37,8 @@ import com.zoonk.android.feature.onboarding.phaseOf
 import com.zoonk.android.feature.onboarding.planOf
 import com.zoonk.android.feature.onboarding.subjectOf
 import com.zoonk.android.feature.onboarding.syllabusOf
+import com.zoonk.android.feature.plan.FakePlanApi
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -69,6 +69,11 @@ class PlanRevealStepFlowTest {
     val rule: ComposeContentTestRule = createComposeRule()
 
     private val api = FakeOnboardingApi()
+    private val planApi =
+        FakePlanApi().apply {
+            shownPlan = planOf()
+            shownSyllabus = syllabusOf(emptyList(), kind = "modules")
+        }
     private lateinit var navigator: AppNavigator
 
     private fun show(
@@ -80,18 +85,14 @@ class PlanRevealStepFlowTest {
         restoration: StateRestorationTester? = null,
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-        val store =
-            OnboardingStore(
-                api,
-                AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
-                session,
-            ) { SignInResult.SignedIn }
+        val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+        val plans = PlanStore(planApi, cache)
         val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
         setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    PlanRevealStep(goal, isGuest, libraryCourse, run(), onRetryRun = null, store, navigator, SETUP, prepareToday)
+                    PlanRevealStep(goal, isGuest, libraryCourse, run(), onRetryRun = null, plans, navigator, SETUP, prepareToday)
                 }
             }
         }
@@ -117,7 +118,7 @@ class PlanRevealStepFlowTest {
 
     @Test
     fun theFactsSayTheWeekendsOwnTimeAndNoStudyTotal() {
-        api.plan = planOf(numbers = numbersOf(600.0), weekdayMinutes = listOf(45, 30, 30, 30, 30, 30, 45), weekendMinutes = 45)
+        planApi.shownPlan = planOf(numbers = numbersOf(600.0), weekdayMinutes = listOf(45, 30, 30, 30, 30, 30, 45), weekendMinutes = 45)
         show()
 
         rule.onNodeWithText("53 days\u00A0· 30\u00A0min a day, 45\u00A0min on weekends").assertIsDisplayed()
@@ -138,7 +139,7 @@ class PlanRevealStepFlowTest {
     fun aPhaseBeforeTodaysShowsNoDateAndTodaysSaysToday() {
         val today = LocalDate.now()
         val earlier = today.minusDays(10)
-        api.plan =
+        planApi.shownPlan =
             planOf(
                 phases =
                     listOf(
@@ -222,7 +223,7 @@ class PlanRevealStepFlowTest {
 
     @Test
     fun aLearnGoalWithoutADateThatHoldsEveryPartSaysMoreTimeOrADateFinishesSooner() {
-        api.plan =
+        planApi.shownPlan =
             planOf(targetDate = null, endDate = LocalDate.now().plusDays(400), feasibility = feasibilityOf(measure = "goal", fits = true))
         show(goal = learnGoalWithoutDate())
 
@@ -235,7 +236,8 @@ class PlanRevealStepFlowTest {
 
     @Test
     fun aLearnGoalWithoutADateThatStopsShortSaysTheTimeSetsHowFarItGoes() {
-        api.plan = planOf(targetDate = null, endDate = LocalDate.now().plusDays(3_650), feasibility = feasibilityOf(measure = "goal"))
+        planApi.shownPlan =
+            planOf(targetDate = null, endDate = LocalDate.now().plusDays(3_650), feasibility = feasibilityOf(measure = "goal"))
         show(goal = learnGoalWithoutDate())
 
         rule
@@ -257,8 +259,8 @@ class PlanRevealStepFlowTest {
 
     @Test
     fun timeThatDoesNotCoverTheExamSaysWhatItCovers() {
-        api.plan = planOf(feasibility = feasibilityOf(coreFits = true, deepensMostAsked = false))
-        api.syllabus = syllabusOf(listOf(subjectOf("Civil", percent = 60), subjectOf("Ethics", percent = 40, assumed = true)))
+        planApi.shownPlan = planOf(feasibility = feasibilityOf(coreFits = true, deepensMostAsked = false))
+        planApi.shownSyllabus = syllabusOf(listOf(subjectOf("Civil", percent = 60), subjectOf("Ethics", percent = 40, assumed = true)))
         show()
 
         rule
@@ -271,11 +273,11 @@ class PlanRevealStepFlowTest {
 
     @Test
     fun aPlanStillBeingBuiltShowsItsWaitUntilARead() {
-        api.plan = planOf(ready = false)
+        planApi.shownPlan = planOf(ready = false)
         show()
 
         rule.onNodeWithText("Building your plan").assertIsDisplayed()
-        api.plan = planOf()
+        planApi.shownPlan = planOf()
         rule.mainClock.advanceTimeBy(POLL_MILLIS)
 
         rule.onNodeWithText("Plan created").assertIsDisplayed()
@@ -283,7 +285,7 @@ class PlanRevealStepFlowTest {
 
     @Test
     fun aLibraryCourseThatFitsTheGoalIsOfferedWhileThePlanIsBuiltAndOpens() {
-        api.plan = planOf(ready = false)
+        planApi.shownPlan = planOf(ready = false)
         show(libraryCourse = OnboardingLibraryCourse("zoonk", 12, UUID.fromString(LIBRARY_COURSE), "statistics", "Statistics"))
 
         rule.onNodeWithText("A course in the Library fits your goal").performScrollTo().assertIsDisplayed()
@@ -295,12 +297,12 @@ class PlanRevealStepFlowTest {
 
     @Test
     fun aPlanIsReadAsSoonAsItsRunSaysItIsMade() {
-        api.plan = planOf(ready = false)
+        planApi.shownPlan = planOf(ready = false)
         var run by mutableStateOf(GenerationRun(status = GenerationRun.Status.Following))
         show(run = { run })
         rule.onNodeWithText("Building your plan").assertIsDisplayed()
 
-        api.plan = planOf()
+        planApi.shownPlan = planOf()
         run = GenerationRun(status = GenerationRun.Status.Ready, steps = mapOf("createPlan" to StepState.Completed))
         rule.mainClock.advanceTimeBy(500)
 
@@ -309,7 +311,7 @@ class PlanRevealStepFlowTest {
 
     @Test
     fun anExamsDocumentsBeingReadShowThatWait() {
-        api.plan = planOf(notice = "reading")
+        planApi.shownPlan = planOf(notice = "reading")
         show()
 
         rule.onNodeWithText("Reading the exam's official documents").assertIsDisplayed()

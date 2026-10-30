@@ -29,7 +29,6 @@ import com.zoonk.api.models.OnboardingDraftEdit
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
-import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
@@ -39,7 +38,6 @@ import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.PlanTimeToCoverSuggested
 import com.zoonk.api.models.PlanTimeToCoverSuggestedSplit
 import com.zoonk.api.models.Source
-import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
@@ -393,8 +391,6 @@ internal class FakeOnboardingApi : OnboardingApi {
     var placement: Placement = placementOf()
     var answered: (PlacementAnswerInput) -> Placement = { placementOf(status = "done", next = null, answered = 1, complete = true) }
     var mockOptions: MockOptions? = null
-    var plan: Plan = planOf()
-    var syllabus: Syllabus = syllabusOf(emptyList(), kind = "modules")
     var writeFailure: ApiException? = null
     var placementReads = 0
     val placementAnswers = mutableListOf<PlacementAnswerInput>()
@@ -440,16 +436,6 @@ internal class FakeOnboardingApi : OnboardingApi {
     ) {
         finishedMocks += mockId
     }
-
-    override suspend fun plan(
-        session: AuthenticatedSession,
-        goalId: String,
-    ): Plan = plan
-
-    override suspend fun syllabus(
-        session: AuthenticatedSession,
-        goalId: String,
-    ): Syllabus = syllabus
 
     var levelTest: LanguageLevelTest = levelTestOf()
     var levelTestReads = 0

@@ -50,8 +50,8 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.READING_RUN
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.studyDaysWords
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -97,15 +97,14 @@ internal fun ColumnScope.PlanRevealStep(
     libraryCourse: OnboardingLibraryCourse?,
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
-    store: OnboardingStore,
+    plans: PlanStore,
     navigator: AppNavigator,
     here: AppRoute,
     prepareToday: suspend () -> Unit = {},
 ) {
-    val goalId = goal.id.toString()
-    val resource = store.plans[goalId]
+    val resource = plans.plan[goal.id]
     val state by resource.collectShown()
-    val plan = state.value
+    val plan = state.value?.plan
     val readingNotice = plan?.notice == Plan.Notice.READING
     val polls = (plan?.ready != true && !run.isStopped) || readingNotice
     val poll = rememberPoll(active = polls) { resource.refreshed() }
@@ -150,7 +149,7 @@ internal fun ColumnScope.PlanRevealStep(
         }
 
         else -> {
-            val syllabus by store.syllabi[goalId].collectShown()
+            val syllabus by plans.syllabus[goal.id].collectShown()
             RevealBody(
                 plan = plan,
                 goal = goal,

@@ -53,6 +53,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.start.text
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -86,7 +87,7 @@ fun GoalSetupScreen(
         LocalSetupDrafts provides signedIn?.session?.let { SetupDrafts(app.drafts, it) },
         LocalSetupSpeech provides app.speech,
     ) {
-        GoalSetupScreen(route, app.onboarding, isGuest = signedIn?.isGuest == true, navigator, prepareToday = { app.today.today.refresh() })
+        GoalSetupScreen(route, app.onboarding, app.plans, isGuest = signedIn?.isGuest == true, navigator, prepareToday = { app.today.today.refresh() })
     }
 }
 
@@ -94,6 +95,7 @@ fun GoalSetupScreen(
 fun GoalSetupScreen(
     route: AppRoute.GoalSetup,
     store: OnboardingStore,
+    plans: PlanStore,
     isGuest: Boolean,
     navigator: AppNavigator,
     prepareToday: suspend () -> Unit = {},
@@ -174,7 +176,7 @@ fun GoalSetupScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
-                        step?.let { SetupStep(it, shown.value, vm, store, isGuest, navigator, route, asideBeside, prepareToday) }
+                        step?.let { SetupStep(it, shown.value, vm, store, plans, isGuest, navigator, route, asideBeside, prepareToday) }
                     }
                 }
 
@@ -194,6 +196,7 @@ private fun ColumnScope.SetupStep(
     view: Onboarding,
     vm: GoalSetupViewModel,
     store: OnboardingStore,
+    plans: PlanStore,
     isGuest: Boolean,
     navigator: AppNavigator,
     route: AppRoute.GoalSetup,
@@ -208,7 +211,7 @@ private fun ColumnScope.SetupStep(
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 
     CompositionLocalProvider(LocalPlanStart provides planStart) {
-        QuestionStep(step, view, vm, store, isGuest, navigator, route, subject, pending, run, onRetryRun, asideBeside, prepareToday)
+        QuestionStep(step, view, vm, store, plans, isGuest, navigator, route, subject, pending, run, onRetryRun, asideBeside, prepareToday)
     }
 }
 
@@ -218,6 +221,7 @@ private fun ColumnScope.QuestionStep(
     view: Onboarding,
     vm: GoalSetupViewModel,
     store: OnboardingStore,
+    plans: PlanStore,
     isGuest: Boolean,
     navigator: AppNavigator,
     route: AppRoute.GoalSetup,
@@ -343,7 +347,7 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.PLAN -> {
-            PlanRevealStep(view.goal, isGuest, view.libraryCourse, run, onRetryRun, store, navigator, route, prepareToday)
+            PlanRevealStep(view.goal, isGuest, view.libraryCourse, run, onRetryRun, plans, navigator, route, prepareToday)
         }
     }
 }

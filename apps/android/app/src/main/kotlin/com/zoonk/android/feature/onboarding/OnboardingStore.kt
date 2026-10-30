@@ -40,14 +40,12 @@ import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
-import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
-import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -442,17 +440,6 @@ class OnboardingStore(
                 }
             }
         }
-
-    val plans =
-        cache.keyed<String, Plan>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearnerModel)) { session, goalId ->
-            session?.let { api.plan(it, goalId) }
-        }
-
-    val syllabi =
-        cache.keyed<String, Syllabus>(
-            Audience.SignedIn,
-            setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress),
-        ) { session, goalId -> session?.let { api.syllabus(it, goalId) } }
 
     suspend fun answerPlacement(
         goalId: String,

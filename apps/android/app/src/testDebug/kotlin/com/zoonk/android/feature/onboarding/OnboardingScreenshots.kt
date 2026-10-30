@@ -60,6 +60,8 @@ import com.zoonk.android.feature.onboarding.setup.LocalSetupSpeech
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
+import com.zoonk.android.feature.plan.FakePlanApi
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.planlink.PlanLinkScreen
 import com.zoonk.android.feature.research.SourceChangeNotice
 import com.zoonk.android.feature.research.UploadRequestNotice
@@ -308,10 +310,10 @@ class OnboardingScreenshots {
                 },
                 "reveal" to {
                     Reveal(
-                        FakeOnboardingApi().apply {
-                            plan =
+                        setupPlanApi().apply {
+                            shownPlan =
                                 planOf(feasibility = feasibilityOf(coreFits = true, deepensMostAsked = true), numbers = numbersOf(1_380.0))
-                            syllabus =
+                            shownSyllabus =
                                 syllabusOf(
                                     listOf(
                                         subjectOf("Civil procedure", percent = 35),
@@ -325,9 +327,9 @@ class OnboardingScreenshots {
                 },
                 "reveal-chapters" to {
                     Reveal(
-                        FakeOnboardingApi().apply {
+                        setupPlanApi().apply {
                             val chapters = (1..7).joinToString(",", "[", "]") { chapterOf("Chapter $it") }
-                            plan =
+                            shownPlan =
                                 planOf(
                                     targetDate = null,
                                     endDate = LocalDate.now().plusDays(90),
@@ -342,7 +344,7 @@ class OnboardingScreenshots {
                 },
                 "reveal-building" to {
                     Reveal(
-                        FakeOnboardingApi().apply { plan = planOf(ready = false) },
+                        setupPlanApi().apply { shownPlan = planOf(ready = false) },
                         run =
                             GenerationRun(
                                 status = GenerationRun.Status.Following,
@@ -351,7 +353,7 @@ class OnboardingScreenshots {
                     )
                 },
                 "reveal-reading" to {
-                    Reveal(FakeOnboardingApi().apply { plan = planOf(notice = "reading") })
+                    Reveal(setupPlanApi().apply { shownPlan = planOf(notice = "reading") })
                 },
                 "setup-purpose" to
                     { Setup(FakeOnboardingApi().apply { setup = { setupView(listOf("purpose", "level", "schedule", "plan")) } }) },
@@ -495,16 +497,8 @@ class OnboardingScreenshots {
 
         @Composable
         private fun Setup(api: FakeOnboardingApi) {
-            val store =
-                remember {
-                    val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-                    OnboardingStore(
-                        api,
-                        AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
-                        session,
-                    ) { SignInResult.SignedIn }
-                }
-            GoalSetupScreen(AppRoute.GoalSetup(GOAL_ID), store, isGuest = false, rememberAppNavigator())
+            val store = rememberStore(api)
+            GoalSetupScreen(AppRoute.GoalSetup(GOAL_ID), store, rememberPlans(), isGuest = false, rememberAppNavigator())
         }
 
         @Composable
@@ -547,11 +541,10 @@ class OnboardingScreenshots {
 
         @Composable
         private fun Reveal(
-            api: FakeOnboardingApi,
+            api: FakePlanApi,
             isGuest: Boolean = false,
             run: GenerationRun = GenerationRun(status = GenerationRun.Status.Following),
         ) {
-            val store = rememberStore(api)
             SetupColumn {
                 PlanRevealStep(
                     examGoal(),
@@ -559,12 +552,25 @@ class OnboardingScreenshots {
                     libraryCourse = null,
                     run,
                     onRetryRun = {},
-                    store,
+                    rememberPlans(api),
                     rememberAppNavigator(),
                     AppRoute.GoalSetup(GOAL_ID),
                 )
             }
         }
+
+        private fun setupPlanApi() =
+            FakePlanApi().apply {
+                shownPlan = planOf()
+                shownSyllabus = syllabusOf(emptyList(), kind = "modules")
+            }
+
+        @Composable
+        private fun rememberPlans(api: FakePlanApi = setupPlanApi()) =
+            remember {
+                val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+                PlanStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)))
+            }
 
         @Composable
         private fun rememberStore(api: FakeOnboardingApi) =
