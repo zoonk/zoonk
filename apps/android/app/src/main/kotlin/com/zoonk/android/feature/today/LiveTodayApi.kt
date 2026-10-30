@@ -8,7 +8,6 @@ import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.MemoryInsightAnswer
 import com.zoonk.api.models.MistakeListAvailability
-import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.PlanWatch
 import com.zoonk.api.models.SuggestedGoal
@@ -39,11 +38,6 @@ class LiveTodayApi(
                 ).mistakes
                 .listCurrentUserMistakes(goalId = goalId, limit = 1, status = MistakesApi.StatusListCurrentUserMistakes.OPEN)
         }.availability
-
-    override suspend fun mocks(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ): MockOptions = perform { api.clients(session).exams.listMocks(goalId) }
 
     override suspend fun language(
         session: AuthenticatedSession,

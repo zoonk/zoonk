@@ -3,7 +3,6 @@ package com.zoonk.android.feature.today
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.MistakeListAvailability
-import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import java.util.UUID
@@ -41,11 +40,6 @@ internal class FakeTodayApi(
         session: AuthenticatedSession,
         goalId: UUID,
     ) = MistakeListAvailability(ready = 0, tomorrow = 0)
-
-    override suspend fun mocks(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ): MockOptions = error("Not used")
 
     override suspend fun language(
         session: AuthenticatedSession,

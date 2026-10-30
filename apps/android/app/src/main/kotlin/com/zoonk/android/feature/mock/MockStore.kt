@@ -29,7 +29,7 @@ class LiveMockApi(
     ) = notAnExamAsNull { perform { api.clients(session).exams.listMocks(goalId) } }
 }
 
-/** The mocks an exam goal offers any time; the exam page and the chooser share it. */
+/** The mocks an exam goal offers any time; Today's practice, the exam page and the chooser share it. */
 class MockStore(
     private val api: MockApi,
     cache: AppCache,
@@ -38,7 +38,14 @@ class MockStore(
         cache.keyed(Audience.SignedIn, OPTIONS_DOMAINS) { session, goalId -> session?.let { api.options(it, goalId) } }
 
     companion object {
-        val OPTIONS_DOMAINS = setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.LearningProfile, DataDomain.UserSubscription)
+        val OPTIONS_DOMAINS =
+            setOf(
+                DataDomain.Goals,
+                DataDomain.LearnerModel,
+                DataDomain.LearningProfile,
+                DataDomain.UserProgress,
+                DataDomain.UserSubscription,
+            )
     }
 }
 

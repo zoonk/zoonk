@@ -16,7 +16,6 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MistakeListAvailability
-import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
@@ -79,12 +78,6 @@ interface TodayApi {
         session: AuthenticatedSession,
         goalId: UUID,
     ): MistakeListAvailability
-
-    /** An exam goal's mocks: one running, or the sizes the learner can take. */
-    suspend fun mocks(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ): MockOptions
 
     /** A language goal's level and its exam-style speaking. */
     suspend fun language(
@@ -168,11 +161,6 @@ class TodayStore(
     val mistakes =
         cache.keyed<UUID, MistakeListAvailability>(Audience.SignedIn, setOf(DataDomain.UserProgress)) { session, goalId ->
             session?.let { api.mistakes(it, goalId) }
-        }
-
-    val mocks =
-        cache.keyed<UUID, MockOptions>(Audience.SignedIn, MOCK_DOMAINS) { session, goalId ->
-            session?.let { api.mocks(it, goalId) }
         }
 
     val language =
@@ -260,9 +248,6 @@ class TodayStore(
                 DataDomain.UserSession,
                 DataDomain.UserSubscription,
             )
-
-        /** A mock started or finished, and the tier that marks mocks Plus. */
-        private val MOCK_DOMAINS = setOf(DataDomain.Goals, DataDomain.UserProgress, DataDomain.UserSession, DataDomain.UserSubscription)
 
         /** The level moves with progress; the tier marks speaking Plus. */
         private val LANGUAGE_DOMAINS =

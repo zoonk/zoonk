@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.KindDot
@@ -41,13 +42,14 @@ import com.zoonk.api.models.TodayGoal
 @Composable
 internal fun TodayPractice(
     store: TodayStore,
+    mocks: MockStore,
     goal: TodayGoal,
     navigate: (AppRoute) -> Unit,
 ) {
     val mistakes by store.mistakes[goal.id].collectShown()
     val mocks =
         if (goal.kind == TodayGoal.Kind.EXAM) {
-            store.mocks[goal.id]
+            mocks.options[goal.id]
                 .collectShown()
                 .value.value
         } else {
