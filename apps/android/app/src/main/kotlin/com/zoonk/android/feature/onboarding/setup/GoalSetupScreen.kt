@@ -137,8 +137,8 @@ fun GoalSetupScreen(
                     )
                 }
 
-                view != null && step in QUESTION_SCREENS -> {
-                    StepDots(view, vm.flow)
+                else -> {
+                    view?.let { setupProgress(vm.flow, it.steps) }?.let { StepDots(it) }
                 }
             }
         },
@@ -345,13 +345,8 @@ internal fun SetupColumn(content: @Composable ColumnScope.() -> Unit) {
 }
 
 @Composable
-private fun StepDots(
-    view: Onboarding,
-    flow: SetupFlow,
-) {
-    val answered = flow.history.count { it in QUESTION_SCREENS }
-    val ahead = view.steps.count { it in QUESTION_SCREENS && it != flow.current }
-    val total = answered + 1 + ahead
+private fun StepDots(progress: SetupProgress) {
+    val (answered, total) = progress
     val ink = MaterialTheme.colorScheme.onSurface
     MeterParts(
         parts =

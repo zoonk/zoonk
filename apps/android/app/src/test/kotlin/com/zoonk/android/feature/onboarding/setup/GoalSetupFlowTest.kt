@@ -159,6 +159,20 @@ class GoalSetupFlowTest {
     fun aPlacementQuestionsBackLeavesTheSetupWithoutStepsBackOrStartOver() {
         api.setup = { setupView(listOf("placement", "plan"), details = """{"answered":["purpose"]}""") }
         api.placement = placementOf(next = trueFalseQuestion())
+    @Test
+    fun theDotsLeaveOptionalPlacementOutAndShowNoneDuringIt() {
+        api.setup = { setupView(listOf("level", "placement", "plan")) }
+        api.reply = { _, _ -> setupView(listOf("placement", "plan"), details = """{"answered":["level"]}""") }
+        show()
+
+        rule.onNodeWithContentDescription("Step 1 of 1").assertIsDisplayed()
+        rule.onNodeWithText("The basics").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Start").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithContentDescription("Step", substring = true).assertDoesNotExist()
+    }
+
         show()
         rule.onNodeWithContentDescription("Back").assertIsDisplayed()
 

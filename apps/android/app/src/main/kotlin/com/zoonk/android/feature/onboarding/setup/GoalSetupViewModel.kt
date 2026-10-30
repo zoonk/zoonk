@@ -38,6 +38,23 @@ internal val QUESTION_SCREENS =
     )
 
 @Serializable
+internal data class SetupProgress(
+    val answered: Int,
+    val total: Int,
+)
+
+/** Placement is optional and the plan isn't a question, so neither counts, and placement shows no dots. */
+internal fun setupProgress(
+    flow: SetupFlow,
+    steps: List<OnboardingStep>,
+): SetupProgress? {
+    val current = flow.current?.takeIf(::countsAsQuestion) ?: return null
+    val answered = flow.history.count(::countsAsQuestion)
+    return SetupProgress(answered, answered + 1 + steps.count { it != current && countsAsQuestion(it) })
+}
+
+private fun countsAsQuestion(step: OnboardingStep) = step in QUESTION_SCREENS && step != OnboardingStep.PLACEMENT
+
 data class SetupFlow(
     val goalId: String,
     val current: OnboardingStep? = null,
