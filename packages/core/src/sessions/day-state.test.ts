@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { type SessionDay, getDayState, getSessionState } from "./today-day-state";
+import { withDayState } from "./day-state";
 
-function day(overrides: Partial<SessionDay> = {}): SessionDay {
+type Day = Parameters<typeof withDayState>[0];
+
+function day(overrides: Partial<Day> = {}): Day {
   return {
     blocks: [
       { position: 0, status: "completed" },
@@ -15,21 +17,25 @@ function day(overrides: Partial<SessionDay> = {}): SessionDay {
   };
 }
 
-const LIMIT_REACHED: SessionDay["dailyLimit"] = {
+const LIMIT_REACHED: Day["dailyLimit"] = {
   limitMinutes: 60,
   reached: true,
   remainingMinutes: 0,
   usedMinutes: 60,
 };
 
-describe(getDayState, () => {
+function dayState(input: Day) {
+  return withDayState(input).state;
+}
+
+describe(withDayState, () => {
   it("is underway while a block is left to go on with", () => {
-    expect(getDayState(day())).toBe("underway");
+    expect(dayState(day())).toBe("underway");
   });
 
   it("is underway on a day not opened yet, by the next step's place in the day", () => {
     expect(
-      getDayState(
+      dayState(
         day({
           blocks: [
             { position: 0, status: "pending" },
@@ -43,7 +49,7 @@ describe(getDayState, () => {
 
   it("is done once every block is behind the learner", () => {
     expect(
-      getDayState(
+      dayState(
         day({
           blocks: [
             { position: 0, status: "completed" },
@@ -56,12 +62,12 @@ describe(getDayState, () => {
   });
 
   it("stops at the daily limit with blocks still to do", () => {
-    expect(getDayState(day({ dailyLimit: LIMIT_REACHED }))).toBe("limit");
+    expect(dayState(day({ dailyLimit: LIMIT_REACHED }))).toBe("limit");
   });
 
   it("is done, not limited, when the limit is reached on the last block", () => {
     expect(
-      getDayState(
+      dayState(
         day({
           blocks: [{ position: 0, status: "completed" }],
           dailyLimit: LIMIT_REACHED,
@@ -72,56 +78,37 @@ describe(getDayState, () => {
   });
 
   it("waits while a study day's lessons are still being outlined", () => {
-    expect(getDayState(day({ blocks: [], emptyDay: "lessonsComing", nextPosition: null }))).toBe(
+    expect(dayState(day({ blocks: [], emptyDay: "lessonsComing", nextPosition: null }))).toBe(
       "waiting",
     );
   });
 
   it("asks the learner for a study day's lessons nobody is outlining yet", () => {
-    expect(getDayState(day({ blocks: [], emptyDay: "lessonsToPrepare", nextPosition: null }))).toBe(
+    expect(dayState(day({ blocks: [], emptyDay: "lessonsToPrepare", nextPosition: null }))).toBe(
       "prepare",
     );
   });
 
   it("has nothing new on a study day without blocks", () => {
-    expect(getDayState(day({ blocks: [], emptyDay: "nothingNew", nextPosition: null }))).toBe(
-      "ahead",
-    );
+    expect(dayState(day({ blocks: [], emptyDay: "nothingNew", nextPosition: null }))).toBe("ahead");
   });
 
   it("rests on a day the plan gives no time, the same before and after it's opened", () => {
     const rest = { blocks: [], minutes: { dailyGoal: 0, done: 0, planned: 0 }, nextPosition: null };
 
-    expect(getDayState(day({ ...rest, emptyDay: "lessonsComing" }))).toBe("rest");
-    expect(getDayState(day({ ...rest, emptyDay: null }))).toBe("rest");
+    expect(dayState(day({ ...rest, emptyDay: "lessonsComing" }))).toBe("rest");
+    expect(dayState(day({ ...rest, emptyDay: null }))).toBe("rest");
   });
 
   it("rests on a day the plan gives no time", () => {
     expect(
-      getDayState(
+      dayState(
         day({ blocks: [], minutes: { dailyGoal: 0, done: 0, planned: 0 }, nextPosition: null }),
       ),
     ).toBe("rest");
   });
 
   it("is not underway when the next block isn't in the day", () => {
-    expect(getDayState(day({ blocks: [{ position: 0, status: "completed" }] }))).toBe("done");
-  });
-});
-
-describe(getSessionState, () => {
-  it("counts a day still to open as started when it kept work done earlier", () => {
-    const state = getSessionState(
-      day({
-        blocks: [
-          { position: 0, status: "completed" },
-          { position: 1, status: "pending" },
-          { position: 2, status: "pending" },
-        ],
-        nextPosition: 1,
-      }),
-    );
-
-    expect(state).toMatchObject({ done: false, started: true });
+    expect(dayState(day({ blocks: [{ position: 0, status: "completed" }] }))).toBe("done");
   });
 });

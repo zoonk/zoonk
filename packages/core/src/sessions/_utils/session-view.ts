@@ -3,6 +3,7 @@ import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { type BlockCheckpoint } from "../block-payload";
 import { type CapsuleFormat } from "../capsules";
 import { type DayBlockScreen } from "../day-block";
+import { type DayState, withDayState } from "../day-state";
 import { type ExtraTime } from "../extra-time";
 import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
 import { type Mission } from "../missions";
@@ -115,6 +116,8 @@ export type StudySessionView = {
   /** Locked plan lessons outside the queue, shown only after a free exam plan's first week. */
   plusLessons: PlusLesson[];
   sessionBar: { completed: number; total: number };
+  /** Where the day stands, which decides what Today offers. */
+  state: DayState;
   status: StudySessionRow["status"];
   week: StudyWeek;
 };
@@ -153,7 +156,7 @@ export function toStudySessionView(
 
   const answeredItemIds = new Set(input.answers.flatMap((answer) => answer.itemId ?? []));
 
-  return {
+  return withDayState({
     ...toDayViewFields({ ...input, sessionBar: getSessionBar(session.blocks) }),
     blocks: session.blocks.map((block) =>
       toStudyBlockView({
@@ -169,5 +172,5 @@ export function toStudySessionView(
     missions: input.missions,
     nextBlockId: getNextBlockId(session.blocks),
     status: session.status,
-  };
+  });
 }

@@ -4,6 +4,7 @@ import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
+import { withDayState } from "../day-state";
 import { type UnstartedDayView } from "../day-view";
 import { hasDayMissionBonus } from "../missions/get-day-missions";
 import { asDayMission, loadMissionDayViews } from "../missions/mission-day-views";
@@ -132,7 +133,7 @@ export async function loadUnstartedDayView({
     ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
     : null;
 
-  return {
+  return withDayState<Omit<UnstartedDayView, "state">>({
     ...fields,
     blocks: blocks.map((block) =>
       toDayBlockView({
@@ -148,5 +149,5 @@ export async function loadUnstartedDayView({
     extraTime,
     missions,
     status: "unstarted",
-  };
+  });
 }

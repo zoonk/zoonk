@@ -86335,6 +86335,20 @@
             "additionalProperties": false,
             "description": "One step per block still in the day, filled as blocks are done"
           },
+          "state": {
+            "default": "underway",
+            "description": "Where the day stands, which decides what Today offers: `underway` (a block to start or continue), `done` (every block behind the learner), `limit` (the daily time limit stopped it with blocks left), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new: practice, the week's challenge or the buddy instead) or `rest` (no study planned). Always sent",
+            "type": "string",
+            "enum": [
+              "ahead",
+              "done",
+              "limit",
+              "prepare",
+              "rest",
+              "underway",
+              "waiting"
+            ]
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -86469,6 +86483,7 @@
           "pauseSuggested",
           "plusLessons",
           "sessionBar",
+          "state",
           "status",
           "week"
         ],
@@ -88495,6 +88510,20 @@
             "additionalProperties": false,
             "description": "One step per block still in the day, filled as blocks are done"
           },
+          "state": {
+            "default": "underway",
+            "description": "Where the day stands, which decides what Today offers: `underway` (a block to start or continue), `done` (every block behind the learner), `limit` (the daily time limit stopped it with blocks left), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new: practice, the week's challenge or the buddy instead) or `rest` (no study planned). Always sent",
+            "type": "string",
+            "enum": [
+              "ahead",
+              "done",
+              "limit",
+              "prepare",
+              "rest",
+              "underway",
+              "waiting"
+            ]
+          },
           "week": {
             "type": "object",
             "properties": {
@@ -89318,6 +89347,7 @@
           "pauseSuggested",
           "plusLessons",
           "sessionBar",
+          "state",
           "week",
           "blocks",
           "catchUp",

@@ -226,7 +226,7 @@ describe(getTodayView, () => {
       title: "ENEM 2026",
     });
 
-    expect(today.session.goalId).toBe(goal.id);
+    expect(today.session).toMatchObject({ goalId: goal.id, state: "underway" });
     expect(Object.values(today.lessonStatus)).toContain("notStarted");
     expect(today.session.blocks.map((block) => block.lessonId)).toContain(lessons[0]?.id);
 

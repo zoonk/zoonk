@@ -6,6 +6,7 @@ import { z } from "zod";
 import { catchUpSchema } from "./catch-up";
 import { checkpointAnsweredQuestionsSchema } from "./checkpoint-evidence";
 import {
+  dayStateSchema,
   emptyDaySchema,
   examTomorrowSchema,
   lessonsComingSchema,
@@ -133,6 +134,7 @@ export const studySessionResponseSchema = z
     sessionBar: z
       .object({ completed: z.number().int().min(0), total: z.number().int().min(0) })
       .meta({ description: "One step per block still in the day, filled as blocks are done" }),
+    state: dayStateSchema,
     status: z.enum(StudySessionStatus),
     week: z
       .object({

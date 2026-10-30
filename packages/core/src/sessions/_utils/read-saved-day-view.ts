@@ -4,6 +4,7 @@ import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { readBlockPayload } from "../block-payload";
 import { toDayBlockRef } from "../day-block";
+import { withDayState } from "../day-state";
 import { type DayView, type UnstartedDayView } from "../day-view";
 import { getExtraTime } from "../extra-time";
 import { loadBlockSubjects } from "./block-subjects";
@@ -86,7 +87,7 @@ export async function readSavedDayView({
 
   const { id: _id, nextBlockId: _next, catchUp: _catchUp, missions, ...fields } = view;
 
-  return {
+  return withDayState<Omit<UnstartedDayView, "state">>({
     ...fields,
     blocks,
     catchUp: catchUp
@@ -118,5 +119,5 @@ export async function readSavedDayView({
     nextPosition: next?.position ?? null,
     sessionBar: getSessionBar(blocks),
     status: "unstarted",
-  };
+  });
 }

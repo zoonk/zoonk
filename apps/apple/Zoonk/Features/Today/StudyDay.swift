@@ -89,6 +89,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   var nextBlockId: String?
   var nextPosition: Int?
   let plusLessons: [PlusLesson]
+  let state: DayState
   let status: Status
   let week: StudyWeek
 
@@ -158,39 +159,10 @@ struct StudyDay: Decodable, Equatable, Sendable {
         weight: weight, fill: kind == .lesson ? .track : .color(kind.color.opacity(0.35)))
     }
   }
-
-  /// Mirrors main's `getDayState`.
-  var state: DayState {
-    let empty = blocks.isEmpty
-    let limitReached = dailyLimit?.reached == true
-    let studyDay = empty && !limitReached && minutes.dailyGoal > 0
-    let done = !empty && nextPosition == nil
-
-    if studyDay && emptyDay == .lessonsComing {
-      return .waiting
-    }
-
-    if studyDay && emptyDay == .lessonsToPrepare {
-      return .prepare
-    }
-
-    if nextBlock != nil && !limitReached {
-      return .underway
-    }
-
-    if limitReached && !done {
-      return .limit
-    }
-
-    if studyDay {
-      return .ahead
-    }
-
-    return empty && !limitReached && minutes.dailyGoal == 0 ? .rest : .done
-  }
 }
 
-enum DayState: Equatable, Sendable {
+/// Core decides where the day stands.
+enum DayState: String, Decodable, Sendable {
   case ahead
   case done
   case limit

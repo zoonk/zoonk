@@ -19,7 +19,6 @@ import {
   type TodayHostNotices,
   TodayScreenProvider,
 } from "./today-context";
-import { getSessionState } from "./today-day-state";
 import { TodayEarlierWork } from "./today-earlier-work";
 import { TodayHeading } from "./today-heading";
 import { TODAY_ACTION_CLASS, TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";
@@ -53,7 +52,7 @@ function isWaitingForLessons(today: TodayView): boolean {
       isStopBeingWritten({ block, lessonStatus: today.lessonStatus }),
   );
 
-  return beingWritten || today.session.lessonsComing || getSessionState(today.session).waiting;
+  return beingWritten || today.session.lessonsComing || today.session.state === "waiting";
 }
 
 function TodaySessionWithEarlierWork() {

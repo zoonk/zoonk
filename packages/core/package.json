@@ -519,6 +519,7 @@
     "./sessions/contract": "./src/sessions/contract.ts",
     "./sessions/daily-time-limit": "./src/sessions/get-daily-time-limit.ts",
     "./sessions/day-block": "./src/sessions/day-block.ts",
+    "./sessions/day-state": "./src/sessions/day-state.ts",
     "./sessions/day-view": "./src/sessions/day-view.ts",
     "./sessions/extra-block": "./src/sessions/add-extra-study-block.ts",
     "./sessions/finish-block": "./src/sessions/finish-study-block.ts",

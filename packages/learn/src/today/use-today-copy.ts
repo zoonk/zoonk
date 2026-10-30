@@ -1,10 +1,10 @@
 "use client";
 
+import { type DayState } from "@zoonk/core/sessions/day-state";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { useExtracted, useFormatter } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import { useTodayScreen } from "./today-context";
-import { type DayState, getDayState, getSessionState } from "./today-day-state";
 
 export function useTodayDate(): string {
   const format = useFormatter();
@@ -60,12 +60,21 @@ export function useFreshStartText(): string | null {
 
 export function useSessionState() {
   const { today } = useTodayScreen();
-  return getSessionState(today.session);
+  const { blocks, dailyLimit, state } = today.session;
+
+  return {
+    ahead: state === "ahead",
+    done: state === "done",
+    limitReached: dailyLimit?.reached === true,
+    rest: state === "rest",
+    started: blocks.some((block) => block.status !== "pending"),
+    waiting: state === "waiting",
+  };
 }
 
 export function useDayState(): DayState {
   const { today } = useTodayScreen();
-  return getDayState(today.session);
+  return today.session.state;
 }
 
 type PastDate = Extract<
