@@ -11,6 +11,7 @@ import {
   getNextStudyDate,
   getWeekDayKind,
   getWeekDays,
+  toStudiedMinutes,
 } from "../../sessions/daily-goal";
 import { type WeeklyStudyTime } from "../weekly-study-time-contract";
 
@@ -22,7 +23,6 @@ export type StudyWeek = {
 };
 
 const WEEK_DAYS = 7;
-const SECONDS_PER_MINUTE = 60;
 
 /** Active goals share one daily budget; sum each plan's allocations including rest/light days. */
 export async function loadStudyWeek({
@@ -100,8 +100,8 @@ export async function loadStudyWeek({
     days: week,
     nextStudyDate: getNextStudyDate({ getMinutes: getDayMinutes, today: localDate }),
     time: {
-      studiedMinutes: Math.floor(
-        days.reduce((total, day) => total + day.timeSpentSeconds, 0) / SECONDS_PER_MINUTE,
+      studiedMinutes: toStudiedMinutes(
+        days.reduce((total, day) => total + day.timeSpentSeconds, 0),
       ),
       targetMinutes: week.reduce((total, day) => total + day.goalMinutes, 0),
     },

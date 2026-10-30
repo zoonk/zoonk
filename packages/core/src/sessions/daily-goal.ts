@@ -21,6 +21,11 @@ export type WeekDay = PlanDay & {
   studied: boolean;
 };
 
+/** Any study counts as a day studied, so time under a minute shows as one rather than 0. */
+export function toStudiedMinutes(seconds: number): number {
+  return seconds > 0 ? Math.max(1, Math.floor(seconds / SECONDS_PER_MINUTE)) : 0;
+}
+
 export function getWeekDayKind({
   date,
   goalMinutes,
@@ -69,14 +74,14 @@ export function getWeekDays({
   return Array.from({ length: DAYS_PER_WEEK }, (_, index) => {
     const date = new Date(start + index * MS_PER_DAY);
     const seconds = days.find((day) => day.date.getTime() === date.getTime())?.seconds ?? 0;
-    const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
+    const minutes = toStudiedMinutes(seconds);
     const { goalMinutes, kind } = getPlanDay(date);
     const finished = completedDates.some((completed) => completed.getTime() === date.getTime());
 
     return {
       date,
       goalMinutes,
-      hitGoal: goalMinutes > 0 && (finished || minutes >= goalMinutes),
+      hitGoal: goalMinutes > 0 && (finished || seconds >= goalMinutes * SECONDS_PER_MINUTE),
       isToday: date.getTime() === today.getTime(),
       kind,
       minutes,

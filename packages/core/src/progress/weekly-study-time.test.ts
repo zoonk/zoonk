@@ -245,4 +245,38 @@ describe("weekly study time", () => {
 
     expect(today.today.session.week.nextStudyDate).toStrictEqual(new Date("2026-10-19T00:00:00Z"));
   });
+
+  it("shows a day studied for under a minute as a minute, so it never reads studied with 0 min", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-16T14:00:00Z"));
+    const user = await userFixture();
+    const { goal } = await learnerGoalFixture({ phases: [1], userId: user.id });
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { createdAt: MONDAY, dailyMinutes: 30, timezone: "UTC" },
+        where: { id: goal.id },
+      }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+      prisma.dailyProgress.create({
+        data: { date: FRIDAY, dayOfWeek: 5, timeSpentSeconds: 40, userId: user.id },
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    const today = await getTodayView({ goalId: goal.id });
+
+    if (today.status !== "ready") {
+      throw new Error(`Expected ready Today, received ${today.status}`);
+    }
+
+    expect(today.today.session.week.days[4]).toMatchObject({
+      date: FRIDAY,
+      minutes: 1,
+      studied: true,
+    });
+
+    expect(today.today.session.week.time.studiedMinutes).toBe(1);
+  });
 });
