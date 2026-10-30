@@ -67,7 +67,12 @@ function WonDetails() {
         {reward.badge && (
           <StepRow>
             <SearchCheckIcon aria-hidden="true" />
-            <span className="font-medium">{t("Trap hunter badge")}</span>
+            <span className="font-medium">
+              {t({
+                description: "A badge for catching the Trickster's traps.",
+                message: "Trap hunter badge",
+              })}
+            </span>
           </StepRow>
         )}
       </DetailsSection>

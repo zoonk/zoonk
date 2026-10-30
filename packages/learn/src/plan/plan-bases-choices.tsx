@@ -21,7 +21,10 @@ function useChoiceName() {
   const t = useExtracted();
 
   const names: Record<BaseChoice, string> = {
-    deep: t("In depth"),
+    deep: t({
+      description: "Choice to study a prerequisite with all its lessons, in depth.",
+      message: "In depth",
+    }),
     essential: t("Essentials"),
     quick: t("Quick lesson"),
     skip: t("Skip"),

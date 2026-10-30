@@ -141,7 +141,10 @@ function MistakeNote({
   return (
     <FeedbackNote>
       {examTomorrow
-        ? t("Saved to your mistakes")
+        ? t({
+            description: '"Your mistakes" is the learner\'s Mistakes notebook.',
+            message: "Saved to your mistakes",
+          })
         : t("Saved to your mistakes · it comes back tomorrow")}
     </FeedbackNote>
   );

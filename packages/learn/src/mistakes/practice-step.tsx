@@ -136,10 +136,12 @@ function PracticeFeedback({
 
       {fixed > 0 && (
         <FeedbackNote>
-          {t(
-            "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}",
-            { count: fixed },
-          )}
+          {t({
+            description: '"Your notebook" is the learner\'s Mistakes notebook.',
+            message:
+              "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}",
+            values: { count: fixed },
+          })}
         </FeedbackNote>
       )}
     </FeedbackPanel>

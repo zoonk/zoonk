@@ -31,7 +31,10 @@ function ResultTag({ picked, result }: { picked: boolean; result: AnswerOptionRe
   const t = useExtracted();
 
   const labels: Record<AnswerOptionResult, string> = {
-    guess: t("Your guess"),
+    guess: t({
+      description: "Tags the learner's pick when it counts as neither right nor wrong.",
+      message: "Your guess",
+    }),
     right: picked ? t("Your answer") : t("Correct"),
     wrong: t("Your answer"),
   };

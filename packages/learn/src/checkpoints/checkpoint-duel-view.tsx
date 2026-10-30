@@ -200,11 +200,12 @@ function PrizeRow() {
           {isWeekly
             ? t({
                 description:
-                  "Labels the Brain Power the learner earns for finishing this weekly challenge.",
+                  "Heading of a reward row: the Brain Power that finishing this weekly challenge earns. Not something still to finish.",
                 message: "Finishing",
               })
             : t({
-                description: "Labels the Brain Power the learner earns for winning this challenge.",
+                description:
+                  "Heading of a reward row: the Brain Power that winning this challenge earns. Not something still to win.",
                 message: "Winning",
               })}
         </span>

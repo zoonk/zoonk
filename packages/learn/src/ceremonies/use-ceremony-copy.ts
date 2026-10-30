@@ -111,7 +111,7 @@ export function useCeremonyCopy({
         action: continueLabel,
         detail: stageLine,
         title: t({
-          description: "The buddy reached its next growth stage, Young or Adult.",
+          description: "A celebration title: the buddy grew into its next stage, Young or Adult.",
           message: "{buddy} grew up!",
           values: { buddy: buddyName },
         }),

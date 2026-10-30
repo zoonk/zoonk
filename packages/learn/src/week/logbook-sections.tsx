@@ -180,9 +180,10 @@ export function TurnaroundStep() {
         <StepEyebrow>{t("The biggest turnaround")}</StepEyebrow>
         <StepTitle>{turnaround.name}</StepTitle>
         <StepDetail className="tabular-nums">
-          {t("{from} → {to} right answers", {
-            from: formatShare(turnaround.from),
-            to: formatShare(turnaround.to),
+          {t({
+            description: '{from} and {to} are shares of right answers, like "40%".',
+            message: "{from} → {to} right answers",
+            values: { from: formatShare(turnaround.from), to: formatShare(turnaround.to) },
           })}
         </StepDetail>
       </StepHeader>
@@ -258,8 +259,10 @@ export function LearnedStep() {
         />
         <LearnedRow
           icon={<SearchCheckIcon aria-hidden="true" className="text-muted-foreground size-4" />}
-          label={t("{count, plural, one {Trap hunter badge} other {Trap hunter badges}}", {
-            count: badges,
+          label={t({
+            description: "A badge for catching the Trickster's traps.",
+            message: "{count, plural, one {Trap hunter badge} other {Trap hunter badges}}",
+            values: { count: badges },
           })}
           value={badges}
         />
