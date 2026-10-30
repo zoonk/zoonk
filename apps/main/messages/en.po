@@ -3673,7 +3673,6 @@ msgstr "Upload"
 
 #: src/components/pricing/free-plan.tsx
 #: src/components/public/course-start-failure.tsx
-#: src/components/public/goal-form.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "Create a free account"
