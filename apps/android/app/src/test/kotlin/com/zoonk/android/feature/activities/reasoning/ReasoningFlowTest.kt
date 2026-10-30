@@ -1,11 +1,13 @@
 package com.zoonk.android.feature.activities.reasoning
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.hasAnyAncestor
@@ -15,12 +17,16 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.percentOffset
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performCustomAccessibilityActionWithLabel
+import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.test.requestFocus
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.activities.gridCells
@@ -168,12 +174,18 @@ class ReasoningFlowTest {
     }
 
     @Test
-    fun mapExplorerListsItsPlacesForKeyboardAndTalkBack() {
+    fun mapExplorerTabsThroughItsPlacesInNumberOrder() {
         play("mapExplorer", isCorrect = false)
 
-        rule.onNode(hasText("Broad Street pump") and hasAnyAncestor(hasContentDescription("Places"))).performScrollTo().performClick()
-        shows("Most of the deaths were in houses a few streets from this pump.")
-        rule.onNode(hasContentDescription("1. Broad Street pump")).assertIsSelected()
+        rule.onNode(hasContentDescription("1. Broad Street pump")).requestFocus()
+        rule.onRoot().performKeyInput { pressKey(Key.Tab) }
+        rule.onNode(hasContentDescription("2. Brewery on Broad Street")).assertIsFocused()
+        rule.onRoot().performKeyInput { pressKey(Key.Tab) }
+        val workhouse = rule.onNode(hasContentDescription("3. Poland Street workhouse")).assertIsFocused()
+        rule.onRoot().performKeyInput { pressKey(Key.Enter) }
+
+        workhouse.assertIsSelected()
+        shows("535 people lived here")
         shows("1 of 3 explored")
     }
 

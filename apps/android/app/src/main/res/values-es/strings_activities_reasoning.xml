@@ -27,7 +27,7 @@
   "activities_reasoning_map_americas": "02b37f046bf1ed0e7969e570cdeb5578fb48db76d5c2083edf015e3e5907fedc",
   "activities_reasoning_map_asia": "98e38a1ff04e3cdee34259591fc171d6f176a707db90a220b889119f5f48a30f",
   "activities_reasoning_map_brazil_states": "1e521e1000ff82bdf02844fbd32dc15809fcf85306f283b10bc75d3c1c498bb7",
-  "activities_reasoning_map_description": "5223578cd1c98346eb918179eee739ac4bde1458657e88f584de20e96891b2b9",
+  "activities_reasoning_map_description": "459d028d4244720f0c89d513181d6597cc982ba51eec45b6871faf036c81d0de",
   "activities_reasoning_map_europe": "fdc3fee86c7f849c47b326bee62c997d09f6e71acae2e6c077dc2ff8222815fc",
   "activities_reasoning_map_europe_1914": "718790355629d84af625df1cbf8ba82f8ea47736171dd36a1da48fd6f634fd33",
   "activities_reasoning_map_explored": "0c39bf4a49093490cde25a0d1954daac218a85c828f8b1d12a6d71e71cb47622",
@@ -56,7 +56,6 @@
   "activities_reasoning_map_note_borders": "bf186a30b31d461849ec8b82464d856d2cfe686f5457e0f42fa6634b89d31cdd",
   "activities_reasoning_map_note_london_1854": "e627f2722742eb25035c0811c73f8e650f4b6a8ebe807d95d6a46a2bf19bafd1",
   "activities_reasoning_map_place": "8686647fd5cd34f365622c0c426f06dbf2311c818ee5b9673790714eb06a995f",
-  "activities_reasoning_map_places": "4c7d58a0f8ecb33a59753603e9f2422a841496ca9e85ea99c6fcd07de5e1866a",
   "activities_reasoning_map_roman_empire_117": "e242d55ba6c73cdc37415eaf8a491622bc9c45c86d062c86067fd64d2db7530e",
   "activities_reasoning_map_unavailable": "9e06e645389b9ff48b13d35ed03e56d75178866dcfb4ebfaa522bb286bcd73d6",
   "activities_reasoning_map_usa_states": "2313c113adb86781b9078d48f6ece208a53ac1c73815dbfab30149611a45e46a",
@@ -153,13 +152,11 @@
     <string name="activities_reasoning_map_hint">Toca un lugar numerado para ver qué hay.</string>
     <!-- A numbered place on the map, like "1. Broad Street pump". -->
     <string name="activities_reasoning_map_place">%1$d. %2$s</string>
-    <!-- The name of the list of the map's places, for TalkBack. -->
-    <string name="activities_reasoning_map_places">Lugares</string>
-    <!-- What the map shows, for TalkBack: its name, then its numbered places, like "Map of Soho, London, in 1854 with 3 places to explore: 1. Broad Street pump, 2. Brewery on Broad Street, 3. Poland Street workhouse." -->
+    <!-- What the map shows, for TalkBack, before its numbered places: its name and how many places it has, like "Map of Soho, London, in 1854 with 3 places to explore." -->
     <plurals name="activities_reasoning_map_description">
-        <item quantity="one">%1$s con %2$d lugar por explorar: %3$s.</item>
-        <item quantity="many">%1$s con %2$d lugares por explorar: %3$s.</item>
-        <item quantity="other">%1$s con %2$d lugares por explorar: %3$s.</item>
+        <item quantity="one">%1$s con %2$d lugar por explorar.</item>
+        <item quantity="many">%1$s con %2$d lugares por explorar.</item>
+        <item quantity="other">%1$s con %2$d lugares por explorar.</item>
     </plurals>
     <string name="activities_reasoning_map_unavailable">No se puede mostrar este mapa. Continúa a la siguiente pantalla.</string>
     <string name="activities_reasoning_map_africa">Mapa de África</string>

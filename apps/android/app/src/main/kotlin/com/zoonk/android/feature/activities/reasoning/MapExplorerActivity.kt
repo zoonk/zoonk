@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -54,8 +55,10 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -66,15 +69,13 @@ import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityCanvasLabel
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
-import com.zoonk.android.feature.activities.ActivitySelectGrid
-import com.zoonk.android.feature.activities.ActivityTile
 import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf23FieldsPlacesInner
 import kotlin.math.floor
-import kotlin.math.roundToInt
+import kotlin.math.min
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf23Value as MapExplorerContent
 
 val mapExplorerRenderer =
@@ -115,8 +116,18 @@ private fun MapExplorerActivity(props: ActivityProps) {
     }
 
     ActivityCanvas {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Bottom) {
-            Text(name, Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        FlowRow(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            itemVerticalAlignment = Alignment.Bottom,
+        ) {
+            Text(
+                name,
+                Modifier.padding(end = 12.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
             Text(
                 pluralStringResource(R.plurals.activities_reasoning_map_explored, places.size, visited.size, places.size),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -131,21 +142,6 @@ private fun MapExplorerActivity(props: ActivityProps) {
             }
         }
         PlaceDetails(selected + 1, places.getOrNull(selected))
-        ActivitySelectGrid(
-            places.withIndex().toList(),
-            label = stringResource(R.string.activities_reasoning_map_places),
-            columns = if (places.any { it.label.length > LONG_LABEL }) 1 else 2,
-        ) { (index, place) ->
-            ActivityTile(
-                picked = place.id == selectedId,
-                result = null,
-                onClick = { select(place.id) },
-                role = Role.RadioButton,
-            ) {
-                PlaceNumber(index + 1, isVisited = place.id in visited, isSelected = false, small = true)
-                Text(place.label, Modifier.padding(start = 8.dp))
-            }
-        }
     }
 }
 
@@ -192,20 +188,7 @@ private fun MapView(
     visited: List<String>,
     onSelect: (String) -> Unit,
 ) {
-    val description =
-        pluralStringResource(
-            R.plurals.activities_reasoning_map_description,
-            places.size,
-            name,
-            places.size,
-            places
-                .mapIndexed {
-                    index,
-                    place,
-                    ->
-                    stringResource(R.string.activities_reasoning_map_place, index + 1, place.label)
-                }.joinToString(", "),
-        )
+    val description = pluralStringResource(R.plurals.activities_reasoning_map_description, places.size, name, places.size)
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val width = maxWidth.value.toDouble()
         val layout = remember(map, places, width) { layoutPins(map.drawing, places, width) }
@@ -214,7 +197,10 @@ private fun MapView(
                 .fillMaxWidth()
                 .height(layout.height.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .semantics { contentDescription = description },
+                .semantics {
+                    contentDescription = description
+                    isTraversalGroup = true
+                },
         ) {
             MapDrawing(map, layout, Modifier.matchParentSize())
             Layout(
@@ -249,8 +235,10 @@ private fun MapDrawing(
     val tones = regionTones()
     val sea = tones.getValue(RegionTone.GroupC)
     val measurer = rememberTextMeasurer()
-    val regionStyle = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
-    val streetStyle = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium)
+    val fontScale = LocalDensity.current.fontScale
+    val labelSize = MaterialTheme.typography.labelMedium.fontSize * (min(fontScale, MAX_LABEL_SCALE) / fontScale)
+    val regionStyle = MaterialTheme.typography.labelMedium.copy(fontSize = labelSize, fontWeight = FontWeight.SemiBold)
+    val streetStyle = MaterialTheme.typography.labelMedium.copy(fontSize = labelSize, fontWeight = FontWeight.Medium)
     val labelTexts = map.drawing.labels.map { label -> label.key?.let(::baseMapLabel)?.let { stringResource(it) } ?: label.text }
     val labels =
         remember(map, labelTexts, regionStyle, streetStyle) {
@@ -346,10 +334,13 @@ private fun Pin(
             .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
             .clip(CircleShape)
             .selectable(selected = isSelected, role = Role.Button, onClick = onClick)
-            .clearAndSetSemantics { contentDescription = description },
+            .clearAndSetSemantics {
+                contentDescription = description
+                traversalIndex = pin.number.toFloat()
+            },
         contentAlignment = Alignment.Center,
     ) {
-        PlaceNumber(pin.number, isVisited, isSelected, small = false)
+        PlaceNumber(pin.number, isVisited, isSelected)
     }
 }
 
@@ -359,7 +350,6 @@ private fun PlaceNumber(
     number: Int,
     isVisited: Boolean,
     isSelected: Boolean,
-    small: Boolean,
 ) {
     val accent = MaterialTheme.zoonk.vizAccent
     val surface = MaterialTheme.colorScheme.surface
@@ -369,7 +359,6 @@ private fun PlaceNumber(
             isVisited -> accent.copy(alpha = SOFT).compositeOver(surface) to accent
             else -> surface to accent
         }
-    val size = if (small) 24.dp else 32.dp
     Box(
         Modifier
             .then(
@@ -384,10 +373,10 @@ private fun PlaceNumber(
                 } else {
                     Modifier
                 },
-            ).defaultMinSize(size, size)
-            .then(if (small) Modifier else Modifier.shadow(PIN_SHADOW, CircleShape))
+            ).defaultMinSize(PIN_FACE, PIN_FACE)
+            .shadow(PIN_SHADOW, CircleShape)
             .background(container, CircleShape)
-            .border(if (small) 1.5.dp else 2.dp, accent, CircleShape)
+            .border(2.dp, accent, CircleShape)
             .padding(horizontal = 4.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -395,9 +384,9 @@ private fun PlaceNumber(
             "$number",
             color = content,
             style =
-                (if (small) MaterialTheme.typography.labelMedium else MaterialTheme.typography.labelLarge).withTabularFigures().copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                MaterialTheme.typography.labelLarge
+                    .withTabularFigures()
+                    .copy(fontWeight = FontWeight.SemiBold),
         )
     }
 }
@@ -453,7 +442,7 @@ private fun PlaceDetails(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Row(Modifier.padding(12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    PlaceNumber(number, isVisited = true, isSelected = true, small = false)
+                    PlaceNumber(number, isVisited = true, isSelected = true)
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(place.label, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold))
                         RichText(
@@ -520,13 +509,16 @@ private fun baseMapLabel(key: String): Int? =
     }
 
 private const val MAX_MAP_HEIGHT = 440.0
-private const val PIN_SPACING = 40.0
-private const val LONG_LABEL = 24
+private const val PIN_SPACING = 48.0
 private const val SOFT = 0.16f
 private const val RING_ALPHA = 0.3f
 private const val REGION_LABEL_ALPHA = 0.75f
+
+/** The map's own labels are part of the drawing, which doesn't grow with the font size. */
+private const val MAX_LABEL_SCALE = 1.3f
 private val STREET_WIDTH = 9.dp
 private val LABEL_HALO = 3.dp
 private val TRUE_SPOT = 3.5.dp
 private val RING = 4.dp
 private val PIN_SHADOW = 4.dp
+private val PIN_FACE = 32.dp

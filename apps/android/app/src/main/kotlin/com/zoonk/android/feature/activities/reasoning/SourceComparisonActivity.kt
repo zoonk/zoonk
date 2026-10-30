@@ -162,7 +162,6 @@ private fun Excerpt(
     onToggle: (String) -> Unit,
 ) {
     val segments = remember(source) { splitExcerpt(source.excerpt, source.passages.map { ExcerptPassage(it.id, it.text) }) }
-    val focus = MaterialTheme.colorScheme.onSurface.copy(alpha = FOCUS_ALPHA)
     val ranges = mutableListOf<Pair<TextRange, PassageState>>()
     val text =
         buildAnnotatedString {
@@ -180,7 +179,7 @@ private fun Excerpt(
                     val link =
                         LinkAnnotation.Clickable(
                             passage.id,
-                            TextLinkStyles(focusedStyle = SpanStyle(background = focus)),
+                            TextLinkStyles(focusedStyle = SpanStyle(textDecoration = TextDecoration.Underline)),
                         ) { onToggle(passage.id) }
                     withLink(link) { append(segment.text) }
                 }
@@ -254,10 +253,10 @@ private class PassageColors(
 @Composable
 private fun passageColors() =
     PassageColors(
-        unmarked = MaterialTheme.zoonk.vizAccent.copy(alpha = UNMARKED_ALPHA),
+        unmarked = MaterialTheme.zoonk.vizAccent,
         marked = MaterialTheme.zoonk.vizHighlight.copy(alpha = SOFT),
-        correct = MaterialTheme.colorScheme.tertiary.copy(alpha = SOFT),
-        incorrect = MaterialTheme.colorScheme.error.copy(alpha = SOFT),
+        correct = MaterialTheme.colorScheme.tertiaryContainer,
+        incorrect = MaterialTheme.colorScheme.errorContainer,
         missed = MaterialTheme.colorScheme.onTertiaryContainer,
     )
 
@@ -329,7 +328,7 @@ private fun lineSpans(
 private fun Legend() {
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val style = MaterialTheme.typography.bodySmall
-    val swatch = MaterialTheme.colorScheme.tertiary.copy(alpha = SWATCH_ALPHA)
+    val swatch = MaterialTheme.colorScheme.tertiaryContainer
     val missed = MaterialTheme.colorScheme.onTertiaryContainer
 
     FlowRow(
@@ -360,9 +359,6 @@ private fun Legend() {
 }
 
 private const val SOFT = 0.16f
-private const val SWATCH_ALPHA = 0.25f
-private const val UNMARKED_ALPHA = 0.6f
-private const val FOCUS_ALPHA = 0.12f
 private const val LINE_HEIGHT = 1.9f
 
 /** Roughly how far the font's letters reach above and below the baseline, as shares of its size. */

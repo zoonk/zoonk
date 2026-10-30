@@ -67,12 +67,10 @@
     <string name="activities_reasoning_map_hint">Tap a numbered place to see what\'s there.</string>
     <!-- A numbered place on the map, like "1. Broad Street pump". -->
     <string name="activities_reasoning_map_place">%1$d. %2$s</string>
-    <!-- The name of the list of the map's places, for TalkBack. -->
-    <string name="activities_reasoning_map_places">Places</string>
-    <!-- What the map shows, for TalkBack: its name, then its numbered places, like "Map of Soho, London, in 1854 with 3 places to explore: 1. Broad Street pump, 2. Brewery on Broad Street, 3. Poland Street workhouse." -->
+    <!-- What the map shows, for TalkBack, before its numbered places: its name and how many places it has, like "Map of Soho, London, in 1854 with 3 places to explore." -->
     <plurals name="activities_reasoning_map_description">
-        <item quantity="one">%1$s with %2$d place to explore: %3$s.</item>
-        <item quantity="other">%1$s with %2$d places to explore: %3$s.</item>
+        <item quantity="one">%1$s with %2$d place to explore.</item>
+        <item quantity="other">%1$s with %2$d places to explore.</item>
     </plurals>
     <string name="activities_reasoning_map_unavailable">This map can\'t be shown. Continue to the next screen.</string>
     <string name="activities_reasoning_map_africa">Map of Africa</string>
