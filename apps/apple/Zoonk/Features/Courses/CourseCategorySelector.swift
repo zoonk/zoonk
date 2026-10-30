@@ -54,13 +54,22 @@ struct CourseCategorySelector: View {
 }
 
 private struct CourseCategoryButton: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
   let category: CourseCategory?
   let isSelected: Bool
   @Binding var selection: CourseCategory?
 
   var body: some View {
+    Group {
+      if isSelected {
+        button.buttonStyle(.mainAction)
+      } else {
+        button.buttonStyle(.bordered)
+      }
+    }
+    .accessibilityAddTraits(isSelected ? .isSelected : [])
+  }
+
+  private var button: some View {
     Button {
       selection = category
     } label: {
@@ -72,24 +81,7 @@ private struct CourseCategoryButton: View {
         title
       }
       .font(.subheadline.weight(.semibold))
-      .foregroundStyle(isSelected ? selectedForegroundStyle : Color.primary)
-      .fixedSize(horizontal: true, vertical: false)
-      .padding(.horizontal, 14)
-      .padding(.vertical, dynamicTypeSize.isAccessibilitySize ? 10 : 0)
-      .frame(height: dynamicTypeSize.isAccessibilitySize ? nil : 38)
-      .background(backgroundStyle, in: Capsule())
     }
-    .buttonStyle(.plain)
-    .frame(minHeight: 44)
-    .accessibilityAddTraits(isSelected ? .isSelected : [])
-  }
-
-  private var backgroundStyle: Color {
-    isSelected ? .primary : Color(uiColor: .secondarySystemBackground)
-  }
-
-  private var selectedForegroundStyle: Color {
-    Color(uiColor: .systemBackground)
   }
 
   @ViewBuilder
