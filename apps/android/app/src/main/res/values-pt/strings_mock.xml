@@ -232,6 +232,7 @@
     </plurals>
     <string name="mock_sections">Seções</string>
     <string name="mock_section_number">Seção %1$d</string>
+    <!-- A section's status in the list of the mock's sections. -->
     <string name="mock_handed_in">Entregue</string>
     <!-- A section's answered questions of all of them: "12/45". -->
     <string name="mock_section_answered">%1$d/%2$d</string>

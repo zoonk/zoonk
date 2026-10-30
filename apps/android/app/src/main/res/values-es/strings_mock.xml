@@ -30,7 +30,7 @@
   "mock_hand_in_mock_title": "6883a7b237661578a38a57c6dda8c9a315da43bc49f09f817bd3e00257a01bd0",
   "mock_hand_in_section": "09ac4d31b9d2e177772c561be7d4a662bde5536b59662c652985c30d10327d88",
   "mock_hand_in_section_title": "42abb8022a60610c4e14f2f7479d5c864b3e19abe98f633f74a5ba880a1fef83",
-  "mock_handed_in": "d9bc80c3e850de551bc1d23be36037e200dc785c46fb4516c989314b8fb48a0c",
+  "mock_handed_in": "c4bcda65e334bf97ba749da27edd214afe46bc97ee54e9aed5675aaff1d447ff",
   "mock_handed_in_title": "1f2f67a885b56b983a9517629d3bc13c2b6d8b11ad67cc6679854f3accc143a1",
   "mock_handing_in": "9aaeb4be09a4ebca9d8530be29a6ec9c9dc2333da78dae1b96794e2298a65397",
   "mock_keep_answering": "a8723f258c89e322fa97df8f821bb69a61760b5c89f7ef990e96b63a062b9b2d",
@@ -232,7 +232,8 @@
     </plurals>
     <string name="mock_sections">Secciones</string>
     <string name="mock_section_number">Sección %1$d</string>
-    <string name="mock_handed_in">Entregado</string>
+    <!-- A section's status in the list of the mock's sections. -->
+    <string name="mock_handed_in">Entregada</string>
     <!-- A section's answered questions of all of them: "12/45". -->
     <string name="mock_section_answered">%1$d/%2$d</string>
     <string name="mock_not_saved_retrying">Aún no se ha guardado · reintentando</string>

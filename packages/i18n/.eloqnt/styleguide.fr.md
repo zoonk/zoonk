@@ -21,7 +21,8 @@
 - Speaking criteria “Fluency” / “Accuracy” / “Range of language”: “Aisance” / “Précision” / “Richesse de la langue”
 - “say” (aloud, in pronunciation practice): “dire”, as in “Dis-le à voix haute”
 - “task” (a speaking exam's task): “tâche”, not “exercice”
-- “section” (a part of a mock exam): “partie”, not “section”
+- “section” (a part of a mock exam): “partie”, not “section”; it’s feminine, so a handed-in part is “rendue”
+- “hand in” (a mock or one of its parts): “rendre”, not “remettre”
 - “flagged” (a mock exam question to come back to): “marquée”, not “signalée”
 - “pattern” (a mistake that recurs): “erreur récurrente”
 - “mind map”: “carte mentale”

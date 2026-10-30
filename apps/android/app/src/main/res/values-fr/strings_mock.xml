@@ -30,7 +30,7 @@
   "mock_hand_in_mock_title": "8530ae90fa14116245cea1e244260bbaa8d551bfddf88c0f475e80ca6fe7b826",
   "mock_hand_in_section": "6508ba0ad217d583f6d4164e3beb7a2dc2a3b816c6c497fe6f66f63a50a7d0fc",
   "mock_hand_in_section_title": "4d38ea699499f168c06df5f9dd7c9e8b8a6765ea81a691c0e20b304891300b78",
-  "mock_handed_in": "d6103a0216dbea0104d225cc61e156aa62c3af2cd5aa1597ac3f4fa8e6391e5e",
+  "mock_handed_in": "12f5a0450b51e73cb2d8eac4c23a4321084aedbc1fd4ec0c35bcfe6e59dc90c2",
   "mock_handed_in_title": "58924d80565f883b6e54ff713fa565bc60ca0c39e747d1806530747e1719d673",
   "mock_handing_in": "86236ed082b22e90fc7dd31d3fb25e2b7feccc81eab3e86685167f6ec2c0654f",
   "mock_keep_answering": "1f16f8f62d6de698c8bd10c69dacf0ec6fb868026285080f513e1e93f7c95341",
@@ -75,10 +75,10 @@
   "mock_sheet": "15a98d29514e186207e27f977666b16f75bbe203e854d84481880cbae7e5ca86",
   "mock_short": "6fb7be818668097d049a317d8ee28d1e4e0cf2d3c8200dc194a1ed276c3d61e9",
   "mock_speaking": "31148dc8dce09410ce654d1e94617c6db8fce2c831585cf7dac3aef375b38ff1",
-  "mock_speaking_all_done": "219133e88541a4b1ff0a81de288ec748cef121518bcfebdf4c67794fdcad1cf3",
+  "mock_speaking_all_done": "72cafb5e92f0d2ed512f0f376aa419cfbb907bbb265193866d40cbec54b4633d",
   "mock_speaking_done": "8fcd1f5a78ee8fee46ed4baf8c43d0bd3e36321871579f348ba7001d76eac6f0",
-  "mock_speaking_hand_in_done": "e7233030f435d00fb4b3df862614bf758018cda0aede258af8eafd9795c6ca32",
-  "mock_speaking_hand_in_left": "c9f2c9a9d608cdc04962ba448832fbbfdf381eeac2c59c6a6eb0140c197f03b2",
+  "mock_speaking_hand_in_done": "f3c1940223bb4ca5bc99e8d31b33c3692a8fb6d2ef0ec3d72e138ed13fecf055",
+  "mock_speaking_hand_in_left": "54bd597728d018feae641a20fdf048cb6eae4a54aa75953faaa8fdc24f02b149",
   "mock_speaking_intro": "f67e0c8132f8e68cbe8034ebf70636bb141050703e74cc73fe2114905cb98b8f",
   "mock_speaking_left": "92490b2f9d6627eef713768c0cc92793cc70e6d53c476d8b49ce15431bfea473",
   "mock_speaking_start": "066c78254404540739d338626040e11a9c4f9d5f0944be8866a63d9a3b094129",
@@ -99,8 +99,8 @@
   "mock_time_up": "1d2f1055addcb7de40d79cb451c1d101999fcdc723fb554b0dd0cfb4166123d8",
   "mock_title": "1a485ee81fa8768280e2623036e4fb8c8c17cbe5f434bb20ea2dcd91333e9ecb",
   "mock_words": "9bd58c4117d1e040f106a9933c0febac60ad9395ed9acf89b78dd4ae526e393d",
-  "mock_written_part": "ce6b88d80cc0ef738f6c8474f1b8541d8eceee0acd2b4e35b2afc05ecdaf9c90",
-  "mock_written_part_area": "a412c09e59f7edf4c4bf03c0a97468ab7fbd3930fd7b9ebe6d2709f9a315cdb4",
+  "mock_written_part": "9b5f77ac09eb3cee5926b9f04662514e38f6c7327a2694865fec56b6731df542",
+  "mock_written_part_area": "09692585b9a1184b12ba8e7fcae05c34138f7bc826d357d501f6a630aa436389",
   "mock_your_essay": "5412f327926c6ffbbeff8701778178cc0d1970a3a93722825c89239f0bc2b321"
 }
 -->
@@ -144,9 +144,9 @@
     <string name="mock_progress_label">Questions auxquelles tu as répondu dans cette partie</string>
     <!-- Where the learner is among a section's questions: "12 of 45". -->
     <string name="mock_place">%1$d sur %2$d</string>
-    <string name="mock_written_part">Épreuve écrite</string>
+    <string name="mock_written_part">Partie écrite</string>
     <!-- %1$s is the essay's area, such as Portuguese. -->
-    <string name="mock_written_part_area">Épreuve écrite · %1$s</string>
+    <string name="mock_written_part_area">Partie écrite · %1$s</string>
     <string name="mock_question_place">Question %1$d sur %2$d</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Question %1$d sur %2$d · %3$s</string>
@@ -232,7 +232,8 @@
     </plurals>
     <string name="mock_sections">Parties</string>
     <string name="mock_section_number">Partie %1$d</string>
-    <string name="mock_handed_in">Rendu</string>
+    <!-- A section's status in the list of the mock's sections. -->
+    <string name="mock_handed_in">Rendue</string>
     <!-- A section's answered questions of all of them: "12/45". -->
     <string name="mock_section_answered">%1$d/%2$d</string>
     <string name="mock_not_saved_retrying">Pas encore enregistré · nouvelle tentative en cours</string>
@@ -272,7 +273,7 @@
         <item quantity="many">Fais les tâches dans l’ordre. Chacune se déroule lors d’un appel, puis tu reviens ici. Il reste %d tâches.</item>
         <item quantity="other">Fais les tâches dans l’ordre. Chacune se déroule lors d’un appel, puis tu reviens ici. Il reste %d tâches.</item>
     </plurals>
-    <string name="mock_speaking_all_done">Toutes les tâches sont terminées. Remets cette partie pour continuer.</string>
+    <string name="mock_speaking_all_done">Toutes les tâches sont terminées. Rends cette partie pour continuer.</string>
     <!-- %2$s is how long the task lasts, such as "4–5 min". -->
     <string name="mock_speaking_task">Tâche %1$d · %2$s</string>
     <!-- Status beside a speaking task the learner has finished. -->
@@ -280,10 +281,10 @@
     <string name="mock_speaking_start_task">Commencer</string>
     <string name="mock_speaking_start_task_number">Commencer la tâche %1$d</string>
     <plurals name="mock_speaking_hand_in_left">
-        <item quantity="one">%d tâche n’est pas terminée, donc cette partie ne recevra pas d’estimation. Après avoir remis cette partie, tu ne pourras plus faire cette tâche dans cet examen blanc.</item>
-        <item quantity="many">%d tâches ne sont pas terminées, donc cette partie ne recevra pas d’estimation. Après avoir remis cette partie, tu ne pourras plus faire ces tâches dans cet examen blanc.</item>
-        <item quantity="other">%d tâches ne sont pas terminées, donc cette partie ne recevra pas d’estimation. Après avoir remis cette partie, tu ne pourras plus faire ces tâches dans cet examen blanc.</item>
+        <item quantity="one">Il reste %d tâche à faire : aucune estimation ne sera donnée pour cette épreuve. Une fois cette partie rendue, tu ne pourras plus faire cette tâche dans cet examen blanc.</item>
+        <item quantity="many">Il reste %d tâches à faire : aucune estimation ne sera donnée pour cette épreuve. Une fois cette partie rendue, tu ne pourras plus faire ces tâches dans cet examen blanc.</item>
+        <item quantity="other">Il reste %d tâches à faire : aucune estimation ne sera donnée pour cette épreuve. Une fois cette partie rendue, tu ne pourras plus faire ces tâches dans cet examen blanc.</item>
     </plurals>
-    <string name="mock_speaking_hand_in_done">Toutes les tâches sont terminées. Après avoir remis cette partie, tu ne pourras plus les refaire dans cet examen blanc.</string>
+    <string name="mock_speaking_hand_in_done">Toutes les tâches sont terminées. Une fois cette partie rendue, tu ne pourras plus les refaire dans cet examen blanc.</string>
     <string name="mock_keep_going">Continuer</string>
 </resources>
