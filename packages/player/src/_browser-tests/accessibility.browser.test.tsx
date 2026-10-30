@@ -5,10 +5,10 @@ import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-conte
 import { describe, expect, it } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
-import { CANVAS_LOAD_TIMEOUT_MS } from "../_test-utils/activity-canvas";
 import { press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { tabTo } from "../_test-utils/keyboard";
+import { MODULE_LOAD_TIMEOUT_MS } from "../_test-utils/module-load";
 import {
   acceptedAnswerCheck,
   buildAdapters,
@@ -138,7 +138,7 @@ describe("lesson player accessibility", () => {
 
     await expect
       .poll(() => document.querySelector("[data-slot='activity-canvas-skeleton']"), {
-        timeout: CANVAS_LOAD_TIMEOUT_MS,
+        timeout: MODULE_LOAD_TIMEOUT_MS,
       })
       .toBeNull();
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
+import { MODULE_LOAD_TIMEOUT_MS } from "../_test-utils/module-load";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
@@ -47,7 +48,10 @@ describe("a lesson's code", () => {
     });
 
     await expect.element(page.getByRole("heading", { name: "Which cloud fits?" })).toBeVisible();
-    await expect.poll(() => loaded(RARE_CODE.katex)).toBe(true);
+
+    await expect
+      .poll(() => loaded(RARE_CODE.katex), { timeout: MODULE_LOAD_TIMEOUT_MS })
+      .toBe(true);
 
     await answerAndContinue();
     await expect.element(page.getByRole("heading", { name: /At what speed/u })).toBeVisible();

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
-import { CANVAS_LOAD_TIMEOUT_MS } from "../_test-utils/activity-canvas";
 import { atViewport } from "../_test-utils/browser-viewport";
+import { MODULE_LOAD_TIMEOUT_MS } from "../_test-utils/module-load";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { previewEntries } from "../preview/preview-catalog";
 import { buildLesson } from "../preview/preview-lesson";
@@ -22,7 +22,7 @@ describe("activities explored on explanation screens", () => {
       await atViewport(PHONE, async () => {
         renderLessonPlayer({ lesson: buildLesson([entry.screen("explore")]) });
 
-        await expect.poll(exploredCanvas, { timeout: CANVAS_LOAD_TIMEOUT_MS }).not.toBeNull();
+        await expect.poll(exploredCanvas, { timeout: MODULE_LOAD_TIMEOUT_MS }).not.toBeNull();
         await expect.element(page.getByRole("button", { name: /^Check/u })).not.toBeInTheDocument();
 
         const labelledBy = exploredCanvas()?.getAttribute("aria-labelledby") ?? "";

@@ -1,10 +1,17 @@
 import { activityBaseMaps } from "@zoonk/core/library/activities/base-maps";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
+import { MODULE_LOAD_TIMEOUT_MS } from "../../../_test-utils/module-load";
 import { projectPlace } from "./base-map-projection";
 import { getBaseMapView } from "./base-map-view";
 import { loadBaseMap } from "./load-base-map";
 
+async function loadEveryDrawing() {
+  await Promise.all(activityBaseMaps.map((map) => loadBaseMap(map.id)));
+}
+
 describe("base map drawings", () => {
+  beforeAll(loadEveryDrawing, MODULE_LOAD_TIMEOUT_MS);
+
   it.each(activityBaseMaps.map((map) => map.id))("draws every part of %s", async (id) => {
     const map = activityBaseMaps.find((item) => item.id === id);
     const drawing = await loadBaseMap(id);
@@ -44,6 +51,8 @@ describe("base map drawings", () => {
 });
 
 describe(getBaseMapView, () => {
+  beforeAll(loadEveryDrawing, MODULE_LOAD_TIMEOUT_MS);
+
   it("draws the map with each place where the drawing puts it", async () => {
     const pump = { id: "pump", latitude: 51.51334, longitude: -0.13667 };
     const soho = await loadBaseMap("london-1854");
