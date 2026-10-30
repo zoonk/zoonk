@@ -66,8 +66,10 @@ private struct ExamContent: View {
 private struct ExamList: View {
   let exam: ExamView
   let options: MockOptions?
-  /// Above the split: folding iPhone Duo recreates its panes, and the result form is in one.
+  /// Above the split: folding iPhone Duo recreates its panes, and the result form and the speaking
+  /// mock's start are in one.
   @State private var result = ExamResultForm()
+  @State private var callStart = CallStart()
   @State private var isReporting = false
 
   var body: some View {
@@ -80,7 +82,7 @@ private struct ExamList: View {
       List {
         ExamMocksSection(exam: exam, options: options)
         whatsOnIt
-        ExamSpeakingSection(exam: exam)
+        ExamSpeakingSection(exam: exam, callStart: callStart)
         ExamScoringSection(exam: exam)
       }
     } single: {
@@ -89,9 +91,12 @@ private struct ExamList: View {
         ExamMocksSection(exam: exam, options: options)
         ExamProgressSection(exam: exam)
         whatsOnIt
-        ExamSpeakingSection(exam: exam)
+        ExamSpeakingSection(exam: exam, callStart: callStart)
         ExamScoringSection(exam: exam)
       }
+    }
+    .onDisappear {
+      callStart.cancel()
     }
     .navigationTitle(exam.examName)
     .toolbar {
@@ -1001,10 +1006,12 @@ private struct ExamMapSection: View {
 private struct ExamSpeakingSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   let exam: ExamView
+  let callStart: CallStart
 
   var body: some View {
     if let mock = exam.speakingMock {
-      SpeakingMockSection(goalId: exam.goalId, mock: mock, paused: exam.speakingMockPaused)
+      SpeakingMockSection(
+        goalId: exam.goalId, mock: mock, paused: exam.speakingMockPaused, start: callStart)
     } else if learner.summary.value?.places.speaking == true {
       Section {
         NavigationLink(value: AppRoute.speaking) {
@@ -1021,18 +1028,12 @@ private struct ExamSpeakingSection: View {
 
 /// Start opens its call; a learner's tap writes it if it isn't written yet.
 private struct SpeakingMockSection: View {
-  private enum Failure: Equatable {
-    case limit(CallLimit)
-    case failed
-  }
-
   @Environment(VoiceServices.self) private var voice
   @Environment(AppRouter.self) private var router
-  @State private var starting = false
-  @State private var failure: Failure?
   let goalId: String
   let mock: ExamView.SpeakingMock
   let paused: Bool
+  let start: CallStart
 
   var body: some View {
     Section {
@@ -1080,17 +1081,18 @@ private struct SpeakingMockSection: View {
         }
       } else {
         Button {
-          Task { await start() }
+          start.start(
+            .case3(.init(goalId: goalId, kind: .speakingMock)), voice: voice, router: router)
         } label: {
-          if starting {
+          if start.isStarting {
             Text("Starting…", tableName: "Exam", comment: "The speaking mock is starting")
           } else {
             Text("Start the mock", tableName: "Exam", comment: "Starts the speaking mock")
           }
         }
-        .disabled(starting)
+        .disabled(start.isStarting)
 
-        switch failure {
+        switch start.refusal {
         case .limit(let limit):
           Group {
             if limit.period == .month {
@@ -1104,37 +1106,16 @@ private struct SpeakingMockSection: View {
             }
           }
           .foregroundStyle(.destructive)
-        case .failed:
+        case nil:
+          EmptyView()
+        case .some:
           Text(
             "The mock didn't start. Try again in a moment.", tableName: "Exam",
             comment: "Starting the speaking mock failed"
           )
           .foregroundStyle(.destructive)
-        case nil:
-          EmptyView()
         }
       }
-    }
-  }
-
-  private func start() async {
-    starting = true
-    failure = nil
-    defer { starting = false }
-
-    switch await voice.startConversation(.case3(.init(goalId: goalId, kind: .speakingMock))) {
-    case .done(.done(let id)):
-      router.open(.conversation(conversationId: id))
-    case .done(.refused(let refusal)):
-      if case .limit(let limit) = CallReservation(refusal: refusal) {
-        failure = .limit(limit)
-      } else {
-        failure = .failed
-      }
-    case .failed:
-      failure = .failed
-    case .obsolete:
-      break
     }
   }
 }

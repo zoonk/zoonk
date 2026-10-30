@@ -173,6 +173,7 @@ private struct LanguageUnitContent: View {
   @Environment(AppRouter.self) private var router
   /// Above the split: folding iPhone Duo recreates its panes, and the call's picker is in one.
   @State private var callMinutes: Int?
+  @State private var callStart = CallStart()
 
   let unit: LanguageUnit
 
@@ -190,6 +191,9 @@ private struct LanguageUnitContent: View {
         unitAndLessons
         practice
       }
+    }
+    .onDisappear {
+      callStart.cancel()
     }
   }
 
@@ -284,7 +288,7 @@ private struct LanguageUnitContent: View {
     if let conversation = unit.conversation {
       UnitPracticeCallSection(
         conversation: conversation, chapterId: unit.unit.chapterId, goalId: unit.goalId,
-        minutes: $callMinutes)
+        minutes: $callMinutes, start: callStart)
     }
 
     if !unit.grammarTips.isEmpty {
@@ -399,17 +403,17 @@ private struct UnitPracticeCallSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(VoiceServices.self) private var voice
-  @State private var outcome: CallReservation?
-  @State private var isStarting = false
 
   let conversation: LanguageUnit.Conversation
   let chapterId: String
   let goalId: String?
   @Binding var minutes: Int?
+  let start: CallStart
 
   var body: some View {
     let isPlus = learner.summary.value?.tier == .plus
     let picked = minutes ?? conversation.defaultMinutes
+    let outcome = start.refusal
 
     Section {
       if conversation.paused || outcome == .callsPaused {
@@ -442,15 +446,15 @@ private struct UnitPracticeCallSection: View {
             isInset: true)
         } else {
           Button {
-            Task { await start(minutes: picked) }
+            startCall(minutes: picked)
           } label: {
-            if isStarting {
+            if start.isStarting {
               Text("Starting…", tableName: "Plan", comment: "The practice call is starting")
             } else {
               Text("Start the call", tableName: "Plan", comment: "Starts the practice call")
             }
           }
-          .disabled(isStarting)
+          .disabled(start.isStarting)
         }
 
         if case .limit(let limit) = outcome {
@@ -489,8 +493,7 @@ private struct UnitPracticeCallSection: View {
     }
   }
 
-  /// Only from the learner's tap: it writes the call's card.
-  private func start(minutes: Int) async {
+  private func startCall(minutes: Int) {
     guard
       let input: Components.Schemas.LanguageConversationStartInput = try? PracticeJSON.recode(
         PracticeCallRequest(chapterId: chapterId, goalId: goalId, minutes: minutes))
@@ -498,20 +501,7 @@ private struct UnitPracticeCallSection: View {
       return
     }
 
-    isStarting = true
-    outcome = nil
-    defer { isStarting = false }
-
-    switch await voice.startConversation(input) {
-    case .done(.done(let id)):
-      router.open(.conversation(conversationId: id))
-    case .done(.refused(let refusal)):
-      outcome = CallReservation(refusal: refusal)
-    case .failed:
-      outcome = .failed
-    case .obsolete:
-      break
-    }
+    start.start(input, voice: voice, router: router)
   }
 }
 
