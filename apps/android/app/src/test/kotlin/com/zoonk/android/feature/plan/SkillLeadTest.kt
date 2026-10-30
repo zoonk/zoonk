@@ -26,6 +26,11 @@ class SkillLeadTest {
     }
 
     @Test
+    fun oneSkillMeasuredSaysNothing() {
+        assertNull(skillLead(levels(Skill.READING to 2.0)))
+    }
+
+    @Test
     fun noLevelsYetSayNothing() {
         assertNull(skillLead(emptyList()))
     }

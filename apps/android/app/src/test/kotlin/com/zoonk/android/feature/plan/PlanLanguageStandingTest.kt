@@ -15,6 +15,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.language.languageProgress
+import com.zoonk.android.feature.language.languageProgressNotYet
 import com.zoonk.android.feature.speaking.speakingPaper
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -81,6 +82,18 @@ class PlanLanguageStandingTest {
         show(languageProgress(level = null, target = null))
 
         compose.onNodeWithText("Not yet").assertIsDisplayed()
+    }
+
+    @Test
+    fun withoutALevelTheSheetDrawsNoSkillsAndNoCanDoList() {
+        show(languageProgressNotYet())
+        openSheet()
+
+        compose.onNodeWithText("Levels move as you practice. They get more accurate every week.").assertIsDisplayed()
+        compose.onNodeWithText("Level by skill").assertDoesNotExist()
+        compose.onNodeWithText("Goal B2 by June 2027").assertDoesNotExist()
+        compose.onNodeWithText("I can already…").assertDoesNotExist()
+        compose.onNodeWithText("Describe where I live").assertDoesNotExist()
     }
 
     @Test

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.language.languageProgress
+import com.zoonk.android.feature.language.languageProgressNotYet
 import com.zoonk.android.feature.speaking.speakingPaper
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -72,23 +73,32 @@ class PlanLanguageScreenshots {
     ) {
         val summary = learnerSummary(kind = "language", title = "Spanish")
         val page = PlanPageState(summary.goals.first(), learnPlan(), summary)
-        val shots =
+        val pages =
             mapOf(
-                "plan-language-$suffix" to null,
-                "plan-language-sheet-paper-$suffix" to languageProgress().copy(speaking = speakingPaper(access = "plusRequired")),
-                "plan-language-sheet-mock-$suffix" to languageProgress(level = null, targetDate = null, speakingMock = "ielts"),
-            ).filterKeys { sheets || it == "plan-language-$suffix" }
-        var shown by mutableStateOf(shots.keys.first())
+                "plan-language-$suffix" to languageProgress(),
+                "plan-language-not-yet-$suffix" to languageProgressNotYet(),
+            )
+        val sheetShots =
+            if (sheets) {
+                mapOf(
+                    "plan-language-sheet-paper-$suffix" to languageProgress().copy(speaking = speakingPaper(access = "plusRequired")),
+                    "plan-language-sheet-mock-$suffix" to languageProgress(level = null, targetDate = null, speakingMock = "ielts"),
+                    "plan-language-sheet-not-yet-$suffix" to languageProgressNotYet(),
+                )
+            } else {
+                emptyMap()
+            }
+        var shown by mutableStateOf(pages.keys.first())
         compose.setContent {
             val navigator = rememberAppNavigator()
             val links = PlanLinks(navigator, page)
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                val sheet = shots.getValue(shown)
+                val sheet = sheetShots[shown]
                 if (sheet == null) {
                     Surface {
                         PlanContent(
                             page = page,
-                            standing = Standing.Language(languageProgress()) { CallStart.Failed },
+                            standing = Standing.Language(pages.getValue(shown)) { CallStart.Failed },
                             structure = null,
                             links = links,
                             resume = Resume.Plain,
@@ -106,7 +116,7 @@ class PlanLanguageScreenshots {
                 }
             }
         }
-        shots.keys.forEach { name ->
+        (pages.keys + sheetShots.keys).forEach { name ->
             shown = name
             compose.waitForIdle()
             write(name, compose.onRoot().captureToImage().asAndroidBitmap())

@@ -16,7 +16,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.api.models.LanguageProgressCanDoInner
 
-/** Main's `CanDoList`: what the finished units taught the learner to do, then the next one ahead. */
+/** Main's `CanDoList`: what the finished units taught the learner to do, then the next one ahead; nothing until a unit is done. */
 @Composable
 fun CanDoList(
     canDo: List<LanguageProgressCanDoInner>,
@@ -24,7 +24,7 @@ fun CanDoList(
 ) {
     val done = canDo.filter { it.done }
     val next = canDo.firstOrNull { !it.done }
-    if (done.isEmpty() && next == null) return
+    if (done.isEmpty()) return
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.language_can_already))

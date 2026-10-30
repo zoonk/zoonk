@@ -28,3 +28,9 @@ internal fun languageProgress(
          "speaking":null,"speakingMock":${speakingMock?.let { "\"$it\"" }},"speakingMockPaused":false,"target":$target}
         """.trimIndent(),
     )
+
+/** No level yet, as before the level test, and no unit done. */
+internal fun languageProgressNotYet(): LanguageProgress =
+    languageProgress(level = null).let { progress ->
+        progress.copy(levels = emptyList(), canDo = progress.canDo.map { it.copy(done = false) })
+    }

@@ -226,10 +226,11 @@ internal sealed interface SkillLead {
     ) : SkillLead
 }
 
-/** The highest skill, when one is ahead of the others; none when the highest are tied. */
+/** The highest skill, when one is ahead of the others; none when the highest are tied or fewer than two are measured. */
 internal fun skillLead(levels: List<LanguageSkillLevel>): SkillLead? {
+    if (levels.size < 2) return null
     val sorted = levels.sortedByDescending { it.score }
-    val first = sorted.firstOrNull() ?: return null
+    val first = sorted.first()
     val rest = sorted.drop(1)
     return when {
         rest.all { it.score == first.score } -> SkillLead.Even

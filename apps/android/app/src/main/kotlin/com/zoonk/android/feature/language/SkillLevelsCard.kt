@@ -53,7 +53,10 @@ import com.zoonk.api.models.LanguageSkillLevel
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
 
-/** Main's `SkillLevelsCard`: each skill's level on the CEFR bands, the goal's mark on them, and what rose since the level test. */
+/**
+ * Main's `SkillLevelsCard`: each skill's level on the CEFR bands, the goal's mark on them, and what
+ * rose since the level test. Before the first level only the line saying levels move shows.
+ */
 @Composable
 fun SkillLevelsCard(
     progress: LanguageProgress,
@@ -62,16 +65,18 @@ fun SkillLevelsCard(
     val target = progress.target
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            itemVerticalAlignment = Alignment.CenterVertically,
-        ) {
-            SectionHeader(stringResource(R.string.language_level_by_skill))
-            if (target != null) TargetLabel(target.label, progress.goal.targetDate)
+        if (progress.levels.isNotEmpty()) {
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
+            ) {
+                SectionHeader(stringResource(R.string.language_level_by_skill))
+                if (target != null) TargetLabel(target.label, progress.goal.targetDate)
+            }
+            LevelGrid(progress.levels, target?.let { levelShare(it.score) })
         }
-        LevelGrid(progress.levels, target?.let { levelShare(it.score) })
         RiseLine(progress.levels)
     }
 }
