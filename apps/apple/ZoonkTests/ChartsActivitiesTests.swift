@@ -43,6 +43,14 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertFalse(ChartsMath.isMultiple(152.5, of: 5))
   }
 
+  func testADomainNearADoublesLimitStaysDrawable() {
+    let domain = ChartsMath.niceDomain([1.7e308])
+
+    XCTAssertTrue(domain.upperBound.isFinite)
+    XCTAssertEqual(domain.upperBound, 1.7e308)
+    XCTAssertEqual(ChartsMath.niceDomain([0, 7]), 0...8)
+  }
+
   func testFormatsUnitsLikeMain() {
     let english = Locale(identifier: "en_US")
     let format = { (value: Double, unit: String?, signed: Bool, digits: Int?, grouping: Bool) in

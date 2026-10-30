@@ -79,7 +79,12 @@ enum ChartsMath {
     }
 
     let step = niceStep(high - low)
-    return clean((low / step).rounded(.down) * step)...clean((high / step).rounded(.up) * step)
+    let (roundedLow, roundedHigh) = (
+      clean((low / step).rounded(.down) * step), clean((high / step).rounded(.up) * step)
+    )
+
+    // Rounding out to a whole step can pass the largest number a double holds.
+    return roundedLow.isFinite && roundedHigh.isFinite ? roundedLow...roundedHigh : low...high
   }
 
   /// Abramowitz and Stegun 7.1.26, as core computes it, so a readout matches grading to the digit.
