@@ -26,10 +26,11 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,7 +82,6 @@ import com.zoonk.api.models.PlanSchedule
 import com.zoonk.api.models.PlanWeekShape
 import com.zoonk.api.models.ShortExamFocus
 import com.zoonk.api.models.Syllabus
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
@@ -214,36 +214,12 @@ internal fun NoticeReading(
     }
 }
 
-/** Today opens once it has read the new plan's day; a read slower than a moment shows on Start, never as a tap that did nothing. */
 @Composable
 private fun StartButton(
-    prepareToday: suspend () -> Unit,
-    onStart: () -> Unit,
+    working: Boolean,
+    onClick: () -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-    var opening by remember { mutableStateOf<Job?>(null) }
-    var working by remember { mutableStateOf(false) }
-
-    Button(
-        onClick = {
-            if (opening == null) {
-                opening =
-                    scope.launch {
-                        val progress =
-                            launch {
-                                delay(TODAY_PROGRESS_DELAY)
-                                working = true
-                            }
-                        prepareToday()
-                        progress.cancel()
-                        working = false
-                        opening = null
-                        onStart()
-                    }
-            }
-        },
-        modifier = Modifier.fillMaxWidth(),
-    ) {
+    Button(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         if (working) {
             CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -266,6 +242,30 @@ private fun RevealBody(
 ) {
     val today = remember { LocalDate.now() }
     val coverage = revealCoverage(plan, goal.kind, syllabus)
+    var opening by rememberSaveable { mutableStateOf(false) }
+    var working by remember { mutableStateOf(false) }
+    LaunchedEffect(opening) {
+        if (!opening) return@LaunchedEffect
+        val progress =
+            launch {
+                delay(TODAY_PROGRESS_DELAY)
+                working = true
+            }
+        try {
+            prepareToday()
+        } finally {
+            progress.cancel()
+            working = false
+        }
+        if (opening) {
+            opening = false
+            onStart()
+        }
+    }
+    val leave = { exit: () -> Unit ->
+        opening = false
+        exit()
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SuccessEyebrow(stringResource(R.string.onboarding_reveal_created))
@@ -276,9 +276,9 @@ private fun RevealBody(
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        StartButton(prepareToday, onStart)
+        StartButton(working, onClick = { opening = true })
         FilledTonalButton(
-            onClick = onAdjust,
+            onClick = { leave(onAdjust) },
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.onboarding_reveal_adjust)) }
         if (isGuest) {
@@ -288,7 +288,7 @@ private fun RevealBody(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account_short)) }
+            TextButton(onClick = { leave(onCreateAccount) }) { Text(stringResource(R.string.onboarding_create_account_short)) }
         }
     }
 
@@ -310,7 +310,7 @@ private fun RevealBody(
 
     // F16: the plan editor's coverage actions (move the date to cover everything, the syllabus's
     // topics) and choices (bases, study everything) go with this.
-    coverage?.let { CoverageWords(it, plan, onSeePlus) }
+    coverage?.let { CoverageWords(it, plan) { leave(onSeePlus) } }
 }
 
 @Composable

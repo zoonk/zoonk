@@ -4,14 +4,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -70,6 +72,7 @@ class PlanRevealStepFlowTest {
         goal: Goal = examGoal(),
         libraryCourse: OnboardingLibraryCourse? = null,
         prepareToday: suspend () -> Unit = {},
+        restoration: StateRestorationTester? = null,
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val store =
@@ -78,7 +81,8 @@ class PlanRevealStepFlowTest {
                 AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
                 session,
             ) { SignInResult.SignedIn }
-        rule.setContent {
+        val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
+        setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
@@ -100,6 +104,7 @@ class PlanRevealStepFlowTest {
 
         navigator.select(AppTab.Plan)
         rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.mainClock.advanceTimeByFrame()
 
         assertEquals(AppRoute.Today, navigator.currentRoute)
     }
@@ -114,11 +119,6 @@ class PlanRevealStepFlowTest {
     }
 
     @Test
-    fun aPhaseBeforeTodaysShowsNoDateAndTodaysSaysToday() {
-        val today = LocalDate.now()
-        val earlier = today.minusDays(10)
-        api.plan =
-    @Test
     fun theCurrentPhaseReadsAsItShows() {
         show()
 
@@ -128,6 +128,11 @@ class PlanRevealStepFlowTest {
             .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.ContentDescription))
     }
 
+    @Test
+    fun aPhaseBeforeTodaysShowsNoDateAndTodaysSaysToday() {
+        val today = LocalDate.now()
+        val earlier = today.minusDays(10)
+        api.plan =
             planOf(
                 phases =
                     listOf(
@@ -159,6 +164,36 @@ class PlanRevealStepFlowTest {
         rule.waitForIdle()
 
         assertEquals(AppRoute.Today, navigator.currentRoute)
+    }
+
+    @Test
+    fun aStartStillWaitingOnTodayOpensItAfterTheScreenIsRebuilt() {
+        val today = CompletableDeferred<Unit>()
+        val restoration = StateRestorationTester(rule)
+        show(prepareToday = { today.await() }, restoration = restoration)
+        navigator.select(AppTab.Plan)
+
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(100)
+        restoration.emulateSavedInstanceStateRestore()
+        today.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.Today, navigator.currentRoute)
+    }
+
+    @Test
+    fun adjustingWhileTodayLoadsKeepsTheLearnerWhereTheyWent() {
+        val today = CompletableDeferred<Unit>()
+        show(prepareToday = { today.await() })
+
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.onNodeWithText("Adjust").performScrollTo().performClick()
+        val adjusting = navigator.currentRoute
+        today.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(adjusting, navigator.currentRoute)
     }
 
     @Test

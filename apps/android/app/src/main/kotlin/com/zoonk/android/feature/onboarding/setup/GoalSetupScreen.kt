@@ -86,7 +86,7 @@ fun GoalSetupScreen(
         LocalSetupDrafts provides signedIn?.session?.let { SetupDrafts(app.drafts, it) },
         LocalSetupSpeech provides app.speech,
     ) {
-        GoalSetupScreen(route, app.onboarding, isGuest = signedIn?.isGuest == true, navigator, prepareToday = { app.today.today.load() })
+        GoalSetupScreen(route, app.onboarding, isGuest = signedIn?.isGuest == true, navigator, prepareToday = { app.today.today.refresh() })
     }
 }
 
