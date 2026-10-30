@@ -159,15 +159,17 @@ async function writeBand({ context, plan: needed }: { context: RunContext; plan:
     }),
   );
 
-  const saved = results.flatMap((result) => (result.status === "fulfilled" ? [result.value] : []));
+  const saved = results.map((result) => (result.status === "fulfilled" ? result.value : null));
   const waited = plan.skills.filter((skill) => skill.id === context.waitedSkillId);
 
-  const written = early
+  const inOrder = early
     ? saved.toSpliced(early.position - plan.nextPosition, 0, {
         chapterId: early.chapterId,
         skillKeys: waited.map((skill) => skill.key),
       })
     : saved;
+
+  const written = inOrder.filter((chapter) => chapter !== null);
 
   const moves = toChapterMoves({ anchors, plan, written });
 
