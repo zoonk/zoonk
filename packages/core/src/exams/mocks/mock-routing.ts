@@ -34,12 +34,13 @@ export function toRouting({
   wanted: number;
 }): MockRouting {
   const sorted = pool.toSorted(byDifficulty);
+  const share = Math.min(wanted, Math.ceil(sorted.length / 2));
 
   return {
-    easier: sorted.slice(0, wanted).map((item) => item.itemId),
+    easier: sorted.slice(0, share).map((item) => item.itemId),
     harder: sorted
       .toReversed()
-      .slice(0, wanted)
+      .slice(0, Math.min(wanted, Math.floor(sorted.length / 2)))
       .map((item) => item.itemId),
   };
 }

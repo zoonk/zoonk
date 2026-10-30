@@ -149,22 +149,26 @@ export function planMock({
         return { ...state, plans: [...state.plans, planSpeakingSection(section)] };
       }
 
+      const previous = sections[index - 1]?.name ?? null;
+      const routed = adaptive && isNextModule({ current: section.name, previous });
+
       const pool = orderBySubjectShares({
         pool: sectionPool({ areaSections, candidates, section }).filter(
           (candidate) => !state.used.has(candidate.itemId),
         ),
         portion: share,
         subjectShares: shares,
-        wanted,
+        wanted: routed ? wanted * 2 : wanted,
       });
 
-      const previous = sections[index - 1]?.name ?? null;
-      const routed = adaptive && isNextModule({ current: section.name, previous });
       const routing = routed ? toRouting({ pool, wanted }) : null;
-      const quotas = getFormatQuotas({ mix, wanted });
+      const quotas = getFormatQuotas({ mix, wanted: routed ? wanted * 2 : wanted });
       const picked = routing ? [] : takeQuestions({ pool, quotas, wanted });
       const reserved = routing ? [...routing.easier, ...routing.harder] : picked;
-      const questions = routing ? Math.min(wanted, routing.easier.length) : picked.length;
+
+      const questions = routing
+        ? Math.min(wanted, routing.easier.length, routing.harder.length)
+        : picked.length;
 
       const plan: MockSectionPlan = {
         ...toSectionRules(section),
@@ -180,11 +184,9 @@ export function planMock({
         routing,
       };
 
-      const formatsWanted = routing
-        ? state.formatsWanted
-        : Object.fromEntries(
-            [...quotas].map(([key, count]) => [key, (state.formatsWanted[key] ?? 0) + count]),
-          );
+      const formatsWanted = Object.fromEntries(
+        [...quotas].map(([key, count]) => [key, (state.formatsWanted[key] ?? 0) + count]),
+      );
 
       return {
         formatsWanted,

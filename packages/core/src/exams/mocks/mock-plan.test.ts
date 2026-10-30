@@ -267,6 +267,8 @@ describe(planMock, () => {
     expect(second?.routing?.easier).toHaveLength(10);
     expect(second?.routing?.harder).toHaveLength(10);
     expect(countPlannedQuestions(plan)).toBe(20);
+    expect(Object.values(plan.formatsWanted ?? {}).reduce((sum, count) => sum + count, 0)).toBe(30);
+    expect(second?.routing?.easier.some((id) => second.routing?.harder.includes(id))).toBe(false);
 
     const reserved = getPlannedItemIds(plan);
 
