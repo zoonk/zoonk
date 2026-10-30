@@ -76,12 +76,12 @@ import com.zoonk.api.models.CurrentUserProgressResponse
 import com.zoonk.api.models.CurrentUserProgressResponseLevel
 import com.zoonk.api.models.CurrentUserScorePatternsResponsePatterns
 import com.zoonk.api.models.CurrentUserScoreResponseScore
+import com.zoonk.api.models.ScorePatternVerdict
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
-import kotlin.math.ceil
 
 /** Whole, as main shows Energy now and the patterns. */
 private fun percent(
@@ -315,20 +315,7 @@ private fun PatternsOverview(
 ) {
     val locale = currentLocale()
     val summary = patterns?.let { patternsSummary(it) }
-    val counted =
-        patterns
-            ?.weekdays
-            .orEmpty()
-            .filter { it.totalAnswers >= MIN_PATTERN_ANSWERS }
-            .map { it.score }
-    val spread =
-        if (counted.size >=
-            2
-        ) {
-            stringResource(R.string.stats_range, percent(counted.min(), locale), percent(counted.max(), locale))
-        } else {
-            null
-        }
+    val spread = patterns?.weekSpread?.let { stringResource(R.string.stats_range, percent(it.low, locale), percent(it.high, locale)) }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -342,7 +329,7 @@ private fun PatternsOverview(
             spread?.let { PatternRow(stringResource(R.string.stats_week_spread), it, null) }
         }
 
-        summary?.let { PatternsNote(it) }
+        if (patterns != null && summary != null) PatternsNote(summary, patterns.minimumAnswers)
     }
 }
 
@@ -909,12 +896,14 @@ internal fun PatternsPage(context: StatsContext) {
 
         PatternBars(
             stringResource(R.string.stats_throughout_week),
+            patterns.minimumAnswers,
             patterns.weekdays.map {
                 PatternBar(weekdayName(it.dayOfWeek.value, locale), null, it.score, it.totalAnswers, it.dayOfWeek.value == bestDay)
             },
         )
         PatternBars(
             stringResource(R.string.stats_throughout_day),
+            patterns.minimumAnswers,
             patterns.times.map {
                 val hours = TIME_HOURS.getValue(it.period.value)
                 PatternBar(
@@ -926,7 +915,7 @@ internal fun PatternsPage(context: StatsContext) {
                 )
             },
         )
-        PatternsNote(summary)
+        PatternsNote(summary, patterns.minimumAnswers)
     }
 }
 
@@ -942,6 +931,7 @@ private data class PatternBar(
 @Composable
 private fun PatternBars(
     title: String,
+    minimumAnswers: Long,
     rows: List<PatternBar>,
 ) {
     val locale = currentLocale()
@@ -952,7 +942,7 @@ private fun PatternBars(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(title)
         rows.forEach { row ->
-            val counted = row.answers >= MIN_PATTERN_ANSWERS
+            val counted = row.answers >= minimumAnswers
             val count =
                 if (row.answers == 0L) {
                     stringResource(R.string.stats_no_answers)
@@ -998,17 +988,20 @@ private fun PatternBars(
 }
 
 @Composable
-private fun PatternsNote(summary: PatternsSummary) {
+private fun PatternsNote(
+    summary: PatternsSummary,
+    minimumAnswers: Long,
+) {
     val sentences =
         listOfNotNull(
             (summary.days as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_days_even, it.points, it.points) },
             (summary.times as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_times_even, it.points, it.points) },
-            pluralStringResource(R.plurals.stats_min_answers, MIN_PATTERN_ANSWERS.toInt(), MIN_PATTERN_ANSWERS.toInt()),
+            pluralStringResource(R.plurals.stats_min_answers, minimumAnswers.toInt(), minimumAnswers.toInt()),
         )
     StatsLine(sentences.joinToString(" "))
 }
 
-internal sealed interface Verdict {
+private sealed interface Verdict {
     data class Best(
         val key: String,
         val score: Double,
@@ -1022,34 +1015,26 @@ internal sealed interface Verdict {
     data object NotEnough : Verdict
 }
 
-internal data class PatternsSummary(
+private data class PatternsSummary(
     val days: Verdict,
     val times: Verdict,
 )
 
-/** Main's `getPatternVerdict`: a lone group has nothing to be better than, and a lead of a few points is noise. */
-internal fun verdict(
-    scores: List<Pair<Double, Long>>,
+/** The API's verdict, with the strongest group it names when it's the best. */
+private fun verdict(
+    verdict: ScorePatternVerdict,
     strongest: Verdict.Best?,
-): Verdict {
-    val counted = scores.filter { it.second >= MIN_PATTERN_ANSWERS }.map { it.first }
-    if (strongest == null || counted.size < 2) return Verdict.NotEnough
-    val spread = counted.max() - counted.min()
-    return if (spread < EVEN_SPREAD_POINTS) Verdict.Even(ceil(spread).toInt()) else strongest
-}
+): Verdict =
+    when (verdict.kind) {
+        ScorePatternVerdict.Kind.BEST -> strongest ?: Verdict.NotEnough
+        ScorePatternVerdict.Kind.EVEN -> Verdict.Even(verdict.points?.toInt() ?: 0)
+        ScorePatternVerdict.Kind.NOT_ENOUGH -> Verdict.NotEnough
+    }
 
-internal fun patternsSummary(patterns: CurrentUserScorePatternsResponsePatterns) =
+private fun patternsSummary(patterns: CurrentUserScorePatternsResponsePatterns) =
     PatternsSummary(
-        days =
-            verdict(
-                patterns.weekdays.map { it.score to it.totalAnswers },
-                patterns.strongestWeekday?.let { Verdict.Best(it.dayOfWeek.value, it.score, it.totalAnswers) },
-            ),
-        times =
-            verdict(
-                patterns.times.map { it.score to it.totalAnswers },
-                patterns.strongestTime?.let { Verdict.Best(it.period.value, it.score, it.totalAnswers) },
-            ),
+        days = verdict(patterns.dayVerdict, patterns.strongestWeekday?.let { Verdict.Best(it.dayOfWeek.value, it.score, it.totalAnswers) }),
+        times = verdict(patterns.timeVerdict, patterns.strongestTime?.let { Verdict.Best(it.period.value, it.score, it.totalAnswers) }),
     )
 
 @Composable
@@ -1115,8 +1100,6 @@ private const val DASH = "–"
 private const val LEVELS_PER_BELT = 10L
 private const val BRAIN_POWER_PER_LESSON = 10L
 private const val SCORE_WINDOW_DAYS = 90
-internal const val MIN_PATTERN_ANSWERS = 10L
-private const val EVEN_SPREAD_POINTS = 5.0
 private const val PANEL_TINT = 0.1f
 private const val RANK_RING_ALPHA = 0.15f
 private const val NEXT_RANK_RING_ALPHA = 0.35f

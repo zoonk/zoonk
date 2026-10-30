@@ -15,7 +15,10 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -184,6 +187,22 @@ class PlanEditorTest {
         compose.onNodeWithContentDescription("Thursday").assertIsOff().performClick()
 
         assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.WeekdayMinutes(listOf(4), 20))), changes)
+    }
+
+    @Test
+    fun theWeeksShapeComesFromThePlan() {
+        show(
+            """"schedule":{"dailyMinutes":20,"dailyTimes":[15,30,45],"fullCourse":false,"lightWeeks":[],"studyDays":7,""" +
+                """"targetDateEstimated":false,""" +
+                """"targetDateNamedMonth":false,""" +
+                """"shape":{"canDiffer":true,"weekdayDays":[1,2,3],"weekdays":20,"weekend":45,"weekendDays":[6]},""" +
+                """"weekdayMinutes":[20,20,20,20,20,20,20]}""",
+        )
+
+        compose.onNode(hasText("Different time on weekends") and isToggleable()).assertIsOn()
+        compose.onNodeWithText("30\u00A0min").performClick()
+
+        assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.WeekdayMinutes(listOf(1, 2, 3), 30))), changes)
     }
 
     @Test

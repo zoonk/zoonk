@@ -135,13 +135,6 @@ class PlanPhasesTest {
     }
 
     @Test
-    fun aWeekdaysTimeIsItsMostCommonAndTheWeekendsShowsOnlyWhenItDiffers() {
-        assertEquals(20 to 30, weekShape(listOf(30, 20, 20, 20, 20, 20, 30), 20).let { it.weekdays to it.weekend })
-        assertEquals(20 to null, weekShape(listOf(20, 20, 20, 20, 20, 20, 20), 20).let { it.weekdays to it.weekend })
-        assertEquals(30 to null, weekShape(listOf(0, 20, 30, 30, 20, 30, 0), 25).let { it.weekdays to it.weekend })
-    }
-
-    @Test
     fun studyDaysReadAsEveryDayARunOrAList() {
         assertEquals("every", studyDaysText(List(7) { 20 }, Locale.ENGLISH, everyDay = "every"))
         assertEquals("Mon – Fri", studyDaysText(listOf(0, 20, 20, 20, 20, 20, 0), Locale.ENGLISH))

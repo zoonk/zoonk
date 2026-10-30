@@ -37,6 +37,7 @@ import com.zoonk.android.ui.components.timeChoices
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.api.models.PlanWeekShape
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.time.temporal.WeekFields
@@ -51,7 +52,7 @@ internal fun PlanScheduleSection(
     modifier: Modifier = Modifier,
     daysModifier: Modifier = Modifier,
 ) {
-    val shape = page.plan.schedule.weekShape
+    val shape = page.plan.schedule.shape
     val weekendOn = drafts.weekendOn ?: (shape.weekend != null)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -68,12 +69,13 @@ internal fun PlanScheduleSection(
 private fun DailyMinutes(
     page: PlanPageState,
     edits: PlanEdits,
-    shape: WeekShape,
+    shape: PlanWeekShape,
     weekendOn: Boolean,
     modifier: Modifier,
 ) {
     val pending = edits.isPending(PlanPart.Schedule)
-    val shown = askedMinutes(edits.asked(PlanPart.Schedule), shape.weekdayDays) ?: shape.weekdays
+    val weekdayDays = shape.weekdayDays.map(Long::toInt)
+    val shown = askedMinutes(edits.asked(PlanPart.Schedule), weekdayDays) ?: shape.weekdays.toInt()
     val locale = currentLocale()
     val answer = (edits.timeToCover.forPlan(page.plan) as? TimeToCoverState.Answered)?.time?.answer()
     val focus = remember { CoverageFocus() }
@@ -81,14 +83,14 @@ private fun DailyMinutes(
     fun setMinutes(minutes: Int) {
         if (pending || minutes == shown) return
         val operation =
-            if (weekendOn && shape.canDiffer) PlanOp.WeekdayMinutes(shape.weekdayDays, minutes) else PlanOp.DailyMinutes(minutes)
+            if (weekendOn && shape.canDiffer) PlanOp.WeekdayMinutes(weekdayDays, minutes) else PlanOp.DailyMinutes(minutes)
         edits.change(PlanPart.Schedule, listOf(operation)) {}
     }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionLabel(stringResource(R.string.plan_time_a_day_label))
         FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            timeChoices(shape.weekdays, shown, answer?.offeredMinutes).forEach { minutes ->
+            timeChoices(shape.weekdays.toInt(), shown, answer?.offeredMinutes).forEach { minutes ->
                 PlanChip(
                     formatMinutes(minutes, locale),
                     selected = minutes == shown,
@@ -109,7 +111,7 @@ private fun DailyMinutes(
 private fun StudyDays(
     page: PlanPageState,
     edits: PlanEdits,
-    shape: WeekShape,
+    shape: PlanWeekShape,
     modifier: Modifier,
 ) {
     val pending = edits.isPending(PlanPart.Schedule)
@@ -122,7 +124,7 @@ private fun StudyDays(
         }
     val firstDay = WeekFields.of(locale).firstDayOfWeek.value % DAYS_PER_WEEK
 
-    fun minutesFor(weekday: Int) = shape.weekend?.takeIf { isWeekend(weekday) } ?: shape.weekdays
+    fun minutesFor(weekday: Int) = (shape.weekend?.takeIf { isWeekend(weekday) } ?: shape.weekdays).toInt()
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionLabel(stringResource(R.string.plan_study_days))
@@ -207,16 +209,17 @@ private fun dayName(
 @Composable
 private fun WeekendMinutes(
     edits: PlanEdits,
-    shape: WeekShape,
+    shape: PlanWeekShape,
     times: List<Long>,
     weekendOn: Boolean,
     onWeekendOn: (Boolean) -> Unit,
 ) {
     if (!shape.canDiffer) return
     val pending = edits.isPending(PlanPart.Schedule)
-    val shown = askedMinutes(edits.asked(PlanPart.Schedule), shape.weekendDays) ?: shape.weekend ?: shape.weekdays
+    val weekendDays = shape.weekendDays.map(Long::toInt)
+    val shown = askedMinutes(edits.asked(PlanPart.Schedule), weekendDays) ?: (shape.weekend ?: shape.weekdays).toInt()
 
-    fun setWeekend(minutes: Int) = edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(shape.weekendDays, minutes))) {}
+    fun setWeekend(minutes: Int) = edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(weekendDays, minutes))) {}
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
@@ -231,7 +234,7 @@ private fun WeekendMinutes(
                             // Switched off, the weekend takes the weekdays' time, so it waits for a change still setting it.
                             if (!pending) {
                                 onWeekendOn(next)
-                                if (!next && shape.weekend != null) setWeekend(shape.weekdays)
+                                if (!next && shape.weekend != null) setWeekend(shape.weekdays.toInt())
                             }
                         },
                     ),
@@ -259,6 +262,9 @@ private fun askedMinutes(
             else -> null
         }
     }
+
+/** Sunday is 0, as the plan counts weekdays. */
+private fun isWeekend(weekday: Int) = weekday == 0 || weekday == 6
 
 private const val DAYS_PER_WEEK = 7
 private val DAY_GAP = 4.dp

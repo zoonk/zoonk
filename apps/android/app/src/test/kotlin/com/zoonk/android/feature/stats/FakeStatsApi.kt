@@ -18,6 +18,9 @@ internal class FakeStatsApi(
     val studied: Boolean,
 ) : StatsApi {
     var activityFails = false
+    var verdicts =
+        """"dayVerdict":{"kind":"best","points":null},"minimumAnswers":10,"timeVerdict":{"kind":"best","points":null},""" +
+            """"weekSpread":{"high":90,"low":60}"""
 
     override suspend fun progress(session: AuthenticatedSession): CurrentUserProgressResponse =
         ApiJson.decodeFromString(
@@ -74,8 +77,7 @@ internal class FakeStatsApi(
 
     override suspend fun patterns(session: AuthenticatedSession): CurrentUserScorePatternsResponsePatterns =
         ApiJson.decodeFromString(
-            """{"dayVerdict":{"kind":"best","points":null},"minimumAnswers":10,"timeVerdict":{"kind":"best","points":null},
-                "weekSpread":{"high":90,"low":60},
+            """{$verdicts,
                 "strongestWeekday":{"correctAnswers":18,"incorrectAnswers":2,"score":90,"totalAnswers":20,"dayOfWeek":"tuesday"},
                 "weekdays":[{"correctAnswers":18,"incorrectAnswers":2,"score":90,"totalAnswers":20,"dayOfWeek":"tuesday"},
                 {"correctAnswers":12,"incorrectAnswers":8,"score":60,"totalAnswers":20,"dayOfWeek":"friday"}],

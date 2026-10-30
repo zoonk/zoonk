@@ -111,6 +111,35 @@ class StatsFlowTest {
     }
 
     @Test
+    fun patternsSayWhatTheApiDecides() {
+        val api =
+            FakeStatsApi(studied = true).apply {
+                verdicts =
+                    """"dayVerdict":{"kind":"even","points":3},"minimumAnswers":12,"timeVerdict":{"kind":"notEnough","points":null},""" +
+                    """"weekSpread":null"""
+            }
+        show(StatsPage.Patterns, api = api)
+
+        rule.onNodeWithText("Any day").assertIsDisplayed()
+        rule.onNodeWithText("Within 3 points").assertIsDisplayed()
+        rule.onNodeWithText("Not enough answers yet").assertIsDisplayed()
+        rule
+            .onNodeWithText(
+                "Your days are within 3 points of each other, so any day works. " +
+                    "A day or a time of day needs 12 answers to count, so one lucky answer never makes a pattern.",
+            ).assertExists()
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp")
+    fun theOverviewSaysTheWeeksSpreadTheApiGives() {
+        val api = FakeStatsApi(studied = true).apply { verdicts = verdicts.replace("""{"high":90,"low":60}""", """{"high":95,"low":40}""") }
+        show(StatsPage.Overview, api = api)
+
+        rule.onNodeWithText("40%–95%").assertExists()
+    }
+
+    @Test
     fun theRightTileReadsAsAnswersOutOfAll() {
         show(StatsPage.Score)
 
