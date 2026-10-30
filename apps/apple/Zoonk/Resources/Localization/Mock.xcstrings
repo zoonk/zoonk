@@ -788,7 +788,7 @@
       }
     },
     "%lld of %lld" : {
-      "comment" : "Question place",
+      "comment" : "A topic's right answers\nQuestion place",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1920,6 +1920,35 @@
         }
       }
     },
+    "A task couldn't be graded, so the speaking part has no estimate." : {
+      "comment" : "A speaking paper with a task that couldn't be graded",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Aufgabe konnte nicht bewertet werden, deshalb gibt es für den mündlichen Teil keine Schätzung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido evaluar una tarea, así que no hay estimación para la parte de expresión oral."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une tâche n’a pas pu être évaluée, donc il n’y a pas d’estimation pour la partie orale."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível avaliar uma tarefa, então a parte de conversação ficou sem estimativa."
+          }
+        }
+      }
+    },
     "About %@" : {
       "comment" : "A placement length",
       "localizations" : {
@@ -1974,6 +2003,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cerca de %@ (recomendado)"
+          }
+        }
+      }
+    },
+    "About %@ of %@" : {
+      "comment" : "A speaking paper's estimated points",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa %1$@ von %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "About %1$@ of %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aproximadamente %1$@ de %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Environ %1$@ sur %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca de %1$@ de %2$@"
           }
         }
       }
@@ -2048,6 +2112,41 @@
         }
       }
     },
+    "About %@ to %@ of %@" : {
+      "comment" : "A speaking paper's estimated points range",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa %1$@ bis %2$@ von %3$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "About %1$@ to %2$@ of %3$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entre %1$@ y %2$@ de %3$@, aproximadamente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Environ %1$@ à %2$@ sur %3$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca de %1$@ a %2$@ de %3$@"
+          }
+        }
+      }
+    },
     "After this, your answers can't change." : {
       "comment" : "Handing in is final",
       "localizations" : {
@@ -2073,6 +2172,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Depois disso, você não poderá alterar suas respostas."
+          }
+        }
+      }
+    },
+    "An estimate, not an official score." : {
+      "comment" : "Under a speaking paper's estimate",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Schätzung, kein offizieller Score."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una estimación, no una puntuación oficial."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une estimation, pas un score officiel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma estimativa, não uma pontuação oficial."
           }
         }
       }
@@ -2218,6 +2346,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aplicar"
+          }
+        }
+      }
+    },
+    "Below %@ on this paper, the whole exam isn't passed." : {
+      "comment" : "A speaking paper's floor for the whole exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit weniger als %@ in diesem Prüfungsteil ist die gesamte Prüfung nicht bestanden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con menos de %@ en esta parte, no se aprueba el examen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec moins de %@ à cette épreuve, tu ne peux pas réussir l’examen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com menos de %@ nesta parte, você não passa na prova."
           }
         }
       }
@@ -2392,6 +2549,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Por área"
+          }
+        }
+      }
+    },
+    "By topic" : {
+      "comment" : "Each topic's result",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach Thema"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por tema"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par sujet"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por tópico"
           }
         }
       }
@@ -4265,6 +4451,35 @@
         }
       }
     },
+    "No estimate" : {
+      "comment" : "A speaking paper's estimate",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Schätzung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin estimación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune estimation"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem estimativa"
+          }
+        }
+      }
+    },
     "No feedback until the end, like on exam day." : {
       "comment" : "Under the answer sheet",
       "localizations" : {
@@ -4319,6 +4534,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sem simulados para esta meta"
+          }
+        }
+      }
+    },
+    "Not done" : {
+      "comment" : "A speaking task left undone",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht bearbeitet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin hacer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non faite"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não feita"
+          }
+        }
+      }
+    },
+    "Not every task was done, so there's no estimate for this paper." : {
+      "comment" : "A speaking paper with tasks left undone",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Da nicht alle Aufgaben bearbeitet wurden, gibt es für diesen Prüfungsteil keine Schätzung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se han completado todas las tareas, así que no hay estimación para esta parte."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toutes les tâches n’ont pas été faites, donc il n’y a pas d’estimation pour cette épreuve."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nem todas as tarefas foram feitas, então esta parte ficou sem estimativa."
           }
         }
       }
@@ -5167,6 +5440,35 @@
         }
       }
     },
+    "See feedback" : {
+      "comment" : "Opens a speaking task's result",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rückmeldung ansehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver comentarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir les commentaires"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver avaliação"
+          }
+        }
+      }
+    },
     "See how it went" : {
       "comment" : "Grades a handed-in mock\nHands in the mock's last section",
       "localizations" : {
@@ -5823,6 +6125,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A prova"
+          }
+        }
+      }
+    },
+    "The exam asks for at least %@ of %@ on this paper and listening together." : {
+      "comment" : "A speaking paper's pass mark shared with listening",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In diesem Prüfungsteil und im Teil Hören brauchst du zusammen mindestens %1$@ von %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The exam asks for at least %1$@ of %2$@ on this paper and listening together."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El examen exige al menos %1$@ de %2$@ sumando esta parte y la de escucha."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour réussir l’examen, il faut au moins %1$@ sur %2$@ au total pour cette épreuve et celle d’écoute."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A prova exige pelo menos %1$@ de %2$@ na soma desta parte com a de escuta."
+          }
+        }
+      }
+    },
+    "The exam asks for at least %@ on this paper." : {
+      "comment" : "A speaking paper's own pass mark",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In diesem Prüfungsteil brauchst du mindestens %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El examen exige al menos %@ en esta parte."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour réussir l’examen, il faut au moins %@ à cette épreuve."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A prova exige pelo menos %@ nesta parte."
           }
         }
       }
@@ -7495,6 +7861,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você deixou em branco."
+          }
+        }
+      }
+    },
+    "You typed in at least one task, and typing shows nothing of how you sound, so the speaking part has no estimate. Speak every task next time to get one." : {
+      "comment" : "A speaking paper with a typed task",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast bei mindestens einer Aufgabe getippt. Dabei lässt sich nicht beurteilen, wie du klingst, deshalb gibt es für den mündlichen Teil keine Schätzung. Beantworte nächstes Mal alle Aufgaben mündlich, um eine zu bekommen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has respondido por escrito en al menos una tarea y eso no permite saber cómo suenas, así que no hay estimación para la parte de expresión oral. La próxima vez, responde en voz alta a todas las tareas para obtenerla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as répondu par écrit à au moins une tâche. Comme cela ne permet pas d’évaluer ta façon de parler, il n’y a pas d’estimation pour la partie orale. La prochaine fois, réponds à chaque tâche à l’oral pour en obtenir une."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você digitou a resposta em pelo menos uma tarefa, e o texto não mostra como você fala. Por isso, a parte de conversação ficou sem estimativa. Na próxima vez, responda falando em todas as tarefas para receber uma estimativa."
+          }
+        }
+      }
+    },
+    "You typed in at least one task, so the estimate leaves out how you sounded there." : {
+      "comment" : "A speaking estimate with a typed task",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast bei mindestens einer Aufgabe getippt, deshalb berücksichtigt die Schätzung dort nicht, wie du klingst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has respondido por escrito en al menos una tarea, así que la estimación no valora cómo suenas en ella."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as répondu par écrit à au moins une tâche, donc l’estimation ne tient pas compte de ta façon de parler pour les réponses concernées."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você digitou a resposta em pelo menos uma tarefa, então a estimativa não considera sua fala nas tarefas respondidas por texto."
           }
         }
       }

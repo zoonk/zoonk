@@ -8756,6 +8756,35 @@
         }
       }
     },
+    "Your plan moved later lessons to make room for it." : {
+      "comment" : "After moving a weekly challenge to another day",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spätere Lektionen in deinem Plan wurden verschoben, um Platz dafür zu schaffen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan ha movido las lecciones posteriores para hacerle sitio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les leçons suivantes ont été décalées dans ton plan pour lui faire une place."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano remarcou as aulas seguintes para abrir espaço para o desafio."
+          }
+        }
+      }
+    },
     "Your recent mistakes were slips while typing, not a rule you're missing. There's nothing to practice." : {
       "comment" : "Why a typos pattern has nothing to practice.",
       "localizations" : {

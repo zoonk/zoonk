@@ -1,6 +1,76 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ of %@" : {
+      "comment" : "An estimated band of the scale's highest",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ von %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ sur %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@"
+          }
+        }
+      }
+    },
+    "%@ of %@ points" : {
+      "comment" : "An estimate in the points its bands give, of the line's most",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ von %2$@ Punkten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@ points"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@ puntos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ sur %2$@ points"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@ pontos"
+          }
+        }
+      }
+    },
     "%@ · Level %@" : {
       "comment" : "A call's length and level, over its title",
       "localizations" : {
@@ -154,6 +224,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ para se preparar"
+          }
+        }
+      }
+    },
+    "%@ · Task %lld of %lld" : {
+      "comment" : "An exam task's place in its speaking paper",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Aufgabe %2$lld von %3$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · Task %2$lld of %3$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Tarea %2$lld de %3$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Tâche %2$lld sur %3$lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Tarefa %2$lld de %3$lld"
           }
         }
       }
@@ -526,6 +631,122 @@
         }
       }
     },
+    "An estimate from one practice task, not an official score." : {
+      "comment" : "An exam task's estimate isn't official",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Schätzung anhand einer einzelnen Übungsaufgabe, kein offizieller Score."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una estimación basada en una tarea de práctica, no una puntuación oficial."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une estimation basée sur une seule tâche d’entraînement, pas un score officiel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma estimativa com base em uma tarefa de prática, não uma pontuação oficial."
+          }
+        }
+      }
+    },
+    "An estimate from one practice task, not an official score. How you sound is rated by how easy you are to understand, never by your accent." : {
+      "comment" : "An exam task's estimate isn't official; sound is rated for intelligibility",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Schätzung anhand einer einzelnen Übungsaufgabe, kein offizieller Score. Bei der Bewertung deiner Sprechweise zählt, wie gut man dich versteht, nie dein Akzent."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una estimación basada en una tarea de práctica, no una puntuación oficial. Se valora lo fácil que resulta entenderte, nunca tu acento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une estimation basée sur une seule tâche d’entraînement, pas un score officiel. Ta façon de parler est évaluée selon la facilité avec laquelle on te comprend, jamais selon ton accent."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma estimativa com base em uma tarefa de prática, não uma pontuação oficial. A avaliação da sua fala considera o quanto é fácil entender você, nunca o seu sotaque."
+          }
+        }
+      }
+    },
+    "An estimate from one short mock, not an official score." : {
+      "comment" : "A speaking mock's band isn't official",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Schätzung anhand einer kurzen Probeprüfung, kein offizieller Score."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una estimación basada en un simulacro breve, no una puntuación oficial."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une estimation basée sur un court examen blanc, pas un score officiel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma estimativa com base em um simulado curto, não uma pontuação oficial."
+          }
+        }
+      }
+    },
+    "At %@" : {
+      "comment" : "An estimate at the level",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En el nivel %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Au niveau %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No nível %@"
+          }
+        }
+      }
+    },
     "Back" : {
       "comment" : "Leaves the call",
       "localizations" : {
@@ -584,6 +805,35 @@
         }
       }
     },
+    "Below %@" : {
+      "comment" : "An estimate below the level",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unter %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por debajo de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En dessous de %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abaixo de %@"
+          }
+        }
+      }
+    },
     "Better" : {
       "comment" : "A better way to say it",
       "localizations" : {
@@ -638,6 +888,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Poder Mental"
+          }
+        }
+      }
+    },
+    "By criterion" : {
+      "comment" : "A speaking mock's criteria",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach Kriterium"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por criterio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par critère"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por critério"
           }
         }
       }
@@ -1222,6 +1501,64 @@
         }
       }
     },
+    "Estimated band, from 0 to 9" : {
+      "comment" : "The IELTS speaking mock's band scale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geschätzter Bandwert von 0 bis 9"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Banda estimada, de 0 a 9"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score estimé, de 0 à 9"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pontuação estimada, de 0 a 9"
+          }
+        }
+      }
+    },
+    "Estimated band, from 1 to 6" : {
+      "comment" : "The TOEFL speaking mock's band scale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geschätzter Bandwert von 1 bis 6"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Banda estimada, de 1 a 6"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score estimé, de 1 à 6"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pontuação estimada, de 1 a 6"
+          }
+        }
+      }
+    },
     "Exam-style speaking" : {
       "comment" : "Eyebrow over the exam's name",
       "localizations" : {
@@ -1334,6 +1671,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fluência e coerência"
+          }
+        }
+      }
+    },
+    "Focus" : {
+      "comment" : "The criterion to work on first",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fokus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prioridad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Priorité"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foco"
+          }
+        }
+      }
+    },
+    "Go to task %lld" : {
+      "comment" : "Opens the speaking paper's next task",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu Aufgabe %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a la tarea %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aller à la tâche %lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir para a tarefa %lld"
           }
         }
       }
@@ -1479,35 +1874,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ajuda"
-          }
-        }
-      }
-    },
-    "How you did" : {
-      "comment" : "A speaking rating's criteria",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "So hast du abgeschnitten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Qué tal lo has hecho"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes résultats"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Como você foi"
           }
         }
       }
@@ -2075,6 +2441,35 @@
         }
       }
     },
+    "Near %@" : {
+      "comment" : "An estimate near the level",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nahe %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proche de %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perto de %@"
+          }
+        }
+      }
+    },
     "No more calls this month" : {
       "comment" : "The plan's call time is used",
       "localizations" : {
@@ -2191,6 +2586,35 @@
         }
       }
     },
+    "Not enough call time this month for this mock" : {
+      "comment" : "The call time left this month can't fit the mock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Monat reicht deine Gesprächszeit nicht für diese Probeprüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No queda suficiente tiempo de llamada este mes para este simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps d’appel insuffisant ce mois-ci pour cet examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não resta tempo de conversa suficiente neste mês para este simulado"
+          }
+        }
+      }
+    },
     "Not enough call time this month for this task" : {
       "comment" : "The call time left this month can't fit this speaking exam task",
       "localizations" : {
@@ -2220,6 +2644,35 @@
         }
       }
     },
+    "Not enough call time today for this mock" : {
+      "comment" : "The call time left today can't fit the mock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute reicht deine Gesprächszeit nicht für diese Probeprüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No queda suficiente tiempo de llamada hoy para este simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps d’appel insuffisant aujourd’hui pour cet examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não resta tempo de conversa suficiente hoje para este simulado"
+          }
+        }
+      }
+    },
     "Not enough call time today for this task" : {
       "comment" : "The call time left today can't fit this speaking exam task",
       "localizations" : {
@@ -2245,6 +2698,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O tempo de conversa que resta hoje não basta para essa tarefa"
+          }
+        }
+      }
+    },
+    "Not rated" : {
+      "comment" : "A criterion without an estimate",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht bewertet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin evaluar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non évalué"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não avaliado"
           }
         }
       }
@@ -2394,6 +2876,41 @@
         }
       }
     },
+    "On these scales, %lld is the %@ level." : {
+      "comment" : "Which band of the exam's scales is its level",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf diesen Skalen entspricht %1$lld dem Level %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "On these scales, %1$lld is the %2$@ level."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En estas escalas, %1$lld corresponde al nivel %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sur ces échelles, %1$lld correspond au niveau %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessas escalas, %1$lld corresponde ao nível %2$@."
+          }
+        }
+      }
+    },
     "Open Settings" : {
       "comment" : "Button that opens the app's settings",
       "localizations" : {
@@ -2477,35 +2994,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Organização da fala"
-          }
-        }
-      }
-    },
-    "Overall band" : {
-      "comment" : "A speaking mock's overall estimate",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gesamtbandwert"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Banda global"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Score global"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pontuação geral"
           }
         }
       }
@@ -2651,6 +3139,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prática concluída"
+          }
+        }
+      }
+    },
+    "Preparation" : {
+      "comment" : "An exam task's preparation time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorbereitung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparo"
+          }
+        }
+      }
+    },
+    "Preparation time is over. Start the call when you're ready." : {
+      "comment" : "The preparation clock ran out",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Vorbereitungszeit ist vorbei. Starte das Gespräch, wenn du bereit bist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha acabado el tiempo de preparación. Inicia la llamada cuando quieras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le temps de préparation est écoulé. Lance l’appel quand tu veux."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O tempo de preparo acabou. Comece a conversa quando quiser."
           }
         }
       }
@@ -3351,6 +3897,64 @@
         }
       }
     },
+    "Start again" : {
+      "comment" : "Restarts the preparation clock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch einmal starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a empezar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recommencer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar de novo"
+          }
+        }
+      }
+    },
+    "Start preparing" : {
+      "comment" : "Starts the preparation clock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorbereitung starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar la preparación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer la préparation"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar o preparo"
+          }
+        }
+      }
+    },
     "Start the call" : {
       "comment" : "Starts a live call",
       "localizations" : {
@@ -3850,31 +4454,66 @@
         }
       }
     },
-    "The exam gives %@ to prepare." : {
-      "comment" : "How long the exam gives to prepare this task",
+    "The exam gives %@ to prepare tasks %@ together, about %@ for this one." : {
+      "comment" : "Preparation time several exam tasks share, and this task's part",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In der Prüfung hast du %@, um dich vorzubereiten."
+            "value" : "In der Prüfung hast du insgesamt %1$@ zur Vorbereitung auf die Aufgaben %2$@, etwa %3$@ für diese Aufgabe."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The exam gives %1$@ to prepare tasks %2$@ together, about %3$@ for this one."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El examen te da %@ para prepararte."
+            "value" : "En el examen tienes %1$@ en total para preparar las tareas %2$@, aproximadamente %3$@ para esta."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’examen te donne %@ pour te préparer."
+            "value" : "L’examen prévoit %1$@ au total pour préparer les tâches %2$@, soit environ %3$@ pour celle-ci."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A prova dá %@ para se preparar."
+            "value" : "A prova dá %1$@ de preparo para as tarefas %2$@ juntas, cerca de %3$@ para esta."
+          }
+        }
+      }
+    },
+    "The exam gives %@ to prepare with the card." : {
+      "comment" : "How long the exam gives to prepare this task",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In der Prüfung hast du %@, um dich mit der Karte vorzubereiten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En el examen tienes %@ para prepararte con la tarjeta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’examen prévoit %@ pour te préparer avec la fiche."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A prova dá %@ para você se preparar com o cartão."
           }
         }
       }
@@ -3933,6 +4572,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O microfone está desativado"
+          }
+        }
+      }
+    },
+    "The mock didn't start. Try again in a moment." : {
+      "comment" : "Starting the speaking mock failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Probeprüfung ist nicht gestartet. Versuch es gleich noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El simulacro no se ha iniciado. Vuelve a intentarlo en un momento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’examen blanc n’a pas démarré. Réessaie dans un instant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O simulado não começou. Tente de novo daqui a pouco."
           }
         }
       }
@@ -4140,6 +4808,64 @@
         }
       }
     },
+    "This mock has no score" : {
+      "comment" : "An ungraded speaking mock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Probeprüfung hat keinen Score"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este simulacro no tiene puntuación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cet examen blanc n’a pas de score"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este simulado não tem pontuação"
+          }
+        }
+      }
+    },
+    "This task has no estimate" : {
+      "comment" : "An ungraded exam task",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für diese Aufgabe gibt es keine Schätzung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta tarea no tiene estimación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette tâche n’a pas d’estimation"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta tarefa não tem estimativa"
+          }
+        }
+      }
+    },
     "Tip: %@" : {
       "comment" : "A hint for the next goal",
       "localizations" : {
@@ -4252,6 +4978,122 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tentar de novo"
+          }
+        }
+      }
+    },
+    "Try another mock" : {
+      "comment" : "Starts a new speaking mock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Andere Probeprüfung starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hacer otro simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essayer un autre examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentar outro simulado"
+          }
+        }
+      }
+    },
+    "Try another one when you're ready." : {
+      "comment" : "Under an ungraded speaking mock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mach eine andere Probeprüfung, wenn du bereit bist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prueba otro cuando quieras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essaie un autre examen blanc quand tu veux."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tente outro quando quiser."
+          }
+        }
+      }
+    },
+    "Try the task again when you're ready." : {
+      "comment" : "Under an ungraded exam task",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versuch die Aufgabe noch einmal, wenn du bereit bist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve a hacer la tarea cuando quieras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessaie cette tâche quand tu veux."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tente fazer a tarefa de novo quando quiser."
+          }
+        }
+      }
+    },
+    "Try this task with a new card" : {
+      "comment" : "Starts the same exam task again with a new card",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versuch diese Aufgabe mit einer neuen Karte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repetir esta tarea con una tarjeta nueva"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessayer cette tâche avec une nouvelle fiche"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentar esta tarefa com um novo cartão"
           }
         }
       }
@@ -4755,31 +5597,31 @@
         }
       }
     },
-    "Work on next: %@" : {
-      "comment" : "The criterion to focus on",
+    "Work on this first" : {
+      "comment" : "The criterion to work on first",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Als Nächstes üben: %@"
+            "value" : "Üb das zuerst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ahora céntrate en: %@"
+            "value" : "Trabaja primero en esto"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À travailler ensuite : %@"
+            "value" : "À travailler en priorité"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Próximo ponto para praticar: %@"
+            "value" : "Foque nisto primeiro"
           }
         }
       }
@@ -4838,6 +5680,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você disse"
+          }
+        }
+      }
+    },
+    "You said little in this task, so there wasn't much to judge. A longer try gives a closer estimate." : {
+      "comment" : "A speaking estimate from a short answer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast bei dieser Aufgabe wenig gesagt, deshalb gab es wenig zu bewerten. Wenn du länger sprichst, wird die Schätzung genauer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has hablado poco en esta tarea, así que no ha habido mucho que evaluar. Una respuesta más larga permite una estimación más precisa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as peu parlé pendant cette tâche, donc il y avait peu d’éléments à évaluer. Une réponse plus longue permet une estimation plus précise."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você falou pouco nesta tarefa, então não deu para avaliar muita coisa. Uma resposta mais longa permite uma estimativa mais precisa."
+          }
+        }
+      }
+    },
+    "You typed your replies, so this estimate leaves out how you sound." : {
+      "comment" : "A speaking estimate from typed replies",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast deine Antworten getippt, deshalb berücksichtigt diese Schätzung nicht, wie du klingst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has respondido por escrito, así que esta estimación no valora cómo suenas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as répondu par écrit, donc cette estimation ne tient pas compte de ta façon de parler."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você digitou suas respostas, então esta estimativa não considera como você fala."
           }
         }
       }
