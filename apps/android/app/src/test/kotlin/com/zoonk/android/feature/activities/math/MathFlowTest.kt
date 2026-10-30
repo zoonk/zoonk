@@ -286,6 +286,33 @@ class MathFlowTest {
         assertEquals(3.0, sentValue())
     }
 
+    @Test
+    fun aSliderWithTwoStopsMovesByArrowKeysAndTalkBack() {
+        play(listOf(switchStep()), isCorrect = true, ApiJson.decodeFromString(ActivityExpected.serializer(), """{"kind":"numeric","value":10}"""))
+
+        press(Key.DirectionRight, 1, handle = slider("Switch"))
+        typedValue("10")
+        press(Key.DirectionLeft, 1, handle = slider("Switch"))
+        typedValue("0")
+        rule.onNode(slider("Switch")).performSemanticsAction(SemanticsActions.SetProgress) { it(0.05f) }
+        typedValue("10")
+        rule.onNode(slider("Switch")).performSemanticsAction(SemanticsActions.SetProgress) { it(0.95f) }
+        typedValue("0")
+    }
+
+    private fun switchStep(): LessonStep {
+        val json =
+            """
+            {"template":"formulaModel","prompt":"Switch it.","check":{"kind":"numeric","question":"What is the value?","answer":10,
+             "tolerance":{"kind":"absolute","value":0.01},"explanation":"Worked out by code.","inputs":[{"name":"on","value":1}]},
+             "fields":{"outputs":[{"formula":"10 * on","id":"value","label":"Value"}],
+             "variables":[{"initial":0,"label":"Switch","max":1,"min":0,"name":"on","step":1}]}}
+            """
+        val content = ApiJson.decodeFromString(ActivityStepContent.serializer(), json)
+        val frame = ApiJson.decodeFromString(ActivityFrame.serializer(), json)
+        return LessonStep("switch", null, StepContent.Activity(content, frame, minTolerance = null))
+    }
+
     private fun precisionStep(): LessonStep {
         val json =
             """

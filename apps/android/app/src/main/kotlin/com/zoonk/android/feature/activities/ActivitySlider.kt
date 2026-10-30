@@ -16,11 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.setProgress
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -93,6 +101,7 @@ internal fun ActivitySliderTrack(
     marks: DrawScope.() -> Unit = {},
 ) {
     val track = MaterialTheme.colorScheme.surfaceContainerHigh
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val colors =
         SliderDefaults.colors(
             activeTrackColor = fill ?: track,
@@ -105,7 +114,7 @@ internal fun ActivitySliderTrack(
     Slider(
         value = position.toFloat(),
         onValueChange = { onPositionChange(it.roundToInt()) },
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().then(if (positions == 1 && enabled) Modifier.betweenTwoStops(position, rtl, onPositionChange) else Modifier),
         enabled = enabled,
         valueRange = 0f..positions.toFloat(),
         steps = (positions - 1).coerceAtLeast(0),
@@ -119,4 +128,37 @@ internal fun ActivitySliderTrack(
     )
 }
 
+/**
+ * With two stops Material's slider has no steps, so its keys move a hundredth of the way and
+ * TalkBack a twentieth, which round back to the same stop; here each move goes to the other one.
+ */
+private fun Modifier.betweenTwoStops(
+    position: Int,
+    rtl: Boolean,
+    onPositionChange: (Int) -> Unit,
+) = onPreviewKeyEvent { event ->
+    val key =
+        when {
+            !rtl -> event.key
+            event.key == Key.DirectionLeft -> Key.DirectionRight
+            event.key == Key.DirectionRight -> Key.DirectionLeft
+            else -> event.key
+        }
+    val next = valueAfterKey(key, position.toDouble(), TWO_STOPS)
+    if (next != null && event.type == KeyEventType.KeyDown) onPositionChange(next.toInt())
+    next != null
+}.semantics {
+    setProgress { target ->
+        onPositionChange(
+            when {
+                target > position -> 1
+                target < position -> 0
+                else -> position
+            },
+        )
+        true
+    }
+}
+
+private val TWO_STOPS = SnapRange(0.0, 1.0, 1.0)
 private const val DISABLED_ALPHA = 0.6f
