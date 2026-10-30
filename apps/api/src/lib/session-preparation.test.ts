@@ -13,6 +13,7 @@ import {
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -27,6 +28,7 @@ import { getTodayView } from "../../../../packages/core/src/view-models/today/ge
 import { mockHookConflict } from "../../mocks/workflow";
 import { getStartMock } from "../workflows/_test-utils/start-mock";
 import { courseOutlineWorkflow } from "../workflows/v2/courses/course-outline-workflow";
+import { guestOutlineWorkflow } from "../workflows/v2/sessions/guest-outline-workflow";
 import {
   scheduleGoalPreparation,
   scheduleSessionPreparation,
@@ -45,8 +47,14 @@ vi.mock("next/server", async (importOriginal) => ({
 const TIME_ZONE = "UTC";
 const pending: Promise<unknown>[] = [];
 
-function runStartedWorkflowsInline() {
+type StartFailure = (workflow: unknown, args: unknown[]) => boolean;
+
+function runStartedWorkflowsInline(fails: StartFailure = () => false) {
   getStartMock().mockImplementation(async (workflow, args) => {
+    if (fails(workflow, args)) {
+      throw new Error("Could not start the workflow");
+    }
+
     if (typeof workflow === "function" && workflow !== courseOutlineWorkflow) {
       pending.push(workflow(...args));
     }
@@ -87,15 +95,20 @@ async function teachSkill({ course, skillId }: { course: { id: string }; skillId
 }
 
 /** A level test tested out the band the plan's build outlined, so the plan now starts on a stand-in. */
-async function placedGuestFixture({ guest = true }: { guest?: boolean } = {}) {
+async function placedGuestFixture({
+  guest = true,
+  laterCourse: withLaterCourse = false,
+}: { guest?: boolean; laterCourse?: boolean } = {}) {
   const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
 
-  const [user, course, chapter, basics, next] = await Promise.all([
+  const [user, course, laterCourse, chapter, basics, next, later] = await Promise.all([
     userFixture(),
+    courseFixture({ outlineStatus: "completed" }),
     courseFixture({ outlineStatus: "completed" }),
     libraryChapterFixture({ level: "beginner" }),
     skillFixture({ level: "beginner" }),
     skillFixture({ level: "intermediate" }),
+    skillFixture({ level: "advanced" }),
   ]);
 
   const lesson = await libraryLessonFixture({ homeChapterId: chapter.id });
@@ -120,9 +133,13 @@ async function placedGuestFixture({ guest = true }: { guest?: boolean } = {}) {
     goalId: goal.id,
     graph: {
       phases: [{ milestone: null, name: "Italiano" }],
-      skills: [basics, next].map((skill) => ({
+      skills: [
+        { courseId: course.id, skill: basics },
+        { courseId: course.id, skill: next },
+        ...(withLaterCourse ? [{ courseId: laterCourse.id, skill: later }] : []),
+      ].map(({ courseId, skill }) => ({
         area: null,
-        courseIds: [course.id],
+        courseIds: [courseId],
         lessons: 1,
         name: skill.name,
         phase: 0,
@@ -144,6 +161,13 @@ async function placedGuestFixture({ guest = true }: { guest?: boolean } = {}) {
       status: "testedOut",
     }),
     planItemFixture({ planId: plan.id, position: 1, scheduledFor: today, skillId: next.id }),
+    withLaterCourse &&
+      planItemFixture({
+        planId: plan.id,
+        position: 2,
+        scheduledFor: new Date(today.getTime() + 2 * 86_400_000),
+        skillId: later.id,
+      }),
   ]);
 
   if (guest) {
@@ -152,7 +176,7 @@ async function placedGuestFixture({ guest = true }: { guest?: boolean } = {}) {
     mockSession(user.id);
   }
 
-  return { course, goal, next, user };
+  return { course, goal, laterCourse, next, user };
 }
 
 type PlacedGuest = Awaited<ReturnType<typeof placedGuestFixture>>;
@@ -244,7 +268,10 @@ describe("preparing a guest's lessons", () => {
     await startGoalPreparation({ goalId: guest.goal.id });
     await settle();
 
-    expect(start).not.toHaveBeenCalledWith(courseOutlineWorkflow, expect.anything());
+    expect(start).not.toHaveBeenCalledWith(courseOutlineWorkflow, [
+      expect.objectContaining({ courseId: guest.course.id }),
+    ]);
+
     await expect(isDayComing(guest)).resolves.toBe(false);
     await expect(readCourse(guest)).resolves.toStrictEqual(course);
   });
@@ -297,6 +324,22 @@ describe("preparing a guest's lessons", () => {
 
     await expect(isDayComing(guest)).resolves.toBe(true);
   });
+
+  it.each([
+    ["its preparation can't start", (workflow: unknown) => workflow === guestOutlineWorkflow],
+    ["its outlines can't start", (workflow: unknown) => workflow === courseOutlineWorkflow],
+  ])(
+    "stops saying lessons are coming when %s",
+    async (_when, fails: (workflow: unknown) => boolean) => {
+      const guest = await placedGuestFixture();
+      runStartedWorkflowsInline(fails);
+
+      await startGoalPreparation({ goalId: guest.goal.id });
+      await settle().catch(() => null);
+
+      await expect(isDayComing(guest)).resolves.toBe(false);
+    },
+  );
 
   it.each([
     ["asked for the goal", (guest: PlacedGuest) => startGoalPreparation({ goalId: guest.goal.id })],
@@ -368,5 +411,25 @@ describe("preparing an account's lessons", () => {
     expect(start).not.toHaveBeenCalledWith(courseOutlineWorkflow, expect.anything());
     await expect(isDayComing(account)).resolves.toBe(false);
     await expect(readCourse(account)).resolves.toStrictEqual(course);
+  });
+
+  it("keeps the day's lessons coming when their outline starts and another one can't", async () => {
+    const account = await placedGuestFixture({ guest: false, laterCourse: true });
+
+    runStartedWorkflowsInline(
+      (workflow, [input]) =>
+        workflow === courseOutlineWorkflow &&
+        isJsonObject(input) &&
+        input.courseId === account.laterCourse.id,
+    );
+
+    await startGoalPreparation({ goalId: account.goal.id });
+    await settle().catch(() => null);
+
+    expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
+      expect.objectContaining({ courseId: account.course.id }),
+    ]);
+
+    await expect(isDayComing(account)).resolves.toBe(true);
   });
 });

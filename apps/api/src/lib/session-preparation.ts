@@ -14,7 +14,7 @@ import {
   requestUpcomingChallengeQuestions,
 } from "@zoonk/core/checkpoints/challenge-questions";
 import { requestClaimQuestions } from "@zoonk/core/lookahead/claim-questions";
-import { askForLessons } from "@zoonk/core/lookahead/lessons-ask";
+import { askForLessons, endLessonsAsk } from "@zoonk/core/lookahead/lessons-ask";
 import {
   type GoalPreparationAccess,
   type SessionPreparationAccess,
@@ -78,6 +78,27 @@ function startChallengeQuestions(request: ChallengeQuestions | null) {
   );
 }
 
+/** A preparation that never starts can't end its learner's ask, so its request does. */
+async function startPreparation<T>({
+  goalId,
+  lessonsAskedAt,
+  run,
+}: {
+  goalId: string;
+  lessonsAskedAt?: number | null;
+  run: () => Promise<T>;
+}): Promise<T> {
+  try {
+    return await run();
+  } catch (error) {
+    if (lessonsAskedAt) {
+      await endLessonsAsk({ askedAt: lessonsAskedAt, goalId, startedCourseIds: [] });
+    }
+
+    throw error;
+  }
+}
+
 async function startFromAccess({
   access,
   challengeQuestions = null,
@@ -92,16 +113,21 @@ async function startFromAccess({
   platform: AnalyticsPlatform | null;
 }) {
   const [preparation] = await Promise.all([
-    start(sessionPreparationWorkflow, [
-      {
-        claimQuestions,
-        goalId: access.goalId,
-        lessonsAskedAt,
-        platform,
-        timeZone: access.timeZone,
-        userId: access.userId,
-      },
-    ]),
+    startPreparation({
+      goalId: access.goalId,
+      lessonsAskedAt,
+      run: () =>
+        start(sessionPreparationWorkflow, [
+          {
+            claimQuestions,
+            goalId: access.goalId,
+            lessonsAskedAt,
+            platform,
+            timeZone: access.timeZone,
+            userId: access.userId,
+          },
+        ]),
+    }),
     startLearnerListeningSets({
       analytics: { distinctId: access.userId, goalId: access.goalId, platform },
       goalId: access.goalId,
@@ -135,9 +161,14 @@ function prepareGuestLessons({
 
   after(async () => {
     const { error } = await safeAsync(() =>
-      start(guestOutlineWorkflow, [
-        { analytics: { distinctId: userId, goalId, platform }, goalId, lessonsAskedAt },
-      ]),
+      startPreparation({
+        goalId,
+        lessonsAskedAt,
+        run: () =>
+          start(guestOutlineWorkflow, [
+            { analytics: { distinctId: userId, goalId, platform }, goalId, lessonsAskedAt },
+          ]),
+      }),
     );
 
     if (error) {

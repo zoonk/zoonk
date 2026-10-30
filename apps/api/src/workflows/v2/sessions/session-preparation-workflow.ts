@@ -8,6 +8,7 @@ import { type PlanStepOutcome, retryPlanConflicts } from "../_shared/plan-confli
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken } from "../_shared/run-token";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
+import { startAll, whileLessonsAsked } from "../goals/goal-outlines";
 import { preparePlacementItems, preparePlacementWeekItems } from "../goals/placement-items";
 import {
   listLessonFieldItemTargetsStep,
@@ -15,7 +16,6 @@ import {
   readGoalField,
 } from "../goals/steps/field-items-steps";
 import {
-  endLessonsAskStep,
   listPlanOutlineNeedsStep,
   listSoonStandInCourseIdsStep,
   readPlanFirstSkillStep,
@@ -84,9 +84,11 @@ async function preparePersonalLayer({
 async function startLessonWork({
   analytics,
   input,
+  started,
 }: {
   analytics: ContentAnalytics;
   input: SessionPreparationInput;
+  started: string[];
 }): Promise<PlanStepOutcome<SessionPreparation | null>> {
   using claim = await claimRunToken(`session-prep:${input.userId}`);
 
@@ -119,7 +121,7 @@ async function startLessonWork({
   const planManifest = manifest.value;
   const admitted = new Set(planManifest?.targets.map((target) => target.lessonId));
 
-  await Promise.all([
+  await startAll([
     ...lessonIds
       .filter((lessonId) => admitted.has(lessonId))
       .map((lessonId) =>
@@ -134,44 +136,20 @@ async function startLessonWork({
           { analytics, forExam, lessonId, planGoalId: input.goalId, planManifest, wait: "later" },
         ]),
       ),
-    ...courseRequests.map((request) =>
-      start(courseOutlineWorkflow, [
+    ...courseRequests.map(async (request) => {
+      await start(courseOutlineWorkflow, [
         {
           ...request,
           analytics,
           ...getOutlineWait({ courseId: request.courseId, firstSkillId, soonCourseIds }),
         },
-      ]),
-    ),
+      ]);
+
+      started.push(request.courseId);
+    }),
   ]);
 
-  if (input.lessonsAskedAt) {
-    await endLessonsAskStep({
-      askedAt: input.lessonsAskedAt,
-      goalId: input.goalId,
-      startedCourseIds: courseRequests.map((request) => request.courseId),
-    });
-  }
-
   return { conflict: false, value: preparation };
-}
-
-/** An ask whose preparation gives up without starting anything stops reading as coming. */
-async function startAskedLessonWork(args: {
-  analytics: ContentAnalytics;
-  input: SessionPreparationInput;
-}): Promise<SessionPreparation | null> {
-  const { goalId, lessonsAskedAt } = args.input;
-
-  try {
-    return await retryPlanConflicts(startLessonWork, args);
-  } catch (error) {
-    if (lessonsAskedAt) {
-      await endLessonsAskStep({ askedAt: lessonsAskedAt, goalId, startedCourseIds: [] });
-    }
-
-    throw error;
-  }
 }
 
 function getOutlineWait({
@@ -291,7 +269,12 @@ export async function sessionPreparationWorkflow(
   "use workflow";
 
   const analytics = { distinctId: input.userId, goalId: input.goalId, platform: input.platform };
-  const preparation = await startAskedLessonWork({ analytics, input });
+
+  const preparation = await whileLessonsAsked({
+    goalId: input.goalId,
+    lessonsAskedAt: input.lessonsAskedAt,
+    run: (started) => retryPlanConflicts(startLessonWork, { analytics, input, started }),
+  });
 
   if (!preparation) {
     return { status: "alreadyRunning" };
