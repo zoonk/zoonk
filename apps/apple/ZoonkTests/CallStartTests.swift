@@ -10,31 +10,31 @@ final class CallStartTests: XCTestCase {
     let transport = HeldCallTransport()
     let voice = makeVoice(transport)
     let start = CallStart()
-    let router = AppRouter()
+    var opened: [String] = []
 
-    start.start(Self.mock, voice: voice, router: router)
+    start.start(Self.mock, voice: voice) { opened.append($0) }
     await transport.waitForHeldRequest()
-    start.start(Self.mock, voice: voice, router: router)
+    start.start(Self.mock, voice: voice) { opened.append($0) }
     await transport.release()
     await waitUntilStarted(start)
 
     let requests = await transport.requests
     XCTAssertEqual(requests, 1)
-    XCTAssertEqual(router.tasks, [.conversation(conversationId: HeldCallTransport.conversationID)])
+    XCTAssertEqual(opened, [HeldCallTransport.conversationID])
   }
 
   func testAStartWhoseScreenLeftOpensNothing() async {
     let transport = HeldCallTransport()
     let start = CallStart()
-    let router = AppRouter()
+    var opened: [String] = []
 
-    start.start(Self.mock, voice: makeVoice(transport), router: router)
+    start.start(Self.mock, voice: makeVoice(transport)) { opened.append($0) }
     await transport.waitForHeldRequest()
     start.cancel()
     await transport.release()
     await waitUntilStarted(start)
 
-    XCTAssertEqual(router.tasks, [])
+    XCTAssertEqual(opened, [])
     XCTAssertNil(start.refusal)
   }
 
