@@ -1,4 +1,4 @@
-import { MIN_DAILY_MINUTES } from "../plans/daily-minutes";
+import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 
 const MINUTES_STEP = 5;
 
@@ -35,7 +35,8 @@ export function getLeastDailyBudget(count: number): number {
 
 /**
  * The least day's time that gives the goal at `place` (the main one is 0) exactly `minutes`: a time
- * worked out for that goal alone, as the day the goals typed with it share.
+ * worked out for that goal alone, as the day the goals typed with it share. Null when that day would
+ * be longer than a day's time can be saved.
  */
 export function getBudgetForGoal({
   count,
@@ -45,7 +46,7 @@ export function getBudgetForGoal({
   count: number;
   minutes: number;
   place: number;
-}): number {
+}): number | null {
   const least = Math.max(minutes, getLeastDailyBudget(count));
 
   const budgets = Array.from(
@@ -53,5 +54,8 @@ export function getBudgetForGoal({
     (_, index) => least + index * MINUTES_STEP,
   );
 
-  return budgets.find((budget) => splitDailyBudget({ budget, count })[place] === minutes) ?? least;
+  const day =
+    budgets.find((budget) => splitDailyBudget({ budget, count })[place] === minutes) ?? least;
+
+  return day > MAX_DAILY_MINUTES ? null : day;
 }
