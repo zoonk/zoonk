@@ -8,11 +8,30 @@ import XCTest
 final class MockEssayGradingTests: XCTestCase {
   func testGradeItComesBackOnceTheLearnersDayTurns() async {
     let clock = TestClock(at(day: 29, hour: 22))
-    let run = makeRun(transport: GradesUsedUpTransport(), clock: clock)
+    let run = makeRun(transport: GradesUsedUpTransport(holdsGrading: false), clock: clock)
 
     await run.gradeEssays()
     run.offerGradingOnANewDay()
     XCTAssertEqual(run.essayGrading, .limitReached(on: at(day: 29, hour: 22)))
+
+    clock.now = at(day: 30, hour: 8)
+    run.offerGradingOnANewDay()
+    XCTAssertEqual(run.essayGrading, .idle)
+  }
+
+  func testALimitAnsweredAfterMidnightCountsForTheDayItWasAskedOn() async {
+    let transport = GradesUsedUpTransport(holdsGrading: true)
+    let clock = TestClock(at(day: 29, hour: 23, minute: 59))
+    let run = makeRun(transport: transport, clock: clock)
+
+    let grading = Task { await run.gradeEssays() }
+    await transport.waitForHeldGrading()
+    clock.now = at(day: 30, hour: 0, minute: 1)
+    await transport.release()
+    await grading.value
+    guard case .limitReached = run.essayGrading else {
+      return XCTFail("the day's essay grades were used up")
+    }
 
     clock.now = at(day: 30, hour: 8)
     run.offerGradingOnANewDay()
@@ -45,19 +64,42 @@ private final class TestClock {
 
 /// Every grading answers that the day's essay grades are used up.
 private actor GradesUsedUpTransport: ClientTransport {
+  private let holdsGrading: Bool
+  private var held: CheckedContinuation<Void, Never>?
+
+  init(holdsGrading: Bool) {
+    self.holdsGrading = holdsGrading
+  }
+
   func send(
     _ request: HTTPRequest,
     body: HTTPBody?,
     baseURL: URL,
     operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
-    let status: HTTPResponse.Status =
-      operationID == "gradeMockEssays" ? .tooManyRequests : .notFound
+    let grading = operationID == "gradeMockEssays"
+
+    if grading, holdsGrading {
+      await withCheckedContinuation { held = $0 }
+    }
+
+    let status: HTTPResponse.Status = grading ? .tooManyRequests : .notFound
 
     return (
       HTTPResponse(status: status, headerFields: [.contentType: "application/json"]),
       HTTPBody(#"{"error":{"code":"LIMIT","message":"No more today"}}"#)
     )
+  }
+
+  func waitForHeldGrading() async {
+    while held == nil {
+      await Task.yield()
+    }
+  }
+
+  func release() {
+    held?.resume()
+    held = nil
   }
 }
 

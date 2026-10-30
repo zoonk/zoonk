@@ -323,6 +323,7 @@ final class MockRun {
 
   func gradeEssays() async {
     guard essayGrading != .grading else { return }
+    let askedOn = now()
     essayGrading = .grading
 
     let result: MutationResult<Bool>? = await within(Self.gradingTimeout) { [store, blockId] in
@@ -334,7 +335,7 @@ final class MockRun {
     switch result {
     case .done(let allGraded):
       await mock.refresh()
-      essayGrading = allGraded ? .idle : .limitReached(on: now())
+      essayGrading = allGraded ? .idle : .limitReached(on: askedOn)
     case .obsolete:
       essayGrading = .idle
     case .failed, nil:
