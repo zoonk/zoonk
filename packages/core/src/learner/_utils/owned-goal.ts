@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
+import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../../users/get-session";
 
 export type OwnedGoal =
@@ -16,7 +17,9 @@ export async function findOwnedGoal(goalId: string): Promise<OwnedGoal> {
     return { status: "unauthorized" };
   }
 
-  const goal = await prisma.goal.findFirst({ where: { id: goalId, userId: session.user.id } });
+  const goal = isUuid(goalId)
+    ? await prisma.goal.findFirst({ where: { id: goalId, userId: session.user.id } })
+    : null;
 
   if (!goal) {
     return { status: "notFound" };

@@ -6,7 +6,7 @@ import { getBaseLanguage, isTTSSupportedLanguage } from "@zoonk/utils/languages"
 import { findSpeechClip, toSpeechClip } from "../../../audio/_utils/speech-clips";
 import { type SpeechClip } from "../../../audio/speech-clip-contract";
 import { getSpeechClipKey } from "../../../audio/speech-clip-key";
-import { type OwnedGoal, findOwnedGoal } from "../../../learner/_utils/owned-goal";
+import { findOwnedGoal } from "../../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readGoalDetails } from "../../_utils/language-goal";
 import {
@@ -78,11 +78,8 @@ export async function saveLevelTestProgress({
   });
 }
 
-export async function loadLevelTestContext(
-  goalId: string,
-  knownOwned?: OwnedGoal,
-): Promise<LevelTestContext> {
-  const owned = knownOwned ?? (await findOwnedGoal(goalId));
+export async function loadLevelTestContext(goalId: string): Promise<LevelTestContext> {
+  const owned = await findOwnedGoal(goalId);
 
   if (owned.status !== "ready") {
     return owned;

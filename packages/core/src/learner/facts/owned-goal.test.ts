@@ -1,11 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession, mockSessionFailure } from "../../_test-utils/mock-session";
-import { loadLevelTestContext } from "../../language/level-test/_utils/level-test-state";
 import { getOwnedGoal } from "../get-owned-goal";
 import { readOwnedGoal } from "./owned-goal";
 
@@ -58,20 +56,5 @@ describe("owned goal request facts", () => {
     const error = new Error("session unavailable");
     mockSessionFailure(error);
     await expect(getOwnedGoal(goal.id)).rejects.toBe(error);
-  });
-
-  it("passes GET ownership facts to mixed helpers while their write default stays fresh", async () => {
-    const [owner, other] = await Promise.all([userFixture(), userFixture()]);
-    const goal = await goalFixture({ kind: "exam", userId: owner.id });
-    mockSession(owner.id);
-    const owned = await getOwnedGoal(goal.id);
-
-    const supplied = await countDatabaseStatements(() => loadLevelTestContext(goal.id, owned));
-    expect(supplied).toMatchObject({ result: { status: "notLanguage" }, statements: 0, writes: 0 });
-
-    await prisma.goal.update({ data: { userId: other.id }, where: { id: goal.id } });
-
-    const fresh = await countDatabaseStatements(() => loadLevelTestContext(goal.id));
-    expect(fresh).toMatchObject({ result: { status: "notFound" }, statements: 1, writes: 0 });
   });
 });

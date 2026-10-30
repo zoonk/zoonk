@@ -20,6 +20,7 @@ import {
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { getUsageRule } from "../../entitlements/limits";
 import * as learnerWrite from "../../learner/_utils/write-learner-change";
+import * as ownedGoalFact from "../../learner/facts/owned-goal";
 import { NEW_SKILL_MEMORY } from "../../learner/fsrs-scheduler";
 import * as placement from "../../learner/placement/_utils/apply-placement";
 import { markPlanInputsUntil } from "../../plans/_test-utils/mark-plan-inputs";
@@ -239,6 +240,30 @@ describe("language level test", () => {
     expect(saved.details).toMatchObject({ skillLevels: { reading: expect.any(String) } });
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
     expect(saved.details).not.toHaveProperty("skillLevels.writing");
+  });
+
+  it("shows an answer on the read right after it, whatever the goal's private cache still holds", async () => {
+    await saveBank();
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    // Vitest runs private caches as plain calls. This one keeps the goal from before the answer, as
+    // `next dev` serves it to the next read.
+    const before = await ownedGoalFact.readOwnedGoal(user.id, goal.id);
+    const cached = vi.spyOn(ownedGoalFact, "readOwnedGoal").mockResolvedValue(before);
+
+    try {
+      await answerLanguageLevelTest({
+        goalId: goal.id,
+        input: { answerIndex: 1, questionId: "reading-A2-0" },
+      });
+
+      await expect(getLanguageLevelTest(goal.id)).resolves.toMatchObject({
+        test: { answered: 1, next: { question: { id: "listening-A2-0" } } },
+      });
+    } finally {
+      cached.mockRestore();
+    }
   });
 
   it("saves one of two submissions of the same question that raced, and refuses the other", async () => {
@@ -804,6 +829,20 @@ describe("language level test", () => {
     mockSession(user.id);
 
     await expect(getLanguageLevelTest(other.id)).resolves.toStrictEqual({ status: "notLanguage" });
+  });
+
+  it("reads a malformed goal id as missing", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    await expect(getLanguageLevelTest("not-a-goal")).resolves.toStrictEqual({ status: "notFound" });
+
+    await expect(
+      answerLanguageLevelTest({
+        goalId: "not-a-goal",
+        input: { answerIndex: 1, questionId: "reading-A2-0" },
+      }),
+    ).resolves.toStrictEqual({ status: "notFound" });
   });
 });
 
