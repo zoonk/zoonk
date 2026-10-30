@@ -211,6 +211,7 @@ class Resource<T : Any> internal constructor(
     }
 
     // Cancelling last: on Main.immediate a caller awaiting the request resumes inside cancel(), and must find it gone.
+    // https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-main-coroutine-dispatcher/immediate.html
     private fun cancelRequest() {
         val cancelled = request
         request = null
