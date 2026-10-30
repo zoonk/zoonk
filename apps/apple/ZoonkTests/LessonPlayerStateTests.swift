@@ -299,6 +299,30 @@ final class LessonGradingTests: XCTestCase {
       [true, true, true])
   }
 
+  func testRepeatedMatchLabelsEachTakeOneTile() {
+    let board = MatchColumnsBoard(
+      pairs: [
+        .init(left: "A", right: "1"), .init(left: "A", right: "1"), .init(left: "B", right: "2"),
+      ],
+      rightItems: ["1", "2", "1"], matched: [.init(left: "A", right: "1")])
+
+    XCTAssertEqual(board.matchedLeft, [0], "the other A is still open")
+    XCTAssertEqual(board.matchedRight, [0], "and so is the other 1")
+    XCTAssertTrue(board.isRight(.init(left: "A", right: "1")), "the second A → 1 is still to match")
+  }
+
+  func testAMatchedPairCountsAgainstHowOftenTheExerciseHasIt() {
+    let board = MatchColumnsBoard(
+      pairs: [
+        .init(left: "A", right: "1"), .init(left: "B", right: "1"), .init(left: "A", right: "2"),
+      ],
+      rightItems: ["1", "1", "2"], matched: [.init(left: "A", right: "1")])
+
+    XCTAssertFalse(
+      board.isRight(.init(left: "A", right: "1")), "a second A → 1 would leave B stuck")
+    XCTAssertTrue(board.isRight(.init(left: "B", right: "1")))
+  }
+
   func testFillBlankShowsTheWholeSentence() throws {
     let grade = LessonGrading.grade(.fillBlank(userAnswers: ["es"]), step: try step(fillBlank))
 

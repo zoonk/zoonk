@@ -509,11 +509,19 @@ private struct MatchColumnsView: View {
     return []
   }
 
+  private var board: MatchColumnsBoard {
+    MatchColumnsBoard(
+      pairs: pairs.map { LessonAnswer.Pair(left: $0.left, right: $0.right) },
+      rightItems: exercise.matchColumnsRightItems, matched: matched)
+  }
+
   var body: some View {
+    let board = board
+
     HStack(alignment: .top, spacing: 12) {
       VStack(spacing: 10) {
         ForEach(pairs.indices, id: \.self) { index in
-          let isMatched = matched.contains { $0.left == pairs[index].left }
+          let isMatched = board.matchedLeft.contains(index)
           Button {
             pickedLeft = index
           } label: {
@@ -529,7 +537,7 @@ private struct MatchColumnsView: View {
       VStack(spacing: 10) {
         ForEach(exercise.matchColumnsRightItems.indices, id: \.self) { index in
           let item = exercise.matchColumnsRightItems[index]
-          let isMatched = matched.contains { $0.right == item }
+          let isMatched = board.matchedRight.contains(index)
           Button {
             pick(right: index)
           } label: {
@@ -562,7 +570,7 @@ private struct MatchColumnsView: View {
       left: pairs[left].left, right: exercise.matchColumnsRightItems[index])
     pickedLeft = nil
 
-    if pairs.contains(where: { $0.left == pair.left && $0.right == pair.right }) {
+    if board.isRight(pair) {
       lastMiss = nil
       context.select(.matchColumns(userPairs: matched + [pair], mistakes: mistakes))
     } else {
