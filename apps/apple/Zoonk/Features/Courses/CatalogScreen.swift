@@ -7,11 +7,6 @@ struct CatalogScreen: View {
     AllCoursesView(category: $category)
       .navigationTitle(title)
       .navigationBarTitleDisplayMode(.large)
-      .navigationSubtitle(
-        Text(
-          "Start from a course, or tell Zoonk what you're getting ready for.",
-          tableName: "Courses", comment: "The line under the catalog's title")
-      )
       .catalogDestinations()
   }
 
