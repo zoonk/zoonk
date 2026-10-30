@@ -18,7 +18,7 @@ class WebPageTest {
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun aPageNoBrowserCanOpenSaysWhomToContact() {
+    fun aPageNoBrowserCanOpenSaysSoInsteadOfCrashing() {
         shadowOf(rule.activity.application).checkActivities(true)
         lateinit var navigator: AppNavigator
         rule.setContent { ZoonkTheme { navigator = rememberAppNavigator() } }
@@ -26,6 +26,6 @@ class WebPageTest {
         val opened = runCatching { rule.runOnIdle { navigator.open(AppRoute.Privacy) } }
 
         assertTrue(opened.exceptionOrNull().toString(), opened.isSuccess)
-        assertEquals("Can't open this page. Email hello@zoonk.com", ShadowToast.getTextOfLatestToast())
+        assertEquals("No app can open this page.", ShadowToast.getTextOfLatestToast())
     }
 }

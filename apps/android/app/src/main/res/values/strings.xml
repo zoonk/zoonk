@@ -65,6 +65,6 @@
     <string name="not_found_go_home">Go to the home page</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
-    <!-- A toast, which shows at most two short lines: a link did nothing because the phone has no browser to open it. Keep it as short as the English. -->
-    <string name="web_page_unavailable">Can\'t open this page. Email hello@zoonk.com</string>
+    <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->
+    <string name="web_page_unavailable">No app can open this page.</string>
 </resources>

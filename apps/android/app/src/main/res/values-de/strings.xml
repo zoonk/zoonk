@@ -59,7 +59,7 @@
   "test_out_skip_chapter": "9cd7f10c3c745385dcbb868c02785f8fadaec702137a0f9b474ff3af21f80cec",
   "test_out_skip_unit": "c53827037a2438afd3687b9bfa7fecedef2e865e4d95687fc3dd8271f67ed2a6",
   "test_out_title": "18a9d535c5f4d730a93c7aa212c3b2c322061ec37e57b82634a62849e8905b35",
-  "web_page_unavailable": "94b81b8c0406dd3e3a016317de9e674fdf61d1247d26bed0527903dc8e477f8a"
+  "web_page_unavailable": "2acaa93761fe8cbd0582594394f7c56570d4e2413460e34a423111e1b3711f11"
 }
 -->
 <resources>
@@ -127,6 +127,6 @@
     <string name="not_found_go_home">Zur Startseite</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
-    <!-- A toast, which shows at most two short lines: a link did nothing because the phone has no browser to open it. Keep it as short as the English. -->
-    <string name="web_page_unavailable">Seite öffnet sich nicht. Schreib an hello@zoonk.com</string>
+    <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->
+    <string name="web_page_unavailable">Keine App kann diese Seite öffnen.</string>
 </resources>

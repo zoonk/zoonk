@@ -28,8 +28,8 @@ fun launchWebPage(
 }
 
 /**
- * Opens a link, or says whom to contact when nothing on the phone can: a toast, the platform's own
- * answer to that, shows over any sheet or dialog the link sits in.
+ * Opens a link, or says nothing on the phone can: a toast, the platform's own answer to that, shows
+ * over any sheet or dialog the link sits in.
  */
 fun openWebPage(
     context: Context,
