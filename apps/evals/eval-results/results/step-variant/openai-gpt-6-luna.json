@@ -36,7 +36,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The response never addresses the learner as “you.” Also, exampleLineIdea and image are null, so it does not literally meet the requirement that every field be filled.",
           "kind": "minorErrors",
@@ -102,7 +106,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The everyday example helps, but the version is only a little simpler overall. Unlike the original, it does not explicitly label more people/less time as inverse and more boxes/more time as direct. It leaves those terms together in the final sentence, making the learner infer their meanings.",
           "kind": "minorErrors",
@@ -238,7 +246,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The explanation is only modestly deeper. Calling $80 the baseline identifies the reference but does not explain why the increase is measured against what you originally paid. The conversion step still gives an instruction rather than explaining why 0.25 means 25%.",
           "kind": "minorErrors",
@@ -263,12 +275,18 @@
               "problem": "A concert ticket went from $80 to $100. By what percent did the price change?",
               "result": "The price rose 25%.",
               "steps": [
-                { "math": "100 - 80 = 20", "text": "Find the change: new price minus old price." },
+                {
+                  "math": "100 - 80 = 20",
+                  "text": "Find the change: new price minus old price."
+                },
                 {
                   "math": "\\frac{20}{80} = 0.25",
                   "text": "Divide the change by the starting price."
                 },
-                { "math": "0.25 = 25\\%", "text": "Write it as a percent." }
+                {
+                  "math": "0.25 = 25\\%",
+                  "text": "Write it as a percent."
+                }
               ],
               "title": "From $80 to $100"
             },
@@ -313,7 +331,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The explanation adds real depth, but it neither explicitly names the uncertainty principle nor provides the requested limit or more technical example. It also leaves exampleLineIdea and image null despite the requirement that every field be filled. The writing does not address the learner as “você.”",
           "kind": "minorErrors",
@@ -348,21 +370,21 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "The explanation uses valid spreadsheet syntax, places the five scores in a matching range, and correctly states that =AVERAGE(A1:A5) returns 85 in both Google Sheets and Excel. The original title and text fields are filled. However, it lacks the tool-focused check specified in this category.",
+          "reasoning": "The cell range, =AVERAGE(A1:A5), and displayed result of 85 are correct in both Google Sheets and Excel. The tool is central to the explanation, but the requested check about what it shows is missing.",
           "score": 8,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The same five scores are preserved, their mean is correctly given as 85, and the explanation retains the add-and-divide definition. There are no factual errors, contradictions, or unrelated lesson concepts.",
+          "reasoning": "Preserves the original five scores, their total of 425, division by 5, and mean of 85. It remains an explanation screen with both original content fields filled and introduces no unrelated ideas or factual errors.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The result is a short, beginner-friendly screen in US English. Direct instructions address the learner naturally, and there is no introduction, filler, or promise of results.",
+          "reasoning": "Brief, direct US English with clear instructions addressed to the learner. It stays close to the original length and contains no introduction, filler, or promises.",
           "score": 10,
           "label": "Short, plain writing",
           "weight": 25
@@ -373,19 +395,27 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1979,
-          "outputTokens": 635,
-          "reasoningTokens": 292
+          "inputTokens": 1982,
+          "outputTokens": 770,
+          "reasoningTokens": 412
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The tool-version expectations call for a check asking what the spreadsheet does or shows. The result explains the output but includes no learner check.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is no check asking what the spreadsheet shows or returns, as required by the tool-version expectations.",
           "kind": "minorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Make addition explicit: “Add the five scores to get 425, then divide by 5 to get 85.” The current wording conveys addition only through the word “total.”",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - Shows the mean the way it's done in a spreadsheet: the AVERAGE function over a range, such as `=AVERAGE(B2:B6)`, which works the same in Google Sheets and Excel, and what it returns for these scores (85)\n      - Still says the mean adds the values and divides by how many there are, with the same five scores\n      - No menus or functions that exist in only one of the two\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
@@ -409,22 +439,22 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "Python is central to the example. The individual code snippets use valid assignments, arithmetic and print syntax; executed in sequence, print(percentual) correctly prints 25.0. No syntax or output cap applies. Presenting the initial assignments on separate lines would improve usability.",
-          "score": 8,
+          "reasoning": "Python is meaningfully present, and the assignments, calculation, and f-string are valid Python with correctly stated output. However, the requested raw output `25.0` is missing, and the question does not check what the tool does or shows. The wrong-syntax/output cap is not triggered because the displayed `25%` is accurate for the supplied code.",
+          "score": 7,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The ticket, R$ 80 starting price, R$ 100 final price, starting-value denominator and 25% increase are preserved correctly, with no unrelated concepts. However, the original screen's calculation fields are left unfilled, and one step combines two calculation moves. These are structural fidelity failures rather than factual or numerical errors.",
+          "reasoning": "The ticket example, starting-value denominator, numbers, and 25% increase are preserved correctly. However, the original step fields are not all filled, and the final step shifts attention to string formatting, an unnecessary additional idea rather than the original percentage-conversion move. The drift cap of 8 applies.",
           "score": 8,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The screen uses natural Brazilian Portuguese, concise instructions and direct address through imperatives. It remains short and has no introduction, filler or promises. No writing cap applies.",
-          "score": 10,
+          "reasoning": "The screen uses natural Brazilian Portuguese, stays compact, and has no introduction, filler, or promises. The final instruction is nevertheless denser than necessary for a beginner because it combines formatting instructions, unfamiliar syntax, and the displayed output.",
+          "score": 8,
           "label": "Short, plain writing",
           "weight": 25
         }
@@ -434,26 +464,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2150,
-          "outputTokens": 782,
-          "reasoningTokens": 337
+          "inputTokens": 2155,
+          "outputTokens": 818,
+          "reasoningTokens": 309
         }
       },
       "steps": [
         {
-          "conclusion": "The requirement to fill every field is not met: all four math fields are null, whereas the original screen supplies a calculation in each. The calculations appear in the text, but the worked-example calculation fields remain empty.",
+          "conclusion": "The example omits the explicitly required Python output `25.0`, showing a formatted `25%` instead. Although that output is correct for the code provided, it does not satisfy the requested demonstration. The original screen's `math` fields are also left null rather than filled.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Step 3 combines division by the starting price and multiplication by 100, contrary to the requirement that each step contain one move. Splitting it would still keep the example within the allowed 2–8 steps.",
+          "conclusion": "The final step adds f-string formatting and a format specifier, introducing unnecessary beginner-level complexity instead of keeping each step to one simple calculation or output move. The question still asks only for the percentage change, rather than what Python prints.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Show the two initial assignments on separate code lines so a beginner can copy them together without accidentally including the Portuguese connector 'e'.",
+          "conclusion": "Use the existing calculation followed by `print(variacao)` and explicitly show `25.0`. Keep the interpretation 'O preço subiu 25%.' separate, populate the original step fields, and ask what Python prints.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -477,7 +507,10 @@
                   "math": "\\frac{20}{80} = 0{,}25",
                   "text": "Divida a variação pelo preço inicial."
                 },
-                { "math": "0{,}25 = 25\\%", "text": "Escreva como porcentagem." }
+                {
+                  "math": "0{,}25 = 25\\%",
+                  "text": "Escreva como porcentagem."
+                }
               ],
               "title": "De R$ 80 para R$ 100"
             },
@@ -490,21 +523,21 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "Successfully converts the device action into an example to read: “Imagine typing” does not ask the learner to operate their computer. It shows the exact command and a concrete output, connects that output to an installed Python version, and never suggests the learner is missing out.",
-          "score": 10,
+          "reasoning": "Provides the correct command and a concrete output as an imagined example, without asking the learner to install, download, open, or run anything or suggesting they miss out. However, “After you press Enter” weakens the otherwise read-only framing. The device-action cap is not triggered because the action remains within the imagined scenario.",
+          "score": 8,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "Preserves the original explanation screen, title, and central idea of checking Python’s version. Both original content fields are filled. The command and example output are accurate, and no unrelated lesson content is introduced.",
+          "reasoning": "Preserves the original explanation screen’s title and core idea. The command, example output, and interpretation of the version number are accurate. Both original content fields are populated, and no unrelated lesson content is introduced.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "Uses concise, beginner-friendly US English and addresses the reader with “you.” It is approximately the original length, with no introduction, filler, or promises.",
+          "reasoning": "Uses concise US English, addresses the reader as “you,” and remains a short screen comparable to the original. The separated command and output are easy to read, with no filler, prefatory introduction, or promises.",
           "score": 10,
           "label": "Short, plain writing",
           "weight": 25
@@ -515,15 +548,27 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1868,
-          "outputTokens": 597,
-          "reasoningTokens": 287
+          "inputTokens": 1883,
+          "outputTokens": 667,
+          "reasoningTokens": 252
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "“After you press Enter” makes the read-only framing slightly ambiguous. The opening “Imagine” keeps this from being a clear instruction to use the learner’s device, but the hypothetical framing should continue throughout.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Use “In this example, pressing Enter prints…” and explain, “This tells you Python is installed and its version is 3.13.1.” This makes both the simulation and the output’s meaning explicit.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - Never asks the learner to open a terminal, install, download or run anything on their computer\n      - Shows what would be typed (`python3 --version`) and exactly what it prints (such as `Python 3.13.1`), and what that tells you (Python is there, and which version)\n      - Doesn't say the learner is missing out\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
@@ -547,21 +592,21 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "The check correctly replaces hands-on instructions with a scenario to read. It supplies all three cell values and the formula, then asks what A4 displays without requiring the learner to open or use Excel. It retains one correct answer and explains realistic distractors. No device-use or syntax cap applies. However, the null fields leave the explicit all-fields-filled requirement unmet.",
+          "reasoning": "This remains a complete multiple-choice check with the specified cells, formula, one correct answer, and explanations for realistic mistakes. It explicitly frames the spreadsheet as imagined and never asks the learner to open Excel or actually use a device, so the device-use cap does not apply. However, “você digita” should become “A4 contém a fórmula” followed by “O que essa célula mostraria?” to fully match the requested typing-free presentation.",
           "score": 8,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The original idea and example are preserved accurately: SOMA(A1:A3) adds 10, 20, and 30 to produce 60. The incorrect options represent summing only two cells and treating the formula as displayed text. Every option has a correct explanation, and no unrelated concept is introduced. No accuracy or topic-drift cap applies.",
+          "reasoning": "The original concept is preserved without unrelated material. SOMA(A1:A3) correctly produces 60 from 10, 20, and 30. The distractors reflect adding only A1 and A2 or mistaking the formula for its displayed result, and every option has an accurate reason.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The wording is natural Brazilian Portuguese, beginner-friendly, and short enough for one check screen. There is no introductory framing, filler, or promise of results, so no writing cap applies. Some feedback could be tightened slightly.",
+          "reasoning": "The screen uses natural Brazilian Portuguese, addresses the learner as “você,” and remains short and beginner-friendly. There is no promotional introduction or filler. Some feedback could be more concise, but the modest expansion does not make this a much longer screen.",
           "score": 9,
           "label": "Short, plain writing",
           "weight": 25
@@ -572,20 +617,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2114,
-          "outputTokens": 752,
-          "reasoningTokens": 310
+          "inputTokens": 2137,
+          "outputTokens": 760,
+          "reasoningTokens": 295
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The screen's instructional content is complete, but context, image, visual, and each option's picture are null. This falls short of the explicit requirement that every field be filled, although it does not prevent answering the check.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The question retains “Em A4, você digita” rather than simply showing the formula already in A4 and asking what the cell would display. “Imagine” makes this hypothetical, so it does not require actual device use, but the typing-centered wording is not quite the requested read-only presentation.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "The explanations could be slightly shorter while preserving their value—for example, 'Somou só A1 e A2; faltou A3.'",
+          "conclusion": "The incorrect-option explanations could be shorter while preserving their teaching value, especially the explanation for displaying the formula as text.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -607,7 +656,12 @@
                   "reason": "SOMA junta 10 + 20 + 30 = 60.",
                   "text": "60"
                 },
-                { "id": "thirty", "isCorrect": false, "reason": "Somou só A1 e A2.", "text": "30" },
+                {
+                  "id": "thirty",
+                  "isCorrect": false,
+                  "reason": "Somou só A1 e A2.",
+                  "text": "30"
+                },
                 {
                   "id": "formula",
                   "isCorrect": false,

@@ -1,0 +1,979 @@
+{
+  "modelId": "openai/gpt-6.1-terra",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All named prerequisite subjects and quantum pillars are explicitly represented, including differential equations, probability, linear algebra, classical mechanics, waves, electromagnetism, wavefunctions, the Schrödinger equation, observables, uncertainty, hydrogen, angular momentum, spin, approximation methods, and entanglement. No missing-pillar cap applies.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The broad progression is sound, and calculus, complex numbers, and linear algebra precede quantum formalism. However, the graph omits several dependencies: probability current on time evolution, free-field quantization on Hamiltonian mechanics, and approximate many-electron interactions on approximation methods. These omissions trigger the cap of 7 for several prerequisite errors. 'Making quantum predictions' also triggers the phase-title cap of 9, which is superseded by the lower cap.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Skills are generally coherent chapter-sized units rather than trivia, and 345.4 hours falls within the expected hundreds-of-hours range. Nevertheless, the allocation is optimistic for the actual expanded curriculum and deep-learning purpose. Phase 1 compresses rebuilding forgotten mathematics through integration together with substantial physics into 46.4 hours; phase 5 allocates only 81.4 hours to numerous advanced specialties, including field quantization, scattering, renormalization, and effective field theory. The clearly undersized-area cap of 8 applies.",
+          "score": 8,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills teach substantive mathematical and physical capabilities. Experimental evidence and measurement interpretations support conceptual understanding rather than serving as history, motivation, or generic introductions. No clear filler or substantially duplicate skill appears.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The path starts with suitable algebra foundations for someone who has forgotten high-school mathematics and develops toward technically substantive quantum physics. US English is used consistently, and exam weights are correctly null for a learning goal. The advanced extensions are relevant to the broad mastery goal, although separating them into optional branches would improve prioritization for a learner studying 45 minutes daily.",
+          "score": 9,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph emphasizes modeling, interpretation, approximation, uncertainty, experimental inference, dimensional checking, and numerical convergence rather than rote memorization. AI-tool instruction is not required for this learning goal. More explicit physical sanity checks within quantum problem-solving outcomes would strengthen an already sound emphasis on understanding and judgment.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "6 of 7 parts passed. \"Apply effective field theory\" sits at the end of a chain of 22 prerequisites; list only what a skill can't be learned without (at most 12 deep).",
+          "score": 8.714285714285714,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 15551,
+          "outputTokens": 1735,
+          "reasoningTokens": 879
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several prerequisite links are missing: position-space wavefunctions include probability current without requiring quantum time evolution; free-field quantization does not require Hamiltonian mechanics; and many-electron atoms invoke approximate interactions without requiring the approximation methods taught elsewhere. The study budget also looks compressed for the expanded scope: 46.4 hours rebuilds mathematics through calculus alongside mechanics, while 81.4 hours covers substantial quantum information, many-body physics, and quantum field theory.",
+          "kind": "majorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "The phase title 'Making quantum predictions' names an ability taught within that phase rather than distinctly naming its stage in the learning path.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Distinguish the core quantum-mechanics pathway from optional advanced specializations and show the calendar implications of studying 45 minutes daily. Strengthen verification outcomes by explicitly including limiting-case, normalization, symmetry, and conservation checks when solving quantum problems.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Huge goal: the graph must span several canonical courses, such as mathematics (algebra, trigonometry, calculus, differential equations, complex numbers, probability), linear algebra, classical mechanics, waves and oscillations, electromagnetism, and quantum mechanics\n      - Quantum mechanics must reach the core: the wave function, the Schrödinger equation, operators and observables, uncertainty, the hydrogen atom, angular momentum and spin, perturbation theory or approximation methods, and entanglement or quantum information\n      - Starting from forgotten high school math, the path begins with the math physics uses; calculus and linear algebra come before the quantum formalism\n      - The honest size is hundreds of hours (roughly 300 to 600); phases that move from the math physics uses through calculus, linear algebra and classical physics to quantum mechanics and its advanced topics are sensible\n      - Chapter-sized skills are expected, not hundreds of lesson-sized trivia skills\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-quantum-physics-from-zero-1",
+        "userInput": {
+          "context": "I finished high school years ago and forgot most of the math. I can study about 45 minutes a day.",
+          "goal": "Master quantum physics from scratch",
+          "goalKind": "learn",
+          "language": "en",
+          "ownLevel": "none",
+          "purpose": "deep"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All four examination areas, every named blueprint topic, and all five essay competencies are substantively covered. Formal writing, prompt understanding and interdisciplinary repertoire, argument organization, cohesion, and rights-respecting intervention each have dedicated skills. Weights follow the supplied frequencies: interpretation, statistics, proportions, and ecology receive 5; Brazilian history and citizenship receive 4; the specified low-frequency topics receive 2. No coverage cap is triggered.",
+          "score": 9,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Most sequences are sensible, including chemical equations before stoichiometry and exponential functions before logarithms. However, motion-graph interpretation lacks the graph-reading prerequisite, and genetic probability problems lack a probability prerequisite. These multiple dependency omissions trigger the cap of 7. Intermediate milestones are also insufficiently specific. Phase titles appropriately describe stages rather than repeating taught topics.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The skills are generally coherent chapter-sized units, mostly estimated at 20–35 short lessons. The 332.7-hour total is credible for broad ENEM preparation with practice and review, and the phase estimates sum correctly. Neither an entire course collapsed into one skill nor excessive trivia-level fragmentation is evident. No size cap is triggered.",
+          "score": 9,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills serve examination content or permitted examination strategy. There are no motivational, introductory, career-advice, or exam-day-checklist skills. Reviewing an essay against the five competencies is an applied editing capability, not a filler recap. No clear duplicate or filler skill is present.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "Learner-facing content is in Brazilian Portuguese and targets ENEM-level secondary-school preparation. Almost all skills are intermediate, and the introductory essay skills still address the actual assessed writing task rather than elementary Portuguese. Time management and TRI are included, while identification documents, pens, gate times, and electronics are correctly excluded. No clear off-syllabus or level mismatch is evident.",
+          "score": 9,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph emphasizes interpretation, contextual modeling, evaluating evidence, comparing alternatives, and reviewing written arguments. Manual calculations are appropriate because ENEM assesses them. Rote memorization does not dominate any area, and an AI-tool skill is not required for this exam goal.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 22006,
+          "outputTokens": 1769,
+          "reasoningTokens": 944
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several clear prerequisite edges are missing. 'Interpretar movimentos e seus gráficos' has no dependency on 'Interpretar gráficos e tabelas', despite requiring graph interpretation. 'Resolver problemas de herança genética' explicitly includes probabilities but does not depend on the probability skills. These omissions allow the planner to schedule dependent skills without their supporting capabilities.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The second and third phase milestones are vague: relating concepts across contexts and analyzing more complex cases do not specify sufficiently observable achievements. They provide weaker progress checkpoints than the final milestone's timed writing and question-solving capabilities.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the TRI strategy operational by explicitly teaching an easy-first answering sequence and when to defer difficult questions. Explicitly mapping the essay skills to C1–C5 would also make scored-competency coverage easier to audit, although all five competencies are substantively present.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Exam goal with a blueprint: all four areas (Linguagens, Humanas, Natureza, Matemática) and the essay must be covered, including the five essay competencies (C1 to C5)\n      - Exam weights must follow the blueprint's frequency: statistics and chart reading, percentages and proportions, ecology, Brazilian history and citizenship, and text interpretation should weigh more than rarely tested topics\n      - Exam strategy the exam scores belongs here, such as keeping answers consistent under item response theory (easy questions first) and managing time\n      - The exam day's procedures (the ID and pen to bring, gate times, electronics) aren't skills: the app's exam-day checklist covers them. A skill about following the exam's procedures or what to bring is a mistake\n      - Topics outside the ENEM syllabus don't belong\n      - The graph maps the whole exam; prioritization is the planner's job, but weights must make it possible\n      - Starting point: ENEM's candidates are finishing secondary school, so Portuguese, mathematics and science skills sit at the depth ENEM asks (mostly the intermediate band or above). Elementary content, such as naming word classes, reading everyday notices, invitations or recipes, or drilling basic arithmetic, doesn't belong\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-enem-2026-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "ENEM (Exame Nacional do Ensino Médio), two Sundays",
+            "notes": [
+              "Format: 5 options per question, no penalty for wrong answers. 5h30 on day 1, 5h on day 2.",
+              "Scoring: item response theory (TRI). Getting hard questions right while missing easy ones counts as inconsistent and lowers the score.",
+              "Rule: Essay: dissertative-argumentative text on a social issue, graded 0 to 1000 in five competencies of 200 points each: C1 formal written Portuguese; C2 understanding the prompt and building a dissertative-argumentative text with knowledge from several areas; C3 selecting and organizing arguments; C4 cohesion; C5 an intervention proposal that respects human rights.",
+              "Rule: Bring an official photo ID and a black ballpoint pen in transparent material. Gates close at 13h. Phones and other electronics stay off, in the envelope provided, for the whole exam."
+            ],
+            "subjects": [
+              {
+                "group": "Dia 1",
+                "name": "Linguagens, Códigos e suas Tecnologias",
+                "questions": 45,
+                "topics": [
+                  "Interpretação de textos e gêneros textuais",
+                  "Funções da linguagem e variação linguística",
+                  "Movimentos literários",
+                  "Artes",
+                  "Educação física e tecnologias da comunicação",
+                  "Leitura em língua estrangeira (inglês ou espanhol)"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Dia 1",
+                "name": "Ciências Humanas e suas Tecnologias",
+                "questions": 45,
+                "topics": [
+                  "Brasil colônia, império e república",
+                  "Cidadania, movimentos sociais e direitos",
+                  "Meio ambiente e geografia do Brasil",
+                  "História antiga e medieval",
+                  "Clássicos da filosofia e da sociologia",
+                  "Urbanização e questões agrárias"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Dia 1",
+                "name": "Redação",
+                "questions": null,
+                "topics": [
+                  "Texto dissertativo-argumentativo sobre um problema social"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Dia 2",
+                "name": "Ciências da Natureza e suas Tecnologias",
+                "questions": 45,
+                "topics": [
+                  "Ecologia e meio ambiente",
+                  "Fisiologia humana e saúde",
+                  "Genética",
+                  "Eletricidade e energia",
+                  "Mecânica",
+                  "Química orgânica",
+                  "Estequiometria e soluções",
+                  "Eletroquímica"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Dia 2",
+                "name": "Matemática e suas Tecnologias",
+                "questions": 45,
+                "topics": [
+                  "Estatística e leitura de gráficos e tabelas",
+                  "Porcentagem e proporção",
+                  "Geometria plana e espacial",
+                  "Funções",
+                  "Probabilidade e contagem",
+                  "Matemática financeira"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": [
+              {
+                "level": "high",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Estatística e leitura de gráficos e tabelas"
+              },
+              {
+                "level": "high",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Porcentagem e proporção"
+              },
+              {
+                "level": "medium",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Geometria plana e espacial"
+              },
+              {
+                "level": "low",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Matemática financeira"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Ecologia e meio ambiente"
+              },
+              {
+                "level": "low",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Eletroquímica"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências Humanas e suas Tecnologias",
+                "topic": "Brasil colônia, império e república"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências Humanas e suas Tecnologias",
+                "topic": "Cidadania, movimentos sociais e direitos"
+              },
+              {
+                "level": "low",
+                "subject": "Ciências Humanas e suas Tecnologias",
+                "topic": "História antiga e medieval"
+              },
+              {
+                "level": "high",
+                "subject": "Linguagens, Códigos e suas Tecnologias",
+                "topic": "Interpretação de textos e gêneros textuais"
+              },
+              {
+                "level": "low",
+                "subject": "Linguagens, Códigos e suas Tecnologias",
+                "topic": "Artes"
+              }
+            ]
+          },
+          "goal": "ENEM",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All named pillars are explicitly covered: check-in and checkout, complaints, telephone reservations, directions and recommendations, guest small talk, short emails, and understanding colleagues and workplace instructions. Additional relevant areas include emergencies, accessibility, billing discrepancies and shift handovers. No coverage cap is triggered.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The graph is followable, prerequisites generally point backwards, and phase titles describe distinct stages rather than duplicating taught topics. However, 'Tramitar una reserva' explicitly includes telephone reservations without listing 'Contestar al teléfono del hotel' as a direct prerequisite, triggering the cap of 8 for a central prerequisite error. Basic small talk and transferring calls also sit unusually late relative to more demanding tasks.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The phase estimates sum correctly to 161 hours, a defensible vocational study budget rather than a claim of comprehensive English fluency. However, 22 lessons for explaining wifi access and 24 for communicating check-in and checkout times are oversized compared with 30–32 lessons for de-escalation or understanding varied accents. These narrow areas need consolidation or smaller estimates, triggering the cap of 8 for a clearly mis-sized area.",
+          "score": 8,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Almost all skills directly support hotel communication, with no introductory, motivational or recap padding. 'Comprar y pagar productos cotidianos' is an off-role shopping skill; understanding prices and payments could instead be taught directly through reception transactions. This one unnecessary standalone skill triggers the cap of 8.",
+          "score": 8,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The practical can-dos strongly match reception work, avoid standalone grammar instruction and do not dwell on the alphabet. Spanish wording is generally appropriate for Spain. The clear mismatch is the course-wide 'Inglés estadounidense' framing for a London job, reinforced by a final-phase skill comparing British terminology with American English. Earlier references to British formats and vocabulary mitigate but do not remove that mismatch, so the cap of 8 applies.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The map develops valuable human judgment through clarification, checking discrepancies, respecting authorised options, de-escalation and discreet handling of guest information. It is not predominantly rote. However, this workplace-focused path includes no skill for directing and checking AI assistance—for example, drafting a guest email and verifying its dates, conditions, tone and privacy—triggering the cap of 8.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 10405,
+          "outputTokens": 1904,
+          "reasoningTokens": 1034
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The entire course is framed as American English despite the learner needing English for a London hotel. British terminology is partly included, but treating it as a late comparison with American English weakens the course's central fit. The workplace-focused map also lacks a skill for using and checking AI assistance in guest correspondence.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Telephone reservation handling omits the direct prerequisite for answering hotel calls. Several narrow tasks, such as explaining wifi access, receive almost as many lessons as substantially broader communication skills. Shopping in a shop or café is unnecessary as a separate skill for this reception role. Basic small talk and call transfers are postponed until the final phase.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the A1/A2-to-B1/B2 progression explicit, use more reusable names instead of location-specific titles such as 'Orientar sobre transporte en Londres', and distinguish basic small talk taught early from more demanding conversations taught later.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Spain Spanish (not Latin American Spanish): names and descriptions in European Spanish vocabulary and forms\n      - Language goal: skills are real situations with can-dos for working at a hotel in London, such as checking guests in and out, handling complaints, taking phone reservations, giving directions and recommendations, small talk with guests, writing short emails to guests, and understanding colleagues and instructions at work\n      - Ordered by CEFR level from A1/A2 (beginner) to B1/B2 (intermediate); the learner has a basic level, so the path should not dwell on the alphabet\n      - Grammar lives inside situations, not as standalone grammar skills\n      - The course is English itself, titled in Spanish (for example \"Inglés\")\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "es-language-english-hotel-1",
+        "userInput": {
+          "context": "Me voy a Londres en marzo para trabajar en la recepción de un hotel. Entiendo un poco de inglés pero me cuesta hablar.",
+          "goal": "Aprender inglés para trabajar en un hotel en Londres",
+          "goalKind": "language",
+          "language": "es",
+          "ownLevel": "basic",
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "The graph explicitly covers joins, aggregation, windows, spreadsheets, descriptive statistics, conversion, retention, average order value, charts, experiment hypotheses, sample size, inference, peeking, business communication, and AI assistance. However, validation is not a substitute for cleaning data, and reports and charts do not explicitly cover dashboards. These two omissions trigger the maximum score of 7.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Most dependencies are sensible, courses are recognizable subjects, and the phase titles describe distinct stages. One central prerequisite problem remains: phase 3 asks learners to plan powered experiments and record decision criteria before phase 4 teaches confidence intervals and p-values. The inference foundation should precede the planning chain and be linked explicitly. This triggers the maximum score of 8 for a central ordering error.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 31 skills are consistently sized at 7–12 lessons and generally represent coherent actions rather than whole courses or trivia. The 305 three-minute lessons account for 15.25 hours, leaving another 15.25 hours for practice and review within the 30.5-hour estimate. For a junior already using SQL and Sheets, this is a plausible focused improvement path rather than a claim of mastery from zero.",
+          "score": 9,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Every skill supports reporting, investigation, experimentation, or communicating analysis at work. There are no introduction-only skills, motivational content, career advice, deep machine learning detours, or substantially duplicative skills. Documentation and data-grain skills have clear operational purposes.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The content closely matches the learner's e-commerce reporting responsibilities and new A/B testing duties. It uses Google Sheets, SQL, and ChatGPT, starts above elementary arithmetic, and uses US English. The path emphasizes practical workplace decisions rather than unrelated theory or career development.",
+          "score": 9,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "An explicit skill teaches using ChatGPT to draft and review queries and explanations while protecting company data and verifying outputs. The wider graph emphasizes metric definitions, data integrity, uncertainty, reproducibility, and decision judgment rather than rote syntax. Concrete adversarial checking exercises would make the AI practice stronger, but the essential tool-use and verification capability is present.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6691,
+          "outputTokens": 1318,
+          "reasoningTokens": 500
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Two required capabilities are not explicitly represented: cleaning data and building dashboards. Checking missing values and duplicates does not teach how to resolve them, and organizing a weekly report does not establish dashboard-building skills. Experiment planning also precedes the inference knowledge needed to choose significance-based decision criteria.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Several skill names are unnecessarily domain-specific rather than broadly reusable, including 'Identify e-commerce data grain' and 'Join e-commerce tables safely.' Keep the e-commerce context in descriptions and use generic action names such as 'Identify data grain' and 'Join tables safely.'",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the AI skill more actionable with explicit practice catching fabricated results, independently reconciling AI-generated numbers, and testing generated queries against known examples. These would strengthen an already relevant drafting-and-verification skill.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Work goal: target the learner's real tasks: SQL (joins, aggregation, window functions), spreadsheets, cleaning data, descriptive statistics, defining business metrics (conversion, retention, average order value), charts and dashboards, A/B testing (hypotheses, sample size, significance, common pitfalls such as peeking), and explaining results to non-technical people\n      - Must include using AI tools well for analysis: writing and checking queries with AI, spotting wrong AI analyses, not trusting unverified numbers\n      - Should not drift into deep machine learning theory or general career advice the learner didn't ask for\n      - Starts from basic knowledge, not from zero arithmetic\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-data-analyst-work-1",
+        "userInput": {
+          "context": "I'm a junior data analyst at an e-commerce company. I build weekly sales reports in Google Sheets and SQL, and my manager wants me to run A/B tests and explain the results. We use ChatGPT at work.",
+          "goal": "Get better at data analysis for my job",
+          "goalKind": "learn",
+          "language": "en",
+          "ownLevel": "basic",
+          "purpose": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All supplied top-level topics have corresponding skills, and frequent topics generally receive greater weights than water, thermochemistry, and mechanics. However, topic tags overstate demonstrated depth in places: calorimetry and heat transfer do not explicitly cover thermal expansion, and radiation applications do not establish nuclear transformations, radioactive decay, fission, or fusion. These are content gaps within represented pillars, rather than an entirely missing course.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Several prerequisite errors trigger the cap of 7. Stoichiometry lacks prior mole instruction; solutions lack the explicitly required balanced-equation and mole dependencies. Thermodynamics inherits a Newtonian-mechanics dependency through mechanical energy. Other gates, such as graph interpretation before statistical measures, are not consistently hard dependencies. Conversely, listed dependencies appear earlier, ecology avoids the prohibited biology dependencies, inheritance builds on meiosis, and the phase titles appropriately describe stages rather than topics.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 261.6-hour total is plausible for preparation across the two large subject areas, and the skills are mostly chapter-sized rather than trivia-sized. Allocation is less convincing locally: the entire integration of human organ systems receives almost the same lesson count as membrane transport, and broad organism classification receives a similarly narrow allocation. This is a clearly unevenly sized area, applying the cap of 8, but the graph remains usable.",
+          "score": 8,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The supplied scope contains only Natural Sciences and Mathematics. Five essay skills are therefore unnecessary to this particular map, even though they would be useful in a broader ENEM plan. The additional time-management/TRI skill teaches test strategy rather than a scored subject ability. Four or more unnecessary skills trigger the cap of 6. The in-scope subject skills otherwise contain little motivational or introductory filler.",
+          "score": 6,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The substantive science and mathematics skills are appropriate to ENEM, use Brazilian Portuguese, and emphasize contextual problem solving. However, adding an essay course, five essay skills, and an essay-writing phase milestone repeatedly expands the expressly supplied two-subject scope. This pattern of mismatches triggers the cap of 7; it does not make the entire graph serve a different goal.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph emphasizes modeling, interpreting representations, comparing explanations, evaluating research conclusions, and assessing environmental and health impacts. Its manual calculations are appropriate to abilities assessed by the exam, not unnecessary automation-resistant busywork. AI-tool instruction is not required for this exam goal, and no rote-dominated area is evident.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 16609,
+          "outputTokens": 1445,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The prerequisite graph violates explicit requirements: no prerequisite skill establishes the mole before stoichiometry, and solutions depend on neither balanced equations nor the mole. Thermodynamics indirectly requires Newton's laws through mechanical energy, unnecessarily gating thermal physics behind mechanics. The map also expands beyond the supplied two-subject blueprint with five essay skills and a test-management skill.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some additional prerequisites are textbook-style rather than hard dependencies: interpreting statistical measures requires graph interpretation, and geometrical optics requires the entire waves skill. Coverage labels are comprehensive, but descriptions do not establish some required ENEM content, including thermal expansion and nuclear transformations. Skill sizes also vary substantially despite similar lesson allocations—for example, all human physiological systems receive 34 lessons while membrane transport receives 28.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Preserve the independent ecology entry point and the generally appropriate frequency-based weights. Make the more extensive topic descriptions explicit enough to audit their ENEM depth, calibrate lesson allocations to breadth, and distinguish lesson time from practice and review time within the otherwise plausible total estimate.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Two subjects of the ENEM notice: every topic of both is taught by some skill, at the depth ENEM asks\n      - Prerequisites are hard dependencies only: a skill lists a prerequisite only when its lessons can't be followed without it, never because it comes earlier in a textbook or in the same subject. Most skills have none, one or two\n      - Ecology and environmental science skills (food chains and webs, cycles of matter, population dynamics and relationships between species, environmental impacts) don't depend on cell and tissue biology, the classification of living beings or comparative physiology\n      - Real dependencies stay: stoichiometry and solution concentration build on balanced chemical equations and the mole, and genetics' inheritance patterns build on how genetic information is passed on\n      - Physics topics don't form one chain through mechanics when they don't use it: heat and electricity don't need Newton's laws\n      - Exam weights follow the topic frequency: ecology, cells, heredity, electricity, waves, heat, organic chemistry, statistics and numbers weigh more than water or energy in chemical transformations\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-enem-science-prerequisites-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "ENEM",
+            "notes": [
+              "Format: Múltipla escolha com cinco alternativas, de A a E",
+              "Scoring: Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente.",
+              "Rule: Cada questão tem uma única alternativa correta."
+            ],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Ciências da Natureza e suas Tecnologias",
+                "questions": 45,
+                "topics": [
+                  "Conhecimentos básicos e fundamentais",
+                  "O movimento, o equilíbrio e a descoberta de leis físicas",
+                  "Energia, trabalho e potência",
+                  "A Mecânica e o funcionamento do Universo",
+                  "Fenômenos Elétricos e Magnéticos",
+                  "Oscilações, ondas, óptica e radiação",
+                  "O calor e os fenômenos térmicos",
+                  "Transformações Químicas",
+                  "Representação das transformações químicas",
+                  "Materiais, suas propriedades e usos",
+                  "Água",
+                  "Transformações Químicas e Energia",
+                  "Dinâmica das Transformações Químicas",
+                  "Transformação Química e Equilíbrio",
+                  "Compostos de Carbono",
+                  "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente",
+                  "Energias Químicas no Cotidiano",
+                  "Moléculas, células e tecidos",
+                  "Hereditariedade e diversidade da vida",
+                  "Identidade dos seres vivos",
+                  "Ecologia e ciências ambientais",
+                  "Origem e evolução da vida",
+                  "Qualidade de vida das populações humanas"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Matemática e suas Tecnologias",
+                "questions": 45,
+                "topics": [
+                  "Conhecimentos numéricos",
+                  "Conhecimentos geométricos",
+                  "Conhecimentos de estatística e probabilidade",
+                  "Conhecimentos algébricos",
+                  "Conhecimentos algébricos/geométricos"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": [
+              {
+                "level": "high",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Conhecimentos numéricos"
+              },
+              {
+                "level": "high",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Conhecimentos de estatística e probabilidade"
+              },
+              {
+                "level": "medium",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Conhecimentos algébricos"
+              },
+              {
+                "level": "medium",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "O movimento, o equilíbrio e a descoberta de leis físicas"
+              },
+              {
+                "level": "medium",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Energia, trabalho e potência"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Fenômenos Elétricos e Magnéticos"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Oscilações, ondas, óptica e radiação"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "O calor e os fenômenos térmicos"
+              },
+              {
+                "level": "medium",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Transformações Químicas"
+              },
+              {
+                "level": "medium",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Materiais, suas propriedades e usos"
+              },
+              {
+                "level": "low",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Água"
+              },
+              {
+                "level": "medium",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Transformações Químicas e Energia"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Dinâmica das Transformações Químicas"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Compostos de Carbono"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Moléculas, células e tecidos"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Hereditariedade e diversidade da vida"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Ecologia e ciências ambientais"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Qualidade de vida das populações humanas"
+              }
+            ]
+          },
+          "goal": "ENEM",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Every supplied blueprint area and named topic appears, including essay development and revision, all four physical-test modalities, and the decision to answer or leave an item blank. The explicit frequency guidance is reflected in interpretation and rewriting at weight 4, information security at 3, and dedicated financial-statement skills at 2. No missing-pillar or weighting cap is triggered.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The overall progression is sensible and the phase titles describe stages rather than duplicate subject names. However, multiple dependency omissions trigger the cap of 7: sampling distributions omit continuous/normal distributions; binomial calculations omit combinations; and essay language revision omits the relevant grammar foundations. The second milestone is also insufficiently measurable.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most skills are coherent chapter-sized units with relatively consistent lesson estimates, and 319 hours is a plausible preparation estimate rather than an obviously dishonest total. However, assigning 20 lessons to basic scoring mechanics is clearly oversized relative to both its complexity and neighboring chapters, triggering the cap of 8 for one mis-sized area.",
+          "score": 8,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills serve the supplied examination and physical preparation requirements. Foundational and applied skills generally have distinguishable purposes. The strategy skills are relevant to the exam's negative marking and shared time limit, not unrelated study advice. No filler cap is triggered.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The content is in Brazilian Portuguese and fits university-educated candidates. Portuguese begins with exam-level interpretation, cohesion, and syntax rather than elementary literacy or word-class drills. Beginner entry points in unfamiliar legal, accounting, and computing subjects are appropriate. The graph consistently serves the requested exam.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph emphasizes interpretation, distinctions, application, checking correctness, and judgment under uncertainty. Manual calculations and legal knowledge are appropriate because the examination tests them. An AI-tool skill is not required for this exam goal, and no area is dominated by unnecessary rote procedures.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 23031,
+          "outputTokens": 1306,
+          "reasoningTokens": 492
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several necessary prerequisite edges are missing. Sampling distributions and the central limit theorem depend on the normal-distribution material, but only sampling methods and discrete distributions are prerequisites. Binomial-distribution calculations lack a dependency on combinations. Essay language revision depends only on text structure, not on the grammar skills needed to check correctness. These omissions allow dependent skills to be studied before their foundations.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The scoring-mechanics skill is oversized at 20 lessons, close to the allocation for entire statistical or legal chapters. Its elementary calculation should be much shorter, with practice concentrated in the separate decision-under-uncertainty skill. The second phase's milestone also uses the vague standard 'greater autonomy' rather than an observable performance criterion.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "State the actual scoring rule (+1 correct, −1 incorrect, 0 blank) in the scoring skill and anchor time-management practice to 120 items plus the essay within 4h30. This would make the strategy map more directly usable without requiring the learner to consult the blueprint.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Public-service exam: every block of the blueprint is covered (Portuguese, administrative, constitutional, criminal and procedural law, special legislation, statistics, logic, informática, accounting, the essay) with weights that follow the blueprint's frequency, and the physical tests at least as preparation\n      - Exam strategy the exam scores belongs here: with a wrong item cancelling a right one, deciding when to leave an item blank\n      - Starting point: the exam's candidates are adults with a university degree in any field. Portuguese starts at the depth the exam asks (comprehension, cohesion, syntax, punctuation, agreement, regency and crase, rewriting) in the intermediate band or above. Elementary content, such as naming nouns, articles and numerals, reading notices, invitations or recipes, or drilling basic arithmetic, doesn't belong\n      - Law, accounting and informática may start in the beginner band, since they're new to most candidates\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-cebraspe-policia-federal-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Concurso da Polícia Federal, cargo Agente de Polícia Federal (banca Cebraspe)",
+            "notes": [
+              "Format: objective test of 120 true-or-false items plus an essay, 4h30.",
+              "Scoring: each right item is worth 1 point and each wrong item takes 1 point away; a blank item is worth 0.",
+              "Rule: Essay: a dissertative text on a current topic. Later phases: physical tests (pull-ups, long jump, swimming, timed run)."
+            ],
+            "subjects": [
+              {
+                "group": "Bloco I (60 itens)",
+                "name": "Língua Portuguesa",
+                "questions": null,
+                "topics": [
+                  "Compreensão e interpretação de textos",
+                  "Tipologia e gêneros textuais",
+                  "Coesão textual",
+                  "Sintaxe da oração e do período",
+                  "Pontuação",
+                  "Concordância, regência e crase",
+                  "Colocação dos pronomes átonos",
+                  "Reescrita de frases e parágrafos do texto"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Bloco I (60 itens)",
+                "name": "Noções de Direito Administrativo",
+                "questions": null,
+                "topics": [
+                  "Administração pública",
+                  "Atos administrativos",
+                  "Agentes públicos",
+                  "Poderes administrativos",
+                  "Responsabilidade civil do Estado"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Bloco I (60 itens)",
+                "name": "Noções de Direito Constitucional",
+                "questions": null,
+                "topics": [
+                  "Direitos e garantias fundamentais",
+                  "Organização do Estado",
+                  "Segurança pública"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Bloco I (60 itens)",
+                "name": "Noções de Direito Penal e Processual Penal",
+                "questions": null,
+                "topics": [
+                  "Crimes contra a administração pública",
+                  "Inquérito policial",
+                  "Prisão e liberdade provisória"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Bloco I (60 itens)",
+                "name": "Legislação Especial",
+                "questions": null,
+                "topics": [
+                  "Lei de Drogas",
+                  "Estatuto do Desarmamento",
+                  "Organizações criminosas",
+                  "Abuso de autoridade",
+                  "Crimes hediondos"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Bloco II (36 itens)",
+                "name": "Estatística",
+                "questions": null,
+                "topics": [
+                  "Estatística descritiva",
+                  "Probabilidade",
+                  "Inferência"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Bloco II (36 itens)",
+                "name": "Raciocínio Lógico",
+                "questions": null,
+                "topics": [
+                  "Proposições e equivalências",
+                  "Argumentos",
+                  "Conjuntos",
+                  "Contagem"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Bloco II (36 itens)",
+                "name": "Informática",
+                "questions": null,
+                "topics": [
+                  "Hardware e sistemas operacionais",
+                  "Redes e internet",
+                  "Segurança da informação",
+                  "Computação em nuvem",
+                  "Bancos de dados e SQL",
+                  "Análise de dados"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Bloco III (24 itens)",
+                "name": "Contabilidade Geral",
+                "questions": null,
+                "topics": [
+                  "Patrimônio",
+                  "Registros contábeis",
+                  "Demonstrações contábeis"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": [
+              {
+                "level": "high",
+                "subject": "Língua Portuguesa",
+                "topic": "Compreensão e interpretação de textos"
+              },
+              {
+                "level": "high",
+                "subject": "Língua Portuguesa",
+                "topic": "Reescrita de frases e parágrafos do texto"
+              },
+              {
+                "level": "medium",
+                "subject": "Informática",
+                "topic": "Segurança da informação"
+              },
+              {
+                "level": "low",
+                "subject": "Contabilidade Geral",
+                "topic": "Demonstrações contábeis"
+              }
+            ]
+          },
+          "goal": "Concurso da Polícia Federal, Agente de Polícia Federal",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
+    }
+  ],
+  "taskId": "skill-graph"
+}

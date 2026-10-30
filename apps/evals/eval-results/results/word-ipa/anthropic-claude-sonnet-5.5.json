@@ -2,7 +2,10 @@
   "modelId": "anthropic/claude-sonnet-5.5",
   "results": [
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈnaːmə/ (expected /ˈnaːmə/) and English /neɪm/; the word is look-alike.",
@@ -21,13 +24,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "ˈnaːmə", "english": "neɪm" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "ˈnaːmə",
+          "english": "neɪm"
+        },
         "id": "de-name-1",
-        "userInput": { "language": "de", "word": "Name" }
+        "userInput": {
+          "language": "de",
+          "word": "Name"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /kɪnt/ (expected /kɪnt/) and English /kaɪnd/; the word is look-alike.",
@@ -46,13 +59,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "kɪnt", "english": "kaɪnd" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "kɪnt",
+          "english": "kaɪnd"
+        },
         "id": "de-kind-1",
-        "userInput": { "language": "de", "word": "Kind" }
+        "userInput": {
+          "language": "de",
+          "word": "Kind"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /hant/ (expected /hant/) and English /hænd/; the word is look-alike.",
@@ -71,13 +94,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "hant", "english": "hænd" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "hant",
+          "english": "hænd"
+        },
         "id": "de-hand-1",
-        "userInput": { "language": "de", "word": "Hand" }
+        "userInput": {
+          "language": "de",
+          "word": "Hand"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /baŋk/ (expected /baŋk/) and English /bæŋk/; the word is look-alike.",
@@ -96,13 +129,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "baŋk", "english": "bæŋk" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "baŋk",
+          "english": "bæŋk"
+        },
         "id": "de-bank-1",
-        "userInput": { "language": "de", "word": "Bank" }
+        "userInput": {
+          "language": "de",
+          "word": "Bank"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /vɪnt/ (expected /vɪnt/) and English /wɪnd/; the word is look-alike.",
@@ -121,38 +164,58 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "vɪnt", "english": "wɪnd" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "vɪnt",
+          "english": "wɪnd"
+        },
         "id": "de-wind-1",
-        "userInput": { "language": "de", "word": "Wind" }
+        "userInput": {
+          "language": "de",
+          "word": "Wind"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /frœyt/ (expected /frœyt/) and English /fruːt/; the word is look-alike.",
+          "conclusion": "Wrote /frœyt/ (expected /frœyt/) and English /fɹuːt/; the word is look-alike.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /frœyt/ (expected /frœyt/) and English /fruːt/; the word is look-alike.",
+          "conclusion": "Wrote /frœyt/ (expected /frœyt/) and English /fɹuːt/; the word is look-alike.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /frœyt/ (expected /frœyt/) and English /fruːt/; the word is look-alike.",
+          "conclusion": "Wrote /frœyt/ (expected /frœyt/) and English /fɹuːt/; the word is look-alike.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "frœyt", "english": "fruːt" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "frœyt",
+          "english": "fruːt"
+        },
         "id": "nl-fruit-1",
-        "userInput": { "language": "nl", "word": "fruit" }
+        "userInput": {
+          "language": "nl",
+          "word": "fruit"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /boːt/ (expected /boːt/) and English /buːt/; the word is look-alike.",
@@ -171,13 +234,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "boːt", "english": "buːt" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "boːt",
+          "english": "buːt"
+        },
         "id": "nl-boot-1",
-        "userInput": { "language": "nl", "word": "boot" }
+        "userInput": {
+          "language": "nl",
+          "word": "boot"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /doːr/ (expected /doːr/) and English /dɔːr/; the word is look-alike.",
@@ -196,38 +269,58 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "doːr", "english": "dɔːr" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "doːr",
+          "english": "dɔːr"
+        },
         "id": "nl-door-1",
-        "userInput": { "language": "nl", "word": "door" }
+        "userInput": {
+          "language": "nl",
+          "word": "door"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ˈʃaʁlis/ (expected /ˈʃaʁlis/) and English /tʃɑrlz/; the word is look-alike.",
+          "conclusion": "Wrote /ˈʃaʁlis/ (expected /ˈʃaʁlis/) and English /tʃɑːrlz/; the word is look-alike.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈʃaʁlis/ (expected /ˈʃaʁlis/) and English /tʃɑrlz/; the word is look-alike.",
+          "conclusion": "Wrote /ˈʃaʁlis/ (expected /ˈʃaʁlis/) and English /tʃɑːrlz/; the word is look-alike.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈʃaʁlis/ (expected /ˈʃaʁlis/) and English /tʃɑrlz/; the word is look-alike.",
+          "conclusion": "Wrote /ˈʃaʁlis/ (expected /ˈʃaʁlis/) and English /tʃɑːrlz/; the word is look-alike.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "ˈʃaʁlis", "english": "tʃɑːrlz" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "ˈʃaʁlis",
+          "english": "tʃɑːrlz"
+        },
         "id": "pt-charles-1",
-        "userInput": { "language": "pt", "word": "Charles" }
+        "userInput": {
+          "language": "pt",
+          "word": "Charles"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈtʃĩmi/ (expected /ˈtʃĩmi/) and English /taɪm/; the word is look-alike.",
@@ -246,13 +339,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "ˈtʃĩmi", "english": "taɪm" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "ˈtʃĩmi",
+          "english": "taɪm"
+        },
         "id": "pt-time-1",
-        "userInput": { "language": "pt", "word": "time" }
+        "userInput": {
+          "language": "pt",
+          "word": "time"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈmawzi/ (expected /ˈmawzi/) and English /maʊs/; the word is look-alike.",
@@ -271,13 +374,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "ˈmawzi", "english": "maʊs" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "ˈmawzi",
+          "english": "maʊs"
+        },
         "id": "pt-mouse-1",
-        "userInput": { "language": "pt", "word": "mouse" }
+        "userInput": {
+          "language": "pt",
+          "word": "mouse"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /oˈtɛw/ (expected /oˈtɛw/) and English /hoʊˈtɛl/; the word is look-alike.",
@@ -296,38 +409,58 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "oˈtɛw", "english": "hoʊˈtɛl" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "oˈtɛw",
+          "english": "hoʊˈtɛl"
+        },
         "id": "pt-hotel-1",
-        "userInput": { "language": "pt", "word": "hotel" }
+        "userInput": {
+          "language": "pt",
+          "word": "hotel"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ˈpje/ (expected /pje/) and English /paɪ/; the word is look-alike.",
+          "conclusion": "Wrote /ˈpje/ (expected /pje/) and English /ˈpaɪ/; the word is look-alike.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈpje/ (expected /pje/) and English /paɪ/; the word is look-alike.",
+          "conclusion": "Wrote /ˈpje/ (expected /pje/) and English /ˈpaɪ/; the word is look-alike.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈpje/ (expected /pje/) and English /paɪ/; the word is look-alike.",
+          "conclusion": "Wrote /ˈpje/ (expected /pje/) and English /ˈpaɪ/; the word is look-alike.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "pje", "english": "paɪ" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "pje",
+          "english": "paɪ"
+        },
         "id": "es-pie-1",
-        "userInput": { "language": "es", "word": "pie" }
+        "userInput": {
+          "language": "es",
+          "word": "pie"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈonθe/ (expected /ˈonse/) and English /wʌns/; the word is look-alike.",
@@ -346,13 +479,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "ˈonse", "english": "wʌns" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "ˈonse",
+          "english": "wʌns"
+        },
         "id": "es-once-1",
-        "userInput": { "language": "es", "word": "once" }
+        "userInput": {
+          "language": "es",
+          "word": "once"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈkome/ (expected /ˈkome/) and English /kʌm/; the word is look-alike.",
@@ -371,13 +514,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "ˈkome", "english": "kʌm" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "ˈkome",
+          "english": "kʌm"
+        },
         "id": "es-come-1",
-        "userInput": { "language": "es", "word": "come" }
+        "userInput": {
+          "language": "es",
+          "word": "come"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /akˈtwal/ (expected /akˈtwal/) and English /ˈæktʃuəl/; the word is look-alike.",
@@ -396,13 +549,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "akˈtwal", "english": "ˈæktʃuəl" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "akˈtwal",
+          "english": "ˈæktʃuəl"
+        },
         "id": "es-actual-1",
-        "userInput": { "language": "es", "word": "actual" }
+        "userInput": {
+          "language": "es",
+          "word": "actual"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /pɛ̃/ (expected /pɛ̃/) and English /peɪn/; the word is look-alike.",
@@ -421,13 +584,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "pɛ̃", "english": "peɪn" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "pɛ̃",
+          "english": "peɪn"
+        },
         "id": "fr-pain-1",
-        "userInput": { "language": "fr", "word": "pain" }
+        "userInput": {
+          "language": "fr",
+          "word": "pain"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ʃa/ (expected /ʃa/) and English /tʃæt/; the word is look-alike.",
@@ -446,13 +619,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "ʃa", "english": "tʃæt" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "ʃa",
+          "english": "tʃæt"
+        },
         "id": "fr-chat-1",
-        "userInput": { "language": "fr", "word": "chat" }
+        "userInput": {
+          "language": "fr",
+          "word": "chat"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /kwɛ̃/ (expected /kwɛ̃/) and English /kɔɪn/; the word is look-alike.",
@@ -471,13 +654,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "kwɛ̃", "english": "kɔɪn" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "kwɛ̃",
+          "english": "kɔɪn"
+        },
         "id": "fr-coin-1",
-        "userInput": { "language": "fr", "word": "coin" }
+        "userInput": {
+          "language": "fr",
+          "word": "coin"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /fuʁ/ (expected /fuʁ/) and English /fɔːr/; the word is look-alike.",
@@ -496,13 +689,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "fuʁ", "english": "fɔːr" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "fuʁ",
+          "english": "fɔːr"
+        },
         "id": "fr-four-1",
-        "userInput": { "language": "fr", "word": "four" }
+        "userInput": {
+          "language": "fr",
+          "word": "four"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈpane/ (expected /ˈpaːne/) and English /peɪn/; the word is look-alike.",
@@ -521,13 +724,23 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "ˈpaːne", "english": "peɪn" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "ˈpaːne",
+          "english": "peɪn"
+        },
         "id": "it-pane-1",
-        "userInput": { "language": "it", "word": "pane" }
+        "userInput": {
+          "language": "it",
+          "word": "pane"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈkaze/ (expected /ˈkaːse/) and English /keɪs/; the word is look-alike.",
@@ -546,38 +759,58 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "ˈkaːse", "english": "keɪs" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "ˈkaːse",
+          "english": "keɪs"
+        },
         "id": "it-case-1",
-        "userInput": { "language": "it", "word": "case" }
+        "userInput": {
+          "language": "it",
+          "word": "case"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ˈmale/ (expected /ˈmaːle/) and English /meɪl/; the word is look-alike.",
+          "conclusion": "Wrote /ˈmale/ (expected /ˈmaːle/) and English /ˈmeɪl/; the word is look-alike.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈmale/ (expected /ˈmaːle/) and English /meɪl/; the word is look-alike.",
+          "conclusion": "Wrote /ˈmale/ (expected /ˈmaːle/) and English /ˈmeɪl/; the word is look-alike.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈmale/ (expected /ˈmaːle/) and English /meɪl/; the word is look-alike.",
+          "conclusion": "Wrote /ˈmale/ (expected /ˈmaːle/) and English /ˈmeɪl/; the word is look-alike.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true, "native": "ˈmaːle", "english": "meɪl" },
+        "expected": {
+          "isLookAlike": true,
+          "native": "ˈmaːle",
+          "english": "meɪl"
+        },
         "id": "it-male-1",
-        "userInput": { "language": "it", "word": "male" }
+        "userInput": {
+          "language": "it",
+          "word": "male"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈʃmɛtɐlɪŋ/ (expected /ˈʃmɛtɐlɪŋ/) and English /none/; the word is own word.",
@@ -596,88 +829,124 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false, "native": "ˈʃmɛtɐlɪŋ" },
+        "expected": {
+          "isLookAlike": false,
+          "native": "ˈʃmɛtɐlɪŋ"
+        },
         "id": "de-schmetterling-1",
-        "userInput": { "language": "de", "word": "Schmetterling" }
+        "userInput": {
+          "language": "de",
+          "word": "Schmetterling"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ˈaɪçhœʁnçən/ (expected /ˈaɪçhœʁnçən/) and English /none/; the word is own word.",
+          "conclusion": "Wrote /ˈaɪçˌhœʁnçən/ (expected /ˈaɪçhœʁnçən/) and English /none/; the word is own word.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈaɪçhœʁnçən/ (expected /ˈaɪçhœʁnçən/) and English /none/; the word is own word.",
+          "conclusion": "Wrote /ˈaɪçˌhœʁnçən/ (expected /ˈaɪçhœʁnçən/) and English /none/; the word is own word.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈaɪçhœʁnçən/ (expected /ˈaɪçhœʁnçən/) and English /none/; the word is own word.",
+          "conclusion": "Wrote /ˈaɪçˌhœʁnçən/ (expected /ˈaɪçhœʁnçən/) and English /none/; the word is own word.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false, "native": "ˈaɪçhœʁnçən" },
+        "expected": {
+          "isLookAlike": false,
+          "native": "ˈaɪçhœʁnçən"
+        },
         "id": "de-eichhoernchen-1",
-        "userInput": { "language": "de", "word": "Eichhörnchen" }
+        "userInput": {
+          "language": "de",
+          "word": "Eichhörnchen"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /maɾiˈposa/ (expected /maɾiˈposa/) and English /none/; the word is own word.",
+          "conclusion": "Wrote /mariˈposa/ (expected /maɾiˈposa/) and English /none/; the word is own word.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /maɾiˈposa/ (expected /maɾiˈposa/) and English /none/; the word is own word.",
+          "conclusion": "Wrote /mariˈposa/ (expected /maɾiˈposa/) and English /none/; the word is own word.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /maɾiˈposa/ (expected /maɾiˈposa/) and English /none/; the word is own word.",
+          "conclusion": "Wrote /mariˈposa/ (expected /maɾiˈposa/) and English /none/; the word is own word.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false, "native": "maɾiˈposa" },
+        "expected": {
+          "isLookAlike": false,
+          "native": "maɾiˈposa"
+        },
         "id": "es-mariposa-1",
-        "userInput": { "language": "es", "word": "mariposa" }
+        "userInput": {
+          "language": "es",
+          "word": "mariposa"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ferokaˈril/ (expected /ferokaˈril/) and English /none/; the word is own word.",
+          "conclusion": "Wrote /fe.roka.ˈril/ (expected /ferokaˈril/) and English /none/; the word is own word.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ferokaˈril/ (expected /ferokaˈril/) and English /none/; the word is own word.",
+          "conclusion": "Wrote /fe.roka.ˈril/ (expected /ferokaˈril/) and English /none/; the word is own word.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ferokaˈril/ (expected /ferokaˈril/) and English /none/; the word is own word.",
+          "conclusion": "Wrote /fe.roka.ˈril/ (expected /ferokaˈril/) and English /none/; the word is own word.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false, "native": "ferokaˈril" },
+        "expected": {
+          "isLookAlike": false,
+          "native": "ferokaˈril"
+        },
         "id": "es-ferrocarril-1",
-        "userInput": { "language": "es", "word": "ferrocarril" }
+        "userInput": {
+          "language": "es",
+          "word": "ferrocarril"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /pa.pi.jɔ̃/ (expected /papijɔ̃/) and English /none/; the word is own word.",
@@ -696,13 +965,22 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false, "native": "papijɔ̃" },
+        "expected": {
+          "isLookAlike": false,
+          "native": "papijɔ̃"
+        },
         "id": "fr-papillon-1",
-        "userInput": { "language": "fr", "word": "papillon" }
+        "userInput": {
+          "language": "fr",
+          "word": "papillon"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ɡʁə.nuj/ (expected /ɡʁənuj/) and English /none/; the word is own word.",
@@ -721,13 +999,22 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false, "native": "ɡʁənuj" },
+        "expected": {
+          "isLookAlike": false,
+          "native": "ɡʁənuj"
+        },
         "id": "fr-grenouille-1",
-        "userInput": { "language": "fr", "word": "grenouille" }
+        "userInput": {
+          "language": "fr",
+          "word": "grenouille"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /farˈfalla/ (expected /farˈfalla/) and English /none/; the word is own word.",
@@ -746,13 +1033,22 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false, "native": "farˈfalla" },
+        "expected": {
+          "isLookAlike": false,
+          "native": "farˈfalla"
+        },
         "id": "it-farfalla-1",
-        "userInput": { "language": "it", "word": "farfalla" }
+        "userInput": {
+          "language": "it",
+          "word": "farfalla"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /boʁboˈletɐ/ (expected /boʁboˈletɐ/) and English /none/; the word is own word.",
@@ -771,13 +1067,22 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false, "native": "boʁboˈletɐ" },
+        "expected": {
+          "isLookAlike": false,
+          "native": "boʁboˈletɐ"
+        },
         "id": "pt-borboleta-1",
-        "userInput": { "language": "pt", "word": "borboleta" }
+        "userInput": {
+          "language": "pt",
+          "word": "borboleta"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈvlɪndər/ (expected /ˈvlɪndər/) and English /none/; the word is own word.",
@@ -796,13 +1101,22 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false, "native": "ˈvlɪndər" },
+        "expected": {
+          "isLookAlike": false,
+          "native": "ˈvlɪndər"
+        },
         "id": "nl-vlinder-1",
-        "userInput": { "language": "nl", "word": "vlinder" }
+        "userInput": {
+          "language": "nl",
+          "word": "vlinder"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ɡɪft/ and English /ɡɪft/; the word is look-alike.",
@@ -821,63 +1135,87 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "de-gift-1",
-        "userInput": { "language": "de", "word": "Gift" }
+        "userInput": {
+          "language": "de",
+          "word": "Gift"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /bʁiːf/ and English /briːf/; the word is look-alike.",
+          "conclusion": "Wrote /bʁiːf/ and English /bɹiːf/; the word is look-alike.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /bʁiːf/ and English /briːf/; the word is look-alike.",
+          "conclusion": "Wrote /bʁiːf/ and English /bɹiːf/; the word is look-alike.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /bʁiːf/ and English /briːf/; the word is look-alike.",
+          "conclusion": "Wrote /bʁiːf/ and English /bɹiːf/; the word is look-alike.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "de-brief-1",
-        "userInput": { "language": "de", "word": "Brief" }
+        "userInput": {
+          "language": "de",
+          "word": "Brief"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ʁɔk/ and English /rɑk/; the word is look-alike.",
+          "conclusion": "Wrote /ʁɔk/ and English /rɑːk/; the word is look-alike.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ʁɔk/ and English /rɑk/; the word is look-alike.",
+          "conclusion": "Wrote /ʁɔk/ and English /rɑːk/; the word is look-alike.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ʁɔk/ and English /rɑk/; the word is look-alike.",
+          "conclusion": "Wrote /ʁɔk/ and English /rɑːk/; the word is look-alike.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "de-rock-1",
-        "userInput": { "language": "de", "word": "Rock" }
+        "userInput": {
+          "language": "de",
+          "word": "Rock"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈhɛndi/ and English /ˈhændi/; the word is look-alike.",
@@ -896,13 +1234,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "de-handy-1",
-        "userInput": { "language": "de", "word": "Handy" }
+        "userInput": {
+          "language": "de",
+          "word": "Handy"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /kɔmˈpjuːtɐ/ and English /kəmˈpjuːtər/; the word is look-alike.",
@@ -921,13 +1267,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "de-computer-1",
-        "userInput": { "language": "de", "word": "Computer" }
+        "userInput": {
+          "language": "de",
+          "word": "Computer"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈʋaːtər/ and English /ˈwɔːtər/; the word is look-alike.",
@@ -946,13 +1300,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "nl-water-1",
-        "userInput": { "language": "nl", "word": "water" }
+        "userInput": {
+          "language": "nl",
+          "word": "water"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /slɪm/ and English /slɪm/; the word is look-alike.",
@@ -971,13 +1333,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "nl-slim-1",
-        "userInput": { "language": "nl", "word": "slim" }
+        "userInput": {
+          "language": "nl",
+          "word": "slim"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ʁeˈaw/ and English /ˈriːəl/; the word is look-alike.",
@@ -996,38 +1366,54 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "pt-real-1",
-        "userInput": { "language": "pt", "word": "real" }
+        "userInput": {
+          "language": "pt",
+          "word": "real"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /maˈɾi.ɐ/ and English /məˈriːə/; the word is look-alike.",
+          "conclusion": "Wrote /maˈɾi.a/ and English /məˈriːə/; the word is look-alike.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /maˈɾi.ɐ/ and English /məˈriːə/; the word is look-alike.",
+          "conclusion": "Wrote /maˈɾi.a/ and English /məˈriːə/; the word is look-alike.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /maˈɾi.ɐ/ and English /məˈriːə/; the word is look-alike.",
+          "conclusion": "Wrote /maˈɾi.a/ and English /məˈriːə/; the word is look-alike.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "pt-maria-1",
-        "userInput": { "language": "pt", "word": "Maria" }
+        "userInput": {
+          "language": "pt",
+          "word": "Maria"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈpan/ and English /ˈpæn/; the word is look-alike.",
@@ -1046,38 +1432,54 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "es-pan-1",
-        "userInput": { "language": "es", "word": "pan" }
+        "userInput": {
+          "language": "es",
+          "word": "pan"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /son/ and English /sʌn/; the word is look-alike.",
+          "conclusion": "Wrote /son/ and English /sɒn/; the word is look-alike.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /son/ and English /sʌn/; the word is look-alike.",
+          "conclusion": "Wrote /son/ and English /sɒn/; the word is look-alike.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /son/ and English /sʌn/; the word is look-alike.",
+          "conclusion": "Wrote /son/ and English /sɒn/; the word is look-alike.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "es-son-1",
-        "userInput": { "language": "es", "word": "son" }
+        "userInput": {
+          "language": "es",
+          "word": "son"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /kaˈfe/ and English /kæˈfeɪ/; the word is look-alike.",
@@ -1096,13 +1498,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "es-cafe-1",
-        "userInput": { "language": "es", "word": "café" }
+        "userInput": {
+          "language": "es",
+          "word": "café"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /mɛ̃/ and English /meɪn/; the word is look-alike.",
@@ -1121,13 +1531,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "fr-main-1",
-        "userInput": { "language": "fr", "word": "main" }
+        "userInput": {
+          "language": "fr",
+          "word": "main"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /paʁi/ and English /ˈpærɪs/; the word is look-alike.",
@@ -1146,13 +1564,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "fr-paris-1",
-        "userInput": { "language": "fr", "word": "Paris" }
+        "userInput": {
+          "language": "fr",
+          "word": "Paris"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ka.fe/ and English /kæˈfeɪ/; the word is look-alike.",
@@ -1171,38 +1597,54 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "fr-cafe-1",
-        "userInput": { "language": "fr", "word": "café" }
+        "userInput": {
+          "language": "fr",
+          "word": "café"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ˈkaːmera/ and English /ˈkæm(ə)rə/; the word is look-alike.",
+          "conclusion": "Wrote /ˈkamera/ and English /ˈkæmərə/; the word is look-alike.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈkaːmera/ and English /ˈkæm(ə)rə/; the word is look-alike.",
+          "conclusion": "Wrote /ˈkamera/ and English /ˈkæmərə/; the word is look-alike.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈkaːmera/ and English /ˈkæm(ə)rə/; the word is look-alike.",
+          "conclusion": "Wrote /ˈkamera/ and English /ˈkæmərə/; the word is look-alike.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "it-camera-1",
-        "userInput": { "language": "it", "word": "camera" }
+        "userInput": {
+          "language": "it",
+          "word": "camera"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈdove/ and English /dʌv/; the word is look-alike.",
@@ -1221,13 +1663,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "it-dove-1",
-        "userInput": { "language": "it", "word": "dove" }
+        "userInput": {
+          "language": "it",
+          "word": "dove"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈkane/ and English /keɪn/; the word is look-alike.",
@@ -1246,13 +1696,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "it-cane-1",
-        "userInput": { "language": "it", "word": "cane" }
+        "userInput": {
+          "language": "it",
+          "word": "cane"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /pan/ and English /pæn/; the word is look-alike.",
@@ -1271,38 +1729,54 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "pl-pan-1",
-        "userInput": { "language": "pl", "word": "pan" }
+        "userInput": {
+          "language": "pl",
+          "word": "pan"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ˈbɑːɳ/ and English /ˈbɑːrn/; the word is look-alike.",
+          "conclusion": "Wrote /ˈbɑːɳ/ and English /bɑːrn/; the word is look-alike.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈbɑːɳ/ and English /ˈbɑːrn/; the word is look-alike.",
+          "conclusion": "Wrote /ˈbɑːɳ/ and English /bɑːrn/; the word is look-alike.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈbɑːɳ/ and English /ˈbɑːrn/; the word is look-alike.",
+          "conclusion": "Wrote /ˈbɑːɳ/ and English /bɑːrn/; the word is look-alike.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "sv-barn-1",
-        "userInput": { "language": "sv", "word": "barn" }
+        "userInput": {
+          "language": "sv",
+          "word": "barn"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ɕɪs/ and English /kɪs/; the word is look-alike.",
@@ -1321,63 +1795,87 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "sv-kiss-1",
-        "userInput": { "language": "sv", "word": "kiss" }
+        "userInput": {
+          "language": "sv",
+          "word": "kiss"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /on/ and English /ɒn/; the word is look-alike.",
+          "conclusion": "Wrote /ˈon/ and English /ɒn/; the word is look-alike.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /on/ and English /ɒn/; the word is look-alike.",
+          "conclusion": "Wrote /ˈon/ and English /ɒn/; the word is look-alike.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /on/ and English /ɒn/; the word is look-alike.",
+          "conclusion": "Wrote /ˈon/ and English /ɒn/; the word is look-alike.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "tr-on-1",
-        "userInput": { "language": "tr", "word": "on" }
+        "userInput": {
+          "language": "tr",
+          "word": "on"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ˈa.ir/ and English /ɛər/; the word is look-alike.",
+          "conclusion": "Wrote /ˈa.ir/ and English /ɛɹ/; the word is look-alike.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈa.ir/ and English /ɛər/; the word is look-alike.",
+          "conclusion": "Wrote /ˈa.ir/ and English /ɛɹ/; the word is look-alike.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ˈa.ir/ and English /ɛər/; the word is look-alike.",
+          "conclusion": "Wrote /ˈa.ir/ and English /ɛɹ/; the word is look-alike.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "id-air-1",
-        "userInput": { "language": "id", "word": "air" }
+        "userInput": {
+          "language": "id",
+          "word": "air"
+        }
       }
     },
     {
-      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈpatʃe/ and English /peɪs/; the word is look-alike.",
@@ -1396,13 +1894,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": true },
+        "expected": {
+          "isLookAlike": true
+        },
         "id": "ro-pace-1",
-        "userInput": { "language": "ro", "word": "pace" }
+        "userInput": {
+          "language": "ro",
+          "word": "pace"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /hʊnt/ and English /none/; the word is own word.",
@@ -1421,13 +1927,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "de-hund-1",
-        "userInput": { "language": "de", "word": "Hund" }
+        "userInput": {
+          "language": "de",
+          "word": "Hund"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "look-alike" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
           "conclusion": "Wrote /haʊ̯s/ and English /haʊs/; the word is own word.",
@@ -1446,13 +1960,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "de-haus-1",
-        "userInput": { "language": "de", "word": "Haus" }
+        "userInput": {
+          "language": "de",
+          "word": "Haus"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈmɛːtçən/ and English /none/; the word is own word.",
@@ -1471,13 +1993,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "de-maedchen-1",
-        "userInput": { "language": "de", "word": "Mädchen" }
+        "userInput": {
+          "language": "de",
+          "word": "Mädchen"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈbʁøːtçən/ and English /none/; the word is own word.",
@@ -1496,38 +2026,54 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "de-broetchen-1",
-        "userInput": { "language": "de", "word": "Brötchen" }
+        "userInput": {
+          "language": "de",
+          "word": "Brötchen"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "look-alike" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ˈjʏʁɡŋ̩/ and English /ˈjɜːrɡən/; the word is own word.",
+          "conclusion": "Wrote /ˈjʏʁɡn̩/ and English /ˈjʊərɡən/; the word is own word.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Wrote /ˈjʏʁɡŋ̩/ and English /ˈjɜːrɡən/; the word is own word.",
+          "conclusion": "Wrote /ˈjʏʁɡn̩/ and English /ˈjʊərɡən/; the word is own word.",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "Wrote /ˈjʏʁɡŋ̩/ and English /ˈjɜːrɡən/; the word is own word.",
+          "conclusion": "Wrote /ˈjʏʁɡn̩/ and English /ˈjʊərɡən/; the word is own word.",
           "kind": "potentialImprovements",
           "score": 6
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "de-juergen-1",
-        "userInput": { "language": "de", "word": "Jürgen" }
+        "userInput": {
+          "language": "de",
+          "word": "Jürgen"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /fits/ and English /none/; the word is own word.",
@@ -1546,38 +2092,54 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "nl-fiets-1",
-        "userInput": { "language": "nl", "word": "fiets" }
+        "userInput": {
+          "language": "nl",
+          "word": "fiets"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ɣəˈzɛləχ/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /ɣəˈzɛləɣ/ and English /none/; the word is own word.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ɣəˈzɛləχ/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /ɣəˈzɛləɣ/ and English /none/; the word is own word.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ɣəˈzɛləχ/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /ɣəˈzɛləɣ/ and English /none/; the word is own word.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "nl-gezellig-1",
-        "userInput": { "language": "nl", "word": "gezellig" }
+        "userInput": {
+          "language": "nl",
+          "word": "gezellig"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /kaːs/ and English /none/; the word is own word.",
@@ -1596,88 +2158,120 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "nl-kaas-1",
-        "userInput": { "language": "nl", "word": "kaas" }
+        "userInput": {
+          "language": "nl",
+          "word": "kaas"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "look-alike" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /sawˈdadʒi/ and English /saʊˈdɑːdə/; the word is own word.",
+          "conclusion": "Wrote /sawˈdadʒi/ and English /saʊˈdɑːdi/; the word is own word.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Wrote /sawˈdadʒi/ and English /saʊˈdɑːdə/; the word is own word.",
+          "conclusion": "Wrote /sawˈdadʒi/ and English /saʊˈdɑːdi/; the word is own word.",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "Wrote /sawˈdadʒi/ and English /saʊˈdɑːdə/; the word is own word.",
+          "conclusion": "Wrote /sawˈdadʒi/ and English /saʊˈdɑːdi/; the word is own word.",
           "kind": "potentialImprovements",
           "score": 6
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "pt-saudade-1",
-        "userInput": { "language": "pt", "word": "saudade" }
+        "userInput": {
+          "language": "pt",
+          "word": "saudade"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ʒɐˈnɛlɐ/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /ʒaˈnɛlɐ/ and English /none/; the word is own word.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ʒɐˈnɛlɐ/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /ʒaˈnɛlɐ/ and English /none/; the word is own word.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /ʒɐˈnɛlɐ/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /ʒaˈnɛlɐ/ and English /none/; the word is own word.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "pt-janela-1",
-        "userInput": { "language": "pt", "word": "janela" }
+        "userInput": {
+          "language": "pt",
+          "word": "janela"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "look-alike"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /ʒuˈɐ̃w̃/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /ʒuˈɐ̃w̃/ and English /dʒoʊ/; the word is own word.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Wrote /ʒuˈɐ̃w̃/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /ʒuˈɐ̃w̃/ and English /dʒoʊ/; the word is own word.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Wrote /ʒuˈɐ̃w̃/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /ʒuˈɐ̃w̃/ and English /dʒoʊ/; the word is own word.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "pt-joao-1",
-        "userInput": { "language": "pt", "word": "João" }
+        "userInput": {
+          "language": "pt",
+          "word": "João"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈpero/ and English /none/; the word is own word.",
@@ -1696,13 +2290,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "es-perro-1",
-        "userInput": { "language": "es", "word": "perro" }
+        "userInput": {
+          "language": "es",
+          "word": "perro"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /benˈtana/ and English /none/; the word is own word.",
@@ -1721,13 +2323,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "es-ventana-1",
-        "userInput": { "language": "es", "word": "ventana" }
+        "userInput": {
+          "language": "es",
+          "word": "ventana"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈfutβol/ and English /none/; the word is own word.",
@@ -1746,13 +2356,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "es-futbol-1",
-        "userInput": { "language": "es", "word": "fútbol" }
+        "userInput": {
+          "language": "es",
+          "word": "fútbol"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /maˈɲana/ and English /none/; the word is own word.",
@@ -1771,38 +2389,54 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "es-manana-1",
-        "userInput": { "language": "es", "word": "mañana" }
+        "userInput": {
+          "language": "es",
+          "word": "mañana"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /fə.nɛtʁ/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /fəˈnɛtʁ/ and English /none/; the word is own word.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /fə.nɛtʁ/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /fəˈnɛtʁ/ and English /none/; the word is own word.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /fə.nɛtʁ/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /fəˈnɛtʁ/ and English /none/; the word is own word.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "fr-fenetre-1",
-        "userInput": { "language": "fr", "word": "fenêtre" }
+        "userInput": {
+          "language": "fr",
+          "word": "fenêtre"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ʃjɛ̃/ and English /none/; the word is own word.",
@@ -1821,63 +2455,87 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "fr-chien-1",
-        "userInput": { "language": "fr", "word": "chien" }
+        "userInput": {
+          "language": "fr",
+          "word": "chien"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /mɛ.zɔ̃/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /mɛzɔ̃/ and English /none/; the word is own word.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /mɛ.zɔ̃/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /mɛzɔ̃/ and English /none/; the word is own word.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /mɛ.zɔ̃/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /mɛzɔ̃/ and English /none/; the word is own word.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "fr-maison-1",
-        "userInput": { "language": "fr", "word": "maison" }
+        "userInput": {
+          "language": "fr",
+          "word": "maison"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "look-alike" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /bənwa/ and English /bɛnˈwɑ/; the word is own word.",
+          "conclusion": "Wrote /bənwa/ and English /none/; the word is own word.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Wrote /bənwa/ and English /bɛnˈwɑ/; the word is own word.",
+          "conclusion": "Wrote /bənwa/ and English /none/; the word is own word.",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Wrote /bənwa/ and English /bɛnˈwɑ/; the word is own word.",
+          "conclusion": "Wrote /bənwa/ and English /none/; the word is own word.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "fr-benoit-1",
-        "userInput": { "language": "fr", "word": "Benoît" }
+        "userInput": {
+          "language": "fr",
+          "word": "Benoît"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /biʎˈʎetto/ and English /none/; the word is own word.",
@@ -1896,13 +2554,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "it-biglietto-1",
-        "userInput": { "language": "it", "word": "biglietto" }
+        "userInput": {
+          "language": "it",
+          "word": "biglietto"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈɡatto/ and English /none/; the word is own word.",
@@ -1921,13 +2587,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "it-gatto-1",
-        "userInput": { "language": "it", "word": "gatto" }
+        "userInput": {
+          "language": "it",
+          "word": "gatto"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈstra.da/ and English /none/; the word is own word.",
@@ -1946,38 +2620,54 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "it-strada-1",
-        "userInput": { "language": "it", "word": "strada" }
+        "userInput": {
+          "language": "it",
+          "word": "strada"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
-          "conclusion": "Wrote /d͡ʑɛŋˈkujɛ/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /d͡ʑɛŋˈkui̯ɛ̃/ and English /none/; the word is own word.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /d͡ʑɛŋˈkujɛ/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /d͡ʑɛŋˈkui̯ɛ̃/ and English /none/; the word is own word.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Wrote /d͡ʑɛŋˈkujɛ/ and English /none/; the word is own word.",
+          "conclusion": "Wrote /d͡ʑɛŋˈkui̯ɛ̃/ and English /none/; the word is own word.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "pl-dziekuje-1",
-        "userInput": { "language": "pl", "word": "dziękuję" }
+        "userInput": {
+          "language": "pl",
+          "word": "dziękuję"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /ˈfœnstɛr/ and English /none/; the word is own word.",
@@ -1996,13 +2686,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "sv-fonster-1",
-        "userInput": { "language": "sv", "word": "fönster" }
+        "userInput": {
+          "language": "sv",
+          "word": "fönster"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /teʃecˈcyɾ/ and English /none/; the word is own word.",
@@ -2021,13 +2719,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "tr-tesekkur-1",
-        "userInput": { "language": "tr", "word": "teşekkür" }
+        "userInput": {
+          "language": "tr",
+          "word": "teşekkür"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /təˈrima/ and English /none/; the word is own word.",
@@ -2046,13 +2752,21 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "id-terima-1",
-        "userInput": { "language": "id", "word": "terima" }
+        "userInput": {
+          "language": "id",
+          "word": "terima"
+        }
       }
     },
     {
-      "classification": { "expected": "own word", "predicted": "own word" },
+      "classification": {
+        "expected": "own word",
+        "predicted": "own word"
+      },
       "steps": [
         {
           "conclusion": "Wrote /fe̯reˈastrə/ and English /none/; the word is own word.",
@@ -2071,9 +2785,14 @@
         }
       ],
       "testCase": {
-        "expected": { "isLookAlike": false },
+        "expected": {
+          "isLookAlike": false
+        },
         "id": "ro-fereastra-1",
-        "userInput": { "language": "ro", "word": "fereastră" }
+        "userInput": {
+          "language": "ro",
+          "word": "fereastră"
+        }
       }
     }
   ],

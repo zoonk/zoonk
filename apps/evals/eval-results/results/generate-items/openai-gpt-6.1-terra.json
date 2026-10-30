@@ -1,0 +1,688 @@
+{
+  "modelId": "openai/gpt-6.1-terra",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The scientific explanations and scoring criteria are accurate. Inhibition reduces activity by 50% at 1 mM substrate and approximately 18.4% at 10 mM, supporting—but not proving—competitive inhibition. The high-substrate prediction is correct for the proposed mechanism. The heat-exposure experiment appropriately tests persistent activity loss using matched assay conditions and an unheated control.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The rubric provides clear, independently scorable criteria, and the sample outline explains the expected reasoning. However, the first key point bundles several ideas rather than presenting each as an independently checkable statement. Distractor and short-answer accepted-wording requirements do not apply to this essay item.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "This is a credible AP Biology experimental free-response question with lettered parts, appropriate task verbs, quantitative evidence, and an experimental-design task. Its eight one-point scoring rows specify what earns credit and total eight points, within the required range. There is no identifiable evidence of copying a real College Board question.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The English-language question appropriately assesses intermediate enzyme biology through data interpretation, mechanistic explanation, prediction, and controlled experimental design. It covers temperature, pH, and inhibitors without repetitive tasks. A useful refinement would be to assess the high-temperature shape–activity mechanism explicitly rather than leaving it in the supporting key points.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2905,
+          "outputTokens": 854,
+          "reasoningTokens": 285
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The first key point combines three independently checkable ideas: the observed temperature optimum, reduced molecular motion at low temperature, and structural disruption at high temperature. Split these into separate key points to satisfy the requirement for atomic essay-grading criteria. The rubric itself is appropriately granular.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The temperature portion could assess the shape–activity connection more directly by asking students to explain how heat-induced structural changes could cause the persistent activity loss predicted in part (d). Currently, that mechanism appears in the key points but is not explicitly assessed.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One original AP Biology free-response question in English on enzyme activity, with lettered parts that use AP task verbs (identify, describe, explain, predict or justify) around an experiment or data. Its rubric must read like AP scoring guidelines: one row per point-bearing part, each description saying exactly what earns the points, and every row with whole points (1 to 3), adding up to a realistic total for a short free-response question (4 to 10). It must not copy a real College Board question.",
+        "id": "en-ap-biology-free-response-essay-1",
+        "userInput": {
+          "count": 1,
+          "examFormat": {
+            "name": "AP Biology",
+            "style": "multipleChoice (4 options): questions on data, experiments and models. essay: free-response questions with parts (a), (b), (c) and (d) using task verbs (identify, describe, explain, predict, justify), scored with point-based scoring guidelines."
+          },
+          "format": "essay",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Explain how temperature, pH and inhibitors change an enzyme's shape and activity, using data from an experiment.",
+            "name": "Enzyme activity"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The general claims about digital services and access barriers are defensible, and the competency descriptions are substantially accurate. However, assigning two points to every competency supplies an incorrect scoring scheme for this task; all five values must be null. There is no objective answer key to evaluate for this essay.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The rubric and key points provide useful grading guidance, and distractor requirements do not apply to an essay. However, the intervention key point combines several independently assessable requirements. Splitting those requirements would make evaluation and feedback more precise.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The Brazilian social theme, short motivating texts, formal dissertative-argumentative command, human-rights requirement and 30-line limit fit ENEM redação. Nevertheless, the unsupported two-point rubric rows fail the required scoring format, keeping this category at most 7. The support texts also weakly establish the theme's focus on older people.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The single intermediate-level essay directly requires a thesis, developed arguments, sociocultural repertoire, coherence and an intervention proposal. Learner-facing content is in Portuguese, and the task requires substantive writing rather than recall. With only one requested item, cross-item variety is not applicable.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2463,
+          "outputTokens": 767,
+          "reasoningTokens": 216
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "All five rubric rows assign points: 2, directly violating the requirement that every row's points be null. This introduces an unsupported scoring scheme despite correctly identifying ENEM's five competencies.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The motivating texts provide little grounding for the elderly-specific theme: Wesley's age is unspecified, and Texto II discusses digital access generally. Also, the final key point bundles intervention feasibility, completeness, relevance and respect for human rights rather than making each independently checkable.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The sample outline could demonstrate how a specific piece of sociocultural knowledge supports an argument, instead of merely recommending relevant repertoire.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One ENEM essay prompt (redação) in Brazilian Portuguese: a theme with short motivating texts and the standard command for a dissertative-argumentative text with an intervention proposal. The rubric uses ENEM's five competencies, and since ENEM's grid doesn't give its rows points of their own, every row's points is null.",
+        "id": "pt-enem-redacao-essay-1",
+        "userInput": {
+          "count": 1,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada. Redação: texto dissertativo-argumentativo com proposta de intervenção, corrigido pelas cinco competências."
+          },
+          "format": "essay",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Escrever um texto dissertativo-argumentativo com tese, argumentos com repertório e proposta de intervenção completa.",
+            "name": "Redação do ENEM"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations confirm all three unique keyed answers: 1.5 × (40/60) × 30 × $0.24 = $7.20; (0.200 − 0.150) × 12 × 30 × $0.20 = $3.60; and ($12.96/$0.18)/(4 × 30) × 1,000 = 600 W. The worked explanations are accurate, and the refrigerator operating assumptions are explicit.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every distractor has a specific misconception label and feedback identifying the mistaken operation or interpretation. Recomputing each stated mistake produces its option value. The traps cover time and power conversions, omitted operating days, confusing total cost with savings, and confusing cost or daily energy with power.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Each item has a short everyday support text, a clear command, and five concise options with exactly one correct answer. Household heating, refrigerator replacement, and appliance electricity costs provide appropriate ENEM-style applied contexts. Option wording does not reveal the answers.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three questions require applying household electricity relationships rather than recalling definitions. They vary the task through direct cost calculation, comparison of operating costs, and reverse calculation of power. The set provides an appropriate difficulty spread and is entirely in English.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3117,
+          "outputTokens": 980,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style Natural Sciences items in US English about household electricity use (energy is power times time, in kWh, and its cost). Each item has a short everyday support text and 5 options; distractors come from typical mistakes such as not converting watts to kilowatts or minutes to hours, or using the wrong number of days. All learner-facing text must be in English.",
+        "id": "en-enem-natural-sciences-electricity-consumption-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Calculate the energy a household appliance uses from its power and time of use, and what it costs.",
+            "example": "A 5,500 W electric shower used 10 minutes a day for 30 days uses 27.5 kWh.",
+            "name": "Household electricity consumption"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Each item has exactly one correct answer and the key matches it: 240 × 1,25 × 0,80 × 0,95 = 228; 198 ÷ (1,10 × 0,80) = 225; and (1 ÷ 0,72 − 1) × 100 ≈ 38,9%. The worked solutions and other mathematical claims are accurate.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every distractor follows from a specific, realistic mistake, and recomputing those mistakes produces the listed values. Labels identify the errors, and reasons explain omitted changes, incorrect bases, or incorrect reversal operations without referring to option positions. The explanation for “42,9%” is valid but could show the recovery calculation explicitly.",
+          "score": 9,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The items use concise everyday contexts, clear commands, and five comparable numeric options with one correct answer, consistent with ENEM-style mathematics. However, none includes the explicitly required town. The omission weakens compliance with the requested setting, although the questions themselves remain realistic.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items require applying successive percentage changes rather than recalling definitions. They vary both context and operation: calculating a final price after three changes, recovering an original price, and finding the percentage increase needed to reverse successive decreases. This provides a useful difficulty progression, and all learner-facing content is in Brazilian Portuguese.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3227,
+          "outputTokens": 898,
+          "reasoningTokens": 319
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "All three items omit the required town, so the requirement to use a different person and town in each item is not satisfied. The people are distinct, but CAST was not supplied in the grading inputs, so their membership cannot be verified.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The feedback for “42,9%” could make the connection to that value more explicit by showing that the incorrectly assumed 30% decrease leads to 1 ÷ 0,70 − 1 ≈ 42,9%. Its existing diagnosis of the mistake is correct.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style Mathematics items in Brazilian Portuguese about successive percentage changes. Distractors should come from typical mistakes such as adding the percentages (10% + 20% = 30%) or applying the second change to the original value. Every item needs 5 options. People and towns come from CAST, a different person and town in each item, and no reason points at an option by its place (\"a segunda\", \"alternativa B\"): each names the option by what it says.",
+        "id": "pt-enem-matematica-porcentagens-sucessivas-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+            "example": "Um produto sobe 10% e depois cai 10%: termina 1% mais barato.",
+            "name": "Aumentos e descontos percentuais sucessivos"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three keys are defensible and correct. The lawful discretionary authorization may be revoked prospectively, with no acquired right implicated. Illegality calls for annulment rather than revocation. Article 54 bars administrative annulment of the beneficial federal act after five years under the stated good-faith circumstances and absence of a timely challenge. The single-payment scenario does not invoke the special starting rule for continuous financial effects.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The false item contains one realistic trap: substituting revocation for annulment when an act is illegal. Its misconception label identifies that confusion, and its explanation clearly contrasts legality review with discretionary withdrawal. The true items also explain the governing rules in accessible language.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Each item presents one assertion for a true-or-false judgment, using concise legal scenarios consistent with Cebraspe-style questions. The false assertion uses a plausible concept swap rather than an implausible claim. The progression from ordinary revocation to the statutory annulment deadline fits the requested intermediate setting.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set is entirely in English and requires applying rules to distinct situations: revocation of a lawful authorization, treatment of an illegal license, and expiration of the annulment period. Difficulty varies appropriately. Coverage could be strengthened by directly testing annulment's retroactive effects rather than mentioning them only in the explanation.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2297,
+          "outputTokens": 806,
+          "reasoningTokens": 313
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Assess annulment's generally retroactive effects directly in an assertion; currently, this part of the requested skill appears only in feedback.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style true/false items in US English on annulment and revocation of administrative acts in Brazilian administrative law: the administration must annul its own illegal acts and may revoke lawful ones for reasons of convenience or opportunity, respecting acquired rights (STF Precedent 473; Law 9.784/1999, arts. 53 and 54). False items must hide one realistic trap, such as swapping annulment and revocation, saying revocation reaches illegal acts or that only the courts can annul. Check the legal accuracy of every statement.",
+        "id": "en-cebraspe-annulment-revocation-administrative-acts-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "format": "trueFalse",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Tell when Brazilian public administration must annul an administrative act and when it may revoke it, and what effects each has.",
+            "name": "Annulment and revocation of administrative acts"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three questions have exactly one defensible answer and correct keys. Independently calculated results are 2×7 + 3×5 + 1×6 = R$35; (80−52) + (65−43) = 50 kg; and (125−100)/100 = 25%. The worked explanations agree with these results.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every distractor has a specific, understandable mistake and feedback explaining it. Recomputing the stated mistakes produces the offered values: for example, adding quantities and unit prices gives 24, subtracting the remaining food amounts gives 6, and using the final planting total as the percentage denominator gives 20%. However, several traps concern arithmetic operations or percentage concepts rather than the explicitly requested table-reading mistakes.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The items use Brazilian Portuguese, everyday settings, short support texts, command-only questions, and five unlabeled answer options. All tables are correctly placed in context as pipe tables. However, the set does not consistently fit the specified beginner level: the shopping item requires multiple products and a sum, and the planting item requires aggregation followed by a percentage calculation.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The questions require application rather than recall and vary their situations and operations. Nevertheless, they omit comparisons across years and identifying the largest change entirely. Much of the challenge comes from multiplication, aggregation, and percentage calculation rather than the requested beginner skill of reading and comparing table entries and changes.",
+          "score": 6,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3311,
+          "outputTokens": 847,
+          "reasoningTokens": 254
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The set misses the requested comparison focus: no item compares years or asks which row has the largest change. Instead, it tests purchase totals, remaining stock, and aggregate percentage increase. Several distractors also rely on arithmetic-operation mistakes rather than the specified row/column misreadings or confusion between totals and changes. The percentage item introduces additional prerequisite knowledge beyond beginner table reading.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Make the contexts more consequential by connecting the requested comparison to a practical decision, such as identifying which location experienced the greatest increase and should receive additional resources.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style Mathematics items in Brazilian Portuguese on reading data from a table (comparing values across rows and years, finding the largest change). Each item gives its data in `context` as a GFM pipe table: a header row, a delimiter row such as |---|---:|, one row per line, set apart from the text around it by blank lines; `question` is only the command, with no table. Options start with the answer itself: an option whose text begins with a letter label (\"A)\", \"(B)\", \"C.\") must be penalized under realism, since the app shuffles options and labels them. Every item needs 5 options, and distractors come from misreading a row or column, or comparing totals instead of changes.",
+        "id": "pt-enem-matematica-leitura-de-tabelas-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Ler e comparar dados apresentados em tabelas para responder a perguntas sobre valores, diferenças e variações.",
+            "example": "Numa tabela de viagens por modalidade em 2022 e 2023, o metrô passou de 180 para 210 mil viagens, o maior aumento.",
+            "name": "Leitura de dados em tabelas"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculation gives x = 11 for item 1, 12 visits for item 2, and x = −1/3 with 2x + 3 = 7/3 for item 3. Each item has exactly one correct option, its key is correct, and the worked explanations are accurate.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every distractor has a specific, realistic misconception and explanatory feedback. Reproducing the stated mistakes gives the listed values, including 13.6 from discounting the joining fee and 19/3 from incorrectly expanding −3(x + 1). No misconception is generic or numerically inconsistent.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The questions use concise, precise English, direct commands, and four short numerical options. The standalone equation, plan-comparison context, and requested expression after solving a fractional equation are all credible Digital SAT Math formats.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items require applying linear-equation skills, with useful variation across parentheses, a contextual equation, and fractions followed by expression evaluation. However, item 2 shifts its distractor emphasis toward percentage interpretation and omitted costs rather than the explicitly requested algebra-error families.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2780,
+          "outputTokens": 809,
+          "reasoningTokens": 333
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Item 2's distractors target discount interpretation and omitted joining fees rather than the requested sign errors, incorrect distribution, or stopping one step early. They are mathematically valid distractors, but less aligned with the specified practice focus.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Digital SAT Math multiple-choice items in English on solving linear equations in one variable. Four options each, with distractors from sign errors, distributing incorrectly or stopping one step early.",
+        "id": "en-sat-math-linear-equations-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Digital SAT Math",
+            "optionCount": 4,
+            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing."
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Solve linear equations in one variable, including ones with parentheses and fractions.",
+            "name": "Solving linear equations in one variable"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent solution supports all three keys. In item 1, 'a gente' includes participants and 'né' seeks agreement; in item 2, the requests adapt to different interlocutors; in item 3, the speech communicates a collective demand despite departures from the standard norm. Each item has exactly one defensible answer, and the explanations contain no factual or linguistic error.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Labels generally identify specific mistakes, and the feedback explains why each interpretation fails in context rather than merely repeating the key. However, several distractors are implausible, especially the invented rejection in item 1, the question-versus-assertion alternative in item 2, and the claim that 'queremos' makes speech written in item 3. The explicit cap of 7 for several implausible distractors applies.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The items have everyday settings, clear commands, five options, and one correct answer, consistent with basic ENEM structure. However, every item misses the specifically required multiline exchange-or-poem support text, and quotations are italicized rather than presented in plain text or quotation marks. Weak alternatives and the conspicuously qualified correct answer in item 3 further reduce exam realism. The set falls short of the requested ENEM-style setting.",
+          "score": 6,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All items are in Portuguese and require contextual interpretation rather than definition recall. They address conversational inclusion, adaptation to interlocutors, and the legitimacy of nonstandard speech in public participation. The situations and commands differ meaningfully, so the duplicate-question cap does not apply. Nevertheless, the supposed hard item offers little additional reasoning demand, and collective-reference interpretation receives repeated emphasis.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3363,
+          "outputTokens": 1042,
+          "reasoningTokens": 283
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None of the three contexts supplies the required exchange or poem quoted over two or more lines. Items 1 and 3 contain single-paragraph monologues, while item 2 embeds two separate requests in one paragraph. The quotations also use italic Markdown rather than the requested plain text or quotation marks. No emphasis delimiter actually spans multiple lines, but the required support-text structure is missing throughout.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several distractors are weak or implausible: item 1 invents an earlier rejection of the proposal, item 2 treats an explicit question as an assertion, and item 3 suggests that 'queremos' makes recorded speech necessarily written. These sometimes test unsupported inference rather than a realistic misconception about linguistic variation. In item 3, the correct option is also noticeably longer and more qualified than the alternatives, making it easier to identify without analyzing the speech.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the difficulty progression substantive: the item labeled hard still permits a straightforward collective-reference reading. A stronger final item could require comparing the effect or adequacy of two varieties in the same public situation. Preserve the contextualized explanations and nonjudgmental treatment of speakers while making the alternatives more closely matched.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style Linguagens items in Brazilian Portuguese on linguistic variation in transcribed speech or verse: each item quotes a short exchange or poem of two or more lines in `context` and asks about the effect or adequacy of a variety, never judging it as wrong. Quoted lines use plain text or quotation marks, never italics or bold opened on one line and closed on another (the app reads each line on its own, so the marks would show). Every item needs 5 options, and distractors come from treating a variety as an error or ignoring the situation.",
+        "id": "pt-enem-linguagens-falas-transcritas-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Reconhecer marcas de variação linguística em falas transcritas e explicar seu efeito de sentido e sua adequação à situação.",
+            "example": "Na fala «a gente se reunia toda sexta», «a gente» marca um registro informal, adequado a uma conversa entre vizinhos.",
+            "name": "Variação linguística em falas transcritas"
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "generate-items"
+}

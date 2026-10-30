@@ -1,0 +1,588 @@
+{
+  "modelId": "openai/gpt-6.1-terra",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All six keys agree with the supplied texts. The three true statements faithfully reproduce or paraphrase their provisions, including the permitted entry to provide assistance. Each false statement contradicts its provision. All reasons quote relevant text accurately and cite the correct reference. No cap applies.",
+          "score": 10,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "Each false statement changes exactly one element while preserving the remaining wording: lei to decreto, dia to noite, and inafiançável to afiançável. Each misconception identifies that precise substitution concisely. No cap applies.",
+          "score": 10,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The set contains exactly six Cebraspe-style right/wrong statements, evenly divided between true and false. The Portuguese preserves the supplied legal language or faithfully paraphrases it. Explanations clearly identify the changes in the false statements. No cap applies.",
+          "score": 10,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "All five supplied provisions are covered, with easy, medium, and hard difficulty labels represented. The two drills on item XI test distinct elements: the timing of judicially ordered entry and the exception for providing assistance. No element is tested twice in the same way, and no coverage cap applies.",
+          "score": 10,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2648,
+          "outputTokens": 553,
+          "reasoningTokens": 131
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style right/wrong statements in Brazilian Portuguese on article 5 of the Brazilian Constitution (caput and items II, III, XI and XLII). True statements repeat or faithfully paraphrase the given text; false ones change exactly one element, as Cebraspe does (for example \"todos\" to \"quase todos\", \"durante o dia\" to \"a qualquer hora\", \"determinação judicial\" to \"determinação policial\", \"inafiançável\" to \"afiançável\"), and their misconception names that trap. Check every statement against the given text, not memory, and that roughly half are false.",
+        "id": "pt-cebraspe-cf88-art5-direitos-fundamentais-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Art. 5º, caput",
+              "text": "Art. 5º Todos são iguais perante a lei, sem distinção de qualquer natureza, garantindo-se aos brasileiros e aos estrangeiros residentes no País a inviolabilidade do direito à vida, à liberdade, à igualdade, à segurança e à propriedade, nos termos seguintes:"
+            },
+            {
+              "reference": "Art. 5º, II",
+              "text": "II - ninguém será obrigado a fazer ou deixar de fazer alguma coisa senão em virtude de lei;"
+            },
+            {
+              "reference": "Art. 5º, III",
+              "text": "III - ninguém será submetido a tortura nem a tratamento desumano ou degradante;"
+            },
+            {
+              "reference": "Art. 5º, XI",
+              "text": "XI - a casa é asilo inviolável do indivíduo, ninguém nela podendo penetrar sem consentimento do morador, salvo em caso de flagrante delito ou desastre, ou para prestar socorro, ou, durante o dia, por determinação judicial;"
+            },
+            {
+              "reference": "Art. 5º, XLII",
+              "text": "XLII - a prática do racismo constitui crime inafiançável e imprescritível, sujeito à pena de reclusão, nos termos da lei;"
+            }
+          ],
+          "count": 6,
+          "language": "pt",
+          "law": {
+            "shortName": "CF/88",
+            "title": "Constituição da República Federativa do Brasil de 1988",
+            "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm"
+          },
+          "style": "cebraspe"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All six drills agree with the supplied texts. The false statement changes 72 hours to 48 hours; the true statement accurately states the documentation's purpose. Both blanks reproduce the relevant sentences with correct answers, and each multiple-choice question has exactly one matching option. Explanations accurately quote and reference the relevant paragraphs. No accuracy cap applies.",
+          "score": 10,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "Each false statement or distractor changes one element: the deadline, notification recipient, likelihood of risk, protected persons, or protected interests. Misconceptions identify those changes specifically. Both blanks remove substantive legal content rather than grammatical filler. No trap-related cap applies.",
+          "score": 10,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The set provides the requested generic mix: two true/false drills, two fill-in-the-blank drills, and two four-option literal-text questions. Wording stays close to the supplied law, and explanations and misconceptions are clear English that identify the relevant changes. No style or language cap applies.",
+          "score": 10,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "Each supplied paragraph receives two drills, with varied formats and easy, medium, and hard difficulty labels. No two drills test the same element in the same way. Coverage could be slightly stronger by explicitly testing the requirement to document any breach, rather than only the documentation's contents and purpose. No concentration or repetition cap applies.",
+          "score": 9,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3068,
+          "outputTokens": 668,
+          "reasoningTokens": 187
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Consider replacing the documentation-purpose statement with a drill targeting “any personal data breaches,” so learners explicitly practice the scope of the documentation duty.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A generic mix of drills in US English on GDPR Article 33 (paragraphs 1, 2 and 5): true/false statements, fill-in-the-blank passages copied word for word with one load-bearing gap (such as \"72 hours\", \"controller\", \"processor\", \"without undue delay\") and 4-option multiple choice on the literal text. False statements and wrong options change exactly one element (the 72-hour deadline, who notifies whom, the \"unlikely to result in a risk\" exception, the duty to document every breach). Check every drill against the given text.",
+        "id": "en-generic-gdpr-art33-breach-notification-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Article 33(1)",
+              "text": "1. In the case of a personal data breach, the controller shall without undue delay and, where feasible, not later than 72 hours after having become aware of it, notify the personal data breach to the supervisory authority competent in accordance with Article 55, unless the personal data breach is unlikely to result in a risk to the rights and freedoms of natural persons. Where the notification to the supervisory authority is not made within 72 hours, it shall be accompanied by reasons for the delay."
+            },
+            {
+              "reference": "Article 33(2)",
+              "text": "2. The processor shall notify the controller without undue delay after becoming aware of a personal data breach."
+            },
+            {
+              "reference": "Article 33(5)",
+              "text": "5. The controller shall document any personal data breaches, comprising the facts relating to the personal data breach, its effects and the remedial action taken. That documentation shall enable the supervisory authority to verify compliance with this Article."
+            }
+          ],
+          "count": 6,
+          "fillInTheBlank": true,
+          "language": "en",
+          "law": {
+            "shortName": "GDPR",
+            "title": "Regulation (EU) 2016/679 (General Data Protection Regulation)",
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679"
+          },
+          "style": "generic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All four drills have exactly one correct option when read with their stems. Every distractor contradicts its supplied provision, and the explanations accurately quote the relevant language and cite the correct reference. The fourth drill preserves both alternative consequences and the qualification concerning art. 18. No wrong-key or misquotation cap applies.",
+          "score": 10,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "Every distractor changes one element: a deadline, starting point, legal consequence, or required qualification. Misconceptions identify those changes specifically. However, “Será prorrogado o ato de provimento” is less credible than the other consequence substitutions and weakens discrimination. The deadline questions could also avoid supplying either the correct duration or starting point in every option. There are not several absurd, vague, or multi-element traps, so the explicit cap does not apply.",
+          "score": 8,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The set consistently uses four-option multiple-choice questions asking for the statutory rule, in Brazilian Portuguese. Stems and options preserve the provisions’ language, with conditions sometimes placed in the stem. Explanations address the learner and clearly identify what changed. No board-format or language cap applies.",
+          "score": 10,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "Each supplied provision receives one drill, with easy, medium, and hard items. The questions distinguish the posse duration, the consequence of missing posse, the exercício starting point, and the consequences and qualification for missing exercício. No two drills test the same element in the same way, and no concentration or repetition cap applies.",
+          "score": 10,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3583,
+          "outputTokens": 868,
+          "reasoningTokens": 287
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "In the second drill, “Será prorrogado o ato de provimento” is a weak distractor: extending the appointment act, rather than a deadline, is awkward and relatively easy to eliminate without knowing the provision.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Mix deadline and starting-point substitutions within the deadline questions, while preserving exactly one changed element per distractor. In particular, all four options in the third drill currently supply “quinze dias”, so that item tests the starting point but not recall of the exercício deadline.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "FGV-style multiple choice in Brazilian Portuguese on the deadlines for taking office (posse) and starting work (exercício) in Law 8.112/1990. Each item has 4 options, one reproducing the text and the others changing one element: thirty days for posse counted from the publication of the appointment, fifteen days for exercício counted from the posse, the appointment made void or the servant dismissed when a deadline is missed. Check every option against the given text.",
+        "id": "pt-fgv-lei8112-posse-exercicio-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Art. 13, § 1º",
+              "text": "§ 1º A posse ocorrerá no prazo de trinta dias contados da publicação do ato de provimento."
+            },
+            {
+              "reference": "Art. 13, § 6º",
+              "text": "§ 6º Será tornado sem efeito o ato de provimento se a posse não ocorrer no prazo previsto no § 1º deste artigo."
+            },
+            {
+              "reference": "Art. 15, § 1º",
+              "text": "§ 1º É de quinze dias o prazo para o servidor empossado em cargo público entrar em exercício, contados da data da posse."
+            },
+            {
+              "reference": "Art. 15, § 2º",
+              "text": "§ 2º O servidor será exonerado do cargo ou será tornado sem efeito o ato de sua designação para função de confiança, se não entrar em exercício nos prazos previstos neste artigo, observado o disposto no art. 18."
+            }
+          ],
+          "count": 4,
+          "language": "pt",
+          "law": {
+            "shortName": "Lei nº 8.112/1990",
+            "title": "Lei nº 8.112, de 11 de dezembro de 1990 (regime jurídico dos servidores públicos civis da União)",
+            "url": "https://www.planalto.gov.br/ccivil_03/leis/l8112cons.htm"
+          },
+          "style": "fgv"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All six keys agree with the supplied texts. The three false statements contradict the provisions by substituting posterior for prévia, three years for two years, and anulabilidade for nulidade. The shortened true statements remain accurate without claiming there are no exceptions. Every explanation quotes the supplied text correctly and cites the appropriate reference.",
+          "score": 10,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "Each false statement changes exactly one element while preserving the surrounding statutory wording: the timing of approval, the maximum validity period, or the legal consequence. Each misconception identifies its specific substitution concisely.",
+          "score": 10,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The six drills consistently use the requested Cebraspe right/wrong format, with exactly three false statements. Statements retain the constitutional language, and explanations and misconceptions are clear Brazilian Portuguese that identify what changed.",
+          "score": 10,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "The set covers all five supplied provisions and includes easy, medium, and hard drills. The two drills on inciso III test distinct elements: the maximum validity period and the single extension for an equal period. No drills duplicate the same element in the same way.",
+          "score": 10,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2740,
+          "outputTokens": 472,
+          "reasoningTokens": 65
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style right/wrong statements in Brazilian Portuguese on article 37 of the Brazilian Constitution: the five principles in the caput, access by public examination (II), validity of up to two years extendable once for an equal period (III), priority of approved candidates (IV) and the nullity of acts that ignore II and III (§ 2º). False statements change one element (such as \"prorrogável uma vez\" to \"prorrogável duas vezes\", \"de até dois anos\" to \"de dois anos\", dropping the exception for commissioned posts). Check every statement against the given text.",
+        "id": "pt-cebraspe-cf88-art37-concurso-publico-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Art. 37, caput",
+              "text": "Art. 37. A administração pública direta e indireta de qualquer dos Poderes da União, dos Estados, do Distrito Federal e dos Municípios obedecerá aos princípios de legalidade, impessoalidade, moralidade, publicidade e eficiência e, também, ao seguinte:"
+            },
+            {
+              "reference": "Art. 37, II",
+              "text": "II - a investidura em cargo ou emprego público depende de aprovação prévia em concurso público de provas ou de provas e títulos, de acordo com a natureza e a complexidade do cargo ou emprego, na forma prevista em lei, ressalvadas as nomeações para cargo em comissão declarado em lei de livre nomeação e exoneração;"
+            },
+            {
+              "reference": "Art. 37, III",
+              "text": "III - o prazo de validade do concurso público será de até dois anos, prorrogável uma vez, por igual período;"
+            },
+            {
+              "reference": "Art. 37, IV",
+              "text": "IV - durante o prazo improrrogável previsto no edital de convocação, aquele aprovado em concurso público de provas ou de provas e títulos será convocado com prioridade sobre novos concursados para assumir cargo ou emprego, na carreira;"
+            },
+            {
+              "reference": "Art. 37, § 2º",
+              "text": "§ 2º A não observância do disposto nos incisos II e III implicará a nulidade do ato e a punição da autoridade responsável, nos termos da lei."
+            }
+          ],
+          "count": 6,
+          "language": "pt",
+          "law": {
+            "shortName": "CF/88",
+            "title": "Constituição da República Federativa do Brasil de 1988",
+            "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm"
+          },
+          "style": "cebraspe"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All keys agree with the supplied texts. The first statement is a permissible incomplete statement, not a false restriction of the caput. Both multiple-choice questions have exactly one literal match. The blank preserves the supplied § 2º passage verbatim with “detenção” removed. Explanations quote accurately and cite the appropriate provisions. No accuracy cap applies.",
+          "score": 10,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "Each distractor changes one element: the relevant status, the penalty type, or one endpoint of the sentencing range. The false statement changes only the reduction fraction. Misconceptions identify those specific substitutions, and the blank removes a legally decisive term rather than grammatical filler. No trap cap applies.",
+          "score": 10,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The five drills provide the requested generic mix of true/false, fill-in-the-blank, and four-option multiple choice. They use Brazilian Portuguese and preserve statutory terminology. Explanations and misconceptions clearly identify the relevant wording and substitutions. No style or language cap applies.",
+          "score": 10,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "All four supplied provisions are represented, the caput penalty is tested, and no two drills test the same element in the same way. However, § 3º's before-judgment extinction rule is untested, and § 1º receives only a narrow phrase-recognition question rather than testing the subtraction conditions. The nominally hard question also offers limited difficulty variety. The concentration/repetition cap is not triggered.",
+          "score": 8,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3116,
+          "outputTokens": 871,
+          "reasoningTokens": 307
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The § 1º question is labeled hard but only requires recognizing the phrase “a qualidade de funcionário” among alternative titles. It provides little additional challenge compared with the easier literal-recall drills.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Broaden the tested elements by including § 3º's extinction of punishability when repair precedes the final judgment. The § 1º question could also test subtraction without possession or participation in subtraction, rather than only the employee-status phrase.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A generic mix of drills in Brazilian Portuguese on embezzlement (peculato) in article 312 of the Brazilian Penal Code: the caput and its penalty, § 1º (peculato-furto), § 2º (culpable form) and § 3º (repairing the damage). Traps should change one element, such as \"reclusão\" to \"detenção\", \"dois a doze anos\" to another range, \"precede à sentença irrecorrível\" to \"posterior\", \"extingue a punibilidade\" to \"reduz de metade a pena\". Fill-in-the-blank passages must be copied word for word.",
+        "id": "pt-generic-codigo-penal-art312-peculato-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Art. 312, caput",
+              "text": "Art. 312 - Apropriar-se o funcionário público de dinheiro, valor ou qualquer outro bem móvel, público ou particular, de que tem a posse em razão do cargo, ou desviá-lo, em proveito próprio ou alheio: Pena - reclusão, de dois a doze anos, e multa."
+            },
+            {
+              "reference": "Art. 312, § 1º",
+              "text": "§ 1º - Aplica-se a mesma pena, se o funcionário público, embora não tendo a posse do dinheiro, valor ou bem, o subtrai, ou concorre para que seja subtraído, em proveito próprio ou alheio, valendo-se de facilidade que lhe proporciona a qualidade de funcionário."
+            },
+            {
+              "reference": "Art. 312, § 2º",
+              "text": "§ 2º - Se o funcionário concorre culposamente para o crime de outrem: Pena - detenção, de três meses a um ano."
+            },
+            {
+              "reference": "Art. 312, § 3º",
+              "text": "§ 3º - No caso do parágrafo anterior, a reparação do dano, se precede à sentença irrecorrível, extingue a punibilidade; se lhe é posterior, reduz de metade a pena imposta."
+            }
+          ],
+          "count": 5,
+          "fillInTheBlank": true,
+          "language": "pt",
+          "law": {
+            "shortName": "Código Penal",
+            "title": "Decreto-Lei nº 2.848, de 7 de dezembro de 1940 (Código Penal)",
+            "url": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm"
+          },
+          "style": "generic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All five keys agree with the supplied text. Each multiple-choice question has exactly one matching option, and every explanation quotes the relevant language accurately and identifies Amendment V. No wrong-key or misquotation cap applies.",
+          "score": 10,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "Each false statement reverses a single prohibition. Each distractor changes one connector, authority, or legal requirement while preserving the surrounding proposition. The misconceptions specifically identify those changes; none of the trap-related caps is triggered.",
+          "score": 10,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The result follows the task-specific requirement of true/false and four-option multiple-choice drills only, without written answers or a fill-in passage. It consistently uses English, retains the constitutional wording where appropriate, and gives clear explanations of the altered elements.",
+          "score": 10,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "The drills cover double jeopardy, grand-jury presentment or indictment, self-incrimination, due process, and takings, but omit the military exception. The hard label does not reflect a genuinely harder task. All drills cover one article—the only article supplied—so the explicit one-article cap applies literally, limiting this category to 7.",
+          "score": 7,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2750,
+          "outputTokens": 831,
+          "reasoningTokens": 333
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The military exception and its actual-service, War, or public-danger language are never tested. Also, the takings drill labeled hard merely reverses a prohibition, making it comparable to the easy double-jeopardy drill.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a more discriminating condition-based trap to test the military exception. A takings option substituting “fair market value” for “just compensation” could also provide more variety than a second straightforward prohibition reversal.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A generic mix of drills in US English on the Fifth Amendment to the US Constitution: grand jury indictment for capital or infamous crimes with the military exception, double jeopardy, self-incrimination \"in any criminal case\", due process and just compensation for takings \"for public use\". Traps change one element (such as \"in time of War or public danger\" dropped or swapped, \"civil case\" for \"criminal case\", \"fair market value\" for \"just compensation\"). Its exam asks no short written answers, so the mix is true/false statements and 4-option multiple choice only, with no fill-in-the-blank passage. Check every drill against the given text.",
+        "id": "en-generic-us-constitution-fifth-amendment-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Amendment V",
+              "text": "No person shall be held to answer for a capital, or otherwise infamous crime, unless on a presentment or indictment of a Grand Jury, except in cases arising in the land or naval forces, or in the Militia, when in actual service in time of War or public danger; nor shall any person be subject for the same offence to be twice put in jeopardy of life or limb; nor shall be compelled in any criminal case to be a witness against himself, nor be deprived of life, liberty, or property, without due process of law; nor shall private property be taken for public use, without just compensation."
+            }
+          ],
+          "count": 5,
+          "language": "en",
+          "law": {
+            "shortName": "US Constitution",
+            "title": "Constitution of the United States",
+            "url": "https://www.archives.gov/founding-docs/bill-of-rights-transcript"
+          },
+          "style": "generic"
+        }
+      }
+    }
+  ],
+  "taskId": "statute-drills"
+}

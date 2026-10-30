@@ -44,6 +44,7 @@ const GENERATION_MODELS: { id: string; name: string }[] = [
   { id: "google/gemini-3-flash", name: "gemini-3-flash" },
   { id: "openai/gpt-6-astra", name: "gpt-6-astra" },
   { id: "openai/gpt-6.1-sol", name: "gpt-6.1-sol" },
+  { id: "openai/gpt-6.1-terra", name: "gpt-6.1-terra" },
   { id: "openai/gpt-6-sol", name: "gpt-6-sol" },
   { id: "openai/gpt-6-luna", name: "gpt-6-luna" },
   { id: "openai/gpt-5.6-sol", name: "gpt-5.6-sol" },

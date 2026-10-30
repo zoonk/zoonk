@@ -5,101 +5,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "Independent assessment yields Certo, Errado, Certo, Errado, matching every supplied key. Annulment for illegality generally has retroactive effects; revocation does not remedy illegality; the valid safety order binds without consent; and imperativity does not authorize direct seizure of bank funds. However, items 2 and 4 are answerable from their false general propositions alone, and item 1 states its decisive factual premise. The explicit cap of 7 for several stimulus-independent questions applies.",
-          "score": 7,
-          "label": "Right keys that need the stimulus",
-          "weight": 35
-        },
-        {
-          "categoryId": "examRealism",
-          "reasoning": "The hypothetical municipal-administration case, formal Brazilian Portuguese, four shared-stimulus Certo/Errado items, and evenly divided judgments fit Cebraspe practice. The questions cover annulment and its effects, revocation, imperativity, and limits on direct enforcement. Concept substitution and the absolute phrase 'todos os atos administrativos' provide credible exam traps. No out-of-place-format cap is triggered.",
-          "score": 9,
-          "label": "Exam realism",
-          "weight": 35
-        },
-        {
-          "categoryId": "stimulus",
-          "reasoning": "The case is clearly hypothetical and original in presentation, with an expressly fictional company and no claimed real source or misquoted legislation. It supplies public servants, a municipal agency, administrative acts, and legally relevant facts in clear, natural Brazilian Portuguese without em dashes. Explanations and misconceptions are also in Portuguese and connect accurately to the case. No grounding or unnatural-language cap applies.",
-          "score": 10,
-          "label": "Original, clear stimulus",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2477,
-          "outputTokens": 870,
-          "reasoningTokens": 295
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "Several items do not require the case. Item 2 defines revocation incorrectly within the statement itself, and item 4 makes the independently false claim that imperativity gives every administrative act self-executing force. Item 1 also supplies its own decisive fact: the absence of a mandatory opinion. A knowledgeable learner can judge these without reading the stimulus, undermining the required case dependence. All four supplied judgments are nevertheless legally correct.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "Make the items depend on identifying facts or comparing acts in the case, rather than including independently decisive definitions. The expressly contestable inspection report also offers an opportunity to assess the rebuttable presumption of legitimacy, which the current questions leave untested.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "One Cebraspe set in Brazilian Portuguese on administrative law: an original hypothetical case (a public servant, an agency, an administrative act) and 4 statements judged Certo or Errado that need the case, about half true, with Cebraspe-style traps (a swapped concept, a wrong exception, an absolute word). No real law is misquoted: when a statement relies on a rule, it is the rule as Brazilian law states it.",
-        "id": "pt-cebraspe-caso-atos-administrativos-1",
-        "userInput": {
-          "examFormat": {
-            "name": "Cebraspe (concurso público)",
-            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
-          },
-          "format": "trueFalse",
-          "language": "pt",
-          "questionCount": 4,
-          "skills": [
-            {
-              "description": "Distinguir anulação e revogação de atos administrativos e seus efeitos.",
-              "level": "intermediate",
-              "name": "Anulação e revogação"
-            },
-            {
-              "description": "Reconhecer os atributos do ato administrativo: presunção de legitimidade, imperatividade e autoexecutoriedade.",
-              "level": "intermediate",
-              "name": "Atributos do ato administrativo"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "keys",
-          "reasoning": "All three marked answers follow from the stimulus and are uniquely defensible. The central argument concerns adapting returns to people's routines; changing payment alone would leave the Saturday/Sunday mismatch unresolved; and 'pequeno desvio' understates the reversal from adapting people to the system to adapting the system to people. Each question requires textual information, and every evidence excerpt is copied exactly. No score cap applies.",
+          "reasoning": "All three marked answers follow from the stimulus: effective and lasting access to shade is the thesis; the thermometer–shade contrast highlights unequal protection; and survival, pedestrian routes, and underserved neighborhoods are the stated evaluation criteria. No competing option is equally defensible, and the questions reference the text's particular argument or wording.",
           "score": 10,
           "label": "Right keys that need the stimulus",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The short, contextualized opinion-style text and three five-option questions fit the requested ENEM Linguagens set. The questions address distinct reading operations, and distractors generally reflect identifiable misreadings. However, several extreme or plainly contradictory alternatives make the set easier and less discriminating than a strong intermediate ENEM exercise. The set does not look out of place overall, so the out-of-place cap does not apply.",
+          "reasoning": "The short opinion piece, contextualized urban issue, clear commands, and five-option format suit the requested ENEM set. However, the third question retrieves explicit criteria instead of supplying the required inference task, and several distractors are less plausible than strong exam distractors. The set remains recognizable as ENEM-style practice rather than looking out of place overall.",
           "score": 8,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "stimulus",
-          "reasoning": "The text is clear, natural Brazilian Portuguese, with an everyday situation and a coherent argument. Its setting is explicitly fictional; it neither claims a real source nor invents facts about real entities. There are no em dashes. Reasons and misconception labels are in Portuguese and consistently refer to the stimulus. No applicable cap or concrete stimulus weakness is evident.",
+          "reasoning": "The stimulus is a clear, natural Brazilian Portuguese opinion piece with no real-source attribution, invented factual statistics, or em dashes. Its figurative language supports the argument coherently. Every evidence excerpt is copied verbatim from the text, and the Portuguese explanations and misconceptions accurately connect options to the stimulus.",
           "score": 10,
           "label": "Original, clear stimulus",
           "weight": 30
@@ -117,20 +37,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3274,
-          "outputTokens": 764,
-          "reasoningTokens": 228
+          "inputTokens": 3223,
+          "outputTokens": 866,
+          "reasoningTokens": 355
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Some distractors are too easy to dismiss for an intermediate ENEM set. In question 1, abandoning reuse unless it eliminates all disposables is an extreme position; in question 2, the supposed impossibility of reusing the pots contradicts the initiative's basic premise. These options represent reading mistakes, but provide limited discrimination.",
-          "kind": "minorErrors",
-          "score": 8.5
+          "conclusion": "The required inference question is missing. Question 3 asks learners to select criteria explicitly listed in the final paragraph, so it tests paraphrase and retrieval rather than an implicit conclusion. Questions 1 and 2 appropriately assess the main idea and a language choice's effect.",
+          "kind": "majorErrors",
+          "score": 8
         },
         {
-          "conclusion": "Replace the weakest distractors with closer misreadings of the text, such as confusing the number of disposables avoided with the main criterion for success, or confusing expanded return locations with expanded return times. Preserve the current distinction between main idea, inference, and language effect.",
+          "conclusion": "Some distractors are too easy to dismiss, particularly the claims that trees literally choose streets or that house orientation alone determines shade. Question 3's 'hard' label also overstates the demand of matching an option to an explicit list.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use more plausible partial readings as distractors, such as confusing total canopy coverage with equitable access to shade. This would make discrimination depend more on careful reading than on rejecting implausible claims.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -166,21 +90,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "The passage supports all four judgments: TRUE, FALSE, NOT GIVEN, TRUE. Recording explicitly began before the intervention; the larger increase occurred beside the inlet; battery losses are not broken down by station; and increased calling does not establish increased juvenile survival. The NOT GIVEN item genuinely concerns missing information. Each question requires passage-specific information, and no competing answer is defensible.",
-          "score": 10,
+          "reasoning": "The independently derived judgments are Certo, Errado, Certo, Errado, matching all supplied keys. The explanations correctly distinguish invalidity from supervening inconvenience, imperativity from consent, and presumed legitimacy from autoexecutoriedade. However, items 2 and 4 are answerable from their own general legal assertions without consulting the case. Because several questions do not need the stimulus, the explicit cap of 7 applies.",
+          "score": 7,
           "label": "Right keys that need the stimulus",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The 334-word academic passage meets the requested length and supports exactly four IELTS-style True/False/Not Given statements. Every question uses TRUE, FALSE, NOT GIVEN in that order with fixedOrder true. The questions test chronology, comparison, an unspecified detail, and a supported inference. Incorrect judgments reflect plausible reading errors, including reversing a comparison and confusing missing information with contradiction.",
-          "score": 10,
+          "reasoning": "The hypothetical administrative-law scenario, formal Brazilian Portuguese, four shared-case Certo/Errado items, and equal true/false balance fit Cebraspe well. The traps plausibly confuse annulment with revocation and presumed legitimacy with direct enforceability. The items address distinct aspects of administrative acts, and the categorical claim that presumed legitimacy 'basta' supplies an appropriate overstatement trap. No out-of-place-format cap applies.",
+          "score": 9,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "stimulus",
-          "reasoning": "The passage is clear, natural English with an appropriate academic register and no em dashes. Its setting is explicitly fictional, and it neither claims a real source nor presents invented findings about identifiable real entities. All evidence excerpts are copied from the passage. Reasons and misconceptions are in English and accurately explain the relevant textual support or absence of information.",
+          "reasoning": "The scenario is original and explicitly locates the agency in a fictional municipality. It includes administrative personnel, an agency, and concrete administrative acts without claiming a real source or presenting invented facts about real entities. The Portuguese is clear and natural, with no em dashes. Reasons and misconceptions are in Portuguese and accurately connect the relevant legal distinctions to the case facts. No category cap applies.",
           "score": 10,
           "label": "Original, clear stimulus",
           "weight": 30
@@ -198,15 +122,111 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2990,
-          "outputTokens": 1264,
-          "reasoningTokens": 862
+          "inputTokens": 2440,
+          "outputTokens": 1017,
+          "reasoningTokens": 461
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Items 2 and 4 do not genuinely require the case. Item 2 states the generally incorrect proposition that subsequent inconvenience makes an authorization illegal from its inception. Item 4 incorrectly treats presumed legitimacy as sufficient authority for direct execution without statutory authorization or urgency. A knowledgeable learner can judge both false without reading the stimulus, undermining the explicit requirement that all four items depend on it.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Rewrite the false items so their judgments turn on facts supplied only by the case. For example, propose revocation of Iara's authorization without repeating its defect, or assert that the conditions for direct execution against Wesley are satisfied without restating those conditions.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One Cebraspe set in Brazilian Portuguese on administrative law: an original hypothetical case (a public servant, an agency, an administrative act) and 4 statements judged Certo or Errado that need the case, about half true, with Cebraspe-style traps (a swapped concept, a wrong exception, an absolute word). No real law is misquoted: when a statement relies on a rule, it is the rule as Brazilian law states it.",
+        "id": "pt-cebraspe-caso-atos-administrativos-1",
+        "userInput": {
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "questionCount": 4,
+          "skills": [
+            {
+              "description": "Distinguir anulação e revogação de atos administrativos e seus efeitos.",
+              "level": "intermediate",
+              "name": "Anulação e revogação"
+            },
+            {
+              "description": "Reconhecer os atributos do ato administrativo: presunção de legitimidade, imperatividade e autoexecutoriedade.",
+              "level": "intermediate",
+              "name": "Atributos do ato administrativo"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "The passage supports TRUE, FALSE, NOT GIVEN, and FALSE respectively. Question 3 correctly tests missing information: neither comparative costs nor the reason for selecting the fabric is stated. Each question requires passage-specific information, and no competing answer is defensible.",
+          "score": 10,
+          "label": "Right keys that need the stimulus",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The academic trial report and its four information-identification statements suit the requested IELTS task. All questions use exactly TRUE, FALSE, and NOT GIVEN in that order with fixedOrder true. They cover experimental design, comparative results, an unstated motive, and the researchers' conclusion. However, the 241-word passage misses the explicit minimum length.",
+          "score": 8,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "stimulus",
+          "reasoning": "The passage is clear, natural academic English without em dashes. It names no real source or entity and presents a coherent unnamed trial. Every evidence excerpt is copied directly from the passage, and explanations are in English and grounded in its content. The FALSE explanation for Question 3 could distinguish absence of a stated motive from evidence about higher prices more precisely.",
+          "score": 8,
+          "label": "Original, clear stimulus",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2794,
+          "outputTokens": 1204,
+          "reasoningTokens": 774
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The passage contains 241 words, falling nine words short of the required 250–350-word range.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Question 3's FALSE explanation could more precisely explain that the passage neither confirms nor contradicts a cost-based selection motive. Disproving the statement would not necessarily mean the fabric was more expensive.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "One IELTS Academic Reading set in English: an original academic passage of 250 to 350 words and 4 True/False/Not Given statements, each a multiple-choice question whose options are exactly TRUE, FALSE and NOT GIVEN in that order with fixedOrder true, including at least one NOT GIVEN whose key is right because the passage doesn't say. Evidence is copied from the passage.",
@@ -234,22 +254,22 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All three keys follow uniquely from the stimulus. Friction is 4 N, giving coupled acceleration 8/3 m/s² and tension 44/3 N; the perpendicular string forces therefore require an axle force of 44√2/3 N. A reaches the floor event at √8 m/s and the spring at √6 m/s, so the intervening time is √8 − √6 seconds. Its 12 J at spring contact gives 10x² + 4x = 12, hence x = (√31 − 1)/5 m. Every question requires stimulus-specific information, and the speeds and energies agree across stages.",
+          "reasoning": "All three keys follow uniquely from the stimulus. The normal force is 16 N and kinetic friction is 4 N. Powered ascent has acceleration 4 m/s², lasts 2 s, and ends at 8 m/s. Subsequent ascent has deceleration 8 m/s², lasts 1 s, and covers 4 m. Downhill acceleration is 4 m/s² over 12 m, giving total time 3 + √6 s. The minimum holding force is 12 − 8 = 4 N. Return kinetic energy is (12 − 4) × 12 = 96 J. Each question requires stimulus data, and no alternative option is defensible.",
           "score": 10,
           "label": "Right keys that need the stimulus",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The concise shared mechanics setup supports exactly three single-answer questions with four options each. Each targets a distinct requested skill and requires multiple steps: coupled Newton equations followed by a vector resultant, motion across two acceleration regimes, and staged energy accounting followed by spring compression against friction. These are appropriate paragraph-based JEE Advanced tasks rather than direct substitutions. Every distractor corresponds to an identifiable calculation or modeling mistake, and its explanation accurately describes that mistake.",
-          "score": 10,
+          "reasoning": "The shared mechanics paragraph, three single-answer questions, four options each, SI units, and physically motivated distractors fit the requested format. Questions 1 and 3 involve linked motion stages and appropriate reasoning. However, Question 2 is a textbook-level static-friction equilibrium exercise rather than the explicitly required advanced multistep problem. This makes the set fall short of the named exam's requested difficulty, triggering the at-most-7 exam-fit cap.",
+          "score": 7,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "stimulus",
-          "reasoning": "The setup is self-contained, naturally written in English, and presented without real-source attribution or invented claims about real entities. Numerical data use SI units, and the floor impact, retained speed, slack string, and continuing friction are specified clearly enough to determine all subsequent motion. There are no em dashes. The English explanations and misconception labels connect directly to the setup and the relevant physical errors.",
-          "score": 10,
+          "reasoning": "The setup is self-contained, naturally written in English, and presents an original hypothetical experiment without source attribution or invented claims about real entities. It contains the necessary numerical data, consistently distinguishes static and kinetic friction, and uses no em dashes. The explanations and misconceptions are grounded in the setup. A small instructional improvement would be to expose the intermediate turning-point calculation rather than introducing the 12 m distance without derivation.",
+          "score": 9,
           "label": "Original, clear stimulus",
           "weight": 30
         },
@@ -266,15 +286,27 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3195,
-          "outputTokens": 639,
-          "reasoningTokens": 155
+          "inputTokens": 2999,
+          "outputTokens": 1109,
+          "reasoningTokens": 442
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Question 2 does not meet the required JEE Advanced difficulty. It is a routine limiting-equilibrium calculation, F_min = mg sin θ − μ_s mg cos θ = 4 N, with no dependence on the preceding motion. Unlike Questions 1 and 3, it does not meaningfully combine stages or require advanced multistep reasoning. This materially weakens the requested one-advanced-question-per-skill coverage.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Make the Newton's-laws question depend on a preceding stage or a coupled-body interaction while retaining one shared setup. Also show how the turning-point distance becomes 12 m in the explanations: the powered stage ends at 8 m/s, followed by another 4 m uphill. Explicitly checking that the 12 N downslope weight component exceeds the 8 N maximum static friction would complete the explanation of why the return motion begins.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
       ],
       "testCase": {
         "expectations": "One JEE Advanced paragraph-based physics set in English: one original experiment or setup (for example blocks on an incline joined over a pulley, then sliding onto a spring), stated once with every number the questions need, in SI units, and 3 single-answer multiple-choice questions with 4 options, one per skill (kinematics, Newton's laws, work and energy), each needing a different part of the setup. Every key follows from the stated numbers, the numbers agree across the questions (a speed one question computes is the speed the next one uses), and each wrong option comes from a real mistake (time to a mark instead of between marks, net force taken as friction, friction left out of an energy balance). Difficulty matches JEE Advanced's own paragraph questions, not a textbook's: each question needs several steps that combine at least two ideas (a result from one stage of the setup feeding the next, or two laws applied together), so no question is a single formula with numbers stated next to each other.",
