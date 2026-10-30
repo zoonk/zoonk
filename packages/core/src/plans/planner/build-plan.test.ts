@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { isPhaseFinished } from "../_utils/phase-states";
+import { isPlanFinished } from "../_utils/plan-end";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { getShownPhaseEnds } from "./kept-phase-ends";
 import { addDays, daysBetween, fromIsoDate, toIsoDate } from "./plan-calendar";
@@ -1359,6 +1361,58 @@ describe("a phase whose lessons the learner's time leaves out", () => {
 
     expect(taught(2)).toBe(false);
     expect(bosses.map((boss) => boss.phase)).toStrictEqual([0]);
+  });
+});
+
+describe("a phase its time covers in part", () => {
+  const input = planInput({
+    goal: { dailyMinutes: 5, kind: "learn", targetDate: fromIsoDate("2026-10-02") },
+    graph: {
+      phases: ["Known", "Middle", "Cut"].map((name) => ({ milestone: null, name })),
+      skills: [
+        skill("k", { lessons: 2 }),
+        skill("m", { lessons: 20, phase: 1 }),
+        skill("c", { lessons: 20, phase: 2 }),
+      ],
+    },
+    items: [0, 1].map((index) =>
+      existing({
+        id: `known-${index}`,
+        lessonId: `k-${index}`,
+        position: index,
+        scheduledFor: TODAY,
+        skillId: "k",
+        status: "testedOut",
+      }),
+    ),
+    lessons: [...lessonsFor("k", 2), ...lessonsFor("m", 20), ...lessonsFor("c", 20)],
+  });
+
+  it("keeps its challenge, so finishing the lessons it holds finishes neither it nor the plan", () => {
+    const plan = buildPlan(input);
+
+    const studied = plan.items.map((item) =>
+      item.kind === "lesson" && item.status === "todo"
+        ? { ...item, status: "done" as const }
+        : item,
+    );
+
+    const inPhase = (phase: number) => studied.filter((item) => item.phase === phase);
+    const bosses = plan.items.filter((item) => item.kind === "boss");
+
+    expect(inPhase(1).some((item) => item.kind === "lesson")).toBe(true);
+    expect(bosses.map((item) => item.phase)).toStrictEqual([1]);
+    expect(isPhaseFinished(inPhase(0))).toBe(true);
+    expect(isPhaseFinished(inPhase(1))).toBe(false);
+
+    expect(
+      isPlanFinished({
+        goalKind: "learn",
+        items: studied,
+        targetDate: input.goal.targetDate,
+        today: TODAY,
+      }),
+    ).toBe(false);
   });
 });
 

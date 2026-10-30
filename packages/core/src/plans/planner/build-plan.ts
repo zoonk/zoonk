@@ -26,6 +26,7 @@ import { listKeptTime, putLandedLessons } from "./landed-placement";
 import { type LaidOutOrder, toQueueUnit } from "./learned-order";
 import { type MockClock, type MockResolution } from "./mock-identity";
 import { createLayOut } from "./pass-layout";
+import { withoutUntaughtChallenges } from "./phase-checkpoints";
 import { placeItemsInPhaseTime } from "./phase-time";
 import { type PlanBase } from "./plan-bases";
 import { addDays, getEndOfWeek } from "./plan-calendar";
@@ -214,7 +215,7 @@ function planGoal({
   const {
     dropped: leftOut,
     landed,
-    laidOut,
+    laidOut: placed,
   } = putLandedLessons({
     days: funded.days,
     dropped: [...carriedSchedule.dropped, ...restSchedule.dropped],
@@ -225,6 +226,8 @@ function planGoal({
     start,
     units: [...carriedSchedule.units, ...restSchedule.units],
   });
+
+  const laidOut = withoutUntaughtChallenges({ kept: keptWork, landed, units: placed });
 
   const schedule = keepThisWeek({
     days: funded.days,
