@@ -328,16 +328,7 @@ private fun PhaseBand(
     val colors = MaterialTheme.colorScheme
     val name = phaseName(phase, page.mocksRequirePlus)
     val from = phase.start?.let { stringResource(R.string.plan_roadmap_from, formatPlanDate(it, page.today, currentLocale())) }
-    val until =
-        page.finish
-            ?.takeIf {
-                isLast
-            }?.let {
-                stringResource(
-                    if (it.month) R.string.plan_roadmap_until_month else R.string.plan_roadmap_until,
-                    planDate(it.date, page.today, it.estimate, it.month).spoken,
-                )
-            }
+    val until = page.finish?.takeIf { isLast }?.let { roadmapUntil(it, page.today) }
     val label = listOfNotNull(name + phaseStateWords(phase.state), from, until).joinToString(". ")
     val (container, content) =
         when (phase.state) {

@@ -434,6 +434,8 @@
   "plan_roadmap_number_of": "4d2104b20d042f5727102957807b2e90972cc8779fb14458aa09261c6fa823cb",
   "plan_roadmap_phase_of": "4ca0f8a2e0ba0e246ec5a97fd3c69d3efff824c9d092b8640f29b81a2a79de30",
   "plan_roadmap_until": "8be15009c017932a6ea1285d25c6a458d3307f6c4372e79c9a77ce4d8f3181df",
+  "plan_roadmap_until_about": "ea0b62a18f5d55e2efe102bce607d108ca4d02f0814928a5c29014b69b9205cc",
+  "plan_roadmap_until_about_month": "bb109b720069ac644ca85a95c1b323502b6fd55c34f4c0883678ffb2cb928f4e",
   "plan_roadmap_until_month": "7de1ad54f4ca90ccd23d3a5354927c463e6e245072c809aead3399c7d2ac395b",
   "plan_saturdays": "45930d51bbf62c9a1971e9aef93af0a162b8503ec5ac778cfe920169e380801e",
   "plan_save": "4e837c388fe4537c3e02f16c358de2b2665c3452982901283f7d958d5e5bd934",
@@ -613,10 +615,14 @@
     <string name="plan_roadmap_number_of">%1$d de %2$d</string>
     <string name="plan_roadmap_phase_of">fase %1$d de %2$d</string>
     <string name="plan_roadmap_from">Desde %1$s</string>
-    <!-- %1$s is the day the plan ends, such as "Nov 3", sometimes after "About". -->
+    <!-- %1$s is the day the plan ends, such as "Nov 3". -->
     <string name="plan_roadmap_until">Hasta el %1$s</string>
-    <!-- %1$s is the month the plan ends, such as "May" or "May 2027", sometimes after "About". -->
+    <!-- %1$s is the month the plan ends, such as "May" or "May 2027". -->
     <string name="plan_roadmap_until_month">Hasta %1$s</string>
+    <!-- An estimated end. %1$s is the day the plan ends, such as "Nov 3". -->
+    <string name="plan_roadmap_until_about">Hasta aproximadamente el %1$s</string>
+    <!-- An estimated end. %1$s is the month the plan ends, such as "May" or "May 2027". -->
+    <string name="plan_roadmap_until_about_month">Hasta aproximadamente %1$s</string>
     <string name="plan_today">Hoy</string>
     <string name="plan_mock_exam">Simulacro de examen</string>
     <string name="plan_phase_challenge">Desafío de la fase</string>

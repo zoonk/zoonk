@@ -53,10 +53,14 @@
     <string name="plan_roadmap_number_of">%1$d of %2$d</string>
     <string name="plan_roadmap_phase_of">phase %1$d of %2$d</string>
     <string name="plan_roadmap_from">From %1$s</string>
-    <!-- %1$s is the day the plan ends, such as "Nov 3", sometimes after "About". -->
+    <!-- %1$s is the day the plan ends, such as "Nov 3". -->
     <string name="plan_roadmap_until">Until %1$s</string>
-    <!-- %1$s is the month the plan ends, such as "May" or "May 2027", sometimes after "About". -->
+    <!-- %1$s is the month the plan ends, such as "May" or "May 2027". -->
     <string name="plan_roadmap_until_month">Until %1$s</string>
+    <!-- An estimated end. %1$s is the day the plan ends, such as "Nov 3". -->
+    <string name="plan_roadmap_until_about">Until about %1$s</string>
+    <!-- An estimated end. %1$s is the month the plan ends, such as "May" or "May 2027". -->
+    <string name="plan_roadmap_until_about_month">Until about %1$s</string>
     <string name="plan_today">Today</string>
     <string name="plan_mock_exam">Mock exam</string>
     <string name="plan_phase_challenge">Phase challenge</string>

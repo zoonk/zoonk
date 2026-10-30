@@ -33,6 +33,21 @@ fun planDate(
     }
 }
 
+@Composable
+internal fun roadmapUntil(
+    finish: PlanFinish,
+    today: LocalDate,
+): String =
+    stringResource(
+        when {
+            finish.estimate && finish.month -> R.string.plan_roadmap_until_about_month
+            finish.estimate -> R.string.plan_roadmap_until_about
+            finish.month -> R.string.plan_roadmap_until_month
+            else -> R.string.plan_roadmap_until
+        },
+        formatPlanDate(finish.date, today, currentLocale(), finish.month),
+    )
+
 /** Main's `usePhaseName`: exam phases have no name, so they're named by kind. */
 @Composable
 fun phaseName(
