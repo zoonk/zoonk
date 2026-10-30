@@ -12,6 +12,7 @@ struct TodayDayView: View {
   @State private var failed: Tap?
   @State private var tapTask: Task<Void, Never>?
   @State private var disclosures = TodayDisclosures()
+  @State private var writingStalled = false
 
   enum Tap: Equatable {
     case block(Int)
@@ -61,7 +62,8 @@ struct TodayDayView: View {
   @ViewBuilder
   private var day: some View {
     TodaySessionSection(
-      view: view, busy: busy, failed: failed, disclosures: $disclosures, open: open
+      view: view, busy: busy, failed: failed, writingStalled: writingStalled,
+      disclosures: $disclosures, open: open
     ) {
       perform(.prepare) { await store.prepareLessons(in: view) }
     }
@@ -221,13 +223,18 @@ struct TodayDayView: View {
     await store.today.refresh()
   }
 
-  /// For a few minutes at most, and not while a task covers Today.
+  /// As main's `usePoll`: ten minutes at most, then Today says it's taking longer. Not while a task
+  /// covers Today.
   private func pollWhileWriting() async {
+    writingStalled = false
+
     guard view.isWaitingForLessons, !isCovered else {
       return
     }
 
-    for _ in 0..<36 {
+    let deadline = ContinuousClock.now + .seconds(600)
+
+    while ContinuousClock.now < deadline {
       do {
         try await Task.sleep(for: .seconds(5))
       } catch {
@@ -236,6 +243,8 @@ struct TodayDayView: View {
 
       await store.today.refresh()
     }
+
+    writingStalled = true
   }
 }
 

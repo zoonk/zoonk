@@ -15,6 +15,7 @@ struct TodaySessionSection: View {
   let view: TodayView
   let busy: TodayDayView.Tap?
   let failed: TodayDayView.Tap?
+  let writingStalled: Bool
   @Binding var disclosures: TodayDisclosures
   let open: (StudyBlock, Bool) -> Void
   let prepare: () -> Void
@@ -55,7 +56,7 @@ struct TodaySessionSection: View {
         PlusLessonRow(title: lesson.title)
       }
 
-      if let status = TodayDayStatus(view: view) {
+      if let status = TodayDayStatus(view: view, writingStalled: writingStalled) {
         status
       }
     }
@@ -556,7 +557,7 @@ private struct TodayDayStatus: View {
   private let clause: String?
   private let systemImage: String
 
-  init?(view: TodayView) {
+  init?(view: TodayView, writingStalled: Bool) {
     self.view = view
     let session = view.session
 
@@ -584,6 +585,14 @@ private struct TodayDayStatus: View {
         : String(
           localized: "Today's session is complete.", table: "Today", comment: "Day done")
       clause = Self.seeYou(session.week)
+    case .waiting where writingStalled:
+      systemImage = "clock"
+      sentence = String(
+        localized: "Today's lessons are taking longer than usual.", table: "Today",
+        comment: "The day's lessons are taking long to outline")
+      clause = String(
+        localized: "Come back in a few minutes.", table: "Today",
+        comment: "The day's lessons are taking long to outline")
     case .waiting:
       systemImage = "hourglass"
       sentence = String(
