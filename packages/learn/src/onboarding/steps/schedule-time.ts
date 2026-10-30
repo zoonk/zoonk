@@ -1,4 +1,3 @@
-import { splitDailyBudget } from "@zoonk/core/goals/daily-budget";
 import {
   type PlanSuggestedTime,
   type PlanTimeAdvice,
@@ -23,26 +22,6 @@ export type TimeLine =
 
 /** The goals typed together share the day's time; `place` is the shown goal's among them, the main one 0. */
 export type GoalsTogether = { count: number; place: number };
-
-export type DaySplit = { mine: number; others: number; rest: number };
-
-export function getDaySplit({
-  minutes,
-  together,
-}: {
-  minutes: number | null;
-  together: GoalsTogether;
-}): DaySplit | null {
-  if (together.count < 2 || minutes === null) {
-    return null;
-  }
-
-  const shares = splitDailyBudget({ budget: minutes, count: together.count });
-  const mine = shares[together.place] ?? minutes;
-  const all = shares.reduce((sum, share) => sum + share, 0);
-
-  return { mine, others: together.count - 1, rest: all - mine };
-}
 
 export function toStudyWeek({
   days,

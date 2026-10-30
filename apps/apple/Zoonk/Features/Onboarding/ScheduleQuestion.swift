@@ -120,6 +120,8 @@ struct ScheduleQuestion: View {
 
   private var findKey: ScheduleWeek { ScheduleTime.findWeek(days: days, weekend: weekend) }
 
+  private var timeChoices: [TimeChoice] { view.timeChoices.map(TimeChoice.init) }
+
   private var shown: Shown {
     let findKey = self.findKey
     let lastFound = found.last(for: findKey)
@@ -190,7 +192,8 @@ struct ScheduleQuestion: View {
               first: found.first, found: shown.lastFound, minutes: $0)
           })
       ) {
-        ForEach(ScheduleTime.dailyTimes(with: minutes, suggested), id: \.self) { time in
+        ForEach(ScheduleTime.dailyTimes(timeChoices, with: minutes, suggested), id: \.self) {
+          time in
           Text(
             time == suggested
               ? String(
@@ -336,12 +339,11 @@ struct ScheduleQuestion: View {
     }
   }
 
-  /// The goals typed together share the day's time; the main one weighs most.
+  /// The goals typed together share the day's time, as core splits it.
   private func splitWords(_ shown: Shown) -> String? {
-    guard
-      let split = ScheduleTime.daySplit(
-        minutes: days.isEmpty ? nil : shown.minutes, count: view.goalIds.count,
-        place: max(0, view.goalIds.firstIndex(of: view.goal.id) ?? 0))
+    guard !days.isEmpty,
+      let split = ScheduleTime.split(
+        minutes: shown.minutes, choices: timeChoices, answers: Array(found.answers.values))
     else {
       return nil
     }
@@ -643,7 +645,7 @@ struct ScheduleQuestion: View {
           let current = weekendPicked ?? shown.minutes ?? view.recommendedMinutes
 
           Picker(selection: Binding(get: { current }, set: { weekendPicked = $0 })) {
-            ForEach(ScheduleTime.dailyTimes(with: current), id: \.self) { time in
+            ForEach(ScheduleTime.dailyTimes(timeChoices, with: current), id: \.self) { time in
               Text(duration(time))
                 .tag(time)
             }

@@ -1,6 +1,7 @@
 "use client";
 
 import { type GoalView } from "@zoonk/core/goals/contract";
+import { getDaySplit } from "@zoonk/core/goals/daily-budget";
 import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { useState } from "react";
@@ -9,7 +10,6 @@ import {
   type GoalsTogether,
   type StudyWeek,
   asksAboutTime,
-  getDaySplit,
   getShownMinutes,
   getTimeLine,
   toFindWeek,
@@ -176,7 +176,7 @@ export function useSchedule({
     picked,
     setFullCourse,
     setPicked,
-    split: hasDays ? getDaySplit({ minutes, together }) : null,
+    split: hasDays && minutes !== null ? getDaySplit({ budget: minutes, ...together }) : null,
     stale:
       hasDays &&
       waitsForSuggestion({ failed: found.failed, first: found.first, found: found.found, picked }),

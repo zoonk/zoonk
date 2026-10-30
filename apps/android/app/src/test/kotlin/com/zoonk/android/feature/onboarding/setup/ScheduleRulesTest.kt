@@ -70,7 +70,7 @@ class ScheduleRulesTest {
 
     @Test
     fun theTimeStartsOnWhatTheApiSuggestsNotOnTheTimesItSends() {
-        val suggested = PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERY_TOPIC, 50)
+        val suggested = PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERY_TOPIC, 50, null)
         val answer = found(recommended = 35).copy(suggested = suggested)
 
         assertEquals(50, shownMinutes(60, answer, answer, picked = null, settled = false))
@@ -152,7 +152,7 @@ class ScheduleRulesTest {
     fun theSuggestionIsOfferedBackOnlyWhileAnotherTimeFallsShort() {
         val short = TimeLine.Share(0.48)
         assertNull(offer(found(), short, 35))
-        assertEquals(PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERYTHING, 35), offer(found(), short, 15))
+        assertEquals(PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERYTHING, 35, null), offer(found(), short, 15))
         assertNull(offer(found(recommended = 900, core = 240), TimeLine.Everything(suggested = false), 900))
     }
 

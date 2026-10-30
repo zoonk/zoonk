@@ -2,7 +2,6 @@ import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/tim
 import { describe, expect, it } from "vitest";
 import {
   asksAboutTime,
-  getDaySplit,
   getOffer,
   getShownMinutes,
   getSuggestedMinutes,
@@ -27,7 +26,7 @@ function foundTime(time: Partial<PlanTimeToCover> = {}): PlanTimeToCover {
     readingNotice: false,
     ready: true,
     recommendedMinutes: 35,
-    suggested: { kind: "everything", minutes: 35 },
+    suggested: { kind: "everything", minutes: 35, split: null },
     targetDate: "2028-10-29",
     targetDateNamedMonth: false,
     ...time,
@@ -35,14 +34,14 @@ function foundTime(time: Partial<PlanTimeToCover> = {}): PlanTimeToCover {
 }
 
 function everythingAt(minutes: number): Partial<PlanTimeToCover> {
-  return { recommendedMinutes: minutes, suggested: { kind: "everything", minutes } };
+  return { recommendedMinutes: minutes, suggested: { kind: "everything", minutes, split: null } };
 }
 
 function everyTopicAt(minutes: number): Partial<PlanTimeToCover> {
   return {
     coreMinutes: minutes,
     recommendedMinutes: null,
-    suggested: { kind: "everyTopic", minutes },
+    suggested: { kind: "everyTopic", minutes, split: null },
   };
 }
 
@@ -283,6 +282,7 @@ describe(getOffer, () => {
     expect(getOffer({ found: foundTime(), line: SHORT, minutes: 15 })).toStrictEqual({
       kind: "everything",
       minutes: 35,
+      split: null,
     });
   });
 
@@ -324,33 +324,5 @@ describe(toFindWeek, () => {
     });
 
     expect(toFindWeek({ days: [1, 2], weekend: null })).toStrictEqual({ studyDays: [1, 2] });
-  });
-});
-
-describe("goals typed together", () => {
-  const MAIN = { count: 2, place: 0 };
-  const SECOND = { count: 2, place: 1 };
-
-  it("says how the day's time is shared only between goals typed together", () => {
-    expect(getDaySplit({ minutes: 60, together: MAIN })).toStrictEqual({
-      mine: 40,
-      others: 1,
-      rest: 20,
-    });
-
-    expect(getDaySplit({ minutes: 60, together: SECOND })).toStrictEqual({
-      mine: 20,
-      others: 1,
-      rest: 40,
-    });
-
-    expect(getDaySplit({ minutes: 50, together: { count: 3, place: 2 } })).toStrictEqual({
-      mine: 10,
-      others: 2,
-      rest: 40,
-    });
-
-    expect(getDaySplit({ minutes: 60, together: { count: 1, place: 0 } })).toBeNull();
-    expect(getDaySplit({ minutes: null, together: MAIN })).toBeNull();
   });
 });

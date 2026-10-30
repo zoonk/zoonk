@@ -156,6 +156,28 @@ protocol PlanAnswer: Equatable, Sendable {
   var ready: Bool { get }
 }
 
+/// The day the goals typed together share, split as saving the schedule splits it: this goal's
+/// minutes and the others' together.
+struct DaySplit: Decodable, Equatable, Sendable {
+  let mine: Int
+  let others: Int
+  let rest: Int
+}
+
+/// A daily time the time question offers, with core's split of it.
+struct TimeChoice: Equatable, Sendable {
+  let minutes: Int
+  let split: DaySplit?
+}
+
+extension TimeChoice {
+  init(_ choice: Components.Schemas.Onboarding.TimeChoicesPayloadPayload) {
+    self.init(
+      minutes: choice.minutes,
+      split: choice.split.map { DaySplit(mine: $0.mine, others: $0.others, rest: $0.rest) })
+  }
+}
+
 struct TimeAdvice: PlanAnswer, Decodable {
   /// Nil for a plan with nothing to cover by.
   let coveredShare: Double?
@@ -175,6 +197,7 @@ struct TimeToCover: PlanAnswer, Decodable {
 
     let kind: Kind
     let minutes: Int
+    let split: DaySplit?
   }
 
   let pastDate: Bool

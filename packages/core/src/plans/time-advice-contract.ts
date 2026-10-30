@@ -25,6 +25,19 @@ const readySchema = z
       "False while the plan is being built, or while it waits for placement or its exam's notice reading, which change what it needs: ask again in a few seconds",
   });
 
+export const daySplitSchema = z
+  .object({
+    mine: z.int().meta({ description: "This goal's minutes of the day" }),
+    others: z.int().meta({ description: "How many other goals share the day" }),
+    rest: z.int().meta({ description: "The other goals' minutes of the day, together" }),
+  })
+  .nullable()
+  .default(null)
+  .meta({
+    description:
+      "How the day the goals typed together share splits among them, as saving the schedule splits it. Null for a goal typed alone",
+  });
+
 const suggestedTimeSchema = z
   .object({
     kind: z
@@ -34,6 +47,10 @@ const suggestedTimeSchema = z
           "everything: the time covers the whole goal in depth by its date (recommendedMinutes); everyTopic: it brings every topic in, some in less depth (coreMinutes)",
       }),
     minutes: z.int(),
+    split: daySplitSchema.meta({
+      description:
+        "How these minutes split among the goals typed together, as saving the schedule splits them. Null for a goal typed alone, or when asked without studyDays",
+    }),
   })
   .nullable()
   .default(null)

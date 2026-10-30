@@ -134,7 +134,7 @@ test("waits for the time new study days need before saving the suggestion", asyn
       readingNotice: false,
       ready: true,
       recommendedMinutes: minutes,
-      suggested: { kind: "everything", minutes },
+      suggested: { kind: "everything", minutes, split: null },
       targetDate: targetDate.toISOString().slice(0, 10),
       targetDateNamedMonth: false,
     };

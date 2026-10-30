@@ -27,13 +27,6 @@ enum ScheduleTime {
     let recommendedMinutes: Int?
   }
 
-  /// The day the goals typed together share: this goal's time and the others' together.
-  struct DaySplit: Equatable {
-    let mine: Int
-    let others: Int
-    let rest: Int
-  }
-
   static let everyDay = Array(0..<7)
 
   private static let weekdays = [1, 2, 3, 4, 5]
@@ -43,6 +36,10 @@ enum ScheduleTime {
 
   static func dailyTimes(with shown: Int?...) -> [Int] {
     Set(dailyTimes + shown.compactMap { $0 }).sorted()
+  }
+
+  static func dailyTimes(_ choices: [TimeChoice], with shown: Int?...) -> [Int] {
+    Set(choices.map(\.minutes) + shown.compactMap { $0 }).sorted()
   }
 
   /// A new goal's every-day week was never chosen, so the question opens on Monday to Friday unless
@@ -101,6 +98,20 @@ enum ScheduleTime {
     suggestedMinutes(first) != nil && suggestedMinutes(found) == minutes ? nil : minutes
   }
 
+  /// Core's split of the time shown: the question's own times carry theirs, and a suggestion between
+  /// them its own, which stays the learner's pick once later weeks suggest other times.
+  static func split(minutes: Int?, choices: [TimeChoice], answers: [TimeToCover]) -> DaySplit? {
+    guard let minutes else {
+      return nil
+    }
+
+    if let choice = choices.first(where: { $0.minutes == minutes }) {
+      return choice.split
+    }
+
+    return answers.compactMap(\.suggested).first { $0.minutes == minutes }?.split
+  }
+
   /// Why no suggestion covers everything; nil when one does, the time shown does, or the date passed.
   /// The date is to blame only once every day is a study day: until then, more days bring the time
   /// down.
@@ -121,24 +132,6 @@ enum ScheduleTime {
     failed: Bool, first: TimeToCover?, found: TimeToCover?, picked: Int?
   ) -> Bool {
     picked == nil && found == nil && !failed && suggestedMinutes(first) != nil
-  }
-
-  /// Mirrors core's `splitDailyBudget`: the main goal (`place` 0) weighs twice the others, which get
-  /// whole 5-minute steps, and every goal at least 5 minutes. Nil for a goal typed alone.
-  static func daySplit(minutes: Int?, count: Int, place: Int) -> DaySplit? {
-    guard count > 1, let minutes else {
-      return nil
-    }
-
-    let least = 5
-    let step = 5
-    let share = Double(minutes) / Double(2 + count - 1)
-    let other = max(least, Int((share / Double(step)).rounded(.down)) * step)
-    let main = max(least, minutes - other * (count - 1))
-    let shares = [main] + Array(repeating: other, count: count - 1)
-    let mine = shares.indices.contains(place) ? shares[place] : minutes
-
-    return DaySplit(mine: mine, others: count - 1, rest: shares.reduce(0, +) - mine)
   }
 
   /// Only while the time shown falls short of everything.

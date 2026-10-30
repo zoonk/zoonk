@@ -1,4 +1,5 @@
 import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
+import { daySplitSchema } from "@zoonk/core/plans/time-advice-contract";
 import {
   ONBOARDING_QUESTIONS,
   type OnboardingView,
@@ -115,6 +116,12 @@ export const onboardingResponseSchema = z
       .meta({
         description:
           "The screens still ahead, in order, always ending with the plan. `dateProblem` says why `targetDate` is back after an answer",
+      }),
+    timeChoices: z
+      .array(z.object({ minutes: z.int().positive(), split: daySplitSchema }))
+      .meta({
+        description:
+          "The daily times the time question offers, in order, `recommendedMinutes` among them, each with how it splits among the goals typed together",
       }),
   })
   .meta({ id: "Onboarding" }) satisfies z.ZodType<OnboardingView>;

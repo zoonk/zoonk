@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getBudgetForGoal, splitDailyBudget } from "./daily-budget";
+import { getBudgetForGoal, getDaySplit, splitDailyBudget } from "./daily-budget";
 
 describe(splitDailyBudget, () => {
   it("gives the main goal twice each other goal's share and keeps the total", () => {
@@ -11,6 +11,30 @@ describe(splitDailyBudget, () => {
   it("keeps one goal's time whole and never goes below the minimum", () => {
     expect(splitDailyBudget({ budget: 25, count: 1 })).toStrictEqual([25]);
     expect(splitDailyBudget({ budget: 10, count: 3 })).toStrictEqual([5, 5, 5]);
+  });
+});
+
+describe(getDaySplit, () => {
+  it("says how the day's time is shared only between goals typed together", () => {
+    expect(getDaySplit({ budget: 60, count: 2, place: 0 })).toStrictEqual({
+      mine: 40,
+      others: 1,
+      rest: 20,
+    });
+
+    expect(getDaySplit({ budget: 60, count: 2, place: 1 })).toStrictEqual({
+      mine: 20,
+      others: 1,
+      rest: 40,
+    });
+
+    expect(getDaySplit({ budget: 50, count: 3, place: 2 })).toStrictEqual({
+      mine: 10,
+      others: 2,
+      rest: 40,
+    });
+
+    expect(getDaySplit({ budget: 60, count: 1, place: 0 })).toBeNull();
   });
 });
 

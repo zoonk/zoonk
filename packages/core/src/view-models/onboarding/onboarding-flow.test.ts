@@ -167,6 +167,7 @@ describe("onboarding a new goal", () => {
         goal: { id: goal?.id },
         goalIds: [goal?.id],
         steps: ["purpose", "targetDate", "level", "buddy", "placement", "schedule", "plan"],
+        timeChoices: expect.arrayContaining([{ minutes: 60, split: null }]),
       },
       status: "ready",
     });
@@ -525,10 +526,14 @@ describe("onboarding a new goal", () => {
     const [main, other] = goals;
     const onboarding = await getOnboarding({ goalId: main?.id ?? "" });
 
-    expect(onboarding.status === "ready" && onboarding.onboarding.goalIds).toStrictEqual([
-      main?.id,
-      other?.id,
-    ]);
+    expect(onboarding).toMatchObject({
+      onboarding: {
+        goalIds: [main?.id, other?.id],
+        timeChoices: expect.arrayContaining([
+          { minutes: 60, split: { mine: 40, others: 1, rest: 20 } },
+        ]),
+      },
+    });
 
     await answerOnboardingQuestion({
       goalId: main?.id ?? "",

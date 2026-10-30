@@ -1,6 +1,6 @@
 import "server-only";
 import { loadGoalDateKind } from "../exams/_utils/goal-date-estimate";
-import { getBudgetForGoal, getGoalShare } from "../goals/daily-budget";
+import { getBudgetForGoal, getDaySplit, getGoalShare } from "../goals/daily-budget";
 import { findOnboardingGoalIds } from "../view-models/onboarding/_utils/onboarding-goals";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { findOwnedPlan } from "./_utils/owned-plan";
@@ -326,6 +326,8 @@ export async function findPlanTimeToCover({
       : toDayMinutes({ day, minutes: feasibility.recommendedMinutes }),
   };
 
+  const suggested = getSuggestedTime(minutes);
+
   return {
     status: "ready",
     time: {
@@ -334,7 +336,10 @@ export async function findPlanTimeToCover({
       pastDate,
       readingNotice: false,
       ready: true,
-      suggested: getSuggestedTime(minutes),
+      suggested: suggested && {
+        ...suggested,
+        split: getDaySplit({ ...day, budget: suggested.minutes }),
+      },
       targetDate: context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null,
       targetDateNamedMonth: dateKind.namedMonth,
     },

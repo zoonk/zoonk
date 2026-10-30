@@ -11,8 +11,10 @@ import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { loadCourseExam } from "../../goals/_utils/course-exam";
 import { findActiveGoalId, loadGoalViews } from "../../goals/_utils/goal-view";
 import { readCourseStart } from "../../goals/course-start-details";
+import { getDaySplit } from "../../goals/daily-budget";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
+import { DAILY_TIME_CHOICES } from "../../plans/daily-minutes";
 import { type NoSitting } from "../../plans/plan-view-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { findLearningProfileView } from "../../profile/_utils/learning-profile-view";
@@ -252,6 +254,23 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     ? null
     : (view.targetDate ?? notice.examDate);
 
+  // The time a day the course's page had picked stays the learner's until they change it.
+  const recommendedMinutes =
+    courseStart?.dailyMinutes ??
+    getRecommendedMinutes({
+      size: getGoalSize({
+        hasNotice: goal.examBlueprintId !== null && !notice.fromMaterial,
+        isClassTest: isClassTest(details) || notice.fromMaterial,
+        kind: goal.kind,
+        purpose: details.purpose,
+        targetDate,
+        targetPosition: details.targetPosition,
+        today,
+      }),
+      targetDate,
+      today,
+    });
+
   return {
     onboarding: {
       dateProblem,
@@ -263,23 +282,18 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       goal: view,
       goalIds,
       libraryCourse,
-      // The time a day the course's page had picked stays the learner's until they change it.
-      recommendedMinutes:
-        courseStart?.dailyMinutes ??
-        getRecommendedMinutes({
-          size: getGoalSize({
-            hasNotice: goal.examBlueprintId !== null && !notice.fromMaterial,
-            isClassTest: isClassTest(details) || notice.fromMaterial,
-            kind: goal.kind,
-            purpose: details.purpose,
-            targetDate,
-            targetPosition: details.targetPosition,
-            today,
-          }),
-          targetDate,
-          today,
-        }),
+      recommendedMinutes,
       steps,
+      timeChoices: [...new Set([...DAILY_TIME_CHOICES, recommendedMinutes])]
+        .toSorted((a, b) => a - b)
+        .map((minutes) => ({
+          minutes,
+          split: getDaySplit({
+            budget: minutes,
+            count: goalIds.length,
+            place: Math.max(0, goalIds.indexOf(goal.id)),
+          }),
+        })),
     },
     status: "ready",
   };

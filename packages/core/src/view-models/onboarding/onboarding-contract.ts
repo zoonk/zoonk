@@ -5,6 +5,7 @@ import {
   examChoicePickSchema,
 } from "../../exams/choices/exam-choice-contract";
 import { type TargetCutoff } from "../../exams/cutoffs/target-cutoff-contract";
+import { type DaySplit } from "../../goals/daily-budget";
 import { type GoalDraft, type GoalView, goalDraftSchema } from "../../goals/goal-contract";
 import { MAX_GOAL_PROMPT_LENGTH } from "../../goals/goal-input-limits";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
@@ -207,6 +208,8 @@ export type OnboardingDateProblem =
   | { kind: "passed" | "today" }
   | ({ kind: "noSitting" } & NoSitting);
 
+type OnboardingTimeChoice = { minutes: number; split: DaySplit | null };
+
 export type OnboardingView = {
   /** "passed" and "today" bring the `targetDate` screen back even when answered; "noSitting" until the learner answers it. */
   dateProblem: OnboardingDateProblem | null;
@@ -228,6 +231,8 @@ export type OnboardingView = {
   recommendedMinutes: number;
   /** Onboarding screens still ahead, in order, ending with the plan. */
   steps: OnboardingStep[];
+  /** The daily times the time question offers, `recommendedMinutes` among them. */
+  timeChoices: OnboardingTimeChoice[];
 };
 
 const nullableAnswer = z.string().trim().min(1).max(MAX_ONBOARDING_ANSWER_LENGTH).nullable();

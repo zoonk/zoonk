@@ -6,7 +6,7 @@ final class ScheduleTimeTests: XCTestCase {
   private typealias Line = ScheduleTime.Line
 
   private func found(
-    suggested: TimeToCover.Suggested? = .init(kind: .everything, minutes: 35),
+    suggested: TimeToCover.Suggested? = .init(kind: .everything, minutes: 35, split: nil),
     recommendedMinutes: Int? = 35,
     pastDate: Bool = false
   ) -> TimeToCover {
@@ -16,11 +16,14 @@ final class ScheduleTimeTests: XCTestCase {
   }
 
   private func everythingAt(_ minutes: Int) -> TimeToCover {
-    found(suggested: .init(kind: .everything, minutes: minutes), recommendedMinutes: minutes)
+    found(
+      suggested: .init(kind: .everything, minutes: minutes, split: nil),
+      recommendedMinutes: minutes)
   }
 
   private func everyTopicAt(_ minutes: Int) -> TimeToCover {
-    found(suggested: .init(kind: .everyTopic, minutes: minutes), recommendedMinutes: 300)
+    found(
+      suggested: .init(kind: .everyTopic, minutes: minutes, split: nil), recommendedMinutes: 300)
   }
 
   private var tooClose: TimeToCover { found(suggested: nil, recommendedMinutes: 900) }
@@ -28,7 +31,8 @@ final class ScheduleTimeTests: XCTestCase {
   private var passed: TimeToCover { found(suggested: nil, recommendedMinutes: nil, pastDate: true) }
 
   private func advice(_ share: Double? = 0.48, endDate: String? = nil) -> TimeAdvice {
-    TimeAdvice(coveredShare: share, endDate: endDate, fullCourseEndDate: nil, ready: true)
+    TimeAdvice(
+      coveredShare: share, endDate: endDate, fullCourseEndDate: nil, ready: true)
   }
 
   private func line(
@@ -179,17 +183,20 @@ final class ScheduleTimeTests: XCTestCase {
         failed: false, first: found(suggested: nil), found: nil, picked: nil))
   }
 
-  func testSplitsTheSharedDayAsCoreDoes() {
+  func testSaysCoresSplitOfTheTimeShownWithoutWaitingForAnAnswerAboutIt() {
+    let choices = [
+      TimeChoice(minutes: 30, split: DaySplit(mine: 20, others: 1, rest: 10)),
+      TimeChoice(minutes: 45, split: DaySplit(mine: 30, others: 1, rest: 15)),
+    ]
+    let split = DaySplit(mine: 25, others: 1, rest: 10)
+    let suggested = found(suggested: .init(kind: .everything, minutes: 35, split: split))
+    let later = found(suggested: .init(kind: .everything, minutes: 60, split: nil))
+
+    XCTAssertEqual(ScheduleTime.split(minutes: 45, choices: choices, answers: []), choices[1].split)
     XCTAssertEqual(
-      ScheduleTime.daySplit(minutes: 60, count: 2, place: 0), .init(mine: 40, others: 1, rest: 20))
-    XCTAssertEqual(
-      ScheduleTime.daySplit(minutes: 45, count: 2, place: 1), .init(mine: 15, others: 1, rest: 30))
-    XCTAssertEqual(
-      ScheduleTime.daySplit(minutes: 50, count: 3, place: 0), .init(mine: 30, others: 2, rest: 20))
-    XCTAssertEqual(
-      ScheduleTime.daySplit(minutes: 10, count: 3, place: 2), .init(mine: 5, others: 2, rest: 10))
-    XCTAssertNil(ScheduleTime.daySplit(minutes: 25, count: 1, place: 0))
-    XCTAssertNil(ScheduleTime.daySplit(minutes: nil, count: 2, place: 0))
+      ScheduleTime.split(minutes: 35, choices: choices, answers: [later, suggested]), split)
+    XCTAssertNil(ScheduleTime.split(minutes: 50, choices: choices, answers: [suggested]))
+    XCTAssertNil(ScheduleTime.split(minutes: nil, choices: choices, answers: [suggested]))
   }
 
   func testOffersTheSuggestionBackOnlyWhileAnotherTimeFallsShort() {
@@ -198,7 +205,7 @@ final class ScheduleTimeTests: XCTestCase {
     XCTAssertNil(ScheduleTime.offer(found: found(), line: short, minutes: 35))
     XCTAssertEqual(
       ScheduleTime.offer(found: found(), line: short, minutes: 15),
-      .init(kind: .everything, minutes: 35))
+      .init(kind: .everything, minutes: 35, split: nil))
     XCTAssertNil(
       ScheduleTime.offer(
         found: everyTopicAt(240), line: .everything(suggested: false), minutes: 900)
@@ -229,6 +236,12 @@ final class ScheduleTimeTests: XCTestCase {
     XCTAssertEqual(Array(times.prefix(4)), [15, 30, 35, 45])
     XCTAssertEqual(times.filter { (240...300).contains($0) }, [240, 270, 300])
     XCTAssertEqual(times.last, 1440)
+  }
+
+  func testOffersCoresTimesWithTheTimesShown() {
+    let choices = [15, 30, 45].map { TimeChoice(minutes: $0, split: nil) }
+
+    XCTAssertEqual(ScheduleTime.dailyTimes(choices, with: 35, 30, nil), [15, 30, 35, 45])
   }
 
   func testOpensOnMondayToFridayUnlessTheGoalHasFewerDays() {

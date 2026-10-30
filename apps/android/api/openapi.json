@@ -79053,11 +79053,44 @@
                 "type": "integer",
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
+              },
+              "split": {
+                "default": null,
+                "description": "How these minutes split among the goals typed together, as saving the schedule splits them. Null for a goal typed alone, or when asked without studyDays",
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "mine": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "This goal's minutes of the day"
+                  },
+                  "others": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "How many other goals share the day"
+                  },
+                  "rest": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "The other goals' minutes of the day, together"
+                  }
+                },
+                "required": [
+                  "mine",
+                  "others",
+                  "rest"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
               "kind",
-              "minutes"
+              "minutes",
+              "split"
             ],
             "additionalProperties": false
           },
@@ -84322,6 +84355,58 @@
               "$ref": "#/components/schemas/OnboardingStep"
             },
             "description": "The screens still ahead, in order, always ending with the plan. `dateProblem` says why `targetDate` is back after an answer"
+          },
+          "timeChoices": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "minutes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "exclusiveMinimum": true,
+                  "maximum": 9007199254740991
+                },
+                "split": {
+                  "default": null,
+                  "description": "How the day the goals typed together share splits among them, as saving the schedule splits it. Null for a goal typed alone",
+                  "nullable": true,
+                  "type": "object",
+                  "properties": {
+                    "mine": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "This goal's minutes of the day"
+                    },
+                    "others": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "How many other goals share the day"
+                    },
+                    "rest": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "The other goals' minutes of the day, together"
+                    }
+                  },
+                  "required": [
+                    "mine",
+                    "others",
+                    "rest"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "minutes",
+                "split"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The daily times the time question offers, in order, `recommendedMinutes` among them, each with how it splits among the goals typed together"
           }
         },
         "required": [
@@ -84335,7 +84420,8 @@
           "goalIds",
           "libraryCourse",
           "recommendedMinutes",
-          "steps"
+          "steps",
+          "timeChoices"
         ],
         "additionalProperties": false
       },

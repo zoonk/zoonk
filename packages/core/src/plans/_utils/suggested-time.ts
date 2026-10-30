@@ -4,7 +4,10 @@ import { type PlanSuggestedTime, type PlanTimeToCover } from "../time-advice-con
 export function getSuggestedTime({
   coreMinutes,
   recommendedMinutes,
-}: Pick<PlanTimeToCover, "coreMinutes" | "recommendedMinutes">): PlanSuggestedTime | null {
+}: Pick<PlanTimeToCover, "coreMinutes" | "recommendedMinutes">): Omit<
+  PlanSuggestedTime,
+  "split"
+> | null {
   if (recommendedMinutes !== null) {
     return { kind: "everything", minutes: recommendedMinutes };
   }

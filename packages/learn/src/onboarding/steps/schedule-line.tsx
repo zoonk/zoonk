@@ -1,12 +1,13 @@
 "use client";
 
+import { type DaySplit } from "@zoonk/core/goals/daily-budget";
 import { type PlanSuggestedTime } from "@zoonk/core/plans/time-advice-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate, useGoalDateValues } from "../../_utils/iso-date";
 import { useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
-import { type DaySplit, type TimeLine, type TooClose } from "./schedule-time";
+import { type TimeLine, type TooClose } from "./schedule-time";
 
 export type GoalDate = { isoDate: string; namedMonth: boolean };
 

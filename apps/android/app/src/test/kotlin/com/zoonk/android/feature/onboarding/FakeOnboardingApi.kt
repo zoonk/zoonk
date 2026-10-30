@@ -126,6 +126,7 @@ internal fun setupView(
             "]",
         ) { "\"$it\"" }},
          "libraryCourse":null,"recommendedMinutes":30,"steps":[${steps.joinToString(",") { "\"$it\"" }}],
+         "timeChoices":[{"minutes":30,"split":null}],
          "goal":{"createdAt":"2026-10-28T12:00:00Z","dailyMinutes":30,"details":$details,"examBlueprintId":null,"id":"$goalId",
           "isActive":true,"kind":"$kind","language":"en","plan":null,"primaryCourseId":null,"prompt":"learn statistics","status":"active",
           "studyDays":[],"studyTime":null,"targetDate":${targetDate?.let {
@@ -518,8 +519,8 @@ internal fun suggestionFor(
     core: Long?,
 ): PlanTimeToCoverSuggested? =
     when {
-        recommended != null && recommended <= 240 -> PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended)
-        core != null && core <= 240 -> PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERY_TOPIC, core)
+        recommended != null && recommended <= 240 -> PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended, null)
+        core != null && core <= 240 -> PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERY_TOPIC, core, null)
         else -> null
     }
 

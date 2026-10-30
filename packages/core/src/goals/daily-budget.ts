@@ -16,6 +16,31 @@ export function splitDailyBudget({ budget, count }: { budget: number; count: num
   return [main, ...Array.from({ length: count - 1 }, () => other)];
 }
 
+export type DaySplit = { mine: number; others: number; rest: number };
+
+/**
+ * What the goal at `place` (the main one is 0) gets of the day the goals typed together share, and
+ * the others' time together. Null for a goal typed alone.
+ */
+export function getDaySplit({
+  budget,
+  count,
+  place,
+}: {
+  budget: number;
+  count: number;
+  place: number;
+}): DaySplit | null {
+  if (count < 2) {
+    return null;
+  }
+
+  const shares = splitDailyBudget({ budget, count });
+  const mine = shares[place] ?? budget;
+
+  return { mine, others: count - 1, rest: shares.reduce((sum, share) => sum + share, 0) - mine };
+}
+
 export function getGoalShare({
   budget,
   count,
