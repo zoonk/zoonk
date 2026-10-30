@@ -177,22 +177,34 @@ private struct VocabularyView: View {
       Text(word.translation)
         .font(.title3)
 
-      if let note = wordHints?.note {
-        VStack(alignment: .leading, spacing: 2) {
-          Text("Usage:", tableName: "Player", comment: "Before a word's usage note")
-            .font(.caption.weight(.medium)).foregroundStyle(.secondary)
-          Text(note)
-        }
+      if let wordHints {
+        LessonWordHints(hints: wordHints)
       }
+    }
+  }
+}
 
-      if let tip = wordHints?.pronunciationTip {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(
-            "Pronunciation tip:", tableName: "Player", comment: "Before a word's pronunciation tip"
-          )
+/// A word's usage note and pronunciation tip: on its vocabulary screen, and after a translation is
+/// checked.
+struct LessonWordHints: View {
+  let hints: WordHints
+
+  var body: some View {
+    if let note = hints.note {
+      VStack(alignment: .leading, spacing: 2) {
+        Text("Usage:", tableName: "Player", comment: "Before a word's usage note")
           .font(.caption.weight(.medium)).foregroundStyle(.secondary)
-          Text(tip)
-        }
+        Text(note)
+      }
+    }
+
+    if let tip = hints.pronunciationTip {
+      VStack(alignment: .leading, spacing: 2) {
+        Text(
+          "Pronunciation tip:", tableName: "Player", comment: "Before a word's pronunciation tip"
+        )
+        .font(.caption.weight(.medium)).foregroundStyle(.secondary)
+        Text(tip)
       }
     }
   }

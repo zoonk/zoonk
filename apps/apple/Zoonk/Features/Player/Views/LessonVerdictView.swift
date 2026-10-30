@@ -66,6 +66,11 @@ struct LessonVerdictView: View {
           .font(.subheadline)
       }
 
+      if case .language(_, let wordHints?) = step.content {
+        LessonWordHints(hints: wordHints)
+          .font(.subheadline)
+      }
+
       if case .typedAnswer = step.content, !result.isCorrect, result.checked, !result.isSampleAnswer
       {
         LessonExplainAnswerView(step: step, store: store)
