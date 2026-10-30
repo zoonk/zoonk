@@ -10,7 +10,7 @@ export function isPicturePending({ now, startedAt }: { now: number; startedAt: n
 
 type ScreenContent = { content: unknown; kind: StepKind };
 
-function asksNumberedPicture({ content, kind }: ScreenContent): boolean {
+export function asksNumberedPicture({ content, kind }: ScreenContent): boolean {
   return kind !== "explanation" && Boolean(getStepImageRequest({ content, kind })?.parts);
 }
 

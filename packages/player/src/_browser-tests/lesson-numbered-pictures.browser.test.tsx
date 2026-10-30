@@ -1,10 +1,11 @@
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { numberedCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
 import { press } from "../_test-utils/activity-player";
-import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import {
   activityStep,
@@ -15,6 +16,7 @@ import {
 
 const heart = activityContentFixtures.labeledDiagram;
 const OVARY = numberedCheckContent.options.find((option) => option.isCorrect);
+const PICTURE_POLL_MS = 4000;
 const NEXT = { text: "Seeds grow inside the ovary.", title: "Inside the ovary" };
 
 describe("numbered pictures", () => {
@@ -30,6 +32,49 @@ describe("numbered pictures", () => {
     await page.getByRole("radio", { name: OVARY?.text }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+  });
+
+  it("waits for a numbered picture before taking answers", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
+    const step = numberedCheckStep({ drawn: false, imagePending: true });
+    const lesson = buildLesson([step]);
+
+    const getLessonPictures = vi
+      .fn<NonNullable<LessonPlayerAdapters["getLessonPictures"]>>()
+      .mockResolvedValue([]);
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
+
+    await Promise.all(
+      numberedCheckContent.options.map(async (option) => {
+        await expect
+          .element(page.getByRole("radio", { exact: true, name: option.text }))
+          .toBeDisabled();
+      }),
+    );
+
+    getLessonPictures.mockResolvedValue([
+      { image: inlineImage({ alt: numberedCheckContent.image.alt }), stepId: step.id },
+    ]);
+
+    await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
+
+    await expect
+      .element(page.getByRole("img", { name: numberedCheckContent.image.alt }))
+      .toBeVisible();
+
+    await Promise.all(
+      numberedCheckContent.options.map(async (option) => {
+        await expect
+          .element(page.getByRole("radio", { exact: true, name: option.text }))
+          .toBeEnabled();
+      }),
+    );
   });
 
   it("leaves out numbered questions whose picture never came, and goes on", async () => {

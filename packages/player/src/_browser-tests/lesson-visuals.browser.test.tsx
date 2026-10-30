@@ -258,6 +258,7 @@ describe("lesson visuals", () => {
     await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
 
     await expect.element(page.getByRole("img", { name: request.alt })).toBeVisible();
+    await expect.element(page.getByRole("radio").first()).toHaveAttribute("aria-checked", "true");
   });
 
   it("describes a question's picture that never came, so the question still reads", async () => {

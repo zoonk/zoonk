@@ -38,13 +38,16 @@ function PictureOptionContent({
 
     if (pending) {
       return (
-        <Skeleton className="bg-muted/60 text-muted-foreground flex aspect-4/5 w-full items-center justify-center rounded-lg">
-          <ImageIcon aria-hidden="true" className="size-5" />
-          <span className="sr-only" role="status">
-            {t("Drawing the picture…")}
-          </span>
-          <p className="px-3 text-sm leading-snug">{alt}</p>
-        </Skeleton>
+        <div className="text-muted-foreground relative flex aspect-4/5 w-full items-center justify-center overflow-hidden rounded-lg">
+          <Skeleton aria-hidden="true" className="bg-muted/60 absolute inset-0" />
+          <div className="relative flex items-center">
+            <ImageIcon aria-hidden="true" className="size-5" />
+            <span className="sr-only" role="status">
+              {t("Drawing the picture…")}
+            </span>
+            <p className="px-3 text-sm leading-snug">{alt}</p>
+          </div>
+        </div>
       );
     }
 
