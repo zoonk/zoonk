@@ -17,6 +17,7 @@ import {
 import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { CANT_LISTEN_TODAY } from "../lesson/use-today-choice";
+import { previewEntries } from "../preview/preview-catalog";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
 
@@ -39,6 +40,9 @@ const RHYTHM_TAPS_MS = rhythmTapTimes(QUICK_RHYTHM.fields);
 
 const REAL_TIME_TEST_TIMEOUT_MS = 30_000;
 
+const PHONE = { height: 812, width: 375 };
+const HALF_TAP_TARGET_PX = 21;
+
 const { byEar, byEarChoice } = engineModeFixtures.keyboardFretboard;
 
 const guitarChord = {
@@ -50,6 +54,26 @@ const guitarChord = {
 
 function pianoKey(name: string) {
   return page.getByRole("group", { name: "Piano keys" }).getByRole("button", { exact: true, name });
+}
+
+function exploredStep(id: string) {
+  const entry = previewEntries.find((item) => item.id === id);
+
+  if (!entry) {
+    throw new Error(`No preview entry ${id}`);
+  }
+
+  return entry.screen("explore");
+}
+
+function tapsLandOn(key: Element) {
+  key.scrollIntoView({ block: "nearest", inline: "center" });
+  const { bottom, left, width } = key.getBoundingClientRect();
+  const center = left + width / 2;
+
+  return [center - HALF_TAP_TARGET_PX, center + HALF_TAP_TARGET_PX].every(
+    (x) => document.elementFromPoint(x, bottom - 4)?.closest("button") === key,
+  );
 }
 
 async function pickFret({ position, string }: { position: string; string: string }) {
@@ -157,7 +181,7 @@ describe("music activities", () => {
   });
 
   it("notation: on a phone the tab wraps two bars a line, each line with its fret numbers", async () => {
-    await atViewport({ height: 812, width: 375 }, async () => {
+    await atViewport(PHONE, async () => {
       openActivity({ template: "notationPlayer" });
       await page.getByRole("radio", { name: "Tab" }).click();
 
@@ -212,6 +236,30 @@ describe("music activities", () => {
     await expect
       .element(page.getByText(/^On the keys: (?=.*\bA\b)(?=.*\bC\b)(?=.*\bE\b)/u))
       .toBeInTheDocument();
+  });
+
+  it("keyboard: an explored chord wider than a phone shows every key it marks, each easy to tap", async () => {
+    await atViewport(PHONE, async () => {
+      renderLessonPlayer({
+        lesson: buildLesson([exploredStep("activity-keyboardFretboard-byEarChoice")]),
+      });
+
+      await expect.element(pianoKey("A")).toHaveAttribute("aria-pressed", "true");
+
+      const edges = pianoKey("C")
+        .element()
+        .closest("[data-slot='piano-keyboard-scroll']")
+        ?.getBoundingClientRect();
+
+      for (const name of ["A", "C", "E"]) {
+        const key = pianoKey(name).element().getBoundingClientRect();
+        expect(key.left, `${name} is cut off`).toBeGreaterThanOrEqual(edges?.left ?? Infinity);
+        expect(key.right, `${name} is cut off`).toBeLessThanOrEqual(edges?.right ?? -Infinity);
+      }
+
+      const keys = page.getByRole("group", { name: "Piano keys" }).getByRole("button").elements();
+      expect(keys.filter((key) => !tapsLandOn(key))).toStrictEqual([]);
+    });
   });
 
   it("rhythm: the sound check is asked once per device and can be taken again", async () => {
