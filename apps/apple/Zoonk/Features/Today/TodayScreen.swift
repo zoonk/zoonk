@@ -104,84 +104,14 @@ private struct TodayStartGoal: View {
 }
 
 private struct TodaySuggestedGoal: View {
-  @Environment(AppRouter.self) private var router
-  @Environment(TodayStore.self) private var store
-
   let suggestion: SuggestedGoal
-
-  @State private var answering: Bool?
-  @State private var failed = false
 
   var body: some View {
     List {
-      Section {
-        VStack(alignment: .leading, spacing: 4) {
-          Text(
-            "Continue \(suggestion.title)?", tableName: "Today",
-            comment: "Offers a goal from the learner's last course"
-          )
-          .font(.headline)
-
-          Text("Build a plan in 1 minute.", tableName: "Today", comment: "Suggested goal's promise")
-            .foregroundStyle(.secondary)
-        }
-
-        Button {
-          answer(accepted: true)
-        } label: {
-          Text("Build my plan", tableName: "Today", comment: "Accepts the suggested goal")
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-
-        Button {
-          answer(accepted: false)
-        } label: {
-          Text("Not now", tableName: "Today", comment: "Dismisses the suggested goal")
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.bordered)
-        .controlSize(.large)
-      } header: {
-        Label {
-          Text(
-            "Suggested goal", tableName: "Today", comment: "A goal from the learner's last course")
-        } icon: {
-          Image(systemName: "safari")
-        }
-      } footer: {
-        if failed {
-          Text(
-            "We couldn't save your answer. Try again.", tableName: "Today",
-            comment: "Answering the suggested goal failed"
-          )
-          .foregroundStyle(.destructive)
-        }
-      }
-      .disabled(answering != nil)
+      SuggestedGoalSection(suggestion: suggestion)
     }
     .navigationSubtitle(
       Text("Welcome back", tableName: "Today", comment: "Greets a learner back with no goal"))
-  }
-
-  private func answer(accepted: Bool) {
-    answering = accepted
-    failed = false
-
-    Task {
-      let result = await store.answer(suggestion, accepted: accepted)
-      answering = nil
-
-      switch result {
-      case .done where accepted:
-        router.open(.startGoal(goal: suggestion.title))
-      case .failed:
-        failed = true
-      case .done, .obsolete:
-        break
-      }
-    }
   }
 }
 

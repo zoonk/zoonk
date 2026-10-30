@@ -9,6 +9,8 @@ enum TodayContent: Equatable, Sendable {
 }
 
 struct SuggestedGoal: Decodable, Equatable, Sendable {
+  /// The course it continues, which starts on its own page.
+  let courseId: String?
   let id: String
   let title: String
 }

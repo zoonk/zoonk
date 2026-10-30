@@ -17,6 +17,7 @@ struct TodayDayView: View {
   /// answering it shows what the answer did; the next waits for the next visit.
   @State private var shownNotice: TodayView.Notice?
   @State private var examChecklist: Set<ExamView.ChecklistItem> = []
+  @State private var examChoice: PlanEditor?
 
   enum Tap: Equatable {
     case block(Int)
@@ -148,7 +149,13 @@ struct TodayDayView: View {
       Section {
         FreeWeekOverNotice()
       }
-    case .examChoice, .suggestedGoal, .uploadRequest, nil:
+    case .examChoice:
+      TodayExamChoiceSection(goalID: view.goal.id, choice: view.examChoice, editor: $examChoice)
+    case .suggestedGoal:
+      if let suggestion = view.suggestedGoal {
+        SuggestedGoalSection(suggestion: suggestion)
+      }
+    case .uploadRequest, nil:
       EmptyView()
     }
   }
@@ -292,6 +299,7 @@ struct TodayDayView: View {
   /// answered stays only while they're here.
   private func startVisit() {
     shownNotice = view.notice
+    examChoice = nil
   }
 }
 
