@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { searchCourses } from "../../courses/search-courses";
+import { getNoSitting } from "../../exams/_utils/notice-day";
 import { getExamCalendarDay, getPlanExamDays } from "../../exams/_utils/plan-exam-days";
 import { listExamChoiceViews, toChosenStructure } from "../../exams/choices/exam-choices";
 import { loadExamChoices } from "../../exams/choices/load-exam-choices";
@@ -34,24 +35,31 @@ export type OnboardingResult =
   | { status: "notFound" | "unauthorized" };
 
 async function findExamNotice({
+  details,
   examBlueprintId,
+  goalDate,
   goalId,
+  today,
 }: {
+  details: Record<string, unknown>;
   examBlueprintId: string | null;
+  goalDate: string | null;
   goalId: string;
+  today: string;
 }): Promise<{
   choices: OnboardingView["examChoices"];
   examDate: string | null;
   fromMaterial: boolean;
+  noSitting: OnboardingView["noSitting"];
   subjects: OnboardingView["examSubjects"];
 }> {
   if (!examBlueprintId) {
-    return { choices: [], examDate: null, fromMaterial: false, subjects: [] };
+    return { choices: [], examDate: null, fromMaterial: false, noSitting: null, subjects: [] };
   }
 
   const [blueprint, choices] = await Promise.all([
     prisma.examBlueprint.findUnique({
-      select: { examDate: true, ownerId: true, structure: true },
+      select: { edition: true, examDate: true, ownerId: true, structure: true },
       where: { id: examBlueprintId },
     }),
     loadExamChoices(goalId),
@@ -69,6 +77,7 @@ async function findExamNotice({
     choices: stored ? listExamChoiceViews({ choices, structure: stored }) : [],
     examDate: blueprint?.examDate ? toIsoDate(blueprint.examDate) : null,
     fromMaterial: Boolean(blueprint?.ownerId),
+    noSitting: getNoSitting({ blueprint, details, goalDate, today }),
     subjects: subjects.map((subject) => ({
       name: subject.name,
       shortName: subject.shortName ?? null,
@@ -96,6 +105,22 @@ async function findCourseExamDays(goal: {
   return found.days.length > 0
     ? { days: found.days.map((day) => day.date), estimated: found.estimated }
     : null;
+}
+
+function getDateProblem({
+  goalDate,
+  noSitting,
+  today,
+}: {
+  goalDate: string | null;
+  noSitting: OnboardingView["noSitting"];
+  today: string;
+}) {
+  if (goalDate !== null && goalDate <= today) {
+    return "passed";
+  }
+
+  return noSitting ? "noSitting" : null;
 }
 
 const QUESTIONS = new Set<OnboardingStep>(ONBOARDING_QUESTIONS);
@@ -148,12 +173,17 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
 
   const { goal, userId } = owned;
   const details = isJsonObject(goal.details) ? goal.details : {};
+  const goalDate = goal.targetDate ? toIsoDate(goal.targetDate) : null;
+
+  const today = toIsoDate(
+    getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
+  );
 
   const [profile, activeGoalId, goalIds, notice, examDays] = await Promise.all([
     findLearningProfileView(userId),
     findActiveGoalId(userId),
     findOnboardingGoalIds(goal),
-    findExamNotice({ examBlueprintId: goal.examBlueprintId, goalId }),
+    findExamNotice({ details, examBlueprintId: goal.examBlueprintId, goalDate, goalId, today }),
     findCourseExamDays(goal),
   ]);
 
@@ -168,6 +198,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
 
   const steps = getOnboardingSteps({
     goal: {
+      dateProblem: getDateProblem({ goalDate, noSitting: notice.noSitting, today }),
       details,
       hasUnpickedChoice: notice.choices.some((choice) => choice.subject === null),
       kind: goal.kind,
@@ -175,10 +206,6 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     },
     profile: { hasBuddy: profile.buddy.picked, hasEarlierGoals: earlierGoals > 0 },
   });
-
-  const today = toIsoDate(
-    getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
-  );
 
   const courseStart = readCourseStart(details);
 
@@ -205,6 +232,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       goal: view,
       goalIds,
       libraryCourse,
+      noSitting: notice.noSitting,
       // The time a day the course's page had picked stays the learner's until they change it.
       recommendedMinutes:
         courseStart?.dailyMinutes ??

@@ -81,7 +81,7 @@ function getNoticeDay({
   return { date: next, estimated };
 }
 
-function getNoSitting({
+export function getNoSitting({
   blueprint,
   details,
   goalDate,

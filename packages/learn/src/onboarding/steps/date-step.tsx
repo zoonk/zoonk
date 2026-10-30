@@ -1,6 +1,7 @@
 "use client";
 
 import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
+import { type NoSitting } from "@zoonk/core/plans/view-contract";
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
@@ -8,6 +9,7 @@ import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { toLocalIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
+import { NoSittingWords } from "../../plan/notice-day";
 import { useKeptTyping } from "../../use-kept-typing";
 import { StepForm } from "./step-form";
 
@@ -17,15 +19,17 @@ type StepProps = {
   subject: string;
 };
 
-type DateStepProps = StepProps & { initialDate?: string | null };
+/** `passedNote` says the learner's date has passed; null when it hasn't. */
+type DateStepProps = StepProps & { passedNote: string | null };
 
 function ExamDateStep({
   exam,
   onAnswer,
   onOtherDate,
+  passedNote,
   pending,
   subject,
-}: StepProps & { exam: { days: string[]; estimated: boolean }; onOtherDate: () => void }) {
+}: DateStepProps & { exam: { days: string[]; estimated: boolean }; onOtherDate: () => void }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
   const [first = "", second] = exam.days;
@@ -38,11 +42,13 @@ function ExamDateStep({
 
   return (
     <StepForm
-      description={
-        exam.estimated
-          ? `${ready} ${t("This is the expected date until the notice confirms it.")}`
-          : ready
-      }
+      description={[
+        passedNote,
+        ready,
+        exam.estimated && t("This is the expected date until the notice confirms it."),
+      ]
+        .filter(Boolean)
+        .join(" ")}
       onContinue={() => onAnswer({ question: "targetDate", targetDate: first })}
       onSkip={onOtherDate}
       pending={pending}
@@ -57,30 +63,69 @@ function ExamDateStep({
   );
 }
 
+/** A date that has passed is shown as passed, never kept as the learner's date. */
 export function DateStep({
   exam,
   initialDate,
+  noSitting,
   ...props
-}: DateStepProps & { exam: { days: string[]; estimated: boolean } | null }) {
+}: StepProps & {
+  exam: { days: string[]; estimated: boolean } | null;
+  initialDate: string | null;
+  noSitting: NoSitting | null;
+}) {
+  const t = useExtracted();
+  const formatDate = useFormatIsoDate();
+  const today = toLocalIsoDate(useMountTime());
+  const passed = initialDate !== null && initialDate <= today ? initialDate : null;
+  const kept = passed ? null : initialDate;
+
+  const passedNote = passed
+    ? t("Your date, {date}, has passed.", { date: formatDate(passed, "long") })
+    : null;
+
   const [otherDate, setOtherDate] = useState(
-    () => !exam || (Boolean(initialDate) && initialDate !== exam.days[0]),
+    () => !exam || (kept !== null && kept !== exam.days[0]),
   );
 
   if (exam && !otherDate) {
-    return <ExamDateStep {...props} exam={exam} onOtherDate={() => setOtherDate(true)} />;
+    return (
+      <ExamDateStep
+        {...props}
+        exam={exam}
+        onOtherDate={() => setOtherDate(true)}
+        passedNote={passedNote}
+      />
+    );
   }
 
-  return <DateFieldStep {...props} initialDate={initialDate} />;
+  return (
+    <DateFieldStep
+      {...props}
+      initialDate={kept}
+      noSitting={noSitting}
+      passedNote={passedNote}
+      today={today}
+    />
+  );
 }
 
-function DateFieldStep({ initialDate, onAnswer, pending, subject }: DateStepProps) {
+const MONTH_LENGTH = "YYYY-MM".length;
+
+function DateFieldStep({
+  initialDate,
+  noSitting,
+  onAnswer,
+  passedNote,
+  pending,
+  subject,
+  today,
+}: DateStepProps & { initialDate: string | null; noSitting: NoSitting | null; today: string }) {
   const t = useExtracted();
   const inputId = useId();
   const noteId = useId();
   const [date, setDate] = useState(initialDate ?? "");
   const kept = useKeptTyping(setDate);
-  const mountedAt = useMountTime();
-  const today = toLocalIsoDate(mountedAt);
 
   // The browser explains a day past the bounds on Continue.
   const bounds = getTargetDateBounds(today);
@@ -88,12 +133,19 @@ function DateFieldStep({ initialDate, onAnswer, pending, subject }: DateStepProp
   // Typing a year passes through 0002, 0020 and 0202, so the note waits for the whole year.
   const tooEarly = date !== "" && date <= today && !date.startsWith("0");
 
+  const noSittingShown =
+    noSitting && date.slice(0, MONTH_LENGTH) === noSitting.month.slice(0, MONTH_LENGTH)
+      ? noSitting
+      : null;
+
+  const withoutDate = t(
+    "Without a date, you study everything at your own pace, and we show when you reach each milestone.",
+  );
+
   return (
     <StepForm
       canContinue={date > today}
-      description={t(
-        "Without a date, you study everything at your own pace, and we show when you reach each milestone.",
-      )}
+      description={[passedNote, withoutDate].filter(Boolean).join(" ")}
       onContinue={() => onAnswer({ question: "targetDate", targetDate: date })}
       onSkip={() => onAnswer({ question: "targetDate", targetDate: null })}
       pending={pending}
@@ -117,6 +169,16 @@ function DateFieldStep({ initialDate, onAnswer, pending, subject }: DateStepProp
         <InputError aria-live="polite" className="min-h-5" id={noteId}>
           {tooEarly && t("Pick a date after today.")}
         </InputError>
+
+        {noSittingShown && (
+          <p className="text-muted-foreground text-sm text-pretty" data-slot="no-sitting">
+            <NoSittingWords
+              disabled={pending}
+              noSitting={noSittingShown}
+              onUse={(targetDate) => onAnswer({ question: "targetDate", targetDate })}
+            />
+          </p>
+        )}
       </div>
     </StepForm>
   );

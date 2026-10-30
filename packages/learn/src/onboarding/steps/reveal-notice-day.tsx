@@ -2,16 +2,13 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { Fragment } from "react";
 import { ChangeSaveError } from "../../_components/save-error";
-import { useFormatIsoDate } from "../../_utils/iso-date";
-import { useNoticeDayText } from "../../plan/notice-day";
+import { NoSittingWords, useNoticeDayText } from "../../plan/notice-day";
 import { usePlanScreen } from "../../plan/plan-context";
 import { usePlanChange } from "../../plan/use-plan-change";
 
 export function RevealNoticeDay() {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
   const noticeDayText = useNoticeDayText();
   const { plan } = usePlanScreen();
   const { change, failed, isPending } = usePlanChange();
@@ -34,21 +31,7 @@ export function RevealNoticeDay() {
             </Button>
           </>
         ) : (
-          noSitting && (
-            <>
-              <span>
-                {t("No exam date in {month}", { month: formatDate(noSitting.month, "month") })}
-              </span>
-              {noSitting.closest.map((date) => (
-                <Fragment key={date}>
-                  <span aria-hidden="true">{" · "}</span>
-                  <Button disabled={isPending} onClick={() => use(date)} variant="link">
-                    {t("Use {date}", { date: formatDate(date, "long") })}
-                  </Button>
-                </Fragment>
-              ))}
-            </>
-          )
+          noSitting && <NoSittingWords disabled={isPending} noSitting={noSitting} onUse={use} />
         )}
       </p>
 

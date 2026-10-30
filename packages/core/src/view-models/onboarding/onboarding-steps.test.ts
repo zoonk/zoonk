@@ -120,6 +120,42 @@ describe(getOnboardingSteps, () => {
     ).toStrictEqual(["schedule", "plan"]);
   });
 
+  it("asks for a new date when the goal's has passed, even after the learner answered it", () => {
+    expect(
+      getOnboardingSteps({
+        goal: {
+          dateProblem: "passed",
+          details: { answered: ["purpose", "targetDate", "level", "schedule", "placement"] },
+          kind: "learn",
+          targetDate: "2020-10-01",
+        },
+        profile: SET_UP_PROFILE,
+      }),
+    ).toStrictEqual(["targetDate", "plan"]);
+  });
+
+  it("asks an exam for its date when no sitting falls in the month it understood, until the learner answers", () => {
+    const goal = {
+      dateProblem: "noSitting" as const,
+      details: { level: "none" },
+      kind: "exam" as const,
+      targetDate: "2027-02-15",
+    };
+
+    expect(getOnboardingSteps({ goal, profile: SET_UP_PROFILE })).toStrictEqual([
+      "targetDate",
+      "schedule",
+      "plan",
+    ]);
+
+    expect(
+      getOnboardingSteps({
+        goal: { ...goal, details: { answered: ["targetDate"], level: "none" } },
+        profile: SET_UP_PROFILE,
+      }),
+    ).toStrictEqual(["schedule", "plan"]);
+  });
+
   it("asks only for the target the exam has: a position for a civil service exam, nothing for a pass", () => {
     expect(examSteps({ examTarget: "position", targetPosition: "Agente" })).not.toContain("target");
     expect(examSteps({ examTarget: "position", targetScore: "80 pontos" })[0]).toBe("target");

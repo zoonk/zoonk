@@ -8585,6 +8585,11 @@ msgid "Your exam is on {date} (and {second})"
 msgstr "Sua prova é em {date} (e {second})"
 
 #: src/onboarding/steps/date-step.tsx
+msgctxt "jYQxlD"
+msgid "Your date, {date}, has passed."
+msgstr "A data escolhida, {date}, já passou."
+
+#: src/onboarding/steps/date-step.tsx
 msgctxt "pwmWjt"
 msgid "Without a date, you study everything at your own pace, and we show when you reach each milestone."
 msgstr "Sem uma data, você estuda tudo no seu ritmo, e a gente mostra quando você chega a cada marco."
@@ -9136,18 +9141,6 @@ msgstr "Pronto. Seu plano agora cobre toda a sua meta."
 msgctxt "xYZ4fs"
 msgid "Use this date"
 msgstr "Usar esta data"
-
-#: src/onboarding/steps/reveal-notice-day.tsx
-#: src/plan/notice-day.tsx
-msgctxt "78R32n"
-msgid "No exam date in {month}"
-msgstr "Nenhuma data de prova em {month}"
-
-#: src/onboarding/steps/reveal-notice-day.tsx
-#: src/plan/notice-day.tsx
-msgctxt "wMxWx9"
-msgid "Use {date}"
-msgstr "Usar {date}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "aTEFtd"
@@ -9731,6 +9724,16 @@ msgstr "A data provável da prova agora é {date}."
 msgctxt "I1NvJD"
 msgid "{document, select, notice {The exam notice says {date}.} other {The exam's official calendar says {date}.}}"
 msgstr "{document, select, notice {O edital informa a data {date}.} other {O calendário oficial da prova informa a data {date}.}}"
+
+#: src/plan/notice-day.tsx
+msgctxt "78R32n"
+msgid "No exam date in {month}"
+msgstr "Nenhuma data de prova em {month}"
+
+#: src/plan/notice-day.tsx
+msgctxt "wMxWx9"
+msgid "Use {date}"
+msgstr "Usar {date}"
 
 #: src/plan/notice-day.tsx
 msgctxt "NymqEe"

@@ -5,7 +5,7 @@ import { type NoSitting, type NoticeDay } from "@zoonk/core/plans/view-contract"
 import { Button } from "@zoonk/ui/components/button";
 import { CalendarDaysIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { Fragment, useState, useTransition } from "react";
 import {
   NoticeCard,
   NoticeCardActions,
@@ -28,6 +28,34 @@ export function useNoticeDayText() {
           "{document, select, notice {The exam notice says {date}.} other {The exam's official calendar says {date}.}}",
           { date: formatDate(date, "long"), document },
         );
+}
+
+/** "No exam date in {month}" and a link to use each of the closest sittings, inside a line of text. */
+export function NoSittingWords({
+  disabled,
+  noSitting,
+  onUse,
+}: {
+  disabled: boolean;
+  noSitting: NoSitting;
+  onUse: (date: string) => void;
+}) {
+  const t = useExtracted();
+  const formatDate = useFormatIsoDate();
+
+  return (
+    <>
+      <span>{t("No exam date in {month}", { month: formatDate(noSitting.month, "month") })}</span>
+      {noSitting.closest.map((date) => (
+        <Fragment key={date}>
+          <span aria-hidden="true">{" · "}</span>
+          <Button disabled={disabled} onClick={() => onUse(date)} type="button" variant="link">
+            {t("Use {date}", { date: formatDate(date, "long") })}
+          </Button>
+        </Fragment>
+      ))}
+    </>
+  );
 }
 
 export function UseDateButton({

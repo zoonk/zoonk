@@ -3,6 +3,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getGoalPreparation } from "../preparation/get-goal-preparation";
+import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { getPlanTabView } from "../view-models/plan/get-plan-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { changeGoalPlan } from "./change-goal-plan";
@@ -258,5 +259,23 @@ describe("a plan made after its date", () => {
     const view = await readPlan();
 
     expect(view?.phases.map((phase) => phase.state)).not.toContain("done");
+  });
+
+  it("asks onboarding for a new date before showing a plan, even though the learner gave one", async () => {
+    const user = await userFixture();
+
+    const { goal } = await unplannedGoalFixture({
+      details: { answered: ["purpose", "targetDate", "level", "schedule", "buddy", "placement"] },
+      kind: "learn",
+      targetDate: DATE,
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+      onboarding: { steps: ["targetDate", "plan"] },
+    });
   });
 });

@@ -6,6 +6,7 @@ import {
 import { z } from "zod";
 import { goalSchema } from "./goals";
 import { playableLibraryLessonResponseSchema } from "./library-lessons";
+import { noSittingSchema } from "./notice-dates";
 
 const onboardingStepSchema = z
   .enum([...ONBOARDING_QUESTIONS, "buddy", "placement", "plan"])
@@ -79,6 +80,10 @@ export const onboardingResponseSchema = z
         description:
           "A published Library course that teaches the goal, searched again once every question is answered",
       }),
+    noSitting: noSittingSchema.meta({
+      description:
+        "An exam held several times a year with no sitting in the month of the goal's date: the `targetDate` screen comes back until the learner answers it, and offers `closest` with one tap. Null otherwise",
+    }),
     recommendedMinutes: z
       .int()
       .positive()
@@ -88,7 +93,10 @@ export const onboardingResponseSchema = z
       }),
     steps: z
       .array(onboardingStepSchema)
-      .meta({ description: "The screens still ahead, in order, always ending with the plan" }),
+      .meta({
+        description:
+          "The screens still ahead, in order, always ending with the plan. A goal whose date is today or earlier gets the `targetDate` screen again, even when answered",
+      }),
   })
   .meta({ id: "Onboarding" }) satisfies z.ZodType<OnboardingView>;
 

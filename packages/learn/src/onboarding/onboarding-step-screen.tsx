@@ -111,6 +111,7 @@ function QuestionStepScreen({
           {...props}
           exam={view.examDays}
           initialDate={view.goal.targetDate}
+          noSitting={view.noSitting}
           subject={subject}
         />
       );

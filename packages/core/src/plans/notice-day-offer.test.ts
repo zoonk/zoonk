@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getExamView } from "../exams/view/get-exam-view";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
+import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
@@ -340,6 +341,23 @@ describe("the notice's day where the exam date shows", () => {
 
     expect(after.schedule).toMatchObject({ noSitting: null, targetDate: "2021-04-02" });
     expect(examAfter).toMatchObject({ days: [{ date: "2021-04-02" }], noSitting: null });
+  });
+
+  it("asks onboarding for the date before the plan when the month it understood has no sitting", async () => {
+    const goal = await plannedExam({
+      days: ["2020-10-16", "2020-11-14", "2021-04-02", "2021-05-22"],
+      details: { answered: ["level", "schedule", "buddy", "placement"] },
+      targetDate: "2021-02-10",
+    });
+
+    const read = await getOnboarding({ goalId: goal.id });
+
+    expect(read).toMatchObject({
+      onboarding: {
+        noSitting: { closest: ["2020-11-14", "2021-04-02"], month: "2021-02-01" },
+        steps: ["targetDate", "plan"],
+      },
+    });
   });
 
   it("says nothing about other sittings when the learner's month has one, or the exam has one sitting", async () => {

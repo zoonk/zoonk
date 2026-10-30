@@ -12,6 +12,11 @@ import {
 type GoalKind = "exam" | "explain" | "language" | "learn";
 
 type StepGoal = {
+  /**
+   * A passed date can't be planned, so it's asked again even when answered; an exam month with no
+   * sitting is asked unless the learner chose that date themselves.
+   */
+  dateProblem?: "noSitting" | "passed" | null;
   details: Record<string, unknown>;
   /** Omit unless the caller loaded notice/plan choices; omission never asks an exam-choice question. */
   hasUnpickedChoice?: boolean;
@@ -153,6 +158,7 @@ function isQuestionMissing({ goal, question }: { goal: StepGoal; question: Onboa
 /** A course's notice date is a default: only a learner answer removes its date question. */
 function isDateMissing(goal: StepGoal): boolean {
   return (
+    Boolean(goal.dateProblem) ||
     readCourseStart(goal.details) !== null ||
     (goal.targetDate === null && (goal.kind !== "exam" || isClassTest(goal.details)))
   );
@@ -167,7 +173,9 @@ export function getMissingQuestions(goal: StepGoal): OnboardingQuestion[] {
   const answered = new Set(getAnsweredQuestions(goal.details));
 
   return ONBOARDING_QUESTIONS.filter(
-    (question) => !answered.has(question) && isQuestionMissing({ goal, question }),
+    (question) =>
+      (question === "targetDate" && goal.dateProblem === "passed") ||
+      (!answered.has(question) && isQuestionMissing({ goal, question })),
   );
 }
 

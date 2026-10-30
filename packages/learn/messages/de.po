@@ -8585,6 +8585,11 @@ msgid "Your exam is on {date} (and {second})"
 msgstr "Deine Prüfung ist am {date} (und am {second})"
 
 #: src/onboarding/steps/date-step.tsx
+msgctxt "jYQxlD"
+msgid "Your date, {date}, has passed."
+msgstr "Dein Termin am {date} ist vorbei."
+
+#: src/onboarding/steps/date-step.tsx
 msgctxt "pwmWjt"
 msgid "Without a date, you study everything at your own pace, and we show when you reach each milestone."
 msgstr "Ohne Termin lernst du alles in deinem eigenen Tempo. Wir zeigen dir, wann du die einzelnen Meilensteine erreichst."
@@ -9136,18 +9141,6 @@ msgstr "Fertig. Dein Plan deckt jetzt dein gesamtes Ziel ab."
 msgctxt "xYZ4fs"
 msgid "Use this date"
 msgstr "Dieses Datum übernehmen"
-
-#: src/onboarding/steps/reveal-notice-day.tsx
-#: src/plan/notice-day.tsx
-msgctxt "78R32n"
-msgid "No exam date in {month}"
-msgstr "Kein Prüfungstermin im {month}"
-
-#: src/onboarding/steps/reveal-notice-day.tsx
-#: src/plan/notice-day.tsx
-msgctxt "wMxWx9"
-msgid "Use {date}"
-msgstr "{date} übernehmen"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "aTEFtd"
@@ -9731,6 +9724,16 @@ msgstr "Die Prüfung findet jetzt voraussichtlich am {date} statt."
 msgctxt "I1NvJD"
 msgid "{document, select, notice {The exam notice says {date}.} other {The exam's official calendar says {date}.}}"
 msgstr "{document, select, notice {Laut Prüfungsausschreibung ist der Termin am {date}.} other {Laut offiziellem Prüfungskalender ist der Termin am {date}.}}"
+
+#: src/plan/notice-day.tsx
+msgctxt "78R32n"
+msgid "No exam date in {month}"
+msgstr "Kein Prüfungstermin im {month}"
+
+#: src/plan/notice-day.tsx
+msgctxt "wMxWx9"
+msgid "Use {date}"
+msgstr "{date} übernehmen"
 
 #: src/plan/notice-day.tsx
 msgctxt "NymqEe"

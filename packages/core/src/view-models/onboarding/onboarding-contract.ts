@@ -8,6 +8,7 @@ import { type TargetCutoff } from "../../exams/cutoffs/target-cutoff-contract";
 import { type GoalDraft, type GoalView, goalDraftSchema } from "../../goals/goal-contract";
 import { MAX_GOAL_PROMPT_LENGTH } from "../../goals/goal-input-limits";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
+import { type NoSitting } from "../../plans/plan-view-contract";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 import { learningProfileUpdateSchema } from "../../profile/learning-profile-contract";
 import { MAX_ONBOARDING_ANSWER_LENGTH } from "./onboarding-limits";
@@ -216,6 +217,8 @@ export type OnboardingView = {
   goalIds: string[];
   /** Searched again after all questions; null before then or when no public course fits. */
   libraryCourse: OnboardingLibraryCourse | null;
+  /** The exam's closest sittings when none falls in the goal date's month; null otherwise. */
+  noSitting: NoSitting | null;
   /** Initial choice only; preserve course-page selections and never imply the recommendation guarantees plan coverage. */
   recommendedMinutes: number;
   /** Onboarding screens still ahead, in order, ending with the plan. */
