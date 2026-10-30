@@ -319,9 +319,8 @@ private fun lineSpans(
         val from = maxOf(range.start, layout.getLineStart(line))
         val to = minOf(range.end, layout.getLineEnd(line, visibleEnd = true)) - 1
         if (to < from) return@mapNotNull null
-        val first = layout.getBoundingBox(from)
-        val last = layout.getBoundingBox(to)
-        LineSpan(minOf(first.left, last.left), maxOf(first.right, last.right), layout.getLineBaseline(line))
+        val boxes = (from..to).map(layout::getBoundingBox)
+        LineSpan(boxes.minOf { it.left }, boxes.maxOf { it.right }, layout.getLineBaseline(line))
     }
 
 @Composable
