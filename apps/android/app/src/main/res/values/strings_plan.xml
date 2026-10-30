@@ -777,6 +777,7 @@
     <string name="plan_more_explanation">More explanation</string>
     <string name="plan_tell_buddy">Something else? Tell %1$s</string>
     <string name="plan_tell_buddy_description">In your own words, like “less on weekends”. You\'ll see the change before it applies.</string>
+    <string name="plan_tell_buddy_description_modules">In your own words, like “skip a module” or “less on weekends”. You\'ll see the change before it applies.</string>
 
     <string name="plan_working_out_coverage">Working out what your time covers…</string>
     <!-- %1$s is a month and year, like "March 2027". -->

@@ -492,6 +492,7 @@
   "plan_talk_to": "967a53a2ab6d8ce55f799e2317eaaf73a767b61884bf6ecb74e3181c2fc0f051",
   "plan_tell_buddy": "01cb7daf52364d1abf9113100c6a357eeea48f912c38b5f9ff95500d3ae659c0",
   "plan_tell_buddy_description": "1484f2f3af33f94a9c6dc93796cf1001cfb3d7ce86c4b73127299b7df69a5345",
+  "plan_tell_buddy_description_modules": "34438d31b7b87802835ba616ebf85b4073c627128655cce81871e95dfd8a0a82",
   "plan_test_chooses_for_you": "ae98b93648233e091f33307ec49db224cab039f0b6329cd2cd505546a12cd9ef",
   "plan_then_covers_everything": "6a336ef1ad72b19d824672f8577ebaba1960ad94095339eb30c6f94d494f873f",
   "plan_this_week": "745a65c02733a311f8352a7e2637cdab2b0c7c6f66a2b38e0b9900d88f99e23b",
@@ -1406,6 +1407,7 @@
     <string name="plan_more_explanation">Mais explicações</string>
     <string name="plan_tell_buddy">Mais alguma coisa? Conte para %1$s</string>
     <string name="plan_tell_buddy_description">Com suas palavras, como “menos nos fins de semana”. Você vai ver a mudança antes de ela ser aplicada.</string>
+    <string name="plan_tell_buddy_description_modules">Com suas palavras, como “pular um módulo” ou “menos tempo nos fins de semana”. Você vai ver a mudança antes de ela ser aplicada.</string>
     <string name="plan_working_out_coverage">Calculando o que cabe no seu tempo…</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="plan_finish_around">Você termina por volta de %1$s.</string>

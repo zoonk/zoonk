@@ -492,6 +492,7 @@
   "plan_talk_to": "7ce4d23c0038856a4dd5d78e68e8cc8fed74a57d3920a84c720003d00078d96c",
   "plan_tell_buddy": "0f838784a23275198c7ba0f04e00b354cc0f212eb3a2c7f0bb8b4b51c2ce7c3a",
   "plan_tell_buddy_description": "cd84d81b737906f9414287e41953cd2f6e4517898e708e9d64923966f85109b4",
+  "plan_tell_buddy_description_modules": "4126e5a89c1a2944eb7f2f52b070e6a20e397cbed0844799d6991dc6876256af",
   "plan_test_chooses_for_you": "eeefb4936765f9cca4222d0c4439fb39bc50d984593020a8a6c8db3f4a78ddc5",
   "plan_then_covers_everything": "6cd17558ae018ce121eb5b66e96ed565a36bdd069bacb9e29685bf06034d6f15",
   "plan_this_week": "61162fd7f150738af12d823313df049e6f587c579cc8808427911d8c191dd80d",
@@ -1406,6 +1407,7 @@
     <string name="plan_more_explanation">Más explicaciones</string>
     <string name="plan_tell_buddy">¿Algo más? Cuéntaselo a %1$s</string>
     <string name="plan_tell_buddy_description">Con tus propias palabras, por ejemplo: «menos los fines de semana». Verás el cambio antes de que se aplique.</string>
+    <string name="plan_tell_buddy_description_modules">Con tus propias palabras, por ejemplo: «saltar un módulo» o «menos los fines de semana». Verás el cambio antes de que se aplique.</string>
     <string name="plan_working_out_coverage">Calculando qué puedes abarcar con tu tiempo…</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="plan_finish_around">Terminarás hacia %1$s.</string>

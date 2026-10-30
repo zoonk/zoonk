@@ -233,6 +233,20 @@ class PlanEditorTest {
     }
 
     @Test
+    fun theBuddyRowOffersSkippingAModuleOfALearnGoalWithModules() {
+        show(extra = """"areas":[${area("Cells")},${area("Genetics")}]""")
+
+        compose.onNodeWithText("like “skip a module” or “less on weekends”", substring = true).performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun theBuddyRowKeepsToTheWeekForAnExamsSubjects() {
+        show(extra = """"areas":[${area("Mathematics")},${area("Languages")}]""", kind = "exam")
+
+        compose.onNodeWithText("like “less on weekends”", substring = true).performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
     fun theLatestChangeCanBeUndone() {
         show(latest = EditorChange(planChange(operations = """[{"kind":"setDailyMinutes","minutes":45}]""")))
 

@@ -492,6 +492,7 @@
   "plan_talk_to": "2947fe997e263a8d6ebe1a1c300cfeb9992eb2b2b776e87c78f46f466f3c247d",
   "plan_tell_buddy": "04b9cb4cd615878838f88800302aaa7c9b78465ab6366962c1472695952229bc",
   "plan_tell_buddy_description": "4ba9ef6f3fae1b98791ddb74e1aba8e36377fe1d6fb649e8c4466579fefa2d56",
+  "plan_tell_buddy_description_modules": "d4e9e1158a7004207e30b25a042c71036734c5390ff26c5f8269329ec220a052",
   "plan_test_chooses_for_you": "ce0e4afd6ed7219446dea93bc349c419c399ba996b7607f8fdc83a0c41c123bf",
   "plan_then_covers_everything": "35ddea0d1fac9e1038021824e0ec551a48177556d2846c0478399dbf6160ff73",
   "plan_this_week": "44062bfe95423eba0ded476eeb0884ffc7e410ae398864af3f3f38a1613afe37",
@@ -1325,6 +1326,7 @@
     <string name="plan_more_explanation">Mehr Erklärungen</string>
     <string name="plan_tell_buddy">Etwas anderes? Sag es %1$s</string>
     <string name="plan_tell_buddy_description">In deinen eigenen Worten, zum Beispiel „am Wochenende weniger“. Du siehst die Änderung, bevor sie übernommen wird.</string>
+    <string name="plan_tell_buddy_description_modules">In deinen eigenen Worten, zum Beispiel „ein Modul überspringen“ oder „am Wochenende weniger lernen“. Du siehst die Änderung, bevor sie übernommen wird.</string>
     <string name="plan_working_out_coverage">Wir ermitteln, was du in deiner Zeit schaffen kannst…</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="plan_finish_around">Du bist etwa im %1$s fertig.</string>

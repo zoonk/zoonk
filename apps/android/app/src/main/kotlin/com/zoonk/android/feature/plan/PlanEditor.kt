@@ -76,6 +76,7 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanBasesAdvice
@@ -366,13 +367,16 @@ private fun PlanEditRequest(
     onTellBuddy: () -> Unit,
 ) {
     val buddy = page.summary.buddy
+    val hasModules = page.goal.kind == LearnerSummaryGoal.Kind.LEARN && page.plan.areas.size > 1
 
     ListRow(
         headline = { Text(stringResource(R.string.plan_tell_buddy, buddyName(BuddyKind.of(buddy.kind.value), buddy.name))) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onTellBuddy,
         leading = { Icon(painterResource(R.drawable.ic_chat_bubble), contentDescription = null) },
-        supporting = { Text(stringResource(R.string.plan_tell_buddy_description)) },
+        supporting = {
+            Text(stringResource(if (hasModules) R.string.plan_tell_buddy_description_modules else R.string.plan_tell_buddy_description))
+        },
     )
 }
 
