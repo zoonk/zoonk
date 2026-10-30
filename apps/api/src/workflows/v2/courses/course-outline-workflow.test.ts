@@ -18,6 +18,7 @@ import {
 } from "@zoonk/testing/fixtures/library-chapters";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -50,9 +51,18 @@ const scope = {
 
 const TIMEOUT = 60_000;
 
-async function planWaitingGoal(idsByKey: Record<string, string>) {
+async function planWaitingGoal(
+  idsByKey: Record<string, string>,
+  { started = true }: { started?: boolean } = {},
+) {
   const user = await userFixture();
-  const goal = await goalFixture({ userId: user.id });
+
+  const goal = await goalFixture({
+    details: started
+      ? { answered: ["purpose", "level", "targetDate", "buddy", "placement", "schedule"] }
+      : {},
+    userId: user.id,
+  });
 
   await prisma.plan.create({
     data: { goalId: goal.id, settings: { startDate: new Date().toISOString().slice(0, 10) } },
@@ -63,10 +73,14 @@ async function planWaitingGoal(idsByKey: Record<string, string>) {
     graph: toGoalPlanGraph({ courseIdsByKey: {}, graph: recordedGraph, idsByKey }),
   });
 
+  if (started) {
+    await studySessionFixture({ goalId: goal.id, userId: user.id });
+  }
+
   return goal;
 }
 
-async function waitingGoal() {
+async function waitingGoal(options: { started?: boolean } = {}) {
   const skills = await Promise.all(
     recordedGraph.skills.map((skill) =>
       skillFixture({ description: skill.description, name: skill.name }),
@@ -77,7 +91,7 @@ async function waitingGoal() {
     recordedGraph.skills.map((skill, index) => [skill.key, skills[index]?.id ?? ""]),
   );
 
-  const goal = await planWaitingGoal(idsByKey);
+  const goal = await planWaitingGoal(idsByKey, options);
 
   const bandSkills = recordedGraph.skills.map((skill) => ({
     description: skill.description,
@@ -272,6 +286,7 @@ describe(courseOutlineWorkflow, () => {
 
       try {
         await Promise.allSettled([writing.finally(() => stop.abort()), marking]);
+        await expect(marking).resolves.toBeGreaterThan(1);
         await expect(writing).resolves.toMatchObject({ status: "written" });
         expect(readyBeforeRetry).toStrictEqual([true]);
 
@@ -848,11 +863,11 @@ describe(courseOutlineWorkflow, () => {
   );
 
   it(
-    "writes a guest's band and replaces its stand-ins, but leaves the course's details and other bands to a learner with an account",
+    "writes a guest's band while leaving its onboarding plan and the course's background work alone",
     { timeout: TIMEOUT },
     async () => {
       const [{ bandSkills, goal }, course] = await Promise.all([
-        waitingGoal(),
+        waitingGoal({ started: false }),
         courseFixture({ outlineStatus: "pending", title: "Immunology" }),
       ]);
 
@@ -868,7 +883,7 @@ describe(courseOutlineWorkflow, () => {
       const items = await lessonItems(goal.id);
 
       expect(items.length).toBeGreaterThan(0);
-      expect(items.every((item) => item.lessonId !== null)).toBe(true);
+      expect(items.every((item) => item.lessonId === null)).toBe(true);
       expect(start).not.toHaveBeenCalled();
     },
   );
@@ -1048,6 +1063,7 @@ describe(courseOutlineWorkflow, () => {
       ]);
 
       const goal = await goalFixture({
+        details: { answered: ["reason", "level", "targetDate", "buddy", "placement", "schedule"] },
         kind: "language",
         language: "pt",
         primaryCourseId: course.id,
@@ -1076,6 +1092,8 @@ describe(courseOutlineWorkflow, () => {
           ],
         },
       });
+
+      await studySessionFixture({ goalId: goal.id, userId: user.id });
 
       const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
 

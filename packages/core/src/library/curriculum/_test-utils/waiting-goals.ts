@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { type skillFixture } from "@zoonk/testing/fixtures/skills";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { createGoalPlan } from "../../../plans/create-goal-plan";
 import { uniqueWord } from "../../identity/_test-utils/identity-mocks";
@@ -14,7 +15,12 @@ type Skill = Awaited<ReturnType<typeof skillFixture>>;
 
 export async function waitingGoal(skill: Skill, { dailyMinutes }: { dailyMinutes?: number } = {}) {
   const user = await userFixture();
-  const goal = await goalFixture({ ...(dailyMinutes && { dailyMinutes }), userId: user.id });
+
+  const goal = await goalFixture({
+    ...(dailyMinutes && { dailyMinutes }),
+    details: { answered: ["purpose", "level", "targetDate", "buddy", "placement", "schedule"] },
+    userId: user.id,
+  });
 
   const plan = await prisma.plan.create({
     data: { goalId: goal.id, settings: { startDate: WAITING_START.toISOString().slice(0, 10) } },
@@ -37,6 +43,7 @@ export async function waitingGoal(skill: Skill, { dailyMinutes }: { dailyMinutes
     },
   });
 
+  await studySessionFixture({ goalId: goal.id, localDate: WAITING_START, userId: user.id });
   return { goal, plan };
 }
 

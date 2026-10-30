@@ -255,15 +255,7 @@ async function saveRefreshedPlan({
   const retained = unchanged ? await prepareRetainedPlanWrite({ computed, context }) : null;
 
   const phaseWrite = unchanged
-    ? await preparePhaseDatesProposal({
-        computed,
-        context: {
-          ...planned,
-          plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 },
-        },
-        mode,
-        pace,
-      })
+    ? await preparePhaseDatesProposal({ computed, context: planned, mode, pace })
     : null;
 
   const saved = await saveOrLetGo(lostSave, () =>

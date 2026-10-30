@@ -14,34 +14,37 @@ export async function markLearnerChanged(
     lockPlanIds = [],
     planInputs = false,
     userId,
-  }: { lockPlanIds?: readonly string[]; planInputs?: boolean; userId: string },
+  }: { lockPlanIds?: readonly string[]; planInputs?: boolean | readonly string[]; userId: string },
 ): Promise<void> {
-  if (planInputs) {
+  if (planInputs === true) {
     await markPlanInputsChanged(tx, { userIds: [userId] });
+  } else if (planInputs) {
+    await markPlansChanged(tx, { planIds: planInputs });
   }
 
   await lockLearner(tx, { lockPlanIds: planInputs ? [] : lockPlanIds, userId });
 }
 
-/** Locks learners in id order after their plans to avoid deadlocks between shared-content writers. */
-async function markChangedPlans(
-  tx: LearnerWriteTransaction,
-  { planIds }: { planIds: readonly string[] },
-  mark: typeof markLockedPlanInputsChanged,
-): Promise<void> {
-  if (planIds.length === 0) {
-    return;
-  }
-
-  const plans = await tx.$queryRaw<{ id: string; userId: string }[]>`
+async function lockDependentPlans(tx: LearnerWriteTransaction, planIds: readonly string[]) {
+  return tx.$queryRaw<{ id: string; userId: string }[]>`
     SELECT plan.id, goal.user_id AS "userId" FROM plans AS plan
     JOIN goals AS goal ON goal.id = plan.goal_id
     WHERE plan.id = ANY(${[...planIds]}::uuid[])
     ORDER BY plan.id FOR UPDATE OF plan
   `;
+}
 
-  await mark(tx, { planIds: plans.map((plan) => plan.id) });
+/** Locks learners in id order after their plans to avoid deadlocks between shared-content writers. */
+export async function markPlansChanged(
+  tx: LearnerWriteTransaction,
+  { planIds }: { planIds: readonly string[] },
+): Promise<void> {
+  if (planIds.length === 0) {
+    return;
+  }
 
+  const plans = await lockDependentPlans(tx, planIds);
+  await markLockedPlanInputsChanged(tx, { planIds: plans.map((plan) => plan.id) });
   const userIds = [...new Set(plans.map((plan) => plan.userId))].toSorted();
 
   await tx.$queryRaw`
@@ -51,16 +54,14 @@ async function markChangedPlans(
   `;
 }
 
-export function markPlansChanged(
+export async function markPlanSourcesChanged(
   tx: LearnerWriteTransaction,
-  input: { planIds: readonly string[] },
+  { planIds }: { planIds: readonly string[] },
 ): Promise<void> {
-  return markChangedPlans(tx, input, markLockedPlanInputsChanged);
-}
+  if (planIds.length === 0) {
+    return;
+  }
 
-export function markPlanSourcesChanged(
-  tx: LearnerWriteTransaction,
-  input: { planIds: readonly string[] },
-): Promise<void> {
-  return markChangedPlans(tx, input, markLockedPlanSourcesChanged);
+  const plans = await lockDependentPlans(tx, planIds);
+  await markLockedPlanSourcesChanged(tx, { planIds: plans.map((plan) => plan.id) });
 }

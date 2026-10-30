@@ -169,14 +169,7 @@ export async function prepareRetainedPlanWrite({
     built && selected
       ? await prepareReadModel({
           computed: { ...computed, built, selected },
-          context: {
-            ...context,
-            plan: {
-              ...context.plan,
-              inputVersion: context.plan.inputVersion + 1,
-              version: context.plan.version - 1,
-            },
-          },
+          context: { ...context, plan: { ...context.plan, version: context.plan.version - 1 } },
         })
       : { previews: [], summary: saved };
 

@@ -9,7 +9,7 @@ import { getGoalsCacheTag } from "../../cache/tags";
 import { getGoalCourseFormat, setGoalPrimaryCourse } from "./goal-primary-course";
 
 describe(setGoalPrimaryCourse, () => {
-  it("points a goal without a main course at the course its first phase is taught in, marking the learner's plans changed", async () => {
+  it("points a goal without a main course at the course its first phase is taught in, marking only that goal's plan changed", async () => {
     const [user, course] = await Promise.all([userFixture(), courseFixture()]);
 
     const [goal, otherGoal] = await Promise.all([
@@ -34,7 +34,7 @@ describe(setGoalPrimaryCourse, () => {
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: otherPlan.id } }),
-    ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion + 1 });
+    ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion });
 
     expect(revalidateTag).toHaveBeenCalledWith(getGoalsCacheTag(user.id), { expire: 0 });
   });

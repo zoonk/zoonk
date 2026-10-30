@@ -1,9 +1,13 @@
+import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { mockSession } from "../../_test-utils/mock-session";
 import { markPlanInputsUntil } from "../../plans/_test-utils/mark-plan-inputs";
+import { openStudyDay } from "../../sessions/open-study-day";
+import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-onboarding-question";
 import { mockDecision, mockSearchTerms, uniqueWord } from "../identity/_test-utils/identity-mocks";
 import {
   WAITING_START,
@@ -21,7 +25,6 @@ const POPULAR_BAND_GOALS = 12;
 
 describe(replanGoalsWaitingOnSkills, () => {
   beforeEach(() => {
-    vi.resetAllMocks();
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(WAITING_START);
     mockSearchTerms([uniqueWord()]);
@@ -96,5 +99,60 @@ describe(replanGoalsWaitingOnSkills, () => {
 
     const planned = await Promise.all(waiting.map(({ plan }) => plannedLessons(plan.id)));
     expect(planned).toStrictEqual(waiting.map(() => lessonIds));
+  });
+
+  it("leaves a learner still answering onboarding to re-plan with the answer", async () => {
+    const skill = await skillFixture();
+    const { goal, plan } = await waitingGoal(skill);
+
+    await prisma.goal.update({
+      data: { details: { answered: ["purpose", "level", "targetDate", "buddy", "placement"] } },
+      where: { id: goal.id },
+    });
+
+    const lessons = await outlineSkill(skill);
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    await replanWaitingGoal(goal.id);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
+      before,
+    );
+
+    await expect(plannedLessons(plan.id)).resolves.toStrictEqual([skill.id]);
+    mockSession(goal.userId);
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { dailyMinutes: 25, question: "schedule" },
+      }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    await expect(plannedLessons(plan.id)).resolves.toStrictEqual(lessons);
+  });
+
+  it("leaves a completed setup unchanged until the learner opens the first study day", async () => {
+    const skill = await skillFixture();
+    const { goal, plan } = await waitingGoal(skill);
+    await prisma.studySession.deleteMany({ where: { goalId: goal.id } });
+    const lessons = await outlineSkill(skill);
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    await replanWaitingGoal(goal.id);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
+      before,
+    );
+
+    mockSession(goal.userId);
+
+    await expect(
+      openStudyDay({
+        goalId: goal.id,
+        shownDate: WAITING_START.toISOString().slice(0, 10),
+        timeZone: "UTC",
+      }),
+    ).resolves.toMatchObject({ status: "opened" });
+
+    await expect(plannedLessons(plan.id)).resolves.toStrictEqual(lessons);
   });
 });

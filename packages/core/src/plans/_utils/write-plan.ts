@@ -1,8 +1,7 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { type TransactionClient } from "@zoonk/db";
 import { PlanConflictError } from "../plan-conflict";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
-import { markPlanWrite } from "./mark-plan-write";
 import {
   type StoredPlanChangePayload,
   UNDOABLE_KINDS,
@@ -10,6 +9,7 @@ import {
   toPlanChangePayload,
 } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
+import { writePlanMetadata } from "./plan-metadata-write";
 import { type PlanSummary, reduceCompletedSummary } from "./plan-summary";
 import { getGoalUpdate } from "./plan-unchanged";
 import { type SavedPlanItem, savePlanItems } from "./save-plan-items";
@@ -192,32 +192,38 @@ export async function savePlanInputsKey({
   previews = [],
   extraWrites,
 }: {
-  context: Pick<PlanContext, "plan">;
+  context: PlanContext;
   graph: PlanState["graph"];
   inputsKey: string;
   summary?: PlanSummary | null;
   previews?: PlanWrite["previews"];
   extraWrites?: (tx: TransactionClient) => Promise<void>;
 }): Promise<void> {
-  await prisma.$transaction(async (tx) => {
-    const plan = await markPlanWrite(tx, context.plan);
+  await writePlanMetadata({
+    context,
+    write: async (tx) => {
+      const { plan } = context;
 
-    const { count } = await tx.plan.updateMany({
-      data: {
-        graph,
-        inputsKey,
-        ...(summary && { coveredShare: summary.selected.coverage?.coveredShare ?? null, summary }),
-      },
-      where: { id: plan.id, inputVersion: plan.inputVersion, version: plan.version },
-    });
+      const { count } = await tx.plan.updateMany({
+        data: {
+          graph,
+          inputsKey,
+          ...(summary && {
+            coveredShare: summary.selected.coverage?.coveredShare ?? null,
+            summary,
+          }),
+        },
+        where: { id: plan.id, inputVersion: plan.inputVersion, version: plan.version },
+      });
 
-    if (count === 0) {
-      throw new PlanConflictError();
-    }
+      if (count === 0) {
+        throw new PlanConflictError();
+      }
 
-    await saveProposalPreviews({ previews, tx });
+      await saveProposalPreviews({ previews, tx });
 
-    await extraWrites?.(tx);
+      await extraWrites?.(tx);
+    },
   });
 }
 

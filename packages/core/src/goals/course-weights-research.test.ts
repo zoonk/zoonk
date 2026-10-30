@@ -1,8 +1,14 @@
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { setGoalPrimaryCourse } from "../library/curriculum/goal-primary-course";
+import { commitPlan } from "../plans/_utils/commit-plan";
+import { loadPlanContext } from "../plans/_utils/plan-context";
+import { computePlan } from "../plans/_utils/replan";
+import { withPlanRetry } from "../plans/plan-conflict";
 import { readCourseWeights } from "../plans/planner/course-weights";
 import {
   copyStoredCourseWeights,
@@ -61,7 +67,7 @@ async function lookUp(goalId: string, year = YEAR) {
 }
 
 describe(findCourseWeightsLookup, () => {
-  it("looks up an entrance exam goal's course weights once, marking the learner's plans changed, and the planner then reads them", async () => {
+  it("looks up an entrance exam goal's course weights once, marking only that goal's plan changed, and the planner then reads them", async () => {
     const goal = await enemGoal({ institution: "UFMG", targetCourse: "Medicina" });
     const lookup = await lookUp(goal.id);
 
@@ -92,7 +98,7 @@ describe(findCourseWeightsLookup, () => {
     await expect(readPlan()).resolves.toStrictEqual({ inputVersion: plan.inputVersion + 1 });
 
     await expect(readPlan(otherPlan.id)).resolves.toStrictEqual({
-      inputVersion: otherPlan.inputVersion + 1,
+      inputVersion: otherPlan.inputVersion,
     });
 
     await Promise.all([
@@ -247,5 +253,69 @@ describe(copyStoredCourseWeights, () => {
     expect(readCourseWeights(saved.details)?.subjects.map((part) => part.weight)).toStrictEqual([
       2, 1, 2,
     ]);
+  });
+});
+
+describe("background plan inputs", () => {
+  it("outlasts a primary course and weights landing in successive plan attempts", async () => {
+    const goal = await enemGoal({ institution: "UFMG", targetCourse: "Medicina" });
+    const [course, plan] = await Promise.all([courseFixture(), planFixture({ goalId: goal.id })]);
+    const lookup = await lookUp(goal.id);
+    let attempts = 0;
+
+    const saving = withPlanRetry(async () => {
+      attempts += 1;
+      const current = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+      const context = await loadPlanContext({ goal: current });
+      expect(context).not.toBeNull();
+      const computed = await computePlan({ context: context!, mode: "automatic" });
+
+      if (attempts === 1) {
+        await setGoalPrimaryCourse({ courseId: course.id, goalId: goal.id });
+      }
+
+      if (attempts === 2) {
+        await recordCourseWeights({ finding: FOUND, goalId: goal.id, lookup, provenance });
+      }
+
+      return commitPlan({ change: null, computed, context: context! });
+    });
+
+    await expect(saving).resolves.toBeNull();
+    expect(attempts).toBe(3);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion + 3,
+      version: plan.version + 1,
+    });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      details: { courseWeights: { status: "found" } },
+      primaryCourseId: course.id,
+    });
+  });
+
+  it("ignores a completed weights lookup for a target the learner has replaced", async () => {
+    const goal = await enemGoal({ institution: "UFMG", targetCourse: "Medicina" });
+    const lookup = await lookUp(goal.id);
+    const plan = await planFixture({ goalId: goal.id });
+
+    await prisma.goal.update({
+      data: { details: { institution: "UFMG", targetCourse: "Direito" } },
+      where: { id: goal.id },
+    });
+
+    await recordCourseWeights({ finding: FOUND, goalId: goal.id, lookup, provenance });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      details: { institution: "UFMG", targetCourse: "Direito" },
+    });
+
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    expect(readCourseWeights(saved.details)).toBeNull();
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion,
+    });
   });
 });

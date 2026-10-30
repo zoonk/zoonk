@@ -100,7 +100,7 @@ describe("plan writes", () => {
     const after = await readPlan();
 
     expect(after.inputsKey).toBe("same-inputs");
-    expect(after.inputVersion).toBe(before.inputVersion + 1);
+    expect(after.inputVersion).toBe(before.inputVersion);
 
     const layout = ({ phases, settings, summary, version }: typeof after) => ({
       phases,
@@ -110,6 +110,8 @@ describe("plan writes", () => {
     });
 
     expect(layout(after)).toStrictEqual(layout(before));
+
+    await prisma.$transaction((tx) => markPlansChanged(tx, { planIds: [context.plan.id] }));
 
     await expect(
       savePlanInputsKey({ context, graph: context.state.graph, inputsKey: "stale-inputs" }),

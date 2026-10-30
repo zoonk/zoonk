@@ -7,9 +7,9 @@ import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../cache/tags";
 import { getCutoffTarget } from "../exams/cutoffs/cutoff-target";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
+import { replanWaitingGoal } from "../library/curriculum/replan-waiting-goals";
 import { examStructureSchema } from "../library/exams/blueprint-contract";
 import { type CourseWeights, readCourseWeightSubjects } from "../plans/planner/course-weights";
-import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 
 export type CourseWeightsLookup = {
   course: string;
@@ -108,15 +108,30 @@ async function copyToGoal({
     subjects: readCourseWeightSubjects(stored.subjects),
   };
 
-  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
+  const goal = await prisma.goal.findUnique({
+    include: { plan: { select: { id: true } } },
+    where: { id: goalId },
+  });
 
   if (!goal) {
     return;
   }
 
-  const marker = { planInputs: true, userId: goal.userId };
+  const marker = { planInputs: goal.plan ? [goal.plan.id] : [], userId: goal.userId };
 
   const count = await writeLearnerChange(marker, async (tx) => {
+    const current = await tx.goal.findUnique({ where: { id: goalId } });
+    const details = isJsonObject(current?.details) ? current.details : {};
+
+    if (
+      !current ||
+      current.examBlueprintId !== lookup.examBlueprintId ||
+      getCutoffTarget({ details, role: null })?.key !== lookup.key ||
+      isLookedUp({ course: lookup.course, details, institution: lookup.institution })
+    ) {
+      return unchanged(0);
+    }
+
     const updated = await tx.$executeRaw`
       UPDATE goals
       SET details = jsonb_set(details, '{courseWeights}', ${JSON.stringify(courseWeights)}::jsonb),
@@ -129,7 +144,7 @@ async function copyToGoal({
   });
 
   if (count > 0) {
-    await refreshGoalPlan({ goalId });
+    await replanWaitingGoal(goalId);
     revalidateCacheTags([getGoalsCacheTag(goal.userId)]);
   }
 }

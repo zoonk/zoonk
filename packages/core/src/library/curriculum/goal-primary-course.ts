@@ -25,13 +25,16 @@ export async function setGoalPrimaryCourse({
   courseId: string;
   goalId: string;
 }): Promise<void> {
-  const goal = await prisma.goal.findUnique({ select: { userId: true }, where: { id: goalId } });
+  const goal = await prisma.goal.findUnique({
+    include: { plan: { select: { id: true } } },
+    where: { id: goalId },
+  });
 
   if (!goal) {
     return;
   }
 
-  const marker = { planInputs: true, userId: goal.userId };
+  const marker = { planInputs: goal.plan ? [goal.plan.id] : [], userId: goal.userId };
 
   const count = await writeLearnerChange(marker, async (tx) => {
     const updated = await tx.goal.updateMany({
