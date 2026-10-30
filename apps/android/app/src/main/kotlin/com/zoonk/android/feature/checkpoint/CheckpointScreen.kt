@@ -86,7 +86,6 @@ import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.WorkedSteps
 import com.zoonk.android.feature.questions.answerText
 import com.zoonk.android.feature.session.DayMoment
-import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.Trickster
