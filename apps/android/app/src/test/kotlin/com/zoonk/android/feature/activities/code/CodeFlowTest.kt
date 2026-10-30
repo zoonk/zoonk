@@ -12,6 +12,7 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -108,6 +109,23 @@ class CodeFlowTest {
 
         shows("Correct!")
         assertEquals(listOf(outputAnswer("5050\n")), graded)
+    }
+
+    @Test
+    fun aRunsOutputComesBackAfterAndroidClosesTheAppInTheBackground() {
+        val restoration = StateRestorationTester(rule)
+        harness.codeSandbox = { scope -> ScriptedSandbox(scope) { ScriptedSandbox.printed("5050\n") }.sandbox }
+        harness.play(listOf(ActivityFixtures.step("codeRunner")), restoration = restoration)
+
+        line(2).performTextReplacement("for n in range(1, 101):")
+        tap("Run")
+        rule.waitUntil(WAIT_MS) { rule.onAllNodesWithText("5050").fetchSemanticsNodes().size == 2 }
+
+        harness.viewModel = harness.openAgain()
+        restoration.emulateSavedInstanceStateRestore()
+
+        rule.onAllNodesWithText("5050").assertCountEquals(2)
+        rule.onNodeWithText("Check").assertIsEnabled()
     }
 
     @Test
