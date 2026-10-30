@@ -95,9 +95,9 @@ private fun CodeRunnerActivity(props: ActivityProps) {
     val isLocked by rememberUpdatedState(props.isLocked)
     var edits by rememberSaveable(stateSaver = draftsSaver(String::toInt)) { mutableStateOf(emptyMap<Int, String>()) }
     var run by remember { mutableStateOf(props.answer.output?.let(ProgramRun::printed)) }
-    val program = programWithEdits(fields.starterCode, edits)
+    val program = programWithEdits(if (props.isExploring) fields.solution else fields.starterCode, edits)
     val matches = run?.let { sameOutput(it.output, fields.expectedOutput) } == true
-    val mistake = run?.takeUnless { matches }?.let { mistakeFor(it.output, fields.mistakes)?.feedback }
+    val mistake = run?.takeUnless { matches || props.isExploring }?.let { mistakeFor(it.output, fields.mistakes)?.feedback }
 
     fun runProgram() {
         if (props.isLocked) return
@@ -118,13 +118,13 @@ private fun CodeRunnerActivity(props: ActivityProps) {
     }
 
     ActivityCanvas {
-        CodePanel(fields, language, program, run, editorRun.isStale, props.isLocked, onEdit = {
+        CodePanel(fields, language, program, run, editorRun.isStale, props.isLocked, marksYourLines = !props.isExploring, onEdit = {
             line,
             text,
             ->
             change(edits + (line to text))
         }, onRun = ::runProgram)
-        CodeRunnerOutput(fields.expectedOutput, language, run, matches, mistake, editorRun.isStale)
+        CodeRunnerOutput(fields.expectedOutput.takeUnless { props.isExploring }, language, run, matches, mistake, editorRun.isStale)
         if (!props.isChecked) {
             SandboxRunBar(
                 runtimeName = language.runtimeName,
@@ -146,6 +146,7 @@ private fun CodePanel(
     run: ProgramRun?,
     isStale: Boolean,
     isLocked: Boolean,
+    marksYourLines: Boolean,
     onEdit: (Int, String) -> Unit,
     onRun: () -> Unit,
 ) {
@@ -173,18 +174,22 @@ private fun CodePanel(
                 color = colors.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.copy(fontFamily = FontFamily.Monospace),
             )
-            val style = MaterialTheme.typography.labelMedium
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                LineMarker(style) { Icon(painterResource(R.drawable.ic_edit), null, Modifier.size(12.dp), tint = colors.onSurfaceVariant) }
-                Text(
-                    pluralStringResource(
-                        R.plurals.activities_code_lines_yours,
-                        fields.editableLines.size,
-                        formatList(fields.editableLines.map(Long::toString), currentLocale()),
-                    ),
-                    color = colors.onSurfaceVariant,
-                    style = style,
-                )
+            if (marksYourLines) {
+                val style = MaterialTheme.typography.labelMedium
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    LineMarker(style) {
+                        Icon(painterResource(R.drawable.ic_edit), null, Modifier.size(12.dp), tint = colors.onSurfaceVariant)
+                    }
+                    Text(
+                        pluralStringResource(
+                            R.plurals.activities_code_lines_yours,
+                            fields.editableLines.size,
+                            formatList(fields.editableLines.map(Long::toString), currentLocale()),
+                        ),
+                        color = colors.onSurfaceVariant,
+                        style = style,
+                    )
+                }
             }
         }
         CodeBlock(stringResource(R.string.activities_code_code)) {
@@ -213,10 +218,10 @@ private fun CodePanel(
     }
 }
 
-/** Main's `CodeRunnerOutput`: what the program printed beside what it should print, then why it stopped. */
+/** Main's `CodeRunnerOutput`: what the program printed, beside what it should print when it has a target, then why it stopped. */
 @Composable
 private fun CodeRunnerOutput(
-    expectedOutput: String,
+    expectedOutput: String?,
     language: CodeLanguage,
     run: ProgramRun?,
     matches: Boolean,
@@ -235,7 +240,7 @@ private fun CodeRunnerOutput(
                 .border(1.dp, colors.outlineVariant, shape),
         ) {
             OutputCell(
-                stringResource(R.string.activities_code_your_output),
+                stringResource(if (expectedOutput == null) R.string.activities_code_output else R.string.activities_code_your_output),
                 Modifier.weight(1f).alpha(
                     if (isStale &&
                         run != null
@@ -246,11 +251,13 @@ private fun CodeRunnerOutput(
                     },
                 ),
             ) {
-                PrintedOutput(run, matches, isStale)
+                PrintedOutput(run, matches, hasTarget = expectedOutput != null && !isStale)
             }
-            VerticalDivider(Modifier.fillMaxHeight(), color = colors.outlineVariant)
-            OutputCell(stringResource(R.string.activities_code_expected), Modifier.weight(1f)) {
-                OutputText(expectedOutput.trimEnd())
+            if (expectedOutput != null) {
+                VerticalDivider(Modifier.fillMaxHeight(), color = colors.outlineVariant)
+                OutputCell(stringResource(R.string.activities_code_expected), Modifier.weight(1f)) {
+                    OutputText(expectedOutput.trimEnd())
+                }
             }
         }
 
@@ -308,7 +315,7 @@ private fun OutputText(
 private fun PrintedOutput(
     run: ProgramRun?,
     matches: Boolean,
-    isStale: Boolean,
+    hasTarget: Boolean,
 ) {
     val colors = MaterialTheme.colorScheme
     val live = Modifier.semantics { liveRegion = LiveRegionMode.Polite }
@@ -334,7 +341,7 @@ private fun PrintedOutput(
         else -> {
             val tone =
                 when {
-                    isStale -> colors.onSurface
+                    !hasTarget -> colors.onSurface
                     matches -> colors.tertiary
                     else -> colors.error
                 }

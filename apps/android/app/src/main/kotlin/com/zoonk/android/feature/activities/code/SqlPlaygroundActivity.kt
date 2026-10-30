@@ -99,7 +99,9 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
     val onAnswerChange by rememberUpdatedState(props.onAnswerChange)
     val isLocked by rememberUpdatedState(props.isLocked)
     val focus = remember { FocusRequester() }
-    var query by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue()) }
+    var query by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(if (props.isExploring) fields.solution else ""))
+    }
     var run by remember { mutableStateOf<QueryRun?>(props.answer.rows?.let(QueryRun::Done)) }
     val expected = (props.expected.interaction as? ActivityExpectedAnswer.RowsWrapper)?.value
     val result = (run as? QueryRun.Done)?.result
@@ -131,7 +133,7 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
 
         if (!props.isChecked) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                val label = stringResource(R.string.activities_code_your_query)
+                val label = stringResource(if (props.isExploring) R.string.activities_code_query else R.string.activities_code_your_query)
                 Text(label, style = MaterialTheme.typography.titleSmall)
                 CodeEditor(
                     value = query,

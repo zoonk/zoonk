@@ -23,10 +23,12 @@
   "activities_code_not_quite": "4ad0581835856f3b1d78740fdf7b572b22c19e885d233868c7ed6a0c0e99bfa1",
   "activities_code_not_set": "320dcf410310c11049a9ceb7bde78dbc42f0543ff97db4888f6be2c54832c2cd",
   "activities_code_nothing_printed": "893952c5c6302ca7bd026439cc6869f8cc6e5557290e5fe03abb4f6768649761",
+  "activities_code_output": "51354010a868895235a7d6601c29834410082f9ab61746510f53e11d11ea587a",
   "activities_code_pass_count": "c47e58f47502c01d81013e8e965773c15841548be31f97593ac5d473be10aec5",
   "activities_code_pattern_cant_run": "20f62fc4b63013a1e5c49b468810f77184d064092560c8cb74ec6d4a8ae58da7",
   "activities_code_pattern_that_works": "39e93fbd1afd38e7a79ca5a6928f2e56d3e9016e6417cded712a38295c17860e",
   "activities_code_predict_first": "31a3153e9e5b001bd8edf6fdc91d1e87abcbe8b56eb239ed5555d4799494d7b9",
+  "activities_code_query": "af79fc33d366525d5df68e1a11b209ac8cf5512ca403c91186eeaa206e6f7860",
   "activities_code_query_that_works": "fe7f3a3206b6badbf255e2e9a2d9073d12b506b59485571666e1fc399fbb65cf",
   "activities_code_query_timeout": "21c47e661360b519116bdec70902bec554a1dcb3114dafc28807c4d4334124e9",
   "activities_code_result_no_rows": "4daa4e291c80ca4a9f5a3fab519e6ec2650641a9caddf390501ad1e21954bb84",
@@ -83,6 +85,7 @@
   "activities_code_value_was": "f5ca9b6f7e4e65bb4671df3d8c1f90e5b41365b7224bcc523742d07b32cce5c6",
   "activities_code_variables": "7bb1ed4012b83dc79a5633dd4f1f25ac86567eaee3360f4b1e8f3a1d59b1eefa",
   "activities_code_whole_run": "0078f80662b0bd7b7e40fac405cc89db1c34dafd9eb26aa5e64b3203977db2c5",
+  "activities_code_whole_run_explored": "01b4967fdd4be7a193749af73ba93c03ad9a387d275900c6845ed7042cf3b9c2",
   "activities_code_you_said_right": "80ece0353e530ab9b08ca042c39c49d8dc76bd0ffb093991cd3a34f8b277673c",
   "activities_code_you_said_wrong": "0f64ce1b72e6c54e1e8974f82e6054686aa89bf0811e97e7e9cbcf7248a50b1d",
   "activities_code_your_formula": "77bdb0f964023ac74d1c0568fccd7b527bfab67dffdd0249af510116ed9e2fa7",
@@ -115,6 +118,8 @@
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">Línea %1$d, puedes editarla</string>
     <string name="activities_code_your_output">Tu resultado</string>
+    <!-- What a program shown to explore printed, with no expected output beside it. -->
+    <string name="activities_code_output">Salida</string>
     <!-- The output the program should print. -->
     <string name="activities_code_expected">Esperado</string>
     <string name="activities_code_run_to_see">Ejecuta el código para verlo</string>
@@ -213,6 +218,8 @@
     <string name="activities_code_badge_query_data">Consulta los datos</string>
     <!-- The field for a SQL query, and its label. -->
     <string name="activities_code_your_query">Tu consulta</string>
+    <!-- Above the SQL query shown to explore, already written and ready to run. -->
+    <string name="activities_code_query">Consulta</string>
     <!-- The row of buttons that type SQL words and the tables' names, for TalkBack. -->
     <string name="activities_code_sql_words">Palabras, tablas y columnas SQL</string>
     <plurals name="activities_code_query_timeout">
@@ -265,6 +272,8 @@
     <string name="activities_code_step_to_see">Avanza para ver si tienes razón.</string>
     <string name="activities_code_step_next_line">Avanza para ejecutar la siguiente línea.</string>
     <string name="activities_code_whole_run">Ya has terminado. Comprueba tus predicciones cuando quieras.</string>
+    <!-- At the last step of a code trace shown to explore, with nothing to predict. -->
+    <string name="activities_code_whole_run_explored">La ejecución ha terminado.</string>
     <!-- The learner's predictions of a code trace's values, for TalkBack. -->
     <string name="activities_code_your_predictions">Tus predicciones</string>
     <!-- A right prediction, like "You said 6, and it was." -->

@@ -21,6 +21,8 @@
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">Line %1$d, yours to edit</string>
     <string name="activities_code_your_output">Your output</string>
+    <!-- What a program shown to explore printed, with no expected output beside it. -->
+    <string name="activities_code_output">Output</string>
     <!-- The output the program should print. -->
     <string name="activities_code_expected">Expected</string>
     <string name="activities_code_run_to_see">Run the code to see it</string>
@@ -120,6 +122,8 @@
     <string name="activities_code_badge_query_data">Query the data</string>
     <!-- The field for a SQL query, and its label. -->
     <string name="activities_code_your_query">Your query</string>
+    <!-- Above the SQL query shown to explore, already written and ready to run. -->
+    <string name="activities_code_query">Query</string>
     <!-- The row of buttons that type SQL words and the tables' names, for TalkBack. -->
     <string name="activities_code_sql_words">SQL words, tables and columns</string>
     <plurals name="activities_code_query_timeout">
@@ -170,6 +174,8 @@
     <string name="activities_code_step_to_see">Step forward to see if you\'re right.</string>
     <string name="activities_code_step_next_line">Step forward to run the next line.</string>
     <string name="activities_code_whole_run">That\'s the whole run. Check your predictions when you\'re ready.</string>
+    <!-- At the last step of a code trace shown to explore, with nothing to predict. -->
+    <string name="activities_code_whole_run_explored">That\'s the whole run.</string>
     <!-- The learner's predictions of a code trace's values, for TalkBack. -->
     <string name="activities_code_your_predictions">Your predictions</string>
     <!-- A right prediction, like "You said 6, and it was." -->

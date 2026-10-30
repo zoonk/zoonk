@@ -30,6 +30,7 @@ import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.LessonStepAnswer
@@ -83,6 +84,14 @@ class CodeFlowTest {
         answer: (JsonObject) -> JsonElement,
     ) = play(ActivityFixtures.step(fixture), ActivityFixtures.expected(fixture), isCorrect, answer)
 
+    private fun explore(
+        fixture: String,
+        answer: (JsonObject) -> JsonElement,
+    ) {
+        harness.codeSandbox = { scope -> ScriptedSandbox(scope, answer).also { scripted = it }.sandbox }
+        harness.play(listOf(ActivityFixtures.exploreStep(fixture), summaryStep("end")))
+    }
+
     private fun tap(text: String) = rule.onNodeWithText(text).performScrollTo().performClick()
 
     private fun shows(text: String) = rule.waitUntilAtLeastOneExists(hasText(text, substring = true), WAIT_MS)
@@ -126,6 +135,18 @@ class CodeFlowTest {
 
         rule.onAllNodesWithText("5050").assertCountEquals(2)
         rule.onNodeWithText("Check").assertIsEnabled()
+    }
+
+    @Test
+    fun anExploredProgramStartsSolvedAndPrintsWithNothingToMatch() {
+        explore("codeRunner") { ScriptedSandbox.printed("5050\n") }
+
+        line(2).assert(hasText("for n in range(1, 101):"))
+        rule.onNodeWithText("is yours", substring = true).assertDoesNotExist()
+        tap("Run")
+        shows("5050")
+        rule.onNodeWithText("Output").assertExists()
+        rule.onNodeWithText("Expected").assertDoesNotExist()
     }
 
     @Test
@@ -197,6 +218,16 @@ class CodeFlowTest {
     }
 
     @Test
+    fun anExploredPatternStartsSolvedWithNoHints() {
+        explore("patternTester") { ScriptedSandbox.regexTested(it) }
+
+        field("Your pattern").assert(hasText("^\\d{5}(-\\d{4})?$"))
+        shows("2 of 2 pass")
+        shows("3 of 3 pass")
+        rule.onNodeWithText("Show a hint").assertDoesNotExist()
+    }
+
+    @Test
     fun aFormulaIsCheckedCellByCell() {
         play(formulaTester, expected = null, isCorrect = false, { ScriptedSandbox.regexTested(it) })
 
@@ -255,6 +286,15 @@ class CodeFlowTest {
 
         shows("Correct!")
         shows("A query that works")
+    }
+
+    @Test
+    fun anExploredQueryStartsSolvedAndRuns() {
+        explore("sqlPlayground", ::sqlRows)
+
+        field("Query").assert(hasText(solution))
+        tap("Run")
+        shows("Your result: 3 rows")
     }
 
     @Test
@@ -328,6 +368,16 @@ class CodeFlowTest {
 
         shows("Correct!")
         assertEquals(listOf(assignmentAnswer(mapOf("0" to "b"))), graded)
+    }
+
+    @Test
+    fun anExploredTraceStepsToTheEndWithoutAskingForPredictions() {
+        explore("codeTracer") { JsonPrimitive(true) }
+
+        stepForward(3)
+        shows("Step 4 of 4")
+        rule.onNodeWithText("What will mid be on pass 3?").assertDoesNotExist()
+        rule.onNodeWithText("That's the whole run.").assertExists()
     }
 
     @Test

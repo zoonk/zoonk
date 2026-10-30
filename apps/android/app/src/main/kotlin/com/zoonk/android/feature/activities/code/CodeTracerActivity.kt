@@ -96,8 +96,9 @@ private fun CodeTracerActivity(props: ActivityProps) {
     var predictions by rememberSaveable(stateSaver = draftsSaver { it }) { mutableStateOf(props.answer.assignmentPairs.orEmpty()) }
     val expectedPairs = props.expected.assignmentPairs
     val lastStep = fields.trace.size - 1
-    val blocking = if (props.isChecked) null else blockingPause(fields.pauses, predictions, step)
-    val upcoming = if (props.isChecked) null else upcomingPause(fields.pauses, predictions, step)
+    val asksNothing = props.isChecked || props.isExploring
+    val blocking = if (asksNothing) null else blockingPause(fields.pauses, predictions, step)
+    val upcoming = if (asksNothing) null else upcomingPause(fields.pauses, predictions, step)
     val isRevealed = { pause: Pause -> props.isChecked || furthest >= pause.step }
     val asking = upcoming?.takeUnless { isRevealed(it.value) }
 
@@ -154,7 +155,13 @@ private fun CodeTracerActivity(props: ActivityProps) {
             Prediction(asking, predictions[asking.index.toString()], props.isLocked) { predict(asking.index, it) }
         } else if (!props.isChecked) {
             Text(
-                stringResource(if (step >= lastStep) R.string.activities_code_whole_run else R.string.activities_code_step_next_line),
+                stringResource(
+                    when {
+                        step < lastStep -> R.string.activities_code_step_next_line
+                        props.isExploring -> R.string.activities_code_whole_run_explored
+                        else -> R.string.activities_code_whole_run
+                    },
+                ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
             )

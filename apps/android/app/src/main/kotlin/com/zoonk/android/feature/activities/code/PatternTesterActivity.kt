@@ -118,7 +118,11 @@ private fun PatternTesterActivity(props: ActivityProps) {
     val formula = (fields as? FormulaFieldsValue)?.value
     val onAnswerChange by rememberUpdatedState(props.onAnswerChange)
     val focus = remember { FocusRequester() }
-    var value by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(props.answer.pattern.orEmpty())) }
+    var value by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(
+            TextFieldValue(if (props.isExploring) regex?.solution ?: formula?.solution.orEmpty() else props.answer.pattern.orEmpty()),
+        )
+    }
 
     fun change(next: TextFieldValue) {
         val edited = next.text != value.text
@@ -144,7 +148,7 @@ private fun PatternTesterActivity(props: ActivityProps) {
         }
         if (regex != null) RegexExamples(regex, value.text)
         if (formula != null) FormulaExamples(formula, value.text)
-        PatternHints(regex?.hints ?: formula?.hints.orEmpty(), props.isChecked, props.isLocked)
+        if (!props.isExploring) PatternHints(regex?.hints ?: formula?.hints.orEmpty(), props.isChecked, props.isLocked)
         if (props.isChecked) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 ActivityCanvasLabel(
