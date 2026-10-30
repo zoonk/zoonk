@@ -60,8 +60,6 @@ function holdPlacementReads(count: number) {
     await reached.promise;
     return markKnown(input);
   });
-
-  return reached.promise;
 }
 
 function holdNextAnnouncement() {
@@ -85,19 +83,16 @@ describe("test-outs from the same read of the plan", () => {
   it("announce a new plan's placement once, with the task's end", async () => {
     const { goalId, planId } = await placedGoal();
     const run = () => runPlanSetupTask({ goalId, task: "placement" });
-    const read = holdPlacementReads(2);
+    holdPlacementReads(2);
     const release = holdNextAnnouncement();
 
     try {
-      const both = Promise.all([run(), run()]);
-      await read;
-
-      await vi.waitFor(async () => {
-        await expect(isPlanSetupTaskOwed({ goalId, task: "placement" })).resolves.toBe(false);
-      });
+      const runs = [run(), run()];
+      await Promise.race(runs);
+      await expect(isPlanSetupTaskOwed({ goalId, task: "placement" })).resolves.toBe(false);
 
       release();
-      await both;
+      await Promise.all(runs);
     } finally {
       release();
     }
