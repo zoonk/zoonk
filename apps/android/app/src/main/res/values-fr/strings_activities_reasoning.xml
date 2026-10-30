@@ -72,6 +72,8 @@
   "activities_reasoning_source_nothing_marked": "fe127f86a65d1c06327d1fa8247ba9a46b57bf72de13f0dbe1bc97f0a3d52406",
   "activities_reasoning_source_unmark": "32a31e6b9167f2c665bc529dfe914af3a809d9c3677806b341ba63181c103e58",
   "activities_reasoning_source_what_to_mark": "2d02d43b6808c13a152c4391a618ad83ec54b8ddd366c58ee9c62f0dbefa4219",
+  "activities_reasoning_source_wrong_mark": "453cbdbf509ce5ac1ea23392773f8d98b0adc903f55a762ce08378bb5653134c",
+  "activities_reasoning_source_wrong_passages": "d00432908b4d3d6b452c2d733e3e12b74314167e5287168d6f69ec039019136b",
   "activities_reasoning_source_you_marked": "ece6eb5dbf7f058ce9287ff79b16e785b0cc814e70f19ab34bc8b0bee5de2964",
   "activities_reasoning_strong": "237e8f384d9e4b85c8c2b500d33b836e5593caa6885b0d42cb1d692fd2a2d68c",
   "activities_reasoning_stronger_evidence": "4647e98d1fe708a0691aaa613a43a9c420716f4972b6dc43d23ecff11828a1c5",
@@ -137,10 +139,14 @@
     <string name="activities_reasoning_source_nothing_marked">Rien n’est encore marqué.</string>
     <!-- For TalkBack once checked, after a source's text: the passages the learner should have marked, separated by semicolons. -->
     <string name="activities_reasoning_source_missed_passages">Oubliés : %1$s.</string>
+    <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
+    <string name="activities_reasoning_source_wrong_passages">Passages marqués par erreur : %1$s.</string>
     <!-- Legend once checked: the tint of the passages the question was about. -->
     <string name="activities_reasoning_source_what_to_mark">À marquer</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->
     <string name="activities_reasoning_source_missed">Oubliés</string>
+    <!-- Legend once checked: the tint of a passage the learner marked by mistake. -->
+    <string name="activities_reasoning_source_wrong_mark">Marqué par erreur</string>
     <!-- A map the learner explores by tapping its numbered places. -->
     <string name="activities_reasoning_badge_explore_map">Explorer la carte</string>
     <!-- How many of the map's places the learner has opened, out of all of them, like "2 of 3 explored". -->

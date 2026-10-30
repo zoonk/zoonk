@@ -72,6 +72,8 @@
   "activities_reasoning_source_nothing_marked": "19a55849c6702c5f946c2fd5e02065dfec569620d188fb8f8cc079903ef41007",
   "activities_reasoning_source_unmark": "8a68508f04c37fcda114ab93424d88c32b0a78b3e5c7df976aa53e7eb26c8f6d",
   "activities_reasoning_source_what_to_mark": "3ad7c0c54e1d23a34e499a0a42cd1c4555e0e5453c8f5a2e817f9ab91d9acfd4",
+  "activities_reasoning_source_wrong_mark": "8df2b2884d002101f421b5e42f1a8c350d13bad73e75db4da5ec7ef00340973a",
+  "activities_reasoning_source_wrong_passages": "2a5789d93744ba93b4ffa9a639f5464e6ba4d15e70221a7003939f8db7741167",
   "activities_reasoning_source_you_marked": "0c7a1f45d7e559b03a2ba7069201dd9f0a770ac63782c889dd99fcb8c394047f",
   "activities_reasoning_strong": "08f04f83b6d3fa885ac597516ea1021bf35ad9245ae842895584ed1acd96347e",
   "activities_reasoning_stronger_evidence": "b38575e3ff5a35ad2ab807b4d560308314d2c0cf52444646bce3eec7cfc55ca2",
@@ -134,10 +136,14 @@
     <string name="activities_reasoning_source_nothing_marked">Noch nichts markiert.</string>
     <!-- For TalkBack once checked, after a source's text: the passages the learner should have marked, separated by semicolons. -->
     <string name="activities_reasoning_source_missed_passages">Nicht markiert: %1$s.</string>
+    <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
+    <string name="activities_reasoning_source_wrong_passages">Fälschlich markiert: %1$s.</string>
     <!-- Legend once checked: the tint of the passages the question was about. -->
     <string name="activities_reasoning_source_what_to_mark">Was markiert werden soll</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->
     <string name="activities_reasoning_source_missed">Nicht markiert</string>
+    <!-- Legend once checked: the tint of a passage the learner marked by mistake. -->
+    <string name="activities_reasoning_source_wrong_mark">Falsche Markierung</string>
     <!-- A map the learner explores by tapping its numbered places. -->
     <string name="activities_reasoning_badge_explore_map">Karte erkunden</string>
     <!-- How many of the map's places the learner has opened, out of all of them, like "2 of 3 explored". -->

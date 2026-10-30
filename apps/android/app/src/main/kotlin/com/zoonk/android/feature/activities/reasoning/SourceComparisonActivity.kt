@@ -99,7 +99,14 @@ private fun SourceComparisonActivity(props: ActivityProps) {
                 )
             }
         }
-        if (props.isChecked) Legend()
+        if (props.isChecked) {
+            val passages = fields.sources.flatMap { it.passages }
+            Legend(
+                found = passages.any { it.isTarget && it.id in marked },
+                missed = passages.any { it.isTarget && it.id !in marked },
+                wrong = passages.any { !it.isTarget && it.id in marked },
+            )
+        }
     }
 }
 
@@ -152,7 +159,8 @@ private fun SourceCard(
 
 /**
  * The excerpt with its passages: a tap or a key marks one. TalkBack reads the whole excerpt with
- * what's marked (and, once checked, what was missed), and marks a passage through its actions.
+ * what's marked (and, once checked, what was marked by mistake or missed), and marks a passage
+ * through its actions.
  */
 @Composable
 private fun Excerpt(
@@ -187,6 +195,7 @@ private fun Excerpt(
             }
         }
     val markedTexts = source.passages.filter { it.id in marked }.map { it.text }
+    val wrongTexts = source.passages.filter { isChecked && !it.isTarget && it.id in marked }.map { it.text }
     val missedTexts = source.passages.filter { isChecked && it.isTarget && it.id !in marked }.map { it.text }
     val summary =
         listOfNotNull(
@@ -194,6 +203,9 @@ private fun Excerpt(
                 stringResource(R.string.activities_reasoning_source_nothing_marked)
             } else {
                 stringResource(R.string.activities_reasoning_source_you_marked, markedTexts.joinToString("; "))
+            },
+            wrongTexts.takeIf { it.isNotEmpty() }?.let {
+                stringResource(R.string.activities_reasoning_source_wrong_passages, it.joinToString("; "))
             },
             missedTexts.takeIf { it.isNotEmpty() }?.let {
                 stringResource(
@@ -324,27 +336,30 @@ private fun lineSpans(
     }
 
 @Composable
-private fun Legend() {
-    val muted = MaterialTheme.colorScheme.onSurfaceVariant
-    val style = MaterialTheme.typography.bodySmall
-    val swatch = MaterialTheme.colorScheme.tertiaryContainer
-    val missed = MaterialTheme.colorScheme.onTertiaryContainer
+private fun Legend(
+    found: Boolean,
+    missed: Boolean,
+    wrong: Boolean,
+) {
+    val dash = MaterialTheme.colorScheme.onTertiaryContainer
 
     FlowRow(
-        Modifier.clearAndSetSemantics {
-        },
+        Modifier.clearAndSetSemantics {},
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Box(Modifier.size(width = 16.dp, height = 12.dp).clip(RoundedCornerShape(2.dp)).background(swatch))
-            Text(stringResource(R.string.activities_reasoning_source_what_to_mark), color = muted, style = style)
+        if (found) {
+            LegendEntry(
+                stringResource(R.string.activities_reasoning_source_what_to_mark),
+                Modifier.tint(MaterialTheme.colorScheme.tertiaryContainer),
+            )
         }
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Box(
+        if (missed) {
+            LegendEntry(
+                stringResource(R.string.activities_reasoning_source_missed),
                 Modifier.width(16.dp).height(2.dp).drawBehind {
                     drawLine(
-                        missed,
+                        dash,
                         Offset(0f, size.height / 2),
                         Offset(size.width, size.height / 2),
                         strokeWidth = size.height,
@@ -352,10 +367,28 @@ private fun Legend() {
                     )
                 },
             )
-            Text(stringResource(R.string.activities_reasoning_source_missed), color = muted, style = style)
+        }
+        if (wrong) {
+            LegendEntry(
+                stringResource(R.string.activities_reasoning_source_wrong_mark),
+                Modifier.tint(MaterialTheme.colorScheme.errorContainer),
+            )
         }
     }
 }
+
+@Composable
+private fun LegendEntry(
+    label: String,
+    swatch: Modifier,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Box(swatch)
+        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+    }
+}
+
+private fun Modifier.tint(color: Color) = size(width = 16.dp, height = 12.dp).clip(RoundedCornerShape(2.dp)).background(color)
 
 private const val SOFT = 0.16f
 private const val LINE_HEIGHT = 1.9f

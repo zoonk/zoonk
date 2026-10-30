@@ -52,10 +52,14 @@
     <string name="activities_reasoning_source_nothing_marked">Nothing marked yet.</string>
     <!-- For TalkBack once checked, after a source's text: the passages the learner should have marked, separated by semicolons. -->
     <string name="activities_reasoning_source_missed_passages">Missed: %1$s.</string>
+    <!-- For TalkBack once checked, after a source's text: the passages the learner marked by mistake, separated by semicolons. -->
+    <string name="activities_reasoning_source_wrong_passages">Marked by mistake: %1$s.</string>
     <!-- Legend once checked: the tint of the passages the question was about. -->
     <string name="activities_reasoning_source_what_to_mark">What to mark</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->
     <string name="activities_reasoning_source_missed">Missed</string>
+    <!-- Legend once checked: the tint of a passage the learner marked by mistake. -->
+    <string name="activities_reasoning_source_wrong_mark">Wrong mark</string>
 
     <!-- A map the learner explores by tapping its numbered places. -->
     <string name="activities_reasoning_badge_explore_map">Explore the map</string>

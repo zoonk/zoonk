@@ -33,9 +33,16 @@ import com.zoonk.android.feature.activities.gridCells
 import com.zoonk.android.feature.activities.selectionIds
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
+import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.LessonStepAnswer
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -62,7 +69,8 @@ class ReasoningFlowTest {
         fixture: String,
         isCorrect: Boolean,
         expected: ActivityExpected? = ActivityFixtures.expected(fixture),
-    ) = harness.play(listOf(ActivityFixtures.step(fixture))) {
+        step: LessonStep = ActivityFixtures.step(fixture),
+    ) = harness.play(listOf(step)) {
         grade = { _, input ->
             val answer = (input.answer as? LessonStepAnswer.LessonStepAnswerOneOf3Value)?.value?.answer
             sent = answer.gridCells
@@ -152,6 +160,25 @@ class ReasoningFlowTest {
 
     private fun states(state: String) = SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, state)
 
+    private fun sourcesWithWrongPassage(): LessonStep {
+        val content = ActivityFixtures.contentJson("sourceComparison")
+        val fields = content.getValue("fields").jsonObject
+        val sources = fields.getValue("sources").jsonArray
+        val first = sources.first().jsonObject
+        val wrong =
+            buildJsonObject {
+                put("id", "p3")
+                put("isTarget", false)
+                put("text", "without any provocation")
+            }
+        val withWrong = JsonObject(first + ("passages" to JsonArray(first.getValue("passages").jsonArray + wrong)))
+        val sourcesJson = JsonArray(listOf(withWrong) + sources.drop(1))
+        return ActivityFixtures.step(
+            JsonObject(content + ("fields" to JsonObject(fields + ("sources" to sourcesJson)))),
+            "sourceComparison",
+        )
+    }
+
     @Test
     fun sourceComparisonMarkingBothClaimsSendsThem() {
         play("sourceComparison", isCorrect = true)
@@ -173,6 +200,20 @@ class ReasoningFlowTest {
         harness.tap("Check")
 
         rule.onNode(rebels).performScrollTo().assert(states("Nothing marked yet. Missed: the rebels fired first."))
+    }
+
+    @Test
+    fun sourceComparisonNamesAPassageMarkedByMistake() {
+        play("sourceComparison", isCorrect = false, step = sourcesWithWrongPassage())
+
+        rule.onNode(regulars).performScrollTo().performCustomAccessibilityActionWithLabel("Mark: The regulars fired on us")
+        rule.onNode(regulars).performCustomAccessibilityActionWithLabel("Mark: without any provocation")
+        harness.tap("Check")
+
+        rule
+            .onNode(regulars)
+            .performScrollTo()
+            .assert(states("You marked: The regulars fired on us; without any provocation. Marked by mistake: without any provocation."))
     }
 
     @Test
