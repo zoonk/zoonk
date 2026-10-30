@@ -59,7 +59,7 @@ export type TodayActions = {
   summaryHref: string;
 };
 
-/** Today shows one notice at most (`pickTodayNotice`), so the host passes every one it has. */
+/** Today shows the one notice its read picked (`today.notice`), so the host passes every one it has. */
 export type TodayHostNotices = {
   practice: React.ReactNode | null;
   sourceChange: React.ReactNode | null;

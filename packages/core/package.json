@@ -579,6 +579,7 @@
     "./view-models/syllabus/lesson-share": "./src/view-models/syllabus/lesson-share.ts",
     "./view-models/syllabus/subject-pages": "./src/view-models/syllabus/subject-pages.ts",
     "./view-models/today/get": "./src/view-models/today/get-today-view.ts",
+    "./view-models/today/notice": "./src/view-models/today/today-notice.ts",
     "./workflows/steps": "./src/workflows/steps.ts"
   },
   "scripts": {

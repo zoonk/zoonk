@@ -1,19 +1,13 @@
 import { researchResultSchema } from "@/workflows/v2/research/research-result";
-import { examDocumentSchema } from "@zoonk/core/exams/document";
 import {
   examEditionSchema,
   examStructureSchema,
   topicFrequencySchema,
 } from "@zoonk/core/library/exams/blueprint-contract";
 import { MAX_PASTED_TEXT_LENGTH, reusePolicySchema } from "@zoonk/core/library/sources/contract";
-import {
-  GoalKind,
-  LearnerSourceOrigin,
-  LibraryVisibility,
-  ResearchUploadReason,
-  SourceKind,
-} from "@zoonk/db";
+import { LearnerSourceOrigin, LibraryVisibility, SourceKind } from "@zoonk/db";
 import { z } from "zod";
+import { uploadRequestSchema } from "./upload-request";
 import { generationResourceSchema } from "./workflows";
 
 const MAX_TITLE_LENGTH = 200;
@@ -235,21 +229,7 @@ export const researchResourceSchema = z
 
 export const goalUploadRequestResponseSchema = z
   .object({
-    request: z
-      .object({
-        examDocument: examDocumentSchema,
-        goalId: z.uuid(),
-        goalKind: z.enum(GoalKind),
-        language: z
-          .string()
-          .meta({ description: "The goal's language, to send with uploads as `language`" }),
-        reason: z
-          .enum(ResearchUploadReason)
-          .meta({
-            description:
-              "`noOfficialSource`: research found no official notice or source. `unverified`: what it found didn't match what it read. `classMaterial`: a teacher's test that only the class's material describes",
-          }),
-      })
+    request: uploadRequestSchema
       .nullable()
       .meta({ description: "Null when research needs nothing from the learner" }),
   })

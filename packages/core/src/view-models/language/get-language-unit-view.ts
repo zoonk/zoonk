@@ -6,8 +6,8 @@ import { getSpeakingLevel } from "../../language/conversations/_utils/conversati
 import { loadPracticeCall } from "../../language/conversations/_utils/practice-call";
 import { CEFR_BANDS } from "../../language/levels/skill-level-rules";
 import { findFreshMistakePattern } from "../../language/patterns/find-fresh-pattern";
-import { loadDuePronunciation } from "../../language/pronunciation/load-due-pronunciation";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
@@ -96,7 +96,7 @@ export async function getLanguageUnitView({
       loadGrammarTips(lessonIds),
       loadUnitWords(lessonIds),
       loadUnitMistakes({ lessonIds, userId }),
-      loadDuePronunciation({ language: targetLanguage, userId }),
+      readDuePronunciation(userId, targetLanguage),
       goal
         ? loadBlockedTestOutChapters({
             chapterIds: [chapter.id],

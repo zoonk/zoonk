@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type TodayHostNoticeState, pickTodayNotice } from "./today-notice-order";
+import { type TodayHostNoticeState, pickTodayNotice } from "./today-notice";
 
 type PickInput = Parameters<typeof pickTodayNotice>[0];
 type Today = PickInput["today"];

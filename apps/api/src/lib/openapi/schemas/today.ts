@@ -2,6 +2,7 @@ import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { mockFundingSchema } from "@zoonk/core/plans/mock-funding-contract";
 import { noticedPatternSchema } from "@zoonk/core/view-models/language/contract";
+import { TODAY_NOTICE_KINDS } from "@zoonk/core/view-models/today/notice";
 import { GoalKind } from "@zoonk/db";
 import { z } from "zod";
 import { lessonGenerationStatusSchema } from "./content-generation";
@@ -12,6 +13,7 @@ import { todayShortPlanSchema } from "./short-exam-plans";
 import { studyDayResponseSchema } from "./study-day";
 import { logicalDateSchema } from "./study-sessions";
 import { suggestedGoalSchema } from "./suggested-goals";
+import { uploadRequestSchema } from "./upload-request";
 
 export const todayResponseSchema = z
   .object({
@@ -64,6 +66,14 @@ export const todayResponseSchema = z
       .describe(
         "Exact saved contribution explaining a lighter study day, welcome-back sessions included; null on unrelated days and the mock's own day.",
       ),
+    notice: z
+      .enum(TODAY_NOTICE_KINDS)
+      .nullable()
+      .default(null)
+      .meta({
+        description:
+          "The one notice Today shows, the most pressing first: `exam` (its days and how it went), `examAccess` (a free exam plan's first week ended), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's noticed pattern or words to say again, from its Today view) or `suggestedGoal`. Keep the one shown while the learner stays, so answering it shows what the answer did; null when nothing needs saying",
+      }),
     pattern: noticedPatternSchema
       .nullable()
       .meta({
@@ -119,6 +129,14 @@ export const todayResponseSchema = z
       }),
     session: studyDayResponseSchema,
     shortPlan: todayShortPlanSchema,
+    sourceChange: z
+      .string()
+      .nullable()
+      .default(null)
+      .meta({
+        description:
+          "The newest change to the source material the goal follows (an exam notice corrected, a source rewritten), in a sentence; null without one",
+      }),
     studiedToday: z
       .boolean()
       .meta({ description: "Any study time today; a buddy never naps on a day with study" }),
@@ -127,6 +145,13 @@ export const todayResponseSchema = z
       .meta({
         description:
           "A course the learner was taking before goals existed, offered as another goal to plan until it's answered",
+      }),
+    uploadRequest: uploadRequestSchema
+      .nullable()
+      .default(null)
+      .meta({
+        description:
+          "The official document or class material research couldn't read, asked of the learner until they upload it (POST /v1/uploads, then POST /v1/research with its source) or dismiss it (DELETE /v1/goals/{goalId}/upload-request); null when research needs nothing",
       }),
     userId: z
       .uuid()

@@ -1,5 +1,5 @@
 import "server-only";
-import { type GoalKind, type ResearchUploadReason, prisma } from "@zoonk/db";
+import { type Goal, type GoalKind, type ResearchUploadReason, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../cache/tags";
 import { type ExamDocument, getExamDocument } from "../../exams/exam-document";
@@ -21,6 +21,18 @@ export type GoalUploadRequestResult =
   | { status: "notFound" | "unauthorized" }
   | { request: GoalUploadRequest | null; status: "ready" };
 
+export function toGoalUploadRequest(goal: Goal): GoalUploadRequest | null {
+  return goal.researchUploadReason
+    ? {
+        examDocument: getExamDocument(goal),
+        goalId: goal.id,
+        goalKind: goal.kind,
+        language: goal.language,
+        reason: goal.researchUploadReason,
+      }
+    : null;
+}
+
 export async function getGoalUploadRequest({
   goalId,
 }: {
@@ -34,19 +46,7 @@ export async function getGoalUploadRequest({
     return owned;
   }
 
-  const { goal } = owned;
-
-  const request = goal.researchUploadReason
-    ? {
-        examDocument: getExamDocument(goal),
-        goalId: goal.id,
-        goalKind: goal.kind,
-        language: goal.language,
-        reason: goal.researchUploadReason,
-      }
-    : null;
-
-  return { request, status: "ready" };
+  return { request: toGoalUploadRequest(owned.goal), status: "ready" };
 }
 
 export async function dismissGoalUploadRequest({

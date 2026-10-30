@@ -6,7 +6,7 @@ import {
   loadLanguageSkillLevels,
 } from "../../language/levels/language-skill-levels";
 import { getOverallLevel } from "../../language/levels/skill-level-rules";
-import { loadDuePronunciation } from "../../language/pronunciation/load-due-pronunciation";
+import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
 import { loadLanguageGoalContext } from "./_utils/language-goal-context";
 import { type LanguageTodayView } from "./language-view-contract";
 
@@ -31,7 +31,7 @@ export async function getLanguageTodayView(
 
   const [levels, pronunciation, speaking] = await Promise.all([
     loadLanguageSkillLevels({ details, language: goal.targetLanguage, userId }),
-    loadDuePronunciation({ language: goal.targetLanguage, userId }),
+    readDuePronunciation(userId, goal.targetLanguage),
     loadSpeakingPaperEntry({ goal }),
   ]);
 

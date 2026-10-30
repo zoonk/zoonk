@@ -87181,6 +87181,23 @@
               }
             ]
           },
+          "notice": {
+            "default": null,
+            "description": "The one notice Today shows, the most pressing first: `exam` (its days and how it went), `examAccess` (a free exam plan's first week ended), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's noticed pattern or words to say again, from its Today view) or `suggestedGoal`. Keep the one shown while the learner stays, so answering it shows what the answer did; null when nothing needs saying",
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "exam",
+              "examAccess",
+              "examChoice",
+              "insight",
+              "planChange",
+              "practice",
+              "sourceChange",
+              "suggestedGoal",
+              "uploadRequest"
+            ]
+          },
           "pattern": {
             "nullable": true,
             "description": "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, offered beside the day; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, without one, and when one of the day's missions already opens it, unless a bonus earned on another goal replaced the missions' rows",
@@ -87361,6 +87378,12 @@
             ],
             "additionalProperties": false
           },
+          "sourceChange": {
+            "default": null,
+            "description": "The newest change to the source material the goal follows (an exam notice corrected, a source rewritten), in a sentence; null without one",
+            "nullable": true,
+            "type": "string"
+          },
           "studiedToday": {
             "type": "boolean",
             "description": "Any study time today; a buddy never naps on a day with study"
@@ -87373,6 +87396,52 @@
                 "$ref": "#/components/schemas/SuggestedGoal"
               }
             ]
+          },
+          "uploadRequest": {
+            "default": null,
+            "description": "The official document or class material research couldn't read, asked of the learner until they upload it (POST /v1/uploads, then POST /v1/research with its source) or dismiss it (DELETE /v1/goals/{goalId}/upload-request); null when research needs nothing",
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "examDocument": {
+                "$ref": "#/components/schemas/ExamDocument"
+              },
+              "goalId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "goalKind": {
+                "type": "string",
+                "enum": [
+                  "learn",
+                  "explain",
+                  "language",
+                  "exam"
+                ]
+              },
+              "language": {
+                "type": "string",
+                "description": "The goal's language, to send with uploads as `language`"
+              },
+              "reason": {
+                "type": "string",
+                "enum": [
+                  "noOfficialSource",
+                  "unverified",
+                  "classMaterial"
+                ],
+                "description": "`noOfficialSource`: research found no official notice or source. `unverified`: what it found didn't match what it read. `classMaterial`: a teacher's test that only the class's material describes"
+              }
+            },
+            "required": [
+              "examDocument",
+              "goalId",
+              "goalKind",
+              "language",
+              "reason"
+            ],
+            "additionalProperties": false
           },
           "userId": {
             "type": "string",
@@ -87452,13 +87521,16 @@
           "insight",
           "lessonStatus",
           "mockFunding",
+          "notice",
           "pattern",
           "planChange",
           "progress",
           "session",
           "shortPlan",
+          "sourceChange",
           "studiedToday",
           "suggestedGoal",
+          "uploadRequest",
           "userId",
           "weeklyChallenge"
         ],

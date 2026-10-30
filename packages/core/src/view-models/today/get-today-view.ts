@@ -8,11 +8,17 @@ import { type ExamMomentView } from "../../exams/view/exam-view-contract";
 import { loadExamMoment } from "../../exams/view/load-exam-moment";
 import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-suggested-goal";
 import { type SuggestedGoalView } from "../../goals/suggestions/suggested-goal-contract";
+import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import {
   type LessonGenerationState,
   getLessonGenerationStates,
 } from "../../library/generation/lesson-generation-state";
+import {
+  type GoalUploadRequest,
+  toGoalUploadRequest,
+} from "../../library/sources/goal-upload-request";
+import { listGoalChangeNotices } from "../../library/sources/source-change-notices";
 import { type MemoryInsightView } from "../../memory/memory-contract";
 import { type ShortPlanToday, loadShortPlanDay } from "../../plans/_utils/load-short-plan-day";
 import {
@@ -35,6 +41,7 @@ import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
 import { loadAroundSession } from "./_utils/load-around-session";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
 import { hasStudiedOn } from "./_utils/studied-on-day";
+import { type TodayNoticeKind, pickTodayNotice } from "./today-notice";
 
 type TodayGoal = {
   /** The date is the likely day of an exam edition whose notice isn't out yet. */
@@ -81,6 +88,8 @@ export type TodayView = {
   lessonStatus: Record<string, LessonGenerationState["status"]>;
   /** Exact saved contribution explaining a lighter day, welcome backs included; null without one. */
   mockFunding: MockFundingView | null;
+  /** The one notice Today shows, the most pressing first; null when nothing needs saying. */
+  notice: TodayNoticeKind | null;
   /** Hidden when missions already provide the drill entry, unless their unfinished rows are hidden. */
   pattern: NoticedPattern | null;
   /** Only actionable changes; proposals wait while the expired-trial notice owns the suggestion slot. */
@@ -89,9 +98,13 @@ export type TodayView = {
   session: DayView;
   /** Class-test day sequence; null for other plans. */
   shortPlan: ShortPlanToday | null;
+  /** The newest change to the source material the goal follows, in a sentence. */
+  sourceChange: string | null;
   /** A learner who studied today never sees a napping buddy. */
   studiedToday: boolean;
   suggestedGoal: SuggestedGoalView | null;
+  /** The document research couldn't read, asked of the learner until they upload or dismiss it. */
+  uploadRequest: GoalUploadRequest | null;
   /** The authenticated viewer who produced this read, retained across delayed delivery. */
   userId: string;
   weeklyChallenge: TodayWeeklyChallenge | null;
@@ -198,6 +211,22 @@ async function loadOpenExamChoice(goal: Goal): Promise<ExamChoiceView | null> {
   return choices.find((choice) => !choice.subject) ?? null;
 }
 
+/** An empty message has nothing to say, as main's notice drew nothing for one. */
+async function loadSourceChange(goalId: string): Promise<string | null> {
+  const result = await listGoalChangeNotices({ goalId });
+  const message = result.status === "ready" ? result.notices[0]?.message : null;
+  return message || null;
+}
+
+/** A language goal's words to say again; its noticed pattern is already in the view. */
+async function hasPronunciationDue(goal: Goal): Promise<boolean> {
+  if (goal.kind !== "language" || !goal.targetLanguage) {
+    return false;
+  }
+
+  return (await readDuePronunciation(goal.userId, goal.targetLanguage)) !== null;
+}
+
 async function readAdmittedToday({
   admission: { owned },
   timeZone,
@@ -220,16 +249,27 @@ async function readAdmittedToday({
     selectedSettings: day.selection?.state.settings,
   });
 
-  const [sessionDay, around, suggestedGoal, planChange, dateKind, examChoice, noticedPattern] =
-    await Promise.all([
-      loadSessionDay({ day, goal: owned.goal, userId }),
-      loadAroundSession({ owned, selection: day.selection, session: day.session, timeZone }),
-      getCurrentSuggestedGoal(),
-      loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone }),
-      loadGoalDateKind(owned.goal, day.blueprint),
-      loadOpenExamChoice(owned.goal),
-      loadNoticedPattern({ goal: owned.goal, userId }),
-    ]);
+  const [
+    sessionDay,
+    around,
+    suggestedGoal,
+    planChange,
+    dateKind,
+    examChoice,
+    noticedPattern,
+    sourceChange,
+    pronunciationDue,
+  ] = await Promise.all([
+    loadSessionDay({ day, goal: owned.goal, userId }),
+    loadAroundSession({ owned, selection: day.selection, session: day.session, timeZone }),
+    getCurrentSuggestedGoal(),
+    loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone }),
+    loadGoalDateKind(owned.goal, day.blueprint),
+    loadOpenExamChoice(owned.goal),
+    loadNoticedPattern({ goal: owned.goal, userId }),
+    loadSourceChange(id),
+    hasPronunciationDue(owned.goal),
+  ]);
 
   const { exam, lessonStates, shortPlan, studied, studySession } = sessionDay;
   const proposalsOpen = !studySession.examAccess.trialEnded;
@@ -240,6 +280,30 @@ async function readAdmittedToday({
     : 0;
 
   const shownChange = !proposalsOpen && planChange?.status === "proposed" ? null : planChange;
+
+  const shownInsight =
+    !proposalsOpen && insight?.planChange?.status === "proposed" ? null : insight;
+
+  const pattern = selectDayPattern({ day: studySession, pattern: noticedPattern });
+  const uploadRequest = toGoalUploadRequest(owned.goal);
+  const studiedToday = studied || studySession.minutes.done > 0;
+
+  const notice = pickTodayNotice({
+    host: {
+      practice: pattern !== null || pronunciationDue,
+      sourceChange: sourceChange !== null,
+      uploadRequest: uploadRequest !== null,
+    },
+    today: {
+      exam,
+      examChoice,
+      insight: shownInsight,
+      planChange: shownChange,
+      session: studySession,
+      studiedToday,
+      suggestedGoal,
+    },
+  });
 
   return {
     status: "ready",
@@ -260,18 +324,21 @@ async function readAdmittedToday({
         targetDate,
         title,
       },
-      insight: !proposalsOpen && insight?.planChange?.status === "proposed" ? null : insight,
+      insight: shownInsight,
       lessonStatus: Object.fromEntries(
         [...lessonStates].map(([lessonId, state]) => [lessonId, state.status]),
       ),
       mockFunding,
-      pattern: selectDayPattern({ day: studySession, pattern: noticedPattern }),
+      notice,
+      pattern,
       planChange: shownChange,
       progress: toTodayProgress({ ...around, lessonsToday }),
       session: studySession,
       shortPlan,
-      studiedToday: studied || studySession.minutes.done > 0,
+      sourceChange,
+      studiedToday,
       suggestedGoal,
+      uploadRequest,
       userId,
       weeklyChallenge: around.challenge,
     },

@@ -5,12 +5,14 @@ const NAMED_WORDS = 3;
 
 export async function loadDuePronunciation({
   language,
+  now,
   userId,
 }: {
   language: string;
+  now: Date;
   userId: string;
 }): Promise<{ count: number; words: string[] } | null> {
-  const due = await findDuePronunciationReviews({ language, now: new Date(), userId });
+  const due = await findDuePronunciationReviews({ language, now, userId });
 
   if (due.length === 0) {
     return null;

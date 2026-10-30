@@ -1,27 +1,15 @@
 "use client";
 
+import { type TodayNoticeKind } from "@zoonk/core/view-models/today/notice";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useState } from "react";
-import { type TodayHostNotices, useTodayScreen } from "./today-context";
+import { useTodayScreen } from "./today-context";
 import { TodayExamAccess } from "./today-exam-access";
 import { TodayExamChoice } from "./today-exam-choice";
 import { TodayExamMoment } from "./today-exam-moment";
 import { TodayInsight } from "./today-insight";
-import {
-  type TodayHostNoticeState,
-  type TodayNoticeKind,
-  pickTodayNotice,
-} from "./today-notice-order";
 import { TodayPlanChange } from "./today-plan-change";
 import { TodaySuggestedGoal } from "./today-suggested-goal";
-
-function toHostState(notices: TodayHostNotices): TodayHostNoticeState {
-  return {
-    practice: notices.practice !== null,
-    sourceChange: notices.sourceChange !== null,
-    uploadRequest: notices.uploadRequest !== null,
-  };
-}
 
 /**
  * The notice picked when Today opened stays while the learner is here, so answering it shows what
@@ -67,8 +55,8 @@ function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
 }
 
 export function TodayNotice({ className }: { className?: string }) {
-  const { notices, today } = useTodayScreen();
-  const kind = useShownNotice(pickTodayNotice({ host: toHostState(notices), today }));
+  const { today } = useTodayScreen();
+  const kind = useShownNotice(today.notice);
 
   return (
     <div className={cn("flex flex-col empty:hidden", className)} data-slot="today-notice">

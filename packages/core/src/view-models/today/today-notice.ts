@@ -1,15 +1,18 @@
-import { type TodayView } from "@zoonk/core/view-models/today/get";
+import { type TodayView } from "./get-today-view";
 
-export type TodayNoticeKind =
-  | "exam"
-  | "examAccess"
-  | "examChoice"
-  | "insight"
-  | "planChange"
-  | "practice"
-  | "sourceChange"
-  | "suggestedGoal"
-  | "uploadRequest";
+export const TODAY_NOTICE_KINDS = [
+  "exam",
+  "examAccess",
+  "examChoice",
+  "insight",
+  "planChange",
+  "practice",
+  "sourceChange",
+  "suggestedGoal",
+  "uploadRequest",
+] as const;
+
+export type TodayNoticeKind = (typeof TODAY_NOTICE_KINDS)[number];
 
 export type TodayHostNoticeState = {
   practice: boolean;

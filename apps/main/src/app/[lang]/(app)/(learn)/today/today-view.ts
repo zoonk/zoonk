@@ -4,11 +4,6 @@ import { getReadAt } from "@/lib/learn/read-at";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
 import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
-import { listGoalChangeNotices } from "@zoonk/core/library/sources/notices";
-import {
-  type GoalUploadRequest,
-  getGoalUploadRequest,
-} from "@zoonk/core/library/sources/upload-request";
 import { type MistakeAvailability } from "@zoonk/core/mistakes/contract";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
@@ -37,7 +32,6 @@ export type TodayScreenData = {
   language: LanguageTodayView | null;
   mistakes: MistakeAvailability;
   mocks: MockOptionsView | null;
-  notices: { change: string | null; upload: GoalUploadRequest | null };
   planEnd: string | null;
   steps: TodayStep[];
   syllabus: TodaySyllabus | null;
@@ -118,18 +112,6 @@ async function countOpenMistakes(goalId: string): Promise<MistakeAvailability> {
   return result.status === "ready" ? result.availability : { ready: 0, tomorrow: 0 };
 }
 
-async function loadNotices(goalId: string): Promise<TodayScreenData["notices"]> {
-  const [changes, upload] = await Promise.all([
-    listGoalChangeNotices({ goalId }),
-    getGoalUploadRequest({ goalId }),
-  ]);
-
-  return {
-    change: changes.status === "ready" ? (changes.notices[0]?.message ?? null) : null,
-    upload: upload.status === "ready" ? upload.request : null,
-  };
-}
-
 /** Only reads: a day not opened yet is shown as it will open, and opening it is the learner's own tap. */
 export async function loadTodayScreen(): Promise<TodayScreenResult> {
   const result = await getTodayView({});
@@ -140,18 +122,16 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
 
   const { today } = result;
 
-  const [buddy, notices, planEnd, readAt, mocks, mistakes, language, syllabus, belt] =
-    await Promise.all([
-      getLearnerBuddy(),
-      loadNotices(today.goal.id),
-      loadPlanEnd(today),
-      getReadAt(),
-      loadTodayMocks(today.goal),
-      countOpenMistakes(today.goal.id),
-      loadLanguageToday(today.goal),
-      loadSyllabus(today.goal.id),
-      getBeltLevel(),
-    ]);
+  const [buddy, planEnd, readAt, mocks, mistakes, language, syllabus, belt] = await Promise.all([
+    getLearnerBuddy(),
+    loadPlanEnd(today),
+    getReadAt(),
+    loadTodayMocks(today.goal),
+    countOpenMistakes(today.goal.id),
+    loadLanguageToday(today.goal),
+    loadSyllabus(today.goal.id),
+    getBeltLevel(),
+  ]);
 
   const steps = today.session.blocks.map((block) => ({
     ref: toDayBlockRef(block),
@@ -165,7 +145,6 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
       language,
       mistakes,
       mocks,
-      notices,
       planEnd,
       steps,
       syllabus,

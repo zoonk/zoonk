@@ -135,7 +135,11 @@ export async function offerPronunciation(goal: Goal): Promise<TutorToolResult> {
     return { reason: "notLanguage", status: "unavailable" };
   }
 
-  const due = await loadDuePronunciation({ language: goal.targetLanguage, userId: goal.userId });
+  const due = await loadDuePronunciation({
+    language: goal.targetLanguage,
+    now: new Date(),
+    userId: goal.userId,
+  });
 
   return due
     ? { offer: { ...due, goalId: goal.id, kind: "pronunciation" }, status: "offered" }

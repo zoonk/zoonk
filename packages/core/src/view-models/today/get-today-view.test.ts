@@ -7,8 +7,16 @@ import {
 } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
+import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
+import {
+  learnerSourceFixture,
+  sourceChangeNoticeFixture,
+  sourceFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { openTodayView } from "../../sessions/_test-utils/open-today-view";
@@ -406,6 +414,91 @@ describe(getTodayView, () => {
       id: suggestion.id,
       status: "pending",
       title: "Spanish",
+    });
+  });
+
+  it("carries what changed in the goal's sources and the document research asks for, and shows one", async () => {
+    const { goal, user } = await setup();
+    const source = await sourceFixture();
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { createdAt: daysAgo(2), researchUploadReason: "noOfficialSource" },
+        where: { id: goal.id },
+      }),
+      learnerSourceFixture({
+        goalId: goal.id,
+        origin: "research",
+        sourceId: source.id,
+        userId: user.id,
+      }),
+    ]);
+
+    await sourceChangeNoticeFixture({
+      createdAt: daysAgo(1),
+      message: "The notice moved the exam a week later.",
+      sourceId: source.id,
+    });
+
+    await expect(readReadyToday()).resolves.toMatchObject({
+      notice: "sourceChange",
+      sourceChange: "The notice moved the exam a week later.",
+      uploadRequest: {
+        examDocument: "notice",
+        goalId: goal.id,
+        goalKind: "exam",
+        reason: "noOfficialSource",
+      },
+    });
+  });
+
+  it("says nothing about a change to its sources without words", async () => {
+    const { goal, user } = await setup();
+    const source = await sourceFixture();
+
+    await Promise.all([
+      prisma.goal.update({ data: { createdAt: daysAgo(2) }, where: { id: goal.id } }),
+      learnerSourceFixture({
+        goalId: goal.id,
+        origin: "research",
+        sourceId: source.id,
+        userId: user.id,
+      }),
+    ]);
+
+    await sourceChangeNoticeFixture({ createdAt: daysAgo(1), message: "", sourceId: source.id });
+
+    await expect(readReadyToday()).resolves.toMatchObject({ notice: null, sourceChange: null });
+  });
+
+  it("offers a language goal's words due to say again as its practice", async () => {
+    const user = await userFixture();
+
+    const { goal } = await sessionGoalFixture({
+      goal: { kind: "language", targetLanguage: "en" },
+      userId: user.id,
+    });
+
+    const organization = await aiOrganizationFixture();
+    const word = await wordFixture({ organizationId: organization.id, targetLanguage: "en" });
+
+    await Promise.all([
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+      pronunciationReviewFixture({ dueAt: daysAgo(1), userId: user.id, wordId: word.id }),
+    ]);
+
+    mockSession(user.id);
+
+    await expect(readReadyToday()).resolves.toMatchObject({ notice: "practice" });
+  });
+
+  it("has no notice on an ordinary day", async () => {
+    await setup();
+
+    await expect(readReadyToday()).resolves.toMatchObject({
+      notice: null,
+      sourceChange: null,
+      uploadRequest: null,
     });
   });
 

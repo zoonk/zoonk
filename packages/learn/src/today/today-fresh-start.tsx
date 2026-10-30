@@ -1,9 +1,9 @@
 "use client";
 
+import { showsFreshStart } from "@zoonk/core/view-models/today/notice";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SunriseIcon } from "lucide-react";
 import { useTodayScreen } from "./today-context";
-import { showsFreshStart } from "./today-notice-order";
 import { useFreshStartText, useSessionState } from "./use-today-copy";
 
 /**
