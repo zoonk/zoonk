@@ -1,6 +1,10 @@
 import { type PlayableLibraryStep } from "@zoonk/core/lesson-player/playable-lesson";
+import {
+  numberedCheckContent,
+  pictureCheckContent,
+} from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
-import { withBaseMaps } from "./base-maps";
+import { toAppSteps } from "./app-steps";
 
 const places = [
   {
@@ -58,16 +62,16 @@ const summary = {
   kind: "summary",
 } satisfies PlayableLibraryStep;
 
-describe(withBaseMaps, () => {
+describe(toAppSteps, () => {
   it("sends a map activity's base map with its places projected", async () => {
-    const [step] = await withBaseMaps([mapActivity]);
+    const [step] = await toAppSteps([mapActivity]);
 
     expect(step).toMatchObject({ baseMap: { places: [{ id: "pump" }, { id: "brewery" }] } });
     expect(step && "baseMap" in step && step.baseMap).not.toHaveProperty("projection");
   });
 
   it("sends the base map an explanation explores", async () => {
-    const [step] = await withBaseMaps([explanation]);
+    const [step] = await toAppSteps([explanation]);
 
     expect(step).toMatchObject({ baseMap: { places: [{ id: "pump" }, { id: "brewery" }] } });
   });
@@ -79,8 +83,40 @@ describe(withBaseMaps, () => {
       id: "plain",
     } satisfies PlayableLibraryStep;
 
-    const steps = await withBaseMaps([plain, summary]);
+    const steps = await toAppSteps([plain, summary]);
 
-    expect(steps).toStrictEqual([{ ...plain, baseMap: null }, summary]);
+    expect(steps).toStrictEqual([
+      { ...plain, baseMap: null, picture: null },
+      { ...summary, picture: null },
+    ]);
+  });
+
+  it("sends each screen's own picture, required only when its question is about numbered parts", async () => {
+    const numbered = {
+      ...stepBase,
+      content: numberedCheckContent,
+      id: "numbered",
+      kind: "check",
+    } satisfies PlayableLibraryStep;
+
+    const pictureOptions = {
+      ...numbered,
+      content: pictureCheckContent,
+      id: "pictureOptions",
+    } satisfies PlayableLibraryStep;
+
+    const plainPicture = {
+      ...numbered,
+      content: { ...numberedCheckContent, image: { alt: "A tulip", prompt: "A red tulip" } },
+      id: "plainPicture",
+    } satisfies PlayableLibraryStep;
+
+    const steps = await toAppSteps([numbered, pictureOptions, plainPicture]);
+
+    expect(steps.map((step) => "picture" in step && step.picture)).toStrictEqual([
+      { alt: numberedCheckContent.image.alt, required: true },
+      null,
+      { alt: "A tulip", required: false },
+    ]);
   });
 });

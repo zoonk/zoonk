@@ -1,6 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { withBaseMaps } from "@/lib/base-maps";
+import { toAppSteps } from "@/lib/app-steps";
 import { withApiImageUrls } from "@/lib/file-urls";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
@@ -26,7 +26,7 @@ async function getLibraryLessonRoute(
 
   const [tutorSuggestions, steps] = await Promise.all([
     wordTutorSuggestions(result.lesson.language),
-    withBaseMaps(result.lesson.steps),
+    toAppSteps(result.lesson.steps),
   ]);
 
   return NextResponse.json(

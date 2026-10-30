@@ -55044,6 +55044,9 @@
                   "additionalProperties": false
                 }
               },
+              "picture": {
+                "$ref": "#/components/schemas/ScreenPicture"
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -55086,6 +55089,7 @@
               "image",
               "imagePending",
               "kind",
+              "picture",
               "baseMap",
               "minTolerance"
             ],
@@ -55772,6 +55776,9 @@
                   "additionalProperties": false
                 }
               },
+              "picture": {
+                "$ref": "#/components/schemas/ScreenPicture"
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -55787,7 +55794,8 @@
               "content",
               "image",
               "imagePending",
-              "kind"
+              "kind",
+              "picture"
             ],
             "additionalProperties": false
           },
@@ -56270,6 +56278,9 @@
                   "additionalProperties": false
                 }
               },
+              "picture": {
+                "$ref": "#/components/schemas/ScreenPicture"
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -56285,7 +56296,8 @@
               "content",
               "image",
               "imagePending",
-              "kind"
+              "kind",
+              "picture"
             ],
             "additionalProperties": false
           },
@@ -61414,6 +61426,9 @@
                   "additionalProperties": false
                 }
               },
+              "picture": {
+                "$ref": "#/components/schemas/ScreenPicture"
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -61455,6 +61470,7 @@
               "image",
               "imagePending",
               "kind",
+              "picture",
               "baseMap"
             ],
             "additionalProperties": false
@@ -62101,6 +62117,9 @@
                   "additionalProperties": false
                 }
               },
+              "picture": {
+                "$ref": "#/components/schemas/ScreenPicture"
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -62116,7 +62135,8 @@
               "content",
               "image",
               "imagePending",
-              "kind"
+              "kind",
+              "picture"
             ],
             "additionalProperties": false
           },
@@ -62359,6 +62379,9 @@
                   ],
                   "additionalProperties": false
                 }
+              },
+              "picture": {
+                "$ref": "#/components/schemas/ScreenPicture"
               },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
@@ -64975,6 +64998,7 @@
               "image",
               "imagePending",
               "kind",
+              "picture",
               "listening"
             ],
             "additionalProperties": false
@@ -65212,6 +65236,9 @@
                   "additionalProperties": false
                 }
               },
+              "picture": {
+                "$ref": "#/components/schemas/ScreenPicture"
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -65227,7 +65254,8 @@
               "content",
               "image",
               "imagePending",
-              "kind"
+              "kind",
+              "picture"
             ],
             "additionalProperties": false
           },
@@ -65650,6 +65678,9 @@
                   "additionalProperties": false
                 }
               },
+              "picture": {
+                "$ref": "#/components/schemas/ScreenPicture"
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -65665,7 +65696,8 @@
               "content",
               "image",
               "imagePending",
-              "kind"
+              "kind",
+              "picture"
             ],
             "additionalProperties": false
           },
@@ -66101,6 +66133,9 @@
                   "additionalProperties": false
                 }
               },
+              "picture": {
+                "$ref": "#/components/schemas/ScreenPicture"
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -66116,7 +66151,8 @@
               "content",
               "image",
               "imagePending",
-              "kind"
+              "kind",
+              "picture"
             ],
             "additionalProperties": false
           },
@@ -68783,6 +68819,26 @@
             "description": "A language exercise screen: `exercise` holds what it shows and checks"
           }
         ]
+      },
+      "ScreenPicture": {
+        "nullable": true,
+        "description": "The screen's own picture, drawn or not (`image` once it's drawn). Null when the screen has none; option pictures are in `content`",
+        "type": "object",
+        "properties": {
+          "alt": {
+            "type": "string",
+            "description": "What the picture shows, with every detail its question needs: show it in the picture's place until the picture is drawn and loaded"
+          },
+          "required": {
+            "type": "boolean",
+            "description": "The question is about the picture's numbered parts, so it can't be answered without it: while `imagePending`, take no answer until the picture comes, and leave the screen out if its wait ends without it. Any other picture is optional: let the learner answer from `alt`"
+          }
+        },
+        "required": [
+          "alt",
+          "required"
+        ],
+        "additionalProperties": false
       },
       "ActivityBaseMap": {
         "nullable": true,

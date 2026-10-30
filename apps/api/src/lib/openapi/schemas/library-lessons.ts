@@ -58,6 +58,28 @@ const stepCitationSchema = z
       "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
   });
 
+const screenPictureSchema = z
+  .object({
+    alt: z
+      .string()
+      .meta({
+        description:
+          "What the picture shows, with every detail its question needs: show it in the picture's place until the picture is drawn and loaded",
+      }),
+    required: z
+      .boolean()
+      .meta({
+        description:
+          "The question is about the picture's numbered parts, so it can't be answered without it: while `imagePending`, take no answer until the picture comes, and leave the screen out if its wait ends without it. Any other picture is optional: let the learner answer from `alt`",
+      }),
+  })
+  .nullable()
+  .meta({
+    description:
+      "The screen's own picture, drawn or not (`image` once it's drawn). Null when the screen has none; option pictures are in `content`",
+    id: "ScreenPicture",
+  });
+
 function teachingStepSchema<TKind extends TeachingStepKind>(kind: TKind) {
   return z.object({
     ...stepBaseShape,
@@ -78,6 +100,7 @@ function teachingStepSchema<TKind extends TeachingStepKind>(kind: TKind) {
         description:
           "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
       }),
+    picture: screenPictureSchema,
     pictureWaitStartedAt: z
       .number()
       .int()

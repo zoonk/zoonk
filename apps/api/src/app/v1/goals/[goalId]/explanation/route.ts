@@ -1,6 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { withBaseMaps } from "@/lib/base-maps";
+import { toAppSteps } from "@/lib/app-steps";
 import { withApiImageUrls } from "@/lib/file-urls";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
@@ -28,7 +28,7 @@ async function getGoalExplanation(
   return NextResponse.json(
     withApiImageUrls({
       ...result.explanation,
-      lesson: lesson && { ...lesson, steps: await withBaseMaps(lesson.steps) },
+      lesson: lesson && { ...lesson, steps: await toAppSteps(lesson.steps) },
     }),
   );
 }

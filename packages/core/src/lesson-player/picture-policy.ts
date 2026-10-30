@@ -10,8 +10,22 @@ export function isPicturePending({ now, startedAt }: { now: number; startedAt: n
 
 type ScreenContent = { content: unknown; kind: StepKind };
 
-export function asksNumberedPicture({ content, kind }: ScreenContent): boolean {
-  return kind !== "explanation" && Boolean(getStepImageRequest({ content, kind })?.parts);
+/** `required` when the screen's question is about its picture's numbered parts; null without a picture of its own. */
+export function getScreenPicture({
+  content,
+  kind,
+}: ScreenContent): { alt: string; required: boolean } | null {
+  const request = getStepImageRequest({ content, kind });
+
+  if (!request) {
+    return null;
+  }
+
+  return { alt: request.alt, required: kind !== "explanation" && Boolean(request.parts) };
+}
+
+export function asksNumberedPicture(screen: ScreenContent): boolean {
+  return getScreenPicture(screen)?.required ?? false;
 }
 
 /** Only numbered-picture questions are omitted; explanations retain their text. */
