@@ -106,7 +106,12 @@ class PlanScreenshots {
                 "plan-sheet-pace" to { links -> PaceDetails(page, page.plan.status!!.pace, links, onAdjust = {}) },
                 "plan-sheet-progress" to
                     { links ->
-                        PreparationDetails(progress(), forExam = false, lessons = Standing.Progress(progress(), 13, 46), links = links)
+                        PreparationDetails(
+                            progress(),
+                            forExam = false,
+                            lessons = Standing.Progress(progress(), done = 13, known = 0, total = 46),
+                            links = links,
+                        )
                     },
                 "plan-sheet-phase-details" to { links -> PhaseDetails(page, page.plan.phases[1], links) },
                 "plan-change-diff" to
@@ -625,7 +630,7 @@ class PlanScreenshots {
                 Surface {
                     PlanContent(
                         page = page,
-                        standing = Standing.Progress(progress(), done = 13, total = 46),
+                        standing = Standing.Progress(progress(), done = 13, known = 0, total = 46),
                         structure = null,
                         links = PlanLinks(navigator, page),
                         resume = Resume.Plain,

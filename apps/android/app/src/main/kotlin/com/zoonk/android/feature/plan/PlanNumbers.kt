@@ -189,13 +189,7 @@ private fun standingNumber(standing: Standing): PlanNumber {
             PlanNumber(
                 label = stringResource(R.string.plan_progress),
                 value = formatGoalProgress(share.toDouble(), locale),
-                detail =
-                    pluralStringResource(
-                        R.plurals.plan_lessons_of,
-                        standing.total.toInt(),
-                        standing.done.toInt(),
-                        standing.total.toInt(),
-                    ),
+                detail = studiedLessonsLine(standing.done, standing.known),
                 share = share,
             )
         }
@@ -217,6 +211,25 @@ private fun standingNumber(standing: Standing): PlanNumber {
         }
     }
 }
+
+/** [known] counts within [done]: the lessons skipped because the learner showed they know them. */
+@Composable
+internal fun studiedLessonsLine(
+    done: Long,
+    known: Long,
+): String {
+    val studied = lessonsStudied(done, known)
+    return if (studied == 0L) {
+        stringResource(R.string.plan_no_lessons_studied_yet)
+    } else {
+        pluralStringResource(R.plurals.plan_lessons_studied, studied.toInt(), formatNumber(studied.toDouble(), currentLocale()))
+    }
+}
+
+internal fun lessonsStudied(
+    done: Long,
+    known: Long,
+): Long = (done - known).coerceAtLeast(0)
 
 internal sealed interface SkillLead {
     data object Even : SkillLead

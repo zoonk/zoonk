@@ -310,6 +310,7 @@
   "plan_lessons_left_out": "cae8810550acb597f6329a2864011edeb5582c36dd7f5ef9d6575032f0b43b43",
   "plan_lessons_of": "97f62ef56ec58f8429f8b58b214c62aad9e2bcab97d3b53e15e3d86bcf55ae0f",
   "plan_lessons_on_the_way": "d53116af8f67b9228dff4e5b5773826976cfc7361dee46564296694f5ebe1d00",
+  "plan_lessons_studied": "d121a7810a57cfbe70615c3c34032b6550dfb7dca8f36d026241f966dd7982f9",
   "plan_level": "6cdc4daa9222fa7f0752c104e92da82cfc4c78a245e0cddddbaa2831cc8f2136",
   "plan_long_term_memory": "29de811301cd8de8670b806952c0a17f0d3fe07a8ddfd436c3ae15d182d40082",
   "plan_loss_this_week": "c809d5da094083fa9aba2059618e903043785448dd24d33593e20cad8201dfe4",
@@ -348,6 +349,7 @@
   "plan_no_date": "6e32a52f192077bfd5c023087bf05b1a669c337ba8d930a1be17100200756722",
   "plan_no_deadline_note": "4e25bcf56867afc4790734e9f76121bad902996a6fce4dfc41c19dd86fa7f2d9",
   "plan_no_goal_description": "8c89e28fdce5de0929a3a525fb73c38d27b90f51cde49c5a7b811bae9c54fcbe",
+  "plan_no_lessons_studied_yet": "35de57e29c4c86a87091b91851a1130872618815cf1bef17284ffd87e35ddd92",
   "plan_no_longer_fits": "97497900fd4eea8d8d02623fa6074ec32b6109a7e6478beade082f1fe9f25f0e",
   "plan_not_in_your_plan": "567d311fefb93f3b53190f2caa1a869cfac1caf845d718b92f872c70dc195e56",
   "plan_not_now": "fa78c66730c77e35af2e8bba580443a80403f88a07b15410a0eda8257bae1028",
@@ -838,6 +840,14 @@
     <string name="plan_even_across_skills">Équilibré entre les compétences</string>
     <!-- Under a language goal's level: the skill that is highest, such as "Reading leads". -->
     <string name="plan_skill_leads">%1$s en priorité</string>
+    <!-- A short line under the progress percent, in a small tile. -->
+    <string name="plan_no_lessons_studied_yet">Aucune leçon étudiée pour l’instant</string>
+    <!-- A short line under the progress percent, in a small tile. -->
+    <plurals name="plan_lessons_studied">
+        <item quantity="one">%1$s leçon étudiée</item>
+        <item quantity="many">%1$s leçons étudiées</item>
+        <item quantity="other">%1$s leçons étudiées</item>
+    </plurals>
     <string name="plan_no_change_this_week">Pas de changement cette semaine</string>
     <plurals name="plan_gain_this_week">
         <item quantity="one">+%d cette semaine</item>

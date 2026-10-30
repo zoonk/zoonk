@@ -487,6 +487,7 @@ internal sealed interface Standing {
     data class Progress(
         val progress: GoalProgress,
         val done: Long,
+        val known: Long,
         val total: Long,
     ) : Standing
 
@@ -505,5 +506,5 @@ internal fun standingOf(
     if (preparation.goalId != page.goal.id) return null
     if (page.isExam) return Standing.Preparation(progress)
     val lessons = syllabus?.lessons
-    return Standing.Progress(progress, lessons?.done ?: 0, lessons?.total ?: 0)
+    return Standing.Progress(progress, lessons?.done ?: 0, lessons?.known ?: 0, lessons?.total ?: 0)
 }

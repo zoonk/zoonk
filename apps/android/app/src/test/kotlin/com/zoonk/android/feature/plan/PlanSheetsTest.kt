@@ -178,7 +178,7 @@ class PlanSheetsTest {
                     PreparationDetails(
                         progress(),
                         forExam = false,
-                        lessons = Standing.Progress(progress(), 13, 46),
+                        lessons = Standing.Progress(progress(), done = 13, known = 0, total = 46),
                         links = links,
                     )
                 }

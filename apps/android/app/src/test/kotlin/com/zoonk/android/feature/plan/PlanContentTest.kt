@@ -51,6 +51,7 @@ class PlanContentTest {
         resume: Resume = if (resumeChangesPlan) Resume.Confirm else Resume.Plain,
         structure: Syllabus? = null,
         plan: Plan = learnPlan(),
+        standing: Standing? = if (kind == "language") null else Standing.Progress(progress(), done = 13, known = 0, total = 46),
     ) {
         val summary = learnerSummary(status = status, kind = kind)
         val page = PlanPageState(summary.goals.first(), plan, summary)
@@ -59,7 +60,7 @@ class PlanContentTest {
             ZoonkTheme {
                 PlanContent(
                     page = page,
-                    standing = if (kind == "language") null else Standing.Progress(progress(), done = 13, total = 46),
+                    standing = standing,
                     structure = structure,
                     links = PlanLinks(navigator, page, openFarTopic = { farTopics += it }),
                     resume = resume,
@@ -183,6 +184,28 @@ class PlanContentTest {
 
         compose.onNodeWithText("Behind").assertIsDisplayed()
         compose.onNodeWithText("Progress").assertDoesNotExist()
+    }
+
+    @Test
+    fun theProgressTileCountsTheLessonsStudiedWhileItsPercentStillCountsTheKnownOnes() {
+        show(standing = Standing.Progress(progress(), done = 1_282, known = 25, total = 2_564))
+
+        compose.onNodeWithText("1,257 lessons studied").assertIsDisplayed()
+        compose.onNodeWithText("50%").assertIsDisplayed()
+    }
+
+    @Test
+    fun theProgressTileSaysOneLessonStudied() {
+        show(standing = Standing.Progress(progress(), done = 25, known = 24, total = 1_257))
+
+        compose.onNodeWithText("1 lesson studied").assertIsDisplayed()
+    }
+
+    @Test
+    fun theProgressTileSaysWhenNoLessonIsStudiedYet() {
+        show(standing = Standing.Progress(progress(), done = 24, known = 24, total = 1_257))
+
+        compose.onNodeWithText("No lessons studied yet").assertIsDisplayed()
     }
 
     @Test

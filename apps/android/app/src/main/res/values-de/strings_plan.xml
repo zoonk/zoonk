@@ -310,6 +310,7 @@
   "plan_lessons_left_out": "45bd41040d7213ce2b79fb655064138fe282f9c011794304cf98f1558c5af1ef",
   "plan_lessons_of": "4e8e75e99f0c4d8ff893de393b5c7e00c8a7e992ba9af24df129332cf58c436a",
   "plan_lessons_on_the_way": "222dae0a6aa2f39fcef4e1964a16619219852d29fd8bd46770ad53ba0436d35e",
+  "plan_lessons_studied": "c12656036b280d25911592f4e5f907c2fc37b073100d7de56abc756286e1aa35",
   "plan_level": "45818468f1ffe08485b1f8ccd6a42dd37d1d189ce7b2dd3f363ba1b9e466b0a5",
   "plan_long_term_memory": "f534bd1bca7e18384be8b94e394cc40d5dcda1e8578772f88af963f2d83e9325",
   "plan_loss_this_week": "6c4f9af3960dae0aee639de55fbb509ce98906e00cdb8a158a7676aac12d2dc5",
@@ -348,6 +349,7 @@
   "plan_no_date": "aaa70661b2d901147ed8a6e0103427c9d17edf1a62fd4690cecbf11b7056d650",
   "plan_no_deadline_note": "8ce29d34c7b41bcfbc302c9c542686fcfa2c76b711e8faa6afea22310c9fdf3e",
   "plan_no_goal_description": "275598c8f2ffd26aaaf6c0da6336c2b222cf3e6659bbe07a189555395df45750",
+  "plan_no_lessons_studied_yet": "48adc113957488453733c25ae89bc94f1c8f141da7ce31068adbaa1be8145662",
   "plan_no_longer_fits": "3af074f97eac4611cb8c9b57fa1055f13ab59c5a392568a890a06bd4931d86a9",
   "plan_not_in_your_plan": "20a7b6d4e1a63617536491b04cf18be32473e118703ae77c0d7ee51667211cff",
   "plan_not_now": "b36d5de4c61fcc76752cd6d144b952874e968b71e52e6760fc2c7fb3aa6c21b6",
@@ -813,6 +815,13 @@
     <string name="plan_even_across_skills">Alle Fähigkeiten gleichauf</string>
     <!-- Under a language goal's level: the skill that is highest, such as "Reading leads". -->
     <string name="plan_skill_leads">%1$s liegt vorn</string>
+    <!-- A short line under the progress percent, in a small tile. -->
+    <string name="plan_no_lessons_studied_yet">Noch keine Lektionen bearbeitet</string>
+    <!-- A short line under the progress percent, in a small tile. -->
+    <plurals name="plan_lessons_studied">
+        <item quantity="one">%1$s Lektion bearbeitet</item>
+        <item quantity="other">%1$s Lektionen bearbeitet</item>
+    </plurals>
     <string name="plan_no_change_this_week">Keine Veränderung diese Woche</string>
     <plurals name="plan_gain_this_week">
         <item quantity="one">+%d diese Woche</item>
