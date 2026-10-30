@@ -38,6 +38,7 @@ import com.zoonk.android.feature.player.model.ActivityFrame
 import com.zoonk.android.feature.player.model.ActivityStepContent
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.LessonStepAnswer
@@ -343,6 +344,16 @@ class MathFlowTest {
         harness.tap("Check")
 
         rule.onNodeWithText("The exact chance is 25%", substring = true).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Run again").performScrollTo().performClick()
+        rule.onNodeWithText("The exact chance is 25%", substring = true).assertExists()
+    }
+
+    @Test
+    fun randomSimulationByChanceExploredRunsWithNoGuessToWaitFor() {
+        harness.play(listOf(ActivityFixtures.exploreStep("randomSimulation"), summaryStep("end")))
+
+        rule.onNodeWithText("The exact chance is 25%", substring = true).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Pick your guess, then check it to run the simulation.").assertDoesNotExist()
         rule.onNodeWithText("Run again").performScrollTo().performClick()
         rule.onNodeWithText("The exact chance is 25%", substring = true).assertExists()
     }

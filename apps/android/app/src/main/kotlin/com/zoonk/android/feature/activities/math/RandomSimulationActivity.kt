@@ -58,6 +58,7 @@ import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityCanvasHeader
 import com.zoonk.android.feature.activities.ActivityCanvasLabel
+import com.zoonk.android.feature.activities.ActivityPhase
 import com.zoonk.android.feature.activities.ActivityPlot
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityReadout
@@ -137,7 +138,7 @@ private fun ChanceSimulation(
 ) {
     val locale = currentLocale()
     var runIndex by rememberSaveable { mutableIntStateOf(0) }
-    val running = props.isChecked
+    val running = props.phase != ActivityPhase.Answering
     val seed = hashSeed(seedText) + runIndex
     val runs = fields.runs.toInt()
     val outcomes = remember(running, seed) { if (running) runSimulation(fields.model, runs, seed) else emptyList() }
