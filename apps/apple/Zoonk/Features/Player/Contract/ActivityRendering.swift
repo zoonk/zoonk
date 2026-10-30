@@ -29,6 +29,8 @@ struct ActivityCanvasContext {
 /// while it isn't an answer yet).
 struct ActivityRenderer: Sendable {
   let template: String
+  /// Mirrors main's `badge`.
+  let badge: ActivityBadge.Rule
   /// Mirrors main's `checkFirst`.
   let showsCheckFirst: @Sendable (ActivityStepContent) -> Bool
   /// Computed like core's `checkActivityAnswer`, for instant feedback. Without it, the player waits
@@ -38,11 +40,13 @@ struct ActivityRenderer: Sendable {
 
   init<Canvas: View>(
     template: String,
+    badge: ActivityBadge.Rule,
     showsCheckFirst: @escaping @Sendable (ActivityStepContent) -> Bool = { _ in false },
     grade: (@Sendable (ActivityStepContent, ActivityAnswer) -> Bool)? = nil,
     @ViewBuilder canvas: @escaping @MainActor @Sendable (ActivityCanvasContext) -> Canvas
   ) {
     self.template = template
+    self.badge = badge
     self.showsCheckFirst = showsCheckFirst
     self.grade = grade
     self.canvas = { context in AnyView(canvas(context)) }

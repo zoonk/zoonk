@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let findError = ActivityRenderer(
-    template: "findError",
+    template: "findError", badge: .always(.findError),
     grade: ActivityExpectedAnswer.grader(FindErrorFields.self) { .selection([$0.errorStepId]) }
   ) { context in
     if let fields = try? context.fields(as: FindErrorFields.self) {

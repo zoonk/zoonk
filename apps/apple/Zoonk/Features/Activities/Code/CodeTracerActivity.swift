@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let codeTracer = ActivityRenderer(
-    template: "codeTracer",
+    template: "codeTracer", badge: .always(.stepThrough),
     grade: ActivityExpectedAnswer.grader(CodeTracerFields.self) { .assignment($0.expectedPairs) }
   ) { context in
     if let fields = try? context.fields(as: CodeTracerFields.self) {

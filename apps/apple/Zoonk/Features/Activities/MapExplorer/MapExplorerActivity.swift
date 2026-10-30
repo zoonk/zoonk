@@ -2,7 +2,8 @@ import MapKit
 import SwiftUI
 
 extension ActivityRenderer {
-  static let mapExplorer = ActivityRenderer(template: "mapExplorer") { context in
+  static let mapExplorer = ActivityRenderer(template: "mapExplorer", badge: .always(.exploreMap)) {
+    context in
     if let fields = try? context.fields(as: MapExplorerFields.self) {
       MapExplorerCanvas(fields: fields)
     }

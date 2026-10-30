@@ -19,6 +19,15 @@ struct ActivityStepView: View {
   var body: some View {
     switch part {
     case .screen:
+      if let badge = activityRenderers.renderer(for: content.template)?.badge.badge(for: content) {
+        Label {
+          Text(badge.title)
+        } icon: {
+          Image(systemName: badge.systemImage)
+        }
+        .chip()
+      }
+
       LessonQuestionText(text: content.prompt)
       LessonPictureView(
         image: step.image, description: content.image, isPending: step.imagePending)

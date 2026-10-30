@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let decisionTree = ActivityRenderer(
-    template: "decisionTree",
+    template: "decisionTree", badge: .always(.followQuestions),
     grade: ActivityExpectedAnswer.grader(DecisionTreeFields.self) { fields in
       DecisionTreeWalk.casePath(fields).map(ActivityExpectedAnswer.order)
     }

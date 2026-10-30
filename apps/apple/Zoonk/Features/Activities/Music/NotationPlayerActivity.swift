@@ -3,7 +3,9 @@ import QuartzCore
 import SwiftUI
 
 extension ActivityRenderer {
-  static let notationPlayer = ActivityRenderer(template: "notationPlayer") { context in
+  static let notationPlayer = ActivityRenderer(
+    template: "notationPlayer", badge: .always(.readAndListen)
+  ) { context in
     if let fields = try? context.fields(as: NotationPlayerFields.self) {
       NotationPlayerCanvas(fields: fields)
     }

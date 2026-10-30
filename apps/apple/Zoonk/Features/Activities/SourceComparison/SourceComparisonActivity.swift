@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let sourceComparison = ActivityRenderer(
-    template: "sourceComparison",
+    template: "sourceComparison", badge: .always(.compareSources),
     grade: ActivityExpectedAnswer.grader(SourceComparisonFields.self) { $0.expected }
   ) { context in
     if let fields = try? context.fields(as: SourceComparisonFields.self) {

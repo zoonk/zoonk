@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let stepSolver = ActivityRenderer(
-    template: "stepSolver",
+    template: "stepSolver", badge: .always(.stepByStep),
     grade: ActivityExpectedAnswer.grader(StepSolverFields.self) { $0.expected }
   ) { context in
     if let fields = try? context.fields(as: StepSolverFields.self) {

@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let codeRunner = ActivityRenderer(
-    template: "codeRunner",
+    template: "codeRunner", badge: .always(.runCode),
     grade: CodeRunnerFields.grade
   ) { context in
     if let fields = try? context.fields(as: CodeRunnerFields.self) {

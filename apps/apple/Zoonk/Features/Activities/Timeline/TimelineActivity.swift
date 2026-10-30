@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let timeline = ActivityRenderer(
-    template: "timeline",
+    template: "timeline", badge: .always(.placeInTime),
     grade: ActivityExpectedAnswer.grader(TimelineFields.self) { $0.expected }
   ) { context in
     if let fields = try? context.fields(as: TimelineFields.self) {

@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let matchPairs = ActivityRenderer(
-    template: "matchPairs",
+    template: "matchPairs", badge: .always(.matchPairs),
     grade: ActivityExpectedAnswer.grader(MatchPairsFields.self) { $0.expected }
   ) { context in
     if let fields = try? context.fields(as: MatchPairsFields.self) {

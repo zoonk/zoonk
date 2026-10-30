@@ -2,7 +2,11 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let keyboardFretboard = ActivityRenderer(
-    template: "keyboardFretboard", grade: KeyboardFretboard.grade
+    template: "keyboardFretboard",
+    badge: .by { content in
+      (try? content.fields(as: KeyboardFretboardFields.self))?.isByEar == true
+        ? .earTraining : .playIt
+    }, grade: KeyboardFretboard.grade
   ) { context in
     if let fields = try? context.fields(as: KeyboardFretboardFields.self) {
       KeyboardFretboardCanvas(fields: fields, context: context)

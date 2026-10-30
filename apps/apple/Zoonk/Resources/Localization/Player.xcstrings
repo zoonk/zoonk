@@ -367,6 +367,35 @@
         }
       }
     },
+    "Before and after" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vergleich vorher und nachher"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Observa el antes y el después"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Observe avant et après"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compare o antes e o depois"
+          }
+        }
+      }
+    },
     "Blank %lld" : {
       "comment" : "An empty blank in a sentence",
       "localizations" : {
@@ -491,6 +520,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Poder Mental"
+          }
+        }
+      }
+    },
+    "Build an argument" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bau ein Argument auf"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Construye un argumento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Construis un argument"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Construa um argumento"
+          }
+        }
+      }
+    },
+    "Build it" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bau es zusammen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Constrúyelo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Construis-le"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monte"
           }
         }
       }
@@ -698,6 +785,35 @@
         }
       }
     },
+    "Compare sources" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vergleich Quellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compara fuentes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compare les sources"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compare fontes"
+          }
+        }
+      }
+    },
     "Confirm" : {
       "comment" : "Confirms a decision in a challenge",
       "localizations" : {
@@ -901,6 +1017,35 @@
         }
       }
     },
+    "Drag a corner" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zieh an einer Ecke"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrastra una esquina"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fais glisser un coin"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arraste um canto"
+          }
+        }
+      }
+    },
     "Drawing the picture…" : {
       "comment" : "While a screen's picture is drawn",
       "localizations" : {
@@ -984,6 +1129,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Números de exemplo"
+          }
+        }
+      }
+    },
+    "Ear training" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trainier dein Gehör"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrena el oído"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exerce ton oreille"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Treine a escuta"
+          }
+        }
+      }
+    },
+    "Estimate first" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schätz zuerst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haz una estimación primero"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estime d’abord"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faça uma estimativa primeiro"
           }
         }
       }
@@ -1075,6 +1278,122 @@
         }
       }
     },
+    "Explore" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erkunde"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore"
+          }
+        }
+      }
+    },
+    "Explore the map" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erkunde die Karte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explora el mapa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore la carte"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore o mapa"
+          }
+        }
+      }
+    },
+    "Fill the square" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füll das Quadrat"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rellena el cuadrado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remplis le carré"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preencha o quadrado"
+          }
+        }
+      }
+    },
+    "Find the error" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finde den Fehler"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encuentra el error"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trouve l’erreur"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encontre o erro"
+          }
+        }
+      }
+    },
     "Finish" : {
       "comment" : "Saves a lesson answered in an earlier sitting",
       "localizations" : {
@@ -1100,6 +1419,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Concluir"
+          }
+        }
+      }
+    },
+    "Follow the questions" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folg den Fragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sigue las preguntas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suis les questions"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siga as perguntas"
           }
         }
       }
@@ -1187,6 +1535,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dê seu palpite primeiro"
+          }
+        }
+      }
+    },
+    "Hands on" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probier es praktisch aus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ponte manos a la obra"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manipule"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coloque a mão na massa"
           }
         }
       }
@@ -1481,6 +1858,35 @@
         }
       }
     },
+    "Label it" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beschrifte es"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ponle etiquetas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute les légendes"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Identifique"
+          }
+        }
+      }
+    },
     "Leave" : {
       "comment" : "Closes the lesson, dropping an answer not checked yet",
       "localizations" : {
@@ -1655,6 +2061,35 @@
         }
       }
     },
+    "Link causes" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verknüpfe Ursachen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relaciona las causas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relie les causes"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relacione as causas"
+          }
+        }
+      }
+    },
     "Made with AI. It may contain mistakes." : {
       "comment" : "In the lesson's menu",
       "localizations" : {
@@ -1680,6 +2115,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Criado com IA. Pode conter erros."
+          }
+        }
+      }
+    },
+    "Match pairs" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finde Paare"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une las parejas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Associe les paires"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Combine os pares"
           }
         }
       }
@@ -1738,6 +2202,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Faltou: %@"
+          }
+        }
+      }
+    },
+    "Move a curve" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verschieb eine Kurve"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mueve una curva"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplace une courbe"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mova uma curva"
           }
         }
       }
@@ -2061,6 +2554,122 @@
         }
       }
     },
+    "Place in time" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordne zeitlich ein"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitúa en el tiempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Situe dans le temps"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Situe no tempo"
+          }
+        }
+      }
+    },
+    "Place it" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Platziere es"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colócalo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place-le"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posicione"
+          }
+        }
+      }
+    },
+    "Play it" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spiel es"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tócalo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Joue"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toque"
+          }
+        }
+      }
+    },
+    "Predict first" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sag zuerst voraus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haz una predicción primero"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fais d’abord une prédiction"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faça uma previsão primeiro"
+          }
+        }
+      }
+    },
     "Previous screen" : {
       "comment" : "Goes back one screen in the lesson",
       "localizations" : {
@@ -2119,6 +2728,64 @@
         }
       }
     },
+    "Put in order" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bring es in die richtige Reihenfolge"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ponlo en orden"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mets dans l’ordre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coloque em ordem"
+          }
+        }
+      }
+    },
+    "Query the data" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag die Daten ab"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulta los datos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interroge les données"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulte os dados"
+          }
+        }
+      }
+    },
     "Quick check · %lld of %lld" : {
       "comment" : "While \"I already know this\" asks the lesson's checks",
       "localizations" : {
@@ -2150,6 +2817,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Conferência rápida · %1$lld de %2$lld"
+          }
+        }
+      }
+    },
+    "Read and listen" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lies und hör zu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lee y escucha"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lis et écoute"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leia e ouça"
+          }
+        }
+      }
+    },
+    "Read the chart" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lies das Diagramm"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lee el gráfico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lis le graphique"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leia o gráfico"
+          }
+        }
+      }
+    },
+    "Reply" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antworte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responde"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réponds"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responda"
           }
         }
       }
@@ -2266,6 +3020,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Correto, mas atenção à escrita"
+          }
+        }
+      }
+    },
+    "Run the code" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Führ den Code aus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ejecuta el código"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exécute le code"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Execute o código"
           }
         }
       }
@@ -2589,6 +3372,35 @@
         }
       }
     },
+    "Simulate" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simuliere"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simula"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simule"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simule"
+          }
+        }
+      }
+    },
     "Skills practiced" : {
       "comment" : "Above the skills a challenge trains",
       "localizations" : {
@@ -2653,6 +3465,35 @@
         }
       }
     },
+    "Sort into groups" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortiere in Gruppen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clasifica en grupos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classe par groupes"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Separe em grupos"
+          }
+        }
+      }
+    },
     "Spelled:" : {
       "comment" : "Before the right spelling of a typed answer",
       "localizations" : {
@@ -2678,6 +3519,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escrita correta:"
+          }
+        }
+      }
+    },
+    "Split it" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teil es auf"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divídelo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divise-le"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divida"
+          }
+        }
+      }
+    },
+    "Spot the pattern" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erkenne das Muster"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encuentra el patrón"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repère la régularité"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encontre o padrão"
           }
         }
       }
@@ -2765,6 +3664,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você mencionou: %@"
+          }
+        }
+      }
+    },
+    "Step by step" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geh Schritt für Schritt vor"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avanza paso a paso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avance étape par étape"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siga passo a passo"
+          }
+        }
+      }
+    },
+    "Step through" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geh die Schritte durch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recorre paso a paso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parcours les étapes"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avance passo a passo"
           }
         }
       }
@@ -2885,6 +3842,35 @@
         }
       }
     },
+    "Tap along" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipp mit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca al ritmo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuie en rythme"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toque no ritmo"
+          }
+        }
+      }
+    },
     "Tap and say it out loud" : {
       "comment" : "Above a sentence to say",
       "localizations" : {
@@ -2910,6 +3896,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Toque e fale em voz alta"
+          }
+        }
+      }
+    },
+    "Test a pattern" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüf ein Muster"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pon a prueba un patrón"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teste une régularité"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teste um padrão"
           }
         }
       }
@@ -3374,6 +4389,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tente de novo em instantes. Nada do que você fez foi perdido."
+          }
+        }
+      }
+    },
+    "Try it" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probier es aus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pruébalo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essaie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experimente"
+          }
+        }
+      }
+    },
+    "Turn it" : {
+      "comment" : "What the learner does in an activity, named above its prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dreh es"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gíralo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tourne-le"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gire"
           }
         }
       }

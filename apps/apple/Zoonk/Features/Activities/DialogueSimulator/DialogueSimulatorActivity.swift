@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let dialogueSimulator = ActivityRenderer(
-    template: "dialogueSimulator",
+    template: "dialogueSimulator", badge: .always(.reply),
     grade: ActivityExpectedAnswer.grader(DialogueFields.self) { $0.expected }
   ) { context in
     if let fields = try? context.fields(as: DialogueFields.self) {

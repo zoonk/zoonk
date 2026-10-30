@@ -3,6 +3,10 @@ import SwiftUI
 extension ActivityRenderer {
   static let combinationGrid = ActivityRenderer(
     template: "combinationGrid",
+    badge: .by { content in
+      (try? content.fields(as: CombinationGridFields.self)).map(CombinationGrid.isFillable) == true
+        ? .fillSquare : .readChart
+    },
     grade: ActivityExpectedAnswer.grader(CombinationGridFields.self) {
       .grid(CombinationGrid.cells($0))
     }

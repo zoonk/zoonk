@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let causeEffectChain = ActivityRenderer(
-    template: "causeEffectChain",
+    template: "causeEffectChain", badge: .always(.linkCauses),
     grade: ActivityExpectedAnswer.grader(CauseEffectFields.self) {
       .links($0.links.map { ActivityExpectedAnswer.Link(from: $0.from, to: $0.to) })
     }

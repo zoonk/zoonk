@@ -3,7 +3,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let rhythmTapper = ActivityRenderer(
-    template: "rhythmTapper", grade: Rhythm.grade
+    template: "rhythmTapper", badge: .always(.tapAlong), grade: Rhythm.grade
   ) { context in
     if let fields = try? context.fields(as: RhythmTapperFields.self) {
       RhythmTapperCanvas(fields: fields, context: context)
