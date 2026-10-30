@@ -115,8 +115,7 @@ internal fun parseItemText(text: String): List<ItemBlock> {
 
         var end = index + 1
         while (end < lines.size && lines[end].isNotBlank() && readMarkdownTable(lines, end) == null) end++
-        val paragraph = lines.subList(index, end).map { parseInline(it.trim()) }
-        blocks += ItemBlock.Paragraph(paragraph.flatMapIndexed { line, segments -> if (line == 0) segments else listOf(BREAK) + segments })
+        blocks += ItemBlock.Paragraph(parseInline(lines.subList(index, end).joinToString("\n") { it.trim() }))
         index = end
     }
 
@@ -148,7 +147,6 @@ private val LINE_END = Regex("\\r?\n")
 private val LINE_BREAKS = Regex("\\s*\\r?\\n\\s*")
 private val SIGN_THEN_AMOUNT = Regex("(\\p{Sc})[ \\t](?=\\d)")
 private val AMOUNT_THEN_SIGN = Regex("(\\d)[ \\t](?=[\\p{Sc}%])")
-private val BREAK = RichSegment(SegmentKind.Text, "\n")
 private const val NO_BREAK_SPACE = '\u00A0'
 
 /** One line of [this] style, so a symbol beside it grows with the font. */

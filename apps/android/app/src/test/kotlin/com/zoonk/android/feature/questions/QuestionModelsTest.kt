@@ -2,6 +2,7 @@ package com.zoonk.android.feature.questions
 
 import com.zoonk.android.data.recode
 import com.zoonk.android.ui.components.LessonVisual
+import com.zoonk.android.ui.richtext.RichSegment
 import com.zoonk.android.ui.richtext.SegmentKind
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.BankQuestion
@@ -132,6 +133,13 @@ class QuestionModelsTest {
         assertTrue(paragraph.segments.any { it.kind == SegmentKind.Bold && it.text == "cheap" })
         val table = blocks[1] as ItemBlock.Table
         assertEquals("R$ 80", table.rows[0][1][0].text)
+    }
+
+    @Test
+    fun itemTextReadsItalicsThatOpenOnOneLineAndCloseOnALaterOne() {
+        val paragraph = parseItemText("_Na rádio,\nse fala._").single() as ItemBlock.Paragraph
+
+        assertEquals(listOf(RichSegment(SegmentKind.Italic, "Na rádio,\nse fala.")), paragraph.segments)
     }
 
     @Test
