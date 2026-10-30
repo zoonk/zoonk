@@ -10,7 +10,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { getChallenge } from "../checkpoints/get-challenge";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
-import { takenChallengeFixture } from "./_test-utils/taken-challenge";
+import { lostChallengeFixture, takenChallengeFixture } from "./_test-utils/taken-challenge";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
@@ -277,6 +277,24 @@ describe("phase dates through system refreshes", () => {
     expect(end).toBe(moves[0]?.after);
     expect(challenge).toBe(end);
     expect(last && end && last <= end).toBe(true);
+  });
+
+  it("still asks a learner who lost a challenge, which stays to do in the plan", async () => {
+    const { goal, outline, plan } = await setup({ challengeTaken: false, targetDate: FAR });
+    const [boss] = await prisma.planItem.findMany({ where: { kind: "boss", planId: plan.id } });
+    const ends = await readPhaseEnds(plan.id);
+
+    await lostChallengeFixture({ date: LAST_WEEK, planItemId: boss?.id ?? "" });
+    await outline({ outline: { count: 10, minutes: 8 }, skill: 1 });
+    await refreshGoalPlan({ goalId: goal.id });
+
+    await expect(readPhaseEnds(plan.id)).resolves.toStrictEqual(ends);
+
+    const { moves } = await readProposedMoves(plan.id);
+
+    expect(moves).toStrictEqual([
+      { after: expect.any(String), before: ends[0], lessonsFirst: true, name: "Basics" },
+    ]);
   });
 
   it("keeps a new learner's challenge after lessons that land longer than planned, without asking", async () => {

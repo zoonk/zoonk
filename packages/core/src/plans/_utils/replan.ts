@@ -22,7 +22,6 @@ import {
 import { type PlanBases } from "../planner/plan-bases";
 import { type PlanEffect } from "../planner/plan-effect";
 import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
-import { hasTakenChallenge } from "../planner/plan-item-rules";
 import { type Pace } from "../planner/plan-pace";
 import { toExamWindows } from "../planner/plan-phases";
 import { type PlanState } from "../planner/plan-state";
@@ -44,6 +43,7 @@ import { loadPlannerInputs, resolveMergedSkills } from "./planner-inputs";
 import { loadQuickBaseLessons } from "./quick-bases";
 import { summarizeRetainedPlan } from "./retained-plan-allocation";
 import { type SelectedSummary } from "./selected-summary-contract";
+import { hasTakenChallenge } from "./taken-challenge";
 
 export type ComputedPlan = {
   bases: PlanBases;
@@ -120,7 +120,13 @@ async function layOutUnmetPhaseDates({
   kept: ReadonlyMap<number, Date> | undefined;
   request: ComputePlanRequest;
 }): Promise<ComputedPlan | null> {
-  if (!kept?.size || hasTakenChallenge(request.context.items) || !mayCostToKeepPhaseDates(built)) {
+  const { goal } = request.context;
+
+  if (
+    !kept?.size ||
+    !mayCostToKeepPhaseDates(built) ||
+    (await hasTakenChallenge({ goalId: goal.id, userId: goal.userId }))
+  ) {
     return null;
   }
 
