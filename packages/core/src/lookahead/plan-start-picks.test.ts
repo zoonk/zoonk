@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -11,7 +12,7 @@ import {
   uniqueWord,
 } from "../library/identity/_test-utils/identity-mocks";
 import { markPlanInputsUntil } from "../plans/_test-utils/mark-plan-inputs";
-import { pickPlanStartToWrite } from "./speculative-lessons";
+import { loadPlanLessons, pickPlanStartToWrite } from "./speculative-lessons";
 
 async function landedBand() {
   const skill = await skillFixture();
@@ -32,6 +33,27 @@ describe("lessons picked and started while a plan's band lands", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("loads the outlined opening without saving over onboarding's stand-ins", async () => {
+    const { goal, lessonIds, plan } = await landedBand();
+    await prisma.goal.update({ data: { details: {} }, where: { id: goal.id } });
+
+    const read = () =>
+      prisma.plan.findUniqueOrThrow({
+        include: { items: { orderBy: { position: "asc" } } },
+        where: { id: plan.id },
+      });
+
+    const before = await read();
+
+    expect(before.items.some((item) => item.kind === "lesson" && item.lessonId === null)).toBe(
+      true,
+    );
+
+    const opening = await loadPlanLessons(goal.id);
+    expect(opening.map((item) => item.lessonId)).toStrictEqual(lessonIds);
+    await expect(read()).resolves.toStrictEqual(before);
   });
 
   it("picks the band's first lesson while the learner's onboarding keeps changing the plan", async () => {

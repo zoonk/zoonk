@@ -258,6 +258,7 @@ async function standInSetup() {
 
   const { goal, plan } = await unplannedGoalFixture({
     dailyMinutes: 30,
+    details: { answered: ["target", "level", "targetDate", "buddy", "placement", "schedule"] },
     kind: "exam",
     settings: { startDate: "2020-09-28" },
     targetDate: new Date("2020-11-29T00:00:00Z"),

@@ -12,6 +12,7 @@ import {
   pickSpeculativeLessonsStep,
   readGoalLookaheadStep,
   readPlanOpeningStep,
+  readPlanOpeningTokenStep,
 } from "./steps/goal-lookahead-steps";
 
 const OUTLINE_POLL = "5s";
@@ -20,8 +21,7 @@ const FOLLOW_POLLS = 60;
 
 type PlanOpening = (string | null)[];
 
-/** `saved` is undefined before the first look. */
-type Followed = { saved: string | null | undefined; started: string[] };
+type Followed = { openingToken: string | null | undefined; started: string[] };
 
 function hasFirstLesson(opening: PlanOpening): boolean {
   return typeof opening[0] === "string";
@@ -32,19 +32,27 @@ function isOpeningOutlined(opening: PlanOpening): boolean {
   return opening.length > 0 && opening.every((lessonId) => lessonId !== null);
 }
 
-function waitForOpening({
+async function waitForOpening({
   done,
   goalId,
 }: {
   done: (opening: PlanOpening) => boolean;
   goalId: string;
 }): Promise<PlanOpening> {
-  return repeatUntil({
-    done,
-    run: () => readPlanOpeningStep(goalId),
+  const result = await repeatUntil<{ opening: PlanOpening; token: string | null }>({
+    done: ({ opening }) => done(opening),
+    run: async (previous) => {
+      const token = await readPlanOpeningTokenStep(goalId);
+
+      return previous?.token === token
+        ? previous
+        : { opening: await readPlanOpeningStep(goalId), token };
+    },
     times: MAX_OUTLINE_POLLS,
     wait: () => sleep(OUTLINE_POLL),
   });
+
+  return result.opening;
 }
 
 type LessonWriter = { analytics: ContentAnalytics; forExam: boolean };
@@ -150,21 +158,21 @@ export async function followPlanStart({
 
   const writer = toWriter({ context, inputs });
 
-  const initial: Followed = { saved: undefined, started };
+  const initial: Followed = { openingToken: undefined, started };
 
   await repeatUntil<Followed>({
     done: () => false,
     run: async (previous = initial) => {
-      const [saved = null] = await readPlanOpeningStep(inputs.goal.id);
+      const openingToken = await readPlanOpeningTokenStep(inputs.goal.id);
 
-      if (saved === previous.saved) {
+      if (openingToken === previous.openingToken) {
         return previous;
       }
 
       const first = await pickPlanStartToWriteStep(inputs.goal.id);
 
       if (!first || previous.started.includes(first)) {
-        return { saved, started: previous.started };
+        return { openingToken, started: previous.started };
       }
 
       const written = await writeLessons({
@@ -174,7 +182,7 @@ export async function followPlanStart({
         writer,
       });
 
-      return { saved, started: [...previous.started, ...written] };
+      return { openingToken, started: [...previous.started, ...written] };
     },
     times: FOLLOW_POLLS,
     wait: () => sleep(OUTLINE_POLL),

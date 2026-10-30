@@ -15,8 +15,10 @@ import {
 import {
   type PlanGenerationManifest,
   createPlanGenerationManifest,
+  loadPlanLessons,
   pickPlanStartToWrite,
   pickSpeculativeLessons,
+  readPlanOpeningToken,
 } from "@zoonk/core/lookahead/speculative-lessons";
 import { type GoalKind, prisma } from "@zoonk/db";
 import { withAiRetry } from "../../_shared/ai-retry";
@@ -79,14 +81,15 @@ const OPENING_LESSONS = 4;
 export async function readPlanOpeningStep(goalId: string): Promise<(string | null)[]> {
   "use step";
 
-  const opening = await prisma.planItem.findMany({
-    orderBy: { position: "asc" },
-    select: { lessonId: true },
-    take: OPENING_LESSONS,
-    where: { kind: "lesson", plan: { goalId }, status: "todo" },
-  });
+  const opening = await loadPlanLessons(goalId);
 
-  return opening.map((item) => item.lessonId);
+  return opening.slice(0, OPENING_LESSONS).map((item) => item.lessonId);
+}
+
+export async function readPlanOpeningTokenStep(goalId: string): Promise<string | null> {
+  "use step";
+
+  return readPlanOpeningToken(goalId);
 }
 
 export async function readPlanFirstSkillStep(goalId: string): Promise<string | null> {

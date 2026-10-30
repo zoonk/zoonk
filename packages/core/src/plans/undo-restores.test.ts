@@ -236,7 +236,7 @@ describe("undoing a change in the app", () => {
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: before.id } }),
     ).resolves.toMatchObject({
-      inputVersion: before.inputVersion + 2,
+      inputVersion: before.inputVersion + 1,
       version: before.version + 1,
     });
 

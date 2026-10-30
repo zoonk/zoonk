@@ -12,7 +12,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import { holdLearnerLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
+import { holdPlanLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import * as refresh from "../../plans/refresh-goal-plan";
 import { writeLessonContent } from "../lessons/write-lesson-content";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
@@ -551,7 +551,7 @@ describe("set-aside selection admission", () => {
     }
   });
 
-  it("marks dependent plans and each owner once, and leaves rejected and repeated calls unchanged", async () => {
+  it("marks dependent plans once, and leaves rejected and repeated calls unchanged", async () => {
     const { lesson, plans } = await setAsideScope();
     await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 7 })).resolves.toBe(false);
     await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 1 })).resolves.toBe(true);
@@ -568,21 +568,21 @@ describe("set-aside selection admission", () => {
   });
 
   it("marks before the lesson lock and rolls back a version that loses while admission waits", async () => {
-    const { user, lesson, plans, item } = await setAsideScope();
+    const { lesson, plans, item } = await setAsideScope();
 
-    const holder = holdLearnerLock({
+    const holder = holdPlanLock({
       beforeCommit: async (tx) => {
         await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${lesson.id}::uuid FOR UPDATE`;
         await tx.step.updateMany({ data: { version: 2 }, where: { lessonId: lesson.id } });
       },
-      userId: user.id,
+      planId: plans[0]!.id,
     });
 
     const pid = await holder.pid;
     const pending = setAsidePublishedLesson({ lessonId: lesson.id, version: 1 });
 
     try {
-      await waitForBlockedStatement(pid, /SELECT id FROM users/u);
+      await waitForBlockedStatement(pid, /SELECT plan.id, goal.user_id/u);
     } finally {
       holder.release();
       await Promise.all([holder.done, pending]);
@@ -608,8 +608,8 @@ describe("set-aside selection admission", () => {
   });
 
   it("commits one selection change for two set-aside requests that race", async () => {
-    const { user, lesson, plans } = await setAsideScope();
-    const holder = holdLearnerLock({ userId: user.id });
+    const { lesson, plans } = await setAsideScope();
+    const holder = holdPlanLock({ planId: plans[0]!.id });
     const pid = await holder.pid;
 
     const calls = Promise.all([
@@ -618,8 +618,7 @@ describe("set-aside selection admission", () => {
     ]);
 
     try {
-      await waitForBlockedStatement(pid, /SELECT id FROM users/u);
-      await waitForBlockedStatement(pid, /SELECT plan.id, goal.user_id/u);
+      await waitForBlockedStatement(pid, /SELECT plan.id, goal.user_id/u, 2);
     } finally {
       holder.release();
       await Promise.all([holder.done, calls]);

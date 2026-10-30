@@ -17,7 +17,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { describe, expect, it } from "vitest";
-import { holdLearnerLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
+import { holdPlanLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { languageLessonDraft } from "../language/_test-utils/language-lesson-draft";
 import { saveLanguageLesson } from "../language/_utils/save-language-lesson";
 import { pullLessonForFix } from "../quality/later-reviews";
@@ -193,7 +193,7 @@ async function lessonState(scope: Scope) {
 
 describe("D5 sibling writer admission", () => {
   it.each(WRITERS)(
-    "%s marks every dependent plan and each owner once, and not again on a replay",
+    "%s marks every dependent plan once, and not again on a replay",
     async (writer) => {
       const scope = await selectionScope();
       const write = await prepareWriter(scope, writer);
@@ -228,25 +228,24 @@ describe("D5 sibling writer admission", () => {
   );
 
   it.each(WRITERS)(
-    "%s takes plan/user admission before domain locks and rolls back the duplicate contender",
+    "%s takes plan admission before domain locks and rolls back the duplicate contender",
     async (writer) => {
       const scope = await selectionScope();
       const write = await prepareWriter(scope, writer);
       const before = await versions(scope);
 
-      const holder = holdLearnerLock({
+      const holder = holdPlanLock({
         beforeCommit: async (tx) => {
           await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${scope.lesson.id}::uuid FOR UPDATE`;
         },
-        userId: scope.first.id,
+        planId: scope.plans[0]!.id,
       });
 
       const pid = await holder.pid;
       const calls = Promise.all([write(), write()]);
 
       try {
-        await waitForBlockedStatement(pid, /SELECT id FROM users/u);
-        await waitForBlockedStatement(pid, /SELECT plan.id, goal.user_id/u);
+        await waitForBlockedStatement(pid, /SELECT plan.id, goal.user_id/u, 2);
       } finally {
         holder.release();
         await Promise.all([holder.done, calls]);
@@ -270,21 +269,21 @@ describe("D5 sibling writer admission", () => {
       const replacement = randomUUID();
       const stored = await lessonState(scope);
 
-      const holder = holdLearnerLock({
+      const holder = holdPlanLock({
         beforeCommit: async (tx) => {
           await tx.lesson.update({
             data: { contentRunId: replacement, contentStatus: "running" },
             where: { id: scope.lesson.id },
           });
         },
-        userId: scope.first.id,
+        planId: scope.plans[0]!.id,
       });
 
       const pid = await holder.pid;
       const pending = write();
 
       try {
-        await waitForBlockedStatement(pid, /SELECT id FROM users/u);
+        await waitForBlockedStatement(pid, /SELECT plan.id, goal.user_id/u);
       } finally {
         holder.release();
         await Promise.all([holder.done, pending]);
@@ -381,13 +380,12 @@ describe("D5 sibling writer admission", () => {
     const first = creationInput(scope);
     const second = { ...creationInput(scope), title: first.title };
     const before = await versions(scope);
-    const holder = holdLearnerLock({ userId: scope.first.id });
+    const holder = holdPlanLock({ planId: scope.plans[0]!.id });
     const pid = await holder.pid;
     const calls = Promise.all([createLibraryLesson(first), createLibraryLesson(second)]);
 
     try {
-      await waitForBlockedStatement(pid, /SELECT id FROM users/u);
-      await waitForBlockedStatement(pid, /SELECT plan.id, goal.user_id/u);
+      await waitForBlockedStatement(pid, /SELECT plan.id, goal.user_id/u, 2);
     } finally {
       holder.release();
       await Promise.all([holder.done, calls]);

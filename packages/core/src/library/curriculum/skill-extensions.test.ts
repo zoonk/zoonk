@@ -97,6 +97,7 @@ async function setup({ dailyMinutes = 30 }: { dailyMinutes?: number } = {}) {
 
   const { goal, plan } = await unplannedGoalFixture({
     dailyMinutes,
+    details: { answered: ["reason", "level", "targetDate", "buddy", "placement", "schedule"] },
     kind: "language",
     language: "pt",
     primaryCourseId: course.id,

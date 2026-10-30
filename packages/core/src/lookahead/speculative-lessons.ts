@@ -20,7 +20,18 @@ type PlannedLesson = { lessonId: string; phase: number };
 
 type PlanLesson = { lessonId: string | null; phase: number };
 
-async function loadPlanLessons(goalId: string): Promise<PlanLesson[]> {
+/** Workflow bridge: authorize goalId first; includes content freshness as well as learner and plan writes. */
+export async function readPlanOpeningToken(goalId: string): Promise<string | null> {
+  const plan = await prisma.plan.findUnique({
+    select: { inputVersion: true, sourceVersion: true, version: true },
+    where: { goalId },
+  });
+
+  return plan ? `${plan.version}:${plan.inputVersion}:${plan.sourceVersion}` : null;
+}
+
+/** Workflow bridge: authorize goalId first; computes without saving during onboarding. */
+export async function loadPlanLessons(goalId: string): Promise<PlanLesson[]> {
   const { plan, status } = await planGoalForPick(goalId);
 
   if (status === "notFound" || status === "paused") {

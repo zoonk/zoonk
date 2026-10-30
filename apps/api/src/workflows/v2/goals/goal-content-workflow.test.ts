@@ -19,6 +19,7 @@ import { classifyWorkField } from "@zoonk/ai/tasks/v2/items/work-field";
 import { writeItemSet } from "@zoonk/ai/tasks/v2/items/write-set";
 import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/v2/plans/routine-fit";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
+import { loadPlanLessons } from "@zoonk/core/lookahead/speculative-lessons";
 import { isPlanConflictError } from "@zoonk/core/plans/conflict";
 import { prisma } from "@zoonk/db";
 import { markPlanInputsChanged } from "@zoonk/db/learner-writes";
@@ -789,7 +790,10 @@ describe(goalContentWorkflow, () => {
           where: { kind: "lesson", plan: { goalId: goal.id } },
         });
 
-        await prisma.planItem.update({ data: { lessonId: lesson.id }, where: { id: first.id } });
+        await prisma.$transaction(async (tx) => {
+          await markPlanInputsChanged(tx, { goalIds: [goal.id], userIds: [user.id] });
+          await tx.planItem.update({ data: { lessonId: lesson.id }, where: { id: first.id } });
+        });
       });
 
       const result = await goalContentWorkflow({ goalId: goal.id });
@@ -832,10 +836,7 @@ describe(goalContentWorkflow, () => {
       runOutlinesInline();
       await goalContentWorkflow({ goalId: goal.id });
 
-      const items = await prisma.planItem.findMany({
-        orderBy: { position: "asc" },
-        where: { kind: "lesson", plan: { goalId: goal.id }, status: "todo" },
-      });
+      const items = await loadPlanLessons(goal.id);
 
       const phaseStarts = [...new Set(items.map((item) => item.phase))].map(
         (planPhase) => items.find((item) => item.phase === planPhase)?.lessonId,
@@ -908,13 +909,11 @@ describe(goalContentWorkflow, () => {
       try {
         const result = await goalContentWorkflow({ goalId: goal.id });
 
-        const first = await prisma.planItem.findFirstOrThrow({
-          orderBy: { position: "asc" },
-          where: { kind: "lesson", plan: { goalId: goal.id }, status: "todo" },
-        });
+        const [first] = await loadPlanLessons(goal.id);
 
+        expect(first?.lessonId).toStrictEqual(expect.any(String));
         expect(result.status).toBe("built");
-        expect(result.speculativeLessonIds[0]).toBe(first.lessonId);
+        expect(result.speculativeLessonIds[0]).toBe(first?.lessonId);
       } finally {
         burst.over = true;
         await marks;
@@ -929,46 +928,9 @@ describe(goalContentWorkflow, () => {
     async () => {
       const { goal, user } = await newGoal();
       runOutlinesInline();
-      const startInline = getStartMock().getMockImplementation();
-
-      const standIns: { id: string; lessonId: string }[] = [];
-      const landed: string[] = [];
-      let openedStandIn = false;
-
-      getStartMock().mockImplementation(async (workflow, args) => {
-        if (workflow === lessonContentWorkflow && !openedStandIn) {
-          openedStandIn = true;
-
-          const [, second] = await prisma.planItem.findMany({
-            orderBy: { position: "asc" },
-            take: 2,
-            where: { kind: "lesson", plan: { goalId: goal.id }, status: "todo" },
-          });
-
-          if (second?.lessonId) {
-            standIns.push({ id: second.id, lessonId: second.lessonId });
-            await prisma.planItem.update({ data: { lessonId: null }, where: { id: second.id } });
-          }
-        }
-
-        return startInline ? startInline(workflow, args) : runPlacementInline(workflow, args);
-      });
-
       let testedOut = false;
 
       vi.mocked(sleep).mockImplementation(async () => {
-        const standIn = standIns.shift();
-
-        if (standIn) {
-          await prisma.planItem.update({
-            data: { lessonId: standIn.lessonId },
-            where: { id: standIn.id },
-          });
-
-          landed.push(standIn.lessonId);
-          return;
-        }
-
         if (testedOut || !isGoalReady(goal.id)) {
           return;
         }
@@ -981,8 +943,6 @@ describe(goalContentWorkflow, () => {
           where: { kind: "lesson", plan: { goalId: goal.id } },
         });
 
-        // A partial skill left todo can differ from the computed start when another Library write
-        // wins the refresh's save.
         await prisma.$transaction(async (tx) => {
           await markPlanInputsChanged(tx, { userIds: [user.id] });
 
@@ -1000,31 +960,63 @@ describe(goalContentWorkflow, () => {
 
       const result = await goalContentWorkflow({ goalId: goal.id });
 
-      expect(landed).toHaveLength(1);
       expect(testedOut).toBe(true);
 
-      const moved = await prisma.planItem.findFirstOrThrow({
-        orderBy: { position: "asc" },
-        where: { kind: "lesson", plan: { goalId: goal.id }, status: "todo" },
-      });
+      const [moved] = await loadPlanLessons(goal.id);
 
-      expect(result.speculativeLessonIds).not.toContain(moved.lessonId);
+      expect(moved?.lessonId).toStrictEqual(expect.any(String));
+      expect(result.speculativeLessonIds).not.toContain(moved?.lessonId);
 
       expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
         {
           analytics: { distinctId: user.id, goalId: goal.id },
           forExam: false,
-          lessonId: moved.lessonId,
+          lessonId: moved?.lessonId,
           planGoalId: goal.id,
           planManifest: expect.objectContaining({
             goalId: goal.id,
             targets: expect.arrayContaining([
-              expect.objectContaining({ lessonId: moved.lessonId }),
+              expect.objectContaining({ lessonId: moved?.lessonId }),
             ]),
           }),
           wait: "learner",
         },
       ]);
+    },
+  );
+
+  it(
+    "starts a guest's first lesson when an outline publication wakes its opening",
+    { timeout: TIMEOUT },
+    async () => {
+      const { goal, user } = await newGoal();
+      await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
+
+      vi.mocked(sleep).mockImplementationOnce(async () => {
+        const outlines = getStartMock().mock.calls.flatMap(([workflow, args]) =>
+          workflow === courseOutlineWorkflow
+            ? (args as Parameters<typeof courseOutlineWorkflow>)
+            : [],
+        );
+
+        const [first] = outlines;
+        expect(first).toBeDefined();
+
+        if (first) {
+          await courseOutlineWorkflow(first);
+        }
+      });
+
+      const result = await goalContentWorkflow({ goalId: goal.id });
+      const [first] = await loadPlanLessons(goal.id);
+
+      expect(first?.lessonId).toStrictEqual(expect.any(String));
+      expect(result).toMatchObject({ speculativeLessonIds: [first?.lessonId], status: "built" });
+      expect(sleep).toHaveBeenCalledOnce();
+
+      await expect(
+        prisma.planItem.count({ where: { lessonId: { not: null }, plan: { goalId: goal.id } } }),
+      ).resolves.toBe(0);
     },
   );
 
@@ -1045,19 +1037,19 @@ describe(goalContentWorkflow, () => {
 
     const result = await goalContentWorkflow({ goalId: goal.id });
 
-    const first = await prisma.planItem.findFirstOrThrow({
-      orderBy: { position: "asc" },
-      where: { kind: "lesson", plan: { goalId: goal.id }, status: "todo" },
-    });
+    expect(sleep).not.toHaveBeenCalled();
 
-    expect(result).toMatchObject({ speculativeLessonIds: [first.lessonId], status: "built" });
+    const [first] = await loadPlanLessons(goal.id);
+    expect(first?.lessonId).toStrictEqual(expect.any(String));
+
+    expect(result).toMatchObject({ speculativeLessonIds: [first?.lessonId], status: "built" });
 
     expect(
       getStartMock().mock.calls.filter(([workflow]) => workflow === lessonContentWorkflow),
     ).toStrictEqual([
       [
         lessonContentWorkflow,
-        [expect.objectContaining({ lessonId: first.lessonId, wait: "learner" })],
+        [expect.objectContaining({ lessonId: first?.lessonId, wait: "learner" })],
       ],
     ]);
 
@@ -1067,7 +1059,7 @@ describe(goalContentWorkflow, () => {
 
     await expect(
       prisma.planItem.count({ where: { lessonId: { not: null }, plan: { goalId: goal.id } } }),
-    ).resolves.toBeGreaterThan(0);
+    ).resolves.toBe(0);
 
     expect(getStartMock().mock.calls.some(([workflow]) => workflow === courseDetailsWorkflow)).toBe(
       false,

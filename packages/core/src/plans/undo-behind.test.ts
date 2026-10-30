@@ -25,6 +25,9 @@ async function behindPlanFixture(kind: "exam" | "learn") {
   const { goal, plan } = await unplannedGoalFixture({
     createdAt: NOW,
     dailyMinutes: 45,
+    details: {
+      answered: ["purpose", "target", "level", "targetDate", "buddy", "placement", "schedule"],
+    },
     kind,
     settings: { startDate: "2020-09-28" },
     targetDate: new Date("2020-10-26"),

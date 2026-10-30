@@ -47,18 +47,18 @@ export async function waitForBlockedStatement(
   }
 }
 
-export function holdLearnerLock({
+function holdLock({
   beforeCommit,
-  userId,
+  lock,
 }: {
   beforeCommit?: (tx: TransactionClient) => Promise<unknown>;
-  userId: string;
+  lock: (tx: TransactionClient) => Promise<unknown>;
 }) {
   const held = Promise.withResolvers<number>();
   const released = Promise.withResolvers<null>();
 
   const done = prisma.$transaction(async (tx) => {
-    await markLearnerChanged(tx, { userId });
+    await lock(tx);
     const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
     held.resolve(backend?.pid ?? 0);
     await released.promise;
@@ -68,4 +68,27 @@ export function holdLearnerLock({
   done.catch((error: unknown) => held.reject(error));
 
   return { done, pid: held.promise, release: () => released.resolve(null) };
+}
+
+export function holdLearnerLock({
+  beforeCommit,
+  userId,
+}: {
+  beforeCommit?: (tx: TransactionClient) => Promise<unknown>;
+  userId: string;
+}) {
+  return holdLock({ beforeCommit, lock: (tx) => markLearnerChanged(tx, { userId }) });
+}
+
+export function holdPlanLock({
+  beforeCommit,
+  planId,
+}: {
+  beforeCommit?: (tx: TransactionClient) => Promise<unknown>;
+  planId: string;
+}) {
+  return holdLock({
+    beforeCommit,
+    lock: (tx) => tx.$queryRaw`SELECT id FROM plans WHERE id = ${planId}::uuid FOR UPDATE`,
+  });
 }

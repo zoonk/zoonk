@@ -238,17 +238,24 @@ describe(changeOwnLevel, () => {
     await expect(change(goal.id, "basic")).resolves.toStrictEqual({ status: "unauthorized" });
   });
 
-  it("saves a changed level and its plan once across duplicate submissions", async () => {
+  it("saves a changed level once and leaves its plan unchanged on replay", async () => {
     const { goal, plan } = await setup();
     const planBefore = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     await Promise.all([change(goal.id, "advanced"), change(goal.id, "advanced")]);
-    await expect(readInputVersion(plan.id)).resolves.toBe(planBefore.inputVersion + 2);
+
+    const saved = await prisma.plan.findUniqueOrThrow({
+      select: { inputVersion: true, inputsKey: true, version: true },
+      where: { id: plan.id },
+    });
+
+    expect(saved.inputVersion).toBe(planBefore.inputVersion + 1);
     await change(goal.id, "advanced");
-    await expect(readInputVersion(plan.id)).resolves.toBe(planBefore.inputVersion + 2);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({
+        select: { inputVersion: true, inputsKey: true, version: true },
+        where: { id: plan.id },
+      }),
+    ).resolves.toStrictEqual(saved);
   });
 });
-
-async function readInputVersion(planId: string) {
-  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
-  return plan.inputVersion;
-}

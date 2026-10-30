@@ -859,7 +859,10 @@ describe(replanGoalsWaitingOnSkills, () => {
     const user = await userFixture();
 
     const [goal, first, second] = await Promise.all([
-      goalFixture({ userId: user.id }),
+      goalFixture({
+        details: { answered: ["purpose", "level", "targetDate", "buddy", "placement", "schedule"] },
+        userId: user.id,
+      }),
       skillFixture(),
       skillFixture(),
     ]);
@@ -949,7 +952,15 @@ describe(replanGoalsWaitingOnSkills, () => {
 
   it("keeps today's session and the plan's version when re-planning a goal changes nothing", async () => {
     const user = await userFixture();
-    const [goal, skill] = await Promise.all([goalFixture({ userId: user.id }), skillFixture()]);
+
+    const [goal, skill] = await Promise.all([
+      goalFixture({
+        details: { answered: ["purpose", "level", "targetDate", "buddy", "placement", "schedule"] },
+        userId: user.id,
+      }),
+      skillFixture(),
+    ]);
+
     const today = getDateInTimeZone({ date: new Date(), timeZone: "UTC" });
 
     await prisma.plan.create({
@@ -996,7 +1007,15 @@ describe(replanGoalsWaitingOnSkills, () => {
 
   it("re-plans a goal re-planned from the band's first chapter again, so its later chapters' lessons join", async () => {
     const user = await userFixture();
-    const [goal, skill] = await Promise.all([goalFixture({ userId: user.id }), skillFixture()]);
+
+    const [goal, skill] = await Promise.all([
+      goalFixture({
+        details: { answered: ["purpose", "level", "targetDate", "buddy", "placement", "schedule"] },
+        userId: user.id,
+      }),
+      skillFixture(),
+    ]);
+
     const today = getDateInTimeZone({ date: new Date(), timeZone: "UTC" });
 
     const goalSkills = [

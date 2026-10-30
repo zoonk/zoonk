@@ -27,7 +27,12 @@ async function setup(examBlueprintId?: string) {
 
   const { goal } = await unplannedGoalFixture({
     dailyMinutes: 12,
-    details: { institution: "Test university", placementDeclined: true, targetCourse: "Medicine" },
+    details: {
+      answered: ["purpose", "target", "level", "targetDate", "buddy", "placement", "schedule"],
+      institution: "Test university",
+      placementDeclined: true,
+      targetCourse: "Medicine",
+    },
     examBlueprintId,
     kind: examBlueprintId ? "exam" : "learn",
     settings: { startDate: "2020-09-28" },
