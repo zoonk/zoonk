@@ -47,7 +47,7 @@
   "missions_open_practice": "7f19a851c8d0c2d5142f09ae899196918cc75600af2f4e0be32c40e0994c3537",
   "missions_open_pronunciation": "7ff303c513112ac633fe9b1ae32c86b21fa948b21996b44b1703f7fc5c123f58",
   "missions_open_review": "a412fac0929f394f7cb8a395e90ed1f09bb5ff6e1c85066a04e15becab441759",
-  "missions_pattern": "ea7a002b7d3d514aff2b2bac68bb63c40eea1475a044652210b44e05f82e83f3",
+  "missions_pattern": "cf64fcb5289087bda6f0c59c60c1e89717d87fdd556974212aee1e820995fdfd",
   "missions_points": "b1a7bdf731c4ef84dcc795f9d36033a15dae5c0f9835fa9eaa8273b8afc04d5a",
   "missions_practice": "ad5e97e9252b0db0d8b33ad69cd6b2ee14671e3bdcbe2e36fcb2dc6cfb5223d7",
   "missions_practice_area": "ddfc270ceae25cbf3fd0ef5296859c73ef4e05ab4973428cd462fe9ef4cfa543",
@@ -117,7 +117,8 @@
         <item quantity="many">Corriger %d erreurs</item>
         <item quantity="other">Corriger %d erreurs</item>
     </plurals>
-    <string name="missions_pattern">Réviser une erreur récurrente</string>
+    <!-- A mission: practice a kind of mistake the learner keeps making. -->
+    <string name="missions_pattern">S’entraîner sur une erreur récurrente</string>
     <string name="missions_pronunciation">Prononciation</string>
     <string name="missions_call">Passer un appel</string>
     <!-- %1$s is the learner's buddy's name. -->

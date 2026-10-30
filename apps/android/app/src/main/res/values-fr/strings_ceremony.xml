@@ -15,7 +15,7 @@
   "ceremony_glasses_new_detail": "17e7284988b3813a589c47b43f251c8258ba23e4d53c2544b0b2212431c1afc5",
   "ceremony_glasses_retro": "0dfcce37cdf0c66fbf837210e41c8a60f1a5748b3645a29a91f8924bb76eda68",
   "ceremony_glasses_retro_detail": "b8779c1c63b244e5ae2c3488d3dc26d1a4422a1c866bb77d131adcb661eef543",
-  "ceremony_glasses_star": "d649e716d6e10a42effe097de648e9175f6af48bb33432d4ff596e0b674024e9",
+  "ceremony_glasses_star": "ec685f91aea54fb570cd5247884b757af49990de967cd4b38682863bc85998ce",
   "ceremony_glasses_star_detail": "11e6bb627c11599905f5eac756fa15c65fa5f22b64e0db67561549baabb99b09",
   "ceremony_grew_up": "9bf8fe9b30da7099bc64b5754e3142ecda42f961ef759e34f639ece334dfee32",
   "ceremony_new_belt": "265853314f76b7a82c709d84dea51a9b762a2456711ccec7faac111d504baba1",
@@ -38,7 +38,7 @@
     <string name="ceremony_stage_young">%1$s est jeune maintenant et continue de grandir grâce à ta Puissance Mentale.</string>
     <!-- %1$s is the buddy's name. -->
     <string name="ceremony_stage_adult">%1$s est adulte maintenant et a fini de grandir grâce à ta Puissance Mentale.</string>
-    <string name="ceremony_glasses_star">Lunettes en forme d’étoiles !</string>
+    <string name="ceremony_glasses_star">Des lunettes étoilées !</string>
     <string name="ceremony_glasses_star_detail">Pour avoir remporté ton premier Défi de la phase.</string>
     <string name="ceremony_glasses_aviator">Des lunettes aviateur !</string>
     <string name="ceremony_glasses_aviator_detail">Pour avoir terminé ton premier Défi hebdomadaire.</string>

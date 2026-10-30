@@ -43,7 +43,7 @@
   "today_finished": "d323b6b953ef8e8f69eebd111514d1d5081dfd0746571042489d09481d4f80fb",
   "today_finished_detail": "40953d61b33e07a0560c7faedb90dc65cca34358d5b2860023a5105ab67e3500",
   "today_finished_goal": "3711f3ad28a9846704e6c22ac4185887e3e276d635ff5132ed04ef5e5f7be49d",
-  "today_fresh_start_new_phase": "fbb2d5d1464e41cea7bfcd7e9220a80ccc025e02be79c17f267e6320ea8fb885",
+  "today_fresh_start_new_phase": "3d5b7fabe5a2d696cd29e75a9c796f968915756f4d2f51b2f6e59c8644ae3b02",
   "today_fresh_start_new_week": "d0d746f1180d9d99525dd6b6f107874b5e8730fcd01fe52317538ba24f6bdafe",
   "today_fresh_start_welcome_back": "55810cf81eff0473b625aad857ca0a9a5041481ee3afea435793a11c7a71f604",
   "today_fresh_start_welcome_back_trial_ended": "26c9d89104b9f33ecb0ccd8e62c9977295f70b660fd5d993cad648657ee1cfb1",
@@ -52,9 +52,9 @@
   "today_insight_got_it": "c38955229e0be0bd63a3d4935b0693d613a8773d28825ad38355773f0a3cd955",
   "today_insight_keep_it": "2f40e0d92e4a3434f090b2cf81820e1c6c7be4511aa5bb9a38b7157c4a72f3ff",
   "today_insight_label": "4140a51a9c7bf2a73d91c7a5cb65abf28b57535cca2c90b7fbce0a5c6931639e",
-  "today_insight_move_time": "b275e83735f47dca272abe7e1a21f1a876950e9a0fceed8cc0a7101ffd553b33",
+  "today_insight_move_time": "ca0faeaefae97493a216192e7ab39880b7f5dbcee8eca3d2c410869184c05019",
   "today_insight_no_thanks": "8a044e42e33a607a5a142829e792ec2644374ab7d39099bb62bda1fe9a7e81e0",
-  "today_insight_time_moved": "b390168cbbeeff017834bf803ad28454b6566a5565279494b6b0dc8bd12df2d3",
+  "today_insight_time_moved": "7425018227c79c1f2c6c694bed3d7704da8173847f2d3ab1e97c5153c40262e3",
   "today_insight_time_stays": "fda583ae023b0c0e34f88cea68b9836e3a99bab0418affd9ff500dbc40e10fcd",
   "today_keep_learning": "7b4af38ac3f87c0dc91a7c941412a8e663488ae90eb43ec2781dd3def2e2c473",
   "today_keep_learning_failed": "311b1fe614b0253008a7cc21282a1ae93708b3bd8d972fd8e80776cafa9cad11",
@@ -99,7 +99,7 @@
   "today_past_date_detail": "d1fcd1d8d63179008524e87ec69c0c312152f39c9e7f303c7abb1ea135d899f5",
   "today_past_date_exam": "98792c15618ec2630b139c51a608d343e41730bf351376c082c432ce8794fc2b",
   "today_paused": "75c3f32e5ab34b9a758bbbd729c651f9aace62bd50b63ed48bbb6f5477623481",
-  "today_paused_detail": "4d15159dd1bd45208c9ceb6ec9b07d19c14b8e16f6e63f2792231f957f6e1506",
+  "today_paused_detail": "939837b9657807f926da1cc6c9ae7a7539a6b214a6f5047ce5901c006b1ae75b",
   "today_paused_goal": "48933d8f702ebc798982abae1f7458887530d53c4662552eb67e654a9ad20ded",
   "today_paused_this_goal": "8ef02272aeabd96ea235ce682864c90493e916528e7a3004795ce6f607e457e9",
   "today_plan_apply": "ac78a60db62160f4ef157c3cbaa3f9a4310a188f3033ce39391205971b27dc51",
@@ -249,7 +249,7 @@
     <!-- %1$s is a duration, such as "55 min". -->
     <string name="today_fresh_start_welcome_back">¡Te damos la bienvenida de nuevo! Hoy tienes menos trabajo, unos %1$s, para que te resulte fácil retomar el ritmo.</string>
     <string name="today_fresh_start_welcome_back_trial_ended">¡Te damos la bienvenida de nuevo! Hoy te llevará unos %1$s, para que te resulte fácil retomar el ritmo.</string>
-    <string name="today_fresh_start_new_phase">Hoy empieza una nueva fase. Para empezar, un calentamiento sencillo.</string>
+    <string name="today_fresh_start_new_phase">Hoy empieza una nueva fase con un calentamiento sencillo.</string>
     <string name="today_fresh_start_new_week">Una nueva semana. Hoy empiezas con un calentamiento sencillo.</string>
     <!-- %d is how many of today's session steps are done. -->
     <plurals name="today_done_count">
@@ -334,7 +334,8 @@
     <string name="today_paused">En pausa</string>
     <string name="today_paused_goal">El objetivo %1$s está en pausa.</string>
     <string name="today_paused_this_goal">Este objetivo está en pausa.</string>
-    <string name="today_paused_detail">No hay nada previsto hasta que lo reanudes.</string>
+    <!-- "It" is the learner's paused goal. -->
+    <string name="today_paused_detail">No hay nada previsto hasta que lo retomes.</string>
     <string name="today_resume_goal">Reanudar %1$s</string>
     <string name="today_new_goal">Nuevo objetivo</string>
     <string name="today_resume_effect">Tu plan se retoma desde hoy, empezando por las lecciones previstas para los días que pausaste.</string>
@@ -441,10 +442,10 @@
     <string name="today_insight_no_thanks">No, gracias</string>
     <string name="today_insight_keep_it">Mantenerlo</string>
     <!-- %1$s is a time of day, such as "19:00". Moves the time of day the learner studies, not how long they study. -->
-    <string name="today_insight_move_time">Fijar mi hora de estudio en %1$s</string>
+    <string name="today_insight_move_time">Cambiar mi hora de estudio a las %1$s</string>
     <string name="today_insight_got_it">Entendido</string>
     <!-- Confirms that the time of day the learner studies moved, not how long they study. -->
-    <string name="today_insight_time_moved">Has cambiado la hora de estudio.</string>
+    <string name="today_insight_time_moved">Hora de estudio cambiada.</string>
     <!-- After declining to move it: the time of day the learner studies stays the same. -->
     <string name="today_insight_time_stays">Tu hora de estudio sigue siendo la misma.</string>
     <string name="today_plan_stays">Tu plan sigue como estaba.</string>

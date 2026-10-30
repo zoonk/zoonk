@@ -275,6 +275,7 @@
     <string name="mock_speaking_all_done">Toutes les tâches sont terminées. Remets cette partie pour continuer.</string>
     <!-- %2$s is how long the task lasts, such as "4–5 min". -->
     <string name="mock_speaking_task">Tâche %1$d · %2$s</string>
+    <!-- Status beside a speaking task the learner has finished. -->
     <string name="mock_speaking_done">Terminée</string>
     <string name="mock_speaking_start_task">Commencer</string>
     <string name="mock_speaking_start_task_number">Commencer la tâche %1$d</string>

@@ -112,7 +112,7 @@
   "conversation_prep_over": "8036f5057dac01b711dfff0ace070c5b1d2dcf4fd29929ecca5713bbfe722a5d",
   "conversation_prep_shared": "e7b136cc2301b180e5ccaac588175752fa3e74294d13ee54b6c4d693bf86b01c",
   "conversation_preparation": "8376d2265449b8e2cabb310c71a4738ec3b00882e6a5cf15bed98df19038c997",
-  "conversation_rated_on": "6ed121bdef9762cb5b269cd3021f9d52db575abdda290c18d302fbe541de3cf5",
+  "conversation_rated_on": "e5dd0db1d193e894bcf6099aca2b2bc71d147757586568e8e23e12711dc0aff0",
   "conversation_rating": "f2dfc61e2764fa9a0718d5637efad48ed8505ace0cd55508c437db77c3b90379",
   "conversation_rating_slow": "c43773398c096c18bd9822e34c558e40585cde252fe79d9fc7751dec6a4ce0d1",
   "conversation_reconnecting": "0a8ca56371b6ebd1fe6a24e0b5ee97ba00da04738a6234b34dfa9a254e93571e",
@@ -291,7 +291,7 @@
     <string name="conversation_exam_task_title">%1$s · Tarefa %2$s de %3$s</string>
     <string name="conversation_opens_and_card">%1$s começa a conversa, e seu cartão fica na tela.</string>
     <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
-    <string name="conversation_rated_on">A avaliação considera %1$s.</string>
+    <string name="conversation_rated_on">Avaliado com base em %1$s.</string>
     <string name="conversation_stand_in_partner">%1$s é uma IA que faz o papel de outra pessoa candidata.</string>
     <string name="conversation_stand_in_examiner">%1$s é uma IA que faz o papel de uma pessoa examinadora.</string>
     <string name="conversation_practice_estimate">É uma prática: a estimativa ao final não é uma pontuação oficial.</string>

@@ -65,7 +65,7 @@
   "catalog_outline_plan_undated": "0eba39dd6c5676b055fe584368ace1c28b122030a2c054d6b3e236cfce4da476",
   "catalog_outline_unwritten": "2d56cd008a3908267fe7dc6d12ccb940677d7592aca069a86a2808683d6cbb1d",
   "catalog_plan_caption": "4995f886e7c719b2e2a399034ae3f6b0821b2c0b848d52031eeb2afbfaa0269e",
-  "catalog_plan_dated_fitting": "a0259c0940c60d56f42aedb46d9bc8ee96859ab579e1ed21312f5b2c3016cbaf",
+  "catalog_plan_dated_fitting": "123df534e62d9ac88de9817111b551e0ceab01770534e6f72b1ee89456c79fa8",
   "catalog_plan_dated_quick": "945f010dae5ee42bff387f43c5eb1396e571589036a4063653db4399c9537819",
   "catalog_plan_dated_some_written": "744e4f304567670f31016f16a9295509d5259783f4f192f2a76e00a9e43167fa",
   "catalog_plan_dated_written_later": "aaf7e0896dfbb27f4045da44d365864ab6f51efb17e723be50775b6ce13c4640",
@@ -223,10 +223,11 @@
         <item quantity="other">até %1$s, estudando %2$s por dia, de segunda a sexta, com o que mais cai primeiro: %3$d aulas que já estão no curso e outras criadas à medida que você chega nelas.</item>
     </plurals>
     <string name="catalog_plan_dated_quick">até %1$s, estudando %2$s por dia, de segunda a sexta, em aulas rápidas sobre o que mais cai. As aulas completas vêm depois, quando houver mais tempo.</string>
+    <!-- %1$s is a date, such as "June 5"; %2$s a daily study time; %3$s how many of the course's lessons fit, a number. -->
     <plurals name="catalog_plan_dated_fitting">
-        <item quantity="one">até %1$s, estudando %2$s por dia, de segunda a sexta, com o que mais cai primeiro: %3$s de %4$d aula do curso.</item>
-        <item quantity="many">até %1$s, estudando %2$s por dia, de segunda a sexta, com o que mais cai primeiro: %3$s das %4$d aulas do curso.</item>
-        <item quantity="other">até %1$s, estudando %2$s por dia, de segunda a sexta, com o que mais cai primeiro: %3$s das %4$d aulas do curso.</item>
+        <item quantity="one">até %1$s, com %2$s por dia, de segunda a sexta, começando pelo que mais cai: %3$s de %4$d aula do curso.</item>
+        <item quantity="many">até %1$s, com %2$s por dia, de segunda a sexta, começando pelo que mais cai: %3$s de %4$d aulas do curso.</item>
+        <item quantity="other">até %1$s, com %2$s por dia, de segunda a sexta, começando pelo que mais cai: %3$s de %4$d aulas do curso.</item>
     </plurals>
     <string name="catalog_plan_not_all_fits">Não dá tempo de estudar tudo até lá. Antes de começar, você vê quanto cabe no seu plano, considerando seu nível e seu tempo.</string>
     <string name="catalog_plan_every_topic">São todos os tópicos do curso, estudados a fundo.</string>
@@ -244,6 +245,7 @@
     <string name="catalog_workload_unwritten_note">As aulas que ainda não estão prontas são criadas quando você chega a elas.</string>
     <string name="catalog_audience">Para quem é</string>
     <string name="catalog_outcomes">O que você vai conseguir fazer</string>
+    <!-- Heading over the list of a course's chapters and lessons. Not the learner's study plan. -->
     <string name="catalog_outline">Conteúdo do curso</string>
     <plurals name="catalog_chapters">
         <item quantity="one">%1$d capítulo</item>

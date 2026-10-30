@@ -58,8 +58,8 @@
   "plan_challenge_won": "bee46d637f06e1f55dcc7ab3cdb771b35a39d5fe9d23b45fcc36a675255374b4",
   "plan_change_about_more_fit": "e1c75f149ddeedc90b6d9e2dce7aeeb215a283548ba39eda20c1e9b5c5eaf05f",
   "plan_change_about_more_lessons": "c6d0fa4af2e2e9f95c5750e3dff4c4bdfa3087ac2acd4f333626fe0f156674ef",
-  "plan_change_activities_back": "2d1103c217f56c9a311f0100435be53a9a22f560188d78f028afcad4cf601ec4",
-  "plan_change_activities_left_out": "5dafc026fd2931a8888166d6b87356562f93c988790f1ca1d7f23234f6ac62b7",
+  "plan_change_activities_back": "a020c3712a185ee9861573c5f4c624dc96b0d4eda5f3b9673560a02b7118af62",
+  "plan_change_activities_left_out": "06bc817ec2a821eb6dfbbeaa276cf9caf9bcc7d490b9b940d5cc7cf09b366068",
   "plan_change_add_to_plan": "8af427c8837eb454664516f73735d2713cccc41a6b4dfb6f8c7f9d1b55a995d6",
   "plan_change_adds": "aee4acb8322bba60a9b6ed3b4339e46dccbaef0fd5b220f7c03ce1fb598c1143",
   "plan_change_adds_about": "880016076f493a4373e7c18b86854d78be155f2d8b35859066816be876696510",
@@ -70,8 +70,8 @@
   "plan_change_area_gets_more": "06e2dc1121f217606beb4c3ac6120d2f9bd32790d3f6d49d94b4ef4dd0a82050",
   "plan_change_area_lessons_to_go": "8a81778224633c6b13ed069bad277186389f42507f3c9c0bae5f960732ab0e7c",
   "plan_change_area_to_go": "11c1b66a05e80b5dccf24db5c264d5eb83fc25573db927d20db2e08eef454c18",
-  "plan_change_areas_back": "ba9610a9b775cffee7a7fab4279c5b8f7b0525e7bba464c2f4b64ecef9d52622",
-  "plan_change_areas_left_out": "1438044229e854652c18bb64ccfea13c06fff63656d5cbce1f5368f61307d6b9",
+  "plan_change_areas_back": "0e4b2528292dae3fa096b706e6d6599384b831c3875c78508d85d97f53ef94f4",
+  "plan_change_areas_left_out": "57329061112da055181f27f97d912f7771378a5a9273312295e565e4427379bc",
   "plan_change_back_in_lessons": "c894637297e5635a49e61955c34c3292487fb13a5d547a5f960be086dbc29f11",
   "plan_change_back_in_plan": "498ff93fc74eea4d31571579adc711fac901aea493fe4da42ec896ab64b6ac7f",
   "plan_change_bases_deep": "bcc21d7127d5fafc91bf06a5bfef586ce1ca3955d2d7dde4841adb03ae4c5339",
@@ -145,8 +145,8 @@
   "plan_change_phase_dates_lessons": "fad19fffd9fc4cb1e7026fe4245a2ad4bb570089e3e9dd21b9bc2a23057d5e2c",
   "plan_change_phase_dates_moved": "c30964e199071436bb64f3dd0a39da0c2644973bd78510af01bb3e348be3f5c3",
   "plan_change_phase_dates_outcomes": "91fd3438593977531a4be4ecc5e3dd7c32c40899d53207aebfdefba59b931dd7",
-  "plan_change_phase_dates_rest_many": "9befec54e62a96310fd7ce4d767e48ac1ace48653121f6f7593c8001cb70b09f",
-  "plan_change_phase_dates_rest_one": "808d5109a5b4f6a306adf061a29e933c3bd34b2a57670b7043bc9e6227aac69c",
+  "plan_change_phase_dates_rest_many": "2f9afef93e9ce60696db723c18857e9a42dc9c9b930c2d34c7cd790a452c86b8",
+  "plan_change_phase_dates_rest_one": "6fd876a87c39a3c337f4a85d13a9b80049fd502c3f322e4edc5a43efa494b757",
   "plan_change_phase_dates_room": "8f865783e89200fb14c7a38ad1e5e7857d98f581377d44ba02387eda4b399d6c",
   "plan_change_phase_end_row": "91b4bd1a0efb4b68104c33ed0b27123cabd1bd56206e7a1f341fad2d89725a58",
   "plan_change_phase_ends": "6d083f97ee4d6dd762f5e41f134846090167ba925ab22ea55814cd0fdfc58e82",
@@ -242,7 +242,7 @@
   "plan_done_suffix": "8a3cbf19205496f5956efef543f92ef2ba427196a1955cee3956fcdfe555928b",
   "plan_editor_close": "76d170354f6469487ad38b600f827cc2a54537587fd42594bf4e7a1d958b3580",
   "plan_editor_title": "92c604ed9ce12054f9041c3ef4299f8b4866907e3eeada197b504dd5fe95a685",
-  "plan_estimate_based_on": "3cd5741c279de457c03590a6f02a02fc763d4d53418317a7ee20617d3874f5b3",
+  "plan_estimate_based_on": "6edb41d2955dff8d7a5def12392b389a1d78584c997a4022db67c228d07840f1",
   "plan_estimate_based_on_last": "bba743495159f715405e15dc57bebb2f8688eecd5760802370a7a3df165d9533",
   "plan_estimate_waits": "cdee3f5bfd6ec2c002a4c07753d6ee8088524e0d3f6017995eda1490bbea52ee",
   "plan_estimated_score": "471ba09383b266bb1ae2d1e0e64492502e45da480ab3d606f34d5fe572793f58",
@@ -250,7 +250,7 @@
   "plan_every_day": "67e5455f0a80959a38845bd03a9c49b00c1a86fe73787b398593a67c43b3f2b8",
   "plan_everything": "3ca6dd60fab787a0abc5aaf547e44c57772c2558c435b254bd993b9bb72a723b",
   "plan_exam_choice_left_out": "15ad346acea8221171317439b75f2e05a6d3f27cb63f74baed0ca76ff113f626",
-  "plan_exam_choice_question": "83eebbf597f226acaaa3b550e3d410f0701f432985e90b3af5ea7de76d07baea",
+  "plan_exam_choice_question": "934bae8e3a63dfc24f26175f9ab561c1b9152bf97c13c4eb8b0b9ea183dc8822",
   "plan_exam_choice_until_you_pick": "6b2b5d9d61d8ee4b4df8a8c4162b64f5d862b4bf2a1af22c25661e41b658d14e",
   "plan_exam_date": "02f49ad62a38af75b0a8718890f91fdd1143aeacfdc9d2e64851f18ed27d168b",
   "plan_exam_date_label": "62a75317ac12a66dedc40f7b539462f3edd29af5aee104c7fe494df32f01e9d9",
@@ -287,7 +287,7 @@
   "plan_focus_already_in": "e79f306509258e64490dd40c9487f3618d122526aac071183cae15880c006b10",
   "plan_focus_cant_move": "f635c6e970bd93781d58ff371a0a51c51578602b1bde2f4e2f4ffa82e12cfa67",
   "plan_focus_includes": "ef2c498b433225eaaa495164b69ce8a131c151722411bef8f5097388c5949cc0",
-  "plan_focus_on_these": "ac61e1ae4eb6c9548153b410b88abc36ed460b609f409d5c129bd781003f8e8b",
+  "plan_focus_on_these": "991bdb6d6c9d73f2d907405eb26988c3cf5b0a64a04d3a49a0cba2d1d59af787",
   "plan_focus_only": "28defa2d9e0e9aa761934a608999e636ff68e18dc9f2848d0f53e3df4602021b",
   "plan_fridays": "71cdeda1c443ef7ad17c19bd9a8e2e061dd386c6c0da910fefdfc56d4ac9b67d",
   "plan_full_course": "e7d390b198af96d80034ebbdc05dd93bf7125293603683f5c219ad049b2ddbfe",
@@ -366,7 +366,7 @@
   "plan_note_covers_everything": "eccef1c8654b9812d8004c3a8481709d74948f1cf1029bd6a2853b3da0e3fc1e",
   "plan_note_every_topic": "bbe92dc2460cbacef32d2e26801f76af27745d1af101d532d788e2c360c0cfef",
   "plan_nothing_planned": "2973e6f8c2a573c130456b95e8a59fd6deaae11b400c99f8f3fbd3ecddfee4dc",
-  "plan_nothing_planned_until_resume": "d71c28c00a994793579011b9ccb2bfec03b7593521a3a98e28366fd71c08cf9c",
+  "plan_nothing_planned_until_resume": "756b5c580f73f1f6888d6c3edbf3719712f0e6364aacc721d910ecfc74d3ae44",
   "plan_options": "25cc1fa435a90e191ea0de80f1d69a644c653dce9628ff89ee44bca2e2c2068e",
   "plan_other_options": "e06a3ea3786b9f8fd098005c248b7623e4030629870c059afb1275363ea23fcf",
   "plan_pace": "15e346cdd1b54f62422fa2758df391d3a49b8abf57fc87f1fdeb369cdf40fdd6",
@@ -472,7 +472,7 @@
   "plan_still_skills_solid": "17f44fffc82c33039be61433a1d1a878336b004aba4acf28534f3e9565ca3db5",
   "plan_still_time_in_plan": "6c6dd040323d8f4dd0795e4fd27f179ad75bb1909d29f42f056b38dbe6e05150",
   "plan_still_to_do": "d691cc29f1c7684599f8290a5902121b67d44eab465f82b6808ab72e9f8fea08",
-  "plan_still_topics_solid": "c1123d5f6f5e9e651d6799ee34deb47bec211fa7d13a094631c641f20c6e93b6",
+  "plan_still_topics_solid": "5805a1ef2e03bb90d97e7b1cd6b79941dfd221b86335540781d3607c2460c269",
   "plan_study_days": "9a43958ed7c7d7ae286f17a917a97285b02222d9cb351987dd1a5d4ec2931ffa",
   "plan_study_everything": "157a0c33ca174c1afa6bc245d42c0264f6cfe9d60439731c42347a6cb838f157",
   "plan_study_everything_after_exam": "62cc2c182945ee172d389c3e39ef3251ffea95b5b8ae2fb41f10a3ea2d8f8729",
@@ -546,7 +546,7 @@
   "plan_weekly_challenges_count": "210403ff9983fbfb801c487dbc6bc7c6083f693968671e8f0f36c2d013815eb3",
   "plan_what_you_practice": "7ca3e03e273e90c6eeb3efd58cb8d17e01751c822b013f2c43eb83344786bc83",
   "plan_when_to_practice": "e016f99843e18926937bc54fe137ce0d924e82a95aa3ef610f1292e9f8d3a047",
-  "plan_where_to_focus": "9edef054e6004559a86ed39844c922fbd18b437094d48286297da9095ca0ec61",
+  "plan_where_to_focus": "f1220f2badd4b8ff219a4897beda58b059b15b781ce678ddd18f10b6bd200636",
   "plan_where_to_focus_description": "c9baa074dc260d2ce49c8bec70b38b69b483bc67234199a96530bb42024655f3",
   "plan_working_out_coverage": "04d1e5d57de99689635797e6193c016b7456515145a14a8801cc148ff72701c1",
   "plan_you_are_here_suffix": "9d64cf09d078f7cc2626d1755e49e5bbeeb464fb8fd7dd14dd3f55a7841310f0",
@@ -783,7 +783,8 @@
     <string name="plan_pace_value_on_pace">Dans les temps</string>
     <string name="plan_time_a_day">%1$s par jour</string>
     <string name="plan_nothing_planned">Rien n’est prévu</string>
-    <string name="plan_nothing_planned_until_resume">Rien n’est prévu jusqu’à ce que tu reprennes ton plan.</string>
+    <!-- "It" is the learner's paused goal. -->
+    <string name="plan_nothing_planned_until_resume">Rien n’est prévu tant que cet objectif reste en pause.</string>
     <plurals name="plan_lessons_left">
         <item quantity="one">%d leçon restante</item>
         <item quantity="many">%d leçons restantes</item>
@@ -887,8 +888,8 @@
     <string name="plan_estimate_based_on_last">Basé sur ton dernier examen blanc</string>
     <plurals name="plan_estimate_based_on">
         <item quantity="one">D’après %d examen blanc, le plus récent</item>
-        <item quantity="many">D’après tes %d derniers examens blancs</item>
-        <item quantity="other">D’après tes %d derniers examens blancs</item>
+        <item quantity="many">D’après %d examens blancs, les plus récents</item>
+        <item quantity="other">D’après %d examens blancs, les plus récents</item>
     </plurals>
     <string name="plan_score_percent">%1$s %%</string>
     <string name="plan_score_percent_range">%1$s %% à %2$s %%</string>
@@ -933,7 +934,8 @@
     <string name="plan_measure_full_reviews">Ta préparation tient compte de tous tes domaines, selon leur poids à l’examen. Pour chaque domaine, elle dépend de ce que tu as étudié et de ce que tu maîtrises : tes bonnes réponses, ta mémoire et tes révisions complètes. Les sujets plus difficiles et plus fréquents comptent davantage. Un domaine reste sous 75%% tant que tu n’as pas répondu à des questions sur ces sujets et fait une révision complète au format de ton examen.</string>
     <string name="plan_measure_mocks">Ta préparation tient compte de tous tes domaines, selon leur poids à l’examen. Pour chaque domaine, elle dépend de ce que tu as étudié et de ce que tu maîtrises : tes bonnes réponses, ta mémoire et tes examens blancs. Les sujets plus difficiles et plus fréquents comptent davantage. Un domaine reste sous 75%% tant que tu n’as pas répondu à des questions sur ces sujets et passé un examen blanc.</string>
     <string name="plan_still_to_do">À faire</string>
-    <string name="plan_still_topics_solid">Atteins le niveau Solide pour les sujets qui comptent le plus</string>
+    <!-- An item in the "Still to do" list, worded like the others, such as "Take your first mock exam". -->
+    <string name="plan_still_topics_solid">Atteindre le niveau Solide pour les sujets qui comptent le plus</string>
     <string name="plan_still_skills_solid">Atteins le niveau Solide pour chaque compétence</string>
     <string name="plan_still_time_in_plan">Environ %1$s dans ton plan</string>
     <string name="plan_still_keep_fresh">Entretiens ce que tu as appris</string>
@@ -988,9 +990,9 @@
     <string name="plan_change_light_week">Une semaine allégée à partir du %1$s, avec deux fois moins de temps.</string>
     <string name="plan_change_weekly_challenge_moved">Le défi hebdomadaire a été déplacé au %1$s.</string>
     <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
-    <string name="plan_change_activities_left_out">On a laissé de côté %1$s dans tes leçons.</string>
+    <string name="plan_change_activities_left_out">Tes leçons laissent de côté %1$s.</string>
     <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
-    <string name="plan_change_activities_back">On a remis %1$s dans tes leçons.</string>
+    <string name="plan_change_activities_back">Tes leçons incluent à nouveau %1$s.</string>
     <string name="plan_change_more_practice">Plus d’entraînement à partir de maintenant.</string>
     <string name="plan_change_more_explanation">Plus d’explications à partir de maintenant.</string>
     <!-- "The basics" are the simple parts of topics the learner already does well, not the plan's prerequisites. -->
@@ -1035,9 +1037,9 @@
     <string name="plan_change_more_time_for">Plus de temps pour %1$s.</string>
     <string name="plan_change_less_time_for">Moins de temps pour %1$s.</string>
     <!-- %1$s is one or more of the exam's areas joined as a list, such as "Math" or "Math and History". -->
-    <string name="plan_change_areas_left_out">On a laissé de côté %1$s dans le plan.</string>
+    <string name="plan_change_areas_left_out">Le plan laisse de côté %1$s.</string>
     <!-- %1$s is one or more of the exam's areas joined as a list, such as "Math" or "Math and History". -->
-    <string name="plan_change_areas_back">On a remis %1$s dans le plan.</string>
+    <string name="plan_change_areas_back">Le plan inclut à nouveau %1$s.</string>
     <string name="plan_change_start_past_basics">Commencer après les bases : %1$s.</string>
     <string name="plan_change_start_from_basics">Recommencer par les bases : %1$s.</string>
     <string name="plan_change_tool_setup">Une leçon pour installer %1$s sur %2$s arrive avant que tu en aies besoin.</string>
@@ -1116,11 +1118,11 @@
         <item quantity="other">Certaines leçons prennent plus de temps que prévu, si bien que le défi qui termine %1$s arrive maintenant avant elles. Décaler la fin de cette phase de %2$d jours permet de placer les leçons en premier.</item>
     </plurals>
     <plurals name="plan_change_phase_dates_rest_many">
-        <item quantity="one">%d défi de la phase tombe un jour de repos. Décaler les dates de tes phases permet de le placer un jour d’étude.</item>
-        <item quantity="many">%d défis de phase tombent des jours de repos. Décaler les dates de tes phases permet de les placer des jours d’étude.</item>
-        <item quantity="other">%d défis de phase tombent des jours de repos. Décaler les dates de tes phases permet de les placer des jours d’étude.</item>
+        <item quantity="one">%d défi de la phase tombe un jour de repos. Décaler les dates de tes phases permet de le placer sur un jour d’étude.</item>
+        <item quantity="many">%d défis de la phase tombent des jours de repos. Décaler les dates de tes phases permet de les placer sur des jours d’étude.</item>
+        <item quantity="other">%d défis de la phase tombent des jours de repos. Décaler les dates de tes phases permet de les placer sur des jours d’étude.</item>
     </plurals>
-    <string name="plan_change_phase_dates_rest_one">%1$s se termine par un défi le %2$s, un jour de repos. Décaler les dates de tes phases permet de le placer un jour d’étude.</string>
+    <string name="plan_change_phase_dates_rest_one">%1$s se termine par un défi le %2$s, un jour de repos. Décaler les dates de tes phases permet de le placer sur un jour d’étude.</string>
     <string name="plan_change_phase_dates_outcomes">Garder les dates de tes phases laisse %1$s de côté avant la date de ton objectif. Les décaler permet de tout inclure.</string>
     <string name="plan_change_phase_dates_lessons">Certaines leçons prennent plus ou moins de temps que prévu. Décaler les dates de tes phases permet d’en inclure davantage avant la date de ton objectif.</string>
     <string name="plan_change_phase_dates_room">Un défi de phase tombe un jour où il n’y a pas assez de temps pour le faire. Décaler les dates de tes phases permet de lui faire une place.</string>
@@ -1261,7 +1263,8 @@
     <string name="plan_weekend_time_differs">Durée différente le week-end</string>
     <string name="plan_time_on_weekends">Durée le week-end</string>
     <string name="plan_exam_choice_left_out">Choisis celui que tu passeras. En attendant, ton plan laisse %1$s de côté.</string>
-    <string name="plan_exam_choice_question">%1$s : lequel vas-tu passer ?</string>
+    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
+    <string name="plan_exam_choice_question">%1$s : quelle matière choisis-tu ?</string>
     <string name="plan_exam_choice_until_you_pick">En attendant ton choix, ton plan laisse %1$s de côté.</string>
     <string name="plan_prerequisites">Prérequis</string>
     <string name="plan_choose_prerequisites">Choisir les prérequis</string>
@@ -1448,7 +1451,8 @@
     <string name="plan_study_everything_goal_description">Toutes les parties de ton objectif, à ton rythme et sans date de fin.</string>
     <string name="plan_sheet_done">Terminé</string>
     <string name="plan_choose_focus">Choisis tes priorités</string>
-    <string name="plan_where_to_focus">Où concentrer tes efforts</string>
+    <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
+    <string name="plan_where_to_focus">Matières prioritaires</string>
     <string name="plan_where_to_focus_description">Les sujets que tu choisis passent en premier et sont étudiés plus en profondeur.</string>
     <string name="plan_take_short_test">Passer un test rapide</string>
     <string name="plan_test_chooses_for_you">Tes réponses déterminent tes priorités</string>
@@ -1457,7 +1461,8 @@
     <string name="plan_focus_only">%1$s uniquement</string>
     <string name="plan_focus_already_in">Rien n’a changé : toutes les leçons de %1$s sont déjà dans ton plan.</string>
     <string name="plan_focus_cant_move">Rien n’a changé : les leçons de %1$s commencent déjà dès que les notions préalables le permettent, et ton temps disponible ne permet pas d’en ajouter. Avec plus de temps par jour, tu pourras en inclure davantage.</string>
-    <string name="plan_focus_on_these">Se concentrer là-dessus</string>
+    <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
+    <string name="plan_focus_on_these">Privilégier ces matières</string>
     <string name="plan_saving">Enregistrement…</string>
     <string name="plan_couldnt_check_changes">Impossible de vérifier ce qui change.</string>
     <string name="plan_then_covers_everything">Ton plan couvrira alors tout en profondeur.</string>

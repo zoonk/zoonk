@@ -61,7 +61,7 @@
   "subscription_plus": "61dd82cd0834f9fba78dce9843236be8f4d01b8076a3eb5ed56498c25b6e5025",
   "subscription_purchase_confirm_failed": "94b3ca5c0b9ecffe486a972fba8129f903a29a9ab9fee3f65d1d8fc83fbdd1e3",
   "subscription_purchase_confirming": "dd29a668d8d109093431ca8215f64b7bfa69711b3564237b48782458b08157b7",
-  "subscription_purchase_other_account": "dec82af1b0fbe31bb70d616952e08a2d5ca7cf53be7b049647dd1e1e2b630d00",
+  "subscription_purchase_other_account": "f66b0df68ef65087aed7cb3d4c5d6373982f4959324807badb79b747decd2c80",
   "subscription_purchase_pending": "28bce9f4228d4368e0522e5dedb85906705e0c2bf929c4425fade3d568b28bb1",
   "subscription_purchase_play_failed": "ad4c92a85bde40387657901c6c9576396fa0c30d1081acab352d13ef5c33c33d",
   "subscription_question_cancel": "218f289656b05803e7996e5ee31845e6728a69687706460886e484b54385cebb",
@@ -129,7 +129,7 @@
     <string name="subscription_cancel_anytime">Jederzeit kündbar.</string>
     <string name="subscription_purchase_pending">Deine Zahlung steht noch aus. Plus startet, sobald Google Play sie bestätigt.</string>
     <string name="subscription_purchase_confirming">Wir bestätigen deinen Kauf…</string>
-    <string name="subscription_purchase_other_account">Dieses Google Play-Abo gehört zu einem anderen Zoonk-Konto. Melde dich bei diesem Konto an, um es zu nutzen.</string>
+    <string name="subscription_purchase_other_account">Dieses Abo bei Google Play gehört zu einem anderen Zoonk-Konto. Meld dich mit diesem Konto an, um es zu nutzen.</string>
     <string name="subscription_purchase_play_failed">Google Play konnte den Kauf nicht abschließen. Versuch es noch einmal.</string>
     <string name="subscription_purchase_confirm_failed">Dein Kauf war erfolgreich, aber wir konnten ihn noch nicht bestätigen. Wir versuchen es noch einmal, wenn du zurückkommst.</string>
     <string name="subscription_benefits_summary">Jedes Ziel · jede Lektion</string>

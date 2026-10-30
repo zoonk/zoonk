@@ -60,12 +60,12 @@
   "catalog_not_found_title": "366f69523d944fbcb7f312d4113937c30033545846a939bfdaca722325ca2c86",
   "catalog_open_course": "82fa99ff137ea5e88543d360dcd9e0c241baddf367df28339b19ee914ebe9af5",
   "catalog_outcomes": "bcc308f747e08ac3d7970bf6cc7640395fccd1bfa07b21c29fdb69f4265c59f2",
-  "catalog_outline": "14e5e415394a368b703997b4fbf981c9deacf7bd631534bcc3df96cf5a921281",
+  "catalog_outline": "aab7123a4cbd14672682debae88355b1f57b4bfb7e1b7a2dfc68bea6155773c0",
   "catalog_outline_plan_dated": "e62012f2a62ea4e0d3c3f345b0597219d7f671935dc6d0f83dd6c3db1d04362d",
   "catalog_outline_plan_undated": "6126808d452ec368e1e19778ed9d1079cf119a51ae098beea9d5463673dc1909",
   "catalog_outline_unwritten": "36ccabbb02cff6528828bf284c5bf6103d56906c117fda31224658f07ff00718",
   "catalog_plan_caption": "d995560a4f503381d7e1dd7412d3d6888a4875237fc4ee504cd783737eef4d50",
-  "catalog_plan_dated_fitting": "b7a13db01df520412e26e09e45508d21792bd5940f0786007bc85ae163884741",
+  "catalog_plan_dated_fitting": "b3633ec128508ddff5e4df3d33c6edda0518fa633afff1d1a5de3fbbfddfab55",
   "catalog_plan_dated_quick": "002bde5880fe8a7bf90b24bcd5f928e2fe972d9f88101116163249458d924bc0",
   "catalog_plan_dated_some_written": "c1e3158cb6001c15f55c2d2fdfb3b260e9b19bda463a2657a87da8759cd91741",
   "catalog_plan_dated_written_later": "350b5fb934316ca6477ced9ddd6e69314c0888a47d78c4b440202f87b73f462e",
@@ -94,7 +94,7 @@
   "catalog_start_lesson": "e7ea37bd0bff5d60c43dfbd27dd6604d47ff6bc3189acbbfa6adb823d1313e61",
   "catalog_start_this_lesson": "4c8da8899fca53564282c058d527d8442ea61fdeaab9d85718e6ce2f783e13ff",
   "catalog_subject_arts": "ca87780fc494698142bc89c00570e49fd1f1258d38ca5dc7e9dbd3e3a18879f9",
-  "catalog_subject_business": "b6f98f320dd0c87f16afcb024ede10da471b376f2d4d2d847b462c70830b802c",
+  "catalog_subject_business": "8caa2fe95e993f635349e17f6ee556f46225737cbfa58ab25872330d0704448a",
   "catalog_subject_communication": "4e7a7a497332a57951d41cee1de156bb449aca7e1268e2d2ce865b688a4e14e2",
   "catalog_subject_culture": "f167dbd0104fd6363833eab72742b94458b137e04856605ae5d09ef453950f52",
   "catalog_subject_economics": "2c166981754c0251db82b2313e5b3126fc246a5a7de18f463a2199a788926fb4",
@@ -131,7 +131,7 @@
 -->
 <resources>
     <string name="catalog_subject_arts">Arts</string>
-    <string name="catalog_subject_business">Gestion d’entreprise</string>
+    <string name="catalog_subject_business">Entreprise</string>
     <string name="catalog_subject_communication">Communication</string>
     <string name="catalog_subject_culture">Culture</string>
     <string name="catalog_subject_economics">Économie</string>
@@ -223,10 +223,11 @@
         <item quantity="other">d’ici le %1$s, à raison de %2$s par jour, du lundi au vendredi, en commençant par les sujets les plus fréquents : %3$d leçons déjà disponibles dans le cours et d’autres préparées au fur et à mesure.</item>
     </plurals>
     <string name="catalog_plan_dated_quick">d’ici le %1$s, à raison de %2$s par jour, du lundi au vendredi, avec des leçons rapides sur les sujets les plus fréquents. Les leçons complètes viendront quand tu auras plus de temps.</string>
+    <!-- %1$s is a date, such as "June 5"; %2$s a daily study time; %3$s how many of the course's lessons fit, a number. -->
     <plurals name="catalog_plan_dated_fitting">
-        <item quantity="one">d’ici le %1$s, à raison de %2$s par jour, du lundi au vendredi, en commençant par les sujets les plus fréquents : %3$s sur %4$d leçon du cours.</item>
-        <item quantity="many">d’ici le %1$s, à raison de %2$s par jour, du lundi au vendredi, en commençant par les sujets les plus fréquents : %3$s sur %4$d leçons du cours.</item>
-        <item quantity="other">d’ici le %1$s, à raison de %2$s par jour, du lundi au vendredi, en commençant par les sujets les plus fréquents : %3$s sur %4$d leçons du cours.</item>
+        <item quantity="one">d’ici le %1$s, à raison de %2$s par jour, du lundi au vendredi, en privilégiant ce qui revient le plus souvent : %3$s sur %4$d leçon du cours.</item>
+        <item quantity="many">d’ici le %1$s, à raison de %2$s par jour, du lundi au vendredi, en privilégiant ce qui revient le plus souvent : %3$s sur %4$d leçons du cours.</item>
+        <item quantity="other">d’ici le %1$s, à raison de %2$s par jour, du lundi au vendredi, en privilégiant ce qui revient le plus souvent : %3$s sur %4$d leçons du cours.</item>
     </plurals>
     <string name="catalog_plan_not_all_fits">Tout ne tient pas dans le temps disponible. Avant de commencer, tu verras ce qui tient selon ton niveau et le temps dont tu disposes.</string>
     <string name="catalog_plan_every_topic">Tous les sujets du cours sont étudiés en profondeur.</string>
@@ -244,7 +245,8 @@
     <string name="catalog_workload_unwritten_note">Les leçons pas encore préparées le seront au fur et à mesure de ta progression.</string>
     <string name="catalog_audience">À qui s’adresse ce cours</string>
     <string name="catalog_outcomes">Ce que tu sauras faire</string>
-    <string name="catalog_outline">Plan du cours</string>
+    <!-- Heading over the list of a course's chapters and lessons. Not the learner's study plan. -->
+    <string name="catalog_outline">Sommaire du cours</string>
     <plurals name="catalog_chapters">
         <item quantity="one">%1$d chapitre</item>
         <item quantity="many">%1$d chapitres</item>

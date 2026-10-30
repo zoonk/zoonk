@@ -249,6 +249,7 @@
         <item quantity="one">Based on %d answer. It gets more accurate every day.</item>
         <item quantity="other">Based on %d answers. It gets more accurate every day.</item>
     </plurals>
+    <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
     <string name="onboarding_placement_enough_title">That\'s enough questions for today</string>
     <string name="onboarding_placement_enough_description">Your first sessions ask a few more to fine-tune your plan.</string>
     <string name="onboarding_placement_set_title">Your starting point is set</string>

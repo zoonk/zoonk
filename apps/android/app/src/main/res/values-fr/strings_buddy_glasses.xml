@@ -19,7 +19,7 @@
   "buddy_glasses_worn_monocle": "07650f7b301cba3ed3047284fab3ea88abd30993c27e1f0e998006baf04c8bf6",
   "buddy_glasses_worn_retro": "80a0654b1c109ed2233608cd6917b5a519218b847f65c47a9b50bb7d7f389edc",
   "buddy_glasses_worn_round": "7fb72142b15a6c70c2d8769ae2333872313daa2f2974a28d63515d43877d66f3",
-  "buddy_glasses_worn_star": "a3f973f807ace4a73f9348240fc3215acfb1ed6cd6b12e85ce1481ba3362c535",
+  "buddy_glasses_worn_star": "c291119010e4938c2e6defd10d3518232011484bcea5b6144695c006008ea549",
   "buddy_stage_adult": "4080d4165ba7901f5a9c2f1696edc0b325b1f2bc3d82bd81d61a3ad71a8ebe35",
   "buddy_stage_baby": "30b390ed714d03910aa40890e1a30dd1f474cec1258e9d7303dfeccb888af0b2",
   "buddy_stage_young": "68601b221d3b5ff07c8a7cea313188c951549bf55f15d68900190936cdc83395"
@@ -34,7 +34,7 @@
     <string name="buddy_glasses_retro">Rétro</string>
     <string name="buddy_glasses_monocle">Monocle</string>
     <string name="buddy_glasses_worn_round">Lunettes rondes</string>
-    <string name="buddy_glasses_worn_star">Lunettes en forme d’étoiles</string>
+    <string name="buddy_glasses_worn_star">Lunettes étoilées</string>
     <string name="buddy_glasses_worn_aviator">Lunettes d’aviateur</string>
     <string name="buddy_glasses_worn_cat_eye">Lunettes œil-de-chat</string>
     <string name="buddy_glasses_worn_retro">Lunettes rétro</string>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "checkpoint_after_lessons": "ace161e4c5a002ff7b059aea45009a793b539cca9b7c6929f6e447ab770104ea",
+  "checkpoint_after_lessons": "4239c233aff99f4c116d0b6bc12fb4b5b22c966753bf2f52256091846810145a",
   "checkpoint_answer": "3d8b8d34a71c65b54e010f99783bd0ba1b1d78e20822ebb2cb2168e95950927c",
   "checkpoint_answers": "ed7f3ee38c908d483b902cdf843cfc8a13da0af426a96e7ba1cd652fc1d33178",
   "checkpoint_badge": "1907984b518670661c811da847edba6f1b66eda62b54c6377bcba57c2b786b86",
@@ -38,7 +38,7 @@
   "checkpoint_questions_left": "b84101a243f765133b9852becd21ec7ea31b69310e34d4f65d0955392f2d50e8",
   "checkpoint_removed_detail": "96f3f1b1d7dbfe966e11864bfa86cf487d9dea29cc97e45055d6f2ab5fe3d003",
   "checkpoint_removed_title": "78e2766bf05b2c8da4d8a0a36902f2cdd07b9b483ac3ab7095d36a52e2b24fe6",
-  "checkpoint_retry_after_lessons": "ddc1e62186c344e80b5e9ac9b5c4ab8d6541b0d09b0cf00c823f9ac1be6f8240",
+  "checkpoint_retry_after_lessons": "1833b1b211bcc243d84c0cc2ea66d5f38a26ab7bb3be5b0a15408b65e3205b52",
   "checkpoint_retry_tomorrow": "55c0d899d080a996ff38b630fdb0c439a1f5200a45619d4ca079207a1cde8445",
   "checkpoint_review": "07a127ae176d1ec834234e2ac606305c97cc9591c7f5b12af9fdd228d46f318e",
   "checkpoint_rewards": "0910641bf0b0a82bb34827febf4a498fbb58347c3bb7b6611609de3cf297c773",
@@ -72,8 +72,8 @@
     <string name="checkpoint_lost_line">Sein Schild hat diesmal gehalten.</string>
     <string name="checkpoint_retry_tomorrow">Morgen gibt es einen neuen Versuch. Nichts geht verloren.</string>
     <plurals name="checkpoint_retry_after_lessons">
-        <item quantity="one">Neuer Versuch morgen, nach %d kurzen Lektion. Nichts geht verloren.</item>
-        <item quantity="other">Neuer Versuch morgen, nach %d kurzen Lektionen. Nichts geht verloren.</item>
+        <item quantity="one">Morgen kannst du es nach %d kurzer Lektion noch einmal versuchen. Nichts geht verloren.</item>
+        <item quantity="other">Morgen kannst du es nach %d kurzen Lektionen noch einmal versuchen. Nichts geht verloren.</item>
     </plurals>
     <string name="checkpoint_every_answered">Alle Fragen sind beantwortet.</string>
     <string name="checkpoint_shield">Der Schild des Tricksers</string>
@@ -138,7 +138,7 @@
     <string name="checkpoint_new_try_next">Neuer Versuch in deiner nächsten Lerneinheit</string>
     <string name="checkpoint_nothing_lost">Nichts ist verloren.</string>
     <plurals name="checkpoint_after_lessons">
-        <item quantity="one">Nach %d kurzen Lektion zu dem, was dir schwergefallen ist. Nichts geht verloren.</item>
+        <item quantity="one">Nach %d kurzer Lektion zu dem, was dir schwergefallen ist. Nichts geht verloren.</item>
         <item quantity="other">Nach %d kurzen Lektionen zu dem, was dir schwergefallen ist. Nichts geht verloren.</item>
     </plurals>
     <!-- %1$s is the next phase's name. -->

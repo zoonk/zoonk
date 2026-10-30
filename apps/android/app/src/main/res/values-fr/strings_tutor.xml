@@ -156,6 +156,7 @@
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="tutor_empty_ai">%1$s est un compagnon d’étude basé sur l’IA et peut faire des erreurs.</string>
     <string name="tutor_guest_title">Crée un compte gratuit pour poser des questions</string>
+    <!-- Loading the written chat with the learner's buddy. Not a speaking call. -->
     <string name="tutor_loading">Chargement de la conversation…</string>
     <string name="tutor_get_answer">Obtenir une réponse</string>
     <string name="tutor_not_answered">Cette question est restée sans réponse.</string>

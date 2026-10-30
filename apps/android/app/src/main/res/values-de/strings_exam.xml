@@ -22,7 +22,7 @@
   "exam_cutoff_goal": "195c281c60e4e9e8bd7d94450a17e192c1a21ca928faa0d9a095cb8625d105e5",
   "exam_cutoff_score": "330bc803926a44c3d98bf7812d1b747c048c1942b063899ec77a28a6e13eac72",
   "exam_cutoff_source": "0dabd3580d22e9055ab95d7e14e0d22fd000b9dee764081efc2c9b982bb4f1b2",
-  "exam_cutoff_title": "2cb4b3a4a94c55260d0f0c96b9970941a2fa504f23002694d0ca0f639cdf1f44",
+  "exam_cutoff_title": "804643d3767a35648a5553a840b1854e8e0da2d0dcd8b77280f756aa3d5a1f4f",
   "exam_day_before_learn": "6603d007638996f8f72509637c8a70b71b6d5d6aa64bfb3c75aac7dae050584c",
   "exam_day_before_learn_and_mock": "2548965f66547cf336972a303d44d09fe9efc2bfe6d490ee921016d192e84ce6",
   "exam_day_before_light": "22e0d8f9afe4192e0012255572030fb4de302c882c59930dd580afca584219ee",
@@ -288,7 +288,7 @@
     <string name="exam_scale_range">Von %1$s bis %2$s.</string>
     <string name="exam_scale_pass">Zum Bestehen: %1$s oder mehr.</string>
     <!-- %1$s is exam_cutoff_score, such as "712.4 out of 1,000". -->
-    <string name="exam_cutoff_title">Letzte Zulassungsgrenze: %1$s</string>
+    <string name="exam_cutoff_title">Letzte Punktegrenze: %1$s</string>
     <string name="exam_cutoff_score">%1$s von %2$s</string>
     <!-- %1$s describes the cut-off (course, place, edition), %2$s is the website it comes from, such as sisu.mec.gov.br. -->
     <string name="exam_cutoff_source">%1$s, laut %2$s</string>

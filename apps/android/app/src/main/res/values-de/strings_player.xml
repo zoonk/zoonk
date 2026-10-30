@@ -345,6 +345,7 @@
     <string name="player_already_knew">Das wusstest du schon</string>
     <string name="player_saving_progress">Wir speichern deinen Fortschritt…</string>
     <string name="player_save_failed">Das hat nicht geklappt. Deine Antworten bleiben erhalten.</string>
+    <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">Wiederholung am %1$s</string>
     <string name="player_next_lesson">Nächste Lektion</string>
     <string name="player_stop_for_today">Für heute aufhören</string>

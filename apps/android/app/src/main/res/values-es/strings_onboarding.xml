@@ -159,7 +159,7 @@
   "onboarding_placement_description_areas": "25a8734588766f367dfdb19ef9153c15e5abdf444e750c4c83875199383fcf56",
   "onboarding_placement_dont_know": "3898cb46142d870539179e3e00df7ec460d425c640d0665d4d64239981768bd0",
   "onboarding_placement_enough_description": "6d0ac42d38767c3f593afc4e1016e1ecbbe16e8b2c0c9c6c54c9e59cf9aa7074",
-  "onboarding_placement_enough_title": "820ea7e1bd8befcb189a4d749a0708dc466ddc1aef18e8cc0042665437bfe525",
+  "onboarding_placement_enough_title": "af7479a0696966401c88d3cec7a454c34d418ff48777f9b9a7c78be74edbe5e7",
   "onboarding_placement_false": "3f03d82ff8572a7e392ca060acb62489bdcf319fc90b8641f8ef948bce4f9dcf",
   "onboarding_placement_mock_about": "7f251b84daf7cdbd62286aa3159a4b7a1abb7b4eeb0bc7bb183044c719767942",
   "onboarding_placement_mock_done": "4274f3619ffd7a761a622ee985c1fc53f11a8f5c08bac44cb31310a1f047219b",
@@ -695,7 +695,8 @@
         <item quantity="many">Esta estimación se basa en %d respuestas. Cada día es más precisa.</item>
         <item quantity="other">Esta estimación se basa en %d respuestas. Cada día es más precisa.</item>
     </plurals>
-    <string name="onboarding_placement_enough_title">Por hoy ya son suficientes preguntas</string>
+    <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
+    <string name="onboarding_placement_enough_title">Por hoy, ya tenemos suficientes respuestas</string>
     <string name="onboarding_placement_enough_description">En tus primeras sesiones responderás a algunas preguntas más para ajustar tu plan.</string>
     <string name="onboarding_placement_set_title">Tu punto de partida está definido</string>
     <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->

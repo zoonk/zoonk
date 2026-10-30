@@ -35,7 +35,7 @@
   "conversation_criterion_overall": "d8ce53a9801d8f1891321d01499682bc851a0aa3709de6f31d2e8fbad17a582a",
   "conversation_criterion_pronunciation": "cc73ed35ee3c680478eda6dcdd0bf19ee9707ab828c017c44fb555fcb1b78455",
   "conversation_criterion_questions": "ae3d6da2de1f75aea631b4ba18d6a333c8c48e5b2f96ce936e74e5499a6c392d",
-  "conversation_criterion_range": "3ad28fbb1f430105923adb587e2628acf7794c84db99011cdae1eea207a49027",
+  "conversation_criterion_range": "a308d00b543605db388f710b0911c5465b4acf3e08b505adc7d29f4f86a6f2f0",
   "conversation_criterion_task": "d071574d37166c76f89f4227595fed8335fd52ff19a98403dbe734109eeea36c",
   "conversation_criterion_vocabulary": "f16e70e0e00552653a7cb829bfede7fba8b8519abd35f36f46b36f62d7791877",
   "conversation_diff_line": "534813179835767944e78546b4e3046ce6fa6828326994713380aca192b5fbd2",
@@ -326,7 +326,7 @@
     <string name="conversation_criterion_pronunciation">Pronunciación</string>
     <string name="conversation_criterion_questions">Preguntas y respuestas</string>
     <!-- A speaking exam criterion: how varied the learner's vocabulary and grammar are. -->
-    <string name="conversation_criterion_range">Variedad de vocabulario y gramática</string>
+    <string name="conversation_criterion_range">Variedad de recursos lingüísticos</string>
     <string name="conversation_criterion_task">Realización de la tarea</string>
     <!-- An estimate on the exam's scale for points, such as "18–20 of 25 points". -->
     <string name="conversation_band_points">%1$s de %2$s puntos</string>

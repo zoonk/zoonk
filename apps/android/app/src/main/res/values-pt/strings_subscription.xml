@@ -65,7 +65,7 @@
   "subscription_purchase_pending": "501b7eacfa37ba627cba3b12c4e1352bd5ee283207b3cfe9ea1f687f27c0641d",
   "subscription_purchase_play_failed": "1b00adb8cab11f4e40c5d30c747bcb4eb8c9e896c750d3d882e9f9e2608e2251",
   "subscription_question_cancel": "37c026d7f78345ed81dd8fc8173ea3bc9420eac0075bd3d9ad841a8a55065d85",
-  "subscription_question_free": "a9924ca73817e70ab9ea8724691ab15d937a7629ebd828647b0905923a320587",
+  "subscription_question_free": "72ae9e735d690cb376da75809ade867e02410042d65558d3deb8d03d37dfda1d",
   "subscription_question_refund": "bdd44918fc942ba278c7ec572c5538f8d88c0ffcb7d6de78b8deaaf27519a3ce",
   "subscription_question_unlimited": "a5806beda549c118812a3739cf213c9b8afd304612d6ee780394e83be3910a29",
   "subscription_questions_email": "3291247dd4d0e8eacfaa54c4f48458f0d56932d281094020c10bd74a3cd36310",
@@ -178,7 +178,7 @@
     <!-- What TalkBack says about a question: its answer is showing or not. -->
     <string name="subscription_answer_shown">Expandida</string>
     <string name="subscription_answer_hidden">Recolhida</string>
-    <string name="subscription_question_free">O que vem no plano grátis?</string>
+    <string name="subscription_question_free">O que está incluído no plano Grátis?</string>
     <plurals name="subscription_answer_free_guest_lead">
         <item quantity="one">Comece grátis com %d aula, sem precisar de conta. Com uma conta grátis, você tem:</item>
         <item quantity="many">Comece grátis com %d aulas, sem precisar de conta. Com uma conta grátis, você tem:</item>

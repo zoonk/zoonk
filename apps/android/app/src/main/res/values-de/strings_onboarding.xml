@@ -159,7 +159,7 @@
   "onboarding_placement_description_areas": "38aee7b185eb75a056f7b8b00218bed9060bafa7a5cf087cbbb8473ad9c5de6e",
   "onboarding_placement_dont_know": "f0bfef432d6c11804e69d9e08fe64a281645c3612524ad85847b48b17d94d94f",
   "onboarding_placement_enough_description": "5c5ea0dc9c0f364fd4f3c28dbc63d3dba61be4624b0cda50911b91febcd6ac01",
-  "onboarding_placement_enough_title": "f257755536d56018017f18a8f4d505d36c1829974f5aa04f67ecee455ad0e2fa",
+  "onboarding_placement_enough_title": "e448c54fcc2cd58d20ec732502f3401af7f372168bf1b4ab8f1da38c4143a407",
   "onboarding_placement_false": "92957bd76478f3533d6ba71f2ebe2dc88984cc7faf26d48660325c332ea5f406",
   "onboarding_placement_mock_about": "385195fd0e2a444396540a86fbeb2509b54d2c19cf8ac951d5e3a6273b4f1fa4",
   "onboarding_placement_mock_done": "d998820995d9bcfd4ffc7f149bcc5e81fe9b83196fc92cf022fac84fdbbc1d7e",
@@ -335,11 +335,11 @@
   "onboarding_row_date_to_be_confirmed": "a2a4cbc2e6ff0ea3622623e1b8d4240a2e03c79830fc27b0d16cb36150ba36e3",
   "onboarding_row_dates_estimated": "abe40921da4fa76a1e3f32fab8e88dbb18a27ae77e46b401d3ab94e5b71e2774",
   "onboarding_row_days_left": "a6b35e6e949329cba1cd22df8336be6f02666b6ed2dcd1a80934969fc0702663",
-  "onboarding_row_deadline": "68c0ea144990304aa20cdb581a93293ffb7cdaefc59dfe1fc80075c691febad5",
+  "onboarding_row_deadline": "87817b293076fe8a6badd4b9d6c67bbba65480f9a9701ac08fbaf72fc9ebf99c",
   "onboarding_row_exam_date": "fcfb97067df54a195faa591e3f4d913df6555d5398c882adfee9b6cff95e9d2c",
   "onboarding_row_exam_dates": "36f1e75af4a2d3c189c5a45b5ccf1226b87e7d18f3a502467627ecbb0750cd43",
   "onboarding_row_goal": "893b281b87d92e62bebea819f02f4feb73f9f5382667025855832eac11a6e936",
-  "onboarding_row_guide_says": "bba09972c27c8c9d9f029a7bedf67486208e4423a46af987cd6c4e7aab073494",
+  "onboarding_row_guide_says": "10657d2ec200b6d5c89c6e9c72a708440e1daa41b71e5f2d17f9ec142101603c",
   "onboarding_row_language": "730a80e658f1fbc7d64c324b94c3e002b341dd6892518de6f1728ecbe37f94ba",
   "onboarding_row_last_cutoff": "d3716a7354d6d1c1d74af996e53d4d682fd6e4654a8d694684f5eea111f1e0cb",
   "onboarding_row_level": "5acf4681319f93c3972182e60b2b9959da94b3e7d646be013ca34fc70c2655e7",
@@ -347,7 +347,7 @@
   "onboarding_row_material": "ff51052151f49962abebee7c9083bc20dcd9ceb6224cf88fc86ae05cd16ca2b2",
   "onboarding_row_material_note": "6b97dcad282ca232d17ca84436c8ea28b348c2ac1c50cd43c824c9cd477465bd",
   "onboarding_row_minutes_a_day": "a327fbf854a0bd37f6532263743c6d5383fc3be91c7b95f30dd794fe8a2879d4",
-  "onboarding_row_notice_says": "c7e10fd8ebccf48c3454217a99929ad70bacd6804208d970a122f2732f0a83ab",
+  "onboarding_row_notice_says": "dca5b307fe19c60e0fa206d8fa161c17bb051cd415fa25f0438bf4893da176e3",
   "onboarding_row_pick_date": "707eb339b9cd4edfa7d816ea03105100a1ba7e173a2e6f8027ccc001dc8d0beb",
   "onboarding_row_position": "18ace96905a3954636b3e900a50580f211e9f61d9bcbc7c9b8622c168eaeb095",
   "onboarding_row_reason": "cfb0c7184e0018e98f069ef0f2f9af7fe841d8edfbddc4ad76f614208b69441e",
@@ -440,7 +440,7 @@
   "onboarding_use_this_date": "6048b7234fb672089d5a1d9cd0839ab92e32966c188ad3932960581e32075c06",
   "onboarding_waitlist_joined": "e7b9754af05a2d5e341ba28e4d99d7c8d7e9cc7b4a118a5f813f3cb82338df23",
   "onboarding_waitlist_sign_in": "e35f52b77482007a4e9339d237bf78ca86257448c0ccec76a59fd41d03deae98",
-  "onboarding_weekend_time": "82df9df233173dada5b466ea03f590fc9b4d05e211c949fa874732a4cd6c0d12",
+  "onboarding_weekend_time": "dbb4033f63ddd01c143501682533a88debd6db40ea6f63568a4b70fcde90fcbf",
   "onboarding_weekend_time_label": "d925e3cccb46dda04123d75c47fa6d16bb663d60aa16939c952e6b879f2e4514",
   "onboarding_what_you_wrote": "6f7b3e175f59ee5efc9703224fbdedb2e6fc67b2bebdf19a6f5c0c0b5232c1d5",
   "onboarding_write_again": "3aeba6aa478261e7d7a79859d591fe7fdaef8b339877ecd09bb90be657f83e8d",
@@ -553,7 +553,7 @@
     <string name="onboarding_row_exam_date">Prüfungstermin</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">Prüfungstermine</string>
-    <string name="onboarding_row_deadline">Frist</string>
+    <string name="onboarding_row_deadline">Zieldatum</string>
     <plurals name="onboarding_row_days_left">
         <item quantity="one">Noch %d Tag</item>
         <item quantity="other">Noch %d Tage</item>
@@ -569,9 +569,9 @@
     <string name="onboarding_row_pick_date">Wähle deinen Termin</string>
     <string name="onboarding_row_several_sittings">Diese Prüfung findet mehrmals im Jahr statt. Bis du einen Termin auswählst, verwendet dein Plan den ersten.</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
-    <string name="onboarding_row_notice_says">In der Prüfungsausschreibung steht: %1$s.</string>
+    <string name="onboarding_row_notice_says">Laut Prüfungsausschreibung ist der Termin am %1$s.</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
-    <string name="onboarding_row_guide_says">Im offiziellen Prüfungskalender steht: %1$s.</string>
+    <string name="onboarding_row_guide_says">Laut offiziellem Prüfungskalender ist der Termin am %1$s.</string>
     <!-- After a goal the learner typed turned out to be a question. -->
     <string name="onboarding_explain_description">Eine kurze Erklärung für dich, etwa 5 Minuten.</string>
     <string name="onboarding_explain_it">Erklär es mir</string>
@@ -690,7 +690,8 @@
         <item quantity="one">Die Einschätzung beruht auf %d Antwort. Sie wird jeden Tag genauer.</item>
         <item quantity="other">Die Einschätzung beruht auf %d Antworten. Sie wird jeden Tag genauer.</item>
     </plurals>
-    <string name="onboarding_placement_enough_title">Das sind genug Fragen für heute</string>
+    <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
+    <string name="onboarding_placement_enough_title">Für heute hast du genug Fragen beantwortet</string>
     <string name="onboarding_placement_enough_description">In deinen ersten Lerneinheiten bekommst du noch ein paar Fragen, damit dein Plan besser zu dir passt.</string>
     <string name="onboarding_placement_set_title">Dein Ausgangspunkt steht fest</string>
     <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
@@ -1008,7 +1009,7 @@
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
     <string name="onboarding_full_course_finish_month">Mit %1$s pro Tag bist du im %2$s fertig, also nach der Prüfung im %3$s.</string>
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="onboarding_weekend_time">Andere tägliche Lernzeit am Wochenende</string>
+    <string name="onboarding_weekend_time">Andere Lerndauer am Wochenende</string>
     <string name="onboarding_schedule_time_label">Tägliche Lernzeit</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_suggested">%1$s (vorgeschlagen)</string>

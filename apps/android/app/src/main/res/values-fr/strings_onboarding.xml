@@ -113,7 +113,7 @@
   "onboarding_language_test_title": "100945e16b8c9061727caacb3c6e9d3e5dd5aad343eedce3a1ae236172dc0659",
   "onboarding_language_test_use_app_in": "192253f3ee1e0a2372a1a2bad9c580c3e9a71331bbafd8e1f1282094dd3d7454",
   "onboarding_language_test_writing": "dea74232637120d287c91724333a89b8fef1b89fd7e0b6a704c1a4879bf1daa1",
-  "onboarding_level_advanced": "b923ed5cac66331190705b59e51931fa30e1a6c67bbe430bae2ff20488cd9bdd",
+  "onboarding_level_advanced": "d43272b05349034e1b13c7eec8d273e4873b328515f48cdc4c02093584eebc47",
   "onboarding_level_advanced_description": "d81859d4e9174f9c43df6e356b16c13a6560d9f727cc5fe8ea3d411189e5cdcb",
   "onboarding_level_basic": "dcfe7c6bc285fa4c7bc54d4fa0508ae36cebc9aacb1fdb37aefb98ba0b57e472",
   "onboarding_level_basic_description": "3c2d62e43f19c19939a8eafa4c01c2e90062a1bec11ff793114a8f8fd5d2b75f",
@@ -159,7 +159,7 @@
   "onboarding_placement_description_areas": "ef5db00a1191301f146bc4c5e5d5e7b0ee8ca86087c55a6189e5bf763fdc7654",
   "onboarding_placement_dont_know": "8c848bfbb1acf9bfdc9e0977aa88bd195396febe4ad5da17972bc2ba4672922d",
   "onboarding_placement_enough_description": "f0f562725ca71e8c787947a59862c44f176db6e64ae5a80c9cb0b8e68dc73d7e",
-  "onboarding_placement_enough_title": "c291ff7df3ba7d395fcc5847a6058af533a3b222fb32651e3ae5dac5ca4b6e02",
+  "onboarding_placement_enough_title": "005c5df9b35a1d3bdffd4543e080752d51c691ee6367af0fca3681a93b38fd78",
   "onboarding_placement_false": "6812164c5f8973a31be62f59aed123edd831a765512f273dc45237488bd0d3fa",
   "onboarding_placement_mock_about": "e423a3a51cbdaabc2d4136d0cc41e54e8748c0ebe655c8ab8243a04892e97eba",
   "onboarding_placement_mock_done": "0be42e8dc9955dab4159b93337a6ffb699f97067e0f9ee0dc02904088dda08e8",
@@ -695,7 +695,8 @@
         <item quantity="many">Estimation basée sur %d réponses. Elle se précise chaque jour.</item>
         <item quantity="other">Estimation basée sur %d réponses. Elle se précise chaque jour.</item>
     </plurals>
-    <string name="onboarding_placement_enough_title">C’est assez de questions pour aujourd’hui</string>
+    <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
+    <string name="onboarding_placement_enough_title">On a assez de réponses pour aujourd’hui</string>
     <string name="onboarding_placement_enough_description">Quelques questions te seront posées pendant tes premières séances pour affiner ton plan.</string>
     <string name="onboarding_placement_set_title">Ton point de départ est défini</string>
     <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
@@ -943,7 +944,7 @@
     <string name="onboarding_level_basic_description">Je connais quelques notions</string>
     <string name="onboarding_level_intermediate">Je l’ai déjà étudié</string>
     <string name="onboarding_level_intermediate_description">On passera ce que tu connais déjà</string>
-    <string name="onboarding_level_advanced">Je m’y connais bien</string>
+    <string name="onboarding_level_advanced">Je le connais bien</string>
     <string name="onboarding_level_advanced_description">Seulement ce qui est nouveau ou difficile</string>
     <string name="onboarding_level_test">Je ne sais pas, propose-moi un test rapide</string>
     <!-- %1$s is a duration, like "2 min". -->

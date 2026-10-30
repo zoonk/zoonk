@@ -23,6 +23,7 @@
     <string name="stats_right_last_90">Right answers in the last 90 days</string>
     <string name="stats_score_90">Score · 90 days</string>
     <string name="stats_score_after_answers">Your score shows after your first answers.</string>
+    <!-- Section header over when the learner answers best, by time of day and weekday, in the last 90 days. Not mistakes. -->
     <string name="stats_patterns_90">Patterns · 90 days</string>
     <string name="stats_see_all">See all</string>
     <string name="stats_best_day">Best day</string>

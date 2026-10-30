@@ -45,7 +45,7 @@
   "tutor_link_title": "63835806c91269ed7e2f09a3bb510b957b2595fc01707032f4e6b7d186090bfa",
   "tutor_load_earlier": "6af17b5faddc381f2fa3e48a1f7519e375e5549eba4972f8e1a8a2ea2a7d46ba",
   "tutor_load_earlier_failed": "71da2208de8dd00ec8ec6e1bb9ffc623aae4483ef1ba8af99752c7152e833002",
-  "tutor_loading": "500a3fd11d82415cbd2ba99159c5a699d7d3fc1cef05474e05ef374add2dc5e2",
+  "tutor_loading": "9e7f4d1f5350daa88b6c968da1178b58992b7ad9171b864df8d54edca3bc502d",
   "tutor_no_answer": "b4a1008cf435666209dff13731de57f479c923f1f3d2bfa5e82316a202ca2215",
   "tutor_not_answered": "140e642aef7128586a54bbbd1a20ffc2cd0439bfe500a8b33d58c906010db75a",
   "tutor_offer_call": "f48b6587ec81cc24bb83dd6b9cda917c14b0e61b5602eb3bc23b17a0062729ca",
@@ -156,7 +156,8 @@
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="tutor_empty_ai">%1$s ist ein KI-Lernkumpel und kann Fehler machen.</string>
     <string name="tutor_guest_title">Erstell ein kostenloses Konto, um Fragen zu stellen</string>
-    <string name="tutor_loading">Wir laden das Gespräch…</string>
+    <!-- Loading the written chat with the learner's buddy. Not a speaking call. -->
+    <string name="tutor_loading">Wir laden den Chat…</string>
     <string name="tutor_get_answer">Antwort erhalten</string>
     <string name="tutor_not_answered">Diese Frage wurde nicht beantwortet.</string>
     <string name="tutor_answer_failed">Wir konnten diese Antwort nicht fertigstellen.</string>

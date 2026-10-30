@@ -182,6 +182,7 @@
     <string name="player_already_knew">You already knew this</string>
     <string name="player_saving_progress">Saving your progress…</string>
     <string name="player_save_failed">That didn\'t go through. Your answers are kept.</string>
+    <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">Review on %1$s</string>
     <string name="player_next_lesson">Next lesson</string>
     <string name="player_stop_for_today">Stop for today</string>

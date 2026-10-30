@@ -132,6 +132,7 @@
     <string name="today_paused">Paused</string>
     <string name="today_paused_goal">%1$s is paused.</string>
     <string name="today_paused_this_goal">This goal is paused.</string>
+    <!-- "It" is the learner's paused goal. -->
     <string name="today_paused_detail">Nothing is planned until you resume it.</string>
     <string name="today_resume_goal">Resume %1$s</string>
     <string name="today_new_goal">New goal</string>

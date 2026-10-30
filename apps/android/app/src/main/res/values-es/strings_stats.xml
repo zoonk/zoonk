@@ -121,6 +121,7 @@
     <string name="stats_right_last_90">Respuestas correctas en los últimos 90 días</string>
     <string name="stats_score_90">Puntuación · 90 días</string>
     <string name="stats_score_after_answers">Tu puntuación aparecerá después de tus primeras respuestas.</string>
+    <!-- Section header over when the learner answers best, by time of day and weekday, in the last 90 days. Not mistakes. -->
     <string name="stats_patterns_90">Patrones · 90 días</string>
     <string name="stats_see_all">Ver todo</string>
     <string name="stats_best_day">Mejor día</string>

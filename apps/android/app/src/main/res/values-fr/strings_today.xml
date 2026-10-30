@@ -52,10 +52,10 @@
   "today_insight_got_it": "98c9816c5fa06040d65dda9c7bf8c765e033e38fd8014d70779c2092e3137146",
   "today_insight_keep_it": "3487e4d74d89b9e1c5c8f2cd6de92ea6a6e6cde2947bd7a7b5c79fc47bf7a44a",
   "today_insight_label": "302b9c2add769edbb76983452013c938a774439acc71717d88fa54e3d47d98c2",
-  "today_insight_move_time": "ede6feb4f76fad156ef4df6f29ae91404e5f47b255aec991a35c263d9cbfdb62",
+  "today_insight_move_time": "b578077ad9b6b2dc87363bf0f079f48e3e426865268faf5e94d5abe478c60e69",
   "today_insight_no_thanks": "edbcb475a6b4dee94b3b2e2b288e1227f18170b894c93c1b72b1b9486e28077d",
-  "today_insight_time_moved": "51a92783ed6fc923061a694803f44c08085027933360b0a0d60b0bdad2841ca3",
-  "today_insight_time_stays": "e9782527027de2e3d7e7696a76a2f10db0dca368f0cc4559cdd599aa4673156c",
+  "today_insight_time_moved": "5d5bfffa679ccbe67c493c74ee1b477ca82440ed3445c5735a0bf6cf99dc390b",
+  "today_insight_time_stays": "ea0d4b386b1cb52839456a79c9f9411d6d47b6a62d9523085c6a087ccb3fec74",
   "today_keep_learning": "3d49c9787f34bb599dc953ca71ca33acee3776b12c3ca14461db25bd7a12c5ae",
   "today_keep_learning_failed": "4a8aaa1afdc1211e0e7d16c41e91dce42bbf1b4422b903e35fd724e930fe4c05",
   "today_keep_my_time": "ffc14057b4b11be582d567d06b49d857b02338d68d45b3abb417a1a58822c1bf",
@@ -99,7 +99,7 @@
   "today_past_date_detail": "833b4b7625148952b1e3286472f5d8b10f75117b946386f8cb48ad6279878dbb",
   "today_past_date_exam": "82444e8723eb30550b339ee339e6034c68df78d24131c30f100246cdf961a95f",
   "today_paused": "8e02adbb13b5db36b39a059f7718d88938149dfec58fb60d6527b5ebdaa090ba",
-  "today_paused_detail": "a0c17d2ac698ded59ac507fc8e600b74a0e9a9f749027d47151ebfb577e0643f",
+  "today_paused_detail": "ed8c2671fff65192419291c1a0b7c526cdaedd6a6af22432792ecae7258c3b30",
   "today_paused_goal": "5b8117e67cf371ff3fadc5176904ede1dba3aeae9315ad5b6f262c545ff4d155",
   "today_paused_this_goal": "2e686e85e2a63d4b5cae0ec41071dc89a3f90245133888fec43f5d0362be1e2d",
   "today_plan_apply": "1bc81027db20b652a06a7ef41f3a7da4775c8c65493c2e4734c150e5626159a6",
@@ -334,7 +334,8 @@
     <string name="today_paused">En pause</string>
     <string name="today_paused_goal">%1$s est en pause.</string>
     <string name="today_paused_this_goal">Cet objectif est en pause.</string>
-    <string name="today_paused_detail">Rien n’est prévu tant que tu ne le reprends pas.</string>
+    <!-- "It" is the learner's paused goal. -->
+    <string name="today_paused_detail">Rien n’est prévu tant que cet objectif reste en pause.</string>
     <string name="today_resume_goal">Reprendre %1$s</string>
     <string name="today_new_goal">Nouvel objectif</string>
     <string name="today_resume_effect">Ton plan reprend aujourd’hui, en commençant par les leçons prévues pendant ta pause.</string>
@@ -441,12 +442,12 @@
     <string name="today_insight_no_thanks">Non merci</string>
     <string name="today_insight_keep_it">Garder</string>
     <!-- %1$s is a time of day, such as "19:00". Moves the time of day the learner studies, not how long they study. -->
-    <string name="today_insight_move_time">Décaler mon heure d’étude à %1$s</string>
+    <string name="today_insight_move_time">Déplacer mon horaire d’étude à %1$s</string>
     <string name="today_insight_got_it">Compris</string>
     <!-- Confirms that the time of day the learner studies moved, not how long they study. -->
-    <string name="today_insight_time_moved">Heure d’étude modifiée.</string>
+    <string name="today_insight_time_moved">Horaire d’étude déplacé.</string>
     <!-- After declining to move it: the time of day the learner studies stays the same. -->
-    <string name="today_insight_time_stays">Ton heure d’étude reste la même.</string>
+    <string name="today_insight_time_stays">Ton horaire d’étude reste inchangé.</string>
     <string name="today_plan_stays">Ton plan reste inchangé.</string>
     <string name="today_noted">C’est noté.</string>
     <string name="today_undo">Annuler</string>

@@ -29,7 +29,7 @@
   "today_days_left": "ddca4673ac6b00cea1909a18cb3c0574efbd480e38e37156de284d509ef1723d",
   "today_days_left_estimated": "cadf500ed31a488f20531194dafcca17d58b1e3ec65334748406a2563b855706",
   "today_done": "2284463c42ec765f3f80e70ec1c041982f73a14d16b32ea352503db6044c6de7",
-  "today_done_count": "1067047037aee2595f10faed2037260a3d6eca8700c92b0d4d0e9fe271e172d9",
+  "today_done_count": "77739ca31a44b4066daac64d201a6d05fc64c01e8f65282c3a2f0841af1c000b",
   "today_done_day_off": "947362f77c84d95608a4d7e104714f610b0983b2593241450ba9949be60afd61",
   "today_earlier_work": "e5e2300b765b1ea11b6eff7f1021dd68a43a82e0455c5b9e163277843ecbbae5",
   "today_earlier_work_detail": "b61a296e26ddbf6a22c61c41e45f4e634240f62ff4876159e2524813e178230e",
@@ -99,7 +99,7 @@
   "today_past_date_detail": "ab4ae15ed40ee29b4ff616143752cb51fe5cdad4eb16cb0ccd54bc38c6ba7204",
   "today_past_date_exam": "ad191f5255b69867f22cb0b66a6dc27b4c831443920643a5c98c7be7c31e9ef3",
   "today_paused": "945d0ac0b7277631575012e93f19572909594f02d9b7012e03444c13e8f376ed",
-  "today_paused_detail": "12604762bd90b2172a54edc3517c3efbe7df3d674375040a6bc6c084c5378e05",
+  "today_paused_detail": "c84b96e7c7fcd283f21911a072a1780a4d2f3dfb7d609f60ec669244342b31e6",
   "today_paused_goal": "858ce1c33d23ec289e9323bdf3d19151dfb6139a03d1f78a97f2114788b9970c",
   "today_paused_this_goal": "0e74d898858754e630b48f6da095e5acdda04e4ff83c0ea97103d23418399621",
   "today_plan_apply": "aa41c326da2648f936f461df07e2e38b3c67d64bab7a1c98cb56d5142237a1a1",
@@ -253,9 +253,9 @@
     <string name="today_fresh_start_new_week">Uma nova semana. Hoje começa com um aquecimento leve.</string>
     <!-- %d is how many of today's session steps are done. -->
     <plurals name="today_done_count">
-        <item quantity="one">Concluídas: %d</item>
-        <item quantity="many">Concluídas: %d</item>
-        <item quantity="other">Concluídas: %d</item>
+        <item quantity="one">%d concluído</item>
+        <item quantity="many">%d concluídos</item>
+        <item quantity="other">%d concluídos</item>
     </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d</item>
@@ -334,7 +334,8 @@
     <string name="today_paused">Pausada</string>
     <string name="today_paused_goal">A meta %1$s está pausada.</string>
     <string name="today_paused_this_goal">Esta meta está pausada.</string>
-    <string name="today_paused_detail">Nada está planejado até você retomar a meta.</string>
+    <!-- "It" is the learner's paused goal. -->
+    <string name="today_paused_detail">Nada fica planejado até você retomar a meta.</string>
     <string name="today_resume_goal">Retomar %1$s</string>
     <string name="today_new_goal">Nova meta</string>
     <string name="today_resume_effect">Seu plano continua a partir de hoje, começando pelas aulas planejadas para os dias em que você fez uma pausa.</string>

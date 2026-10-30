@@ -11,14 +11,14 @@
   "buddy_page_energy_studied": "43e4d2b93fa2e451bd2c03422b5d0399025354ef8902d0ce198c52c0bf59fada",
   "buddy_page_energy_study": "d08b20141decb56e46f167b0c5348d007a3364e59fe1f9525c91087832a177a7",
   "buddy_page_first_anytime": "684063efd7293b075026bfa65b0bfad79c7287b1320dd378b6960c247328ba6c",
-  "buddy_page_first_ask": "89019974d4fe681e1c1b667bcc3f3efac690107dfce6e527db6d819b350fb1b3",
+  "buddy_page_first_ask": "20e414100e4194699173706e90f1b8c4f393488163a3898d462192f2da462128",
   "buddy_page_first_call": "8d76bf12e14b8db1a76e222f9a6a8a458168ccf5a513a99bb523aeac5f5e9c54",
   "buddy_page_first_challenge": "f6bd4a7ffcd817ed48e17214978626de54ab63ad842cc9ce99c267767cc9af7f",
   "buddy_page_first_essay": "338973462b9e99b6d1575d27bc1715b241776ba53a4d215937eeabc1525f1861",
   "buddy_page_first_lesson": "17989da014649413182fe8471891b6acad64349f6da1d05f6e4c86fbbd06de36",
   "buddy_page_first_mistake": "982d736503df986463a36b0842beb449a4ace5b32272d133417f0c6c18a2a625",
   "buddy_page_first_mock": "5c69ddbda8d6aac48865afc829c9a83b84bcb5c75a1912fa9d65faf6fc260062",
-  "buddy_page_first_pattern": "1811be9356978f511904d246c2b47163889bc03fcd1905f046863b7a27b0a94c",
+  "buddy_page_first_pattern": "6890bc457c72aecd80de0abb8efa768154e9f49608c95d0d32345958602cf24c",
   "buddy_page_first_review": "37d4ea755bd96d75377153145f7ccb468396f187024944dade05925115bad0e9",
   "buddy_page_first_steps": "b6b88bd28187a70d23cb94a018dd09a5ec281aebbd8734bc7dbbdb22f292a894",
   "buddy_page_first_steps_done": "0c784523715603cc9e74b51138ec3ca83930dabf65169cfee4b133d7a2856c44",
@@ -98,8 +98,10 @@
     <string name="buddy_page_first_lesson">Deine erste Lektion abschließen</string>
     <string name="buddy_page_first_review">Deine erste Wiederholung machen</string>
     <string name="buddy_page_first_mistake">Deinen ersten Fehler korrigieren</string>
-    <string name="buddy_page_first_pattern">Ein Muster üben</string>
-    <string name="buddy_page_first_ask">Frag %1$s etwas</string>
+    <!-- A first-steps mission: practice a kind of mistake the learner keeps making. -->
+    <string name="buddy_page_first_pattern">An einem Fehlermuster arbeiten</string>
+    <!-- A first-steps mission. %1$s is the learner's buddy's name. -->
+    <string name="buddy_page_first_ask">%1$s etwas fragen</string>
     <string name="buddy_page_first_essay">Deinen ersten Aufsatz schreiben</string>
     <string name="buddy_page_first_call">Dein erstes Gespräch führen</string>
     <string name="buddy_page_first_mock">Deine erste Probeprüfung ablegen</string>

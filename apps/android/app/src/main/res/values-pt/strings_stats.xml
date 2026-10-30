@@ -11,7 +11,7 @@
   "stats_any_day_studied": "8e29b37ecc6f3d5e96c92feea26da941c8de5f244680d506695fbf1c4b52f7f5",
   "stats_any_time": "a78487a50cdf4e5a7a56ba57def479d831803c3021210f5e7d6a88318a3174a4",
   "stats_average": "8d06da224724714c0995867be478106bc65981071044ca9f964f03ab084beb88",
-  "stats_back_from_today": "37155d21cc4dc1c4c09c1b5bdc6c8b6c7c9c6e7e03764f75221a831d1ada38c4",
+  "stats_back_from_today": "15ae7c67624d512f1d30cd904f6049506f4b27a0904494355c024ae8a0486863",
   "stats_belt_at": "125c8e02cb05f8650763b1f6c22a6f60c162af84c0e8a6a2ffbbcbc2d6818283",
   "stats_belt_current": "cb430d032ca1780171a3d64a94120e3fe5baf052aa1152b734395217606cd746",
   "stats_belt_earned": "8c7657ad46d813d566bb892e44ac675261bbcca1c1f24824fd698f91b10320f0",
@@ -93,7 +93,7 @@
   "stats_to_go": "15a1fe27e7b9d8547e09babcb70b289a538e56dc0fa7144bd979a0e031ea8d22",
   "stats_to_level": "3adff8c0328be4fc3219949ff55e5c918062f4ba8b7b2298b4dfbb473a58a488",
   "stats_today": "dc269047c93c053d66a9ef1f47d99259805a9e10b6d7b618fc405a12cc6bcbf9",
-  "stats_week_spread": "ea22eebe08aaa0965961ec0cf35aef62f8acbe72b0e0af0ea28858b17aa054ab",
+  "stats_week_spread": "99272a286fea6202b01bc0b0cd73954320a3875bd449eda26fc6a7593dbdb515",
   "stats_within_points": "7f5efa810ec5d1ee94f83592da612fa3c8f13c992ec9290e0b3e6b6116ce8e93"
 }
 -->
@@ -121,12 +121,13 @@
     <string name="stats_right_last_90">Respostas certas nos últimos 90 dias</string>
     <string name="stats_score_90">Pontuação · 90 dias</string>
     <string name="stats_score_after_answers">Sua pontuação aparece depois das suas primeiras respostas.</string>
+    <!-- Section header over when the learner answers best, by time of day and weekday, in the last 90 days. Not mistakes. -->
     <string name="stats_patterns_90">Padrões · 90 dias</string>
     <string name="stats_see_all">Ver tudo</string>
     <string name="stats_best_day">Melhor dia</string>
     <string name="stats_best_time">Melhor horário</string>
     <!-- Noun row label for how much the scores varied over the week; its value is the range from the lowest to the highest weekday score, such as "62%–80%". -->
-    <string name="stats_week_spread">Variação na semana</string>
+    <string name="stats_week_spread">Variação ao longo da semana</string>
     <string name="stats_range">%1$s–%2$s</string>
     <string name="stats_brain_power">Poder Mental</string>
     <string name="stats_brain_power_amount">%1$s de Poder Mental</string>
@@ -187,7 +188,7 @@
     <string name="stats_correct_of_total">%1$s de %2$s</string>
     <string name="stats_period">Período</string>
     <!-- Under "Period", a number of days such as "90 days": the stats count those days back from today. -->
-    <string name="stats_back_from_today">De hoje para trás</string>
+    <string name="stats_back_from_today">Contados até hoje</string>
     <plurals name="stats_days">
         <item quantity="one">%1$s dia</item>
         <item quantity="many">%1$s dias</item>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "memory_category_background": "3cb2e82a2565e9867fb6a6766e99fa094373bd2fd45476910c76dad4bd8fd903",
+  "memory_category_background": "62b522aeaabe9370ab34e5f69de06bd3a6af9ea35d2b7414893e8c08091b3cf7",
   "memory_category_context": "46a795e5178dcf26f08e1397211180d3adacf7c1b49926ee372b0d22d0a69c61",
   "memory_category_goals": "a41feba2615afbfd0c4d6f38f56d92ae931f898d35d70e6dbfe62f5133f67034",
   "memory_category_learning": "8876e752aa6790d90fe093b535f810f3a4f8255f7917de1e72e8bcb1543121d2",
@@ -46,7 +46,7 @@
     <string name="memory_save_failed">Não foi possível salvar. Tente de novo.</string>
     <string name="memory_category_goals">Metas</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
-    <string name="memory_category_background">Sobre você</string>
+    <string name="memory_category_background">Trajetória</string>
     <string name="memory_category_routine">Rotina</string>
     <string name="memory_category_preferences">Preferências</string>
     <string name="memory_category_learning">Aprendizado</string>

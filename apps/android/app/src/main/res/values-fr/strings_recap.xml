@@ -22,7 +22,7 @@
   "recap_reviews": "aa7db0185b82b7e7492c382c8393bbc452111e321445cc908fc2ffd5caf60f90",
   "recap_solid": "b78f5d0684de7d5f2ac92b827539681c4d0af7fdabde87e5ccfb6170ab184733",
   "recap_time": "ea14349a2b7dec94346528d6f303d2b65b0632a4c4f788b0c1235230a6345f22",
-  "recap_trap_hunter_badge": "c5763dab9ad3cfeda95aad8322fbe3b885422c87adaa23e702546a3b96afd6b2",
+  "recap_trap_hunter_badge": "47520eb9bfd3d191a9a1580ed932ab79d6d582db686f6b0b1e0cb5da7cf97966",
   "recap_trap_hunter_badges": "b70815bb75c3a039b3b600cdfe1d1469b0ec47b7c4d68bb227ba95bce7e49a55",
   "recap_turnaround": "79b26eb9f8b030ec857b7ce20e600b1b341d21031353fb9bd1f7a701467bef1f",
   "recap_turnaround_chart": "63b7db137d301a1b2f32638ef76504921299944739c07c65a60bc2797d51262e",
@@ -77,7 +77,7 @@
     <string name="recap_reviews">révisions</string>
     <string name="recap_mistake_fixed">erreur corrigée</string>
     <string name="recap_mistakes_fixed">erreurs corrigées</string>
-    <string name="recap_trap_hunter_badge">Badge de chasse aux pièges</string>
+    <string name="recap_trap_hunter_badge">Badge Chasseur de pièges</string>
     <string name="recap_trap_hunter_badges">badges de chasse aux pièges</string>
     <string name="recap_next_week">La semaine prochaine</string>
     <string name="recap_lets_go">C’est parti</string>

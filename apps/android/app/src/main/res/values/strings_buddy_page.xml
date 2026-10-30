@@ -44,7 +44,9 @@
     <string name="buddy_page_first_lesson">Finish your first lesson</string>
     <string name="buddy_page_first_review">Do your first review</string>
     <string name="buddy_page_first_mistake">Fix your first mistake</string>
+    <!-- A first-steps mission: practice a kind of mistake the learner keeps making. -->
     <string name="buddy_page_first_pattern">Practice a pattern</string>
+    <!-- A first-steps mission. %1$s is the learner's buddy's name. -->
     <string name="buddy_page_first_ask">Ask %1$s something</string>
     <string name="buddy_page_first_essay">Write your first essay</string>
     <string name="buddy_page_first_call">Have your first call</string>

@@ -65,7 +65,7 @@
   "stats_part_failed": "4cdd07523a0d2ec967ec07fca3be637956924715cc8b99af744725036d9aa4e8",
   "stats_past_year": "1e1eae063d7dfee1df5496a319a6871c456321190ad84c46549b5139527a922a",
   "stats_patterns": "e0fcbac24043a202ec33679937e6ccc9573c95ae9e11ac7a6cff66679547de71",
-  "stats_patterns_90": "d7fc7b1c690839df84d860243ec0ae56c100a5ba262036e3bd6c2e9124dc4b9d",
+  "stats_patterns_90": "e454b940073486f5d2249cb33e8b9ce75f49bc8d15ada5fad14a1e70c6cd76c2",
   "stats_patterns_intro": "316dda34d40985b1d4ffe4eeb0949ec5a40f2df95fdcbef822001bf6f9f9dde3",
   "stats_period": "af7b230dbdb8f16bd4b05c6cd0861b3c7b7ffeb3399f890bfef47a691f001d4f",
   "stats_range": "6b0aab72cf86be61a690fac4a03b2b79459d7216fa6e70bd4587dc4d82c10000",
@@ -121,7 +121,8 @@
     <string name="stats_right_last_90">Bonnes réponses sur les 90 derniers jours</string>
     <string name="stats_score_90">Score · 90 jours</string>
     <string name="stats_score_after_answers">Ton Score s’affiche après tes premières réponses.</string>
-    <string name="stats_patterns_90">Erreurs récurrentes · 90 jours</string>
+    <!-- Section header over when the learner answers best, by time of day and weekday, in the last 90 days. Not mistakes. -->
+    <string name="stats_patterns_90">Tendances · 90 jours</string>
     <string name="stats_see_all">Tout voir</string>
     <string name="stats_best_day">Meilleur jour</string>
     <string name="stats_best_time">Meilleur moment</string>

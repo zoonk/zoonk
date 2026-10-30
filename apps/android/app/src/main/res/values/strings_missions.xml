@@ -50,6 +50,7 @@
         <item quantity="one">Fix %d mistake</item>
         <item quantity="other">Fix %d mistakes</item>
     </plurals>
+    <!-- A mission: practice a kind of mistake the learner keeps making. -->
     <string name="missions_pattern">Practice a pattern</string>
     <string name="missions_pronunciation">Pronunciation</string>
     <string name="missions_call">Have a call</string>

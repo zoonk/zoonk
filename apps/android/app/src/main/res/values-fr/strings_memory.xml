@@ -15,7 +15,7 @@
   "memory_edit": "4767e50fb7ef8173297bf67246b4077b86e9cb5896baf5a8aed7e463f06acbbb",
   "memory_edit_description": "24c48f9baa56eab886ede479968e23f17c3bda8ec0042076331d5430fb1ac5b0",
   "memory_edit_label": "51a99fe576a009032b369633a9ee60ff3c7dda9142ddf94383607ed886ec26a3",
-  "memory_edit_title": "d0c3cd23e6a59ef4e2ed2bc93c8b115b4a28656319a6f3fc4ffcf949ce64d2ae",
+  "memory_edit_title": "7b384c4bdd9fbb10e12499a8a77de05c7b7ca8de377f7f6007ca2edb80796079",
   "memory_empty_off": "432467edd1e651cff059c20c613c1679c9adf79a40c22710fa3013a65e8a3720",
   "memory_empty_on": "036ea2f9d9d52b0be4d909b2dc97dd155d16b5ef2cf965586c444b71c4e5770e",
   "memory_fact_options": "afca0a0db6d8b985e7263c1cc577222ecabc29e2755967fb1b82de8a97741649",
@@ -24,7 +24,7 @@
   "memory_sensitive_note": "303bcde2d6da4e207353284a818ddc4fc0121c75a88e7d3d3b7ef8c42269a468",
   "memory_source_chat": "be04f82de39134f00aa813a0c73057f8999db40db2daf605de5e2e4dd3894b8e",
   "memory_source_noticed": "e50d77a59d290a49861e5ccada9811d43e53d54a9fc7c47bac95115eb5766ce9",
-  "memory_source_onboarding": "177c53fa4f67908acca642160321ec13cb932c1f871e607458046d370eefc121",
+  "memory_source_onboarding": "ea526ce948e7cf564b3201294a0dc21ea51e6b63f54071f7b89f50636cb0737a",
   "memory_source_session": "5acdd05c0c2bd7af5a0ee81792b55f50c48b47d917d90397720947e23a3d0338",
   "memory_source_you": "9c84655eda9cc5380ec303345851625191ca228b33a6d1b95324139574cc9ee7",
   "memory_undo": "ba0a54a1660b3be8b6a4ab9c9fa7f4c94ffb64e89b1d34496b71ef3509befbe3",
@@ -54,7 +54,7 @@
     <string name="memory_source_noticed">Observé dans ton activité</string>
     <string name="memory_source_you">Tu nous l’as dit</string>
     <string name="memory_source_chat">Issu d’une discussion</string>
-    <string name="memory_source_onboarding">Lors de tes premiers pas</string>
+    <string name="memory_source_onboarding">Lors de la prise en main</string>
     <string name="memory_source_session">Issu d’une séance d’étude</string>
     <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
     <string name="memory_fact_source">%1$s · %2$s</string>
@@ -63,7 +63,7 @@
     <string name="memory_edit">Modifier</string>
     <string name="memory_delete">Supprimer</string>
     <!-- Title of the dialog that edits one fact Zoonk remembers about the learner. -->
-    <string name="memory_edit_title">Modifier une information</string>
+    <string name="memory_edit_title">Modifier ce souvenir</string>
     <string name="memory_edit_description">Formule-le de façon à ce que ça te corresponde.</string>
     <string name="memory_edit_label">Ce que Zoonk retient</string>
     <string name="memory_download">Télécharger ma mémoire</string>

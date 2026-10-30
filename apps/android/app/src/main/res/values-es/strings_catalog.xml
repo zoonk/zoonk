@@ -60,12 +60,12 @@
   "catalog_not_found_title": "5be4765d71988aed3f97a3fcb862b085a2c08cf0ec12e26d04ac9b1de5dd39aa",
   "catalog_open_course": "8f698c4e231c46e4dce0c0e9f32bc56cea6f163d485741e7201a08ed47a285d7",
   "catalog_outcomes": "b58437d2d14e999b6a511e00d2838eb8905125c0f54d5af14c91d059a55fbf27",
-  "catalog_outline": "20392136a115e2c5fb8a3baeae0a2469c1dd906847b787448413719d6a93bab8",
+  "catalog_outline": "0af51b6d4a6d5446b2adb28f9cd5cf1cf8d81ff9359302850b272d862a43071b",
   "catalog_outline_plan_dated": "0906016540644619d0178910cf6daa350cb4884ef62bf1ca65cea18c63461375",
   "catalog_outline_plan_undated": "92a35cc375794e0311b1e63cbc145bb5c2dde6181c21d622812455c339788e1e",
   "catalog_outline_unwritten": "3b23c4a805b62f9d9170ae4919ea42b719a4a4457d02ddf24253b1237f001735",
   "catalog_plan_caption": "45a21cdefa6daf3882d1ef1f45ab40eba82e015157573d463ee103ec9a5900d8",
-  "catalog_plan_dated_fitting": "2335f6cfa9336c7a643b28a8952f5d9447e2c79040502698134e0449e927651c",
+  "catalog_plan_dated_fitting": "950f73c89c476d8c0de6e6067a1def863b86a21dfc69bfe9d95655f02f714bb6",
   "catalog_plan_dated_quick": "02c133c19f093efc396fd9f1ad8d67f8da3964b5315bec6bc6db39aaa071af9d",
   "catalog_plan_dated_some_written": "3bfa85e83ece9b1a0c684e309952f7fc7345deb9734954ffdf13f629953bfe81",
   "catalog_plan_dated_written_later": "05480ae1da9208b22e28061c8656fa31823e1e447d720e4971bbe90258283114",
@@ -223,10 +223,11 @@
         <item quantity="other">hasta el %1$s, con %2$s al día de lunes a viernes y los temas más frecuentes primero: %3$d lecciones que ya están en el curso y otras que se preparan a medida que llegas a ellas.</item>
     </plurals>
     <string name="catalog_plan_dated_quick">hasta el %1$s, con %2$s al día de lunes a viernes, en lecciones rápidas sobre los temas más frecuentes. Las lecciones completas llegan cuando hay más tiempo.</string>
+    <!-- %1$s is a date, such as "June 5"; %2$s a daily study time; %3$s how many of the course's lessons fit, a number. -->
     <plurals name="catalog_plan_dated_fitting">
-        <item quantity="one">para %1$s, con %2$s al día, de lunes a viernes y empezando por lo que más se pregunta: %3$s de %4$d lección del curso.</item>
-        <item quantity="many">para %1$s, con %2$s al día, de lunes a viernes y empezando por lo que más se pregunta: %3$s de %4$d lecciones del curso.</item>
-        <item quantity="other">para %1$s, con %2$s al día, de lunes a viernes y empezando por lo que más se pregunta: %3$s de %4$d lecciones del curso.</item>
+        <item quantity="one">para el %1$s, con %2$s al día, de lunes a viernes, empezando por lo que más suele salir: %3$s de un total de %4$d lección del curso.</item>
+        <item quantity="many">para el %1$s, con %2$s al día, de lunes a viernes, empezando por lo que más suele salir: %3$s de un total de %4$d lecciones del curso.</item>
+        <item quantity="other">para el %1$s, con %2$s al día, de lunes a viernes, empezando por lo que más suele salir: %3$s de un total de %4$d lecciones del curso.</item>
     </plurals>
     <string name="catalog_plan_not_all_fits">No da tiempo a todo antes de esa fecha. Antes de empezar, verás cuánto cabe según tu nivel y el tiempo del que dispones.</string>
     <string name="catalog_plan_every_topic">Son todos los temas del curso, en profundidad.</string>
@@ -244,7 +245,8 @@
     <string name="catalog_workload_unwritten_note">Las lecciones pendientes se preparan cuando llegas a ellas.</string>
     <string name="catalog_audience">A quién va dirigido</string>
     <string name="catalog_outcomes">Qué podrás hacer</string>
-    <string name="catalog_outline">Contenido del curso</string>
+    <!-- Heading over the list of a course's chapters and lessons. Not the learner's study plan. -->
+    <string name="catalog_outline">Índice del curso</string>
     <plurals name="catalog_chapters">
         <item quantity="one">%1$d capítulo</item>
         <item quantity="many">%1$d capítulos</item>

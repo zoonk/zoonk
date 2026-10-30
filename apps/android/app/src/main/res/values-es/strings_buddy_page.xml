@@ -18,7 +18,7 @@
   "buddy_page_first_lesson": "4d8d190f3f695c1ef4693a765502ee8443f4a6233e5c21ac65a7018e7e3045b4",
   "buddy_page_first_mistake": "caf075b4d52385399c4646b941ac9e7386569ae9a50eeaac24eff83de13bc93d",
   "buddy_page_first_mock": "329a465513fbadfe5a63696acfb932ece7171659d685344e24a3b223c3d4d837",
-  "buddy_page_first_pattern": "7770bcbfb227e0100ff4ac06d920c904714bfb4be0b9b09ade6d3e1e8a950aa7",
+  "buddy_page_first_pattern": "23e982622893f17db2086772b0bb55c4dd611a4df6c9002ddd68f7bd062e97a5",
   "buddy_page_first_review": "1e94dd1c7467f4426848e83b0eaaeb826d12cf1d9f4abaeae88d21e16a4e9ff2",
   "buddy_page_first_steps": "491e9d3f188d54e5fc13e92cfddadcaec6d758fb2cd8ab96e8df19c724dde0a9",
   "buddy_page_first_steps_done": "5e44c008436a4d3245e73a7f73112c13197695fb2b0d5fbdec2ba2140e3baee7",
@@ -98,7 +98,9 @@
     <string name="buddy_page_first_lesson">Completa tu primera lección</string>
     <string name="buddy_page_first_review">Haz tu primer repaso</string>
     <string name="buddy_page_first_mistake">Corrige tu primer error</string>
-    <string name="buddy_page_first_pattern">Practica un patrón</string>
+    <!-- A first-steps mission: practice a kind of mistake the learner keeps making. -->
+    <string name="buddy_page_first_pattern">Practica para corregir un error recurrente</string>
+    <!-- A first-steps mission. %1$s is the learner's buddy's name. -->
     <string name="buddy_page_first_ask">Pregúntale algo a %1$s</string>
     <string name="buddy_page_first_essay">Escribe tu primera redacción</string>
     <string name="buddy_page_first_call">Haz tu primera llamada</string>

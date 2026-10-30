@@ -89,6 +89,7 @@
         <item quantity="other">by %1$s, at %2$s a day, Monday to Friday, what comes up most first: %3$d lessons already in the course, and more written as you reach them.</item>
     </plurals>
     <string name="catalog_plan_dated_quick">by %1$s, at %2$s a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there\'s more time.</string>
+    <!-- %1$s is a date, such as "June 5"; %2$s a daily study time; %3$s how many of the course's lessons fit, a number. -->
     <plurals name="catalog_plan_dated_fitting">
         <item quantity="one">by %1$s, at %2$s a day, Monday to Friday, what comes up most first: %3$s of the course\'s %4$d lesson.</item>
         <item quantity="other">by %1$s, at %2$s a day, Monday to Friday, what comes up most first: %3$s of the course\'s %4$d lessons.</item>
@@ -112,6 +113,7 @@
     <string name="catalog_audience">Who it\'s for</string>
     <string name="catalog_outcomes">What you\'ll be able to do</string>
 
+    <!-- Heading over the list of a course's chapters and lessons. Not the learner's study plan. -->
     <string name="catalog_outline">Course outline</string>
     <plurals name="catalog_chapters">
         <item quantity="one">%1$d chapter</item>

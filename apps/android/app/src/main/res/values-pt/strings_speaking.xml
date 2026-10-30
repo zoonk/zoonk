@@ -23,7 +23,7 @@
   "speaking_plus": "1217e5e372b07567de6281ae8a0fa0329c19771adc0d7dbeedfae45b3a0733e5",
   "speaking_prep": "bac9cbf55aeb53107fb1e0da911a0aefc775ba9cc9b809e60b8000b93764c5d9",
   "speaking_prep_shared": "799db57107a70ab68f9b42480320fa3b2877a3eae4a3c6433d598e5f693160cb",
-  "speaking_rated_on": "844685125821545f8c024f302b50b0cc587d857dc542f44f11f6cb5bcf41543b",
+  "speaking_rated_on": "e5b95d23a64ac030a5458729366fdd5a68a677ffd23feb5887806c6e2cf9b153",
   "speaking_row": "8aea7c7c4284e0cb5cc68dbf56c04362eacb812747382973d4196e590741da69",
   "speaking_section": "e6e382d4a2e8d81bef09fbd6539ef1a5d73b31b55ee9be5db1a011808b4ed780",
   "speaking_start_failed": "dfb15d0c587d1796c3e511fd22d09222020816af82e211a2cdea3df9aeff0bfd",
@@ -71,7 +71,7 @@
     <string name="speaking_prep_shared">%1$s para preparar as tarefas %2$s</string>
     <string name="speaking_prep">%1$s para se preparar</string>
     <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
-    <string name="speaking_rated_on">A avaliação considera %1$s.</string>
+    <string name="speaking_rated_on">Avaliado com base em %1$s.</string>
     <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s tarefas em uma conversa</string>
     <!-- A band is the exam's score for each criterion. -->

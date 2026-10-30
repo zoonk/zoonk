@@ -21,7 +21,7 @@
   "player_back": "0a70e5bcd7acf620cfd8dfcdde649947d1a120d37568ec0e959778a6b5aac4f2",
   "player_back_to_chapter": "b13d90c1ba4ce0653c8c110cb87b55b6cd46e2c4d9785f0bf2a38e22469da5b9",
   "player_back_to_unit": "118935561852a046c1413926a8d231b0af6aadb9698f60ddd52e5832517da8ad",
-  "player_build_my_plan": "02277a7dc28e85d5ede500f49586f1fc3a8692566c0fc641196a48cbcd6e149e",
+  "player_build_my_plan": "dcbaff31ceb026f7a3f0716065edc5510745f53978ab7fbefb6cb5b9972d8fcd",
   "player_can_talk_now": "bab11818c6669056c15f0d514d9d1669fff2230ebcd80f0e78950ce2dac42560",
   "player_cant_talk_now": "caba6fe3a67e472c2b0c2035d1a4e3ab44da83a2f386e1ba7c80781c236cdd38",
   "player_cant_write_now": "778dd85d71021e72ea9b99487b511f317c1f3be323c0dcc4c81b115a4091b9d1",
@@ -96,7 +96,7 @@
   "player_not_written_description": "d3f2b7ddd13cd5d6b19cc13c54f36fd83e411a75cc9dcafdba0e98ee2e623ae2",
   "player_not_written_title": "a6badd0ae9d5a05c2c4c4523e0c8286f895eef504a8c30d66c27d0f211775312",
   "player_nothing_left_description": "5f3ec79504f03a69d0f1ae162f4b3e752f1c07e70b6b600fb65b676f68c79c0e",
-  "player_nothing_left_title": "c0b16cddab711190c257beccb198a40c2952bba0f9867121e22c9141e2dce5c8",
+  "player_nothing_left_title": "40b78869fb051672661751af63fe21dc5defbe2d35291cef57ea85b5ac2bbaca",
   "player_notice_answer_not_saved": "56f75c60eb844d8849658737700fbee81abc5e2ba9763189647c760292172e78",
   "player_notice_picture_ready": "dcf5e54e5edbd59bab7c7e850bd4d5d0f4db789a877675e1d30d4d2c32a8c8fe",
   "player_notice_self_correct": "99d65f95ef078e827584e8187c5647e4dc2548b05b1ddab02624725bbfccfc27",
@@ -117,7 +117,7 @@
   "player_ready_instead": "f626c6460f1b206e11d741aed0d14ccd19566f6365a3356c94967e272677a3d2",
   "player_ready_while_waiting": "38286d6278dabf0e2d7c31b160b4d060fe3b955b5eaa8251d0319f5eade8437a",
   "player_review_ideas": "327ae348479aa648083730680f21250a27967744c649ba1df33e6de8b29a662c",
-  "player_review_on": "a8153f82dba84c476047067081e6631b693f85f246ecf9b20eac3edae02d9510",
+  "player_review_on": "961f0a7e19c01d58127edcb29c986d4f6660ea13b156b3b5db5faeb6bd28db89",
   "player_save_failed": "d1987bd52db878f734aa87a28d732162709154e4640d35958dd95a93d84ac4fa",
   "player_saved_to_mistakes": "6e7efaa738e99ebcdb1c825a53451217d765133ccd304cbc1699003f4afb6a84",
   "player_saved_to_mistakes_back_at_end": "1bd7248c1b827649fad2fcd0eb69717e84794c551812219e2ccd8499b2545ada",
@@ -349,7 +349,8 @@
     <string name="player_already_knew">Tu savais déjà ça</string>
     <string name="player_saving_progress">Enregistrement de ta progression…</string>
     <string name="player_save_failed">L’enregistrement a échoué. Tes réponses sont conservées.</string>
-    <string name="player_review_on">À réviser le %1$s</string>
+    <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
+    <string name="player_review_on">Révision le %1$s</string>
     <string name="player_next_lesson">Leçon suivante</string>
     <string name="player_stop_for_today">Arrêter pour aujourd’hui</string>
     <string name="player_see_todays_summary">Voir le bilan du jour</string>
@@ -369,9 +370,9 @@
         <item quantity="other">Leçon %1$s sur %2$s</item>
     </plurals>
     <string name="player_guest_save_note">Enregistre ta progression et une courte révision t’aidera à retenir ce que tu as appris.</string>
-    <string name="player_build_my_plan">Créer mon plan</string>
+    <string name="player_build_my_plan">Préparer mon plan</string>
     <string name="player_create_account_to_save">Créer un compte pour enregistrer</string>
-    <string name="player_nothing_left_title">Plus aucune question</string>
+    <string name="player_nothing_left_title">Tu n’as plus de questions auxquelles répondre</string>
     <string name="player_nothing_left_description">Termine pour voir ton résultat.</string>
     <string name="player_finish">Terminer</string>
 </resources>

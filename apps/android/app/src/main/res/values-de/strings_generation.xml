@@ -44,7 +44,7 @@
   "generation_skills_line_3": "30e916f797b32a089090db27deb80dba469a9a18e8cf12e0ef0a76cb54e3ca64",
   "generation_try_again": "bc5fce83193424c9523939e76345035c100653e506b21aaea81428577e0bcb1b",
   "generation_understanding": "03f5da419c4027f382d827bf8bbff0226313858322634e007b2064ac8c7bdb4e",
-  "generation_understanding_dates": "05a18a22750192def925ff7e894439577e2d51c7215d750fa657b4a199c14eaf",
+  "generation_understanding_dates": "d7182cc2b874f26be2ffd7003e834c3552f0f5727dde04143676efaf463a4143",
   "generation_understanding_dates_line_1": "0f194def4ba50fc01cc7b528de1a96813ca07a690760de8ce7aa05d4ca7863ec",
   "generation_understanding_dates_line_2": "f48b008a5175360c376741e7af5b725285938e12af467c6ea6e4c5dc78dd1afa",
   "generation_understanding_read": "c7ab4d2e3eda5b65c10676e592dea54b1e2e1066ab7b6b55b0fa2729f1f4964a",
@@ -92,7 +92,7 @@
     <string name="generation_understanding_read_line_1">Wir lesen, was du geschrieben hast…</string>
     <string name="generation_understanding_read_line_2">Wir finden heraus, was du erreichen möchtest…</string>
     <string name="generation_understanding_read_line_3">Wir prüfen, ob es um eine Prüfung, eine Sprache oder ein Fach geht…</string>
-    <string name="generation_understanding_dates">Wir prüfen die Prüfungstermine</string>
+    <string name="generation_understanding_dates">Wir sehen uns die Prüfungstermine an</string>
     <string name="generation_understanding_dates_line_1">Wir sehen im Prüfungskalender nach…</string>
     <!-- Shown while reading an exam's calendar. "Your year" is the year the learner takes the exam. -->
     <string name="generation_understanding_dates_line_2">Wir suchen die Termine für dein Prüfungsjahr…</string>

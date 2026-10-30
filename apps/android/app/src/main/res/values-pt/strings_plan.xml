@@ -55,7 +55,7 @@
   "plan_challenge_left_out": "b7e0911d53ea18b5d526a902aa12aa4fc0516c5c0c669d354bd1fbb7dbe55c9a",
   "plan_challenge_next_session": "52db1943e627b5a9dca06d92eed62366570fd00772e7fb0db47f0b2df4e146eb",
   "plan_challenge_opens_after_lessons": "ea550065ad7b470b5b73ec5923866f2230fa1dc92d896cb316cac1d68bac5922",
-  "plan_challenge_won": "2354389de1651e82098e5e37237b863aab95fa82583a5c3169432aa551981fdc",
+  "plan_challenge_won": "5d29f10f16b42e06c2e46302282923ffb5ea297d688aec780436df66c61cd3d7",
   "plan_change_about_more_fit": "96606ef501c1afbbcecfbc6088847c60a760d2e95ddf49fb2136f4b93c7c91a8",
   "plan_change_about_more_lessons": "730c4566a7d02a47c856732f906cf7dec21fe075dcd10b02e749a5f6a784d722",
   "plan_change_activities_back": "4eb062199cd512de928123a70cf3352713bea2a5e53b8c11cfc81fda29f9d2df",
@@ -287,7 +287,7 @@
   "plan_focus_already_in": "3e41f77c6cc7bf9db1f68be58b9d118173dd54b7ebdbb837ec2273368f8312f9",
   "plan_focus_cant_move": "0c7ce14bbd6f271767c9f9be37138b0ae15ee56ee578559feb446778e5e1bd78",
   "plan_focus_includes": "d0f022780598b9984f866c7e168346eddf73737d04b3bb59b20599eee5aaf042",
-  "plan_focus_on_these": "71bba09c45ec4485bb4938dae4509de75f357a0a5dd8551041a8f1f165ba773d",
+  "plan_focus_on_these": "17017c031004f20eec813197276233dff30310ea73a8c89f4807585f496407a2",
   "plan_focus_only": "c4a6843a70053fbdb4f90888c6839a44cfba9873ffba17bb0765a599a75c6822",
   "plan_fridays": "fbc8fe30a5f764e8ce9ab801e84449ba75ad090cc698c7f083dbaedb71ace6b8",
   "plan_full_course": "4eed2bbba60b7d4344863bf97cd9cfc000e1fd0d45f420634dafe627e57a2660",
@@ -366,7 +366,7 @@
   "plan_note_covers_everything": "cc8885c1a8e47b56c5d02a780eeebefbeb7be49f478fc8be190c11fd8f17ca1d",
   "plan_note_every_topic": "3d556437c1b64def01d9bb83b6dff8e07ca79c9b6a1f584edd23e44c7fdc4062",
   "plan_nothing_planned": "713774bc56350e1b5ac12ff8f7d97bcafa14d01a39dacac9bcf83ec94601d248",
-  "plan_nothing_planned_until_resume": "64323f155219029349b1576087997b0de16fbeace591d000350cc9846a805dbc",
+  "plan_nothing_planned_until_resume": "3e6c46d40d2ddbdcb79beadb5baa875b0bb335f42cfd61afcfd44e71a0f03303",
   "plan_options": "f3cee82c74a292395099a5d18d2a09eade63ced448764e4e972d49c2e215faec",
   "plan_other_options": "3202ecd49bcf0ff9637fdd370f176f20fecea3d1e85223560eb5ce93ffb8008a",
   "plan_pace": "f78f648abe914c866f8ec47d184e70df921dcbad17eea9cd49cd9a35328575e1",
@@ -472,7 +472,7 @@
   "plan_still_skills_solid": "785c35be4312337a1908c6d225a1f190655716b5527b4bbb7b59627dd4eccf73",
   "plan_still_time_in_plan": "0212384956609d0ebffdeb49ccc71359e59a3f1adb2a87ff684283a0a3c86a1c",
   "plan_still_to_do": "632d1275b0e1b790d0bfc3baf2fcd15ffabc02f0d3f43ffb7809310fd7847959",
-  "plan_still_topics_solid": "36a7c320a89b9b80d65ab6b6b97b127ae824d8d23718c5daca1e589bd066f405",
+  "plan_still_topics_solid": "543b297b434a6f4d56325e61c3aa53de4be36aaf8adadb3ec3c4338f3e0b05a9",
   "plan_study_days": "4a96a21f25c8f91cb0c17566b29605abbd00d93441eda44bdf99f4bf35e72999",
   "plan_study_everything": "1599d98b08258d52d53ae77f6c008764b14ea954357c5c9e03312cd3f110d85b",
   "plan_study_everything_after_exam": "8e33d6189c1666328c2533fa732a1d7b495dfa1d268a941af79128d52374a736",
@@ -712,7 +712,7 @@
     <string name="plan_unit_lessons_being_written">Mais aulas desta unidade estão sendo criadas.</string>
     <string name="plan_phase_lessons_being_written">Mais aulas desta fase estão sendo criadas.</string>
     <!-- Status beside a phase challenge the learner has won. -->
-    <string name="plan_challenge_won">Vitória</string>
+    <string name="plan_challenge_won">Você venceu</string>
     <string name="plan_challenge_next_session">Na sua próxima sessão</string>
     <string name="plan_challenge_after_previous">Depois do desafio anterior</string>
     <string name="plan_challenge_opens_after_lessons">Disponível após as aulas desta fase</string>
@@ -783,7 +783,8 @@
     <string name="plan_pace_value_on_pace">No ritmo</string>
     <string name="plan_time_a_day">%1$s por dia</string>
     <string name="plan_nothing_planned">Nada planejado</string>
-    <string name="plan_nothing_planned_until_resume">Nada está planejado até você retomar o plano.</string>
+    <!-- "It" is the learner's paused goal. -->
+    <string name="plan_nothing_planned_until_resume">Nada fica planejado até você retomar a meta.</string>
     <plurals name="plan_lessons_left">
         <item quantity="one">Falta %d aula</item>
         <item quantity="many">Faltam %d aulas</item>
@@ -933,7 +934,8 @@
     <string name="plan_measure_full_reviews">Seu preparo soma o que você sabe em cada matéria, levando em conta o peso de cada uma na prova. O preparo em uma matéria é calculado com base no quanto você estudou e no quanto sabe: respostas certas, memória e revisões completas. Tópicos mais difíceis e mais frequentes têm mais peso. Uma matéria fica abaixo de 75%% até você responder perguntas sobre esses tópicos e fazer uma revisão completa no formato da sua prova.</string>
     <string name="plan_measure_mocks">Seu preparo soma o que você sabe em cada matéria, levando em conta o peso de cada uma na prova. O preparo em uma matéria é calculado com base no quanto você estudou e no quanto sabe: respostas certas, memória e simulados. Tópicos mais difíceis e mais frequentes têm mais peso. Uma matéria fica abaixo de 75%% até você responder perguntas sobre esses tópicos e fazer um simulado.</string>
     <string name="plan_still_to_do">Ainda falta</string>
-    <string name="plan_still_topics_solid">Chegue ao nível Firme nos tópicos de maior peso</string>
+    <!-- An item in the "Still to do" list, worded like the others, such as "Take your first mock exam". -->
+    <string name="plan_still_topics_solid">Chegar ao nível Firme nos tópicos com mais peso</string>
     <string name="plan_still_skills_solid">Chegar a Firme em todas as habilidades</string>
     <string name="plan_still_time_in_plan">Cerca de %1$s no seu plano</string>
     <string name="plan_still_keep_fresh">Manter na memória o que você estudou</string>
@@ -1261,6 +1263,7 @@
     <string name="plan_weekend_time_differs">Tempo diferente nos fins de semana</string>
     <string name="plan_time_on_weekends">Tempo nos fins de semana</string>
     <string name="plan_exam_choice_left_out">Escolha a prova que você vai fazer. Até lá, seu plano deixa %1$s de fora.</string>
+    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s: qual você vai fazer?</string>
     <string name="plan_exam_choice_until_you_pick">Até você escolher, seu plano deixa %1$s de fora.</string>
     <string name="plan_prerequisites">Bases</string>
@@ -1448,6 +1451,7 @@
     <string name="plan_study_everything_goal_description">Todas as partes da sua meta, no seu ritmo e sem data para terminar.</string>
     <string name="plan_sheet_done">Concluído</string>
     <string name="plan_choose_focus">Escolha onde focar</string>
+    <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
     <string name="plan_where_to_focus">Onde focar</string>
     <string name="plan_where_to_focus_description">As matérias que você escolher vêm primeiro e são estudadas com mais profundidade.</string>
     <string name="plan_take_short_test">Fazer um teste rápido</string>
@@ -1457,7 +1461,8 @@
     <string name="plan_focus_only">Apenas %1$s</string>
     <string name="plan_focus_already_in">Nada mudou: todas as aulas de %1$s já estão no seu plano.</string>
     <string name="plan_focus_cant_move">Nada mudou: as aulas de %1$s já começam o mais cedo possível, depois das aulas que servem de base, e seu tempo não comporta mais aulas. Com mais tempo por dia, mais aulas cabem no plano.</string>
-    <string name="plan_focus_on_these">Focar nestas</string>
+    <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
+    <string name="plan_focus_on_these">Focar nessas matérias</string>
     <string name="plan_saving">Salvando…</string>
     <string name="plan_couldnt_check_changes">Não foi possível conferir o que muda.</string>
     <string name="plan_then_covers_everything">Assim, seu plano cobre tudo em profundidade.</string>

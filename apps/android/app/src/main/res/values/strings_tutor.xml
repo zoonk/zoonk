@@ -35,6 +35,7 @@
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="tutor_empty_ai">%1$s is an AI study buddy and can make mistakes.</string>
     <string name="tutor_guest_title">Create a free account to ask questions</string>
+    <!-- Loading the written chat with the learner's buddy. Not a speaking call. -->
     <string name="tutor_loading">Loading the conversation…</string>
 
     <string name="tutor_get_answer">Get answer</string>
