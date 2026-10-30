@@ -173,6 +173,14 @@ function causeEffectIssues(fields: CauseEffectFields) {
     }) && issue("answerMismatch", "fields.links", "A cause is dated after its effect"),
     fields.nodes.some((node) => !linked.has(node.id)) &&
       issue("inconsistentFields", "fields.nodes", "Every node must be part of a link"),
+    fields.nodes.some(
+      (node) => node.year !== undefined && node.label.includes(String(node.year)),
+    ) &&
+      issue(
+        "inconsistentFields",
+        "fields.nodes",
+        "A label repeats its year, which the card already shows: leave the date out of the label",
+      ),
   ].filter((item) => item !== false);
 }
 

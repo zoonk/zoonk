@@ -255,6 +255,19 @@ describe(validateActivity, () => {
     expect(issueCodes(slowRegex)).toContain("inconsistentFields");
   });
 
+  it("keeps a cause-and-effect card's year out of its label, as the card already shows it", () => {
+    const dated = structuredClone(fixtures.causeEffectChain);
+
+    dated.fields.nodes = dated.fields.nodes.map((node) =>
+      node.id === "dust" ? { ...node, label: "Dust storms (1934)" } : node,
+    );
+
+    expect(validateActivity(dated)).toMatchObject({
+      issues: [{ code: "inconsistentFields", path: "fields.nodes" }],
+      ok: false,
+    });
+  });
+
   it("asks a geometry board only for numbers that stay the same as corners move", () => {
     const board = fixtures.geometryBoard;
 
