@@ -1131,3 +1131,12 @@ final class LessonVerdictTests: XCTestCase {
     XCTAssertEqual(LessonVerdict.of(result, step: step).title.key, "Not quite")
   }
 }
+
+final class LessonTodayChoicesTests: XCTestCase {
+  func testADayChoiceLastsTheLearnersOwnDay() throws {
+    let saoPaulo = try XCTUnwrap(TimeZone(identifier: "America/Sao_Paulo"))
+    let lateEvening = try XCTUnwrap(ISO8601DateFormatter().date(from: "2026-10-31T02:30:00Z"))
+
+    XCTAssertEqual(LessonTodayChoices.day(of: lateEvening, in: saoPaulo), "2026-10-30")
+  }
+}

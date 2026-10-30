@@ -19,8 +19,13 @@ struct LessonTodayChoices: Sendable {
     write(choice, chosen ? today() : nil)
   }
 
+  /// The learner's own calendar day, as main keys it: ISO 8601 alone would read it in GMT.
+  static func day(of date: Date, in timeZone: TimeZone = .current) -> String {
+    date.formatted(Date.ISO8601FormatStyle(timeZone: timeZone).year().month().day())
+  }
+
   static let standard = LessonTodayChoices(
-    today: { Date.now.formatted(.iso8601.year().month().day()) },
+    today: { day(of: .now) },
     read: { UserDefaults.standard.string(forKey: $0.rawValue) },
     write: { choice, value in UserDefaults.standard.set(value, forKey: choice.rawValue) })
 }
