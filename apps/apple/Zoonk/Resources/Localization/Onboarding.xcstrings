@@ -2211,13 +2211,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Algumas perguntas rápidas sobre a área, para que seu plano pule o que você já sabe. Não tem pontuação, e tudo bem responder “Ainda não sei”."
+                  "value" : "Algumas perguntas rápidas sobre %lld área, para seu plano pular o que você já sabe. Não tem pontuação, e tudo bem responder “Ainda não sei”."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Algumas perguntas rápidas sobre as %lld áreas, para que seu plano pule o que você já sabe. Não tem pontuação, e tudo bem responder “Ainda não sei”."
+                  "value" : "Algumas perguntas rápidas sobre as %lld áreas, para seu plano pular o que você já sabe. Não tem pontuação, e tudo bem responder “Ainda não sei”."
                 }
               }
             }
@@ -2998,13 +2998,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Basé sur ta réponse. Ce résultat s’affine chaque jour."
+                  "value" : "À partir de %lld réponse. La précision s’améliore chaque jour."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Basé sur tes %lld réponses. Ce résultat s’affine chaque jour."
+                  "value" : "À partir de %lld réponses. La précision s’améliore chaque jour."
                 }
               }
             }

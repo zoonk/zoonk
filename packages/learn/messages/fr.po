@@ -8669,7 +8669,7 @@ msgstr "Ton examen blanc a défini ton point de départ"
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "DYttBE"
 msgid "Based on {count, plural, one {your # answer} other {your # answers}}. It gets more accurate every day."
-msgstr "Défini à partir de {count, plural, one {ta réponse} other {tes # réponses}}. Il s’affine chaque jour."
+msgstr "Basé sur {count, plural, one {ta # réponse} other {tes # réponses}}. Cela devient plus précis chaque jour."
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "HiDu8F"
