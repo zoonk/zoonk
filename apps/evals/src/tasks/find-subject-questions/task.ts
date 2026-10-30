@@ -4,7 +4,7 @@ import {
   type FindSubjectQuestionsParams,
   type SubjectQuestionsFinding,
   findSubjectQuestions,
-} from "@zoonk/ai/tasks/v2/research/find-subject-questions";
+} from "@zoonk/ai/tasks/research/find-subject-questions";
 import { TEST_CASES } from "./test-cases";
 
 export type FindSubjectQuestionsExpected = {

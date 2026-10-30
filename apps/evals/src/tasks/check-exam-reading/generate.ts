@@ -3,7 +3,7 @@ import {
   type ExamReadingFindings,
   type ReadSubject,
   checkExamReading,
-} from "@zoonk/ai/tasks/v2/research/check-exam-reading";
+} from "@zoonk/ai/tasks/research/check-exam-reading";
 import {
   type BlueprintContent,
   type ReadingProblem,

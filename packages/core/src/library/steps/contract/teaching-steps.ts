@@ -1,4 +1,4 @@
-import { lessonVisualSchema } from "@zoonk/ai/tasks/v2/visuals/schema";
+import { lessonVisualSchema } from "@zoonk/ai/tasks/visuals/schema";
 import { z } from "zod";
 import { exploreActivitySchema } from "../../activities/activity-templates";
 import {

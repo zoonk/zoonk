@@ -1,4 +1,4 @@
-import { type NumericEntry } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type NumericEntry } from "@zoonk/ai/tasks/items/schemas";
 import { countDecimalPlaces, isRoundedAnswer } from "@zoonk/utils/rounded-answer";
 import { withinTolerance } from "../../activities/templates/_utils/pattern-checks";
 import { isClose } from "../../activities/templates/_utils/template-helpers";

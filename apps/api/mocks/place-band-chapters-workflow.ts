@@ -1,4 +1,4 @@
-import { placeChaptersAfterStep } from "../src/workflows/v2/courses/steps/course-outline-steps";
+import { placeChaptersAfterStep } from "../src/workflows/courses/steps/course-outline-steps";
 
 export async function placeBandChaptersWorkflow(
   input: Parameters<typeof placeChaptersAfterStep>[0],

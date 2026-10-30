@@ -1,4 +1,4 @@
-import { definitionNamesWord } from "@zoonk/ai/tasks/v2/language/language-lesson-rules";
+import { definitionNamesWord } from "@zoonk/ai/tasks/language/language-lesson-rules";
 import {
   type MediaAsset,
   type Source,

@@ -3,7 +3,7 @@ import {
   type EssayGrade,
   type GradeEssayParams,
   gradeEssay,
-} from "@zoonk/ai/tasks/v2/grading/grade-essay";
+} from "@zoonk/ai/tasks/grading/grade-essay";
 import { scoreEssayGrade } from "./scorer";
 import { type GradeEssayExpected, TEST_CASES } from "./test-cases";
 

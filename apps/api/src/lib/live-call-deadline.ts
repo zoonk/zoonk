@@ -1,4 +1,4 @@
-import { liveCallDeadlineWorkflow } from "@/workflows/v2/calls/live-call-deadline-workflow";
+import { liveCallDeadlineWorkflow } from "@/workflows/calls/live-call-deadline-workflow";
 import { start } from "workflow/api";
 
 /** Started before Connect answers, so the server hangs the call up on time. */

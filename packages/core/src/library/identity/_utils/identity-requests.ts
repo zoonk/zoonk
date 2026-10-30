@@ -1,4 +1,4 @@
-import { type LibraryIdentitySubject } from "@zoonk/ai/tasks/v2/identity/subject";
+import { type LibraryIdentitySubject } from "@zoonk/ai/tasks/identity/subject";
 import { type CourseLevel } from "@zoonk/db";
 import { type TextSearch } from "./text-search-sql";
 

@@ -1,4 +1,4 @@
-import { researchResultSchema } from "@/workflows/v2/research/research-result";
+import { researchResultSchema } from "@/workflows/research/research-result";
 import {
   examEditionSchema,
   examStructureSchema,

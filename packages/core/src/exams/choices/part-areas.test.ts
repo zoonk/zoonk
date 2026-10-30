@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { interpretPlanEdit } from "@zoonk/ai/tasks/v2/plans/edit-intent";
+import { interpretPlanEdit } from "@zoonk/ai/tasks/plans/edit-intent";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

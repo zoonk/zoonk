@@ -1,4 +1,4 @@
-import { normalizeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
+import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { parseLocalizedNumber } from "@zoonk/utils/localized-number";
 import { findMarkdownTables } from "@zoonk/utils/markdown-table";
 import { normalizeString } from "@zoonk/utils/string";

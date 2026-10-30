@@ -1,4 +1,4 @@
-import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { type TextLayout } from "@zoonk/utils/text-flaws";
 
 type ItemText = { layout: TextLayout; text: string };

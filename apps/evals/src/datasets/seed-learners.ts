@@ -1,6 +1,6 @@
-import { type MemoryFactText } from "@zoonk/ai/tasks/v2/memory/facts";
-import { localizeObject } from "@zoonk/db/seed/v2/localize";
-import { listSeedPersonas } from "@zoonk/db/seed/v2/personas";
+import { type MemoryFactText } from "@zoonk/ai/tasks/memory/facts";
+import { localizeObject } from "@zoonk/db/seed/localize";
+import { listSeedPersonas } from "@zoonk/db/seed/personas";
 import { isJsonObject } from "@zoonk/utils/json";
 
 /**

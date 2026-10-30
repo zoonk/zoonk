@@ -3,7 +3,7 @@ import {
   type CourseDetails,
   type CourseDetailsParams,
   generateCourseDetails,
-} from "@zoonk/ai/tasks/v2/courses/details";
+} from "@zoonk/ai/tasks/courses/details";
 import { prisma } from "@zoonk/db";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { revalidateCourseContent } from "../../cache/revalidate-course-content";

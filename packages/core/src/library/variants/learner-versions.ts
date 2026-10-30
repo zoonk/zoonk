@@ -1,5 +1,5 @@
 import "server-only";
-import { NO_INSTALL_TOOL_KEY } from "@zoonk/ai/tasks/v2/variants/step-variant";
+import { NO_INSTALL_TOOL_KEY } from "@zoonk/ai/tasks/variants/step-variant";
 import { type StepKind, type StepVariant, prisma } from "@zoonk/db";
 import { type PlanToolChoice, parsePlanSettings } from "../../plans/planner/plan-state";
 import { findLearnerLessonPlan } from "../_utils/learner-lesson-plan";

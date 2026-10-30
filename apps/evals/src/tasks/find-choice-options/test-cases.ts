@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type FindChoiceOptionsParams } from "@zoonk/ai/tasks/v2/research/find-choice-options";
+import { type FindChoiceOptionsParams } from "@zoonk/ai/tasks/research/find-choice-options";
 import { type FindChoiceOptionsExpected } from "./task";
 
 type FindChoiceOptionsCase = TestCase<FindChoiceOptionsExpected, FindChoiceOptionsParams>;

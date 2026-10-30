@@ -1,5 +1,5 @@
 import "server-only";
-import { getCourseDetailsPromptVersion } from "@zoonk/ai/tasks/v2/courses/details";
+import { getCourseDetailsPromptVersion } from "@zoonk/ai/tasks/courses/details";
 import { type Course, DbNull, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCourseContent } from "../../cache/revalidate-course-content";

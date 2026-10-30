@@ -1,5 +1,5 @@
 import "server-only";
-import { type GoalTutorLookUpResult } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
+import { type GoalTutorLookUpResult } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
 import { type Goal } from "@zoonk/db";
 import { getCatalogCourseProgress } from "../../../catalog/progress";
 import { listCurrentUserCourses } from "../../../courses/list-current-user-courses";

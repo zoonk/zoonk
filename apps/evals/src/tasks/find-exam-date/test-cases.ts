@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type FindExamDateParams } from "@zoonk/ai/tasks/v2/goals/find-exam-date";
+import { type FindExamDateParams } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { type FindExamDateExpected } from "./task";
 
 type FindExamDateCase = TestCase<FindExamDateExpected, FindExamDateParams>;

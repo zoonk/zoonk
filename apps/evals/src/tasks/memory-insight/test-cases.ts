@@ -1,6 +1,6 @@
 import { type TestCase } from "@/lib/types";
-import { type MemoryInsightParams } from "@zoonk/ai/tasks/v2/memory/insight";
-import { type MemoryInsightOutput } from "@zoonk/ai/tasks/v2/memory/insight-rules";
+import { type MemoryInsightParams } from "@zoonk/ai/tasks/memory/insight";
+import { type MemoryInsightOutput } from "@zoonk/ai/tasks/memory/insight-rules";
 
 export type MemoryInsightExpected = {
   kinds: MemoryInsightOutput["kind"][];

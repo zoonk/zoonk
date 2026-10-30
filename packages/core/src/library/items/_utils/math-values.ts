@@ -1,4 +1,4 @@
-import { type GeneratedMathProblem } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type GeneratedMathProblem } from "@zoonk/ai/tasks/items/schemas";
 import { evaluateFormula } from "../../activities/expression/evaluate-expression";
 
 const PLACEHOLDER = /\{(?<name>[A-Z_a-z]\w*)\}/gu;

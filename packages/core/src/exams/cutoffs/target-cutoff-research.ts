@@ -1,5 +1,5 @@
 import "server-only";
-import { type TargetCutoffFinding } from "@zoonk/ai/tasks/v2/research/find-target-cutoff";
+import { type TargetCutoffFinding } from "@zoonk/ai/tasks/research/find-target-cutoff";
 import { prisma } from "@zoonk/db";
 import { getCutoffTarget } from "./cutoff-target";
 

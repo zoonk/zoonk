@@ -2,7 +2,7 @@ import { type Task } from "@/lib/types";
 import {
   type SetupLessonOutlineParams,
   generateSetupLessonOutline,
-} from "@zoonk/ai/tasks/v2/curriculum/setup-lesson-outline";
+} from "@zoonk/ai/tasks/curriculum/setup-lesson-outline";
 import { type SetupLessonOutlineExpected, scoreSetupLessonOutline } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 

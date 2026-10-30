@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
-import { fixLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer/fix";
-import { checkLessonQuality } from "@zoonk/ai/tasks/v2/quality/lesson-check";
+import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
+import { fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
+import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import {

@@ -1,4 +1,4 @@
-import { type ExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
+import { type ExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { describe, expect, it } from "vitest";
 import { applyGraphCoverage, needsCoverageCheck } from "./add-coverage-skills";
 import { type GoalSkillGraph } from "./save-goal-skills";

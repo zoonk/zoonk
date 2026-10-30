@@ -1,7 +1,7 @@
-import { type ExtractedMemoryFact, extractMemoryFacts } from "@zoonk/ai/tasks/v2/memory/extraction";
-import { gateMemoryFact } from "@zoonk/ai/tasks/v2/memory/gate";
-import { reconcileMemoryFact } from "@zoonk/ai/tasks/v2/memory/reconcile";
-import { findSessionPatterns } from "@zoonk/ai/tasks/v2/memory/session-patterns";
+import { type ExtractedMemoryFact, extractMemoryFacts } from "@zoonk/ai/tasks/memory/extraction";
+import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
+import { reconcileMemoryFact } from "@zoonk/ai/tasks/memory/reconcile";
+import { findSessionPatterns } from "@zoonk/ai/tasks/memory/session-patterns";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";

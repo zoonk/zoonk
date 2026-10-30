@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type ExplainSpokenAnswerParams } from "@zoonk/ai/tasks/v2/language/explain-spoken-answer";
+import { type ExplainSpokenAnswerParams } from "@zoonk/ai/tasks/language/explain-spoken-answer";
 
 type ExplainSpokenAnswerInput = Omit<
   ExplainSpokenAnswerParams,

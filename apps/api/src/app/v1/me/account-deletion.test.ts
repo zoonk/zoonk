@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { del, list } from "@vercel/blob";
-import { type QuickExplanation } from "@zoonk/ai/tasks/v2/explain/quick-explanation";
+import { type QuickExplanation } from "@zoonk/ai/tasks/explain/quick-explanation";
 import { auth } from "@zoonk/auth";
 import { deleteUserDependenciesBeforeAuthDelete } from "@zoonk/auth/account-deletion";
 import { registerEvaluationRunLog } from "@zoonk/core/evaluation-runs/log";

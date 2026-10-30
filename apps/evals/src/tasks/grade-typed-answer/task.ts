@@ -3,7 +3,7 @@ import {
   type GradeTypedAnswerParams,
   type TypedAnswerGrade,
   gradeTypedAnswer,
-} from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
+} from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { evaluateTypedAnswerKeyPoints } from "./key-point-evaluation";
 import { scoreTypedAnswerGrade } from "./scorer";
 import { type GradeTypedAnswerExpected, TEST_CASES } from "./test-cases";

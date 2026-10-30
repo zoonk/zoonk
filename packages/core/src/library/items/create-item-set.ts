@@ -1,4 +1,4 @@
-import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/items/schemas";
 import { type Item, type ItemSet, type ItemSetKind, prisma } from "@zoonk/db";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { type RejectedItem, toCheckedItem } from "./create-items";

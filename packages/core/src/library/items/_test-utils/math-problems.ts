@@ -1,4 +1,4 @@
-import { type GeneratedMathProblem } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type GeneratedMathProblem } from "@zoonk/ai/tasks/items/schemas";
 
 export const discountQuestion =
   "A shirt costs {price} and is {discount}% off. How much do you pay?";

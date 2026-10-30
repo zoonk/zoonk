@@ -1,4 +1,4 @@
-import { type ExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
+import { type ExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 
 const NATUREZA = "Ciências da Natureza e suas Tecnologias";
 const MATEMATICA = "Matemática e suas Tecnologias";

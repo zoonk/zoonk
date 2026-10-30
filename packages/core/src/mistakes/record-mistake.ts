@@ -1,4 +1,4 @@
-import { type MistakeCauseInput } from "@zoonk/ai/tasks/v2/mistakes/cause";
+import { type MistakeCauseInput } from "@zoonk/ai/tasks/mistakes/cause";
 import { type Mistake, type TransactionClient, prisma } from "@zoonk/db";
 import { type MistakeSignals, inferMistakeCause } from "./mistake-cause";
 import { type MistakeSnapshot } from "./mistake-snapshot";

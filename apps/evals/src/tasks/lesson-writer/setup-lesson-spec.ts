@@ -1,4 +1,4 @@
-import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 
 export const SETUP_LESSON_SPEC: LessonSpec = {
   canDo: "Run a line of Python in the Windows terminal",

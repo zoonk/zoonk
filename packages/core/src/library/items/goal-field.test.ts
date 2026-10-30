@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type WorkFieldResult, classifyWorkField } from "@zoonk/ai/tasks/v2/items/work-field";
+import { type WorkFieldResult, classifyWorkField } from "@zoonk/ai/tasks/items/work-field";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";

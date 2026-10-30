@@ -3,7 +3,7 @@ import { type TaskScorer, type TestCase } from "@/lib/types";
 import {
   type EnemInterventionElements,
   type EssayGrade,
-} from "@zoonk/ai/tasks/v2/grading/grade-essay";
+} from "@zoonk/ai/tasks/grading/grade-essay";
 import { type GradeEssayExpected } from "./test-cases";
 
 const MIN_SCORE = 6;

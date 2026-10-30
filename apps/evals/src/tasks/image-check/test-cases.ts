@@ -1,4 +1,4 @@
-import { type ImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
+import { type ImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 import { TEST_CASES as IMAGE_CASES } from "../lesson-image/test-cases";
 
 export type ImageCheckCaseInput = { imageFile: string; scene: ImageScene; language: string };

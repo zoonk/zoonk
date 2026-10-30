@@ -1,7 +1,7 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
-import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/v2/lesson-writer";
-import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
+import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { checkWrittenLesson } from "@zoonk/core/library/quality/code-checks";
 import { checkLessonPrograms } from "@zoonk/core/library/quality/program-checks";
 import { findQuestionBases } from "@zoonk/core/library/steps/question-bases";

@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type SourceChangeNoticeParams } from "@zoonk/ai/tasks/v2/research/source-change-notice";
+import { type SourceChangeNoticeParams } from "@zoonk/ai/tasks/research/source-change-notice";
 
 const SHARED_EXPECTATIONS = `
 - One plain sentence in the requested language, at most 120 characters.

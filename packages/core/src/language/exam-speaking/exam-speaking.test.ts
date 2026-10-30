@@ -1,8 +1,8 @@
-import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
-import { generateExamSpeakingCard } from "@zoonk/ai/tasks/v2/language/exam-speaking-card";
-import { drawExamSpeakingPhoto } from "@zoonk/ai/tasks/v2/language/exam-speaking-photo";
-import { createLiveCallSession } from "@zoonk/ai/tasks/v2/language/live-call-session";
-import { scoreSpeaking } from "@zoonk/ai/tasks/v2/language/speaking-score";
+import { checkConversationObjectives } from "@zoonk/ai/tasks/language/conversation-objectives";
+import { generateExamSpeakingCard } from "@zoonk/ai/tasks/language/exam-speaking-card";
+import { drawExamSpeakingPhoto } from "@zoonk/ai/tasks/language/exam-speaking-photo";
+import { createLiveCallSession } from "@zoonk/ai/tasks/language/live-call-session";
+import { scoreSpeaking } from "@zoonk/ai/tasks/language/speaking-score";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";

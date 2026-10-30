@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type GradeTypedAnswerParams } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
+import { type GradeTypedAnswerParams } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 
 type GradeTypedAnswerInput = Omit<GradeTypedAnswerParams, "model" | "useFallback" | "reasoning">;
 

@@ -1,5 +1,5 @@
 import { type Task } from "@/lib/types";
-import { type WriteLessonDraftParams, writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
+import { type WriteLessonDraftParams, writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { LESSON_WRITER_SCORE_CATEGORIES } from "./score-categories";
 import { scoreLessonWriter } from "./scorer";
 import { TEST_CASES } from "./test-cases";

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
+import { checkLessonImage } from "@zoonk/ai/tasks/images/check";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";

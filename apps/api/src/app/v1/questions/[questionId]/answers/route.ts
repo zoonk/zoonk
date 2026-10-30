@@ -13,7 +13,7 @@ import {
 } from "@/lib/tutor-answers";
 import { confirmToolsOnly, loadConfirmationWords } from "@/lib/tutor-confirmation";
 import { type LessonQuestionAnswerCompletion } from "@zoonk/ai/tasks/lessons/question";
-import { joinStepTexts } from "@zoonk/ai/tasks/v2/tutor/goal-tutor";
+import { joinStepTexts } from "@zoonk/ai/tasks/tutor/goal-tutor";
 import {
   claimLessonQuestionAnswer,
   completeLessonQuestionAnswer,

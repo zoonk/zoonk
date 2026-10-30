@@ -2,7 +2,7 @@ import "server-only";
 import {
   type LibraryIdentityCandidate,
   type LibraryIdentitySubject,
-} from "@zoonk/ai/tasks/v2/identity/subject";
+} from "@zoonk/ai/tasks/identity/subject";
 import { type Sql, prisma, sql } from "@zoonk/db";
 import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { QUICK_LESSON_KEY_SQL_PATTERN } from "../../quick-lessons/quick-lesson-identity";

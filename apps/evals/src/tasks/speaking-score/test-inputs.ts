@@ -1,9 +1,9 @@
-import { type ConversationTurn } from "@zoonk/ai/tasks/v2/language/conversation-feedback";
+import { type ConversationTurn } from "@zoonk/ai/tasks/language/conversation-feedback";
 import {
   type SpeakingExam,
   type SpeakingMockExam,
-} from "@zoonk/ai/tasks/v2/language/exam-speaking-exams";
-import { type ScoreSpeakingParams } from "@zoonk/ai/tasks/v2/language/speaking-score";
+} from "@zoonk/ai/tasks/language/exam-speaking-exams";
+import { type ScoreSpeakingParams } from "@zoonk/ai/tasks/language/speaking-score";
 import { getSpeakingMockRating } from "@zoonk/core/language/conversations/speaking-mock";
 import {
   getSpeakingFormat,

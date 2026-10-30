@@ -1,5 +1,5 @@
 import { createDeterministicStringFieldScorer } from "@/lib/deterministic-string-field-scorer";
-import { type MistakeCauseSchema } from "@zoonk/ai/tasks/v2/mistakes/cause";
+import { type MistakeCauseSchema } from "@zoonk/ai/tasks/mistakes/cause";
 
 export type MistakeCauseExpected = Pick<MistakeCauseSchema, "cause">;
 

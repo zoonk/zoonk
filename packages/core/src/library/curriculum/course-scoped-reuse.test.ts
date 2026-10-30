@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
+import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";

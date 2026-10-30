@@ -1,6 +1,6 @@
 import "server-only";
-import { isRunActive } from "@/workflows/v2/_shared/run-activity";
-import { goalUnderstandingWorkflow } from "@/workflows/v2/onboarding/goal-understanding-workflow";
+import { isRunActive } from "@/workflows/_shared/run-activity";
+import { goalUnderstandingWorkflow } from "@/workflows/onboarding/goal-understanding-workflow";
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { recordUnderstandingRun } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { start } from "workflow/api";

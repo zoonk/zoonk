@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { writeConversationFeedback } from "@zoonk/ai/tasks/v2/language/conversation-feedback";
-import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
-import { scoreSpeaking } from "@zoonk/ai/tasks/v2/language/speaking-score";
+import { writeConversationFeedback } from "@zoonk/ai/tasks/language/conversation-feedback";
+import { checkConversationObjectives } from "@zoonk/ai/tasks/language/conversation-objectives";
+import { scoreSpeaking } from "@zoonk/ai/tasks/language/speaking-score";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";

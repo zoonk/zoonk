@@ -1,5 +1,5 @@
 import { type Task } from "@/lib/types";
-import { type GenerateItemsParams, generateItems } from "@zoonk/ai/tasks/v2/items/generate";
+import { type GenerateItemsParams, generateItems } from "@zoonk/ai/tasks/items/generate";
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "./score-categories";
 import { scoreGeneratedItems } from "./scorer";
 import { TEST_CASES } from "./test-cases";

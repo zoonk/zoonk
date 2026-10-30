@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type PlanEditInput } from "@zoonk/ai/tasks/v2/plans/edit-intent";
+import { type PlanEditInput } from "@zoonk/ai/tasks/plans/edit-intent";
 import { type ExpectedChange, type PlanEditExpected } from "./scorer";
 
 type PlanEditTestCase = TestCase<PlanEditExpected, PlanEditInput>;

@@ -1,5 +1,5 @@
 import "server-only";
-import { classifyMistakeCause } from "@zoonk/ai/tasks/v2/mistakes/cause";
+import { classifyMistakeCause } from "@zoonk/ai/tasks/mistakes/cause";
 import { type MistakeCause } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";

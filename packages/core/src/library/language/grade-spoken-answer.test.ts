@@ -1,6 +1,6 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
-import { explainSpokenAnswer } from "@zoonk/ai/tasks/v2/language/explain-spoken-answer";
-import { transcribeSpeech } from "@zoonk/ai/tasks/v2/language/transcribe-speech";
+import { explainSpokenAnswer } from "@zoonk/ai/tasks/language/explain-spoken-answer";
+import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";

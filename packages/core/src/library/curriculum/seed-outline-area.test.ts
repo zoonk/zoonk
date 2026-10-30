@@ -6,10 +6,10 @@ import {
 } from "@zoonk/testing/fixtures/library-chapters";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, it } from "vitest";
-import { t } from "../../../../db/src/prisma/seed/v2/_utils/localize";
-import { libraryIds } from "../../../../db/src/prisma/seed/v2/library/library-ids";
-import { type SeedCourse } from "../../../../db/src/prisma/seed/v2/library/types";
-import { writeLibraryCourse } from "../../../../db/src/prisma/seed/v2/library/write-course";
+import { t } from "../../../../db/src/prisma/seed/_utils/localize";
+import { libraryIds } from "../../../../db/src/prisma/seed/library/library-ids";
+import { type SeedCourse } from "../../../../db/src/prisma/seed/library/types";
+import { writeLibraryCourse } from "../../../../db/src/prisma/seed/library/write-course";
 import { loadCourseOutline } from "../../goals/_utils/course-outline";
 
 describe("seeded course outline areas", () => {

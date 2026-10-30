@@ -1,4 +1,4 @@
-import { type MindMapStructure } from "@zoonk/ai/tasks/v2/mind-maps/schema";
+import { type MindMapStructure } from "@zoonk/ai/tasks/mind-maps/schema";
 
 export type MindMapImageInput = { caseId: string; language: string; structure: MindMapStructure };
 

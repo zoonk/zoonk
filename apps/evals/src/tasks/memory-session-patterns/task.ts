@@ -4,7 +4,7 @@ import {
   type SessionPatternsParams,
   type SessionPatternsSchema,
   findSessionPatterns,
-} from "@zoonk/ai/tasks/v2/memory/session-patterns";
+} from "@zoonk/ai/tasks/memory/session-patterns";
 import { normalizeString } from "@zoonk/utils/string";
 import { z } from "zod";
 import { type SessionPatternsExpected, TEST_CASES } from "./test-cases";

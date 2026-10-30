@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { dailySweepsWorkflow } from "@/workflows/v2/sweeps/daily-sweeps-workflow";
+import { dailySweepsWorkflow } from "@/workflows/sweeps/daily-sweeps-workflow";
 import { NextResponse } from "next/server";
 import { start } from "workflow/api";
 

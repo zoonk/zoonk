@@ -2,7 +2,7 @@ import { readEvalImage, saveEvalImage } from "@/lib/image-files";
 import { judgeImage } from "@/lib/image-judge";
 import { defineScoreCategories } from "@/lib/score-categories";
 import { type Task, type TaskScorer, getJudgeExpectations } from "@/lib/types";
-import { generateCourseIcon } from "@zoonk/ai/tasks/v2/courses/icon";
+import { generateCourseIcon } from "@zoonk/ai/tasks/courses/icon";
 import { type CourseIconInput, TEST_CASES } from "./test-cases";
 
 const TASK_ID = "course-icon";

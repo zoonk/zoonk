@@ -1,9 +1,9 @@
 import {
   type GoalTutorLookUpRequest,
   type GoalTutorLookUpResult,
-} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
+} from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
 import "server-only";
-import { type PlanLookUp } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup-plan";
+import { type PlanLookUp } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup-plan";
 import { type Goal, type PlanItem, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";

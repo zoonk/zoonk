@@ -1,4 +1,4 @@
-import { gateMemoryFact } from "@zoonk/ai/tasks/v2/memory/gate";
+import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";

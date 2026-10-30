@@ -1,4 +1,4 @@
-import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type CourseLevel } from "@zoonk/db";
 
 const HIGH_STAKES_CATEGORIES: ReadonlySet<string> = new Set(["health", "law", "math", "science"]);

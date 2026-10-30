@@ -1,5 +1,5 @@
 import "server-only";
-import { type ChallengeCaseParams } from "@zoonk/ai/tasks/v2/challenge/case";
+import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/case";
 import { prisma } from "@zoonk/db";
 import { finishLibraryGeneration } from "../claims/generation-claim";
 import { saveLessonContent } from "../lessons/_utils/save-lesson-content";

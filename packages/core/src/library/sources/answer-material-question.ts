@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { answerFromMaterial } from "@zoonk/ai/tasks/v2/material/answer";
+import { answerFromMaterial } from "@zoonk/ai/tasks/material/answer";
 import { prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";

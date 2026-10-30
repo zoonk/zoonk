@@ -3,7 +3,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
-import { chapterMindMapWorkflow } from "@/workflows/v2/mind-maps/chapter-mind-map-workflow";
+import { chapterMindMapWorkflow } from "@/workflows/mind-maps/chapter-mind-map-workflow";
 import { requestChapterMindMap } from "@zoonk/core/mind-maps/request";
 import { NextResponse } from "next/server";
 import { start } from "workflow/api";

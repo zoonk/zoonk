@@ -1,6 +1,6 @@
 import "server-only";
-import { type GoalTutorLookUpResult } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
-import { type GoalTutorPage, type TutorLink } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-pages";
+import { type GoalTutorLookUpResult } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
+import { type GoalTutorPage, type TutorLink } from "@zoonk/ai/tasks/tutor/goal-tutor-pages";
 import { getWeeklyRecap } from "../../../milestones/get-weekly-recap";
 import { type WeekNumbers } from "../../../milestones/weekly-recap";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";

@@ -1,4 +1,4 @@
-import { type ExtractedMemoryFact } from "@zoonk/ai/tasks/v2/memory/extraction";
+import { type ExtractedMemoryFact } from "@zoonk/ai/tasks/memory/extraction";
 import { describe, expect, it } from "vitest";
 import { isSameStatement, toMemoryCandidates, toSessionFacts } from "./memory-candidates";
 

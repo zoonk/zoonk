@@ -1,7 +1,7 @@
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
-import { getIpaSimilarity } from "@zoonk/ai/tasks/v2/language/ipa-similarity";
-import { type WordIpa } from "@zoonk/ai/tasks/v2/language/word-ipa";
+import { getIpaSimilarity } from "@zoonk/ai/tasks/language/ipa-similarity";
+import { type WordIpa } from "@zoonk/ai/tasks/language/word-ipa";
 import { type WordIpaExpected } from "./test-cases";
 
 const RIGHT_SCORE = 10;

@@ -1,4 +1,4 @@
-import { type BlueprintExtraction } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
+import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { listChoiceGroups } from "../../exams/choices/exam-choices";
 import { type ReusePolicy } from "../sources/source-contract";

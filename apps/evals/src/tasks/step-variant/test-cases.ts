@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type GenerateStepVariantParams } from "@zoonk/ai/tasks/v2/variants/step-variant";
+import { type GenerateStepVariantParams } from "@zoonk/ai/tasks/variants/step-variant";
 
 type StepVariantInput = Omit<
   GenerateStepVariantParams,

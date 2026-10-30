@@ -3,7 +3,7 @@ import {
   type GenerateConversationScenarioParams,
   type GenerateConversationScenarioSchema,
   generateConversationScenario,
-} from "@zoonk/ai/tasks/v2/language/conversation-scenario";
+} from "@zoonk/ai/tasks/language/conversation-scenario";
 import { CONVERSATION_SCENARIO_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 

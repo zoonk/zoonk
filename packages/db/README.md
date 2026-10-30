@@ -64,7 +64,7 @@ Run the following commands to set up Prisma:
 
 #### Local Curriculum Content
 
-The regular Prisma seed creates local users, accounts, subscriptions, organizations and progress, plus the v2 seed: a few Library courses and one learner persona per goal kind (`v2-*@zoonk.test`). This package writes each persona's history and what's due this week; core's planner lays out the rest of their plans (`pnpm --filter @zoonk/core seed:v2`, which the Prisma seed runs after the regular one), so a seeded plan is the one the app makes.
+The regular Prisma seed creates local users, accounts, subscriptions, organizations and progress, plus a few Library courses and one learner persona per goal kind (`v2-*@zoonk.test`). This package writes each persona's history and what's due this week; core's planner lays out the rest of their plans (`pnpm --filter @zoonk/core seed`, which the Prisma seed runs after the regular one), so a seeded plan is the one the app makes.
 
 To refresh the local curriculum from a database copy, run the regular seed once (it creates the local AI organization), then provide the copy's connection string:
 
@@ -74,7 +74,7 @@ CONTENT_SOURCE_DATABASE_URL='postgresql://...' pnpm --filter @zoonk/db db:sync-c
 
 The content sync accepts only local development databases: `zoonk` or `zoonk_wt_<id>_dev`. It replaces the AI organization's catalog: its courses (updated in place by slug), every public Library chapter, lesson, step, variant, skill, item and image, and it adds or updates the organization's words, sentences and pronunciations. It never imports source users or progress, and it never touches private content or learners' own courses. Local learners' links (plans, study blocks, attempts, mistakes, question threads, mastery and example lines) move onto the matching copied content by natural key. The whole sync rolls back if a link can't be matched, or if other local rows point at content it would replace.
 
-Seeded content stays as the v2 seed wrote it. The seed gives its courses and Library rows UUID version 8 ids (`seedId`), which generated content never has, so the sync never reads those rows from the source and never removes or overwrites them locally. Everything under them stays too (a seeded lesson's steps, including ones generated locally, and the pictures they show), so the `v2-*` personas keep their goals, plans and history. A source row that shares a natural key with a row that stays (a seeded course's slug, a Library chapter, lesson or skill identity, an image's reuse key) is left out along with the rows that need it, and the sync logs how many.
+Seeded content stays as the seed wrote it. The seed gives its courses and Library rows UUID version 8 ids (`seedId`), which generated content never has, so the sync never reads those rows from the source and never removes or overwrites them locally. Everything under them stays too (a seeded lesson's steps, including ones generated locally, and the pictures they show), so the `v2-*` personas keep their goals, plans and history. A source row that shares a natural key with a row that stays (a seeded course's slug, a Library chapter, lesson or skill identity, an image's reuse key) is left out along with the rows that need it, and the sync logs how many.
 
 #### Useful Commands
 

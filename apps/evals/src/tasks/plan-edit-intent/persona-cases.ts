@@ -1,6 +1,6 @@
 import { SEED_LEARNERS_TODAY, getSeedLearner } from "@/datasets/seed-learners";
 import { type TestCase } from "@/lib/types";
-import { type PlanEditInput } from "@zoonk/ai/tasks/v2/plans/edit-intent";
+import { type PlanEditInput } from "@zoonk/ai/tasks/plans/edit-intent";
 import { type ExpectedChange, type PlanEditExpected } from "./scorer";
 
 const DAYS_PER_WEEK = 7;

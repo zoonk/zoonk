@@ -4,7 +4,7 @@ import {
   type FindTopicFrequencyParams,
   type TopicFrequencyFinding,
   findTopicFrequency,
-} from "@zoonk/ai/tasks/v2/research/find-topic-frequency";
+} from "@zoonk/ai/tasks/research/find-topic-frequency";
 import { TEST_CASES } from "./test-cases";
 
 export type FindTopicFrequencyExpected = { found: string[]; notLow: string[]; notHigh: string[] };

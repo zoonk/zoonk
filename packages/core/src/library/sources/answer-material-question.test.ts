@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { answerFromMaterial } from "@zoonk/ai/tasks/v2/material/answer";
+import { answerFromMaterial } from "@zoonk/ai/tasks/material/answer";
 import { prisma } from "@zoonk/db";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";

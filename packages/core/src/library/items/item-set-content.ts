@@ -1,4 +1,4 @@
-import { lessonVisualSchema } from "@zoonk/ai/tasks/v2/visuals/schema";
+import { lessonVisualSchema } from "@zoonk/ai/tasks/visuals/schema";
 import { type ItemSetKind } from "@zoonk/db";
 import { z } from "zod";
 import { listeningContentSchema } from "../listening/listening-content";

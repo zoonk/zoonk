@@ -1,5 +1,5 @@
 import "server-only";
-import { type GoalUnderstanding } from "@zoonk/ai/tasks/v2/goals/understand-goal";
+import { type GoalUnderstanding } from "@zoonk/ai/tasks/goals/understand-goal";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { z } from "zod";

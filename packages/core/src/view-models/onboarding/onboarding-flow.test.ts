@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { extractMemoryFacts } from "@zoonk/ai/tasks/v2/memory/extraction";
-import { gateMemoryFact } from "@zoonk/ai/tasks/v2/memory/gate";
-import { reconcileMemoryFact } from "@zoonk/ai/tasks/v2/memory/reconcile";
+import { extractMemoryFacts } from "@zoonk/ai/tasks/memory/extraction";
+import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
+import { reconcileMemoryFact } from "@zoonk/ai/tasks/memory/reconcile";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";

@@ -1,4 +1,4 @@
-import { type PlanEditInput } from "@zoonk/ai/tasks/v2/plans/edit-intent";
+import { type PlanEditInput } from "@zoonk/ai/tasks/plans/edit-intent";
 import { getSkillArea, getWrittenTestAreas } from "../planner/graph-areas";
 import { getWeekdayMinutes, toIsoDate } from "../planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../planner/plan-state";

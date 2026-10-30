@@ -1,7 +1,7 @@
 import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
-import { type NumericEntry, type OptionSelect } from "@zoonk/ai/tasks/v2/items/schemas";
-import { type PartialCreditRule } from "@zoonk/ai/tasks/v2/research/partial-credit";
+import { type NumericEntry, type OptionSelect } from "@zoonk/ai/tasks/items/schemas";
+import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit";
 import { isUsableBlueprint } from "@zoonk/core/library/exams/blueprint-content";
 import { getFormatShares } from "@zoonk/core/library/exams/format-shares";
 import { normalizeString } from "@zoonk/utils/string";

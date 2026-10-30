@@ -2,7 +2,7 @@ import "server-only";
 import {
   type GenerateLevelTestBankParams,
   generateLevelTestBank,
-} from "@zoonk/ai/tasks/v2/language/level-test-bank";
+} from "@zoonk/ai/tasks/language/level-test-bank";
 import { type LanguageLevelTest, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { toProvenanceData } from "../../../library/_utils/library-rows";
 import { type LevelTestBank, levelTestBankSchema } from "../level-test-contract";

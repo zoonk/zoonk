@@ -1,5 +1,5 @@
 import { assignListeningVoices } from "@zoonk/ai/tasks/audio/listening-voices";
-import { LISTENING_GENDERS, type ListeningSet } from "@zoonk/ai/tasks/v2/listening/schema";
+import { LISTENING_GENDERS, type ListeningSet } from "@zoonk/ai/tasks/listening/schema";
 import { TTS_VOICES } from "@zoonk/utils/languages";
 import { z } from "zod";
 

@@ -2,7 +2,7 @@ import { type Task } from "@/lib/types";
 import {
   type CheckLessonQualityParams,
   checkLessonQuality,
-} from "@zoonk/ai/tasks/v2/quality/lesson-check";
+} from "@zoonk/ai/tasks/quality/lesson-check";
 import { describeActivityTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { checkWrittenLesson, toReviewedLesson } from "@zoonk/core/library/quality/code-checks";
 import { scoreLessonQualityCheck } from "./scorer";

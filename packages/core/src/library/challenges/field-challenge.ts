@@ -1,5 +1,5 @@
 import "server-only";
-import { type ChallengeCaseParams } from "@zoonk/ai/tasks/v2/challenge/case";
+import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/case";
 import { type StepVariant, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { createOrFindByIdentity, toProvenanceData } from "../_utils/library-rows";

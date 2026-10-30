@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type CoverageCheckParams } from "@zoonk/ai/tasks/v2/curriculum/coverage-check";
+import { type CoverageCheckParams } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { type CoverageCheckExpected } from "./scorer";
 
 type CoverageSkill = CoverageCheckParams["skills"][number];

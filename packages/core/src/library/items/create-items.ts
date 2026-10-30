@@ -1,4 +1,4 @@
-import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/items/schemas";
 import { type Item } from "@zoonk/db";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";

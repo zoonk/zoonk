@@ -1,5 +1,5 @@
-import { type LessonScreenKind, type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
-import { type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type LessonScreenKind, type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { describe, expect, it } from "vitest";
 import { temperatureSpec } from "../_test-utils/written-lessons";
 import { findRepeatedExamples } from "./repeated-examples";

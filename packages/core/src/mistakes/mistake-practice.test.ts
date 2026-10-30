@@ -1,4 +1,4 @@
-import { classifyMistakeCause } from "@zoonk/ai/tasks/v2/mistakes/cause";
+import { classifyMistakeCause } from "@zoonk/ai/tasks/mistakes/cause";
 import { prisma } from "@zoonk/db";
 import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";

@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type CheckConversationObjectivesParams } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
+import { type CheckConversationObjectivesParams } from "@zoonk/ai/tasks/language/conversation-objectives";
 
 export type ConversationObjectivesInput = Omit<
   CheckConversationObjectivesParams,

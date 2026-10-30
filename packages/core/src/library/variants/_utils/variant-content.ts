@@ -1,5 +1,5 @@
-import { type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
-import { type WrittenVariant } from "@zoonk/ai/tasks/v2/variants/step-variant";
+import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { type WrittenVariant } from "@zoonk/ai/tasks/variants/step-variant";
 import { type CourseLevel, type StepKind } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { checkScreenText } from "../../quality/lesson-code-checks";

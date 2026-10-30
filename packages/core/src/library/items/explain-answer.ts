@@ -1,9 +1,6 @@
 import "server-only";
-import { explainWrongAnswer } from "@zoonk/ai/tasks/v2/grading/explain-wrong-answer";
-import {
-  matchTypedAnswer,
-  normalizeTypedAnswer,
-} from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
+import { explainWrongAnswer } from "@zoonk/ai/tasks/grading/explain-wrong-answer";
+import { matchTypedAnswer, normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { getSession } from "../../users/get-session";

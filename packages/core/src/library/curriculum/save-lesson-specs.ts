@@ -1,5 +1,5 @@
 import "server-only";
-import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCourseContent } from "../../cache/revalidate-course-content";

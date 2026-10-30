@@ -1,7 +1,7 @@
 import "server-only";
 import { createHash } from "node:crypto";
-import { type WorkFieldParams, classifyWorkField } from "@zoonk/ai/tasks/v2/items/work-field";
-import { type WorkField, isWorkField } from "@zoonk/ai/tasks/v2/items/work-fields";
+import { type WorkFieldParams, classifyWorkField } from "@zoonk/ai/tasks/items/work-field";
+import { type WorkField, isWorkField } from "@zoonk/ai/tasks/items/work-fields";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";

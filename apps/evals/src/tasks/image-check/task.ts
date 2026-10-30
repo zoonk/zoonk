@@ -2,7 +2,7 @@ import { readDatasetImage } from "@/lib/image-files";
 import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
 import { type Reasoning } from "@zoonk/ai/provider-options";
-import { type ImageCheckVerdict, checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
+import { type ImageCheckVerdict, checkLessonImage } from "@zoonk/ai/tasks/images/check";
 import { type ImageCheckCaseInput, type ImageCheckExpected, TEST_CASES } from "./test-cases";
 
 const TASK_ID = "image-check";

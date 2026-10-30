@@ -1,5 +1,5 @@
 import "server-only";
-import { type LanguageLessonParams } from "@zoonk/ai/tasks/v2/language/language-lesson";
+import { type LanguageLessonParams } from "@zoonk/ai/tasks/language/language-lesson";
 import { prisma } from "@zoonk/db";
 import { CEFR_BANDS } from "../../../language/levels/skill-level-rules";
 

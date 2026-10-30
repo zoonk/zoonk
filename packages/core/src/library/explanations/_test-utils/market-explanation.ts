@@ -1,4 +1,4 @@
-import { type QuickExplanation } from "@zoonk/ai/tasks/v2/explain/quick-explanation";
+import { type QuickExplanation } from "@zoonk/ai/tasks/explain/quick-explanation";
 
 export function marketExplanation(): QuickExplanation {
   return {

@@ -2,7 +2,7 @@ import {
   type NumericEntry,
   numericEntrySchema,
   optionSelectSchema,
-} from "@zoonk/ai/tasks/v2/items/schemas";
+} from "@zoonk/ai/tasks/items/schemas";
 import { apportion } from "@zoonk/utils/apportion";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type ExamStructure, isFormatShare } from "../../library/exams/blueprint-contract";

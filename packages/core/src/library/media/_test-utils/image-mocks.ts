@@ -1,7 +1,7 @@
-import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
-import { generateLessonImage } from "@zoonk/ai/tasks/v2/images/generate";
-import { generateImageScene } from "@zoonk/ai/tasks/v2/images/scene";
-import { type ImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
+import { checkLessonImage } from "@zoonk/ai/tasks/images/check";
+import { generateLessonImage } from "@zoonk/ai/tasks/images/generate";
+import { generateImageScene } from "@zoonk/ai/tasks/images/scene";
+import { type ImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 import sharp from "sharp";
 import { vi } from "vitest";
 

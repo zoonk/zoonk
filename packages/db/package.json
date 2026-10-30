@@ -11,9 +11,9 @@
     "./live-call-enums": "./src/live-call-enums.ts",
     "./local-database": "./src/local-database.ts",
     "./seed/emails": "./src/prisma/seed/emails.ts",
-    "./seed/v2": "./src/prisma/seed/v2/index.ts",
-    "./seed/v2/localize": "./src/prisma/seed/v2/_utils/localize.ts",
-    "./seed/v2/personas": "./src/prisma/seed/v2/learners/seed-personas.ts",
+    "./seed": "./src/prisma/seed/index.ts",
+    "./seed/localize": "./src/prisma/seed/_utils/localize.ts",
+    "./seed/personas": "./src/prisma/seed/learners/seed-personas.ts",
     "./utils": "./src/utils.ts"
   },
   "scripts": {
@@ -26,7 +26,7 @@
     "db:sync-content": "tsx src/prisma/sync-content.ts",
     "db:seed": "prisma db seed",
     "db:seed:e2e": "node ../../scripts/run-test-env.mts e2e prisma db seed",
-    "prisma:seed": "tsx src/prisma/seed.ts && pnpm --filter @zoonk/core seed:v2",
+    "prisma:seed": "tsx src/prisma/seed.ts && pnpm --filter @zoonk/core seed",
     "db:setup:e2e": "node ../../scripts/run-test-env.mts e2e prisma migrate deploy",
     "db:setup:test": "node ../../scripts/run-test-env.mts test prisma migrate deploy",
     "db:studio": "prisma studio",

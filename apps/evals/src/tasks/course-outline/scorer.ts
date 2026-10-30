@@ -1,7 +1,7 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
-import { type CourseOutlineParams } from "@zoonk/ai/tasks/v2/curriculum/course-outline";
-import { findMixedAreaChapters } from "@zoonk/ai/tasks/v2/curriculum/outline-areas";
+import { type CourseOutlineParams } from "@zoonk/ai/tasks/curriculum/course-outline";
+import { findMixedAreaChapters } from "@zoonk/ai/tasks/curriculum/outline-areas";
 import { COURSE_OUTLINE_SCORE_CATEGORIES } from "./score-categories";
 
 /** A case-insensitive pattern matched against practical chapters' tool names. */

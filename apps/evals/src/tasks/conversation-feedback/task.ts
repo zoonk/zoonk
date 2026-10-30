@@ -3,7 +3,7 @@ import {
   type WriteConversationFeedbackParams,
   type WriteConversationFeedbackSchema,
   writeConversationFeedback,
-} from "@zoonk/ai/tasks/v2/language/conversation-feedback";
+} from "@zoonk/ai/tasks/language/conversation-feedback";
 import { CONVERSATION_FEEDBACK_SCORE_CATEGORIES } from "./score-categories";
 import { scoreConversationFeedback } from "./scorer";
 import { TEST_CASES } from "./test-cases";

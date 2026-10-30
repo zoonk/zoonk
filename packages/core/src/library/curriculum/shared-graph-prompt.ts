@@ -1,4 +1,4 @@
-import { type SkillGraphParams } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
+import { type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalCurriculumInputs } from "./goal-curriculum-inputs";
 

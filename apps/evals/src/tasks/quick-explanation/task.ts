@@ -4,8 +4,8 @@ import {
   type QuickExplanation,
   type QuickExplanationParams,
   generateQuickExplanation,
-} from "@zoonk/ai/tasks/v2/explain/quick-explanation";
-import { checkQuickExplanation } from "@zoonk/ai/tasks/v2/explain/quick-explanation-checks";
+} from "@zoonk/ai/tasks/explain/quick-explanation";
+import { checkQuickExplanation } from "@zoonk/ai/tasks/explain/quick-explanation-checks";
 import { QUICK_EXPLANATION_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 

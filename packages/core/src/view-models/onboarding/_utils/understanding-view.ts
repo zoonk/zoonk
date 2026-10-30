@@ -1,8 +1,5 @@
 import "server-only";
-import {
-  type GoalUnderstanding,
-  type UnderstoodGoal,
-} from "@zoonk/ai/tasks/v2/goals/understand-goal";
+import { type GoalUnderstanding, type UnderstoodGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
 import { findMeantExamDay, getKeptMonthStart } from "../../../exams/kept-month";

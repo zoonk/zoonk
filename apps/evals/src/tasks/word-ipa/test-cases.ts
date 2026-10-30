@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type WordIpaParams } from "@zoonk/ai/tasks/v2/language/word-ipa";
+import { type WordIpaParams } from "@zoonk/ai/tasks/language/word-ipa";
 
 export type WordIpaExpected = { isLookAlike: boolean; native?: string; english?: string };
 

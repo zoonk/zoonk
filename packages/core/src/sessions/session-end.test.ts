@@ -1,5 +1,5 @@
-import { generateMemoryInsight } from "@zoonk/ai/tasks/v2/memory/insight";
-import { findSessionPatterns } from "@zoonk/ai/tasks/v2/memory/session-patterns";
+import { generateMemoryInsight } from "@zoonk/ai/tasks/memory/insight";
+import { findSessionPatterns } from "@zoonk/ai/tasks/memory/session-patterns";
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";

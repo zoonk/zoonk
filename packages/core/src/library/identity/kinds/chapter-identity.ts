@@ -1,5 +1,5 @@
 import "server-only";
-import { type LibraryIdentityCandidate } from "@zoonk/ai/tasks/v2/identity/subject";
+import { type LibraryIdentityCandidate } from "@zoonk/ai/tasks/identity/subject";
 import { prisma, sql } from "@zoonk/db";
 import { buildChapterIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { listChapterCourses } from "../_utils/candidate-courses";

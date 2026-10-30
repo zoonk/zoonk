@@ -1,4 +1,4 @@
-import { type ImageSceneInput } from "@zoonk/ai/tasks/v2/images/scene";
+import { type ImageSceneInput } from "@zoonk/ai/tasks/images/scene";
 
 export type ImageSceneExpected = { labels: "any" | "none" | "some" };
 

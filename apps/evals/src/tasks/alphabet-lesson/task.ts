@@ -3,7 +3,7 @@ import {
   type AlphabetLessonContent,
   type GenerateAlphabetLessonParams,
   generateAlphabetLesson,
-} from "@zoonk/ai/tasks/v2/language/alphabet-lesson";
+} from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { ALPHABET_LESSON_SCORE_CATEGORIES } from "./score-categories";
 import { scoreAlphabetLesson } from "./scorer";
 import { type AlphabetLessonExpected, TEST_CASES } from "./test-cases";

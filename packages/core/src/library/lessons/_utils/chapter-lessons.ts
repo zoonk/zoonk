@@ -1,6 +1,6 @@
 import "server-only";
-import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
-import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/v2/lesson-writer";
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 import { type StepKind, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { libraryRowsVisibleTo } from "../../_utils/library-visibility";

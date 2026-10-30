@@ -1,6 +1,6 @@
 import { type TestCase } from "@/lib/types";
-import { type MemoryExtractionParams } from "@zoonk/ai/tasks/v2/memory/extraction";
-import { type MemoryFactCategory } from "@zoonk/ai/tasks/v2/memory/facts";
+import { type MemoryExtractionParams } from "@zoonk/ai/tasks/memory/extraction";
+import { type MemoryFactCategory } from "@zoonk/ai/tasks/memory/facts";
 
 export type ExpectedFact = {
   categories: MemoryFactCategory[];

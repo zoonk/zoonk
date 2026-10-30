@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type LessonSpecParams } from "@zoonk/ai/tasks/v2/lesson-spec";
+import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
 
 export type LessonSpecExpected = {

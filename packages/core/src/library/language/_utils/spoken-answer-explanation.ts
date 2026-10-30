@@ -1,5 +1,5 @@
 import "server-only";
-import { explainSpokenAnswer } from "@zoonk/ai/tasks/v2/language/explain-spoken-answer";
+import { explainSpokenAnswer } from "@zoonk/ai/tasks/language/explain-spoken-answer";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { findAnswerExplanation, saveAnswerExplanation } from "../../items/answer-explanations";

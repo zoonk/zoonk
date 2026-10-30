@@ -4,7 +4,7 @@ import {
   type AnswerFromMaterialInput,
   type MaterialAnswer,
   answerFromMaterial,
-} from "@zoonk/ai/tasks/v2/material/answer";
+} from "@zoonk/ai/tasks/material/answer";
 import { normalizeString } from "@zoonk/utils/string";
 import { type AnswerFromMaterialExpected, TEST_CASES } from "./test-cases";
 

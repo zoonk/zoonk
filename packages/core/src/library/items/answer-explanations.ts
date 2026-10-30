@@ -1,4 +1,4 @@
-import { normalizeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
+import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { type AnswerExplanation, prisma } from "@zoonk/db";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 

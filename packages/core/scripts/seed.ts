@@ -1,10 +1,10 @@
 import { createInterface } from "node:readline";
 import { parseArgs } from "node:util";
 import { prisma } from "@zoonk/db";
-import { SEED_PERSONA_NAMES, type SeedPersonaName } from "@zoonk/db/seed/v2/personas";
+import { SEED_PERSONA_NAMES, type SeedPersonaName } from "@zoonk/db/seed/personas";
 import { logError } from "@zoonk/utils/logger";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
-import { seedV2, seedV2PersonaCopy } from "../src/seed/seed-v2";
+import { seed, seedPersonaCopy } from "../src/seed/seed";
 
 function isPersonaName(value: string): value is SeedPersonaName {
   return SEED_PERSONA_NAMES.some((name) => name === value);
@@ -50,7 +50,7 @@ async function copyPersona({
     );
   }
 
-  return seedV2PersonaCopy({ awayDays, copyKey, day: planDay, email, persona, timeZone });
+  return seedPersonaCopy({ awayDays, copyKey, day: planDay, email, persona, timeZone });
 }
 
 type CopyRequest = Parameters<typeof copyPersona>[0] & { id: string };
@@ -77,7 +77,7 @@ async function main() {
     return;
   }
 
-  await seedV2();
+  await seed();
 }
 
 // The database pool keeps idle connections open for a while: exit as soon as the seed is written.

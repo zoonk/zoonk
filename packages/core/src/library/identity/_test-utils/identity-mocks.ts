@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
-import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
-import { type LibraryIdentitySubject } from "@zoonk/ai/tasks/v2/identity/subject";
+import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
+import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
+import { type LibraryIdentitySubject } from "@zoonk/ai/tasks/identity/subject";
 import { vi } from "vitest";
 
 const MATCH_PROBABILITY = 0.9;

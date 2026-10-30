@@ -3,7 +3,7 @@ import { type ServiceTier } from "@zoonk/ai/provider-options";
 import {
   type LanguageLessonContent,
   generateLanguageLesson,
-} from "@zoonk/ai/tasks/v2/language/language-lesson";
+} from "@zoonk/ai/tasks/language/language-lesson";
 import { prisma } from "@zoonk/db";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";

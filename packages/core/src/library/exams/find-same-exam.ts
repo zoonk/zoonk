@@ -1,5 +1,5 @@
 import "server-only";
-import { decideExamIdentity } from "@zoonk/ai/tasks/v2/research/exam-identity-decision";
+import { decideExamIdentity } from "@zoonk/ai/tasks/research/exam-identity-decision";
 import { type ExamBlueprint, prisma, sql } from "@zoonk/db";
 import { EXAM_BLUEPRINT_DOCUMENT } from "../identity/_utils/search-documents";
 import { findRankedIds, orderByIds, toTextSearch } from "../identity/_utils/text-search-sql";

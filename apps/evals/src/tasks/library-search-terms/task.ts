@@ -3,7 +3,7 @@ import {
   type SearchTermsData,
   type SearchTermsParams,
   generateSearchTerms,
-} from "@zoonk/ai/tasks/v2/identity/search-terms";
+} from "@zoonk/ai/tasks/identity/search-terms";
 import { type LibrarySearchTermsExpected, scoreLibrarySearchTerms } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 

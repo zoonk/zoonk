@@ -3,7 +3,7 @@ import {
   type CourseDetails,
   type CourseDetailsParams,
   generateCourseDetails,
-} from "@zoonk/ai/tasks/v2/courses/details";
+} from "@zoonk/ai/tasks/courses/details";
 import { type CourseDetailsExpected, scoreCourseDetails } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 

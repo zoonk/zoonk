@@ -1,5 +1,5 @@
 import { setTimeout as wait } from "node:timers/promises";
-import { gradeEssay } from "@zoonk/ai/tasks/v2/grading/grade-essay";
+import { gradeEssay } from "@zoonk/ai/tasks/grading/grade-essay";
 import { prisma } from "@zoonk/db";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";

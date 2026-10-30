@@ -1,11 +1,11 @@
 import "server-only";
 import { type CallReuse, type ServiceTier } from "@zoonk/ai/provider-options";
-import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/v2/lesson-writer";
-import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
+import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import {
   type CheckLessonQualityParams,
   checkLessonQuality,
-} from "@zoonk/ai/tasks/v2/quality/lesson-check";
+} from "@zoonk/ai/tasks/quality/lesson-check";
 import { type ConvertedScreen } from "../steps/written-screens";
 import {
   type LessonCheckProblem,

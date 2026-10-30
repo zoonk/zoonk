@@ -1,4 +1,4 @@
-import { assessPronunciation } from "@zoonk/ai/tasks/v2/language/assess-pronunciation";
+import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";

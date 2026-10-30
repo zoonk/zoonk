@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { put } from "@vercel/blob";
-import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
-import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
+import { checkLessonImage } from "@zoonk/ai/tasks/images/check";
+import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";

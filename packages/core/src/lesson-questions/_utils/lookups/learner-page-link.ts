@@ -3,7 +3,7 @@ import {
   type GoalTutorPage,
   type TutorLink,
   listGoalTutorPages,
-} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-pages";
+} from "@zoonk/ai/tasks/tutor/goal-tutor-pages";
 import { type Goal } from "@zoonk/db";
 import { type LinkScope } from "../plan-day-context";
 

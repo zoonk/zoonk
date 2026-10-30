@@ -1,4 +1,4 @@
-import { isLiveCallAvailable } from "@zoonk/ai/tasks/v2/language/live-call-session";
+import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { type TransactionClient } from "@zoonk/db";
 
 export const LIVE_CALL_SETTING_ID = "live";

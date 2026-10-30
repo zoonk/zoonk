@@ -1,5 +1,5 @@
 import "server-only";
-import { getLessonRewriteModel } from "@zoonk/ai/tasks/v2/lesson-writer";
+import { getLessonRewriteModel } from "@zoonk/ai/tasks/lesson-writer";
 import { type HeldBackDraft, MAX_LESSON_DRAFTS } from "../../generation/held-back-drafts";
 
 export function pickDraftWriter({ heldBackDrafts }: { heldBackDrafts: readonly HeldBackDraft[] }): {

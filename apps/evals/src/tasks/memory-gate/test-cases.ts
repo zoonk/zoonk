@@ -1,8 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import {
-  type MemoryGateCandidate,
-  type MemoryGateVerdict,
-} from "@zoonk/ai/tasks/v2/memory/decisions";
+import { type MemoryGateCandidate, type MemoryGateVerdict } from "@zoonk/ai/tasks/memory/decisions";
 
 export type MemoryGateInput = { candidate: MemoryGateCandidate };
 export type MemoryGateExpected = Pick<MemoryGateVerdict, "decision">;

@@ -1,4 +1,4 @@
-import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/v2/plans/routine-fit";
+import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/plans/routine-fit";
 import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";

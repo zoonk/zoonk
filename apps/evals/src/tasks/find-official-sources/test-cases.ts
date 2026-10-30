@@ -1,6 +1,6 @@
 import { type TestCase } from "@/lib/types";
-import { type FindOfficialSourcesParams } from "@zoonk/ai/tasks/v2/research/find-official-sources";
-import { RESEARCH_SEARCH_TOOLS } from "@zoonk/ai/tasks/v2/research/search-tools";
+import { type FindOfficialSourcesParams } from "@zoonk/ai/tasks/research/find-official-sources";
+import { RESEARCH_SEARCH_TOOLS } from "@zoonk/ai/tasks/research/search-tools";
 import { type FindOfficialSourcesExpected } from "./task";
 
 type Exam = {

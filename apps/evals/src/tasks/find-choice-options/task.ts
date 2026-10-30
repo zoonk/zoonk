@@ -4,7 +4,7 @@ import {
   type ChoiceOptionsFinding,
   type FindChoiceOptionsParams,
   findChoiceOptions,
-} from "@zoonk/ai/tasks/v2/research/find-choice-options";
+} from "@zoonk/ai/tasks/research/find-choice-options";
 import { TEST_CASES } from "./test-cases";
 
 export type FindChoiceOptionsExpected = { options: number };

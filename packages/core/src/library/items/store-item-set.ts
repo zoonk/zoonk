@@ -1,4 +1,4 @@
-import { type WrittenItemSet, toSetItem } from "@zoonk/ai/tasks/v2/items/write-set";
+import { type WrittenItemSet, toSetItem } from "@zoonk/ai/tasks/items/write-set";
 import { type LibraryProvenance } from "../_utils/library-rows";
 import { createItemSet } from "./create-item-set";
 import { type RejectedItem } from "./create-items";

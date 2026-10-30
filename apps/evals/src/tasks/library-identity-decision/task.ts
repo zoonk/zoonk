@@ -3,7 +3,7 @@ import {
   LIBRARY_IDENTITY_MIN_PROBABILITY,
   evaluateLibraryIdentityCandidates,
   getLibraryIdentityQuestion,
-} from "@zoonk/ai/tasks/v2/identity/decision";
+} from "@zoonk/ai/tasks/identity/decision";
 import {
   type LibraryIdentityDecisionExpected,
   type LibraryIdentityDecisionInput,

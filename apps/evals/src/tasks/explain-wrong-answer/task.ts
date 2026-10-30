@@ -3,7 +3,7 @@ import {
   type ExplainWrongAnswerParams,
   type ExplainWrongAnswerSchema,
   explainWrongAnswer,
-} from "@zoonk/ai/tasks/v2/grading/explain-wrong-answer";
+} from "@zoonk/ai/tasks/grading/explain-wrong-answer";
 import { EXPLAIN_WRONG_ANSWER_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 

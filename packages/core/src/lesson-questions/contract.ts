@@ -1,4 +1,4 @@
-import { type GoalTutorAppTool } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-tools";
+import { type GoalTutorAppTool } from "@zoonk/ai/tasks/tutor/goal-tutor-tools";
 import { z } from "zod";
 import { lessonStepAnswerSchema } from "../lesson-player/contract";
 import { planChangeSchema } from "../plans/plan-change-contract";
@@ -10,7 +10,7 @@ export type {
   GoalTutorLinks,
   GoalTutorPage,
   TutorLink,
-} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-pages";
+} from "@zoonk/ai/tasks/tutor/goal-tutor-pages";
 
 export const MAX_LESSON_QUESTION_LENGTH = 2000;
 export const MAX_LESSON_QUESTION_THREAD_TURNS = 50;

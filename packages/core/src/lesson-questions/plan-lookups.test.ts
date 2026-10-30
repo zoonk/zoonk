@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type GoalTutorLookUpRequest } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
+import { type GoalTutorLookUpRequest } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
 import { prisma } from "@zoonk/db";
 import { planChangeFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";

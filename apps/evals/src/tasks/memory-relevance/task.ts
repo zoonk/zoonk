@@ -4,7 +4,7 @@ import { type Task, type TaskScorer } from "@/lib/types";
 import {
   type MemoryRelevanceInput,
   memoryRelevanceClassifier,
-} from "@zoonk/ai/tasks/v2/memory/relevance";
+} from "@zoonk/ai/tasks/memory/relevance";
 import { isJsonObject } from "@zoonk/utils/json";
 import { PERSONA_TEST_CASES } from "./persona-cases";
 import { type MemoryRelevanceExpected, TEST_CASES } from "./test-cases";

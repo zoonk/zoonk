@@ -3,7 +3,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { generationPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { workflowEventsQuerySchema } from "@/lib/openapi/schemas/workflows";
 import { readPathParams, readQueryParams } from "@/lib/request-input";
-import { readRunState } from "@/workflows/v2/_shared/run-activity";
+import { readRunState } from "@/workflows/_shared/run-activity";
 import { getRun } from "workflow/api";
 
 const SSE_HEADERS = {

@@ -1,5 +1,5 @@
 import "server-only";
-import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
+import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { canGradeWithModel } from "./model-grading";
 import { type TypedItem, getTypedQuestionText, matchesAcceptedAnswer } from "./typed-items";
 

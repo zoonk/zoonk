@@ -1,6 +1,6 @@
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
-import { type ResearchSearchPlan } from "@zoonk/ai/tasks/v2/research/plan";
+import { type ResearchSearchPlan } from "@zoonk/ai/tasks/research/plan";
 import { normalizeString } from "@zoonk/utils/string";
 
 export type ResearchPlanExpected = {

@@ -1,5 +1,5 @@
-import { type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
-import { type LessonVisual } from "@zoonk/ai/tasks/v2/visuals/schema";
+import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { type LessonVisual } from "@zoonk/ai/tasks/visuals/schema";
 import { type StepKind } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getOptionId, shuffleAnswerOptions } from "../_utils/answer-options";

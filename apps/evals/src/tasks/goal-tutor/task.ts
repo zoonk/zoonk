@@ -2,17 +2,17 @@ import { type Task } from "@/lib/types";
 import {
   type GenerateGoalTutorAnswerParams,
   generateGoalTutorAnswer,
-} from "@zoonk/ai/tasks/v2/tutor/goal-tutor";
+} from "@zoonk/ai/tasks/tutor/goal-tutor";
 import {
   type GoalTutorAppToolResult,
   type GoalTutorPlanChangeResult,
-} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-cards";
+} from "@zoonk/ai/tasks/tutor/goal-tutor-cards";
 import {
   type GoalTutorLookUp,
   type GoalTutorLookUpResult,
-} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
-import { listGoalTutorPages } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-pages";
-import { type GoalTutorAppTool } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-tools";
+} from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
+import { listGoalTutorPages } from "@zoonk/ai/tasks/tutor/goal-tutor-pages";
+import { type GoalTutorAppTool } from "@zoonk/ai/tasks/tutor/goal-tutor-tools";
 import { createAnswerLinks } from "@zoonk/player/tutor/app-links";
 import { TEST_CASES } from "./test-cases";
 

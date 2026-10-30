@@ -1,7 +1,7 @@
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
-import { type FixLessonDraftParams } from "@zoonk/ai/tasks/v2/lesson-writer/fix";
-import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type FixLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer/fix";
+import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { checkWrittenLesson } from "@zoonk/core/library/quality/code-checks";
 import { checkLessonPrograms } from "@zoonk/core/library/quality/program-checks";
 import { findQuestionBases } from "@zoonk/core/library/steps/question-bases";

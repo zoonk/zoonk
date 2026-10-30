@@ -1,4 +1,4 @@
-import { type BlueprintExtraction } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
+import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { type Citation } from "./blueprint-contract";
 import { type ExtractionDocument, type Passage, toClaimSource } from "./blueprint-passages";
 

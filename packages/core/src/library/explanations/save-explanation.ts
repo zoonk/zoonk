@@ -1,6 +1,6 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { type QuickExplanation } from "@zoonk/ai/tasks/v2/explain/quick-explanation";
+import { type QuickExplanation } from "@zoonk/ai/tasks/explain/quick-explanation";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";

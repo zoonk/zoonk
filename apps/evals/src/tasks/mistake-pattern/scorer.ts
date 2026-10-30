@@ -1,7 +1,7 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
-import { type FindMistakePatternSchema } from "@zoonk/ai/tasks/v2/language/mistake-pattern";
-import { isWellFormedDrillQuestion } from "@zoonk/ai/tasks/v2/language/mistake-pattern-rules";
+import { type FindMistakePatternSchema } from "@zoonk/ai/tasks/language/mistake-pattern";
+import { isWellFormedDrillQuestion } from "@zoonk/ai/tasks/language/mistake-pattern-rules";
 import { MISTAKE_PATTERN_SCORE_CATEGORIES } from "./score-categories";
 
 export type MistakePatternExpected = Pick<FindMistakePatternSchema, "kind" | "mistakeNumbers">;

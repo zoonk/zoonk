@@ -1,11 +1,11 @@
-import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
-import { LiveCallCreationRefusedError } from "@zoonk/ai/tasks/v2/language/live-call-creation";
+import { checkConversationObjectives } from "@zoonk/ai/tasks/language/conversation-objectives";
+import { LiveCallCreationRefusedError } from "@zoonk/ai/tasks/language/live-call-creation";
 import {
   type LiveCallSession,
   createLiveCallSession,
   hangUpLiveCallSession,
   isLiveCallAvailable,
-} from "@zoonk/ai/tasks/v2/language/live-call-session";
+} from "@zoonk/ai/tasks/language/live-call-session";
 import { prisma } from "@zoonk/db";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

@@ -5,7 +5,7 @@ import {
   type ExamDescription,
   evaluateExamIdentityPair,
   isSameExam,
-} from "@zoonk/ai/tasks/v2/research/exam-identity-decision";
+} from "@zoonk/ai/tasks/research/exam-identity-decision";
 import { TEST_CASES } from "./test-cases";
 
 export type ExamIdentityInput = { candidate: ExamDescription; request: ExamDescription };

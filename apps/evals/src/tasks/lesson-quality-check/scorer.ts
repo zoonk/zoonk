@@ -1,6 +1,6 @@
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
-import { type LessonQualityIssue } from "@zoonk/ai/tasks/v2/quality/lesson-check";
+import { type LessonQualityIssue } from "@zoonk/ai/tasks/quality/lesson-check";
 import { type LessonQualityCheckExpected } from "./test-cases";
 
 function parseIssues(output: string): LessonQualityIssue[] | null {

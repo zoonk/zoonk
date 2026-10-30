@@ -1,7 +1,7 @@
 import { getSeedLearner } from "@/datasets/seed-learners";
 import { type TestCase } from "@/lib/types";
-import { type MemoryFactText } from "@zoonk/ai/tasks/v2/memory/facts";
-import { type MemoryReconcileInput } from "@zoonk/ai/tasks/v2/memory/reconcile";
+import { type MemoryFactText } from "@zoonk/ai/tasks/memory/facts";
+import { type MemoryReconcileInput } from "@zoonk/ai/tasks/memory/reconcile";
 import { type MemoryReconcileExpected } from "./test-cases";
 
 function personaCase({

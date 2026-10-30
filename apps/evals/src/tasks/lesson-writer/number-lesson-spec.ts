@@ -1,4 +1,4 @@
-import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 
 export const SCIENTIFIC_NOTATION_SPEC = {
   canDo: "Escrever, comparar e multiplicar números em notação científica",

@@ -1,6 +1,6 @@
 import { getSeedLearner, getSeedScreen } from "@/datasets/seed-learners";
 import { type TestCase } from "@/lib/types";
-import { type GenerateExampleLinesParams } from "@zoonk/ai/tasks/v2/variants/example-lines";
+import { type GenerateExampleLinesParams } from "@zoonk/ai/tasks/variants/example-lines";
 
 type ExampleLinesInput = Omit<
   GenerateExampleLinesParams,

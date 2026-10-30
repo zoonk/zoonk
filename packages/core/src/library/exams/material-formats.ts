@@ -1,4 +1,4 @@
-import { isSameFormat } from "@zoonk/ai/tasks/v2/research/format-words";
+import { isSameFormat } from "@zoonk/ai/tasks/research/format-words";
 import { type Citation, type ExamStructure } from "./blueprint-contract";
 import { type ExtractionDocument } from "./blueprint-passages";
 import { toStems } from "./topic-key";

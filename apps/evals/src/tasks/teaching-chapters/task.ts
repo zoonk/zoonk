@@ -2,7 +2,7 @@ import { type Task } from "@/lib/types";
 import {
   type TeachingChaptersParams,
   findTeachingChapters,
-} from "@zoonk/ai/tasks/v2/curriculum/teaching-chapters";
+} from "@zoonk/ai/tasks/curriculum/teaching-chapters";
 import { type TeachingChaptersExpected, scoreTeachingChapters } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 

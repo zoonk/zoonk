@@ -3,7 +3,7 @@ import {
   type GenerateLevelTestBankParams,
   type GenerateLevelTestBankSchema,
   generateLevelTestBank,
-} from "@zoonk/ai/tasks/v2/language/level-test-bank";
+} from "@zoonk/ai/tasks/language/level-test-bank";
 import { LEVEL_TEST_BANK_SCORE_CATEGORIES } from "./score-categories";
 import { scoreLevelTestBank } from "./scorer";
 import { TEST_CASES } from "./test-cases";

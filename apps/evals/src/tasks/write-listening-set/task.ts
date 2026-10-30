@@ -2,7 +2,7 @@ import { type Task } from "@/lib/types";
 import {
   type WriteListeningSetParams,
   writeListeningSet,
-} from "@zoonk/ai/tasks/v2/listening/write-set";
+} from "@zoonk/ai/tasks/listening/write-set";
 import { WRITE_LISTENING_SET_SCORE_CATEGORIES } from "./score-categories";
 import { scoreWriteListeningSet } from "./scorer";
 import { TEST_CASES } from "./test-cases";

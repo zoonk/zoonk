@@ -1,5 +1,5 @@
 import "server-only";
-import { type LessonSpec, type LessonSpecSkill } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
+import { type LessonSpec, type LessonSpecSkill } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { type CourseLevel, type Skill, prisma } from "@zoonk/db";
 import { isSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { normalizeString } from "@zoonk/utils/string";

@@ -1,4 +1,4 @@
-import { type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { normalizeString } from "@zoonk/utils/string";
 import { getScreenTexts } from "./screen-texts";
 

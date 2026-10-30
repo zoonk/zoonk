@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
-import { authenticatedCallFixture } from "@/workflows/v2/calls/_test-utils/live-call-fixtures";
-import { liveCallDeadlineWorkflow } from "@/workflows/v2/calls/live-call-deadline-workflow";
+import { authenticatedCallFixture } from "@/workflows/calls/_test-utils/live-call-fixtures";
+import { liveCallDeadlineWorkflow } from "@/workflows/calls/live-call-deadline-workflow";
 import {
   createLiveCallSession,
   hangUpLiveCallSession,
   isLiveCallAvailable,
-} from "@zoonk/ai/tasks/v2/language/live-call-session";
+} from "@zoonk/ai/tasks/language/live-call-session";
 import {
   liveCallAdmissionInputSchema,
   liveCallAdmissionResponseSchema,
@@ -25,7 +25,7 @@ import { POST as end } from "./[connectionId]/end/route";
 import { POST as redeem } from "./[connectionId]/sdp/route";
 import { POST as reserve } from "./route";
 
-vi.mock("@zoonk/ai/tasks/v2/language/live-call-session", () => ({
+vi.mock("@zoonk/ai/tasks/language/live-call-session", () => ({
   createLiveCallSession: vi.fn(),
   hangUpLiveCallSession: vi.fn(),
   isLiveCallAvailable: vi.fn(),

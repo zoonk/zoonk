@@ -28,9 +28,9 @@ vi.mock("./speech-provider", () => ({
   generateSpeechWithProvider: generateSpeechWithProviderMock,
 }));
 
-vi.mock("../v2/language/word-ipa", () => ({ writeWordIpa: writeWordIpaMock }));
+vi.mock("../language/word-ipa", () => ({ writeWordIpa: writeWordIpaMock }));
 
-vi.mock("../v2/language/check-word-pronunciation", () => ({
+vi.mock("../language/check-word-pronunciation", () => ({
   checkWordPronunciation: checkWordPronunciationMock,
 }));
 

@@ -1,5 +1,5 @@
 import "server-only";
-import { type MindMapChapter, type MindMapLesson } from "@zoonk/ai/tasks/v2/mind-maps/structure";
+import { type MindMapChapter, type MindMapLesson } from "@zoonk/ai/tasks/mind-maps/structure";
 import { type Step, prisma } from "@zoonk/db";
 import { toSummaryIdeas } from "../../library/lessons/_utils/summary-ideas";
 import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";

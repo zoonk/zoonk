@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type PlanRoutineFitInput } from "@zoonk/ai/tasks/v2/plans/routine-fit";
+import { type PlanRoutineFitInput } from "@zoonk/ai/tasks/plans/routine-fit";
 import { seedInput } from "../plan-edit-intent/memory-cases";
 import { type ExpectedChange, type PlanEditExpected } from "../plan-edit-intent/scorer";
 

@@ -1,5 +1,5 @@
 import "server-only";
-import { LIVE_CONVERSATION_MODEL } from "@zoonk/ai/tasks/v2/language/live-conversation-models";
+import { LIVE_CONVERSATION_MODEL } from "@zoonk/ai/tasks/language/live-conversation-models";
 import { type Goal, type LanguageConversationKind, type prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { writeLearnerChange } from "../../../learner/_utils/write-learner-change";

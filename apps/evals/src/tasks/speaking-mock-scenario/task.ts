@@ -1,9 +1,9 @@
 import { type Task } from "@/lib/types";
-import { type GenerateConversationScenarioSchema } from "@zoonk/ai/tasks/v2/language/conversation-scenario";
+import { type GenerateConversationScenarioSchema } from "@zoonk/ai/tasks/language/conversation-scenario";
 import {
   type GenerateSpeakingMockScenarioParams,
   generateSpeakingMockScenario,
-} from "@zoonk/ai/tasks/v2/language/speaking-mock-scenario";
+} from "@zoonk/ai/tasks/language/speaking-mock-scenario";
 import { SPEAKING_MOCK_SCENARIO_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 

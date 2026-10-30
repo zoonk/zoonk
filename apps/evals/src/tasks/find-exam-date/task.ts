@@ -4,7 +4,7 @@ import {
   type ExamDateFinding,
   type FindExamDateParams,
   findExamDate,
-} from "@zoonk/ai/tasks/v2/goals/find-exam-date";
+} from "@zoonk/ai/tasks/goals/find-exam-date";
 import { TEST_CASES } from "./test-cases";
 
 export type FindExamDateExpected = {

@@ -4,7 +4,7 @@ import {
   type SpeakingCriterion,
   type SpeakingGrade,
   listRatedCriteria,
-} from "@zoonk/ai/tasks/v2/language/speaking-bands";
+} from "@zoonk/ai/tasks/language/speaking-bands";
 import { SPEAKING_SCORE_CATEGORIES } from "./score-categories";
 import { type SpeakingScoreInput } from "./test-inputs";
 

@@ -2,7 +2,7 @@ import { type TestCase } from "@/lib/types";
 import {
   type TopicSkillNamesInput,
   type TopicToName,
-} from "@zoonk/ai/tasks/v2/plans/topic-skill-names";
+} from "@zoonk/ai/tasks/plans/topic-skill-names";
 import { type TopicSkillNamesExpected } from "./scorer";
 
 type TopicSkillNamesTestCase = TestCase<TopicSkillNamesExpected, TopicSkillNamesInput>;

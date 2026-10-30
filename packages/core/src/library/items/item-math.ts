@@ -1,4 +1,4 @@
-import { type GeneratedMathProblem, type NumericEntry } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type GeneratedMathProblem, type NumericEntry } from "@zoonk/ai/tasks/items/schemas";
 import { evaluateFormula } from "../activities/expression/evaluate-expression";
 import { withinTolerance } from "../activities/templates/_utils/pattern-checks";
 import { type MathValues, fillMathStep, fillMathText, getValues } from "./_utils/math-values";

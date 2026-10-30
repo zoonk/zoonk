@@ -1,4 +1,4 @@
-import { type ImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
+import { type ImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 
 export type LessonImageInput = {
   caseId: string;

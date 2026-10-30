@@ -1,5 +1,5 @@
 import { type CallReuse } from "@zoonk/ai/provider-options";
-import { type SearchTermsParams } from "@zoonk/ai/tasks/v2/identity/search-terms";
+import { type SearchTermsParams } from "@zoonk/ai/tasks/identity/search-terms";
 import { type CourseLevel } from "@zoonk/db";
 import { type CandidateExam } from "../exams/candidate-exams";
 

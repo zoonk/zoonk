@@ -1,5 +1,5 @@
-import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/v2/memory/relevance";
-import { generateMemorySearchTerms } from "@zoonk/ai/tasks/v2/memory/search-terms";
+import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/memory/relevance";
+import { generateMemorySearchTerms } from "@zoonk/ai/tasks/memory/search-terms";
 import { type MemoryCategory, prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";

@@ -1,6 +1,6 @@
 import { type TestCase } from "@/lib/types";
-import { type ExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
-import { type SkillGraphParams } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
+import { type ExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
+import { type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { CAMARA_BLUEPRINT } from "./camara-blueprint";
 import { ENEM_SCIENCE_BLUEPRINT } from "./enem-science-blueprint";
 

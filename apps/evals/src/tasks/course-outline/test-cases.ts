@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type CourseOutlineParams } from "@zoonk/ai/tasks/v2/curriculum/course-outline";
+import { type CourseOutlineParams } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { type CourseOutlineExpected } from "./scorer";
 
 const SHARED_EXPECTATIONS = `

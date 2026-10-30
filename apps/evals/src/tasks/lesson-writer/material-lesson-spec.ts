@@ -1,4 +1,4 @@
-import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 
 export const MATERIAL_LESSON_SPEC: LessonSpec = {
   canDo: "Calcular o saldo de ATP da glicólise",

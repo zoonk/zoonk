@@ -1,10 +1,10 @@
 import "server-only";
-import { LiveCallCreationRefusedError } from "@zoonk/ai/tasks/v2/language/live-call-creation";
+import { LiveCallCreationRefusedError } from "@zoonk/ai/tasks/language/live-call-creation";
 import {
   createLiveCallSession,
   hangUpLiveCallSession,
-} from "@zoonk/ai/tasks/v2/language/live-call-session";
-import { getLiveConversationVoice } from "@zoonk/ai/tasks/v2/language/live-conversation-models";
+} from "@zoonk/ai/tasks/language/live-call-session";
+import { getLiveConversationVoice } from "@zoonk/ai/tasks/language/live-conversation-models";
 import { type LiveCallConnection, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";

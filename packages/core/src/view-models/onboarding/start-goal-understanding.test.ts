@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { classifyCourseIntent } from "@zoonk/ai/tasks/courses/intent";
-import { understandGoal as runUnderstandGoal } from "@zoonk/ai/tasks/v2/goals/understand-goal";
+import { understandGoal as runUnderstandGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";

@@ -4,7 +4,7 @@ import {
   type WriteItemSetParams,
   type WrittenItemSet,
   toSetItem,
-} from "@zoonk/ai/tasks/v2/items/write-set";
+} from "@zoonk/ai/tasks/items/write-set";
 import { checkItem } from "@zoonk/core/library/items/checks";
 import { repairItem } from "@zoonk/core/library/items/repairs";
 import { checkWrittenItemSet, repairWrittenItemSet } from "@zoonk/core/library/items/set-checks";

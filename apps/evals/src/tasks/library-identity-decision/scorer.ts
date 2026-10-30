@@ -3,7 +3,7 @@ import { type TaskScorer } from "@/lib/types";
 import {
   type LibraryIdentityItem,
   type LibraryIdentitySubject,
-} from "@zoonk/ai/tasks/v2/identity/subject";
+} from "@zoonk/ai/tasks/identity/subject";
 import { isJsonObject } from "@zoonk/utils/json";
 
 /** Candidates in `others` are unlabeled; `position` places the labeled candidate among them. */

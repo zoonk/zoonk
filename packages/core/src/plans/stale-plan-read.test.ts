@@ -8,7 +8,7 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockAccountSession, mockSession } from "../_test-utils/mock-session";
 import { markPlansChanged } from "../learner/_utils/mark-learner-changed";
-import { seedV2PersonaCopy } from "../seed/seed-v2";
+import { seedPersonaCopy } from "../seed/seed";
 import { openStudyDay } from "../sessions/open-study-day";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
@@ -155,7 +155,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
     vi.setSystemTime(new Date("2026-10-15T12:00:00Z"));
     const copyKey = randomUUID();
 
-    const copy = await seedV2PersonaCopy({
+    const copy = await seedPersonaCopy({
       copyKey,
       email: `catch-up-preview-${copyKey}@zoonk.test`,
       persona: "exam",

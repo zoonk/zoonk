@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
-import { type WrittenItemSet } from "@zoonk/ai/tasks/v2/items/write-set";
+import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
+import { type WrittenItemSet } from "@zoonk/ai/tasks/items/write-set";
 
 type ItemOf<FORMAT extends GeneratedItem["format"]> = Extract<GeneratedItem, { format: FORMAT }>;
 

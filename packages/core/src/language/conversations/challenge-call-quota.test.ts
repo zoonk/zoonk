@@ -1,5 +1,5 @@
-import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
-import { createLiveCallSession } from "@zoonk/ai/tasks/v2/language/live-call-session";
+import { checkConversationObjectives } from "@zoonk/ai/tasks/language/conversation-objectives";
+import { createLiveCallSession } from "@zoonk/ai/tasks/language/live-call-session";
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";

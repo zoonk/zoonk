@@ -1,4 +1,4 @@
-import { lessonContentWorkflow } from "@/workflows/v2/lessons/lesson-content-workflow";
+import { lessonContentWorkflow } from "@/workflows/lessons/lesson-content-workflow";
 import { pullLessonsForRegeneration } from "@zoonk/core/library/lessons/regenerate";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -7,9 +7,7 @@ import { POST as createLessonRegeneration } from "./route";
 
 vi.mock("@zoonk/core/library/lessons/regenerate", () => ({ pullLessonsForRegeneration: vi.fn() }));
 
-vi.mock("@/workflows/v2/lessons/lesson-content-workflow", () => ({
-  lessonContentWorkflow: vi.fn(),
-}));
+vi.mock("@/workflows/lessons/lesson-content-workflow", () => ({ lessonContentWorkflow: vi.fn() }));
 
 const LESSON_IDS = ["019c9bd7-bf11-73cb-9cc8-fe371298190b", "019c9bd7-bf11-73cb-9cc8-fe371298190c"];
 

@@ -1,6 +1,6 @@
-import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
-import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/v2/language/speaking-mock-scenario";
-import { scoreSpeaking } from "@zoonk/ai/tasks/v2/language/speaking-score";
+import { checkConversationObjectives } from "@zoonk/ai/tasks/language/conversation-objectives";
+import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/language/speaking-mock-scenario";
+import { scoreSpeaking } from "@zoonk/ai/tasks/language/speaking-score";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

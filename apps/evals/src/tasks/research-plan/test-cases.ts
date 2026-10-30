@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type ExamResearchPlanParams } from "@zoonk/ai/tasks/v2/research/plan";
+import { type ExamResearchPlanParams } from "@zoonk/ai/tasks/research/plan";
 import { type ResearchPlanExpected } from "./scorer";
 
 export const TEST_CASES: TestCase<ResearchPlanExpected, ExamResearchPlanParams>[] = [

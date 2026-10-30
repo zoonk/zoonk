@@ -3,7 +3,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
 import { challengePathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
-import { challengeQuestionsWorkflow } from "@/workflows/v2/goals/challenge-questions-workflow";
+import { challengeQuestionsWorkflow } from "@/workflows/goals/challenge-questions-workflow";
 import { requestChallengeQuestions } from "@zoonk/core/checkpoints/challenge-questions";
 import { NextResponse } from "next/server";
 import { start } from "workflow/api";

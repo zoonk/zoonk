@@ -1,7 +1,7 @@
 import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
-import { extractMemoryFacts } from "@zoonk/ai/tasks/v2/memory/extraction";
-import { findSessionPatterns } from "@zoonk/ai/tasks/v2/memory/session-patterns";
+import { extractMemoryFacts } from "@zoonk/ai/tasks/memory/extraction";
+import { findSessionPatterns } from "@zoonk/ai/tasks/memory/session-patterns";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";

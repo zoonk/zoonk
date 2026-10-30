@@ -1,5 +1,5 @@
-import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
-import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { LESSON_SPECS } from "../lesson-writer/lesson-specs";
 import { VISUAL_LESSON_SPECS } from "../lesson-writer/visual-lesson-specs";
 

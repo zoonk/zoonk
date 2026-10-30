@@ -4,7 +4,7 @@ import {
   type UnderstandGoalParams,
   goalRouteClassifier,
   understandGoal,
-} from "@zoonk/ai/tasks/v2/goals/understand-goal";
+} from "@zoonk/ai/tasks/goals/understand-goal";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
 import { PERSONA_TEST_CASES } from "./persona-cases";
 import { type UnderstandGoalExpected, scoreUnderstandGoal } from "./scorer";

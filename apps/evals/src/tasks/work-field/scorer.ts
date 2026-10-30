@@ -1,5 +1,5 @@
 import { createDeterministicStringFieldScorer } from "@/lib/deterministic-string-field-scorer";
-import { type WorkFieldResult } from "@zoonk/ai/tasks/v2/items/work-field";
+import { type WorkFieldResult } from "@zoonk/ai/tasks/items/work-field";
 
 export type WorkFieldExpected = {
   field: WorkFieldResult["field"];

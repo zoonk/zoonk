@@ -3,7 +3,7 @@ import { type Task, type TaskScorer } from "@/lib/types";
 import {
   type FindOfficialSourcesParams,
   findOfficialSources,
-} from "@zoonk/ai/tasks/v2/research/find-official-sources";
+} from "@zoonk/ai/tasks/research/find-official-sources";
 import { fetchDocument } from "@zoonk/core/library/sources/fetch";
 import { parseDocument } from "@zoonk/core/library/sources/parse-document";
 import { normalizeString } from "@zoonk/utils/string";

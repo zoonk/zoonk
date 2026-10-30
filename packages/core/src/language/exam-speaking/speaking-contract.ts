@@ -1,4 +1,4 @@
-import { SPEAKING_EXAMS } from "@zoonk/ai/tasks/v2/language/exam-speaking-exams";
+import { SPEAKING_EXAMS } from "@zoonk/ai/tasks/language/exam-speaking-exams";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { z } from "zod";
 

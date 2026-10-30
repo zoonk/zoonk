@@ -1,5 +1,5 @@
 import "server-only";
-import { type GoalUnderstanding } from "@zoonk/ai/tasks/v2/goals/understand-goal";
+import { type GoalUnderstanding } from "@zoonk/ai/tasks/goals/understand-goal";
 import { type OnboardingDraft, type TransactionClient, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";

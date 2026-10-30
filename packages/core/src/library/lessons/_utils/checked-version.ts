@@ -1,9 +1,9 @@
 import "server-only";
 import { type CallReuse, type ServiceTier } from "@zoonk/ai/provider-options";
-import { type writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
-import { fixLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer/fix";
-import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
-import { type CitedDocuments, citeMaterial } from "@zoonk/ai/tasks/v2/material/cite";
+import { type writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
+import { fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
+import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { type CitedDocuments, citeMaterial } from "@zoonk/ai/tasks/material/cite";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LibraryProvenance } from "../../_utils/library-rows";
 import {

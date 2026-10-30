@@ -1,6 +1,6 @@
 import { type TestCase } from "@/lib/types";
-import { type SearchTermsParams } from "@zoonk/ai/tasks/v2/identity/search-terms";
-import { type LibraryIdentitySubject } from "@zoonk/ai/tasks/v2/identity/subject";
+import { type SearchTermsParams } from "@zoonk/ai/tasks/identity/search-terms";
+import { type LibraryIdentitySubject } from "@zoonk/ai/tasks/identity/subject";
 import { type LibrarySearchItem, type LibrarySearchTermsExpected } from "./scorer";
 
 type LibrarySearchTermsTestCase = TestCase<LibrarySearchTermsExpected, SearchTermsParams>;

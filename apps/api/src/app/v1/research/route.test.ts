@@ -1,4 +1,4 @@
-import { researchWorkflow } from "@/workflows/v2/research/research-workflow";
+import { researchWorkflow } from "@/workflows/research/research-workflow";
 import { answerGoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -8,7 +8,7 @@ import { POST as createResearch } from "./route";
 
 vi.mock("@zoonk/core/library/sources/upload-request", () => ({ answerGoalUploadRequest: vi.fn() }));
 
-vi.mock("@/workflows/v2/research/research-workflow", () => ({ researchWorkflow: vi.fn() }));
+vi.mock("@/workflows/research/research-workflow", () => ({ researchWorkflow: vi.fn() }));
 
 const GOAL_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190b";
 const SOURCE_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190c";

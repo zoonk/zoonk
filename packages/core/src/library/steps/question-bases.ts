@@ -1,4 +1,4 @@
-import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { explanationSchema } from "./contract/content-schemas";
 import { normalizeStepContentValue } from "./contract/normalize-step-content";
 import { safeParseStepContent } from "./contract/step-contract";

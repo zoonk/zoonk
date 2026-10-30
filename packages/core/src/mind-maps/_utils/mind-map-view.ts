@@ -1,4 +1,4 @@
-import { mindMapStructureSchema } from "@zoonk/ai/tasks/v2/mind-maps/schema";
+import { mindMapStructureSchema } from "@zoonk/ai/tasks/mind-maps/schema";
 import { type ChapterMindMap } from "@zoonk/db";
 import {
   type ChapterMindMapView,

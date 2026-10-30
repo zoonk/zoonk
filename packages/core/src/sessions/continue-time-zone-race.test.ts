@@ -4,7 +4,7 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { revalidateTag } from "next/cache";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockAccountSession } from "../_test-utils/mock-session";
-import { seedV2PersonaCopy } from "../seed/seed-v2";
+import { seedPersonaCopy } from "../seed/seed";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { getStudySession } from "./get-study-session";
 import { openStudySession } from "./open-study-day";
@@ -21,7 +21,7 @@ describe("Continue on an already studied day while another device reads it", () 
     vi.setSystemTime(NOW);
     const copyKey = randomUUID();
 
-    const copy = await seedV2PersonaCopy({
+    const copy = await seedPersonaCopy({
       copyKey,
       email: `continue-zone-${copyKey}@zoonk.test`,
       persona: "exam",

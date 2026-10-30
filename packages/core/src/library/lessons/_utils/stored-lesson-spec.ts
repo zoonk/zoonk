@@ -2,7 +2,7 @@ import {
   LESSON_SCREEN_KINDS,
   type LessonSpec,
   SUPPORT_MODES,
-} from "@zoonk/ai/tasks/v2/lesson-spec/rules";
+} from "@zoonk/ai/tasks/lesson-spec/rules";
 import { z } from "zod";
 
 /** `Lesson.spec` holds the normalized spec `generateLessonSpec` returns: skill indexes are 0-based. */

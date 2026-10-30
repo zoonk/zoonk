@@ -1,6 +1,6 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createGenerateTextResult } from "../v2/_test-utils/generate-text-result";
+import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import {
   type GenerateLessonQuestionAnswerParams,
   generateLessonQuestionAnswer,

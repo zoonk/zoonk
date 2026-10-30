@@ -1,5 +1,5 @@
 import { type Task } from "@/lib/types";
-import { type WriteItemSetParams, writeItemSet } from "@zoonk/ai/tasks/v2/items/write-set";
+import { type WriteItemSetParams, writeItemSet } from "@zoonk/ai/tasks/items/write-set";
 import { WRITE_ITEM_SET_SCORE_CATEGORIES } from "./score-categories";
 import { scoreWriteItemSet } from "./scorer";
 import { TEST_CASES } from "./test-cases";

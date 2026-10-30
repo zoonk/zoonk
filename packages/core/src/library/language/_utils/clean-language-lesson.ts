@@ -1,5 +1,5 @@
-import { type LanguageLessonContent } from "@zoonk/ai/tasks/v2/language/language-lesson";
-import { definitionNamesWord } from "@zoonk/ai/tasks/v2/language/language-lesson-rules";
+import { type LanguageLessonContent } from "@zoonk/ai/tasks/language/language-lesson";
+import { definitionNamesWord } from "@zoonk/ai/tasks/language/language-lesson-rules";
 import { normalizeDistractorKey, sanitizeDistractors } from "@zoonk/utils/distractors";
 import { normalizePunctuation, segmentWords } from "@zoonk/utils/string";
 

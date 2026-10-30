@@ -1,5 +1,5 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
-import { generateAlphabetLesson } from "@zoonk/ai/tasks/v2/language/alphabet-lesson";
+import { generateAlphabetLesson } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { prisma } from "@zoonk/db";
 import { describe, expect, it, vi } from "vitest";
 import { storeBlobUploads } from "../../../_test-utils/blob-uploads";

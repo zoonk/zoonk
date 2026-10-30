@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
-import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
-import { interpretPlanEdit } from "@zoonk/ai/tasks/v2/plans/edit-intent";
-import { type TopicSkillName, nameTopicSkills } from "@zoonk/ai/tasks/v2/plans/topic-skill-names";
+import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
+import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
+import { interpretPlanEdit } from "@zoonk/ai/tasks/plans/edit-intent";
+import { type TopicSkillName, nameTopicSkills } from "@zoonk/ai/tasks/plans/topic-skill-names";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";

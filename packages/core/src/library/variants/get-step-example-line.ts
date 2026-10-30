@@ -1,5 +1,5 @@
 import "server-only";
-import { generateExampleLines } from "@zoonk/ai/tasks/v2/variants/example-lines";
+import { generateExampleLines } from "@zoonk/ai/tasks/variants/example-lines";
 import { type StepExampleLine, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimAssist } from "../../entitlements/claim-usage";

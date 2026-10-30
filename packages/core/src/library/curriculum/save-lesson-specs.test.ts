@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
-import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
+import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";

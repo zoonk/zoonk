@@ -11,7 +11,7 @@ type UnderstandingResult = Parameters<typeof prisma.goalUnderstanding.create>[0]
  */
 const PROMPT_VERSION = getPromptVersion({
   systemPrompt: readFileSync(
-    new URL("../../../ai/src/tasks/v2/goals/understand-goal.prompt.md", import.meta.url),
+    new URL("../../../ai/src/tasks/goals/understand-goal.prompt.md", import.meta.url),
     "utf8",
   ),
 });

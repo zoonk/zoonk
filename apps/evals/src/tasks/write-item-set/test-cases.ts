@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type WriteItemSetParams } from "@zoonk/ai/tasks/v2/items/write-set";
+import { type WriteItemSetParams } from "@zoonk/ai/tasks/items/write-set";
 import { CEBRASPE, ENEM, JEE_ADVANCED } from "../generate-items/test-cases";
 
 type WriteItemSetInput = Omit<WriteItemSetParams, "model" | "useFallback" | "reasoning">;

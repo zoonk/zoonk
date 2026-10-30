@@ -10,7 +10,7 @@ import {
   unplannedGoalFixture,
 } from "../../../../../../../../packages/core/src/plans/_test-utils/plan-library";
 import { createGoalPlan } from "../../../../../../../../packages/core/src/plans/create-goal-plan";
-import { sessionPreparationWorkflow } from "../../../../../workflows/v2/sessions/session-preparation-workflow";
+import { sessionPreparationWorkflow } from "../../../../../workflows/sessions/session-preparation-workflow";
 import { GET as readToday } from "../../../today/route";
 import { POST as prepareLessons } from "./route";
 

@@ -1,10 +1,10 @@
-import { writeConversationFeedback } from "@zoonk/ai/tasks/v2/language/conversation-feedback";
-import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
-import { generateConversationScenario } from "@zoonk/ai/tasks/v2/language/conversation-scenario";
+import { writeConversationFeedback } from "@zoonk/ai/tasks/language/conversation-feedback";
+import { checkConversationObjectives } from "@zoonk/ai/tasks/language/conversation-objectives";
+import { generateConversationScenario } from "@zoonk/ai/tasks/language/conversation-scenario";
 import {
   createLiveCallSession,
   hangUpLiveCallSession,
-} from "@zoonk/ai/tasks/v2/language/live-call-session";
+} from "@zoonk/ai/tasks/language/live-call-session";
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";

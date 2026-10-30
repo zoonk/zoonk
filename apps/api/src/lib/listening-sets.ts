@@ -1,8 +1,8 @@
-import { type ContentAnalytics } from "@/workflows/v2/_shared/content-analytics";
+import { type ContentAnalytics } from "@/workflows/_shared/content-analytics";
 import {
   type ListeningSetsInput,
   listeningSetsWorkflow,
-} from "@/workflows/v2/listening/listening-sets-workflow";
+} from "@/workflows/listening/listening-sets-workflow";
 import { start } from "workflow/api";
 
 /**

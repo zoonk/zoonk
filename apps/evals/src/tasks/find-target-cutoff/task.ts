@@ -4,7 +4,7 @@ import {
   type FindTargetCutoffParams,
   type TargetCutoffFinding,
   findTargetCutoff,
-} from "@zoonk/ai/tasks/v2/research/find-target-cutoff";
+} from "@zoonk/ai/tasks/research/find-target-cutoff";
 import { TEST_CASES } from "./test-cases";
 
 export type FindTargetCutoffExpected = {

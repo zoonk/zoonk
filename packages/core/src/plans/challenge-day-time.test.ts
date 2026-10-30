@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
-import { seedV2PersonaCopy } from "../seed/seed-v2";
+import { seedPersonaCopy } from "../seed/seed";
 import { readSelectedItemFacts } from "./_utils/selected-item-contract";
 import { fromIsoDate, getPlanCalendar, toIsoDate } from "./planner/plan-calendar";
 import { getExamDayRules, getPlannedMinutes } from "./planner/plan-days";
@@ -37,7 +37,7 @@ describe("a day that holds a challenge", () => {
   it("asks no more than its time, the time the day's challenges take past it included", async () => {
     const copyKey = randomUUID().slice(0, 8);
 
-    const copy = await seedV2PersonaCopy({
+    const copy = await seedPersonaCopy({
       copyKey,
       email: `challenge-day-${copyKey}@zoonk.test`,
       persona: "exam",

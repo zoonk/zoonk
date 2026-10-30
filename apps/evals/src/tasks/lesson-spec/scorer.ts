@@ -1,6 +1,6 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
-import { type LessonSpec, getLessonSpecIssues } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
+import { type LessonSpec, getLessonSpecIssues } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { isJsonObject } from "@zoonk/utils/json";
 import { LESSON_SPEC_SCORE_CATEGORIES } from "./score-categories";
 import { type LessonSpecExpected } from "./visual-test-cases";

@@ -1,5 +1,5 @@
 import "server-only";
-import { gradeEssay } from "@zoonk/ai/tasks/v2/grading/grade-essay";
+import { gradeEssay } from "@zoonk/ai/tasks/grading/grade-essay";
 import { type ExamBlueprint, type Item, type TransactionClient } from "@zoonk/db";
 import {
   type RecordedOutcome,

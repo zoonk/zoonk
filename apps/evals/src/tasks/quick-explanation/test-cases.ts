@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type QuickExplanationParams } from "@zoonk/ai/tasks/v2/explain/quick-explanation";
+import { type QuickExplanationParams } from "@zoonk/ai/tasks/explain/quick-explanation";
 
 type QuickExplanationInput = Pick<QuickExplanationParams, "language" | "question">;
 

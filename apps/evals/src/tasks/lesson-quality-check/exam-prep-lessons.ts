@@ -1,4 +1,4 @@
-import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { EXAM_PREP_LESSON } from "../lesson-writer/exam-prep-lesson-spec";
 
 const lesson: WrittenLesson = {

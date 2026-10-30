@@ -1,4 +1,4 @@
-import { type BlueprintExtraction } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
+import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { type FactEntry, type FactSource, toFacts } from "./blueprint-fact-claims";
 import {
   type ExtractionDocument,

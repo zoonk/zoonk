@@ -1,6 +1,6 @@
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
-import { type LibraryIdentitySubject } from "@zoonk/ai/tasks/v2/identity/subject";
+import { type LibraryIdentitySubject } from "@zoonk/ai/tasks/identity/subject";
 import {
   matchesSearchTerms,
   parseSearchTerms,

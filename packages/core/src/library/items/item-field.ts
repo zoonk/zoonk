@@ -1,4 +1,4 @@
-import { type WorkField, isWorkField } from "@zoonk/ai/tasks/v2/items/work-fields";
+import { type WorkField, isWorkField } from "@zoonk/ai/tasks/items/work-fields";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 
 const FIELD_PURPOSES = new Set(["careerChange", "work"]);

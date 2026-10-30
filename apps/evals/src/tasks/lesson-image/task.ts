@@ -2,9 +2,9 @@ import { readEvalImage, saveEvalImage } from "@/lib/image-files";
 import { judgeImage } from "@/lib/image-judge";
 import { defineScoreCategories } from "@/lib/score-categories";
 import { type Task, type TaskScorer, getJudgeExpectations } from "@/lib/types";
-import { generateLessonImage } from "@zoonk/ai/tasks/v2/images/generate";
-import { describeImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
-import { getImagePalette } from "@zoonk/ai/tasks/v2/images/style";
+import { generateLessonImage } from "@zoonk/ai/tasks/images/generate";
+import { describeImageScene } from "@zoonk/ai/tasks/images/scene-schema";
+import { getImagePalette } from "@zoonk/ai/tasks/images/style";
 import { type LessonImageInput, TEST_CASES } from "./test-cases";
 
 const TASK_ID = "lesson-image";

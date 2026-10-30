@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type SessionPatternsParams } from "@zoonk/ai/tasks/v2/memory/session-patterns";
+import { type SessionPatternsParams } from "@zoonk/ai/tasks/memory/session-patterns";
 
 type ExpectedPattern = { keywords: string[] };
 

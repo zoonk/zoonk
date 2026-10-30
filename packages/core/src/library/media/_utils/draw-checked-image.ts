@@ -1,8 +1,8 @@
 import "server-only";
 import { type ServiceTier } from "@zoonk/ai/provider-options";
-import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
-import { type LessonImageParams, generateLessonImage } from "@zoonk/ai/tasks/v2/images/generate";
-import { type ImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
+import { checkLessonImage } from "@zoonk/ai/tasks/images/check";
+import { type LessonImageParams, generateLessonImage } from "@zoonk/ai/tasks/images/generate";
+import { type ImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 import { logInfo } from "@zoonk/utils/logger";
 import { isNearSolidImage } from "../../../images/image-quality";
 import { type LibraryProvenance } from "../../_utils/library-rows";

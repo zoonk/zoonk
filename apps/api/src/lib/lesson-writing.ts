@@ -1,6 +1,6 @@
 import "server-only";
-import { isRunActive } from "@/workflows/v2/_shared/run-activity";
-import { lessonContentWorkflow } from "@/workflows/v2/lessons/lesson-content-workflow";
+import { isRunActive } from "@/workflows/_shared/run-activity";
+import { lessonContentWorkflow } from "@/workflows/lessons/lesson-content-workflow";
 import { releaseStaleLessonClaims } from "@zoonk/core/library/generation/state";
 import {
   type LessonGenerationRequest,

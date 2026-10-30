@@ -1,8 +1,5 @@
 import { type Task } from "@/lib/types";
-import {
-  type SkillGraphParams,
-  generateSkillGraph,
-} from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
+import { type SkillGraphParams, generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { SKILL_GRAPH_SCORE_CATEGORIES } from "./score-categories";
 import { type SkillGraphOutput, scoreSkillGraph } from "./scorer";
 import { TEST_CASES } from "./test-cases";

@@ -1,5 +1,5 @@
 import "server-only";
-import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
+import { checkConversationObjectives } from "@zoonk/ai/tasks/language/conversation-objectives";
 import { type LanguageConversation } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { type ConversationTurn } from "../conversation-contract";

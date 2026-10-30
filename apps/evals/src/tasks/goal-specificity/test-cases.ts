@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type GoalSpecificityParams } from "@zoonk/ai/tasks/v2/identity/goal-specificity";
+import { type GoalSpecificityParams } from "@zoonk/ai/tasks/identity/goal-specificity";
 import { type GoalSpecificityExpected } from "./scorer";
 
 type GoalSpecificityTestCase = TestCase<GoalSpecificityExpected, GoalSpecificityParams>;

@@ -3,7 +3,7 @@ import {
   type PassMarkTranslations,
   type TranslatePassMarksParams,
   translatePassMarks,
-} from "@zoonk/ai/tasks/v2/research/translate-pass-marks";
+} from "@zoonk/ai/tasks/research/translate-pass-marks";
 import { TEST_CASES } from "./test-cases";
 
 export const translatePassMarksTask: Task<TranslatePassMarksParams, PassMarkTranslations> = {

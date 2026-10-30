@@ -1,4 +1,4 @@
-import { type PastQuestion } from "@zoonk/ai/tasks/v2/items/past-questions";
+import { type PastQuestion } from "@zoonk/ai/tasks/items/past-questions";
 
 const DASHES = /[-­‐-―−]/gu;
 const SINGLE_QUOTES = /[‘’‚‛′]/gu;

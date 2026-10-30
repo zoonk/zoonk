@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { seedV2 } from "@zoonk/e2e/fixtures/seed-v2";
+import { seed } from "@zoonk/e2e/fixtures/seed";
 import { clearLeftOpenLiveCalls, resetGuestSpend } from "@zoonk/testing/fixtures/usage";
 
 /**
@@ -8,7 +8,7 @@ import { clearLeftOpenLiveCalls, resetGuestSpend } from "@zoonk/testing/fixtures
  * tests, which also clears the AI budget guests share.
  */
 export async function prepareE2EData(): Promise<void> {
-  await seedV2();
+  await seed();
 
   await Promise.all([
     getAiOrganization(),

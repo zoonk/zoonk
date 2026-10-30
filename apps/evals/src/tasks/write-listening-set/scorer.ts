@@ -1,11 +1,11 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
-import { findListeningSetProblems } from "@zoonk/ai/tasks/v2/listening/checks";
-import { toListeningItem } from "@zoonk/ai/tasks/v2/listening/schema";
+import { findListeningSetProblems } from "@zoonk/ai/tasks/listening/checks";
+import { toListeningItem } from "@zoonk/ai/tasks/listening/schema";
 import {
   type WriteListeningSetParams,
   type writeListeningSet,
-} from "@zoonk/ai/tasks/v2/listening/write-set";
+} from "@zoonk/ai/tasks/listening/write-set";
 import { checkItem } from "@zoonk/core/library/items/checks";
 import { repairItem } from "@zoonk/core/library/items/repairs";
 import { WRITE_LISTENING_SET_SCORE_CATEGORIES } from "./score-categories";

@@ -4,11 +4,11 @@ import { classify } from "@zoonk/ai/evaluate/classify";
 import {
   type MemoryReconcileAction,
   decideMemoryReconcile,
-} from "@zoonk/ai/tasks/v2/memory/decisions";
+} from "@zoonk/ai/tasks/memory/decisions";
 import {
   type MemoryReconcileInput,
   memoryReconcileClassifier,
-} from "@zoonk/ai/tasks/v2/memory/reconcile";
+} from "@zoonk/ai/tasks/memory/reconcile";
 import { isJsonObject } from "@zoonk/utils/json";
 import { PERSONA_TEST_CASES } from "./persona-cases";
 import { type MemoryReconcileExpected, TEST_CASES } from "./test-cases";

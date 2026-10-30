@@ -1,6 +1,6 @@
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
-import { type AssessPronunciationSchema } from "@zoonk/ai/tasks/v2/language/assess-pronunciation";
+import { type AssessPronunciationSchema } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import { scoreFlaggedWords } from "../transcribe-speech/scorer";
 import { type PronunciationClipExpected, type PronunciationClipInput } from "./test-cases";
 

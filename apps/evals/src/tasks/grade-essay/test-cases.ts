@@ -3,7 +3,7 @@ import {
   type EnemInterventionElements,
   type EssayGrade,
   type GradeEssayParams,
-} from "@zoonk/ai/tasks/v2/grading/grade-essay";
+} from "@zoonk/ai/tasks/grading/grade-essay";
 import { AP_ANSWERS, ENEM_ESSAYS, OTHER_ESSAYS } from "./essays";
 
 type GradeEssayInput = Omit<GradeEssayParams, "model" | "useFallback" | "reasoning">;

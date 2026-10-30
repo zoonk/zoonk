@@ -1,4 +1,4 @@
-import { type BlueprintExtraction } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
+import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { type ExamStructure, type SectionNavigation } from "./blueprint-contract";
 import { type KeptFacts, keptOr } from "./blueprint-kept";
 

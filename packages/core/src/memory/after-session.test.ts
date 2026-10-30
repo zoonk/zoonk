@@ -1,9 +1,6 @@
-import { generateMemoryInsight } from "@zoonk/ai/tasks/v2/memory/insight";
-import { type MemoryInsightOutput } from "@zoonk/ai/tasks/v2/memory/insight-rules";
-import {
-  type SessionPattern,
-  findSessionPatterns,
-} from "@zoonk/ai/tasks/v2/memory/session-patterns";
+import { generateMemoryInsight } from "@zoonk/ai/tasks/memory/insight";
+import { type MemoryInsightOutput } from "@zoonk/ai/tasks/memory/insight-rules";
+import { type SessionPattern, findSessionPatterns } from "@zoonk/ai/tasks/memory/session-patterns";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";

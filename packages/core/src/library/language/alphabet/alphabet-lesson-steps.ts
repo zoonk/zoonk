@@ -1,4 +1,4 @@
-import { type AlphabetLessonContent } from "@zoonk/ai/tasks/v2/language/alphabet-lesson";
+import { type AlphabetLessonContent } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { type StepKind } from "@zoonk/db";
 import { safeParseStepContent } from "../../steps/contract/step-contract";
 

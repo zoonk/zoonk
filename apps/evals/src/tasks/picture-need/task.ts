@@ -1,7 +1,7 @@
 import { createBooleanEvaluation } from "@/lib/evaluation-routes";
 import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
-import { pictureNeedClassifier } from "@zoonk/ai/tasks/v2/lesson-spec/picture-need";
+import { pictureNeedClassifier } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { type PictureNeedExpected, type PictureNeedInput, TEST_CASES } from "./test-cases";
 
 type PictureNeedOutput = { teaches: boolean };

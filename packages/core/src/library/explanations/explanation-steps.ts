@@ -1,5 +1,5 @@
-import { type QuickExplanation } from "@zoonk/ai/tasks/v2/explain/quick-explanation";
-import { checkQuickExplanation } from "@zoonk/ai/tasks/v2/explain/quick-explanation-checks";
+import { type QuickExplanation } from "@zoonk/ai/tasks/explain/quick-explanation";
+import { checkQuickExplanation } from "@zoonk/ai/tasks/explain/quick-explanation-checks";
 import { type StepKind } from "@zoonk/db";
 import { getOptionId, shuffleAnswerOptions } from "../_utils/answer-options";
 import { safeParseStepContent } from "../steps/contract/step-contract";

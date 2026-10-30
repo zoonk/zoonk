@@ -1,7 +1,7 @@
 import "server-only";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { classifyCourseIntent } from "@zoonk/ai/tasks/courses/intent";
-import { type GoalUnderstanding, understandGoal } from "@zoonk/ai/tasks/v2/goals/understand-goal";
+import { type GoalUnderstanding, understandGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";

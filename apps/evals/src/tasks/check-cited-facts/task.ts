@@ -3,7 +3,7 @@ import { type Task, type TaskScorer } from "@/lib/types";
 import {
   type CheckCitedFactsParams,
   checkCitedFacts,
-} from "@zoonk/ai/tasks/v2/research/check-cited-facts";
+} from "@zoonk/ai/tasks/research/check-cited-facts";
 import { TEST_CASES } from "./test-cases";
 
 export type CheckCitedFactsExpected = { supportedIds: string[] };

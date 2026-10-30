@@ -1,6 +1,6 @@
 import { SEED_LEARNERS_TODAY, getSeedLearner } from "@/datasets/seed-learners";
 import { type TestCase } from "@/lib/types";
-import { type UnderstandGoalInput } from "@zoonk/ai/tasks/v2/goals/understand-goal";
+import { type UnderstandGoalInput } from "@zoonk/ai/tasks/goals/understand-goal";
 import { type UnderstandGoalExpected } from "./scorer";
 
 function personaCase({

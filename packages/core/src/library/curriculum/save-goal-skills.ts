@@ -1,5 +1,5 @@
 import "server-only";
-import { type generateSkillGraph } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
+import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { type LibraryProvenance } from "../_utils/library-rows";
 import { setSkillsPrerequisites } from "../skills/create-skill";
 import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";

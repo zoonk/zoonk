@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type LanguageLessonParams } from "@zoonk/ai/tasks/v2/language/language-lesson";
+import { type LanguageLessonParams } from "@zoonk/ai/tasks/language/language-lesson";
 
 export type LanguageLessonInput = Omit<
   LanguageLessonParams,

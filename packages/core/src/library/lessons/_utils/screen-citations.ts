@@ -1,5 +1,5 @@
-import { type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
-import { type ScreenMaterialRef } from "@zoonk/ai/tasks/v2/material/cite";
+import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { type ScreenMaterialRef } from "@zoonk/ai/tasks/material/cite";
 import { getScreenTexts } from "../../quality/_utils/screen-texts";
 import { type MaterialPage, findMaterialPage } from "../../sources/material-pages";
 

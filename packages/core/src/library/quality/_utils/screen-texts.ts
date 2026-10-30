@@ -1,4 +1,4 @@
-import { type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type TextLayout } from "@zoonk/utils/text-flaws";
 
 type ScreenText = { layout: TextLayout | null; prose: boolean; text: string };

@@ -1,4 +1,4 @@
-import { type TutorLink } from "../v2/tutor/goal-tutor-pages";
+import { type TutorLink } from "../tutor/goal-tutor-pages";
 
 /** Built on the server from stored content and the learner's records, never from client text. */
 export type LessonQuestionStepContext = {

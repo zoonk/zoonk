@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type TranslatePassMarksParams } from "@zoonk/ai/tasks/v2/research/translate-pass-marks";
+import { type TranslatePassMarksParams } from "@zoonk/ai/tasks/research/translate-pass-marks";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 
 const SHARED_EXPECTATIONS = `

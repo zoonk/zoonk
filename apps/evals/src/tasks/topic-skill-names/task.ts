@@ -3,7 +3,7 @@ import {
   type TopicSkillName,
   type TopicSkillNamesInput,
   nameTopicSkills,
-} from "@zoonk/ai/tasks/v2/plans/topic-skill-names";
+} from "@zoonk/ai/tasks/plans/topic-skill-names";
 import { type TopicSkillNamesExpected, scoreTopicSkillNames } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 

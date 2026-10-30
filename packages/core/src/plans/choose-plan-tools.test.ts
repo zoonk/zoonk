@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { generateSetupLessonOutline } from "@zoonk/ai/tasks/v2/curriculum/setup-lesson-outline";
+import { generateSetupLessonOutline } from "@zoonk/ai/tasks/curriculum/setup-lesson-outline";
 import { prisma } from "@zoonk/db";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";

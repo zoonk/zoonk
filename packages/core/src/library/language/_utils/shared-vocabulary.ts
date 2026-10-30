@@ -1,5 +1,5 @@
 import "server-only";
-import { type LanguageLessonContent } from "@zoonk/ai/tasks/v2/language/language-lesson";
+import { type LanguageLessonContent } from "@zoonk/ai/tasks/language/language-lesson";
 import { prisma } from "@zoonk/db";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
 

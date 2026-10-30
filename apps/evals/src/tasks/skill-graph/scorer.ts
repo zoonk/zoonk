@@ -3,11 +3,11 @@ import { type TaskScorer } from "@/lib/types";
 import {
   type SkillGraphParams,
   type generateSkillGraph,
-} from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
+} from "@zoonk/ai/tasks/curriculum/skill-graph";
 import {
   type SkillGraphProblem,
   findSkillGraphProblems,
-} from "@zoonk/ai/tasks/v2/curriculum/skill-graph-checks";
+} from "@zoonk/ai/tasks/curriculum/skill-graph-checks";
 import { SKILL_GRAPH_SCORE_CATEGORIES } from "./score-categories";
 
 type SkillGraphResult = Awaited<ReturnType<typeof generateSkillGraph>>;

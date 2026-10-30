@@ -4,7 +4,7 @@ import {
   type LessonScopeContext,
   type PlanScopeContext,
 } from "@zoonk/ai/tasks/lessons/question-context";
-import { type GenerateGoalTutorAnswerParams } from "@zoonk/ai/tasks/v2/tutor/goal-tutor";
+import { type GenerateGoalTutorAnswerParams } from "@zoonk/ai/tasks/tutor/goal-tutor";
 import { ACCOUNTING_PLAN, ENEM_PLAN, QUANTUM_PLAN } from "../lesson-question/screen-contexts";
 import {
   type GoalTutorAppToolStandIn,

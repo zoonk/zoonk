@@ -1,4 +1,4 @@
-import { type GeneratedMathProblem } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type GeneratedMathProblem } from "@zoonk/ai/tasks/items/schemas";
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
 import { getOptionId } from "../../_utils/answer-options";
 import { evaluateFormula } from "../../activities/expression/evaluate-expression";

@@ -1,4 +1,4 @@
-import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
 
 const taxDeadlines: WrittenLesson = {

@@ -4,7 +4,7 @@ import {
   type ChallengeCaseParams,
   type WrittenChallengeCase,
   generateChallengeCase,
-} from "@zoonk/ai/tasks/v2/challenge/case";
+} from "@zoonk/ai/tasks/challenge/case";
 import { checkWrittenChallenge } from "@zoonk/core/library/challenges/case-content";
 import { CHALLENGE_CASE_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";

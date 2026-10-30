@@ -1,5 +1,5 @@
 import "server-only";
-import { type StatuteDrill } from "@zoonk/ai/tasks/v2/items/statute-drills";
+import { type StatuteDrill } from "@zoonk/ai/tasks/items/statute-drills";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { checkItem } from "../items/item-checks";

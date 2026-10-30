@@ -1,9 +1,9 @@
 import "server-only";
-import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/v2/memory/relevance";
+import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/memory/relevance";
 import {
   type MemorySearchTermsParams,
   generateMemorySearchTerms,
-} from "@zoonk/ai/tasks/v2/memory/search-terms";
+} from "@zoonk/ai/tasks/memory/search-terms";
 import { type MemoryCategory, type MemoryFact, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";

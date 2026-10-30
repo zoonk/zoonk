@@ -1,5 +1,5 @@
 import "server-only";
-import { type QuestionFormat } from "@zoonk/ai/tasks/v2/research/extract-question-formats";
+import { type QuestionFormat } from "@zoonk/ai/tasks/research/extract-question-formats";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";

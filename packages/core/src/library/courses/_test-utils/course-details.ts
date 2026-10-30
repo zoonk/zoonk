@@ -1,4 +1,4 @@
-import { getCourseDetailsPromptVersion } from "@zoonk/ai/tasks/v2/courses/details";
+import { getCourseDetailsPromptVersion } from "@zoonk/ai/tasks/courses/details";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {

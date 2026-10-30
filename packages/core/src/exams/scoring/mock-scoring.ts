@@ -1,4 +1,4 @@
-import { type PartialCreditRule } from "@zoonk/ai/tasks/v2/research/partial-credit";
+import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type MockScoring } from "../mocks/mock-contract";
 import { type MockScoreNotes } from "../mocks/mock-view-contract";

@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type WriteListeningSetParams } from "@zoonk/ai/tasks/v2/listening/write-set";
+import { type WriteListeningSetParams } from "@zoonk/ai/tasks/listening/write-set";
 
 type WriteListeningSetInput = Omit<
   WriteListeningSetParams,

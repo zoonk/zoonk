@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type CheckCitedFactsParams } from "@zoonk/ai/tasks/v2/research/check-cited-facts";
+import { type CheckCitedFactsParams } from "@zoonk/ai/tasks/research/check-cited-facts";
 import { type CheckCitedFactsExpected } from "./task";
 
 const CLASS_TEST_NOTE =

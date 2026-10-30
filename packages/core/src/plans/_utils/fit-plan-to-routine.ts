@@ -1,5 +1,5 @@
 import "server-only";
-import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/v2/plans/routine-fit";
+import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/plans/routine-fit";
 import { prisma } from "@zoonk/db";
 import { toProvenanceData } from "../../library/_utils/library-rows";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../daily-minutes";

@@ -1,7 +1,7 @@
 import "server-only";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
-import { checkCoverage } from "@zoonk/ai/tasks/v2/curriculum/coverage-check";
-import { findUncoveredTopics, formatExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
+import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
+import { findUncoveredTopics, formatExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { type PlanGraph, parsePlanGraph } from "../../plans/planner/plan-state";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";

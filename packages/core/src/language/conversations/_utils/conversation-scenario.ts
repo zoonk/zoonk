@@ -1,6 +1,6 @@
 import "server-only";
-import { generateConversationScenario } from "@zoonk/ai/tasks/v2/language/conversation-scenario";
-import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/v2/language/speaking-mock-scenario";
+import { generateConversationScenario } from "@zoonk/ai/tasks/language/conversation-scenario";
+import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/language/speaking-mock-scenario";
 import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { toProvenanceData } from "../../../library/_utils/library-rows";

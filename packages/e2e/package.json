@@ -9,7 +9,7 @@
     "./fixtures/guests": "./src/fixtures/guests.ts",
     "./fixtures/orgs": "./src/fixtures/orgs.ts",
     "./fixtures/personas": "./src/fixtures/personas.ts",
-    "./fixtures/seed-v2": "./src/fixtures/seed-v2.ts",
+    "./fixtures/seed": "./src/fixtures/seed.ts",
     "./fixtures/users": "./src/fixtures/users.ts"
   },
   "scripts": {

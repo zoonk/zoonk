@@ -4,7 +4,7 @@ import {
   type CourseWeightsFinding,
   type FindCourseWeightsParams,
   findCourseWeights,
-} from "@zoonk/ai/tasks/v2/research/find-course-weights";
+} from "@zoonk/ai/tasks/research/find-course-weights";
 import { TEST_CASES } from "./test-cases";
 
 export type FindCourseWeightsExpected = {

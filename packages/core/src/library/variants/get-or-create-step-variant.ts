@@ -3,7 +3,7 @@ import {
   type GenerateStepVariantParams,
   VARIANT_SCREEN_KINDS,
   generateStepVariant,
-} from "@zoonk/ai/tasks/v2/variants/step-variant";
+} from "@zoonk/ai/tasks/variants/step-variant";
 import { type StepVariant, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { createOrFindByIdentity, toProvenanceData } from "../_utils/library-rows";

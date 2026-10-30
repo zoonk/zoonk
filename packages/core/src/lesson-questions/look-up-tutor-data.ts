@@ -4,7 +4,7 @@ import {
   type GoalTutorLookUpResult,
   isLearnerLookUp,
   isPlanLookUp,
-} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
+} from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
 import { type Goal, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../users/get-session";

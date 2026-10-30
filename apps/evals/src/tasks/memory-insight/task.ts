@@ -1,11 +1,11 @@
 import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
-import { type MemoryInsightParams, generateMemoryInsight } from "@zoonk/ai/tasks/v2/memory/insight";
+import { type MemoryInsightParams, generateMemoryInsight } from "@zoonk/ai/tasks/memory/insight";
 import {
   type MemoryInsightOutput,
   memoryInsightOutputSchema,
   toMemoryInsight,
-} from "@zoonk/ai/tasks/v2/memory/insight-rules";
+} from "@zoonk/ai/tasks/memory/insight-rules";
 import { normalizeString } from "@zoonk/utils/string";
 import { type MemoryInsightExpected, TEST_CASES } from "./test-cases";
 

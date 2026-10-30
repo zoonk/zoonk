@@ -1,4 +1,4 @@
-import { normalizeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
+import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { getBaseLanguage } from "@zoonk/utils/languages";
 import { Converter as createChineseConverter } from "opencc-js/t2cn";
 import { alignWords } from "./_utils/word-alignment";

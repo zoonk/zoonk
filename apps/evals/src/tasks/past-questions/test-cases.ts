@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type ExtractPastQuestionsParams } from "@zoonk/ai/tasks/v2/items/past-questions";
+import { type ExtractPastQuestionsParams } from "@zoonk/ai/tasks/items/past-questions";
 
 type PastQuestionsInput = Omit<ExtractPastQuestionsParams, "model" | "useFallback" | "reasoning">;
 

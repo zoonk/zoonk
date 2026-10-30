@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type CiteMaterialInput } from "@zoonk/ai/tasks/v2/material/cite";
+import { type CiteMaterialInput } from "@zoonk/ai/tasks/material/cite";
 import {
   CELL_NOTES,
   CONSTITUTION_ARTICLES,

@@ -1,6 +1,6 @@
 import { type TestCase } from "@/lib/types";
-import { type FixLessonDraftParams } from "@zoonk/ai/tasks/v2/lesson-writer/fix";
-import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type FixLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer/fix";
+import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { describeActivityTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { BASE_LESSONS } from "../lesson-quality-check/base-lessons";
 

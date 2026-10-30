@@ -2,7 +2,7 @@ import { type Task } from "@/lib/types";
 import {
   type SourceChangeNoticeParams,
   generateSourceChangeNotice,
-} from "@zoonk/ai/tasks/v2/research/source-change-notice";
+} from "@zoonk/ai/tasks/research/source-change-notice";
 import { TEST_CASES } from "./test-cases";
 
 export const sourceChangeNoticeTask: Task<SourceChangeNoticeParams, { message: string }> = {

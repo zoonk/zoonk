@@ -1,4 +1,4 @@
-import { type SpeakingExam } from "@zoonk/ai/tasks/v2/language/exam-speaking-exams";
+import { type SpeakingExam } from "@zoonk/ai/tasks/language/exam-speaking-exams";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 
 type SpeakingRole = "examiner" | "partner";

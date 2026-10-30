@@ -1,5 +1,5 @@
 import "server-only";
-import { type GoalTutorLookUpResult } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
+import { type GoalTutorLookUpResult } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
 import { type Goal, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { listFinishedLessonIds } from "../../../catalog/_utils/finished-lessons";

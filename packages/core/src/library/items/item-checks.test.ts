@@ -1,4 +1,4 @@
-import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { describe, expect, it } from "vitest";
 import { discountMath } from "./_test-utils/math-problems";
 import { checkItem, findOwnEmDashes } from "./item-checks";

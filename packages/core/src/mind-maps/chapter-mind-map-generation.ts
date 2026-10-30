@@ -1,9 +1,9 @@
 import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
-import { checkMindMapImage } from "@zoonk/ai/tasks/v2/mind-maps/check";
-import { generateMindMapImage } from "@zoonk/ai/tasks/v2/mind-maps/image";
-import { mindMapStructureSchema } from "@zoonk/ai/tasks/v2/mind-maps/schema";
-import { generateMindMapStructure } from "@zoonk/ai/tasks/v2/mind-maps/structure";
+import { checkMindMapImage } from "@zoonk/ai/tasks/mind-maps/check";
+import { generateMindMapImage } from "@zoonk/ai/tasks/mind-maps/image";
+import { mindMapStructureSchema } from "@zoonk/ai/tasks/mind-maps/schema";
+import { generateMindMapStructure } from "@zoonk/ai/tasks/mind-maps/structure";
 import { prisma } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
 import { readStoredImage } from "../images/read-stored-image";

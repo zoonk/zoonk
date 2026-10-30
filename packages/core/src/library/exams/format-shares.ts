@@ -1,7 +1,7 @@
 import {
   type FormatCount,
   type QuestionFormat,
-} from "@zoonk/ai/tasks/v2/research/extract-question-formats";
+} from "@zoonk/ai/tasks/research/extract-question-formats";
 
 const PERCENT = 100;
 

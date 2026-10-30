@@ -4,7 +4,7 @@ import {
   type MemoryExtractionParams,
   type MemoryExtractionSchema,
   extractMemoryFacts,
-} from "@zoonk/ai/tasks/v2/memory/extraction";
+} from "@zoonk/ai/tasks/memory/extraction";
 import { normalizeString } from "@zoonk/utils/string";
 import { z } from "zod";
 import { type ExpectedFact, type MemoryExtractionExpected, TEST_CASES } from "./test-cases";

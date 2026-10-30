@@ -4,7 +4,7 @@ import {
   type MemorySearchTermsParams,
   type MemorySearchTermsSchema,
   generateMemorySearchTerms,
-} from "@zoonk/ai/tasks/v2/memory/search-terms";
+} from "@zoonk/ai/tasks/memory/search-terms";
 import { type SearchTerm, parseSearchTerms } from "@zoonk/core/library/identity/text-search-query";
 import { isJsonObject } from "@zoonk/utils/json";
 import { removeAccents } from "@zoonk/utils/string";

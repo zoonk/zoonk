@@ -1,5 +1,5 @@
-import { matchTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
-import { type LessonVisual } from "@zoonk/ai/tasks/v2/visuals/schema";
+import { matchTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
+import { type LessonVisual } from "@zoonk/ai/tasks/visuals/schema";
 import { type Item } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { type ParsedItemContent, parseItemContent } from "../../library/items/item-content";

@@ -1,5 +1,5 @@
 import "server-only";
-import { type CourseIconParams, generateCourseIcon } from "@zoonk/ai/tasks/v2/courses/icon";
+import { type CourseIconParams, generateCourseIcon } from "@zoonk/ai/tasks/courses/icon";
 import { prisma } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
 import { revalidateCourseContent } from "../../cache/revalidate-course-content";

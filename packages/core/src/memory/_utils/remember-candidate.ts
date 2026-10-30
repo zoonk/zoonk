@@ -1,7 +1,7 @@
 import "server-only";
-import { type MemoryReconcileAction } from "@zoonk/ai/tasks/v2/memory/decisions";
-import { gateMemoryFact } from "@zoonk/ai/tasks/v2/memory/gate";
-import { reconcileMemoryFact } from "@zoonk/ai/tasks/v2/memory/reconcile";
+import { type MemoryReconcileAction } from "@zoonk/ai/tasks/memory/decisions";
+import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
+import { reconcileMemoryFact } from "@zoonk/ai/tasks/memory/reconcile";
 import { type MemoryFact } from "@zoonk/db";
 import { type MemoryChange, type MemorySource } from "../memory-contract";
 import { type MemoryCandidate, isSameStatement } from "./memory-candidates";

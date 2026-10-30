@@ -6,7 +6,7 @@ import { parsePlanChangePayload } from "../plans/_utils/plan-change-payload";
 import { readSelectedItemFacts } from "../plans/_utils/selected-item-contract";
 import { getItemKey } from "../plans/planner/plan-items";
 import { parsePlanSettings } from "../plans/planner/plan-state";
-import { seedV2PersonaCopy } from "../seed/seed-v2";
+import { seedPersonaCopy } from "../seed/seed";
 import { moveChallenge, undoChallengeMove } from "./move-challenge";
 
 const FRIDAY = new Date("2026-10-16T20:52:12Z");
@@ -59,7 +59,7 @@ describe("moving a funded mock to Monday", () => {
   it("moves Ana's Sunday mock with its saved credits, names what leaves, and undoes exactly", async () => {
     const copyKey = randomUUID().slice(0, 8);
 
-    const copy = await seedV2PersonaCopy({
+    const copy = await seedPersonaCopy({
       copyKey,
       email: `move-funded-mock-${copyKey}@zoonk.test`,
       persona: "exam",
@@ -141,7 +141,7 @@ describe("moving a funded mock to Monday", () => {
   it("refuses Ana's mock when no day before her exam has room for Monday's lessons, saying why", async () => {
     const copyKey = randomUUID().slice(0, 8);
 
-    const copy = await seedV2PersonaCopy({
+    const copy = await seedPersonaCopy({
       copyKey,
       email: `move-funded-mock-${copyKey}@zoonk.test`,
       persona: "exam",

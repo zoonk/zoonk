@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type FindMistakePatternParams } from "@zoonk/ai/tasks/v2/language/mistake-pattern";
+import { type FindMistakePatternParams } from "@zoonk/ai/tasks/language/mistake-pattern";
 import { type MistakePatternExpected } from "./scorer";
 
 type MistakePatternInput = Omit<

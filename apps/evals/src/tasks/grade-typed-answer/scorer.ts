@@ -1,6 +1,6 @@
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
-import { type TypedAnswerGrade } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
+import { type TypedAnswerGrade } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { findFeedbackWritingIssue, findPraiseMismatch } from "./feedback-writing";
 import { type GradeTypedAnswerExpected } from "./test-cases";
 

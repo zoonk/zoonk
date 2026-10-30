@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { type ListeningSet } from "@zoonk/ai/tasks/v2/listening/schema";
-import { writeListeningSet } from "@zoonk/ai/tasks/v2/listening/write-set";
+import { type ListeningSet } from "@zoonk/ai/tasks/listening/schema";
+import { writeListeningSet } from "@zoonk/ai/tasks/listening/write-set";
 import { vi } from "vitest";
 import { generatedProvenance } from "../../items/_test-utils/generated-items";
 

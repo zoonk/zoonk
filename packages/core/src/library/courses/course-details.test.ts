@@ -1,4 +1,4 @@
-import { generateCourseDetails } from "@zoonk/ai/tasks/v2/courses/details";
+import { generateCourseDetails } from "@zoonk/ai/tasks/courses/details";
 import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { revalidateTag } from "next/cache";

@@ -2,11 +2,11 @@ import "server-only";
 import {
   LIBRARY_IDENTITY_MIN_PROBABILITY,
   decideLibraryIdentity,
-} from "@zoonk/ai/tasks/v2/identity/decision";
+} from "@zoonk/ai/tasks/identity/decision";
 import {
   type LibraryIdentityCandidate,
   type LibraryIdentitySubject,
-} from "@zoonk/ai/tasks/v2/identity/subject";
+} from "@zoonk/ai/tasks/identity/subject";
 import { prisma, sql } from "@zoonk/db";
 import { SOURCE_DOCUMENT } from "../identity/_utils/search-documents";
 import {

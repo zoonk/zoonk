@@ -6,7 +6,7 @@ import {
   TRANSCRIPTION_MODELS,
   type TranscriptionModelId,
   transcribeSpeech,
-} from "@zoonk/ai/tasks/v2/language/transcribe-speech";
+} from "@zoonk/ai/tasks/language/transcribe-speech";
 import { scoreSpeechTranscript } from "./scorer";
 import { type SpeechClipExpected, type SpeechClipInput, TEST_CASES } from "./test-cases";
 

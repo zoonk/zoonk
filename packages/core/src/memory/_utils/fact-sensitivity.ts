@@ -1,5 +1,5 @@
 import "server-only";
-import { gateMemoryFact } from "@zoonk/ai/tasks/v2/memory/gate";
+import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
 import { type MemoryFact, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";

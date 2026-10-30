@@ -1,6 +1,6 @@
 import "server-only";
-import { type ImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
-import { IMAGE_STYLE_VERSION } from "@zoonk/ai/tasks/v2/images/style";
+import { type ImageScene } from "@zoonk/ai/tasks/images/scene-schema";
+import { IMAGE_STYLE_VERSION } from "@zoonk/ai/tasks/images/style";
 import { type MediaAsset, prisma } from "@zoonk/db";
 import { assertIdentityKeyScope } from "@zoonk/utils/identity-key";
 import { getPrivateImageFolder } from "@zoonk/utils/user-blobs";

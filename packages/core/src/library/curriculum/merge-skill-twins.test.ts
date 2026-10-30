@@ -1,4 +1,4 @@
-import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
+import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { describe, expect, it, vi } from "vitest";
 import { mockDecision } from "../identity/_test-utils/identity-mocks";
 import { type CurriculumScope } from "./curriculum-scope";

@@ -1,5 +1,5 @@
-import { numericEntrySchema, optionSelectSchema } from "@zoonk/ai/tasks/v2/items/schemas";
-import { partialCreditSchema } from "@zoonk/ai/tasks/v2/research/partial-credit";
+import { numericEntrySchema, optionSelectSchema } from "@zoonk/ai/tasks/items/schemas";
+import { partialCreditSchema } from "@zoonk/ai/tasks/research/partial-credit";
 import { z } from "zod";
 
 const citationSchema = z.object({ passage: z.string(), sourceId: z.string() });

@@ -4,7 +4,7 @@ import {
   type PlanEditParams,
   interpretPlanEdit,
   planEditKindClassifier,
-} from "@zoonk/ai/tasks/v2/plans/edit-intent";
+} from "@zoonk/ai/tasks/plans/edit-intent";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
 import { CLASS_TEST_FOCUS_TEST_CASES, FOCUS_PART_TEST_CASES } from "./focus-part-cases";
 import { MEMORY_TEST_CASES } from "./memory-cases";

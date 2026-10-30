@@ -1,4 +1,4 @@
-import { type LessonVisual } from "@zoonk/ai/tasks/v2/visuals/schema";
+import { type LessonVisual } from "@zoonk/ai/tasks/visuals/schema";
 import { getBaseLanguage } from "@zoonk/utils/languages";
 import { findMarkdownTables, findRaggedTableRows } from "@zoonk/utils/markdown-table";
 import { normalizeString } from "@zoonk/utils/string";

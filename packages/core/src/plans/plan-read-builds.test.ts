@@ -3,7 +3,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { createLessonQuestion } from "../lesson-questions/create-lesson-question";
-import { seedV2PersonaCopy } from "../seed/seed-v2";
+import { seedPersonaCopy } from "../seed/seed";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { getPlanBasesAdvice } from "./get-bases-advice";
@@ -58,7 +58,7 @@ describe("plans laid out per read", () => {
   it("reads Ana's exam plan, her time advice and a buddy turn from her own plan, never searching other daily times", async () => {
     const copyKey = randomUUID();
 
-    const user = await seedV2PersonaCopy({
+    const user = await seedPersonaCopy({
       copyKey,
       email: `builds-${copyKey}@zoonk.test`,
       persona: "exam",
@@ -104,7 +104,7 @@ describe("plans laid out per read", () => {
   it("finds the time that covers Ana's exam without planning every time under it, and finds the same one", async () => {
     const copyKey = randomUUID();
 
-    const user = await seedV2PersonaCopy({
+    const user = await seedPersonaCopy({
       copyKey,
       email: `floor-${copyKey}@zoonk.test`,
       persona: "exam",

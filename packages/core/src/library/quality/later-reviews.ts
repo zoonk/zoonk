@@ -1,5 +1,5 @@
 import "server-only";
-import { type CheckLessonQualityParams } from "@zoonk/ai/tasks/v2/quality/lesson-check";
+import { type CheckLessonQualityParams } from "@zoonk/ai/tasks/quality/lesson-check";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";

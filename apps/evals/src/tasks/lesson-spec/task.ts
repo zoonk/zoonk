@@ -1,5 +1,5 @@
 import { type Task } from "@/lib/types";
-import { type LessonSpecParams, generateLessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec";
+import { type LessonSpecParams, generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { scoreLessonSpec } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 import { type LessonSpecExpected } from "./visual-test-cases";

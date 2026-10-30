@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type GenerateLevelTestBankParams } from "@zoonk/ai/tasks/v2/language/level-test-bank";
+import { type GenerateLevelTestBankParams } from "@zoonk/ai/tasks/language/level-test-bank";
 
 type LevelTestBankInput = Omit<
   GenerateLevelTestBankParams,

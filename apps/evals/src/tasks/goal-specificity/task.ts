@@ -5,7 +5,7 @@ import {
   type GoalSpecificitySchema,
   classifyGoalSpecificity,
   goalSpecificityClassifier,
-} from "@zoonk/ai/tasks/v2/identity/goal-specificity";
+} from "@zoonk/ai/tasks/identity/goal-specificity";
 import { type GoalSpecificityExpected, scoreGoalSpecificity } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 

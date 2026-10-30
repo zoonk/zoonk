@@ -2,7 +2,7 @@ import { type TestCase } from "@/lib/types";
 import {
   type ConversationTurn,
   type WriteConversationFeedbackParams,
-} from "@zoonk/ai/tasks/v2/language/conversation-feedback";
+} from "@zoonk/ai/tasks/language/conversation-feedback";
 
 type ConversationFeedbackInput = Omit<
   WriteConversationFeedbackParams,

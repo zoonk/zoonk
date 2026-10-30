@@ -3,7 +3,7 @@ import {
   type ExplainSpokenAnswerParams,
   type ExplainSpokenAnswerSchema,
   explainSpokenAnswer,
-} from "@zoonk/ai/tasks/v2/language/explain-spoken-answer";
+} from "@zoonk/ai/tasks/language/explain-spoken-answer";
 import { EXPLAIN_SPOKEN_ANSWER_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 

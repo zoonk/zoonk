@@ -3,7 +3,7 @@ import { type Task, type TaskScorer } from "@/lib/types";
 import {
   type CheckConversationObjectivesSchema,
   checkConversationObjectives,
-} from "@zoonk/ai/tasks/v2/language/conversation-objectives";
+} from "@zoonk/ai/tasks/language/conversation-objectives";
 import {
   type ConversationObjectivesExpected,
   type ConversationObjectivesInput,

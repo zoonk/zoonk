@@ -1,4 +1,4 @@
-import { type PartialCreditRule } from "@zoonk/ai/tasks/v2/research/partial-credit";
+import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit";
 import { type NetOutcome } from "./net-score";
 
 type Picks = { correct: number; options: number; right: number; wrong: number };

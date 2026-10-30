@@ -1,4 +1,4 @@
-import { type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { describe, expect, it } from "vitest";
 import { writtenTemperatureLesson } from "./_test-utils/written-lessons";
 import { repairWrittenLesson } from "./lesson-repairs";

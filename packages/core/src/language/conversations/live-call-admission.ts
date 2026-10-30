@@ -1,5 +1,5 @@
 import "server-only";
-import { isLiveCallAvailable } from "@zoonk/ai/tasks/v2/language/live-call-session";
+import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { prisma } from "@zoonk/db";
 import { io } from "next/cache";
 import { getAdminAccess } from "../../users/get-admin-access";

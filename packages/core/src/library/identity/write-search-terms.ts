@@ -1,9 +1,6 @@
 import "server-only";
-import {
-  type SearchTermsParams,
-  generateSearchTerms,
-} from "@zoonk/ai/tasks/v2/identity/search-terms";
-import { type LibraryIdentitySubject } from "@zoonk/ai/tasks/v2/identity/subject";
+import { type SearchTermsParams, generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
+import { type LibraryIdentitySubject } from "@zoonk/ai/tasks/identity/subject";
 import { splitEvenly } from "@zoonk/utils/split-evenly";
 
 const MAX_SUBJECTS_PER_CALL = 8;

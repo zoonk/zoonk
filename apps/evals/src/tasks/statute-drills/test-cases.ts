@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type StatuteDrillParams } from "@zoonk/ai/tasks/v2/items/statute-drills";
+import { type StatuteDrillParams } from "@zoonk/ai/tasks/items/statute-drills";
 
 type StatuteDrillsInput = Omit<StatuteDrillParams, "model" | "useFallback" | "reasoning">;
 

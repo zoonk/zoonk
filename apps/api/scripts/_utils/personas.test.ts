@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { getLearnerSummary } from "@zoonk/core/learner/summary";
 import { getSession } from "@zoonk/core/users/session";
 import { prisma } from "@zoonk/db";
-import { writeSeedV2 } from "@zoonk/db/seed/v2";
-import { listSeedPersonas } from "@zoonk/db/seed/v2/personas";
+import { writeSeed } from "@zoonk/db/seed";
+import { listSeedPersonas } from "@zoonk/db/seed/personas";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -188,7 +188,7 @@ async function readPersonaSummary(userId: string) {
 
 describe("persona command", () => {
   beforeAll(async () => {
-    await writeSeedV2(prisma);
+    await writeSeed(prisma);
   }, 120_000);
 
   it.each(listSeedPersonas({ now: new Date() }))(

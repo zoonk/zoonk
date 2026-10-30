@@ -3,8 +3,8 @@ import { type TaskScorer } from "@/lib/types";
 import {
   type PlacementItemsParams,
   type PlacementSkillItems,
-} from "@zoonk/ai/tasks/v2/items/placement-items";
-import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
+} from "@zoonk/ai/tasks/items/placement-items";
+import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { checkItem, findOwnEmDashes } from "@zoonk/core/library/items/checks";
 import { findNumberFormatFlaws } from "@zoonk/utils/number-format-flaws";
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "../generate-items/score-categories";

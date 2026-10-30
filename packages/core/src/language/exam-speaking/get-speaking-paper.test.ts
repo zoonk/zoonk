@@ -1,4 +1,4 @@
-import { isLiveCallAvailable } from "@zoonk/ai/tasks/v2/language/live-call-session";
+import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";

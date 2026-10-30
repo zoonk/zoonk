@@ -1,7 +1,7 @@
 import "server-only";
-import { explainQuestionWorkflow } from "@/workflows/v2/explain/explain-question-workflow";
-import { goalContentWorkflow } from "@/workflows/v2/goals/goal-content-workflow";
-import { researchWorkflow } from "@/workflows/v2/research/research-workflow";
+import { explainQuestionWorkflow } from "@/workflows/explain/explain-question-workflow";
+import { goalContentWorkflow } from "@/workflows/goals/goal-content-workflow";
+import { researchWorkflow } from "@/workflows/research/research-workflow";
 import { getRequestPlatform } from "@zoonk/core/analytics/request-platform";
 import { getGoalGenerationId } from "@zoonk/core/goals/generation-id";
 import { recordGoalGeneration } from "@zoonk/core/goals/record-generation";

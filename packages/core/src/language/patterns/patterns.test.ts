@@ -1,4 +1,4 @@
-import { findMistakePattern } from "@zoonk/ai/tasks/v2/language/mistake-pattern";
+import { findMistakePattern } from "@zoonk/ai/tasks/language/mistake-pattern";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";

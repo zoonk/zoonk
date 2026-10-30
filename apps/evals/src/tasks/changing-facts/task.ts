@@ -7,7 +7,7 @@ import {
   type ChangingFactsTopic,
   changingFactsClassifier,
   classifyChangingFacts,
-} from "@zoonk/ai/tasks/v2/research/changing-facts";
+} from "@zoonk/ai/tasks/research/changing-facts";
 import { TEST_CASES } from "./test-cases";
 
 export type ChangingFactsExpected = { topics: readonly ChangingFactsTopic[] };

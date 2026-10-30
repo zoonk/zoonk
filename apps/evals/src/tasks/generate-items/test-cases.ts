@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type GenerateItemsParams } from "@zoonk/ai/tasks/v2/items/generate";
+import { type GenerateItemsParams } from "@zoonk/ai/tasks/items/generate";
 
 type GenerateItemsInput = Omit<GenerateItemsParams, "model" | "useFallback" | "reasoning">;
 

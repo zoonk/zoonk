@@ -3,7 +3,7 @@ import {
   type SourceResearchPlan,
   type SourceResearchPlanParams,
   generateSourceResearchPlan,
-} from "@zoonk/ai/tasks/v2/research/source-plan";
+} from "@zoonk/ai/tasks/research/source-plan";
 import { type ResearchPlanExpected, scoreResearchPlan } from "../research-plan/scorer";
 import { TEST_CASES } from "./test-cases";
 

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type PastQuestion } from "@zoonk/ai/tasks/v2/items/past-questions";
+import { type PastQuestion } from "@zoonk/ai/tasks/items/past-questions";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";

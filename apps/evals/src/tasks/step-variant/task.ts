@@ -2,7 +2,7 @@ import { type Task } from "@/lib/types";
 import {
   type GenerateStepVariantParams,
   generateStepVariant,
-} from "@zoonk/ai/tasks/v2/variants/step-variant";
+} from "@zoonk/ai/tasks/variants/step-variant";
 import { STEP_VARIANT_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 

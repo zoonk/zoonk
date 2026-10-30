@@ -1,5 +1,5 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
-import { generateLanguageLesson } from "@zoonk/ai/tasks/v2/language/language-lesson";
+import { generateLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson";
 import { prisma } from "@zoonk/db";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {

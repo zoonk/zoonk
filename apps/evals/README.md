@@ -168,7 +168,7 @@ The labels in that file are what production recorded, not ground truth. Label ca
 
 ## Shared Learner Dataset
 
-Tasks that take learner context (example lines, memory relevance and reconcile, plan edits, mistake causes and goal understanding) also run cases built from the seed learners that E2E tests and screenshots use: Maya, Sam and a guest in English, and Ana, Lucas, Pedro and Marcos in Brazilian Portuguese. `src/datasets/seed-learners.ts` reads them from `@zoonk/db/seed/v2/personas` on a fixed Monday (`SEED_LEARNERS_TODAY`) and gives each task their goal as typed and planned, their memory facts, the explanation screens of their lessons and the mistakes in their notebook. Each task's `persona-cases.ts` picks from it and labels the expected result by hand; case ids read `<language>-persona-<learner>-…`.
+Tasks that take learner context (example lines, memory relevance and reconcile, plan edits, mistake causes and goal understanding) also run cases built from the seed learners that E2E tests and screenshots use: Maya, Sam and a guest in English, and Ana, Lucas, Pedro and Marcos in Brazilian Portuguese. `src/datasets/seed-learners.ts` reads them from `@zoonk/db/seed/personas` on a fixed Monday (`SEED_LEARNERS_TODAY`) and gives each task their goal as typed and planned, their memory facts, the explanation screens of their lessons and the mistakes in their notebook. Each task's `persona-cases.ts` picks from it and labels the expected result by hand; case ids read `<language>-persona-<learner>-…`.
 
 When the seed changes a learner, lesson, fact or mistake a case points at, loading the task throws with the missing piece, so the case changes with the seed instead of silently testing something else.
 

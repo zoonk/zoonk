@@ -1,5 +1,5 @@
 import "server-only";
-import { type StatuteDrill } from "@zoonk/ai/tasks/v2/items/statute-drills";
+import { type StatuteDrill } from "@zoonk/ai/tasks/items/statute-drills";
 import { prisma } from "@zoonk/db";
 import { type LibraryProvenance } from "../../library/_utils/library-rows";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";

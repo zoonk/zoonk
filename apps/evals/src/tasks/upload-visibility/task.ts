@@ -4,7 +4,7 @@ import {
   type UploadVisibility,
   type UploadVisibilityParams,
   classifyUploadVisibility,
-} from "@zoonk/ai/tasks/v2/research/upload-visibility";
+} from "@zoonk/ai/tasks/research/upload-visibility";
 import { TEST_CASES } from "./test-cases";
 
 export type UploadVisibilityExpected = { visibility: "public" | "private" };

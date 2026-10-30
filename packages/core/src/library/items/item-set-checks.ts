@@ -1,4 +1,4 @@
-import { type WrittenItemSet } from "@zoonk/ai/tasks/v2/items/write-set";
+import { type WrittenItemSet } from "@zoonk/ai/tasks/items/write-set";
 import { normalizeString, replaceEmDashes, segmentWords } from "@zoonk/utils/string";
 import { findPlaceholderText, findUnrenderedMarkdown } from "@zoonk/utils/text-flaws";
 

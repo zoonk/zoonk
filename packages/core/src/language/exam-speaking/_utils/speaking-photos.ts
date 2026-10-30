@@ -1,6 +1,6 @@
 import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
-import { drawExamSpeakingPhoto } from "@zoonk/ai/tasks/v2/language/exam-speaking-photo";
+import { drawExamSpeakingPhoto } from "@zoonk/ai/tasks/language/exam-speaking-photo";
 import { optimizeImage } from "../../../images/optimize-image";
 import { uploadImage } from "../../../images/upload-image";
 import { type SpeakingCard } from "../speaking-contract";

@@ -13,10 +13,9 @@ const isE2E = process.env.E2E_TESTING === "true";
 
 const e2eAliases: Record<string, string> = isE2E
   ? {
-      "@zoonk/ai/tasks/v2/language/assess-pronunciation":
+      "@zoonk/ai/tasks/language/assess-pronunciation":
         "../../packages/e2e/src/pronunciation-grader.ts",
-      "@zoonk/ai/tasks/v2/language/live-call-session":
-        "../../packages/e2e/src/live-call-provider.ts",
+      "@zoonk/ai/tasks/language/live-call-session": "../../packages/e2e/src/live-call-provider.ts",
       "@zoonk/auth": "../../packages/auth/src/e2e.ts",
     }
   : {};

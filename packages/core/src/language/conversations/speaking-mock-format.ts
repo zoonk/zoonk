@@ -1,9 +1,9 @@
-import { type SpeakingMockExam } from "@zoonk/ai/tasks/v2/language/exam-speaking-exams";
+import { type SpeakingMockExam } from "@zoonk/ai/tasks/language/exam-speaking-exams";
 import {
   type SpeakingCriterion,
   type SpeakingScale,
   toBand,
-} from "@zoonk/ai/tasks/v2/language/speaking-bands";
+} from "@zoonk/ai/tasks/language/speaking-bands";
 
 /** Exam task and scale constraints: https://www.ets.org/content/dam/ets-india/pdfs/toefl/toefl-ibt-test-specifications-2026.pdf and https://www.ets.org/toefl/institutions/ibt/score-scale-update.html. */
 export const SPEAKING_MOCK_CRITERIA = {

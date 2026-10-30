@@ -2,9 +2,9 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { courseDetailsRegenerationRequestSchema } from "@/lib/openapi/schemas/course-details-regenerations";
 import { readBody } from "@/lib/request-input";
-import { deliverCourseContent } from "@/workflows/v2/_shared/course-content-notification";
-import { listInFlightCourseDetails } from "@/workflows/v2/courses/course-details-runs";
-import { startCourseDetailsRun } from "@/workflows/v2/courses/start-course-details-run";
+import { deliverCourseContent } from "@/workflows/_shared/course-content-notification";
+import { listInFlightCourseDetails } from "@/workflows/courses/course-details-runs";
+import { startCourseDetailsRun } from "@/workflows/courses/start-course-details-run";
 import { collectCourseContentTags } from "@zoonk/core/cache/course-content";
 import {
   getCourseDetailsRegenerationPreview,

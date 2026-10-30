@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type FindTopicFrequencyParams } from "@zoonk/ai/tasks/v2/research/find-topic-frequency";
+import { type FindTopicFrequencyParams } from "@zoonk/ai/tasks/research/find-topic-frequency";
 import { type FindTopicFrequencyExpected } from "./task";
 
 type FindTopicFrequencyCase = TestCase<FindTopicFrequencyExpected, FindTopicFrequencyParams>;

@@ -1,9 +1,9 @@
 import { type TestCase } from "@/lib/types";
-import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import {
   type CheckLessonQualityParams,
   type LessonQualityIssueKind,
-} from "@zoonk/ai/tasks/v2/quality/lesson-check";
+} from "@zoonk/ai/tasks/quality/lesson-check";
 import { BASE_LESSONS } from "./base-lessons";
 import { EXAM_PREP_BASE_LESSON } from "./exam-prep-lessons";
 import { SOURCED_BASE_LESSONS } from "./sourced-lessons";

@@ -1,5 +1,5 @@
 import "server-only";
-import { type LessonSpecParams } from "@zoonk/ai/tasks/v2/lesson-spec";
+import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { prisma } from "@zoonk/db";
 import { isSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { listPlannerTemplates } from "../activities/writer-templates";

@@ -4,12 +4,12 @@ import { type Reasoning } from "@zoonk/ai/provider-options";
 import {
   type AssessPronunciationSchema,
   assessPronunciation,
-} from "@zoonk/ai/tasks/v2/language/assess-pronunciation";
+} from "@zoonk/ai/tasks/language/assess-pronunciation";
 import {
   TRANSCRIPTION_MODELS,
   type TranscriptionModelId,
   transcribeSpeech,
-} from "@zoonk/ai/tasks/v2/language/transcribe-speech";
+} from "@zoonk/ai/tasks/language/transcribe-speech";
 import { matchSpokenAnswer } from "@zoonk/core/library/language/spoken-answer-match";
 import { findSpeechClipPath } from "../transcribe-speech/task";
 import { scorePronunciation } from "./scorer";

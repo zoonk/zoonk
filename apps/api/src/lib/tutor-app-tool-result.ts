@@ -1,5 +1,5 @@
-import { type GoalTutorAppToolResult } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-cards";
-import { type GoalTutorAppTool } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-tools";
+import { type GoalTutorAppToolResult } from "@zoonk/ai/tasks/tutor/goal-tutor-cards";
+import { type GoalTutorAppTool } from "@zoonk/ai/tasks/tutor/goal-tutor-tools";
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
 import { type offerTutorTool } from "@zoonk/core/lesson-questions/offer-tool";
 

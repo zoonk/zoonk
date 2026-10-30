@@ -2,7 +2,7 @@ import { type TestCase } from "@/lib/types";
 import {
   type ChangingFactsParams,
   type ChangingFactsTopic,
-} from "@zoonk/ai/tasks/v2/research/changing-facts";
+} from "@zoonk/ai/tasks/research/changing-facts";
 import { type ChangingFactsExpected } from "./task";
 
 function topicCase(

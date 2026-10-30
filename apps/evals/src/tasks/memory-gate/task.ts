@@ -1,8 +1,8 @@
 import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
 import { evaluateQuestions } from "@zoonk/ai/evaluate/evaluate-questions";
-import { type MemoryGateVerdict, decideMemoryGate } from "@zoonk/ai/tasks/v2/memory/decisions";
-import { memoryGateClassifier } from "@zoonk/ai/tasks/v2/memory/gate";
+import { type MemoryGateVerdict, decideMemoryGate } from "@zoonk/ai/tasks/memory/decisions";
+import { memoryGateClassifier } from "@zoonk/ai/tasks/memory/gate";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type MemoryGateExpected, type MemoryGateInput, TEST_CASES } from "./test-cases";
 

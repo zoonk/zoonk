@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type MemorySearchTermsParams } from "@zoonk/ai/tasks/v2/memory/search-terms";
+import { type MemorySearchTermsParams } from "@zoonk/ai/tasks/memory/search-terms";
 
 export type MemorySearchTermsExpected = { irrelevant: string[]; relevant: string[] };
 

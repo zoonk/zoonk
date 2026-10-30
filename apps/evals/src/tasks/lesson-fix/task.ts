@@ -1,5 +1,5 @@
 import { type Task } from "@/lib/types";
-import { type FixLessonDraftParams, fixLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer/fix";
+import { type FixLessonDraftParams, fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { scoreLessonFix } from "./scorer";
 import { type LessonFixExpected, TEST_CASES } from "./test-cases";
 

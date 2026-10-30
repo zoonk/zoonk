@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { generateExampleLines } from "@zoonk/ai/tasks/v2/variants/example-lines";
+import { generateExampleLines } from "@zoonk/ai/tasks/variants/example-lines";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";

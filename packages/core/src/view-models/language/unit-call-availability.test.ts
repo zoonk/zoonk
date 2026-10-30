@@ -4,7 +4,7 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { getLanguageUnitView } from "./get-language-unit-view";
 
 // Provider availability is an external deployment boundary; the view still reads real learner data.
-vi.mock("@zoonk/ai/tasks/v2/language/live-call-session", () => ({
+vi.mock("@zoonk/ai/tasks/language/live-call-session", () => ({
   isLiveCallAvailable: vi.fn(() => false),
 }));
 

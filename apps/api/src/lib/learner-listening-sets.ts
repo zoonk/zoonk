@@ -1,6 +1,6 @@
 import "server-only";
 import { startListeningSets } from "@/lib/listening-sets";
-import { type ContentAnalytics } from "@/workflows/v2/_shared/content-analytics";
+import { type ContentAnalytics } from "@/workflows/_shared/content-analytics";
 import { listListeningPartsToPrepare } from "@zoonk/core/exams/listening/prepare";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";

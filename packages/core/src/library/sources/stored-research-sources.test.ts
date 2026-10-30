@@ -1,4 +1,4 @@
-import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
+import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { uniqueWord } from "../identity/_test-utils/identity-mocks";

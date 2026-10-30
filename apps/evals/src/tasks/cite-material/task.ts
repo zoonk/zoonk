@@ -4,7 +4,7 @@ import {
   type CiteMaterialInput,
   type ScreenMaterialRef,
   citeMaterial,
-} from "@zoonk/ai/tasks/v2/material/cite";
+} from "@zoonk/ai/tasks/material/cite";
 import { type CiteMaterialExpected, TEST_CASES } from "./test-cases";
 
 type CiteMaterialOutput = { citations: ScreenMaterialRef[] };

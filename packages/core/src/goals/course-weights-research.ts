@@ -1,5 +1,5 @@
 import "server-only";
-import { type CourseWeightsFinding } from "@zoonk/ai/tasks/v2/research/find-course-weights";
+import { type CourseWeightsFinding } from "@zoonk/ai/tasks/research/find-course-weights";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString } from "@zoonk/utils/string";

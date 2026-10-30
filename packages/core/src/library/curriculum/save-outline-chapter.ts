@@ -1,5 +1,5 @@
 import "server-only";
-import { type generateCourseOutline } from "@zoonk/ai/tasks/v2/curriculum/course-outline";
+import { type generateCourseOutline } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { type LibraryProvenance } from "../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";

@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { type SeededToday } from "@zoonk/db/seed/v2";
+import { type SeededToday } from "@zoonk/db/seed";
 import { loadDayPlanVersion } from "../sessions/_utils/day-plan-version";
 import { loadSessionBuildInput } from "../sessions/_utils/load-build-inputs";
 import { completeLessonPlanItems } from "../sessions/_utils/plan-items";

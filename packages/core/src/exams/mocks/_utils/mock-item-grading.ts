@@ -1,4 +1,4 @@
-import { type PartialCreditRule } from "@zoonk/ai/tasks/v2/research/partial-credit";
+import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit";
 import { type JsonObject } from "@zoonk/utils/json";
 import { type ChoiceItem, gradeChoiceAnswer } from "../../../learner/_utils/choice-items";
 import { gradeMathAnswer, readRecordedMath } from "../../../learner/_utils/math-items";

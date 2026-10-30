@@ -2,7 +2,7 @@ import { type Task, toTokenUsage } from "@/lib/types";
 import {
   type CourseOutlineParams,
   generateCourseOutline,
-} from "@zoonk/ai/tasks/v2/curriculum/course-outline";
+} from "@zoonk/ai/tasks/curriculum/course-outline";
 import { type CourseOutlineExpected, scoreCourseOutline } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 

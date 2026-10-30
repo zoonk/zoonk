@@ -1,6 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
-import { type PastCheckpoint, type SeededPast } from "@zoonk/db/seed/v2";
+import { type PastCheckpoint, type SeededPast } from "@zoonk/db/seed";
 import { getDateInTimeZone, getHourInTimeZone } from "@zoonk/utils/time-zone";
 import { loadCheckpointCandidates } from "../checkpoints/_utils/checkpoint-candidates";
 import { getPassMark, selectCheckpointItems } from "../checkpoints/checkpoint-rules";

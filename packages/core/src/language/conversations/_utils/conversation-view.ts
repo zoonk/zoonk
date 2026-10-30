@@ -1,5 +1,5 @@
 import "server-only";
-import { buildLiveConversationInstructions } from "@zoonk/ai/tasks/v2/language/live-conversation-instructions";
+import { buildLiveConversationInstructions } from "@zoonk/ai/tasks/language/live-conversation-instructions";
 import { type Chapter, type LanguageConversation } from "@zoonk/db";
 import { isCefrLevel } from "@zoonk/utils/cefr";
 import { type ExamTaskSnapshot, type ExamTaskView } from "../../exam-speaking/speaking-contract";

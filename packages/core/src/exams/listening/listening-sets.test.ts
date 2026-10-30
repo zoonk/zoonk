@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { writeListeningSet } from "@zoonk/ai/tasks/v2/listening/write-set";
+import { writeListeningSet } from "@zoonk/ai/tasks/listening/write-set";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";

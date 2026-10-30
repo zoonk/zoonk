@@ -1,5 +1,5 @@
 import "server-only";
-import { type LessonSpecParams } from "@zoonk/ai/tasks/v2/lesson-spec";
+import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { type ExamBlueprint, type GoalKind } from "@zoonk/db";
 import { toItemExam } from "../../lookahead/placement-item-skills";
 

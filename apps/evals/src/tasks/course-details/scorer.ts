@@ -5,7 +5,7 @@ import {
   type CourseDetails,
   PAGE_LISTS,
   SUBJECT_CATEGORIES,
-} from "@zoonk/ai/tasks/v2/courses/details";
+} from "@zoonk/ai/tasks/courses/details";
 
 export type CourseDetailsExpected = { categories?: string[] };
 

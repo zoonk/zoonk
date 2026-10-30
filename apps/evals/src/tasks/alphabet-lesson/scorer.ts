@@ -1,6 +1,6 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
-import { type AlphabetLessonContent } from "@zoonk/ai/tasks/v2/language/alphabet-lesson";
+import { type AlphabetLessonContent } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { ALPHABET_LESSON_SCORE_CATEGORIES } from "./score-categories";
 import { type AlphabetLessonExpected } from "./test-cases";
 

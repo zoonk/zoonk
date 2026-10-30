@@ -2,8 +2,8 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { researchPathParamsSchema } from "@/lib/openapi/schemas/research-sources";
 import { readPathParams } from "@/lib/request-input";
-import { readClientRunStatus } from "@/workflows/v2/_shared/run-activity";
-import { researchResultSchema } from "@/workflows/v2/research/research-result";
+import { readClientRunStatus } from "@/workflows/_shared/run-activity";
+import { researchResultSchema } from "@/workflows/research/research-result";
 import { NextResponse } from "next/server";
 import { getRun } from "workflow/api";
 

@@ -5,7 +5,7 @@ import {
   type StatuteDrill,
   type StatuteDrillParams,
   type generateStatuteDrills,
-} from "@zoonk/ai/tasks/v2/items/statute-drills";
+} from "@zoonk/ai/tasks/items/statute-drills";
 import { checkItem } from "@zoonk/core/library/items/checks";
 import { STATUTE_DRILLS_SCORE_CATEGORIES } from "./score-categories";
 

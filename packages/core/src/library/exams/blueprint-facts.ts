@@ -1,7 +1,7 @@
-import { type CitedFact } from "@zoonk/ai/tasks/v2/research/check-cited-facts";
-import { type BlueprintExtraction } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
-import { type FormatCount } from "@zoonk/ai/tasks/v2/research/extract-question-formats";
-import { type PartialCreditRule } from "@zoonk/ai/tasks/v2/research/partial-credit";
+import { type CitedFact } from "@zoonk/ai/tasks/research/check-cited-facts";
+import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
+import { type FormatCount } from "@zoonk/ai/tasks/research/extract-question-formats";
+import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit";
 import { splitEvenly } from "@zoonk/utils/split-evenly";
 import { type FactEntry, type FactSource, toFacts } from "./blueprint-fact-claims";
 import { testedLanguageFacts } from "./blueprint-language";

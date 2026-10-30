@@ -3,7 +3,7 @@ import {
   type ExamSpeakingCardOutput,
   type GenerateExamSpeakingCardParams,
   generateExamSpeakingCard,
-} from "@zoonk/ai/tasks/v2/language/exam-speaking-card";
+} from "@zoonk/ai/tasks/language/exam-speaking-card";
 import { EXAM_SPEAKING_CARD_SCORE_CATEGORIES } from "./score-categories";
 import { scoreExamSpeakingCardOutput } from "./scorer";
 import { TEST_CASES } from "./test-cases";

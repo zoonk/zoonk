@@ -3,7 +3,7 @@ import {
   type WorkFieldParams,
   type WorkFieldResult,
   classifyWorkField,
-} from "@zoonk/ai/tasks/v2/items/work-field";
+} from "@zoonk/ai/tasks/items/work-field";
 import { type WorkFieldExpected, scoreWorkField } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 

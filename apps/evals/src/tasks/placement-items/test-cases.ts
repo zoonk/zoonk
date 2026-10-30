@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type PlacementItemsParams } from "@zoonk/ai/tasks/v2/items/placement-items";
+import { type PlacementItemsParams } from "@zoonk/ai/tasks/items/placement-items";
 import { CEBRASPE, ENEM, SAT_MATH } from "../generate-items/test-cases";
 
 type PlacementItemsInput = Omit<PlacementItemsParams, "model" | "useFallback" | "reasoning">;

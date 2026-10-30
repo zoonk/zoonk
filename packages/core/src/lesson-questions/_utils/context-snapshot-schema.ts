@@ -1,6 +1,6 @@
 import "server-only";
 import { type LessonQuestionContextSnapshot } from "@zoonk/ai/tasks/lessons/question-context";
-import { GOAL_TUTOR_PAGES } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-pages";
+import { GOAL_TUTOR_PAGES } from "@zoonk/ai/tasks/tutor/goal-tutor-pages";
 import { z } from "zod";
 import { screenSnapshotSchema, standaloneScreenSnapshotSchema } from "./screen-snapshot-schema";
 

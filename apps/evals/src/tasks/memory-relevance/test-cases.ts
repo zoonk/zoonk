@@ -1,6 +1,6 @@
 import { type TestCase } from "@/lib/types";
-import { type MemoryFactText } from "@zoonk/ai/tasks/v2/memory/facts";
-import { type MemoryRelevanceInput } from "@zoonk/ai/tasks/v2/memory/relevance";
+import { type MemoryFactText } from "@zoonk/ai/tasks/memory/facts";
+import { type MemoryRelevanceInput } from "@zoonk/ai/tasks/memory/relevance";
 
 export type MemoryRelevanceExpected = { relevant: boolean };
 

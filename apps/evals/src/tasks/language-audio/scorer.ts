@@ -1,12 +1,12 @@
 import { readEvalAudio } from "@/lib/audio-files";
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer, type TokenUsage, toTokenUsage } from "@/lib/types";
-import { assessPronunciation } from "@zoonk/ai/tasks/v2/language/assess-pronunciation";
+import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import {
   type WordPronunciationCheck,
   checkWordPronunciation,
-} from "@zoonk/ai/tasks/v2/language/check-word-pronunciation";
-import { transcribeSpeech } from "@zoonk/ai/tasks/v2/language/transcribe-speech";
+} from "@zoonk/ai/tasks/language/check-word-pronunciation";
+import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
 import { matchSpokenAnswer } from "@zoonk/core/library/language/spoken-answer-match";
 import { type LanguageAudioInput, type LookAlike } from "./test-cases";
 

@@ -1,7 +1,7 @@
 import { createBooleanEvaluation } from "@/lib/evaluation-routes";
 import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
-import { questionGeneralityClassifier } from "@zoonk/ai/tasks/v2/explain/question-generality";
+import { questionGeneralityClassifier } from "@zoonk/ai/tasks/explain/question-generality";
 import {
   type QuestionGeneralityExpected,
   type QuestionGeneralityInput,

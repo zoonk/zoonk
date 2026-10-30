@@ -1,8 +1,8 @@
-import { type ContentAnalytics } from "@/workflows/v2/_shared/content-analytics";
+import { type ContentAnalytics } from "@/workflows/_shared/content-analytics";
 import {
   type LevelTestBankInput,
   levelTestBankWorkflow,
-} from "@/workflows/v2/language/level-test-bank-workflow";
+} from "@/workflows/language/level-test-bank-workflow";
 import { start } from "workflow/api";
 
 /** Callable from routes, steps and workflows alike. */

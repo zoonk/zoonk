@@ -1,7 +1,7 @@
 import "server-only";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
-import { imageSceneSchema } from "@zoonk/ai/tasks/v2/images/scene-schema";
-import { getImagePalette } from "@zoonk/ai/tasks/v2/images/style";
+import { imageSceneSchema } from "@zoonk/ai/tasks/images/scene-schema";
+import { getImagePalette } from "@zoonk/ai/tasks/images/style";
 import { prisma } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";

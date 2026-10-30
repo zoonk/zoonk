@@ -1,4 +1,4 @@
-import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 
 export const ACTIVITY_LESSON_SPECS = {
   "en-major-minor-by-ear": {

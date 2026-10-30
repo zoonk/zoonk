@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/v2/lesson-writer";
+import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 import { describeActivityTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { GLYCOLYSIS_SLIDES } from "../cite-material/material-fixtures";
 import { ACTIVITY_LESSON_SPECS } from "./activity-lesson-specs";

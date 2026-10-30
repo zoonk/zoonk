@@ -1,5 +1,5 @@
 import "server-only";
-import { interpretPlanEdit } from "@zoonk/ai/tasks/v2/plans/edit-intent";
+import { interpretPlanEdit } from "@zoonk/ai/tasks/plans/edit-intent";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../daily-minutes";
 import { type PlanOperation } from "../plan-contract";
 import { withTopicPart } from "./focus-topic-part";

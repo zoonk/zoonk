@@ -1,4 +1,4 @@
-import { PARTIAL_CREDIT_RULES } from "@zoonk/ai/tasks/v2/research/partial-credit";
+import { PARTIAL_CREDIT_RULES } from "@zoonk/ai/tasks/research/partial-credit";
 import { type MistakeCause } from "@zoonk/db";
 import { z } from "zod";
 import { type ExamDayChecklistItem } from "../../checkpoints/weekly-challenge-rules";

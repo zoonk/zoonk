@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { put } from "@vercel/blob";
-import { checkMindMapImage } from "@zoonk/ai/tasks/v2/mind-maps/check";
-import { generateMindMapImage } from "@zoonk/ai/tasks/v2/mind-maps/image";
-import { type MindMapStructure } from "@zoonk/ai/tasks/v2/mind-maps/schema";
-import { generateMindMapStructure } from "@zoonk/ai/tasks/v2/mind-maps/structure";
+import { checkMindMapImage } from "@zoonk/ai/tasks/mind-maps/check";
+import { generateMindMapImage } from "@zoonk/ai/tasks/mind-maps/image";
+import { type MindMapStructure } from "@zoonk/ai/tasks/mind-maps/schema";
+import { generateMindMapStructure } from "@zoonk/ai/tasks/mind-maps/structure";
 import { prisma } from "@zoonk/db";
 import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";

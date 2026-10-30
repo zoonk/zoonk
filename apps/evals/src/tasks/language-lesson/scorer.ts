@@ -1,8 +1,8 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { generateScore } from "@/lib/score";
 import { type TaskScorer, getJudgeExpectations } from "@/lib/types";
-import { type LanguageLessonContent } from "@zoonk/ai/tasks/v2/language/language-lesson";
-import { definitionNamesWord } from "@zoonk/ai/tasks/v2/language/language-lesson-rules";
+import { type LanguageLessonContent } from "@zoonk/ai/tasks/language/language-lesson";
+import { definitionNamesWord } from "@zoonk/ai/tasks/language/language-lesson-rules";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { LANGUAGE_LESSON_SCORE_CATEGORIES } from "./score-categories";
 import { type LanguageLessonInput } from "./test-cases";

@@ -1,10 +1,10 @@
-import { type checkCoverage } from "@zoonk/ai/tasks/v2/curriculum/coverage-check";
+import { type checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import {
   type ExamOutline,
   canBuildOn,
   findUncoveredTopics,
   isWrittenTestSubject,
-} from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
+} from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
 type Coverage = Awaited<ReturnType<typeof checkCoverage>>["data"];

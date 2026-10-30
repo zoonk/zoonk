@@ -1,6 +1,6 @@
 import "server-only";
-import { writeConversationFeedback } from "@zoonk/ai/tasks/v2/language/conversation-feedback";
-import { scoreSpeaking } from "@zoonk/ai/tasks/v2/language/speaking-score";
+import { writeConversationFeedback } from "@zoonk/ai/tasks/language/conversation-feedback";
+import { scoreSpeaking } from "@zoonk/ai/tasks/language/speaking-score";
 import { type LanguageConversation } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { toProvenanceData } from "../../../library/_utils/library-rows";

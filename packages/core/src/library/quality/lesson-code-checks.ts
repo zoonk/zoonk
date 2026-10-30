@@ -1,9 +1,9 @@
-import { type LessonScreen, type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
+import { type LessonScreen, type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import {
   type WrittenLesson,
   type WrittenScreen,
   getWrittenKinds,
-} from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+} from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type CourseLevel } from "@zoonk/db";
 import { removeMarkdownTables } from "@zoonk/utils/markdown-table";
 import { normalizeString } from "@zoonk/utils/string";

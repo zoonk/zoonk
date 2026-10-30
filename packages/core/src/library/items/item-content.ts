@@ -6,7 +6,7 @@ import {
   type OptionSelect,
   numericEntrySchema,
   optionSelectSchema,
-} from "@zoonk/ai/tasks/v2/items/schemas";
+} from "@zoonk/ai/tasks/items/schemas";
 import { isJsonObject, mapJsonStrings } from "@zoonk/utils/json";
 import { replaceEmDashes } from "@zoonk/utils/string";
 import { z } from "zod";

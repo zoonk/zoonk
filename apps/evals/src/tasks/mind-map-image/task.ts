@@ -3,9 +3,9 @@ import { judgeImage } from "@/lib/image-judge";
 import { calculateScore } from "@/lib/score-calculation";
 import { defineScoreCategories } from "@/lib/score-categories";
 import { type Task, type TaskScorer, getJudgeExpectations } from "@/lib/types";
-import { checkMindMapImage } from "@zoonk/ai/tasks/v2/mind-maps/check";
-import { generateMindMapImage } from "@zoonk/ai/tasks/v2/mind-maps/image";
-import { type MindMapStructure, listMindMapTexts } from "@zoonk/ai/tasks/v2/mind-maps/schema";
+import { checkMindMapImage } from "@zoonk/ai/tasks/mind-maps/check";
+import { generateMindMapImage } from "@zoonk/ai/tasks/mind-maps/image";
+import { type MindMapStructure, listMindMapTexts } from "@zoonk/ai/tasks/mind-maps/schema";
 import { type MindMapImageInput, TEST_CASES } from "./test-cases";
 
 const TASK_ID = "mind-map-image";

@@ -1,4 +1,4 @@
-import { gradeEssay } from "@zoonk/ai/tasks/v2/grading/grade-essay";
+import { gradeEssay } from "@zoonk/ai/tasks/grading/grade-essay";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";

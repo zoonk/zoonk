@@ -1,6 +1,6 @@
 import "server-only";
-import { type ExamOutline, formatExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
-import { type SkillGraphParams } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
+import { type ExamOutline, formatExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
+import { type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { type Course, type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";

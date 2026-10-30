@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { seedV2PersonaCopy } from "../seed/seed-v2";
+import { seedPersonaCopy } from "../seed/seed";
 import { findOwnedPlan } from "./_utils/owned-plan";
 import { computePlan } from "./_utils/replan";
 import { changeGoalPlan } from "./change-goal-plan";
@@ -50,7 +50,7 @@ describe("studying everything after an exam (R14)", () => {
     async (minutes) => {
       const copyKey = randomUUID();
 
-      const copy = await seedV2PersonaCopy({
+      const copy = await seedPersonaCopy({
         copyKey,
         email: `full-course-${copyKey}@zoonk.test`,
         persona: "exam",
@@ -124,7 +124,7 @@ describe("studying everything after an exam (R14)", () => {
     async ({ exam, fits, minutes }) => {
       const copyKey = randomUUID();
 
-      const copy = await seedV2PersonaCopy({
+      const copy = await seedPersonaCopy({
         copyKey,
         email: `challenge-parity-${copyKey}@zoonk.test`,
         persona: "exam",
@@ -190,7 +190,7 @@ describe("studying everything after an exam (R14)", () => {
   it("reads the end the change saved after the exam", async () => {
     const copyKey = randomUUID();
 
-    const copy = await seedV2PersonaCopy({
+    const copy = await seedPersonaCopy({
       copyKey,
       email: `full-course-end-${copyKey}@zoonk.test`,
       persona: "exam",

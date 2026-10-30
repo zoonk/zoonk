@@ -3,7 +3,7 @@ import {
   type PlanRoutineFit,
   type PlanRoutineFitParams,
   fitPlanToRoutineFacts,
-} from "@zoonk/ai/tasks/v2/plans/routine-fit";
+} from "@zoonk/ai/tasks/plans/routine-fit";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
 import { type PlanEditExpected, scorePlanEditIntent } from "../plan-edit-intent/scorer";
 import { TEST_CASES } from "./test-cases";

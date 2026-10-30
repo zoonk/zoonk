@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type ConversationTurn } from "@zoonk/ai/tasks/v2/language/conversation-feedback";
+import { type ConversationTurn } from "@zoonk/ai/tasks/language/conversation-feedback";
 import { IELTS_TEST_CASES } from "./ielts-test-cases";
 import { type SpeakingScoreExpected } from "./scorer";
 import { type SpeakingScoreInput, examTask } from "./test-inputs";

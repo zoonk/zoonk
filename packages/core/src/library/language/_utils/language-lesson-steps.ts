@@ -1,4 +1,4 @@
-import { type LanguageLessonContent } from "@zoonk/ai/tasks/v2/language/language-lesson";
+import { type LanguageLessonContent } from "@zoonk/ai/tasks/language/language-lesson";
 import { type StepKind } from "@zoonk/db";
 import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { isSameLanguage } from "@zoonk/utils/languages";

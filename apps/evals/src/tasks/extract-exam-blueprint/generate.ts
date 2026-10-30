@@ -1,12 +1,12 @@
 import { type ModelCall } from "@/lib/types";
 import { type Reasoning } from "@zoonk/ai/provider-options";
-import { checkCitedFacts } from "@zoonk/ai/tasks/v2/research/check-cited-facts";
-import { checkExamReading } from "@zoonk/ai/tasks/v2/research/check-exam-reading";
-import { type ResearchDocument } from "@zoonk/ai/tasks/v2/research/documents";
+import { checkCitedFacts } from "@zoonk/ai/tasks/research/check-cited-facts";
+import { checkExamReading } from "@zoonk/ai/tasks/research/check-exam-reading";
+import { type ResearchDocument } from "@zoonk/ai/tasks/research/documents";
 import {
   type BlueprintExtraction,
   extractExamBlueprint,
-} from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
+} from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { toBlueprintContent } from "@zoonk/core/library/exams/blueprint-content";
 import {
   type BlueprintContent,

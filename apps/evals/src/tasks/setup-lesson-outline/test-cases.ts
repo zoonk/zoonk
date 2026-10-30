@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type SetupLessonOutlineParams } from "@zoonk/ai/tasks/v2/curriculum/setup-lesson-outline";
+import { type SetupLessonOutlineParams } from "@zoonk/ai/tasks/curriculum/setup-lesson-outline";
 import { type SetupLessonOutlineExpected } from "./scorer";
 
 export const TEST_CASES: TestCase<SetupLessonOutlineExpected, SetupLessonOutlineParams>[] = [

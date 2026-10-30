@@ -1,11 +1,11 @@
 import "server-only";
 import { createHash } from "node:crypto";
-import { type MemoryInsightSkill, generateMemoryInsight } from "@zoonk/ai/tasks/v2/memory/insight";
+import { type MemoryInsightSkill, generateMemoryInsight } from "@zoonk/ai/tasks/memory/insight";
 import {
   type MemoryInsight as InsightProposal,
   type MemoryInsightKindName,
   toMemoryInsight,
-} from "@zoonk/ai/tasks/v2/memory/insight-rules";
+} from "@zoonk/ai/tasks/memory/insight-rules";
 import { type MemoryInsight, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";

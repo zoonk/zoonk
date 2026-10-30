@@ -1,4 +1,4 @@
-import { explainWrongAnswer } from "@zoonk/ai/tasks/v2/grading/explain-wrong-answer";
+import { explainWrongAnswer } from "@zoonk/ai/tasks/grading/explain-wrong-answer";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";

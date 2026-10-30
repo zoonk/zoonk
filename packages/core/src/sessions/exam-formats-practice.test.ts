@@ -1,4 +1,4 @@
-import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
+import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";

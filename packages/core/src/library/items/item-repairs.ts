@@ -1,5 +1,5 @@
-import { normalizeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
-import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
+import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
+import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { normalizeString } from "@zoonk/utils/string";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { stripOptionLabels } from "../_utils/answer-options";

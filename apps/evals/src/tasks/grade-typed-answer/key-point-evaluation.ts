@@ -3,8 +3,8 @@ import {
   type GradeTypedAnswerParams,
   type TypedAnswerGrade,
   gradeTypedAnswer,
-} from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
-import { matchTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
+} from "@zoonk/ai/tasks/grading/grade-typed-answer";
+import { matchTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 
 const INSTRUCTIONS = `Decide whether LEARNER_ANSWER states the key point below as an answer to QUESTION.
 The key point is met when the answer states its idea in any wording, including synonyms, paraphrases, everyday words and examples that clearly show it. It is not met when the answer leaves it out, stays too vague, only repeats the question or contradicts it. Judge meaning, not grammar, and ignore spelling slips.`;

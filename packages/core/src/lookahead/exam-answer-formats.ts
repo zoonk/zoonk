@@ -1,4 +1,4 @@
-import { type NumericEntry, type OptionSelect } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type NumericEntry, type OptionSelect } from "@zoonk/ai/tasks/items/schemas";
 import { type ExamStructure } from "../library/exams/blueprint-contract";
 import { ANY_NUMBER } from "../library/items/_utils/numeric-entry";
 

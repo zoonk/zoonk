@@ -1,5 +1,5 @@
 import { type Task } from "@/lib/types";
-import { type WordIpa, writeWordIpa } from "@zoonk/ai/tasks/v2/language/word-ipa";
+import { type WordIpa, writeWordIpa } from "@zoonk/ai/tasks/language/word-ipa";
 import { scoreWordIpa } from "./scorer";
 import { TEST_CASES, type WordIpaExpected } from "./test-cases";
 

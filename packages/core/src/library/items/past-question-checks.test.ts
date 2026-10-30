@@ -1,4 +1,4 @@
-import { type PastQuestion } from "@zoonk/ai/tasks/v2/items/past-questions";
+import { type PastQuestion } from "@zoonk/ai/tasks/items/past-questions";
 import { describe, expect, it } from "vitest";
 import { checkPastQuestion } from "./past-question-checks";
 

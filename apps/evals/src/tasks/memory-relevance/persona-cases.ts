@@ -1,6 +1,6 @@
 import { getSeedFact, getSeedLearner } from "@/datasets/seed-learners";
 import { type TestCase } from "@/lib/types";
-import { type MemoryRelevanceInput } from "@zoonk/ai/tasks/v2/memory/relevance";
+import { type MemoryRelevanceInput } from "@zoonk/ai/tasks/memory/relevance";
 import { type MemoryRelevanceExpected } from "./test-cases";
 
 function tutorNeed(question: string): string {

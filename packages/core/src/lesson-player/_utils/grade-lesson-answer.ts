@@ -2,8 +2,8 @@ import "server-only";
 import {
   type TypedAnswerCorrection,
   gradeTypedAnswer,
-} from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
-import { matchTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
+} from "@zoonk/ai/tasks/grading/grade-typed-answer";
+import { matchTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { gradeChallengePath } from "../../library/challenges/challenge-run";
 import { matchSpokenAnswer } from "../../library/language/spoken-answer-match";
 import { type LessonStepAnswer } from "../contract";

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { generateChallengeCase } from "@zoonk/ai/tasks/v2/challenge/case";
+import { generateChallengeCase } from "@zoonk/ai/tasks/challenge/case";
 import { prisma } from "@zoonk/db";
 import { writtenChallengeCaseFixture } from "@zoonk/testing/fixtures/challenge-written-case";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";

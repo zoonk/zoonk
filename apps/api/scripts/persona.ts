@@ -1,7 +1,7 @@
 /** Run it through `pnpm dev:persona`, which passes the URLs `pnpm dev` serves. */
 import { parseArgs } from "node:util";
 import { prisma } from "@zoonk/db";
-import { SEED_LANGUAGES, type SeedLanguage } from "@zoonk/db/seed/v2/localize";
+import { SEED_LANGUAGES, type SeedLanguage } from "@zoonk/db/seed/localize";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
 import { logError, logInfo } from "@zoonk/utils/logger";

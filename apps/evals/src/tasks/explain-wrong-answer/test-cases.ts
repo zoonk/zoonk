@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type ExplainWrongAnswerParams } from "@zoonk/ai/tasks/v2/grading/explain-wrong-answer";
+import { type ExplainWrongAnswerParams } from "@zoonk/ai/tasks/grading/explain-wrong-answer";
 
 type ExplainWrongAnswerInput = Omit<
   ExplainWrongAnswerParams,

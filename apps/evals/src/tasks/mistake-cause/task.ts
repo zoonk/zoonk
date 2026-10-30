@@ -5,7 +5,7 @@ import {
   type MistakeCauseSchema,
   classifyMistakeCause,
   mistakeCauseClassifier,
-} from "@zoonk/ai/tasks/v2/mistakes/cause";
+} from "@zoonk/ai/tasks/mistakes/cause";
 import { PERSONA_TEST_CASES } from "./persona-cases";
 import { type MistakeCauseExpected, scoreMistakeCause } from "./scorer";
 import { TEST_CASES } from "./test-cases";

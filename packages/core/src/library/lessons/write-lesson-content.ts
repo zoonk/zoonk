@@ -1,7 +1,7 @@
 import "server-only";
 import { type CallReuse, type ServiceTier } from "@zoonk/ai/provider-options";
-import { writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
-import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
+import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { logError } from "@zoonk/utils/logger";
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
 import { type LessonGateProblem } from "../quality/lesson-quality-gate";

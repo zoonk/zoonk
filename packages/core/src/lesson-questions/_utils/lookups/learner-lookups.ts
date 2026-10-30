@@ -2,8 +2,8 @@ import "server-only";
 import {
   type GoalTutorLookUpRequest,
   type GoalTutorLookUpResult,
-} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
-import { type LearnerLookUp } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup-learner";
+} from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
+import { type LearnerLookUp } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup-learner";
 import { type Goal } from "@zoonk/db";
 import { type LinkScope } from "../plan-day-context";
 import { lookUpAccount, lookUpCourses, lookUpGoals } from "./learner-account-lookups";

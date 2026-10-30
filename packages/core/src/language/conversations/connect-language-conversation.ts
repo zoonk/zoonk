@@ -1,5 +1,5 @@
 import "server-only";
-import { getLiveConversationVoice } from "@zoonk/ai/tasks/v2/language/live-conversation-models";
+import { getLiveConversationVoice } from "@zoonk/ai/tasks/language/live-conversation-models";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";

@@ -2,7 +2,7 @@ import { type Task } from "@/lib/types";
 import {
   type ExtractPastQuestionsParams,
   extractPastQuestions,
-} from "@zoonk/ai/tasks/v2/items/past-questions";
+} from "@zoonk/ai/tasks/items/past-questions";
 import { PAST_QUESTIONS_SCORE_CATEGORIES } from "./score-categories";
 import { scorePastQuestions } from "./scorer";
 import { TEST_CASES } from "./test-cases";

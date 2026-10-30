@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type WrittenVariant, generateStepVariant } from "@zoonk/ai/tasks/v2/variants/step-variant";
+import { type WrittenVariant, generateStepVariant } from "@zoonk/ai/tasks/variants/step-variant";
 import { type StepKind, prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";

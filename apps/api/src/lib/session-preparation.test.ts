@@ -27,8 +27,8 @@ import { finishCourseOutline } from "../../../../packages/core/src/library/curri
 import { getTodayView } from "../../../../packages/core/src/view-models/today/get-today-view";
 import { mockHookConflict } from "../../mocks/workflow";
 import { getStartMock } from "../workflows/_test-utils/start-mock";
-import { courseOutlineWorkflow } from "../workflows/v2/courses/course-outline-workflow";
-import { guestOutlineWorkflow } from "../workflows/v2/sessions/guest-outline-workflow";
+import { courseOutlineWorkflow } from "../workflows/courses/course-outline-workflow";
+import { guestOutlineWorkflow } from "../workflows/sessions/guest-outline-workflow";
 import {
   scheduleGoalPreparation,
   scheduleSessionPreparation,

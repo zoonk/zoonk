@@ -3,7 +3,7 @@ import { type TaskScorer } from "@/lib/types";
 import {
   type GenerateLevelTestBankSchema,
   LEVEL_TEST_PASSAGE_WORDS,
-} from "@zoonk/ai/tasks/v2/language/level-test-bank";
+} from "@zoonk/ai/tasks/language/level-test-bank";
 import { LEVEL_TEST_BANK_SCORE_CATEGORIES } from "./score-categories";
 
 type LevelTestQuestion = GenerateLevelTestBankSchema["questions"][number];

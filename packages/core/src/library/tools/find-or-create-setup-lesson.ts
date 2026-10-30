@@ -1,5 +1,5 @@
 import "server-only";
-import { generateSetupLessonOutline } from "@zoonk/ai/tasks/v2/curriculum/setup-lesson-outline";
+import { generateSetupLessonOutline } from "@zoonk/ai/tasks/curriculum/setup-lesson-outline";
 import { prisma } from "@zoonk/db";
 import {
   buildLessonIdentityKey,

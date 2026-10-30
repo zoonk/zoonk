@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { findExamDate } from "@zoonk/ai/tasks/v2/goals/find-exam-date";
-import { decideExamIdentity } from "@zoonk/ai/tasks/v2/research/exam-identity-decision";
+import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
+import { decideExamIdentity } from "@zoonk/ai/tasks/research/exam-identity-decision";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { buildExamIdentityKey } from "../../../library/exams/exam-identity";

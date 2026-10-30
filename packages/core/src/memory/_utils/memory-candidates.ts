@@ -1,5 +1,5 @@
-import { type ExtractedMemoryFact } from "@zoonk/ai/tasks/v2/memory/extraction";
-import { type SessionPattern } from "@zoonk/ai/tasks/v2/memory/session-patterns";
+import { type ExtractedMemoryFact } from "@zoonk/ai/tasks/memory/extraction";
+import { type SessionPattern } from "@zoonk/ai/tasks/memory/session-patterns";
 import { type MemoryCategory, type MemoryOrigin } from "@zoonk/db";
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 import { normalizeString } from "@zoonk/utils/string";

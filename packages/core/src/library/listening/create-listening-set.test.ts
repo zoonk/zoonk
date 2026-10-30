@@ -1,4 +1,4 @@
-import { writeListeningSet } from "@zoonk/ai/tasks/v2/listening/write-set";
+import { writeListeningSet } from "@zoonk/ai/tasks/listening/write-set";
 import { prisma } from "@zoonk/db";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";

@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type WorkFieldParams } from "@zoonk/ai/tasks/v2/items/work-field";
+import { type WorkFieldParams } from "@zoonk/ai/tasks/items/work-field";
 import { type WorkFieldExpected } from "./scorer";
 
 type WorkFieldTestCase = TestCase<WorkFieldExpected, WorkFieldParams>;

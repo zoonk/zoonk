@@ -2,9 +2,9 @@ import "server-only";
 import {
   type LibraryIdentityVerdict,
   decideLibraryIdentity,
-} from "@zoonk/ai/tasks/v2/identity/decision";
-import { type SearchTermsParams } from "@zoonk/ai/tasks/v2/identity/search-terms";
-import { type LibraryIdentityCandidate } from "@zoonk/ai/tasks/v2/identity/subject";
+} from "@zoonk/ai/tasks/identity/decision";
+import { type SearchTermsParams } from "@zoonk/ai/tasks/identity/search-terms";
+import { type LibraryIdentityCandidate } from "@zoonk/ai/tasks/identity/subject";
 import { type IdentityKindSearch, type LibraryIdentityRequest } from "./_utils/identity-requests";
 import { toTextSearch } from "./_utils/text-search-sql";
 import { getChapterIdentitySearch, loadChapterCandidates } from "./kinds/chapter-identity";

@@ -5,8 +5,8 @@ import {
   LISTENING_QUESTION_FORMATS,
   type ListeningQuestion,
   toListeningItem,
-} from "@zoonk/ai/tasks/v2/listening/schema";
-import { writeListeningSet } from "@zoonk/ai/tasks/v2/listening/write-set";
+} from "@zoonk/ai/tasks/listening/schema";
+import { writeListeningSet } from "@zoonk/ai/tasks/listening/write-set";
 import { logError } from "@zoonk/utils/logger";
 import { createItemSet } from "../items/create-item-set";
 import { toListeningContent } from "./listening-content";

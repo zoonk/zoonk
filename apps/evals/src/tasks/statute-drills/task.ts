@@ -2,7 +2,7 @@ import { type Task } from "@/lib/types";
 import {
   type StatuteDrillParams,
   generateStatuteDrills,
-} from "@zoonk/ai/tasks/v2/items/statute-drills";
+} from "@zoonk/ai/tasks/items/statute-drills";
 import { STATUTE_DRILLS_SCORE_CATEGORIES } from "./score-categories";
 import { scoreStatuteDrills } from "./scorer";
 import { TEST_CASES } from "./test-cases";

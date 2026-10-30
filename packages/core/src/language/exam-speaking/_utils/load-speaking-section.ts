@@ -1,5 +1,5 @@
 import "server-only";
-import { SPEAKING_EXAM_LANGUAGES } from "@zoonk/ai/tasks/v2/language/exam-speaking-exams";
+import { SPEAKING_EXAM_LANGUAGES } from "@zoonk/ai/tasks/language/exam-speaking-exams";
 import { type LanguageConversation, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import {

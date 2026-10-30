@@ -1,6 +1,6 @@
 import "server-only";
-import { type PlanEditTopic } from "@zoonk/ai/tasks/v2/plans/edit-intent";
-import { type TopicSkillName, nameTopicSkills } from "@zoonk/ai/tasks/v2/plans/topic-skill-names";
+import { type PlanEditTopic } from "@zoonk/ai/tasks/plans/edit-intent";
+import { type TopicSkillName, nameTopicSkills } from "@zoonk/ai/tasks/plans/topic-skill-names";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { toProvenanceData } from "../../library/_utils/library-rows";
 import { type CurriculumScope } from "../../library/curriculum/curriculum-scope";

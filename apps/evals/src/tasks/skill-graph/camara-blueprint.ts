@@ -1,4 +1,4 @@
-import { type ExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
+import { type ExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 
 export const CAMARA_BLUEPRINT: ExamOutline = {
   name: "Concurso da Câmara dos Deputados, Analista Legislativo, Registro e Redação (Cebraspe)",

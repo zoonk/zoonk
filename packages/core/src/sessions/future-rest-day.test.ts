@@ -8,7 +8,7 @@ import { changeGoalPlan } from "../plans/change-goal-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { decidePlanChange } from "../plans/decide-plan-change";
 import { parsePlanGraph } from "../plans/planner/plan-state";
-import { seedV2PersonaCopy } from "../seed/seed-v2";
+import { seedPersonaCopy } from "../seed/seed";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { startStudyBlock } from "./start-study-block";
 
@@ -22,7 +22,7 @@ const SESSION_INCLUDE = { blocks: { orderBy: { position: "asc" } } } as const;
 async function openPlannedDay(persona: "buddy" | "hugeGoal" = "hugeGoal") {
   const copyKey = crypto.randomUUID();
 
-  const { goalId, userId } = await seedV2PersonaCopy({
+  const { goalId, userId } = await seedPersonaCopy({
     copyKey,
     email: `future-rest-${copyKey}@zoonk.test`,
     persona,

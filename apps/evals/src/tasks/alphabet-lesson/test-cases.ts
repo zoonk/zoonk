@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type GenerateAlphabetLessonParams } from "@zoonk/ai/tasks/v2/language/alphabet-lesson";
+import { type GenerateAlphabetLessonParams } from "@zoonk/ai/tasks/language/alphabet-lesson";
 
 type AlphabetLessonInput = Omit<
   GenerateAlphabetLessonParams,

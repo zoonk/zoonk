@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
+import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";

@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { put } from "@vercel/blob";
-import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
-import { describeImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
-import { IMAGE_STYLE_VERSION } from "@zoonk/ai/tasks/v2/images/style";
+import { checkLessonImage } from "@zoonk/ai/tasks/images/check";
+import { describeImageScene } from "@zoonk/ai/tasks/images/scene-schema";
+import { IMAGE_STYLE_VERSION } from "@zoonk/ai/tasks/images/style";
 import { prisma } from "@zoonk/db";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";

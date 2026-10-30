@@ -1,7 +1,7 @@
 import { streamLessonQuestionAnswer } from "@zoonk/ai/tasks/lessons/question";
-import { GOAL_TUTOR_MODEL, streamGoalTutorAnswer } from "@zoonk/ai/tasks/v2/tutor/goal-tutor";
-import { createCardTools } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-cards";
-import { createLookUpTool } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
+import { GOAL_TUTOR_MODEL, streamGoalTutorAnswer } from "@zoonk/ai/tasks/tutor/goal-tutor";
+import { createCardTools } from "@zoonk/ai/tasks/tutor/goal-tutor-cards";
+import { createLookUpTool } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
 import {
   claimLessonQuestionAnswer,
   completeLessonQuestionAnswer,

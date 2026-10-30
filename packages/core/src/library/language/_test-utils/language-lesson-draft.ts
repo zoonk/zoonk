@@ -1,4 +1,4 @@
-import { type LanguageLessonContent } from "@zoonk/ai/tasks/v2/language/language-lesson";
+import { type LanguageLessonContent } from "@zoonk/ai/tasks/language/language-lesson";
 
 export function languageLessonDraft(
   overrides: Partial<LanguageLessonContent> = {},

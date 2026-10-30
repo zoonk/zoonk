@@ -1,6 +1,6 @@
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
-import { type TopicSkillName } from "@zoonk/ai/tasks/v2/plans/topic-skill-names";
+import { type TopicSkillName } from "@zoonk/ai/tasks/plans/topic-skill-names";
 import { normalizeString } from "@zoonk/utils/string";
 
 export type TopicSkillNamesExpected = { topics: { general: string[]; personal: string[] }[] };

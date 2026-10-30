@@ -1,5 +1,5 @@
 import { isDeepStrictEqual } from "node:util";
-import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type LessonGateProblem } from "../../quality/lesson-quality-gate";
 
 type FixReach = { strayed: boolean; unfixed: LessonGateProblem[] };

@@ -3,7 +3,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalSkillPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
-import { courseOutlineWorkflow } from "@/workflows/v2/courses/course-outline-workflow";
+import { courseOutlineWorkflow } from "@/workflows/courses/course-outline-workflow";
 import { requestSkillOutline } from "@zoonk/core/lookahead/skill-outline";
 import { NextResponse } from "next/server";
 import { start } from "workflow/api";

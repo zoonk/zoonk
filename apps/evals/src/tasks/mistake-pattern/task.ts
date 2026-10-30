@@ -3,7 +3,7 @@ import {
   type FindMistakePatternParams,
   type FindMistakePatternSchema,
   findMistakePattern,
-} from "@zoonk/ai/tasks/v2/language/mistake-pattern";
+} from "@zoonk/ai/tasks/language/mistake-pattern";
 import { MISTAKE_PATTERN_SCORE_CATEGORIES } from "./score-categories";
 import { type MistakePatternExpected, scoreMistakePattern } from "./scorer";
 import { TEST_CASES } from "./test-cases";

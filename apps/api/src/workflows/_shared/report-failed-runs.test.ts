@@ -5,7 +5,7 @@ import { registerFailedRunReports } from "./report-failed-runs";
 
 vi.mock("@sentry/nextjs", () => ({ captureException: vi.fn(), flush: vi.fn() }));
 
-const WORKFLOW_NAME = "workflow//./src/workflows/v2/research/research-workflow//researchWorkflow";
+const WORKFLOW_NAME = "workflow//./src/workflows/research/research-workflow//researchWorkflow";
 
 function failedRun(cause: unknown): RunFailedHookParams {
   const error = Object.assign(new Error("Workflow run failed"), { cause, errorCode: "USER_ERROR" });

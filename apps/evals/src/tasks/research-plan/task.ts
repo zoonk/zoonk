@@ -3,7 +3,7 @@ import {
   type ExamResearchPlan,
   type ExamResearchPlanParams,
   generateExamResearchPlan,
-} from "@zoonk/ai/tasks/v2/research/plan";
+} from "@zoonk/ai/tasks/research/plan";
 import { type ResearchPlanExpected, scoreResearchPlan } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 

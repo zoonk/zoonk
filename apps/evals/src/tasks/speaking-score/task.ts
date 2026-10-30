@@ -1,9 +1,6 @@
 import { type Task } from "@/lib/types";
-import { type SpeakingGrade } from "@zoonk/ai/tasks/v2/language/speaking-bands";
-import {
-  type ScoreSpeakingParams,
-  scoreSpeaking,
-} from "@zoonk/ai/tasks/v2/language/speaking-score";
+import { type SpeakingGrade } from "@zoonk/ai/tasks/language/speaking-bands";
+import { type ScoreSpeakingParams, scoreSpeaking } from "@zoonk/ai/tasks/language/speaking-score";
 import { SPEAKING_SCORE_CATEGORIES } from "./score-categories";
 import { type SpeakingScoreExpected, scoreSpeakingOutput } from "./scorer";
 import { TEST_CASES } from "./test-cases";

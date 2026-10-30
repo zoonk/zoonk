@@ -1,6 +1,6 @@
-import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
-import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/v2/lesson-writer";
-import { type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
+import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { readNumbers } from "./arithmetic";
 import { getScreenTexts } from "./screen-texts";
 

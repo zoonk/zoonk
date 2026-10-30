@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type GenerateConversationScenarioParams } from "@zoonk/ai/tasks/v2/language/conversation-scenario";
+import { type GenerateConversationScenarioParams } from "@zoonk/ai/tasks/language/conversation-scenario";
 
 type ConversationScenarioInput = Omit<
   GenerateConversationScenarioParams,

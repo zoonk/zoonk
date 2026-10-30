@@ -1,5 +1,5 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
-import { generateLevelTestBank } from "@zoonk/ai/tasks/v2/language/level-test-bank";
+import { generateLevelTestBank } from "@zoonk/ai/tasks/language/level-test-bank";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { beforeEach, describe, expect, it, vi } from "vitest";

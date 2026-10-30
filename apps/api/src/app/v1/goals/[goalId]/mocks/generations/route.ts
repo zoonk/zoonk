@@ -3,7 +3,7 @@ import { examError } from "@/lib/exam-errors";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
-import { mockQuestionsWorkflow } from "@/workflows/v2/goals/mock-questions-workflow";
+import { mockQuestionsWorkflow } from "@/workflows/goals/mock-questions-workflow";
 import { mockQuestionsInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { requestMockQuestions } from "@zoonk/core/exams/mocks/request-questions";
 import { type NextRequest, NextResponse } from "next/server";

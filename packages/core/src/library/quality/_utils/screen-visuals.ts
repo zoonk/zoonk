@@ -1,5 +1,5 @@
-import { type LessonScreen } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
-import { type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type LessonScreen } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { getScreenTexts } from "./screen-texts";
 import { getVisualProblems, pointsAtFigure } from "./visual-references";
 

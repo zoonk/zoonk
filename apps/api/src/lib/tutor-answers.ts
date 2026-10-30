@@ -10,17 +10,17 @@ import {
   type SubjectScopeContext,
   type TutorScreenContext,
 } from "@zoonk/ai/tasks/lessons/question-context";
-import { GOAL_TUTOR_MODEL, streamGoalTutorAnswer } from "@zoonk/ai/tasks/v2/tutor/goal-tutor";
+import { GOAL_TUTOR_MODEL, streamGoalTutorAnswer } from "@zoonk/ai/tasks/tutor/goal-tutor";
 import {
   type GoalTutorAppToolRequest,
   type GoalTutorAppToolResult,
   type GoalTutorPlanChangeResult,
-} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-cards";
+} from "@zoonk/ai/tasks/tutor/goal-tutor-cards";
 import {
   type GoalTutorLookUpRequest,
   type GoalTutorLookUpResult,
-} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
-import { listGoalTutorPages } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-pages";
+} from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
+import { listGoalTutorPages } from "@zoonk/ai/tasks/tutor/goal-tutor-pages";
 import { type claimLessonQuestionAnswer } from "@zoonk/core/lesson-questions/answer-lifecycle";
 import {
   LESSON_QUESTION_PLAN_CHANGE_PART,

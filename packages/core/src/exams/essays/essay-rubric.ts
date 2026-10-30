@@ -1,4 +1,4 @@
-import { type EssayRubric } from "@zoonk/ai/tasks/v2/grading/grade-essay";
+import { type EssayRubric } from "@zoonk/ai/tasks/grading/grade-essay";
 import { type ExamBlueprint } from "@zoonk/db";
 import { getExamScale, isEnemExam } from "../scoring/exam-scales";
 

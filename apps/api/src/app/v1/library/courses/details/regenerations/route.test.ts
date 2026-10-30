@@ -1,4 +1,4 @@
-import { courseDetailsWorkflow } from "@/workflows/v2/courses/course-details-workflow";
+import { courseDetailsWorkflow } from "@/workflows/courses/course-details-workflow";
 import {
   getCourseDetailsRegenerationPreview,
   regenerateCourseDetails,
@@ -16,9 +16,7 @@ vi.mock("@zoonk/core/library/courses/regenerate-details", () => ({
   regenerateCourseDetails: vi.fn(),
 }));
 
-vi.mock("@/workflows/v2/courses/course-details-workflow", () => ({
-  courseDetailsWorkflow: vi.fn(),
-}));
+vi.mock("@/workflows/courses/course-details-workflow", () => ({ courseDetailsWorkflow: vi.fn() }));
 
 function request(body: unknown) {
   return new NextRequest("http://localhost/v1/library/courses/details/regenerations", {

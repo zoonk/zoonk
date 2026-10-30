@@ -5,7 +5,7 @@ import {
   type ItemFormat,
   type NumericEntry,
   type OptionSelect,
-} from "@zoonk/ai/tasks/v2/items/schemas";
+} from "@zoonk/ai/tasks/items/schemas";
 import { checkItem, findOwnEmDashes } from "@zoonk/core/library/items/checks";
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "./score-categories";
 

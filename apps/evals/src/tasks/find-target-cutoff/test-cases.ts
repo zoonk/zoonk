@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type FindTargetCutoffParams } from "@zoonk/ai/tasks/v2/research/find-target-cutoff";
+import { type FindTargetCutoffParams } from "@zoonk/ai/tasks/research/find-target-cutoff";
 import { type FindTargetCutoffExpected } from "./task";
 
 type FindTargetCutoffCase = TestCase<FindTargetCutoffExpected, FindTargetCutoffParams>;

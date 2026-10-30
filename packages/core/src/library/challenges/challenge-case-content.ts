@@ -1,4 +1,4 @@
-import { type WrittenChallengeCase } from "@zoonk/ai/tasks/v2/challenge/case";
+import { type WrittenChallengeCase } from "@zoonk/ai/tasks/challenge/case";
 import { seededShuffle } from "@zoonk/utils/seeded-random";
 import { describeContentIssues, safeParseStepContent } from "../steps/contract/step-contract";
 import { type ChallengeLessonSpec } from "./challenge-lesson-spec";

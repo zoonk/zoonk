@@ -1,5 +1,5 @@
-import { numericEntrySchema, optionSelectSchema } from "@zoonk/ai/tasks/v2/items/schemas";
-import { lessonVisualSchema } from "@zoonk/ai/tasks/v2/visuals/schema";
+import { numericEntrySchema, optionSelectSchema } from "@zoonk/ai/tasks/items/schemas";
+import { lessonVisualSchema } from "@zoonk/ai/tasks/visuals/schema";
 import { itemImageSchema } from "@zoonk/core/library/items/image";
 import { z } from "zod";
 

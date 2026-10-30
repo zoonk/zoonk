@@ -1,12 +1,12 @@
 import "server-only";
 import { startLearnerListeningSets } from "@/lib/learner-listening-sets";
 import { scheduleLessonWriting } from "@/lib/lesson-writing";
-import { challengeQuestionsWorkflow } from "@/workflows/v2/goals/challenge-questions-workflow";
-import { guestOutlineWorkflow } from "@/workflows/v2/sessions/guest-outline-workflow";
+import { challengeQuestionsWorkflow } from "@/workflows/goals/challenge-questions-workflow";
+import { guestOutlineWorkflow } from "@/workflows/sessions/guest-outline-workflow";
 import {
   type ClaimQuestions,
   sessionPreparationWorkflow,
-} from "@/workflows/v2/sessions/session-preparation-workflow";
+} from "@/workflows/sessions/session-preparation-workflow";
 import { getRequestPlatform } from "@zoonk/core/analytics/request-platform";
 import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
 import {

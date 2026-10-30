@@ -1,5 +1,5 @@
 import "server-only";
-import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { prisma } from "@zoonk/db";
 import {
   type ImageAnalytics,

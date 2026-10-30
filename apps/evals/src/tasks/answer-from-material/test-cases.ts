@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type AnswerFromMaterialInput } from "@zoonk/ai/tasks/v2/material/answer";
+import { type AnswerFromMaterialInput } from "@zoonk/ai/tasks/material/answer";
 import { GLYCOLYSIS_SLIDES, MARKET_NOTES } from "../cite-material/material-fixtures";
 
 export type AnswerFromMaterialExpected = {

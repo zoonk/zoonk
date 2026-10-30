@@ -1,4 +1,4 @@
-import { lessonVisualSchema } from "@zoonk/ai/tasks/v2/visuals/schema";
+import { lessonVisualSchema } from "@zoonk/ai/tasks/visuals/schema";
 import { z } from "zod";
 import { itemImageSchema } from "../library/items/item-image";
 import { itemSetViewSchema } from "../library/items/item-set-view";

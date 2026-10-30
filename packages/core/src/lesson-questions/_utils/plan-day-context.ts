@@ -3,7 +3,7 @@ import {
   type PlanItemReason,
   type PlanScopeContext,
 } from "@zoonk/ai/tasks/lessons/question-context";
-import { type TutorLink } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-pages";
+import { type TutorLink } from "@zoonk/ai/tasks/tutor/goal-tutor-pages";
 import {
   type Goal,
   type PlanItem,

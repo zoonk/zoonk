@@ -1,4 +1,4 @@
-import { LIVE_CALL_CREATE_TIMEOUT_MS } from "@zoonk/ai/tasks/v2/language/live-call-creation";
+import { LIVE_CALL_CREATE_TIMEOUT_MS } from "@zoonk/ai/tasks/language/live-call-creation";
 import { type LiveCallConnection } from "@zoonk/db";
 import {
   LIVE_CALL_CONNECT_WINDOW_SECONDS,

@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type UploadVisibilityParams } from "@zoonk/ai/tasks/v2/research/upload-visibility";
+import { type UploadVisibilityParams } from "@zoonk/ai/tasks/research/upload-visibility";
 import { type UploadVisibilityExpected } from "./task";
 
 function uploadCase({

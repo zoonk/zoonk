@@ -1,5 +1,5 @@
 import "server-only";
-import { writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
+import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { prisma } from "@zoonk/db";
 import { markLockedPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { safeAsync } from "@zoonk/utils/error";

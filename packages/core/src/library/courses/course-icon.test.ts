@@ -1,5 +1,5 @@
 import { put } from "@vercel/blob";
-import { generateCourseIcon } from "@zoonk/ai/tasks/v2/courses/icon";
+import { generateCourseIcon } from "@zoonk/ai/tasks/courses/icon";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { beforeEach, describe, expect, it, vi } from "vitest";

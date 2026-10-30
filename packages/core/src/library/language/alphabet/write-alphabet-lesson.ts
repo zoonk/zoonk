@@ -1,5 +1,5 @@
 import "server-only";
-import { generateAlphabetLesson } from "@zoonk/ai/tasks/v2/language/alphabet-lesson";
+import { generateAlphabetLesson } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { safeAsync } from "@zoonk/utils/error";
 import { usesNonLatinScript } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";

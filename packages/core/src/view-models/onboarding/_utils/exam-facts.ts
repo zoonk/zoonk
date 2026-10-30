@@ -1,5 +1,5 @@
 import "server-only";
-import { type FindExamDateParams, findExamDate } from "@zoonk/ai/tasks/v2/goals/find-exam-date";
+import { type FindExamDateParams, findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";

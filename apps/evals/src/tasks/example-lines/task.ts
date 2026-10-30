@@ -2,7 +2,7 @@ import { type Task } from "@/lib/types";
 import {
   type GenerateExampleLinesParams,
   generateExampleLines,
-} from "@zoonk/ai/tasks/v2/variants/example-lines";
+} from "@zoonk/ai/tasks/variants/example-lines";
 import { PERSONA_TEST_CASES } from "./persona-cases";
 import { EXAMPLE_LINES_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";

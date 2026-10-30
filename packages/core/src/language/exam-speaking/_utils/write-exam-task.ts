@@ -1,6 +1,6 @@
 import "server-only";
-import { generateExamSpeakingCard } from "@zoonk/ai/tasks/v2/language/exam-speaking-card";
-import { SPEAKING_EXAM_LANGUAGES } from "@zoonk/ai/tasks/v2/language/exam-speaking-exams";
+import { generateExamSpeakingCard } from "@zoonk/ai/tasks/language/exam-speaking-card";
+import { SPEAKING_EXAM_LANGUAGES } from "@zoonk/ai/tasks/language/exam-speaking-exams";
 import { type Goal } from "@zoonk/db";
 import { createConversation } from "../../conversations/_utils/create-conversation";
 import { type SpeakingCard } from "../speaking-contract";

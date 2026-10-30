@@ -1,7 +1,7 @@
 import "server-only";
-import { normalizeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
-import { assessPronunciation } from "@zoonk/ai/tasks/v2/language/assess-pronunciation";
-import { transcribeSpeech } from "@zoonk/ai/tasks/v2/language/transcribe-speech";
+import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
+import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
+import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
 import { logError } from "@zoonk/utils/logger";
 import { MAX_SPOKEN_AUDIO_BYTES, isSpokenAudioMediaType } from "../spoken-answer-contract";
 import { type SpokenAnswerMatch, matchSpokenAnswer } from "../spoken-answer-match";

@@ -32,7 +32,7 @@ export type ContentTable = (typeof CONTENT_TABLES)[number];
 export const PUBLIC_ROWS = "visibility = 'public' AND owner_id IS NULL";
 
 /**
- * The v2 seed's ids are UUID version 8, which generated content never has. Seeded content belongs
+ * The seed's ids are UUID version 8, which generated content never has. Seeded content belongs
  * to the local database, so the sync never reads, removes or overwrites it.
  */
 export const SEEDED_ROWS = "uuid_extract_version(id) = 8";

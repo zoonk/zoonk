@@ -1,6 +1,6 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
-import { type ExamSpeakingCardOutput } from "@zoonk/ai/tasks/v2/language/exam-speaking-card";
+import { type ExamSpeakingCardOutput } from "@zoonk/ai/tasks/language/exam-speaking-card";
 import { EXAM_SPEAKING_CARD_SCORE_CATEGORIES } from "./score-categories";
 import { type ExamSpeakingCardInput } from "./test-cases";
 

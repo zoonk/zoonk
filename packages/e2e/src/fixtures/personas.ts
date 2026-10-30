@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { type SeedPersonaName } from "@zoonk/db/seed/v2/personas";
-import { seedV2PersonaCopy } from "./seed-v2";
+import { type SeedPersonaName } from "@zoonk/db/seed/personas";
+import { seedPersonaCopy } from "./seed";
 import { type E2EUser } from "./users";
 
 const SHORT_UUID_LENGTH = 8;
@@ -38,7 +38,7 @@ export async function createE2EPersona(
   const copyKey = randomUUID().slice(0, SHORT_UUID_LENGTH);
   const email = `e2e-${persona.toLowerCase()}-${copyKey}@zoonk.test`;
 
-  const { goalId, userId } = await seedV2PersonaCopy({ copyKey, email, persona });
+  const { goalId, userId } = await seedPersonaCopy({ copyKey, email, persona });
 
   const [storageState, goal] = await Promise.all([
     signIn({ baseURL, email }),

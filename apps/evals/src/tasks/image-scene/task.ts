@@ -1,8 +1,8 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { defineScoreCategories } from "@/lib/score-categories";
 import { type Task, type TaskScorer, type TestCase } from "@/lib/types";
-import { type ImageSceneInput, generateImageScene } from "@zoonk/ai/tasks/v2/images/scene";
-import { type ImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
+import { type ImageSceneInput, generateImageScene } from "@zoonk/ai/tasks/images/scene";
+import { type ImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 import { getString } from "@zoonk/utils/json";
 import { type ImageSceneExpected, TEST_CASES } from "./test-cases";
 

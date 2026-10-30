@@ -5,7 +5,7 @@ import { type Task, type TaskScorer } from "@/lib/types";
 import {
   type WordPronunciationCheck,
   checkWordPronunciation,
-} from "@zoonk/ai/tasks/v2/language/check-word-pronunciation";
+} from "@zoonk/ai/tasks/language/check-word-pronunciation";
 import {
   LOOK_ALIKE_CLIPS_DIR,
   type LookAlikeClipExpected,

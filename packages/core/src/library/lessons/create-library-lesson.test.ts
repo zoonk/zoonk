@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import * as decisionTask from "@zoonk/ai/tasks/v2/identity/decision";
-import * as searchTermsTask from "@zoonk/ai/tasks/v2/identity/search-terms";
+import * as decisionTask from "@zoonk/ai/tasks/identity/decision";
+import * as searchTermsTask from "@zoonk/ai/tasks/identity/search-terms";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";

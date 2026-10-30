@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type GenerateSpeakingMockScenarioParams } from "@zoonk/ai/tasks/v2/language/speaking-mock-scenario";
+import { type GenerateSpeakingMockScenarioParams } from "@zoonk/ai/tasks/language/speaking-mock-scenario";
 
 type SpeakingMockScenarioInput = Omit<
   GenerateSpeakingMockScenarioParams,

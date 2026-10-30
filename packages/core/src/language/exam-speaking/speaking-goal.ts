@@ -2,7 +2,7 @@ import {
   SPEAKING_EXAMS,
   SPEAKING_EXAM_LANGUAGES,
   type SpeakingExam,
-} from "@zoonk/ai/tasks/v2/language/exam-speaking-exams";
+} from "@zoonk/ai/tasks/language/exam-speaking-exams";
 import { type Goal } from "@zoonk/db";
 import { CEFR_LEVELS, type CefrLevel, isCefrLevel } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";

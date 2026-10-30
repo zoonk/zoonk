@@ -1,5 +1,5 @@
 import "server-only";
-import { findMistakePattern } from "@zoonk/ai/tasks/v2/language/mistake-pattern";
+import { findMistakePattern } from "@zoonk/ai/tasks/language/mistake-pattern";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { logError } from "@zoonk/utils/logger";

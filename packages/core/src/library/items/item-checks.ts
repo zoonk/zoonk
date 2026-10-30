@@ -1,9 +1,9 @@
-import { normalizeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
+import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import {
   type GeneratedItem,
   type NumericEntry,
   type OptionSelect,
-} from "@zoonk/ai/tasks/v2/items/schemas";
+} from "@zoonk/ai/tasks/items/schemas";
 import { normalizeString } from "@zoonk/utils/string";
 import { findEmDashes, findPlaceholderText, findUnrenderedMarkdown } from "@zoonk/utils/text-flaws";
 import { findOptionPositionReferences, stripOptionLabels } from "../_utils/answer-options";

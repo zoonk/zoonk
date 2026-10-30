@@ -9,13 +9,13 @@ function seedRunLibrary(): void {
 
   const script = `
     import { prisma } from "@zoonk/db";
-    import { writeSeedV2Library } from "@zoonk/db/seed/v2";
+    import { writeSeedLibrary } from "@zoonk/db/seed";
     async function seed() {
       const [database] = await prisma.$queryRaw\`SELECT current_database() AS name\`;
       if (database?.name !== process.env.CORE_TEST_DATABASE_NAME) {
         throw new Error("Core library setup must use this run's cloned test database.");
       }
-      await writeSeedV2Library(prisma);
+      await writeSeedLibrary(prisma);
       await prisma.$disconnect();
     }
     seed().then(() => process.exit(0), (error) => { console.error(error); process.exit(1); });`;

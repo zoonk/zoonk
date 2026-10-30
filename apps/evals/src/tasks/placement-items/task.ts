@@ -2,7 +2,7 @@ import { type Task } from "@/lib/types";
 import {
   type PlacementItemsParams,
   generatePlacementItems,
-} from "@zoonk/ai/tasks/v2/items/placement-items";
+} from "@zoonk/ai/tasks/items/placement-items";
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "../generate-items/score-categories";
 import { scorePlacementItems } from "./scorer";
 import { TEST_CASES } from "./test-cases";

@@ -1,5 +1,5 @@
-import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
-import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/v2/lesson-writer";
+import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 
 export const EXAM_PREP_LESSON: Pick<
   WriteLessonDraftParams,

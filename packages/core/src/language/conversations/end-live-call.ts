@@ -1,7 +1,7 @@
 import "server-only";
-import { LIVE_CALL_CREATE_TIMEOUT_MS } from "@zoonk/ai/tasks/v2/language/live-call-creation";
-import { hangUpLiveCallSession } from "@zoonk/ai/tasks/v2/language/live-call-session";
-import { recordLiveConversationUsage } from "@zoonk/ai/tasks/v2/language/live-conversation-usage";
+import { LIVE_CALL_CREATE_TIMEOUT_MS } from "@zoonk/ai/tasks/language/live-call-creation";
+import { hangUpLiveCallSession } from "@zoonk/ai/tasks/language/live-call-session";
+import { recordLiveConversationUsage } from "@zoonk/ai/tasks/language/live-conversation-usage";
 import { type LiveCallConnection, type LiveCallEndReason, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";

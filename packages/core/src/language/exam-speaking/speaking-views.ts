@@ -1,4 +1,4 @@
-import { SPEAKING_EXAM_LANGUAGES } from "@zoonk/ai/tasks/v2/language/exam-speaking-exams";
+import { SPEAKING_EXAM_LANGUAGES } from "@zoonk/ai/tasks/language/exam-speaking-exams";
 import {
   type ExamTaskSnapshot,
   type ExamTaskView,

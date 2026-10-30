@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { seedV2PersonaCopy } from "@zoonk/core/seed/v2";
+import { seedPersonaCopy } from "@zoonk/core/seed";
 import { prisma } from "@zoonk/db";
-import { seedV2Plus } from "@zoonk/db/seed/v2";
-import { type SeedLanguage } from "@zoonk/db/seed/v2/localize";
-import { findSeedPersonaName, listSeedPersonas } from "@zoonk/db/seed/v2/personas";
+import { seedPlus } from "@zoonk/db/seed";
+import { type SeedLanguage } from "@zoonk/db/seed/localize";
+import { findSeedPersonaName, listSeedPersonas } from "@zoonk/db/seed/personas";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone, getTimeZoneOffsetMs } from "@zoonk/utils/time-zone";
 import { type TimeShift, findLastWrite, writeLearnerCopy } from "./copy-learner";
@@ -57,7 +57,7 @@ export async function createPersona({ name, ...options }: PersonaRequest) {
     throw new Error(`There's no persona "${name}". Pick one of: ${listPersonaNames().join(", ")}.`);
   }
 
-  return seedV2PersonaCopy({ ...options, ...newPersonaAccount(name), persona });
+  return seedPersonaCopy({ ...options, ...newPersonaAccount(name), persona });
 }
 
 function getCloneName(email: string): string {
@@ -168,7 +168,7 @@ export async function clonePersona({ awayDays, day, from, plus, timeZone }: Pers
   const userId = await writeLearnerCopy({ account: { email, username }, learner, shift, timeZone });
 
   if (plus ?? source.plus) {
-    await seedV2Plus(prisma, { now, userId });
+    await seedPlus(prisma, { now, userId });
   }
 
   const goal = await prisma.goal.findFirstOrThrow({

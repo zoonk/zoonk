@@ -1,4 +1,4 @@
-import { checkCoverage } from "@zoonk/ai/tasks/v2/curriculum/coverage-check";
+import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";

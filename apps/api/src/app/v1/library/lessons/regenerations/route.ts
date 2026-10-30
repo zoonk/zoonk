@@ -2,7 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { lessonRegenerationRequestSchema } from "@/lib/openapi/schemas/lesson-regenerations";
 import { readBody } from "@/lib/request-input";
-import { lessonContentWorkflow } from "@/workflows/v2/lessons/lesson-content-workflow";
+import { lessonContentWorkflow } from "@/workflows/lessons/lesson-content-workflow";
 import { pullLessonsForRegeneration } from "@zoonk/core/library/lessons/regenerate";
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";

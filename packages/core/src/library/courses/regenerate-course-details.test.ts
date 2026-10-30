@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import {
   generateCourseDetails,
   getCourseDetailsPromptVersion,
-} from "@zoonk/ai/tasks/v2/courses/details";
+} from "@zoonk/ai/tasks/courses/details";
 import { DbNull, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {

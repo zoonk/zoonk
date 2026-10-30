@@ -1,8 +1,5 @@
 import "server-only";
-import {
-  type PastQuestion,
-  type PastQuestionFormat,
-} from "@zoonk/ai/tasks/v2/items/past-questions";
+import { type PastQuestion, type PastQuestionFormat } from "@zoonk/ai/tasks/items/past-questions";
 import { type Source, prisma, sql } from "@zoonk/db";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";

@@ -1,4 +1,4 @@
-import { type GeneratedMathProblem } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type GeneratedMathProblem } from "@zoonk/ai/tasks/items/schemas";
 import { describe, expect, it } from "vitest";
 import { discountMath, discountQuestion as question } from "./_test-utils/math-problems";
 import { checkMathProblem } from "./item-math-checks";

@@ -1,5 +1,5 @@
-import { type ExamReadingFindings } from "@zoonk/ai/tasks/v2/research/check-exam-reading";
-import { type ReadingCorrection } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
+import { type ExamReadingFindings } from "@zoonk/ai/tasks/research/check-exam-reading";
+import { type ReadingCorrection } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { nameOverlap, namesMatch } from "../../exams/_utils/name-match";
 import { listCountedSubjects } from "../../exams/choices/exam-choices";
 import { isWrittenSubject } from "../../exams/mocks/written-subject";

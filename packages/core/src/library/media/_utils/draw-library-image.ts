@@ -1,7 +1,7 @@
 import "server-only";
-import { type ImageSceneParams, generateImageScene } from "@zoonk/ai/tasks/v2/images/scene";
-import { type ImageScene, describeImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
-import { getImagePalette } from "@zoonk/ai/tasks/v2/images/style";
+import { type ImageSceneParams, generateImageScene } from "@zoonk/ai/tasks/images/scene";
+import { type ImageScene, describeImageScene } from "@zoonk/ai/tasks/images/scene-schema";
+import { getImagePalette } from "@zoonk/ai/tasks/images/style";
 import { resolveLibraryIdentity } from "../../identity/resolve-library-identity";
 import { drawImage } from "./draw-checked-image";
 import { canStorePicture } from "./picture-store";

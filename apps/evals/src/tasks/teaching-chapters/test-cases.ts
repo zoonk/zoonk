@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type TeachingChaptersParams } from "@zoonk/ai/tasks/v2/curriculum/teaching-chapters";
+import { type TeachingChaptersParams } from "@zoonk/ai/tasks/curriculum/teaching-chapters";
 import { type TeachingChaptersExpected } from "./scorer";
 
 type TeachingChaptersTestCase = TestCase<TeachingChaptersExpected, TeachingChaptersParams>;

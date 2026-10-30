@@ -509,7 +509,7 @@
     "./progress/weekly-study-time-contract": "./src/progress/weekly-study-time-contract.ts",
     "./security/api-deployment": "./src/security/api-deployment.ts",
     "./security/headers": "./src/security/headers.ts",
-    "./seed/v2": "./src/seed/seed-v2.ts",
+    "./seed": "./src/seed/seed.ts",
     "./sessions/alternative": "./src/sessions/alternative-study-block.ts",
     "./sessions/answer": "./src/sessions/answer-study-question.ts",
     "./sessions/answer-limits": "./src/sessions/answer-limits.ts",
@@ -589,7 +589,7 @@
     "./workflows/steps": "./src/workflows/steps.ts"
   },
   "scripts": {
-    "seed:v2": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 tsx --conditions=react-server scripts/seed.ts",
+    "seed": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 tsx --conditions=react-server scripts/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"

@@ -1,7 +1,7 @@
 import "server-only";
-import { findTwinCandidates, mergeSkillTwins } from "@zoonk/ai/tasks/v2/curriculum/skill-twins";
-import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
-import { type LibraryIdentityItem } from "@zoonk/ai/tasks/v2/identity/subject";
+import { findTwinCandidates, mergeSkillTwins } from "@zoonk/ai/tasks/curriculum/skill-twins";
+import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
+import { type LibraryIdentityItem } from "@zoonk/ai/tasks/identity/subject";
 import { safeAsync } from "@zoonk/utils/error";
 import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
 import { type GoalSkillGraph } from "./save-goal-skills";

@@ -3,7 +3,7 @@ import {
   type LanguageLessonContent,
   type LanguageLessonParams,
   generateLanguageLesson,
-} from "@zoonk/ai/tasks/v2/language/language-lesson";
+} from "@zoonk/ai/tasks/language/language-lesson";
 import { LANGUAGE_LESSON_SCORE_CATEGORIES } from "./score-categories";
 import { scoreLanguageLesson } from "./scorer";
 import { TEST_CASES } from "./test-cases";

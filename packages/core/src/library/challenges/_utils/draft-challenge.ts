@@ -1,5 +1,5 @@
 import "server-only";
-import { type ChallengeCaseParams, generateChallengeCase } from "@zoonk/ai/tasks/v2/challenge/case";
+import { type ChallengeCaseParams, generateChallengeCase } from "@zoonk/ai/tasks/challenge/case";
 import { type Lesson } from "@zoonk/db";
 import { checkWrittenChallenge } from "../challenge-case-content";
 import { type ChallengeLessonSpec } from "../challenge-lesson-spec";

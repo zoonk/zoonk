@@ -1,5 +1,5 @@
-import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
-import { classifyMistakeCause } from "@zoonk/ai/tasks/v2/mistakes/cause";
+import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
+import { classifyMistakeCause } from "@zoonk/ai/tasks/mistakes/cause";
 import { prisma } from "@zoonk/db";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { describe, expect, it, vi } from "vitest";

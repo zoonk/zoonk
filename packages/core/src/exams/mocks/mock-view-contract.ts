@@ -1,5 +1,5 @@
-import { type NumericEntry, type OptionSelect } from "@zoonk/ai/tasks/v2/items/schemas";
-import { type LessonVisual } from "@zoonk/ai/tasks/v2/visuals/schema";
+import { type NumericEntry, type OptionSelect } from "@zoonk/ai/tasks/items/schemas";
+import { type LessonVisual } from "@zoonk/ai/tasks/visuals/schema";
 import { type SectionNavigation } from "../../library/exams/blueprint-contract";
 import { type ItemImage } from "../../library/items/item-image";
 import { type ItemSetView } from "../../library/items/item-set-view";

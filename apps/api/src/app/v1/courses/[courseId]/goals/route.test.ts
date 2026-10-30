@@ -1,5 +1,5 @@
-import { goalContentWorkflow } from "@/workflows/v2/goals/goal-content-workflow";
-import { researchWorkflow } from "@/workflows/v2/research/research-workflow";
+import { goalContentWorkflow } from "@/workflows/goals/goal-content-workflow";
+import { researchWorkflow } from "@/workflows/research/research-workflow";
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { startCourseGoal } from "@zoonk/core/goals/start-course";
 import { NextRequest } from "next/server";
@@ -8,8 +8,8 @@ import { start } from "workflow/api";
 import { POST as startFromCourse } from "./route";
 
 vi.mock("@zoonk/core/goals/start-course", () => ({ startCourseGoal: vi.fn() }));
-vi.mock("@/workflows/v2/goals/goal-content-workflow", () => ({ goalContentWorkflow: vi.fn() }));
-vi.mock("@/workflows/v2/research/research-workflow", () => ({ researchWorkflow: vi.fn() }));
+vi.mock("@/workflows/goals/goal-content-workflow", () => ({ goalContentWorkflow: vi.fn() }));
+vi.mock("@/workflows/research/research-workflow", () => ({ researchWorkflow: vi.fn() }));
 
 vi.mock("@zoonk/core/goals/generation-id", () => ({
   getGoalGenerationId: vi.fn(async () => ({ generationId: null, status: "ready" })),

@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type MistakeCauseParams } from "@zoonk/ai/tasks/v2/mistakes/cause";
+import { type MistakeCauseParams } from "@zoonk/ai/tasks/mistakes/cause";
 import { type MistakeCauseExpected } from "./scorer";
 
 type MistakeCauseTestCase = TestCase<MistakeCauseExpected, MistakeCauseParams>;

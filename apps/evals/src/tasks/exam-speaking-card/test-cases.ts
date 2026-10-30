@@ -1,6 +1,6 @@
 import { type TestCase } from "@/lib/types";
-import { type GenerateExamSpeakingCardParams } from "@zoonk/ai/tasks/v2/language/exam-speaking-card";
-import { type SpeakingExam } from "@zoonk/ai/tasks/v2/language/exam-speaking-exams";
+import { type GenerateExamSpeakingCardParams } from "@zoonk/ai/tasks/language/exam-speaking-card";
+import { type SpeakingExam } from "@zoonk/ai/tasks/language/exam-speaking-exams";
 import { getSpeakingFormat, getSpeakingTask } from "@zoonk/core/language/exam-speaking/formats";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 

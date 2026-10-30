@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type FindCourseWeightsParams } from "@zoonk/ai/tasks/v2/research/find-course-weights";
+import { type FindCourseWeightsParams } from "@zoonk/ai/tasks/research/find-course-weights";
 import { type FindCourseWeightsExpected } from "./task";
 
 type FindCourseWeightsCase = TestCase<FindCourseWeightsExpected, FindCourseWeightsParams>;

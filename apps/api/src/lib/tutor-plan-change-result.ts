@@ -1,7 +1,7 @@
 import {
   type GoalTutorPlanChangeEffect,
   type GoalTutorPlanChangeResult,
-} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-cards";
+} from "@zoonk/ai/tasks/tutor/goal-tutor-cards";
 import { type proposeTutorPlanChange } from "@zoonk/core/lesson-questions/propose-plan-change";
 import { type PlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
