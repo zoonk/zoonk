@@ -85,4 +85,23 @@ struct CodeActivityRunnerTests {
           "WITH RECURSIVE n(x) AS (VALUES(1) UNION ALL SELECT x+1 FROM n WHERE x < 5000) SELECT x FROM n",
         tables: []) == .tooManyRows)
   }
+
+  @Test func aQueryStopsPastTheRowsAnAnswerCanHoldAndCutsLongCells() {
+    let rows = { (count: Int) in
+      "WITH RECURSIVE n(x) AS (VALUES(1) UNION ALL SELECT x+1 FROM n WHERE x < \(count)) SELECT x FROM n"
+    }
+    let long = CodeSQLRunner.run(
+      query: "SELECT replace(hex(zeroblob(20000)), '00', 'x') AS text", tables: [])
+
+    #expect(CodeSQLRunner.run(query: rows(200), tables: []) != .tooManyRows)
+    #expect(CodeSQLRunner.run(query: rows(201), tables: []) == .tooManyRows)
+    #expect(
+      CodeSQLRunner.run(query: "\(rows(201)); SELECT 1 AS one", tables: [])
+        == .done(SQLResult(columns: ["one"], rows: [[.number(1)]])),
+      "only the last table is the result")
+    #expect(
+      long
+        == .done(
+          SQLResult(columns: ["text"], rows: [[.string(String(repeating: "x", count: 10_000))]])))
+  }
 }

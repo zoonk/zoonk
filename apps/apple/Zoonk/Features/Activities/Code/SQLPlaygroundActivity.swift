@@ -345,9 +345,11 @@ private struct SQLPlaygroundCanvas: View {
         tableName: "ActivitiesCode", comment: "A SQL query ran out of time")
     case .tooManyRows:
       Text(
-        "The query returned too many rows. Add a filter or LIMIT and try again.",
+        "The query returned too many rows. Is a join missing its condition?",
         tableName: "ActivitiesCode",
-        comment: "A SQL query returned more rows than the app shows; LIMIT is a SQL keyword")
+        comment:
+          "A query returned more rows than a lesson's small tables could need, most often by joining tables without saying how they match"
+      )
     }
   }
 

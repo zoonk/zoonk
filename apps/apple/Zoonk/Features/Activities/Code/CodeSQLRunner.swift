@@ -18,8 +18,9 @@ enum SQLRun: Equatable, Sendable {
 /// last statement that returned a table.
 enum CodeSQLRunner {
   static let timeLimitSeconds = 3
-  /// Far more than a lesson's tables hold; a cross join past it would freeze the result table.
-  private static let maxRows = 1000
+  /// Core's `MAX_QUERY_ROWS` and `MAX_PROGRAM_OUTPUT_LENGTH`: the most an answer can carry.
+  private static let maxRows = 200
+  private static let maxCellLength = 10_000
 
   static func run(
     query: String, tables: [SQLPlaygroundFields.Table],
@@ -92,6 +93,7 @@ enum CodeSQLRunner {
     try sql.withCString { start in
       var cursor: UnsafePointer<CChar>? = start
       var result = SQLResult(columns: [], rows: [])
+      var isResultTooLong = false
 
       while let current = cursor, current.pointee != 0 {
         var statement: OpaquePointer?
@@ -118,14 +120,18 @@ enum CodeSQLRunner {
         let count = sqlite3_column_count(statement)
         let columns = (0..<count).map { String(cString: sqlite3_column_name(statement, $0)) }
         var rows: [[JSONValue]] = []
+        var isTooLong = false
         var status = sqlite3_step(statement)
 
+        // Only the last table is the result, as on main: an earlier one past the limit still
+        // runs to its end, without keeping its rows.
         while status == SQLITE_ROW {
-          guard rows.count < maxRows else {
-            throw SQLRun.tooManyRows
+          if rows.count < maxRows {
+            rows.append((0..<count).map { cell(statement, $0) })
+          } else {
+            isTooLong = true
           }
 
-          rows.append((0..<count).map { cell(statement, $0) })
           status = sqlite3_step(statement)
         }
 
@@ -135,7 +141,12 @@ enum CodeSQLRunner {
 
         if count > 0 {
           result = SQLResult(columns: columns, rows: rows)
+          isResultTooLong = isTooLong
         }
+      }
+
+      guard !isResultTooLong else {
+        throw SQLRun.tooManyRows
       }
 
       return result
@@ -148,8 +159,13 @@ enum CodeSQLRunner {
     case SQLITE_INTEGER: .number(Double(sqlite3_column_int64(statement, index)))
     case SQLITE_FLOAT: .number(sqlite3_column_double(statement, index))
     case SQLITE_BLOB: .string("[blob]")
-    default: .string(String(cString: sqlite3_column_text(statement, index)))
+    default: .string(capped(String(cString: sqlite3_column_text(statement, index))))
     }
+  }
+
+  /// In UTF-16 units, as JavaScript's `slice` counts them in core's `capProgramText`.
+  private static func capped(_ text: String) -> String {
+    String(decoding: text.utf16.prefix(maxCellLength), as: UTF16.self)
   }
 
   private static func failure(_ database: OpaquePointer) -> SQLRun {

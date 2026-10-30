@@ -1340,31 +1340,31 @@
         }
       }
     },
-    "The query returned too many rows. Add a filter or LIMIT and try again." : {
-      "comment" : "A SQL query returned more rows than the app shows; LIMIT is a SQL keyword",
+    "The query returned too many rows. Is a join missing its condition?" : {
+      "comment" : "A query returned more rows than a lesson's small tables could need, most often by joining tables without saying how they match",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Abfrage hat zu viele Zeilen zurückgegeben. Füge einen Filter oder LIMIT hinzu und versuch es noch einmal."
+            "value" : "Die Abfrage hat zu viele Zeilen zurückgegeben. Fehlt bei einer Verknüpfung die Bedingung?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La consulta ha devuelto demasiadas filas. Añade un filtro o LIMIT y vuelve a intentarlo."
+            "value" : "La consulta ha devuelto demasiadas filas. ¿Falta indicar cómo se relacionan las tablas?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La requête a renvoyé trop de lignes. Ajoute un filtre ou LIMIT et réessaie."
+            "value" : "La requête a renvoyé trop de lignes. Manque-t-il une condition de jointure ?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A consulta retornou linhas demais. Adicione um filtro ou LIMIT e tente de novo."
+            "value" : "A consulta retornou linhas demais. Está faltando a condição de alguma junção?"
           }
         }
       }
