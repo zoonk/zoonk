@@ -55,6 +55,8 @@ val ActivityExpected?.orderIds: List<String>? get() = (interaction as? ActivityE
 
 val ActivityExpected?.selectionIds: List<String>? get() = (interaction as? ActivityExpectedAnswer.SelectionWrapper)?.value?.ids
 
+val ActivityExpected?.gridCells: List<String>? get() = (interaction as? ActivityExpectedAnswer.GridWrapper)?.value?.cells
+
 val ActivityAnswer?.assignmentPairs: Map<String, String>? get() = (this as? AssignmentAnswerValue)?.value?.pairs
 
 val ActivityExpected?.assignmentPairs: Map<String, String>? get() = (interaction as? ActivityExpectedAnswer.AssignmentWrapper)?.value?.pairs

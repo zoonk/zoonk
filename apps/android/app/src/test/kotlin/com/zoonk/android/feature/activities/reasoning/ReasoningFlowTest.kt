@@ -33,6 +33,8 @@ import com.zoonk.android.feature.activities.gridCells
 import com.zoonk.android.feature.activities.selectionIds
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.LessonStepAnswer
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -59,12 +61,13 @@ class ReasoningFlowTest {
     private fun play(
         fixture: String,
         isCorrect: Boolean,
+        expected: ActivityExpected? = ActivityFixtures.expected(fixture),
     ) = harness.play(listOf(ActivityFixtures.step(fixture))) {
         grade = { _, input ->
             val answer = (input.answer as? LessonStepAnswer.LessonStepAnswerOneOf3Value)?.value?.answer
             sent = answer.gridCells
             picked = answer.selectionIds
-            checkResult(isCorrect, expected = ActivityFixtures.expected(fixture))
+            checkResult(isCorrect, expected = expected)
         }
     }
 
@@ -119,6 +122,18 @@ class ReasoningFlowTest {
 
         shows("8 of 9 squares right")
         rule.onNode(hasContentDescription("12. Your answer: 8")).performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun timesTableShowsTheSquaresTheServerExpects() {
+        val expected = """{"kind":"interaction","answer":{"kind":"grid","cells":["2","4","6","3","6","9","4","8","16"]}}"""
+        play("combinationGrid.timesTable", isCorrect = false, expected = ApiJson.decodeFromString(ActivityExpected.serializer(), expected))
+
+        fillSquare(listOf("2", "4", "6", "3", "6", "9", "4", "8", "12"))
+        harness.tap("Check")
+
+        shows("8 of 9 squares right")
+        rule.onNode(hasContentDescription("16. Your answer: 12")).performScrollTo().assertIsDisplayed()
     }
 
     @Test

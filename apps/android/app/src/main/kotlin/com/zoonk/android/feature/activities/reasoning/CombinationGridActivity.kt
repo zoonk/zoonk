@@ -105,6 +105,7 @@ private fun CombinationGridActivity(props: ActivityProps) {
     var activeCell by rememberSaveable { mutableStateOf(nextEmptyCell(fill, null)) }
     val editable = !props.isLocked && !isReadOnly
     val counted = if (props.isChecked) countedCells(check, output, grid.cells) else null
+    val right = props.expected.gridCells ?: grid.cells
 
     fun pick(value: String) {
         val cell = activeCell ?: return
@@ -119,7 +120,7 @@ private fun CombinationGridActivity(props: ActivityProps) {
             grid = grid,
             fill = if (props.isChecked && isReadOnly) grid.cells.map { null } else fill,
             activeCell = activeCell.takeIf { editable && !props.isChecked },
-            checked = counted?.let { GridChecked(it, grid.cells) },
+            checked = counted?.let { GridChecked(it, right) },
             onSelectCell = if (editable && !props.isChecked) ({ activeCell = it }) else null,
         )
         if (!isReadOnly || !counted.isNullOrEmpty()) {
@@ -127,7 +128,7 @@ private fun CombinationGridActivity(props: ActivityProps) {
                 grid = grid,
                 fill = fill,
                 counted = counted?.size?.takeIf { check !is InteractionCheckValue },
-                expected = if (props.isChecked && !isReadOnly) grid.cells else emptyList(),
+                expected = if (props.isChecked && !isReadOnly) right else emptyList(),
                 outputName = outputName(grid, output),
             )
         }
