@@ -46,8 +46,8 @@ export function LevelTestQuestion({
   const [isPending, startTransition] = useTransition();
   const speech = useSpokenAudio(targetLanguage);
   const isListening = question.skill === "listening";
-  const audioFailed = isListening && speech.state.status === "failed";
-  const listeningOut = audioFailed ? t("Skip this question") : t("I didn't understand the audio");
+  const noAudio = isListening && (audioPending || speech.state.status === "failed");
+  const listeningOut = noAudio ? t("Skip this question") : t("I didn't understand the audio");
 
   return (
     <PlacementQuestionScreen
@@ -67,7 +67,7 @@ export function LevelTestQuestion({
       onAnswer={(choice, durationMs) =>
         startTransition(async () => {
           const answerIndex = "selectedIndex" in choice ? choice.selectedIndex : null;
-          const skipped = audioFailed && "dontKnow" in choice;
+          const skipped = noAudio && "dontKnow" in choice;
 
           const view = await answer({
             answerIndex,
