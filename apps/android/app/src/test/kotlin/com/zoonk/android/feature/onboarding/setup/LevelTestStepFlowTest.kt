@@ -93,6 +93,7 @@ class LevelTestStepFlowTest {
                             goalId = GOAL_ID,
                             language = language,
                             targetLanguage = targetLanguage,
+                            testMinutes = 3,
                             store = store,
                             navigator = rememberAppNavigator(),
                             onProgress = { progress = it },

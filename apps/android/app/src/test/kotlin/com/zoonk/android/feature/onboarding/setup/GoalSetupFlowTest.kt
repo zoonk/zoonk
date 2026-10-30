@@ -180,18 +180,24 @@ class GoalSetupFlowTest {
     }
 
     @Test
-    fun aLanguageGoalsQuickTestTakesItsLevelTestsThreeMinutesOnBothScreens() {
-        api.setup = { setupView(listOf("level", "placement", "plan"), kind = "language", targetLanguage = "it") }
+    fun aLanguageGoalsQuickTestTakesTheTimeTheSetupSaysOnBothScreens() {
+        api.setup = { setupView(listOf("level", "placement", "plan"), kind = "language", targetLanguage = "it", quickTestMinutes = 4) }
         api.reply = { _, _ ->
-            setupView(listOf("placement", "plan"), kind = "language", targetLanguage = "it", details = """{"answered":["level"]}""")
+            setupView(
+                listOf("placement", "plan"),
+                kind = "language",
+                targetLanguage = "it",
+                details = """{"answered":["level"]}""",
+                quickTestMinutes = 4,
+            )
         }
         show()
 
-        rule.onNodeWithText("Adapts to your answers, about 3\u00A0min").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Adapts to your answers, about 4\u00A0min").performScrollTo().assertIsDisplayed()
         rule.onNodeWithText("Not sure, give me a quick test").performScrollTo().performClick()
         rule.waitForIdle()
 
-        rule.onNodeWithText("About 3\u00A0min of reading", substring = true).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("About 4\u00A0min of reading", substring = true).performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -313,13 +319,19 @@ class GoalSetupFlowTest {
     }
 
     @Test
-    fun aGoalTypedWithAnotherSaysHowTheDayIsShared() {
-        api.setup = { setupView(listOf("schedule", "plan"), goalIds = listOf(GOAL_ID, EXAM_GOAL_ID)) }
+    fun aGoalTypedWithAnotherSaysHowCoreSharesTheDay() {
+        api.setup = {
+            setupView(
+                listOf("schedule", "plan"),
+                goalIds = listOf(GOAL_ID, EXAM_GOAL_ID),
+                split = { minutes -> """{"mine":${minutes - 5},"others":1,"rest":5}""" },
+            )
+        }
         api.advice = { adviceOf(null, LocalDate(2027, 3, 15), targetDate = null) }
         show()
 
         rule
-            .onNodeWithText("This goal gets 20\u00A0min a day and your other goal 10\u00A0min.", substring = true)
+            .onNodeWithText("This goal gets 25\u00A0min a day and your other goal 5\u00A0min.", substring = true)
             .performScrollTo()
             .assertIsDisplayed()
     }

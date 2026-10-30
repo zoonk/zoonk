@@ -117,6 +117,8 @@ internal fun setupView(
     targetDate: String? = null,
     targetLanguage: String? = null,
     timeChoices: List<Int> = DAILY_TIMES,
+    split: (Int) -> String? = { null },
+    quickTestMinutes: Int = 2,
 ): Onboarding =
     ApiJson.decodeFromString(
         """
@@ -125,8 +127,10 @@ internal fun setupView(
             "[",
             "]",
         ) { "\"$it\"" }},
-         "libraryCourse":null,"quickTestMinutes":2,"recommendedMinutes":30,"steps":[${steps.joinToString(",") { "\"$it\"" }}],
-         "timeChoices":[${timeChoices.joinToString(",") { "{\"minutes\":$it,\"split\":null}" }}],
+         "libraryCourse":null,"quickTestMinutes":$quickTestMinutes,"recommendedMinutes":30,"steps":[${steps.joinToString(
+            ",",
+        ) { "\"$it\"" }}],
+         "timeChoices":[${timeChoices.joinToString(",") { "{\"minutes\":$it,\"split\":${split(it) ?: "null"}}" }}],
          "goal":{"createdAt":"2026-10-28T12:00:00Z","dailyMinutes":30,"details":$details,"examBlueprintId":null,"id":"$goalId",
           "isActive":true,"kind":"$kind","language":"en","plan":null,"primaryCourseId":null,"prompt":"learn statistics","status":"active",
           "studyDays":[],"studyTime":null,"targetDate":${targetDate?.let {

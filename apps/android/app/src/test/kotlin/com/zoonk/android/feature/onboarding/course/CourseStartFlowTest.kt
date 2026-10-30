@@ -25,6 +25,7 @@ import com.zoonk.android.feature.catalog.CHAPTER_TWO
 import com.zoonk.android.feature.catalog.COURSE
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.FakeCatalogApi
+import com.zoonk.android.feature.catalog.course
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -55,6 +56,7 @@ class CourseStartFlowTest {
     val rule: ComposeContentTestRule = createComposeRule()
 
     private val api = FakeOnboardingApi().apply { setup = { setupView(listOf("schedule", "plan"), goalId = it) } }
+    private val catalog = FakeCatalogApi()
     private lateinit var navigator: AppNavigator
     private var existingGoalId by mutableStateOf<String?>(null)
 
@@ -69,7 +71,7 @@ class CourseStartFlowTest {
         setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
-                CourseStartScreen(route, CatalogStore(FakeCatalogApi(), cache), store, signedIn = true, existingGoalId, navigator)
+                CourseStartScreen(route, CatalogStore(catalog, cache), store, signedIn = true, existingGoalId, navigator)
             }
         }
     }
@@ -108,6 +110,14 @@ class CourseStartFlowTest {
 
         assertEquals(JsonPrimitive("basic"), api.courseStarts.single().second["level"])
         assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
+    }
+
+    @Test
+    fun theQuickTestTakesTheTimeTheCourseSays() {
+        catalog.course = course(quickTestMinutes = 3)
+        show()
+
+        rule.onNodeWithText("Adapts to your answers, about 3\u00A0min").performScrollTo().assertIsDisplayed()
     }
 
     @Test

@@ -91,6 +91,7 @@ internal fun ColumnScope.LanguageLevelTestStep(
     goalId: String,
     language: String,
     targetLanguage: String,
+    testMinutes: Int,
     store: OnboardingStore,
     navigator: AppNavigator,
     onProgress: (Float?) -> Unit,
@@ -118,7 +119,15 @@ internal fun ColumnScope.LanguageLevelTestStep(
         }
 
         LevelTestPhase.Intro -> {
-            LevelTestIntro(language, targetLanguage, pending = vm.isSaving, failed = vm.finishFailed, onStart = vm::begin, onSkip = finish)
+            LevelTestIntro(
+                language,
+                targetLanguage,
+                testMinutes,
+                pending = vm.isSaving,
+                failed = vm.finishFailed,
+                onStart = vm::begin,
+                onSkip = finish,
+            )
         }
 
         LevelTestPhase.Waiting -> {
@@ -159,6 +168,7 @@ internal fun ColumnScope.LanguageLevelTestStep(
 private fun ColumnScope.LevelTestIntro(
     language: String,
     targetLanguage: String,
+    testMinutes: Int,
     pending: Boolean,
     failed: Boolean,
     onStart: () -> Unit,
@@ -166,7 +176,7 @@ private fun ColumnScope.LevelTestIntro(
 ) {
     OnboardingHeading(
         stringResource(R.string.onboarding_language_test_title, languageName(targetLanguage, currentLocale())),
-        stringResource(R.string.onboarding_language_test_description, formatMinutes(LEVEL_TEST_MINUTES, currentLocale())),
+        stringResource(R.string.onboarding_language_test_description, formatMinutes(testMinutes, currentLocale())),
     )
     if (usesNonLatinScript(targetLanguage)) {
         Text(
@@ -540,6 +550,3 @@ private const val LISTENING_RATE = 0.9f
 /** The ready message's height, so Play replaces the on-its-way panel without moving the question. */
 private val MESSAGE_MIN_HEIGHT = 80.dp
 private const val NAME_SHARE_LIMIT = 0.4f
-
-/** Three reading and three listening questions and one sentence out loud; a language goal's quick test is this test. */
-internal const val LEVEL_TEST_MINUTES = 3

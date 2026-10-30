@@ -194,7 +194,7 @@ private fun CourseStartForm(
         }
 
         if (!blocked) {
-            if (chapter != null) PlanPreview(planned) else LevelChoiceList(vm.level, onChange = vm::pick)
+            if (chapter != null) PlanPreview(planned) else LevelChoiceList(vm.level, course.quickTestMinutes.toInt(), onChange = vm::pick)
         }
 
         if (limit == GoalLimitReason.OneActiveGoal) {

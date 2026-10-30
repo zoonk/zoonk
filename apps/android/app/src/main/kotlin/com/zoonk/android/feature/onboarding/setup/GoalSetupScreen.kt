@@ -271,8 +271,7 @@ private fun ColumnScope.QuestionStep(
             if (view.examSubjects.size > 1) {
                 SubjectsLevelStep(subject, view.examSubjects, view.goal.details.texts("knownSubjects"), pending, vm::answer)
             } else {
-                val testMinutes = if (view.goal.kind == Goal.Kind.LANGUAGE) LEVEL_TEST_MINUTES else QUICK_TEST_MINUTES
-                LevelStep(subject, view.goal.levelChoice(), pending, vm::answer, testMinutes)
+                LevelStep(subject, view.goal.levelChoice(), view.quickTestMinutes.toInt(), pending, vm::answer)
             }
         }
 
@@ -280,13 +279,12 @@ private fun ColumnScope.QuestionStep(
             ScheduleStep(
                 view.goal,
                 view.recommendedMinutes.toInt(),
-                view.timeChoices.map { it.minutes },
+                view.timeChoices,
                 run,
                 store,
                 vm,
                 pending,
                 factsBeside = asideBeside,
-                together = GoalsTogether(view.goalIds.size, view.goalIds.indexOf(view.goal.id).coerceAtLeast(0)),
             )
         }
 
@@ -310,6 +308,7 @@ private fun ColumnScope.QuestionStep(
                             .text("nativeLanguage")
                             ?.takeIf(String::isNotBlank) ?: view.goal.language,
                     targetLanguage = targetLanguage,
+                    testMinutes = view.quickTestMinutes.toInt(),
                     store = store,
                     navigator = navigator,
                     onProgress = { vm.placementProgress = it },

@@ -61,6 +61,7 @@ import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf8
+import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverSuggested
@@ -74,13 +75,12 @@ import java.util.TimeZone
 internal fun ColumnScope.ScheduleStep(
     goal: Goal,
     recommendedMinutes: Int,
-    timeChoices: List<Long>,
+    timeChoices: List<OnboardingTimeChoicesInner>,
     run: GenerationRun,
     store: OnboardingStore,
     vm: GoalSetupViewModel,
     pending: Boolean,
     factsBeside: Boolean,
-    together: GoalsTogether,
 ) {
     val exam = goal.kind == Goal.Kind.EXAM
     var picked by rememberSaveable { mutableStateOf<Int?>(null) }
@@ -175,7 +175,7 @@ internal fun ColumnScope.ScheduleStep(
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             DailyTimePicker(
-                times = timeChoices,
+                times = timeChoices.map { it.minutes },
                 minutes = minutes,
                 label = stringResource(R.string.onboarding_schedule_time_label),
                 onChange = pick,
@@ -189,7 +189,7 @@ internal fun ColumnScope.ScheduleStep(
                 minutes = minutes,
                 offer = offer(found, line, minutes),
                 tooClose = tooClose(found, line, studiesEveryDay = days.size == EVERY_DAY.size),
-                split = daySplit(minutes, together).takeIf { hasDays },
+                split = daySplit(minutes, timeChoices, listOf(covering.answer, covering.last, covering.first)).takeIf { hasDays },
                 onRetry = if (findFailed) covering.restart else timeAdvice.restart,
                 onUseOffer = { picked = pickedMinutes(first, found, it) },
             )
@@ -205,7 +205,7 @@ internal fun ColumnScope.ScheduleStep(
             WeekdayToggles(days, onChange = { days = it })
             if (days.any(::isWeekend)) {
                 WeekendTime(
-                    times = timeChoices,
+                    times = timeChoices.map { it.minutes },
                     checked = weekendOn,
                     minutes = weekendPicked ?: minutes ?: recommendedMinutes,
                     onCheckedChange = {

@@ -1,9 +1,12 @@
 package com.zoonk.android.feature.onboarding.setup
 
 import com.zoonk.android.feature.onboarding.suggestionFor
+import com.zoonk.api.models.OnboardingTimeChoicesInner
+import com.zoonk.api.models.OnboardingTimeChoicesInnerSplit
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverSuggested
+import com.zoonk.api.models.PlanTimeToCoverSuggestedSplit
 import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -159,13 +162,27 @@ class ScheduleRulesTest {
     }
 
     @Test
-    fun theDaysTimeIsSharedWithTheMainGoalWeighingAsTwoOthers() {
-        assertEquals(listOf(40, 20), splitDailyBudget(60, 2))
-        assertEquals(listOf(30, 15, 15), splitDailyBudget(60, 3))
-        assertEquals(listOf(5, 5, 5), splitDailyBudget(10, 3))
-        assertEquals(DaySplit(mine = 20, others = 1, rest = 40), daySplit(60, GoalsTogether(count = 2, place = 1)))
-        assertEquals(DaySplit(mine = 30, others = 2, rest = 30), daySplit(60, GoalsTogether(count = 3, place = 0)))
-        assertNull(daySplit(60, GoalsTogether(count = 1, place = 0)))
+    fun theSplitShownIsCoresForTheTimeShown() {
+        val choices =
+            listOf(
+                OnboardingTimeChoicesInner(30, OnboardingTimeChoicesInnerSplit(mine = 20, others = 1, rest = 10)),
+                OnboardingTimeChoicesInner(60, null),
+            )
+        val suggested =
+            found(recommended = 50).copy(
+                suggested =
+                    PlanTimeToCoverSuggested(
+                        PlanTimeToCoverSuggested.Kind.EVERYTHING,
+                        50,
+                        PlanTimeToCoverSuggestedSplit(mine = 35, others = 2, rest = 15),
+                    ),
+            )
+
+        assertEquals(DaySplit(mine = 20, others = 1, rest = 10), daySplit(30, choices, listOf(suggested)))
+        assertEquals(DaySplit(mine = 35, others = 2, rest = 15), daySplit(50, choices, listOf(null, suggested)))
+        assertNull(daySplit(60, choices, listOf(suggested)))
+        assertNull(daySplit(45, choices, listOf(suggested)))
+        assertNull(daySplit(null, choices, listOf(suggested)))
     }
 
     @Test

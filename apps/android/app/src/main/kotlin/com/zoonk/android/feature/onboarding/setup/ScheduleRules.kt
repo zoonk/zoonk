@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
@@ -23,43 +24,31 @@ internal data class StudyWeek(
     val fullCourse: Boolean = false,
 )
 
-/** The goals typed together share the day's time; [place] is the shown goal's among them, the main one 0. */
-internal data class GoalsTogether(
-    val count: Int,
-    val place: Int,
-)
-
 internal data class DaySplit(
     val mine: Int,
     val others: Int,
     val rest: Int,
 )
 
-/** Must match core's `splitDailyBudget`, which saves the day this way: the main goal weighs as two of the others. */
-internal fun splitDailyBudget(
-    budget: Int,
-    count: Int,
-): List<Int> {
-    if (count <= 1) return if (count == 1) listOf(budget) else emptyList()
-    val share = budget.toDouble() / (MAIN_GOAL_WEIGHT + count - 1)
-    val other = maxOf(MIN_GOAL_MINUTES, (share / GOAL_MINUTES_STEP).toInt() * GOAL_MINUTES_STEP)
-    val main = maxOf(MIN_GOAL_MINUTES, budget - other * (count - 1))
-    return listOf(main) + List(count - 1) { other }
-}
-
+/**
+ * Core's split of the time shown among the goals typed together: the question's own times carry
+ * theirs, and a suggestion between them its own, which stays the learner's pick once later weeks
+ * suggest other times.
+ */
 internal fun daySplit(
     minutes: Int?,
-    together: GoalsTogether,
+    choices: List<OnboardingTimeChoicesInner>,
+    answers: List<PlanTimeToCover?>,
 ): DaySplit? {
-    if (together.count < 2 || minutes == null) return null
-    val shares = splitDailyBudget(minutes, together.count)
-    val mine = shares.getOrElse(together.place) { minutes }
-    return DaySplit(mine, together.count - 1, shares.sum() - mine)
+    minutes ?: return null
+    choices.find { it.minutes.toInt() == minutes }?.let { choice ->
+        return choice.split?.let { DaySplit(it.mine.toInt(), it.others.toInt(), it.rest.toInt()) }
+    }
+    return answers
+        .firstNotNullOfOrNull { answer -> answer?.suggested?.takeIf { it.minutes.toInt() == minutes } }
+        ?.split
+        ?.let { DaySplit(it.mine.toInt(), it.others.toInt(), it.rest.toInt()) }
 }
-
-private const val MAIN_GOAL_WEIGHT = 2
-private const val MIN_GOAL_MINUTES = 5
-private const val GOAL_MINUTES_STEP = 5
 
 internal fun studyWeek(
     days: List<Int>,
