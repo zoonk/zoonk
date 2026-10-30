@@ -43,6 +43,7 @@ import com.zoonk.android.feature.activities.decisionTreeRenderer
 import com.zoonk.android.feature.activities.dialogueSimulatorRenderer
 import com.zoonk.android.feature.activities.findErrorRenderer
 import com.zoonk.android.feature.activities.geometry.geometryBoardRenderer
+import com.zoonk.android.feature.activities.geometry.lineCrossingRenderer
 import com.zoonk.android.feature.activities.geometry.moleculeBuilderRenderer
 import com.zoonk.android.feature.activities.geometry.unitCircleRenderer
 import com.zoonk.android.feature.activities.guessRevealRenderer
@@ -127,6 +128,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "guessReveal" to guessRevealRenderer,
         "keyboardFretboard" to keyboardFretboardRenderer,
         "labeledDiagram" to labeledDiagramRenderer,
+        "lineCrossing" to lineCrossingRenderer,
         "mapExplorer" to mapExplorerRenderer,
         "matchPairs" to matchPairsRenderer,
         "moleculeBuilder" to moleculeBuilderRenderer,

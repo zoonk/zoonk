@@ -3,6 +3,7 @@
 {
   "activities_geometry_badge_build_it": "6d8bc718fbb98a39b058663a19e603d357011c46cc719ca599281bf5f13adcbc",
   "activities_geometry_badge_drag_corner": "f714c599d0eb04ed1e3252a9da469831becbd04d879fe13f1b231563af5274d5",
+  "activities_geometry_badge_move_curve": "19488635d012cb9996385904198a5102f34bc0966132c8877347b77dd4b89536",
   "activities_geometry_badge_turn_it": "c620a27e8c4171932e5bac87af7549f752eaf68492f7a251eca016acd1bc18d0",
   "activities_geometry_board_angles": "f263d40a074fe48786f85877613f3edafd8bd33afcbcb0e27f2ebbaade7210de",
   "activities_geometry_board_angles_total": "8434d8b237f0da4d85677c7d6699e2804eb5d6836e53147f1b6b198cbe8cd6b2",
@@ -38,6 +39,21 @@
   "activities_geometry_element_phosphorus": "a9e7bbceb99a78b07af82e0da8063c589ea29db15b32d45c9cc4379cfbb5f434",
   "activities_geometry_element_silicon": "27a70e0b777e315f85d637a0ea9da685246b0648073da6526059d674748f244d",
   "activities_geometry_element_sulfur": "c68530af89a2a7bfb2e0a5c9e78399457b4bf2f8d9e5766eca596437a99f1d27",
+  "activities_geometry_line_before": "a0674dcae92c95a0200c783e146d851ce1724f22e5e409f1e71367f5c93abea3",
+  "activities_geometry_line_description": "57abd4a78ac9243f372c5c67c560ed070fa22bda725600a8196ceb9f02332e7c",
+  "activities_geometry_line_goes_down": "6db4741d1d2133f40e5dc5d143eb1d42ead91aab153130f1e7056e3915471e4d",
+  "activities_geometry_line_goes_up": "6e053c346bbf380a17678f74b315b74ae71736384e9a963ccbb9a460e088906a",
+  "activities_geometry_line_hint": "18066a0bad9109d7a848173a9474128789dcfceae3f12f794f0f48e4741aad3b",
+  "activities_geometry_line_move": "3054fc41b22fdfb21d23bd3be128074159c1ae977ec20a7bbfc771f2265c52ab",
+  "activities_geometry_line_moved_down": "67ca10b3ce5e3339164e7ffe7dc80389e6401e676563da9a0eb814cbad6feba4",
+  "activities_geometry_line_moved_left": "05e9f1003e4d29bc706a13704a8a6aec1827a018f71d1a7511f280d43e538416",
+  "activities_geometry_line_moved_right": "533b6aac7b9bca7b116b5e8a9eb24233e1c5337c3ff6bba4c60c2915b9411946",
+  "activities_geometry_line_moved_up": "69c034312faa048375db1e9952fe9eecec599759801c5c888c1eaf1ccd56985e",
+  "activities_geometry_line_new_crossing": "c285b0c6bcaf71434015c96f1d7718009e3ec00af9612ce5e590190b175340db",
+  "activities_geometry_line_stays": "0db77ad9db4004898bf358aae6f089197d3d192931b98d12e63ad09a671f1cd4",
+  "activities_geometry_line_unmoved": "321955da6c39f0c5236dad2de85027c792862b1b004058757c06d42b3e472386",
+  "activities_geometry_line_unmoved_line": "186846cd948b93dfb525890471ed9cca84cad49591d9b719584d5d44aa0f983b",
+  "activities_geometry_line_what_happened": "2cbe333ea2feb76243e92c5458428d55d5abb2b96db60ef977228528c3da4c49",
   "activities_geometry_molecule_add": "f024a36a14d261a1c8e2fa4781976f2287a90e7e919feac71e95bd0d4efe0af1",
   "activities_geometry_molecule_add_bonded": "0f0de86350639ccc7bee0266636eb972ff9360b5e59fbd155909b8edfe3d0207",
   "activities_geometry_molecule_added": "0f8f9f88e7562b9b651c9288c9a1655bf77058c82b29afa5056dad00f2594abc",
@@ -221,4 +237,36 @@
         <item quantity="many">%1$d liaisons au total, en comptant une liaison double comme deux.</item>
         <item quantity="other">%1$d liaisons au total, en comptant une liaison double comme deux.</item>
     </plurals>
+    <!-- The badge of an activity where the learner drags a line on a chart; "curve" as in a supply or demand curve. -->
+    <string name="activities_geometry_badge_move_curve">Déplace une courbe</string>
+    <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
+    <string name="activities_geometry_line_move">Déplacer la courbe %1$s</string>
+    <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved". -->
+    <string name="activities_geometry_line_unmoved_line">%1$s : aucun déplacement</string>
+    <!-- A line on a chart dragged to the right, like "Supply moved right". -->
+    <string name="activities_geometry_line_moved_right">%1$s : déplacement vers la droite</string>
+    <!-- A line on a chart dragged to the left, like "Supply moved left". -->
+    <string name="activities_geometry_line_moved_left">%1$s : déplacement vers la gauche</string>
+    <!-- A line on a chart dragged up, like "Cost moved up". -->
+    <string name="activities_geometry_line_moved_up">%1$s : déplacement vers le haut</string>
+    <!-- A line on a chart dragged down, like "Cost moved down". -->
+    <string name="activities_geometry_line_moved_down">%1$s : déplacement vers le bas</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Price per dozen goes up". -->
+    <string name="activities_geometry_line_goes_up">%1$s augmente</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold goes down". -->
+    <string name="activities_geometry_line_goes_down">%1$s diminue</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold stays the same". -->
+    <string name="activities_geometry_line_stays">%1$s reste stable</string>
+    <!-- A hint under a chart of two lines, before the learner moves either. -->
+    <string name="activities_geometry_line_hint">Fais glisser une courbe à l’aide de sa poignée.</string>
+    <!-- Beside the dashed line showing where a line was before the learner moved it. -->
+    <string name="activities_geometry_line_before">Avant</string>
+    <!-- Beside the dashed line showing how the line really moved, after checking the answer. -->
+    <string name="activities_geometry_line_what_happened">Ce qui s’est passé</string>
+    <!-- A chart of two lines, for TalkBack: the lines' names, then the vertical axis against the horizontal one, like "A chart of two lines, Supply and Demand, with Price per dozen against Eggs sold." -->
+    <string name="activities_geometry_line_description">Un graphique avec deux courbes, %1$s et %2$s, et %3$s sur l’axe vertical et %4$s sur l’axe horizontal.</string>
+    <!-- A chart of two lines, for TalkBack, before the learner moves either. -->
+    <string name="activities_geometry_line_unmoved">Aucune des deux courbes n’a encore bougé.</string>
+    <!-- After checking, for TalkBack: the value where the two lines now cross, like "The new crossing is at 250." -->
+    <string name="activities_geometry_line_new_crossing">Le nouveau point d’intersection est à %1$s.</string>
 </resources>

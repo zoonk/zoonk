@@ -254,8 +254,62 @@ class GeometryFlowTest {
         shows("1 atom has open bonds, shown as dots.")
     }
 
+    @Test
+    fun lineCrossingMovingSupplyLeftExplainsTheSpike() {
+        play("lineCrossing", isCorrect = true)
+
+        handle(SUPPLY).press(Key.DirectionLeft)
+        assertEquals("Supply moved left. Price per dozen goes up. Eggs sold goes down.", handle(SUPPLY).state())
+        harness.tap("Check")
+
+        val answer = sentAnswer()
+        assertTrue(answer, answer.contains(""""answer":{"curve":"supply","direction":"left","kind":"curveShift"}"""))
+        handle(SUPPLY).assertIsNotEnabled()
+    }
+
+    @Test
+    fun lineCrossingMovingDemandGetsTheWrongLineFeedback() {
+        play("lineCrossing", isCorrect = false)
+
+        handle(DEMAND).press(Key.DirectionRight, times = 2)
+        harness.tap("Check")
+
+        shows("Supply moved left.")
+        shows("People didn't want more eggs.")
+    }
+
+    @Test
+    fun lineCrossingMovingTheCostLineUpGivesTheNewBreakEven() {
+        play("lineCrossing.breakEven", isCorrect = true)
+
+        handle(COST).press(Key.DirectionUp, times = 4)
+        assertEquals(true, handle(COST).state()?.contains("Lamps sold goes up"))
+        assertEquals("250", typedAnswer())
+        harness.tap("Check")
+
+        rule.onNode(hasContentDescription("The new crossing is at 250.", substring = true)).assertExists()
+    }
+
+    @Test
+    fun lineCrossingMovesByDragTalkBackAndTap() {
+        play("lineCrossing", isCorrect = true)
+
+        handle(SUPPLY).performTouchInput { swipe(center, center - Offset(60f, 0f)) }
+        assertEquals(true, handle(SUPPLY).state()?.contains("Price per dozen goes up"))
+
+        handle(SUPPLY).performSemanticsAction(SemanticsActions.SetProgress) { it(1f) }
+        assertEquals(true, handle(SUPPLY).state()?.contains("Price per dozen goes down"))
+
+        val supply = handle(SUPPLY).fetchSemanticsNode().boundsInRoot.center
+        rule.onRoot().performTouchInput { click(supply - Offset(80f, 0f)) }
+        assertEquals(true, handle(SUPPLY).state()?.contains("Price per dozen goes up"))
+    }
+
     private companion object {
         const val POINT = "Point on the circle"
         const val CORNER_C = "Corner C"
+        const val SUPPLY = "Move the line Supply"
+        const val DEMAND = "Move the line Demand"
+        const val COST = "Move the line Cost"
     }
 }
