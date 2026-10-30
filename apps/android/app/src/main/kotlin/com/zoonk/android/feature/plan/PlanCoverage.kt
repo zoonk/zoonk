@@ -72,7 +72,7 @@ internal fun coveredText(
 /** Below half a percent, the share would read "0%". */
 private const val MIN_SHOWN_SHARE = 0.005
 
-/** A goal's date as main's `useFormatGoalDate` writes it: a date standing for its month says the month. */
+/** A goal's date as learn's `useGoalDateValues` writes it: a date standing for its month says the month. */
 @Composable
 internal fun goalDate(
     date: LocalDate,
