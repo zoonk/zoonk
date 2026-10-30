@@ -28,6 +28,8 @@ struct LearnerGoal: Equatable, Identifiable, Sendable {
   var courseLevel: CourseLevel? = nil
   let dailyMinutes: Int
   let id: String
+  /// Questions are left before its plan is set, so continuing it opens its setup instead of Today.
+  var isSettingUp = false
   let kind: Kind
   let status: Status
   /// `YYYY-MM-DD`, a calendar day.
@@ -128,6 +130,7 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
         courseLevel: goal.courseLevel.flatMap { CourseLevel(rawValue: $0.rawValue) },
         dailyMinutes: goal.dailyMinutes,
         id: goal.id,
+        isSettingUp: goal.isSettingUp,
         kind: LearnerGoal.Kind(rawValue: goal.kind.rawValue) ?? .learn,
         status: LearnerGoal.Status(rawValue: goal.status.rawValue) ?? .active,
         targetDate: goal.targetDate,

@@ -43,22 +43,22 @@ final class LearnerSummaryStore {
     await summary.refresh()
   }
 
-  func switchGoal(to goalID: String) async {
-    guard let session = cache.session.authenticatedSession, summary.value?.activeGoalID != goalID
-    else {
-      return
+  /// True once the goal is the one the tabs show, with the summary read again for it.
+  @discardableResult
+  func switchGoal(to goalID: String) async -> Bool {
+    guard summary.value?.activeGoalID != goalID else {
+      return true
     }
 
-    do {
-      try await api.switchGoal(token: session.bearerToken, goalID: goalID)
-    } catch APIError.unauthorized {
-      await cache.session.expire(session)
-      return
-    } catch {
-      return
+    let result = await cache.mutate(invalidating: [.learningProfile]) { identity in
+      try await api.switchGoal(token: identity.bearerToken, goalID: goalID)
     }
 
-    cache.invalidate([.learningProfile])
+    guard case .done = result else {
+      return false
+    }
+
     await summary.refresh()
+    return true
   }
 }

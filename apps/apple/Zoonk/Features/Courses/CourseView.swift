@@ -75,7 +75,7 @@ private struct CourseLandingList: View {
       EditionNotice(edition: edition)
     }
 
-    CourseHeroSection(detail: detail, exam: example?.exam, follows: follows)
+    CourseHeroSection(detail: detail, exam: example?.exam, goal: goal)
 
     if let pace = example?.pace {
       CoursePlanSections(
@@ -98,13 +98,13 @@ private struct CourseLandingList: View {
         courseID: detail.course.id),
       disclosures: $outline)
 
-    CourseClosingSection(courseID: detail.course.id, follows: follows)
+    CourseClosingSection(courseID: detail.course.id, goal: goal)
   }
 
-  /// Its page offers "Continue your plan" then, since starting it again would only lead back to
-  /// that goal.
-  private var follows: Bool {
-    learner.summary.value?.goals.contains { $0.courseID == detail.course.id } ?? false
+  /// The learner's goal that follows this course. Its page offers "Continue your plan" then, since
+  /// starting it again would only lead back to that goal.
+  private var goal: LearnerGoal? {
+    learner.summary.value?.goals.first { $0.courseID == detail.course.id }
   }
 
   private var outlineLead: String? {
@@ -137,7 +137,7 @@ private struct CourseHeroSection: View {
 
   let detail: CourseDetail
   let exam: CoursePlanExample.Exam?
-  let follows: Bool
+  let goal: LearnerGoal?
 
   var body: some View {
     Section {
@@ -176,7 +176,7 @@ private struct CourseHeroSection: View {
         PlanLine(startsHere: false)
 
         CatalogStartActions(
-          courseID: detail.course.id, continues: follows, tryLessonID: detail.tryLessonID
+          courseID: detail.course.id, goal: goal, tryLessonID: detail.tryLessonID
         )
         .padding(.top, 4)
       }
@@ -307,13 +307,13 @@ struct CheckLine: View {
 
 private struct CourseClosingSection: View {
   let courseID: String
-  let follows: Bool
+  let goal: LearnerGoal?
 
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
         Group {
-          if follows {
+          if goal != nil {
             Text(
               "Your plan follows this course", tableName: "Courses",
               comment: "A course page's last call for a learner whose goal follows the course")
@@ -326,7 +326,7 @@ private struct CourseClosingSection: View {
         .font(.title2.weight(.semibold))
         .accessibilityAddTraits(.isHeader)
 
-        if !follows {
+        if goal == nil {
           Text(
             "A few quick questions, then your plan and your first lesson.", tableName: "Courses",
             comment: "Under a course page's last call"
@@ -334,7 +334,7 @@ private struct CourseClosingSection: View {
           .foregroundStyle(.secondary)
         }
 
-        CatalogStartActions(courseID: courseID, continues: follows, tryLessonID: nil)
+        CatalogStartActions(courseID: courseID, goal: goal, tryLessonID: nil)
           .padding(.top, 8)
       }
       .listRowBackground(Color.clear)

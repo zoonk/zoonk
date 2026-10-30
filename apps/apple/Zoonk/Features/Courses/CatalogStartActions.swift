@@ -2,15 +2,19 @@ import SwiftUI
 
 struct CatalogStartActions: View {
   @Environment(AppRouter.self) private var router
+  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
 
   let courseID: String
   /// The chapter a chapter page starts the plan from; nil for the whole course.
   var chapterID: String?
-  var continues = false
+  /// The learner's goal that follows this course, which they continue instead of starting again.
+  var goal: LearnerGoal?
   let tryLessonID: String?
   /// Nil shows the visitor's "Start free, no account needed."
   var note: Text?
+
+  @State private var switchingTo: LearnerGoal.ID?
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
@@ -24,6 +28,17 @@ struct CatalogStartActions: View {
         }
       }
       .controlSize(.large)
+      .task(id: switchingTo) {
+        guard let switchingTo else {
+          return
+        }
+
+        if await learner.switchGoal(to: switchingTo), !Task.isCancelled {
+          router.showRoot(of: .today)
+        }
+
+        self.switchingTo = nil
+      }
 
       if let note {
         note
@@ -46,15 +61,16 @@ struct CatalogStartActions: View {
 
   @ViewBuilder
   private var startButtons: some View {
-    if continues {
+    if let goal {
       Button {
-        router.showRoot(of: .today)
+        continuePlan(goal)
       } label: {
         Text(
           "Continue your plan", tableName: "Courses",
           comment: "Takes a learner whose goal follows this course back to Today")
       }
       .buttonStyle(.mainAction)
+      .disabled(switchingTo != nil)
     } else {
       Button {
         router.open(.courseStart(courseId: courseID, chapterId: chapterID))
@@ -75,6 +91,18 @@ struct CatalogStartActions: View {
           comment: "Opens one of the course's lessons to try before starting a plan")
       }
       .buttonStyle(.bordered)
+    }
+  }
+
+  /// Goes where the plan is: its setup while questions are left, or Today, after making the goal the
+  /// one the tabs show.
+  private func continuePlan(_ goal: LearnerGoal) {
+    if goal.isSettingUp {
+      router.open(.goalSetup(goalId: goal.id))
+    } else if learner.summary.value?.shownGoal?.id == goal.id {
+      router.showRoot(of: .today)
+    } else {
+      switchingTo = goal.id
     }
   }
 }
