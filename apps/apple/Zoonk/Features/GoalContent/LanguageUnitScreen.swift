@@ -378,6 +378,8 @@ private struct LanguageUnitContent: View {
             .font(.subheadline)
             .foregroundStyle(.secondary)
           }
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .disclosureChevron()
         }
       }
     }

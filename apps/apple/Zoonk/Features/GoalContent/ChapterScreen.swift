@@ -231,6 +231,8 @@ private struct ChapterContent: View {
               .font(.subheadline)
               .foregroundStyle(.secondary)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .disclosureChevron()
           }
         }
 
@@ -353,6 +355,7 @@ struct LessonRow: View {
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(state)
+    .disclosureChevron()
   }
 
   private var status: StatusMark.Status {
