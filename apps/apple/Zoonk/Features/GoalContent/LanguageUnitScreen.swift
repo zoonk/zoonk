@@ -261,28 +261,6 @@ private struct LanguageUnitContent: View {
       .padding(.vertical, 4)
     }
 
-    if !unit.unit.objectives.isEmpty {
-      let finished = !lessons.isEmpty && done == lessons.count
-
-      Section {
-        ForEach(unit.unit.objectives.prefix(3), id: \.self) { objective in
-          Label {
-            Text(objective)
-          } icon: {
-            StatusMark(status: finished ? .done : .todo)
-          }
-        }
-      } header: {
-        if finished {
-          Text(
-            "I can already…", tableName: "Plan", comment: "Section of what a finished unit taught")
-        } else {
-          Text(
-            "By the end of this unit", tableName: "Plan", comment: "Section of what a unit teaches")
-        }
-      }
-    }
-
     if !lessons.isEmpty {
       Section {
         ForEach(Array(lessons.enumerated()), id: \.element.id) { index, lesson in
@@ -305,6 +283,28 @@ private struct LanguageUnitContent: View {
             comment: "Lessons done of the chapter's lessons"
           )
           .monospacedDigit()
+        }
+      }
+    }
+
+    if !unit.unit.objectives.isEmpty {
+      let finished = !lessons.isEmpty && done == lessons.count
+
+      Section {
+        ForEach(unit.unit.objectives.prefix(3), id: \.self) { objective in
+          Label {
+            Text(objective)
+          } icon: {
+            StatusMark(status: finished ? .done : .todo)
+          }
+        }
+      } header: {
+        if finished {
+          Text(
+            "I can already…", tableName: "Plan", comment: "Section of what a finished unit taught")
+        } else {
+          Text(
+            "By the end of this unit", tableName: "Plan", comment: "Section of what a unit teaches")
         }
       }
     }
