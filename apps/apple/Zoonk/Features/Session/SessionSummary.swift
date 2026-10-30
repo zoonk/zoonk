@@ -86,6 +86,8 @@ struct BlockMoment: Decodable, Equatable, Sendable {
   let correct: Int
   let fullMeal: FullMeal
   let missions: [StudyMission]
+  /// The block the session goes on to; nil once it's done.
+  let nextBlockId: String?
   let reached: DayResult.Reached?
   let sessionCompleted: Bool
   let total: Int

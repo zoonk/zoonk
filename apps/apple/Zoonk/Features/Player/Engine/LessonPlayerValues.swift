@@ -105,4 +105,6 @@ struct LessonCompletionSummary: Hashable, Sendable {
   let isFirstCompletion: Bool
   let nextReviewAt: Date?
   let day: DayResult?
+  /// When the lesson was one of the session's blocks.
+  let block: BlockMoment?
 }

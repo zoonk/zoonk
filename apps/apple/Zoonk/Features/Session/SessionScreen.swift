@@ -14,7 +14,12 @@ struct SessionScreen: View {
         QuestionBlockScreen(
           sessionId: sessionID, blockId: blockID,
           onFinished: { completion in
-            playback.finish(try? StudyJSON.recode(completion, as: BlockMoment.self))
+            let moment = try? StudyJSON.recode(completion, as: BlockMoment.self)
+            playback.finish(moment)
+
+            if let moment {
+              store.apply(moment, sessionID: sessionID)
+            }
           },
           onStop: {
             if case .failed = await store.stop(sessionID: sessionID, in: playback) {

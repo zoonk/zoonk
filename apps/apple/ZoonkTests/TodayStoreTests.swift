@@ -219,7 +219,9 @@ final class TodayStoreTests: XCTestCase {
   }
 
   func testAMilestoneCeremonyShowsOnceOnTheSessionScreen() {
-    let store = StudySessionStore(api: StudyAPIStub(), cache: signedInCache())
+    let api = StudyAPIStub()
+    let cache = signedInCache()
+    let store = StudySessionStore(api: api, cache: cache, today: TodayStore(api: api, cache: cache))
     let belt = Milestone(id: "m1", key: "yellow", kind: "belt")
 
     XCTAssertTrue(store.claimCeremony(belt))
@@ -227,7 +229,9 @@ final class TodayStoreTests: XCTestCase {
   }
 
   func testStoppingForTodayEndsTheBlockAndShowsTheSummary() async {
-    let store = StudySessionStore(api: StudyAPIStub(), cache: signedInCache())
+    let api = StudyAPIStub()
+    let cache = signedInCache()
+    let store = StudySessionStore(api: api, cache: cache, today: TodayStore(api: api, cache: cache))
     let playback = SessionPlayback()
     playback.play(blockID: "b1")
 
@@ -398,6 +402,61 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(behind.behind?.currentMinutes, 45)
   }
 
+  func testAFinishedBlockShowsTheServersNextOneAtOnceOnTodayAndTheSession() async throws {
+    let session = try day(
+      blocks: [
+        block(position: 0, kind: "learn", id: "b0", lessonID: "l0", screen: "lesson"),
+        block(position: 1, id: "b1"),
+      ],
+      nextPosition: 0, id: "s1")
+    let api = StudyAPIStub(today: .day(try today(session: session)), session: session)
+    let cache = signedInCache()
+    let todayStore = TodayStore(api: api, cache: cache)
+    let sessions = StudySessionStore(api: api, cache: cache, today: todayStore)
+    await todayStore.today.load()
+    await sessions.session(id: "s1").load()
+
+    sessions.apply(try moment(blockID: "b0", nextBlockID: "b1"), sessionID: "s1")
+
+    let shownSession = sessions.session(id: "s1").value
+    XCTAssertEqual(shownSession?.nextBlock?.id, "b1")
+    XCTAssertEqual(shownSession?.blocks.first?.isFinished, true)
+    guard case .day(let view)? = todayStore.today.value else {
+      return XCTFail("Expected Today's day")
+    }
+    XCTAssertEqual(view.session.nextBlock?.id, "b1")
+    let reads = await api.todayReads
+    XCTAssertEqual(reads, 1, "the completion shows without reading Today again")
+  }
+
+  func testAFinishedBlockEndsTheDayOrWaitsForANextBlockTheDayDoesNotList() throws {
+    let session = try day(
+      blocks: [block(position: 0, id: "b0"), block(position: 1, id: "b1")], nextPosition: 0,
+      id: "s1")
+
+    let ended = session.finishing(try moment(blockID: "b0", nextBlockID: nil))
+    XCTAssertNil(ended.nextBlock)
+    XCTAssertEqual(ended.state, .done)
+    XCTAssertEqual(session.finishing(try moment(blockID: "b0", nextBlockID: "new")), session)
+    XCTAssertEqual(session.finishing(try moment(blockID: "other", nextBlockID: "b1")), session)
+  }
+
+  func testALateCompletionNeverPutsAFinishedBlockBackUpNext() throws {
+    let session = try day(
+      blocks: [
+        block(position: 0, id: "b0"), block(position: 1, id: "b1"), block(position: 2, id: "b2"),
+      ],
+      nextPosition: 0, id: "s1")
+    let afterB1 =
+      session
+      .finishing(try moment(blockID: "b0", nextBlockID: "b1"))
+      .finishing(try moment(blockID: "b1", nextBlockID: "b2"))
+
+    let late = afterB1.finishing(try moment(blockID: "b0", nextBlockID: "b1"))
+
+    XCTAssertEqual(late.nextBlock?.id, "b2")
+  }
+
   func testShownStepEncodesItsWorkAsCoreReadsIt() throws {
     let challenge = try block(
       position: 2, kind: "checkpoint",
@@ -523,6 +582,16 @@ private func today(session: StudyDay, planChange: TodayView.PlanChange? = nil) t
     studiedToday: false, suggestedGoal: nil, uploadRequest: nil, weeklyChallenge: nil)
 }
 
+private func moment(blockID: String, nextBlockID: String?) throws -> BlockMoment {
+  try decode(
+    """
+    {"blockId":"\(blockID)","brainPower":10,"ceremony":null,"comesBackOn":null,
+    "completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"missions":[],
+    "nextBlockId":\(json(nextBlockID)),"reached":null,"sessionCompleted":\(nextBlockID == nil),
+    "total":1}
+    """)
+}
+
 private func opened(target: StudyBlock) throws -> OpenedStudyDay {
   OpenedStudyDay(
     session: try day(blocks: [target], nextPosition: target.position, id: "s1"), sessionId: "s1",
@@ -535,6 +604,7 @@ private actor StudyAPIStub: StudyAPIClient {
   private let startError: APIError?
   private let call: LanguageCheckpointCall
   private var today: TodayContent
+  private let session: StudyDay?
   private var decided: TodayView.PlanChange?
   private let holdsOpening: Bool
   private var heldOpening: CheckedContinuation<Void, Never>?
@@ -550,9 +620,10 @@ private actor StudyAPIStub: StudyAPIClient {
   init(
     opened: OpenedStudyDay? = nil, start: BlockStart = .started, startError: APIError? = nil,
     call: LanguageCheckpointCall = .notLanguage(.init(status: .notLanguage)),
-    today: TodayContent = .goalNotActive, decided: TodayView.PlanChange? = nil,
-    holdsOpening: Bool = false
+    today: TodayContent = .goalNotActive, session: StudyDay? = nil,
+    decided: TodayView.PlanChange? = nil, holdsOpening: Bool = false
   ) {
+    self.session = session
     self.decided = decided
     self.opened = opened
     self.startResult = start
@@ -631,7 +702,11 @@ private actor StudyAPIStub: StudyAPIClient {
   func stop(token: String, sessionID: String, timeZone: String) async throws {}
 
   func getSession(token: String, sessionID: String) async throws -> StudyDay {
-    throw APIError.unavailable
+    guard let session else {
+      throw APIError.unavailable
+    }
+
+    return session
   }
 
   func getSummary(token: String, sessionID: String) async throws -> SessionSummary {

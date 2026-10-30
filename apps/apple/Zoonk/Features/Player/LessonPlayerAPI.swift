@@ -253,7 +253,7 @@ struct LessonPlayerAPI: Sendable {
           energyDelta: completion.energyDelta, seconds: completion.seconds,
           isFirstCompletion: completion.isFirstCompletion,
           nextReviewAt: completion.nextReviewAt,
-          day: block?.day ?? DayResult(completion)))
+          day: block?.day ?? DayResult(completion), block: block))
     case .unprocessableContent:
       return .incomplete
     case .unauthorized:

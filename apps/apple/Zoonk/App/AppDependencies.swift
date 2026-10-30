@@ -68,9 +68,15 @@ struct AppDependencies {
     let settingsStore = SettingsStore(
       api: settingsAPI ?? SettingsAPI(clients: clients), cache: cache)
     self.settingsStore = settingsStore
+    let studyAPI = studyAPI ?? StudyAPI(clients: clients)
+    let todayStore = TodayStore(api: studyAPI, cache: cache)
+    self.todayStore = todayStore
+    let studySessionStore = StudySessionStore(api: studyAPI, cache: cache, today: todayStore)
+    self.studySessionStore = studySessionStore
     lessonPlayer = LessonPlayerDependencies(
       api: LessonPlayerAPI(clients: clients), cache: cache,
-      preferences: settingsStore.preferences)
+      preferences: settingsStore.preferences,
+      blockFinished: { studySessionStore.apply($1, sessionID: $0) })
     goalContentStore = GoalContentStore(api: GoalContentAPI(clients: clients), cache: cache)
     mindMapsStore = MindMapsStore(
       api: mindMapsAPI ?? MindMapsAPI(clients: clients), cache: cache)
@@ -82,9 +88,6 @@ struct AppDependencies {
       api: progressAPI ?? ProgressAPI(clients: clients),
       cache: cache)
     sessionStore = session
-    let studyAPI = studyAPI ?? StudyAPI(clients: clients)
-    studySessionStore = StudySessionStore(api: studyAPI, cache: cache)
-    todayStore = TodayStore(api: studyAPI, cache: cache)
     self.subscriptionStore = subscriptionStore
     tutorStore = TutorStore(api: tutorAPI ?? TutorAPI(clients: clients), cache: cache)
     voice = VoiceServices(clients: clients, cache: cache)

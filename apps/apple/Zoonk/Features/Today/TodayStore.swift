@@ -43,6 +43,17 @@ final class TodayStore {
   @ObservationIgnored private let cache: AppCache
   @ObservationIgnored private var languageTodays: [String: Resource<LanguageTodayView>] = [:]
 
+  func apply(_ completion: BlockMoment, sessionID: String) {
+    today.update { content in
+      guard case .day(var view) = content, view.session.id == sessionID else {
+        return content
+      }
+
+      view.session = view.session.finishing(completion)
+      return .day(view)
+    }
+  }
+
   init(api: any StudyAPIClient, cache: AppCache) {
     self.api = api
     self.cache = cache

@@ -5,12 +5,17 @@ final class LessonPlayerDependencies {
   let api: LessonPlayerAPI
   let cache: AppCache
   let preferences: Resource<LearningPreferences>
+  let blockFinished: @MainActor (_ sessionID: String, BlockMoment) -> Void
   private var lessons: [String: Resource<LessonLoad>] = [:]
 
-  init(api: LessonPlayerAPI, cache: AppCache, preferences: Resource<LearningPreferences>) {
+  init(
+    api: LessonPlayerAPI, cache: AppCache, preferences: Resource<LearningPreferences>,
+    blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void
+  ) {
     self.api = api
     self.cache = cache
     self.preferences = preferences
+    self.blockFinished = blockFinished
   }
 
   func lesson(id: String) -> Resource<LessonLoad> {
@@ -42,7 +47,8 @@ struct LessonPlayerScreen: View {
       LessonPlayerContent(
         store: LessonPlayerStore(
           lessonId: lessonId, studySessionId: sessionId, api: player.api, cache: player.cache,
-          preferences: player.preferences, lessonResource: player.lesson(id: lessonId))
+          preferences: player.preferences, lessonResource: player.lesson(id: lessonId),
+          blockFinished: player.blockFinished)
       )
       .id(lessonId)
     }

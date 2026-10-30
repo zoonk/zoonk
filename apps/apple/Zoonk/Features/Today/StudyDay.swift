@@ -68,7 +68,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   }
 
   let id: String?
-  let blocks: [StudyBlock]
+  var blocks: [StudyBlock]
   let brainPower: Int
   let catchUp: CatchUp?
   let current: Bool
@@ -86,14 +86,39 @@ struct StudyDay: Decodable, Equatable, Sendable {
   let localDate: String
   let minutes: Minutes
   let missions: [StudyMission]
-  let nextBlockId: String?
-  let nextPosition: Int?
+  var nextBlockId: String?
+  var nextPosition: Int?
   let plusLessons: [PlusLesson]
   let status: Status
   let week: StudyWeek
 
   var nextBlock: StudyBlock? {
     blocks.first { $0.position == nextPosition }
+  }
+
+  /// The day as a block's completion says it now stands, before the session is read again: the
+  /// block done and the server's next block up.
+  func finishing(_ moment: BlockMoment) -> StudyDay {
+    guard let index = blocks.firstIndex(where: { $0.id == moment.blockId }) else {
+      return self
+    }
+
+    var day = self
+    day.blocks[index].status = .completed
+    day.nextBlockId = moment.nextBlockId
+    day.nextPosition = nil
+
+    if let nextID = moment.nextBlockId {
+      // A next block this day doesn't list yet waits for the read, and one already done means a
+      // later completion (another window's) got here first.
+      guard let next = blocks.first(where: { $0.id == nextID }), !next.isFinished else {
+        return self
+      }
+
+      day.nextPosition = next.position
+    }
+
+    return day
   }
 
   /// Mirrors main's `splitTodayQueue`: the blocks still to do keep their order around the next one.
@@ -250,7 +275,7 @@ struct StudyBlock: Decodable, Equatable, Sendable {
   let refresh: Bool
   let reinforcement: Bool
   let screen: Screen
-  let status: Status
+  var status: Status
   let subject: String?
   let title: String?
   let waitReason: WaitReason?

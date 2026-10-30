@@ -6,15 +6,17 @@ import Observation
 final class StudySessionStore {
   @ObservationIgnored private let api: any StudyAPIClient
   @ObservationIgnored private let cache: AppCache
+  @ObservationIgnored private let today: TodayStore
   @ObservationIgnored private var sessions: [String: Resource<StudyDay>] = [:]
   @ObservationIgnored private var summaries: [String: Resource<SessionSummary>] = [:]
   @ObservationIgnored private var recaps: [String: Resource<WeeklyRecap>] = [:]
   /// Ceremonies already shown here, so a milestone a block and the summary both carry shows once.
   @ObservationIgnored private var shownCeremonies: Set<String> = []
 
-  init(api: any StudyAPIClient, cache: AppCache) {
+  init(api: any StudyAPIClient, cache: AppCache, today: TodayStore) {
     self.api = api
     self.cache = cache
+    self.today = today
   }
 
   func session(id: String) -> Resource<StudyDay> {
@@ -87,6 +89,13 @@ final class StudySessionStore {
     }
 
     return result
+  }
+
+  /// The session and Today show the finished block done and the server's next block at once,
+  /// instead of the day as it was until they're read again.
+  func apply(_ completion: BlockMoment, sessionID: String) {
+    sessions[sessionID]?.update { $0.finishing(completion) }
+    today.apply(completion, sessionID: sessionID)
   }
 
   /// True once per milestone.

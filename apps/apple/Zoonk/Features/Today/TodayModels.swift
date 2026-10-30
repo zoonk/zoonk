@@ -161,7 +161,7 @@ struct TodayView: Decodable, Equatable, Sendable {
   let pattern: Pattern?
   let planChange: PlanChange?
   let progress: Progress?
-  let session: StudyDay
+  var session: StudyDay
   /// The newest change to the source material the goal follows, in a sentence.
   let sourceChange: String?
   let studiedToday: Bool

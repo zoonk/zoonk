@@ -75,6 +75,7 @@ final class LessonPlayerStore {
   private let lessonResource: Resource<LessonLoad>
   private var session: SessionStore { cache.session }
   private let choices: LessonTodayChoices
+  private let blockFinished: @MainActor (_ sessionID: String, BlockMoment) -> Void
   private var identity: AuthenticatedSession?
   private(set) var openedAt = Date.now
   /// The lesson's example lines are written once, after the learner's first action.
@@ -87,7 +88,8 @@ final class LessonPlayerStore {
     lessonId: String, studySessionId: String?, api: LessonPlayerAPI, cache: AppCache,
     preferences: Resource<LearningPreferences>,
     lessonResource: Resource<LessonLoad>,
-    choices: LessonTodayChoices = .standard
+    choices: LessonTodayChoices = .standard,
+    blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void = { _, _ in }
   ) {
     self.lessonId = lessonId
     self.studySessionId = studySessionId
@@ -96,6 +98,7 @@ final class LessonPlayerStore {
     self.preferences = preferences
     self.lessonResource = lessonResource
     self.choices = choices
+    self.blockFinished = blockFinished
     cantTalkToday = choices.isChosenToday(.cantTalk)
   }
 
@@ -581,6 +584,10 @@ final class LessonPlayerStore {
     switch completed {
     case .done(.completed(let summary)):
       state?.completionSaved(summary)
+
+      if let studySessionId, let block = summary.block {
+        blockFinished(studySessionId, block)
+      }
 
       if isGuest, studySessionId == nil {
         fit = await api.getLessonFit(id: lessonId, token: token)
