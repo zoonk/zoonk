@@ -21,3 +21,8 @@ export function getWaitRun({
 export function isRunStopped(run: GenerationRun | null): boolean {
   return run?.status === "failed" && run.failure !== "connection";
 }
+
+/** The run's plan exists, so what waits on it can ask now instead of at its next check. */
+export function isPlanMade(run: GenerationRun | null): boolean {
+  return run?.steps.createPlan === "completed";
+}

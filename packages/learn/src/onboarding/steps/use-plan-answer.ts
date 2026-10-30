@@ -45,18 +45,21 @@ type Answered<Answer> = {
 /**
  * Asks every few seconds while the plan isn't ready, then once for each new `key`, keeping each
  * answer so going back to an earlier choice needs no new one; `paused` stops asking again a plan
- * whose run stopped. Each ask plans the goal, so one is out at a time and the latest `key` goes next.
+ * whose run stopped, and `planMade` asks again at once when the run says the plan exists. Each ask
+ * plans the goal, so one is out at a time and the latest `key` goes next.
  */
 export function usePlanAnswer<Answer extends { ready: boolean }>({
   ask,
   enabled,
   key,
   paused,
+  planMade,
 }: {
   ask: () => Promise<Answer | null>;
   enabled: boolean;
   key: string;
   paused: boolean;
+  planMade: boolean;
 }): PlanAnswer<Answer> {
   const [answered, setAnswered] = useState<Answered<Answer>>({
     byKey: new Map(),
@@ -71,7 +74,7 @@ export function usePlanAnswer<Answer extends { ready: boolean }>({
   const poll = usePoll({
     active: enabled && !answer?.ready && !(paused && answer !== null),
     intervalMs: POLL_MS,
-    key,
+    key: planMade ? `${key}:planMade` : key,
     onPoll: async (signal) => {
       if (answered.last) {
         await settle(signal);

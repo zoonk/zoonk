@@ -59,12 +59,14 @@ function useFoundTime({
   dated,
   days,
   paused,
+  planMade,
   weekend,
 }: {
   ask: ScheduleActions["findTimeToCover"];
   dated: boolean;
   days: number[];
   paused: boolean;
+  planMade: boolean;
   weekend: number | null;
 }) {
   const week = toFindWeek({ days, weekend });
@@ -74,6 +76,7 @@ function useFoundTime({
     enabled: dated && days.length > 0,
     key: JSON.stringify(week),
     paused,
+    planMade,
   });
 
   const found = readyAnswer(covering.answer);
@@ -95,6 +98,7 @@ export function useSchedule({
   exam,
   goal,
   paused,
+  planMade,
   recommendedMinutes,
   together,
 }: {
@@ -103,6 +107,7 @@ export function useSchedule({
   exam: boolean;
   goal: GoalView;
   paused: boolean;
+  planMade: boolean;
   recommendedMinutes: number;
   together: GoalsTogether;
 }) {
@@ -116,6 +121,7 @@ export function useSchedule({
     dated: datedGuess,
     days: week.days,
     paused,
+    planMade,
     weekend: week.weekend,
   });
 
@@ -144,6 +150,7 @@ export function useSchedule({
       asksAboutTime({ dated, found: found.found, fullCourse: studiesEverything, minutes }),
     key: JSON.stringify({ ...asked, dailyMinutes: minutes }),
     paused,
+    planMade,
   });
 
   const advice = readyAnswer(timeAdvice.answer);

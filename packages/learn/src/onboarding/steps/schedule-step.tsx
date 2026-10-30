@@ -23,7 +23,7 @@ import {
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
 import { type Schedule, type ScheduleActions, useSchedule } from "./use-schedule";
-import { WAITING_RUN, getWaitRun, isRunStopped } from "./wait-run";
+import { WAITING_RUN, getWaitRun, isPlanMade, isRunStopped } from "./wait-run";
 
 const FULL_COURSE_ID = "onboarding-full-course";
 
@@ -208,6 +208,7 @@ export function ScheduleStep({
     exam,
     goal,
     paused: isRunStopped(run),
+    planMade: isPlanMade(run),
     recommendedMinutes,
     together,
   });

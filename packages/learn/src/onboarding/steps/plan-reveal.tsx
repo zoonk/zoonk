@@ -15,7 +15,7 @@ import { NoticeReading } from "./notice-reading";
 import { PlanBuilding } from "./plan-building";
 import { RevealBody } from "./reveal-body";
 import { StepLoading } from "./step-parts";
-import { WAITING_RUN, getWaitRun, isRunStopped } from "./wait-run";
+import { WAITING_RUN, getWaitRun, isPlanMade, isRunStopped } from "./wait-run";
 
 const POLL_MS = 3000;
 
@@ -109,6 +109,7 @@ export function PlanReveal({
   const poll = usePoll({
     active: (!plan?.ready && !isRunStopped(run)) || readingNotice,
     intervalMs: POLL_MS,
+    key: String(isPlanMade(run)),
     onPoll: refresh,
   });
 
