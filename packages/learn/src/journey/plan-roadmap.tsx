@@ -133,6 +133,20 @@ function getPhaseWhen({ currentIndex, position }: { currentIndex: number; positi
   return currentIndex !== -1 && position > currentIndex ? "start" : null;
 }
 
+function PhaseWhenText({ startDate, when }: { startDate: string; when: "start" | "today" }) {
+  const t = useExtracted();
+
+  if (when === "today") {
+    return t("Today");
+  }
+
+  return (
+    <>
+      {t("From")} <PlanDateText isoDate={startDate} />
+    </>
+  );
+}
+
 function RoadmapRevealList() {
   const t = useExtracted();
   const phaseName = usePhaseName();
@@ -205,9 +219,9 @@ function RoadmapReveal() {
                       when === "today" ? getShareInPhase({ at: "start", date: today, phase }) : null
                     }
                   />
-                  {when === "start" && (
+                  {when && (
                     <span className="sr-only">
-                      {t("From")} <PlanDateText isoDate={phase.startDate} />
+                      <PhaseWhenText startDate={phase.startDate} when={when} />
                     </span>
                   )}
                 </>

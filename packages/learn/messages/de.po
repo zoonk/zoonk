@@ -4143,14 +4143,14 @@ msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "{done, number} von {total, plural, one {# Phase} other {# Phasen}} abgeschlossen"
 
 #: src/journey/plan-roadmap.tsx
-msgctxt "mElWfu"
-msgid "You are here"
-msgstr "Du bist hier"
-
-#: src/journey/plan-roadmap.tsx
 msgctxt "dM-p3_"
 msgid "From"
 msgstr "Ab"
+
+#: src/journey/plan-roadmap.tsx
+msgctxt "mElWfu"
+msgid "You are here"
+msgstr "Du bist hier"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "yPg8s6"

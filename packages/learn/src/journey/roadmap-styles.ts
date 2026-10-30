@@ -12,9 +12,12 @@ export const BAND_STATE_CLASS: Record<PlanPhaseView["state"], string> = {
 
 /** Fills its column, so a band whose name takes two lines makes every band in the row as tall. */
 export const BAND_CLASS =
-  "relative flex min-h-8 min-w-0 flex-1 items-center gap-1 rounded-md px-2.5 py-1 text-left text-[0.78125rem] font-medium";
+  "relative flex min-h-8 min-w-18 flex-1 items-center gap-1 rounded-md px-2.5 py-1 text-left text-[0.78125rem] font-medium";
 
-export const BAND_NAME_CLASS = "min-w-0 leading-4 text-balance";
+export const BAND_NAME_CLASS = "min-w-0 leading-4 text-balance hyphens-auto";
+
+/** Inline in the name, so a narrow band's lines get its whole width. */
+export const BAND_CHECK_CLASS = "mr-1 inline size-3.5 align-[-0.1875rem]";
 
 /**
  * A band is drawn to its time but never narrower than its name's longest word, so the column

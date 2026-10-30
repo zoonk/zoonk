@@ -4,6 +4,7 @@ import { METER_PARTS_CLASS } from "@zoonk/learn/meter";
 import {
   AXIS_CLASS,
   AXIS_LABEL_CLASS,
+  BAND_CHECK_CLASS,
   BAND_CLASS,
   BAND_COLUMN_CLASS,
   BAND_NAME_CLASS,
@@ -70,11 +71,12 @@ function TodayTicks({ share }: { share: number }) {
 function RoadBandFace({ band }: { band: RoadBand }) {
   return (
     <span className={cn(BAND_CLASS, BAND_LOOK[band.state])}>
-      {band.state === "done" && (
-        <CheckIcon aria-hidden="true" className="size-3.5 shrink-0" strokeWidth={2.5} />
-      )}
-
-      <span className={BAND_NAME_CLASS}>{band.name}</span>
+      <span className={BAND_NAME_CLASS}>
+        {band.state === "done" && (
+          <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} strokeWidth={2.5} />
+        )}
+        {band.name}
+      </span>
       {band.todayShare !== undefined && <TodayTicks share={band.todayShare} />}
 
       {band.state === "current" && band.share !== undefined && band.share > 0 && (

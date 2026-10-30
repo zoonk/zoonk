@@ -5,7 +5,7 @@ import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
-import { BAND_NAME_CLASS } from "./roadmap-styles";
+import { BAND_CHECK_CLASS, BAND_NAME_CLASS } from "./roadmap-styles";
 import { getLessonShare } from "./use-roadmap";
 
 const PERCENT = 100;
@@ -17,10 +17,10 @@ export function BandFace({ phase }: { phase: PlanPhaseView }) {
 
   return (
     <>
-      {phase.state === "done" && (
-        <CheckIcon aria-hidden="true" className="size-3.5 shrink-0" strokeWidth={2.5} />
-      )}
       <span className={BAND_NAME_CLASS}>
+        {phase.state === "done" && (
+          <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} strokeWidth={2.5} />
+        )}
         {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
       </span>
       {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}
