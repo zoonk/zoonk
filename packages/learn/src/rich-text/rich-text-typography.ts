@@ -9,6 +9,16 @@ const NBSP = " ";
  */
 const LONG_NUMBER = /(?<![\d.,\p{L}/-])[1-9]\d{4,}(?![\d\p{L}/-]|[.,]\d)/gu;
 
+/** A postal code's label right before it ("ZIP 94103", "PLZ 10115"), or a state's code ("CA 94103"). */
+const POSTAL_LABEL =
+  /\b(?:zip(?: code)?|postal code|postcode|plz|postleitzahl|cep|cp|code postal|código postal):?\s$/iu;
+
+const STATE_CODE = /(?<!\p{L})\p{Lu}{2},?\s$/u;
+
+function isPostalCode(before: string): boolean {
+  return POSTAL_LABEL.test(before) || STATE_CODE.test(before);
+}
+
 /** In their own case: "A" is amperes, "a" is a word. */
 const UNITS = [
   "%",
@@ -79,7 +89,9 @@ export function typesetNumbers({ locale, text }: { locale: string; text: string 
   const grouping = getNumberFormatter(locale, { useGrouping: true });
 
   return text
-    .replaceAll(LONG_NUMBER, (digits) => grouping.format(Number(digits)))
+    .replaceAll(LONG_NUMBER, (digits: string, offset: number) =>
+      isPostalCode(text.slice(0, offset)) ? digits : grouping.format(Number(digits)),
+    )
     .replaceAll(NUMBER_THEN_UNIT, NBSP)
     .replaceAll(
       CURRENCY_THEN_NUMBER,

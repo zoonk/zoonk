@@ -46,6 +46,17 @@ describe(typesetNumbers, () => {
     );
   });
 
+  it("leaves a postal code alone after its label or a state's code", () => {
+    const text =
+      "Write to San Francisco, CA 94103, ZIP code 94103, PLZ 10115 or code postal 75001.";
+
+    expect(typesetNumbers({ locale: "en", text })).toBe(text);
+
+    expect(typesetNumbers({ locale: "en", text: "CA has 39000 schools." })).toBe(
+      "CA has 39,000 schools.",
+    );
+  });
+
   it("leaves decimals, codes, years and numbers before longer words alone", () => {
     const text = "1,5 mais 12345,67 no CEP 01310-100 em 2026 com 5 pessoas e ID 123456789a";
     expect(typesetNumbers({ locale: "pt", text })).toBe(text);
