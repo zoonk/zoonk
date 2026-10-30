@@ -151,7 +151,12 @@ class Plot internal constructor(
         val measured = measurer.measure(text, style.copy(color = color, fontWeight = FontWeight.SemiBold))
         val point = at(x, y)
         val left = if (end) point.x - measured.size.width else point.x - measured.size.width / 2
-        val topLeft = Offset(left.coerceIn(0f, max(0f, size.width - measured.size.width)), point.y - lift.toPx() - measured.size.height / 2)
+        val top = point.y - lift.toPx() - measured.size.height / 2
+        val topLeft =
+            Offset(
+                left.coerceIn(0f, max(0f, size.width - measured.size.width)),
+                top.coerceIn(0f, max(0f, size.height - measured.size.height)),
+            )
         halo?.let { drawText(measured, color = it, topLeft = topLeft, drawStyle = Stroke(HALO_WIDTH.toPx(), join = StrokeJoin.Round)) }
         drawText(measured, topLeft = topLeft, drawStyle = Fill)
     }
