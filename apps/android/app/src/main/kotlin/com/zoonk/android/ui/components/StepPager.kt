@@ -3,6 +3,7 @@ package com.zoonk.android.ui.components
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -35,17 +36,21 @@ fun StepPagerActions(
 ) {
     BackHandler(enabled = index > 0) { onIndexChange(index - 1) }
 
-    ActionFlow { main ->
+    // Back stays outside the actions' row, level with its last line when they wrap at a large font.
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Bottom) {
         if (index > 0) {
-            // Level with the action's last line when its label wraps at a large font.
-            OutlinedIconButton(onClick = { onIndexChange(index - 1) }, Modifier.align(Alignment.Bottom)) {
+            OutlinedIconButton(onClick = { onIndexChange(index - 1) }) {
                 Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.navigation_back))
             }
         }
-        if (index < count - 1) {
-            Button(onClick = { onIndexChange(index + 1) }, modifier = main) { Text(stringResource(R.string.steps_continue)) }
-        } else {
-            finalAction(main)
+        Box(Modifier.weight(1f)) {
+            ActionFlow { main ->
+                if (index < count - 1) {
+                    Button(onClick = { onIndexChange(index + 1) }, modifier = main) { Text(stringResource(R.string.steps_continue)) }
+                } else {
+                    finalAction(main)
+                }
+            }
         }
     }
 }
