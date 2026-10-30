@@ -1377,7 +1377,7 @@ msgstr "{count, plural, one {# acerto para vencer} other {# acertos para vencer}
 #: src/challenge/challenge-intro.tsx
 msgctxt "KSWWEF"
 msgid "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day."
-msgstr "Você vai saber se acertou ou errou após cada resposta e, no final, vai entender por quê e conhecer as armadilhas que ele preparou. Se ele vencer, você pode disputar uma revanche no dia seguinte."
+msgstr "Você vê se acertou ou errou depois de cada resposta e, no final, as explicações e as pegadinhas que ele preparou. Se ele ganhar, você tem uma revanche no dia seguinte."
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
@@ -3876,12 +3876,12 @@ msgstr "Depois do desafio anterior"
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
 msgid "A live call where you get your point across"
-msgstr "Uma conversa ao vivo em que você se faz entender"
+msgstr "Uma conversa ao vivo para você se fazer entender"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "yK6jNb"
 msgid "Questions on this phase, with no hints"
-msgstr "Perguntas sobre esta fase, sem dicas"
+msgstr "Perguntas desta fase, sem dicas"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "jcz36l"
@@ -4071,7 +4071,7 @@ msgstr "Continua em {date}"
 #: src/journey/path-phase-row.tsx
 msgctxt "e4_rBx"
 msgid "No time for this phase's challenge before your date"
-msgstr "Não há tempo para o desafio desta fase antes da data da sua meta"
+msgstr "Sem tempo para o desafio desta fase antes da data da sua meta"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "LZkGdn"

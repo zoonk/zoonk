@@ -1377,7 +1377,7 @@ msgstr "{count, plural, one {# acierto para ganar} other {# aciertos para ganar}
 #: src/challenge/challenge-intro.tsx
 msgctxt "KSWWEF"
 msgid "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day."
-msgstr "Después de cada respuesta sabrás si has acertado o fallado. Al final descubrirás por qué y qué trampas te ha tendido. Si gana, tendrás una revancha al día siguiente."
+msgstr "Después de cada respuesta verás si has acertado o fallado y, al final, la explicación y las trampas que te ha tendido. Si gana, podrás volver a enfrentarte a él al día siguiente."
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
@@ -3876,7 +3876,7 @@ msgstr "Después del desafío anterior"
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
 msgid "A live call where you get your point across"
-msgstr "Una llamada en directo en la que te haces entender"
+msgstr "Una llamada en directo para hacerte entender"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "yK6jNb"
@@ -4071,7 +4071,7 @@ msgstr "Se retoma el {date}"
 #: src/journey/path-phase-row.tsx
 msgctxt "e4_rBx"
 msgid "No time for this phase's challenge before your date"
-msgstr "No hay tiempo para el desafío de esta fase antes de la fecha de tu objetivo"
+msgstr "No hay tiempo para el desafío de esta fase antes de tu fecha objetivo"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "LZkGdn"

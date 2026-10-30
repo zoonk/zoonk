@@ -1377,7 +1377,7 @@ msgstr "{count, plural, one {# richtige Antwort zum Sieg} other {# richtige Antw
 #: src/challenge/challenge-intro.tsx
 msgctxt "KSWWEF"
 msgid "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day."
-msgstr "Nach jeder Antwort siehst du, ob sie richtig oder falsch ist. Am Ende erfährst du, warum und welche Fallen er gestellt hat. Wenn er gewinnt, bekommst du am nächsten Tag eine Revanche."
+msgstr "Nach jeder Antwort siehst du, ob sie richtig oder falsch ist. Am Ende erfährst du, warum das so ist und welche Fallen er dir gestellt hat. Wenn er gewinnt, kannst du am nächsten Tag noch einmal gegen ihn antreten."
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
@@ -3876,12 +3876,12 @@ msgstr "Nach der vorherigen Herausforderung"
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
 msgid "A live call where you get your point across"
-msgstr "Ein Live-Gespräch, in dem du dich verständlich ausdrückst"
+msgstr "Ein Live-Gespräch, in dem du dich verständlich machst"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "yK6jNb"
 msgid "Questions on this phase, with no hints"
-msgstr "Fragen zu dieser Phase, ohne Hinweise"
+msgstr "Fragen zu dieser Phase ohne Hinweise"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "jcz36l"
@@ -4071,7 +4071,7 @@ msgstr "Geht am {date} weiter"
 #: src/journey/path-phase-row.tsx
 msgctxt "e4_rBx"
 msgid "No time for this phase's challenge before your date"
-msgstr "Vor deinem Zieldatum bleibt keine Zeit für die Phasen-Herausforderung"
+msgstr "Vor deinem Zieldatum bleibt keine Zeit für die Herausforderung dieser Phase"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "LZkGdn"

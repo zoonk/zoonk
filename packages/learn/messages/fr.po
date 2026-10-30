@@ -1377,7 +1377,7 @@ msgstr "{count, plural, one {# bonne réponse pour gagner} other {# bonnes répo
 #: src/challenge/challenge-intro.tsx
 msgctxt "KSWWEF"
 msgid "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day."
-msgstr "Après chaque réponse, tu sauras si elle est juste ou fausse. À la fin, tu découvriras pourquoi, ainsi que les pièges qu’il a tendus. S’il gagne, tu pourras prendre ta revanche le lendemain."
+msgstr "Après chaque réponse, tu sauras si elle est juste ou fausse. À la fin, tu découvriras les explications et les pièges qu’il a tendus. S’il gagne, tu pourras prendre ta revanche le lendemain."
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
@@ -3881,7 +3881,7 @@ msgstr "Un appel en direct pour te faire comprendre"
 #: src/journey/journey-phase-events.tsx
 msgctxt "yK6jNb"
 msgid "Questions on this phase, with no hints"
-msgstr "Des questions sur cette phase, sans indices"
+msgstr "Des questions sur cette phase, sans indice"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "jcz36l"

@@ -1375,9 +1375,9 @@ msgid "{count, plural, one {# right to win} other {# right to win}}"
 msgstr "{count, plural, one {# right to win} other {# right to win}}"
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "KSWWEF"
-msgid "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day."
-msgstr "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day."
+msgctxt "Aw7qrt"
+msgid "You'll see right or wrong after each answer, and why at the end, with the traps he set."
+msgstr "You'll see right or wrong after each answer, and why at the end, with the traps he set."
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
@@ -3874,16 +3874,6 @@ msgid "After the challenge before it"
 msgstr "After the challenge before it"
 
 #: src/journey/journey-phase-events.tsx
-msgctxt "zHMlZo"
-msgid "A live call where you get your point across"
-msgstr "A live call where you get your point across"
-
-#: src/journey/journey-phase-events.tsx
-msgctxt "yK6jNb"
-msgid "Questions on this phase, with no hints"
-msgstr "Questions on this phase, with no hints"
-
-#: src/journey/journey-phase-events.tsx
 msgctxt "jcz36l"
 msgid "{count, plural, one {# mock exam} other {# mock exams}}"
 msgstr "{count, plural, one {# mock exam} other {# mock exams}}"
@@ -4066,12 +4056,6 @@ msgstr "Continues today"
 msgctxt "-DKe0Q"
 msgid "Continues {date}"
 msgstr "Continues {date}"
-
-#. On a phase of the learner's plan: the plan has no room for its challenge before their goal's date.
-#: src/journey/path-phase-row.tsx
-msgctxt "e4_rBx"
-msgid "No time for this phase's challenge before your date"
-msgstr "No time for this phase's challenge before your date"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "LZkGdn"
@@ -12047,16 +12031,6 @@ msgstr "{count, plural, one {# question} other {# questions}} · {titles}"
 msgctxt "BeE-47"
 msgid "Short lesson before the rematch"
 msgstr "Short lesson before the rematch"
-
-#: src/session/use-block-copy.ts
-msgctxt "yl8kH0"
-msgid "{phase} · a live call"
-msgstr "{phase} · a live call"
-
-#: src/session/use-block-copy.ts
-msgctxt "HS4tNy"
-msgid "A live call"
-msgstr "A live call"
 
 #: src/session/use-block-copy.ts
 msgctxt "NARnnE"
