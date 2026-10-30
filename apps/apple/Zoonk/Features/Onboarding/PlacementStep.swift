@@ -14,6 +14,8 @@ struct PlacementStep: View {
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
   @State private var failed = false
+  @State private var isWaitLost = false
+  @State private var waitRound = 0
   /// Neither a question's number nor the bar ever goes back while the plan is still being written.
   @State private var shown = (answered: 0, spent: 0.0)
 
@@ -202,9 +204,16 @@ struct PlacementStep: View {
           tableName: "Onboarding",
           comment: "Why placement questions take a moment"))
 
-      Section {
-        ProgressView()
-          .frame(maxWidth: .infinity)
+      if isWaitLost {
+        GenerationFailureSection(failure: .connection) {
+          isWaitLost = false
+          waitRound += 1
+        }
+      } else {
+        Section {
+          ProgressView()
+            .frame(maxWidth: .infinity)
+        }
       }
 
       Section {
@@ -229,7 +238,7 @@ struct PlacementStep: View {
     }
     .onboardingColumn()
     .disabled(isSaving)
-    .task { await waitForQuestions() }
+    .task(id: waitRound) { await waitForQuestions() }
   }
 
   private func outcome(title: Text, description: Text) -> some View {
@@ -305,6 +314,10 @@ struct PlacementStep: View {
       }
 
       await read()
+    }
+
+    if !Task.isCancelled, case .waiting = phase {
+      isWaitLost = true
     }
   }
 
