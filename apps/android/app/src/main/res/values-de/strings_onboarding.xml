@@ -151,6 +151,7 @@
   "onboarding_musicianship_subject": "26b469bd3eb87c5255e9d2d86faabe364179939c6dbe694d317c0373f264a4d8",
   "onboarding_musicianship_title": "c12ac066d5775f9d2e755d626169040d72185b5c7bfc3c3791ac39a25f142589",
   "onboarding_my_notes": "85067b4a404f59533c705b39f9046a21dac4ab2954a36f2e588ffeed2080097e",
+  "onboarding_no_date": "c9148490173e2b9481e25b3e954599adffac30724dbc96e44b28091b44247281",
   "onboarding_opening_explanation": "4ae38d9dab87245a9b45983ec11942f536e17337f008b16f1a385978d5324268",
   "onboarding_paste_link": "7b7b6eac41e808feb9bab08062e6384067705caf0fda9b5870a9633b7e7acffb",
   "onboarding_paste_link_placeholder": "48cdb70809157b2d4b02b805393db04ef8361e2cfe7a339d849e3fc62081d35d",
@@ -981,6 +982,8 @@
     <string name="onboarding_date_description">Ohne Datum lernst du alle Inhalte in deinem eigenen Tempo. Wir zeigen dir, wann du die einzelnen Meilensteine erreichst.</string>
     <string name="onboarding_date_none">Kein Datum, alle Inhalte lernen</string>
     <string name="onboarding_date_label">Datum</string>
+    <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
+    <string name="onboarding_no_date">Kein Datum</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
     <string name="onboarding_date_passed">Dein Termin am %1$s ist schon vorbei.</string>
     <!-- Leads the date question asked again because the goal's date is today. -->

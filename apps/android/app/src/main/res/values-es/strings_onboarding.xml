@@ -151,6 +151,7 @@
   "onboarding_musicianship_subject": "67479265cc978a81a306d2f5bc9761ceb4d018b08fd39aa48537d72173faf407",
   "onboarding_musicianship_title": "04681ced4d8a23a4d2a44cf55cfffedeb59471e65f819461d8627634de11d22c",
   "onboarding_my_notes": "bf0dccad914cc2f801f087004c7c5e4fe2dc44030216247ec0cc9b2406e32e5a",
+  "onboarding_no_date": "72fbb845e3796b2c5fcff1814c4c4748f51e4297a2b5ebcf913c8d1c9a0ce783",
   "onboarding_opening_explanation": "6e4affb5e6c12b36fc51c29d62ca28553ad5ba6f931bdb7a10853ebdbc8f481c",
   "onboarding_paste_link": "556446cea7ef90aa6f8c4b88083bdc784e6f1a7cd02685d14d1916ac2dd18945",
   "onboarding_paste_link_placeholder": "e6126a992ca09571fed6d84b1348c2b9f3edc00035d67ef4b2f40e873198c575",
@@ -1002,6 +1003,8 @@
     <string name="onboarding_date_description">Sin una fecha, estudiarás todo a tu ritmo y te mostraremos cuándo alcanzarás cada etapa.</string>
     <string name="onboarding_date_none">Sin fecha, estudiar todo</string>
     <string name="onboarding_date_label">Fecha</string>
+    <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
+    <string name="onboarding_no_date">Sin fecha</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
     <string name="onboarding_date_passed">La fecha que has elegido, %1$s, ya ha pasado.</string>
     <!-- Leads the date question asked again because the goal's date is today. -->

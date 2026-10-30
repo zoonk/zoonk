@@ -663,6 +663,45 @@ class GoalSetupFlowTest {
 
     @Test
     @Config(qualifiers = "w1280dp-h800dp")
+    fun thePlanSoFarSaysTheLevelTheTestFoundBeforeAnyOther() {
+        api.setup = {
+            setupView(
+                listOf("schedule", "plan"),
+                kind = "language",
+                targetLanguage = "it",
+                details = """{"answered":["level","placement"],"level":"B1+","levelNote":"I know a little"}""",
+            )
+        }
+        show()
+
+        rule.onNodeWithText("Your level").assertIsDisplayed()
+        rule.onNodeWithText("B1+").assertIsDisplayed()
+        rule.onNodeWithText("I know a little").assertDoesNotExist()
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp")
+    fun thePlanSoFarSaysTheLevelPickedOverTheLevelTheWordsGave() {
+        api.setup = { setupView(listOf("schedule", "plan"), details = """{"answered":["level"],"level":"basic","levelNote":"A2"}""") }
+        show()
+
+        rule.onNodeWithText("Your level").assertIsDisplayed()
+        rule.onNodeWithText("The basics").assertIsDisplayed()
+        rule.onNodeWithText("A2").assertDoesNotExist()
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp")
+    fun thePlanSoFarSaysNoDateWhenTheLearnerChoseNone() {
+        api.setup = { setupView(listOf("schedule", "plan"), details = """{"answered":["targetDate"]}""") }
+        api.advice = { adviceOf(null, LocalDate(2027, 3, 15), targetDate = null) }
+        show()
+
+        rule.onNodeWithText("No date").assertIsDisplayed()
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp")
     fun thePlanSoFarListsWhatWasAnsweredWithACareerChangesOwnLabels() {
         api.setup = {
             setupView(

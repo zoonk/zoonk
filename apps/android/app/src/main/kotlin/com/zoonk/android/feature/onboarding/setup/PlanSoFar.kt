@@ -20,6 +20,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.language.parseCefrScore
 import com.zoonk.android.feature.onboarding.start.UnderstoodRows
 import com.zoonk.android.feature.onboarding.start.facts
 import com.zoonk.android.feature.onboarding.start.text
@@ -32,6 +33,7 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.Goal
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import java.time.LocalDate
@@ -48,6 +50,7 @@ internal data class PlanFact(
 internal fun planFacts(goal: Goal): List<PlanFact> {
     val locale = currentLocale()
     val details = goal.details
+    val dateLabel = stringResource(if (goal.kind == Goal.Kind.EXAM) R.string.onboarding_row_exam_date else R.string.onboarding_date_label)
     val date =
         goal.targetDate?.toJavaLocalDate()?.let { day ->
             val days =
@@ -56,22 +59,13 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
                     .toInt()
                     .coerceAtLeast(0)
             PlanFact(
-                label =
-                    stringResource(
-                        if (goal.kind ==
-                            Goal.Kind.EXAM
-                        ) {
-                            R.string.onboarding_row_exam_date
-                        } else {
-                            R.string.onboarding_date_label
-                        },
-                    ),
+                label = dateLabel,
                 value = formatDate(day, locale, DateStyle.Long),
                 count = pluralStringResource(R.plurals.onboarding_days, days, days),
                 chip = true,
             )
-        }
-    val answered = (details["answered"] as? JsonArray)?.any { (it as? JsonPrimitive)?.contentOrNull == "schedule" } == true
+        } ?: PlanFact(dateLabel, stringResource(R.string.onboarding_no_date), chip = true).takeIf { details.answered("targetDate") }
+    val level = setupLevel(details)
     val resources = LocalResources.current
     val rows = remember(resources, locale) { UnderstoodRows(resources, locale, is24Hour = false) }
     val facts = goal.facts()
@@ -79,8 +73,8 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
     return listOfNotNull(PlanFact(stringResource(R.string.onboarding_row_goal), goal.title, chip = true), date) +
         (rows.languageRows(facts) + rows.detailRows(facts, cutoff = null)).map { PlanFact(it.label, it.value, chip = it.id in CHIP_ROWS) } +
         listOfNotNull(
-            details.text("levelNote")?.let { PlanFact(stringResource(R.string.onboarding_row_level), it) },
-            if (answered) {
+            level?.let { PlanFact(stringResource(R.string.onboarding_level_label), it) },
+            if (details.answered("schedule")) {
                 PlanFact(
                     stringResource(R.string.onboarding_time_a_day),
                     formatMinutes(goal.dailyMinutes.toInt(), locale),
@@ -90,6 +84,29 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
             },
         )
 }
+
+/** A level test's result, then the level the learner picked, then the level their words gave. */
+@Composable
+private fun setupLevel(details: Map<String, JsonElement>): String? {
+    val level = details.text("level")
+    val own = OWN_LEVELS[level]?.let { stringResource(it) }
+    return when {
+        level != null && parseCefrScore(level) != null -> level
+        own != null && details.answered("level") -> own
+        else -> details.text("levelNote")?.takeIf(String::isNotBlank) ?: own
+    }
+}
+
+private fun Map<String, JsonElement>.answered(question: String) =
+    (this["answered"] as? JsonArray)?.any { (it as? JsonPrimitive)?.contentOrNull == question } == true
+
+private val OWN_LEVELS =
+    mapOf(
+        "none" to R.string.onboarding_level_none,
+        "basic" to R.string.onboarding_level_basic,
+        "intermediate" to R.string.onboarding_level_intermediate,
+        "advanced" to R.string.onboarding_level_advanced,
+    )
 
 /** Short facts that also sit as chips over the schedule question on phones. */
 private val CHIP_ROWS = setOf("targetLanguage", "targetCourse", "institution", "targetPosition", "targetScore")

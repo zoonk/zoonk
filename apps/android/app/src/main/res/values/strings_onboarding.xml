@@ -540,6 +540,8 @@
     <string name="onboarding_date_description">Without a date, you study everything at your own pace, and we show when you reach each milestone.</string>
     <string name="onboarding_date_none">No date, study everything</string>
     <string name="onboarding_date_label">Date</string>
+    <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
+    <string name="onboarding_no_date">No date</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
     <string name="onboarding_date_passed">Your date, %1$s, has passed.</string>
     <!-- Leads the date question asked again because the goal's date is today. -->
