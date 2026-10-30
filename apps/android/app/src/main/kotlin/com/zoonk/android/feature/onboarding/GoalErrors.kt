@@ -65,7 +65,7 @@ fun Refusal.goalLimitReason(): GoalLimitReason =
             }
         }
 
-        Refusal.SlowDown, Refusal.Unsupported -> {
+        Refusal.SlowDown, Refusal.Unsupported, is Refusal.DayTooShort -> {
             GoalLimitReason.SlowDown
         }
     }
@@ -91,7 +91,7 @@ fun WriteOutcome<*>.startError(): GoalError =
                     GoalError.OneMoment
                 }
 
-                Refusal.Unsupported -> {
+                Refusal.Unsupported, is Refusal.DayTooShort -> {
                     GoalError.CouldNotRead
                 }
             }

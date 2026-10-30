@@ -37,6 +37,11 @@
     <string name="onboarding_error_could_not_read">We couldn\'t read your goal. Try again in a moment.</string>
     <string name="onboarding_error_could_not_save">We couldn\'t save your goal. Try again in a moment.</string>
     <string name="onboarding_save_failed">We couldn\'t save that. Try again.</string>
+    <!-- When the time a day is too short for every goal typed together. %1$s is a time, such as "20 min"; %2$d is how many goals. -->
+    <plurals name="onboarding_day_too_short">
+        <item quantity="one">Choose at least %1$s a day for your %2$d goal.</item>
+        <item quantity="other">Choose at least %1$s a day for your %2$d goals.</item>
+    </plurals>
 
     <!-- Plus notice before typing, for a free learner who already follows a goal. -->
     <string name="onboarding_plus_more_goals">More goals at once with Plus</string>
@@ -303,15 +308,15 @@
     <string name="onboarding_reveal_until_about">Until about %1$s</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_daily">%1$s a day</string>
+    <!-- Under a plan without a date that holds every part of a learn goal. -->
+    <string name="onboarding_reveal_pace_covers">Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
+    <!-- Under a plan without a date that stops before every part of a learn goal. -->
+    <string name="onboarding_reveal_pace_time">Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
     <!-- The study time a plan adds up to. %1$s is a duration, such as "12 hr". -->
     <string name="onboarding_reveal_study">about %1$s of study</string>
     <string name="onboarding_reveal_start">Start</string>
     <string name="onboarding_reveal_adjust">Adjust</string>
     <string name="onboarding_reveal_save_note">Save your plan so it\'s here next time.</string>
-    <!-- Under a plan without a date that holds every part of a learn goal. -->
-    <string name="onboarding_reveal_pace_covers">Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
-    <!-- Under a plan without a date that stops before every part of a learn goal. -->
-    <string name="onboarding_reveal_pace_time">Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
     <string name="onboarding_reveal_phases">Phases</string>
     <string name="onboarding_reveal_chapters">Chapters</string>
     <plurals name="onboarding_reveal_more_chapters">
@@ -555,6 +560,13 @@
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_close">Your date is close: covering everything in depth takes %1$s a day.</string>
     <string name="onboarding_schedule_too_close">Your date is too close to cover everything in depth.</string>
+    <!-- %1$s is a time, such as "1 hr 30 min". -->
+    <string name="onboarding_schedule_days_close">Covering everything in depth by your date takes %1$s a day on the days you picked. More study days bring that down.</string>
+    <string name="onboarding_schedule_days_too_close">The days you picked can\'t cover everything in depth by your date. More study days would help.</string>
+    <!-- After the line about the time a day, when two goals were typed together. %1$s is this goal's time, %2$s the other goal's, such as "20 min". -->
+    <string name="onboarding_schedule_split_one">This goal gets %1$s a day and your other goal %2$s.</string>
+    <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
+    <string name="onboarding_schedule_split_many">This goal gets %1$s a day and your other goals %2$s together.</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_takes_exam_all">What it takes to cover all your exam topics by %1$s.</string>
     <!-- %1$s is a date, such as "November 8". -->

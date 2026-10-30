@@ -92,7 +92,7 @@ fun attachErrorMessage(outcome: WriteOutcome<*>): String =
                 R.string.onboarding_attach_sign_in
             }
 
-            null -> {
+            is Refusal.DayTooShort, null -> {
                 R.string.onboarding_attach_failed
             }
         },

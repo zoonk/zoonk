@@ -112,6 +112,7 @@ internal const val EXAM_GOAL_ID = "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"
 internal fun setupView(
     steps: List<String>,
     goalId: String = GOAL_ID,
+    goalIds: List<String> = listOf(goalId),
     kind: String = "learn",
     details: String = """{"answered":[]}""",
     targetDate: String? = null,
@@ -119,7 +120,11 @@ internal fun setupView(
 ): Onboarding =
     ApiJson.decodeFromString(
         """
-        {"examChoices":[],"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
+        {"examChoices":[],"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":${goalIds.joinToString(
+            ",",
+            "[",
+            "]",
+        ) { "\"$it\"" }},
          "libraryCourse":null,"recommendedMinutes":30,"steps":[${steps.joinToString(",") { "\"$it\"" }}],
          "goal":{"createdAt":"2026-10-28T12:00:00Z","dailyMinutes":30,"details":$details,"examBlueprintId":null,"id":"$goalId",
           "isActive":true,"kind":"$kind","language":"en","plan":null,"primaryCourseId":null,"prompt":"learn statistics","status":"active",
@@ -296,11 +301,20 @@ internal class FakeOnboardingApi : OnboardingApi {
 
     var cover: (PlanTimeToCoverInput) -> PlanTimeToCover = { throw ApiException(ApiError.Unavailable) }
 
+    val coverAsks = mutableListOf<PlanTimeToCoverInput>()
+
+    /** Holds every time search after the first until it completes. */
+    var coverGate: CompletableDeferred<Unit>? = null
+
     override suspend fun timeToCover(
         session: AuthenticatedSession,
         goalId: String,
         input: PlanTimeToCoverInput,
-    ) = cover(input)
+    ): PlanTimeToCover {
+        coverAsks += input
+        if (coverAsks.size > 1) coverGate?.await()
+        return cover(input)
+    }
 
     override suspend fun uploadFile(
         session: AuthenticatedSession,

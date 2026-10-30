@@ -74,6 +74,13 @@ sealed interface Refusal {
     data object SlowDown : Refusal
 
     data object Unsupported : Refusal
+
+    /** The day the goals typed together share is shorter than [minutes], the least that gives each of the [goals] its share. */
+    @Serializable
+    data class DayTooShort(
+        val minutes: Int,
+        val goals: Int,
+    ) : Refusal
 }
 
 sealed interface WriteOutcome<out T> {
@@ -512,6 +519,7 @@ internal fun ApiException.refusal(): Refusal? =
         "UNPROCESSABLE_ENTITY" -> Refusal.Unsupported
         "USAGE_LIMIT_REACHED" -> details?.decode<LimitDetails>()?.limit?.let(Refusal::Limit)
         "GOAL_LIMIT_REACHED" -> details?.decode<UsageLimit>()?.let(Refusal::Limit)
+        "DAY_TOO_SHORT" -> details?.decode<Refusal.DayTooShort>()
         else -> Refusal.SlowDown.takeIf { status == TOO_MANY_REQUESTS }
     }
 

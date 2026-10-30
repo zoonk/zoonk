@@ -11,6 +11,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
@@ -22,6 +23,7 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.api.ApiJson
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.KSerializer
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
@@ -93,13 +95,15 @@ internal class PlanAnswer<T>(
     val last: T?,
     val poll: Poll,
     val status: PollStatus,
+    val restart: () -> Unit,
 )
 
 /**
  * Asks every few seconds while the plan isn't [ready], then once for each new [query], keeping each
  * answer so going back to an earlier choice needs no new one. After the first answer, days tapped in
  * a row ask once; [paused] stops asking again a plan whose run stopped. The first answer outlives the
- * screen's recreation, as the choices it decides do.
+ * screen's recreation, as the choices it decides do. Each ask plans the goal, so one is out at a time
+ * and the latest [query] goes next; an ask unanswered for 45 seconds fails while it's still out.
  */
 @Composable
 internal fun <Q : Any, T : Any> rememberPlanAnswer(
@@ -113,21 +117,34 @@ internal fun <Q : Any, T : Any> rememberPlanAnswer(
     var first by rememberSaveable(stateSaver = jsonSaver(serializer)) { mutableStateOf<T?>(null) }
     var last by remember { mutableStateOf<T?>(null) }
     var settled by remember { mutableStateOf(query) }
-    LaunchedEffect(query) {
-        if (last != null) delay(SETTLE)
-        settled = query
-    }
+    var missed by remember { mutableStateOf<Q?>(null) }
     val asked = if (last == null) query else settled
     val state = if (enabled) resources[asked].collectShown().value else null
+    val asking by rememberUpdatedState(state == LoadState.Loading)
+    LaunchedEffect(query) {
+        if (last != null) delay(SETTLE)
+        snapshotFlow { asking }.first { !it }
+        settled = query
+    }
     val answer = (state as? LoadState.Loaded)?.value?.takeIf { asked == query }
     LaunchedEffect(answer) {
         answer ?: return@LaunchedEffect
         last = answer
         if (first == null && ready(answer)) first = answer
     }
-    val active = enabled && answer?.let(ready) != true && !(paused && answer != null)
+    val active = enabled && asked == query && answer?.let(ready) != true && !(paused && answer != null)
     val poll = rememberPoll(active, key = query) { resources[query].refreshed() }
-    return PlanAnswer(answer, first, answer ?: last, poll, poll.status(active))
+    LaunchedEffect(query, enabled, answer == null, poll.round) {
+        if (!enabled || answer != null) return@LaunchedEffect
+        delay(ANSWER_TIMEOUT)
+        missed = query
+    }
+    val status = if (missed == query && answer == null) PollStatus.Failed else poll.status(active)
+    val restart = {
+        missed = null
+        poll.restart()
+    }
+    return PlanAnswer(answer, first, answer ?: last, poll, status, restart)
 }
 
 private fun <T : Any> jsonSaver(serializer: KSerializer<T>) =
@@ -152,5 +169,6 @@ internal fun GenerationRun.withPoll(poll: Poll): GenerationRun =
 
 private val POLL_INTERVAL = 3.seconds
 private val SETTLE = 300.milliseconds
+private val ANSWER_TIMEOUT = 45.seconds
 private val POLL_TIMEOUT = 10.minutes
 private const val MAX_FAILURES = 3

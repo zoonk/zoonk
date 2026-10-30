@@ -7,6 +7,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
@@ -42,6 +43,7 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf9
 import com.zoonk.api.models.PlanTimeAdvice
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -50,6 +52,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -156,10 +160,6 @@ class GoalSetupFlowTest {
     }
 
     @Test
-    fun aPlacementQuestionsBackLeavesTheSetupWithoutStepsBackOrStartOver() {
-        api.setup = { setupView(listOf("placement", "plan"), details = """{"answered":["purpose"]}""") }
-        api.placement = placementOf(next = trueFalseQuestion())
-    @Test
     fun theDotsLeaveOptionalPlacementOutAndShowNoneDuringIt() {
         api.setup = { setupView(listOf("level", "placement", "plan")) }
         api.reply = { _, _ -> setupView(listOf("placement", "plan"), details = """{"answered":["level"]}""") }
@@ -173,6 +173,10 @@ class GoalSetupFlowTest {
         rule.onNodeWithContentDescription("Step", substring = true).assertDoesNotExist()
     }
 
+    @Test
+    fun aPlacementQuestionsBackLeavesTheSetupWithoutStepsBackOrStartOver() {
+        api.setup = { setupView(listOf("placement", "plan"), details = """{"answered":["purpose"]}""") }
+        api.placement = placementOf(next = trueFalseQuestion())
         show()
         rule.onNodeWithContentDescription("Back").assertIsDisplayed()
 
@@ -253,6 +257,76 @@ class GoalSetupFlowTest {
         restoration.emulateSavedInstanceStateRestore()
         rule.mainClock.advanceTimeBy(1_000)
         rule.onNodeWithContentDescription("Time a day, 45\u00A0min").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun aGoalTypedWithAnotherSaysHowTheDayIsShared() {
+        api.setup = { setupView(listOf("schedule", "plan"), goalIds = listOf(GOAL_ID, EXAM_GOAL_ID)) }
+        api.advice = { adviceOf(null, LocalDate(2027, 3, 15), targetDate = null) }
+        show()
+
+        rule
+            .onNodeWithText("This goal gets 20\u00A0min a day and your other goal 10\u00A0min.", substring = true)
+            .performScrollTo()
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun aDayTooShortForTheGoalsTypedTogetherSaysTheLeastItTakes() {
+        api.setup = { setupView(listOf("schedule", "plan"), goalIds = listOf(GOAL_ID, EXAM_GOAL_ID)) }
+        api.refusal =
+            ApiException(
+                ApiError.Unavailable,
+                "DAY_TOO_SHORT",
+                status = 422,
+                details =
+                    buildJsonObject {
+                        put("goals", 2)
+                        put("minutes", 10)
+                    },
+            )
+        show()
+
+        rule.onNodeWithText("Continue").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Choose at least 10\u00A0min a day for your 2 goals.").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun continueWaitsForTheNewDaysTimeAndAfterAWhileSavesTheTimeShown() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { input -> coverOf(recommended = if (input.studyDays.orEmpty().size == 5) 45 else 50) }
+        api.coverGate = CompletableDeferred()
+        show()
+
+        rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.onNodeWithText("Continue").performScrollTo().assertIsNotEnabled()
+
+        rule.mainClock.advanceTimeBy(45_000)
+        rule.onNodeWithText("We couldn't work out the time your goal needs.").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Continue").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        assertEquals(45L, (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value).value.dailyMinutes)
+    }
+
+    @Test
+    fun oneTimeSearchGoesOutAtATimeAndTheLatestDaysAskNext() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { coverOf(recommended = 45) }
+        api.coverGate = CompletableDeferred()
+        show()
+
+        for (day in listOf("Friday", "Thursday", "Wednesday")) {
+            rule.onNodeWithContentDescription(day).performScrollTo().performClick()
+            rule.mainClock.advanceTimeBy(1_000)
+        }
+        api.coverGate?.complete(Unit)
+        rule.mainClock.advanceTimeBy(1_000)
+
+        assertEquals(listOf(5, 4, 2), api.coverAsks.map { it.studyDays.orEmpty().size })
     }
 
     @Test

@@ -39,6 +39,7 @@
   "onboarding_date_label": "753446bb6bc9baccedb47dd621c10f3a563c34bb6691b842e48bdf8201f00699",
   "onboarding_date_none": "c95c96c5656cd6c7a63230278d02cfe255a6ddfb29407881dd43ef5e48ee9f44",
   "onboarding_date_title": "c7fc37985846506e6ac0a9589f324595da48781c24509ffadeb6a2dab1ed10d0",
+  "onboarding_day_too_short": "5efcc947b5edc8c7f3186e3cd59a2f7947f7932bbe10f363676fcefa3bd9a920",
   "onboarding_days": "ca4a5780553711cc9bb6209dafc173716db3e96d7c65df9422c6ac7e6169cbb0",
   "onboarding_decide_later": "3f82144c0f43d6410656ebb9092260c3b119634464e355db74116716d2dccdff",
   "onboarding_declined_description": "f556c3b354ecca0f6591bfe861e27ba520cb2a7dda9c2c9bfd28448394dd690b",
@@ -273,9 +274,9 @@
   "onboarding_reveal_notice_day_guide": "19bd7bb2c62aa22931ca31983c2f5896519503d7cffeae865683c7a235fe07a5",
   "onboarding_reveal_notice_day_notice": "736887ec3d8d2b45b09eb79fbf3802d3f75dea4eba01e0eb2036345b87757852",
   "onboarding_reveal_notice_subjects": "b6a08fd03efd41e140a41878e6c68f8ca89dab1d44f04739ed90da28f6bc3139",
-  "onboarding_reveal_phase_day": "b92196204586c61fdead23f8549ef7915bae5233d59d4a1c96a9f0c6c860d591",
   "onboarding_reveal_pace_covers": "7a57b33acc6217270e346e4643aa80887b41e475c7165bde9ffeef5c3ebaaf7a",
   "onboarding_reveal_pace_time": "87d8012fe3a253179c4a952e13db4081c18b631baf3b2f660630c2383db8dcfd",
+  "onboarding_reveal_phase_day": "b92196204586c61fdead23f8549ef7915bae5233d59d4a1c96a9f0c6c860d591",
   "onboarding_reveal_phase_final_stretch": "98e6d5042e0581e3de84502464ca17996b609a0f3b2b628ac0a26cb18e14d840",
   "onboarding_reveal_phase_foundations": "54b1c96ea373ed651f38b38f22d2564a308dd5964b4b935a6961dd23f2d52780",
   "onboarding_reveal_phase_full_review": "0de6db158adcbadcfa3df4633e579ad529d77e3a93c929203f3e51eeb11868af",
@@ -367,6 +368,8 @@
   "onboarding_schedule_close": "551772b99c6b48b60c5bbf5993c4b0cb7e40384e2c0ea2f71cb5dcf9463017b2",
   "onboarding_schedule_covers_exam_all": "e9600b51d8d23b3949c077687369c24136cd836d0f60141cb896aa6bce234ad9",
   "onboarding_schedule_covers_goal_all": "423cc9b1b32e1ed01146b142e76416e65b53ba3e252407cf0e7ba7f7220aa009",
+  "onboarding_schedule_days_close": "5b806fa2ec2e4a4f822bfa2cd0b8add0dbce0fa62fd4604a3723d31d1c6271d1",
+  "onboarding_schedule_days_too_close": "985cead1d9a7c128b37e1561f54e96facd9e763a25b36072975d69c4e4d71ea7",
   "onboarding_schedule_find_failed": "9cef5f764e76b4f055d01e464d19b6d9900d7e7f89501e5900906c93f917a9a5",
   "onboarding_schedule_no_days": "3549777c2338fa21fa6b510c1510f6258a08cd65100995233d33a48c48b410ef",
   "onboarding_schedule_offer_every_topic": "2221ae84d173c49293f177704b6b04009900b289864306b9f4711823aad20bbd",
@@ -377,6 +380,8 @@
   "onboarding_schedule_reaches_goal": "603afb756742196038d20ef1a2c034eb7ba110f7d716aee8dd068c540ab6ebe5",
   "onboarding_schedule_share_exam": "1246de4e191b87a20850d90ce589c16e2d2099476e17ca94b67020b961845e8e",
   "onboarding_schedule_share_goal": "7c59709d40cb008c3b31ed5fdae7fbd325d4ff7e954a0fd069dd02743639e666",
+  "onboarding_schedule_split_many": "3d31d1b1dfbff588667cdb3dc0e54cc71e3c89e535924abd680bd6990a904206",
+  "onboarding_schedule_split_one": "689d8b3620f75791cc4700df16c8a7075e8351a7a608a3c057ca08610d335a90",
   "onboarding_schedule_suggested": "38fe57691d2c01051c14ee4c69d55cdc02cd934a018b1d752ed16fa015973387",
   "onboarding_schedule_takes_exam_all": "2605dcde59a8843efe73f0442bcb7cb66f41c7c80c416928e663a9758c7f1d70",
   "onboarding_schedule_takes_goal_all": "8db50ca37cafbe5627a4301fa3055aaac5a26620416da67f4598e42c255b33c9",
@@ -468,6 +473,11 @@
     <string name="onboarding_error_could_not_read">Wir konnten dein Ziel nicht lesen. Versuch es gleich noch einmal.</string>
     <string name="onboarding_error_could_not_save">Wir konnten dein Ziel nicht speichern. Versuch es gleich noch einmal.</string>
     <string name="onboarding_save_failed">Wir konnten das nicht speichern. Versuch es noch einmal.</string>
+    <!-- When the time a day is too short for every goal typed together. %1$s is a time, such as "20 min"; %2$d is how many goals. -->
+    <plurals name="onboarding_day_too_short">
+        <item quantity="one">Wähl mindestens %1$s pro Tag für %2$d Ziel.</item>
+        <item quantity="other">Wähl mindestens %1$s pro Tag für %2$d Ziele.</item>
+    </plurals>
     <!-- Plus notice before typing, for a free learner who already follows a goal. -->
     <string name="onboarding_plus_more_goals">Mehr Ziele gleichzeitig mit Plus</string>
     <string name="onboarding_plus_more_goals_up_front">Mit dem Free-Tarif kannst du ein Ziel auf einmal verfolgen. Um ein weiteres zu starten, pausiere dein aktuelles Ziel im Menü deines Plans. Kurze Fragen kannst du jederzeit stellen.</string>
@@ -724,6 +734,10 @@
     <string name="onboarding_reveal_until_about">Bis etwa %1$s</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_daily">%1$s pro Tag</string>
+    <!-- Under a plan without a date that holds every part of a learn goal. -->
+    <string name="onboarding_reveal_pace_covers">Dein Plan deckt dein ganzes Ziel ab. Wenn du früher fertig werden möchtest, erhöhe deine tägliche Lernzeit. Oder wähl ein Datum, dann plant er das Wichtigste bis dahin ein.</string>
+    <!-- Under a plan without a date that stops before every part of a learn goal. -->
+    <string name="onboarding_reveal_pace_time">Deine tägliche Lernzeit bestimmt, wie weit dein Plan reicht. Wenn du mehr schaffen oder früher fertig werden möchtest, erhöhe deine tägliche Lernzeit. Oder wähl ein Datum, dann plant er das Wichtigste bis dahin ein.</string>
     <!-- The study time a plan adds up to. %1$s is a duration, such as "12 hr". -->
     <string name="onboarding_reveal_study">etwa %1$s Lernzeit</string>
     <string name="onboarding_reveal_start">Starten</string>
@@ -734,10 +748,6 @@
     <plurals name="onboarding_reveal_more_chapters">
         <item quantity="one">%d weitere Kapitel</item>
         <item quantity="other">%d weitere Kapitel</item>
-    <!-- Under a plan without a date that holds every part of a learn goal. -->
-    <string name="onboarding_reveal_pace_covers">Dein Plan deckt dein ganzes Ziel ab. Wenn du früher fertig werden möchtest, erhöhe deine tägliche Lernzeit. Oder wähl ein Datum, dann plant er das Wichtigste bis dahin ein.</string>
-    <!-- Under a plan without a date that stops before every part of a learn goal. -->
-    <string name="onboarding_reveal_pace_time">Deine tägliche Lernzeit bestimmt, wie weit dein Plan reicht. Wenn du mehr schaffen oder früher fertig werden möchtest, erhöhe deine tägliche Lernzeit. Oder wähl ein Datum, dann plant er das Wichtigste bis dahin ein.</string>
     </plurals>
     <plurals name="onboarding_reveal_known_skills">
         <item quantity="one">%d Fähigkeit, die du schon beherrschst</item>
@@ -976,6 +986,13 @@
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_close">Dein Zieldatum ist nah: Um alles gründlich zu lernen, brauchst du %1$s pro Tag.</string>
     <string name="onboarding_schedule_too_close">Dein Zieldatum ist zu nah, um alles gründlich zu lernen.</string>
+    <!-- %1$s is a time, such as "1 hr 30 min". -->
+    <string name="onboarding_schedule_days_close">Um bis zu deinem Datum alles gründlich abzudecken, brauchst du an deinen gewählten Tagen täglich %1$s. Mehr Lerntage senken das.</string>
+    <string name="onboarding_schedule_days_too_close">Deine gewählten Tage reichen nicht, um bis zu deinem Datum alles gründlich abzudecken. Mehr Lerntage würden helfen.</string>
+    <!-- After the line about the time a day, when two goals were typed together. %1$s is this goal's time, %2$s the other goal's, such as "20 min". -->
+    <string name="onboarding_schedule_split_one">Dieses Ziel bekommt %1$s am Tag, dein anderes Ziel %2$s.</string>
+    <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
+    <string name="onboarding_schedule_split_many">Dieses Ziel bekommt %1$s am Tag, deine anderen Ziele zusammen %2$s.</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_takes_exam_all">So viel brauchst du, um alle Prüfungsthemen bis %1$s zu lernen.</string>
     <!-- %1$s is a date, such as "November 8". -->

@@ -141,10 +141,11 @@ class ScheduleRulesTest {
     @Test
     fun aTooCloseDateIsSaidOnlyWhenNoSensibleTimeCoversEverything() {
         val short = TimeLine.Share(0.15)
-        assertNull(tooClose(found(), short))
-        assertNull(tooClose(pastDate, short))
-        assertEquals(TooClose(900), tooClose(tooClose, short))
-        assertNull(tooClose(tooClose, TimeLine.Everything(suggested = false)))
+        assertNull(tooClose(found(), short, studiesEveryDay = true))
+        assertNull(tooClose(pastDate, short, studiesEveryDay = true))
+        assertEquals(TooClose(900, TooClose.Cause.Date), tooClose(tooClose, short, studiesEveryDay = true))
+        assertEquals(TooClose(900, TooClose.Cause.Days), tooClose(tooClose, short, studiesEveryDay = false))
+        assertNull(tooClose(tooClose, TimeLine.Everything(suggested = false), studiesEveryDay = true))
     }
 
     @Test
@@ -153,6 +154,25 @@ class ScheduleRulesTest {
         assertNull(offer(found(), short, 35))
         assertEquals(PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERYTHING, 35), offer(found(), short, 15))
         assertNull(offer(found(recommended = 900, core = 240), TimeLine.Everything(suggested = false), 900))
+    }
+
+    @Test
+    fun theDaysTimeIsSharedWithTheMainGoalWeighingAsTwoOthers() {
+        assertEquals(listOf(40, 20), splitDailyBudget(60, 2))
+        assertEquals(listOf(30, 15, 15), splitDailyBudget(60, 3))
+        assertEquals(listOf(5, 5, 5), splitDailyBudget(10, 3))
+        assertEquals(DaySplit(mine = 20, others = 1, rest = 40), daySplit(60, GoalsTogether(count = 2, place = 1)))
+        assertEquals(DaySplit(mine = 30, others = 2, rest = 30), daySplit(60, GoalsTogether(count = 3, place = 0)))
+        assertNull(daySplit(60, GoalsTogether(count = 1, place = 0)))
+    }
+
+    @Test
+    fun continueWaitsForTheNewDaysSuggestionOnlyWhileTheTimeFollowsOne() {
+        assertTrue(waitsForSuggestion(failed = false, first = found(), found = null, picked = null))
+        assertFalse(waitsForSuggestion(failed = true, first = found(), found = null, picked = null))
+        assertFalse(waitsForSuggestion(failed = false, first = found(), found = found(), picked = null))
+        assertFalse(waitsForSuggestion(failed = false, first = found(), found = null, picked = 30))
+        assertFalse(waitsForSuggestion(failed = false, first = tooClose, found = null, picked = null))
     }
 
     @Test

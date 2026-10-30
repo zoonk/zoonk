@@ -11,6 +11,7 @@ import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
@@ -37,7 +38,6 @@ internal val QUESTION_SCREENS =
         OnboardingStep.PLACEMENT,
     )
 
-@Serializable
 internal data class SetupProgress(
     val answered: Int,
     val total: Int,
@@ -55,6 +55,7 @@ internal fun setupProgress(
 
 private fun countsAsQuestion(step: OnboardingStep) = step in QUESTION_SCREENS && step != OnboardingStep.PLACEMENT
 
+@Serializable
 data class SetupFlow(
     val goalId: String,
     val current: OnboardingStep? = null,
@@ -77,6 +78,9 @@ internal class GoalSetupViewModel(
         private set
 
     var saveFailed by mutableStateOf(false)
+        private set
+
+    var dayTooShort by mutableStateOf<Refusal.DayTooShort?>(null)
         private set
 
     var isStartingOver by mutableStateOf(false)
@@ -124,6 +128,7 @@ internal class GoalSetupViewModel(
         if (isSaving) return
         isSaving = true
         saveFailed = false
+        dayTooShort = null
         val answeredGoal = goalId
         viewModelScope.launch {
             when (val outcome = store.answer(goalId, input)) {
@@ -136,6 +141,7 @@ internal class GoalSetupViewModel(
 
                 else -> {
                     saveFailed = true
+                    dayTooShort = (outcome as? WriteOutcome.Refused)?.refusal as? Refusal.DayTooShort
                 }
             }
             isSaving = false

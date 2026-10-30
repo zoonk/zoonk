@@ -80,6 +80,7 @@ internal fun ColumnScope.ScheduleStep(
     vm: GoalSetupViewModel,
     pending: Boolean,
     factsBeside: Boolean,
+    together: GoalsTogether,
 ) {
     val exam = goal.kind == Goal.Kind.EXAM
     var picked by rememberSaveable { mutableStateOf<Int?>(null) }
@@ -146,11 +147,12 @@ internal fun ColumnScope.ScheduleStep(
             ?.takeIf { dated }
             ?.let { ShownDate(it, shownFound.targetDateNamedMonth) }
     val pick = { next: Int -> picked = pickedMinutes(first, shownFound, next) }
+    val stale = hasDays && waitsForSuggestion(findFailed, first, found, picked)
 
     StepForm(
         title = stringResource(R.string.onboarding_schedule_title),
         canContinue = hasDays && minutes != null,
-        pending = pending,
+        pending = pending || stale,
         onContinue = {
             val time = minutes ?: return@StepForm
             vm.answer(
@@ -173,7 +175,7 @@ internal fun ColumnScope.ScheduleStep(
             DailyTimePicker(
                 minutes = minutes,
                 suggested = suggestedMinutes(found),
-                stale = picked == null && dated && found == null && !findFailed && lastFound != null,
+                stale = stale,
                 onChange = pick,
             )
             ScheduleLine(
@@ -182,8 +184,9 @@ internal fun ColumnScope.ScheduleStep(
                 line = line,
                 minutes = minutes,
                 offer = offer(found, line, minutes),
-                tooClose = tooClose(found, line),
-                onRetry = if (findFailed) covering.poll::restart else timeAdvice.poll::restart,
+                tooClose = tooClose(found, line, studiesEveryDay = days.size == EVERY_DAY.size),
+                split = daySplit(minutes, together).takeIf { hasDays },
+                onRetry = if (findFailed) covering.restart else timeAdvice.restart,
                 onUseOffer = { picked = pickedMinutes(first, found, it) },
             )
         }
@@ -294,12 +297,14 @@ private fun ScheduleLine(
     minutes: Int?,
     offer: PlanTimeToCoverSuggested?,
     tooClose: TooClose?,
+    split: DaySplit?,
     onRetry: () -> Unit,
     onUseOffer: (Int) -> Unit,
 ) {
     val failed = line is TimeLine.AskFailed || line is TimeLine.FindFailed
     val words = lineWords(date, exam, line, minutes)
     val close = tooClose?.let { tooCloseWords(it) }
+    val shared = split?.let { splitWords(it) }
     val locale = currentLocale()
 
     Column(Modifier.heightIn(min = 48.dp).semantics { liveRegion = LiveRegionMode.Polite }) {
@@ -307,6 +312,7 @@ private fun ScheduleLine(
             buildAnnotatedString {
                 close?.let { append("$it ") }
                 append(words)
+                shared?.let { append(" $it") }
             },
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
@@ -332,10 +338,26 @@ private fun ScheduleLine(
 }
 
 @Composable
-private fun tooCloseWords(tooClose: TooClose): String =
-    tooClose.recommendedMinutes?.let {
-        stringResource(R.string.onboarding_schedule_close, formatMinutes(it, currentLocale()))
-    } ?: stringResource(R.string.onboarding_schedule_too_close)
+private fun tooCloseWords(tooClose: TooClose): String {
+    val time = tooClose.recommendedMinutes?.let { formatMinutes(it, currentLocale()) }
+    return when (tooClose.cause) {
+        TooClose.Cause.Date -> {
+            time?.let { stringResource(R.string.onboarding_schedule_close, it) } ?: stringResource(R.string.onboarding_schedule_too_close)
+        }
+
+        TooClose.Cause.Days -> {
+            time?.let { stringResource(R.string.onboarding_schedule_days_close, it) }
+                ?: stringResource(R.string.onboarding_schedule_days_too_close)
+        }
+    }
+}
+
+@Composable
+private fun splitWords(split: DaySplit): String {
+    val locale = currentLocale()
+    val words = if (split.others == 1) R.string.onboarding_schedule_split_one else R.string.onboarding_schedule_split_many
+    return stringResource(words, formatMinutes(split.mine, locale), formatMinutes(split.rest, locale))
+}
 
 @Composable
 private fun lineWords(

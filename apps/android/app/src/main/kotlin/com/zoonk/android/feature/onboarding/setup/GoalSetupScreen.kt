@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -50,6 +51,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -60,6 +62,8 @@ import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.api.models.Goal
@@ -166,7 +170,7 @@ fun GoalSetupScreen(
                     SetupColumn {
                         if (vm.saveFailed) {
                             Text(
-                                stringResource(R.string.onboarding_save_failed),
+                                vm.dayTooShort?.let { dayTooShortWords(it) } ?: stringResource(R.string.onboarding_save_failed),
                                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                                 color = MaterialTheme.colorScheme.error,
                                 style = MaterialTheme.typography.bodyMedium,
@@ -275,7 +279,16 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.SCHEDULE -> {
-            ScheduleStep(view.goal, view.recommendedMinutes.toInt(), run, store, vm, pending, factsBeside = asideBeside)
+            ScheduleStep(
+                view.goal,
+                view.recommendedMinutes.toInt(),
+                run,
+                store,
+                vm,
+                pending,
+                factsBeside = asideBeside,
+                together = GoalsTogether(view.goalIds.size, view.goalIds.indexOf(view.goal.id).coerceAtLeast(0)),
+            )
         }
 
         OnboardingStep.BUDDY -> {
@@ -445,3 +458,7 @@ private fun Map<String, kotlinx.serialization.json.JsonElement>.texts(key: Strin
 private const val DONE_ALPHA = 0.25f
 
 private val STEP_DOTS_WIDTH = 96.dp
+
+@Composable
+private fun dayTooShortWords(short: Refusal.DayTooShort): String =
+    pluralStringResource(R.plurals.onboarding_day_too_short, short.goals, formatMinutes(short.minutes, currentLocale()), short.goals)
