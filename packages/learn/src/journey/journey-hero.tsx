@@ -20,6 +20,7 @@ import { ListGroup } from "../_components/list-group";
 import { useFormatGoalProgress, useFormatShare } from "../_utils/percent";
 import { getLeadingSkill } from "../language/_utils/level-scale";
 import { useSkillName } from "../language/_utils/use-skill-name";
+import { type CallStartOutcome } from "../language/conversation/use-call-start";
 import { SpeakingPracticeRow } from "../language/exam-speaking/speaking-practice-screen";
 import { CanDoList } from "../language/progress/can-do-list";
 import { LevelValue } from "../language/progress/level-value";
@@ -43,7 +44,7 @@ export type JourneyStanding =
       kind: "language";
       language: LanguageProgressView;
       speakingHref: string;
-      startSpeakingMock: () => Promise<boolean>;
+      startSpeakingMock: () => Promise<CallStartOutcome>;
     };
 
 function WeekGain({ gain }: { gain: number }) {

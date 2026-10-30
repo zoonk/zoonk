@@ -15,7 +15,11 @@ export type LanguageConversationRequest =
 
 type CallLimit = Extract<ConversationConnection, { status: "limit" }>["limit"];
 
-type StartedLanguageConversation = { conversationId: string } | { limit: CallLimit } | null;
+type StartedLanguageConversation =
+  | { conversationId: string }
+  | { limit: CallLimit }
+  | "paused"
+  | null;
 
 export async function startLanguageConversationAction(
   request: LanguageConversationRequest,
@@ -35,6 +39,10 @@ export async function startLanguageConversationAction(
 
   if (data.status === "limitReached") {
     return { limit: { period: data.limit.period, tier: data.limit.tier } };
+  }
+
+  if (data.status === "callsPaused") {
+    return "paused";
   }
 
   if (data.status !== "ready") {

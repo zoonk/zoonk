@@ -28,7 +28,7 @@ import { useFormatDuration } from "../../_utils/time-format";
 import { GenerationWait } from "../../generation/generation-wait";
 import { CallLimitMessage } from "../conversation/call-limit-message";
 import { CallOffMessage } from "../conversation/conversation-parts";
-import { useCallStart } from "../conversation/use-call-start";
+import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 
 type LengthChoice = { locked: boolean; minutes: number };
 
@@ -81,25 +81,31 @@ function MinuteChips({
   );
 }
 
+function CallsPausedMessage({ className }: { className: string }) {
+  const t = useExtracted();
+
+  return (
+    <CallOffMessage className={className} title={t("Calls are paused")}>
+      <p className="text-muted-foreground text-sm text-pretty">
+        {t("It's the same for everyone right now. Try again later.")}
+      </p>
+    </CallOffMessage>
+  );
+}
+
 function CallSetup({
   conversation,
   onStart,
 }: {
   conversation: LanguageUnitView["conversation"];
-  onStart: (minutes: number) => Promise<boolean>;
+  onStart: (minutes: number) => Promise<CallStartOutcome>;
 }) {
   const t = useExtracted();
   const [minutes, setMinutes] = useState(conversation.defaultMinutes);
   const call = useCallStart({ onStart: () => onStart(minutes), step: "writeCall" });
 
   if (conversation.paused) {
-    return (
-      <CallOffMessage className="py-4" title={t("Calls are paused")}>
-        <p className="text-muted-foreground text-sm text-pretty">
-          {t("It's the same for everyone right now. Try again later.")}
-        </p>
-      </CallOffMessage>
-    );
+    return <CallsPausedMessage className="py-4" />;
   }
 
   if (call.run) {
@@ -140,6 +146,7 @@ function CallSetup({
           {t("The call didn't start. Try again in a moment.")}
         </p>
       )}
+      {call.paused && <CallsPausedMessage className="py-0" />}
     </div>
   );
 }
@@ -152,7 +159,7 @@ export function PracticeCallSheet({
 }: {
   conversation: LanguageUnitView["conversation"];
   onOpenChange: (open: boolean) => void;
-  onStart: (minutes: number) => Promise<boolean>;
+  onStart: (minutes: number) => Promise<CallStartOutcome>;
   open: boolean;
 }) {
   const t = useExtracted();
@@ -161,7 +168,7 @@ export function PracticeCallSheet({
   const start = async (minutes: number) => {
     const started = await onStart(minutes);
 
-    if (started) {
+    if (started === true) {
       // The router preserves this page: returning opens a fresh setup, never its pending start.
       onOpenChange(false);
     }
@@ -198,7 +205,7 @@ export function PracticeConversation({
   onStart,
 }: {
   conversation: LanguageUnitView["conversation"];
-  onStart: (minutes: number) => Promise<boolean>;
+  onStart: (minutes: number) => Promise<CallStartOutcome>;
 }) {
   const t = useExtracted();
   const [open, setOpen] = useState(false);

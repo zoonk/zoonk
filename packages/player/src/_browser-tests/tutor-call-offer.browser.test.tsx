@@ -32,8 +32,13 @@ const OFFERED_CALL: CallOffer = {
   unitTitle: "Talking about your projects",
 };
 
-function renderOffer(offer: CallOffer) {
-  const startConversation = vi.fn<TutorCardActions["tools"]["startConversation"]>(async () => true);
+function renderOffer(
+  offer: CallOffer,
+  started: Awaited<ReturnType<TutorCardActions["tools"]["startConversation"]>> = true,
+) {
+  const startConversation = vi.fn<TutorCardActions["tools"]["startConversation"]>(
+    async () => started,
+  );
 
   const tools: TutorCardActions["tools"] = {
     hrefs: {
@@ -84,6 +89,32 @@ describe("the tutor's call offer", () => {
       .toStrictEqual([
         [{ chapterId: OFFERED_CALL.chapterId, goalId: OFFERED_CALL.goalId, minutes: 2 }],
       ]);
+  });
+
+  it("says calls are paused when the call it starts finds them paused, and starts it once they're back", async () => {
+    const startConversation = renderOffer(OFFERED_CALL, "paused");
+
+    await page.getByRole("button", { name: "Practice" }).click();
+    await page.getByRole("button", { name: "Start the call" }).click();
+
+    await expect.element(page.getByText("Calls are paused", { exact: true })).toBeVisible();
+
+    await expect
+      .element(page.getByText("It's the same for everyone right now. Try again later."))
+      .toBeVisible();
+
+    await expect
+      .element(page.getByText("The call didn't start. Try again in a moment."))
+      .not.toBeInTheDocument();
+
+    startConversation.mockResolvedValueOnce(true);
+    await page.getByRole("button", { name: "Start the call" }).click();
+
+    await expect
+      .element(page.getByRole("dialog", { name: "Practice a conversation" }))
+      .not.toBeInTheDocument();
+
+    expect(startConversation).toHaveBeenCalledTimes(2);
   });
 
   it("says calls are paused, with nothing to tap", async () => {

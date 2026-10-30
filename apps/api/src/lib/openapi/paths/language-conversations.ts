@@ -81,7 +81,7 @@ export const languageConversationPaths = {
         "503": {
           ...callUnavailableResponse,
           description:
-            "Exam speaking tasks and IELTS/TOEFL speaking mocks are refused before generation when calls are paused. Error code: CALLS_PAUSED.",
+            "Practice calls, exam speaking tasks and IELTS/TOEFL speaking mocks are refused before they're written when calls are paused. Error code: CALLS_PAUSED.",
         },
         ...readErrors,
       },

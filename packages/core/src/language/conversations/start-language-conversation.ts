@@ -53,7 +53,7 @@ async function startPractice({
 }: {
   input: Extract<LanguageConversationStartInput, { kind: "practice" }>;
   userId: string;
-}): Promise<StartedCall> {
+}): Promise<StartedCall | { status: "callsPaused" }> {
   const chapter = await prisma.chapter.findFirst({
     where: { ...libraryRowsVisibleTo(userId), id: input.chapterId },
   });
@@ -66,6 +66,10 @@ async function startPractice({
 
   if (!targetLanguage) {
     return { status: "notLanguage" };
+  }
+
+  if ((await readLiveCallAdmission({ transaction: prisma, userId })) === null) {
+    return { status: "callsPaused" };
   }
 
   await saveDayBeforeActivity({ goalId: input.goalId, language: targetLanguage, userId });

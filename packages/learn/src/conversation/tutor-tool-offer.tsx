@@ -11,6 +11,7 @@ import {
   TestOutStartStatus,
   useTestOutStart,
 } from "../_components/test-out-start-link";
+import { type CallStartOutcome } from "../language/conversation/use-call-start";
 import { PracticeCallSheet } from "../language/unit/practice-conversation";
 import { useMockEntryDescription } from "../mock/mock-entry";
 import {
@@ -23,7 +24,6 @@ import {
 } from "./tutor-feature-offers";
 import { OfferButton, OfferCard, OfferLink, OfferTile, usePracticeVerb } from "./tutor-offer-card";
 
-/** `startConversation` resolves to false when the call didn't start. */
 export type TutorToolActions = {
   hrefs: {
     chooseFocus: string;
@@ -41,7 +41,7 @@ export type TutorToolActions = {
     chapterId: string;
     goalId: string;
     minutes: number;
-  }) => Promise<boolean>;
+  }) => Promise<CallStartOutcome>;
   startTestOut: (input: { chapterId: string; goalId: string }) => Promise<TestOutStart>;
 };
 

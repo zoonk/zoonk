@@ -3,6 +3,7 @@
 import { type ExamResultInput } from "@zoonk/core/exams/results/contract";
 import { type ExamView } from "@zoonk/core/exams/view/contract";
 import { createContext, use } from "react";
+import { type CallStartOutcome } from "../language/conversation/use-call-start";
 import { type ExamTaskStart } from "../language/exam-speaking/speaking-paper-section";
 
 /** Each resolves to whether it went through. */
@@ -10,7 +11,7 @@ export type ExamActions = {
   report: (input: ExamResultInput) => Promise<boolean>;
   setDate: (isoDate: string) => Promise<boolean>;
   startExamTask: (task: string) => Promise<ExamTaskStart>;
-  startSpeakingMock: () => Promise<boolean>;
+  startSpeakingMock: () => Promise<CallStartOutcome>;
 };
 
 export type ExamHrefs = {

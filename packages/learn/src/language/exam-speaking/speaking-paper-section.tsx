@@ -22,10 +22,10 @@ import {
 import { PlusNotice } from "../../_components/plus-lock";
 import { GenerationWait } from "../../generation/generation-wait";
 import { CallLimitMessage } from "../conversation/call-limit-message";
-import { useCallStart } from "../conversation/use-call-start";
+import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 import { TaskRow, getTaskRowId } from "./speaking-task-row";
 
-export type ExamTaskStart = boolean | { limit: CallLimit };
+export type ExamTaskStart = CallStartOutcome | { limit: CallLimit };
 
 function useOpenTask(openTask: string | null) {
   useEffect(() => {
@@ -58,13 +58,12 @@ export function SpeakingPaperSection({
   const [startedTask, setStartedTask] = useState<string | null>(null);
   const [limit, setLimit] = useState<CallLimit | null>(null);
   const locked = paper.access === "plusRequired";
-  const paused = paper.access === "callsPaused";
 
   const call = useCallStart({
     onStart: async () => {
       const started = selected.current ? await onStart(selected.current) : false;
 
-      if (typeof started === "boolean") {
+      if (typeof started === "boolean" || started === "paused") {
         return started;
       }
 
@@ -74,6 +73,7 @@ export function SpeakingPaperSection({
     step: "writeTask",
   });
 
+  const paused = paper.access === "callsPaused";
   const busy = call.isStarting || call.run !== null;
   useOpenTask(openTask);
 
@@ -92,7 +92,7 @@ export function SpeakingPaperSection({
         </PlusNotice>
       )}
 
-      {paused && (
+      {(paused || call.paused) && (
         <NoticeCard>
           <PhoneOffIcon aria-hidden="true" />
           <NoticeCardContent>

@@ -6,16 +6,30 @@ import { type GenerationRun } from "../../generation/generation-run";
 /** A call written ahead starts well within this, so a slower start is a model writing it. */
 const WRITING_AFTER_MS = 1000;
 
+/** True once the call opens, false when it didn't start, `"paused"` when calls are paused for everyone. */
+export type CallStartOutcome = boolean | "paused";
+
 type CallStartState =
   | "failed"
   | "idle"
   | "opened"
+  | "paused"
   | "ready"
   | "starting"
   | "writeFailed"
   | "writing";
 
-function settle({ current, started }: { current: CallStartState; started: boolean }) {
+function settle({
+  current,
+  started,
+}: {
+  current: CallStartState;
+  started: CallStartOutcome;
+}): CallStartState {
+  if (started === "paused") {
+    return "paused";
+  }
+
   const wasWriting = current === "writing";
 
   if (started) {
@@ -49,8 +63,13 @@ function toRun({
   return null;
 }
 
-/** `onStart` resolves false when the call didn't start. */
-export function useCallStart({ onStart, step }: { onStart: () => Promise<boolean>; step: string }) {
+export function useCallStart({
+  onStart,
+  step,
+}: {
+  onStart: () => Promise<CallStartOutcome>;
+  step: string;
+}) {
   const [state, setState] = useState<CallStartState>("idle");
 
   // The router keeps the card's page while its call runs, so back on it that start is over; one
@@ -77,6 +96,7 @@ export function useCallStart({ onStart, step }: { onStart: () => Promise<boolean
   return {
     failed: state === "failed",
     isStarting: state === "starting" || state === "opened",
+    paused: state === "paused",
     run: toRun({ retry: () => void start(), state, step }),
     start: () => void start(),
   };

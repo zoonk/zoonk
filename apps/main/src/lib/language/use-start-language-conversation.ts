@@ -14,14 +14,16 @@ export function useOpenLanguageConversation({ from }: { from?: "exam" } = {}) {
   const router = useRouter();
 
   return useCallback(
-    async (request: LanguageConversationRequest): Promise<boolean | { limit: CallLimit }> => {
+    async (
+      request: LanguageConversationRequest,
+    ): Promise<boolean | "paused" | { limit: CallLimit }> => {
       const started = await startLanguageConversationAction(request);
 
       if (!started) {
         return false;
       }
 
-      if ("limit" in started) {
+      if (started === "paused" || "limit" in started) {
         return started;
       }
 
@@ -36,7 +38,10 @@ export function useStartLanguageConversation(options: { from?: "exam" } = {}) {
   const open = useOpenLanguageConversation(options);
 
   return useCallback(
-    async (request: LanguageConversationRequest) => (await open(request)) === true,
+    async (request: LanguageConversationRequest): Promise<boolean | "paused"> => {
+      const opened = await open(request);
+      return opened === "paused" ? opened : opened === true;
+    },
     [open],
   );
 }

@@ -12,6 +12,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { setupTestCalls } from "../../_test-utils/connect-test-call";
 import { mockSession } from "../../_test-utils/mock-session";
 import { startLanguageConversation } from "../../language/conversations/start-language-conversation";
 import { practiceMistakePattern } from "../../language/patterns/practice-mistake-pattern";
@@ -300,6 +301,7 @@ describe("an activity done from Today before the learner starts the day", () => 
   });
 
   it("saves a language goal's day when a practice call starts", async () => {
+    await setupTestCalls();
     const { goal, renting, user } = await languageGoalFixture();
     mockSession(user.id);
 

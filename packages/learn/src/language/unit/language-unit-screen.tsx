@@ -16,15 +16,15 @@ import { LessonSummaries } from "../../_components/lesson-summaries";
 import { ListGroup, ListRowIcon } from "../../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../../_components/page";
 import { type TestOutStart, TestOutStartRow } from "../../_components/test-out-start-link";
+import { type CallStartOutcome } from "../conversation/use-call-start";
 import { PracticeConversation } from "./practice-conversation";
 import { UnitBar, UnitHeader } from "./unit-header";
 import { UnitMistakes } from "./unit-mistakes";
 import { UnitPracticeRows } from "./unit-rows";
 import { UnitGrammarTips, UnitObjectives, UnitWords } from "./unit-sections";
 
-/** `startConversation` resolves to false when the call didn't start. */
 type LanguageUnitActions = {
-  startConversation: (minutes: number) => Promise<boolean>;
+  startConversation: (minutes: number) => Promise<CallStartOutcome>;
   startTestOut: () => Promise<TestOutStart>;
 };
 

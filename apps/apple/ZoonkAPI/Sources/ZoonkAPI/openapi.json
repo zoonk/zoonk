@@ -6279,7 +6279,7 @@
             }
           },
           "503": {
-            "description": "Exam speaking tasks and IELTS/TOEFL speaking mocks are refused before generation when calls are paused. Error code: CALLS_PAUSED.",
+            "description": "Practice calls, exam speaking tasks and IELTS/TOEFL speaking mocks are refused before they're written when calls are paused. Error code: CALLS_PAUSED.",
             "content": {
               "application/json": {
                 "schema": {

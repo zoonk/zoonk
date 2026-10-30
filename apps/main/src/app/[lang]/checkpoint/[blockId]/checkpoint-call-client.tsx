@@ -130,7 +130,7 @@ export function CheckpointCallClient({
   return (
     <CheckpointCallPreparing
       exitHref="/today"
-      onStart={() => startConversation({ blockId, kind: "checkpoint" })}
+      onStart={async () => (await startConversation({ blockId, kind: "checkpoint" })) === true}
       unitTitle={unitTitle}
     />
   );

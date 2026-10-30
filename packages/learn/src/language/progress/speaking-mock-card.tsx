@@ -13,7 +13,7 @@ import {
 } from "../../_components/notice-card";
 import { GenerationWait } from "../../generation/generation-wait";
 import { useSpeakingMockTitle } from "../conversation/conversation-labels";
-import { useCallStart } from "../conversation/use-call-start";
+import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 
 function useSpeakingMockDescription() {
   const t = useExtracted();
@@ -36,7 +36,7 @@ export function SpeakingMockCard({
   paused,
 }: {
   exam: SpeakingMockExam;
-  onStart: () => Promise<boolean>;
+  onStart: () => Promise<CallStartOutcome>;
   paused: boolean;
 }) {
   const t = useExtracted();
@@ -56,7 +56,7 @@ export function SpeakingMockCard({
         </div>
       </div>
 
-      {paused && (
+      {(paused || call.paused) && (
         <NoticeCard>
           <PhoneOffIcon aria-hidden="true" />
           <NoticeCardContent>

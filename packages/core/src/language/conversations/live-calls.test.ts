@@ -7,6 +7,7 @@ import {
   isLiveCallAvailable,
 } from "@zoonk/ai/tasks/language/live-call-session";
 import { prisma } from "@zoonk/db";
+import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
@@ -27,6 +28,7 @@ import { endLanguageConversationConnection } from "./end-language-conversation-c
 import { endLiveCall } from "./end-live-call";
 import { getLiveCallAdmission } from "./live-call-admission";
 import { redeemLiveCallSdp } from "./redeem-live-call-sdp";
+import { startLanguageConversation } from "./start-language-conversation";
 
 const DAY_MS = 86_400_000;
 const SECOND_MS = 1000;
@@ -723,6 +725,20 @@ describe("live calls", () => {
     });
 
     expect(hangUpLiveCallSession).not.toHaveBeenCalled();
+  });
+
+  it("refuses a practice call's start while calls are paused, before writing it", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    await setAdmission("off");
+
+    await expect(
+      startLanguageConversation({ chapterId: renting.id, kind: "practice", minutes: 2 }),
+    ).resolves.toStrictEqual({ status: "callsPaused" });
+
+    await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
+      0,
+    );
   });
 
   it("[4] reads admission fresh at Connect and at the SDP step", async () => {
