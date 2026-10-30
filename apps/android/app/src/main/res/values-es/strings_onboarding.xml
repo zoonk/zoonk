@@ -274,6 +274,8 @@
   "onboarding_reveal_notice_day_notice": "63447362728df2076fa9eeede175ba6b590b4243d6c220bd8fb685c7bbb28f7d",
   "onboarding_reveal_notice_subjects": "e559280a5b6ea92eee6947e34a7da80213c892f84f22eadd9245ccf0f395d4e2",
   "onboarding_reveal_phase_day": "4daec726e92883c53c51cdcaca26e0a3e188342e97badb8f14130d51b0ab5067",
+  "onboarding_reveal_pace_covers": "2dc252f06130648d27bd385ca94b5092031d98f5d114798b4b1c4f5d2eb33a45",
+  "onboarding_reveal_pace_time": "d7233ef0e5c4d8e12b322e029ae8d3437c299877aa0f7e2e34aee3839ca6ecf1",
   "onboarding_reveal_phase_final_stretch": "23947777f093adece55ba701cb07780f4542abd949170c61dc41e3858f66662a",
   "onboarding_reveal_phase_foundations": "c471c02c7259acd11f2c18343d0cde3af690f938011700669fe3e58e3b179cb6",
   "onboarding_reveal_phase_full_review": "106240916d552537ebdf4c0960bb4cfae0e990e9233b09e7a9637ef3532da8ca",
@@ -739,6 +741,10 @@
         <item quantity="one">%d capítulo más</item>
         <item quantity="many">%d capítulos más</item>
         <item quantity="other">%d capítulos más</item>
+    <!-- Under a plan without a date that holds every part of a learn goal. -->
+    <string name="onboarding_reveal_pace_covers">Tu plan cubre todas las partes de tu objetivo. Para terminar antes, dedícale más tiempo al día o elige una fecha y el plan ajustará lo más importante al tiempo disponible.</string>
+    <!-- Under a plan without a date that stops before every part of a learn goal. -->
+    <string name="onboarding_reveal_pace_time">El tiempo que dedicas al día determina hasta dónde llega tu plan. Para avanzar más o terminar antes, dedícale más tiempo al día o elige una fecha y el plan ajustará lo más importante al tiempo disponible.</string>
     </plurals>
     <plurals name="onboarding_reveal_known_skills">
         <item quantity="one">%d habilidad que ya conoces</item>

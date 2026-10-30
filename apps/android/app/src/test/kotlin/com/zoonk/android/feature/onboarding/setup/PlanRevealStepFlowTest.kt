@@ -29,6 +29,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.Goal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -37,6 +38,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import java.time.LocalDate
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
@@ -50,6 +52,7 @@ class PlanRevealStepFlowTest {
     private fun show(
         isGuest: Boolean = false,
         run: GenerationRun = GenerationRun(status = GenerationRun.Status.Following),
+        goal: Goal = examGoal(),
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val store = OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
@@ -57,7 +60,7 @@ class PlanRevealStepFlowTest {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    PlanRevealStep(examGoal(), isGuest, libraryCourse = null, run, onRetryRun = null, store, navigator)
+                    PlanRevealStep(goal, isGuest, libraryCourse = null, run, onRetryRun = null, store, navigator)
                 }
             }
         }
@@ -77,6 +80,31 @@ class PlanRevealStepFlowTest {
         rule.onNodeWithText("Start").performScrollTo().performClick()
 
         assertEquals(AppRoute.Today, navigator.currentRoute)
+    }
+
+    @Test
+    fun aLearnGoalWithoutADateThatHoldsEveryPartSaysMoreTimeOrADateFinishesSooner() {
+        api.plan =
+            planOf(targetDate = null, endDate = LocalDate.now().plusDays(400), feasibility = feasibilityOf(measure = "goal", fits = true))
+        show(goal = learnGoalWithoutDate())
+
+        rule
+            .onNodeWithText(
+                "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits " +
+                    "what matters most by then.",
+            ).assertIsDisplayed()
+    }
+
+    @Test
+    fun aLearnGoalWithoutADateThatStopsShortSaysTheTimeSetsHowFarItGoes() {
+        api.plan = planOf(targetDate = null, endDate = LocalDate.now().plusDays(3_650), feasibility = feasibilityOf(measure = "goal"))
+        show(goal = learnGoalWithoutDate())
+
+        rule
+            .onNodeWithText(
+                "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a " +
+                    "date and it fits what matters most by then.",
+            ).assertIsDisplayed()
     }
 
     @Test
@@ -123,6 +151,8 @@ class PlanRevealStepFlowTest {
         rule.onNodeWithText("Reading the exam's official documents").assertIsDisplayed()
         rule.onNodeWithContentDescription("Reading the official documents").assertIsDisplayed()
     }
+
+    private fun learnGoalWithoutDate() = examGoal().copy(kind = Goal.Kind.LEARN, targetDate = null)
 
     private companion object {
         const val POLL_MILLIS = 3_500L

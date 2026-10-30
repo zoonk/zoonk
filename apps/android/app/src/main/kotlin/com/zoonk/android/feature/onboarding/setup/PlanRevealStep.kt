@@ -181,6 +181,7 @@ private fun RevealBody(
         SuccessEyebrow(stringResource(R.string.onboarding_reveal_created))
         Text(goal.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
         FactsLine(plan.revealFacts(today))
+        PaceLine(plan, goal.kind)
         NoticeDayLine(plan)
     }
 
@@ -247,6 +248,31 @@ private fun FactsLine(facts: RevealFacts) {
         text = parts.joinToString(" · "),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
+    )
+}
+
+/**
+ * A learn goal without a date runs as long as its subject takes, so the reveal says what sets its end.
+ * Planning without a date stops at the longest plan there can be, so only a plan holding every part says so.
+ */
+@Composable
+private fun PaceLine(
+    plan: Plan,
+    kind: Goal.Kind,
+) {
+    if (kind != Goal.Kind.LEARN || plan.schedule.targetDate != null || plan.estimate.endDate == null) return
+    Text(
+        stringResource(
+            if (plan.feasibility?.fits ==
+                true
+            ) {
+                R.string.onboarding_reveal_pace_covers
+            } else {
+                R.string.onboarding_reveal_pace_time
+            },
+        ),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
     )
 }
 

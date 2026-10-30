@@ -308,6 +308,10 @@
     <string name="onboarding_reveal_start">Start</string>
     <string name="onboarding_reveal_adjust">Adjust</string>
     <string name="onboarding_reveal_save_note">Save your plan so it\'s here next time.</string>
+    <!-- Under a plan without a date that holds every part of a learn goal. -->
+    <string name="onboarding_reveal_pace_covers">Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
+    <!-- Under a plan without a date that stops before every part of a learn goal. -->
+    <string name="onboarding_reveal_pace_time">Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
     <string name="onboarding_reveal_phases">Phases</string>
     <string name="onboarding_reveal_chapters">Chapters</string>
     <plurals name="onboarding_reveal_more_chapters">
