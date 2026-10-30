@@ -3,7 +3,7 @@
 ## Voice and locale
 
 - Use Brazilian Portuguese (pt-BR) and informal “você”.
-- Prefer everyday speech: “a gente” for “we”, “te ajuda” for “helps you”, and no clitic object pronouns: “criar ela”, “ajustar ele”, “você usa”, not “criá-la”, “ajustá-lo”, “você a usa”.
+- Prefer everyday speech: “a gente” for “we”, “te ajuda” for “helps you”, and no third-person clitic pronouns: “criar ela”, “ajustar ele”, “você usa”, not “criá-la”, “ajustá-lo”, “você a usa”.
 - “Zoonk”, “Plus” and “Zoonk Plus” always take the masculine article, at the start of a sentence too and joined to prepositions: “O Zoonk cria”, “Com o Zoonk”, “pelo Zoonk”, “os limites do Plus”. “Get Plus”: “assinar o Plus”, not “mudar para o Plus”.
 - Localize illustrative exam examples for Brazil: Enem, vestibular, concursos públicos, and prova da OAB. Write “Enem” even where the English says “ENEM”: “o Enem de novembro”.
 - Treat “Poder Mental” as a product name without an article in short labels and headings. Amounts take “de”: “+10 de Poder Mental”.
@@ -82,7 +82,7 @@
 - “Needs adjusting”: “Precisa de ajustes”
 - “Too tight”: “Apertado demais”
 - “Even across skills”: “Habilidades no mesmo nível”
-- “left out”: “ficar de fora”, not “pulado” or “ignorado”; “Out of your plan” and “Not in your plan” give no reason: “Fora do seu plano”
+- “left out”: “ficar de fora”, not “pulado” or “ignorado”
 - “skipped” (known through placement): “pulado”, not “ignorado”
 - “Daily time”: “Tempo diário”, not “Tempo por dia”
 

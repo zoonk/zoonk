@@ -65,7 +65,7 @@
 - “Even across skills”: “Igualado en todas las habilidades”
 - “left out”: “omitir”, not “saltar”; the learner's “Skip” and content “skipped” because a test showed it's known: “saltar” / “saltado”
 - “On pace” / “Keeping pace”: “Al día”, not “A buen ritmo”
-- “Daily time”: “Tiempo diario”; elsewhere the daily amount is “tiempo de estudio” or “duración”, never a bare “tiempo”, which reads as weather
+- “Daily time”: “Tiempo diario”
 
 ## Buddy names
 

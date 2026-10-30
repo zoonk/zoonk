@@ -24,7 +24,6 @@
 - “task” (a speaking exam's task): “tâche”, not “exercice”
 - “flagged” (a mock exam question to come back to): “marquée”, not “signalée”
 - “pattern” (a mistake that recurs): “erreur récurrente”; the stats section “Patterns”: “Tendances”
-- “Ask about this question” (to the buddy): “Demande à propos de cette question”, not “Pose une question sur cette question”
 - “mind map”: “carte mentale”
 - “topic”: “sujet”, not “thème”
 - “tap”: “appuie sur”, not “touche”
