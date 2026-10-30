@@ -255,16 +255,17 @@ class MathFlowTest {
     }
 
     @Test
-    fun areaModelMovingASplitKeepsTheSameTotal() {
+    fun areaModelTheTotalAChoiceAsksForWaitsForTheCheck() {
         play("areaModel", isCorrect = true)
 
-        described("Split into 4 parts: 200, 30, 80, 12. Together they make 322\u00A0m².")
+        described("Split into 4 parts: 200, 30, 80, 12.")
+        rule.onNode(hasContentDescription("Together they make", substring = true)).assertDoesNotExist()
         press(Key.DirectionLeft, 3, handle = slider("Split across the width"))
-        described("Split into 4 parts: 170, 60, 68, 24.")
         rule.onNodeWithText("322\u00A0m²").performScrollTo().performClick()
         harness.tap("Check")
 
         assertEquals(1, harness.api.checks.size)
+        described("Split into 4 parts: 170, 60, 68, 24. Together they make 322\u00A0m².")
     }
 
     @Test

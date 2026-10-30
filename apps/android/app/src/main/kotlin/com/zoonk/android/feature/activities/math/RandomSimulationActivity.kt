@@ -123,8 +123,9 @@ private fun RandomSimulationActivity(props: ActivityProps) {
 private fun revealCount(
     key: Long,
     total: Int,
+    instant: Boolean = false,
 ): Int {
-    val shown = remember(key) { Animatable(0f) }
+    val shown = remember(key) { Animatable(if (instant) total.toFloat() else 0f) }
     LaunchedEffect(key, total) { shown.animateTo(total.toFloat(), tween(REVEAL_MS, easing = LinearEasing)) }
     return shown.value.roundToInt()
 }
@@ -215,7 +216,7 @@ private fun ChanceSimulation(
             }
 
             fields.model is SharedBirthdayModel -> {
-                RunningShareChart(hits, runs, guess, guessLabel.orEmpty())
+                RunningShareChart(hits, runs, guess, guessLabel.orEmpty(), isGuessRight = props.isCorrect == true)
             }
 
             else -> {
@@ -305,10 +306,11 @@ private fun RunningShareChart(
     runs: Int,
     guess: Double?,
     guessLabel: String,
+    isGuessRight: Boolean,
 ) {
     val locale = currentLocale()
     val accent = MaterialTheme.zoonk.vizAccent
-    val wrong = MaterialTheme.colorScheme.error
+    val tone = if (isGuessRight) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error
     ActivityPlot(
         xDomain = 0.0..runs.toDouble(),
         yDomain = 0.0..1.0,
@@ -319,8 +321,8 @@ private fun RunningShareChart(
         area = CHART_AREA,
     ) {
         guess?.let {
-            line(listOf(0.0 to it, runs.toDouble() to it), wrong, width = 2.dp, dash = GUESS_DASH)
-            label(guessLabel, runs.toDouble(), it, wrong, lift = GUESS_LIFT, end = true)
+            line(listOf(0.0 to it, runs.toDouble() to it), tone, width = 2.dp, dash = GUESS_DASH)
+            label(guessLabel, runs.toDouble(), it, tone, lift = GUESS_LIFT, end = true)
         }
         line(runningShare(hits, LINE_POINTS), accent)
     }
@@ -345,7 +347,8 @@ private fun SamplingSimulation(
     val seedFor = { forSize: Int -> hashSeed("$seedText:$forSize") + runIndex }
     val results = remember(seedFor(size)) { simulateSamples(population, runs, seedFor(size), size) }
     val baseline = remember(seedFor(smallest)) { simulateSamples(population, runs, seedFor(smallest), smallest) }
-    val revealed = revealCount(seedFor(size), runs)
+    val openingSeed = remember { seedFor(size) }
+    val revealed = revealCount(seedFor(size), runs, instant = seedFor(size) == openingSeed)
     val shown = results.take(revealed)
     val done = shown.size == results.size
     val (from, to) = middleRange(results)
