@@ -38,6 +38,7 @@
     "./name-words": "./src/name-words.ts",
     "./markdown-links": "./src/markdown-links.ts",
     "./markdown-table": "./src/markdown-table.ts",
+    "./markdown-text": "./src/markdown-text.ts",
     "./number": "./src/number.ts",
     "./number-format-flaws": "./src/number-format-flaws.ts",
     "./once": "./src/once.ts",
@@ -62,8 +63,7 @@
     "./upload": "./src/upload.ts",
     "./uuid": "./src/uuid.ts",
     "./url": "./src/url.ts",
-    "./user-blobs": "./src/user-blobs.ts",
-    "./markdown-text": "./src/markdown-text.ts"
+    "./user-blobs": "./src/user-blobs.ts"
   },
   "scripts": {
     "test": "vitest run",

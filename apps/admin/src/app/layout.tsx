@@ -1,6 +1,6 @@
 import { SidebarStateScript } from "@zoonk/ui/components/sidebar";
 import { type Metadata } from "next";
-import "@zoonk/ui/globals.css";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: { default: "Zoonk Admin", template: "%s | Zoonk Admin" },
