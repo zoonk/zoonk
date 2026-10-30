@@ -168,58 +168,52 @@ describe("selected plan persistence", () => {
 
     await prisma.planItem.deleteMany({ where: { lessonId: lesson.id, planId: plan.id } });
 
+    const current = await loadPlanContext({ goal: context.goal, now: NOW });
+    expect(current).not.toBeNull();
+    const computed = await computePlan({ context: current!, mode: "automatic", now: NOW });
+    expect(computed.built.items.map((item) => item.lessonId)).toContain(lesson.id);
+
+    await expect(
+      holdBackLessonDraft({
+        lessonId: lesson.id,
+        model: "test",
+        problems: [{ problem: "The lesson cannot be played", screen: null }],
+        workflowRunId: runId,
+      }),
+    ).resolves.toMatchObject({ setAside: true });
+
+    const afterHold = await readSaved(plan.id);
+    expect(afterHold.version).toBe(current!.plan.version);
+    const firstSave = commitPlan({ change: null, computed, context: current! });
+    await expect(firstSave).rejects.toBeInstanceOf(PlanConflictError);
+
     let attempts = 0;
-    const held: unknown[] = [];
-    const conflicts: unknown[] = [];
-    const heldVersions: number[] = [];
-    const selectedBeforeHold: (string | null)[] = [];
-    const publications: number[] = [];
 
     const saving = withPlanRetry(async () => {
       attempts += 1;
-      const current = await loadPlanContext({ goal: context.goal, now: NOW });
-      expect(current).not.toBeNull();
-      const computed = await computePlan({ context: current!, mode: "automatic", now: NOW });
 
       if (attempts === 1) {
-        selectedBeforeHold.push(...computed.built.items.map((item) => item.lessonId));
-
-        held.push(
-          await holdBackLessonDraft({
-            lessonId: lesson.id,
-            model: "test",
-            problems: [{ problem: "The lesson cannot be played", screen: null }],
-            workflowRunId: runId,
-          }),
-        );
-
-        const afterHold = await readSaved(plan.id);
-        heldVersions.push(afterHold.version - current!.plan.version);
-      } else {
-        const published = await createItems({
-          format: "multipleChoice",
-          items: [generatedMultipleChoice()],
-          language: "en",
-          provenance: generatedProvenance(),
-          skillId: library.skills[1]!.id,
-        });
-
-        publications.push(published.created.length);
+        return firstSave;
       }
 
-      return commitPlan({ change: null, computed, context: current! }).catch((error: unknown) => {
-        conflicts.push(error);
-        throw error;
+      const fresh = await loadPlanContext({ goal: context.goal, now: NOW });
+      expect(fresh).not.toBeNull();
+      const replanned = await computePlan({ context: fresh!, mode: "automatic", now: NOW });
+
+      const published = await createItems({
+        format: "multipleChoice",
+        items: [generatedMultipleChoice()],
+        language: "en",
+        provenance: generatedProvenance(),
+        skillId: library.skills[1]!.id,
       });
+
+      expect(published.created).toHaveLength(1);
+      return commitPlan({ change: null, computed: replanned, context: fresh! });
     });
 
     await expect(saving).resolves.toBeNull();
     expect(attempts).toBe(2);
-    expect(publications).toStrictEqual([1]);
-    expect(held).toMatchObject([{ setAside: true }]);
-    expect(heldVersions).toStrictEqual([0]);
-    expect(selectedBeforeHold).toContain(lesson.id);
-    expect(conflicts).toStrictEqual([expect.any(PlanConflictError)]);
     const saved = await readSaved(plan.id);
 
     expect(

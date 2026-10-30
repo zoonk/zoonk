@@ -14,8 +14,14 @@ import { readBlueprintContent, saveExamBlueprint } from "./exams/save-exam-bluep
 import { setSkillsPrerequisites } from "./skills/create-skill";
 import { mergeSkillForAdmin } from "./skills/merge-skill";
 
-const WRITERS = ["prerequisites", "blueprint", "merge", "zone"] as const;
-type Writer = (typeof WRITERS)[number];
+const WRITERS = [
+  { inputVersion: 0, sourceVersion: 1, writer: "prerequisites" },
+  { inputVersion: 0, sourceVersion: 1, writer: "blueprint" },
+  { inputVersion: 1, sourceVersion: 1, writer: "merge" },
+  { inputVersion: 1, sourceVersion: 0, writer: "zone" },
+] as const;
+
+type Writer = (typeof WRITERS)[number]["writer"];
 
 async function dependentPlan({
   userId,
@@ -162,17 +168,14 @@ async function inputVersions(planIds: string[]) {
 
 describe("plan input writers", () => {
   it.each(WRITERS)(
-    "%s marks the complete affected union without touching unrelated plans",
-    async (writer) => {
+    "$writer marks the complete affected union without touching unrelated plans",
+    async ({ writer, inputVersion, sourceVersion }) => {
       const context = await fixture(writer);
       const unrelated = await dependentPlan({});
       await context.write();
 
       await expect(inputVersions(context.plans.map(({ id }) => id))).resolves.toStrictEqual(
-        context.plans.map(() => ({
-          inputVersion: Number(writer === "merge" || writer === "zone"),
-          sourceVersion: Number(writer !== "zone"),
-        })),
+        context.plans.map(() => ({ inputVersion, sourceVersion })),
       );
 
       await expect(inputVersions([unrelated.plan.id])).resolves.toStrictEqual([
@@ -181,36 +184,36 @@ describe("plan input writers", () => {
     },
   );
 
-  it.each(WRITERS)("%s waits for the plan before changing its domain inputs", async (writer) => {
-    const context = await fixture(writer);
-    const before = await context.read();
-    const held = Promise.withResolvers<number>();
-    const resume = Promise.withResolvers<null>();
+  it.each(WRITERS)(
+    "$writer waits for the plan before changing its domain inputs",
+    async ({ writer, inputVersion, sourceVersion }) => {
+      const context = await fixture(writer);
+      const before = await context.read();
+      const held = Promise.withResolvers<number>();
+      const resume = Promise.withResolvers<null>();
 
-    const holder = prisma.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT id FROM plans WHERE id = ${context.plans[0]!.id}::uuid FOR UPDATE`;
-      await context.lock(tx);
-      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
-      held.resolve(backend!.pid);
-      await resume.promise;
-    });
+      const holder = prisma.$transaction(async (tx) => {
+        await tx.$queryRaw`SELECT id FROM plans WHERE id = ${context.plans[0]!.id}::uuid FOR UPDATE`;
+        await context.lock(tx);
+        const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+        held.resolve(backend!.pid);
+        await resume.promise;
+      });
 
-    const pid = await held.promise;
-    const writing = context.write();
+      const pid = await held.promise;
+      const writing = context.write();
 
-    try {
-      await waitForBlockedStatement(pid, /FROM plans[\s\S]*FOR UPDATE/u);
-      await expect(context.read()).resolves.toStrictEqual(before);
-    } finally {
-      resume.resolve(null);
-      await Promise.all([holder, writing]);
-    }
+      try {
+        await waitForBlockedStatement(pid, /FROM plans[\s\S]*FOR UPDATE/u);
+        await expect(context.read()).resolves.toStrictEqual(before);
+      } finally {
+        resume.resolve(null);
+        await Promise.all([holder, writing]);
+      }
 
-    await expect(inputVersions(context.plans.map(({ id }) => id))).resolves.toStrictEqual(
-      context.plans.map(() => ({
-        inputVersion: Number(writer === "merge" || writer === "zone"),
-        sourceVersion: Number(writer !== "zone"),
-      })),
-    );
-  });
+      await expect(inputVersions(context.plans.map(({ id }) => id))).resolves.toStrictEqual(
+        context.plans.map(() => ({ inputVersion, sourceVersion })),
+      );
+    },
+  );
 });

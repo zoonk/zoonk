@@ -17,9 +17,28 @@ async function planFor(skillId: string) {
 }
 
 describe("a merge's inputs while it waits", () => {
-  it.each(["merge", "prerequisites"] as const)(
-    "rechecks newly arriving aliases and mastery before %s writes",
-    async (writer) => {
+  it.each([
+    {
+      marks: [
+        { inputVersion: 2, sourceVersion: 2 },
+        { inputVersion: 2, sourceVersion: 2 },
+        { inputVersion: 1, sourceVersion: 1 },
+        { inputVersion: 2, sourceVersion: 2 },
+      ],
+      writer: "merge",
+    },
+    {
+      marks: [
+        { inputVersion: 1, sourceVersion: 2 },
+        { inputVersion: 1, sourceVersion: 2 },
+        { inputVersion: 0, sourceVersion: 0 },
+        { inputVersion: 1, sourceVersion: 1 },
+      ],
+      writer: "prerequisites",
+    },
+  ] as const)(
+    "rechecks newly arriving aliases and mastery before $writer writes",
+    async ({ writer, marks }) => {
       const [incoming, duplicate, survivor, admin] = await Promise.all([
         skillFixture(),
         skillFixture(),
@@ -85,21 +104,10 @@ describe("a merge's inputs while it waits", () => {
       await expect(first).resolves.toMatchObject({ status: "merged" });
 
       await Promise.all(
-        [
-          { expected: 2, plan: incomingPlan.plan },
-          { expected: 2, plan: duplicatePlan.plan },
-          { expected: writer === "merge" ? 1 : 0, plan: survivorPlan.plan },
-          { expected: writer === "merge" ? 2 : 1, plan: masteryPlan.plan },
-        ].map(({ plan, expected }) =>
-          expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
-            inputVersion:
-              expected -
-              Number(
-                writer === "prerequisites" &&
-                  (plan.id === incomingPlan.plan.id || plan.id === duplicatePlan.plan.id),
-              ),
-            sourceVersion: expected,
-          }),
+        [incomingPlan, duplicatePlan, survivorPlan, masteryPlan].map(({ plan }, index) =>
+          expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject(
+            marks[index]!,
+          ),
         ),
       );
 

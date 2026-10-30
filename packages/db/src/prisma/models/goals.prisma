@@ -114,6 +114,7 @@ model Plan {
   estimateHours       Float?                 @map("estimate_hours")
   version             Int                    @default(1)
   inputVersion        Int                    @default(0) @map("input_version")
+  /// Marks a layout stale; never rejects plan writes.
   sourceVersion       Int                    @default(0) @map("source_version")
   /// Valid for the plan version it was posted with (see `readPlanSummary`); a legacy value reads as
   /// pending, never as a plan with no work.

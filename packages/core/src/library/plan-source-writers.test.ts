@@ -583,6 +583,7 @@ function holdShare({ id, table }: SourceRoot) {
 type WriterCase = {
   beforeRelease?: () => Promise<void>;
   expectWritten: () => Promise<void>;
+  inputMarks?: number;
   marks?: number;
   plan: Pick<Plan, "id" | "inputVersion" | "sourceVersion">;
   root: SourceRoot;
@@ -793,6 +794,7 @@ async function setAsideCase(): Promise<WriterCase> {
   return {
     expectWritten: () =>
       expect(readLesson(lesson.id)).resolves.toMatchObject({ setAsideAt: expect.any(Date) }),
+    inputMarks: 1,
     plan,
     root: lessonRoot(lesson.id),
     write: () => setAsidePublishedLesson({ lessonId: lesson.id, version: 1 }),
@@ -1565,12 +1567,11 @@ describe("plan source writers lock what plans read and mark them", () => {
     expect(Object.keys(WRITER_CASES).toSorted()).toStrictEqual(marking.toSorted());
   });
 
-  it.each(CASES)("$name ($file)", async ({ build, file }) => {
+  it.each(CASES)("$name ($file)", async ({ build }) => {
     const writer = await build();
 
     await expect(writeWhileRead(writer)).resolves.toStrictEqual({
-      inputVersion:
-        writer.plan.inputVersion + Number(file === "library/quality/published-lesson-check.ts"),
+      inputVersion: writer.plan.inputVersion + (writer.inputMarks ?? 0),
       sourceVersion: writer.plan.sourceVersion + (writer.marks ?? 1),
     });
   });
