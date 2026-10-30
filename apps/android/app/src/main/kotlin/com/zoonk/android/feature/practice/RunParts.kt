@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -274,7 +275,7 @@ internal fun ListeningSet(set: ItemSet) {
     }
 }
 
-/** A main action that shows it's working while its write is on its way. */
+/** A main action that shows it's working while its write is on its way; it keeps its colors then, as main's, so it doesn't read as unavailable. */
 @Composable
 internal fun BusyButton(
     label: String,
@@ -283,7 +284,16 @@ internal fun BusyButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier) { PendingLabel(busy, label) }
+    val colors =
+        if (busy) {
+            ButtonDefaults.buttonColors(
+                disabledContainerColor = MaterialTheme.colorScheme.primary,
+                disabledContentColor = MaterialTheme.colorScheme.onPrimary,
+            )
+        } else {
+            ButtonDefaults.buttonColors()
+        }
+    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier, colors = colors) { PendingLabel(busy, label) }
 }
 
 /** [onRetry] sends the same answer again: the only way to resend an "I don't know" or a time-up answer. */
