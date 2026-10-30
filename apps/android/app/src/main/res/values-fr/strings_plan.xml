@@ -87,7 +87,7 @@
   "plan_change_days_time": "c53ca987f086f18041622aa99cd61c47dcb252ea9d3df80b706d014c5e0613c7",
   "plan_change_easier": "52ac89bddb97adf87731d39f8a284657ada5ea155b512cd28acc92ca152f151f",
   "plan_change_ends_around_instead": "ddd615fd39e23a5e5182522946845510770608ef3c7f145a7def152aaa4830d0",
-  "plan_change_ends_around_instead_month": "19bf1b03065fd0cd3ddb43a125be77f21df412c44363305f12e77c0a4a136406",
+  "plan_change_ends_around_instead_month": "12d9db485020518256a278ca6a20f695ab3a138bf04a988fd2021bd5cf866711",
   "plan_change_ends_at_exam": "08c4a1dffc458b637ff8fc51485198bef4935584315f3273edbedbb8493e247e",
   "plan_change_ends_instead": "bcff5f8d6ded3fb6e7ae5824a6caeb8c578a2758de4efc5da10ddd4738605800",
   "plan_change_exam_choice": "ac8eaf0a0ad2a7add92553c3b1fce0d78f6665e30a823ba070efddaf538cf387",
@@ -257,10 +257,10 @@
   "plan_exam_day": "1fdffcf8860479fba0728177493c2be4678ef0478b33634178089611c225644a",
   "plan_eyebrow": "fed58a3aaacc96d95f7e31b9d29a82b3c3bf43a1750b7d79e3f5041dd64f7fdf",
   "plan_far_count_from": "bb2f846e6b09a02bfc8fd54b71de2793b981ab827ff37c0c9d10dc77cd903ee9",
-  "plan_far_count_from_month": "5909ee118db8274d2bedbfc54f1126f49fd3369bc10bf9dbd260986607a2be23",
+  "plan_far_count_from_month": "dfe9d7a2243bf91b48339900bd8ed08fd05fe3c32ba700bc967f9600efdf4d94",
   "plan_far_explain": "9f3d871adacb29288d9e96d6f301dcc6b3a9fe4a9c55e09b0f56ed79565d8e6a",
   "plan_far_from": "505f366fd4f0033f845ffac5642aecbdf0fc64cdd2f2a52140a27d799da1dd98",
-  "plan_far_from_month": "2422076d27481705a4c871e2f8b0c15728f07fbebccaeeec71ac2c98cecfb75b",
+  "plan_far_from_month": "ee876bf8d647b5b16b980b324c2631f5b388540028b5e66e40b722b2d0b9a47e",
   "plan_far_lessons": "5fb84652f74f2e58bae4576a43d209493b94d98f74b2b01e729187cccbc891ca",
   "plan_far_lessons_about": "7167b815ba130f2ab8222f5100ad6c08ccecf3cf219cbbb3f2b8dbc1bce76826",
   "plan_far_nothing_left": "80d31f782a481db74c66de816b678d76c6b52557d70cdabd4ae33dc4495dba10",
@@ -280,7 +280,7 @@
   "plan_finding": "ba9564e93256a9ccbe3a888a3251aacc27c163ef921881b4a2f6390f7a8c8239",
   "plan_finish": "18f52d5f22da4b32e02eee908802add75d530b4062c3ef825d74409418686ba8",
   "plan_finish_after_exam": "d9a48941d42f26162d47b18f9b980e573d31e5131307f1d1812d2ba9ad5ca1b1",
-  "plan_finish_after_exam_month": "f0ae870d9b1465ee59bb86829e92d965736011e911b65dda542d854641da55a2",
+  "plan_finish_after_exam_month": "fdb64124bbe28247f996f9af1f5f99877f62d7417cbf36639765367b2757088f",
   "plan_finish_around": "6cbac5be9c5f91d5c36c5c4ada9717fa8e1b457767dd7fc3b42f73912b1ff22a",
   "plan_finish_working": "54ef5b6905640c2e54525d064fff957e142cdba00eb7e7c77957562a7ac83c40",
   "plan_finished_title": "5a27731b2a98cc704618ed59a58ec7839869087bf8ad0d1b71cfc1548a865fe1",
@@ -296,7 +296,7 @@
   "plan_full_course_on_exam_unknown_end": "5c55956965bb24449266535bd03421af3048db93c88d71d5e8a7cb19d41af1da",
   "plan_full_course_rule_exam": "9f7c1b5b226cd886db7bbbf0cbb7a9d64d12113a53a7f288d607bb641d77bbe4",
   "plan_full_course_rule_goal": "22ffd7c3e9eae1ad37345f48a04edb9d211e4c1f04a4fdab22ab87e6874c7fbf",
-  "plan_full_course_rule_goal_month": "6618007673a044b2d46931436741be68d879fcd746c962fe82659c6b6c5f9eb1",
+  "plan_full_course_rule_goal_month": "ec946016750bee62a9c48b3a515e927686064634150655c832061407c56ed12a",
   "plan_full_course_switch": "ed1d9e8a6f56fe12bcebefac6c3ad3984e9f957606e1626a84c58c0e76edb85a",
   "plan_full_reviews": "3f1f9f97c2d332f640b50743a2a88f74223ef05823d0c5f2e7445ad7f458f26d",
   "plan_full_reviews_done": "19e30a4c22c114db6931b0b101553a4be49041a8821f091f5ae90c0afb56c479",
@@ -683,8 +683,8 @@
     <string name="plan_going_deeper">Approfondissement d’un sujet déjà étudié</string>
     <!-- %1$s is a day this month, such as "Nov 3". -->
     <string name="plan_far_from">À partir du %1$s</string>
-    <!-- %1$s is a month, such as "May" or "May 2027". -->
-    <string name="plan_far_from_month">À partir de %1$s</string>
+    <!-- %1$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "Dès %1$s"). -->
+    <string name="plan_far_from_month">Dès %1$s</string>
     <plurals name="plan_far_lessons">
         <item quantity="one">%d leçon</item>
         <item quantity="many">%d leçons</item>
@@ -697,8 +697,8 @@
     </plurals>
     <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a day this month, such as "Nov 3". -->
     <string name="plan_far_count_from">%1$s · à partir du %2$s</string>
-    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "May" or "May 2027". -->
-    <string name="plan_far_count_from_month">%1$s · à partir de %2$s</string>
+    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "dès %2$s"). -->
+    <string name="plan_far_count_from_month">%1$s · dès %2$s</string>
     <!-- A far topic's sheet: why its lessons aren't there yet. -->
     <string name="plan_far_explain">Les leçons d’un sujet sont planifiées deux semaines avant que tu l’étudies. Tu peux maintenant voir celles de ce sujet.</string>
     <!-- Writes a far topic's lessons now. -->
@@ -1138,8 +1138,8 @@
     <string name="plan_change_ends_instead">Se termine le %1$s au lieu du %2$s.</string>
     <!-- %1$s and %2$s are days, like "May 5". -->
     <string name="plan_change_ends_around_instead">Se termine vers le %1$s au lieu du %2$s.</string>
-    <!-- %1$s and %2$s are months and years, like "March 2027". -->
-    <string name="plan_change_ends_around_instead_month">Se termine vers %1$s au lieu de %2$s.</string>
+    <!-- %1$s and %2$s are months and years, like "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
+    <string name="plan_change_ends_around_instead_month">Se termine vers %1$s plutôt qu’en %2$s.</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="plan_change_finish_around">Tu termines vers %1$s.</string>
     <string name="plan_change_start_area_on">Tu commences %1$s le %2$s.</string>
@@ -1445,13 +1445,13 @@
     <string name="plan_finish">Avec %1$s par jour, tu termines dans %2$s.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="plan_finish_after_exam">À raison de %1$s par jour, tu termines en %2$s, après l’examen du %3$s.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
-    <string name="plan_finish_after_exam_month">À raison de %1$s par jour, tu termines en %2$s, après l’examen de %3$s.</string>
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
+    <string name="plan_finish_after_exam_month">Avec %1$s par jour, tu termines en %2$s, après l’examen prévu en %3$s.</string>
     <string name="plan_full_course_rule_exam">Jusqu’à l’examen, rien ne change : les sujets les plus fréquents passent en premier, avec des examens blancs et une dernière ligne droite. Ce qui ne tient pas dans le plan vient après l’examen.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_full_course_rule_goal">L’échéance du %1$s sera retirée de ton plan. Tu pourras en fixer une nouvelle à tout moment.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_full_course_rule_goal_month">L’échéance de %1$s sera retirée de ton plan. Tu pourras en fixer une nouvelle à tout moment.</string>
+    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
+    <string name="plan_full_course_rule_goal_month">La date limite prévue en %1$s est retirée de ton plan. Tu peux en fixer une autre quand tu veux.</string>
     <string name="plan_study_everything">Tout étudier</string>
     <string name="plan_study_everything_exam_description">Tous les sujets, même après l’examen, à ton rythme.</string>
     <string name="plan_study_everything_goal_description">Toutes les parties de ton objectif, à ton rythme et sans date de fin.</string>

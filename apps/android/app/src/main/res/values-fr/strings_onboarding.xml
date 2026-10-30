@@ -69,7 +69,7 @@
   "onboarding_follow_ups_title": "9ea82850868be6005e950c60c92fa85f12b7e32e58cb61f389f6c94f09aafe14",
   "onboarding_full_course": "f7b6035f37f2b9f1003919d665e2a8e28e0ea9f0188c0f58744fac2aa08395cd",
   "onboarding_full_course_finish": "190f18ed80e1db99695dea931644ce6a3b8672c2b30d31cd83f6cc90754f72b9",
-  "onboarding_full_course_finish_month": "dce6cc57d08c3a119b8676bb7240b3a5d7efaf2e32456d9bd53b1057c24186ec",
+  "onboarding_full_course_finish_month": "1024be86207beac585bdc07d215e4426b8c17ae2a119b5996a056d975091cdda",
   "onboarding_full_course_rule": "b3712db10e452d2bfdbb396152f94848e16464533ebb255cc65922cb359af926",
   "onboarding_full_course_until_exam": "3c37697151631faf0d4f8b10fcbb77dcf360ad2be6b8b54620dd8c7a34a6b8cc",
   "onboarding_go_to_plan": "128090f026eebbe9305e4630224bdfe0f64d18c7da46935e6b2d624b03464268",
@@ -264,7 +264,7 @@
   "onboarding_reveal_free_week_over_title": "222e67d155f4ad501953c0a6b21524282909d8f149752d630c46080734b8de3a",
   "onboarding_reveal_full_course": "2083c4f47ec89e169a1e9a3bdbabf1b358648e205717058bec66c2175198b964",
   "onboarding_reveal_full_course_finish": "e8e196e7114ba8bbc0b24d126ba93cd348713b3e4b3ed7d890d040f054f7f8d4",
-  "onboarding_reveal_full_course_finish_month": "11d5b44b4d4a74a168a3b5cb1d44598d7412d87a2e6e9f8ca3b322f5cc9eb00d",
+  "onboarding_reveal_full_course_finish_month": "b11fe177df33e40d88f1302a70bd98bb5424a5de6fae11154f772a4bb054cba9",
   "onboarding_reveal_guide_parts": "1535e10f07345643021f86433479c6d028b489f332a9e190de29c1cc05eb4440",
   "onboarding_reveal_known_skills": "e05a4e3812156668aa9dd060c591056e1cd0a9fa9e51d2b5013451dc3b6db84f",
   "onboarding_reveal_material_topics": "14226015850cb57bd6d365ec6b5e3677f5990b8812cce566e50e51cdb556e971",
@@ -382,7 +382,7 @@
   "onboarding_schedule_offer_everything": "7ebf2e6318d2a74c34bd86768b12b4124a1742d7ac3b783ef39dbedb69f5fc80",
   "onboarding_schedule_other_time_label": "90453249b8f3a3415a57dbe40a118d7cbdf05ae11b4471883bc83067968f7079",
   "onboarding_schedule_past_date": "7f6c1af06dfc2988283ca0dca4839c9bb5e719a9d29d8d2594af1054c278fa84",
-  "onboarding_schedule_past_date_month": "3675874da7442d52fa5347f3220d997f1e346d4a66bd93d53b61959d6307db0b",
+  "onboarding_schedule_past_date_month": "067e06150ddc4a4b87566b3088dd85c00d194f565c139c0e40f33e8819f04f1c",
   "onboarding_schedule_reaches_exam": "854bb0160ab1181b86848c4bf322df61e3fe79c6a11602f8c7cfb5af8e7909dc",
   "onboarding_schedule_reaches_exam_month": "d84345c0cccd4eeb92bfbc7cb4d87bf1221e4dfac84db71d815881c0c39a5a0f",
   "onboarding_schedule_reaches_goal": "610c39530ff8fffdeac30b5dd24328eaa54f33eb5110aa2df532d58d7880c40e",
@@ -831,8 +831,8 @@
     <string name="onboarding_reveal_covers_goal_left_out">Avec %1$s par jour, tu ne peux pas étudier toutes les parties de ton objectif : ce qui vient en dernier dans ton plan est laissé de côté.</string>
     <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="onboarding_reveal_full_course_finish">À raison de %1$s par jour, tu termines en %2$s, après l’examen du %3$s. Jusqu’à l’examen, priorité aux sujets les plus fréquents.</string>
-    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
-    <string name="onboarding_reveal_full_course_finish_month">À raison de %1$s par jour, tu termines en %2$s, après l’examen de %3$s. Jusqu’à l’examen, priorité aux sujets les plus fréquents.</string>
+    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
+    <string name="onboarding_reveal_full_course_finish_month">Avec %1$s par jour, tu termines en %2$s, après l’examen prévu en %3$s. D’ici l’examen, la priorité va aux sujets qui tombent le plus souvent.</string>
     <string name="onboarding_reveal_full_course">Avant l’examen, les sujets qui reviennent le plus souvent passent en premier. Ce qui ne tient pas dans le temps disponible vient après l’examen.</string>
     <plurals name="onboarding_reveal_modules">
         <item quantity="one">%d module</item>
@@ -1028,8 +1028,8 @@
     <string name="onboarding_full_course_until_exam">Jusqu’à l’examen, les sujets les plus fréquents passent en premier.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="onboarding_full_course_finish">À raison de %1$s par jour, tu termines en %2$s, après l’examen du %3$s.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
-    <string name="onboarding_full_course_finish_month">À raison de %1$s par jour, tu termines en %2$s, après l’examen de %3$s.</string>
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
+    <string name="onboarding_full_course_finish_month">Avec %1$s par jour, tu termines en %2$s, après l’examen prévu en %3$s.</string>
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="onboarding_weekend_time">Durée différente le week-end</string>
     <string name="onboarding_schedule_time_label">Durée quotidienne</string>
@@ -1079,8 +1079,8 @@
     <string name="onboarding_schedule_share_goal_month">Permet d’étudier en profondeur environ %1$s du contenu de ton objectif d’ici %2$s, l’essentiel en premier.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="onboarding_schedule_past_date">L’échéance du %1$s est passée. Tu peux en choisir une nouvelle à l’écran suivant.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="onboarding_schedule_past_date_month">L’échéance de %1$s est passée. Tu peux en choisir une nouvelle à l’écran suivant.</string>
+    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
+    <string name="onboarding_schedule_past_date_month">La date que tu avais choisie (%1$s) est passée. Tu peux en choisir une autre sur l’écran suivant.</string>
     <string name="onboarding_schedule_no_days">Choisis au moins un jour d’étude.</string>
     <string name="onboarding_schedule_working">Estimation du temps nécessaire pour ton objectif…</string>
     <string name="onboarding_schedule_find_failed">Nous n’avons pas pu estimer le temps nécessaire pour ton objectif.</string>

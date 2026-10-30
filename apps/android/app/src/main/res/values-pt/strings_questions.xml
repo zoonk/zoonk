@@ -135,7 +135,7 @@
     <string name="questions_placement_note">Ajustando seu plano. Um erro aqui nunca é salvo no seu caderno.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Questão de prova anterior · %1$s</string>
-    <!-- %1$s is a month and year, like Oct 2026. -->
+    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
     <string name="questions_sources_chip">Fontes · Conferidas em %1$s</string>
     <string name="questions_source_checked_by">%1$s · Conferida em %2$s</string>
     <string name="questions_source_checked">Conferida em %1$s</string>

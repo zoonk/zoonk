@@ -831,7 +831,7 @@
     <string name="onboarding_reveal_covers_goal_left_out">Com %1$s por dia, não dá para estudar todo o conteúdo da sua meta: o que vem por último na trilha fica de fora.</string>
     <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="onboarding_reveal_full_course_finish">Com %1$s por dia, você termina em %2$s, depois da prova no dia %3$s. Até a prova, o que mais cai vem primeiro.</string>
-    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
+    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_reveal_full_course_finish_month">Com %1$s por dia, você termina em %2$s, depois da prova em %3$s. Até a prova, o que mais cai vem primeiro.</string>
     <string name="onboarding_reveal_full_course">Até a prova, você estuda primeiro o que mais cai. O que não couber fica para depois.</string>
     <plurals name="onboarding_reveal_modules">
@@ -1028,7 +1028,7 @@
     <string name="onboarding_full_course_until_exam">Até a prova, o que mais cai vem primeiro.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="onboarding_full_course_finish">Com %1$s por dia, você termina em %2$s, depois da prova no dia %3$s.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_full_course_finish_month">Com %1$s por dia, você termina em %2$s, depois da prova em %3$s.</string>
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="onboarding_weekend_time">Tempo de estudo diferente nos fins de semana</string>
@@ -1079,7 +1079,7 @@
     <string name="onboarding_schedule_share_goal_month">Cobre cerca de %1$s do conteúdo da sua meta em profundidade até %2$s, começando pelo que mais importa.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="onboarding_schedule_past_date">A data de %1$s já passou. Você pode escolher outra na próxima tela.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
+    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
     <string name="onboarding_schedule_past_date_month">A data de %1$s já passou. Você pode escolher outra na próxima tela.</string>
     <string name="onboarding_schedule_no_days">Escolha pelo menos um dia de estudo.</string>
     <string name="onboarding_schedule_working">Calculando o tempo necessário para sua meta…</string>

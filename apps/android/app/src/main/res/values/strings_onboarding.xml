@@ -383,7 +383,7 @@
     <string name="onboarding_reveal_covers_goal_left_out">%1$s a day doesn\'t reach every part of your goal: what comes last in your path is left out.</string>
     <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="onboarding_reveal_full_course_finish">At %1$s a day, you finish in %2$s, after the exam on %3$s. Until the exam, what comes up most comes first.</string>
-    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
+    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_reveal_full_course_finish_month">At %1$s a day, you finish in %2$s, after the exam in %3$s. Until the exam, what comes up most comes first.</string>
     <string name="onboarding_reveal_full_course">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
     <plurals name="onboarding_reveal_modules">
@@ -567,7 +567,7 @@
     <string name="onboarding_full_course_until_exam">Until the exam, what comes up most comes first.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="onboarding_full_course_finish">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_full_course_finish_month">At %1$s a day, you finish in %2$s, after the exam in %3$s.</string>
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="onboarding_weekend_time">Different time on weekends</string>
@@ -618,7 +618,7 @@
     <string name="onboarding_schedule_share_goal_month">Covers about %1$s of your goal in depth by %2$s, what matters most first.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="onboarding_schedule_past_date">Your date, %1$s, has passed. You can choose a new one on the next screen.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
+    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
     <string name="onboarding_schedule_past_date_month">Your date, %1$s, has passed. You can choose a new one on the next screen.</string>
     <string name="onboarding_schedule_no_days">Choose at least one study day.</string>
     <string name="onboarding_schedule_working">Working out the time your goal needs…</string>

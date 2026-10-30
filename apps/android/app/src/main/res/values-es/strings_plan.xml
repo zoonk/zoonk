@@ -683,7 +683,7 @@
     <string name="plan_going_deeper">Profundizando en un tema anterior</string>
     <!-- %1$s is a day this month, such as "Nov 3". -->
     <string name="plan_far_from">A partir del %1$s</string>
-    <!-- %1$s is a month, such as "May" or "May 2027". -->
+    <!-- %1$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "Dès %1$s"). -->
     <string name="plan_far_from_month">A partir de %1$s</string>
     <plurals name="plan_far_lessons">
         <item quantity="one">%d lección</item>
@@ -697,7 +697,7 @@
     </plurals>
     <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a day this month, such as "Nov 3". -->
     <string name="plan_far_count_from">%1$s · a partir del %2$s</string>
-    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "May" or "May 2027". -->
+    <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "dès %2$s"). -->
     <string name="plan_far_count_from_month">%1$s · a partir de %2$s</string>
     <!-- A far topic's sheet: why its lessons aren't there yet. -->
     <string name="plan_far_explain">Las lecciones de cada tema se planifican dos semanas antes de que llegues a él. Ya puedes ver las de este tema.</string>
@@ -1138,7 +1138,7 @@
     <string name="plan_change_ends_instead">Termina el %1$s en lugar del %2$s.</string>
     <!-- %1$s and %2$s are days, like "May 5". -->
     <string name="plan_change_ends_around_instead">Termina alrededor del %1$s en lugar del %2$s.</string>
-    <!-- %1$s and %2$s are months and years, like "March 2027". -->
+    <!-- %1$s and %2$s are months and years, like "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
     <string name="plan_change_ends_around_instead_month">Termina hacia %1$s en lugar de %2$s.</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="plan_change_finish_around">Terminas hacia %1$s.</string>
@@ -1445,12 +1445,12 @@
     <string name="plan_finish">Con %1$s al día, terminarás en %2$s.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
     <string name="plan_finish_after_exam">Con %1$s al día, terminas en %2$s, después del examen del %3$s.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "May 2027". -->
+    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="plan_finish_after_exam_month">Con %1$s al día, terminas en %2$s, después del examen de %3$s.</string>
     <string name="plan_full_course_rule_exam">Hasta el examen, nada cambia: lo que más suele caer va primero, con simulacros y la recta final. Lo que no quepa se estudia después.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_full_course_rule_goal">Se elimina de tu plan la fecha límite del %1$s. Puedes volver a fijar una cuando quieras.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
+    <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
     <string name="plan_full_course_rule_goal_month">Se elimina de tu plan la fecha límite de %1$s. Puedes volver a fijar una cuando quieras.</string>
     <string name="plan_study_everything">Estudiar todo</string>
     <string name="plan_study_everything_exam_description">Todos los temas, incluso después del examen, a tu ritmo.</string>

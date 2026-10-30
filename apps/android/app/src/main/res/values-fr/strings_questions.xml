@@ -59,7 +59,7 @@
   "questions_show_less": "3744519e9aef79e4a5e0165d427567941600157159ede7181ee0879b6ce94269",
   "questions_source_checked": "21667416661304e6c8da56cef678473886b27ec9788a0769b8d32905e3df9d8a",
   "questions_source_checked_by": "8c7ebd86a8d5c93f5f62b8bddc9c0e0fd7593c7096fd55619111a25dca3c5dc0",
-  "questions_sources_chip": "bc85051de82dea2cd66c9495870a1c1686915889ec9dad4fcdcbdcc6db2021be",
+  "questions_sources_chip": "ef74931583e4d765bd378e71a1b8064a002616b014faf88abc09a4b6b9411239",
   "questions_streak": "8248e5d81ac498ed728e1af884a9d4b68c836bd42a7f1b5559645116ab8e4bf8",
   "questions_true": "df5b826e552559aa97bace36cb21e20d0404117b8822414b1c8cc0fefc340c7f",
   "questions_wrong": "894341894ad7cf63794869221c200e4bc716c2ac38aac05e898714c5139b79e2",
@@ -135,8 +135,8 @@
     <string name="questions_placement_note">Ton plan s’affine. Une erreur ici n’est jamais ajoutée à ton carnet.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Question d’un examen passé · %1$s</string>
-    <!-- %1$s is a month and year, like Oct 2026. -->
-    <string name="questions_sources_chip">Sources · Vérifiées le %1$s</string>
+    <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
+    <string name="questions_sources_chip">Sources · Vérifiées en %1$s</string>
     <string name="questions_source_checked_by">%1$s · Vérifiée le %2$s</string>
     <string name="questions_source_checked">Vérifiée le %1$s</string>
     <string name="questions_open_source">Ouvrir la source</string>
