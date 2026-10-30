@@ -2,19 +2,22 @@ import SwiftUI
 
 struct SessionScreen: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(AppRouter.self) private var router
   @Environment(StudySessionStore.self) private var store
   @Environment(TodayStore.self) private var today
 
   var body: some View {
+    let playback = router.playback
+
     ZStack {
-      if let sessionID = today.sessionID, let blockID = store.playingBlockID {
+      if let sessionID = today.sessionID, let blockID = playback.playingBlockID {
         QuestionBlockScreen(
           sessionId: sessionID, blockId: blockID,
           onFinished: { completion in
-            store.finish(try? StudyJSON.recode(completion, as: BlockMoment.self))
+            playback.finish(try? StudyJSON.recode(completion, as: BlockMoment.self))
           },
           onStop: {
-            if case .failed = await store.stop(sessionID: sessionID) {
+            if case .failed = await store.stop(sessionID: sessionID, in: playback) {
               return false
             }
 
@@ -58,7 +61,7 @@ struct SessionScreen: View {
       }
     }
     .onDisappear {
-      store.leave()
+      playback.leave()
     }
   }
 }
@@ -71,7 +74,8 @@ private struct SessionContent: View {
 
   var body: some View {
     let session = store.session(id: sessionID)
-    let stopped = store.stoppedSessionID == sessionID
+    let playback = router.playback
+    let stopped = playback.stoppedSessionID == sessionID
 
     Group {
       switch session.state {
@@ -79,7 +83,7 @@ private struct SessionContent: View {
         if stopped || day.nextBlock == nil {
           SessionSummaryView(sessionID: sessionID, stopped: stopped)
         } else {
-          NextStopView(day: day, sessionID: sessionID, moment: store.moment)
+          NextStopView(day: day, sessionID: sessionID, moment: playback.moment)
         }
       case .failed(let error) where error != .unauthorized:
         ContentUnavailableView {
@@ -97,7 +101,7 @@ private struct SessionContent: View {
           .buttonStyle(.bordered)
         }
       default:
-        if let moment = store.moment {
+        if let moment = playback.moment {
           List {
             Section {
               MomentSummary(moment: moment, title: nil)
@@ -125,7 +129,7 @@ private struct SessionContent: View {
         Task { await session.refresh() }
       }
     }
-    .milestoneCeremony(store.moment?.ceremony)
+    .milestoneCeremony(playback.moment?.ceremony)
   }
 }
 
@@ -378,7 +382,7 @@ private struct NextStopView: View {
         // The step waits here; its writing is followed from what the tap asked.
         break
       case .done(let destination) where !Task.isCancelled:
-        router.openStudy(destination, sessions: store)
+        router.openStudy(destination)
       case .done:
         break
       case .failed:
@@ -394,7 +398,7 @@ private struct NextStopView: View {
     failed = false
 
     action = Task {
-      if case .failed = await store.stop(sessionID: sessionID) {
+      if case .failed = await store.stop(sessionID: sessionID, in: router.playback) {
         failed = true
       }
 

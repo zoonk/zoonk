@@ -21,6 +21,7 @@ final class AppRouter {
   }
   private var hiddenTasks: Set<Int> = []
   private var paths: [AppTab: NavigationPath] = [:]
+  let playback = SessionPlayback()
   @ObservationIgnored private let openBlock: BlockOpener
 
   typealias BlockOpener = @MainActor (_ blockID: String, _ router: AppRouter) -> Void

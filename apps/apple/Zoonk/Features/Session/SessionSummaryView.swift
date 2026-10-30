@@ -230,10 +230,10 @@ struct SessionSummaryView: View {
       switch result {
       case .done(.session), .done(.lessonWait):
         // The next stop shows the step, and follows a lesson being written.
-        store.resume(sessionID: sessionID)
+        router.playback.resume(sessionID: sessionID)
       case .done(let destination) where !Task.isCancelled:
-        store.resume(sessionID: sessionID)
-        router.openStudy(destination, sessions: store)
+        router.playback.resume(sessionID: sessionID)
+        router.openStudy(destination)
       case .failed:
         failed = true
       case .done, .obsolete:
@@ -252,7 +252,7 @@ struct SessionSummaryView: View {
 
       switch result {
       case .done(let destination) where !Task.isCancelled:
-        router.openStudy(destination, sessions: store)
+        router.openStudy(destination)
       case .failed:
         failed = true
       case .done, .obsolete:

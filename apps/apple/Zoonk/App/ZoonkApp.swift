@@ -65,7 +65,7 @@ struct ZoonkApp: App {
 
   var body: some Scene {
     WindowGroup {
-      AppWindow(initialSheet: initialSheet, today: today, sessions: studySession)
+      AppWindow(initialSheet: initialSheet, today: today)
         #if DEBUG
           .modifier(UITestFixtureFailureCover(failure: uiTestFixtureFailure))
         #endif
@@ -108,11 +108,10 @@ private struct AppWindow: View {
   @Environment(SessionStore.self) private var session
   @State private var router: AppRouter
 
-  init(initialSheet: AppSheet?, today: TodayStore, sessions: StudySessionStore) {
+  init(initialSheet: AppSheet?, today: TodayStore) {
     _router = State(
       initialValue: AppRouter(
-        sheet: initialSheet,
-        openBlock: AppRouter.openingTodayBlocks(today: today, sessions: sessions)))
+        sheet: initialSheet, openBlock: AppRouter.openingTodayBlocks(today: today)))
   }
 
   var body: some View {

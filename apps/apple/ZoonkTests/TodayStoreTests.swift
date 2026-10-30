@@ -206,13 +206,14 @@ final class TodayStoreTests: XCTestCase {
 
   func testStoppingForTodayEndsTheBlockAndShowsTheSummary() async {
     let store = StudySessionStore(api: StudyAPIStub(), cache: signedInCache())
-    store.play(blockID: "b1")
+    let playback = SessionPlayback()
+    playback.play(blockID: "b1")
 
-    let stopped = await store.stop(sessionID: "s1").destination != nil
+    let stopped = await store.stop(sessionID: "s1", in: playback).destination != nil
 
     XCTAssertTrue(stopped)
-    XCTAssertNil(store.playingBlockID)
-    XCTAssertEqual(store.stoppedSessionID, "s1")
+    XCTAssertNil(playback.playingBlockID)
+    XCTAssertEqual(playback.stoppedSessionID, "s1")
   }
 
   func testAnOpeningAnsweredAfterItsLearnerLeftOpensNothing() async throws {

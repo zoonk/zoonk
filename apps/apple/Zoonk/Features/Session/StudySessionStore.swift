@@ -9,10 +9,6 @@ final class StudySessionStore {
   @ObservationIgnored private var sessions: [String: Resource<StudyDay>] = [:]
   @ObservationIgnored private var summaries: [String: Resource<SessionSummary>] = [:]
   @ObservationIgnored private var recaps: [String: Resource<WeeklyRecap>] = [:]
-
-  private(set) var playingBlockID: String?
-  private(set) var moment: BlockMoment?
-  private(set) var stoppedSessionID: String?
   /// Ceremonies already shown here, so a milestone a block and the summary both carry shows once.
   @ObservationIgnored private var shownCeremonies: Set<String> = []
 
@@ -80,42 +76,17 @@ final class StudySessionStore {
     return resource
   }
 
-  func stop(sessionID: String) async -> MutationResult<Void> {
+  func stop(sessionID: String, in playback: SessionPlayback) async -> MutationResult<Void> {
     let result = await cache.mutate(invalidating: [.userProgress, .userSession]) { identity in
       try await api.stop(
         token: identity.bearerToken, sessionID: sessionID, timeZone: TimeZone.current.identifier)
     }
 
     if case .done = result {
-      playingBlockID = nil
-      stoppedSessionID = sessionID
+      playback.stop(sessionID: sessionID)
     }
 
     return result
-  }
-
-  func play(blockID: String) {
-    playingBlockID = blockID
-    moment = nil
-    stoppedSessionID = nil
-  }
-
-  func finish(_ completion: BlockMoment?) {
-    playingBlockID = nil
-    moment = completion
-  }
-
-  /// "Keep going" after "Stop for today": the next stop shows again.
-  func resume(sessionID: String) {
-    if stoppedSessionID == sessionID {
-      stoppedSessionID = nil
-    }
-  }
-
-  func leave() {
-    playingBlockID = nil
-    moment = nil
-    stoppedSessionID = nil
   }
 
   /// True once per milestone.

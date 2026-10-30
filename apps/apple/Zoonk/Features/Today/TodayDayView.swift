@@ -4,7 +4,6 @@ struct TodayDayView: View {
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isCoveredByTask) private var isCovered
   @Environment(AppRouter.self) private var router
-  @Environment(StudySessionStore.self) private var sessions
   @Environment(TodayStore.self) private var store
 
   let view: TodayView
@@ -179,7 +178,7 @@ struct TodayDayView: View {
 
       switch result {
       case .done(let destination) where !Task.isCancelled:
-        router.openStudy(destination, sessions: sessions)
+        router.openStudy(destination)
       case .failed:
         failed = tap
       case .done, .obsolete:
@@ -239,12 +238,12 @@ struct TodayDayView: View {
 extension AppRouter {
   /// A block Today doesn't list as one to do now shows Today as it stands; one that couldn't open
   /// leaves the learner where they tapped.
-  static func openingTodayBlocks(today: TodayStore, sessions: StudySessionStore) -> BlockOpener {
+  static func openingTodayBlocks(today: TodayStore) -> BlockOpener {
     { blockID, router in
       Task {
         switch await today.open(blockID: blockID) {
         case .done(let destination)?:
-          router.openStudy(destination, sessions: sessions)
+          router.openStudy(destination)
         case nil:
           router.showRoot(of: .today)
         case .failed?, .obsolete?:
@@ -256,9 +255,9 @@ extension AppRouter {
 
   /// Anything but a question block opens its own screen over the session, so closing it goes on with
   /// the day.
-  func openStudy(_ destination: StudyDestination, sessions: StudySessionStore) {
+  func openStudy(_ destination: StudyDestination) {
     if case .questionBlock(_, let blockID) = destination {
-      sessions.play(blockID: blockID)
+      playback.play(blockID: blockID)
     }
 
     guard let step = destination.step else {
