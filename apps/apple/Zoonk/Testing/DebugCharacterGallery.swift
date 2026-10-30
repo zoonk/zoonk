@@ -170,34 +170,56 @@
     }
   }
   private struct MomentsPreview: View {
-    @State private var allDone = false
+    private enum Variant: String, CaseIterable {
+      case oneDone = "One mission done"
+      case allDone = "All missions done"
+      case reached = "Level and Energy"
+      case maxEnergy = "Max Energy"
+    }
 
-    private func result(allDone: Bool) -> DayResult? {
-      let json = """
-        {"ceremony": null, "reached": null, "missionMoment": {
-          "completed": ["review"], "fullMeal": {"bonus": 50, "paid": \(allDone)},
+    @State private var variant = Variant.oneDone
+
+    private func result(_ variant: Variant) -> DayResult? {
+      let paid = variant == .allDone
+      let moment = """
+        {"completed": ["review"], "fullMeal": {"bonus": 50, "paid": \(paid)},
           "missions": [
             {"detail": null, "done": 1, "kind": "review", "minutes": 5, "opens": null,
              "status": "done", "total": 1, "waitReason": null},
-            {"detail": null, "done": \(allDone ? 1 : 0), "kind": "somethingNew", "minutes": 10,
-             "opens": null, "status": "\(allDone ? "done" : "todo")", "total": 1,
-             "waitReason": null}]}}
+            {"detail": null, "done": \(paid ? 1 : 0), "kind": "somethingNew", "minutes": 10,
+             "opens": null, "status": "\(paid ? "done" : "todo")", "total": 1,
+             "waitReason": null},
+            {"detail": null, "done": \(paid ? 2 : 1), "kind": "fixMistake", "minutes": 4,
+             "opens": null, "status": "\(paid ? "done" : "todo")", "total": 2,
+             "waitReason": null}]}
         """
+      let json =
+        switch variant {
+        case .oneDone, .allDone:
+          #"{"ceremony": null, "reached": null, "missionMoment": \#(moment)}"#
+        case .reached:
+          """
+          {"ceremony": null, "missionMoment": null,
+           "reached": {"energy": 80, "level": {"color": "yellow", "level": 3}}}
+          """
+        case .maxEnergy:
+          #"{"ceremony": null, "missionMoment": null, "reached": {"energy": 100, "level": null}}"#
+        }
       return try? JSONDecoder().decode(DayResult.self, from: Data(json.utf8))
     }
 
     var body: some View {
       NavigationStack {
         List {
-          if let result = result(allDone: allDone) {
-            DayMomentSections(result: result)
-              .id(allDone)
+          Picker(selection: $variant) {
+            ForEach(Variant.allCases, id: \.self) { Text(verbatim: $0.rawValue).tag($0) }
+          } label: {
+            Text(verbatim: "Moment")
           }
 
-          Button {
-            allDone.toggle()
-          } label: {
-            Text(verbatim: allDone ? "One mission done" : "All missions done")
+          if let result = result(variant) {
+            DayMomentSections(result: result)
+              .id(variant)
           }
         }
         .navigationTitle(Text(verbatim: "Moments"))

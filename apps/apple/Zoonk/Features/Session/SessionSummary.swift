@@ -116,7 +116,7 @@ extension Components.Schemas.StudyBlockCompletion {
   }
 }
 
-struct Milestone: Decodable, Equatable, Identifiable, Sendable {
+struct Milestone: Decodable, Hashable, Identifiable, Sendable {
   let id: String
   let key: String
   let kind: String

@@ -108,7 +108,8 @@ private struct SessionContent: View {
             }
 
             // The buddy acts once, on the next stop's screen.
-            DayMomentSections(result: moment.day, celebrates: false)
+            DayMomentSections(result: moment.day)
+              .environment(\.celebrates, false)
 
             Section {
               ProgressView()

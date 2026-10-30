@@ -4374,6 +4374,35 @@
         }
       }
     },
+    "Just done" : {
+      "comment" : "A mission the result just completed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerade erledigt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recién completada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminée à l’instant"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concluída agora"
+          }
+        }
+      }
+    },
     "Just typos" : {
       "comment" : "Recent mistakes were slips",
       "localizations" : {

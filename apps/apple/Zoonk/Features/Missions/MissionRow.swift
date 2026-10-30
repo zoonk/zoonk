@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct StudyMission: Decodable, Equatable, Sendable {
+struct StudyMission: Decodable, Hashable, Sendable {
   enum Kind: String, Decodable, Sendable {
     case askBuddy
     case call
@@ -18,7 +18,7 @@ struct StudyMission: Decodable, Equatable, Sendable {
     case weeklyChallenge
   }
 
-  struct Detail: Decodable, Equatable, Sendable {
+  struct Detail: Decodable, Hashable, Sendable {
     let areaTitle: String?
     let chapterTitle: String?
     let patternTitle: String?
@@ -27,8 +27,8 @@ struct StudyMission: Decodable, Equatable, Sendable {
   }
 
   /// A block by id, or by its place on a day not opened yet.
-  struct Opens: Decodable, Equatable, Sendable {
-    struct Ref: Decodable, Equatable, Sendable {
+  struct Opens: Decodable, Hashable, Sendable {
+    struct Ref: Decodable, Hashable, Sendable {
       let position: Int
     }
 
@@ -201,6 +201,8 @@ struct MissionRow: View {
   let mission: StudyMission
   let buddyName: String
   var block: StudyBlock?
+  /// Its place among the missions a result just completed, which stamp in one after another.
+  var justDone: Int?
   var open: (() -> Void)?
 
   private var waits: Bool { mission.waitReason != nil }
@@ -216,7 +218,7 @@ struct MissionRow: View {
 
       VStack(alignment: .leading, spacing: 2) {
         Text(mission.name(buddy: buddyName))
-          .foregroundStyle(mission.isDone || waits ? .secondary : .primary)
+          .foregroundStyle((mission.isDone && justDone == nil) || waits ? .secondary : .primary)
 
         if !mission.isDone, !detail.isEmpty {
           Text(verbatim: detail.joined(separator: " · "))
@@ -227,6 +229,12 @@ struct MissionRow: View {
       }
 
       Spacer(minLength: 8)
+
+      if justDone != nil {
+        Text("Just done", tableName: "Today", comment: "A mission the result just completed")
+          .font(.caption.weight(.medium))
+          .foregroundStyle(.success)
+      }
 
       if !mission.isDone, !waits, mission.opens?.kind == "block" {
         Image(systemName: "target")
@@ -243,8 +251,8 @@ struct MissionRow: View {
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(
-      mission.isDone ? Text("Done", tableName: "Today", comment: "A mission that's done") : Text("")
-    )
+      mission.isDone && justDone == nil
+        ? Text("Done", tableName: "Today", comment: "A mission that's done") : Text(""))
 
     if let open, opensSomewhere {
       Button(action: open) {
@@ -258,7 +266,10 @@ struct MissionRow: View {
 
   @ViewBuilder
   private var mark: some View {
-    if mission.isDone {
+    if let justDone {
+      StatusMark(status: .done)
+        .settles(delay: .beat + Double(justDone) * .stagger)
+    } else if mission.isDone {
       StatusMark(status: .done)
     } else if mission.kind == .askBuddy {
       let buddy = learner.summary.value?.buddy ?? BuddyLook()
