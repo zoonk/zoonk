@@ -110,6 +110,7 @@ struct ZoonkApp: App {
 private struct AppWindow: View {
   @Environment(SessionStore.self) private var session
   @State private var router: AppRouter
+  @SceneStorage(TestOutScreen.openResultKey) private var openTestOutResult: URL?
 
   init(initialSheet: AppSheet?, today: TodayStore) {
     _router = State(
@@ -133,6 +134,11 @@ private struct AppWindow: View {
       .onOpenURL { url in
         if !router.open(url: url) {
           session.handleGoogleSignInURL(url)
+        }
+      }
+      .onAppear {
+        if let openTestOutResult {
+          router.open(url: openTestOutResult)
         }
       }
   }

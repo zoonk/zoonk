@@ -6,6 +6,19 @@ struct TestOutScreen: View {
   let chapterId: String
   var resultId: String?
 
+  /// Main keeps a result in its address (`?result=`), so a reload opens it again. The window keeps
+  /// the same address and opens it when the system relaunches the app.
+  static let openResultKey = "testOut.openResult"
+
+  static func address(chapterId: String, resultId: String) -> URL? {
+    var components = URLComponents(string: "https://www.zoonk.com")
+    components?.path = "/test-out/\(chapterId)"
+    components?.queryItems = [URLQueryItem(name: "result", value: resultId)]
+    return components?.url
+  }
+
+  @SceneStorage(TestOutScreen.openResultKey) private var openResult: URL?
+
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
@@ -77,6 +90,7 @@ struct TestOutScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
+    .onDisappear { openResult = nil }
     .task(id: "\(session.authenticatedSession?.bearerToken ?? ""):\(goalId ?? "")") { await read() }
   }
 
@@ -192,6 +206,7 @@ struct TestOutScreen: View {
           changeId: recorded.canUndo ? recorded.changeId : nil, correct: recorded.correct,
           lessonsSkipped: recorded.lessonsSkipped, passed: recorded.passed, total: recorded.total)
         undo = recorded.undone ? .done : .idle
+        openResult = Self.address(chapterId: chapterId, resultId: resultId)
         return
       }
 
@@ -250,6 +265,7 @@ struct TestOutScreen: View {
 
     let chapterId = chapterId
     let requestId = PracticeAnswerDraft.requestId(key: draftKey)
+    openResult = Self.address(chapterId: chapterId, resultId: requestId)
 
     switch await practice.write(
       .planChanged,

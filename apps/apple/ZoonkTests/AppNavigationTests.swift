@@ -46,6 +46,13 @@ final class AppNavigationTests: XCTestCase {
     }
   }
 
+  @MainActor
+  func testATestOutResultsAddressOpensThatResult() throws {
+    let address = try XCTUnwrap(TestOutScreen.address(chapterId: "c1", resultId: "r1"))
+
+    XCTAssertEqual(AppLink(url: address), .route(.testOut(chapterId: "c1", resultId: "r1")))
+  }
+
   func testLinksWithoutAPlaceInTheAppAreLeftAlone() throws {
     for url in [
       "https://www.zoonk.com/pricing",
