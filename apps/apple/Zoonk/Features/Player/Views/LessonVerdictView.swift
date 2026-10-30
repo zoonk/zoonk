@@ -208,30 +208,16 @@ private struct LessonKeyPointsView: View {
   }
 }
 
-/// Written only on the learner's tap.
+/// Written only on the learner's tap. After a failure or a refusal the button stays, so the learner
+/// can ask again, as on main.
 private struct LessonExplainAnswerView: View {
   let step: LessonStep
   let store: LessonPlayerStore
 
   var body: some View {
-    switch store.explanations[step.id] {
-    case nil:
-      Button {
-        Task { await store.explainAnswer() }
-      } label: {
-        Text("Explain my answer", tableName: "Player", comment: "Asks why a typed answer is wrong")
-      }
-      .buttonStyle(.bordered)
-    case .loading:
-      HStack {
-        ProgressView()
-        Text(
-          "Explaining your answer", tableName: "Player",
-          comment: "While the explanation of a typed answer is written")
-      }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
-    case .explained(let explanation):
+    let state = store.explanations[step.id]
+
+    if case .explained(let explanation) = state {
       VStack(alignment: .leading, spacing: 2) {
         Text(
           "Why that answer misses", tableName: "Player",
@@ -242,19 +228,50 @@ private struct LessonExplainAnswerView: View {
         LessonTextBlocks(explanation)
           .font(.subheadline)
       }
-    case .refused(let refusal):
-      LessonHelpLimitNote(refusal: refusal)
-    case .failed:
-      Text(
-        "We couldn't explain it right now. Try again in a moment.", tableName: "Player",
-        comment: "The explanation of a typed answer failed"
-      )
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+    } else {
+      VStack(alignment: .leading, spacing: 8) {
+        Button {
+          Task { await store.explainAnswer() }
+        } label: {
+          if state == .loading {
+            HStack {
+              ProgressView()
+              Text(
+                "Explaining your answer", tableName: "Player",
+                comment: "While the explanation of a typed answer is written")
+            }
+          } else {
+            Label {
+              Text(
+                "Explain my answer", tableName: "Player",
+                comment: "Asks why a typed answer is wrong")
+            } icon: {
+              Image(systemName: "lightbulb")
+            }
+          }
+        }
+        .buttonStyle(.bordered)
+        .disabled(state == .loading)
+
+        switch state {
+        case .failed:
+          Text(
+            "We couldn't explain it right now. Try again in a moment.", tableName: "Player",
+            comment: "The explanation of a typed answer failed"
+          )
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+        case .refused(let refusal):
+          LessonHelpLimitNote(refusal: refusal)
+        default:
+          EmptyView()
+        }
+      }
     }
   }
 }
 
+/// What a checked answer was. A hook's guess is never wrong.
 struct LessonVerdict {
   let title: LocalizedStringResource
   let symbol: String
