@@ -91,8 +91,8 @@ struct PlanDateSection: View {
         )
       } else if schedule.targetDate == nil && !isExam {
         Text(
-          "No deadline: you study everything at your own pace.", tableName: "Plan",
-          comment: "A goal without a deadline")
+          "No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then.",
+          tableName: "Plan", comment: "A goal without a deadline, and what a deadline would do")
       }
     }
     .environment(\.timeZone, .gmt)

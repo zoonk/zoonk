@@ -57,9 +57,16 @@ struct AdjustPlanSections: View {
           comment: "Opens the buddy's conversation to change the plan in words")
       }
     } footer: {
-      Text(
-        "In your own words, like “less on weekends”. You'll see the change before it applies.",
-        tableName: "Plan", comment: "Explains changing the plan by talking to the buddy")
+      if goal.kind == .learn && plan.areas.count > 1 {
+        Text(
+          "In your own words, like “skip a module” or “less on weekends”. You'll see the change before it applies.",
+          tableName: "Plan",
+          comment: "Explains changing a plan with modules by talking to the buddy")
+      } else {
+        Text(
+          "In your own words, like “less on weekends”. You'll see the change before it applies.",
+          tableName: "Plan", comment: "Explains changing the plan by talking to the buddy")
+      }
     }
   }
 }

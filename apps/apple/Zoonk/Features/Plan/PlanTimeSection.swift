@@ -60,6 +60,10 @@ struct PlanTimeSection: View {
         )
         .font(.subheadline)
         .foregroundStyle(.secondary)
+      } else if let finish {
+        finish
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
       }
 
       if goal.kind == .exam, plan.feasibility?.deadline != nil {
@@ -70,6 +74,21 @@ struct PlanTimeSection: View {
         "Your plan changes from today. Less time spreads your lessons over more days.",
         tableName: "Plan", comment: "Explains what changing the time a day does")
     }
+  }
+
+  /// A plan without a date says when it finishes.
+  private var finish: Text? {
+    guard let end = plan.estimate.endDate else {
+      return nil
+    }
+
+    return editor.isSaving
+      ? Text(
+        "Working out when you'd finish…", tableName: "Plan",
+        comment: "While a change to the time saves, in place of when the plan finishes")
+      : Text(
+        "You finish around \(PlanDate.text(end, today: plan.today, month: true)).",
+        tableName: "Plan", comment: "When a plan without a date finishes, as a month and year")
   }
 
   /// Turning it on says what it changes first; turning it off applies at once.

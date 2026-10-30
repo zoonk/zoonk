@@ -8955,6 +8955,35 @@
         }
       }
     },
+    "In your own words, like “skip a module” or “less on weekends”. You'll see the change before it applies." : {
+      "comment" : "Explains changing a plan with modules by talking to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In deinen eigenen Worten, zum Beispiel „ein Modul überspringen“ oder „am Wochenende weniger lernen“. Du siehst die Änderung, bevor sie übernommen wird."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con tus propias palabras, como «saltar un módulo» o «menos los fines de semana». Verás el cambio antes de que se aplique."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec tes mots, par exemple « sauter un module » ou « en faire moins le week-end ». Tu verras le changement avant qu’il soit appliqué."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diga do seu jeito, como “pular um módulo” ou “estudar menos nos fins de semana”. Você vai ver a mudança antes de ela ser aplicada."
+          }
+        }
+      }
+    },
     "Intermediate" : {
       "comment" : "A course level",
       "localizations" : {
@@ -11152,31 +11181,31 @@
         }
       }
     },
-    "No deadline: you study everything at your own pace." : {
-      "comment" : "A goal without a deadline",
+    "No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then." : {
+      "comment" : "A goal without a deadline, and what a deadline would do",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kein Zieldatum: Du lernst alles in deinem eigenen Tempo."
+            "value" : "Ohne Zieldatum: Du lernst alles in deinem eigenen Tempo. Mit Zieldatum stimmt dein Plan die Inhalte so ab, dass du bis dahin das Wichtigste lernst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin fecha límite: estudias todo a tu ritmo."
+            "value" : "Sin fecha límite: lo estudias todo a tu ritmo. Con una fecha límite, el plan se ajusta para que estudies lo más importante antes de esa fecha."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sans date limite : tu étudies tout à ton rythme."
+            "value" : "Sans date limite : tu étudies tout à ton rythme. Avec une date limite, ton plan s’adapte pour couvrir l’essentiel d’ici là."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sem prazo: você estuda tudo no seu ritmo."
+            "value" : "Sem prazo: você estuda tudo no seu ritmo. Com um prazo, seu plano se ajusta para você estudar o que mais importa até lá."
           }
         }
       }
@@ -15192,6 +15221,35 @@
         }
       }
     },
+    "Working out when you'd finish…" : {
+      "comment" : "While a change to the time saves, in place of when the plan finishes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir berechnen, wann du fertig wärst…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculando cuándo terminarías…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimation de ta date de fin…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculando quando você terminaria…"
+          }
+        }
+      }
+    },
     "Writing" : {
       "comment" : "A language skill\nPractice activity",
       "localizations" : {
@@ -15333,6 +15391,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você está aqui"
+          }
+        }
+      }
+    },
+    "You finish around %@." : {
+      "comment" : "When a plan without a date finishes, as a month and year",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bist etwa im %@ fertig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminarás aproximadamente en %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu termineras vers %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você termina por volta de %@."
           }
         }
       }
