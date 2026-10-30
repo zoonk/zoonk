@@ -4,13 +4,11 @@ import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { DailyTimePicker, TimeSelect } from "../_components/daily-time-picker";
 import { ChangeSaveError } from "../_components/save-error";
 import { WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime } from "../_components/weekend-time";
 import { useGoalDateValues } from "../_utils/iso-date";
-import { useFormatDuration } from "../_utils/time-format";
-import { ChoiceList } from "../onboarding/choice-list";
-import { OtherTimeSelect, TimeSelect, getTimeChoices } from "../onboarding/steps/daily-minutes";
 import { usePlanScreen } from "./plan-context";
 import {
   CoveredSentence,
@@ -32,7 +30,7 @@ import { ChooseFocus, useCanChooseFocus } from "./plan-focus";
 import { FullCourseSwitch } from "./plan-full-course";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
-import { getOfferedMinutes, useTimeToCoverTexts } from "./use-time-to-cover";
+import { getOfferedMinutes } from "./use-time-to-cover";
 
 const DAYS_PER_WEEK = 7;
 
@@ -44,11 +42,13 @@ function DailyCoverage({
   canFind,
   onAsk,
   onMoving,
+  onUseTime,
   planChange,
 }: {
   canFind: boolean;
   onAsk: () => void;
   onMoving: (moving: boolean) => void;
+  onUseTime: (minutes: number) => void;
   planChange: PlanChange;
 }) {
   const t = useExtracted();
@@ -100,7 +100,7 @@ function DailyCoverage({
                 />
               )}
             </div>
-            <FindLine canFind={canFind} onAsk={onAsk} />
+            <FindLine canFind={canFind} onAsk={onAsk} onUseTime={onUseTime} pending={pending} />
             <div className="flex flex-wrap items-center gap-2 empty:hidden" id={FIND_ACTIONS_ID}>
               {canMoveDate && (
                 <MoveDateSwitch id={MOVE_DATE_ID} onMoving={onMoving} planChange={planChange} />
@@ -137,15 +137,12 @@ function DailyMinutes({
   const { change } = planChange;
   const isPending = planChange.isPending || moving;
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const texts = useTimeToCoverTexts();
   const shape = useWeekShape();
   const timeEnough = useTimeEnough();
   const answer = useFindAnswer();
   const current = shape.weekdays;
   const time = useTappedChoice(current);
-  const choices = getTimeChoices(current, time.shown, getOfferedMinutes(answer));
-  const onAsk = useFocusFindAnswer(choices);
+  const onAsk = useFocusFindAnswer();
 
   const setMinutes = (minutes: number) => {
     if (isPending || minutes === current) {
@@ -164,40 +161,25 @@ function DailyMinutes({
 
   return (
     <div className="flex flex-col gap-3" id={getEditorSectionId("time")}>
-      {/* The presets carry the name for screen readers (`label`); this is their visible title. */}
+      {/* The picker carries the name for screen readers (`label`); this is its visible title. */}
       <span aria-hidden="true" className="text-sm font-medium">
         {t("Time a day")}
       </span>
 
-      <div className="flex flex-col gap-2">
-        <div aria-busy={isPending} className="aria-busy:opacity-80">
-          <ChoiceList
-            choices={choices.map((minutes) => ({
-              description: (answer && texts.note(answer, minutes)) ?? undefined,
-              label: formatDuration(minutes),
-              value: String(minutes),
-            }))}
-            label={t("Time a day")}
-            manualActivation
-            numberKeys={false}
-            onChange={(value) => setMinutes(Number(value))}
-            value={String(time.shown)}
-            variant="chips"
-          />
-        </div>
-
-        <OtherTimeSelect
-          disabled={isPending}
-          label={t("Other time a day")}
-          minutes={time.shown}
-          onPick={setMinutes}
-        />
-      </div>
+      <DailyTimePicker
+        disabled={isPending}
+        label={t("Time a day")}
+        minutes={time.shown}
+        onChange={setMinutes}
+        saves
+        suggested={getOfferedMinutes(answer)}
+      />
 
       <DailyCoverage
         canFind={!timeEnough}
         onAsk={onAsk}
         onMoving={onMoving}
+        onUseTime={setMinutes}
         planChange={planChange}
       />
 
@@ -301,6 +283,7 @@ function WeekendMinutes({
         disabled={isPending}
         label={t("Time on weekends")}
         onChange={(minutes) => void setWeekend(minutes)}
+        saves
         value={weekend.shown}
       />
     </WeekendTime>

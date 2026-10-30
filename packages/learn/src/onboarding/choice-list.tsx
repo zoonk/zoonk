@@ -48,13 +48,6 @@ export const CHOICE_ROW_CLASS = cn(
   "group/choice has-focus-visible:before:ring-ring/50 cursor-pointer has-focus-visible:before:ring-[3px]",
 );
 
-const CHIP_CLASS = cn(
-  "ring-input press flex cursor-pointer items-center rounded-lg ring-1 [--press-scale:0.99] ring-inset",
-  "hover:bg-muted has-data-checked:bg-selected-tint has-data-checked:ring-selected has-focus-visible:outline-ring has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-data-checked:ring-2",
-);
-
-type ChoiceListVariant = "chips" | "rows";
-
 /**
  * `onPick` hears only a deliberate pick (a tap, a click or a number key), never the arrow keys, so
  * a one-answer question can move on with it.
@@ -62,23 +55,19 @@ type ChoiceListVariant = "chips" | "rows";
 export function ChoiceList<Value extends string>({
   choices,
   label,
-  manualActivation = false,
   numberKeys = true,
   onChange,
   onPick,
   readOnly = false,
   value,
-  variant = "rows",
 }: {
   choices: Choice<Value>[];
   label: string;
-  manualActivation?: boolean;
   numberKeys?: boolean;
   onChange: (value: Value) => void;
   onPick?: (value: Value) => void;
   readOnly?: boolean;
   value: Value | null;
-  variant?: ChoiceListVariant;
 }) {
   const t = useExtracted();
   const announce = useOnboardingAnnounce();
@@ -125,66 +114,6 @@ export function ChoiceList<Value extends string>({
       onChange(choice.value);
     }
   };
-
-  if (variant === "chips") {
-    return (
-      <div className="@container">
-        <RadioGroup
-          aria-label={label}
-          className="grid grid-cols-2 gap-2 @[19rem]:grid-cols-3 @[26rem]:grid-cols-4"
-          onValueChange={pick}
-          readOnly={readOnly}
-          value={value}
-        >
-          {choices.map((choice) => (
-            <RadioGroupOption
-              className={cn(CHIP_CLASS, "relative min-h-11 justify-center px-1 py-1.5 text-center")}
-              key={choice.value}
-              onClick={(event) => {
-                // Base UI consumes Space on the radio. A label click needs its own activation.
-                if (manualActivation && !readOnly && !event.defaultPrevented) {
-                  event.preventDefault();
-                  onChange(choice.value);
-                }
-              }}
-            >
-              <span className="flex min-w-0 flex-col gap-0.5">
-                <span className="font-mono text-[0.8125rem] font-medium tabular-nums">
-                  {choice.label}
-                </span>
-                {choice.description && (
-                  <span className="text-muted-foreground text-[0.6875rem] leading-tight">
-                    {choice.description}
-                  </span>
-                )}
-              </span>
-
-              <RadioGroupItem
-                className="pointer-events-none absolute inset-0 size-full opacity-0"
-                onFocus={(event) => {
-                  /** Base UI's composite still tracks focus; its radio must not select on focus. */
-                  if (manualActivation) {
-                    event.preventDefault();
-                  }
-                }}
-                onKeyDown={(event) => {
-                  if (manualActivation && event.key === "Enter") {
-                    event.preventDefault();
-                    event.preventBaseUIHandler();
-
-                    if (!readOnly) {
-                      onChange(choice.value);
-                    }
-                  }
-                }}
-                value={choice.value}
-              />
-            </RadioGroupOption>
-          ))}
-        </RadioGroup>
-      </div>
-    );
-  }
 
   return (
     <RadioGroup

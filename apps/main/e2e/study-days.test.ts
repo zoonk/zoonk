@@ -47,7 +47,7 @@ test.describe("Study days", () => {
       const days = editor.getByRole("group", { name: "Study days" });
       const sunday = days.getByRole("button", { exact: true, name: "Sunday" });
       const monday = days.getByRole("button", { exact: true, name: "Monday" });
-      const time = editor.getByRole("radiogroup", { name: "Time a day" });
+      const time = editor.getByLabel("Time a day", { exact: true });
       const failed = editor.getByRole("alert");
 
       await expect(sunday).toHaveAttribute("aria-pressed", "true");
@@ -62,15 +62,15 @@ test.describe("Study days", () => {
       await expect(sunday).toHaveAttribute("aria-pressed", "true");
       await expect(monday).toBeEnabled();
 
-      await time.getByText("45 min", { exact: true }).click();
+      await time.selectOption("45");
       await expect.poll(() => held.length).toBe(2);
-      await expect(time.getByRole("radio", { name: /^45 min/u })).toBeChecked();
+      await expect(time).toHaveValue("45");
       await expect(failed).toBeHidden();
       await expect(sunday).toHaveAttribute("aria-pressed", "true");
 
       held[1]?.();
       await expect(failed).toBeVisible();
-      await expect(time.getByRole("radio", { name: /^15 min/u })).toBeChecked();
+      await expect(time).toHaveValue("15");
       expect(await loadSundayMinutes(user.goalId)).toBe(sundayBefore);
 
       failing = false;

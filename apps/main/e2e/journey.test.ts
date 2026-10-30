@@ -39,19 +39,20 @@ test.describe("Journey", () => {
       };
 
       const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
-      const own = new RegExp(`^${minutesLabel(goal.dailyMinutes)}(?:\\s|$)`, "u");
-      const otherTime = goal.dailyMinutes === 15 ? "30 min" : "15 min";
+      const otherTime = goal.dailyMinutes === 15 ? 30 : 15;
 
       await openJourney(page);
       await page.getByRole("button", { name: "Adjust plan" }).click();
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
-      const minutes = editor.getByRole("radiogroup", { name: "Time a day" });
+      const minutes = editor.getByLabel("Time a day", { exact: true });
       const before = await loadPlanItems();
 
-      await minutes.getByText(otherTime, { exact: true }).click();
+      await minutes.selectOption(String(otherTime));
 
       await expect(
-        editor.getByRole("status").filter({ hasText: `Daily time changed to ${otherTime}.` }),
+        editor
+          .getByRole("status")
+          .filter({ hasText: `Daily time changed to ${minutesLabel(otherTime)}.` }),
       ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
       await expect.poll(loadPlanItems).not.toStrictEqual(before);
@@ -61,7 +62,7 @@ test.describe("Journey", () => {
         editor.getByRole("status").filter({ hasText: "Undone. Your plan is back as it was." }),
       ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
-      await expect(minutes.getByRole("radio", { name: own })).toBeChecked();
+      await expect(minutes).toHaveValue(String(goal.dailyMinutes));
       await expect(editor.getByRole("button", { name: "Undo" })).toHaveCount(0);
       await expect.poll(loadPlanItems).toStrictEqual(before);
 

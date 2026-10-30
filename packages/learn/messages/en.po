@@ -118,6 +118,20 @@ msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "Create a free account"
 
+#: src/_components/daily-time-picker.tsx
+msgctxt "8kifjv"
+msgid "{time} (suggested)"
+msgstr "{time} (suggested)"
+
+#: src/_components/daily-time-picker.tsx
+#: src/onboarding/plan-receipt.tsx
+#: src/onboarding/steps/schedule-step.tsx
+#: src/plan/plan-properties.tsx
+#: src/plan/plan-schedule.tsx
+msgctxt "8W4rYY"
+msgid "Time a day"
+msgstr "Time a day"
+
 #: src/_components/detail-page.tsx
 #: src/_components/steps.tsx
 #: src/ceremonies/use-ceremony-copy.ts
@@ -8487,14 +8501,6 @@ msgid "Goal"
 msgstr "Goal"
 
 #: src/onboarding/plan-receipt.tsx
-#: src/onboarding/steps/schedule-step.tsx
-#: src/plan/plan-properties.tsx
-#: src/plan/plan-schedule.tsx
-msgctxt "8W4rYY"
-msgid "Time a day"
-msgstr "Time a day"
-
-#: src/onboarding/plan-receipt.tsx
 msgctxt "UcBsGX"
 msgid "Your plan so far"
 msgstr "Your plan so far"
@@ -8543,28 +8549,6 @@ msgstr "{count, plural, one {Choose at least {time} a day for your # goal.} othe
 msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
 msgstr "Your buddy grows as you learn."
-
-#. Placeholder of a menu with more amounts of daily study time.
-#: src/onboarding/steps/daily-minutes.tsx
-msgctxt "QegAWn"
-msgid "Other time…"
-msgstr "Other time…"
-
-#: src/onboarding/steps/daily-minutes.tsx
-msgctxt "NnJcB-"
-msgid "Minutes a day"
-msgstr "Minutes a day"
-
-#: src/onboarding/steps/daily-minutes.tsx
-#: src/plan/plan-schedule.tsx
-msgctxt "fhjtBs"
-msgid "Other time a day"
-msgstr "Other time a day"
-
-#: src/onboarding/steps/daily-minutes.tsx
-msgctxt "8kifjv"
-msgid "{time} (suggested)"
-msgstr "{time} (suggested)"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "_2I8Hl"
@@ -11280,17 +11264,11 @@ msgctxt "YV4Gvt"
 msgid "{dateKind, select, month {No amount of time a day covers everything in depth by {date}.} other {No amount of time a day covers everything in depth by {date}.}}"
 msgstr "{dateKind, select, month {No amount of time a day covers everything in depth by {date}.} other {No amount of time a day covers everything in depth by {date}.}}"
 
-#. A note beside a daily time saying what it achieves.
+#. A button that changes the plan's daily time to the one just found.
 #: src/plan/use-time-to-cover.ts
-msgctxt "IPzR8B"
-msgid "Covers everything"
-msgstr "Covers everything"
-
-#. A note beside a daily time saying what it achieves.
-#: src/plan/use-time-to-cover.ts
-msgctxt "OUc_Xr"
-msgid "Every topic"
-msgstr "Every topic"
+msgctxt "Nm3oG2"
+msgid "Use {time} a day"
+msgstr "Use {time} a day"
 
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"

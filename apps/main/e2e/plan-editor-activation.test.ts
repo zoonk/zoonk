@@ -8,16 +8,15 @@ async function readDailyMinutes(goalId: string) {
   return goal.dailyMinutes;
 }
 
-test("arrow keys move through the time presets without saving, and Enter applies one", async ({
+test("keys move through the daily times without saving, and Enter applies one", async ({
   browser,
 }) => {
   await asPersona(browser, { persona: "hugeGoal" }, async ({ page, user }) => {
     await page.goto("/plan");
     await page.getByRole("button", { name: "Adjust plan" }).click();
     const editor = page.getByRole("dialog", { name: "Adjust your plan" });
-    const time = editor.getByRole("radiogroup", { name: "Time a day" });
-    const selected = time.getByRole("radio", { exact: true, name: "45 min" });
-    await expect(selected).toBeChecked();
+    const time = editor.getByLabel("Time a day", { exact: true });
+    await expect(time).toHaveValue("45");
     const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
     const saves: string[] = [];
 
@@ -29,10 +28,10 @@ test("arrow keys move through the time presets without saving, and Enter applies
       }
     });
 
-    await selected.focus();
-    await page.keyboard.press("ArrowLeft");
-    await page.keyboard.press("ArrowLeft");
-    await expect(time.getByRole("radio", { exact: true, name: "15 min" })).toBeFocused();
+    // Typing a time's first digit moves a closed select on every platform; arrows only on some.
+    await time.focus();
+    await page.keyboard.press("1");
+    await expect(time).toHaveValue("60");
     expect(saves).toHaveLength(0);
 
     await expect(
@@ -41,7 +40,7 @@ test("arrow keys move through the time presets without saving, and Enter applies
 
     await page.keyboard.press("Enter");
 
-    await expect.poll(() => readDailyMinutes(user.goalId), { timeout: REPLAN_TIMEOUT_MS }).toBe(15);
+    await expect.poll(() => readDailyMinutes(user.goalId), { timeout: REPLAN_TIMEOUT_MS }).toBe(60);
 
     expect(saves).toHaveLength(1);
   });

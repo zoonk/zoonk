@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
-import { DailyMinutesChoice } from "@zoonk/learn/onboarding/daily-minutes";
+import { DailyTimeField } from "@zoonk/learn/daily-time-picker";
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
@@ -40,7 +40,7 @@ export function StartPlanForm({
       <p className="text-sm font-medium" id={minutesId}>
         {t("How much time a day?")}
       </p>
-      <DailyMinutesChoice defaultMinutes={DEFAULT_MINUTES} name="dailyMinutes" />
+      <DailyTimeField defaultMinutes={DEFAULT_MINUTES} name="dailyMinutes" />
       <Button
         aria-keyshortcuts="Enter"
         className="mt-1"

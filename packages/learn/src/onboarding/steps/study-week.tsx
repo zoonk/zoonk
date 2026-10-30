@@ -1,9 +1,9 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { TimeSelect } from "../../_components/daily-time-picker";
 import { WeekdayToggle } from "../../_components/weekday-toggle";
 import { WeekendTime } from "../../_components/weekend-time";
-import { TimeSelect } from "./daily-minutes";
 
 const DAYS_PER_WEEK = 7;
 

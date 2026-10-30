@@ -96,21 +96,12 @@ export function useTimeToCoverTexts() {
           "{dateKind, select, month {No amount of time a day covers everything in depth by {date}.} other {No amount of time a day covers everything in depth by {date}.}}",
         values: goalDate({ isoDate: targetDate, namedMonth: targetDateNamedMonth, style: "long" }),
       }),
-    note: (answer: TimeToCoverAnswer, minutes: number): string | null => {
-      if (getOfferedMinutes(answer) !== minutes) {
-        return null;
-      }
-
-      return answer.kind === "covers"
-        ? t({
-            description: "A note beside a daily time saying what it achieves.",
-            message: "Covers everything",
-          })
-        : t({
-            description: "A note beside a daily time saying what it achieves.",
-            message: "Every topic",
-          });
-    },
     tryAgain: t("Try again"),
+    use: (minutes: number) =>
+      t({
+        description: "A button that changes the plan's daily time to the one just found.",
+        message: "Use {time} a day",
+        values: { time: formatDuration(minutes) },
+      }),
   };
 }

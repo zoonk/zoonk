@@ -118,6 +118,20 @@ msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "Criar uma conta grátis"
 
+#: src/_components/daily-time-picker.tsx
+msgctxt "8kifjv"
+msgid "{time} (suggested)"
+msgstr "{time} (sugerido)"
+
+#: src/_components/daily-time-picker.tsx
+#: src/onboarding/plan-receipt.tsx
+#: src/onboarding/steps/schedule-step.tsx
+#: src/plan/plan-properties.tsx
+#: src/plan/plan-schedule.tsx
+msgctxt "8W4rYY"
+msgid "Time a day"
+msgstr "Tempo diário"
+
 #: src/_components/detail-page.tsx
 #: src/_components/steps.tsx
 #: src/ceremonies/use-ceremony-copy.ts
@@ -8487,14 +8501,6 @@ msgid "Goal"
 msgstr "Meta"
 
 #: src/onboarding/plan-receipt.tsx
-#: src/onboarding/steps/schedule-step.tsx
-#: src/plan/plan-properties.tsx
-#: src/plan/plan-schedule.tsx
-msgctxt "8W4rYY"
-msgid "Time a day"
-msgstr "Tempo diário"
-
-#: src/onboarding/plan-receipt.tsx
 msgctxt "UcBsGX"
 msgid "Your plan so far"
 msgstr "Seu plano até agora"
@@ -8543,28 +8549,6 @@ msgstr "{count, plural, one {Escolha pelo menos {time} por dia para sua # meta.}
 msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
 msgstr "Seu Parceiro cresce enquanto você aprende."
-
-#. Placeholder of a menu with more amounts of daily study time.
-#: src/onboarding/steps/daily-minutes.tsx
-msgctxt "QegAWn"
-msgid "Other time…"
-msgstr "Outra duração…"
-
-#: src/onboarding/steps/daily-minutes.tsx
-msgctxt "NnJcB-"
-msgid "Minutes a day"
-msgstr "Minutos por dia"
-
-#: src/onboarding/steps/daily-minutes.tsx
-#: src/plan/plan-schedule.tsx
-msgctxt "fhjtBs"
-msgid "Other time a day"
-msgstr "Outro tempo diário"
-
-#: src/onboarding/steps/daily-minutes.tsx
-msgctxt "8kifjv"
-msgid "{time} (suggested)"
-msgstr "{time} (sugerido)"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "_2I8Hl"
@@ -11280,17 +11264,11 @@ msgctxt "YV4Gvt"
 msgid "{dateKind, select, month {No amount of time a day covers everything in depth by {date}.} other {No amount of time a day covers everything in depth by {date}.}}"
 msgstr "{dateKind, select, month {Não dá para estudar tudo a fundo até {date}, seja qual for o tempo diário.} other {Não dá para estudar tudo a fundo até {date}, seja qual for o tempo diário.}}"
 
-#. A note beside a daily time saying what it achieves.
+#. A button that changes the plan's daily time to the one just found.
 #: src/plan/use-time-to-cover.ts
-msgctxt "IPzR8B"
-msgid "Covers everything"
-msgstr "Cobre tudo"
-
-#. A note beside a daily time saying what it achieves.
-#: src/plan/use-time-to-cover.ts
-msgctxt "OUc_Xr"
-msgid "Every topic"
-msgstr "Todos os tópicos"
+msgctxt "Nm3oG2"
+msgid "Use {time} a day"
+msgstr "Usar {time} por dia"
 
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"

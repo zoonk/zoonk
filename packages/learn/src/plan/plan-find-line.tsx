@@ -1,10 +1,11 @@
 "use client";
 
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
+import { Button } from "@zoonk/ui/components/button";
 import { useLayoutEffect, useRef } from "react";
 import { usePlanScreen } from "./plan-context";
-import { FindTimeLine, findPickedChip, findTimeChip } from "./plan-coverage";
-import { getEditorSectionId } from "./plan-editor-sections";
+import { FindTimeLine } from "./plan-coverage";
+import { findSectionControl } from "./plan-editor-sections";
 import { FULL_COURSE_SWITCH_ID } from "./plan-full-course";
 import {
   type TimeToCoverAnswer,
@@ -15,6 +16,8 @@ import {
 } from "./use-time-to-cover";
 
 const FIND_LINE_ID = "plan-editor-find";
+
+const USE_TIME_ID = "plan-editor-use-time";
 
 export const FIND_ACTIONS_ID = "plan-editor-find-actions";
 
@@ -27,18 +30,15 @@ export function useFindAnswer(): TimeToCoverAnswer | null {
 
 function findFocusTarget({
   answered,
-  choices,
   isGoal,
 }: {
   answered: PlanTimeToCover;
-  choices: number[];
   isGoal: boolean;
 }): HTMLElement | null {
-  const offered = getOfferedMinutes(readTimeToCover(answered));
-  const section = document.querySelector<HTMLElement>(`#${getEditorSectionId("time")}`);
+  const offer = document.querySelector<HTMLElement>(`#${USE_TIME_ID}`);
 
-  if (offered !== null) {
-    return findTimeChip({ choices, container: section, minutes: offered });
+  if (offer) {
+    return offer;
   }
 
   if (isGoal && answered.fittingDate) {
@@ -56,7 +56,7 @@ function findFocusTarget({
  * The returned `ask` marks that this editor asked, so an answer found elsewhere (the Plan's card)
  * moves nothing.
  */
-export function useFocusFindAnswer(choices: number[]) {
+export function useFocusFindAnswer() {
   const { goal } = usePlanScreen();
   const { answered, state } = useTimeToCover();
   const asked = useRef(false);
@@ -74,15 +74,14 @@ export function useFocusFindAnswer(choices: number[]) {
       return;
     }
 
-    const target = findFocusTarget({ answered, choices, isGoal: goal.kind !== "exam" });
-    const section = document.querySelector<HTMLElement>(`#${getEditorSectionId("time")}`);
+    const target = findFocusTarget({ answered, isGoal: goal.kind !== "exam" });
     const line = document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`);
 
-    (target ?? findPickedChip(section) ?? line)?.focus();
+    (target ?? findSectionControl("time") ?? line)?.focus();
 
     // The answer shows too: on a phone, the latest change pinned at the sheet's foot can cover it.
     line?.scrollIntoView({ block: "nearest" });
-  }, [answered, choices, goal.kind, state.status]);
+  }, [answered, goal.kind, state.status]);
 
   return () => {
     asked.current = true;
@@ -90,17 +89,34 @@ export function useFocusFindAnswer(choices: number[]) {
 }
 
 /** The editor's block is a live region already, so the line isn't one of its own. */
-export function FindLine({ canFind, onAsk }: { canFind: boolean; onAsk: () => void }) {
-  const { goal, plan } = usePlanScreen();
+export function FindLine({
+  canFind,
+  onAsk,
+  onUseTime,
+  pending,
+}: {
+  canFind: boolean;
+  onAsk: () => void;
+  onUseTime: (minutes: number) => void;
+  pending: boolean;
+}) {
+  const { goal, keepFocus, plan } = usePlanScreen();
   const texts = useTimeToCoverTexts();
   const { answered, find, state } = useTimeToCover();
   const answer = answered && readTimeToCover(answered);
+  const offered = getOfferedMinutes(answer);
   const showsDate = goal.kind !== "exam" && answer?.kind !== "covers";
   const dateFound = showsDate ? answered?.fittingDate : null;
 
   const ask = () => {
     onAsk();
     void find();
+  };
+
+  const applyTime = (minutes: number) => {
+    onUseTime(minutes);
+    // The button goes once its time is the plan's, so the keyboard waits on the picker.
+    keepFocus(() => findSectionControl("time"));
   };
 
   return (
@@ -137,6 +153,20 @@ export function FindLine({ canFind, onAsk }: { canFind: boolean; onAsk: () => vo
                 fittingDate: dateFound,
               })}
             </p>
+          )}
+
+          {offered !== null && offered !== plan.schedule.shape.weekdays && (
+            <Button
+              className="self-start"
+              disabled={pending}
+              focusableWhenDisabled
+              id={USE_TIME_ID}
+              onClick={() => applyTime(offered)}
+              size="sm"
+              variant="outline"
+            >
+              {texts.use(offered)}
+            </Button>
           )}
         </>
       }

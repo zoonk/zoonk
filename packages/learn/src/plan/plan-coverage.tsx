@@ -8,7 +8,7 @@ import { ChangeSaveError } from "../_components/save-error";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
-import { getEditorSectionId } from "./plan-editor-sections";
+import { findSectionControl } from "./plan-editor-sections";
 import { usePlanChange } from "./use-plan-change";
 import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
@@ -164,7 +164,7 @@ export function useMoveDate({
     });
 
     // Move gives way once the plan covers everything, so the keyboard waits on the time picked.
-    keepFocus(() => findPickedChip(document.querySelector(`#${getEditorSectionId("time")}`)));
+    keepFocus(() => findSectionControl("time"));
   };
 
   return {
@@ -316,24 +316,4 @@ export function FindTimeLine({
       {pending && <span className="sr-only">{texts.finding}</span>}
     </div>
   );
-}
-
-export function findPickedChip(container: ParentNode | null): HTMLElement | null {
-  return container?.querySelector<HTMLElement>('[role="radio"][aria-checked="true"]') ?? null;
-}
-
-export function findTimeChip({
-  choices,
-  container,
-  minutes,
-}: {
-  choices: number[];
-  container: HTMLElement | null;
-  minutes: number;
-}): HTMLElement | null {
-  const index = choices.indexOf(minutes);
-
-  return index === -1
-    ? null
-    : (container?.querySelectorAll<HTMLElement>('[role="radio"]')[index] ?? null);
 }
