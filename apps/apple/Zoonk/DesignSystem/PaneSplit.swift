@@ -43,6 +43,10 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
               .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
           }
           .environment(\.isPaneSplit, true)
+          // A list right under the bar has no top margin, but SwiftUI decides it once per
+          // collection view and gives a pane one it kept off screen through a fold or resize,
+          // which brings back the margin it had there: one page would start lower than the other.
+          .contentMargins(.top, 0, for: .scrollContent)
         } else {
           single
         }
