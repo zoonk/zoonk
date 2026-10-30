@@ -55,6 +55,7 @@ private struct ChanceSimulationView: View {
 
   @State private var runIndex = 0
   @State private var revealed = 0
+  @State private var simulated: (seed: Int, outcomes: [Int])?
 
   /// The runs play once there's nothing left to guess: after the check, or explored.
   private var isRunning: Bool { context.phase != .answering }
@@ -71,11 +72,11 @@ private struct ChanceSimulationView: View {
   }
 
   var body: some View {
-    let outcomes = isRunning ? ChanceModel.run(fields.model, runs: fields.runs, seed: seed) : []
+    let outcomes = isRunning && simulated?.seed == seed ? simulated?.outcomes ?? [] : []
     let shown = Array(outcomes.prefix(revealed))
     let hits = shown.map { ChanceModel.isHit(fields.model, $0) }
     let share = hits.isEmpty ? 0 : Double(hits.filter { $0 }.count) / Double(hits.count)
-    let isDone = isRunning && shown.count == outcomes.count
+    let isDone = !outcomes.isEmpty && shown.count == outcomes.count
     let runsLabel = String(
       localized: "\(ActivityNumberFormat.format(Double(fields.runs))) runs of \(fields.trialLabel)",
       table: "ActivitiesCharts",
@@ -133,7 +134,23 @@ private struct ChanceSimulationView: View {
         }
       }
     }
-    .modifier(RevealCount(key: isRunning ? seed : -1, total: outcomes.count, revealed: $revealed))
+    .task(id: isRunning ? seed : nil) {
+      guard isRunning else {
+        return
+      }
+
+      let (model, runs, seed) = (fields.model, fields.runs, seed)
+      let outcomes = await Task.detached {
+        ChanceModel.run(model, runs: runs, seed: seed)
+      }.value
+
+      if !Task.isCancelled {
+        simulated = (seed, outcomes)
+      }
+    }
+    .modifier(
+      RevealCount(key: outcomes.isEmpty ? -1 : seed, total: outcomes.count, revealed: $revealed)
+    )
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       isRunning
@@ -253,6 +270,26 @@ private struct ChanceSimulationView: View {
   }
 }
 
+/// A size's results with what the reveal doesn't change: the middle range, the smallest size's
+/// results to compare with, and the tallest bar either reaches.
+private struct SamplingRun {
+  let key: [Int]
+  let selected: [Double]
+  let range: ClosedRange<Double>
+  let comparison: [SamplingModel.Bin]?
+  let peak: Int
+
+  init(key: [Int], selected: [Double], baseline: [Double]?, domain: ClosedRange<Double>) {
+    self.key = key
+    self.selected = selected
+    range = SamplingModel.middleRange(selected)
+    comparison = baseline.map { SamplingModel.histogram($0, domain: domain) }
+    peak = max(
+      SamplingModel.histogram(selected, domain: domain).map(\.count).max() ?? 1,
+      comparison?.map(\.count).max() ?? 1, 1)
+  }
+}
+
 private struct SamplingSimulationView: View {
   let context: ActivityCanvasContext
   let fields: RandomSimulationFields.Sampling
@@ -261,6 +298,7 @@ private struct SamplingSimulationView: View {
   @State private var sizeIndex: Int
   @State private var runIndex = 0
   @State private var revealed = 0
+  @State private var simulated: SamplingRun?
 
   init(context: ActivityCanvasContext, fields: RandomSimulationFields.Sampling, fieldsJSON: String)
   {
@@ -289,9 +327,7 @@ private struct SamplingSimulationView: View {
     Int(SeededShuffle.hashSeed("\(fieldsJSON):\(size)")) + runIndex
   }
 
-  private func results(_ size: Int) -> [Double] {
-    SamplingModel.simulate(fields.population, runs: fields.runs, seed: seed(size), size: size)
-  }
+  private var simulationKey: [Int] { [size, seed(size), seed(smallest)] }
 
   private func valueText(_ value: Double, digits: Int? = nil) -> String {
     isShare
@@ -324,18 +360,16 @@ private struct SamplingSimulationView: View {
   var body: some View {
     let domain = SamplingModel.domain(fields.population, smallest: smallest)
     let truth = SamplingModel.truth(fields.population)
-    let selected = results(size)
-    let baseline = size == smallest ? nil : results(smallest)
+    let run = simulated?.key == simulationKey ? simulated : nil
+    let selected = run?.selected ?? []
     let shown = Array(selected.prefix(revealed))
-    let isDone = shown.count == selected.count
-    let range = SamplingModel.middleRange(selected)
+    let isDone = !selected.isEmpty && shown.count == selected.count
+    let range = run?.range ?? 0...0
     let margin = (range.upperBound - range.lowerBound) / 2
     let digits = SamplingModel.digits(margin: margin, population: fields.population)
     let bins = SamplingModel.histogram(shown, domain: domain)
-    let comparison = baseline.map { SamplingModel.histogram($0, domain: domain) }
-    let peak = max(
-      SamplingModel.histogram(selected, domain: domain).map(\.count).max() ?? 1,
-      comparison?.map(\.count).max() ?? 1, 1)
+    let comparison = run?.comparison
+    let peak = run?.peak ?? 1
     let sizeLabel =
       fields.sizeLabel
       ?? String(localized: "Sample size", table: "ActivitiesCharts", comment: "A slider's label")
@@ -345,11 +379,15 @@ private struct SamplingSimulationView: View {
         HStack(alignment: .top) {
           marginHeader
           Spacer()
-          marginReadout(margin, isDone: isDone)
+          if run != nil {
+            marginReadout(margin, isDone: isDone)
+          }
         }
         VStack(alignment: .leading, spacing: 4) {
           marginHeader
-          marginReadout(margin, isDone: isDone)
+          if run != nil {
+            marginReadout(margin, isDone: isDone)
+          }
         }
       }
 
@@ -462,7 +500,28 @@ private struct SamplingSimulationView: View {
         expectedSpread
       }
     }
-    .modifier(RevealCount(key: seed(size), total: fields.runs, revealed: $revealed))
+    .task(id: simulationKey) {
+      let key = simulationKey
+      let (population, runs, size, smallest) = (fields.population, fields.runs, size, smallest)
+      let (seed, smallestSeed) = (seed(size), seed(smallest))
+      let domain = SamplingModel.domain(population, smallest: smallest)
+      let run = await Task.detached {
+        SamplingRun(
+          key: key,
+          selected: SamplingModel.simulate(population, runs: runs, seed: seed, size: size),
+          baseline: size == smallest
+            ? nil
+            : SamplingModel.simulate(population, runs: runs, seed: smallestSeed, size: smallest),
+          domain: domain)
+      }.value
+
+      if !Task.isCancelled {
+        simulated = run
+      }
+    }
+    .modifier(
+      RevealCount(key: run == nil ? -1 : seed(size), total: selected.count, revealed: $revealed)
+    )
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text(
