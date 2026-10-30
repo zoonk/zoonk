@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { applyChangeNow } from "../../plans/_utils/apply-plan-change";
@@ -19,15 +19,17 @@ export type ExamChoiceResult =
 
 const EXAM_CHOICE_NOTE = "The learner picked the option they take of one of the exam's choices.";
 
-async function findOfferedChoices({
+export async function findOfferedChoices({
   choices,
   goal,
+  db = prisma,
 }: {
   choices: readonly ExamChoice[];
   goal: Pick<Goal, "examBlueprintId">;
+  db?: Pick<TransactionClient, "examBlueprint">;
 }): Promise<ExamChoice[] | null> {
   const blueprint = goal.examBlueprintId
-    ? await prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
+    ? await db.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
     : null;
 
   if (!blueprint) {
@@ -47,11 +49,9 @@ async function findOfferedChoices({
 async function applyChoices({
   choices,
   context,
-  followToday,
 }: {
   choices: readonly ExamChoice[];
   context: PlanContext;
-  followToday: boolean;
 }): Promise<ExamChoiceResult> {
   const current = context.state.settings.examChoices;
 
@@ -66,7 +66,7 @@ async function applyChoices({
 
   const result = await applyChangeNow({
     context,
-    followToday,
+    followToday: true,
     operations: changed.map((choice) => ({ kind: "setExamChoice" as const, ...choice })),
     reason: EXAM_CHOICE_NOTE,
     source: "learner",
@@ -78,37 +78,6 @@ async function applyChoices({
 
   const change = result.status === "saved" ? null : await loadPlanChangeView(result.changeId);
   return { change, status: "applied" };
-}
-
-/** The caller must already have authorized ownership of the goal. */
-export async function pickExamOptions({
-  choices,
-  followToday,
-  goal,
-  timeZone,
-}: {
-  choices: readonly ExamChoice[];
-  followToday: boolean;
-  goal: Goal;
-  timeZone?: string | null;
-}): Promise<ExamChoiceResult> {
-  return withPlanRetry(async () => {
-    const context = await loadPlanAtToken(goal.id, { timeZone });
-
-    if (!context) {
-      return { status: "notFound" };
-    }
-
-    const offered = await findOfferedChoices({ choices, goal: context.goal });
-
-    if (!offered) {
-      return { error: "unknownOption", status: "invalid" };
-    }
-
-    return context
-      ? applyChoices({ choices: offered, context, followToday })
-      : { status: "notFound" };
-  });
 }
 
 export async function chooseExamOption({
@@ -124,10 +93,22 @@ export async function chooseExamOption({
     return owned;
   }
 
-  return pickExamOptions({
-    choices: [{ group: input.group, subject: input.subject }],
-    followToday: true,
-    goal: owned.goal,
-    timeZone: input.timeZone,
+  return withPlanRetry(async () => {
+    const context = await loadPlanAtToken(owned.goal.id, { timeZone: input.timeZone });
+
+    if (!context) {
+      return { status: "notFound" };
+    }
+
+    const offered = await findOfferedChoices({
+      choices: [{ group: input.group, subject: input.subject }],
+      goal: context.goal,
+    });
+
+    if (!offered) {
+      return { error: "unknownOption", status: "invalid" };
+    }
+
+    return applyChoices({ choices: offered, context });
   });
 }

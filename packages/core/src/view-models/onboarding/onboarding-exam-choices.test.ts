@@ -84,6 +84,10 @@ describe("onboarding an exam with a choice", () => {
       { group: FOREIGN, subject: SPANISH },
     ]);
 
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion + 1,
+    });
+
     const onboarding = await loadOnboarding(goal.id);
 
     expect(onboarding.steps).not.toContain("examChoice");

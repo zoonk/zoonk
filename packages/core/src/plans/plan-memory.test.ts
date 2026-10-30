@@ -5,14 +5,16 @@ import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
+import { runPlanSetupTask } from "./plan-setup";
 
 /** A Monday in 2020, before other tests' learning events, so pace estimates don't move dates. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 function mockFit(data: Awaited<ReturnType<typeof fitPlanToRoutineFacts>>["data"]) {
-  vi.mocked(fitPlanToRoutineFacts).mockResolvedValue({
+  const result = {
     data,
     provenance: {
       generatedAt: NOW.toISOString(),
@@ -27,7 +29,10 @@ function mockFit(data: Awaited<ReturnType<typeof fitPlanToRoutineFacts>>["data"]
     systemPrompt: "",
     usage: {} as never,
     userPrompt: "",
-  });
+  };
+
+  vi.mocked(fitPlanToRoutineFacts).mockResolvedValue(result);
+  return result;
 }
 
 async function learnerFixture({ memoryEnabled = true }: { memoryEnabled?: boolean } = {}) {
@@ -113,6 +118,69 @@ describe("plans read the learner's goals and routine", () => {
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     expect(vi.mocked(fitPlanToRoutineFacts)).not.toHaveBeenCalled();
+  });
+
+  it("keeps an explicit schedule when the routine model finishes afterwards", async () => {
+    const { goal, library, plan } = await setup();
+    await createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" });
+
+    const result = mockFit({
+      operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [0] }],
+      reason: "Sundays are off, since you never study then.",
+    });
+
+    const started = Promise.withResolvers<boolean>();
+    const released = Promise.withResolvers<boolean>();
+
+    vi.mocked(fitPlanToRoutineFacts).mockImplementation(async () => {
+      started.resolve(true);
+      await released.promise;
+      return result;
+    });
+
+    const routine = runPlanSetupTask({ goalId: goal.id, task: "routine" });
+    await started.promise;
+
+    try {
+      await expect(
+        answerOnboardingQuestion({
+          goalId: goal.id,
+          input: { dailyMinutes: 25, question: "schedule", studyDays: [0, 1, 2, 3, 4, 5, 6] },
+        }),
+      ).resolves.toMatchObject({ status: "saved" });
+    } finally {
+      released.resolve(true);
+      await routine;
+    }
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      dailyMinutes: 25,
+    });
+
+    const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(stored.settings).toMatchObject({ weekdayMinutes: null });
+    expect(stored.setupTasks).not.toContain("routine");
+
+    await expect(
+      prisma.planChange.count({ where: { planId: plan.id, runId: "run-routine" } }),
+    ).resolves.toBe(0);
+  });
+
+  it("does not restore routine setup when the schedule arrives before the first graph", async () => {
+    const { goal, library } = await setup();
+
+    mockFit({
+      operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [0] }],
+      reason: "Sundays are off, since you never study then.",
+    });
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { dailyMinutes: 25, question: "schedule", studyDays: [0, 1, 2, 3, 4, 5, 6] },
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    expect(fitPlanToRoutineFacts).not.toHaveBeenCalled();
   });
 
   it("asks nothing when memory has no goals or routine, or is turned off", async () => {

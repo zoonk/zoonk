@@ -1,12 +1,13 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { prisma } from "@zoonk/db";
-import { withPlanRetry } from "../plan-conflict";
+import { type TransactionClient } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { parsePlanSettings } from "../planner/plan-state";
 import { toRecommendedBaseChoices } from "../planner/recommended-base-choices";
+import { refreshGoalPlan } from "../refresh-goal-plan";
 import { isPlanReady } from "./apply-plan-change";
-import { commitPlan } from "./commit-plan";
 import { withPastBasicsAreas } from "./level-listening-starts";
-import { listListeningPastBasicsAreas } from "./load-listening-starts";
+import { listChosenStartAreas, listListeningPastBasicsAreas } from "./load-listening-starts";
 import { type PlanContext } from "./plan-context";
 import { loadPlanAtToken } from "./plan-token";
 import { ensureQuickBaseLessons } from "./quick-bases";
@@ -31,25 +32,8 @@ export async function planOnRecommendedBases({
   return state ? computePlan({ context, mode: "forced", state }) : computed;
 }
 
-async function startOnRecommendedBases({
-  computed,
-  context,
-}: {
-  computed: ComputedPlan;
-  context: PlanContext;
-}): Promise<ComputedPlan> {
-  const state = withRecommendedBases(computed);
-
-  if (!state) {
-    return computed;
-  }
-
-  await ensureQuickBaseLessons(state.settings);
-  return computePlan({ context, mode: "forced", state });
-}
-
-async function hasChosenBases(planId: string): Promise<boolean> {
-  const chosen = await prisma.planChange.findFirst({
+async function hasChosenBases(planId: string, tx: TransactionClient): Promise<boolean> {
+  const chosen = await tx.planChange.findFirst({
     select: { id: true },
     where: {
       payload: { array_contains: [{ kind: "setBaseChoices" }], path: ["operations"] },
@@ -60,40 +44,60 @@ async function hasChosenBases(planId: string): Promise<boolean> {
   return chosen !== null;
 }
 
-export async function settleNewPlan({
-  fullCourse,
-  goalId,
-}: {
-  fullCourse?: boolean;
-  goalId: string;
-}): Promise<void> {
-  await withPlanRetry(async () => {
-    const context = await loadPlanAtToken(goalId);
+export async function settleNewPlan({ goalId }: { goalId: string }): Promise<void> {
+  const context = await loadPlanAtToken(goalId);
 
-    if (!context || !isPlanReady(context)) {
-      return;
-    }
+  if (!context || !isPlanReady(context)) {
+    return;
+  }
 
-    const { state } = context;
-    const studiesEverything = context.goal.kind === "exam" && fullCourse !== undefined;
-
-    const levelStarts = await listListeningPastBasicsAreas({
-      goal: context.goal,
-      graph: state.graph,
-      planId: context.plan.id,
-    });
-
-    const { settings: levelSettings } = withPastBasicsAreas({ areas: levelStarts, state });
-    const settings = studiesEverything ? { ...levelSettings, fullCourse } : levelSettings;
-
-    const computed = await computePlan({ context, mode: "forced", state: { ...state, settings } });
-
-    const settled = (await hasChosenBases(context.plan.id))
-      ? computed
-      : await startOnRecommendedBases({ computed, context });
-
-    if (settled !== computed || settings !== state.settings) {
-      await commitPlan({ change: null, computed: settled, context });
-    }
+  const levelStarts = await listListeningPastBasicsAreas({
+    goal: context.goal,
+    graph: context.state.graph,
+    planId: context.plan.id,
   });
+
+  const state = withPastBasicsAreas({ areas: levelStarts, state: context.state });
+  const computed = await computePlan({ context, mode: "forced", state });
+  const baseChoices = toRecommendedBaseChoices(computed.bases);
+
+  const settings = await writeLearnerChange(
+    { goalIds: [goalId], planInputs: true, userId: context.goal.userId },
+    async (tx) => {
+      const plan = await tx.plan.findUnique({ where: { goalId } });
+
+      if (!plan) {
+        return unchanged(null);
+      }
+
+      const current = parsePlanSettings(plan.settings);
+
+      const chosenStarts =
+        levelStarts.length > 0 ? await listChosenStartAreas(plan.id, tx) : new Set<string>();
+
+      const selected = {
+        ...current,
+        ...(!(await hasChosenBases(plan.id, tx)) && { baseChoices }),
+        pastBasicsAreas: [
+          ...new Set([
+            ...current.pastBasicsAreas,
+            ...levelStarts.filter((area) => !chosenStarts.has(area)),
+          ]),
+        ],
+      };
+
+      if (isDeepStrictEqual(current, selected)) {
+        return unchanged(current);
+      }
+
+      await tx.plan.update({ data: { settings: selected }, where: { id: plan.id } });
+      return selected;
+    },
+  );
+
+  if (settings) {
+    await ensureQuickBaseLessons(settings);
+  }
+
+  await refreshGoalPlan({ goalId, mode: "forced", onConflict: "yield" });
 }

@@ -6,6 +6,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-util
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
+import { openStudyDay } from "../../sessions/open-study-day";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
 import {
   ENGLISH,
@@ -53,7 +54,7 @@ async function setup({ built = true }: { built?: boolean } = {}) {
 
   mockSession(user.id);
 
-  return { goal, plan, user };
+  return { goal, library, plan, user };
 }
 
 async function loadChoices(planId: string) {
@@ -71,6 +72,40 @@ describe(chooseExamOption, () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("replaces today's pending lessons when the learner switches exam options", async () => {
+    const { goal, library, plan } = await setup();
+    await chooseExamOption({ goalId: goal.id, input: spanish });
+    const skill = library.graph.skills.find((item) => item.area === SPANISH);
+
+    const items = await prisma.planItem.findMany({
+      where: { lessonId: { not: null }, planId: plan.id, skillId: skill?.skillId },
+    });
+
+    const lessonIds = items.flatMap((item) => item.lessonId ?? []);
+    expect(lessonIds.length).toBeGreaterThan(0);
+
+    const opened = await openStudyDay({
+      goalId: goal.id,
+      shownDate: "2020-09-28",
+      timeZone: TIME_ZONE,
+    });
+
+    expect(opened.status).toBe("opened");
+
+    const pending = () =>
+      prisma.studySessionBlock.count({
+        where: {
+          lessonId: { in: lessonIds },
+          session: { goalId: goal.id },
+          status: { in: ["pending", "active"] },
+        },
+      });
+
+    await expect(pending()).resolves.toBeGreaterThan(0);
+    await chooseExamOption({ goalId: goal.id, input: { ...spanish, subject: ENGLISH } });
+    await expect(pending()).resolves.toBe(0);
   });
 
   it("keeps the learner's option with their plan, as a change they can undo", async () => {

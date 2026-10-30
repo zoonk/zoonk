@@ -9,7 +9,7 @@ import { type LearningProfileView } from "../../profile/learning-profile-contrac
 import { getSession } from "../../users/get-session";
 import { parseStoredUnderstanding } from "./_utils/onboarding-draft";
 import { type OnboardingResumeView } from "./onboarding-contract";
-import { getOnboardingSteps } from "./onboarding-steps";
+import { getOnboardingSteps, hasOnboardingQuestions } from "./onboarding-steps";
 
 export type OnboardingResumeResult =
   | { resume: OnboardingResumeView | null; status: "ready" }
@@ -88,7 +88,7 @@ async function isInOnboarding({
     },
   });
 
-  return steps.some((step) => step !== "plan");
+  return hasOnboardingQuestions(steps);
 }
 
 /** Drafts count only when newer than every goal; otherwise resume the newest unfinished onboarding or the day. */

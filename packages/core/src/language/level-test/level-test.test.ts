@@ -1,6 +1,10 @@
 import { assessPronunciation } from "@zoonk/ai/tasks/v2/language/assess-pronunciation";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
@@ -17,6 +21,7 @@ import { getUsageRule } from "../../entitlements/limits";
 import * as learnerWrite from "../../learner/_utils/write-learner-change";
 import { NEW_SKILL_MEMORY } from "../../learner/fsrs-scheduler";
 import * as placement from "../../learner/placement/_utils/apply-placement";
+import { markPlanInputsUntil } from "../../plans/_test-utils/mark-plan-inputs";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
 import * as announcement from "../../plans/announce-tested-out-items";
 import { createGoalPlan } from "../../plans/create-goal-plan";
@@ -856,6 +861,50 @@ function holdNextAnnouncement() {
 }
 
 describe("placing a level test's result on the planner's plan", () => {
+  it("finishes during background input bursts and announces the durable result afterwards", async () => {
+    const { goalId, readPlacement, userId } = await plannedLearnerFixture();
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+
+    const item = await prisma.planItem.findFirstOrThrow({
+      orderBy: { position: "asc" },
+      where: { kind: "lesson", lessonId: { not: null }, planId: plan.id },
+    });
+
+    const session = await studySessionFixture({ goalId, userId });
+
+    const block = await studySessionBlockFixture({
+      lessonId: item.lessonId,
+      sessionId: session.id,
+    });
+
+    const stop = new AbortController();
+    const marking = markPlanInputsUntil({ planId: plan.id, signal: stop.signal });
+
+    try {
+      await expect(finishLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "ready" });
+    } finally {
+      stop.abort();
+      await expect(marking).resolves.toBeGreaterThan(1);
+    }
+
+    await expect(readPlacement()).resolves.toMatchObject({
+      items: ["testedOut", "testedOut"],
+      reps: 1,
+    });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ status: "skipped" });
+
+    await finishLanguageLevelTest(goalId);
+
+    await expect(readPlacement()).resolves.toMatchObject({
+      changes: [{ status: "applied" }],
+      items: ["testedOut", "testedOut"],
+      reps: 1,
+    });
+  });
+
   it("skips the lessons below the level once, with one undo, when two finishes race", async () => {
     const { goalId, readPlacement, userId } = await plannedLearnerFixture();
     const writer = holdLearnerLock({ userId });

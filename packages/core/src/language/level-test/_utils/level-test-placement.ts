@@ -13,6 +13,8 @@ import { markSkillsKnown, testOutKnownPlanItems } from "../../../learner/_utils/
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { loadPlacement } from "../../../learner/placement/_utils/apply-placement";
 import { announceTestedOutItems } from "../../../plans/announce-tested-out-items";
+import { isPlanConflictError } from "../../../plans/plan-conflict";
+import { skipTestedOutBlocks } from "../../../sessions/_utils/skip-tested-out-blocks";
 import { readGoalDetails } from "../../_utils/language-goal";
 import { type LevelTestProgress } from "../level-test-contract";
 import { readLevelTestProgress } from "./level-test-state";
@@ -165,6 +167,11 @@ export async function announceLevelTestPlacement({
   );
 
   if (error instanceof PlacementAnnouncedError || data) {
+    return;
+  }
+
+  if (isPlanConflictError(error)) {
+    await skipTestedOutBlocks({ goalId, notStarted: true, planItemIds: placement.unannounced });
     return;
   }
 

@@ -8,6 +8,8 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getChallenge } from "../checkpoints/get-challenge";
+import { writeLearnerChange } from "../learner/_utils/write-learner-change";
+import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { lostChallengeFixture, takenChallengeFixture } from "./_test-utils/taken-challenge";
@@ -232,6 +234,79 @@ describe("phase dates through system refreshes", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("forces phase dates even after automatic planning saved the same inputs", async () => {
+    const { goal, plan } = await setup({ targetDate: FAR });
+    const before = await readPhaseEnds(plan.id);
+
+    await writeLearnerChange({ goalIds: [goal.id], planInputs: true, userId: goal.userId }, (tx) =>
+      tx.goal.update({ data: { dailyMinutes: 60 }, where: { id: goal.id } }),
+    );
+
+    await refreshGoalPlan({ goalId: goal.id });
+    await expect(readPhaseEnds(plan.id)).resolves.toStrictEqual(before);
+    await refreshGoalPlan({ goalId: goal.id, mode: "forced", onConflict: "yield" });
+    const after = await readPhaseEnds(plan.id);
+    expect(Date.parse(after[0]!)).toBeLessThan(Date.parse(before[0]!));
+  });
+
+  it("refreshes a completed sibling when another goal changes their shared schedule", async () => {
+    const { goal, library, plan } = await setup({ targetDate: FAR });
+
+    const { goal: sibling } = await unplannedGoalFixture({
+      dailyMinutes: 12,
+      settings: { startDate: "2020-09-27" },
+      targetDate: FAR,
+      timezone: "UTC",
+      userId: goal.userId,
+    });
+
+    await createGoalPlan({ goalId: sibling.id, graph: library.graph });
+
+    const details = {
+      answered: ["purpose", "level", "targetDate", "buddy", "placement", "schedule"],
+      onboardingId: crypto.randomUUID(),
+    };
+
+    await prisma.goal.updateMany({
+      data: { details },
+      where: { id: { in: [goal.id, sibling.id] } },
+    });
+
+    const before = await readPhaseEnds(plan.id);
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: sibling.id,
+        input: { dailyMinutes: 120, question: "schedule" },
+      }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    const current = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    expect(current.dailyMinutes).toBeGreaterThan(12);
+    const after = await readPhaseEnds(plan.id);
+    expect(Date.parse(after[0]!)).toBeLessThan(Date.parse(before[0]!));
+  });
+
+  it("moves the existing phase dates when onboarding saves more daily time", async () => {
+    const { goal, plan } = await setup({ targetDate: FAR });
+    const before = await readPhaseEnds(plan.id);
+    expect(before[0]).not.toBeNull();
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { dailyMinutes: 60, question: "schedule" },
+      }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    const after = await readPhaseEnds(plan.id);
+    expect(Date.parse(after[0]!)).toBeLessThan(Date.parse(before[0]!));
+
+    await expect(
+      prisma.planChange.count({ where: { planId: plan.id, status: "proposed" } }),
+    ).resolves.toBe(0);
   });
 
   it("offers to move a phase's end past lessons that land longer than planned, so its challenge comes after them", async () => {

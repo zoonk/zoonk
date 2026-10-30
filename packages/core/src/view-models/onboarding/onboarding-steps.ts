@@ -200,6 +200,23 @@ export function getOnboardingSteps({
   ];
 }
 
+export function hasOnboardingQuestions(steps: readonly OnboardingStep[]): boolean {
+  return steps.some((step) => step !== "plan");
+}
+
+export function isGoalSetupLeft(goal: Pick<Goal, "details" | "kind" | "targetDate">): boolean {
+  return hasOnboardingQuestions(
+    getOnboardingSteps({
+      goal: {
+        details: isJsonObject(goal.details) ? goal.details : {},
+        kind: goal.kind,
+        targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
+      },
+      profile: { hasBuddy: true, hasEarlierGoals: true },
+    }),
+  );
+}
+
 /** A default course plan is not configured until learner questions finish; later buddy/notice choices must not reopen setup. */
 export function isCourseSetupLeft(goal: Pick<Goal, "details" | "kind" | "targetDate">): boolean {
   const details = isJsonObject(goal.details) ? goal.details : {};
@@ -208,14 +225,5 @@ export function isCourseSetupLeft(goal: Pick<Goal, "details" | "kind" | "targetD
     return false;
   }
 
-  const steps = getOnboardingSteps({
-    goal: {
-      details,
-      kind: goal.kind,
-      targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
-    },
-    profile: { hasBuddy: true, hasEarlierGoals: true },
-  });
-
-  return steps.some((step) => step !== "plan");
+  return isGoalSetupLeft(goal);
 }

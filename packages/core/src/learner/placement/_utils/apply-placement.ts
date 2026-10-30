@@ -80,7 +80,11 @@ export async function applyPlacement({
   await markSkillsKnown({ knownAt: now, skillIds: state.knownSkillIds, timeZone, userId });
 
   // A question inside today's session keeps the rest of the day as the learner was shown it.
-  const { changeId, planItemIds: testedOutPlanItemIds } = await markPlanItemsTestedOut({
+  const {
+    changeId,
+    pastBasicsAdded,
+    planItemIds: testedOutPlanItemIds,
+  } = await markPlanItemsTestedOut({
     announceAlso,
     extraWrites,
     followToday: answer === null,
@@ -96,7 +100,7 @@ export async function applyPlacement({
 
   revalidateCacheTags([getLearnerModelCacheTag(userId)]);
 
-  return { changeId, pastBasicsAreas, state, testedOutPlanItemIds };
+  return { changeId, pastBasicsAreas: pastBasicsAdded, state, testedOutPlanItemIds };
 }
 
 function endedPlacement(details: unknown): boolean {

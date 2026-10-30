@@ -5,7 +5,11 @@ import { skipTestedOutBlocks } from "../sessions/_utils/skip-tested-out-blocks";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
 import { followPlanToday } from "./_utils/follow-plan-today";
-import { getListeningPastBasicsEffect, withPastBasicsAreas } from "./_utils/level-listening-starts";
+import {
+  getListeningPastBasicsEffect,
+  withPastBasicsAreas,
+  withoutPastBasicsAreas,
+} from "./_utils/level-listening-starts";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext } from "./_utils/plan-context";
 import { type PlanSnapshot, parsePlanSnapshot } from "./_utils/plan-snapshot";
@@ -150,6 +154,7 @@ export async function announceTestedOutItems({
   followToday = true,
   goalId,
   now,
+  pastBasicsAdded = [],
   pastBasicsAreas = [],
   planItemIds,
   timeZone,
@@ -162,6 +167,7 @@ export async function announceTestedOutItems({
   followToday?: boolean;
   goalId: string;
   now: Date;
+  pastBasicsAdded?: readonly string[];
   pastBasicsAreas?: readonly string[];
   planItemIds: readonly string[];
   timeZone: string;
@@ -173,11 +179,20 @@ export async function announceTestedOutItems({
   const skipped = new Set(planItemIds);
 
   return withPlanRetry(async () => {
-    const context = await loadPlanAtToken(goalId, { now, timeZone });
+    const loaded = await loadPlanAtToken(goalId, { now, timeZone });
 
-    if (!context || !isPlanReady(context)) {
+    if (!loaded || !isPlanReady(loaded)) {
       return null;
     }
+
+    const startsAdded = pastBasicsAdded.filter((area) =>
+      loaded.state.settings.pastBasicsAreas.includes(area),
+    );
+
+    const context = {
+      ...loaded,
+      state: withoutPastBasicsAreas({ areas: startsAdded, state: loaded.state }),
+    };
 
     const lessonsSkipped = countLessons(context.items.filter((item) => skipped.has(item.id)));
 
@@ -187,7 +202,8 @@ export async function announceTestedOutItems({
     if (
       recorded &&
       !extraWrites &&
-      !pastBasicsAreas?.length &&
+      pastBasicsAreas.length === 0 &&
+      startsAdded.length === 0 &&
       planItemIds.every((id) => recorded.planItemIds.includes(id))
     ) {
       await skipTestedOutBlocks({ goalId, notStarted: !followToday, planItemIds });
@@ -203,12 +219,15 @@ export async function announceTestedOutItems({
       context,
       mode: "forced",
       now,
-      state: withPastBasicsAreas({ areas: pastBasicsAreas, state: context.state }),
+      state: withPastBasicsAreas({ areas: pastBasicsAreas, state: loaded.state }),
     });
 
     const effect = {
       ...computed.effect,
-      ...getListeningPastBasicsEffect({ areas: pastBasicsAreas, state: context.state }),
+      ...getListeningPastBasicsEffect({
+        areas: [...pastBasicsAreas, ...startsAdded],
+        state: context.state,
+      }),
     };
 
     // Writing the plan drops earlier changes' snapshots, so the one from before the first skip is

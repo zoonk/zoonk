@@ -56,7 +56,7 @@ const itemSelect = {
   titleSnapshot: true,
 } as const;
 
-function getPlanState({
+export function getPlanState({
   goal,
   plan,
 }: {

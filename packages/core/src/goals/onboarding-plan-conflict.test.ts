@@ -50,7 +50,7 @@ async function duringPublications<T>(lessonId: string, run: () => Promise<T>): P
     return publish();
   }
 
-  await Promise.all([answer, publish()]);
+  await Promise.all([answer, ...Array.from({ length: 3 }, () => publish())]);
   expect(publications).toBeGreaterThan(1);
   return saving;
 }

@@ -14,7 +14,7 @@ import {
 } from "./level-listening-starts";
 import { parsePlanChangePayload } from "./plan-change-payload";
 
-async function listChosenStartAreas(
+export async function listChosenStartAreas(
   planId: string,
   tx: TransactionClient = prisma,
 ): Promise<Set<string>> {

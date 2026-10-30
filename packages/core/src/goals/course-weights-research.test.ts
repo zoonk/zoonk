@@ -1,15 +1,16 @@
 import { prisma } from "@zoonk/db";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { setGoalPrimaryCourse } from "../library/curriculum/goal-primary-course";
-import { commitPlan } from "../plans/_utils/commit-plan";
-import { loadPlanContext } from "../plans/_utils/plan-context";
-import { computePlan } from "../plans/_utils/replan";
-import { withPlanRetry } from "../plans/plan-conflict";
+import { holdLearnerLock, waitForBlockedStatement } from "../_test-utils/learner-lock";
+import { mockSession } from "../_test-utils/mock-session";
+import { recordGoalNoticeFormats } from "../library/exams/notice-formats";
+import { planLibraryFixture } from "../plans/_test-utils/plan-library";
+import { createGoalPlan } from "../plans/create-goal-plan";
 import { readCourseWeights } from "../plans/planner/course-weights";
+import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
+import { type OnboardingAnswerInput } from "../view-models/onboarding/onboarding-contract";
 import {
   copyStoredCourseWeights,
   findCourseWeightsLookup,
@@ -257,41 +258,67 @@ describe(copyStoredCourseWeights, () => {
 });
 
 describe("background plan inputs", () => {
-  it("outlasts a primary course and weights landing in successive plan attempts", async () => {
+  it.each<OnboardingAnswerInput>([
+    { level: "basic", question: "level" },
+    { question: "targetDate", targetDate: "2027-04-29" },
+    { dailyMinutes: 25, question: "schedule" },
+  ])("keeps research landing while the learner answers $question", async (input) => {
     const goal = await enemGoal({ institution: "UFMG", targetCourse: "Medicina" });
-    const [course, plan] = await Promise.all([courseFixture(), planFixture({ goalId: goal.id })]);
+
+    const [library] = await Promise.all([
+      planLibraryFixture({ skills: [{ lessons: 3 }] }),
+      planFixture({ goalId: goal.id }),
+    ]);
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" });
+    mockSession(goal.userId);
     const lookup = await lookUp(goal.id);
-    let attempts = 0;
+    const held = holdLearnerLock({ userId: goal.userId });
+    const pid = await held.pid;
+    const weights = recordCourseWeights({ finding: FOUND, goalId: goal.id, lookup, provenance });
+    const userLock = /FROM users[\s\S]*FOR (?:NO KEY )?UPDATE/u;
+    await waitForBlockedStatement(pid, userLock);
 
-    const saving = withPlanRetry(async () => {
-      attempts += 1;
-      const current = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-      const context = await loadPlanContext({ goal: current });
-      expect(context).not.toBeNull();
-      const computed = await computePlan({ context: context!, mode: "automatic" });
-
-      if (attempts === 1) {
-        await setGoalPrimaryCourse({ courseId: course.id, goalId: goal.id });
-      }
-
-      if (attempts === 2) {
-        await recordCourseWeights({ finding: FOUND, goalId: goal.id, lookup, provenance });
-      }
-
-      return commitPlan({ change: null, computed, context: context! });
+    const formats = recordGoalNoticeFormats({
+      documents: [{ sourceId: "notice", text: "The exam has five options per question." }],
+      formats: [
+        {
+          count: null,
+          countPassage: null,
+          description: "Five choices",
+          document: 1,
+          entry: null,
+          kind: "multipleChoice",
+          markingPassage: null,
+          options: 5,
+          partialCredit: null,
+          passage: "five options per question",
+          select: null,
+        },
+      ],
+      goalId: goal.id,
     });
 
-    await expect(saving).resolves.toBeNull();
-    expect(attempts).toBe(3);
+    await waitForBlockedStatement(pid, userLock, 2);
+    const saving = answerOnboardingQuestion({ goalId: goal.id, input });
 
-    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
-      inputVersion: plan.inputVersion + 3,
-      version: plan.version + 1,
-    });
+    try {
+      await waitForBlockedStatement(pid, /FROM plans AS plan[\s\S]*FOR UPDATE/u);
+    } finally {
+      held.release();
+      await Promise.all([held.done, weights, formats]);
+    }
+
+    await expect(saving).resolves.toMatchObject({ status: "saved" });
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
-      details: { courseWeights: { status: "found" } },
-      primaryCourseId: course.id,
+      details: {
+        answered: [input.question],
+        courseWeights: { status: "found" },
+        institution: "UFMG",
+        noticeFormats: expect.any(Array),
+        targetCourse: "Medicina",
+      },
     });
   });
 

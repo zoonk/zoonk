@@ -5,7 +5,10 @@ import { type AnalyticsPlatform } from "../analytics/shared-properties";
 import { getNamedMonthStart } from "../exams/_utils/exam-edition-days";
 import { getExamCalendarDay, getPlanExamDays } from "../exams/_utils/plan-exam-days";
 import { getKeptMonthStart } from "../exams/kept-month";
-import { isCourseDateSkipped } from "../view-models/onboarding/onboarding-steps";
+import {
+  getAnsweredQuestions,
+  isCourseDateSkipped,
+} from "../view-models/onboarding/onboarding-steps";
 import { commitPlan } from "./_utils/commit-plan";
 import { type PlanContext } from "./_utils/plan-context";
 import { loadPlanAtToken } from "./_utils/plan-token";
@@ -154,8 +157,14 @@ async function planFromGraph({ followNotice, goalId, graph, provenance }: GraphP
     return { computed, goal, isFirst, status: "unchanged" as const };
   }
 
+  const answered = getAnsweredQuestions(isJsonObject(goal.details) ? goal.details : {});
+
   const setupTasks: PlanSetupTask[] = isFirst
-    ? ["placement", "routine", ...(target.asksNotice ? (["notice"] as const) : [])]
+    ? [
+        "placement",
+        ...(answered.includes("schedule") ? [] : (["routine"] as const)),
+        ...(target.asksNotice ? (["notice"] as const) : []),
+      ]
     : [];
 
   const plan = { ...provenance, ...(isFirst ? { setupTasks } : {}) };

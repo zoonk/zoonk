@@ -1,5 +1,6 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
+import { isGoalSetupLeft } from "../view-models/onboarding/onboarding-steps";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { wasLastDayStudied } from "./_utils/carried-lessons";
 import { commitPlan } from "./_utils/commit-plan";
@@ -19,7 +20,7 @@ import { type ComputedPlan, type PlanTagRevalidation, computePlan } from "./_uti
 import { getSettledPlanChange } from "./_utils/settled-change";
 import { computeSettledPlan } from "./_utils/settled-plan";
 import { savePlanInputsKey } from "./_utils/write-plan";
-import { isPlanConflictError, withPlanRetry } from "./plan-conflict";
+import { afterPlanInputWrite, isPlanConflictError, withPlanRetry } from "./plan-conflict";
 import { addDays } from "./planner/plan-calendar";
 
 type PlanRefreshResult = { status: "notFound" | "notReady" | "paused" | "refreshed" | "unchanged" };
@@ -80,9 +81,11 @@ async function settleLeftWork({
 
 async function computeRefreshedPlan({
   context,
+  mode = "automatic",
   pace,
 }: {
   context: PlanContext;
+  mode?: "automatic" | "forced";
   pace: "sampled" | "saved";
 }): Promise<{ computed: ComputedPlan; mode: "automatic" | "forced"; planned: PlanContext } | null> {
   const fresh = readFreshPlanSummary({
@@ -90,11 +93,12 @@ async function computeRefreshedPlan({
     value: context.plan.summary,
   });
 
-  const request = { context, mode: "automatic" as const, pace };
+  const request = { context, mode, pace };
 
-  const automatic = fresh
-    ? await computePlan({ ...request, skipUnchangedInputs: true })
-    : await computePlan(request);
+  const automatic =
+    fresh && mode === "automatic"
+      ? await computePlan({ ...request, skipUnchangedInputs: true })
+      : await computePlan(request);
 
   if (!automatic) {
     return null;
@@ -103,7 +107,7 @@ async function computeRefreshedPlan({
   const newPace = !isDeepStrictEqual(automatic.pace, context.state.settings.pace);
 
   if (pace === "saved" || !newPace || automatic.built.spill <= 0) {
-    return { computed: automatic, mode: "automatic", planned: context };
+    return { computed: automatic, mode, planned: context };
   }
 
   const planned = { ...context, today: addDays(context.today, 1) };
@@ -123,27 +127,31 @@ async function computeRefreshedPlan({
  * built yet.
  */
 export async function refreshGoalPlan({
-  retryOnConflict = true,
+  onConflict = "retry",
   ...input
-}: RefreshInput & { retryOnConflict?: boolean }): Promise<PlanRefreshResult> {
+}: RefreshInput & { onConflict?: "retry" | "throw" | "yield" }): Promise<PlanRefreshResult> {
   const refresh = async (): Promise<PlanRefreshResult> => {
     const { status } = await refreshPlanned({ ...input, lostSave: "throw" });
+
     return { status };
   };
 
-  return retryOnConflict ? withPlanRetry(refresh) : refresh();
+  if (onConflict === "yield") {
+    return (await afterPlanInputWrite(() => withPlanRetry(refresh))) ?? { status: "unchanged" };
+  }
+
+  return onConflict === "retry" ? withPlanRetry(refresh) : refresh();
 }
 
-/**
- * Like `refreshGoalPlan`, but a save another write won is let go instead of retried; `plan` is null
- * when the saved plan stays as it is.
- */
+/** Computes without saving during onboarding; otherwise lets go of a save another writer won. */
 export async function planGoalForPick(goalId: string): Promise<PlannedRefresh> {
-  return refreshPlanned({ goalId, lostSave: "letGo" });
+  return refreshPlanned({ goalId, lostSave: "letGo", whenSetup: "compute" });
 }
 
 type RefreshInput = {
   goalId: string;
+  mode?: "automatic" | "forced";
+  whenSetup?: "compute" | "save" | "skip";
   /** For a re-plan that only brings in lessons written meanwhile: the learner's last change stays undoable. */
   keepsOpenUndo?: boolean;
   settleMissedDays?: boolean;
@@ -157,10 +165,12 @@ async function refreshPlanned({
   goalId,
   keepsOpenUndo = false,
   lostSave,
+  mode,
   pace = "saved",
   revalidation = "now",
   settleMissedDays = true,
   settleOnly = false,
+  whenSetup = "save",
 }: RefreshInput & { lostSave: LostSave }): Promise<PlannedRefresh> {
   const context = await loadPlanAtToken(goalId);
 
@@ -176,6 +186,13 @@ async function refreshPlanned({
     return { plan: null, status: "notReady" };
   }
 
+  if (whenSetup !== "save" && isGoalSetupLeft(context.goal)) {
+    const planned =
+      whenSetup === "compute" ? await computeRefreshedPlan({ context, mode, pace }) : null;
+
+    return { plan: planned?.computed ?? null, status: "unchanged" };
+  }
+
   const left = settleMissedDays ? await loadLeftWork(context) : [];
 
   if (left.length > 0) {
@@ -186,7 +203,7 @@ async function refreshPlanned({
     return { plan: null, status: "unchanged" };
   }
 
-  const refreshed = await computeRefreshedPlan({ context, pace });
+  const refreshed = await computeRefreshedPlan({ context, mode, pace });
 
   if (!refreshed) {
     await saveOrLetGo(lostSave, () =>
@@ -217,6 +234,7 @@ async function saveRefreshedPlan({
   const { computed, mode, planned } = refreshed;
 
   if (
+    mode === "automatic" &&
     computed.inputsKey === context.plan.inputsKey &&
     readFreshPlanSummary({ basis: getPlanSummaryBasis(context), value: context.plan.summary })
   ) {

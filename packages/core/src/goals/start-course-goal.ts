@@ -12,6 +12,7 @@ import { getTargetDateBounds } from "../plans/target-date-range";
 import { getSession } from "../users/get-session";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
+import { hasOnboardingQuestions } from "../view-models/onboarding/onboarding-steps";
 import { loadCourseExam } from "./_utils/course-exam";
 import { getCourseGoalKind } from "./_utils/course-goal-kind";
 import { loadCourseOutline, plansFromCourseOutline } from "./_utils/course-outline";
@@ -62,7 +63,7 @@ async function toExistingResult(goalId: string): Promise<CourseGoalStartResult> 
   }
 
   const { goal, steps } = result.onboarding;
-  return { goal, inOnboarding: steps.some((step) => step !== "plan"), status: "existing" };
+  return { goal, inOnboarding: hasOnboardingQuestions(steps), status: "existing" };
 }
 
 export async function findCourseGoalStart(

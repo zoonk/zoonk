@@ -5,16 +5,22 @@ import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
 import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
 import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
 import { type OwnLevel } from "../learner/placement/placement-steps";
+import { markPlanInputsUntil } from "./_test-utils/mark-plan-inputs";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
+import { parsePlanSnapshot } from "./_utils/plan-snapshot";
 import { settleNewPlan } from "./_utils/recommended-bases";
 import { createGoalPlan } from "./create-goal-plan";
 import { parsePlanSettings } from "./planner/plan-state";
 
-async function settledLearner(details: { knownSubjects?: string[]; level: OwnLevel | null }) {
+async function settledLearner(
+  details: { knownSubjects?: string[]; level: OwnLevel | null },
+  duringBurst = false,
+) {
   const user = await userFixture();
 
   const [library, blueprint] = await Promise.all([
@@ -46,7 +52,22 @@ async function settledLearner(details: { knownSubjects?: string[]; level: OwnLev
 
   mockSession(user.id);
   await createGoalPlan({ goalId: goal.id, graph: library.graph });
-  await settleNewPlan({ goalId: goal.id });
+  const stop = new AbortController();
+
+  if (!duringBurst) {
+    stop.abort();
+  }
+
+  const marking = markPlanInputsUntil({ planId: plan.id, signal: stop.signal });
+
+  let marks = 0;
+
+  try {
+    await settleNewPlan({ goalId: goal.id });
+  } finally {
+    stop.abort();
+    marks = await marking;
+  }
 
   const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
 
@@ -55,10 +76,43 @@ async function settledLearner(details: { knownSubjects?: string[]; level: OwnLev
       where: { kind: "lesson", planId: plan.id, skillId: skill?.id, status: "todo" },
     });
 
-  return { goal, settings: parsePlanSettings(saved.settings), skills: library.skills, todo, user };
+  return {
+    goal,
+    marks,
+    settings: parsePlanSettings(saved.settings),
+    skills: library.skills,
+    todo,
+    user,
+  };
 }
 
 describe("a language exam's listening basics at the learner's own level", () => {
+  it("leaves in-session inferred starts unchanged when there is no skip to announce", async () => {
+    const { goal, settings } = await settledLearner({ level: "basic" });
+    expect(settings.pastBasicsAreas).toStrictEqual([]);
+
+    await expect(
+      markPlanItemsTestedOut({
+        followToday: false,
+        goalId: goal.id,
+        items: [],
+        knownSkillIds: new Set(),
+        pastBasicsAreas: ["Listening"],
+        testedOutAt: new Date(),
+        timeZone: "UTC",
+      }),
+    ).resolves.toMatchObject({ changeId: null, pastBasicsAdded: [] });
+
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+    expect(parsePlanSettings(saved.settings).pastBasicsAreas).toStrictEqual([]);
+  });
+
+  it("keeps the inferred starts as inputs when background marks win the layout save", async () => {
+    const { marks, settings } = await settledLearner({ level: "intermediate" }, true);
+    expect(marks).toBeGreaterThan(1);
+    expect(settings.pastBasicsAreas).toStrictEqual(["Listening"]);
+  });
+
   it("start past the basics for a learner who studied the language before, still to confirm", async () => {
     const { goal, settings, skills, todo, user } = await settledLearner({ level: "intermediate" });
     const [sounds, exchanges, details, gist, words] = skills;
@@ -206,6 +260,12 @@ describe("a language exam's listening basics after placement's text questions", 
     });
 
     expect(effect?.listeningPastBasics).toStrictEqual(["Listening"]);
+
+    const snapshot = await prisma.planChangeSnapshot.findUniqueOrThrow({
+      where: { changeId: change.id },
+    });
+
+    expect(parsePlanSnapshot(snapshot.plan)?.state.settings.pastBasicsAreas).toStrictEqual([]);
   });
 
   it("stay when placement missed as many of the band's text basics as it confirmed", async () => {

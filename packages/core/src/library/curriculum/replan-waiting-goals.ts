@@ -1,11 +1,8 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { isJsonObject } from "@zoonk/utils/json";
 import { logError } from "@zoonk/utils/logger";
-import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
-import { getOnboardingSteps } from "../../view-models/onboarding/onboarding-steps";
 
 export type WaitingGoalsReplan = { failedGoalIds: string[]; goalIds: string[] };
 
@@ -38,35 +35,14 @@ export async function listGoalsWaitingOnSkills({
   return [...new Set([...goalIds.filter((id) => waiting.has(id)), ...waiting])];
 }
 
-/** Background refreshes wait until setup and the first study-day open; both already re-plan. Throws if another plan write wins afterward. */
+/** Background refreshes yield during setup; the learner's next answer re-plans. Throws if another plan write wins afterward. */
 export async function replanWaitingGoal(goalId: string): Promise<void> {
-  const goal = await prisma.goal.findUnique({
-    include: { studySessions: { select: { id: true }, take: 1 } },
-    where: { id: goalId },
-  });
-
-  if (!goal || goal.studySessions.length === 0) {
-    return;
-  }
-
-  const steps = getOnboardingSteps({
-    goal: {
-      details: isJsonObject(goal.details) ? goal.details : {},
-      kind: goal.kind,
-      targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
-    },
-    profile: { hasBuddy: true, hasEarlierGoals: true },
-  });
-
-  if (steps.some((step) => step !== "plan")) {
-    return;
-  }
-
   await refreshGoalPlan({
     goalId,
     keepsOpenUndo: true,
-    retryOnConflict: false,
+    onConflict: "throw",
     settleMissedDays: false,
+    whenSetup: "skip",
   });
 }
 

@@ -2,6 +2,9 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
+import { afterPlanInputWrite } from "../../plans/plan-conflict";
+import { parsePlanSettings } from "../../plans/planner/plan-state";
+import { skipTestedOutBlocks } from "../../sessions/_utils/skip-tested-out-blocks";
 import { INFERRED_KNOWN_ANSWER } from "../answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
 import { type GoalPlan, type GoalPlanItem, loadGoalPlan } from "./goal-skill-graph";
@@ -178,7 +181,7 @@ export async function markPlanItemsTestedOut({
   items,
   knownSkillIds,
   now,
-  pastBasicsAreas,
+  pastBasicsAreas = [],
   placedSkills = [],
   testedOutAt,
   timeZone,
@@ -201,54 +204,98 @@ export async function markPlanItemsTestedOut({
 }): Promise<{
   changeId: string | null;
   lessonsSkipped: number;
+  pastBasicsAdded: string[];
   planItemIds: string[];
   planVersion: number | null;
 }> {
+  const empty = { changeId: null, lessonsSkipped: 0, planItemIds: [], planVersion: null };
   const { ids, leftOut } = findTestOut({ items, knownSkillIds, placedSkills });
   const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
   if (!goal) {
-    return { changeId: null, lessonsSkipped: 0, planItemIds: [], planVersion: null };
+    return { ...empty, pastBasicsAdded: [] };
   }
 
-  const standInIds =
-    ids.length > 0 || leftOut.length > 0
-      ? await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
-          const changed = await testOutKnownPlanItems(tx, {
-            goalId,
-            items,
-            knownSkillIds,
-            placedSkills,
-            testedOutAt,
-            timeZone,
-          });
+  const testedOut =
+    ids.length > 0 || leftOut.length > 0 || pastBasicsAreas.length > 0
+      ? await writeLearnerChange(
+          { goalIds: [goalId], planInputs: true, userId: goal.userId },
+          async (tx) => {
+            const changed = await testOutKnownPlanItems(tx, {
+              goalId,
+              items,
+              knownSkillIds,
+              placedSkills,
+              testedOutAt,
+              timeZone,
+            });
 
-          return changed.itemIds.length === 0 && changed.standInIds.length === 0
-            ? unchanged(changed.standInIds)
-            : changed.standInIds;
-        })
-      : [];
+            const plan =
+              !extraWrites &&
+              (followToday || ids.length > 0 || leftOut.length > 0) &&
+              pastBasicsAreas.length > 0
+                ? await tx.plan.findUnique({ where: { goalId } })
+                : null;
 
+            const settings = parsePlanSettings(plan?.settings);
+
+            const pastBasicsAdded = plan
+              ? pastBasicsAreas.filter((area) => !settings.pastBasicsAreas.includes(area))
+              : [];
+
+            if (plan && pastBasicsAdded.length > 0) {
+              await tx.plan.update({
+                data: {
+                  settings: {
+                    ...settings,
+                    pastBasicsAreas: [...settings.pastBasicsAreas, ...pastBasicsAdded],
+                  },
+                },
+                where: { id: plan.id },
+              });
+            }
+
+            const result = { pastBasicsAdded, standInIds: changed.standInIds };
+
+            return changed.itemIds.length === 0 &&
+              changed.standInIds.length === 0 &&
+              pastBasicsAdded.length === 0
+              ? unchanged(result)
+              : result;
+          },
+        )
+      : { pastBasicsAdded: [], standInIds: [] };
+
+  const { pastBasicsAdded, standInIds } = testedOut;
   const planItemIds = [...ids, ...standInIds];
   const announced = [...new Set([...announceAlso, ...planItemIds])];
 
   if (announced.length === 0) {
-    return { changeId: null, lessonsSkipped: 0, planItemIds: [], planVersion: null };
+    return { ...empty, pastBasicsAdded };
   }
 
-  const announcement = await announceTestedOutItems({
-    extraWrites,
-    followToday,
-    goalId,
-    now: now ?? testedOutAt,
-    pastBasicsAreas,
-    planItemIds: announced,
-    timeZone,
-  });
+  const announce = () =>
+    announceTestedOutItems({
+      extraWrites,
+      followToday,
+      goalId,
+      now: now ?? testedOutAt,
+      pastBasicsAdded,
+      pastBasicsAreas: extraWrites ? pastBasicsAreas : [],
+      planItemIds: announced,
+      timeZone,
+    });
+
+  const announcement = extraWrites ? await announce() : await afterPlanInputWrite(announce);
+
+  if (!announcement) {
+    await skipTestedOutBlocks({ goalId, notStarted: true, planItemIds: announced });
+  }
 
   return {
     changeId: announcement?.changeId ?? null,
     lessonsSkipped: announcement?.lessonsSkipped ?? planItemIds.length,
+    pastBasicsAdded,
     planItemIds,
     planVersion: announcement?.planVersion ?? null,
   };

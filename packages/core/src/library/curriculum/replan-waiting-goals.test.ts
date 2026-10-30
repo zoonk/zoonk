@@ -5,6 +5,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickSpeculativeLessons } from "../../lookahead/speculative-lessons";
 import { markPlanInputsUntil } from "../../plans/_test-utils/mark-plan-inputs";
 import { openStudyDay } from "../../sessions/open-study-day";
 import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-onboarding-question";
@@ -131,7 +132,7 @@ describe(replanGoalsWaitingOnSkills, () => {
     await expect(plannedLessons(plan.id)).resolves.toStrictEqual(lessons);
   });
 
-  it("leaves a completed setup unchanged until the learner opens the first study day", async () => {
+  it("refreshes a completed setup before the learner opens the first study day", async () => {
     const skill = await skillFixture();
     const { goal, plan } = await waitingGoal(skill);
     await prisma.studySession.deleteMany({ where: { goalId: goal.id } });
@@ -139,9 +140,11 @@ describe(replanGoalsWaitingOnSkills, () => {
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     await replanWaitingGoal(goal.id);
 
-    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
-      before,
-    );
+    await expect(plannedLessons(plan.id)).resolves.toStrictEqual(lessons);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      version: before.version + 1,
+    });
 
     mockSession(goal.userId);
 
@@ -154,5 +157,25 @@ describe(replanGoalsWaitingOnSkills, () => {
     ).resolves.toMatchObject({ status: "opened" });
 
     await expect(plannedLessons(plan.id)).resolves.toStrictEqual(lessons);
+  });
+
+  it("picks newly published lessons in memory while onboarding still owns the saved plan", async () => {
+    const skill = await skillFixture();
+    const { goal, plan } = await waitingGoal(skill);
+    await prisma.goal.update({ data: { details: {} }, where: { id: goal.id } });
+    const lessons = await outlineSkill(skill);
+
+    const before = await prisma.plan.findUniqueOrThrow({
+      include: { items: true },
+      where: { id: plan.id },
+    });
+
+    await expect(
+      pickSpeculativeLessons({ count: 2, goalId: goal.id, ownLevel: null }),
+    ).resolves.toStrictEqual([lessons.slice(0, 2)]);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ include: { items: true }, where: { id: plan.id } }),
+    ).resolves.toStrictEqual(before);
   });
 });

@@ -3,10 +3,13 @@ import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
 import { getCoverageChange } from "./_utils/coverage-change";
 import { followPlanToday } from "./_utils/follow-plan-today";
-import { getListeningPastBasicsEffect, withPastBasicsAreas } from "./_utils/level-listening-starts";
+import {
+  getListeningPastBasicsEffect,
+  withoutPastBasicsAreas,
+} from "./_utils/level-listening-starts";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { computePlan } from "./_utils/replan";
-import { withPlanRetry } from "./plan-conflict";
+import { afterPlanInputWrite } from "./plan-conflict";
 
 export async function replanAfterPlacement({
   goalId,
@@ -19,19 +22,23 @@ export async function replanAfterPlacement({
   pastBasicsAreas?: readonly string[];
   timeZone: string;
 }): Promise<void> {
-  await withPlanRetry(async () => {
-    const context = await loadPlanAtToken(goalId, { now, timeZone });
+  await afterPlanInputWrite(async () => {
+    const loaded = await loadPlanAtToken(goalId, { now, timeZone });
 
-    if (!context || !isPlanReady(context)) {
+    if (!loaded || !isPlanReady(loaded)) {
       return;
     }
 
-    const computed = await computePlan({
-      context,
-      mode: "forced",
-      now,
-      state: withPastBasicsAreas({ areas: pastBasicsAreas, state: context.state }),
-    });
+    const added = pastBasicsAreas.filter((area) =>
+      loaded.state.settings.pastBasicsAreas.includes(area),
+    );
+
+    const context = {
+      ...loaded,
+      state: withoutPastBasicsAreas({ areas: added, state: loaded.state }),
+    };
+
+    const computed = await computePlan({ context, mode: "forced", now, state: loaded.state });
 
     if (computed.inputsKey === context.plan.inputsKey) {
       return;
@@ -40,7 +47,7 @@ export async function replanAfterPlacement({
     const changeId = await commitPlan({
       change: getCoverageChange({
         computed,
-        ...getListeningPastBasicsEffect({ areas: pastBasicsAreas, state: context.state }),
+        ...getListeningPastBasicsEffect({ areas: added, state: context.state }),
       }),
       computed,
       context,

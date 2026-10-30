@@ -224,7 +224,7 @@ export async function updateGoal({
     updated.status === "active" &&
     (input.details !== undefined || input.timeZone !== undefined)
   ) {
-    await refreshGoalPlan({ goalId });
+    await refreshGoalPlan({ goalId, onConflict: "yield" });
   }
 
   if (completed) {

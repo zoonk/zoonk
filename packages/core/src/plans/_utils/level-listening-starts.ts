@@ -57,6 +57,24 @@ export function withPastBasicsAreas({
       };
 }
 
+export function withoutPastBasicsAreas({
+  areas,
+  state,
+}: {
+  areas: readonly string[];
+  state: PlanState;
+}): PlanState {
+  return areas.length === 0
+    ? state
+    : {
+        ...state,
+        settings: {
+          ...state.settings,
+          pastBasicsAreas: state.settings.pastBasicsAreas.filter((area) => !areas.includes(area)),
+        },
+      };
+}
+
 export function getListeningPastBasicsEffect({
   areas,
   state,
