@@ -542,6 +542,45 @@ describe("onboarding a new goal", () => {
     expect(saved.map((goal) => goal.dailyMinutes)).toStrictEqual([40, 20]);
   });
 
+  it("refuses a day too short to give every goal typed together its minimum", async () => {
+    await useLearner({ plus: true });
+    const onboardingId = randomUUID();
+
+    const goals = await createGoal([
+      draft({ details: { onboardingId, subject: "ENEM" }, kind: "exam", title: "Pass the ENEM" }),
+      draft({
+        details: { onboardingId, subject: "English" },
+        kind: "language",
+        targetLanguage: "en",
+        title: "English",
+      }),
+    ]);
+
+    const ids = goals.map((goal) => goal.id);
+    const [main] = ids;
+
+    const read = () =>
+      prisma.goal.findMany({ orderBy: { createdAt: "asc" }, where: { id: { in: ids } } });
+
+    const before = await read();
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: main ?? "",
+        input: { dailyMinutes: 5, question: "schedule" },
+      }),
+    ).resolves.toStrictEqual({ status: "invalid" });
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: main ?? "",
+        input: { dailyMinutes: 30, question: "schedule", weekendMinutes: 5 },
+      }),
+    ).resolves.toStrictEqual({ status: "invalid" });
+
+    await expect(read()).resolves.toStrictEqual(before);
+  });
+
   it("saves the buddy on the profile and asks it only once", async () => {
     const user = await useLearner();
     const [goal] = await createGoal();

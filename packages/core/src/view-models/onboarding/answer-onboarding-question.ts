@@ -6,7 +6,7 @@ import {
   type MoveLanguageGoalResult,
   moveLanguageGoalToExam,
 } from "../../exams/move-language-goal";
-import { splitDailyBudget } from "../../goals/daily-budget";
+import { getLeastDailyBudget, splitDailyBudget } from "../../goals/daily-budget";
 import { type GoalUpdateInput, type GoalView } from "../../goals/goal-contract";
 import { updateGoal } from "../../goals/update-goal";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
@@ -170,9 +170,18 @@ function shareMinutes({ goalIds, minutes }: { goalIds: string[]; minutes: number
 
 type ScheduleAnswer = Extract<OnboardingAnswerInput, { question: "schedule" }>;
 
-/** Applies shared weekday/weekend schedules and returns this goal's allocation. */
+/**
+ * Applies shared weekday/weekend schedules and returns this goal's allocation; null for a day too
+ * short to give each goal its minimum.
+ */
 async function updateSharedGoals({ goal, input }: { goal: Goal; input: ScheduleAnswer }) {
   const goalIds = await findOnboardingGoalIds(goal);
+  const least = getLeastDailyBudget(goalIds.length);
+
+  if (input.dailyMinutes < least || (input.weekendMinutes ?? least) < least) {
+    return null;
+  }
+
   const shares = shareMinutes({ goalIds, minutes: input.dailyMinutes });
 
   const weekendShares =
@@ -239,7 +248,12 @@ export async function answerOnboardingQuestion({
   const details = isJsonObject(goal.details) ? goal.details : {};
   const answered = [...new Set([...getAnsweredQuestions(details), input.question])];
 
-  const shared = input.question === "schedule" ? await updateSharedGoals({ goal, input }) : null;
+  const shared =
+    input.question === "schedule" ? await updateSharedGoals({ goal, input }) : undefined;
+
+  if (shared === null) {
+    return { status: "invalid" };
+  }
 
   const result = await updateGoal({
     goalId,

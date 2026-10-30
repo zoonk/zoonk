@@ -16,15 +16,22 @@ export function splitDailyBudget({ budget, count }: { budget: number; count: num
   return [main, ...Array.from({ length: count - 1 }, () => other)];
 }
 
+/** Each goal typed together gets at least the minimum, so the day they share holds that much each. */
+export function getLeastDailyBudget(count: number): number {
+  return Math.max(1, count) * MIN_DAILY_MINUTES;
+}
+
 /**
  * The least day's time that gives the main goal exactly `main` minutes: a time worked out for the
  * main goal alone, as the day the goals typed with it share.
  */
 export function getBudgetForMainGoal({ count, main }: { count: number; main: number }): number {
+  const least = Math.max(main, getLeastDailyBudget(count));
+
   const budgets = Array.from(
     { length: Math.max(1, count) * (main / MINUTES_STEP) + 1 },
-    (_, index) => main + index * MINUTES_STEP,
+    (_, index) => least + index * MINUTES_STEP,
   );
 
-  return budgets.find((budget) => splitDailyBudget({ budget, count })[0] === main) ?? main;
+  return budgets.find((budget) => splitDailyBudget({ budget, count })[0] === main) ?? least;
 }

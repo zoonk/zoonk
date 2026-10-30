@@ -22,6 +22,21 @@ describe(getBudgetForMainGoal, () => {
     expect(getBudgetForMainGoal({ count: 3, main: 30 })).toBe(50);
   });
 
+  it("never suggests a day shorter than every goal's minimum, so the saved times add up to it", () => {
+    expect(getBudgetForMainGoal({ count: 2, main: 5 })).toBe(10);
+    expect(getBudgetForMainGoal({ count: 3, main: 5 })).toBe(15);
+
+    for (const count of [1, 2, 3]) {
+      for (const main of [5, 10, 15, 40]) {
+        const budget = getBudgetForMainGoal({ count, main });
+        const shares = splitDailyBudget({ budget, count });
+
+        expect(shares[0]).toBe(main);
+        expect(shares.reduce((sum, minutes) => sum + minutes, 0)).toBe(budget);
+      }
+    }
+  });
+
   it("finds a day for every time the main goal can get", () => {
     const times = Array.from({ length: 288 }, (_, index) => (index + 1) * 5);
 
