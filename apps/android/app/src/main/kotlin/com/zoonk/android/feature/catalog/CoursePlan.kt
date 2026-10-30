@@ -32,6 +32,7 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
@@ -232,7 +233,7 @@ private fun UndatedToday(
         FactsRow(
             title = stringResource(R.string.catalog_plan_today),
             facts =
-                pluralStringResource(R.plurals.catalog_plan_lessons, steps.size, steps.size) + " · " +
+                pluralStringResource(R.plurals.catalog_plan_lessons, steps.size, steps.size) + FACT_SEPARATOR +
                     formatTotalDuration(steps.sumOf { it.minutes }, locale),
         )
 
@@ -241,7 +242,7 @@ private fun UndatedToday(
         if (folded.isNotEmpty()) {
             HorizontalDivider()
             Text(
-                pluralStringResource(R.plurals.catalog_plan_more_lessons, folded.size, folded.size) + " · " +
+                pluralStringResource(R.plurals.catalog_plan_more_lessons, folded.size, folded.size) + FACT_SEPARATOR +
                     formatTotalDuration(folded.sumOf { it.minutes }, locale),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),

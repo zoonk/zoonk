@@ -105,6 +105,7 @@ import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatDuration
@@ -273,7 +274,11 @@ private fun TypeRoles() {
         Text("Today", style = type.titleLarge)
         SectionHeader("This week")
         Text("Lessons, reviews and practice in the order that fits your week.", style = type.bodyLarge)
-        Text("3 lessons · 11 min", color = MaterialTheme.colorScheme.onSurfaceVariant, style = type.bodyMedium.withTabularFigures())
+        Text(
+            factsLine("3 lessons", "11 min"),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = type.bodyMedium.withTabularFigures(),
+        )
         Text("Try a lesson", style = type.labelLarge)
         Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             Text("43", style = type.displaySmall.withTabularFigures())

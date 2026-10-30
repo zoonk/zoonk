@@ -5,8 +5,8 @@
   "earlier_questions_empty": "4214a90d720417540a627b869b891db5d230a37fe9bee75370cd74bf7e384f12",
   "earlier_questions_from": "06ab764e51233c4f0761949dc639bf8f5a8636d8f044396cf3d621fc207c0563",
   "earlier_questions_from_course": "7648863739119e45c3f641f49faf68d797320bd8ab2a15d2e87897f66855ff37",
-  "earlier_questions_from_course_lesson": "5e23f56a5eeef113d45b82c699bbc7763ec981b47ef9b2f33a09316dd629d397",
-  "earlier_questions_from_lesson": "4edf0f2a31e8a469e74760247ce5e959f0c95e2b0c48a0a8c19ea27650472205",
+  "earlier_questions_from_course_lesson": "fa0dc469d8a3d46ea7b5b0108c456fdb49a6fea03d7de6545c3000a9fb7944f6",
+  "earlier_questions_from_lesson": "7f0e19e9069e1b45808fa47ad1f424b376ed51bf2194012455353cd4cdac33cb",
   "earlier_questions_no_answer": "db640c98f7f9dff12e6d933b1681db01f9f05ee79bf3c12d2ef749fd8623b6e8",
   "earlier_questions_older": "cf3eec831bc94ccfca21ac0761013c7f51d76c5d5080708c7380d50ca83f457b",
   "earlier_questions_older_failed": "f643d45b40058d056004d3018563b028d29aabd29f000aef244ff3d78a39d861",
@@ -20,11 +20,11 @@
     <string name="earlier_questions_description">Les questions que tu as posées dans tes cours avant leur réécriture. Les leçons ont changé, mais tes questions restent ici pour que tu puisses les relire.</string>
     <string name="earlier_questions_empty">Tu n’as pas de questions précédentes.</string>
     <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it, %2$s the lesson's. -->
-    <string name="earlier_questions_from_course_lesson">D’une version précédente de %1$s · %2$s</string>
+    <string name="earlier_questions_from_course_lesson">D’une ancienne version de %1$s · %2$s</string>
     <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it. -->
     <string name="earlier_questions_from_course">D’une version précédente de %1$s</string>
     <!-- Above a question about a lesson that no longer exists, when the course's title wasn't saved. %1$s is the lesson's title. -->
-    <string name="earlier_questions_from_lesson">D’une version précédente de ce cours · %1$s</string>
+    <string name="earlier_questions_from_lesson">D’une ancienne version de ce cours · %1$s</string>
     <!-- Above a question about a lesson that no longer exists, when neither title was saved. -->
     <string name="earlier_questions_from">D’une version précédente de ce cours</string>
     <string name="earlier_questions_no_answer">Aucune réponse n’a été enregistrée.</string>

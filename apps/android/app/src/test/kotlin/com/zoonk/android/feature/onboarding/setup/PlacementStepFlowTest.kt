@@ -120,7 +120,7 @@ class PlacementStepFlowTest {
         show()
         tap("Start")
 
-        rule.onNodeWithText("Bar exam · Question 1").assertIsDisplayed()
+        rule.onNodeWithText("Bar exam\u00A0· Question 1").assertIsDisplayed()
         rule.onNodeWithText("Confirm").performScrollTo().assertIsNotEnabled()
         tap("A district court")
         tap("Confirm")

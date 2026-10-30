@@ -3,7 +3,7 @@
 {
   "planlink_about": "f152297adc59b95a6b4fc364a51984368582aab20e366c5e7deb7f2af3202160",
   "planlink_eyebrow": "99336703b36b68bac999a200797d51e4e0d998656cd4558cac0a8e51af1f2953",
-  "planlink_facts": "c5dc4201fa02953c9601d3993fd5e093d9eb5f0b23f828d9e96acfb2c320d058",
+  "planlink_facts": "6e5e4c3544664328ec819506ccad684107a01e1e2460f6702e3891de9304e49b",
   "planlink_failed": "c159fef0580b339d8bd483c240620effa822f2e18d79fe78b2227f9bd3d0ea95",
   "planlink_make_it_yours": "bbf11b7bb9feae063d2244975c38164e5d4d9097a4d13dd82233bc9e5f6ba989",
   "planlink_minutes_label": "8d2bbff76e455c1c58e084a28423f338663f8d996551f31f89b0c9c25e6ddf8b",
@@ -28,7 +28,7 @@
     <string name="planlink_refused">Ahora mismo no puedes empezar otro objetivo. Primero termina o pausa uno.</string>
     <string name="planlink_failed">No ha funcionado. Vuelve a intentarlo dentro de un momento.</string>
     <!-- A shared plan's size: %1$s is its study time, such as "40 hr"; %2$s its phases, such as "5 phases"; %3$s its skills, such as "24 skills". -->
-    <string name="planlink_facts">~%1$s de estudio · %2$s · %3$s</string>
+    <string name="planlink_facts">~%1$s de estudio · %2$s · %3$s</string>
     <plurals name="planlink_phases">
         <item quantity="one">%d fase</item>
         <item quantity="many">%d fases</item>

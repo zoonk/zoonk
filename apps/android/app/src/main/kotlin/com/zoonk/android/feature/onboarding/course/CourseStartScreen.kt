@@ -62,6 +62,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.CourseChapter
@@ -284,7 +285,7 @@ private fun PlanPreview(chapters: List<CourseChapter>) {
 
     Column {
         Text(
-            pluralStringResource(R.plurals.onboarding_course_chapters, chapters.size, chapters.size) + " · " +
+            pluralStringResource(R.plurals.onboarding_course_chapters, chapters.size, chapters.size) + FACT_SEPARATOR +
                 pluralStringResource(R.plurals.onboarding_course_lessons, lessons, lessons),
             modifier = Modifier.semantics { heading() },
             color = muted,

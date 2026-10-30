@@ -32,6 +32,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -243,7 +244,7 @@ internal fun PlanProperties(
                             if (practiced.size == PlanSteering.SkippedActivities.entries.size) {
                                 stringResource(R.string.plan_everything)
                             } else {
-                                practiced.map { activityName(it) }.joinToString(" · ")
+                                practiced.map { activityName(it) }.factsLine()
                             },
                         onClick = onOpen?.let { { it(PlanSection.Practice) } },
                         onClickLabel = adjust,

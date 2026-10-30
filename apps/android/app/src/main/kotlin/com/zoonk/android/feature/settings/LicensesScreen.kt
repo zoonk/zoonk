@@ -42,6 +42,7 @@ import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.PageScaffold
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -63,7 +64,7 @@ fun LicensesScreen(navigator: AppNavigator) {
                     ListItem(
                         headlineContent = { Text(library.name) },
                         supportingContent = {
-                            Text(listOfNotNull(library.artifactVersion, library.licenses.joinToString { it.name }).joinToString(" · "))
+                            Text(listOfNotNull(library.artifactVersion, library.licenses.joinToString { it.name }).factsLine())
                         },
                         modifier =
                             Modifier

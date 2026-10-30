@@ -229,7 +229,7 @@ class TutorPanelTest {
         )
 
         compose.onNodeWithText("A short call out loud with Lucía, Waiter.").assertExists()
-        compose.onNodeWithText("with Lucía · Waiter").assertDoesNotExist()
+        compose.onNodeWithText("with Lucía\u00A0· Waiter").assertDoesNotExist()
         compose.onNodeWithText("Practice a conversation").assertDoesNotExist()
         compose.onNodeWithText("Practice").performScrollTo().performClick()
         compose.onNodeWithText("2\u00A0min").performClick()

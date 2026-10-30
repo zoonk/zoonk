@@ -11,7 +11,7 @@
   "goal_box_kind_exam": "2f52ec2b472c7c48e724f9d23ace0a1293e3b4904a8ccb16e5fa19406ad9b4c5",
   "goal_box_kind_language": "3cb3b6b288bcafea9ad455cd9b97656bed40489243be8f51a38ae464f6052e18",
   "goal_box_kind_music": "2186a7b80a6bedab57d63c27aae2f09b86dcf90e52f7af3f5068df7e7053af28",
-  "goal_box_kind_quick_explanation": "3209a67dbe0c281b5ed224f914edc64b4e5c3b37ff6de25451fc62389700276b",
+  "goal_box_kind_quick_explanation": "75597d6f75aab835f16f7a582da7cb71ca7e1a677acea01129f748e7ad21a8d5",
   "goal_box_kind_topic": "26e9883b3c35b727e270186c77f6ebc0b9f7dde57666afd74726965b51406fd1",
   "goal_box_label": "c654353d563a003fa33ce6763f2edd31c2d2d15760e666b58019b7f63c93d5a5",
   "goal_box_placeholder": "b3c159be363bcae64d4705282f2f79f9b48ae4ab49c6cd34dd17541c8aee75de",
@@ -40,5 +40,5 @@
     <string name="goal_box_kind_topic">Aprender um tópico</string>
     <string name="goal_box_kind_music">Música</string>
     <!-- %1$s is a duration, like "5 min". -->
-    <string name="goal_box_kind_quick_explanation">Explicação rápida · %1$s</string>
+    <string name="goal_box_kind_quick_explanation">Explicação rápida · %1$s</string>
 </resources>

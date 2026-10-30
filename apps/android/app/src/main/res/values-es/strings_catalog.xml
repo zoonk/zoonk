@@ -23,14 +23,14 @@
   "catalog_collapse": "37b85fe3729b7ed11e3ea48e774d1bdcd684c07113756bbf5d6b1edfaddafde8",
   "catalog_continue_lesson": "82f5788b29a86a4b73e2afde7b50c6e10b932d72b30fb875c9b52da68b47f842",
   "catalog_continue_plan": "b0b9c279a4554aec64f6a58c9e7ceca7c6eda359eb035547855af12ab2931ffe",
-  "catalog_course_meta": "92041bb7a37b82589ba4c478b6874221e0787d6d333bc3aa31554c3bf49e2bd0",
+  "catalog_course_meta": "dc284cb767699f3a453c2cab14e9ba3e74111f4edb0af0f550c5fe6e4c7b9f4a",
   "catalog_edition_notice": "4d03d0a1bec7e9144f83b265fedb36901c4f4920e5c93c30e4ac642965f28a78",
   "catalog_empty_description": "915a080f549e69838e126c9e4cf6805c889f357288de3dc480b501096cf61381",
   "catalog_empty_title": "03738051ff47dc5fae6123c6ff9934b77742ed1067c7c09ece281b84a8c8cda4",
-  "catalog_exam_around": "19933b1da335614a8eef77dbabddf6b262d7030de182f56abbf8bd06a3bc3314",
-  "catalog_exam_around_today": "99e9508074f7dc8177db6c272c379122c3b97e588fa009e3af276ac415d24a65",
-  "catalog_exam_on": "543ef10b63744d9c0b6b40ca51600decc7d3e43968af162b955d1b747b7c47bd",
-  "catalog_exam_on_today": "36bead4d6a3e5f6671d2f2aad54fee508a5ddc8d07e5736daa62ad68cd24b51e",
+  "catalog_exam_around": "ce77672c3ce219e4f788ab02d5a8ab255dd1e45dda3072ef436c0b4e0b7485dc",
+  "catalog_exam_around_today": "ab403ce32a510f363058579e4a42625037f2e8da9974f522942f19f808f7730d",
+  "catalog_exam_on": "67c0e44ba424d462e4d89590b169e328af91067b4d2cb7443f16d1febdaed481",
+  "catalog_exam_on_today": "22e70a8b86c5ca335d066aa05eb101214afa4bfb63fdd7201524bc93f91c182b",
   "catalog_example_plan": "3c9ef06e8bc03291e3bbd74256170671be92042bb5963c771d32c6190355f29e",
   "catalog_expand": "1c84c872240a1f1fceb062fb190a2a230a6262b24203bf1ed7141eb25e05724c",
   "catalog_go_to_chapter": "3b9f0b4ae6a4d254d6bb7107dd93c0b1303c4cd345636854cb346a57181a57c3",
@@ -111,8 +111,8 @@
   "catalog_this_chapter": "65e8671dd895ad2ecbbd97e7b36852c890446043e9c6fb6f8967f7f170da33bc",
   "catalog_title": "02c3631fd802bae8d44bbd4ddb004b8e7976ad25b18c3fe18d6e906ccd54930e",
   "catalog_try_lesson": "7bc3a130899ddd8121ae57704ff0fe03c76e28ef02cd487ad8cf9e98d158ba0d",
-  "catalog_try_place": "444a7e97ec6a06de6f2e42802457c91617480f05273892787f63a8aa6b04cf1f",
-  "catalog_try_title": "e03ffaaf4b630036e6fe5f9000e29a71406ebbc435835c4c7374b0e3c846dcdf",
+  "catalog_try_place": "11e5ab91ccd0940c1d08cdc1639483a60f2e3d8605ae89a034d1c8a44c46d407",
+  "catalog_try_title": "970fbba18832255b99710329514c09ff21cbd3d5cb69f3af5f16a0ca4a73bae6",
   "catalog_what_you_learn": "fe3108e3f314afbc574bc963d78a325a8eaf336e4ccb4b944622b68072a448bc",
   "catalog_workload_after_exam": "6d2c898d0a0a6c048b44a9411387f4895180f137bd9ace90b918ed9633fb88a5",
   "catalog_workload_challenges": "2badeaf00cb83bba654e38a186dd5790a781803dd210138ba78bb9347baaee2f",
@@ -152,9 +152,9 @@
     <string name="catalog_all">Todos</string>
     <string name="catalog_categories">Categorías de cursos</string>
     <plurals name="catalog_course_meta">
-        <item quantity="one">%1$d lección · %2$s</item>
-        <item quantity="many">%1$d lecciones · %2$s</item>
-        <item quantity="other">%1$d lecciones · %2$s</item>
+        <item quantity="one">%1$d lección · %2$s</item>
+        <item quantity="many">%1$d lecciones · %2$s</item>
+        <item quantity="other">%1$d lecciones · %2$s</item>
     </plurals>
     <string name="catalog_empty_title">No hay cursos</string>
     <string name="catalog_empty_description">Aún no hay cursos disponibles.</string>
@@ -164,17 +164,17 @@
     <string name="catalog_not_found_title">No hemos encontrado esta página</string>
     <string name="catalog_not_found_description">Puede que el enlace sea antiguo o esté mal escrito.</string>
     <string name="catalog_edition_notice">Este curso también está disponible en tu idioma.</string>
-    <string name="catalog_exam_on_today">Examen el %1$s · hoy</string>
+    <string name="catalog_exam_on_today">Examen el %1$s · hoy</string>
     <plurals name="catalog_exam_on">
-        <item quantity="one">Examen el %1$s · queda %2$d día</item>
-        <item quantity="many">Examen el %1$s · quedan %2$d días</item>
-        <item quantity="other">Examen el %1$s · quedan %2$d días</item>
+        <item quantity="one">Examen el %1$s · queda %2$d día</item>
+        <item quantity="many">Examen el %1$s · quedan %2$d días</item>
+        <item quantity="other">Examen el %1$s · quedan %2$d días</item>
     </plurals>
-    <string name="catalog_exam_around_today">Examen alrededor del %1$s · hoy</string>
+    <string name="catalog_exam_around_today">Examen hacia el %1$s · hoy</string>
     <plurals name="catalog_exam_around">
-        <item quantity="one">Examen alrededor del %1$s · queda aproximadamente %2$d día</item>
-        <item quantity="many">Examen alrededor del %1$s · quedan aproximadamente %2$d días</item>
-        <item quantity="other">Examen alrededor del %1$s · quedan aproximadamente %2$d días</item>
+        <item quantity="one">Examen hacia el %1$s · queda aproximadamente %2$d día</item>
+        <item quantity="many">Examen hacia el %1$s · quedan aproximadamente %2$d días</item>
+        <item quantity="other">Examen hacia el %1$s · quedan aproximadamente %2$d días</item>
     </plurals>
     <string name="catalog_plan_line">Con Zoonk, tu plan parte de tu nivel y se adapta a tu horario.</string>
     <string name="catalog_plan_line_chapter">Con Zoonk, tu plan empieza en este capítulo y se adapta a tu horario.</string>
@@ -182,8 +182,8 @@
     <string name="catalog_continue_plan">Continuar tu plan</string>
     <string name="catalog_try_lesson">Prueba una lección</string>
     <string name="catalog_start_free">Empieza gratis, sin necesidad de crear una cuenta.</string>
-    <string name="catalog_try_title">Prueba una lección · gratis · %1$s</string>
-    <string name="catalog_try_place">%1$s · lección %2$s</string>
+    <string name="catalog_try_title">Prueba una lección · gratis · %1$s</string>
+    <string name="catalog_try_place">%1$s · lección %2$s</string>
     <string name="catalog_guess_first">Haz una suposición primero. No cuenta.</string>
     <string name="catalog_quick_question">Pregunta rápida</string>
     <string name="catalog_guess_note">Tu respuesta da comienzo a la lección de %1$s minutos.</string>

@@ -62,6 +62,7 @@ import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
 import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.api.models.GoalUnderstandingOneOf
@@ -290,7 +291,7 @@ private fun RowNote(row: UnderstoodRow) {
     val text =
         buildAnnotatedString {
             row.note?.let(::append)
-            if (row.note != null && row.source != null) append(" · ")
+            if (row.note != null && row.source != null) append(FACT_SEPARATOR)
             val source = row.source
             if (source != null && sourceText != null) {
                 withLink(

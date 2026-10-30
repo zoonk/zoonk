@@ -37,7 +37,9 @@ import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -59,7 +61,7 @@ internal fun TodayPageHeader(
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         val parts = listOfNotNull(date, state)
-        if (parts.isNotEmpty()) Eyebrow(AnnotatedString(parts.joinToString(SEPARATOR)))
+        if (parts.isNotEmpty()) Eyebrow(AnnotatedString(parts.factsLine()))
         TitleRow(title, trailing)
     }
 }
@@ -197,7 +199,7 @@ private fun todayEyebrow(model: TodayDayModel): AnnotatedString {
 
     return buildAnnotatedString {
         parts.forEachIndexed { index, part ->
-            if (index > 0) append(SEPARATOR)
+            if (index > 0) append(FACT_SEPARATOR)
             append(part)
         }
     }
@@ -349,5 +351,3 @@ internal fun TodayStatusLine(
         HorizontalDivider()
     }
 }
-
-private const val SEPARATOR = " · "

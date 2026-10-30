@@ -47,6 +47,7 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -662,7 +663,7 @@ internal fun ColumnScope.PhaseDetails(
             style = MaterialTheme.typography.titleLarge,
         )
         Text(
-            text = listOfNotNull(range, lessons).joinToString(" · "),
+            text = listOfNotNull(range, lessons).factsLine(),
             style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

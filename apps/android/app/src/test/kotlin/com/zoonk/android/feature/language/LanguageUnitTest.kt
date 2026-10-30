@@ -62,8 +62,8 @@ class LanguageUnitTest {
     fun theHeroSaysWhereTheUnitStandsAndContinuesItsNextLesson() {
         show()
 
-        compose.onNodeWithText("Unit 3 · A1–A2").assertIsDisplayed()
-        compose.onNodeWithText("3 lessons · 30 min · 33% done").assertIsDisplayed()
+        compose.onNodeWithText("Unit 3\u00A0· A1–A2").assertIsDisplayed()
+        compose.onNodeWithText("3 lessons\u00A0· 30 min\u00A0· 33% done").assertIsDisplayed()
         compose.onNodeWithText("Continue").performClick()
 
         assertEquals(listOf<AppRoute>(AppRoute.Lesson(NEXT_LESSON.toString())), opened)
@@ -150,7 +150,7 @@ class LanguageUnitTest {
         seen("Words in this unit")
 
         compose.onNodeWithText("Words in this unit").performClick()
-        seen("hola · gracias and 10 more")
+        seen("hola\u00A0· gracias and 10 more")
     }
 
     /** A Fold opening or a tablet turning moves practice and reference between the aside and the page. */

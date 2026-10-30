@@ -107,7 +107,7 @@ class StatsFlowTest {
         show(StatsPage.Patterns)
 
         rule.onAllNodesWithText("Tuesday")[0].assertIsDisplayed()
-        rule.onNodeWithText("90% · 20 answers").assertIsDisplayed()
+        rule.onNodeWithText("90%\u00A0· 20 answers").assertIsDisplayed()
     }
 
     @Test
@@ -162,8 +162,8 @@ class StatsFlowTest {
     fun aTappedDayIsTheOneTheCalendarSays() {
         show(StatsPage.Activity)
 
-        rule.onNodeWithContentDescription("Oct 28 · 5 activities").assertIsSelected()
-        rule.onNodeWithContentDescription("Oct 27 · 3 activities").performClick().assertIsSelected()
+        rule.onNodeWithContentDescription("Oct 28\u00A0· 5 activities").assertIsSelected()
+        rule.onNodeWithContentDescription("Oct 27\u00A0· 3 activities").performClick().assertIsSelected()
     }
 
     @Test

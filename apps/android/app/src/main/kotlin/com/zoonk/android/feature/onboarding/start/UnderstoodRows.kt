@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.icu.text.ListFormatter
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
@@ -130,7 +131,7 @@ class UnderstoodRows(
         return UnderstoodRow(
             id = "schedule",
             label = text(R.string.onboarding_row_when_you_study),
-            value = parts.joinToString(" · "),
+            value = parts.factsLine(),
             editable = EditableField.StudyTime,
             editDefault = schedule.studyTime.orEmpty(),
         )
@@ -232,7 +233,7 @@ class UnderstoodRows(
         val detail =
             listOf(cutoff.course, cutoff.position, cutoff.institution.takeIf { cutoff.course != null }, cutoff.edition, cutoff.quota)
                 .filterNot { it.isNullOrBlank() }
-                .joinToString(" · ")
+                .factsLine()
         return UnderstoodRow(
             id = "cutoff",
             label = text(R.string.onboarding_row_last_cutoff),

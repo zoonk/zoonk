@@ -38,6 +38,7 @@
 ## Feature names and states
 
 - “Buddy”: “Compagnon”
+- “study buddy”: “compagnon d’étude”
 - “Time capsules”: “Capsules temporelles”
 - Mission names (missions list, first steps): infinitive: “Terminer ta première leçon”; “Practice” / “Review”: “S’entraîner” / “Réviser”
 - “essay”: “rédaction”, not “dissertation”

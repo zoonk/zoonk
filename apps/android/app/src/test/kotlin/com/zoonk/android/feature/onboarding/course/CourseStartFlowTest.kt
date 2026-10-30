@@ -126,7 +126,7 @@ class CourseStartFlowTest {
         show(AppRoute.CourseStart(COURSE, chapterId = CHAPTER_TWO, dailyMinutes = 15))
 
         rule.onNode(hasText("Bonds") and isHeading()).assertIsDisplayed()
-        rule.onNodeWithText("1 chapter · 1 lesson").assertIsDisplayed()
+        rule.onNodeWithText("1 chapter\u00A0· 1 lesson").assertIsDisplayed()
         rule.onNodeWithText("15 minutes a day for now. You can change it in the next steps.").assertIsDisplayed()
         build()
 

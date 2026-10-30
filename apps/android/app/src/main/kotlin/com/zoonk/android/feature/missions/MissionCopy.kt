@@ -10,6 +10,7 @@ import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.StudyMission.Kind
@@ -178,7 +179,7 @@ fun missionStepLine(
     val minutes = mission.minutes?.takeIf { it > 0 }?.let { formatMinutes(it.toInt().coerceAtLeast(1), locale) }
     val time = minutes?.let { if (mission.kind in ESTIMATED) stringResource(R.string.missions_estimate, it) else it }
 
-    return listOfNotNull(count, step, time).joinToString(" · ").ifEmpty { null }
+    return listOfNotNull(count, step, time).factsLine().ifEmpty { null }
 }
 
 @Composable

@@ -54,7 +54,7 @@
         <item quantity="other">%d mistakes fixed. They leave your notebook.</item>
     </plurals>
     <string name="questions_saved">Saved to your mistakes</string>
-    <string name="questions_saved_tomorrow">Saved to your mistakes · it comes back tomorrow</string>
+    <string name="questions_saved_tomorrow">Saved to your mistakes · it comes back tomorrow</string>
     <string name="questions_show_less">Show less</string>
     <string name="questions_read_again">Read it all again</string>
     <string name="questions_set_place_audio">Question %1$d of %2$d on this recording</string>
@@ -63,10 +63,10 @@
     <string name="questions_set_place_text">Question %1$d of %2$d on this text</string>
     <string name="questions_placement_note">Fine-tuning your plan. A miss here is never saved as a mistake.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
-    <string name="questions_quoted_source">Past exam question · %1$s</string>
+    <string name="questions_quoted_source">Past exam question · %1$s</string>
     <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
-    <string name="questions_sources_chip">Sources · Checked %1$s</string>
-    <string name="questions_source_checked_by">%1$s · Checked %2$s</string>
+    <string name="questions_sources_chip">Sources · Checked %1$s</string>
+    <string name="questions_source_checked_by">%1$s · Checked %2$s</string>
     <string name="questions_source_checked">Checked %1$s</string>
     <string name="questions_open_source">Open the source</string>
     <string name="questions_drill_reteach_ideas">The idea first, then a few questions on it.</string>

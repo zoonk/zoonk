@@ -6,9 +6,9 @@
     <string name="conversation_ielts_mock">IELTS speaking mock</string>
     <string name="conversation_toefl_mock">TOEFL speaking mock</string>
     <!-- How long the call lasts and its language level, such as "5 min · Level A2". -->
-    <string name="conversation_intro_meta">%1$s · Level %2$s</string>
+    <string name="conversation_intro_meta">%1$s · Level %2$s</string>
     <!-- The character's role and where the call takes place, such as "Waiter · Café in Madrid". -->
-    <string name="conversation_character_detail">%1$s · %2$s</string>
+    <string name="conversation_character_detail">%1$s · %2$s</string>
     <string name="conversation_get_across">What to get across</string>
     <string name="conversation_mic_note">Speak or type. The microphone is used only during the call.</string>
     <string name="conversation_start">Start the call</string>
@@ -99,7 +99,7 @@
 
     <string name="conversation_practice">Practice a conversation</string>
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->
-    <string name="conversation_practice_with">with %1$s · %2$s</string>
+    <string name="conversation_practice_with">with %1$s · %2$s</string>
     <string name="conversation_call_length">Call length</string>
     <string name="conversation_longer_calls_plus">Longer calls come with Plus.</string>
     <string name="conversation_opens_when_ready">Your call opens as soon as it\'s ready.</string>
@@ -117,7 +117,7 @@
     <string name="conversation_writing_call_line_4">Adding phrases you can lean on…</string>
     <!-- Exam speaking tasks: an official exam's speaking task practiced on a call, with an AI in the examiner's place. -->
     <!-- The exam and the task's place in its paper, such as "DELE B2 · Task 2 of 4". -->
-    <string name="conversation_exam_task_title">%1$s · Task %2$s of %3$s</string>
+    <string name="conversation_exam_task_title">%1$s · Task %2$s of %3$s</string>
     <string name="conversation_opens_and_card">%1$s opens the call, and your card stays on screen.</string>
     <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
     <string name="conversation_rated_on">Rated on %1$s.</string>
@@ -180,7 +180,7 @@
     <string name="conversation_every_criterion">See every criterion</string>
     <string name="conversation_by_criterion">By criterion</string>
     <!-- A criterion, its estimate and how it stands, such as "Fluency · 3–4 of 5 · At B2". -->
-    <string name="conversation_criterion_line">%1$s · %2$s · %3$s</string>
+    <string name="conversation_criterion_line">%1$s · %2$s · %3$s</string>
     <string name="conversation_mock_band_ielts">Estimated band, from 0 to 9</string>
     <string name="conversation_mock_band_toefl">Estimated band, from 1 to 6</string>
     <string name="conversation_mock_estimate">An estimate from one short mock, not an official score.</string>

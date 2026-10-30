@@ -3,7 +3,7 @@
     <string name="settings_preferences">Preferences</string>
     <string name="settings_memory">Memory</string>
     <!-- %1$s is the buddy's name and %2$s the app's language, like "Zu · English". -->
-    <string name="settings_preferences_summary">%1$s · %2$s</string>
+    <string name="settings_preferences_summary">%1$s · %2$s</string>
     <string name="settings_profile">Profile</string>
     <string name="settings_profile_needs_account">Create an account to have a profile. Your plan and progress come with you.</string>
     <string name="settings_account">Account</string>
@@ -36,7 +36,7 @@
     <string name="settings_preferences_change">Change</string>
     <string name="settings_preferences_choose_buddy">Choose your buddy</string>
     <!-- %1$s is the buddy's stage ("Baby") and %2$s what it wears ("Round glasses"). -->
-    <string name="settings_preferences_buddy_line">%1$s · %2$s</string>
+    <string name="settings_preferences_buddy_line">%1$s · %2$s</string>
     <string name="settings_preferences_lessons">Lessons</string>
     <string name="settings_preferences_sounds">Sounds</string>
     <string name="settings_preferences_sounds_description">When you get it right or finish</string>

@@ -53,6 +53,7 @@ import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.feature.activities.assignmentPairs
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf27Value as MatchPairsContent
@@ -156,7 +157,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
                 listOfNotNull(
                     stringResource(R.string.activities_sorting_pairs_matched, progress.matched.size, pairIds.size),
                     if (traps > 0) pluralStringResource(R.plurals.activities_sorting_cards_without_match, traps, traps) else null,
-                ).joinToString(" · "),
+                ).factsLine(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
             )

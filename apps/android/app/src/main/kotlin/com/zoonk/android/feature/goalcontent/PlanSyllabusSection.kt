@@ -27,6 +27,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.api.models.GoalContentGoal
 import com.zoonk.api.models.Syllabus
@@ -181,7 +182,7 @@ private fun sectionCount(syllabus: Syllabus): String {
             listOf(
                 pluralStringResource(R.plurals.goalcontent_subject_count, subjects, subjects),
                 pluralStringResource(R.plurals.goalcontent_topic_count, topics, topics),
-            ).joinToString(" · ")
+            ).factsLine()
         }
 
         syllabus.goal.kind == GoalContentGoal.Kind.EXAM -> {
@@ -215,7 +216,7 @@ private fun QuestionsSourceNote(
             stringResource(R.string.goalcontent_questions_source_latest, publisher)
         }
 
-    SectionNote(annotate("$lead · $sentence", publisher to LinkTarget(source.url)), modifier)
+    SectionNote(annotate(factsLine(lead, sentence), publisher to LinkTarget(source.url)), modifier)
 }
 
 /** How the learner's course weighs the exam's parts, which the plan's time follows. */

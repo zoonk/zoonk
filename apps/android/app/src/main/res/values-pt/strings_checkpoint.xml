@@ -34,7 +34,7 @@
   "checkpoint_phase_name": "ab48950e35598392ce55ac1944e8099e7e9d39545078a8780c6a6681f893cee3",
   "checkpoint_phase_plain": "d8b9a43be9ff9bce3f7e326be0bcb6980ef2c4cec123455a33e68d3b0ee947bb",
   "checkpoint_prize": "9880e69ed9e57645a4a9687823726d7ea90c0acb9a984460c41e835d6926557d",
-  "checkpoint_prize_phase": "72a7014ade9de3b4e9c8a837a6ca5ed427435e61c26f75f578be0396c3dce22c",
+  "checkpoint_prize_phase": "ea90046fe8ebb4c76edc16cd61e9ef2f2ba6f42aac29b85833266a8808416919",
   "checkpoint_questions_left": "1d477a45b59ecca6b60532dc59702c0e575910bac967e446892f753ac70758f4",
   "checkpoint_removed_detail": "6abf303d99863a3f9b8ff8eb9272f26ba0ed426169d9b557c43a0a839c5cdc64",
   "checkpoint_removed_title": "d75b825848fd9876c82a5bb03ee5de076f0b4c7b19f26141295d05b2e0982e23",
@@ -117,7 +117,7 @@
     <!-- %1$s is the Brain Power the challenge gives, like 30. -->
     <string name="checkpoint_prize">+%1$s</string>
     <!-- %1$s is the Brain Power; %2$s is the phase's number. -->
-    <string name="checkpoint_prize_phase">+%1$s · fase %2$s concluída</string>
+    <string name="checkpoint_prize_phase">+%1$s · fase %2$s concluída</string>
     <string name="checkpoint_removed_title">As perguntas foram removidas</string>
     <string name="checkpoint_removed_detail">Você ainda não tinha respondido nenhuma pergunta, então este desafio não recebeu uma pontuação. Nada foi perdido.</string>
     <string name="checkpoint_weekly_done">Desafio semanal concluído</string>

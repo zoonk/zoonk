@@ -36,6 +36,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
@@ -48,9 +49,6 @@ import com.zoonk.api.models.CoursePlanExample
 import com.zoonk.api.models.LearnerSummary
 import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.roundToLong
-
-/** Main's `OUTLINE_SEPARATOR`. */
-internal const val SEPARATOR = " · "
 
 @Composable
 internal fun CourseChapter.Level.label(): String =
@@ -90,7 +88,7 @@ internal fun CourseOutline(
                 pluralStringResource(R.plurals.catalog_chapters, chapters.size, chapters.size),
                 pluralStringResource(R.plurals.catalog_short_lessons, lessonCount, lessonCount).takeIf { lessonCount > 0 },
                 formatTotalDuration(totalMinutes.toDouble(), locale).takeIf { lessonCount > 0 },
-            ).joinToString(SEPARATOR)
+            ).factsLine()
         }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -167,8 +165,8 @@ internal fun CourseOutline(
                                 listOfNotNull(
                                     pluralStringResource(R.plurals.catalog_chapters, levelChapters.size, levelChapters.size),
                                     span,
-                                ).joinToString(SEPARATOR),
-                            closedSummary = levelChapters.take(CHAPTERS_NAMED).joinToString(SEPARATOR) { it.title },
+                                ).factsLine(),
+                            closedSummary = levelChapters.take(CHAPTERS_NAMED).map { it.title }.factsLine(),
                             openByDefault = level == openLevel,
                         ) {
                             ChapterRows(navigator, courseId, levelChapters, numbers) { chapter ->
@@ -290,7 +288,7 @@ private fun areaFitText(
                         area.quickLessons >
                             0
                     },
-                ).joinToString(SEPARATOR)
+                ).factsLine()
             }
     }
 
@@ -298,7 +296,7 @@ private fun areaFitText(
         parts += pluralStringResource(R.plurals.catalog_chapters_left_out, leftOut, leftOut)
     }
 
-    return parts.joinToString(SEPARATOR)
+    return parts.factsLine()
 }
 
 /** "Left out" only when the plan holds no work of it. */
@@ -342,7 +340,7 @@ private fun areaChapterMark(
             }
         }
 
-    return listOfNotNull(span, detail).joinToString(SEPARATOR)
+    return listOfNotNull(span, detail).factsLine()
 }
 
 /** Main's `RouteZone`: a disclosure whose closed state names what's inside; it follows [openByDefault] until tapped. */
@@ -487,7 +485,7 @@ private fun OutlineChapterRow(
 
             if (chapter.lessons.isNotEmpty()) {
                 Text(
-                    chapter.lessons.joinToString(SEPARATOR) { it.title },
+                    chapter.lessons.map { it.title }.factsLine(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )

@@ -64,16 +64,17 @@
     <string name="today_step_skipped">Skipped</string>
     <string name="today_step_counts_toward_mission">Counts toward a mission</string>
     <string name="today_step_being_written">Being written for you…</string>
+    <!-- A step's label. It and today_step_catching_up_subject label the same kind of step, so both take the same grammatical form. -->
     <string name="today_step_catching_up">Catching up</string>
-    <!-- %1$s is the subject the block studies. -->
-    <string name="today_step_catching_up_subject">Catching up · %1$s</string>
+    <!-- %1$s is the subject the block studies. Labels the same kind of step as today_step_catching_up, so both take the same grammatical form. -->
+    <string name="today_step_catching_up_subject">Catching up · %1$s</string>
     <string name="today_step_often_tested">Often tested</string>
-    <string name="today_step_often_tested_label">%1$s · often tested</string>
+    <string name="today_step_often_tested_label">%1$s · often tested</string>
     <string name="today_step_after_lessons">After today\'s lessons</string>
     <!-- %1$s is the phase's name. -->
-    <string name="today_step_after_lessons_phase">%1$s · after today\'s lessons</string>
+    <string name="today_step_after_lessons_phase">%1$s · after today\'s lessons</string>
     <string name="today_step_after_challenge">After the challenge before it</string>
-    <string name="today_step_after_challenge_phase">%1$s · after the challenge before it</string>
+    <string name="today_step_after_challenge_phase">%1$s · after the challenge before it</string>
 
     <string name="today_done">Today\'s session is complete.</string>
     <string name="today_done_day_off">You studied on your day off.</string>
@@ -190,7 +191,7 @@
         <item quantity="other">%d more lessons to catch up come first tomorrow.</item>
     </plurals>
     <!-- %1$s is a duration, such as "25 min". -->
-    <string name="today_catch_up_today">Catch up today · +%1$s</string>
+    <string name="today_catch_up_today">Catch up today · +%1$s</string>
     <!-- %1$s is a weekday, such as "Saturday". -->
     <string name="today_see_day_challenge">See %1$s\'s challenge</string>
     <string name="today_see_day_mock">See %1$s\'s mock exam</string>
@@ -199,7 +200,7 @@
     <string name="today_already_know_this">Already know this?</string>
     <string name="today_take_the_test">Take the test</string>
     <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
-    <string name="today_earlier_work">Earlier unfinished work · %1$s</string>
+    <string name="today_earlier_work">Earlier unfinished work · %1$s</string>
     <string name="today_earlier_work_detail">Start with these. Starting your session fits the plan to today\'s time.</string>
     <string name="today_practice_anytime">Practice anytime</string>
     <string name="today_mistakes_notebook">Mistakes notebook</string>

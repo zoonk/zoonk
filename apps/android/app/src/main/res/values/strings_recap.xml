@@ -11,9 +11,9 @@
         <item quantity="other">%d more questions than the week before!</item>
     </plurals>
     <!-- %1$s is the phase's number, %2$s its name. -->
-    <string name="recap_phase_done">Phase %1$s · %2$s done</string>
+    <string name="recap_phase_done">Phase %1$s · %2$s done</string>
     <!-- %1$s is the week's dates, such as "Oct 20 – 26". -->
-    <string name="recap_weekly_summary">Weekly summary · %1$s</string>
+    <string name="recap_weekly_summary">Weekly summary · %1$s</string>
     <!-- %1$s is the learner's first name. -->
     <string name="recap_what_a_week_name">What a week, %1$s!</string>
     <string name="recap_what_a_week">What a week!</string>

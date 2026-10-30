@@ -6,6 +6,7 @@ import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.feature.mock.mockDaySize
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.api.models.MockOption
@@ -54,7 +55,7 @@ internal fun mockOptionDetail(
     val written = option.written.takeIf { it.isNotEmpty() }?.let { stringResource(R.string.mock_chooser_written, formatList(it, locale)) }
     val objective = stringResource(R.string.mock_chooser_objective_only).takeIf { option.objectiveOnly && covers == null }
 
-    return listOfNotNull(covers, subjects, written, objective).joinToString(" · ").ifEmpty { null }
+    return listOfNotNull(covers, subjects, written, objective).factsLine().ifEmpty { null }
 }
 
 @Composable

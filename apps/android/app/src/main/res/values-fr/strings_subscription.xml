@@ -22,7 +22,7 @@
   "subscription_benefit_calls": "15a914da8b40b4dfee62bd57ef57d4adf44fbf746a12c299613dc93c8d79f1d4",
   "subscription_benefit_exam": "6467e1f1bfe0f4d0e4aa57c51634a222ff48b80810abf28162db3241ba7cf8f1",
   "subscription_benefit_mocks": "cd1aad5ec78ec3baa29d102ab29033894fe8954cfa7bd4c6d28b26ebb833724e",
-  "subscription_benefits_summary": "f2039b997e4b9d35c0861c5f92cfedd7ac843df00ea0cb3f98b5c340a13b9efc",
+  "subscription_benefits_summary": "7116108eac44634461f8fd97a22a75d3b5aec127aded0b43a70d89544cbb9eae",
   "subscription_billed_monthly": "79d337b66ba01baaeec9130117c083a4274ca59020b6d22e0692905545969d18",
   "subscription_billing_period": "eb82a1d2b891a3d1762d9e02e0f70924fc4b319f8974f8b4a25f85103873ffa6",
   "subscription_cancel": "564f2afdc29dbdaf51950689bae111e4c37055a6f82646ceef227fa87ad01660",
@@ -40,7 +40,7 @@
   "subscription_free_goals": "361b81f5d07a6ba1510e7b0522c928eee37f0004970ba0e007715135932c66ce",
   "subscription_free_lessons_a_month": "3138d2ebbe3dc3c33dd1829e853f5ac4f70a4e7950030f3ba5461f4d6d5c179d",
   "subscription_free_plan": "4db22e629a78291ecb50a87aee32336822b05d6b18e4617067df55b61748faa4",
-  "subscription_free_summary": "982ce64aeab1fcd1db729d823a7cd97d7ef789746203aebf829f1d5473fb9471",
+  "subscription_free_summary": "43ffd937092f135af8e707af8d4d3dca004758251194e42da5eeadfa7f8055c4",
   "subscription_free_week_over_description": "75d78b55e34c0f85470e3bac020ffd22a4010e46b208d54cc433bb624434c926",
   "subscription_free_week_over_title": "36ef8e8580f57fe648e8cc234e937c9d0f0ec197a3b450fcf3d67d85e4788762",
   "subscription_get_plus": "11bbacf52d235c2a60c19a3b99012716c402f1164a4a7462b332fd3228f50b64",
@@ -133,7 +133,7 @@
     <string name="subscription_purchase_other_account">Cet abonnement Google Play appartient à un autre compte Zoonk. Connecte-toi à ce compte pour l’utiliser.</string>
     <string name="subscription_purchase_play_failed">Google Play n’a pas pu finaliser l’achat. Réessaie.</string>
     <string name="subscription_purchase_confirm_failed">Ton achat a bien été effectué, mais nous n’avons pas encore pu le confirmer. Nous réessaierons à ton retour.</string>
-    <string name="subscription_benefits_summary">Tous les objectifs · toutes les leçons</string>
+    <string name="subscription_benefits_summary">Tous les objectifs · toutes les leçons</string>
     <string name="subscription_benefit_exam">Tout ton plan d’examen, chaque jour jusqu’à l’examen</string>
     <string name="subscription_benefit_mocks">Des examens blancs chronométrés comme le vrai</string>
     <string name="subscription_benefit_buddy">Un Compagnon d’étude IA dès que tu bloques</string>
@@ -141,7 +141,7 @@
     <string name="subscription_start_free">Commencer gratuitement</string>
     <string name="subscription_no_card_needed">Pas de carte bancaire nécessaire.</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
-    <string name="subscription_free_summary">%1$s · %2$s</string>
+    <string name="subscription_free_summary">%1$s · %2$s</string>
     <!-- %d is the number as a digit, at the start: "1 goal". -->
     <plurals name="subscription_free_goals">
         <item quantity="one">%d objectif</item>

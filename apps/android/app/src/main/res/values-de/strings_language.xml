@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "language_alphabet_anytime": "70cb87195bf14dcf7535c8b03d8b43abcf9acee4c6988bfb386d9898f6bda43d",
-  "language_alphabet_first_next_session": "55cc2b75eae43f11fb92a3c88e612dc80fccdef982d1584c50d6ce53eca92ae5",
+  "language_alphabet_anytime": "082f58734130631b412053dcdf2f576cfe0c405e6551144a2dd57268f87dc939",
+  "language_alphabet_first_next_session": "65a54a498ae45dc987cfba1aa2cfe42d615eefafa96042f4ae5e6eb2ac014cc1",
   "language_alphabet_skip": "7aa4ff1d45daf5f02ee1e8cbb026ff3a4c6f1a40a66d71382b2faf081aac4614",
   "language_alphabet_skip_failed": "bc04b9bb0405d31b16291d3ba017bff25909cea84c24fb5d7b279d290abc594e",
   "language_can_already": "a677e87438bdf07808060b28ab4ff9305a26aec0c137d5ad8ce73a5dce8655a2",
@@ -38,7 +38,7 @@
   "language_unit_about": "1dfe91c8a0962b02a5ad45661a1bff444d97db699d360160fdf1999221571768",
   "language_unit_continue": "8b6515a1860b17c0d4a0c9adcc9f0a3becf82ceb068f4aa01afa36a44844877a",
   "language_unit_done_share": "e9752d24fcff399a0a170ec773fb55fa5e57ff03be87ae4c420615993c23063e",
-  "language_unit_eyebrow": "8180e4ea4fdc071780d420ed57db079b11c772572f52b89b409d5521858fbc54",
+  "language_unit_eyebrow": "6a80647f81a7869e8ff5df72dc0fb8cab6665139636e4dba458cc5f65af0aeec",
   "language_unit_grammar_tips": "b522db455556f1b3e1859841e49a4937e1f7894f94afffad7c6bb6249d96fb2c",
   "language_unit_lessons": "9234bbbb27ce186be4570843d4407669f45db508beef42b0aa1441aa1a07c456",
   "language_unit_mistakes": "67dd9125c671c4e3588213b9c1504141b108cbeb0e0c923b15d915362859b308",
@@ -54,7 +54,7 @@
 -->
 <resources>
     <!-- A unit's place and its levels: "Unit 3 · A1–A2". -->
-    <string name="language_unit_eyebrow">Einheit %1$s · %2$s</string>
+    <string name="language_unit_eyebrow">Einheit %1$s · %2$s</string>
     <plurals name="language_unit_lessons">
         <item quantity="one">%d Lektion</item>
         <item quantity="other">%d Lektionen</item>
@@ -118,9 +118,9 @@
         <item quantity="other">Sprich %d Wörter noch einmal</item>
     </plurals>
     <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
-    <string name="language_alphabet_first_next_session">Als Erstes in deiner nächsten Lerneinheit · %1$s</string>
+    <string name="language_alphabet_first_next_session">Als Erstes in deiner nächsten Lerneinheit · %1$s</string>
     <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
-    <string name="language_alphabet_anytime">Übe jederzeit · %1$s</string>
+    <string name="language_alphabet_anytime">Jederzeit üben · %1$s</string>
     <!-- Skips the alphabet lesson for a learner who reads the script. -->
     <string name="language_alphabet_skip">Ich kann es schon lesen</string>
     <string name="language_alphabet_skip_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>

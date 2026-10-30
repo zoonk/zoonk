@@ -11,7 +11,7 @@
     <string name="planlink_refused">You can\'t start another goal right now. Finish or pause one first.</string>
     <string name="planlink_failed">That didn\'t work. Try again in a moment.</string>
     <!-- A shared plan's size: %1$s is its study time, such as "40 hr"; %2$s its phases, such as "5 phases"; %3$s its skills, such as "24 skills". -->
-    <string name="planlink_facts">~%1$s of study · %2$s · %3$s</string>
+    <string name="planlink_facts">~%1$s of study · %2$s · %3$s</string>
     <plurals name="planlink_phases">
         <item quantity="one">%d phase</item>
         <item quantity="other">%d phases</item>

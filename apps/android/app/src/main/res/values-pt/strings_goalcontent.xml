@@ -33,7 +33,7 @@
   "goalcontent_known": "3ef575dbb9bf52de5012ea13c9249679d4d2905f50cc70cbed1ba4df66009105",
   "goalcontent_known_before": "713d6724357e835cf35d1f8045e99fa1009cb95eb76425c09350e47b92bf7175",
   "goalcontent_lesson_count": "8ccf70eaa72a2888a67ac2a41a5b6c70409dda5528e42da4f4239c845df6af56",
-  "goalcontent_lessons_done": "ceb823fb3eec3a666df3db9a022f6860da04b238ddbae8c57f6bfa13507ebd39",
+  "goalcontent_lessons_done": "6bcdf489e3444a00658f8fe89659397008ccc26a15eaabc123beb5b7f5893e0d",
   "goalcontent_lessons_known_skipped": "79ef8ff1aba8d6932bbd9f600e1ff4a1c1bd9d86d9f74226853f6a11329d5778",
   "goalcontent_lessons_skipped": "fa97ebe3e9f829538b96fd45c07ec7bb48e7678f8c8872bc0f232b0eac8ecf9c",
   "goalcontent_mastery": "d87c308e32fd94e0cfb0a91b4e827f7f1372a170570851be08b723f78bacab7f",
@@ -72,7 +72,7 @@
   "goalcontent_start": "a83f67753ed1c32971bc608c090cb57a52df47ab51f38ea0c3a3cb5a3c995a9c",
   "goalcontent_studied": "74527812f61c4e113cb1addf5cab6e556c60bb7e019beb14b91b6caffb52ad9c",
   "goalcontent_subject": "f788cb56f7b39933c9475c1373174c26a4eb1a922ef9259cc6eecdeb6006a3a4",
-  "goalcontent_subject_chapter": "19ec34f98b336c9a84417409a615c40cf3ddda726c7135c9e46a884f106a7dbc",
+  "goalcontent_subject_chapter": "078a0cd2bd0b990aa8c85f6ca45bf91713ffc59556e6207a7e4611b3f7c6bfc8",
   "goalcontent_subject_count": "23d12da8f631bedbad1022dc4d5ec5a06580c71cfbf82872e2cabd6742d61609",
   "goalcontent_subject_missing": "b7b8967e4682e81ab3b2fdb07336d75f5a54cf17cbf7738c0f78e9fd66883fba",
   "goalcontent_subject_skipped": "203c04e7d2e47a3c6ba7ce6715b2faac912f59438a78bf02e8b2a297ef6d6d68",
@@ -82,8 +82,8 @@
   "goalcontent_topic_count": "493b8208e0f94a8750bfa2f889969f93a60c1e4ff820999b4369e9e649ef83b0",
   "goalcontent_topic_in_progress": "f56f84949eb15f44cbd2b7c8a8089b4c02c9f07d88888b0d9a7bad96875a69a2",
   "goalcontent_topic_known": "9b7dcb25c5fce90201af98884135fad9971c62e2fc1f3aa3069a4da825913556",
-  "goalcontent_topic_known_practice": "0f3b55b62d6bb43a728bfb50295a91a80117a680400787b2ad324b953ad0939d",
-  "goalcontent_topic_known_reviews": "d0c843ceee891e111e84183cf13376d4e3a10c5c82a37d7a5f96370ec79137a7",
+  "goalcontent_topic_known_practice": "c88ef5499009854d9f117060060c3aaef61c01c2346e2c38e79e844c519731f6",
+  "goalcontent_topic_known_reviews": "8baa66b347f9178d610e3cb335ef05b298e1f13b5e2f24242754c74d0953d605",
   "goalcontent_topic_missing": "3f4525381f0fefb75142b1e3627e63ce80c43296932b2fb2272d692f9abe4ff1",
   "goalcontent_topic_past_basics": "cda5d097d7d8b25449021891574398a357fb048aeabb237b4b6a25a0b040cea9",
   "goalcontent_topic_skipped": "dc551e23c82fa0454dbe150e326b207a1cd03d367a0d33d9899a3f0dce0291a4",
@@ -255,13 +255,13 @@
     </plurals>
     <string name="goalcontent_skipped_known">Pulado porque você já sabe</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
-    <string name="goalcontent_lessons_done">%1$s · %2$s concluídas</string>
+    <string name="goalcontent_lessons_done">%1$s · %2$s concluídas</string>
     <!-- A topic's state for screen readers. -->
     <string name="goalcontent_topic_known">Você já sabe</string>
     <string name="goalcontent_topic_in_progress">Em andamento</string>
     <string name="goalcontent_topic_to_study">Para estudar</string>
-    <string name="goalcontent_topic_known_reviews">Você já sabe · volta nas suas revisões</string>
-    <string name="goalcontent_topic_known_practice">Você já sabe · volta nas práticas</string>
+    <string name="goalcontent_topic_known_reviews">Você já sabe isso · aparece de novo nas suas revisões</string>
+    <string name="goalcontent_topic_known_practice">Você já sabe isso · aparece de novo na prática</string>
     <string name="goalcontent_topic_skipped">Você tirou esta matéria do seu plano</string>
     <string name="goalcontent_topic_past_basics">Você começa depois do básico</string>
     <string name="goalcontent_topic_skipped_base">Você escolheu pular esta base</string>
@@ -282,7 +282,7 @@
     <string name="goalcontent_matrix_title">O que as questões cobram</string>
     <string name="goalcontent_see_all">Ver tudo em %1$s</string>
     <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
-    <string name="goalcontent_subject_chapter">%1$s · Capítulo %2$s</string>
+    <string name="goalcontent_subject_chapter">%1$s · Capítulo %2$s</string>
     <string name="goalcontent_chapter_number">Capítulo %1$s</string>
     <string name="goalcontent_progress">Progresso</string>
     <string name="goalcontent_practice">Prática</string>

@@ -20,12 +20,12 @@
         <item quantity="other">%1$s, %2$d of %3$d questions</item>
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
-    <string name="mock_row_detail">%1$s · %2$s</string>
+    <string name="mock_row_detail">%1$s · %2$s</string>
     <string name="mock_take">Take a mock exam</string>
     <string name="mock_continue">Continue your mock exam</string>
     <string name="mock_label">Mock exam</string>
     <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
-    <string name="mock_label_shape">Mock exam · %1$s</string>
+    <string name="mock_label_shape">Mock exam · %1$s</string>
     <string name="mock_not_found_title">We couldn\'t find this page</string>
     <string name="mock_not_found_description">The link may be old or mistyped.</string>
     <string name="mock_go_to_today">Go to Today</string>
@@ -39,10 +39,10 @@
     <string name="mock_place">%1$d of %2$d</string>
     <string name="mock_written_part">Written part</string>
     <!-- %1$s is the essay's area, such as Portuguese. -->
-    <string name="mock_written_part_area">Written part · %1$s</string>
+    <string name="mock_written_part_area">Written part · %1$s</string>
     <string name="mock_question_place">Question %1$d of %2$d</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
-    <string name="mock_question_place_area">Question %1$d of %2$d · %3$s</string>
+    <string name="mock_question_place_area">Question %1$d of %2$d · %3$s</string>
     <string name="mock_flag">Flag</string>
     <string name="mock_next">Next</string>
     <string name="mock_hand_in_mock">Hand in the mock exam</string>
@@ -103,7 +103,7 @@
     <string name="mock_question_number">Question %1$d</string>
     <string name="mock_cell_answered">answered</string>
     <string name="mock_cell_flagged">flagged</string>
-    <string name="mock_legend">flagged · no feedback until the end, like on exam day</string>
+    <string name="mock_legend">flagged · no feedback until the end, like on exam day</string>
     <plurals name="mock_reused">
         <item quantity="one">%d question repeats.</item>
         <item quantity="other">%d questions repeat, missed ones first.</item>
@@ -119,7 +119,7 @@
     <string name="mock_handed_in">Handed in</string>
     <!-- A section's answered questions of all of them: "12/45". -->
     <string name="mock_section_answered">%1$d/%2$d</string>
-    <string name="mock_not_saved_retrying">Not saved yet · retrying</string>
+    <string name="mock_not_saved_retrying">Not saved yet · retrying</string>
     <string name="mock_retry">Retry</string>
     <string name="mock_last_not_saved">Your last answer wasn\'t saved.</string>
     <string name="mock_step_failed_saved">That didn\'t go through. Your answers are saved. Try again in a moment.</string>
@@ -156,7 +156,7 @@
     </plurals>
     <string name="mock_speaking_all_done">Every task is done. Hand in this section to go on.</string>
     <!-- %2$s is how long the task lasts, such as "4–5 min". -->
-    <string name="mock_speaking_task">Task %1$d · %2$s</string>
+    <string name="mock_speaking_task">Task %1$d · %2$s</string>
     <!-- Status beside a speaking task the learner has finished. -->
     <string name="mock_speaking_done">Done</string>
     <string name="mock_speaking_start_task">Start</string>

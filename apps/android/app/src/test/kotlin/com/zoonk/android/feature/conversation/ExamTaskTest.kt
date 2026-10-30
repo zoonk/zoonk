@@ -36,7 +36,7 @@ class ExamTaskTest {
         harness.api.stored = examConversation(harness.id)
         show()
 
-        compose.onNodeWithText("DELE B2 · Task 1 of 4").assertExists()
+        compose.onNodeWithText("DELE B2\u00A0· Task 1 of 4").assertExists()
         seen("Lee las propuestas.")
         seen("Start preparing")
         compose.onNodeWithText("Start preparing").performClick()

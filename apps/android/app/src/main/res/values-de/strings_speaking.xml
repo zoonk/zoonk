@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "speaking_eyebrow": "33b25e32fb88be7013a3974fd3e99e5070345052bfa9e5651aa31d04d40f4290",
-  "speaking_facts": "4e32e80d0c7adc7bdaa426581a4dcf70c9e30075dc3db86863cc4cceb54de012",
+  "speaking_facts": "d5d751183b5bb138df6653ebc28076ff73312662628fb919055dfc86eee6eab2",
   "speaking_footer": "e8d55d442a163c8585fc72c89461e8d93fcc819327e7fdf45893e035687e6873",
   "speaking_footer_partner": "9e2ea3e669a519864ff1b35842f682edd5868ea361dd9bdc6912b554546b3722",
   "speaking_last_at": "88d9b34ac6adc9437f0fa43b838d79cf68558df1b90ca868501ca5efe397f09c",
@@ -44,8 +44,8 @@
     <string name="speaking_eyebrow">Sprechen wie in der Prüfung</string>
     <!-- The paper's task count and how long its speaking part lasts in the exam, such as "4 tasks · 15 min in the exam". -->
     <plurals name="speaking_facts">
-        <item quantity="one">%1$d Aufgabe · %2$s in der Prüfung</item>
-        <item quantity="other">%1$d Aufgaben · %2$s in der Prüfung</item>
+        <item quantity="one">%1$d Aufgabe · %2$s in der Prüfung</item>
+        <item quantity="other">%1$d Aufgaben · %2$s in der Prüfung</item>
     </plurals>
     <string name="speaking_official">%1$s ist eine offizielle Prüfung. Übe die Sprechaufgaben, ob du die Prüfung ablegen möchtest oder nicht.</string>
     <string name="speaking_tasks">Aufgaben</string>

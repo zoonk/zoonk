@@ -41,6 +41,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.CatalogLesson
@@ -210,7 +211,7 @@ private fun LessonMore(
             OutlineZone(
                 title = stringResource(R.string.catalog_chapter_heading, formatNumber(place.number.toDouble(), locale), chapter.title),
                 aside =
-                    pluralStringResource(R.plurals.catalog_plan_lessons, chapter.lessons.size, chapter.lessons.size) + SEPARATOR +
+                    pluralStringResource(R.plurals.catalog_plan_lessons, chapter.lessons.size, chapter.lessons.size) + FACT_SEPARATOR +
                         formatTotalDuration(minutes.toDouble(), locale),
                 closedSummary = null,
                 openByDefault = false,
@@ -292,7 +293,7 @@ private fun LessonPlanDay(
             FactsRow(
                 title = stringResource(R.string.catalog_example_plan),
                 facts =
-                    pluralStringResource(R.plurals.catalog_plan_lessons, steps.size, steps.size) + SEPARATOR +
+                    pluralStringResource(R.plurals.catalog_plan_lessons, steps.size, steps.size) + FACT_SEPARATOR +
                         formatTotalDuration(steps.sumOf { it.minutes }, locale),
             )
             DayList(steps)

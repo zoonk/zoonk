@@ -28,6 +28,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LanguageTodaySpeaking
@@ -141,7 +142,7 @@ private fun MistakesRow(
                 listOf(
                     pluralStringResource(R.plurals.today_mistakes_ready, ready, ready),
                     pluralStringResource(R.plurals.today_mistakes_tomorrow, tomorrow, tomorrow),
-                ).joinToString(" · ")
+                ).factsLine()
             }
 
             ready > 0 -> {

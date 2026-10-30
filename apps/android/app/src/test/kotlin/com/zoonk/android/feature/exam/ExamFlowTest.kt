@@ -84,7 +84,7 @@ class ExamFlowTest {
     fun theHeroCountsTheDaysAndTakesAMock() {
         show()
 
-        rule.onNodeWithText("Exam · 10 days left").assertIsDisplayed()
+        rule.onNodeWithText("Exam\u00A0· 10 days left").assertIsDisplayed()
         rule.onNodeWithText("Take a mock exam").performClick()
 
         assertEquals(AppRoute.MockChooser, navigator.currentRoute)

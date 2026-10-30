@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "speaking_eyebrow": "432272c43ffa9ddf449f9c71f82ec0a9efc541476135acb03259ba4a93553bd4",
-  "speaking_facts": "aa4b6fd97af220f60f5aeab8e1574d756e08beddab1ea7ee7b0c28e0edfaad36",
+  "speaking_facts": "7ebdac316223dc937e220a31afa305d0b1888636803874ef040221b49e4bb2b3",
   "speaking_footer": "bed4f6f805c3e31d4cc1b10a7db8a727e705ebd569f9f7a6050575fad7e0004b",
   "speaking_footer_partner": "b7f8899ff76c7490f8a103c966f2f4b92b6129a75472c7bca67809bdbab4793c",
   "speaking_last_at": "0729ed8f3ba625b40c77a4cb3cd4409c493bae69c6b0d448190738162e1bc932",
@@ -44,9 +44,9 @@
     <string name="speaking_eyebrow">Conversação no formato da prova</string>
     <!-- The paper's task count and how long its speaking part lasts in the exam, such as "4 tasks · 15 min in the exam". -->
     <plurals name="speaking_facts">
-        <item quantity="one">%1$d tarefa · %2$s na prova</item>
-        <item quantity="many">%1$d tarefas · %2$s na prova</item>
-        <item quantity="other">%1$d tarefas · %2$s na prova</item>
+        <item quantity="one">%1$d tarefa · %2$s na prova</item>
+        <item quantity="many">%1$d tarefas · %2$s na prova</item>
+        <item quantity="other">%1$d tarefas · %2$s na prova</item>
     </plurals>
     <string name="speaking_official">%1$s é uma prova oficial. Pratique as tarefas de conversação mesmo que você não pretenda fazer a prova.</string>
     <string name="speaking_tasks">Tarefas</string>

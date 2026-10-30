@@ -107,7 +107,7 @@ class MockResultFlowTest {
 
         rule.onNodeWithText("Mock exam 3 done").assertIsDisplayed()
         rule.onNodeWithText("1 of 3").assertIsDisplayed()
-        rule.onNodeWithText("Right answers · ENEM · Mathematics, Languages").assertIsDisplayed()
+        rule.onNodeWithText("Right answers\u00A0· ENEM\u00A0· Mathematics, Languages").assertIsDisplayed()
     }
 
     @Test

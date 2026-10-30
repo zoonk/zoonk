@@ -78,7 +78,9 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
@@ -423,7 +425,7 @@ private fun Intro(challenge: Challenge) {
             IntroHeading(
                 title = mockTitle(challenge.number ?: 1),
                 whenText = whenText(challenge),
-                detail = listOfNotNull(challenge.examName, area).joinToString(" · ").ifEmpty { null },
+                detail = listOfNotNull(challenge.examName, area).factsLine().ifEmpty { null },
             )
             Facts(
                 listOfNotNull(
@@ -545,9 +547,9 @@ private fun Facts(
     val brain = MaterialTheme.zoonk.brainText
     Text(
         buildAnnotatedString {
-            append(facts.joinToString(" · "))
+            append(facts.factsLine())
             prize?.let {
-                if (facts.isNotEmpty()) append(" · ")
+                if (facts.isNotEmpty()) append(FACT_SEPARATOR)
                 withStyle(SpanStyle(color = brain)) { append(it) }
             }
         },
@@ -661,9 +663,9 @@ private fun MockDetails(challenge: Challenge) {
                         meta = part.minutes?.let { formatMinutes(it.toInt(), locale) },
                         details =
                             listOf(
-                                part.tasks.joinToString(" · ") { task ->
-                                    task.count?.let { count -> "$count × ${task.description}" } ?: task.description
-                                },
+                                part.tasks
+                                    .map { task -> task.count?.let { count -> "$count × ${task.description}" } ?: task.description }
+                                    .factsLine(),
                                 stringResource(if (part.asked) R.string.challenge_written_asked else R.string.challenge_written_practiced),
                             ),
                     )

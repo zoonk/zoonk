@@ -58,6 +58,7 @@ import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatPercent
@@ -279,7 +280,7 @@ private fun FactsLine(facts: RevealFacts) {
         )
 
     Text(
-        text = parts.joinToString(" · "),
+        text = parts.factsLine(),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
     )
@@ -377,7 +378,7 @@ private fun PlanPhases(
                 Text(
                     text =
                         listOfNotNull(name, day?.let { stringResource(R.string.onboarding_reveal_phase_day, it.day, it.days) })
-                            .joinToString(" · "),
+                            .factsLine(),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.labelMedium,
                 )
@@ -628,7 +629,7 @@ private fun CoverageWords(
             }
 
             is RevealCoverage.Summary -> {
-                listOfNotNull(summaryTitle(coverage.title), coverage.detail?.let { summaryDetail(it, time) }).joinToString(" · ")
+                listOfNotNull(summaryTitle(coverage.title), coverage.detail?.let { summaryDetail(it, time) }).factsLine()
             }
         }
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
@@ -685,11 +686,11 @@ private fun summaryDetail(
 ): String =
     when (detail) {
         is SummaryDetail.Names -> {
-            detail.names.joinToString(" · ")
+            detail.names.factsLine()
         }
 
         is SummaryDetail.MostQuestions -> {
-            val subjects = detail.subjects.joinToString(" · ") { (name, questions) -> "$name $questions" }
+            val subjects = detail.subjects.map { (name, questions) -> "$name $questions" }.factsLine()
             stringResource(R.string.onboarding_reveal_most_questions, subjects)
         }
 

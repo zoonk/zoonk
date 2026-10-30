@@ -41,6 +41,7 @@ import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.WeekdayNames
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
@@ -114,7 +115,7 @@ private fun WeekHeader(day: DayView) {
                     },
                 style = MaterialTheme.typography.titleMedium,
             )
-            val line = listOfNotNull(daysText, if (hasTime && !wide) "$studiedText / $planned" else null).joinToString(" · ")
+            val line = listOfNotNull(daysText, if (hasTime && !wide) "$studiedText / $planned" else null).factsLine()
             if (line.isNotEmpty()) {
                 Text(
                     text = line,
@@ -321,7 +322,7 @@ private fun ChallengeRow(
             Column {
                 Text(name, style = MaterialTheme.typography.titleSmall)
                 Text(
-                    facts.joinToString(" · "),
+                    facts.factsLine(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall,
                 )

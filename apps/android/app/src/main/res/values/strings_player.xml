@@ -20,7 +20,7 @@
     <string name="player_action_start">Start</string>
     <string name="player_previous_screen">Previous screen</string>
 
-    <string name="player_quick_check">Quick check · %1$s of %2$s</string>
+    <string name="player_quick_check">Quick check · %1$s of %2$s</string>
     <!-- Shown on a wrong answer the learner can still fix right away. "Not quite" means "that isn't right", not "better luck next time". -->
     <string name="player_notice_self_correct">Not quite. Look again and fix it yourself, then check.</string>
     <string name="player_notice_answer_not_saved">Your answer here didn\'t save. Answer it again to finish the lesson.</string>
@@ -52,11 +52,11 @@
     <string name="player_hyperdrive_streak">%1$s right in a row</string>
     <string name="player_comes_back_at_end">This question comes back at the end of the lesson</string>
     <string name="player_saved_to_mistakes">Saved to your mistakes</string>
-    <string name="player_saved_to_mistakes_back_at_end">Saved to your mistakes · back at the end of this lesson</string>
-    <string name="player_saved_to_mistakes_back_today">Saved to your mistakes · back in a review later today</string>
-    <string name="player_saved_to_mistakes_back_tomorrow">Saved to your mistakes · back in tomorrow\'s review</string>
-    <string name="player_saved_to_mistakes_back_weekday">Saved to your mistakes · back in %1$s\'s review</string>
-    <string name="player_saved_to_mistakes_back_date">Saved to your mistakes · back in a review on %1$s</string>
+    <string name="player_saved_to_mistakes_back_at_end">Saved to your mistakes · back at the end of this lesson</string>
+    <string name="player_saved_to_mistakes_back_today">Saved to your mistakes · back in a review later today</string>
+    <string name="player_saved_to_mistakes_back_tomorrow">Saved to your mistakes · back in tomorrow\'s review</string>
+    <string name="player_saved_to_mistakes_back_weekday">Saved to your mistakes · back in %1$s\'s review</string>
+    <string name="player_saved_to_mistakes_back_date">Saved to your mistakes · back in a review on %1$s</string>
     <string name="player_comes_back_today">This idea comes back in a review later today</string>
     <string name="player_comes_back_tomorrow">This idea comes back in tomorrow\'s review</string>
     <string name="player_comes_back_weekday">This idea comes back in %1$s\'s review</string>
@@ -132,9 +132,9 @@
     <string name="player_activity_your_answer">Your answer:</string>
     <string name="player_activity_correct_answer">Correct answer:</string>
     <!-- A work challenge's label: %1$s is where it happens, such as "Customer support". -->
-    <string name="player_challenge_case">Challenge · %1$s</string>
+    <string name="player_challenge_case">Challenge · %1$s</string>
     <!-- A what-if scenario's label: %1$s is where it happens. -->
-    <string name="player_challenge_what_if">What if · %1$s</string>
+    <string name="player_challenge_what_if">What if · %1$s</string>
     <string name="player_challenge_mission">Your mission</string>
     <string name="player_challenge_team">Your team</string>
     <string name="player_challenge_help_ai">You can ask the team or the AI for help. Your decisions change the outcome.</string>
@@ -155,7 +155,7 @@
     <string name="player_challenge_improve">To improve</string>
     <string name="player_challenge_skills">Skills practiced</string>
     <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
-    <string name="player_challenge_practice">Practice “%1$s” · %2$s</string>
+    <string name="player_challenge_practice">Practice “%1$s” · %2$s</string>
     <string name="player_done">Done</string>
     <string name="player_drawing_picture">Drawing the picture…</string>
     <string name="player_not_in_app_title">This lesson isn\'t in the app yet</string>
@@ -193,8 +193,8 @@
     <string name="player_back_to_unit">Back to unit</string>
     <string name="player_part_of">This is part of</string>
     <plurals name="player_course_size">
-        <item quantity="one">%1$s chapter · about %2$s at your pace</item>
-        <item quantity="other">%1$s chapters · about %2$s at your pace</item>
+        <item quantity="one">%1$s chapter · about %2$s at your pace</item>
+        <item quantity="other">%1$s chapters · about %2$s at your pace</item>
     </plurals>
     <plurals name="player_lesson_of">
         <item quantity="one">%1$s of %2$s lesson</item>

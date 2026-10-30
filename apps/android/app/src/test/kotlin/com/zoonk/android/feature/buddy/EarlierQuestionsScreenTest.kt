@@ -50,7 +50,7 @@ class EarlierQuestionsScreenTest {
             )
         show()
 
-        compose.onNodeWithText("From an earlier version of Atoms · Bonds").assertExists()
+        compose.onNodeWithText("From an earlier version of Atoms\u00A0· Bonds").assertExists()
         compose.onNodeWithText("Question 1").assertExists()
         compose.onNodeWithText("Answer 1").assertExists()
         compose.onNodeWithText("From an earlier version of this course").assertExists()

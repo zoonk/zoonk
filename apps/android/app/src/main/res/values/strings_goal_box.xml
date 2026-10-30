@@ -20,5 +20,5 @@
     <string name="goal_box_kind_topic">Learn a topic</string>
     <string name="goal_box_kind_music">Music</string>
     <!-- %1$s is a duration, like "5 min". -->
-    <string name="goal_box_kind_quick_explanation">Quick explanation · %1$s</string>
+    <string name="goal_box_kind_quick_explanation">Quick explanation · %1$s</string>
 </resources>

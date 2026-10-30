@@ -10,6 +10,7 @@ import com.zoonk.android.navigation.PlaceIcon
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.CatalogSearchResponse
@@ -175,7 +176,7 @@ private fun learnerGroups(
         listOfNotNull(
             next?.let {
                 val minutes = formatDuration((it.minutes * SECONDS_PER_MINUTE).roundToLong(), locale)
-                val detail = it.title?.let { title -> "$title · $minutes" } ?: minutes
+                val detail = factsLine(it.title, minutes)
                 SearchItem("continue", stringResource(R.string.search_continue), SearchAction.Continue, R.drawable.ic_play_arrow, detail)
             },
             SearchItem(

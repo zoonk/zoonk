@@ -28,21 +28,21 @@
   "exam_day_before_light": "22e0d8f9afe4192e0012255572030fb4de302c882c59930dd580afca584219ee",
   "exam_day_before_mock": "47dcf9b2d1e6b5957942eb2910ae43a1fb82b14f28fe0c7592392ef17a58e678",
   "exam_day_before_review": "7c49c50f2a9c6d19a412366de84fac75269e1d84a9832909d036736cac90e37f",
-  "exam_day_time": "b856c516cdf8aaae46cf7f882b28c5b2ae09641257dca506f7ddbba8d295911e",
+  "exam_day_time": "be2692cec56b9e40d5302b701e9fe2a76c622b882bfdea51474d2a4a153c4450",
   "exam_did_you_pass": "70e36e20ac75b620701cf5d67464851802225559e865ddb4ba5646f22b367623",
   "exam_estimated_from_past": "d413cbb84cdb85b68f160b6e152142655f5a729117735a1e974c35ba34aca04e",
   "exam_estimated_note_guide": "fbe8fa30cb2598e2b4c6e5383fa2ff7d39b36ac10400b262e1e8724befb9a74f",
   "exam_estimated_note_notice": "8fe1c0e7bb543e231905020112e6ff7e39c4937e478f3c3a9bbbda3a1765e535",
   "exam_eyebrow": "a4a1344c6df9eaaf98982f92c91b64d880c71c5a08489ec00a97d4fdd858b7d4",
-  "exam_eyebrow_days_left": "3ba089f44fecfd82ede66e9428f631d0d343af468c12832f59cbccf1c68def1a",
-  "exam_eyebrow_days_left_about": "9b1b1d5393a21329852874399cf35afbedbeb60c8d487bc175ed867c430a1f0c",
-  "exam_eyebrow_days_left_estimated": "a7e19b95fda4e5e977ff10e4dc8f046efe69488fcfd05085fa306b57bcb042fd",
+  "exam_eyebrow_days_left": "af9050db778e629a15308f2db8ccb798b85b08cf2dfdaa332fe1e286da53dc4f",
+  "exam_eyebrow_days_left_about": "15a19fb043e3eedad61b9c65c243b0f830735585a3aa294a992624c7618a234c",
+  "exam_eyebrow_days_left_estimated": "2cd8cc361c0a638875167919777741859f61a594b5da6f6b296379c7b6884b35",
   "exam_final_stretch": "499b1bc14323663aaaa98650cc28754e39cd1e8e4a2c9c638a8ec0686e0a0170",
   "exam_final_stretch_detail": "67a552a6a386d04c97b99c54a2034e0d93af501ee9ccf07f740493c5877744f2",
   "exam_format_day": "57fc70ad17709d2f9c01a2b15f743895b6e13293dc10689270a5d54cc2ab70c2",
   "exam_format_days": "5017d2a1f6d2028e026eb3c272b45e099b6570cd588cae179e0434241146fa6f",
   "exam_format_one_day": "4b63448509889fa360b07e51d177a3fcca1d81f7f62d7bd20abc1660800cac0b",
-  "exam_format_parts_questions": "63102319d1b76f29584890a027ffc23dbdeefaa99253707334ebb51b3adb1fa7",
+  "exam_format_parts_questions": "23a6ac170f7373049e71f2b946efc4e49b00ba18b619d0c80910313430caa239",
   "exam_format_two_days": "402b6b2dcbbf608b9e3d523d1712468ca700af8e03692ffa7812b8c35e198a56",
   "exam_go_to_today": "99ac99f404ae9c0386648ab3964d99c53ff6a3e22202e8b8ca240d3d2d3454ae",
   "exam_how_did_it_go": "c37488c83bb7978abbeccf2670f91e308b6e84061457de860ab974c91ad22f13",
@@ -150,7 +150,7 @@
     </plurals>
     <string name="exam_prepared">Du hast dich darauf vorbereitet.</string>
     <!-- %1$s is the exam's date, %2$s the time it starts. -->
-    <string name="exam_day_time">%1$s · %2$s</string>
+    <string name="exam_day_time">%1$s · %2$s</string>
     <string name="exam_checklist_title">Für den Prüfungstag</string>
     <!-- How many of the exam day checklist's items the learner ticked: %1$d of %2$d. -->
     <string name="exam_checklist_count">%1$d von %2$d</string>
@@ -166,18 +166,18 @@
     <string name="exam_add_result">Ergebnis eintragen</string>
     <string name="exam_eyebrow">Prüfung</string>
     <plurals name="exam_eyebrow_days_left">
-        <item quantity="one">Prüfung · Noch %d Tag</item>
-        <item quantity="other">Prüfung · Noch %d Tage</item>
+        <item quantity="one">Prüfung · noch %d Tag</item>
+        <item quantity="other">Prüfung · noch %d Tage</item>
     </plurals>
     <!-- The exam's date is estimated, so the days left are approximate ("~"). -->
     <plurals name="exam_eyebrow_days_left_estimated">
-        <item quantity="one">Prüfung · Noch ~%d Tag</item>
-        <item quantity="other">Prüfung · Noch ~%d Tage</item>
+        <item quantity="one">Prüfung · noch ~%d Tag</item>
+        <item quantity="other">Prüfung · noch ~%d Tage</item>
     </plurals>
     <!-- What screen readers say for exam_eyebrow_days_left_estimated. -->
     <plurals name="exam_eyebrow_days_left_about">
-        <item quantity="one">Prüfung · Noch etwa %d Tag</item>
-        <item quantity="other">Prüfung · Noch etwa %d Tage</item>
+        <item quantity="one">Prüfung · noch etwa %d Tag</item>
+        <item quantity="other">Prüfung · noch etwa %d Tage</item>
     </plurals>
     <string name="exam_estimated_from_past">anhand früherer Termine geschätzt</string>
     <string name="exam_named_month_note_notice">Der Monat, den du uns genannt hast. Wir teilen dir den Tag mit, sobald er offiziell bekannt gegeben wird.</string>
@@ -258,7 +258,7 @@
     </plurals>
     <string name="exam_format_day">Tag %1$d</string>
     <!-- %1$s lists the day's parts, %2$s counts its questions: "Languages and Humanities · 90 questions". -->
-    <string name="exam_format_parts_questions">%1$s · %2$s</string>
+    <string name="exam_format_parts_questions">%1$s · %2$s</string>
     <string name="exam_about">Über die Prüfung</string>
     <!-- Said by screen readers on the mock the learner is on or is next. -->
     <string name="exam_current">Aktuell</string>

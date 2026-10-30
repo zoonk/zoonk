@@ -31,7 +31,7 @@ class MatchPairsFlowTest : SortingFlow() {
         matchCards("éxito", "success")
         matchCards("librería", "bookstore")
 
-        shows("Pairs matched: 3 of 3 · 2 cards have no match")
+        shows("Pairs matched: 3 of 3\u00A0· 2 cards have no match")
         rule.onNodeWithContentDescription("embarrassed, no match").assertIsNotEnabled()
         rule.onNodeWithContentDescription("library, no match").assertIsNotEnabled()
         harness.tap("Check")

@@ -32,7 +32,7 @@
     </plurals>
     <string name="exam_prepared">You\'ve prepared for this.</string>
     <!-- %1$s is the exam's date, %2$s the time it starts. -->
-    <string name="exam_day_time">%1$s · %2$s</string>
+    <string name="exam_day_time">%1$s · %2$s</string>
     <string name="exam_checklist_title">For exam day</string>
     <!-- How many of the exam day checklist's items the learner ticked: %1$d of %2$d. -->
     <string name="exam_checklist_count">%1$d of %2$d</string>
@@ -48,18 +48,18 @@
     <string name="exam_add_result">Add your result</string>
     <string name="exam_eyebrow">Exam</string>
     <plurals name="exam_eyebrow_days_left">
-        <item quantity="one">Exam · %d day left</item>
-        <item quantity="other">Exam · %d days left</item>
+        <item quantity="one">Exam · %d day left</item>
+        <item quantity="other">Exam · %d days left</item>
     </plurals>
     <!-- The exam's date is estimated, so the days left are approximate ("~"). -->
     <plurals name="exam_eyebrow_days_left_estimated">
-        <item quantity="one">Exam · ~%d day left</item>
-        <item quantity="other">Exam · ~%d days left</item>
+        <item quantity="one">Exam · ~%d day left</item>
+        <item quantity="other">Exam · ~%d days left</item>
     </plurals>
     <!-- What screen readers say for exam_eyebrow_days_left_estimated. -->
     <plurals name="exam_eyebrow_days_left_about">
-        <item quantity="one">Exam · About %d day left</item>
-        <item quantity="other">Exam · About %d days left</item>
+        <item quantity="one">Exam · About %d day left</item>
+        <item quantity="other">Exam · About %d days left</item>
     </plurals>
     <string name="exam_estimated_from_past">estimated from past editions</string>
     <string name="exam_named_month_note_notice">The month you told us. We\'ll tell you the day once the notice sets it.</string>
@@ -140,7 +140,7 @@
     </plurals>
     <string name="exam_format_day">Day %1$d</string>
     <!-- %1$s lists the day's parts, %2$s counts its questions: "Languages and Humanities · 90 questions". -->
-    <string name="exam_format_parts_questions">%1$s · %2$s</string>
+    <string name="exam_format_parts_questions">%1$s · %2$s</string>
     <string name="exam_about">About the exam</string>
     <!-- Said by screen readers on the mock the learner is on or is next. -->
     <string name="exam_current">Current</string>

@@ -53,7 +53,7 @@
     <!-- %1$s is the Brain Power the challenge gives, like 30. -->
     <string name="checkpoint_prize">+%1$s</string>
     <!-- %1$s is the Brain Power; %2$s is the phase's number. -->
-    <string name="checkpoint_prize_phase">+%1$s · phase %2$s done</string>
+    <string name="checkpoint_prize_phase">+%1$s · phase %2$s done</string>
     <string name="checkpoint_removed_title">The questions were removed</string>
     <string name="checkpoint_removed_detail">You hadn\'t answered any yet, so this challenge isn\'t scored. Nothing is lost.</string>
     <string name="checkpoint_weekly_done">Weekly challenge done</string>

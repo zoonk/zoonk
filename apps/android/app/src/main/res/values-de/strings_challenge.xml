@@ -5,7 +5,7 @@
   "challenge_call_detail": "7c225e2d0bce05fa6d62c0816e2418a02bc5a8059100a5f0758a80a5b9b94b24",
   "challenge_call_goals": "c1d41a5bf185c2e32e33e7acc046bc6b22bd4822934c67a74589596e187e7721",
   "challenge_call_goals_title": "631b30e497d59b828986e5e331309fd0dd0eaa57e5550fee2341838a58d5d59e",
-  "challenge_call_level": "486d822e8c72440405c8faf603c6bd45bc34d8314fe1adf44255202a95d4ede3",
+  "challenge_call_level": "0ddafe2c742a6abc5449d28ee8ed8fe7680b226dc6b8984533d24a732e2d192a",
   "challenge_call_passed": "17c446879193f0d96e33475881cda14835d74067aed70c5747d92c054f7bab26",
   "challenge_call_plus": "f82b66f7527e8e18e4703c811516742bc6c6d815faadf91bfdae9f05ab4d01fd",
   "challenge_call_result": "43c12217382d5164ef1b5b5eef36b2cd0add75dc2a1258b54bae0b665373893c",
@@ -13,7 +13,7 @@
   "challenge_call_to_win": "30f989a3292d31b7c48d09343424c7202a2d3171021136894c13264ef09185ad",
   "challenge_change_failed": "562b299a5d8d6ff6f9ee7e6a16df9c4a2ce89c47c39cff2e9abd8ff7e581dfb2",
   "challenge_continue": "567e7394c7fbea5e34c6b15b1cbbcb97401a15acb020a3fa0000e44ed976be7f",
-  "challenge_day_time": "fa9b7a73e9e24d0dc14d777890de028bebfc7463c39318746d34fcdc27e9b494",
+  "challenge_day_time": "72bc8038c7f292dd1cc2b5d8840f8c0560ab43ecbbfa5b3b57b99a520d650edc",
   "challenge_mock_plus": "0afc24c46a8d323b99544fe1f8237e6c435529f2f2a88a900914418a45bf4275",
   "challenge_mock_start": "7b569efc3a3001a4788437c48309985f50a622e3a92a761e02ba566c232376c1",
   "challenge_move": "525714a17a1441c6ebe4d1ecf05af6572494e58823309a486b33926a9086ac7c",
@@ -33,11 +33,11 @@
   "challenge_penalty_costs": "88e507e3f479950029faaa8a5d4d3951a7bcfc1ce66a41b979d1151af1c93f68",
   "challenge_prize": "18622bd9a90024fc18fc18e9eaa6629fc7a3d14bddb4f2cf161071dc7594c8f2",
   "challenge_questions": "3f6b1eec35498265c2df7240cf5fee2ee1465b1672a288cc963ef42b49a7f85e",
-  "challenge_rematch": "8680844634e7fa0bdd218241e7759d0e02086c1dd110d38f36b3234eeb0792ef",
+  "challenge_rematch": "8378810de85549710059502bfeadeb97674264c63f824a00f4650b4088ba020a",
   "challenge_result_at_end": "a175418bc9335539487389286535462425e8d96f2885ba9042e079b86ea8d045",
   "challenge_result_right": "b294c0277eb20ecbe7fdb09a549371cbd4764c949e637015877e9c4b0a8d9b2b",
   "challenge_section_questions": "4342d84011bb9df58c3b108922150a6f527b765b8fdff50eac08eea91d38bc4d",
-  "challenge_section_size": "6c67f7596d288a5dd4f2c1d2a8e9999ebe42c05a504159c73ac467c11c7ac0e8",
+  "challenge_section_size": "97bb46e5f7cc1c2bc3a1363198586b2f7c7a730e61d3118ad170e4c24bc39e73",
   "challenge_see_plus": "752de1fbd91033e6e3d47f4935f3c706a58263633b472ceda65908d48e9ae4d0",
   "challenge_see_result": "05501b852e839dfd1b5bc4377c19ffa74130e43626d1609644ba3f947d23f7be",
   "challenge_start": "9d4d2d80b58f0a82a9a1dee1ea9616bb4b1c4700f53a72b418d268e2a1e1d5d0",
@@ -78,7 +78,7 @@
     <string name="challenge_writing_title">Wir bereiten deine Herausforderung vor</string>
     <string name="challenge_writing_detail">Wir erstellen die Fragen. Sobald sie fertig sind, geht es hier los.</string>
     <!-- %1$s is the challenge's name, like "Phase 2 challenge". -->
-    <string name="challenge_rematch">Neuer Versuch · %1$s</string>
+    <string name="challenge_rematch">Neuer Versuch · %1$s</string>
     <string name="challenge_trickster_recordings">Fragen zu Aufnahmen aus dieser Phase, wie in der Prüfung abgespielt, ohne Hinweise.</string>
     <plurals name="challenge_trickster_recording_count">
         <item quantity="one">Fragen zu %d Aufnahme aus dieser Phase, wie in der Prüfung abgespielt, ohne Hinweise.</item>
@@ -109,14 +109,14 @@
     <string name="challenge_today">Heute</string>
     <string name="challenge_tomorrow">Morgen</string>
     <!-- %1$s is the day; %2$s is the time it starts, like 9:00 AM. -->
-    <string name="challenge_day_time">%1$s · %2$s</string>
+    <string name="challenge_day_time">%1$s · %2$s</string>
     <string name="challenge_mock_start">Probeprüfung starten</string>
     <string name="challenge_objective_only">Nur der objektive Teil</string>
     <string name="challenge_section_questions">Fragen</string>
     <!-- A section's questions (%1$d) and its time (%2$s), like "45 questions · 1 h 30 min". -->
     <plurals name="challenge_section_size">
-        <item quantity="one">%1$d Frage · %2$s</item>
-        <item quantity="other">%1$d Fragen · %2$s</item>
+        <item quantity="one">%1$d Frage · %2$s</item>
+        <item quantity="other">%1$d Fragen · %2$s</item>
     </plurals>
     <string name="challenge_written_asked">In der Probeprüfung schriftlich bearbeitet und nach den Prüfungskriterien bewertet, sobald du sie abgibst.</string>
     <string name="challenge_written_practiced">Schriftlich: Du übst das in deinen Aufsatz-Lerneinheiten. Die Bewertung erfolgt nach den Prüfungskriterien.</string>
@@ -128,7 +128,7 @@
     <string name="challenge_call_title">Das Gespräch der Einheit</string>
     <string name="challenge_call_detail">Ein Live-Gespräch, in dem du deinen Standpunkt vermittelst. Sprich oder tippe.</string>
     <!-- %1$s is the call's length; %2$s its level, like B1. -->
-    <string name="challenge_call_level">%1$s · Level %2$s</string>
+    <string name="challenge_call_level">%1$s · Level %2$s</string>
     <plurals name="challenge_call_goals">
         <item quantity="one">%d Ziel</item>
         <item quantity="other">%d Ziele</item>

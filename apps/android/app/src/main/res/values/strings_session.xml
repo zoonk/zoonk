@@ -21,22 +21,22 @@
         <item quantity="other">%d questions</item>
     </plurals>
     <plurals name="session_block_weakest">
-        <item quantity="one">No reviews due today · %d question on your weakest topics</item>
-        <item quantity="other">No reviews due today · %d questions on your weakest topics</item>
+        <item quantity="one">No reviews due today · %d question on your weakest topics</item>
+        <item quantity="other">No reviews due today · %d questions on your weakest topics</item>
     </plurals>
     <!-- %2$s lists the topics reviewed, such as "Fractions, Ratios and 2 more topics". -->
     <plurals name="session_block_review_topics">
-        <item quantity="one">%1$d question · %2$s</item>
-        <item quantity="other">%1$d questions · %2$s</item>
+        <item quantity="one">%1$d question · %2$s</item>
+        <item quantity="other">%1$d questions · %2$s</item>
     </plurals>
     <plurals name="session_block_review_topics_and_known">
-        <item quantity="one">%1$d question · %2$s, plus what you already know</item>
-        <item quantity="other">%1$d questions · %2$s, plus what you already know</item>
+        <item quantity="one">%1$d question · %2$s, plus what you already know</item>
+        <item quantity="other">%1$d questions · %2$s, plus what you already know</item>
     </plurals>
     <!-- %2$s is the phase's name. -->
     <plurals name="session_block_phase_questions">
-        <item quantity="one">%2$s · %1$d question, no hints</item>
-        <item quantity="other">%2$s · %1$d questions, no hints</item>
+        <item quantity="one">%2$s · %1$d question, no hints</item>
+        <item quantity="other">%2$s · %1$d questions, no hints</item>
     </plurals>
     <!-- %1$s is the phase's name; a language unit's challenge is a live call with the Trickster. -->
     <string name="session_block_phase_live_call">%1$s · a live call</string>

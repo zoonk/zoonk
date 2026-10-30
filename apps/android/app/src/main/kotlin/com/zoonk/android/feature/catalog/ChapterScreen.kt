@@ -40,7 +40,9 @@ import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.Subject
 import com.zoonk.android.ui.components.SubjectGlyph
 import com.zoonk.android.ui.components.colors
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -264,7 +266,7 @@ private fun ChapterStrip(
             formatNumber(place.number.toDouble(), locale),
             formatNumber(place.total.toDouble(), locale),
         )
-    val label = position + SEPARATOR + place.chapter.level.label()
+    val label = position + FACT_SEPARATOR + place.chapter.level.label()
     val stretch = detail.chapters.drop(place.number - 1).take(NEXT_CHAPTERS + 1)
     val ink = MaterialTheme.colorScheme.onSurface
 
@@ -353,7 +355,7 @@ internal fun chapterFacts(place: ChapterPlace): String {
         ),
         pluralStringResource(R.plurals.catalog_short_lessons, lessons.size, lessons.size),
         formatTotalDuration(lessons.sumOf { it.estimatedMinutes }.toDouble(), locale),
-    ).joinToString(SEPARATOR)
+    ).factsLine()
 }
 
 /** Main's `ChapterLessonRows`: each lesson opens its page; [currentLessonId]'s is on its tint. */

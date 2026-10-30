@@ -82,6 +82,7 @@ import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
@@ -166,7 +167,7 @@ internal fun ColumnScope.PlacementStep(
             key(phase.item.itemId) {
                 PlacementQuestion(
                     item = phase.item,
-                    eyebrow = "${subject.labelCase()} · ${stringResource(R.string.onboarding_placement_question_number, phase.number)}",
+                    eyebrow = factsLine(subject.labelCase(), stringResource(R.string.onboarding_placement_question_number, phase.number)),
                     labels = phase.labels,
                     typedWords = rememberUnsentWords(goalId, typedDraftStep(phase.item.itemId), count = 1),
                     pending = vm.isSaving,

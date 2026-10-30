@@ -15,7 +15,7 @@
   "recap_new_idea": "c77d58b2167e1452be2346bd4f66eed200922c350ce91180b70af1c374fd04f4",
   "recap_new_ideas": "eb8d764bcff887b44d511eff10886d785151baa1e755d54a51cfaeb6f6e75d3b",
   "recap_next_week": "539c876b69ced3f58f45054da2bf8a02a63e497dbcd2305bd0119c1e22a7cfc1",
-  "recap_phase_done": "031ed75e51ac8daaa5fca92c221d6cada84ba45723db6645820ec6defe0a3439",
+  "recap_phase_done": "e6f48661929e524b1d0e1727512e805cb8a6da939aef659a57b260c0f3f8e0a9",
   "recap_questions": "6e6d00a492a0c9fcfb3e886f5e763c9f92dff2f378acc8adc4ebe4006df9360d",
   "recap_quiet_week": "e572f6a278de369f8d667240bc371488f8f00d2928818300b8681a53dfa5fbdf",
   "recap_review": "0b95bb0f7ff3980cacfd252f5e3c275000b944a15d80efe9ddfb9a083bab988b",
@@ -27,7 +27,7 @@
   "recap_turnaround": "67b49c1c807c9ceceabe6756fa46cc47c57a595c14d1dd3767e3361325519c2a",
   "recap_turnaround_chart": "abd343c2ed73169da768f436f81669e0fc0ec6cf7bffa019b0fb00ff4c497574",
   "recap_turnaround_detail": "c74e4903373394d45316eff9d9405d53d15e1086a66ab8c5ce92bf59f61a3bf1",
-  "recap_weekly_summary": "4986676af8973877df397a768a1ccb06a8348a6c25a1044aa78fd3e7d0809c0d",
+  "recap_weekly_summary": "3f964b9838690d3f14bbad36ef119481315ff4ed3a45698f70954be8bf142b25",
   "recap_what_a_week": "74b94fb819888651ab35ea93c464d53140d4e166e5bcd31912dc531415929d2e",
   "recap_what_a_week_name": "77f5dd97dc9c6705209c5a787fd3a089b444d61909f0b50c6d37cb2658be211e"
 }
@@ -46,9 +46,9 @@
         <item quantity="other">%d perguntas a mais que na semana anterior!</item>
     </plurals>
     <!-- %1$s is the phase's number, %2$s its name. -->
-    <string name="recap_phase_done">Fase %1$s · %2$s concluído</string>
+    <string name="recap_phase_done">Fase %1$s concluída · %2$s</string>
     <!-- %1$s is the week's dates, such as "Oct 20 – 26". -->
-    <string name="recap_weekly_summary">Resumo da semana · %1$s</string>
+    <string name="recap_weekly_summary">Resumo semanal · %1$s</string>
     <!-- %1$s is the learner's first name. -->
     <string name="recap_what_a_week_name">Que semana, %1$s!</string>
     <string name="recap_what_a_week">Que semana!</string>

@@ -15,7 +15,7 @@
   "practice_net": "1d84d56f3027e91992c4bfe93ef20767723db5dc4de06de3976b8610758f27d6",
   "practice_net_hint": "7afc0a0c71bf25648ae05c1ef808bb6e18184db1f62b6e33435ec6d04f1ad41e",
   "practice_net_right": "e813ce58a66a6446aea5559704f3cd7829c4193ee096e9226bb7be6cc821e8dc",
-  "practice_net_tally": "58cb3dc280800b6e8c9e7794660d2121a471b250d09b2fbc04596d8affaaad48",
+  "practice_net_tally": "bfe3eaa9b0bf4090fb434141f42c388ca5156d314c120f7255464d2aa36477a1",
   "practice_net_wrong": "54abbc1074fca4def04c4a57790d8458c7d3f9e1382917c7f166ef8387d044e6",
   "practice_next": "86c39ce1950071426052c8e23dcba294c51126db148d6b742686e107729e4d11",
   "practice_not_found_description": "f8ce09d6044bbad84ac2f4fa00e2bc3a56789468ab4fb4076cdde1b499a11793",
@@ -66,7 +66,7 @@
     <!-- Right answers minus wrong ones, which can be negative. -->
     <string name="practice_net">score net %1$d</string>
     <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
-    <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
+    <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
     <string name="practice_net_hint">Une mauvaise réponse annule une bonne réponse. Tu n’es pas sûr ? Laisse la réponse vide.</string>
     <!-- %1$s is a day and month, like October 8. -->
     <string name="practice_time_machine_seen">Tu as vu cette question le %1$s.</string>

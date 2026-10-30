@@ -17,7 +17,7 @@
   "mock_chooser_not_enough": "90e9f8f1b6b13a50c7e9d444a888f48875a0a306fa91974a18d707d421ab43f9",
   "mock_chooser_objective_only": "be8718b5ae6d3a83ef9fe48c5c0d2a6b8a5299519c805e875b9481850ea666aa",
   "mock_chooser_one_subject": "063908ea394847a8be0d174e05a1019e45d5720d7eec41ee1c02a551302d8a90",
-  "mock_chooser_option_size": "2be8f50cf2c9e08ea7c638f5a6261a00ba1e22511f3e7b0ae49c4470f8a9059c",
+  "mock_chooser_option_size": "88e1466219144a7507b34230ed2dc8158f5b05adbfe16b722d119eca98a35e38",
   "mock_chooser_option_size_spoken": "1b5e29ad83ac2bef6f2fc57dd1971f429c81c66b4eba4f1b407cdd9f0addce4d",
   "mock_chooser_parts": "152d7c0e2406bdad0ec975b50079c6e970a9903dc4ff3ee9202625cee738a54b",
   "mock_chooser_pick_free": "b6f996387f1b8d4f729dc09a0665566502677190f75f755f4e961145964d5de4",
@@ -89,7 +89,7 @@
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
     <string name="mock_chooser_written">+ %1$s</string>
     <!-- A mock's size in a row: %1$d questions ("q" is short for questions) and about %2$s, a duration such as "5 hr". -->
-    <string name="mock_chooser_option_size">%1$d Fragen · ca. %2$s</string>
+    <string name="mock_chooser_option_size">%1$d Fragen · ~%2$s</string>
     <!-- What screen readers say for a mock's size: %2$s is a duration such as "5 hr". -->
     <plurals name="mock_chooser_option_size_spoken">
         <item quantity="one">%1$d Frage, etwa %2$s</item>

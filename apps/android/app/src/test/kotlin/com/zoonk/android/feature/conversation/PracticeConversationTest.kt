@@ -55,7 +55,7 @@ class PracticeConversationTest {
     fun theLearnerPicksALengthAndTheCallOpens() {
         show()
 
-        compose.onAllNodesWithText("with Lucía · Waiter").assertCountEquals(2)
+        compose.onAllNodesWithText("with Lucía\u00A0· Waiter").assertCountEquals(2)
         compose.onNodeWithText("2\u00A0min").performClick()
         compose.onNodeWithText("Start the call").performClick()
         compose.waitForIdle()

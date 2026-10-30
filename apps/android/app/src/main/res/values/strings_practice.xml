@@ -28,7 +28,7 @@
     <!-- Right answers minus wrong ones, which can be negative. -->
     <string name="practice_net">net %1$d</string>
     <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
-    <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
+    <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
     <string name="practice_net_hint">A wrong answer cancels a right one. Not sure? Leave it blank.</string>
     <!-- %1$s is a day and month, like October 8. -->
     <string name="practice_time_machine_seen">You saw this on %1$s.</string>

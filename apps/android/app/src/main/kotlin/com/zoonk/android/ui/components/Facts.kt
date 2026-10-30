@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 
 /** Main's `TaskMeta`: short facts in a row, each kept whole, wrapping only between them. */
 @Composable
@@ -19,12 +20,10 @@ fun Facts(facts: List<String>) {
     ) {
         facts.forEachIndexed { index, fact ->
             Text(
-                text = if (index < facts.lastIndex) fact + NO_BREAK_DOT else fact,
+                text = if (index < facts.lastIndex) fact + FACT_SEPARATOR.trimEnd() else fact,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
 }
-
-private const val NO_BREAK_DOT = "\u00A0·"

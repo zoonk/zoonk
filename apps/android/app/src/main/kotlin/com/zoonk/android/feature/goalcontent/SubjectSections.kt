@@ -59,6 +59,7 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -288,7 +289,7 @@ private fun SubjectDetails(
 
     Column {
         if (questions != null) {
-            PropertyRow(stringResource(R.string.goalcontent_questions), listOfNotNull(number(questions), edition).joinToString(" · "))
+            PropertyRow(stringResource(R.string.goalcontent_questions), listOfNotNull(number(questions), edition).factsLine())
         }
         if (subject.topics.isNotEmpty()) {
             PropertyRow(
@@ -871,7 +872,7 @@ private fun MatrixGroupRow(group: TopicGroup<String>) {
         group.children.size
             .takeIf { it > 0 }
             ?.let { pluralStringResource(R.plurals.goalcontent_skill_count, it, it) }
-    val line = listOfNotNull(named.label, skills).joinToString(" · ").takeIf { it.isNotEmpty() }
+    val line = listOfNotNull(named.label, skills).factsLine().takeIf { it.isNotEmpty() }
     val headline: @Composable () -> Unit = {
         Text(numberedTopic(group.number, named.text), maxLines = 3, overflow = TextOverflow.Ellipsis)
     }

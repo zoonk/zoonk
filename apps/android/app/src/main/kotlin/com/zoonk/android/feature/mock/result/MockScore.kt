@@ -35,6 +35,7 @@ import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamDocument
@@ -143,7 +144,7 @@ private fun ScoreHeader(
         } else {
             result.areas.joinToString(", ") { it.name }
         }
-    val detail = listOf(score.label, view.examName.orEmpty(), areas).filter { it.isNotEmpty() }.joinToString(" · ")
+    val detail = listOf(score.label, view.examName.orEmpty(), areas).filter { it.isNotEmpty() }.factsLine()
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(4.dp)) {

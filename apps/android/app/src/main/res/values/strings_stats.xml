@@ -16,15 +16,15 @@
     <string name="stats_energy_average">Average %1$s</string>
     <string name="stats_study_days">Study days</string>
     <plurals name="stats_lessons_time">
-        <item quantity="one">%1$s lesson · %2$s</item>
-        <item quantity="other">%1$s lessons · %2$s</item>
+        <item quantity="one">%1$s lesson · %2$s</item>
+        <item quantity="other">%1$s lessons · %2$s</item>
     </plurals>
     <string name="stats_right_count">%1$s/%2$s right</string>
     <string name="stats_right_last_90">Right answers in the last 90 days</string>
-    <string name="stats_score_90">Score · 90 days</string>
+    <string name="stats_score_90">Score · 90 days</string>
     <string name="stats_score_after_answers">Your score shows after your first answers.</string>
     <!-- Section header over when the learner answers best, by time of day and weekday, in the last 90 days. Not mistakes. -->
-    <string name="stats_patterns_90">Patterns · 90 days</string>
+    <string name="stats_patterns_90">Patterns · 90 days</string>
     <string name="stats_see_all">See all</string>
     <string name="stats_best_day">Best day</string>
     <string name="stats_best_time">Best time</string>
@@ -75,14 +75,14 @@
         <item quantity="one">%1$s activity</item>
         <item quantity="other">%1$s activities</item>
     </plurals>
-    <string name="stats_day_no_study">%1$s · No study</string>
+    <string name="stats_day_no_study">%1$s · No study</string>
     <!-- %1$s is a date; %2$s is how many activities the learner did that day, as in "Nov 3 · 4 activities". -->
     <plurals name="stats_day_activities">
-        <item quantity="one">%1$s · %2$s activity</item>
-        <item quantity="other">%1$s · %2$s activities</item>
+        <item quantity="one">%1$s · %2$s activity</item>
+        <item quantity="other">%1$s · %2$s activities</item>
     </plurals>
-    <string name="stats_day_no_energy">%1$s · No Energy recorded</string>
-    <string name="stats_day_energy">%1$s · %2$s Energy</string>
+    <string name="stats_day_no_energy">%1$s · No Energy recorded</string>
+    <string name="stats_day_energy">%1$s · %2$s Energy</string>
     <string name="stats_calendar_energy_summary">Energy over the past 12 months: %1$s today, %2$s on average since you started</string>
 
     <string name="stats_right_answers">Right answers</string>
@@ -116,8 +116,8 @@
         <item quantity="other">Within %1$d points</item>
     </plurals>
     <plurals name="stats_score_answers">
-        <item quantity="one">%1$s · %2$s answer</item>
-        <item quantity="other">%1$s · %2$s answers</item>
+        <item quantity="one">%1$s · %2$s answer</item>
+        <item quantity="other">%1$s · %2$s answers</item>
     </plurals>
     <plurals name="stats_answer_count">
         <item quantity="one">%1$s answer</item>

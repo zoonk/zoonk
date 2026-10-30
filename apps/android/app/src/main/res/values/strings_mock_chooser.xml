@@ -17,7 +17,7 @@
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
     <string name="mock_chooser_written">+ %1$s</string>
     <!-- A mock's size in a row: %1$d questions ("q" is short for questions) and about %2$s, a duration such as "5 hr". -->
-    <string name="mock_chooser_option_size">%1$d q · ~%2$s</string>
+    <string name="mock_chooser_option_size">%1$d q · ~%2$s</string>
     <!-- What screen readers say for a mock's size: %2$s is a duration such as "5 hr". -->
     <plurals name="mock_chooser_option_size_spoken">
         <item quantity="one">%1$d question, about %2$s</item>

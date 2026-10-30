@@ -9,7 +9,7 @@
     <string name="explain_phase_write_line">Writing screen %1$d…</string>
     <string name="explain_phase_write_review">Checking the facts…</string>
     <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
-    <string name="explain_quick">Quick explanation · %1$s</string>
+    <string name="explain_quick">Quick explanation · %1$s</string>
     <string name="explain_no_plan">No plan to set up.</string>
     <string name="explain_coming">What\'s coming</string>
     <string name="explain_one_question">1 quick question at the end</string>

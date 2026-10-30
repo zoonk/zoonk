@@ -66,7 +66,7 @@
   "mock_result_preparation_counts": "13f8a2c4f5978fdc832a4169cb1510521c9edf1a80ba85db664521ea1c8ba121",
   "mock_result_preparation_fell": "aa4f679564c1a75e8d4c3804b354bfb7801a5a157c4917fa3188567ebfc9de1d",
   "mock_result_question": "0ab27e3132dd02552996107f90adb6171bb8f9351e59082badedfaf2177711c7",
-  "mock_result_question_area": "1c65d5a2fb46b72d5b06a1fd40c3d3ef604fea5175bf7e785c053dee31084d3f",
+  "mock_result_question_area": "eaad797ee89ada1df67a960c0f1371571ffb5e0b5a33df544be2cb842d116810",
   "mock_result_range": "df8b90eb065e19b9c747c64c9c4fffc7c8deeba3bc70d6d7276ad234a7317d56",
   "mock_result_relative": "2f513e8c4c305ae0c28e165d56f440efee04ff549fd015f1a16a884dea74a4a4",
   "mock_result_review": "bf2051191c08675d972d0bb779333621dc3b99660c407cd370696262af57af7c",
@@ -96,7 +96,7 @@
   "mock_result_typed_estimate": "acadb88c6f27f2df4fe78f55f80cfe910ca73f697aed4c0f1c8dd8a2786eed1c",
   "mock_result_typed_no_estimate": "e383896f6f008534158d1f0acac4fe2d90fb1819e0e936d68936f8b93e9a34cd",
   "mock_result_up": "c8d4669c3f0cd70ef62564952d5fa7e0350858780cea9297a9dcf258fc93c208",
-  "mock_result_written_part": "b9b313a4e781f1d630da23f9843b9d6e95432b5c84e7e1285cdb295d8b1d5ea5",
+  "mock_result_written_part": "571360212e0d705def739bdb8c451429ceda602ebbf6515dbb27c29df60ef1e1",
   "mock_result_wrong": "818c243108b5bde4e8e96e024309590fb0840ece59e4b71a6a6e82e544f62372",
   "mock_result_your_plan": "4b87b48678c0248148e94b9151c193f7232c30b79197d060099ab5aee9207af2",
   "mock_result_your_preparation": "c061fb6789925f8d6f61059c01e7a5c41016121b9e45148e314553634561652e"
@@ -200,11 +200,11 @@
         <item quantity="other">Voir les %d questions</item>
     </plurals>
     <!-- %2$s is the question's subject, such as "Mathematics". -->
-    <string name="mock_result_question_area">Question %1$d · %2$s</string>
+    <string name="mock_result_question_area">Question %1$d · %2$s</string>
     <string name="mock_result_question">Question %1$d</string>
     <string name="mock_result_left_blank">Tu n’as pas répondu.</string>
     <string name="mock_result_partly_right_note">Réponse en partie juste : elle rapporte une partie des points.</string>
-    <string name="mock_result_written_part">Partie écrite · %1$d sur %2$d</string>
+    <string name="mock_result_written_part">Partie écrite · %1$d sur %2$d</string>
     <string name="mock_result_too_short">Trop courte pour être évaluée</string>
     <string name="mock_result_grading">Évaluation selon le barème de l’examen. Cela peut prendre jusqu’à 30 secondes.</string>
     <string name="mock_result_grading_slow">Évaluation toujours en cours. Ça prend plus de temps que d’habitude.</string>

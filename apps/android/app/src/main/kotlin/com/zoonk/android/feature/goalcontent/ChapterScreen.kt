@@ -76,6 +76,7 @@ import com.zoonk.android.ui.components.TestOutRow
 import com.zoonk.android.ui.components.TestOutScope
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -311,7 +312,7 @@ private fun ChapterHero(
                 pluralStringResource(R.plurals.goalcontent_lesson_count, lessons.size, lessons.size),
                 minutes.takeIf { it > 0 }?.let { formatMinutes(it, locale) },
                 percentDone(done.toDouble() / lessons.size),
-            ).joinToString(" · ")
+            ).factsLine()
         }
 
     val action: (@Composable (Modifier) -> Unit)? =

@@ -51,6 +51,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.withWords
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
@@ -191,7 +192,7 @@ internal fun CharacterRow(
         Text(
             buildAnnotatedString {
                 withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface)) { append(name) }
-                append(" · ")
+                append(FACT_SEPARATOR)
                 append(detail)
             },
             color = MaterialTheme.colorScheme.onSurfaceVariant,

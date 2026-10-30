@@ -64,6 +64,7 @@ import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.components.rankBar
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatHourRange
@@ -255,7 +256,7 @@ private fun OverviewContent(
                             headlineContent = { Text(stringResource(R.string.stats_patterns)) },
                             supportingContent = {
                                 PatternValue(
-                                    names.joinToString(" · ").ifEmpty { stringResource(R.string.stats_not_yet) },
+                                    names.factsLine().ifEmpty { stringResource(R.string.stats_not_yet) },
                                 )
                             },
                             trailingContent = { Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null) },

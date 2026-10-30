@@ -50,7 +50,7 @@
     <string name="subscription_purchase_other_account">This Google Play subscription belongs to another Zoonk account. Log in to that account to use it.</string>
     <string name="subscription_purchase_play_failed">Google Play couldn\'t complete the purchase. Try again.</string>
     <string name="subscription_purchase_confirm_failed">Your purchase went through, but we couldn\'t confirm it yet. We\'ll try again when you come back.</string>
-    <string name="subscription_benefits_summary">Every goal · every lesson</string>
+    <string name="subscription_benefits_summary">Every goal · every lesson</string>
     <string name="subscription_benefit_exam">Your whole exam plan, every day to the exam</string>
     <string name="subscription_benefit_mocks">Mock exams, timed like the real one</string>
     <string name="subscription_benefit_buddy">An AI study buddy whenever you\'re stuck</string>
@@ -58,7 +58,7 @@
     <string name="subscription_start_free">Start free</string>
     <string name="subscription_no_card_needed">No card needed.</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
-    <string name="subscription_free_summary">%1$s · %2$s</string>
+    <string name="subscription_free_summary">%1$s · %2$s</string>
     <!-- %d is the number as a digit, at the start: "1 goal". -->
     <plurals name="subscription_free_goals">
         <item quantity="one">%d goal</item>

@@ -64,7 +64,7 @@
     <string name="missions_from_notebook">From your mistakes notebook</string>
     <string name="missions_due_today">Due today</string>
     <!-- %1$s is a language unit's title. -->
-    <string name="missions_quick_call_unit">Quick call · %1$s</string>
+    <string name="missions_quick_call_unit">Quick call · %1$s</string>
     <string name="missions_quick_call">A quick call</string>
     <string name="missions_ask_anything">Anything about today\'s lessons</string>
     <string name="missions_last_lesson">The last lesson is in today\'s plan</string>

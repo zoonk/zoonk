@@ -86,6 +86,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TestOutRow
 import com.zoonk.android.ui.components.TestOutScope
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
@@ -288,7 +289,7 @@ private fun UnitHero(
                 pluralStringResource(R.plurals.language_unit_lessons, lessons.size, lessons.size),
                 lessons.sumOf { it.minutes }.takeIf { it > 0 }?.let { formatMinutes(it, locale) },
                 stringResource(R.string.language_unit_done_share, formatPercent(done.toDouble() / lessons.size, locale)),
-            ).joinToString(SEPARATOR)
+            ).factsLine()
         }
 
     Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -467,7 +468,7 @@ private fun UnitReference(
                         leading = { Icon(painterResource(R.drawable.ic_translate), contentDescription = null) },
                         count = unit.words.count.toInt(),
                     ) {
-                        val sample = unit.words.sample.joinToString(SEPARATOR)
+                        val sample = unit.words.sample.factsLine()
                         val more = unit.words.count - unit.words.sample.size
                         Text(
                             if (more >
@@ -524,7 +525,6 @@ private fun SnapshotStateList<String>.show(
 
 private val EXPANDED_SAVER = listSaver<SnapshotStateList<String>, String>(save = { it.toList() }, restore = { it.toMutableStateList() })
 
-private const val SEPARATOR = " · "
 private const val SHOWN_OBJECTIVES = 3
 private val PAGE_WIDTH = 720.dp
 private val SECTION_GAP = 40.dp

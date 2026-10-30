@@ -5,8 +5,8 @@
     <string name="speaking_eyebrow">Exam-style speaking</string>
     <!-- The paper's task count and how long its speaking part lasts in the exam, such as "4 tasks · 15 min in the exam". -->
     <plurals name="speaking_facts">
-        <item quantity="one">%1$d task · %2$s in the exam</item>
-        <item quantity="other">%1$d tasks · %2$s in the exam</item>
+        <item quantity="one">%1$d task · %2$s in the exam</item>
+        <item quantity="other">%1$d tasks · %2$s in the exam</item>
     </plurals>
     <string name="speaking_official">%1$s is an official exam. Practice its speaking tasks whether or not you plan to take it.</string>
     <string name="speaking_tasks">Tasks</string>

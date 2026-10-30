@@ -19,7 +19,7 @@
   "memory_empty_off": "d1330ac77404902c7687eacc321c7e90c3688cf7d2431635bc519046cc79f7ae",
   "memory_empty_on": "4a0d44623ffaeb59fc31e4f5adfbe31540ef0ab391dfe5d9d8526d0d02c26fe7",
   "memory_fact_options": "151bcc4e145753a25df65ab4f2a7ff445fe76420adef28447d168b5031357522",
-  "memory_fact_source": "aae44201027ca276f94bd6994e2b32fa305a3b3ef4b933082e65589b070b1e2d",
+  "memory_fact_source": "e4323f46e985fed5a7f0fd16d203ba9757f17aed2e994e7c00d8ee067a06e0fc",
   "memory_save_failed": "99a1073fb7ba091f3da4bb81ca750b6503ac00bdcfcde306e7d199ceb844bbb4",
   "memory_sensitive_note": "b2099ba583eb70ee829cbafaa7d4195d90d2a966753072c3c8b6f6afd48ca64c",
   "memory_source_chat": "135aaed57f930677db309836f3102e32a5444c3ceaabcac1e2e660d0aa56b9ed",
@@ -57,7 +57,7 @@
     <string name="memory_source_onboarding">Da configuração inicial</string>
     <string name="memory_source_session">De uma sessão de estudo</string>
     <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
-    <string name="memory_fact_source">%1$s · %2$s</string>
+    <string name="memory_fact_source">%1$s · %2$s</string>
     <!-- %1$s is the fact, like "Studies after work". -->
     <string name="memory_fact_options">Opções para “%1$s”</string>
     <string name="memory_edit">Editar</string>

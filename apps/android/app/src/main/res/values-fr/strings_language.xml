@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "language_alphabet_anytime": "e036804d2101ab7a4ab70bfad9965753e1229461667e68d00fb4ca96a9c18726",
-  "language_alphabet_first_next_session": "5ae47e5ecc15db483e3528284d943c9257436f22d4130e09b741724d33aa92de",
+  "language_alphabet_anytime": "04ba069381162cc90a5f76bf575b983e2648e95b56b508866b7ed593b4e0433b",
+  "language_alphabet_first_next_session": "77906b62310bdb5bd00e0913302a37fdb1f6f9e0b43efa0243ee17669363225f",
   "language_alphabet_skip": "692684557e482da4aaf08bd22358123c7cbc9525364390b0d43b873716d67cb3",
   "language_alphabet_skip_failed": "98d261362144312082e94aed79040a11ad97a205e5301cbdf7be5822e67608d8",
   "language_can_already": "cd57b86f57364325a3f1f86749432232249c2f888f89f2b250a01e32929c4318",
@@ -38,7 +38,7 @@
   "language_unit_about": "3e925ccc1a4be8c42352272b42d4f5e1a810f29b68f81164ec4d3aba4d17bb33",
   "language_unit_continue": "74bde2162165d2a04bf413521d16c1221e5842388313f8e0900df657386f2fc3",
   "language_unit_done_share": "26a95258aff2bf54808753e51682c55ef40b48211c3617f42b56ba514ffc5b23",
-  "language_unit_eyebrow": "058f1fd90e3366fc43dca96cc2857f903308039513aad2351cd85c35436acd1a",
+  "language_unit_eyebrow": "ee6639202bab93e15db095d83e25d772af073f1408b36664bbee8562ef1ee11e",
   "language_unit_grammar_tips": "c3477d28abaf235c8e2e58e76f084a470db995d28f9dffe8f4a8a3c4255d3456",
   "language_unit_lessons": "ca6b00794f0cc7657787344c163eba3b8f4f7f28cbfeba7d15e3620ed46b4d6f",
   "language_unit_mistakes": "5cc0f8f0d2318872674f72ef7a5ab449b7726b783fae9f9e6342f04a8dbbd443",
@@ -54,7 +54,7 @@
 -->
 <resources>
     <!-- A unit's place and its levels: "Unit 3 · A1–A2". -->
-    <string name="language_unit_eyebrow">Unité %1$s · %2$s</string>
+    <string name="language_unit_eyebrow">Unité %1$s · %2$s</string>
     <plurals name="language_unit_lessons">
         <item quantity="one">%d leçon</item>
         <item quantity="many">%d leçons</item>
@@ -121,9 +121,9 @@
         <item quantity="other">Redis %d mots</item>
     </plurals>
     <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
-    <string name="language_alphabet_first_next_session">Au début de ta prochaine séance · %1$s</string>
+    <string name="language_alphabet_first_next_session">Au début de ta prochaine séance · %1$s</string>
     <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
-    <string name="language_alphabet_anytime">Entraîne-toi quand tu veux · %1$s</string>
+    <string name="language_alphabet_anytime">Entraîne-toi quand tu veux · %1$s</string>
     <!-- Skips the alphabet lesson for a learner who reads the script. -->
     <string name="language_alphabet_skip">Je sais déjà le lire</string>
     <string name="language_alphabet_skip_failed">L’enregistrement a échoué. Réessaie.</string>

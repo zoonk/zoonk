@@ -89,6 +89,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
@@ -437,7 +438,7 @@ private fun TaskRow(
             taskRoleLabel(task.role == SpeakingPaperTask.Role.PARTNER),
             taskMinutes(task.minutes.min, task.minutes.max),
             prep,
-        ).joinToString(" · ")
+        ).factsLine()
     val lastTry =
         task.lastTry?.let {
             when {

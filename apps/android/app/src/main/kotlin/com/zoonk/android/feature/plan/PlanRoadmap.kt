@@ -52,6 +52,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlanPhase
@@ -554,7 +555,7 @@ private fun positionWords(
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
     return buildAnnotatedString {
         append(name)
-        withStyle(SpanStyle(color = quiet)) { details.forEach { append(" · $it") } }
+        withStyle(SpanStyle(color = quiet)) { details.forEach { append("$FACT_SEPARATOR$it") } }
     }
 }
 

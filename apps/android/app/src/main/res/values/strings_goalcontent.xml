@@ -139,13 +139,13 @@
     </plurals>
     <string name="goalcontent_skipped_known">Skipped because you already know it</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
-    <string name="goalcontent_lessons_done">%1$s · %2$s done</string>
+    <string name="goalcontent_lessons_done">%1$s · %2$s done</string>
     <!-- A topic's state for screen readers. -->
     <string name="goalcontent_topic_known">You know this</string>
     <string name="goalcontent_topic_in_progress">In progress</string>
     <string name="goalcontent_topic_to_study">To study</string>
-    <string name="goalcontent_topic_known_reviews">You know this · it comes back in your reviews</string>
-    <string name="goalcontent_topic_known_practice">You know this · it comes back in practice</string>
+    <string name="goalcontent_topic_known_reviews">You know this · it comes back in your reviews</string>
+    <string name="goalcontent_topic_known_practice">You know this · it comes back in practice</string>
     <string name="goalcontent_topic_skipped">You took this subject out of your plan</string>
     <string name="goalcontent_topic_past_basics">You start past the basics</string>
     <string name="goalcontent_topic_skipped_base">You chose to skip this prerequisite</string>
@@ -167,7 +167,7 @@
     <string name="goalcontent_see_all">See all %1$s</string>
 
     <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
-    <string name="goalcontent_subject_chapter">%1$s · Chapter %2$s</string>
+    <string name="goalcontent_subject_chapter">%1$s · Chapter %2$s</string>
     <string name="goalcontent_chapter_number">Chapter %1$s</string>
     <string name="goalcontent_progress">Progress</string>
     <string name="goalcontent_practice">Practice</string>

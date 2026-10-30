@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
@@ -99,7 +100,7 @@ private fun ExamFormatSection(format: List<ExamFormatDay>) {
         (
             listOfNotNull(questions.takeIf { it > 0 }?.let { pluralStringResource(R.plurals.exam_questions, it, it) }) +
                 parts.filter { it.written }.map { it.name }
-        ).joinToString(" · ")
+        ).factsLine()
             .takeIf { it.isNotEmpty() && format.size > 1 }
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -287,7 +288,7 @@ private fun CutoffRow(
     val detail =
         listOf(cutoff.course, cutoff.position, cutoff.institution.takeIf { cutoff.course != null }, cutoff.edition, cutoff.quota)
             .filterNot { it.isNullOrBlank() }
-            .joinToString(" · ")
+            .factsLine()
     val site = sourceSite(cutoff.source.url)
     val source = stringResource(R.string.exam_cutoff_source, detail, site)
 

@@ -88,11 +88,11 @@
         <item quantity="other">See the %d questions</item>
     </plurals>
     <!-- %2$s is the question's subject, such as "Mathematics". -->
-    <string name="mock_result_question_area">Question %1$d · %2$s</string>
+    <string name="mock_result_question_area">Question %1$d · %2$s</string>
     <string name="mock_result_question">Question %1$d</string>
     <string name="mock_result_left_blank">You left it blank.</string>
     <string name="mock_result_partly_right_note">Partly right: it earned part of its points.</string>
-    <string name="mock_result_written_part">Written part · %1$d of %2$d</string>
+    <string name="mock_result_written_part">Written part · %1$d of %2$d</string>
     <string name="mock_result_too_short">Too short to grade</string>
     <string name="mock_result_grading">Grading it with the exam\'s rubric. It can take up to 30 seconds.</string>
     <string name="mock_result_grading_slow">Still grading. This is taking longer than usual.</string>

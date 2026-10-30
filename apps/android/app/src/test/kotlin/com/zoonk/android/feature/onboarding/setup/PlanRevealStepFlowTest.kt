@@ -81,8 +81,8 @@ class PlanRevealStepFlowTest {
 
         rule.onNodeWithText("Plan created").assertIsDisplayed()
         rule.onNodeWithText("Pass the bar exam").assertIsDisplayed()
-        rule.onNodeWithText("53 days · 30\u00A0min a day").assertIsDisplayed()
-        rule.onNodeWithText("Foundations · day 1 of 21").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("53 days\u00A0· 30\u00A0min a day").assertIsDisplayed()
+        rule.onNodeWithText("Foundations\u00A0· day 1 of 21").performScrollTo().assertIsDisplayed()
         rule.onNodeWithText("Final stretch").performScrollTo().assertIsDisplayed()
 
         navigator.select(AppTab.Plan)

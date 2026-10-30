@@ -71,6 +71,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
@@ -281,7 +282,7 @@ private fun RunnerProgress(
         ) {
             val meta = MaterialTheme.typography.labelMedium.withTabularFigures()
             Text(
-                listOfNotNull(mockTitle(run.view.number).takeIf { titled }, question.question.area).joinToString(" · "),
+                listOfNotNull(mockTitle(run.view.number).takeIf { titled }, question.question.area).factsLine(),
                 Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = meta,

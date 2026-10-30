@@ -29,7 +29,7 @@
   "buddy_page_greeting": "52831b8b9da1ea01db955b260f015a169fca20564eaaaa4c4b6646da0c9a7519",
   "buddy_page_grows_adult": "940001fada9f216101c3c7f6250f7cff395ad3d66eff13f3555c0766c6966981",
   "buddy_page_grows_young": "ac443c1756dba60e28c0f897be0680da8826b87c358ee7c8106474c634bad3d9",
-  "buddy_page_line": "916e758d0c435bc0995d7746a39778823779fbe216818ce59f0da426601ebe92",
+  "buddy_page_line": "5ff9477562beca94d25ed065bff340e0c035ae40a936bcd09a50eb7c64f6fd5a",
   "buddy_page_missions": "5ee8af3225d87aba57c9d16c2c5b07265875069755e3c794248a5d5cee916519",
   "buddy_page_missions_done": "498cd13a17b5e8a6c90359efecbaf23551fbffceff24c1759686e705c9a583b2",
   "buddy_page_more": "a69adc5510b85ef35600609c9dc9c468732aa9aa98d9e2b784066e00dc8fbd77",
@@ -58,7 +58,7 @@
 -->
 <resources>
     <!-- Under the buddy's name; %1$s is its stage, like "Baby". -->
-    <string name="buddy_page_line">Seu parceiro de estudos · %1$s</string>
+    <string name="buddy_page_line">Seu parceiro de estudos · %1$s</string>
     <string name="buddy_page_more">Mais sobre %1$s</string>
     <string name="buddy_page_change">Trocar %1$s</string>
     <string name="buddy_page_choose">Escolha seu parceiro</string>

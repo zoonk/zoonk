@@ -58,6 +58,7 @@ import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
@@ -288,7 +289,7 @@ private fun rightDetail(summary: StudySessionSummary): String? {
             summary.accuracy?.let { formatPercent(it, locale) },
             summary.netScore?.let { stringResource(R.string.session_summary_net, formatNumber(it.toDouble(), locale)) },
         )
-    return parts.takeIf { it.isNotEmpty() }?.joinToString(" · ")
+    return parts.takeIf { it.isNotEmpty() }?.factsLine()
 }
 
 private class GoalNumber(

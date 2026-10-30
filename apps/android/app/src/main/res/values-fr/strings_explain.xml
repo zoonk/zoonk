@@ -18,7 +18,7 @@
   "explain_phase_write": "67cc2226eb7a28a734b082d0930315a17542568a0bd15a5253e4f3d8c27e461f",
   "explain_phase_write_line": "cb70042f3399f52b1795df871e7385a2d3203614298655797219bb25af3e6a5c",
   "explain_phase_write_review": "15b2594e1bbd4e15bc147d61596796725d10754100a5433eaaafe150c25083cc",
-  "explain_quick": "e8c3aabd42a5fc6d840b5eb57d3b542be33730cd5ea88004f766649924729608",
+  "explain_quick": "725ca3d9983f520e52749f63437b6f7bf62a7b89f4723c2f96b639a887728fa9",
   "explain_recap": "f52bcbc0cb11c641f162f550604e73b15d54da82db576b7a5463797336095be0",
   "explain_see": "04b6d41038b7d78e4336539df2ee25e114101a50c305c7e57c47d0a85e0a6611",
   "explain_slow": "830d2509b2be1f03ad4adb7e7283669d5c262687dccea597a42b6d8864dd7fdd",
@@ -37,7 +37,7 @@
     <string name="explain_phase_write_line">Préparation de l’écran %1$d…</string>
     <string name="explain_phase_write_review">Vérification des faits…</string>
     <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
-    <string name="explain_quick">Explication rapide · %1$s</string>
+    <string name="explain_quick">Explication rapide · %1$s</string>
     <string name="explain_no_plan">Pas de plan à préparer.</string>
     <string name="explain_coming">Au programme</string>
     <string name="explain_one_question">1 question rapide à la fin</string>

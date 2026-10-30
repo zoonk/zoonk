@@ -25,8 +25,8 @@
     <string name="catalog_all">All</string>
     <string name="catalog_categories">Course categories</string>
     <plurals name="catalog_course_meta">
-        <item quantity="one">%1$d lesson · %2$s</item>
-        <item quantity="other">%1$d lessons · %2$s</item>
+        <item quantity="one">%1$d lesson · %2$s</item>
+        <item quantity="other">%1$d lessons · %2$s</item>
     </plurals>
     <string name="catalog_empty_title">No courses</string>
     <string name="catalog_empty_description">No courses available yet.</string>
@@ -37,15 +37,15 @@
     <string name="catalog_not_found_description">The link may be old or mistyped.</string>
 
     <string name="catalog_edition_notice">This course is also available in your language.</string>
-    <string name="catalog_exam_on_today">Exam on %1$s · today</string>
+    <string name="catalog_exam_on_today">Exam on %1$s · today</string>
     <plurals name="catalog_exam_on">
-        <item quantity="one">Exam on %1$s · %2$d day left</item>
-        <item quantity="other">Exam on %1$s · %2$d days left</item>
+        <item quantity="one">Exam on %1$s · %2$d day left</item>
+        <item quantity="other">Exam on %1$s · %2$d days left</item>
     </plurals>
-    <string name="catalog_exam_around_today">Exam around %1$s · today</string>
+    <string name="catalog_exam_around_today">Exam around %1$s · today</string>
     <plurals name="catalog_exam_around">
-        <item quantity="one">Exam around %1$s · about %2$d day left</item>
-        <item quantity="other">Exam around %1$s · about %2$d days left</item>
+        <item quantity="one">Exam around %1$s · about %2$d day left</item>
+        <item quantity="other">Exam around %1$s · about %2$d days left</item>
     </plurals>
     <string name="catalog_plan_line">With Zoonk, your plan starts at your level and fits your schedule.</string>
     <string name="catalog_plan_line_chapter">With Zoonk, your plan starts at this chapter and fits your schedule.</string>
@@ -54,8 +54,8 @@
     <string name="catalog_try_lesson">Try a lesson</string>
     <string name="catalog_start_free">Start free, no account needed.</string>
 
-    <string name="catalog_try_title">Try a lesson · free · %1$s</string>
-    <string name="catalog_try_place">%1$s · lesson %2$s</string>
+    <string name="catalog_try_title">Try a lesson · free · %1$s</string>
+    <string name="catalog_try_place">%1$s · lesson %2$s</string>
     <string name="catalog_guess_first">Guess first. It doesn\'t count.</string>
     <string name="catalog_quick_question">Quick question</string>
     <string name="catalog_guess_note">Your answer starts the %1$s-minute lesson.</string>

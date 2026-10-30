@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Under the buddy's name; %1$s is its stage, like "Baby". -->
-    <string name="buddy_page_line">Your study buddy · %1$s</string>
+    <string name="buddy_page_line">Your study buddy · %1$s</string>
     <string name="buddy_page_more">More about %1$s</string>
     <string name="buddy_page_change">Change %1$s</string>
     <string name="buddy_page_choose">Choose your buddy</string>

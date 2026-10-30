@@ -45,6 +45,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.ExamDocument
@@ -317,7 +318,7 @@ private fun subjectEyebrow(
                 null
             }
         }
-    return listOfNotNull(kind, weight).joinToString(" · ")
+    return listOfNotNull(kind, weight).factsLine()
 }
 
 /** The group a plan adds outside the learner's material or the exam's own documents. */
@@ -344,7 +345,7 @@ private fun subjectFacts(subject: SyllabusSubject): String? {
                 ?.let { pluralStringResource(R.plurals.goalcontent_chapter_count, it, it) },
             if (inLessons) percentDone(subject.bar.share) else null,
         )
-    return facts.takeIf { it.isNotEmpty() }?.joinToString(" · ")
+    return facts.takeIf { it.isNotEmpty() }?.factsLine()
 }
 
 @Composable

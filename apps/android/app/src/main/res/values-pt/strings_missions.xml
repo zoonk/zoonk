@@ -54,7 +54,7 @@
   "missions_progress": "99d192bb6a37b8344f18b53be34a57c81b7557dc84ad71fb172542812844e92e",
   "missions_pronunciation": "3c679f083d27b14a3d5f6eedba2187e2c4adfa1aa287082cec030a1b717cce97",
   "missions_quick_call": "5b548ebb5b31d26577579ffb28ad2c5e4ddfb6bc29315fc16f19bd0e52559dac",
-  "missions_quick_call_unit": "91097b43b66ae8c398c5c4bbd8715d79bf17a42d2c5ee5dad8d7ffccef03d0c7",
+  "missions_quick_call_unit": "86f3a32d775c0143508a1a21612d501d6b7d50daec88ca212473cd4bde6071cd",
   "missions_rematch": "4f499616e4f88d07a4f8408842102a8e2cef284373ca765cad3e33bf8dfc3766",
   "missions_review": "14a56131e72147ee06b6b2416827e7bcb00392466d47d03a2d0c9fa45b4d3aa5",
   "missions_something_new": "6de95bd0382a152b124ad5669cb43af3310018c1fdfc261e85ea10b482abfc5c",
@@ -130,7 +130,7 @@
     <string name="missions_from_notebook">Do seu Caderno de erros</string>
     <string name="missions_due_today">Para hoje</string>
     <!-- %1$s is a language unit's title. -->
-    <string name="missions_quick_call_unit">Conversa rápida · %1$s</string>
+    <string name="missions_quick_call_unit">Conversa rápida · %1$s</string>
     <string name="missions_quick_call">Uma conversa rápida</string>
     <string name="missions_ask_anything">Qualquer coisa sobre as aulas de hoje</string>
     <string name="missions_last_lesson">A última aula está no plano de hoje</string>

@@ -57,6 +57,7 @@ import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkMotion
@@ -191,7 +192,7 @@ private fun MissionsStatus(
                 listOf(
                     count,
                     stringResource(R.string.missions_estimate, formatMinutes(minutes.toInt().coerceAtLeast(1), locale)),
-                ).joinToString(" · ")
+                ).factsLine()
             } else {
                 count
             }

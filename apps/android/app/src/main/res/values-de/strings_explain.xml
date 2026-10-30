@@ -18,7 +18,7 @@
   "explain_phase_write": "7be09d31cc5e87abe19fd748ce3251547910373bac5d5d505e45ec46f15b9008",
   "explain_phase_write_line": "2e9f9a26f146c207dc949ee9a7cbedd87df20c2faa471701b25ddee14312920f",
   "explain_phase_write_review": "b0b9c30ddb3000a15100f5a1020f881fcd1fdb9bbef4d81604d58e67bfa55909",
-  "explain_quick": "4e73cf99a02eef5066706cde02836850f4069758738737a5e5852ca5dd35a6cb",
+  "explain_quick": "dd370fa52124b18ee23ad4969b1986bf1853ea717d942f43170ef49e78563da9",
   "explain_recap": "b750361ed8a2fb7721803dc992119444c36e3ffec6076e3bf32400aee83793c0",
   "explain_see": "bfda2943f52a9b2f1d07a7e910e85522484560a1b743369df995421cfa529728",
   "explain_slow": "3fa44892e7f31044fb2651057152d590d2fa4512a60026212e54267361084de6",
@@ -37,7 +37,7 @@
     <string name="explain_phase_write_line">Wir erstellen Seite %1$d…</string>
     <string name="explain_phase_write_review">Wir prüfen die Fakten…</string>
     <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
-    <string name="explain_quick">Kurze Erklärung · %1$s</string>
+    <string name="explain_quick">Kurze Erklärung · %1$s</string>
     <string name="explain_no_plan">Du musst keinen Plan erstellen.</string>
     <string name="explain_coming">Das erwartet dich</string>
     <string name="explain_one_question">1 kurze Frage am Ende</string>

@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "speaking_eyebrow": "ba048e3dd30f2939c2e1edf78b575a3f06b7f7a8753eecaa29de458bb7cc720c",
-  "speaking_facts": "51e9dc37c864a2bc95952c0ad882ce6a98f22699c831cc5c1f4a4a80ed32e5ce",
+  "speaking_facts": "7c718308bb6c8c98114ecca72df81cb5103e3ebe6db7ea0032a2fe4d1aef2190",
   "speaking_footer": "5a502c4b1f797832c919723b5c907a6174d6dc12d76e69bc5eb65782d1ce6fd2",
   "speaking_footer_partner": "9f7ec4c709f9b23cc73ffd4c6c202d847ffb8b01b0849dfe446b2d108bee8df7",
   "speaking_last_at": "7f3d08076bf6f9eebcb1e23217514b3c73134b581b0e0455fbfd18eb62c1d8f7",
@@ -44,9 +44,9 @@
     <string name="speaking_eyebrow">Expression orale type examen</string>
     <!-- The paper's task count and how long its speaking part lasts in the exam, such as "4 tasks · 15 min in the exam". -->
     <plurals name="speaking_facts">
-        <item quantity="one">%1$d tâche · %2$s à l’examen</item>
-        <item quantity="many">%1$d tâches · %2$s à l’examen</item>
-        <item quantity="other">%1$d tâches · %2$s à l’examen</item>
+        <item quantity="one">%1$d tâche · %2$s à l’examen</item>
+        <item quantity="many">%1$d tâches · %2$s à l’examen</item>
+        <item quantity="other">%1$d tâches · %2$s à l’examen</item>
     </plurals>
     <string name="speaking_official">%1$s est un examen officiel. Entraîne-toi à ses épreuves orales, que tu comptes le passer ou non.</string>
     <string name="speaking_tasks">Tâches</string>

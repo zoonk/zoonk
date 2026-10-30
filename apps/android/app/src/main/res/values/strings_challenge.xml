@@ -7,7 +7,7 @@
     <string name="challenge_writing_detail">We\'re writing its questions. It starts here when they\'re ready.</string>
 
     <!-- %1$s is the challenge's name, like "Phase 2 challenge". -->
-    <string name="challenge_rematch">New try · %1$s</string>
+    <string name="challenge_rematch">New try · %1$s</string>
     <string name="challenge_trickster_recordings">Questions on recordings from this phase, played as in the exam, with no hints.</string>
     <plurals name="challenge_trickster_recording_count">
         <item quantity="one">Questions on %d recording from this phase, played as in the exam, with no hints.</item>
@@ -40,15 +40,15 @@
     <string name="challenge_today">Today</string>
     <string name="challenge_tomorrow">Tomorrow</string>
     <!-- %1$s is the day; %2$s is the time it starts, like 9:00 AM. -->
-    <string name="challenge_day_time">%1$s · %2$s</string>
+    <string name="challenge_day_time">%1$s · %2$s</string>
 
     <string name="challenge_mock_start">Start the mock exam</string>
     <string name="challenge_objective_only">Objective part only</string>
     <string name="challenge_section_questions">Questions</string>
     <!-- A section's questions (%1$d) and its time (%2$s), like "45 questions · 1 h 30 min". -->
     <plurals name="challenge_section_size">
-        <item quantity="one">%1$d question · %2$s</item>
-        <item quantity="other">%1$d questions · %2$s</item>
+        <item quantity="one">%1$d question · %2$s</item>
+        <item quantity="other">%1$d questions · %2$s</item>
     </plurals>
     <string name="challenge_written_asked">Written in the mock, graded by the exam\'s criteria after you hand it in.</string>
     <string name="challenge_written_practiced">Written: you practice it in your essay sessions, graded by the exam\'s criteria.</string>
@@ -61,7 +61,7 @@
     <string name="challenge_call_title">The unit\'s call</string>
     <string name="challenge_call_detail">A live call where you get your point across. Speak or type.</string>
     <!-- %1$s is the call's length; %2$s its level, like B1. -->
-    <string name="challenge_call_level">%1$s · Level %2$s</string>
+    <string name="challenge_call_level">%1$s · Level %2$s</string>
     <plurals name="challenge_call_goals">
         <item quantity="one">%d goal</item>
         <item quantity="other">%d goals</item>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "language_alphabet_anytime": "c4e39ef1a32e1ebfd4462047e8beb4b237dbaf426eb41204e0b92578a39f4167",
-  "language_alphabet_first_next_session": "4cc82dc6cb7f0f65776b155950a7dd690ac649783ff222db49ac4500f2078689",
+  "language_alphabet_anytime": "c415422c71a9d3be179202629aa80bfe070cac3a4fdb998f9a2840a007255f76",
+  "language_alphabet_first_next_session": "47fe6be4319733d6f60c33c626faba4149e0c8f7a399d02f827f4a7097ed0c09",
   "language_alphabet_skip": "7c416170b3c5baee17e609f03cc58be80ac44c5cb3871797ce26efa298e81af0",
   "language_alphabet_skip_failed": "5b56fca8fcfaaac32b8c561b58234c825087f29a444eceaab5efc07ce4c4355a",
   "language_can_already": "0c7e414bcf7042f1a2d4c7f00ed4b8a3ece6ef3347af8df4eede6f9312692035",
@@ -38,7 +38,7 @@
   "language_unit_about": "17e20e9672ddb81670fa8928a32341702b3f16fb7639bcae45441b7cbd4ac816",
   "language_unit_continue": "bcb5d8e1fab57510bef013b78c766dc70a6ad5d864fce9d09525e3dff37575b8",
   "language_unit_done_share": "2e9d0ba3def927cbe7205bc3010c3c50f7948762ee48ac4581f6946c6c38ecd5",
-  "language_unit_eyebrow": "d54a44c28c6855fbbdcba7ef4c639b68586a6362140670e2ac3054047bf9da46",
+  "language_unit_eyebrow": "51cec455112746f41263b276d000127545c5cfc26d83ec6c222070c97110f007",
   "language_unit_grammar_tips": "6d7be2db23e0dba54c01be83a2a7d224b9950555a3ee7374ca96f53815aa99ee",
   "language_unit_lessons": "d3ddb6533a4a00f3100f0825494847dac8048f8327a098648a41bc6fbd4dbfd5",
   "language_unit_mistakes": "ac95b23afb1f29281a170d3e960751dabb450965925c85d8011e79bb225a0267",
@@ -54,7 +54,7 @@
 -->
 <resources>
     <!-- A unit's place and its levels: "Unit 3 · A1–A2". -->
-    <string name="language_unit_eyebrow">Unidade %1$s · %2$s</string>
+    <string name="language_unit_eyebrow">Unidade %1$s · %2$s</string>
     <plurals name="language_unit_lessons">
         <item quantity="one">%d aula</item>
         <item quantity="many">%d aulas</item>
@@ -121,9 +121,9 @@
         <item quantity="other">Repita %d palavras</item>
     </plurals>
     <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
-    <string name="language_alphabet_first_next_session">Primeiro na sua próxima sessão · %1$s</string>
+    <string name="language_alphabet_first_next_session">No início da sua próxima sessão · %1$s</string>
     <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
-    <string name="language_alphabet_anytime">Pratique quando quiser · %1$s</string>
+    <string name="language_alphabet_anytime">Pratique quando quiser · %1$s</string>
     <!-- Skips the alphabet lesson for a learner who reads the script. -->
     <string name="language_alphabet_skip">Já consigo ler</string>
     <string name="language_alphabet_skip_failed">Não foi possível salvar. Tente de novo.</string>

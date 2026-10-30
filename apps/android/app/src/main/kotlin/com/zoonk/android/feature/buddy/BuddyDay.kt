@@ -54,6 +54,7 @@ import com.zoonk.android.ui.characters.buddyStageName
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -179,7 +180,7 @@ private fun BuddyTodaySheet(
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Text(
-                    "${buddyStageName(look.stage)} · ${growthLine(status.nextStage)}",
+                    factsLine(buddyStageName(look.stage), growthLine(status.nextStage)),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )

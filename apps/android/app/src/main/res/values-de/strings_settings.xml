@@ -30,7 +30,7 @@
   "settings_preferences": "b72807f260eae87cf6ac7faf9220b4ad1483fe6aea1708129e95073b56ed2708",
   "settings_preferences_app_language": "34651fdb09eb3cdee6dc7925727d960cff8e283d08ce08de61a007cf257eeb03",
   "settings_preferences_buddy": "a5c70da54a8d7a15d322a32c53daf45c2481f61852021856e168a9fed23a189f",
-  "settings_preferences_buddy_line": "e791877baf1c1205653a97eab75b0cd70ef60b9cdd426082ca6c7eac2765c6ad",
+  "settings_preferences_buddy_line": "936c3ff31162811b9f721b3ffb540ea67ad92737672f5fdf11d0283884006ee4",
   "settings_preferences_change": "43bcbc53a761ef69add36d11196e002787ef7c2d7909be82befda3e6838f1cb4",
   "settings_preferences_choose_buddy": "8beb67fa01fbd849a5c1756b277df5c53f462b1751a1199f7da961c463227037",
   "settings_preferences_daily_limit": "644a55883c2cb59269f257a329c360dd15ae8f45d1452fa9500d31cc16f536eb",
@@ -44,7 +44,7 @@
   "settings_preferences_save_failed": "aa787d4049acddb890477ed7ac84fddf791e873ceff393380ad372974c606297",
   "settings_preferences_sounds": "835e4109f126ee0f7bb938ceb6abd3ebf10aa00c74d05b8980e0ae1e093db439",
   "settings_preferences_sounds_description": "27ead4c0abf19d997a59d907bc0fe6753f623ca9ab72eedaa996708399576baf",
-  "settings_preferences_summary": "97c610e0158a8a0402afce0e090fb76e0d336ab1fcc201b7cabc292c779ff22b",
+  "settings_preferences_summary": "804412952646423b047905e3d8e2bca951626caedeaf04089dbe15d0efd78895",
   "settings_profile": "e7793decc781e7a27ec6d05153361a758408e396d546b05d66b399a635b5e747",
   "settings_profile_description": "d348dca6709a6ab0db23401c2cf9270cf3b0db74c4c9324330d3b38d905e9dcf",
   "settings_profile_needs_account": "56d236b9497c584fa988e31319e82b68f47c61ac2b9cbd89c6a0cc17d501af72",
@@ -57,7 +57,7 @@
     <string name="settings_preferences">Vorlieben</string>
     <string name="settings_memory">Erinnerungen</string>
     <!-- %1$s is the buddy's name and %2$s the app's language, like "Zu · English". -->
-    <string name="settings_preferences_summary">%1$s · %2$s</string>
+    <string name="settings_preferences_summary">%1$s · %2$s</string>
     <string name="settings_profile">Profil</string>
     <string name="settings_profile_needs_account">Erstelle ein Konto, um ein Profil zu haben. Dein Plan und dein Fortschritt werden übernommen.</string>
     <string name="settings_account">Konto</string>
@@ -90,7 +90,7 @@
     <string name="settings_preferences_change">Ändern</string>
     <string name="settings_preferences_choose_buddy">Wähle deinen Kumpel</string>
     <!-- %1$s is the buddy's stage ("Baby") and %2$s what it wears ("Round glasses"). -->
-    <string name="settings_preferences_buddy_line">%1$s · %2$s</string>
+    <string name="settings_preferences_buddy_line">%1$s · %2$s</string>
     <string name="settings_preferences_lessons">Lektionen</string>
     <string name="settings_preferences_sounds">Töne</string>
     <string name="settings_preferences_sounds_description">Bei richtigen Antworten oder wenn du fertig bist</string>

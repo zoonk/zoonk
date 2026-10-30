@@ -39,6 +39,7 @@
 - “essay”: “redacción”, not “ensayo”
 - “Hyperdrive”: “Hiperimpulso”
 - “Mistakes notebook”: “Cuaderno de errores”
+- “Saved to your mistakes”: “Guardado en tu cuaderno de errores”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Por corregir” / “Corregidos”
 - “full review” (language exam preparation): “revisión completa”; spaced review: “repaso”
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Nuevo” / “Aprendiendo” / “Firme” / “Dominado”

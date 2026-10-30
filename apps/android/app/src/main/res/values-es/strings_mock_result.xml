@@ -66,7 +66,7 @@
   "mock_result_preparation_counts": "977c59c6067efa51771174696846dbeba2fa37407bc830a1e3e48343d4484cd4",
   "mock_result_preparation_fell": "616c66eccf57e32ebbc2ddba9c59b8e935195589079b7d7e8efb7fbb6f99ba22",
   "mock_result_question": "06fec1e7941f1a8f738a61d1af1f890e64d60efd4b86fd548ace776fda280154",
-  "mock_result_question_area": "fd73aad07e68293d494823f7235130f7df4e3801cb8d575c9a412c5c6db600f7",
+  "mock_result_question_area": "9055b0ed17e1102145f19b9693ccaee116487242fec4abb132506e504a865743",
   "mock_result_range": "dcbe6f27be1483a8d3f5c8d62f24d4a185d966f1d1fcd4f1c88144eb0c4c166c",
   "mock_result_relative": "f642fa14e520bbead1c8f0ec9795d6e524358103ef11571961be493283ef5d8e",
   "mock_result_review": "57c791c82544088f7bd22fd0eba8d6bb8ed327ef385e9d244b6d21c50823881f",
@@ -96,7 +96,7 @@
   "mock_result_typed_estimate": "7bdf41a6e8f91977c0e21db33ac4e04c220130076e779f524944a984ad399e31",
   "mock_result_typed_no_estimate": "cff0ba0a055a02bac011effab8854363f3472b21ff2c4e0a11f76a0f5b08c0ee",
   "mock_result_up": "0bb473746f14759db0c8d6700d0672dccffc347ebad89b4477d5381eedec25c8",
-  "mock_result_written_part": "9486f2f1550807fd7b070ff8a958488e23b320963cbdd992ab435a5a94f4d9fd",
+  "mock_result_written_part": "240e957f3610bd93c5baddfbcd0ed4b7cb00b39d526c4a39c319ca1ccc0de609",
   "mock_result_wrong": "f6f7746f67dcbb025865e4298c9866e560c6b50d6215f2689df502e2e5cbef21",
   "mock_result_your_plan": "037bc363fd551cacdf3bd13f2adafe7a7aadbbe3d83fb79711168c87ed3c21a3",
   "mock_result_your_preparation": "4cb55edd7c1b1bf5b4e3cf6b713b1a2ed12350015ebaa46ae609b63bf4c1ba96"
@@ -200,11 +200,11 @@
         <item quantity="other">Ver %d preguntas</item>
     </plurals>
     <!-- %2$s is the question's subject, such as "Mathematics". -->
-    <string name="mock_result_question_area">Pregunta %1$d · %2$s</string>
+    <string name="mock_result_question_area">Pregunta %1$d · %2$s</string>
     <string name="mock_result_question">Pregunta %1$d</string>
     <string name="mock_result_left_blank">La dejaste en blanco.</string>
     <string name="mock_result_partly_right_note">Parcialmente correcta: has conseguido parte de los puntos.</string>
-    <string name="mock_result_written_part">Parte escrita · %1$d de %2$d</string>
+    <string name="mock_result_written_part">Parte escrita · %1$d de %2$d</string>
     <string name="mock_result_too_short">Demasiado breve para corregir</string>
     <string name="mock_result_grading">Corrigiéndola con los criterios del examen. Puede tardar hasta 30 segundos.</string>
     <string name="mock_result_grading_slow">Sigue en corrección. Está tardando más de lo habitual.</string>

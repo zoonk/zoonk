@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="plan_title">Plan</string>
-    <string name="plan_eyebrow">%1$s · %2$s</string>
+    <string name="plan_eyebrow">%1$s · %2$s</string>
     <string name="plan_day_is_here">The day is here</string>
     <plurals name="plan_days_left">
         <item quantity="one">%d day left</item>
@@ -23,7 +23,7 @@
     <string name="plan_setup_left_title">Your plan comes after a few questions</string>
     <string name="plan_setup_left_description">Answer them and we\'ll plan every day until you reach your goal.</string>
     <string name="plan_continue">Continue</string>
-    <string name="plan_building_eyebrow">%1$s · Building your plan</string>
+    <string name="plan_building_eyebrow">%1$s · Building your plan</string>
     <string name="plan_building_description">It usually takes a minute or two. Your plan opens here as soon as it\'s ready.</string>
 
     <string name="plan_options">Plan options</string>
@@ -66,7 +66,7 @@
     <string name="plan_phase_challenge">Phase challenge</string>
     <string name="plan_exam_day">Exam day</string>
     <string name="plan_goal_date">Goal date</string>
-    <string name="plan_exam_date_label">%1$s · exam</string>
+    <string name="plan_exam_date_label">%1$s · exam</string>
     <string name="plan_you_are_here_suffix">, you are here</string>
     <string name="plan_done_suffix">, done</string>
     <string name="plan_up_next_suffix">, up next</string>
@@ -106,9 +106,9 @@
     <string name="plan_continues_today">Continues today</string>
     <!-- %1$s is the day the plan resumes, such as "Nov 3". -->
     <string name="plan_continues_on">Continues %1$s</string>
-    <string name="plan_more_lessons_challenge_on">More lessons on the way · challenge %1$s</string>
+    <string name="plan_more_lessons_challenge_on">More lessons on the way · challenge %1$s</string>
     <string name="plan_more_lessons_on_the_way">More lessons on the way</string>
-    <string name="plan_lessons_done_challenge_on">Lessons done · challenge %1$s</string>
+    <string name="plan_lessons_done_challenge_on">Lessons done · challenge %1$s</string>
     <string name="plan_up_next">Up next</string>
     <string name="plan_skipped">Skipped</string>
     <string name="plan_done">Done</string>
@@ -133,9 +133,9 @@
         <item quantity="other">About %d lessons</item>
     </plurals>
     <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a day this month, such as "Nov 3". -->
-    <string name="plan_far_count_from">%1$s · from %2$s</string>
+    <string name="plan_far_count_from">%1$s · from %2$s</string>
     <!-- %1$s is a count of lessons, such as "About 12 lessons"; %2$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "dès %2$s"). -->
-    <string name="plan_far_count_from_month">%1$s · from %2$s</string>
+    <string name="plan_far_count_from_month">%1$s · from %2$s</string>
     <!-- A far topic's sheet: why its lessons aren't there yet. -->
     <string name="plan_far_explain">A topic\'s lessons are planned two weeks before you get to it. You can see this one\'s now.</string>
     <!-- Writes a far topic's lessons now. -->
@@ -193,7 +193,7 @@
     <string name="plan_everything">Everything</string>
     <string name="plan_to_be_confirmed">To be confirmed</string>
     <string name="plan_no_date">No date</string>
-    <string name="plan_time_weekends">%1$s · %2$s weekends</string>
+    <string name="plan_time_weekends">%1$s · %2$s weekends</string>
     <string name="plan_every_day">Every day</string>
     <string name="plan_day_range">%1$s – %2$s</string>
     <string name="plan_mocks_next">Next %1$s</string>
@@ -705,7 +705,7 @@
     <string name="plan_bases_studied_stay">Prerequisites you\'ve studied stay studied.</string>
     <string name="plan_choose_by_subject">Choose by subject</string>
     <string name="plan_base_studied_name">%1$s (studied)</string>
-    <string name="plan_base_names_time">%1$s · %2$s</string>
+    <string name="plan_base_names_time">%1$s · %2$s</string>
     <string name="plan_different_choices">Different choices</string>
     <string name="plan_base_studied">Studied</string>
     <string name="plan_get_recommendation">Get a recommendation</string>

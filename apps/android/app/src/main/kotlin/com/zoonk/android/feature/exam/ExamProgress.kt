@@ -39,6 +39,7 @@ import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -81,7 +82,7 @@ private fun ProgressCard(
                             mockTitle(mock.number),
                             mockDate(mock.finishedAt),
                             mock.shapeLabel,
-                        ).filter(String::isNotEmpty).joinToString(" · "),
+                        ).filter(String::isNotEmpty).factsLine(),
                     value = mock.percent.toInt(),
                 )
             }
@@ -115,7 +116,7 @@ private fun ProgressTiles(
     val latest = progress.mocks.lastOrNull { it.shape?.kind != MockShape.Kind.AREA } ?: progress.mocks.lastOrNull() ?: return
     val best = findBestArea(progress.subjects)
     val name =
-        listOfNotNull(mockTitle(latest.number), latest.shapeLabel.takeIf { latest.shape?.kind == MockShape.Kind.AREA }).joinToString(" · ")
+        listOfNotNull(mockTitle(latest.number), latest.shapeLabel.takeIf { latest.shape?.kind == MockShape.Kind.AREA }).factsLine()
     val change = if (first != null && progress.mocks.size > 1) latest.percent - first.percent else null
     val since = change?.let { stringResource(R.string.exam_since_first, signedChange(it)) }
 

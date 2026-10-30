@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- A unit's place and its levels: "Unit 3 · A1–A2". -->
-    <string name="language_unit_eyebrow">Unit %1$s · %2$s</string>
+    <string name="language_unit_eyebrow">Unit %1$s · %2$s</string>
     <plurals name="language_unit_lessons">
         <item quantity="one">%d lesson</item>
         <item quantity="other">%d lessons</item>
@@ -65,9 +65,9 @@
         <item quantity="other">Say %d words again</item>
     </plurals>
     <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
-    <string name="language_alphabet_first_next_session">First in your next session · %1$s</string>
+    <string name="language_alphabet_first_next_session">First in your next session · %1$s</string>
     <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
-    <string name="language_alphabet_anytime">Practice anytime · %1$s</string>
+    <string name="language_alphabet_anytime">Practice anytime · %1$s</string>
     <!-- Skips the alphabet lesson for a learner who reads the script. -->
     <string name="language_alphabet_skip">I can already read it</string>
     <string name="language_alphabet_skip_failed">That didn\'t save. Try again.</string>

@@ -45,6 +45,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LetterMark
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -247,7 +248,7 @@ private fun GoalLine(goal: LearnerSummaryGoal) {
                         days == 0L -> stringResource(R.string.today_day_is_here)
                         else -> pluralStringResource(R.plurals.today_days_left, days.toInt(), days.toInt())
                     }
-                listOfNotNull(daily, left).joinToString(" · ")
+                listOfNotNull(daily, left).factsLine()
             }
         }
 
