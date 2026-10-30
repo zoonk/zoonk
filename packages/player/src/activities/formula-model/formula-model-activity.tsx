@@ -37,11 +37,13 @@ function expectedPoint({
   content,
   expected,
   format,
+  inputs,
 }: {
   axis: Fields["variables"][number];
   content: Content;
   expected: FormulaModelProps["expected"];
   format: ReturnType<typeof useFormatNumber>;
+  inputs: ModelValues;
 }) {
   const { check } = content;
 
@@ -50,9 +52,10 @@ function expectedPoint({
   }
 
   const input = check.inputs?.find((item) => item.name === axis.name);
+  const submitted = computeActivityValue(content, { inputs, output: check.output });
 
   return {
-    label: format(expected.value, exactAnswerFormat({ check })),
+    label: format(expected.value, exactAnswerFormat({ check, value: submitted ?? undefined })),
     x: input?.value ?? axis.initial,
     y: expected.value,
   };
@@ -142,7 +145,11 @@ function FormulaModelBoard({
         deltaLabel={
           view.delta === 0 ? null : format(view.delta, { signed: true, unit: charted.unit })
         }
-        expected={isChecked ? expectedPoint({ axis, content, expected, format }) : null}
+        expected={
+          isChecked
+            ? expectedPoint({ axis, content, expected, format, inputs: { ...sliders, ...events } })
+            : null
+        }
         formatTick={(value) => format(value, { compact: true, unit: charted.unit })}
         formatX={formatX}
         x={view.x}

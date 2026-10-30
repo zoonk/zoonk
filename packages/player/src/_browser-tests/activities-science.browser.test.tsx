@@ -158,6 +158,28 @@ describe("science activities", () => {
       .toContain("40.77");
   });
 
+  it("formula model simulation: the chart writes the right answer as the feedback does", async () => {
+    const simulation = engineModeFixtures.formulaModel.simulation;
+
+    openActivity({
+      content: { ...simulation, check: { ...simulation.check, answer: 40.7747 } },
+      template: "formulaModel",
+    });
+
+    await pressOnSlider("Launch angle", "ArrowRight", 14);
+    await checkActivity();
+    await expectVerdict("Not quite");
+    await expect.element(page.getByText("40.775", { exact: true }).first()).toBeVisible();
+
+    await expect
+      .poll(() =>
+        [...document.querySelectorAll("[data-slot='activity-plot'] text")].map(
+          (text) => text.textContent,
+        ),
+      )
+      .toContain("40.775");
+  });
+
   it("labeled diagram: every name on its part is right", async () => {
     openActivity({ template: "labeledDiagram" });
     await expect.element(page.getByRole("img", { name: /five numbered parts/u })).toBeVisible();
