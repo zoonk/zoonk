@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,6 +49,7 @@ import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.scaffold.ActionFlow
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import java.time.Instant
@@ -314,25 +313,6 @@ internal fun SaveErrorText(onRetry: (() -> Unit)? = null) {
 internal fun ActionColumn(content: @Composable ColumnScope.() -> Unit) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
 }
-
-/**
- * The task's actions, the main one at the end on a wide window (as the player's). On a narrow one
- * the main action fills its line and moves to a line of its own when the others don't leave it
- * room, so a large font never breaks its word.
- */
-@Composable
-internal fun ActionFlow(content: @Composable FlowRowScope.(main: Modifier) -> Unit) {
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp, if (wide) Alignment.End else Alignment.Start),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        itemVerticalAlignment = Alignment.CenterVertically,
-    ) { content(if (wide) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f)) }
-}
-
-private val MAIN_ACTION_WIDTH = 160.dp
 
 /** As wide as the questions on a narrow window; across the window, its actions at the end, on a wide one (main's action bar). */
 @Composable

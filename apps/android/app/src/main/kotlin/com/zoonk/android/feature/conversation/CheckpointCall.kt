@@ -147,13 +147,13 @@ internal fun CheckpointCallContent(
     val scope = rememberCoroutineScope()
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
-            CallFrame(title = stringResource(R.string.conversation_unit_challenge), onClose = exits::close) {
+            CallFrame(title = { CallTitle(stringResource(R.string.conversation_unit_challenge)) }, onClose = exits::close) {
                 item(key = "loading") { Box(Modifier.callItem(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
             }
         }
 
         is LoadState.Failed -> {
-            CallFrame(title = stringResource(R.string.conversation_unit_challenge), onClose = exits::close) {
+            CallFrame(title = { CallTitle(stringResource(R.string.conversation_unit_challenge)) }, onClose = exits::close) {
                 item(
                     key = "failed",
                 ) { LoadFailedMessage(onRetry = { scope.launch { model.call.refresh() } }, modifier = Modifier.callItem()) }
@@ -249,7 +249,7 @@ private fun CheckpointPreparing(
 
     if (!asked) {
         CallFrame(
-            title = title,
+            title = { CallTitle(title) },
             onClose = exits::close,
             bottomBar = {
                 StartCallButton(
@@ -278,7 +278,7 @@ private fun CheckpointPreparing(
     }
 
     val failed = model.start == CheckpointCallModel.Start.Failed || model.start == CheckpointCallModel.Start.PlusRequired
-    CallFrame(title = title, onClose = exits::close) {
+    CallFrame(title = { CallTitle(title) }, onClose = exits::close) {
         item(key = "wait") {
             GenerationWait(
                 kind = GenerationKind.ConversationCall,

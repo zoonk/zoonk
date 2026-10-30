@@ -259,7 +259,7 @@ internal fun ExamTaskIntro(
     val criteria = spokenList(task.criteria.map { criterionGloss(it.key, it.name) }, locale)
     val card: @Composable () -> Unit = { SpeakingCardView(task.card, conversation.targetLanguage) }
 
-    CallFrame(title = examTaskTitle(task), onClose = onClose, bottomBar = actions, aside = { card() }) { beside ->
+    CallFrame(title = { CallTitle(examTaskTitle(task)) }, onClose = onClose, bottomBar = actions, aside = { card() }) { beside ->
         item(key = "header") {
             Column(Modifier.callItem(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(

@@ -199,12 +199,9 @@ internal fun MockResult(
                             current?.let { if (it.id !in left) left = left + it.id }
                             reachedId = shown[to].id
                         },
-                        dots = false,
-                    ) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            if (wide && secondary != null) OutlinedButton(onClick = onContinue) { Text(secondary) }
-                            MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue)
-                        }
+                    ) { main ->
+                        if (wide && secondary != null) OutlinedButton(onClick = onContinue) { Text(secondary) }
+                        MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue, main)
                     }
                     if (current?.id == SCORE && !wide && view.review.isNotEmpty()) {
                         TextButton(onClick = { reviewOpen = true }, modifier = Modifier.fillMaxWidth()) {
@@ -295,12 +292,27 @@ private fun MainAction(
     mistakes: Int,
     onMistakes: () -> Unit,
     onContinue: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     when {
-        placement -> Button(onClick = onContinue) { Text(stringResource(R.string.mock_result_see_plan)) }
-        mistakes == 0 -> Button(onClick = onContinue) { Text(stringResource(R.string.mock_result_continue)) }
-        mistakes == 1 -> Button(onClick = onMistakes) { Text(stringResource(R.string.mock_result_review_mistake)) }
-        else -> Button(onClick = onMistakes) { Text(pluralStringResource(R.plurals.mock_result_review_mistakes, mistakes, mistakes)) }
+        placement -> {
+            Button(onClick = onContinue, modifier) { Text(stringResource(R.string.mock_result_see_plan)) }
+        }
+
+        mistakes == 0 -> {
+            Button(onClick = onContinue, modifier) { Text(stringResource(R.string.mock_result_continue)) }
+        }
+
+        mistakes == 1 -> {
+            Button(onClick = onMistakes, modifier) { Text(stringResource(R.string.mock_result_review_mistake)) }
+        }
+
+        else -> {
+            Button(
+                onClick = onMistakes,
+                modifier,
+            ) { Text(pluralStringResource(R.plurals.mock_result_review_mistakes, mistakes, mistakes)) }
+        }
     }
 }
 

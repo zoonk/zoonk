@@ -53,6 +53,7 @@ import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.Readout
+import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
@@ -99,11 +100,11 @@ internal fun ConversationResult(
     val shown = index.coerceIn(0, steps.lastIndex)
 
     CallFrame(
-        title = conversationTitle(conversation),
+        title = { StepDots(steps.size, shown) },
         onClose = onClose,
         bottomBar = {
-            StepPagerActions(steps.size, shown, onIndexChange = { index = it }) {
-                Button(onClick = onContinue) { Text(stringResource(R.string.steps_continue)) }
+            StepPagerActions(steps.size, shown, onIndexChange = { index = it }) { main ->
+                Button(onClick = onContinue, modifier = main) { Text(stringResource(R.string.steps_continue)) }
             }
         },
     ) {

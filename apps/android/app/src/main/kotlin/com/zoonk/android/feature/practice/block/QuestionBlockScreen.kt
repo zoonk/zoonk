@@ -22,7 +22,6 @@ import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.player.SessionEndActions
 import com.zoonk.android.feature.player.leaveTaskFor
 import com.zoonk.android.feature.practice.ActionColumn
-import com.zoonk.android.feature.practice.ActionFlow
 import com.zoonk.android.feature.practice.AnswerActions
 import com.zoonk.android.feature.practice.Draft
 import com.zoonk.android.feature.practice.QuestionRun
@@ -53,6 +52,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
+import com.zoonk.android.ui.scaffold.ActionFlow
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.StudyBlockDetail

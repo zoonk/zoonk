@@ -155,7 +155,7 @@ internal fun ConversationContent(
 
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
-            CallFrame(title = "", onClose = exits::close) {
+            CallFrame(title = {}, onClose = exits::close) {
                 item(key = "loading") { Box(Modifier.callItem(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
             }
         }
@@ -164,7 +164,7 @@ internal fun ConversationContent(
             if (state.error == ApiError.NotFound) {
                 NotFound(onClose = exits::close)
             } else {
-                CallFrame(title = "", onClose = exits::close) {
+                CallFrame(title = {}, onClose = exits::close) {
                     item(
                         key = "failed",
                     ) { LoadFailedMessage(onRetry = { scope.launch { model.conversation.refresh() } }, modifier = Modifier.callItem()) }
@@ -363,7 +363,7 @@ internal fun rememberCallStart(start: (microphone: Boolean, takeover: Boolean) -
 
 @Composable
 private fun NotFound(onClose: () -> Unit) {
-    CallFrame(title = "", onClose = onClose) {
+    CallFrame(title = {}, onClose = onClose) {
         item(key = "not-found") {
             CallOffMessage(stringResource(R.string.conversation_not_found_title), Modifier.callItem()) {
                 Text(

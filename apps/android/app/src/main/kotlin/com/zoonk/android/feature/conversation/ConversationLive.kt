@@ -121,7 +121,7 @@ internal fun ConversationLive(
     }
 
     CallFrame(
-        title = conversation.title,
+        title = { CallTitle(conversation.title) },
         onClose = actions.onEnd,
         listState = listState,
         exitConfirmation = endFirst,

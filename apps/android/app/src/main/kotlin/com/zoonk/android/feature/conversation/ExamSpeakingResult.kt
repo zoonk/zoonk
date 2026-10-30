@@ -34,6 +34,7 @@ import com.zoonk.android.data.recode
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.Readout
+import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.api.models.ExamSpeakingFeedback
@@ -57,7 +58,6 @@ internal class ResultActions(
 /** A result's steps one at a time, with what the last one offers under it. */
 @Composable
 private fun ResultSteps(
-    title: String,
     steps: List<@Composable ColumnScope.() -> Unit>,
     actions: ResultActions,
     nextLabel: String?,
@@ -67,11 +67,13 @@ private fun ResultSteps(
     var index by rememberSaveable { mutableIntStateOf(0) }
     val shown = index.coerceIn(0, steps.lastIndex)
     CallFrame(
-        title = title,
+        title = { StepDots(steps.size, shown) },
         onClose = actions.onClose,
         bottomBar = {
-            StepPagerActions(steps.size, shown, onIndexChange = { index = it }) {
-                Button(onClick = actions.nextTask ?: actions.onContinue) { Text(nextLabel ?: stringResource(R.string.steps_continue)) }
+            StepPagerActions(steps.size, shown, onIndexChange = { index = it }) { main ->
+                Button(onClick = actions.nextTask ?: actions.onContinue, modifier = main) {
+                    Text(nextLabel ?: stringResource(R.string.steps_continue))
+                }
             }
         },
     ) {
@@ -119,7 +121,6 @@ internal fun ExamSpeakingResult(
         }
     val next = task.nextTask
     ResultSteps(
-        title = examTaskTitle(task),
         steps = steps,
         actions = actions,
         nextLabel =
@@ -388,7 +389,6 @@ internal fun SpeakingMockResult(
             null -> null
         }
     val focus = feedback?.criteria?.firstOrNull { it.criterion == feedback.focus }
-    val title = conversationTitle(conversation)
     val steps =
         buildList<@Composable ColumnScope.() -> Unit> {
             if (feedback == null) {
@@ -469,7 +469,7 @@ internal fun SpeakingMockResult(
             }
             focus?.let { add { FocusStep(mockCriterionName(it.criterion), null, it.evidence, it.tip, conversation.targetLanguage) } }
         }
-    ResultSteps(title = title, steps = steps, actions = actions, nextLabel = null, dayMoment = dayMoment) {
+    ResultSteps(steps = steps, actions = actions, nextLabel = null, dayMoment = dayMoment) {
         actions.onTryAgain?.let { TextButton(onClick = it) { Text(stringResource(R.string.conversation_try_another_mock)) } }
         if (feedback != null && feedback.criteria.isNotEmpty()) {
             EveryCriterion(

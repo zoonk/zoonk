@@ -58,6 +58,7 @@ import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
+import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.currentLocale
@@ -154,13 +155,10 @@ internal fun Logbook(
 
     TaskScaffold(
         onClose = onClose,
+        title = { StepDots(steps.size, index) },
         bottomBar = {
-            StepPagerActions(
-                steps.size,
-                index,
-                onIndexChange = { index = it },
-            ) {
-                Button(onClick = onStart) { Text(stringResource(R.string.recap_lets_go)) }
+            StepPagerActions(steps.size, index, onIndexChange = { index = it }) { main ->
+                Button(onClick = onStart, modifier = main) { Text(stringResource(R.string.recap_lets_go)) }
             }
         },
     ) { padding ->

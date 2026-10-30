@@ -52,7 +52,6 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.practice.ActionBarWidth
 import com.zoonk.android.feature.practice.ActionColumn
-import com.zoonk.android.feature.practice.ActionFlow
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ChoiceQuestionsRun
 import com.zoonk.android.feature.practice.RunIntro
@@ -78,6 +77,7 @@ import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.scaffold.ActionFlow
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlinx.coroutines.launch
@@ -315,8 +315,12 @@ internal fun FocusTestResult(
                                 if (shown == 0) leftFirst = true
                                 index = it
                             },
-                            dots = false,
-                        ) { Button(onClick = { navigator.showRoot(AppTab.Plan) }) { Text(stringResource(R.string.focustest_see_plan)) } }
+                        ) { main ->
+                            Button(
+                                onClick = { navigator.showRoot(AppTab.Plan) },
+                                modifier = main,
+                            ) { Text(stringResource(R.string.focustest_see_plan)) }
+                        }
                         if (canUndo && shown == count - 1) UndoAction(ui.undo, viewModel::undo)
                     }
                 }

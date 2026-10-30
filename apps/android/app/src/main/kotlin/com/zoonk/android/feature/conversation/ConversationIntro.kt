@@ -53,7 +53,7 @@ internal fun CallIntro(
     }
 
     CallFrame(
-        title = conversationTitle(conversation),
+        title = { CallTitle(conversationTitle(conversation)) },
         onClose = onClose,
         bottomBar = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {

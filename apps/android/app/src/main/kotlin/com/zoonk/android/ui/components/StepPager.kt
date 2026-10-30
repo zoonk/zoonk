@@ -3,10 +3,8 @@ package com.zoonk.android.ui.components
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -21,41 +19,33 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.scaffold.ActionFlow
 
 /**
- * Main's `Steps`: a few steps one at a time, with back (a button and the system's back) and next,
- * and the last step's own action in place of next. Back from the first step leaves as the screen does.
- * Without [dots], the screen shows [StepDots] itself, as main does in its header.
+ * Main's `Steps`: a few steps one at a time, with back (a button and the system's back) and Continue,
+ * and the last step's own action in place of Continue, each the bar's main action. The screen shows
+ * [StepDots] in its top bar. Back from the first step leaves as the screen does.
  */
 @Composable
 fun StepPagerActions(
     count: Int,
     index: Int,
     onIndexChange: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-    dots: Boolean = true,
-    finalAction: @Composable () -> Unit,
+    finalAction: @Composable FlowRowScope.(main: Modifier) -> Unit,
 ) {
     BackHandler(enabled = index > 0) { onIndexChange(index - 1) }
 
-    // The dots stay centered on the bar whether or not there's a step to go back to.
-    Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        if (dots) StepDots(count, index)
-
-        // Back is measured first, so a long last action wraps beside it instead of covering it, and
-        // stays level with the action's last line.
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Bottom) {
-            if (index > 0) {
-                OutlinedIconButton(onClick = { onIndexChange(index - 1) }) {
-                    Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.navigation_back))
-                }
+    ActionFlow { main ->
+        if (index > 0) {
+            // Level with the action's last line when its label wraps at a large font.
+            OutlinedIconButton(onClick = { onIndexChange(index - 1) }, Modifier.align(Alignment.Bottom)) {
+                Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.navigation_back))
             }
-            Spacer(Modifier.weight(1f))
-            if (index < count - 1) {
-                Button(onClick = { onIndexChange(index + 1) }) { Text(stringResource(R.string.steps_continue)) }
-            } else {
-                finalAction()
-            }
+        }
+        if (index < count - 1) {
+            Button(onClick = { onIndexChange(index + 1) }, modifier = main) { Text(stringResource(R.string.steps_continue)) }
+        } else {
+            finalAction(main)
         }
     }
 }

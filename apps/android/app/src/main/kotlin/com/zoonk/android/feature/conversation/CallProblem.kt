@@ -181,7 +181,7 @@ private fun Problem(
     actions: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    CallFrame(title = title, onClose = onClose, bottomBar = actions) {
+    CallFrame(title = { CallTitle(title) }, onClose = onClose, bottomBar = actions) {
         item(key = "problem") { Box(Modifier.callItem()) { content() } }
     }
 }
@@ -207,7 +207,7 @@ internal fun SavingCall(
                 slow -> R.string.conversation_writing_feedback_slow
                 else -> R.string.conversation_writing_feedback
             }
-        CallFrame(title = title, onClose = onClose) {
+        CallFrame(title = { CallTitle(title) }, onClose = onClose) {
             item(key = "saving") {
                 Row(
                     Modifier.callItem().semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
@@ -227,7 +227,7 @@ internal fun SavingCall(
     }
 
     val message = if (save == CallSave.Closing) R.string.conversation_still_closing else R.string.conversation_save_failed
-    CallFrame(title = title, onClose = onClose, bottomBar = {
+    CallFrame(title = { CallTitle(title) }, onClose = onClose, bottomBar = {
         Button(onClick = onRetry, modifier = Modifier.barAction()) { Text(stringResource(R.string.conversation_try_again)) }
     }) {
         item(key = "failed") {

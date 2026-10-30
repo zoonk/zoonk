@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -76,7 +75,6 @@ import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.feature.player.leaveTaskFor
 import com.zoonk.android.feature.practice.ActionBarWidth
 import com.zoonk.android.feature.practice.ActionColumn
-import com.zoonk.android.feature.practice.ActionFlow
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
@@ -97,6 +95,7 @@ import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.stepHeading
+import com.zoonk.android.ui.scaffold.ActionFlow
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -501,16 +500,15 @@ internal fun EssayGradeSteps(
             bottomBar = {
                 ActionBarWidth {
                     ActionColumn {
-                        StepPagerActions(count, shown, onIndexChange = { index = it }, dots = false) {
-                            FlowRow(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                OutlinedButton(onClick = viewModel::finish, enabled = !finishing) {
-                                    Text(stringResource(R.string.essay_skip_rewrite))
-                                }
-                                Button(onClick = viewModel::rewrite, enabled = !finished) { Text(stringResource(R.string.essay_rewrite)) }
+                        StepPagerActions(count, shown, onIndexChange = { index = it }) { main ->
+                            OutlinedButton(onClick = viewModel::finish, enabled = !finishing) {
+                                Text(stringResource(R.string.essay_skip_rewrite))
                             }
+                            Button(
+                                onClick = viewModel::rewrite,
+                                enabled = !finished,
+                                modifier = main,
+                            ) { Text(stringResource(R.string.essay_rewrite)) }
                         }
                         if (shown == count - 1) {
                             if (finishFailed && !finishing) {

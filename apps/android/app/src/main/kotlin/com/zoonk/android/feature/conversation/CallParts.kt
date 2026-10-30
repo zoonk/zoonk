@@ -71,7 +71,7 @@ private val AVATAR_MIN = 40.dp
  */
 @Composable
 internal fun CallFrame(
-    title: String,
+    title: @Composable () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
@@ -84,7 +84,7 @@ internal fun CallFrame(
     TaskScaffold(
         onClose = onClose,
         modifier = modifier,
-        title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        title = title,
         exitConfirmation = exitConfirmation,
         bottomBar =
             bottomBar?.let { bar ->
@@ -108,6 +108,11 @@ internal fun CallFrame(
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) { content(beside) }
     }
+}
+
+@Composable
+internal fun CallTitle(text: String) {
+    Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
 }
 
 /** Whether the bar is on a wide window, where its main action keeps its own width. */
