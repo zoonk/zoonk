@@ -54,6 +54,7 @@
   "plan_challenge_after_previous": "c03dcef57b7b796243445154a9944e5420e1d07017f6e0940ce963e2a2b9857e",
   "plan_challenge_left_out": "eaeae6beb8b972a1999cfe1ecb46a589aa8abdfc9aa80d708a86d63259dbc686",
   "plan_challenge_next_session": "d62981cd9b04a5abb80b1048ab2ac5e203343594b743c0634942bde32ae2bd03",
+  "plan_challenge_opens_after_lessons": "85b68ca3344f846fdbd0513abdacec373d2ccff172bb34d7da85f399abac8f38",
   "plan_challenge_won": "e05a81fdc3ff80ac5b6abe8bf01262965b2aef9c6d6bc1a3e4e1a7153071e7d6",
   "plan_change_about_more_fit": "cc2aecfa5e07c701f1615e511c3e52b82a7a55545a1f50eeea81927bd9e8a63f",
   "plan_change_about_more_lessons": "b857d87cac7b5218e53ca4c602f8353706793425906a736a6084987dcdf2b11c",
@@ -689,6 +690,7 @@
     <string name="plan_challenge_won">Ganado</string>
     <string name="plan_challenge_next_session">En tu próxima sesión</string>
     <string name="plan_challenge_after_previous">Después del desafío anterior</string>
+    <string name="plan_challenge_opens_after_lessons">Se abre al terminar las lecciones de esta fase</string>
     <string name="plan_mock_next_sitting">Simulacro para la próxima convocatoria</string>
     <plurals name="plan_mock_exams_count">
         <item quantity="one">%d simulacro</item>

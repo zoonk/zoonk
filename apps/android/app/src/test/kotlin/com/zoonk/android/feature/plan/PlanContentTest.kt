@@ -2,12 +2,19 @@ package com.zoonk.android.feature.plan
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.getBoundsInRoot
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasScrollToKeyAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -118,6 +125,39 @@ class PlanContentTest {
         compose.onNodeWithText("Flask").performClick()
 
         assertEquals(listOf(FarTopic(UUID.fromString(FAR_SKILL), "Flask", null, LocalDate(2026, 11, 11))), farTopics)
+    }
+
+    @Test
+    fun theUpNextChapterUnderItsPhaseIsHighlightedAcrossThePath() {
+        show()
+
+        val page = compose.onRoot().getBoundsInRoot()
+        val row = compose.onAllNodes(hasText("Dictionaries") and hasClickAction()).onFirst().getBoundsInRoot()
+        assertEquals(page.left, row.left)
+        assertEquals(page.right, row.right)
+    }
+
+    @Test
+    fun aPhaseChallengeSaysWhenItOpensUntilItCanBeOpened() {
+        show()
+
+        compose.onAllNodesWithText("Opens after this phase's lessons").onFirst().assertIsDisplayed()
+    }
+
+    @Test
+    fun aPhaseChallengeThatCanBeOpenedSaysNothingMore() {
+        val plan = learnPlan()
+        show(
+            plan =
+                plan.copy(
+                    phases =
+                        plan.phases.map { phase ->
+                            phase.copy(checkpoint = phase.checkpoint?.copy(planItemId = UUID.fromString(CHECKPOINT_ITEM)))
+                        },
+                ),
+        )
+
+        compose.onAllNodesWithText("Opens after this phase's lessons").assertCountEquals(0)
     }
 
     @Test

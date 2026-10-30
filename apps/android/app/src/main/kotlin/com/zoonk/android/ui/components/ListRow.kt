@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -37,7 +38,8 @@ import com.zoonk.android.ui.theme.withTabularFigures
  * Material's list item, as every list draws its rows: [highlighted] is the learner's place, and a row
  * with [expanded] opens what's under it, TalkBack hearing whether it's open after [stateDescription].
  * [meta] (numbers, a date, the Plus mark) ends the headline and moves under it when the words would
- * get too little room. Rows reach the list's edges and inset their own content.
+ * get too little room. Rows reach the list's edges and inset their own content; a nested row moves its
+ * mark and words in by [indent], so its highlight still spans the list.
  */
 @Composable
 fun ListRow(
@@ -46,6 +48,7 @@ fun ListRow(
     onClick: (() -> Unit)? = null,
     enabled: Boolean = true,
     highlighted: Boolean = false,
+    indent: Dp = 0.dp,
     expanded: Boolean? = null,
     stateDescription: String? = null,
     leading: (@Composable () -> Unit)? = null,
@@ -89,7 +92,15 @@ fun ListRow(
                         if (expanded) collapse(action = toggle) else expand(action = toggle)
                     }
                 },
-        leadingContent = leading?.let { { Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { it() } } },
+        leadingContent =
+            leading?.let {
+                {
+                    Box(
+                        Modifier.padding(start = indent).size(markSize()),
+                        contentAlignment = Alignment.Center,
+                    ) { it() }
+                }
+            },
         supportingContent = supporting,
         trailingContent =
             expanded?.let {

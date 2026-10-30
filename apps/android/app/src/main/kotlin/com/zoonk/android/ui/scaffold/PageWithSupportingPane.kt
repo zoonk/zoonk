@@ -20,17 +20,20 @@ import androidx.window.core.layout.WindowSizeClass
  * A page with what helps with it beside it where there's room (main's page aside and task aside):
  * Material's supporting-pane scaffold, which keeps both panes off a fold's hinge. Where only one
  * pane fits, [mainPane] is told so (`supportingPaneBeside` false) and shows the supporting content
- * its own way, below its content or in a sheet, as main does under `lg`.
+ * its own way, below its content or in a sheet, as main does under `lg`. With [panesTouch], the panes
+ * meet without Material's room between them, for an aside that starts with its own hairline, so the
+ * page's lists reach that hairline as they reach the window's edge.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun PageWithSupportingPane(
     supportingPane: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    panesTouch: Boolean = false,
     mainPane: @Composable (supportingPaneBeside: Boolean) -> Unit,
 ) {
     BoxWithConstraints(modifier) {
-        val navigator = rememberSupportingPaneScaffoldNavigator(scaffoldDirective = paneDirective(maxWidth))
+        val navigator = rememberSupportingPaneScaffoldNavigator(scaffoldDirective = paneDirective(maxWidth, panesTouch))
         val supportingPaneBeside = navigator.scaffoldValue[SupportingPaneScaffoldRole.Supporting] == PaneAdaptedValue.Expanded
 
         SupportingPaneScaffold(
@@ -49,7 +52,10 @@ fun supportingPaneBeside(width: Dp): Boolean = paneDirective(width).maxHorizonta
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-private fun paneDirective(width: Dp): PaneScaffoldDirective {
+private fun paneDirective(
+    width: Dp,
+    panesTouch: Boolean = false,
+): PaneScaffoldDirective {
     // Material reads the window, but a rail or drawer beside the page can leave it a phone's width,
     // as on an unfolded foldable. Its default also lays the aside under the page on tall windows.
     val window = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
@@ -58,7 +64,7 @@ private fun paneDirective(width: Dp): PaneScaffoldDirective {
     // and `copy()` turns that back on, so the directive is built whole.
     return PaneScaffoldDirective(
         maxHorizontalPartitions = if (roomForTwo) window.maxHorizontalPartitions else 1,
-        horizontalPartitionSpacerSize = window.horizontalPartitionSpacerSize,
+        horizontalPartitionSpacerSize = if (panesTouch) 0.dp else window.horizontalPartitionSpacerSize,
         maxVerticalPartitions = 1,
         verticalPartitionSpacerSize = window.verticalPartitionSpacerSize,
         defaultPanePreferredWidth = window.defaultPanePreferredWidth,

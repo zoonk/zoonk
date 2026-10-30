@@ -392,6 +392,7 @@ internal fun PlanContent(
             main(false)
         } else {
             PageWithSupportingPane(
+                panesTouch = true,
                 supportingPane = {
                     Row {
                         VerticalDivider()

@@ -54,6 +54,7 @@
   "plan_challenge_after_previous": "1c13aff758dfe773e6c369ed58770ca680aae37f87fb05760827a50e54d2748d",
   "plan_challenge_left_out": "4a5553ade8265200ec104539b9bd28773e62deba0df32490597cc8b2bfa495d2",
   "plan_challenge_next_session": "f6d750f467203daafe273267ce6b4f39aa1f607fba79dc5591feb8ed42031574",
+  "plan_challenge_opens_after_lessons": "07780a474902a1457285dc7639049e27779c703aa214fc3173701c54bd2856ae",
   "plan_challenge_won": "8c5790dc42fc8970a5d979cd6552f58523228a1cf96fb88372bd8673d846d843",
   "plan_change_about_more_fit": "503e58256eefcb948dca0a6753df3a9a852d6718f98e3c5c8f3262e4df0e5c4f",
   "plan_change_about_more_lessons": "27675525e84b66eabf4b576e8e2189d9dffaba3838ad023d04b45eba81e91ca7",
@@ -679,6 +680,7 @@
     <string name="plan_challenge_won">Gewonnen</string>
     <string name="plan_challenge_next_session">In deiner nächsten Lerneinheit</string>
     <string name="plan_challenge_after_previous">Nach der vorherigen Herausforderung</string>
+    <string name="plan_challenge_opens_after_lessons">Nach den Lektionen dieser Phase verfügbar</string>
     <string name="plan_mock_next_sitting">Probeprüfung für den nächsten Prüfungstermin</string>
     <plurals name="plan_mock_exams_count">
         <item quantity="one">%d Probeprüfung</item>

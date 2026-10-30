@@ -850,6 +850,13 @@ internal fun LazyListScope.subjectMatrix(matrix: List<String>) {
                         )
                     },
                     onClick = { showAll = true },
+                    leading = {
+                        Icon(
+                            painterResource(R.drawable.ic_add),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    },
                 )
             }
         }

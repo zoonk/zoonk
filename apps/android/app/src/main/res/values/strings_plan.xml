@@ -139,6 +139,7 @@
     <string name="plan_challenge_won">Won</string>
     <string name="plan_challenge_next_session">In your next session</string>
     <string name="plan_challenge_after_previous">After the challenge before it</string>
+    <string name="plan_challenge_opens_after_lessons">Opens after this phase\'s lessons</string>
     <string name="plan_mock_next_sitting">Mock exam for the next sitting</string>
     <plurals name="plan_mock_exams_count">
         <item quantity="one">%d mock exam</item>

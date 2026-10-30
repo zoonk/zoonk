@@ -30,6 +30,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.PlusMark
@@ -110,7 +111,7 @@ private fun PhaseItem(
 ) {
     val name = phaseName(phase, page.mocksRequirePlus)
     val own = phase.ownChapter(name)
-    val nested = Modifier.padding(start = listRowWordsStart() - LIST_ITEM_INSET)
+    val nested = listRowWordsStart() - LIST_ITEM_INSET
 
     if (own != null) {
         val chapterId = own.chapterId.toString()
@@ -126,10 +127,8 @@ private fun PhaseItem(
                 nextChapter = own.takeIf { isNext },
             )
             if (open) {
-                Column(nested) {
-                    phase.checkpoint?.let { CheckpointRow(page, it, links) }
-                    WritingAheadLine(phase.chapters, unit = page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE)
-                }
+                phase.checkpoint?.let { CheckpointRow(page, it, links, indent = nested) }
+                WritingAheadLine(phase.chapters, unit = page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE, indent = nested)
             }
         }
         return
@@ -147,11 +146,7 @@ private fun PhaseItem(
 
     Column {
         PhaseRow(page, phase, isLast, open, onClick = { expanded = !expanded }, expanded = expanded, byPlace = byPlace && expanded)
-        if (expanded) {
-            Column(nested) {
-                PhaseChapters(page, phase.chapters, phase.checkpoint, links)
-            }
-        }
+        if (expanded) PhaseChapters(page, phase.chapters, phase.checkpoint, links, indent = nested)
     }
 }
 
@@ -360,6 +355,7 @@ internal fun PhaseChapters(
     chapters: List<PlanPhaseChaptersInner>,
     checkpoint: PlanPhaseCheckpoint?,
     links: PlanLinks,
+    indent: Dp = 0.dp,
 ) {
     var showAll by rememberSaveable { mutableStateOf(false) }
     val rows = chapters.filterNot { it.isWritingAhead }
@@ -368,7 +364,7 @@ internal fun PhaseChapters(
     val shown = if (showAll) rows else rows.slice(window)
 
     Column {
-        shown.forEach { ChapterRow(it, links) }
+        shown.forEach { ChapterRow(it, links, indent) }
         if (hidden > 0) {
             ListRow(
                 headline = {
@@ -383,11 +379,12 @@ internal fun PhaseChapters(
                     )
                 },
                 onClick = { showAll = !showAll },
+                indent = indent,
                 leading = { Icon(painterResource(if (showAll) R.drawable.ic_remove else R.drawable.ic_add), contentDescription = null) },
             )
         }
-        checkpoint?.let { CheckpointRow(page, it, links) }
-        WritingAheadLine(chapters)
+        checkpoint?.let { CheckpointRow(page, it, links, indent) }
+        WritingAheadLine(chapters, indent = indent)
     }
 }
 
@@ -395,6 +392,7 @@ internal fun PhaseChapters(
 private fun ChapterRow(
     chapter: PlanPhaseChaptersInner,
     links: PlanLinks,
+    indent: Dp,
 ) {
     val isNext = chapter.state == PlanPhaseChaptersInner.State.CURRENT
     val chapterId = chapter.chapterId?.toString()
@@ -424,6 +422,7 @@ private fun ChapterRow(
                 else -> null
             },
         highlighted = isNext && opensChapter,
+        indent = indent,
         leading = { ChapterMark(chapter, isNext) },
         supporting = line?.let { { Text(it) } },
         meta =
@@ -440,6 +439,7 @@ private fun ChapterRow(
 internal fun WritingAheadLine(
     chapters: List<PlanPhaseChaptersInner>,
     unit: Boolean = false,
+    indent: Dp = 0.dp,
 ) {
     val writing = chapters.filter { it.isWritingAhead }
     if (writing.isEmpty()) return
@@ -452,7 +452,7 @@ internal fun WritingAheadLine(
         }
     Text(
         text = text,
-        modifier = Modifier.padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp),
+        modifier = Modifier.padding(start = listRowWordsStart() + indent, top = 8.dp, end = LIST_ITEM_INSET, bottom = 8.dp),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
@@ -463,6 +463,7 @@ internal fun CheckpointRow(
     page: PlanPageState,
     checkpoint: PlanPhaseCheckpoint,
     links: PlanLinks,
+    indent: Dp = 0.dp,
 ) {
     val done = checkpoint.state == PlanPhaseCheckpoint.State.DONE
     // A locked one is never in a session, so it keeps its planned day.
@@ -486,7 +487,9 @@ internal fun CheckpointRow(
             )
         },
         onClick = planItemId?.let { { links.challenge(it) } },
+        indent = indent,
         leading = { Trickster(Modifier.size(markSize())) },
+        supporting = if (planItemId == null && !done) ({ Text(stringResource(R.string.plan_challenge_opens_after_lessons)) }) else null,
         meta =
             if (checkpoint.locked || trailing != null) {
                 {
@@ -642,13 +645,17 @@ internal fun ColumnScope.PhaseDetails(
         )
     }
 
-    if (learn) {
-        PhaseChapters(page, phase.chapters, phase.checkpoint, links)
-    } else {
-        Column {
+    Column(Modifier.bleed(LIST_ITEM_INSET)) {
+        if (learn) {
+            PhaseChapters(page, phase.chapters, phase.checkpoint, links)
+        } else {
             phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links) }
             if (phase.mocks.nextDate == null && phase.mocks.count > 0) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     MetaLine(pluralStringResource(R.plurals.plan_mock_exams_count, phase.mocks.count.toInt(), phase.mocks.count.toInt()))
                     if (page.mocksRequirePlus) PlusMark()
                 }
