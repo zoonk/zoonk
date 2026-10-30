@@ -1,7 +1,7 @@
 {
   "blockId": null,
   "call": null,
-  "canMove": true,
+  "canMove": false,
   "dailyLimitReached": false,
   "date": "2026-10-29",
   "estimatedMinutes": 12,

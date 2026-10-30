@@ -28,11 +28,10 @@ fun MomentAfterCeremony(
     moment: @Composable (MomentBuddy) -> Unit,
 ) {
     var closed by rememberSaveable(milestone?.id) { mutableStateOf(false) }
-    if (milestone != null && !closed) {
-        SessionCeremony(app, milestone, onClose = { closed = true })
-        return
-    }
-    moment(momentBuddy(app))
+    val open = milestone?.takeUnless { closed }
+    open?.let { SessionCeremony(app, it, onClose = { closed = true }) }
+    // A badge only gets marked shown, so its moment is already there under it.
+    if (open == null || open.kind == Milestone.Kind.BADGE) moment(momentBuddy(app))
 }
 
 @Composable

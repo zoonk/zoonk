@@ -93,11 +93,11 @@
     <string name="challenge_not_ready">This challenge isn\'t ready yet.</string>
     <string name="challenge_next_session">In your next session</string>
     <string name="challenge_used_up">You\'ve reached today\'s study time.</string>
-    <string name="challenge_used_up_move">You\'ve reached today\'s study time. Move it to Monday to keep it.</string>
-    <string name="challenge_used_up_next_session">You\'ve reached today\'s study time. It\'ll be in your next session.</string>
-    <string name="challenge_used_up_tomorrow">You\'ve reached today\'s study time. It\'ll be here tomorrow.</string>
+    <string name="challenge_used_up_move">You\'ve reached today\'s study time. Move the challenge to Monday to keep it.</string>
+    <string name="challenge_used_up_next_session">You\'ve reached today\'s study time. The challenge will be in your next session.</string>
+    <string name="challenge_used_up_tomorrow">You\'ve reached today\'s study time. The challenge will be here tomorrow.</string>
     <!-- %1$s is a weekday, like Monday. -->
-    <string name="challenge_used_up_on">You\'ve reached today\'s study time. It\'ll be here on %1$s.</string>
+    <string name="challenge_used_up_on">You\'ve reached today\'s study time. The challenge will be here on %1$s.</string>
     <string name="challenge_back_to_today">Back to Today</string>
 
     <string name="challenge_move">Move to Monday</string>
@@ -108,7 +108,7 @@
     <string name="challenge_move_before_monday">A weekly challenge or mock exam can move only to a day on or after next Monday. It stays where it is.</string>
     <string name="challenge_move_collision">That day already has a weekly challenge or mock exam, so this one stays where it is.</string>
     <string name="challenge_move_no_room">Your plan can\'t make room for this challenge on Monday. It stays where it is.</string>
-    <!-- %1$s is the mock's length; %2$s the day, like Nov 3. -->
+    <!-- %1$s is the mock's length, like 5 hr, describing the mock as in "a 5-hour mock exam"; %2$s is the day it would move to, like Nov 3 ("on Nov 3"). -->
     <string name="challenge_move_unfunded">Your plan can\'t make room for this %1$s mock exam on %2$s. It stays where it is.</string>
     <string name="challenge_change_failed">That didn\'t save. Try again.</string>
 </resources>

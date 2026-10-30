@@ -177,12 +177,7 @@ internal fun RunFinished(
         onClose = onClose,
         bottomBar = {
             ActionBarWidth {
-                ActionFlow { width ->
-                    Button(onClick = onClose, enabled = !saving, modifier = width) {
-                        if (saving) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
-                        Text(action)
-                    }
-                }
+                ActionFlow { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
             }
         },
     ) { padding -> RunDone(title, saving, Modifier.fillMaxSize().padding(padding), detail, content) }
@@ -243,10 +238,17 @@ internal fun BusyButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier) {
-        if (busy) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(16.dp), color = LocalContentColor.current, strokeWidth = 2.dp)
-        Text(label)
-    }
+    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier) { BusyLabel(label, busy) }
+}
+
+/** Any button's label, with a spinner while its write is on its way. */
+@Composable
+internal fun BusyLabel(
+    label: String,
+    busy: Boolean,
+) {
+    if (busy) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(16.dp), color = LocalContentColor.current, strokeWidth = 2.dp)
+    Text(label)
 }
 
 /** [onRetry] sends the same answer again: the only way to resend an "I don't know" or a time-up answer. */

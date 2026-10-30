@@ -43,6 +43,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -62,6 +63,7 @@ import com.zoonk.android.feature.practice.ActionBarWidth
 import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.ActionFlow
 import com.zoonk.android.feature.practice.BusyButton
+import com.zoonk.android.feature.practice.BusyLabel
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunNotFound
@@ -73,7 +75,10 @@ import com.zoonk.android.ui.characters.TricksterArt
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TitleAndMeta
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -111,9 +116,19 @@ fun ChallengeScreen(
     }
     val viewModel =
         viewModel(key = "challenge:$planItemId:${signedIn.localId}") {
-            ChallengeViewModel(planItemId, route.sessionId, app.challenges, LiveGenerationSource(app.api, signedIn))
+            ChallengeViewModel(
+                planItemId,
+                route.sessionId,
+                app.challenges,
+                LiveGenerationSource(app.api, signedIn),
+                createSavedStateHandle(),
+            )
         }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
+    if (ui.moved != null) {
+        ChallengeMoved(ui, viewModel, navigator)
+        return
+    }
     val loaded by app.challenges.challenges[ui.planItemId].collectShown()
     val scope = rememberCoroutineScope()
 
@@ -144,20 +159,27 @@ fun ChallengeScreen(
 
         is LoadState.Failed -> {
             if (read.error == ApiError.NotFound) {
-                RunNotFound(navigator::closeTask)
+                ToToday(navigator)
             } else {
                 RunLoadFailed(navigator::closeTask, onRetry = { scope.launch { app.challenges.challenges[ui.planItemId].refresh() } })
             }
         }
 
         LoadState.Empty -> {
-            RunNotFound(navigator::closeTask)
+            ToToday(navigator)
         }
 
         else -> {
             RunLoading(navigator::closeTask)
         }
     }
+}
+
+/** As main does, a challenge that isn't there, like one a move replaced, opens Today. */
+@Composable
+private fun ToToday(navigator: AppNavigator) {
+    LaunchedEffect(Unit) { navigator.showRoot(AppTab.Today) }
+    RunLoading(navigator::closeTask)
 }
 
 @Composable
@@ -169,11 +191,7 @@ internal fun ChallengeView(
     sessionId: String?,
 ) {
     val actions = remember(viewModel, navigator, sessionId) { ChallengeActions(viewModel, navigator, sessionId) }
-    when {
-        ui.moved != null -> MovedScreen(ui, actions)
-        ui.writing -> WritingScreen(viewModel, navigator::closeTask)
-        else -> IntroScreen(challenge, ui, actions)
-    }
+    if (ui.writing) WritingScreen(viewModel, navigator::closeTask) else IntroScreen(challenge, ui, actions)
 }
 
 private class ChallengeActions(
@@ -232,46 +250,51 @@ private fun WritingScreen(
     }
 }
 
+/** Shown as soon as the move is saved: it needs nothing from the moved challenge's read. */
 @Composable
-private fun MovedScreen(
+internal fun ChallengeMoved(
     ui: ChallengeUi,
-    actions: ChallengeActions,
+    viewModel: ChallengeViewModel,
+    navigator: AppNavigator,
 ) {
     val moved = ui.moved ?: return
     val day = formatDate(moved.date.toJavaLocalDate(), currentLocale(), DateStyle.WeekdayDay)
     TaskScaffold(
-        onClose = actions::close,
+        onClose = navigator::closeTask,
         bottomBar = {
             ActionBarWidth {
                 ActionColumn {
                     MoveFailed(ui)
                     ActionFlow { width ->
-                        OutlinedButton(
-                            onClick = actions.viewModel::undoMove,
-                            enabled = !ui.moving,
-                        ) { Text(stringResource(R.string.challenge_undo)) }
-                        Button(onClick = actions::toToday, modifier = width) { Text(stringResource(R.string.challenge_back_to_today)) }
+                        OutlinedButton(onClick = viewModel::undoMove, enabled = !ui.moving) {
+                            BusyLabel(stringResource(R.string.challenge_undo), ui.moving)
+                        }
+                        Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
+                            Text(stringResource(R.string.challenge_back_to_today))
+                        }
                     }
                 }
             }
         },
     ) { padding ->
         CenteredColumn(Modifier.padding(padding)) {
-            Text(
-                stringResource(R.string.challenge_moved_title, day),
-                modifier =
-                    Modifier.semantics {
-                        heading()
-                        liveRegion = LiveRegionMode.Polite
-                    },
-                style = MaterialTheme.typography.headlineSmall,
-            )
-            val leftOut = moved.effect?.takeIf { it.lessonsRemoved > 0 }?.let { lessonsText(it) }
-            Text(
-                listOfNotNull(stringResource(R.string.challenge_moved_detail), leftOut).joinToString(" "),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyLarge,
-            )
+            // Read out whole, as main's status card is: where it went and what that left out.
+            Column(
+                Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    stringResource(R.string.challenge_moved_title, day),
+                    modifier = Modifier.semantics { heading() },
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                val leftOut = moved.effect?.takeIf { it.lessonsRemoved > 0 }?.let { lessonsText(it) }
+                Text(
+                    listOfNotNull(stringResource(R.string.challenge_moved_detail), leftOut).joinToString(" "),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
         }
     }
 }
@@ -306,6 +329,8 @@ private fun IntroScreen(
                 CenteredColumn(Modifier.weight(1f)) {
                     Intro(challenge)
                     if (!wide) aside?.content?.invoke(true)
+                    // A card this size scrolls with the intro; the bar under it keeps only its action.
+                    if (plusRequired(challenge, ui)) PlusRequiredNotice(challenge)
                 }
                 if (wide && aside != null) {
                     VerticalDivider()
@@ -313,7 +338,7 @@ private fun IntroScreen(
                         Modifier.width(ASIDE_WIDTH).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        Text(aside.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+                        SectionHeader(aside.title)
                         aside.content(false)
                     }
                 }
@@ -342,7 +367,7 @@ private fun asideFor(challenge: Challenge): Aside? {
                 val title = stringResource(R.string.challenge_call_goals_title)
                 Aside(title) { titled ->
                     Column {
-                        if (titled) SectionTitle(title)
+                        if (titled) SectionHeader(title)
                         goals.forEach { goal ->
                             ChecklistRow(buildAnnotatedString { append(goal.label) }, done = false, description = goal.description)
                         }
@@ -546,14 +571,43 @@ private fun Facts(
     )
 }
 
+/** Main's `Callout`: a quiet note on how the challenge plays or is scored. */
 @Composable
-private fun RuleLine(text: String) {
-    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+private fun RuleLine(
+    text: String,
+    @DrawableRes icon: Int? = null,
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        icon?.let {
+            Icon(
+                painterResource(it),
+                contentDescription = null,
+                modifier = Modifier.padding(top = 2.dp).size(16.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+    }
 }
 
+/** A topic group, a mock section or a written part: its name and details, with its numbers at the end. */
 @Composable
-private fun SectionTitle(text: String) {
-    Text(text, modifier = Modifier.semantics { heading() }.padding(bottom = 4.dp), style = MaterialTheme.typography.titleSmall)
+private fun DetailRow(
+    title: String,
+    meta: String?,
+    details: List<String> = emptyList(),
+) {
+    ListRow(end = {}) {
+        TitleAndMeta(
+            modifier = Modifier.weight(1f),
+            meta = {
+                meta?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium) }
+            },
+        ) {
+            Text(title, style = MaterialTheme.typography.bodyLarge)
+            details.forEach { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
+        }
+    }
 }
 
 /** A subject's topics on one row, or a topic without a subject on its own. */
@@ -570,28 +624,17 @@ private fun Topics(
                 if (subject == null) names.map { null to listOf(it) } else listOf(subject to names)
             }
     Column {
-        title?.let { SectionTitle(it) }
+        title?.let { SectionHeader(it) }
         rows.forEachIndexed { index, (subject, names) ->
             if (index > 0) HorizontalDivider()
-            Row(Modifier.fillMaxWidth().padding(vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(subject ?: names.first(), style = MaterialTheme.typography.bodyLarge)
-                    if (subject != null) {
-                        Text(
-                            names.joinToString(", "),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 2,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-                if (subject != null) {
-                    Text(
-                        pluralStringResource(R.plurals.challenge_topic_count, names.size, names.size),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                }
+            if (subject == null) {
+                DetailRow(names.first(), meta = null)
+            } else {
+                DetailRow(
+                    subject,
+                    meta = pluralStringResource(R.plurals.challenge_topic_count, names.size, names.size),
+                    details = listOf(names.joinToString(", ")),
+                )
             }
         }
     }
@@ -606,68 +649,37 @@ private fun MockDetails(challenge: Challenge) {
             Column {
                 challenge.sections.forEachIndexed { index, section ->
                     if (index > 0) HorizontalDivider()
-                    Row(Modifier.fillMaxWidth().padding(vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Column(Modifier.weight(1f)) {
-                            Text(
-                                section.name ?: stringResource(R.string.challenge_section_questions),
-                                style = MaterialTheme.typography.bodyLarge,
-                            )
-                            section.tools?.let {
-                                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-                            }
-                        }
-                        val count = section.questions.toInt()
-                        Text(
+                    val count = section.questions.toInt()
+                    DetailRow(
+                        section.name ?: stringResource(R.string.challenge_section_questions),
+                        meta =
                             pluralStringResource(
                                 R.plurals.challenge_section_size,
                                 count,
                                 count,
                                 formatMinutes(section.minutes.toInt(), locale),
                             ),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelMedium,
-                        )
-                    }
+                        details = listOfNotNull(section.tools),
+                    )
                 }
                 challenge.written.forEach { part ->
                     HorizontalDivider()
-                    Column(Modifier.fillMaxWidth().padding(vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Text(part.name, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-                            part.minutes?.let {
-                                Text(
-                                    formatMinutes(it.toInt(), locale),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
-                            }
-                        }
-                        Text(
-                            part.tasks.joinToString(" · ") { task ->
-                                task.count?.let { count -> "$count × ${task.description}" } ?: task.description
-                            },
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                        Text(
-                            stringResource(if (part.asked) R.string.challenge_written_asked else R.string.challenge_written_practiced),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                    }
+                    DetailRow(
+                        part.name,
+                        meta = part.minutes?.let { formatMinutes(it.toInt(), locale) },
+                        details =
+                            listOf(
+                                part.tasks.joinToString(" · ") { task ->
+                                    task.count?.let { count -> "$count × ${task.description}" } ?: task.description
+                                },
+                                stringResource(if (part.asked) R.string.challenge_written_asked else R.string.challenge_written_practiced),
+                            ),
+                    )
                 }
             }
         }
         MockLeftOutNote(challenge.leftOut.filter { it.part != MockLeftOut.Part.WRITTEN && it.part != MockLeftOut.Part.WRITTEN_IN_FULL })
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Icon(
-                painterResource(if (challenge.netScored) R.drawable.ic_balance else R.drawable.ic_visibility_off),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Text(scoringLine(challenge), style = MaterialTheme.typography.bodyMedium)
-        }
+        RuleLine(scoringLine(challenge), if (challenge.netScored) R.drawable.ic_balance else R.drawable.ic_visibility_off)
     }
 }
 
@@ -704,8 +716,10 @@ private fun ChallengeFooter(
     val ready = challenge.status == Challenge.Status.READY && challenge.waitReason == null
 
     ActionColumn {
-        if (ui.problem == StartProblem.PlusRequired || challenge.status == Challenge.Status.PLUS_REQUIRED) {
-            PlusRequiredNotice(challenge, actions)
+        if (plusRequired(challenge, ui)) {
+            ActionFlow { width ->
+                Button(onClick = actions::seePlus, modifier = width) { Text(stringResource(R.string.challenge_see_plus)) }
+            }
             return@ActionColumn
         }
         when (challenge.status) {
@@ -787,7 +801,7 @@ private fun ChallengeFooter(
             if (movable) {
                 ActionFlow { width ->
                     OutlinedButton(onClick = vm::moveToMonday, enabled = !ui.moving && !ui.starting, modifier = width) {
-                        Text(stringResource(R.string.challenge_move))
+                        BusyLabel(stringResource(R.string.challenge_move), ui.moving)
                     }
                 }
             }
@@ -815,10 +829,9 @@ private fun StartActions(
     MoveFailed(ui)
     ActionFlow { width ->
         if (movable) {
-            OutlinedButton(
-                onClick = vm::moveToMonday,
-                enabled = !ui.moving && !ui.starting,
-            ) { Text(stringResource(R.string.challenge_move)) }
+            OutlinedButton(onClick = vm::moveToMonday, enabled = !ui.moving && !ui.starting) {
+                BusyLabel(stringResource(R.string.challenge_move), ui.moving)
+            }
         }
         val label =
             when {
@@ -841,11 +854,13 @@ private fun SeeResult(
     }
 }
 
-@Composable
-private fun PlusRequiredNotice(
+private fun plusRequired(
     challenge: Challenge,
-    actions: ChallengeActions,
-) {
+    ui: ChallengeUi,
+) = ui.problem == StartProblem.PlusRequired || challenge.status == Challenge.Status.PLUS_REQUIRED
+
+@Composable
+private fun PlusRequiredNotice(challenge: Challenge) {
     when {
         challenge.mock -> {
             PlusNotice(onSeePlus = null, description = stringResource(R.string.challenge_mock_plus))
@@ -863,7 +878,6 @@ private fun PlusRequiredNotice(
             )
         }
     }
-    ActionFlow { width -> Button(onClick = actions::seePlus, modifier = width) { Text(stringResource(R.string.challenge_see_plus)) } }
 }
 
 @Composable
@@ -944,7 +958,7 @@ private fun MoveFailed(ui: ChallengeUi) {
 private fun ErrorLine(text: String) {
     Text(
         text,
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )

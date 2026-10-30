@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ANA
@@ -39,6 +40,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
@@ -108,13 +110,14 @@ class ChallengeScreenshots {
                 FakeSession(AuthenticatedSession(ANA, "token", "local")),
                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
             )
-        val viewModel = ChallengeViewModel(challenge.planItemId, null, ChallengeStore(api, cache) { "UTC" }, source)
+        val viewModel = ChallengeViewModel(challenge.planItemId, null, ChallengeStore(api, cache) { "UTC" }, source, SavedStateHandle())
         if (moved) viewModel.moveToMonday()
 
         rule.setContent {
             ZoonkTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
-                ChallengeView(challenge, ui, viewModel, rememberAppNavigator(), null)
+                val navigator = rememberAppNavigator()
+                if (ui.moved != null) ChallengeMoved(ui, viewModel, navigator) else ChallengeView(challenge, ui, viewModel, navigator, null)
             }
         }
         rule.waitForIdle()
@@ -163,7 +166,7 @@ class ChallengeScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneWeekly() = show("phone-weekly", "kind" to "weekly", "startTime" to "09:00", "date" to "2026-10-31", "passMark" to null)
+    fun phoneWeekly() = show("phone-weekly", "kind" to "weekly", "startTime" to "09:00", "canMove" to true, "passMark" to null)
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
@@ -180,11 +183,20 @@ class ChallengeScreenshots {
             "topics" to JsonArray(emptyList()),
             "passMark" to null,
             "date" to "2026-11-01",
+            "status" to "upcoming",
+            "canMove" to true,
         )
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phonePlusRequired() = show("phone-plus", "status" to "plusRequired")
+
+    @Test
+    @Config(qualifiers = "w891dp-h411dp-land-xxhdpi")
+    fun landscapePlusRequiredLargeFont() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("landscape-plus-font200", "status" to "plusRequired", "mock" to true, "topics" to JsonArray(emptyList()))
+    }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
@@ -206,5 +218,5 @@ class ChallengeScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneMoved() = show("phone-moved", moved = true)
+    fun phoneMoved() = show("phone-moved", "kind" to "weekly", "canMove" to true, moved = true)
 }

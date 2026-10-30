@@ -20,7 +20,7 @@
   "challenge_move_before_monday": "456b2f448a725db28a6b14186951917ba8ca261c5c1793238520bfcf5da691f6",
   "challenge_move_collision": "6079fabf523b2c1cde54c89f6025b9ceb72aa29ce313a716eac5e9e19854e503",
   "challenge_move_no_room": "6613182144ab45349a470f3f0ef460664031864b98d6539365a109c8895cac91",
-  "challenge_move_unfunded": "3ee5796896db1b314b3a0be44f55e31aaf155d9ab6629af9c07057e418abc411",
+  "challenge_move_unfunded": "c662b065bda626fd1561af3aff46ccf10eaba8e399059ab40598f7a67da447e8",
   "challenge_moved_detail": "b318ad7b45bf12a91e162c8cfa33230ddabcea047725c419df95f57b10e4baef",
   "challenge_moved_title": "c18fc9ff746ec8471104ffceeb54e1f497bd491a1e3a57a6fd28503701ebe4e9",
   "challenge_next_session": "8a3553454cc49828df5756b360f8edc06419b11e68dbd8b72ceca667e5f0fa92",
@@ -56,10 +56,10 @@
   "challenge_trickster_rule": "f7218d6485d4af45ad6973ae19082033d0d3808f6a99ff426476b2475c9ca902",
   "challenge_undo": "87d93eff54465f5dda3ec2338421f27583948ab28f291861528ddc11ed9026ae",
   "challenge_used_up": "d63b52e8895c96ca8660ba9255f4161bcb61f857043cb612b74c56675eb72996",
-  "challenge_used_up_move": "68454e69a6e95443f391531c545ee16ecf26a0538a1b9b5de7ab7f9a2858a1c2",
-  "challenge_used_up_next_session": "0eecb1f9e92fa6c43e4fc8ad813fbe05b7c47d9d0b8fed4610e941458dec783c",
-  "challenge_used_up_on": "43fb64594a1e08edc0268a64e78ac9fa88b8df9c892d18b6c1c5274b0596ce2c",
-  "challenge_used_up_tomorrow": "48d34268159b1e99c44fb08e17d098bb8baaaea3b7403cc0730ed5e4f108a071",
+  "challenge_used_up_move": "f869df2b7dcbc1a76a670e5b88d55d4e8f10e0a92041bf00b5be97befcb96397",
+  "challenge_used_up_next_session": "0e0620b4266b8aa888ef29dd0c9bb0d953c57730895d6b8107faf0929647be70",
+  "challenge_used_up_on": "233a7e015d46f65d20f88eb2bc66ef6a67c7a3206b486f720f1bab757e4b6a58",
+  "challenge_used_up_tomorrow": "500f994be37f374d5f26d844075fa855975002d7b23f59407e678161a71a8c8f",
   "challenge_weekly_detail": "e51bcb663229e38b3a9d64738c037b63de5a2eb95a3111c7fd37f61e30d30c89",
   "challenge_weekly_rule": "814c4de11f133eeab6126a5e4d32699ed5b262538a8ab7b7d2632062be873bb0",
   "challenge_writing": "a8c7d5787c299e63979e0880e3070af6afbcf505aaf11d08b6570153c0d9e46d",
@@ -167,11 +167,11 @@
     <string name="challenge_not_ready">Ce défi n’est pas encore prêt.</string>
     <string name="challenge_next_session">À ta prochaine séance</string>
     <string name="challenge_used_up">Tu as atteint ta durée d’étude d’aujourd’hui.</string>
-    <string name="challenge_used_up_move">Tu as atteint ta durée d’étude d’aujourd’hui. Déplace-le à lundi pour le garder.</string>
-    <string name="challenge_used_up_next_session">Tu as atteint ta durée d’étude d’aujourd’hui. Il sera dans ta prochaine séance.</string>
-    <string name="challenge_used_up_tomorrow">Tu as atteint ta durée d’étude d’aujourd’hui. Il sera là demain.</string>
+    <string name="challenge_used_up_move">Tu as atteint la durée d’étude prévue pour aujourd’hui. Décale le défi à lundi pour le garder.</string>
+    <string name="challenge_used_up_next_session">Tu as atteint la durée d’étude prévue pour aujourd’hui. Le défi sera dans ta prochaine séance.</string>
+    <string name="challenge_used_up_tomorrow">Tu as atteint la durée d’étude prévue pour aujourd’hui. Le défi sera là demain.</string>
     <!-- %1$s is a weekday, like Monday. -->
-    <string name="challenge_used_up_on">Tu as atteint ta durée d’étude d’aujourd’hui. Il sera là le %1$s.</string>
+    <string name="challenge_used_up_on">Tu as atteint la durée d’étude prévue pour aujourd’hui. Le défi sera disponible le %1$s.</string>
     <string name="challenge_back_to_today">Retour à Aujourd’hui</string>
     <string name="challenge_move">Déplacer à lundi</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
@@ -181,7 +181,7 @@
     <string name="challenge_move_before_monday">Un défi hebdomadaire ou un examen blanc peut être déplacé uniquement à partir du lundi prochain. Il reste à sa place.</string>
     <string name="challenge_move_collision">Ce jour a déjà un défi hebdomadaire ou un examen blanc, celui-ci reste donc à sa place.</string>
     <string name="challenge_move_no_room">Ton plan ne peut pas faire de place à ce défi lundi. Il reste à sa place.</string>
-    <!-- %1$s is the mock's length; %2$s the day, like Nov 3. -->
-    <string name="challenge_move_unfunded">Ton plan ne peut pas faire de place à cet examen blanc %1$s le %2$s. Il reste à sa place.</string>
+    <!-- %1$s is the mock's length, like 5 hr, describing the mock as in "a 5-hour mock exam"; %2$s is the day it would move to, like Nov 3 ("on Nov 3"). -->
+    <string name="challenge_move_unfunded">Ton plan ne peut pas faire de place à cet examen blanc (%1$s) prévu le %2$s. Il reste à sa place.</string>
     <string name="challenge_change_failed">La modification n’a pas été enregistrée. Réessaie.</string>
 </resources>
