@@ -64,15 +64,14 @@ enum PlanSlotItem: Hashable {
 struct PlanSuggestionSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
-  @State private var dismissed: Set<PlanSlotItem> = []
-  @State private var isWorking = false
 
   let context: PlanContext
 
   var body: some View {
+    let state = store.suggestionState(goalId: context.goal.id)
     let items = PlanSlotItem.items(
       plan: context.plan, isPaused: context.isPaused, isExam: context.goal.kind == .exam
-    ).filter { !dismissed.contains($0) }
+    ).filter { !state.dismissed.contains($0) }
 
     if let item = items.first {
       Section {
@@ -85,7 +84,7 @@ struct PlanSuggestionSection: View {
             comment: "The suggestion shown of the Plan's suggestions")
         }
       }
-      .disabled(isWorking)
+      .disabled(state.isWorking)
     }
   }
 
@@ -286,15 +285,18 @@ struct PlanSuggestionSection: View {
 
   private func notNow(_ item: PlanSlotItem) -> some View {
     Button {
-      dismissed.insert(item)
+      store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
+        $0.dismissed.insert(item)
+      }
     } label: {
       Text("Not now", tableName: "Plan", comment: "Puts a suggestion off")
     }
   }
 
   private func choose(_ subject: String, in choice: GoalPlan.ExamChoice) async {
-    isWorking = true
-    defer { isWorking = false }
+    let key = store.suggestionKey(goalId: context.goal.id)
+    store.setSuggestionState(key) { $0.isWorking = true }
+    defer { store.setSuggestionState(key) { $0.isWorking = false } }
 
     let goalId = context.goal.id
     let group = choice.group
@@ -308,8 +310,9 @@ struct PlanSuggestionSection: View {
   }
 
   private func applyOffer(_ offer: GoalPlan.FitOffer) async {
-    isWorking = true
-    defer { isWorking = false }
+    let key = store.suggestionKey(goalId: context.goal.id)
+    store.setSuggestionState(key) { $0.isWorking = true }
+    defer { store.setSuggestionState(key) { $0.isWorking = false } }
 
     await planEditor.change(
       offer.operations.map { .operation($0) },

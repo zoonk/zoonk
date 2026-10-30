@@ -23,11 +23,24 @@ final class PlanStore {
   @ObservationIgnored private var syllabi: [String: Resource<GoalSyllabus>] = [:]
   /// What the learner opened on a plan's path, kept above the panes a fold rebuilds.
   private var phaseDisclosures: [String: [Int: PhaseDisclosure]] = [:]
+  /// What the learner put off or set going among a plan's suggestions, kept the same way, for the
+  /// session that did it.
+  private var suggestionStates: [SuggestionKey: SuggestionState] = [:]
 
   struct PhaseDisclosure {
     /// Nil until the learner opens or closes it: the phase they're in starts open.
     var isExpanded: Bool?
     var showsAllChapters = false
+  }
+
+  struct SuggestionState {
+    var dismissed: Set<PlanSlotItem> = []
+    var isWorking = false
+  }
+
+  struct SuggestionKey: Hashable {
+    let owner: AuthenticatedSession?
+    let goalId: String
   }
 
   init(
@@ -67,6 +80,18 @@ final class PlanStore {
 
   func setPhaseDisclosure(goalId: String, phase: Int, _ change: (inout PhaseDisclosure) -> Void) {
     change(&phaseDisclosures[goalId, default: [:]][phase, default: PhaseDisclosure()])
+  }
+
+  func suggestionKey(goalId: String) -> SuggestionKey {
+    SuggestionKey(owner: cache.session.authenticatedSession, goalId: goalId)
+  }
+
+  func suggestionState(goalId: String) -> SuggestionState {
+    suggestionStates[suggestionKey(goalId: goalId)] ?? SuggestionState()
+  }
+
+  func setSuggestionState(_ key: SuggestionKey, _ change: (inout SuggestionState) -> Void) {
+    change(&suggestionStates[key, default: SuggestionState()])
   }
 
   func syllabus(goalId: String) -> Resource<GoalSyllabus> {

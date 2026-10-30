@@ -202,6 +202,23 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertNil(session.authenticatedSession)
   }
 
+  func testSuggestionStateBelongsToTheSessionThatMadeIt() {
+    let store = makeStore(api: PlanAPIStub())
+    let earlier = PlanStore.SuggestionKey(
+      owner: AuthenticatedSession(bearerToken: "earlier-session"), goalId: "goal")
+
+    store.setSuggestionState(earlier) {
+      $0.isWorking = true
+      $0.dismissed.insert(.tooTight)
+    }
+
+    XCTAssertFalse(store.suggestionState(goalId: "goal").isWorking)
+    XCTAssertEqual(store.suggestionState(goalId: "goal").dismissed, [])
+
+    store.setSuggestionState(store.suggestionKey(goalId: "goal")) { $0.dismissed.insert(.tooTight) }
+    XCTAssertEqual(store.suggestionState(goalId: "goal").dismissed, [.tooTight])
+  }
+
   private func makeStore(api: PlanAPIStub, clock: TestClock = TestClock(now: .now)) -> PlanStore {
     PlanStore(
       api: api,
