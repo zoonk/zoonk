@@ -139,13 +139,18 @@ internal fun RunDone(
 ) {
     Box(modifier.fillMaxWidth().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
         Column(
-            Modifier.widthIn(max = DONE_WIDTH).fillMaxWidth().padding(horizontal = 16.dp, vertical = 24.dp),
+            Modifier.runColumn().padding(vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(text = title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
                 detail?.let {
-                    Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        text = it,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
                 }
             }
             if (saving) {
@@ -162,7 +167,10 @@ internal fun RunDone(
     }
 }
 
-private val DONE_WIDTH = 640.dp
+/** A run's reading column, centered on wide windows, with every screen of the run on the same edges. */
+internal fun Modifier.runColumn(): Modifier = widthIn(max = RUN_WIDTH).fillMaxWidth().padding(horizontal = 16.dp)
+
+private val RUN_WIDTH = 640.dp
 
 @Composable
 internal fun RunFinished(

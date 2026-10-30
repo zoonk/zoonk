@@ -105,20 +105,23 @@ interface RunControls {
     fun next(questions: List<Question>)
 }
 
-/** A keyboard's Enter runs [mainAction] and Escape closes, as in the lesson player. */
+/**
+ * A keyboard's Enter runs [mainAction] and Escape closes, as in the lesson player. On a wide window
+ * a question's passage shows beside it, or else [aside].
+ */
 @Composable
 internal fun RunFrame(
     title: String,
-    questions: List<Question>,
-    run: QuestionRun,
     question: Question?,
     app: AppContainer,
     onClose: () -> Unit,
     mainAction: (() -> Unit)?,
     report: FeedbackTarget?,
+    progress: @Composable () -> Unit,
     actions: @Composable () -> Unit,
     closeLabel: String? = null,
-    content: @Composable ColumnScope.(inlineSet: Boolean) -> Unit,
+    aside: (@Composable ColumnScope.() -> Unit)? = null,
+    content: @Composable ColumnScope.(inlineSet: Boolean, asideShown: Boolean) -> Unit,
 ) {
     val focus = remember { FocusRequester() }
 
@@ -140,23 +143,28 @@ internal fun RunFrame(
         closeLabel = closeLabel,
         bottomBar = { ActionBarWidth(actions) },
     ) { padding ->
-        RunLayout(
-            question,
-            Modifier.padding(padding),
-            header = { if (questions.isNotEmpty()) RunSegments(questions, run) },
-            content = content,
-        )
+        RunLayout(question, Modifier.padding(padding), header = progress, aside = aside, content = content)
     }
 }
 
 @Composable
-private fun RunSegments(
+internal fun RunSegments(
     questions: List<Question>,
     run: QuestionRun,
 ) {
-    val label = stringResource(R.string.practice_progress, minOf(run.index + 1, questions.size), questions.size)
+    if (questions.isEmpty()) return
+    RunMeter(index = run.index, total = questions.size, segments(questions, run))
+}
+
+@Composable
+internal fun RunMeter(
+    index: Int,
+    total: Int,
+    segments: List<Segment>,
+) {
+    val label = stringResource(R.string.practice_progress, minOf(index + 1, total), total)
     val parts =
-        segments(questions, run).map { segment ->
+        segments.map { segment ->
             MeterPart(
                 when (segment) {
                     Segment.Ahead -> MeterPart.Fill.Track
@@ -171,13 +179,11 @@ private fun RunSegments(
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Box(
             Modifier
-                .widthIn(max = CONTENT_WIDTH)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .runColumn()
                 .padding(bottom = 8.dp)
                 .semantics {
                     contentDescription = label
-                    progressBarRangeInfo = ProgressBarRangeInfo(run.index.toFloat(), 0f..questions.size.toFloat())
+                    progressBarRangeInfo = ProgressBarRangeInfo(index.toFloat(), 0f..total.toFloat())
                 },
         ) { MeterParts(parts) }
     }
@@ -188,10 +194,12 @@ private fun RunLayout(
     question: Question?,
     modifier: Modifier,
     header: @Composable () -> Unit,
-    content: @Composable ColumnScope.(inlineSet: Boolean) -> Unit,
+    aside: (@Composable ColumnScope.() -> Unit)?,
+    content: @Composable ColumnScope.(inlineSet: Boolean, asideShown: Boolean) -> Unit,
 ) {
     BoxWithConstraints(modifier.fillMaxSize()) {
-        val aside = question?.set?.takeIf { it.listening == null && maxWidth >= ASIDE_FROM }
+        val wide = maxWidth >= ASIDE_FROM
+        val set = question?.set?.takeIf { it.listening == null && wide }
 
         Row(Modifier.fillMaxSize()) {
             // The progress stays over the question, in its pane, when a passage shows beside it.
@@ -202,24 +210,34 @@ private fun RunLayout(
                         .weight(1f)
                         .fillMaxWidth()
                         .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(vertical = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        content(aside == null)
+                    Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        content(set == null, set == null && aside != null && wide)
                     }
                 }
             }
 
-            if (aside != null) {
+            if (set != null) {
                 VerticalDivider()
                 // A rail beside the question, half the window only for a long passage, as main's aside.
-                val rail = if (isLongText(aside.text)) Modifier.weight(1f) else Modifier.width(ASIDE_WIDTH)
+                val rail = if (isLongText(set.text)) Modifier.weight(1f) else Modifier.width(ASIDE_WIDTH)
                 Column(
                     rail
                         .verticalScroll(rememberScrollState())
                         .padding(horizontal = 24.dp, vertical = 8.dp),
-                ) { ItemSetText(aside, inAside = true) }
+                ) { ItemSetText(set, inAside = true) }
+            } else if (aside != null && wide) {
+                VerticalDivider()
+                Column(
+                    Modifier
+                        .width(ASIDE_WIDTH)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    content = aside,
+                )
             }
         }
     }
@@ -441,9 +459,9 @@ internal data class Draft(
 )
 
 internal fun Draft?.answerFor(
-    run: QuestionRun,
+    step: Int,
     question: Question?,
-): Answer? = this?.takeIf { it.step == run.index && it.itemId == question?.itemId }?.answer
+): Answer? = this?.takeIf { it.step == step && it.itemId == question?.itemId }?.answer
 
 /** A run belongs to the account that started it: another account signing in gets its own. */
 @Composable
@@ -463,5 +481,4 @@ private val DraftSaver =
 
 private val ASIDE_FROM = 840.dp
 private val ASIDE_WIDTH = 360.dp
-private val CONTENT_WIDTH = 640.dp
 private const val READ_ALPHA = 0.25f

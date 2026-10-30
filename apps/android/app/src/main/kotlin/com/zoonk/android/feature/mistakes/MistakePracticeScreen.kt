@@ -32,6 +32,7 @@ import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.RunPhase
 import com.zoonk.android.feature.practice.RunQuestion
+import com.zoonk.android.feature.practice.RunSegments
 import com.zoonk.android.feature.practice.answerAction
 import com.zoonk.android.feature.practice.answerFor
 import com.zoonk.android.feature.practice.rememberDraft
@@ -129,17 +130,16 @@ internal fun PracticeRun(
     val questions = state.read.questions
     val question = questions.getOrNull(run.index)
     var saved by rememberDraft()
-    val draft = saved.answerFor(run, question)
+    val draft = saved.answerFor(run.index, question)
 
     RunFrame(
         title = stringResource(R.string.mistakes_practice_title),
-        questions = questions,
-        run = run,
         question = question,
         app = app,
         onClose = viewModel::leave,
         mainAction = answerAction(questions, question, run, draft, viewModel),
         report = runReportTarget("mistake-practice", question, run),
+        progress = { RunSegments(questions, run) },
         actions = {
             question?.let {
                 AnswerActions(
@@ -154,7 +154,7 @@ internal fun PracticeRun(
             }
         },
         closeLabel = if (endsRun) stringResource(R.string.mistakes_practice_end) else null,
-    ) { inlineSet ->
+    ) { inlineSet, _ ->
         question?.let {
             key(run.index) {
                 RunQuestion(

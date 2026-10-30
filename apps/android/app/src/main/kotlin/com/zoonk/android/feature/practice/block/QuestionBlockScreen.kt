@@ -34,6 +34,7 @@ import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.RunPhase
 import com.zoonk.android.feature.practice.RunQuestion
+import com.zoonk.android.feature.practice.RunSegments
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.practice.answerAction
 import com.zoonk.android.feature.practice.answerFor
@@ -220,7 +221,7 @@ internal fun Runner(
     val questions = read.questions
     val question = questions.getOrNull(run.index)
     var saved by rememberDraft()
-    val draft = saved.answerFor(run, question)
+    val draft = saved.answerFor(run.index, question)
 
     if (run.phase == RunPhase.Finishing) {
         BlockFinished(null, detail.isReview, app, viewModel, onClose)
@@ -236,15 +237,14 @@ internal fun Runner(
 
     RunFrame(
         title = blockTitle(detail.block.toDayStep()),
-        questions = questions,
-        run = run,
         question = question,
         app = app,
         onClose = onClose,
         mainAction = mainAction,
         report = runReportTarget("question-block", question, run),
+        progress = { RunSegments(questions, run) },
         actions = { BlockActions(read, run, question, draft, viewModel, app, navigator) },
-    ) { inlineSet ->
+    ) { inlineSet, _ ->
         if (run.phase == RunPhase.FinishReady) {
             FinishReady()
         } else if (question != null) {
