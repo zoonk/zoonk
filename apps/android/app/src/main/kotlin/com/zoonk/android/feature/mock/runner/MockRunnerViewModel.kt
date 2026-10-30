@@ -247,11 +247,12 @@ class MockRunnerViewModel(
     fun gradeEssays() {
         if (grading.value == EssayGrading.Grading) return
         grading.value = EssayGrading.Grading
+        val askedOn = today()
         viewModelScope.launch {
             val result = withTimeoutOrNull(ESSAY_GRADING_TIMEOUT) { store.gradeEssays(blockId) }
             val graded = (result as? MutationResult.Done)?.value
             if (graded != null) reset(graded.mock)
-            if (graded?.limitReached == true) gradesUsedOn = today()
+            if (graded?.limitReached == true) gradesUsedOn = askedOn
             grading.value =
                 when {
                     graded != null -> if (graded.limitReached) EssayGrading.LimitReached else EssayGrading.Idle

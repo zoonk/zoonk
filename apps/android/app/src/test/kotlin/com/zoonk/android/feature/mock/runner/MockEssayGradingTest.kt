@@ -24,6 +24,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -118,6 +119,28 @@ class MockEssayGradingTest {
             assertEquals(EssayGrading.LimitReached, viewModel.essayGrading.value)
 
             clock.now = Instant.parse("2026-10-30T08:00:00Z")
+            viewModel.onStop()
+            viewModel.onStart()
+            assertEquals(EssayGrading.Idle, viewModel.essayGrading.value)
+        }
+
+    @Test
+    fun aLimitAnsweredAfterMidnightCountsForTheDayItWasAskedOn() =
+        runTest(dispatcher) {
+            api.afterFinish = essays(pendingEssay())
+            api.afterGrade = essays(pendingEssay())
+            api.gradeOutcome = EssayGradeOutcome.LimitReached
+            api.gradeGate = CompletableDeferred()
+            val clock = SetClock(Instant.parse("2026-10-29T23:59:00Z"))
+            val viewModel = viewModel(clock = clock)
+
+            viewModel.finish()
+            runCurrent()
+            clock.now = Instant.parse("2026-10-30T00:01:00Z")
+            api.gradeGate!!.complete(Unit)
+            runCurrent()
+            assertEquals(EssayGrading.LimitReached, viewModel.essayGrading.value)
+
             viewModel.onStop()
             viewModel.onStart()
             assertEquals(EssayGrading.Idle, viewModel.essayGrading.value)
