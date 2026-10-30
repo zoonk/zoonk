@@ -21,7 +21,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.player.SessionEndActions
 import com.zoonk.android.feature.player.leaveTaskFor
-import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.AnswerActions
 import com.zoonk.android.feature.practice.Draft
 import com.zoonk.android.feature.practice.QuestionRun
@@ -284,20 +283,16 @@ private fun BlockActions(
         }
 
         RunPhase.FinishFailed -> {
-            ActionColumn {
-                SaveErrorText()
-                TaskActions { width ->
-                    Button(onClick = viewModel::finish, modifier = width) { Text(stringResource(R.string.practice_try_again)) }
-                }
+            SaveErrorText()
+            TaskActions { width ->
+                Button(onClick = viewModel::finish, modifier = width) { Text(stringResource(R.string.practice_try_again)) }
             }
         }
 
         RunPhase.AlreadyAnswered -> {
-            ActionColumn {
-                Text(stringResource(R.string.practice_already_answered), style = MaterialTheme.typography.bodyMedium)
-                TaskActions { width ->
-                    Button(onClick = viewModel::reread, modifier = width) { Text(stringResource(R.string.practice_continue)) }
-                }
+            Text(stringResource(R.string.practice_already_answered), style = MaterialTheme.typography.bodyMedium)
+            TaskActions { width ->
+                Button(onClick = viewModel::reread, modifier = width) { Text(stringResource(R.string.practice_continue)) }
             }
         }
 

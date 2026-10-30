@@ -56,7 +56,6 @@ import com.zoonk.android.feature.mock.chooser.MockLeftOutNote
 import com.zoonk.android.feature.mock.mockDaySize
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.plan.lessonsText
-import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
@@ -264,15 +263,13 @@ internal fun ChallengeMoved(
         onClose = navigator::closeTask,
         bottomBar = {
             TaskActionBar {
-                ActionColumn {
-                    MoveFailed(ui)
-                    TaskActions { width ->
-                        OutlinedButton(onClick = viewModel::undoMove, enabled = !ui.moving) {
-                            PendingLabel(ui.moving, stringResource(R.string.challenge_undo))
-                        }
-                        Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
-                            Text(stringResource(R.string.challenge_back_to_today))
-                        }
+                MoveFailed(ui)
+                TaskActions { width ->
+                    OutlinedButton(onClick = viewModel::undoMove, enabled = !ui.moving) {
+                        PendingLabel(ui.moving, stringResource(R.string.challenge_undo))
+                    }
+                    Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
+                        Text(stringResource(R.string.challenge_back_to_today))
                     }
                 }
             }
@@ -710,94 +707,92 @@ private fun ChallengeFooter(
     val movable = challenge.canMove && ui.refusal == null
     val ready = challenge.status == Challenge.Status.READY && challenge.waitReason == null
 
-    ActionColumn {
-        if (plusRequired(challenge, ui)) {
-            TaskActions { width ->
-                Button(onClick = actions::seePlus, modifier = width) { Text(stringResource(R.string.challenge_see_plus)) }
-            }
-            return@ActionColumn
+    if (plusRequired(challenge, ui)) {
+        TaskActions { width ->
+            Button(onClick = actions::seePlus, modifier = width) { Text(stringResource(R.string.challenge_see_plus)) }
         }
-        when (challenge.status) {
-            Challenge.Status.READY, Challenge.Status.STARTED -> {
-                val wait = challenge.waitReason
-                when {
-                    wait != null -> {
-                        StatusLine(R.drawable.ic_calendar_clock, waitText(wait))
-                    }
+        return
+    }
+    when (challenge.status) {
+        Challenge.Status.READY, Challenge.Status.STARTED -> {
+            val wait = challenge.waitReason
+            when {
+                wait != null -> {
+                    StatusLine(R.drawable.ic_calendar_clock, waitText(wait))
+                }
 
-                    challenge.status == Challenge.Status.READY && challenge.dailyLimitReached -> {
-                        StatusLine(null, usedUpText(challenge, movable))
-                        MoveFailed(ui)
-                        TaskActions { width ->
-                            if (movable) {
-                                OutlinedButton(onClick = actions::toToday) { Text(stringResource(R.string.challenge_back_to_today)) }
-                                BusyButton(stringResource(R.string.challenge_move), ui.moving, !ui.starting, width, vm::moveToMonday)
-                            } else {
-                                Button(
-                                    onClick = actions::toToday,
-                                    modifier = width,
-                                ) { Text(stringResource(R.string.challenge_back_to_today)) }
-                            }
-                        }
-                    }
-
-                    challenge.status == Challenge.Status.READY -> {
-                        StartActions(challenge, ui, movable, actions)
-                    }
-
-                    else -> {
-                        TaskActions { width ->
-                            BusyButton(stringResource(R.string.challenge_continue), ui.starting, true, width, vm::start)
+                challenge.status == Challenge.Status.READY && challenge.dailyLimitReached -> {
+                    StatusLine(null, usedUpText(challenge, movable))
+                    MoveFailed(ui)
+                    TaskActions { width ->
+                        if (movable) {
+                            OutlinedButton(onClick = actions::toToday) { Text(stringResource(R.string.challenge_back_to_today)) }
+                            BusyButton(stringResource(R.string.challenge_move), ui.moving, !ui.starting, width, vm::moveToMonday)
+                        } else {
+                            Button(
+                                onClick = actions::toToday,
+                                modifier = width,
+                            ) { Text(stringResource(R.string.challenge_back_to_today)) }
                         }
                     }
                 }
-            }
 
-            Challenge.Status.TRIED -> {
-                val lessons = challenge.reinforcementLessons.toInt()
-                StatusLine(
-                    R.drawable.ic_replay,
-                    if (lessons == 0) {
-                        stringResource(R.string.checkpoint_retry_tomorrow)
-                    } else {
-                        pluralStringResource(R.plurals.checkpoint_retry_after_lessons, lessons, lessons)
-                    },
-                )
-                SeeResult(challenge, actions)
-            }
+                challenge.status == Challenge.Status.READY -> {
+                    StartActions(challenge, ui, movable, actions)
+                }
 
-            Challenge.Status.DONE -> {
-                SeeResult(challenge, actions)
+                else -> {
+                    TaskActions { width ->
+                        BusyButton(stringResource(R.string.challenge_continue), ui.starting, true, width, vm::start)
+                    }
+                }
             }
+        }
 
-            Challenge.Status.WAITING -> {
-                val empty = challenge.questions == 0L && challenge.call == null && !challenge.mock
-                val upcoming = challenge.date?.let { it > challenge.today } == true
-                if (empty && upcoming) {
-                    OpensLine(challenge)
+        Challenge.Status.TRIED -> {
+            val lessons = challenge.reinforcementLessons.toInt()
+            StatusLine(
+                R.drawable.ic_replay,
+                if (lessons == 0) {
+                    stringResource(R.string.checkpoint_retry_tomorrow)
                 } else {
-                    val line = if (empty) R.string.challenge_not_ready else R.string.challenge_next_session
-                    StatusLine(R.drawable.ic_calendar_clock, stringResource(line))
-                }
-            }
-
-            Challenge.Status.QUEUED -> {
-                StatusLine(R.drawable.ic_calendar_clock, stringResource(R.string.missions_after_challenge))
-            }
-
-            Challenge.Status.UPCOMING -> {
-                OpensLine(challenge)
-            }
-
-            Challenge.Status.PLUS_REQUIRED -> {}
+                    pluralStringResource(R.plurals.checkpoint_retry_after_lessons, lessons, lessons)
+                },
+            )
+            SeeResult(challenge, actions)
         }
-        if (!ready) {
-            MoveFailed(ui)
-            if (movable) {
-                TaskActions { width ->
-                    OutlinedButton(onClick = vm::moveToMonday, enabled = !ui.moving && !ui.starting, modifier = width) {
-                        PendingLabel(ui.moving, stringResource(R.string.challenge_move))
-                    }
+
+        Challenge.Status.DONE -> {
+            SeeResult(challenge, actions)
+        }
+
+        Challenge.Status.WAITING -> {
+            val empty = challenge.questions == 0L && challenge.call == null && !challenge.mock
+            val upcoming = challenge.date?.let { it > challenge.today } == true
+            if (empty && upcoming) {
+                OpensLine(challenge)
+            } else {
+                val line = if (empty) R.string.challenge_not_ready else R.string.challenge_next_session
+                StatusLine(R.drawable.ic_calendar_clock, stringResource(line))
+            }
+        }
+
+        Challenge.Status.QUEUED -> {
+            StatusLine(R.drawable.ic_calendar_clock, stringResource(R.string.missions_after_challenge))
+        }
+
+        Challenge.Status.UPCOMING -> {
+            OpensLine(challenge)
+        }
+
+        Challenge.Status.PLUS_REQUIRED -> {}
+    }
+    if (!ready) {
+        MoveFailed(ui)
+        if (movable) {
+            TaskActions { width ->
+                OutlinedButton(onClick = vm::moveToMonday, enabled = !ui.moving && !ui.starting, modifier = width) {
+                    PendingLabel(ui.moving, stringResource(R.string.challenge_move))
                 }
             }
         }
@@ -966,7 +961,7 @@ private fun StatusLine(
     text: String,
 ) {
     Row(
-        Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
+        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.Top,
     ) {

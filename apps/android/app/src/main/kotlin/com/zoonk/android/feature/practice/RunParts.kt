@@ -299,17 +299,12 @@ internal fun SaveErrorText(onRetry: (() -> Unit)? = null) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = stringResource(R.string.practice_save_error),
-            modifier = Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
+            modifier = Modifier.weight(1f, fill = false).semantics { liveRegion = LiveRegionMode.Polite },
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,
         )
         onRetry?.let { TextButton(onClick = it) { Text(stringResource(R.string.practice_try_again)) } }
     }
-}
-
-@Composable
-internal fun ActionColumn(content: @Composable ColumnScope.() -> Unit) {
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
 }
 
 @Composable

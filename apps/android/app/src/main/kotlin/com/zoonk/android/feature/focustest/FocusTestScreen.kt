@@ -50,7 +50,6 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
-import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ChoiceQuestionsRun
 import com.zoonk.android.feature.practice.RunIntro
@@ -307,22 +306,20 @@ internal fun FocusTestResult(
             title = { StepDots(count, shown) },
             bottomBar = {
                 TaskActionBar {
-                    ActionColumn {
-                        StepPagerActions(
-                            count,
-                            shown,
-                            onIndexChange = {
-                                if (shown == 0) leftFirst = true
-                                index = it
-                            },
-                        ) { main ->
-                            Button(
-                                onClick = { navigator.showRoot(AppTab.Plan) },
-                                modifier = main,
-                            ) { Text(stringResource(R.string.focustest_see_plan)) }
-                        }
-                        if (canUndo && shown == count - 1) UndoAction(ui.undo, viewModel::undo)
+                    StepPagerActions(
+                        count,
+                        shown,
+                        onIndexChange = {
+                            if (shown == 0) leftFirst = true
+                            index = it
+                        },
+                    ) { main ->
+                        Button(
+                            onClick = { navigator.showRoot(AppTab.Plan) },
+                            modifier = main,
+                        ) { Text(stringResource(R.string.focustest_see_plan)) }
                     }
+                    if (canUndo && shown == count - 1) UndoAction(ui.undo, viewModel::undo)
                 }
             },
         ) { padding ->

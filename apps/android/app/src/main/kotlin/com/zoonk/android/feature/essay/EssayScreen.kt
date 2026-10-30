@@ -73,7 +73,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.feature.player.leaveTaskFor
-import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
@@ -220,31 +219,29 @@ internal fun EssayWrite(
             },
         bottomBar = {
             TaskActionBar {
-                ActionColumn {
-                    StatusLine(ui.send, ui.gradesLeft)
-                    if (finishFailed && !finishing) SaveErrorText(viewModel::finish)
-                    TaskActions { width ->
-                        if (rewriting) {
-                            OutlinedButton(
-                                onClick = viewModel::finish,
-                                enabled = !finishing,
-                            ) { Text(stringResource(R.string.essay_skip_rewrite)) }
-                        }
-                        val pending = ui.send == EssaySend.Pending
-                        BusyButton(
-                            stringResource(
-                                when {
-                                    pending -> R.string.essay_grading_button
-                                    rewriting -> R.string.essay_grade_rewrite
-                                    else -> R.string.essay_send
-                                },
-                            ),
-                            busy = pending,
-                            enabled = ui.canSend && !finishing,
-                            modifier = width,
-                            onClick = viewModel::send,
-                        )
+                StatusLine(ui.send, ui.gradesLeft)
+                if (finishFailed && !finishing) SaveErrorText(viewModel::finish)
+                TaskActions { width ->
+                    if (rewriting) {
+                        OutlinedButton(
+                            onClick = viewModel::finish,
+                            enabled = !finishing,
+                        ) { Text(stringResource(R.string.essay_skip_rewrite)) }
                     }
+                    val pending = ui.send == EssaySend.Pending
+                    BusyButton(
+                        stringResource(
+                            when {
+                                pending -> R.string.essay_grading_button
+                                rewriting -> R.string.essay_grade_rewrite
+                                else -> R.string.essay_send
+                            },
+                        ),
+                        busy = pending,
+                        enabled = ui.canSend && !finishing,
+                        modifier = width,
+                        onClick = viewModel::send,
+                    )
                 }
             }
         },
@@ -499,30 +496,28 @@ internal fun EssayGradeSteps(
             title = { StepDots(count, shown) },
             bottomBar = {
                 TaskActionBar {
-                    ActionColumn {
-                        StepPagerActions(count, shown, onIndexChange = { index = it }) { main ->
-                            OutlinedButton(onClick = viewModel::finish, enabled = !finishing) {
-                                Text(stringResource(R.string.essay_skip_rewrite))
-                            }
-                            Button(
-                                onClick = viewModel::rewrite,
-                                enabled = !finished,
-                                modifier = main,
-                            ) { Text(stringResource(R.string.essay_rewrite)) }
+                    StepPagerActions(count, shown, onIndexChange = { index = it }) { main ->
+                        OutlinedButton(onClick = viewModel::finish, enabled = !finishing) {
+                            Text(stringResource(R.string.essay_skip_rewrite))
                         }
-                        if (shown == count - 1) {
-                            if (finishFailed && !finishing) {
-                                Text(
-                                    stringResource(R.string.essay_finish_failed),
-                                    Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                )
-                            }
-                            if (!tooShort && !beside) {
-                                TextButton(onClick = { comments = true }, modifier = Modifier.fillMaxWidth()) {
-                                    Text(stringResource(R.string.essay_see_comments), textAlign = TextAlign.Center)
-                                }
+                        Button(
+                            onClick = viewModel::rewrite,
+                            enabled = !finished,
+                            modifier = main,
+                        ) { Text(stringResource(R.string.essay_rewrite)) }
+                    }
+                    if (shown == count - 1) {
+                        if (finishFailed && !finishing) {
+                            Text(
+                                stringResource(R.string.essay_finish_failed),
+                                Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                        if (!tooShort && !beside) {
+                            TextButton(onClick = { comments = true }, modifier = Modifier.fillMaxWidth()) {
+                                Text(stringResource(R.string.essay_see_comments), textAlign = TextAlign.Center)
                             }
                         }
                     }

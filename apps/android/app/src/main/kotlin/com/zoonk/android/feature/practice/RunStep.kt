@@ -355,35 +355,33 @@ internal fun AnswerActions(
         }
 
         else -> {
-            ActionColumn {
-                if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
-                TaskActions { width ->
-                    when (notSureOffer(question, every = notSureOnEvery)) {
-                        NotSure.Drill -> {
-                            NotSureButton(onClick = { controls.submit(question, Answer.DontKnow) }, enabled = run.canAnswer)
-                        }
-
-                        NotSure.DontKnowYet -> {
-                            NotSureButton(
-                                onClick = { controls.submit(question, Answer.DontKnow) },
-                                enabled = run.canAnswer,
-                                dontKnowYet = true,
-                            )
-                        }
-
-                        null -> {}
+            if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
+            TaskActions { width ->
+                when (notSureOffer(question, every = notSureOnEvery)) {
+                    NotSure.Drill -> {
+                        NotSureButton(onClick = { controls.submit(question, Answer.DontKnow) }, enabled = run.canAnswer)
                     }
-                    BusyButton(
-                        stringResource(R.string.practice_check),
-                        busy = phase == RunPhase.Checking,
-                        enabled =
-                            run.canAnswer && draft != null,
-                        modifier = width,
-                    ) {
-                        draft?.let { controls.submit(question, it) }
+
+                    NotSure.DontKnowYet -> {
+                        NotSureButton(
+                            onClick = { controls.submit(question, Answer.DontKnow) },
+                            enabled = run.canAnswer,
+                            dontKnowYet = true,
+                        )
                     }
-                    ask()
+
+                    null -> {}
                 }
+                BusyButton(
+                    stringResource(R.string.practice_check),
+                    busy = phase == RunPhase.Checking,
+                    enabled =
+                        run.canAnswer && draft != null,
+                    modifier = width,
+                ) {
+                    draft?.let { controls.submit(question, it) }
+                }
+                ask()
             }
         }
     }

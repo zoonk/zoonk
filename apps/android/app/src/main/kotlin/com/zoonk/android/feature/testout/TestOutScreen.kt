@@ -43,7 +43,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.player.LessonTitle
-import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ChoiceQuestionsRun
 import com.zoonk.android.feature.practice.RunFinished
@@ -275,16 +274,14 @@ private fun StartActions(
     val refused = ui.refused
     when {
         plusRequired -> {
-            ActionColumn {
-                PlusNotice(
-                    onSeePlus = null,
-                    title = stringResource(R.string.subscription_free_week_over_title),
-                    description = stringResource(R.string.subscription_free_week_over_description),
-                )
-                TaskActions { width ->
-                    Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = width) {
-                        Text(stringResource(R.string.testout_see_plus))
-                    }
+            PlusNotice(
+                onSeePlus = null,
+                title = stringResource(R.string.subscription_free_week_over_title),
+                description = stringResource(R.string.subscription_free_week_over_description),
+            )
+            TaskActions { width ->
+                Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = width) {
+                    Text(stringResource(R.string.testout_see_plus))
                 }
             }
         }
@@ -395,10 +392,8 @@ internal fun TestOutResult(
             onClose = onClose,
             detail = detail,
             actions = {
-                ActionColumn {
-                    TaskActions { width -> Button(onClick = onClose, modifier = width) { Text(stringResource(R.string.testout_continue)) } }
-                    if (canUndo) UndoAction(ui.undo, viewModel::undo)
-                }
+                TaskActions { width -> Button(onClick = onClose, modifier = width) { Text(stringResource(R.string.testout_continue)) } }
+                if (canUndo) UndoAction(ui.undo, viewModel::undo)
             },
         ) {
             MomentReadouts(brainPower = 0, facts = listOf(scoreLine(outcome)))

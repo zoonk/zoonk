@@ -68,7 +68,6 @@ import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.player.LessonTitle
-import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ListeningSet
 import com.zoonk.android.feature.practice.RunLoadFailed
@@ -404,29 +403,27 @@ private fun DuelActions(
     question: Question?,
     viewModel: CheckpointViewModel,
 ) {
-    ActionColumn {
-        if (state.error != null) SaveErrorText(onRetry = viewModel::retry.takeIf { !state.pending })
-        TaskActions { width ->
-            when {
-                question == null || state.feedback != null -> {
-                    BusyButton(
-                        stringResource(if (score.done) R.string.checkpoint_see_result else R.string.checkpoint_next),
-                        busy = state.pending,
-                        enabled = true,
-                        modifier = width,
-                        onClick = viewModel::next,
-                    )
-                }
+    if (state.error != null) SaveErrorText(onRetry = viewModel::retry.takeIf { !state.pending })
+    TaskActions { width ->
+        when {
+            question == null || state.feedback != null -> {
+                BusyButton(
+                    stringResource(if (score.done) R.string.checkpoint_see_result else R.string.checkpoint_next),
+                    busy = state.pending,
+                    enabled = true,
+                    modifier = width,
+                    onClick = viewModel::next,
+                )
+            }
 
-                else -> {
-                    BusyButton(
-                        stringResource(R.string.checkpoint_confirm),
-                        busy = state.pending,
-                        enabled = state.selected != null,
-                        modifier = width,
-                    ) {
-                        state.selected?.let(viewModel::confirm)
-                    }
+            else -> {
+                BusyButton(
+                    stringResource(R.string.checkpoint_confirm),
+                    busy = state.pending,
+                    enabled = state.selected != null,
+                    modifier = width,
+                ) {
+                    state.selected?.let(viewModel::confirm)
                 }
             }
         }

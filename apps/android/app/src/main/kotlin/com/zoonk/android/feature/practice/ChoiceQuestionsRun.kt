@@ -156,25 +156,23 @@ internal fun ChoiceQuestionsRun(
                 null
             } else {
                 {
-                    ActionColumn {
-                        if (failed && !pending) SaveErrorText(onSend)
-                        TaskActions { width ->
-                            if (question != null) {
-                                NotSureButton(onClick = { onAnswer(question, Answer.DontKnow) }, enabled = !locked, dontKnowYet = true)
-                            }
-                            BusyButton(
-                                stringResource(
-                                    when {
-                                        question == null -> R.string.practice_finish_now
-                                        shown + 1 >= total -> R.string.practice_finish
-                                        else -> R.string.practice_next
-                                    },
-                                ),
-                                busy = pending,
-                                enabled = next != null,
-                                modifier = width,
-                            ) { next?.invoke() }
+                    if (failed && !pending) SaveErrorText(onSend)
+                    TaskActions { width ->
+                        if (question != null) {
+                            NotSureButton(onClick = { onAnswer(question, Answer.DontKnow) }, enabled = !locked, dontKnowYet = true)
                         }
+                        BusyButton(
+                            stringResource(
+                                when {
+                                    question == null -> R.string.practice_finish_now
+                                    shown + 1 >= total -> R.string.practice_finish
+                                    else -> R.string.practice_next
+                                },
+                            ),
+                            busy = pending,
+                            enabled = next != null,
+                            modifier = width,
+                        ) { next?.invoke() }
                     }
                 }
             },
