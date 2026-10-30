@@ -3,6 +3,7 @@ import Foundation
 /// Kept for the rest of the learner's day on this device, across lessons, until they take it back.
 struct LessonTodayChoices: Sendable {
   enum Choice: String, Sendable {
+    case cantListen = "zoonk:cant-listen-on"
     case cantTalk = "zoonk:cant-talk-on"
     case cantWrite = "zoonk:cant-write-on"
   }

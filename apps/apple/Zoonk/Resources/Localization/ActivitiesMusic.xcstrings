@@ -1200,6 +1200,64 @@
         }
       }
     },
+    "I can listen now" : {
+      "comment" : "Brings back the sound to find by ear",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt mit Ton lernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya puedo escuchar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je peux écouter maintenant"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posso ouvir agora"
+          }
+        }
+      }
+    },
+    "I can't listen now" : {
+      "comment" : "Shows a by-ear sound's notes as text instead of playing it, for the rest of the day",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt ohne Ton lernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora no puedo escuchar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je ne peux pas écouter maintenant"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não posso ouvir agora"
+          }
+        }
+      }
+    },
     "Listen first" : {
       "comment" : "Plays one round of the rhythm",
       "localizations" : {
@@ -2293,6 +2351,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível reproduzir o som. Você ainda pode ver todas as notas."
+          }
+        }
+      }
+    },
+    "The sound plays: %@" : {
+      "comment" : "The notes a sound to find by ear plays, in order, for a learner who can't listen, like “The sound plays: G, C”",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Tonfolge lautet: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suenan estas notas: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes jouées : %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O som tem estas notas: %@"
           }
         }
       }

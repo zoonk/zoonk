@@ -18,6 +18,7 @@ extension ActivityRenderer {
 /// free to explore.
 private struct KeyboardFretboardCanvas: View {
   @State private var audio = MusicAudio()
+  @State private var cantListen = LessonTodayChoices.standard.isChosenToday(.cantListen)
 
   let fields: KeyboardFretboardFields
   let context: ActivityCanvasContext
@@ -25,12 +26,18 @@ private struct KeyboardFretboardCanvas: View {
   var body: some View {
     MusicCanvas {
       if fields.showsPiano {
-        PianoBoard(fields: fields, context: context, audio: audio)
+        PianoBoard(fields: fields, context: context, audio: audio, cantListen: $cantListen)
       } else {
-        GuitarOnlyBoard(fields: fields, context: context, audio: audio)
+        GuitarOnlyBoard(fields: fields, context: context, audio: audio, cantListen: $cantListen)
       }
 
       MusicSoundNote(audio: audio)
+    }
+    .onChange(of: cantListen) { LessonTodayChoices.standard.setChosenToday(.cantListen, $1) }
+    .onChange(of: audio.isUnavailable) { _, isUnavailable in
+      if isUnavailable, fields.isByEar, context.phase == .answering, !cantListen {
+        announceActivityChange(SoundAsText.spoken(fields.target.spelling))
+      }
     }
     .onDisappear { audio.close() }
   }
@@ -65,15 +72,20 @@ private struct KeyboardFretboardState {
 
 private struct PianoBoard: View {
   @State private var pressed: [Int]
+  @Binding var cantListen: Bool
 
   let fields: KeyboardFretboardFields
   let context: ActivityCanvasContext
   let audio: MusicAudio
 
-  init(fields: KeyboardFretboardFields, context: ActivityCanvasContext, audio: MusicAudio) {
+  init(
+    fields: KeyboardFretboardFields, context: ActivityCanvasContext, audio: MusicAudio,
+    cantListen: Binding<Bool>
+  ) {
     self.fields = fields
     self.context = context
     self.audio = audio
+    _cantListen = cantListen
     _pressed = State(
       initialValue: KeyboardFretboardState(fields: fields, context: context).initialPitches)
   }
@@ -90,7 +102,8 @@ private struct PianoBoard: View {
 
     KeyboardFretboardHeader(
       fields: fields, isRevealed: context.phase != .answering, notes: shown.map(spell),
-      onPlayTarget: { audio.play(KeyboardFretboard.targetSound(fields.target), on: .piano) },
+      onPlayTarget: cantListen
+        ? nil : { audio.play(KeyboardFretboard.targetSound(fields.target), on: .piano) },
       onHear: {
         audio.play(
           MusicSound.together(
@@ -107,6 +120,12 @@ private struct PianoBoard: View {
       spokenNameOf: { MusicLabels.spoken(spell($0)) },
       isPressed: { pressed.contains($0 % MusicNotes.octave) },
       onPress: state.isChecked ? nil : { press($0) })
+
+    if fields.isByEar, !state.isChecked {
+      SoundAsText(
+        cantListen: $cantListen, isAnswering: context.phase == .answering,
+        notes: fields.target.spelling, isSoundUnavailable: audio.isUnavailable)
+    }
 
     if fields.showsGuitar {
       GuitarMirror(pitches: shown, spell: spell, isChecked: state.showsAnswer)
@@ -133,15 +152,20 @@ private struct PianoBoard: View {
 private struct GuitarOnlyBoard: View {
   @State private var voicing: GuitarVoicing
   @State private var firstFret: Int
+  @Binding var cantListen: Bool
 
   let fields: KeyboardFretboardFields
   let context: ActivityCanvasContext
   let audio: MusicAudio
 
-  init(fields: KeyboardFretboardFields, context: ActivityCanvasContext, audio: MusicAudio) {
+  init(
+    fields: KeyboardFretboardFields, context: ActivityCanvasContext, audio: MusicAudio,
+    cantListen: Binding<Bool>
+  ) {
     self.fields = fields
     self.context = context
     self.audio = audio
+    _cantListen = cantListen
 
     let initial = KeyboardFretboardState(fields: fields, context: context).initialPitches
     let voicing = KeyboardFretboard.voicing(for: initial) ?? Guitar.unplayed
@@ -156,7 +180,8 @@ private struct GuitarOnlyBoard: View {
 
     KeyboardFretboardHeader(
       fields: fields, isRevealed: context.phase != .answering, notes: played.map(spell),
-      onPlayTarget: { audio.play(KeyboardFretboard.targetSound(fields.target), on: .guitar) },
+      onPlayTarget: cantListen
+        ? nil : { audio.play(KeyboardFretboard.targetSound(fields.target), on: .guitar) },
       onHear: {
         audio.play(
           MusicSound.together(
@@ -174,6 +199,12 @@ private struct GuitarOnlyBoard: View {
       Text(
         "Guitar strings", tableName: "ActivitiesMusic", comment: "VoiceOver name of the guitar neck"
       ))
+
+    if fields.isByEar, !state.isChecked {
+      SoundAsText(
+        cantListen: $cantListen, isAnswering: context.phase == .answering,
+        notes: fields.target.spelling, isSoundUnavailable: audio.isUnavailable)
+    }
 
     if !state.isChecked {
       HStack {
@@ -262,7 +293,8 @@ private struct KeyboardFretboardHeader: View {
   let fields: KeyboardFretboardFields
   let isRevealed: Bool
   let notes: [String]
-  let onPlayTarget: () -> Void
+  /// Nil while the learner can't listen: the sound's notes show as text instead.
+  let onPlayTarget: (() -> Void)?
   let onHear: () -> Void
 
   var body: some View {
@@ -301,7 +333,7 @@ private struct KeyboardFretboardHeader: View {
 
   @ViewBuilder
   private var buttons: some View {
-    if fields.isByEar {
+    if fields.isByEar, let onPlayTarget {
       MusicSoundButton(
         title: Text(
           "Play the sound", tableName: "ActivitiesMusic",
@@ -334,6 +366,71 @@ private struct KeyboardFretboardHeader: View {
       return Text(
         "\(notes.count) notes", tableName: "ActivitiesMusic",
         comment: "How many notes the target has, like “2 notes”")
+    }
+  }
+}
+
+/// A by-ear sound's notes in the order it plays them, for a learner who can't listen, and at once
+/// when the sound can't play. "I can't listen now" holds for the rest of the day, as on main.
+private struct SoundAsText: View {
+  /// VoiceOver hears the notes as they appear, since focus stays on the button that showed them.
+  static func spoken(_ notes: [String]) -> String {
+    String(
+      localized:
+        "The sound plays: \(notes.map(MusicLabels.spoken).joined(separator: ", "))",
+      table: "ActivitiesMusic",
+      comment:
+        "The notes a sound to find by ear plays, in order, for a learner who can't listen, like “The sound plays: G, C”"
+    )
+  }
+
+  @Binding var cantListen: Bool
+
+  let isAnswering: Bool
+  let notes: [String]
+  let isSoundUnavailable: Bool
+
+  var body: some View {
+    if cantListen || isSoundUnavailable {
+      Text(
+        "The sound plays: \(notes.map(MusicLabels.display).joined(separator: ", "))",
+        tableName: "ActivitiesMusic",
+        comment:
+          "The notes a sound to find by ear plays, in order, for a learner who can't listen, like “The sound plays: G, C”"
+      )
+      .font(.subheadline)
+      .accessibilityLabel(Self.spoken(notes))
+    }
+
+    if isAnswering, cantListen || !isSoundUnavailable {
+      Button {
+        cantListen.toggle()
+
+        if cantListen {
+          announceActivityChange(Self.spoken(notes))
+        }
+      } label: {
+        if cantListen {
+          Label {
+            Text(
+              "I can listen now", tableName: "ActivitiesMusic",
+              comment: "Brings back the sound to find by ear")
+          } icon: {
+            Image(systemName: "ear")
+          }
+        } else {
+          Label {
+            Text(
+              "I can't listen now", tableName: "ActivitiesMusic",
+              comment:
+                "Shows a by-ear sound's notes as text instead of playing it, for the rest of the day"
+            )
+          } icon: {
+            Image(systemName: "speaker.slash")
+          }
+        }
+      }
+      .buttonStyle(.borderless)
     }
   }
 }
