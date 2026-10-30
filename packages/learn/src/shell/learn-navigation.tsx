@@ -2,6 +2,7 @@
 
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
+import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MapIcon, SunIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -135,40 +136,58 @@ const TAB_ITEM_CLASS =
 
 const SIDE_TAB_ITEM_CLASS = cn(
   SIDEBAR_ITEM_CLASS,
-  "has-data-link-pending:bg-sidebar-accent has-data-link-pending:text-foreground",
+  "has-data-link-pending:bg-muted has-data-link-pending:text-foreground",
 );
 
 const PENDING_NAVIGATION_CLASS =
   "[&:has([data-link-pending])_[aria-current=page]]:bg-transparent [&:has([data-link-pending])_[aria-current=page]]:text-muted-foreground";
 
-/** Place it inside `Sidebar`. */
-export function LearnSideNavigation({
+type SideNavigationProps = LearnNavigationProps & { todayCount?: React.ReactNode };
+
+function SideTab({
   activeTab,
   buddy,
   missions,
+  tab,
   todayCount,
-}: LearnNavigationProps & { todayCount?: React.ReactNode }) {
+}: SideNavigationProps & { tab: LearnTab }) {
   const routes = useLearnRoutes();
 
+  return (
+    <SidebarTooltip
+      label={
+        <>
+          <TabLabel buddy={buddy} tab={tab} />
+          {tab === "today" && todayCount}
+        </>
+      }
+    >
+      <LearnLink
+        aria-current={tab === activeTab ? "page" : undefined}
+        className={SIDE_TAB_ITEM_CLASS}
+        href={routes[tab]}
+      >
+        <span className="flex size-4 shrink-0 items-center justify-center">
+          <TabIcon buddy={buddy} missions={missions} size="sm" tab={tab} />
+        </span>
+        <span className="min-w-0 flex-1 truncate">
+          <TabLabel buddy={buddy} tab={tab} />
+        </span>
+        {tab === "buddy" && missions && <MissionsLabel missions={missions} />}
+        {tab === "today" && todayCount}
+      </LearnLink>
+    </SidebarTooltip>
+  );
+}
+
+/** Place it inside `Sidebar`. */
+export function LearnSideNavigation(props: SideNavigationProps) {
   return (
     <NavigationRoot className={PENDING_NAVIGATION_CLASS} data-slot="learn-side-navigation">
       <ul className="flex flex-col gap-0.5">
         {LEARN_TABS.map((tab) => (
           <li key={tab}>
-            <LearnLink
-              aria-current={tab === activeTab ? "page" : undefined}
-              className={SIDE_TAB_ITEM_CLASS}
-              href={routes[tab]}
-            >
-              <span className="flex size-4 shrink-0 items-center justify-center">
-                <TabIcon buddy={buddy} missions={missions} size="sm" tab={tab} />
-              </span>
-              <span className="min-w-0 flex-1 truncate">
-                <TabLabel buddy={buddy} tab={tab} />
-              </span>
-              {tab === "buddy" && missions && <MissionsLabel missions={missions} />}
-              {tab === "today" && todayCount}
-            </LearnLink>
+            <SideTab {...props} tab={tab} />
           </li>
         ))}
       </ul>

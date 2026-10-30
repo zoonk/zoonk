@@ -8,6 +8,7 @@ msgstr ""
 
 #: src/app/[lang]/(app)/(catalog)/_components/account-dropdown-item.tsx
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/auth-gate.tsx
@@ -775,6 +776,16 @@ msgstr "Study"
 msgctxt "JZy6jo"
 msgid "Sidebar"
 msgstr "Sidebar"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "Collapse sidebar"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+msgctxt "1JgBls"
+msgid "Expand sidebar"
+msgstr "Expand sidebar"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
 msgctxt "CPAYvm"

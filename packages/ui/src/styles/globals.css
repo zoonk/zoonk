@@ -16,6 +16,9 @@
   }
 }
 
+/* `SidebarStateScript` marks `<html>` before the first paint. */
+@custom-variant sidebar-collapsed (&:where([data-sidebar-collapsed] [data-slot=sidebar], [data-sidebar-collapsed] [data-slot=sidebar] *));
+
 @theme inline {
   --font-sans:
     var(--font-geist-sans, ui-sans-serif), ui-sans-serif, system-ui, sans-serif,
@@ -64,14 +67,6 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ground: var(--ground);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
   --color-energy: var(--energy);
   --color-brain: var(--brain);
   --color-brain-text: var(--brain-text);
@@ -212,14 +207,6 @@
   --border: oklch(0 0 0 / 7%);
   --input: oklch(0 0 0 / 13%);
   --ring: var(--color-primary);
-  --sidebar: oklch(0.97 0.0015 106);
-  --sidebar-foreground: var(--color-foreground);
-  --sidebar-primary: var(--color-primary);
-  --sidebar-primary-foreground: var(--color-primary-foreground);
-  --sidebar-accent: oklch(0.935 0.002 106);
-  --sidebar-accent-foreground: oklch(0.185 0.004 286);
-  --sidebar-border: oklch(0.925 0.002 106);
-  --sidebar-ring: var(--color-primary);
   --energy: oklch(0.782 0.158 72.3);
   --brain: oklch(0.64 0.17 293);
   --brain-text: oklch(0.56 0.19 293);
@@ -276,14 +263,6 @@
     --border: var(--color-neutral-950);
     --input: var(--color-neutral-950);
     --ring: var(--color-primary);
-    --sidebar: var(--color-background);
-    --sidebar-foreground: var(--color-foreground);
-    --sidebar-primary: var(--color-primary);
-    --sidebar-primary-foreground: var(--color-primary-foreground);
-    --sidebar-accent: var(--color-neutral-100);
-    --sidebar-accent-foreground: var(--color-black);
-    --sidebar-border: var(--color-neutral-950);
-    --sidebar-ring: var(--color-primary);
     --energy: var(--color-amber-700);
     --brain: var(--color-violet-800);
     --brain-text: var(--brain);
@@ -327,14 +306,6 @@
     --border: oklch(1 0 0 / 7.5%);
     --input: oklch(1 0 0 / 13%);
     --ring: var(--color-primary);
-    --sidebar: oklch(0.162 0.003 286);
-    --sidebar-foreground: var(--color-foreground);
-    --sidebar-primary: var(--color-primary);
-    --sidebar-primary-foreground: var(--color-primary-foreground);
-    --sidebar-accent: oklch(0.225 0.005 286);
-    --sidebar-accent-foreground: oklch(0.94 0.003 286);
-    --sidebar-border: oklch(0.235 0.005 286);
-    --sidebar-ring: var(--color-primary);
     --energy: oklch(0.782 0.158 72.3);
     --brain: oklch(0.75 0.13 293);
     --brain-text: oklch(0.83 0.09 293);
@@ -390,14 +361,6 @@
       --border: var(--color-neutral-50);
       --input: var(--color-neutral-50);
       --ring: var(--color-primary);
-      --sidebar: var(--color-background);
-      --sidebar-foreground: var(--color-foreground);
-      --sidebar-primary: var(--color-primary);
-      --sidebar-primary-foreground: var(--color-primary-foreground);
-      --sidebar-accent: var(--color-neutral-700);
-      --sidebar-accent-foreground: var(--color-white);
-      --sidebar-border: var(--color-neutral-50);
-      --sidebar-ring: var(--color-primary);
       --energy: var(--color-amber-200);
       --brain: var(--color-violet-200);
       --brain-text: var(--brain);

@@ -5,22 +5,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
 } from "@zoonk/ui/components/dropdown-menu";
-import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
+import { useShortcutLabel } from "@zoonk/ui/hooks/shortcut-label";
 import { SearchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { openCommandPalette } from "./command-palette-event";
 
-/** Apple keyboards say ⌘ where the others say Ctrl; the server can't tell, so it says ⌘. */
-function useShortcutLabel() {
-  const isMounted = useIsMounted();
-  const isApple = !isMounted || /Mac|iPhone|iPad|iPod/u.test(navigator.userAgent);
-
-  return isApple ? "⌘K" : "Ctrl K";
-}
-
 export function SearchDropdownItem() {
   const t = useExtracted();
-  const shortcut = useShortcutLabel();
+  const shortcut = useShortcutLabel("K");
 
   return (
     <>

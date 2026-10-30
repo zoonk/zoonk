@@ -1,6 +1,7 @@
 const MAX_NUMBER_KEY = 9;
 
-const POPUP_SELECTOR = "[role='dialog'], [role='alertdialog'], [role='menu'], [role='listbox']";
+export const POPUP_SELECTOR =
+  "[role='dialog'], [role='alertdialog'], [role='menu'], [role='listbox']";
 
 /** A radio isn't one: Enter on a picked answer submits it, as a radio does in a form. */
 const PRESSABLE_SELECTOR = [

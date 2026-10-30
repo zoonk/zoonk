@@ -14,6 +14,7 @@ import {
 } from "@zoonk/core/learner/summary/contract";
 import { DropdownMenu, DropdownMenuTrigger } from "@zoonk/ui/components/dropdown-menu";
 import { SIDEBAR_ACCOUNT_CLASS } from "@zoonk/ui/components/sidebar";
+import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 import { BeltLevel } from "./learn-bar-end";
@@ -72,14 +73,16 @@ function AccountTrigger({
   said: string[];
 }) {
   return (
-    <DropdownMenuTrigger className={SIDEBAR_ACCOUNT_CLASS}>
-      <span aria-hidden="true" className="flex size-6 shrink-0 overflow-hidden rounded-full">
-        <LearnerAvatar />
-      </span>
-      <span className="min-w-0 flex-1 truncate">{name}</span>
-      <span className="sr-only">{`, ${said.join(", ")}`}</span>
-      {children}
-    </DropdownMenuTrigger>
+    <SidebarTooltip label={name}>
+      <DropdownMenuTrigger className={SIDEBAR_ACCOUNT_CLASS}>
+        <span aria-hidden="true" className="flex size-6 shrink-0 overflow-hidden rounded-full">
+          <LearnerAvatar />
+        </span>
+        <span className="min-w-0 flex-1 truncate">{name}</span>
+        <span className="sr-only">{`, ${said.join(", ")}`}</span>
+        {children}
+      </DropdownMenuTrigger>
+    </SidebarTooltip>
   );
 }
 

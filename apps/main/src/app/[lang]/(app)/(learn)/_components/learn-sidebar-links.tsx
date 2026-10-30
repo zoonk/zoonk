@@ -4,73 +4,50 @@ import { openCommandPalette } from "@/app/[lang]/(app)/(catalog)/_components/com
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { useContentFeedback } from "@zoonk/learn/feedback";
-import { Kbd } from "@zoonk/ui/components/kbd";
-import { SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
-import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { cn } from "@zoonk/ui/lib/utils";
-import { MessageSquareIcon, SearchIcon } from "lucide-react";
+import { SIDEBAR_COUNT_CLASS, SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
+import { SidebarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { MessageSquareIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 
-/** Apple's label until mounted, so it matches the server's. */
-function useShortcutLabel() {
-  const isMounted = useIsMounted();
-  const isApple = !isMounted || /Mac|iPhone|iPad|iPod/u.test(navigator.userAgent);
-
-  return isApple ? "⌘K" : "Ctrl K";
-}
-
-const SEARCH_CLASS = {
-  bar: "h-10 rounded-[0.625rem] px-3 text-sm hover:bg-muted/60",
-  sidebar: "h-8 rounded-lg px-2.5 text-[0.8125rem] hover:bg-sidebar-accent/70",
-} as const;
-
 export function LearnSidebarSearch({
   className,
-  placement = "sidebar",
+  placement,
 }: {
   className?: string;
-  placement?: keyof typeof SEARCH_CLASS;
+  placement?: "bar" | "sidebar";
 }) {
   const t = useExtracted();
-  const shortcut = useShortcutLabel();
 
   return (
-    <button
-      aria-keyshortcuts="Meta+K Control+K"
-      className={cn(
-        "text-faint ring-input hover:text-foreground focus-visible:ring-ring/50 hit-area relative flex w-full items-center gap-2 ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]",
-        SEARCH_CLASS[placement],
-        className,
-      )}
+    <SidebarSearch
+      className={className}
+      label={t("Search or ask…")}
       onClick={openCommandPalette}
-      type="button"
-    >
-      <SearchIcon aria-hidden="true" className="size-4 shrink-0" />
-      <span className="flex-1 truncate text-left">{t("Search or ask…")}</span>
-      <Kbd aria-hidden="true" className="hidden pointer-fine:inline-flex">
-        {shortcut}
-      </Kbd>
-    </button>
+      placement={placement}
+    />
   );
 }
 
 export function LearnSidebarFeedback() {
   const t = useExtracted();
   const feedback = useContentFeedback();
+  const label = t("Send feedback");
 
   return (
-    <button
-      aria-haspopup="dialog"
-      className={SIDEBAR_ITEM_CLASS}
-      onClick={() =>
-        feedback?.openFeedbackForm({ context: { screen: "sidebar" }, isReport: false })
-      }
-      type="button"
-    >
-      <MessageSquareIcon aria-hidden="true" />
-      <span className="min-w-0 flex-1 truncate text-left">{t("Send feedback")}</span>
-    </button>
+    <SidebarTooltip label={label}>
+      <button
+        aria-haspopup="dialog"
+        className={SIDEBAR_ITEM_CLASS}
+        onClick={() =>
+          feedback?.openFeedbackForm({ context: { screen: "sidebar" }, isReport: false })
+        }
+        type="button"
+      >
+        <MessageSquareIcon aria-hidden="true" />
+        <span className="min-w-0 flex-1 truncate text-left">{label}</span>
+      </button>
+    </SidebarTooltip>
   );
 }
 
@@ -96,22 +73,28 @@ type SidebarLinkProps = { count?: number; label: string; menu: SidebarMenu };
 function SidebarLinkView({ count, current, label, menu }: SidebarLinkProps & { current: boolean }) {
   const { icon: Icon, url: href } = getMenu(menu);
 
+  const countMark = Boolean(count) && <span className={SIDEBAR_COUNT_CLASS}>{count}</span>;
+
   return (
-    <Link
-      aria-current={current ? "page" : undefined}
-      className={SIDEBAR_ITEM_CLASS}
-      href={href}
-      prefetch
+    <SidebarTooltip
+      label={
+        <>
+          {label}
+          {countMark}
+        </>
+      }
     >
-      <Icon aria-hidden="true" />
-      <span className="min-w-0 flex-1 truncate">{label}</span>
-      {Boolean(count) && (
-        // On the current item's fill a faint count would drop under AA.
-        <span className="text-faint in-aria-[current=page]:text-muted-foreground font-mono text-xs tabular-nums">
-          {count}
-        </span>
-      )}
-    </Link>
+      <Link
+        aria-current={current ? "page" : undefined}
+        className={SIDEBAR_ITEM_CLASS}
+        href={href}
+        prefetch
+      >
+        <Icon aria-hidden="true" />
+        <span className="min-w-0 flex-1 truncate">{label}</span>
+        {countMark}
+      </Link>
+    </SidebarTooltip>
   );
 }
 

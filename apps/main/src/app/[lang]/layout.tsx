@@ -4,6 +4,7 @@ import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { routing } from "@/i18n/routing";
 import { geistMono, geistSans } from "@/lib/fonts";
 import { RefreshStalePages } from "@/lib/http/refresh-stale-pages";
+import { SidebarStateScript } from "@zoonk/ui/components/sidebar";
 import { Toaster } from "@zoonk/ui/components/toast";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { type Metadata } from "next";
@@ -43,7 +44,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
   const locale = await lang();
 
   return (
-    // The hint script marks `<html>` before React hydrates it.
+    // The hint and sidebar scripts mark `<html>` before React hydrates it.
     <html
       className={`${geistSans.variable} ${geistMono.variable}`}
       lang={locale}
@@ -51,6 +52,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
     >
       <head>
         <SignedInHintScript />
+        <SidebarStateScript />
         <KeepTypingScript />
       </head>
       <body className="font-sans antialiased">

@@ -14,6 +14,7 @@ import {
   type LearnTabMissions,
 } from "@zoonk/learn/navigation";
 import { LearnShellMain } from "@zoonk/learn/shell";
+import { SIDEBAR_COUNT_CLASS } from "@zoonk/ui/components/sidebar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegments } from "next/navigation";
@@ -82,7 +83,7 @@ function TodayCount({ learner }: { learner: LearnerSummaryState }) {
   }
 
   return (
-    <span className="text-faint in-aria-[current=page]:text-muted-foreground font-mono text-xs tabular-nums">
+    <span className={SIDEBAR_COUNT_CLASS}>
       <span aria-hidden="true">{blocksLeft}</span>
       <span className="sr-only">
         {t("{count, plural, one {# activity left} other {# activities left}}", {

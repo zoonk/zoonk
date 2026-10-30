@@ -21,7 +21,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
   {
     id: "surfaces",
     intro:
-      "Neutral tone steps set a page's parts apart; color never does. In light the page and panels are both white and a panel reads by its hairline; in dark a panel is a step lighter than the page.",
+      "Neutral tone steps set a page's parts apart; color never does. In light the page and panels are both white and a panel reads by its hairline; in dark a panel is a step lighter than the page. The sidebar and an aside are the page itself, set apart by a hairline.",
     title: "Surfaces and lines",
     tokens: [
       {
@@ -49,18 +49,12 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
       {
         meaning: "The quiet fill.",
         name: "muted",
-        use: "The row the learner is on, a hover, a keycap, a skeleton.",
+        use: "The row the learner is on, the sidebar's current item, a hover, a keycap, a skeleton.",
       },
       {
         meaning: "The third step: what's still to fill.",
         name: "surface-3",
         use: "A meter's or a bar's track, a cell not done yet, a mock sheet's answered squares.",
-      },
-      {
-        avoid: "Restyling: the sidebar stays exactly as it is.",
-        meaning: "The sidebar's own surface, a step dimmer than the page.",
-        name: "sidebar",
-        use: "`LearnAppSidebar` only, with `sidebar-accent` for its current item.",
       },
       {
         meaning: "A hairline.",

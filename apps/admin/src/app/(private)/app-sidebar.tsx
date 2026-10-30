@@ -6,8 +6,10 @@ import {
   Sidebar,
   SidebarFooter,
   SidebarHeader,
+  SidebarHeaderRow,
   SidebarSection,
 } from "@zoonk/ui/components/sidebar";
+import { SidebarToggle, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import {
   BarChart3Icon,
   BookOpen,
@@ -87,17 +89,18 @@ function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
   return menuGroups.map((group) => (
     <SidebarSection aria-label={group.label} key={group.label} label={group.label}>
       {group.items.map(({ icon: Icon, label, url }) => (
-        <Link
-          aria-current={isActive(pathname, url) ? "page" : undefined}
-          className={SIDEBAR_ITEM_CLASS}
-          href={url}
-          key={label}
-          onNavigate={onNavigate}
-          prefetch
-        >
-          <Icon aria-hidden="true" />
-          <span className="min-w-0 flex-1 truncate">{label}</span>
-        </Link>
+        <SidebarTooltip key={label} label={label}>
+          <Link
+            aria-current={isActive(pathname, url) ? "page" : undefined}
+            className={SIDEBAR_ITEM_CLASS}
+            href={url}
+            onNavigate={onNavigate}
+            prefetch
+          >
+            <Icon aria-hidden="true" />
+            <span className="min-w-0 flex-1 truncate">{label}</span>
+          </Link>
+        </SidebarTooltip>
       ))}
     </SidebarSection>
   ));
@@ -106,14 +109,21 @@ function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
 function AdminSidebarContent({
   account,
   onNavigate,
+  toggle,
 }: {
   account: AdminAccount;
   onNavigate?: () => void;
+  toggle?: React.ReactNode;
 }) {
   return (
     <>
       <SidebarHeader>
-        <span className="flex h-8 items-center px-2 text-sm font-semibold">Zoonk Admin</span>
+        <SidebarHeaderRow>
+          <span className="sidebar-collapsed:hidden flex h-8 items-center px-2 text-sm font-semibold">
+            Zoonk Admin
+          </span>
+          {toggle}
+        </SidebarHeaderRow>
       </SidebarHeader>
 
       <AdminNav onNavigate={onNavigate} />
@@ -128,7 +138,10 @@ function AdminSidebarContent({
 export function AppSidebar({ account }: { account: AdminAccount }) {
   return (
     <Sidebar aria-label="Sidebar" className="gap-4">
-      <AdminSidebarContent account={account} />
+      <AdminSidebarContent
+        account={account}
+        toggle={<SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />}
+      />
     </Sidebar>
   );
 }
@@ -144,10 +157,7 @@ export function AdminMenuSheet({
 }) {
   return (
     <Sheet onOpenChange={onOpenChange} open={open}>
-      <SheetContent
-        className="bg-sidebar text-sidebar-foreground gap-4 overflow-y-auto p-3 data-[side=left]:w-60"
-        side="left"
-      >
+      <SheetContent className="gap-4 overflow-y-auto p-3 data-[side=left]:w-60" side="left">
         <SheetTitle className="sr-only">Menu</SheetTitle>
         <AdminSidebarContent account={account} onNavigate={() => onOpenChange(false)} />
       </SheetContent>
