@@ -38,6 +38,9 @@
         <item quantity="one">%2$s · %1$d question, no hints</item>
         <item quantity="other">%2$s · %1$d questions, no hints</item>
     </plurals>
+    <!-- %1$s is the phase's name; a language unit's challenge is a live call with the Trickster. -->
+    <string name="session_block_phase_live_call">%1$s · a live call</string>
+    <string name="session_block_live_call">A live call</string>
     <plurals name="session_block_challenge_questions">
         <item quantity="one">%d question, no hints</item>
         <item quantity="other">%d questions, no hints</item>

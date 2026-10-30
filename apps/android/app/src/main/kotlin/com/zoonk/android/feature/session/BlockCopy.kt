@@ -135,6 +135,17 @@ fun blockDetail(step: DayStep): String? {
             if (step.reinforcement) stringResource(R.string.session_block_rematch_lesson) else step.canDo
         }
 
+        // A language unit's challenge is a live call, with no questions.
+        step.checkpointFacts?.mock == false && count == 0 -> {
+            if (phase !=
+                null
+            ) {
+                stringResource(R.string.session_block_phase_live_call, phase)
+            } else {
+                stringResource(R.string.session_block_live_call)
+            }
+        }
+
         phase != null -> {
             pluralStringResource(R.plurals.session_block_phase_questions, count, count, phase)
         }

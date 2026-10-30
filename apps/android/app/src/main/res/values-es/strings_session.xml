@@ -7,10 +7,12 @@
   "session_block_final_challenge": "3bd0162d3dd65087234b4507d4796e83bfdf3432a135c468a05cc9c0e6671302",
   "session_block_full_review": "43dd6f5fdf211f04db85206c674403dd412dc321993116b062608ac7bf2bd9a3",
   "session_block_full_review_questions": "280d98dc70264cf2430d58d8de2603dba51c3b6ad7493f81d50f157f0ddbfbee",
+  "session_block_live_call": "11c64d5ce3fcb2857f0d284deb7fe7ebcecd3309d3fb69d1dc44563cdd815787",
   "session_block_mixed_practice": "fd994e90957f22c66da46ecf9839017704aeddd2624fbb59bee4592c8394aa24",
   "session_block_mock_exam": "22dcc6c51afb24bed128908943c8cc852596b7c75adea1a47c6321cc0ff15413",
   "session_block_new_lesson": "b14746ab8e54f38aacf56a70c0e0a7c72842c1757d04a6b16201e7d3eed76a1d",
   "session_block_phase_challenge": "6bf45447371b38fc36a496acea6e043708bec4c17b8bb8dab1753b0917818c43",
+  "session_block_phase_live_call": "230a9e77edf69edbf9f1a25769f994df37f361ceab877eb7ebb1a6f85a6c396c",
   "session_block_phase_questions": "c879fd4d394abb672ae863bc81ee81e1bc7065bf531098a50286914f7804dfbf",
   "session_block_practice_mistakes": "e31585899753b211464d78f06ea5180ed3aff00eaf9c3567e99b0898f117454a",
   "session_block_questions": "fdf53fb6be8173b4342f526c391e97ea33bd0b17837dc703948736562fcaa6f4",
@@ -113,6 +115,9 @@
         <item quantity="many">%2$s · %1$d preguntas, sin pistas</item>
         <item quantity="other">%2$s · %1$d preguntas, sin pistas</item>
     </plurals>
+    <!-- %1$s is the phase's name; a language unit's challenge is a live call with the Trickster. -->
+    <string name="session_block_phase_live_call">%1$s · una llamada en directo</string>
+    <string name="session_block_live_call">Una llamada en directo</string>
     <plurals name="session_block_challenge_questions">
         <item quantity="one">%d pregunta, sin pistas</item>
         <item quantity="many">%d preguntas, sin pistas</item>
