@@ -131,6 +131,27 @@ final class MockDraftQueueTests: XCTestCase {
     XCTAssertEqual(queue.status, .saved)
   }
 
+  func testStoppingDropsAnAnswerStillOnItsWayInsteadOfSendingItAgain() async {
+    let gate = Gate()
+    var saves = 0
+    let queue = MockDraftQueue(
+      retryDelay: { _ in .milliseconds(10) },
+      save: { _ in
+        saves += 1
+        await gate.wait()
+        return .unreachable
+      })
+
+    queue.add(draft("a", .choice(0)))
+    while saves == 0 { await Task.yield() }
+    queue.stop()
+    gate.open()
+    try? await Task.sleep(for: .milliseconds(100))
+
+    XCTAssertEqual(saves, 1)
+    XCTAssertEqual(queue.status, .saved)
+  }
+
   func testABlankDraftIsNotAnswered() {
     XCTAssertFalse(draft("a", nil).isAnswered)
     XCTAssertFalse(draft("a", .text("  \n")).isAnswered)

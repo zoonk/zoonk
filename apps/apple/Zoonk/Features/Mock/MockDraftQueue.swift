@@ -29,6 +29,8 @@ final class MockDraftQueue {
   @ObservationIgnored private var attempt = 0
   @ObservationIgnored private var refused = false
   @ObservationIgnored private var retryTask: Task<Void, Never>?
+  @ObservationIgnored private var sendTask: Task<Void, Never>?
+  @ObservationIgnored private var isStopped = false
 
   init(
     retryDelay: @escaping (Int) -> Duration = { attempt in
@@ -43,6 +45,10 @@ final class MockDraftQueue {
   var isBusy: Bool { sending || !waiting.isEmpty }
 
   func add(_ draft: MockDraft) {
+    guard !isStopped else {
+      return
+    }
+
     if let index = waiting.firstIndex(where: { $0.itemId == draft.itemId }) {
       waiting[index] = draft
     } else {
@@ -69,15 +75,20 @@ final class MockDraftQueue {
     sendNext()
   }
 
+  /// For good: its screen is gone, so an answer on its way is dropped, never sent again.
   func stop() {
+    isStopped = true
+    sendTask?.cancel()
+    sendTask = nil
     retryTask?.cancel()
     retryTask = nil
     waiting.removeAll()
+    sending = false
     settle()
   }
 
   private func sendNext() {
-    guard !sending, retryTask == nil, !waiting.isEmpty else {
+    guard !isStopped, !sending, retryTask == nil, !waiting.isEmpty else {
       settle()
       return
     }
@@ -86,8 +97,13 @@ final class MockDraftQueue {
     sending = true
     settle()
 
-    Task {
+    sendTask = Task {
       let outcome = await save(draft)
+
+      guard !isStopped else {
+        return
+      }
+
       sending = false
 
       switch outcome {
