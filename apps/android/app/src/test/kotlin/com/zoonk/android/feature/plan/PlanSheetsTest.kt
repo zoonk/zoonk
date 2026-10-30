@@ -76,13 +76,16 @@ class PlanSheetsTest {
         }
     }
 
-    private fun everything(preview: PlanPreviewState = PlanPreviewState.Idle) {
+    private fun everything(
+        preview: PlanPreviewState = PlanPreviewState.Idle,
+        plan: Plan = coveragePlan(),
+    ) {
         edits = edits()
         compose.setContent {
             ZoonkTheme {
                 Column {
                     StudyEverythingBody(
-                        page(coveragePlan()),
+                        page(plan),
                         edits,
                         preview,
                         onPreview = { previews += it },
@@ -164,6 +167,15 @@ class PlanSheetsTest {
         compose.onNode(hasText("Study everything") and hasClickAction()).performClick()
 
         assertEquals(listOf(PlanPart.FullCourse to listOf<PlanOp>(PlanOp.TargetDate(null))), changes)
+    }
+
+    @Test
+    fun studyEverythingPreviewsTheEndOfAPlanThatCoversEverythingByItsDate() {
+        val covering = coveragePlan(extra = """"estimate":{"endDate":"2027-01-31","remainingHours":10,"totalHours":12}""")
+        everything(plan = covering.copy(feasibility = covering.feasibility?.copy(fits = true)))
+
+        assertEquals(listOf(listOf<PlanOp>(PlanOp.TargetDate(null))), previews)
+        compose.onNodeWithText("At 20 min a day, you finish in January 2027.").assertDoesNotExist()
     }
 
     @Test

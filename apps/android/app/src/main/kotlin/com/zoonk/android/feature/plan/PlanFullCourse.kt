@@ -44,8 +44,8 @@ import java.util.UUID
 
 /**
  * Main's `useFullCourse`: studying everything, an exam's past its date and another goal's without
- * one. [endDate] only when it's the plan's own end: working it out otherwise plans the goal again,
- * which a page never does.
+ * one. [endDate] only for an exam, whose plan already knows it. A dated goal's plan practices until
+ * its date, so its end without one is previewed when asked.
  */
 @Immutable
 internal data class FullCourse(
@@ -65,7 +65,7 @@ internal fun fullCourse(page: PlanPageState): FullCourse? {
     val target = schedule.targetDate ?: return null
     val fits = plan.feasibility?.fits ?: false
     if (page.goal.kind == LearnerSummaryGoal.Kind.EXPLAIN || (page.isExam && fits && !schedule.fullCourse)) return null
-    val end = if (page.isExam) plan.estimate.fullCourseEndDate else plan.estimate.endDate.takeIf { fits }
+    val end = if (page.isExam) plan.estimate.fullCourseEndDate else null
     return FullCourse(page.isExam, schedule.fullCourse, end?.toJavaLocalDate(), target.toJavaLocalDate(), schedule.targetDateNamedMonth)
 }
 
