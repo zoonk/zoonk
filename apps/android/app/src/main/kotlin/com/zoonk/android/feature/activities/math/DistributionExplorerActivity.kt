@@ -1,9 +1,7 @@
 package com.zoonk.android.feature.activities.math
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
@@ -35,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
+import com.zoonk.android.feature.activities.ActivityCanvasHeader
 import com.zoonk.android.feature.activities.ActivityPlaceHandle
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityReadout
@@ -130,14 +128,12 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
         )
 
     ActivityCanvas(description = listOfNotNull(shape, shares, targetLabel.takeIf { props.isChecked }).joinToString(" ")) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        ActivityCanvasHeader(readout = { ActivityReadout(percent(between), Modifier.clearAndSetSemantics {}, color = MaterialTheme.zoonk.vizAccent) }) {
             Text(
                 stringResource(R.string.activities_math_distribution_range, fields.valueLabel, format(low), format(high)),
-                Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            ActivityReadout(percent(between), Modifier.clearAndSetSemantics {}, color = MaterialTheme.zoonk.vizAccent)
         }
         DistributionPlot(
             distribution = distribution,

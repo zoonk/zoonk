@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -75,6 +76,22 @@ fun ActivityCanvas(
 /** The canvas's color on the screen, for what has to blend into it, like a label's halo. */
 @Composable
 fun activityCanvasColor(): Color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = CANVAS_ALPHA).compositeOver(MaterialTheme.colorScheme.surface)
+
+/** Main's canvas header: its labels, then the live readout beside them, or under them when they need the room. */
+@Composable
+fun ActivityCanvasHeader(
+    readout: @Composable () -> Unit,
+    labels: @Composable ColumnScope.() -> Unit,
+) {
+    FlowRow(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Column(Modifier.padding(end = 12.dp), verticalArrangement = Arrangement.spacedBy(2.dp), content = labels)
+        readout()
+    }
+}
 
 /** Main's `LineMarker`: a small icon centered on the first line of [style]'s text beside it, at any font size. */
 @Composable

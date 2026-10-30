@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
+import com.zoonk.android.feature.activities.ActivityCanvasHeader
 import com.zoonk.android.feature.activities.ActivityCanvasLabel
 import com.zoonk.android.feature.activities.ActivityPlot
 import com.zoonk.android.feature.activities.ActivityProps
@@ -180,17 +181,12 @@ private fun ChanceSimulation(
         }
 
     ActivityCanvas(description = description) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(runsLabel, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-                ActivityCanvasLabel(fields.hitLabel)
-                if (running &&
-                    guessLabel != null
-                ) {
-                    Text(guessLabel, style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium))
-                }
-            }
-            if (running) ActivityReadout(percent(share), Modifier.clearAndSetSemantics {}, color = MaterialTheme.zoonk.vizAccent)
+        ActivityCanvasHeader(
+            readout = { if (running) ActivityReadout(percent(share), Modifier.clearAndSetSemantics {}, color = MaterialTheme.zoonk.vizAccent) },
+        ) {
+            Text(runsLabel, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            ActivityCanvasLabel(fields.hitLabel)
+            if (running && guessLabel != null) Text(guessLabel, style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium))
         }
         when {
             !running -> {
@@ -213,11 +209,7 @@ private fun ChanceSimulation(
             }
         }
         if (done) {
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                itemVerticalAlignment = Alignment.CenterVertically,
-            ) {
+            RunRow(enabled = true, onRunAgain = { runIndex += 1 }) {
                 Text(
                     stringResource(
                         R.string.activities_math_chance_result,
@@ -225,23 +217,32 @@ private fun ChanceSimulation(
                         percent(share),
                         percent(hitProbability(fields.model)),
                     ),
-                    Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
+                    it.semantics { liveRegion = LiveRegionMode.Polite },
                     style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
                 )
-                RunAgain(enabled = true) { runIndex += 1 }
             }
         }
     }
 }
 
+/** Main's `flex-wrap` row: what the runs came to, then "Run again", which moves under it when the text needs the room. */
 @Composable
-private fun RunAgain(
+private fun RunRow(
     enabled: Boolean,
-    onClick: () -> Unit,
+    onRunAgain: () -> Unit,
+    text: @Composable (Modifier) -> Unit,
 ) {
-    OutlinedButton(onClick = onClick, enabled = enabled) {
-        Icon(painterResource(R.drawable.ic_replay), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-        Text(stringResource(R.string.activities_math_run_again), Modifier.padding(start = ButtonDefaults.IconSpacing))
+    FlowRow(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        itemVerticalAlignment = Alignment.CenterVertically,
+    ) {
+        text(Modifier.padding(end = 12.dp))
+        OutlinedButton(onClick = onRunAgain, enabled = enabled) {
+            Icon(painterResource(R.drawable.ic_replay), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+            Text(stringResource(R.string.activities_math_run_again), Modifier.padding(start = ButtonDefaults.IconSpacing))
+        }
     }
 }
 
@@ -362,20 +363,21 @@ private fun SamplingSimulation(
         )
 
     ActivityCanvas(description = summary) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(
-                    stringResource(R.string.activities_math_sampling_within, formatAmount(MIDDLE_PERCENT, locale, "%")),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
+        ActivityCanvasHeader(
+            readout = {
+                ActivityReadout(
+                    marginShown,
+                    Modifier.clearAndSetSemantics {},
+                    color = if (done) MaterialTheme.zoonk.vizAccent else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                ActivityCanvasLabel(fields.populationLabel)
-            }
-            ActivityReadout(
-                marginShown,
-                Modifier.clearAndSetSemantics {},
-                color = if (done) MaterialTheme.zoonk.vizAccent else MaterialTheme.colorScheme.onSurfaceVariant,
+            },
+        ) {
+            Text(
+                stringResource(R.string.activities_math_sampling_within, formatAmount(MIDDLE_PERCENT, locale, "%")),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
             )
+            ActivityCanvasLabel(fields.populationLabel)
         }
         SamplingChart(
             bins = histogram(shown, domain),
@@ -398,11 +400,7 @@ private fun SamplingSimulation(
             onValueChange = { sizeIndex = it.toInt() },
             disabled = props.isLocked,
         ) { SizeStops(sizes.map(formatSize), sizeIndex) }
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            itemVerticalAlignment = Alignment.CenterVertically,
-        ) {
+        RunRow(enabled = done, onRunAgain = { runIndex += 1 }) {
             Text(
                 if (done) {
                     stringResource(R.string.activities_math_sampling_done, formatAmount(fields.runs.toDouble(), locale), formatSize(size))
@@ -413,11 +411,10 @@ private fun SamplingSimulation(
                         formatAmount(fields.runs.toDouble(), locale),
                     )
                 },
-                Modifier.weight(1f).semantics { if (done) liveRegion = LiveRegionMode.Polite },
+                it.semantics { if (done) liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
             )
-            RunAgain(enabled = done) { runIndex += 1 }
         }
         if (props.isChecked) ExpectedSpread(fields, sizes, isShare, formatSize)
     }
