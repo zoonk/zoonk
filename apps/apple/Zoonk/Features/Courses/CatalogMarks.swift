@@ -151,6 +151,7 @@ struct CatalogSectionHeader<Title: View, Detail: View>: View {
         title
         Spacer(minLength: 12)
         detailText
+          .lineLimit(1)
       }
 
       VStack(alignment: .leading, spacing: 2) {
@@ -163,6 +164,5 @@ struct CatalogSectionHeader<Title: View, Detail: View>: View {
   private var detailText: some View {
     detail
       .font(.footnote.monospacedDigit())
-      .lineLimit(1)
   }
 }
