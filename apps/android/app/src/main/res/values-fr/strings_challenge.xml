@@ -53,7 +53,7 @@
   "challenge_trickster_mixed": "af1b204c34dc44a1774f64e7cc3345756ba842307b10948c312c958e5c84f243",
   "challenge_trickster_recording_count": "b59409b085975a63c20523841a8cbb6603ba1f3f8348cfa755ad09287d8288a5",
   "challenge_trickster_recordings": "311880f05c5cb04eda5c63731118fd73059ea933cc8ca37cd8c6d736a46a543b",
-  "challenge_trickster_rule": "f7218d6485d4af45ad6973ae19082033d0d3808f6a99ff426476b2475c9ca902",
+  "challenge_trickster_rule": "cb27a0bd0c0d69bb5ea905ffd8597c480ccfe3c6278b54d0a46807c217c09083",
   "challenge_undo": "87d93eff54465f5dda3ec2338421f27583948ab28f291861528ddc11ed9026ae",
   "challenge_used_up": "d63b52e8895c96ca8660ba9255f4161bcb61f857043cb612b74c56675eb72996",
   "challenge_used_up_move": "f869df2b7dcbc1a76a670e5b88d55d4e8f10e0a92041bf00b5be97befcb96397",
@@ -86,7 +86,7 @@
         <item quantity="other">Questions sur %d enregistrements de cette phase, chacun diffusé comme à l’examen, sans indice.</item>
     </plurals>
     <string name="challenge_trickster_mixed">Questions variées sur cette phase, sans indice.</string>
-    <string name="challenge_trickster_rule">Tu verras si ta réponse est juste ou fausse après chaque question, puis pourquoi à la fin, avec les pièges qu’il a tendus.</string>
+    <string name="challenge_trickster_rule">Après chaque réponse, tu sauras si elle est juste ou fausse. À la fin, tu découvriras les explications et les pièges qu’il a tendus. S’il gagne, tu pourras prendre ta revanche le lendemain.</string>
     <string name="challenge_weekly_detail">Questions sur ce que tu as étudié cette semaine, sans indice.</string>
     <string name="challenge_weekly_rule">Tu verras si ta réponse est juste ou fausse après chaque question, puis pourquoi à la fin.</string>
     <plurals name="challenge_questions">

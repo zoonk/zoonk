@@ -53,7 +53,7 @@
   "challenge_trickster_mixed": "6d6d6090fc0835455fe8800f2fd6905d589b1c34e0a2a72a432cc535c9e4e2c0",
   "challenge_trickster_recording_count": "30b874f57c1b7d32d23a8d96acae38d0511ce813873c12fe133311a8190bf912",
   "challenge_trickster_recordings": "6acc514cef0198517eb52ddf4c5fc83ea28011b853754aea24e4c32d7938c06a",
-  "challenge_trickster_rule": "2bf5575bae0fa26e7ad1bd2f5eb7348b7b3ce19ce7334691cf880c71a1d2074f",
+  "challenge_trickster_rule": "d5453189112a83ec8f5a8fc2ef0e7a8e2ca6229cb7e7047342eef17b40ca9c86",
   "challenge_undo": "5523940309280a16ddc2823e9270dfa8ec4c35e70611ba7d93b3bbd8e8d459cf",
   "challenge_used_up": "ae4a35f39f5fcca43f5b7c430e5d1466d526579bcea0e72ccbf48e663aed9922",
   "challenge_used_up_move": "579821a0085e25cb89315226dc318ca1af742608dbb0b1bbad1dd5a9448881a9",
@@ -86,7 +86,7 @@
         <item quantity="other">Perguntas sobre %d gravações desta fase, cada uma reproduzida como na prova, sem dicas.</item>
     </plurals>
     <string name="challenge_trickster_mixed">Perguntas variadas desta fase, sem dicas.</string>
-    <string name="challenge_trickster_rule">Você vai ver se acertou ou errou depois de cada resposta e, no final, o motivo e as pegadinhas que ele preparou.</string>
+    <string name="challenge_trickster_rule">Você vê se acertou ou errou depois de cada resposta e, no final, as explicações e as pegadinhas que ele preparou. Se ele ganhar, você tem uma revanche no dia seguinte.</string>
     <string name="challenge_weekly_detail">Perguntas sobre o que você estudou nesta semana, sem dicas.</string>
     <string name="challenge_weekly_rule">Você vai ver se acertou ou errou depois de cada resposta e, no final, o motivo.</string>
     <plurals name="challenge_questions">

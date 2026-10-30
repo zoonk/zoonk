@@ -14,7 +14,7 @@
         <item quantity="other">Questions on %d recordings from this phase, each played as in the exam, with no hints.</item>
     </plurals>
     <string name="challenge_trickster_mixed">Mixed questions from this phase, with no hints.</string>
-    <string name="challenge_trickster_rule">You\'ll see right or wrong after each answer, and why at the end, with the traps he set.</string>
+    <string name="challenge_trickster_rule">You\'ll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day.</string>
     <string name="challenge_weekly_detail">Questions from what you studied this week, with no hints.</string>
     <string name="challenge_weekly_rule">You\'ll see right or wrong after each answer, and why at the end.</string>
     <plurals name="challenge_questions">

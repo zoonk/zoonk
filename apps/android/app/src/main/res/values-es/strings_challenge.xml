@@ -53,7 +53,7 @@
   "challenge_trickster_mixed": "12d970b8ccce3b6f6cab34679ded4ef7d3b09f360fe707c7502f8496ce3c5422",
   "challenge_trickster_recording_count": "81677e1df7b38a609e3d444caa4d98017edbdec805e70b5af2d3b8e8845b4fcd",
   "challenge_trickster_recordings": "ebd2c5024c57b2dfe26403e0b4e95f9574eda91493f56b7806001371a72053c6",
-  "challenge_trickster_rule": "5e772296d581f19a18184b32fe021c9c6d8f785a42662ac8732c89f1c2db06ca",
+  "challenge_trickster_rule": "4c810ea14fd37a74d5a6fcbc07ed351a628b1b5e64a8537f9a92f734218244d2",
   "challenge_undo": "b6431e30a3dbe22216573eab92ea72f9438dbad96266e5a42b6dd2def1b32119",
   "challenge_used_up": "681b0987b3da32f7f8195b812c34bf53d873d31f661d6aad6966c8c236fee0c7",
   "challenge_used_up_move": "f4eb654f81c8667a6ffd55dc15cc780ffd45aaeffc7feec76e98bdd2d8cfc766",
@@ -86,7 +86,7 @@
         <item quantity="other">Preguntas sobre %d grabaciones de esta fase, cada una como en el examen y sin pistas.</item>
     </plurals>
     <string name="challenge_trickster_mixed">Preguntas variadas de esta fase, sin pistas.</string>
-    <string name="challenge_trickster_rule">Verás si has acertado después de cada respuesta. Al final sabrás por qué y conocerás las trampas que te ha preparado.</string>
+    <string name="challenge_trickster_rule">Después de cada respuesta verás si has acertado o fallado y, al final, la explicación y las trampas que te ha tendido. Si gana, podrás volver a enfrentarte a él al día siguiente.</string>
     <string name="challenge_weekly_detail">Preguntas sobre lo que has estudiado esta semana, sin pistas.</string>
     <string name="challenge_weekly_rule">Verás si has acertado después de cada respuesta y sabrás por qué al final.</string>
     <plurals name="challenge_questions">

@@ -53,7 +53,7 @@
   "challenge_trickster_mixed": "23b075624b2fb070cc7fefdad13b1ba199f0470dd7add9590f83fdbf88bcca56",
   "challenge_trickster_recording_count": "2c6c6aa600c78b59bec92f797ce065ef27fb1f2a06be33d6474683b6adab7b53",
   "challenge_trickster_recordings": "3868421f63eba9a03272338c68039311bf35c8883b29537bca5791fc466990b2",
-  "challenge_trickster_rule": "73fb8495a8e2975db73bf02028088c5b0442657cc213e1d860adea24da2fa205",
+  "challenge_trickster_rule": "689a8f76daf881bbcfbd1aad8eb7eb02afbfd847a3cfbf4be0b6a4d17097f82e",
   "challenge_undo": "dbcbcd05608fefedb08b824fcb5d687d64998afdb6f5a446bae8d967a4bad20f",
   "challenge_used_up": "9e2370a4a230797b074a89eb25ada59a36a87b9d1dc1766ff76eda2d938b268c",
   "challenge_used_up_move": "32ade76629de94e6270f0f7e73eec55202bf9f72907835f8ea221b4526cbf8b5",
@@ -85,7 +85,7 @@
         <item quantity="other">Fragen zu %d Aufnahmen aus dieser Phase, jeweils wie in der Prüfung abgespielt, ohne Hinweise.</item>
     </plurals>
     <string name="challenge_trickster_mixed">Gemischte Fragen aus dieser Phase, ohne Hinweise.</string>
-    <string name="challenge_trickster_rule">Nach jeder Antwort siehst du, ob sie richtig oder falsch war. Am Ende erfährst du, warum und welche Fallen der Trickser gestellt hat.</string>
+    <string name="challenge_trickster_rule">Nach jeder Antwort siehst du, ob sie richtig oder falsch ist. Am Ende erfährst du, warum das so ist und welche Fallen er dir gestellt hat. Wenn er gewinnt, kannst du am nächsten Tag noch einmal gegen ihn antreten.</string>
     <string name="challenge_weekly_detail">Fragen zu dem, was du diese Woche gelernt hast, ohne Hinweise.</string>
     <string name="challenge_weekly_rule">Nach jeder Antwort siehst du, ob sie richtig oder falsch war. Am Ende erfährst du warum.</string>
     <plurals name="challenge_questions">
