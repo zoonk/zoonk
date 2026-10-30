@@ -2,18 +2,37 @@ package com.zoonk.android.feature.plan
 
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlanChangeOperationsInner
+import com.zoonk.api.models.PlanFocusPart
+import com.zoonk.api.models.PlanOperation
+import com.zoonk.api.models.PlanOperationOneOf
+import com.zoonk.api.models.PlanOperationOneOf1
+import com.zoonk.api.models.PlanOperationOneOf10
+import com.zoonk.api.models.PlanOperationOneOf11
+import com.zoonk.api.models.PlanOperationOneOf12
+import com.zoonk.api.models.PlanOperationOneOf13
+import com.zoonk.api.models.PlanOperationOneOf14
+import com.zoonk.api.models.PlanOperationOneOf15
+import com.zoonk.api.models.PlanOperationOneOf15ChoicesInner
+import com.zoonk.api.models.PlanOperationOneOf16
+import com.zoonk.api.models.PlanOperationOneOf17
+import com.zoonk.api.models.PlanOperationOneOf2
+import com.zoonk.api.models.PlanOperationOneOf3
+import com.zoonk.api.models.PlanOperationOneOf4
+import com.zoonk.api.models.PlanOperationOneOf5
+import com.zoonk.api.models.PlanOperationOneOf6
+import com.zoonk.api.models.PlanOperationOneOf7
+import com.zoonk.api.models.PlanOperationOneOf8
+import com.zoonk.api.models.PlanOperationOneOf9
 import com.zoonk.api.models.PlanOperationOutput
+import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
-import kotlinx.serialization.json.buildJsonArray
-import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.put
 import java.time.LocalDate
 
 /**
@@ -260,123 +279,113 @@ fun PlanOp.Companion.of(json: JsonObject): PlanOp =
         }
     }
 
-/**
- * The operation as the API takes it in a change or a preview, or null for one only the server
- * makes. "No date" sends `targetDate: null` explicitly, which the generated models would drop.
- */
-fun PlanOp.toJson(): JsonObject? =
+/** The operation as the API takes it in a change or a preview, or null for one only the server makes. */
+fun PlanOp.toOperation(): PlanOperation? =
     when (this) {
         is PlanOp.DailyMinutes -> {
-            op("setDailyMinutes") { put("minutes", minutes) }
+            PlanOperation.PlanOperationOneOfValue(PlanOperationOneOf(PlanOperationOneOf.Kind.SET_DAILY_MINUTES, minutes.toLong()))
         }
 
         is PlanOp.WeekdayMinutes -> {
-            op("setWeekdayMinutes") {
-                put("weekdays", JsonArray(weekdays.map(::JsonPrimitive)))
-                put("minutes", minutes)
-            }
+            PlanOperation.PlanOperationOneOf1Value(
+                PlanOperationOneOf1(PlanOperationOneOf1.Kind.SET_WEEKDAY_MINUTES, minutes.toLong(), weekdays.map(Int::toLong)),
+            )
         }
 
         is PlanOp.LightWeek -> {
-            op("addLightWeek") { put("startDate", startDate.toString()) }
+            PlanOperation.PlanOperationOneOf2Value(
+                PlanOperationOneOf2(PlanOperationOneOf2.Kind.ADD_LIGHT_WEEK, startDate.toKotlinLocalDate()),
+            )
         }
 
         is PlanOp.MoveWeeklyEvent -> {
-            op("moveWeeklyEvent") {
-                put("from", from.toString())
-                put("to", to.toString())
-            }
+            PlanOperation.PlanOperationOneOf3Value(
+                PlanOperationOneOf3(from.toKotlinLocalDate(), PlanOperationOneOf3.Kind.MOVE_WEEKLY_EVENT, to.toKotlinLocalDate()),
+            )
         }
 
         is PlanOp.TargetDate -> {
-            op("setTargetDate") { put("targetDate", date?.toString()?.let(::JsonPrimitive) ?: JsonNull) }
+            PlanOperation.PlanOperationOneOf4Value(PlanOperationOneOf4(PlanOperationOneOf4.Kind.SET_TARGET_DATE, date?.toKotlinLocalDate()))
         }
 
         is PlanOp.FocusAreas -> {
-            op("focusAreas") {
-                put("areas", areas.json())
-                if (parts.isNotEmpty()) {
-                    put(
-                        "parts",
-                        buildJsonArray {
-                            parts.forEach { part ->
-                                add(
-                                    buildJsonObject {
-                                        put("area", part.area)
-                                        put("name", part.name)
-                                        put("skillIds", part.skillIds.json())
-                                    },
-                                )
-                            }
-                        },
-                    )
-                }
-            }
-        }
-
-        is PlanOp.ReduceAreas -> {
-            op("reduceAreas") { put("areas", areas.json()) }
+            PlanOperation.PlanOperationOneOf5Value(
+                PlanOperationOneOf5(
+                    areas,
+                    PlanOperationOneOf5.Kind.FOCUS_AREAS,
+                    parts.map { PlanFocusPart(it.area, it.name, it.skillIds) }.ifEmpty { null },
+                ),
+            )
         }
 
         is PlanOp.SkipAreas -> {
-            op("skipAreas") { put("areas", areas.json()) }
+            PlanOperation.PlanOperationOneOf6Value(PlanOperationOneOf6(areas, PlanOperationOneOf6.Kind.SKIP_AREAS))
         }
 
         is PlanOp.RestoreAreas -> {
-            op("restoreAreas") { put("areas", areas.json()) }
+            PlanOperation.PlanOperationOneOf7Value(PlanOperationOneOf7(areas, PlanOperationOneOf7.Kind.RESTORE_AREAS))
         }
 
-        is PlanOp.AreaStart -> {
-            op("setAreaStart") {
-                put("areas", areas.json())
-                put("start", if (pastBasics) "pastBasics" else "basics")
-            }
+        is PlanOp.ReduceAreas -> {
+            PlanOperation.PlanOperationOneOf8Value(PlanOperationOneOf8(areas, PlanOperationOneOf8.Kind.REDUCE_AREAS))
         }
 
         is PlanOp.SkipActivities -> {
-            op("skipActivities") { put("activities", activities.json()) }
+            PlanOperation.PlanOperationOneOf9Value(
+                PlanOperationOneOf9(activities.map { contractEnum(it) }, PlanOperationOneOf9.Kind.SKIP_ACTIVITIES),
+            )
         }
 
         is PlanOp.RestoreActivities -> {
-            op("restoreActivities") { put("activities", activities.json()) }
+            PlanOperation.PlanOperationOneOf10Value(
+                PlanOperationOneOf10(
+                    activities.map {
+                        contractEnum(it)
+                    },
+                    PlanOperationOneOf10.Kind.RESTORE_ACTIVITIES,
+                ),
+            )
         }
 
         is PlanOp.PracticeBias -> {
-            op("setPracticeBias") { put("bias", bias) }
+            PlanOperation.PlanOperationOneOf11Value(PlanOperationOneOf11(contractEnum(bias), PlanOperationOneOf11.Kind.SET_PRACTICE_BIAS))
         }
 
         is PlanOp.DifficultyBias -> {
-            op("setDifficultyBias") { put("bias", bias) }
+            PlanOperation.PlanOperationOneOf12Value(PlanOperationOneOf12(contractEnum(bias), PlanOperationOneOf12.Kind.SET_DIFFICULTY_BIAS))
         }
 
         is PlanOp.WrittenCadence -> {
-            op("setWrittenCadence") { put("cadence", cadence) }
+            PlanOperation.PlanOperationOneOf13Value(
+                PlanOperationOneOf13(contractEnum(cadence), PlanOperationOneOf13.Kind.SET_WRITTEN_CADENCE),
+            )
         }
 
         is PlanOp.FullCourse -> {
-            op("setFullCourse") { put("fullCourse", fullCourse) }
+            PlanOperation.PlanOperationOneOf14Value(PlanOperationOneOf14(fullCourse, PlanOperationOneOf14.Kind.SET_FULL_COURSE))
         }
 
         is PlanOp.BaseChoices -> {
-            op("setBaseChoices") {
-                put(
-                    "choices",
-                    buildJsonArray {
-                        choices.forEach { choice ->
-                            add(
-                                buildJsonObject {
-                                    put("skillId", choice.skillId)
-                                    put("choice", choice.choice)
-                                },
-                            )
-                        }
-                    },
-                )
-            }
+            PlanOperation.PlanOperationOneOf15Value(
+                PlanOperationOneOf15(
+                    choices.map { PlanOperationOneOf15ChoicesInner(contractEnum(it.choice), it.skillId) },
+                    PlanOperationOneOf15.Kind.SET_BASE_CHOICES,
+                ),
+            )
         }
 
         PlanOp.FitLessons -> {
-            op("fitLessons") {}
+            PlanOperation.PlanOperationOneOf16Value(PlanOperationOneOf16(PlanOperationOneOf16.Kind.FIT_LESSONS))
+        }
+
+        is PlanOp.AreaStart -> {
+            PlanOperation.PlanOperationOneOf17Value(
+                PlanOperationOneOf17(
+                    areas,
+                    PlanOperationOneOf17.Kind.SET_AREA_START,
+                    if (pastBasics) PlanOperationOneOf17.Start.PAST_BASICS else PlanOperationOneOf17.Start.BASICS,
+                ),
+            )
         }
 
         is PlanOp.AddSkills, is PlanOp.Tools, PlanOp.FollowNotice, is PlanOp.NoticeDate, PlanOp.FitPhaseDates, is PlanOp.ExamChoice,
@@ -386,15 +395,7 @@ fun PlanOp.toJson(): JsonObject? =
         }
     }
 
-private fun op(
-    kind: String,
-    fields: kotlinx.serialization.json.JsonObjectBuilder.() -> Unit,
-) = buildJsonObject {
-    put("kind", kind)
-    fields()
-}
-
-private fun List<String>.json() = JsonArray(map(::JsonPrimitive))
+private inline fun <reified T> contractEnum(value: String): T = ApiJson.decodeFromJsonElement(JsonPrimitive(value))
 
 private fun focusPart(json: JsonObject) = FocusPart(json.string("area").orEmpty(), json.string("name").orEmpty(), json.strings("skillIds"))
 

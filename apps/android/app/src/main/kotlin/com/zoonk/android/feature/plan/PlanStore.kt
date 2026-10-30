@@ -21,6 +21,7 @@ import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
+import com.zoonk.api.models.PlanChangeInput
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanTimeToCover
@@ -32,9 +33,6 @@ import com.zoonk.api.models.SkillOutlineGeneration
 import com.zoonk.api.models.StudyNext
 import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.flow.first
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import java.time.ZoneId
 import java.util.UUID
 import kotlin.time.Clock
@@ -322,11 +320,7 @@ class LivePlanApi(
         perform { api.clients(session).goals.continueGoalAtNextLevel(goalId) }
     }
 
-    private fun changeInput(operations: List<PlanOp>) =
-        buildJsonObject {
-            put("operations", JsonArray(operations.mapNotNull { it.toJson() }))
-            put("timeZone", deviceTimeZone())
-        }
+    private fun changeInput(operations: List<PlanOp>) = PlanChangeInput(operations.mapNotNull { it.toOperation() }, deviceTimeZone())
 
     private fun deviceTimeZone() = ZoneId.systemDefault().id
 }

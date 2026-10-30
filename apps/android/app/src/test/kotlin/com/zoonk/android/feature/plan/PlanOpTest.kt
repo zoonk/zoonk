@@ -1,8 +1,11 @@
 package com.zoonk.android.feature.plan
 
 import com.zoonk.api.ApiJson
+import com.zoonk.api.ApiRequestJson
 import com.zoonk.api.models.PlanEffect
-import kotlinx.serialization.json.JsonNull
+import com.zoonk.api.models.PlanOperation
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -33,25 +36,53 @@ class PlanOpTest {
     }
 
     @Test
-    fun noDateIsSentAsAnExplicitNull() {
-        val json = PlanOp.TargetDate(null).toJson()!!
+    fun eachOperationEncodesAsTheContractTakesItAndReadsBack() {
+        val sent =
+            mapOf(
+                PlanOp.DailyMinutes(40) to """{"kind":"setDailyMinutes","minutes":40}""",
+                PlanOp.WeekdayMinutes(listOf(0, 6), 30) to """{"kind":"setWeekdayMinutes","weekdays":[0,6],"minutes":30}""",
+                PlanOp.LightWeek(LocalDate.of(2027, 1, 4)) to """{"kind":"addLightWeek","startDate":"2027-01-04"}""",
+                PlanOp.MoveWeeklyEvent(LocalDate.of(2027, 1, 9), LocalDate.of(2027, 1, 10)) to
+                    """{"kind":"moveWeeklyEvent","from":"2027-01-09","to":"2027-01-10"}""",
+                PlanOp.TargetDate(null) to """{"kind":"setTargetDate","targetDate":null}""",
+                PlanOp.TargetDate(LocalDate.of(2027, 1, 31)) to """{"kind":"setTargetDate","targetDate":"2027-01-31"}""",
+                PlanOp.FocusAreas(listOf("Math")) to """{"kind":"focusAreas","areas":["Math"]}""",
+                PlanOp.FocusAreas(listOf("Science"), listOf(FocusPart("Science", "biology", listOf("s1")))) to
+                    """{"kind":"focusAreas","areas":["Science"],"parts":[{"area":"Science","name":"biology","skillIds":["s1"]}]}""",
+                PlanOp.ReduceAreas(listOf("Math")) to """{"kind":"reduceAreas","areas":["Math"]}""",
+                PlanOp.SkipAreas(listOf("Math")) to """{"kind":"skipAreas","areas":["Math"]}""",
+                PlanOp.RestoreAreas(listOf("Math")) to """{"kind":"restoreAreas","areas":["Math"]}""",
+                PlanOp.AreaStart(listOf("Math"), pastBasics = true) to """{"kind":"setAreaStart","areas":["Math"],"start":"pastBasics"}""",
+                PlanOp.AreaStart(listOf("Math"), pastBasics = false) to """{"kind":"setAreaStart","areas":["Math"],"start":"basics"}""",
+                PlanOp.SkipActivities(listOf("listening")) to """{"kind":"skipActivities","activities":["listening"]}""",
+                PlanOp.RestoreActivities(listOf("speaking")) to """{"kind":"restoreActivities","activities":["speaking"]}""",
+                PlanOp.PracticeBias("morePractice") to """{"kind":"setPracticeBias","bias":"morePractice"}""",
+                PlanOp.DifficultyBias("harder") to """{"kind":"setDifficultyBias","bias":"harder"}""",
+                PlanOp.WrittenCadence("finalWeeks") to """{"kind":"setWrittenCadence","cadence":"finalWeeks"}""",
+                PlanOp.FullCourse(true) to """{"kind":"setFullCourse","fullCourse":true}""",
+                PlanOp.BaseChoices(listOf(BaseChoice("k1", "quick"))) to
+                    """{"kind":"setBaseChoices","choices":[{"skillId":"k1","choice":"quick"}]}""",
+                PlanOp.FitLessons to """{"kind":"fitLessons"}""",
+            )
 
-        assertEquals(JsonNull, json["targetDate"])
-        assertEquals(PlanOp.TargetDate(null), PlanOp.of(json))
-        assertEquals(PlanOp.TargetDate(LocalDate.of(2027, 1, 31)), PlanOp.of(PlanOp.TargetDate(LocalDate.of(2027, 1, 31)).toJson()!!))
+        sent.forEach { (op, json) ->
+            val encoded = ApiRequestJson.encodeToJsonElement(PlanOperation.serializer(), op.toOperation()!!)
+            assertEquals(Json.parseToJsonElement(json), encoded)
+            assertEquals(op, PlanOp.of(encoded.jsonObject))
+        }
     }
 
     @Test
     fun onlyTheServersOwnOperationsCantBeSent() {
-        assertNull(PlanOp.FollowNotice.toJson())
-        assertEquals(
-            "setWeekdayMinutes",
-            PlanOp
-                .WeekdayMinutes(listOf(0, 6), 30)
-                .toJson()!!["kind"]
-                .toString()
-                .trim('"'),
-        )
+        listOf(
+            PlanOp.AddSkills(listOf("SQL")),
+            PlanOp.Tools(listOf(ToolPick("Python", "setup", "mac"))),
+            PlanOp.FollowNotice,
+            PlanOp.NoticeDate(LocalDate.of(2027, 1, 31), estimated = true),
+            PlanOp.FitPhaseDates,
+            PlanOp.ExamChoice("Language", "English"),
+            PlanOp.Unknown,
+        ).forEach { assertNull(it.toOperation()) }
     }
 
     @Test
