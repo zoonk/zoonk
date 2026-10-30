@@ -12,11 +12,11 @@ private const val NBSP = "\u00A0"
  */
 private val LONG_NUMBER = Regex("(?<![0-9.,\\p{L}/-])[1-9][0-9]{4,}(?![0-9\\p{L}/-]|[.,][0-9])")
 
-/** A postal code's label right before it ("ZIP 94103", "PLZ 10115"), or a state's code ("CA 94103"). */
+/** A postal code's label right before it ("ZIP 94103", "PLZ 10115"), or a city's state code ("San Francisco, CA 94103"). */
 private val POSTAL_LABEL =
     Regex("\\b(?:zip(?: code)?|postal code|postcode|plz|postleitzahl|cep|cp|code postal|código postal):?\\s$", RegexOption.IGNORE_CASE)
 
-private val STATE_CODE = Regex("(?<!\\p{L})\\p{Lu}{2},?\\s$")
+private val STATE_CODE = Regex(",\\s\\p{Lu}{2},?\\s$")
 
 private fun isPostalCode(before: String) = POSTAL_LABEL.containsMatchIn(before) || STATE_CODE.containsMatchIn(before)
 

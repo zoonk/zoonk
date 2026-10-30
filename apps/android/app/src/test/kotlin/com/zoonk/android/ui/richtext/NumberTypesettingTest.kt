@@ -25,6 +25,7 @@ class NumberTypesettingTest {
         val text = "Write to San Francisco, CA 94103, ZIP code 94103, PLZ 10115 or code postal 75001."
         assertEquals(text, typesetNumbers(english, text))
         assertEquals("CA has 39,000 schools.", typesetNumbers(english, "CA has 39000 schools."))
+        assertEquals("The UK 12,000 and NO 50,000 counts.", typesetNumbers(english, "The UK 12000 and NO 50000 counts."))
     }
 
     @Test
