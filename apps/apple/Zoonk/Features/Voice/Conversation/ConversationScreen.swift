@@ -111,6 +111,8 @@ private struct ConversationLoad: View {
           conversation: value, isInCall: $isInCall, callsRightAway: callsRightAway
         ) { saved in
           if let onSaved {
+            // The mock's result reopens this call for its feedback.
+            resource.invalidate()
             onSaved()
             return
           }
