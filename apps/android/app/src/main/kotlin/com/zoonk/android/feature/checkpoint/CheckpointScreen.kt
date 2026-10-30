@@ -767,7 +767,6 @@ internal fun DuelResult(
                     Modifier.width(ASIDE_WIDTH).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    Text(eyebrow(checkpoint), modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
                     ResultDetails(duel, won)
                 }
             }
