@@ -68,6 +68,8 @@ private struct OnboardingDetail: Decodable {
 struct QuestionForm<Content: View>: View {
   let isSaving: Bool
   let failed: Bool
+  /// Says why a save failed, when the answer itself was refused.
+  var failure: Text?
   @ViewBuilder let content: Content
 
   var body: some View {
@@ -76,11 +78,11 @@ struct QuestionForm<Content: View>: View {
 
       if failed {
         Section {
-          Text(
-            "That didn't save. Try again.", tableName: "Onboarding",
-            comment: "A change couldn't be saved"
-          )
-          .foregroundStyle(.destructive)
+          (failure
+            ?? Text(
+              "That didn't save. Try again.", tableName: "Onboarding",
+              comment: "A change couldn't be saved"))
+            .foregroundStyle(.destructive)
         }
       }
     }

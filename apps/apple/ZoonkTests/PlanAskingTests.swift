@@ -26,8 +26,40 @@ final class PlanAskingTests: XCTestCase {
     }
   }
 
-  private func makeAsking(patience: Duration = .seconds(60)) -> PlanAsking<String, Answer> {
-    PlanAsking(interval: .milliseconds(1), settle: .milliseconds(1), patience: patience)
+  /// Holds each request until it's released, recording what was asked.
+  private final class HeldRequests {
+    private(set) var asked: [String] = []
+    private var held: [CheckedContinuation<Answer, Never>] = []
+    private var waiters: [(count: Int, resume: CheckedContinuation<Void, Never>)] = []
+
+    func answer(_ key: String, id: Int) async -> Answer {
+      asked.append(key)
+      for waiter in waiters where waiter.count <= asked.count {
+        waiter.resume.resume()
+      }
+
+      waiters.removeAll { $0.count <= asked.count }
+      return await withCheckedContinuation { held.append($0) }
+    }
+
+    func waitForAsks(_ count: Int) async {
+      guard asked.count < count else {
+        return
+      }
+
+      await withCheckedContinuation { waiters.append((count, $0)) }
+    }
+
+    func releaseNext(ready: Bool = true) {
+      held.removeFirst().resume(returning: Answer(id: asked.count, ready: ready))
+    }
+  }
+
+  private func makeAsking(
+    patience: Duration = .seconds(60), timeout: Duration = .seconds(60)
+  ) -> PlanAsking<String, Answer> {
+    PlanAsking(
+      interval: .milliseconds(1), settle: .milliseconds(1), patience: patience, timeout: timeout)
   }
 
   func testAsksAgainWhileThePlanIsntReady() async {
@@ -141,5 +173,55 @@ final class PlanAskingTests: XCTestCase {
     XCTAssertNil(asking.answer(for: "old"))
     XCTAssertNil(asking.first)
     XCTAssertNotEqual(asking.status, .failed)
+  }
+
+  func testDaysChangedDuringASearchAskOnceForTheLatestWeek() async {
+    let asking = makeAsking()
+    let server = HeldRequests()
+
+    let first = Task { await asking.ask("a", when: true) { await server.answer("a", id: 1) } }
+    await server.waitForAsks(1)
+
+    let second = Task { await asking.ask("b", when: true) { await server.answer("b", id: 2) } }
+    first.cancel()
+    await Task.yield()
+    let latest = Task { await asking.ask("c", when: true) { await server.answer("c", id: 3) } }
+    second.cancel()
+
+    server.releaseNext()
+    await server.waitForAsks(2)
+    server.releaseNext()
+    await latest.value
+
+    XCTAssertEqual(server.asked, ["a", "c"])
+    XCTAssertEqual(asking.answer(for: "c")?.ready, true)
+  }
+
+  func testASearchUnansweredTooLongFailsWithoutSendingItAgain() async {
+    let asking = makeAsking(timeout: .milliseconds(20))
+    let server = HeldRequests()
+
+    await asking.ask("a", when: true) { await server.answer("a", id: 1) }
+
+    XCTAssertEqual(asking.status, .failed)
+    XCTAssertEqual(server.asked, ["a"], "asking again joins the request still out")
+
+    server.releaseNext()
+  }
+
+  func testAWeekWaitingForTheLaneFailsInTimeWithoutBeingSent() async {
+    let asking = makeAsking(timeout: .milliseconds(20))
+    let server = HeldRequests()
+
+    let first = Task { await asking.ask("a", when: true) { await server.answer("a", id: 1) } }
+    await server.waitForAsks(1)
+    first.cancel()
+
+    await asking.ask("b", when: true) { await server.answer("b", id: 2) }
+
+    XCTAssertEqual(asking.status, .failed)
+    XCTAssertEqual(server.asked, ["a"], "the latest week waits for the one still out")
+
+    server.releaseNext()
   }
 }

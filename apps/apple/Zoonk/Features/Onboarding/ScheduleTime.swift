@@ -18,7 +18,20 @@ enum ScheduleTime {
   }
 
   struct TooClose: Equatable {
+    enum Cause: Equatable {
+      case date
+      case days
+    }
+
+    let cause: Cause
     let recommendedMinutes: Int?
+  }
+
+  /// The day the goals typed together share: this goal's time and the others' together.
+  struct DaySplit: Equatable {
+    let mine: Int
+    let others: Int
+    let rest: Int
   }
 
   static let everyDay = Array(0..<7)
@@ -89,14 +102,43 @@ enum ScheduleTime {
   }
 
   /// Why no suggestion covers everything; nil when one does, the time shown does, or the date passed.
-  static func tooClose(found: TimeToCover?, line: Line) -> TooClose? {
+  /// The date is to blame only once every day is a study day: until then, more days bring the time
+  /// down.
+  static func tooClose(found: TimeToCover?, line: Line, studiesEveryDay: Bool) -> TooClose? {
     guard let found, !found.pastDate, !line.coversEverything,
       found.suggested?.kind != .everything
     else {
       return nil
     }
 
-    return TooClose(recommendedMinutes: found.recommendedMinutes)
+    return TooClose(
+      cause: studiesEveryDay ? .date : .days, recommendedMinutes: found.recommendedMinutes)
+  }
+
+  /// The time shown is a suggestion it follows, still the one for the days before: Continue waits
+  /// for the new one.
+  static func waitsForSuggestion(
+    failed: Bool, first: TimeToCover?, found: TimeToCover?, picked: Int?
+  ) -> Bool {
+    picked == nil && found == nil && !failed && suggestedMinutes(first) != nil
+  }
+
+  /// Mirrors core's `splitDailyBudget`: the main goal (`place` 0) weighs twice the others, which get
+  /// whole 5-minute steps, and every goal at least 5 minutes. Nil for a goal typed alone.
+  static func daySplit(minutes: Int?, count: Int, place: Int) -> DaySplit? {
+    guard count > 1, let minutes else {
+      return nil
+    }
+
+    let least = 5
+    let step = 5
+    let share = Double(minutes) / Double(2 + count - 1)
+    let other = max(least, Int((share / Double(step)).rounded(.down)) * step)
+    let main = max(least, minutes - other * (count - 1))
+    let shares = [main] + Array(repeating: other, count: count - 1)
+    let mine = shares.indices.contains(place) ? shares[place] : minutes
+
+    return DaySplit(mine: mine, others: count - 1, rest: shares.reduce(0, +) - mine)
   }
 
   /// Only while the time shown falls short of everything.

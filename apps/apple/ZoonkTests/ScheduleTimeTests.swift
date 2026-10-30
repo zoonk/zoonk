@@ -145,13 +145,51 @@ final class ScheduleTimeTests: XCTestCase {
   func testSaysWhyOnlyWhenNoSensibleTimeCoversEverything() {
     let short = Line.share(0.15)
 
-    XCTAssertNil(ScheduleTime.tooClose(found: found(), line: short))
-    XCTAssertNil(ScheduleTime.tooClose(found: passed, line: short))
+    func why(_ found: TimeToCover, line: Line = short) -> ScheduleTime.TooClose? {
+      ScheduleTime.tooClose(found: found, line: line, studiesEveryDay: true)
+    }
+
+    XCTAssertNil(why(found()))
+    XCTAssertNil(why(passed))
+    XCTAssertEqual(why(tooClose), .init(cause: .date, recommendedMinutes: 900))
+    XCTAssertEqual(why(everyTopicAt(45)), .init(cause: .date, recommendedMinutes: 300))
+    XCTAssertNil(why(tooClose, line: .everything(suggested: false)))
+  }
+
+  func testBlamesTheDaysUntilEveryDayIsAStudyDay() {
+    let fewerDays = ScheduleTime.tooClose(
+      found: tooClose, line: .share(0.15), studiesEveryDay: false)
+
+    XCTAssertEqual(fewerDays, .init(cause: .days, recommendedMinutes: 900))
+  }
+
+  func testWaitsForTheNewDaysSuggestionUnlessTheLearnerPickedATime() {
+    let first = everythingAt(35)
+
+    XCTAssertTrue(
+      ScheduleTime.waitsForSuggestion(failed: false, first: first, found: nil, picked: nil))
+    XCTAssertFalse(
+      ScheduleTime.waitsForSuggestion(failed: false, first: first, found: nil, picked: 60))
+    XCTAssertFalse(
+      ScheduleTime.waitsForSuggestion(failed: true, first: first, found: nil, picked: nil))
+    XCTAssertFalse(
+      ScheduleTime.waitsForSuggestion(failed: false, first: first, found: first, picked: nil))
+    XCTAssertFalse(
+      ScheduleTime.waitsForSuggestion(
+        failed: false, first: found(suggested: nil), found: nil, picked: nil))
+  }
+
+  func testSplitsTheSharedDayAsCoreDoes() {
     XCTAssertEqual(
-      ScheduleTime.tooClose(found: tooClose, line: short), .init(recommendedMinutes: 900))
+      ScheduleTime.daySplit(minutes: 60, count: 2, place: 0), .init(mine: 40, others: 1, rest: 20))
     XCTAssertEqual(
-      ScheduleTime.tooClose(found: everyTopicAt(45), line: short), .init(recommendedMinutes: 300))
-    XCTAssertNil(ScheduleTime.tooClose(found: tooClose, line: .everything(suggested: false)))
+      ScheduleTime.daySplit(minutes: 45, count: 2, place: 1), .init(mine: 15, others: 1, rest: 30))
+    XCTAssertEqual(
+      ScheduleTime.daySplit(minutes: 50, count: 3, place: 0), .init(mine: 30, others: 2, rest: 20))
+    XCTAssertEqual(
+      ScheduleTime.daySplit(minutes: 10, count: 3, place: 2), .init(mine: 5, others: 2, rest: 10))
+    XCTAssertNil(ScheduleTime.daySplit(minutes: 25, count: 1, place: 0))
+    XCTAssertNil(ScheduleTime.daySplit(minutes: nil, count: 2, place: 0))
   }
 
   func testOffersTheSuggestionBackOnlyWhileAnotherTimeFallsShort() {

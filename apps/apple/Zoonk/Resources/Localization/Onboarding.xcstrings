@@ -3012,6 +3012,151 @@
         }
       }
     },
+    "Choose at least %@ a day for your %lld goals." : {
+      "comment" : "The day's time is shorter than the goals typed together need",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähl täglich mindestens %1$@ für %#@goals@."
+          },
+          "substitutions" : {
+            "goals" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Ziel"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Ziele"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Choose at least %1$@ a day for your %#@goals@."
+          },
+          "substitutions" : {
+            "goals" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg goal"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg goals"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige al menos %1$@ al día para %#@goals@."
+          },
+          "substitutions" : {
+            "goals" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg objetivo"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg objetivos"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prévois au moins %1$@ par jour pour %#@goals@."
+          },
+          "substitutions" : {
+            "goals" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg objectif"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg objectifs"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolha pelo menos %1$@ por dia para %#@goals@."
+          },
+          "substitutions" : {
+            "goals" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg meta"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg metas"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Choose at least one study day." : {
       "comment" : "No study day is picked",
       "localizations" : {
@@ -3240,6 +3385,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estude tudo com %@ por dia"
+          }
+        }
+      }
+    },
+    "Covering everything in depth by your date takes %@ a day on the days you picked. More study days bring that down." : {
+      "comment" : "The time a day covering the whole goal by its date on the days picked",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An den gewählten Lerntagen brauchst du jeweils %@, um bis zu deinem Zieldatum alles gründlich zu lernen. Mit mehr Lerntagen sinkt die tägliche Lernzeit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudiarlo todo en profundidad para esa fecha requiere %@ al día los días que has elegido. Con más días de estudio, necesitarás menos tiempo al día."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour tout étudier en profondeur d’ici la date prévue, il faut %@ par jour, les jours que tu as choisis. Ajouter des jours d’étude réduit cette durée."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para estudar tudo a fundo até a data definida, você precisa de %@ por dia nos dias que escolheu. Mais dias de estudo reduzem esse tempo."
           }
         }
       }
@@ -8622,6 +8796,35 @@
         }
       }
     },
+    "The days you picked can't cover everything in depth by your date. More study days would help." : {
+      "comment" : "No time a day covers the whole goal on the days picked",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die gewählten Lerntage reichen nicht aus, um bis zu deinem Zieldatum alles gründlich zu lernen. Mehr Lerntage würden helfen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con los días que has elegido no da tiempo a estudiarlo todo en profundidad para esa fecha. Añadir más días de estudio ayudaría."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les jours que tu as choisis ne suffisent pas pour tout étudier en profondeur d’ici la date prévue. Ajouter des jours d’étude serait utile."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com os dias que você escolheu, não dá para estudar tudo a fundo até a data definida. Mais dias de estudo ajudariam."
+          }
+        }
+      }
+    },
     "The exam notice says %@." : {
       "comment" : "The day an exam's notice gives",
       "localizations" : {
@@ -9111,6 +9314,76 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esta prova acontece várias vezes por ano. Até você escolher uma data, seu plano usa a primeira."
+          }
+        }
+      }
+    },
+    "This goal gets %@ a day and your other goal %@." : {
+      "comment" : "How the day's time splits between two goals typed together",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für dieses Ziel sind täglich %1$@ und für dein anderes Ziel %2$@ eingeplant."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This goal gets %1$@ a day and your other goal %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dedicarás %1$@ al día a este objetivo y %2$@ al otro."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as %1$@ par jour pour cet objectif et %2$@ pour ton autre objectif."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essa meta fica com %1$@ por dia e a outra meta com %2$@."
+          }
+        }
+      }
+    },
+    "This goal gets %@ a day and your other goals %@ together." : {
+      "comment" : "How the day's time splits between three or more goals typed together",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für dieses Ziel sind täglich %1$@ und für deine anderen Ziele zusammen %2$@ eingeplant."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This goal gets %1$@ a day and your other goals %2$@ together."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dedicarás %1$@ al día a este objetivo y %2$@ en total a tus otros objetivos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as %1$@ par jour pour cet objectif et %2$@ au total pour tes autres objectifs."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essa meta fica com %1$@ por dia e as outras metas com %2$@ no total."
           }
         }
       }

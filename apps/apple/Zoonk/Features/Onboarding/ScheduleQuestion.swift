@@ -6,6 +6,7 @@ struct ScheduleQuestion: View {
   let view: GoalOnboarding
   let isSaving: Bool
   let failed: Bool
+  let refusal: OnboardingError?
   let onAnswer: ([String: Any]) -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
@@ -47,11 +48,13 @@ struct ScheduleQuestion: View {
     view: GoalOnboarding,
     isSaving: Bool,
     failed: Bool,
+    refusal: OnboardingError?,
     onAnswer: @escaping ([String: Any]) -> Void
   ) {
     self.view = view
     self.isSaving = isSaving
     self.failed = failed
+    self.refusal = refusal
     self.onAnswer = onAnswer
     _days = State(initialValue: ScheduleTime.startingDays(view.goal.studyDays))
   }
@@ -61,7 +64,7 @@ struct ScheduleQuestion: View {
     let findKey = self.findKey
     let findsTime = datedGuess && !days.isEmpty
 
-    QuestionForm(isSaving: isSaving, failed: failed) {
+    QuestionForm(isSaving: isSaving, failed: failed, failure: refusalWords) {
       StepHeader(
         title: Text(
           "How much time can you study each day?", tableName: "Onboarding",
@@ -85,9 +88,11 @@ struct ScheduleQuestion: View {
 
       weekSection(shown)
 
-      StepButtons(canContinue: !days.isEmpty && shown.minutes != nil) {
+      // While the new days' suggestion is worked out, Continue waits for it.
+      StepButtons(canContinue: !days.isEmpty && shown.minutes != nil && !isStale(shown)) {
         submit(shown)
       }
+      .environment(\.isSavingAnswer, isSaving || isStale(shown))
     }
     .task(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
       await found.ask(findKey, when: findsTime) {
@@ -153,10 +158,23 @@ struct ScheduleQuestion: View {
     return (targetDate, time.targetDateNamedMonth)
   }
 
-  /// Shows its last time dimmed while the time the new days need is worked out.
+  /// The time shown is still the suggestion for the days before: it shows dimmed, and Continue
+  /// waits for the new one.
   private func isStale(_ shown: Shown) -> Bool {
-    picked == nil && shown.dated && shown.found == nil && found.status != .failed
-      && shown.lastFound != nil
+    !days.isEmpty
+      && ScheduleTime.waitsForSuggestion(
+        failed: found.status == .failed, first: found.first, found: shown.found, picked: picked)
+  }
+
+  private var refusalWords: Text? {
+    guard case .dayTooShort(let minutes, let goals) = refusal else {
+      return nil
+    }
+
+    return Text(
+      "Choose at least \(duration(minutes)) a day for your \(goals) goals.",
+      tableName: "Onboarding",
+      comment: "The day's time is shorter than the goals typed together need")
   }
 
   private func timeMenu(_ shown: Shown) -> some View {
@@ -215,6 +233,12 @@ struct ScheduleQuestion: View {
       words
         .font(.subheadline)
         .foregroundStyle(.secondary)
+
+      if case .finish = shown.line, let split = splitWords(shown) {
+        Text(split)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+      }
 
       if failedLine {
         Button {
@@ -277,24 +301,62 @@ struct ScheduleQuestion: View {
   }
 
   private func announcement(_ shown: Shown) -> String {
-    let tooClose = ScheduleTime.tooClose(found: shown.found, line: shown.line).map {
-      tooCloseWords($0)
-    }
+    let tooClose = ScheduleTime.tooClose(
+      found: shown.found, line: shown.line,
+      studiesEveryDay: days.count == ScheduleTime.everyDay.count
+    ).map(tooCloseWords)
 
-    return [tooClose, statusWords(shown)].compactMap { $0 }.joined(separator: " ")
+    return [tooClose, statusWords(shown), splitWords(shown)].compactMap { $0 }.joined(
+      separator: " ")
   }
 
+  /// Until every day is a study day, more days bring the time down; only then is the date to blame.
   private func tooCloseWords(_ tooClose: ScheduleTime.TooClose) -> String {
-    guard let minutes = tooClose.recommendedMinutes else {
-      return String(
+    switch (tooClose.cause, tooClose.recommendedMinutes) {
+    case (.days, nil):
+      String(
+        localized:
+          "The days you picked can't cover everything in depth by your date. More study days would help.",
+        table: "Onboarding", comment: "No time a day covers the whole goal on the days picked")
+    case (.days, let minutes?):
+      String(
+        localized:
+          "Covering everything in depth by your date takes \(duration(minutes)) a day on the days you picked. More study days bring that down.",
+        table: "Onboarding",
+        comment: "The time a day covering the whole goal by its date on the days picked")
+    case (.date, nil):
+      String(
         localized: "Your date is too close to cover everything in depth.", table: "Onboarding",
         comment: "No time a day covers the whole goal by its date")
+    case (.date, let minutes?):
+      String(
+        localized:
+          "Your date is close: covering everything in depth takes \(duration(minutes)) a day.",
+        table: "Onboarding", comment: "The time a day covering the whole goal by its date takes")
+    }
+  }
+
+  /// The goals typed together share the day's time; the main one weighs most.
+  private func splitWords(_ shown: Shown) -> String? {
+    guard
+      let split = ScheduleTime.daySplit(
+        minutes: days.isEmpty ? nil : shown.minutes, count: view.goalIds.count,
+        place: max(0, view.goalIds.firstIndex(of: view.goal.id) ?? 0))
+    else {
+      return nil
     }
 
-    return String(
-      localized:
-        "Your date is close: covering everything in depth takes \(duration(minutes)) a day.",
-      table: "Onboarding", comment: "The time a day covering the whole goal by its date takes")
+    let main = duration(split.mine)
+    let other = duration(split.rest)
+
+    return split.others == 1
+      ? String(
+        localized: "This goal gets \(main) a day and your other goal \(other).",
+        table: "Onboarding", comment: "How the day's time splits between two goals typed together")
+      : String(
+        localized: "This goal gets \(main) a day and your other goals \(other) together.",
+        table: "Onboarding",
+        comment: "How the day's time splits between three or more goals typed together")
   }
 
   private func statusWords(_ shown: Shown) -> String? {

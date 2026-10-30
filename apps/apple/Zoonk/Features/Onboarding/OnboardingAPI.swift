@@ -17,6 +17,9 @@ enum OnboardingError: Error, Equatable, Sendable {
   /// Too many new goals at once (`SLOW_DOWN`).
   case slowDown
   case unsupported
+  /// A schedule shorter than the goals typed together need, at least 5 minutes each
+  /// (`DAY_TOO_SHORT`): `minutes` is the least the day takes.
+  case dayTooShort(minutes: Int, goals: Int)
   case failed(APIError)
 }
 
@@ -67,6 +70,20 @@ struct OnboardingResume: Equatable, Sendable {
   }
 
   let draft: Draft?
+}
+
+private struct DayTooShortBody: Decodable {
+  struct Body: Decodable {
+    struct Details: Decodable {
+      let goals: Int
+      let minutes: Int
+    }
+
+    let code: String
+    let details: Details?
+  }
+
+  let error: Body
 }
 
 private struct ResumeBody: Decodable {
@@ -411,6 +428,14 @@ struct OnboardingAPI: Sendable {
     switch output {
     case .ok(let response):
       return try response.body.json
+    case .unprocessableContent(let response):
+      let refusal: DayTooShortBody = try PracticeJSON.recode(try response.body.json)
+
+      guard refusal.error.code == "DAY_TOO_SHORT", let details = refusal.error.details else {
+        throw APIError.unavailable
+      }
+
+      throw OnboardingError.dayTooShort(minutes: details.minutes, goals: details.goals)
     case .unauthorized:
       throw APIError.unauthorized
     case .notFound:

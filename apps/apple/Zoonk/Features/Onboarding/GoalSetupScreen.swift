@@ -104,6 +104,8 @@ private struct GoalSteps: View {
   @State private var revisiting: Components.Schemas.OnboardingStep?
   @State private var isSaving = false
   @State private var failed = false
+  /// Why the last save was refused, when the answer itself was.
+  @State private var refusal: OnboardingError?
   @State private var confirmingStartOver = false
   /// Start over's request, cancelled if the screen goes away first, so it never acts after.
   @State private var startingOver: Task<Void, Never>?
@@ -148,7 +150,8 @@ private struct GoalSteps: View {
 
   var body: some View {
     StepScreen(
-      step: step, view: view, isSaving: isSaving, failed: failed, onAnswer: answer,
+      step: step, view: view, isSaving: isSaving, failed: failed, refusal: refusal,
+      onAnswer: answer,
       onPlacementDone: { answer(["question": "placement"]) }
     )
     .id(step)
@@ -241,6 +244,7 @@ private struct GoalSteps: View {
       } catch is CancellationError {
       } catch {
         failed = true
+        refusal = error as? OnboardingError
       }
     }
   }
@@ -298,6 +302,7 @@ private struct StepScreen: View {
   let view: GoalOnboarding
   let isSaving: Bool
   let failed: Bool
+  let refusal: OnboardingError?
   let onAnswer: ([String: Any]) -> Void
   let onPlacementDone: () -> Void
 
@@ -316,7 +321,8 @@ private struct StepScreen: View {
         .onboardingColumn()
     case .schedule:
       PlanWait(view: view) { _ in
-        ScheduleQuestion(view: view, isSaving: isSaving, failed: failed, onAnswer: onAnswer)
+        ScheduleQuestion(
+          view: view, isSaving: isSaving, failed: failed, refusal: refusal, onAnswer: onAnswer)
       }
       .onboardingColumn()
     default:
