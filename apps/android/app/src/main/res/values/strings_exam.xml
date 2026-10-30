@@ -100,7 +100,8 @@
     <string name="exam_mocks_plus">Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time.</string>
     <!-- How far into a running mock: "12 of 45 answered". -->
     <string name="exam_mock_answered">%1$s of %2$s answered</string>
-    <string name="exam_mock_handed_in">Handed in</string>
+    <!-- A running mock's status on the exam page once every part of it is handed in. -->
+    <string name="exam_mock_handed_in">All parts handed in</string>
     <string name="exam_mock_time_up">Time\'s up</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="exam_mock_time_left">%1$s left</string>

@@ -48,7 +48,7 @@
   "exam_how_did_it_go": "e445f34e7c9d5ba51b84f2393e03b137f5b56adc4204e856657dec38d4a7579f",
   "exam_latest_mock": "59c64860673d07c2767486bb6cbe32b9e4086ec1c55b37f464dbbb8490db01ce",
   "exam_mock_answered": "3b92b93d8726ca6d46eaf3dbc28470f6b709692a156a51f221a593f7d267c26c",
-  "exam_mock_handed_in": "294f80c9522cad7a3faa4c6b13b4053afb831ca0831c2b5bb66011e8805134fd",
+  "exam_mock_handed_in": "a603e79428778c5937ec60c7f3a090dfe04bbd556292be758a6766536a748a26",
   "exam_mock_time_left": "9efcdd1f8fc3d101b75bbcfdd0af1668ba66c99bf9416f1dfdbaa4c9b1e1e8d5",
   "exam_mock_time_up": "71d92abf2703165dfc58b4628b389811ac06b59920a88a5c72b2e342715cb087",
   "exam_mocks": "e39876e49b675073256d574db104005f9d269edb5859bd69656df712a364a5df",
@@ -225,7 +225,8 @@
     <string name="exam_mocks_plus">Plus incluye simulacros cuando quieras, uno cada semana en tu plan y el seguimiento de tu progreso.</string>
     <!-- How far into a running mock: "12 of 45 answered". -->
     <string name="exam_mock_answered">%1$s de %2$s respondidas</string>
-    <string name="exam_mock_handed_in">Entregado</string>
+    <!-- A running mock's status on the exam page once every part of it is handed in. -->
+    <string name="exam_mock_handed_in">Todas las partes entregadas</string>
     <string name="exam_mock_time_up">Se acabó el tiempo</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="exam_mock_time_left">Quedan %1$s</string>
