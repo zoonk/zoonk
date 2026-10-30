@@ -65,6 +65,7 @@
 - “Broken” / “Held” (shield): “Quebrado” / “Resistiu”
 - “Big Challenge”: “Grande Desafio”
 - “Phase challenge”: “Desafio da fase”, not “avaliação”, “ponto de controle”, or “etapa”
+- “Step” the learner takes or follows (the next step, a solution’s or worked example’s steps, a run’s steps): “passo” (“Próximo passo”, “Passo 2”); “etapa” only for a stage of a process or a flow (“as etapas da fotossíntese”, “nas próximas etapas”)
 - “Weekly challenge”: “Desafio semanal”
 - “Mock exam”, including speaking mocks: “Simulado”, not “prova simulada” or “simulação”
 - “Full meal”: “Refeição completa”

@@ -88,7 +88,7 @@
   "player_listen": "55366525747555dbe28edbbf4c740748fd29815e1a225256313115f12c1869ff",
   "player_microphone_blocked": "ca049b0457f384fca6be6193d3363588a36cf8212bd066c0d949b5a0d0df03ef",
   "player_next_lesson": "7bd9f0b726aa2ab49cfdc4a88c62413f30f4973f992cc7a798f4b160a34f1a5d",
-  "player_next_step_failed": "7b702230bb962139d74f41d46de14c7f9919f60309d5ba289a2d82e27d4af301",
+  "player_next_step_failed": "a82775aee2a392c8118db0ff54834c69f573fb55878db7abe040f08281e4dec5",
   "player_not_found_description": "3c7ff2626f290e1ff4e59aeacb4ab32500078b0ce0611ecba1db5fd9cb957d3c",
   "player_not_found_title": "397ab93f3c5ff28a329fffcd08cd03b7e5e0178ac49fe90fd4208f136eea7509",
   "player_not_in_app_description": "fcfc5f6551e19837865d7dec325102dcfd97cfce46e13d44c0caeeb0c83ff38c",
@@ -354,7 +354,7 @@
     <string name="player_next_lesson">Próxima aula</string>
     <string name="player_stop_for_today">Parar por hoje</string>
     <string name="player_see_todays_summary">Ver o resumo de hoje</string>
-    <string name="player_next_step_failed">Não conseguimos abrir a próxima etapa. Tente de novo.</string>
+    <string name="player_next_step_failed">Não deu para abrir o próximo passo. Tente de novo.</string>
     <string name="player_stop_failed">Não conseguimos parar a sessão. Tente de novo.</string>
     <string name="player_back_to_chapter">Voltar ao capítulo</string>
     <string name="player_back_to_unit">Voltar à unidade</string>
