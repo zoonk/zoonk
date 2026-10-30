@@ -25,6 +25,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
+import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonStepAnswer
 import kotlinx.coroutines.CompletableDeferred
@@ -64,6 +65,17 @@ class KeyboardFretboardFlowTest {
                 .single()
                 .second.answer,
         )
+
+    @Test
+    fun anExploredSoundFoundByEarIsNamedAndPlayedOnTheKeys() {
+        harness.play(listOf(ActivityFixtures.exploreStep("keyboardFretboard.byEar"), summaryStep("end")))
+
+        shows("2 notes")
+        rule.onNode(hasContentDescription("On the keys: C, G")).assertExists()
+        key("C").assertIsOn()
+        rule.onNodeWithText("By ear").assertDoesNotExist()
+        rule.onNodeWithText("I can't listen now").assertDoesNotExist()
+    }
 
     @Test
     fun changingOneNoteTurnsCMajorIntoCMinor() {

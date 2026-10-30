@@ -128,7 +128,7 @@ object KeyboardFretboard {
 
     /**
      * Where the notes start: the learner's answer when there is one, else the start, else (for a question about the target)
-     * the target itself to explore. A target found by ear stays hidden until it's answered.
+     * the target itself to explore. A target found by ear stays hidden until it's answered, unless an explanation explores it.
      */
     fun initialPitches(
         answer: ActivityAnswer?,
@@ -136,10 +136,11 @@ object KeyboardFretboard {
         byEar: Boolean,
         start: NoteTarget?,
         target: NoteTarget,
+        isExploring: Boolean = false,
     ): List<Int> {
         answer.notes?.let { notes -> MusicNotes.pitchClasses(notes)?.let { return it } }
 
-        val showsTarget = !byEar && !isInteraction
+        val showsTarget = if (byEar) isExploring else !isInteraction
         return (start ?: target.takeIf { showsTarget })?.pitches.orEmpty()
     }
 

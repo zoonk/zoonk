@@ -35,6 +35,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityCanvasLabel
+import com.zoonk.android.feature.activities.ActivityPhase
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.player.model.ActivityStepContent
@@ -73,9 +74,11 @@ private class Board(
 
     /** A target found by ear shows once answered, even when the question only asked to name it. */
     val showsAnswer = props.isChecked && (isInteraction || byEar)
+    val isRevealed = props.phase != ActivityPhase.Answering
+    val asksByEar = byEar && props.phase == ActivityPhase.Answering
     val spell = KeyboardFretboard.spelling(listOf(target, start))
     val expected = KeyboardFretboard.expectedPitches(props.expected, target.pitches)
-    val initialPitches = KeyboardFretboard.initialPitches(props.answer, isInteraction, byEar, start, target)
+    val initialPitches = KeyboardFretboard.initialPitches(props.answer, isInteraction, byEar, start, target, props.isExploring)
     val playsTarget = byEar && !props.cantListen
 }
 
@@ -119,7 +122,7 @@ private fun PianoBoard(
     KeyboardFretboardHeader(
         board = board,
         notes = shown.map(board.spell),
-        isRevealed = props.isChecked,
+        isRevealed = board.isRevealed,
         labels = labels,
         onPlayTarget = { audio.play(KeyboardFretboard.targetSound(board.target), MusicInstrument.Piano) }.takeIf { board.playsTarget },
         onHear = {
@@ -140,7 +143,7 @@ private fun PianoBoard(
         enabled = !props.isLocked,
     )
 
-    if (board.byEar && !props.isChecked) SoundAsText(board.target, props, audio.isUnavailable, labels)
+    if (board.asksByEar) SoundAsText(board.target, props, audio.isUnavailable, labels)
     if (board.showsGuitar) GuitarMirror(shown, board.spell, isChecked = board.showsAnswer, labels = labels)
 }
 
@@ -196,7 +199,7 @@ private fun GuitarOnlyBoard(
     KeyboardFretboardHeader(
         board = board,
         notes = played.map(board.spell),
-        isRevealed = props.isChecked,
+        isRevealed = board.isRevealed,
         labels = labels,
         onPlayTarget = { audio.play(KeyboardFretboard.targetSound(board.target), MusicInstrument.Guitar) }.takeIf { board.playsTarget },
         onHear = {
@@ -221,7 +224,7 @@ private fun GuitarOnlyBoard(
     )
 
     if (!props.isChecked) FretWindow(firstFret, enabled = !props.isLocked) { firstFret = it }
-    if (board.byEar && !props.isChecked) SoundAsText(board.target, props, audio.isUnavailable, labels)
+    if (board.asksByEar) SoundAsText(board.target, props, audio.isUnavailable, labels)
 
     if (board.showsAnswer) {
         GuitarMirror(
