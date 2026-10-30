@@ -58,7 +58,7 @@ struct AreaModelSide: Hashable {
   }
 }
 
-/// The canvas never answers a numeric check: the learner adds the parts and types it.
+/// The canvas never answers a check about the total: the learner adds the parts.
 struct AreaModelCanvas: View {
   let context: ActivityCanvasContext
   let fields: AreaModelFields
@@ -93,9 +93,11 @@ struct AreaModelCanvas: View {
     fields.isArea ? fields.unit.map { "\($0)²" } : fields.unit
   }
 
+  /// A question about the total waits for the check, whether it's typed or chosen.
   private var hidesTotal: Bool {
-    if case .numeric = context.check, !isChecked { return true }
-    return false
+    guard context.phase == .answering else { return false }
+    if case .interaction = context.check { return false }
+    return true
   }
 
   var body: some View {

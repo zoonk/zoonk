@@ -23,11 +23,12 @@ private struct RevealCount: ViewModifier {
 
   let key: Int
   let total: Int
+  var isInstant = false
   @Binding var revealed: Int
 
   func body(content: Content) -> some View {
     content.task(id: key) {
-      guard !reduceMotion else {
+      guard !reduceMotion, !isInstant else {
         revealed = total
         return
       }
@@ -69,6 +70,14 @@ private struct ChanceSimulationView: View {
     }
 
     return options.first { $0.id == id }?.value
+  }
+
+  private var isGuessRight: Bool {
+    guard case .choice(_, let options, _, _) = context.check else {
+      return false
+    }
+
+    return options.first(where: \.isCorrect)?.id == context.answer?.optionId
   }
 
   var body: some View {
@@ -227,15 +236,15 @@ private struct ChanceSimulationView: View {
     Chart {
       if let guess {
         RuleMark(y: .value("guess", guess))
-          .foregroundStyle(.secondary)
-          .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+          .foregroundStyle(isGuessRight ? Color.success : .destructive)
+          .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 4]))
           .annotation(position: .top, alignment: .trailing) {
             Text(
               "Your guess: \(percentText(guess))", tableName: "ActivitiesCharts",
               comment: "The learner's guess next to a simulation"
             )
             .font(.caption2)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(isGuessRight ? Color.success : .destructive)
           }
       }
 
@@ -520,7 +529,11 @@ private struct SamplingSimulationView: View {
       }
     }
     .modifier(
-      RevealCount(key: run == nil ? -1 : seed(size), total: selected.count, revealed: $revealed)
+      // The opening run shows at once; only a new run or size plays, as on main.
+      RevealCount(
+        key: run == nil ? -1 : seed(size), total: selected.count,
+        isInstant: runIndex == 0 && sizeIndex == fields.sampleSizes.count - 1,
+        revealed: $revealed)
     )
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
