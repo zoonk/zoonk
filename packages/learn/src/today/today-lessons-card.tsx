@@ -55,8 +55,9 @@ export function LessonsCard({
       className={className}
       detail={t({
         description: "A short line under the progress percent, in a small tile.",
-        message: "{done, plural, =0 {No lessons yet} one {# lesson done} other {# lessons done}}",
-        values: { done: lessons.done },
+        message:
+          "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}",
+        values: { studied: counts.studied },
       })}
       ids={ids}
       summary={

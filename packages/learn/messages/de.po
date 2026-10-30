@@ -3713,9 +3713,9 @@ msgstr "Vorbereitung"
 #. A short line under the progress percent, in a small tile.
 #: src/journey/journey-hero.tsx
 #: src/today/today-lessons-card.tsx
-msgctxt "L6dnbU"
-msgid "{done, plural, =0 {No lessons yet} one {# lesson done} other {# lessons done}}"
-msgstr "{done, plural, =0 {Noch keine Lektionen} one {# Lektion abgeschlossen} other {# Lektionen abgeschlossen}}"
+msgctxt "Z1VCaI"
+msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
+msgstr "{studied, plural, =0 {Noch keine Lektionen gelernt} one {# Lektion gelernt} other {# Lektionen gelernt}}"
 
 #: src/journey/journey-hero.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -8970,9 +8970,14 @@ msgid "about {time} of study"
 msgstr "etwa {time} Lernzeit"
 
 #: src/onboarding/steps/reveal-body.tsx
-msgctxt "Y3WKHs"
-msgid "Your plan covers your whole goal in depth. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
-msgstr "Dein Plan deckt dein gesamtes Ziel gründlich ab. Wenn du früher fertig sein möchtest, nimm dir täglich mehr Zeit oder wähl ein Datum, damit dein Plan bis dahin das Wichtigste abdeckt."
+msgctxt "1-tKgx"
+msgid "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
+msgstr "Dein Plan deckt dein ganzes Ziel ab. Wenn du früher fertig werden möchtest, erhöhe deine tägliche Lernzeit. Oder wähl ein Datum, dann plant er das Wichtigste bis dahin ein."
+
+#: src/onboarding/steps/reveal-body.tsx
+msgctxt "b3M-c5"
+msgid "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
+msgstr "Deine tägliche Lernzeit bestimmt, wie weit dein Plan reicht. Wenn du mehr schaffen oder früher fertig werden möchtest, erhöhe deine tägliche Lernzeit. Oder wähl ein Datum, dann plant er das Wichtigste bis dahin ein."
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "q_N3d-"

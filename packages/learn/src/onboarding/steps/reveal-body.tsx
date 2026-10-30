@@ -113,7 +113,8 @@ function RevealFacts() {
 
 /**
  * A language ends at the level the learner picked and an exam at its date; a learn goal without a
- * date runs as long as its whole subject takes, so the reveal says what sets that.
+ * date runs as long as its whole subject takes, so the reveal says what sets that. Planning without
+ * a date stops at the longest plan there can be, so only a plan holding every part says it does.
  */
 function RevealPace() {
   const t = useExtracted();
@@ -125,9 +126,13 @@ function RevealPace() {
 
   return (
     <p className="text-muted-foreground max-w-prose text-sm text-pretty">
-      {t(
-        "Your plan covers your whole goal in depth. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
-      )}
+      {plan.feasibility?.fits
+        ? t(
+            "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
+          )
+        : t(
+            "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
+          )}
     </p>
   );
 }

@@ -3713,9 +3713,9 @@ msgstr "Preparación"
 #. A short line under the progress percent, in a small tile.
 #: src/journey/journey-hero.tsx
 #: src/today/today-lessons-card.tsx
-msgctxt "L6dnbU"
-msgid "{done, plural, =0 {No lessons yet} one {# lesson done} other {# lessons done}}"
-msgstr "{done, plural, =0 {Aún no hay lecciones completadas} one {# lección completada} other {# lecciones completadas}}"
+msgctxt "Z1VCaI"
+msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
+msgstr "{studied, plural, =0 {Aún no has estudiado ninguna lección} one {# lección estudiada} other {# lecciones estudiadas}}"
 
 #: src/journey/journey-hero.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -8970,9 +8970,14 @@ msgid "about {time} of study"
 msgstr "aproximadamente {time} de estudio"
 
 #: src/onboarding/steps/reveal-body.tsx
-msgctxt "Y3WKHs"
-msgid "Your plan covers your whole goal in depth. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
-msgstr "Tu plan cubre todo tu objetivo en profundidad. Para terminar antes, dedícale más tiempo al día o elige una fecha y el plan incluirá lo más importante hasta entonces."
+msgctxt "1-tKgx"
+msgid "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
+msgstr "Tu plan cubre todas las partes de tu objetivo. Para terminar antes, dedícale más tiempo al día o elige una fecha y el plan ajustará lo más importante al tiempo disponible."
+
+#: src/onboarding/steps/reveal-body.tsx
+msgctxt "b3M-c5"
+msgid "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
+msgstr "El tiempo que dedicas al día determina hasta dónde llega tu plan. Para avanzar más o terminar antes, dedícale más tiempo al día o elige una fecha y el plan ajustará lo más importante al tiempo disponible."
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "q_N3d-"

@@ -3713,9 +3713,9 @@ msgstr "Préparation"
 #. A short line under the progress percent, in a small tile.
 #: src/journey/journey-hero.tsx
 #: src/today/today-lessons-card.tsx
-msgctxt "L6dnbU"
-msgid "{done, plural, =0 {No lessons yet} one {# lesson done} other {# lessons done}}"
-msgstr "{done, plural, =0 {Aucune leçon pour l’instant} one {# leçon terminée} other {# leçons terminées}}"
+msgctxt "Z1VCaI"
+msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
+msgstr "{studied, plural, =0 {Aucune leçon étudiée pour le moment} one {# leçon étudiée} other {# leçons étudiées}}"
 
 #: src/journey/journey-hero.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -8970,9 +8970,14 @@ msgid "about {time} of study"
 msgstr "environ {time} d’étude"
 
 #: src/onboarding/steps/reveal-body.tsx
-msgctxt "Y3WKHs"
-msgid "Your plan covers your whole goal in depth. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
-msgstr "Ton plan couvre tout ton objectif en profondeur. Pour finir plus tôt, consacre-lui plus de temps chaque jour ou choisis une date : il inclura d’ici là ce qui compte le plus."
+msgctxt "1-tKgx"
+msgid "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
+msgstr "Ton plan couvre toutes les parties de ton objectif. Pour finir plus tôt, consacre-lui plus de temps chaque jour, ou choisis une date : ton plan inclura ce qui compte le plus d’ici là."
+
+#: src/onboarding/steps/reveal-body.tsx
+msgctxt "b3M-c5"
+msgid "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
+msgstr "Le temps que tu y consacres chaque jour détermine jusqu’où va ton plan. Pour aller plus loin ou finir plus tôt, consacre-lui plus de temps chaque jour, ou choisis une date : ton plan inclura ce qui compte le plus d’ici là."
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "q_N3d-"
