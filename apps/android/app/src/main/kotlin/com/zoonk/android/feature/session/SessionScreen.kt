@@ -19,11 +19,14 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
@@ -280,6 +283,7 @@ internal fun NextStop(
     val startsFor = goalId?.takeIf { ready }
     val written = startsFor != null && viewModel.writtenWhileWaiting == step.position
     val startFocus = remember { FocusRequester() }
+    var screenFocused by remember { mutableStateOf(false) }
     val instead = alternative?.takeIf { !ready && goalId != null }
     // Main stacks the actions full width below its large breakpoint once an alternative joins them.
     val stacked =
@@ -299,10 +303,10 @@ internal fun NextStop(
             reread()
         }
     }
-    LaunchedEffect(written) { if (written) startFocus.requestFocus() }
 
     TaskScaffold(
         onClose = navigator::closeTask,
+        modifier = Modifier.onFocusChanged { screenFocused = it.hasFocus },
         title = { Text(stringResource(R.string.session_summary_eyebrow), maxLines = 1, style = MaterialTheme.typography.titleSmall) },
         bottomBar =
             if (startsFor != null || instead != null || onStop != null || viewModel.failed != null) {
@@ -326,6 +330,7 @@ internal fun NextStop(
                                 ) { Text(stringResource(R.string.session_next_stop)) }
                             }
                             startsFor?.let { goal ->
+                                LaunchedEffect(written) { if (written && !screenFocused) startFocus.requestFocus() }
                                 Button(
                                     onClick = { viewModel.start(day, step, goal) },
                                     Modifier.focusRequester(startFocus),
