@@ -4,32 +4,30 @@
     {
       "steps": [
         {
-          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "conclusion": "Screen 4: Its basis names screen 5; name an earlier hook text, explanation or worked example.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "conclusion": "Screen 4: Its basis names screen 5; name an earlier hook text, explanation or worked example.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "conclusion": "Screen 4: Its basis names screen 5; name an earlier hook text, explanation or worked example.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
-        "expected": { "screens": [1, 3] },
+        "expected": {
+          "screens": [
+            1,
+            3
+          ]
+        },
         "id": "en-temperature-code-problems-1",
         "userInput": {
-          "activityTemplates": [
-            {
-              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why. Check kinds this template supports: numeric.",
-              "id": "numberLine",
-              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"moves\":{\"minItems\":1,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"by\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"by\"],\"additionalProperties\":false}},\"start\":{\"type\":\"number\"},\"step\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"label\",\"max\",\"min\",\"moves\",\"start\",\"step\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"numberLine\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
-            }
-          ],
           "chapterTitle": "Negative numbers",
           "courseTitle": "Everyday math",
           "language": "en",
@@ -39,9 +37,18 @@
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  { "isCorrect": true, "text": "2 °C" },
-                  { "isCorrect": false, "text": "8 °C" },
-                  { "isCorrect": false, "text": "−8 °C" }
+                  {
+                    "isCorrect": true,
+                    "text": "2 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "8 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "−8 °C"
+                  }
                 ],
                 "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
                 "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
@@ -65,7 +72,10 @@
                 "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
                 "result": "It's 2 °C: two degrees above zero.",
                 "steps": [
-                  { "math": "-3 + 3 = 0", "text": "First climb to zero: that takes 3 degrees." },
+                  {
+                    "math": "-3 + 3 = 0",
+                    "text": "First climb to zero: that takes 3 degrees."
+                  },
                   {
                     "math": "0 + 2 = 2",
                     "text": "Two degrees of the rise are left, so keep going up."
@@ -99,9 +109,15 @@
                       "expression": null,
                       "text": "Start at {start} °C and move {rise} degrees up."
                     },
-                    { "expression": null, "text": "You land on {result} °C." }
+                    {
+                      "expression": null,
+                      "text": "You land on {result} °C."
+                    }
                   ],
-                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
                   "unit": "°C",
                   "variables": [
                     {
@@ -112,7 +128,14 @@
                       "unit": "°C",
                       "value": -4
                     },
-                    { "max": 15, "min": 2, "name": "rise", "step": 1, "unit": "°C", "value": 7 }
+                    {
+                      "max": 15,
+                      "min": 2,
+                      "name": "rise",
+                      "step": 1,
+                      "unit": "°C",
+                      "value": 7
+                    }
                   ]
                 },
                 "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?"
@@ -179,13 +202,7 @@
             ]
           },
           "level": "beginner",
-          "problems": [
-            {
-              "problem": "Uses filler (\"it's important to note\"); cut it and say the idea directly.",
-              "screen": 1
-            },
-            { "problem": "Step 2 shows {result} without an expression.", "screen": 3 }
-          ],
+          "shortAnswers": true,
           "spec": {
             "canDo": "Work out a temperature after it rises across zero",
             "description": "Add a rise to a temperature below zero, the way thermometers do.",
@@ -202,49 +219,63 @@
                 "activityTemplate": null,
                 "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
               },
               {
                 "activityTemplate": null,
                 "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Zero is just a mark on the way up: count to zero, then past it.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "numberLine",
                 "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explain in your own words why −3 + 5 is 2.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -260,7 +291,24 @@
             ],
             "supportMode": "explanationFirst",
             "title": "Temperature changes across zero"
-          }
+          },
+          "activityTemplates": [
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why. Check kinds this template supports: numeric.",
+              "id": "numberLine",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"moves\":{\"minItems\":1,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"by\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"by\"],\"additionalProperties\":false}},\"start\":{\"type\":\"number\"},\"step\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"label\",\"max\",\"min\",\"moves\",\"start\",\"step\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"numberLine\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ],
+          "problems": [
+            {
+              "problem": "Uses filler (\"it's important to note\"); cut it and say the idea directly.",
+              "screen": 1
+            },
+            {
+              "problem": "Step 2 shows {result} without an expression.",
+              "screen": 3
+            }
+          ]
         }
       }
     },
@@ -283,16 +331,14 @@
         }
       ],
       "testCase": {
-        "expected": { "screens": [1, 3] },
+        "expected": {
+          "screens": [
+            1,
+            3
+          ]
+        },
         "id": "en-temperature-basis-follows-1",
         "userInput": {
-          "activityTemplates": [
-            {
-              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why. Check kinds this template supports: numeric.",
-              "id": "numberLine",
-              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"moves\":{\"minItems\":1,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"by\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"by\"],\"additionalProperties\":false}},\"start\":{\"type\":\"number\"},\"step\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"label\",\"max\",\"min\",\"moves\",\"start\",\"step\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"numberLine\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
-            }
-          ],
           "chapterTitle": "Negative numbers",
           "courseTitle": "Everyday math",
           "language": "en",
@@ -302,9 +348,18 @@
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  { "isCorrect": true, "text": "2 °C" },
-                  { "isCorrect": false, "text": "8 °C" },
-                  { "isCorrect": false, "text": "−8 °C" }
+                  {
+                    "isCorrect": true,
+                    "text": "2 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "8 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "−8 °C"
+                  }
                 ],
                 "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
                 "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
@@ -328,7 +383,10 @@
                 "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
                 "result": "It's 2 °C: two degrees above zero.",
                 "steps": [
-                  { "math": "-3 + 3 = 0", "text": "First climb to zero: that takes 3 degrees." },
+                  {
+                    "math": "-3 + 3 = 0",
+                    "text": "First climb to zero: that takes 3 degrees."
+                  },
                   {
                     "math": "0 + 2 = 2",
                     "text": "Two degrees of the rise are left, so keep going up."
@@ -338,7 +396,10 @@
                 "visual": null
               },
               {
-                "basis": { "quote": "a rise always moves **up** the thermometer.", "screen": 2 },
+                "basis": {
+                  "quote": "a rise always moves **up** the thermometer.",
+                  "screen": 2
+                },
                 "context": null,
                 "correctReason": "You start at {start} °C and move {rise} degrees up.",
                 "kind": "mathCheck",
@@ -362,9 +423,15 @@
                       "expression": null,
                       "text": "Start at {start} °C and move {rise} degrees up."
                     },
-                    { "expression": null, "text": "You land on {result} °C." }
+                    {
+                      "expression": null,
+                      "text": "You land on {result} °C."
+                    }
                   ],
-                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
                   "unit": "°C",
                   "variables": [
                     {
@@ -375,7 +442,14 @@
                       "unit": "°C",
                       "value": -4
                     },
-                    { "max": 15, "min": 2, "name": "rise", "step": 1, "unit": "°C", "value": 7 }
+                    {
+                      "max": 15,
+                      "min": 2,
+                      "name": "rise",
+                      "step": 1,
+                      "unit": "°C",
+                      "value": 7
+                    }
                   ]
                 },
                 "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?"
@@ -442,13 +516,7 @@
             ]
           },
           "level": "beginner",
-          "problems": [
-            {
-              "problem": "Uses filler (\"it's important to note\"); cut it and say the idea directly.",
-              "screen": 1
-            },
-            { "problem": "Step 2 shows {result} without an expression.", "screen": 3 }
-          ],
+          "shortAnswers": true,
           "spec": {
             "canDo": "Work out a temperature after it rises across zero",
             "description": "Add a rise to a temperature below zero, the way thermometers do.",
@@ -465,49 +533,63 @@
                 "activityTemplate": null,
                 "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
               },
               {
                 "activityTemplate": null,
                 "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Zero is just a mark on the way up: count to zero, then past it.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "numberLine",
                 "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explain in your own words why −3 + 5 is 2.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -523,7 +605,24 @@
             ],
             "supportMode": "explanationFirst",
             "title": "Temperature changes across zero"
-          }
+          },
+          "activityTemplates": [
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why. Check kinds this template supports: numeric.",
+              "id": "numberLine",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"moves\":{\"minItems\":1,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"by\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"by\"],\"additionalProperties\":false}},\"start\":{\"type\":\"number\"},\"step\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"label\",\"max\",\"min\",\"moves\",\"start\",\"step\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"numberLine\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ],
+          "problems": [
+            {
+              "problem": "Uses filler (\"it's important to note\"); cut it and say the idea directly.",
+              "screen": 1
+            },
+            {
+              "problem": "Step 2 shows {result} without an expression.",
+              "screen": 3
+            }
+          ]
         }
       }
     },
@@ -546,16 +645,13 @@
         }
       ],
       "testCase": {
-        "expected": { "screens": [5] },
+        "expected": {
+          "screens": [
+            5
+          ]
+        },
         "id": "en-temperature-activity-answer-1",
         "userInput": {
-          "activityTemplates": [
-            {
-              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why. Check kinds this template supports: numeric.",
-              "id": "numberLine",
-              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"moves\":{\"minItems\":1,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"by\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"by\"],\"additionalProperties\":false}},\"start\":{\"type\":\"number\"},\"step\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"label\",\"max\",\"min\",\"moves\",\"start\",\"step\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"numberLine\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
-            }
-          ],
           "chapterTitle": "Negative numbers",
           "courseTitle": "Everyday math",
           "language": "en",
@@ -565,9 +661,18 @@
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  { "isCorrect": true, "text": "2 °C" },
-                  { "isCorrect": false, "text": "8 °C" },
-                  { "isCorrect": false, "text": "−8 °C" }
+                  {
+                    "isCorrect": true,
+                    "text": "2 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "8 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "−8 °C"
+                  }
                 ],
                 "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
                 "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
@@ -591,7 +696,10 @@
                 "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
                 "result": "It's 2 °C: two degrees above zero.",
                 "steps": [
-                  { "math": "-3 + 3 = 0", "text": "First climb to zero: that takes 3 degrees." },
+                  {
+                    "math": "-3 + 3 = 0",
+                    "text": "First climb to zero: that takes 3 degrees."
+                  },
                   {
                     "math": "0 + 2 = 2",
                     "text": "Two degrees of the rise are left, so keep going up."
@@ -626,7 +734,10 @@
                       "text": "Move {rise} degrees up from {start} °C: {result} °C."
                     }
                   ],
-                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
                   "unit": "°C",
                   "variables": [
                     {
@@ -637,7 +748,14 @@
                       "unit": "°C",
                       "value": -4
                     },
-                    { "max": 15, "min": 2, "name": "rise", "step": 1, "unit": "°C", "value": 7 }
+                    {
+                      "max": 15,
+                      "min": 2,
+                      "name": "rise",
+                      "step": 1,
+                      "unit": "°C",
+                      "value": 7
+                    }
                   ]
                 },
                 "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?"
@@ -704,9 +822,7 @@
             ]
           },
           "level": "beginner",
-          "problems": [
-            { "problem": "check.answer: The answer 6 doesn't match the computed 5", "screen": 5 }
-          ],
+          "shortAnswers": true,
           "spec": {
             "canDo": "Work out a temperature after it rises across zero",
             "description": "Add a rise to a temperature below zero, the way thermometers do.",
@@ -723,49 +839,63 @@
                 "activityTemplate": null,
                 "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
               },
               {
                 "activityTemplate": null,
                 "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Zero is just a mark on the way up: count to zero, then past it.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "numberLine",
                 "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explain in your own words why −3 + 5 is 2.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -781,7 +911,20 @@
             ],
             "supportMode": "explanationFirst",
             "title": "Temperature changes across zero"
-          }
+          },
+          "activityTemplates": [
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why. Check kinds this template supports: numeric.",
+              "id": "numberLine",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"moves\":{\"minItems\":1,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"by\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"by\"],\"additionalProperties\":false}},\"start\":{\"type\":\"number\"},\"step\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"label\",\"max\",\"min\",\"moves\",\"start\",\"step\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"numberLine\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ],
+          "problems": [
+            {
+              "problem": "check.answer: The answer 6 doesn't match the computed 5",
+              "screen": 5
+            }
+          ]
         }
       }
     },
@@ -804,16 +947,13 @@
         }
       ],
       "testCase": {
-        "expected": { "screens": [7] },
+        "expected": {
+          "screens": [
+            7
+          ]
+        },
         "id": "en-temperature-numbered-reason-1",
         "userInput": {
-          "activityTemplates": [
-            {
-              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why. Check kinds this template supports: numeric.",
-              "id": "numberLine",
-              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"moves\":{\"minItems\":1,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"by\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"by\"],\"additionalProperties\":false}},\"start\":{\"type\":\"number\"},\"step\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"label\",\"max\",\"min\",\"moves\",\"start\",\"step\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"numberLine\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
-            }
-          ],
           "chapterTitle": "Negative numbers",
           "courseTitle": "Everyday math",
           "language": "en",
@@ -823,9 +963,18 @@
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  { "isCorrect": true, "text": "2 °C" },
-                  { "isCorrect": false, "text": "8 °C" },
-                  { "isCorrect": false, "text": "−8 °C" }
+                  {
+                    "isCorrect": true,
+                    "text": "2 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "8 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "−8 °C"
+                  }
                 ],
                 "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
                 "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
@@ -849,7 +998,10 @@
                 "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
                 "result": "It's 2 °C: two degrees above zero.",
                 "steps": [
-                  { "math": "-3 + 3 = 0", "text": "First climb to zero: that takes 3 degrees." },
+                  {
+                    "math": "-3 + 3 = 0",
+                    "text": "First climb to zero: that takes 3 degrees."
+                  },
                   {
                     "math": "0 + 2 = 2",
                     "text": "Two degrees of the rise are left, so keep going up."
@@ -884,7 +1036,10 @@
                       "text": "Move {rise} degrees up from {start} °C: {result} °C."
                     }
                   ],
-                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
                   "unit": "°C",
                   "variables": [
                     {
@@ -895,7 +1050,14 @@
                       "unit": "°C",
                       "value": -4
                     },
-                    { "max": 15, "min": 2, "name": "rise", "step": 1, "unit": "°C", "value": 7 }
+                    {
+                      "max": 15,
+                      "min": 2,
+                      "name": "rise",
+                      "step": 1,
+                      "unit": "°C",
+                      "value": 7
+                    }
                   ]
                 },
                 "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?"
@@ -931,8 +1093,12 @@
                 "basis": null,
                 "context": "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
                 "image": {
-                  "alt": "A thermometer from −10 °C to 10 °C with three numbered marks.",
-                  "parts": ["−6 °C mark", "zero mark", "3 °C mark"],
+                  "alt": "A thermometer from −10 °C to 10 °C: 1 sits low on the scale, 2 at its middle line, 3 just above it.",
+                  "parts": [
+                    "−6 °C mark",
+                    "zero mark",
+                    "3 °C mark"
+                  ],
                   "prompt": "A thermometer from −10 °C to 10 °C."
                 },
                 "kind": "check",
@@ -966,12 +1132,7 @@
             ]
           },
           "level": "beginner",
-          "problems": [
-            {
-              "problem": "The reason for \"1\" (\"That's not right.\") is too vague: say that 1 marks the starting −6 °C, before the rise.",
-              "screen": 7
-            }
-          ],
+          "shortAnswers": true,
           "spec": {
             "canDo": "Work out a temperature after it rises across zero",
             "description": "Add a rise to a temperature below zero, the way thermometers do.",
@@ -988,49 +1149,63 @@
                 "activityTemplate": null,
                 "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
               },
               {
                 "activityTemplate": null,
                 "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Zero is just a mark on the way up: count to zero, then past it.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "numberLine",
                 "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explain in your own words why −3 + 5 is 2.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -1046,7 +1221,20 @@
             ],
             "supportMode": "explanationFirst",
             "title": "Temperature changes across zero"
-          }
+          },
+          "activityTemplates": [
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why. Check kinds this template supports: numeric.",
+              "id": "numberLine",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"moves\":{\"minItems\":1,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"by\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"by\"],\"additionalProperties\":false}},\"start\":{\"type\":\"number\"},\"step\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"label\",\"max\",\"min\",\"moves\",\"start\",\"step\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"numberLine\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ],
+          "problems": [
+            {
+              "problem": "The reason for \"1\" (\"That's not right.\") is too vague: say that 1 marks the starting −6 °C, before the rise.",
+              "screen": 7
+            }
+          ]
         }
       }
     },
@@ -1069,10 +1257,13 @@
         }
       ],
       "testCase": {
-        "expected": { "screens": [2] },
+        "expected": {
+          "screens": [
+            2
+          ]
+        },
         "id": "pt-regra-reviewer-jargon-1",
         "userInput": {
-          "activityTemplates": [],
           "chapterTitle": "Razão e proporção",
           "courseTitle": "Matemática",
           "language": "pt",
@@ -1082,10 +1273,22 @@
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  { "isCorrect": false, "text": "Aumenta" },
-                  { "isCorrect": false, "text": "Diminui" },
-                  { "isCorrect": false, "text": "Fica igual" },
-                  { "isCorrect": true, "text": "Depende de quanto cada coisa mudou" }
+                  {
+                    "isCorrect": false,
+                    "text": "Aumenta"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "Diminui"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "Fica igual"
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "Depende de quanto cada coisa mudou"
+                  }
                 ],
                 "question": "Uma gráfica recebe um pedido maior e contrata mais gente. O prazo aumenta ou diminui? Dê seu palpite.",
                 "reveal": "Depende. Um pedido maior exige mais tempo, mas mais gente pode reduzir o tempo. Você precisa comparar as duas mudanças.",
@@ -1149,7 +1352,10 @@
                 "problem": "Quatro trabalhadores terminam um muro em 6 dias. No mesmo ritmo, quantos dias 8 trabalhadores levam para terminar o mesmo muro?",
                 "result": "Oito trabalhadores terminam o muro em 3 dias.",
                 "steps": [
-                  { "math": null, "text": "Mantenha a obra fixa: é o mesmo muro." },
+                  {
+                    "math": null,
+                    "text": "Mantenha a obra fixa: é o mesmo muro."
+                  },
                   {
                     "math": "\\frac{4}{8}",
                     "text": "Com mais trabalhadores, o tempo diminui. Use a razão inversa entre as equipes."
@@ -1196,7 +1402,10 @@
                       "text": "O novo prazo é {result} horas."
                     }
                   ],
-                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
                   "unit": "horas",
                   "variables": [
                     {
@@ -1215,7 +1424,14 @@
                       "unit": "etiquetas",
                       "value": 80
                     },
-                    { "max": 5, "min": 1, "name": "horas", "step": 1, "unit": "horas", "value": 2 },
+                    {
+                      "max": 5,
+                      "min": 1,
+                      "name": "horas",
+                      "step": 1,
+                      "unit": "horas",
+                      "value": 2
+                    },
                     {
                       "max": 400,
                       "min": 200,
@@ -1243,7 +1459,10 @@
                 "problem": "Três impressoras fazem 240 etiquetas em 4 horas. No mesmo ritmo, quanto tempo 5 impressoras levam para fazer 600 etiquetas?",
                 "result": "Cinco impressoras fazem as 600 etiquetas em 6 horas.",
                 "steps": [
-                  { "math": "4\\text{ horas}", "text": "Comece pelo prazo conhecido." },
+                  {
+                    "math": "4\\text{ horas}",
+                    "text": "Comece pelo prazo conhecido."
+                  },
                   {
                     "math": "\\frac{600}{240}",
                     "text": "A quantidade de etiquetas aumenta. Multiplique pela razão entre o pedido novo e o antigo."
@@ -1298,7 +1517,10 @@
                       "text": "O prazo calculado é {result} horas."
                     }
                   ],
-                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
                   "unit": "horas",
                   "variables": [
                     {
@@ -1317,7 +1539,14 @@
                       "unit": "peças",
                       "value": 120
                     },
-                    { "max": 6, "min": 2, "name": "horas", "step": 1, "unit": "horas", "value": 3 },
+                    {
+                      "max": 6,
+                      "min": 2,
+                      "name": "horas",
+                      "step": 1,
+                      "unit": "horas",
+                      "value": 3
+                    },
                     {
                       "max": 8,
                       "min": 4,
@@ -1372,7 +1601,10 @@
                       "text": "O prazo para a nova fornada é {result} horas."
                     }
                   ],
-                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
                   "unit": "horas",
                   "variables": [
                     {
@@ -1391,7 +1623,14 @@
                       "unit": "pães",
                       "value": 120
                     },
-                    { "max": 6, "min": 2, "name": "horas", "step": 1, "unit": "horas", "value": 3 },
+                    {
+                      "max": 6,
+                      "min": 2,
+                      "name": "horas",
+                      "step": 1,
+                      "unit": "horas",
+                      "value": 3
+                    },
                     {
                       "max": 6,
                       "min": 3,
@@ -1420,12 +1659,6 @@
             ]
           },
           "level": "intermediate",
-          "problems": [
-            {
-              "problem": "Uses \"grandezas inversamente proporcionais\", \"constante de proporcionalidade\" and notation before explaining them, right after a check about the gráfica. Fix: build on the gráfica check in everyday words: with the same order, more people means less time (inverse); with the same team, more labels means more time (direct). Introduce one term at a time and no notation.",
-              "screen": 2
-            }
-          ],
           "spec": {
             "canDo": "Resolver regras de três simples e compostas com grandezas diretas e inversas",
             "description": "Use a relação entre grandezas para calcular prazos quando mudam a quantidade de trabalho e a capacidade de produção.",
@@ -1442,63 +1675,87 @@
                 "activityTemplate": null,
                 "brief": "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes."
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
                 "kind": "explanation",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
                 "kind": "workedExample",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
                 "kind": "check",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
                 "kind": "explanation",
-                "skills": [2],
+                "skills": [
+                  2
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
                 "kind": "workedExample",
-                "skills": [0, 2],
+                "skills": [
+                  0,
+                  2
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
                 "kind": "check",
-                "skills": [0, 2],
+                "skills": [
+                  0,
+                  2
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
                 "kind": "application",
-                "skills": [0, 1, 2],
+                "skills": [
+                  0,
+                  1,
+                  2
+                ],
                 "visual": null
               }
             ],
@@ -1530,7 +1787,14 @@
             ],
             "supportMode": "questionFirst",
             "title": "Regra de três simples e composta"
-          }
+          },
+          "activityTemplates": [],
+          "problems": [
+            {
+              "problem": "Uses \"grandezas inversamente proporcionais\", \"constante de proporcionalidade\" and notation before explaining them, right after a check about the gráfica. Fix: build on the gráfica check in everyday words: with the same order, more people means less time (inverse); with the same team, more labels means more time (direct). Introduce one term at a time and no notation.",
+              "screen": 2
+            }
+          ]
         }
       }
     }

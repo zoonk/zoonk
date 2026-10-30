@@ -28,16 +28,12 @@ function toInput(
   problems: FixLessonDraftParams["problems"],
 ): LessonFixInput {
   return {
+    ...base,
     activityTemplates: describeActivityTemplates(
       base.spec.screens.flatMap((screen) => screen.activityTemplate ?? []),
     ),
-    chapterTitle: base.chapterTitle,
-    courseTitle: base.courseTitle,
-    language: base.language,
     lesson,
-    level: base.level,
     problems,
-    spec: base.spec,
   };
 }
 
