@@ -138,7 +138,7 @@ class Plot internal constructor(
         drawText(measured, topLeft = Offset(left, point.y - measured.size.height / 2))
     }
 
-    /** Text centered on a point, or ending at it when [end], lifted by [lift]; a [halo] keeps it clear of the lines under it. */
+    /** Text centered on a point, or ending at it when [end], lifted by [lift] and kept inside the plot; a [halo] keeps it clear of the lines under it. */
     fun label(
         text: String,
         x: Double,
@@ -151,7 +151,7 @@ class Plot internal constructor(
         val measured = measurer.measure(text, style.copy(color = color, fontWeight = FontWeight.SemiBold))
         val point = at(x, y)
         val left = if (end) point.x - measured.size.width else point.x - measured.size.width / 2
-        val topLeft = Offset(left, point.y - lift.toPx() - measured.size.height / 2)
+        val topLeft = Offset(left.coerceIn(0f, max(0f, size.width - measured.size.width)), point.y - lift.toPx() - measured.size.height / 2)
         halo?.let { drawText(measured, color = it, topLeft = topLeft, drawStyle = Stroke(HALO_WIDTH.toPx(), join = StrokeJoin.Round)) }
         drawText(measured, topLeft = topLeft, drawStyle = Fill)
     }
