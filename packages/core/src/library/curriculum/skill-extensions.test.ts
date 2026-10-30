@@ -458,6 +458,34 @@ describe("skill extensions", () => {
     ]);
   });
 
+  it("keeps asking for a skill's next chapter when the later chapter's lessons were set aside", async () => {
+    const { chapter, course, skill } = await courseSetup();
+    const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
+
+    const later = await addChapter({
+      courseId: course.id,
+      lessons: 4,
+      position: 1,
+      skillId: skill.id,
+      title: "Entrevistas com perguntas situacionais",
+    });
+
+    await prisma.lesson.updateMany({
+      data: { setAsideAt: new Date() },
+      where: { homeChapterId: later.id },
+    });
+
+    await expect(
+      planSkillExtensions({
+        courseId: course.id,
+        extensions: [{ afterChapterId: chapter.id, lessons: 5, skill: ref }],
+        ownerId: null,
+      }),
+    ).resolves.toMatchObject([
+      { afterChapterId: chapter.id, chapters: [{ title: chapter.title }], lessons: 5 },
+    ]);
+  });
+
   it("continues after every chapter that teaches the skill, one that needs a tool included", async () => {
     const { chapter, course, skill } = await courseSetup();
     const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };

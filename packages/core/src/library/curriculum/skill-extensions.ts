@@ -68,7 +68,7 @@ function loadSkillPlacements({
                 },
               },
             },
-            where: { lesson: visible },
+            where: { lesson: { ...visible, setAsideAt: null } },
           },
           title: true,
           tools: true,
