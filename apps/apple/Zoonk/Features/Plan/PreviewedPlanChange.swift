@@ -5,6 +5,7 @@ struct PreviewedPlanChange<Control: View>: View {
   @Environment(PlanStore.self) private var store
   @State private var isPreviewing = false
   @State private var preview: Preview?
+  @State private var hasAsked = false
 
   let editor: PlanEditor
   let plan: GoalPlan
@@ -15,6 +16,8 @@ struct PreviewedPlanChange<Control: View>: View {
   let what: String
   /// What the Plan says once the change is saved.
   let sentence: String
+  /// Asks as soon as it shows, for a learner who came to make this change.
+  var asksOnAppear = false
   @ViewBuilder let control: (_ isPreviewing: Bool, _ ask: @escaping () -> Void) -> Control
 
   private struct Preview: Identifiable {
@@ -28,6 +31,12 @@ struct PreviewedPlanChange<Control: View>: View {
       Task { await ask() }
     }
     .disabled(isPreviewing)
+    .task {
+      if asksOnAppear && !hasAsked {
+        hasAsked = true
+        await ask()
+      }
+    }
     .alert(
       title,
       isPresented: Binding(get: { preview != nil }, set: { if !$0 { preview = nil } }),

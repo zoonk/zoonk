@@ -10,6 +10,7 @@ struct PlanDateSection: View {
   let editor: PlanEditor
   let goal: LearnerGoal
   let plan: GoalPlan
+  var asksStudyEverything = false
 
   var body: some View {
     let schedule = plan.schedule
@@ -173,7 +174,8 @@ struct PlanDateSection: View {
           table: "Plan",
           comment:
             "Says the goal's deadline was dropped; the argument is a date like 'May 5, 2027' or 'May 5'"
-        )
+        ),
+      asksOnAppear: asksStudyEverything
     ) { isPreviewing, ask in
       Button(action: ask) {
         LabeledContent {

@@ -34,8 +34,9 @@ final class TodayStore {
   /// Shown while Today reads the day again, never for another learner or day.
   private var opened: OpenedSession?
   /// Main holds an answered change on Today with what it did and its Undo while the day reads
-  /// again; never for another learner or day.
-  private var answered: (owner: AuthenticatedSession, localDate: String, value: AnsweredPlanChange)?
+  /// again; never for another learner, goal or day.
+  private var answered:
+    (owner: AuthenticatedSession, day: OpenedSession.Day, value: AnsweredPlanChange)?
   private var writings: [String: (owner: AuthenticatedSession, writing: LessonWriting)] = [:]
 
   @ObservationIgnored private let api: any StudyAPIClient
@@ -182,17 +183,25 @@ final class TodayStore {
     }
   }
 
-  /// A new proposal, or the one the learner just answered.
+  /// The one the learner just answered, until they ask for the next; else the day's.
   func shownPlanChange(in view: TodayView) -> AnsweredPlanChange? {
-    let answered = answeredPlanChange(in: view)
+    answeredPlanChange(in: view) ?? view.planChange.map { AnsweredPlanChange(change: $0) }
+  }
 
-    if let proposed = view.planChange, proposed.status == "proposed",
-      proposed.id != answered?.change.id
-    {
-      return AnsweredPlanChange(change: proposed)
+  /// A newer proposal waiting behind the one just answered.
+  func nextPlanChange(in view: TodayView) -> TodayView.PlanChange? {
+    guard let answered = answeredPlanChange(in: view), let next = view.planChange,
+      next.status == "proposed", next.id != answered.change.id
+    else {
+      return nil
     }
 
-    return answered
+    return next
+  }
+
+  /// For the next suggestion, and for a new visit, which reads Today as it stands.
+  func dropAnsweredPlanChange() {
+    answered = nil
   }
 
   /// Undoing an applied proposal asks about it again.
@@ -212,7 +221,7 @@ final class TodayStore {
       answered = saved.flatMap {
         $0.status == "proposed"
           ? nil
-          : (owner, view.session.localDate, AnsweredPlanChange(change: $0, decision: decision))
+          : (owner, OpenedSession.Day(view), AnsweredPlanChange(change: $0, decision: decision))
       }
       return .done(())
     case .failed(let error):
@@ -224,7 +233,7 @@ final class TodayStore {
 
   private func answeredPlanChange(in view: TodayView) -> AnsweredPlanChange? {
     guard let answered, answered.owner == cache.session.authenticatedSession,
-      answered.localDate == view.session.localDate
+      answered.day == OpenedSession.Day(view)
     else {
       return nil
     }

@@ -12,6 +12,7 @@ struct PlanTimeSection: View {
   let plan: GoalPlan
   /// The weekend has its own time: the time a day changes the weekdays alone.
   let weekendOn: Bool
+  var asksStudyEverything = false
 
   private enum Found: Equatable {
     case building
@@ -83,7 +84,8 @@ struct PlanTimeSection: View {
         comment: "What studying everything does"),
       sentence: String(
         localized: "Your plan studies everything, even after the exam.", table: "Plan",
-        comment: "Says the plan now studies everything")
+        comment: "Says the plan now studies everything"),
+      asksOnAppear: asksStudyEverything && !plan.schedule.fullCourse
     ) { isPreviewing, ask in
       Toggle(
         isOn: Binding(

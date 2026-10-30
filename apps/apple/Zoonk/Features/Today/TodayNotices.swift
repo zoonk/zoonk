@@ -185,3 +185,27 @@ struct TodayExamChoiceSection: View {
     }
   }
 }
+
+/// Main sends a learner who fell behind to the Plan with its editor open; here it opens over Today.
+struct TodayAdjustPlanSheet: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(PlanStore.self) private var plans
+
+  let goalID: String
+  let section: AdjustPlanSheet.Section
+
+  var body: some View {
+    let plan = plans.plan(goalId: goalID)
+
+    Group {
+      if let goal = learner.summary.value?.followedGoals.first(where: { $0.id == goalID }),
+        let read = plan.value, read.plan.ready
+      {
+        AdjustPlanSheet(goal: goal, plan: read.plan, section: section, store: plans)
+      } else {
+        ProgressView()
+      }
+    }
+    .loads(plan, refreshable: false)
+  }
+}

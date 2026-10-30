@@ -6,6 +6,9 @@ struct AdjustPlanSheet: View {
   enum Section: Hashable, Identifiable {
     case date
     case days
+    /// Studying everything, which asks as soon as the sheet opens.
+    case everything
+    case focus
     case time
     case top
 
@@ -34,11 +37,16 @@ struct AdjustPlanSheet: View {
         Form {
           PlanEditorLatestSection(editor: editor, plan: plan)
 
-          PlanDateSection(editor: editor, goal: goal, plan: plan)
-            .id(Section.date)
+          PlanDateSection(
+            editor: editor, goal: goal, plan: plan, asksStudyEverything: section == .everything
+          )
+          .id(Section.date)
 
-          PlanTimeSection(editor: editor, goal: goal, plan: plan, weekendOn: weekendOn)
-            .id(Section.time)
+          PlanTimeSection(
+            editor: editor, goal: goal, plan: plan, weekendOn: weekendOn,
+            asksStudyEverything: section == .everything
+          )
+          .id(Section.time)
 
           daysSection
             .id(Section.days)
@@ -51,7 +59,10 @@ struct AdjustPlanSheet: View {
         }
         .disabled(editor.isSaving)
         .onAppear {
-          if section != .top {
+          if section == .everything {
+            // An exam studies everything after it from its time; any other goal drops its date.
+            proxy.scrollTo(goal.kind == .exam ? Section.time : Section.date, anchor: .top)
+          } else if section != .top {
             proxy.scrollTo(section, anchor: .top)
           }
         }

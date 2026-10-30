@@ -19,6 +19,8 @@ enum PlanChangeDecision: String, Sendable {
   case applied
   case declined
   case undone
+  /// Keeps the plan as the change left it, and stops asking.
+  case seen
 }
 
 struct TutorAPI: TutorAPIClient {

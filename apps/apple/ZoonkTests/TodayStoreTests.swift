@@ -347,6 +347,57 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(store.shownPlanChange(in: view), AnsweredPlanChange(change: proposed))
   }
 
+  func testAnAnsweredChangeStaysUntilTheLearnerAsksForTheNextSuggestion() async throws {
+    let proposed = try planChange(status: "proposed")
+    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: proposed)
+    let api = StudyAPIStub(today: .day(view), decided: try planChange(status: "declined"))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    _ = await store.answer(proposed, with: .declined, in: view)
+    let newer = try planChange(status: "proposed", id: "c2")
+    await api.serve(.day(try today(session: day(blocks: [], nextPosition: nil), planChange: newer)))
+    await store.today.refresh()
+    let reread = try XCTUnwrap(store.day)
+
+    XCTAssertEqual(store.shownPlanChange(in: reread)?.decision, .declined)
+    XCTAssertEqual(store.nextPlanChange(in: reread)?.id, "c2")
+
+    store.dropAnsweredPlanChange()
+
+    XCTAssertEqual(store.shownPlanChange(in: reread), AnsweredPlanChange(change: newer))
+    XCTAssertNil(store.nextPlanChange(in: reread))
+  }
+
+  func testAnAnswerStaysWithItsGoal() async throws {
+    let proposed = try planChange(status: "proposed")
+    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: proposed)
+    let api = StudyAPIStub(today: .day(view), decided: try planChange(status: "declined"))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    _ = await store.answer(proposed, with: .declined, in: view)
+    let other = try planChange(status: "proposed", id: "c2")
+    let otherGoal = try today(
+      session: day(blocks: [], nextPosition: nil, goalID: "g2"), planChange: other)
+
+    XCTAssertEqual(store.shownPlanChange(in: otherGoal), AnsweredPlanChange(change: other))
+    XCTAssertEqual(store.shownPlanChange(in: view)?.decision, .declined)
+  }
+
+  func testMissedDaysThatPutTheDateAtRiskAskWhatToDo() throws {
+    let behind = try planChange(
+      status: "applied", kind: "missedDays",
+      behind:
+        #"{"canFocus":true,"coveredAfter":0.8,"coveredBefore":1,"currentMinutes":45,"measure":"exam"}"#
+    )
+    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: behind)
+    let store = TodayStore(api: StudyAPIStub(today: .day(view)), cache: signedInCache())
+
+    XCTAssertEqual(store.shownPlanChange(in: view), AnsweredPlanChange(change: behind))
+    XCTAssertEqual(behind.behind?.currentMinutes, 45)
+  }
+
   func testShownStepEncodesItsWorkAsCoreReadsIt() throws {
     let challenge = try block(
       position: 2, kind: "checkpoint",
@@ -414,7 +465,7 @@ private func block(
 
 private func dayJSON(
   blocks: [StudyBlock], nextPosition: Int?, id: String?, dailyGoal: Int, emptyDay: String?,
-  limitReached: Bool, localDate: String
+  limitReached: Bool, localDate: String, goalID: String
 ) -> String {
   let blockList = blocks.map {
     blockJSON(
@@ -429,7 +480,7 @@ private func dayJSON(
     "dayEndsAt":1793242800000,"emptyDay":\(json(emptyDay)),
     "examAccess":{"includesMockExams":true,"trialEnded":false},"examTomorrow":false,
     "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
-    "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"g1","lessonsComing":false,
+    "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"\(goalID)","lessonsComing":false,
     "localDate":"\(localDate)","minutes":{"dailyGoal":\(dailyGoal),"done":0,"planned":15},
     "missions":[],"nextPosition":\(nextPosition.map(String.init) ?? "null"),
     "pauseSuggested":false,"plusLessons":[],"sessionBar":{"completed":0,"total":1},
@@ -441,19 +492,23 @@ private func dayJSON(
 
 private func day(
   blocks: [StudyBlock], nextPosition: Int?, id: String? = nil, dailyGoal: Int = 15,
-  emptyDay: String? = nil, limitReached: Bool = false, localDate: String = "2026-10-28"
+  emptyDay: String? = nil, limitReached: Bool = false, localDate: String = "2026-10-28",
+  goalID: String = "g1"
 ) throws -> StudyDay {
   try decode(
     dayJSON(
       blocks: blocks, nextPosition: nextPosition, id: id, dailyGoal: dailyGoal, emptyDay: emptyDay,
-      limitReached: limitReached, localDate: localDate))
+      limitReached: limitReached, localDate: localDate, goalID: goalID))
 }
 
-private func planChange(status: String, canUndo: Bool = false) throws -> TodayView.PlanChange {
+private func planChange(
+  status: String, canUndo: Bool = false, id: String = "c1", kind: String = "edited",
+  behind: String = "null"
+) throws -> TodayView.PlanChange {
   try decode(
     """
-    {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice",
-    "id":"c1","kind":"edited","officialDate":null,"reason":"Rest on Saturdays?",
+    {"behind":\(behind),"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice",
+    "id":"\(id)","kind":"\(kind)","officialDate":null,"reason":"Rest on Saturdays?",
     "source":"memory","status":"\(status)","todaySession":null}
     """)
 }

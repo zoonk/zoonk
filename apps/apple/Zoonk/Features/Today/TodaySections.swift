@@ -176,18 +176,20 @@ struct TodayChallengeRow: View {
   }
 }
 
-/// Main answers a proposal right on Today, where the Plan never shows it. Missed days that put the
-/// goal's date at risk leave their choices to the Plan.
+/// Main answers a proposal right on Today, where the Plan never shows it, and missed days that put
+/// the goal's date at risk with their choices.
 struct TodayPlanChangeSection: View {
-  @Environment(AppRouter.self) private var router
   @AccessibilityFocusState private var isResultFocused: Bool
 
   let view: TodayView
   let shown: AnsweredPlanChange
+  let next: TodayView.PlanChange?
   @Binding var isOpen: Bool
   let isSaving: Bool
   let failed: Bool
   let answer: (PlanChangeDecision) -> Void
+  let showNext: () -> Void
+  let adjust: (AdjustPlanSheet.Section) -> Void
 
   private var change: TodayView.PlanChange { shown.change }
 
@@ -197,7 +199,11 @@ struct TodayPlanChangeSection: View {
         Text(result(decision))
           .accessibilityFocused($isResultFocused)
 
-        if decision == .applied, change.canUndo {
+        if next != nil {
+          Button(action: showNext) {
+            Text("Next suggestion", tableName: "Today", comment: "Shows the next plan suggestion")
+          }
+        } else if decision == .applied, change.canUndo {
           Button {
             answer(.undone)
           } label: {
@@ -209,14 +215,17 @@ struct TodayPlanChangeSection: View {
           }
           .disabled(isSaving)
         }
-      } else if change.kind == "missedDays", change.behind != nil {
-        Text(summary)
-
-        Button {
-          router.select(.plan)
-        } label: {
-          Text("See your plan", tableName: "Today", comment: "Opens the Plan")
+      } else if let behind = change.behind, change.kind == "missedDays" {
+        Label {
+          Text(behindSentence(behind))
+        } icon: {
+          Image(systemName: "calendar.badge.clock")
         }
+
+        ForEach(behindChoices(behind), id: \.self) { choice in
+          behindButton(choice)
+        }
+        .disabled(isSaving)
       } else {
         DisclosureGroup(isExpanded: $isOpen) {
           details
@@ -242,6 +251,75 @@ struct TodayPlanChangeSection: View {
       // The buttons leave with the answer, so VoiceOver lands on what it did.
       isResultFocused = shown.decision != nil
     }
+  }
+
+  private enum BehindChoice: Hashable {
+    case adjustTime
+    case focus
+    case keep
+    case studyEverything
+  }
+
+  /// Main's order: on a return after a break, nothing that asks for more hours leads.
+  private func behindChoices(_ behind: TodayView.PlanChange.Behind) -> [BehindChoice] {
+    let choices: [BehindChoice] =
+      view.session.freshStart == .welcomeBack
+      ? [.focus, .keep, .adjustTime, .studyEverything]
+      : [.adjustTime, .focus, .studyEverything, .keep]
+
+    return choices.filter { $0 != .focus || behind.canFocus }
+  }
+
+  private func behindButton(_ choice: BehindChoice) -> some View {
+    let isExam = view.goal.kind == .exam
+
+    return Button {
+      switch choice {
+      case .adjustTime:
+        adjust(isExam ? .time : .date)
+      case .focus:
+        adjust(.focus)
+      case .keep:
+        answer(.seen)
+      case .studyEverything:
+        adjust(.everything)
+      }
+    } label: {
+      switch choice {
+      case .adjustTime:
+        isExam
+          ? Text("More time a day", tableName: "Today", comment: "Opens the plan's daily time")
+          : Text(
+            "More time or a later date", tableName: "Today",
+            comment: "Opens the plan's daily time and date")
+      case .focus:
+        Text(
+          "Choose where to focus", tableName: "Today",
+          comment: "Opens the choice of the plan's areas to focus on")
+      case .keep:
+        Text(
+          "Keep my time", tableName: "Today",
+          comment: "Keeps the daily time after falling behind, with less depth")
+      case .studyEverything:
+        Text("Study everything", tableName: "Today", comment: "Opens studying the whole goal")
+      }
+    }
+  }
+
+  private func behindSentence(_ behind: TodayView.PlanChange.Behind) -> String {
+    let time = studyDuration(minutes: behind.currentMinutes)
+    let after = behind.coveredAfter.formatted(.percent.precision(.fractionLength(0)))
+    let before = behind.coveredBefore.formatted(.percent.precision(.fractionLength(0)))
+
+    return behind.measure == "exam"
+      ? String(
+        localized:
+          "At \(time) a day, your plan now covers \(after) of the exam, down from \(before).",
+        table: "Today", comment: "Missed days left an exam plan covering less")
+      : String(
+        localized:
+          "At \(time) a day, your plan now covers \(after) of your goal, down from \(before).",
+        table: "Today", comment: "Missed days left a plan covering less of its goal")
   }
 
   private var summary: String {
@@ -356,6 +434,10 @@ struct TodayPlanChangeSection: View {
       String(
         localized: "Undone. Your plan is back as it was.", table: "Today",
         comment: "A plan change was undone")
+    case .seen:
+      String(
+        localized: "Noted. You keep your time, with less depth where it counts least.",
+        table: "Today", comment: "The learner kept their daily time after falling behind")
     }
   }
 }

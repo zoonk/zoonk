@@ -18,6 +18,7 @@ struct TodayDayView: View {
   @State private var shownNotice: TodayView.Notice?
   @State private var examChecklist: Set<ExamView.ChecklistItem> = []
   @State private var examChoice: PlanEditor?
+  @State private var adjusting: AdjustPlanSheet.Section?
 
   enum Tap: Equatable {
     case block(Int)
@@ -61,6 +62,9 @@ struct TodayDayView: View {
       }
     }
     .modifier(LanguageTodayLoading(goal: view.goal))
+    .sheet(item: $adjusting) { section in
+      TodayAdjustPlanSheet(goalID: view.goal.id, section: section)
+    }
     .navigationSubtitle(dayLine)
     .task(id: view.session.localDate) {
       await refreshAtDayEnd()
@@ -100,10 +104,16 @@ struct TodayDayView: View {
   private var planChange: some View {
     if let shown = store.shownPlanChange(in: view) {
       TodayPlanChangeSection(
-        view: view, shown: shown, isOpen: $disclosures.planChange, isSaving: busy == .planChange,
+        view: view, shown: shown, next: store.nextPlanChange(in: view),
+        isOpen: $disclosures.planChange, isSaving: busy == .planChange,
         failed: failed == .planChange
       ) { decision in
         perform(.planChange) { await store.answer(shown.change, with: decision, in: view) }
+      } showNext: {
+        disclosures.planChange = false
+        store.dropAnsweredPlanChange()
+      } adjust: { section in
+        adjusting = section
       }
     }
   }
@@ -300,6 +310,7 @@ struct TodayDayView: View {
   private func startVisit() {
     shownNotice = view.notice
     examChoice = nil
+    store.dropAnsweredPlanChange()
   }
 }
 

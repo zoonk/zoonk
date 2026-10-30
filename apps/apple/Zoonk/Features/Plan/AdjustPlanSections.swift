@@ -14,6 +14,7 @@ struct AdjustPlanSections: View {
     }
 
     PlanFocusSection(editor: editor, goal: goal, plan: plan)
+      .id(AdjustPlanSheet.Section.focus)
 
     if let bases = plan.bases, !bases.items.isEmpty {
       Section {
