@@ -78,7 +78,8 @@ class CheckpointFlowTest {
         rule.setContent { ZoonkTheme { DuelResult(duel, viewModel, AppContainer.preview(rule.activity), ZU) } }
 
         rule.onNodeWithText("You beat the Trickster!").assertIsDisplayed()
-        rule.onNodeWithText("+30").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("+30", substring = true).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("+50", substring = true).assertDoesNotExist()
     }
 
     @Test

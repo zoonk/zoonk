@@ -679,6 +679,7 @@ internal fun DuelResult(
     val checkpoint = duel.read.checkpoint
     val outcome = duel.outcome()
     val won = outcome != null && (!duel.read.isBoss || outcome.passed)
+    val rows = resultRows(duel, won)
     val answers =
         duel.state.completion
             ?.checkpoint
@@ -699,7 +700,7 @@ internal fun DuelResult(
                 }
             }
         },
-        aside = outcome?.let { TaskAside { ResultDetails(duel, won) } },
+        aside = outcome?.takeIf { !rows.isEmpty }?.let { TaskAside { ResultDetails(duel, rows, won) } },
     ) { padding ->
         val wide = taskAsideBeside()
         Column(
@@ -739,7 +740,7 @@ internal fun DuelResult(
                         ?.passMark
                         ?.toInt()
                 MomentReadouts(
-                    brainPower = 0,
+                    brainPower = earnedBrainPower(duel, won),
                     score = MomentScore(outcome.total, outcome.correct),
                     facts =
                         listOfNotNull(
@@ -749,7 +750,7 @@ internal fun DuelResult(
                         ),
                 )
                 duel.state.completion?.let { DayMoment(it, buddy.look, buddy.name) }
-                if (!wide) ResultDetails(duel, won)
+                if (!wide && !rows.isEmpty) ResultDetails(duel, rows, won)
                 if (wide && answers.isNotEmpty()) Review(duel, answers, app)
             }
         }
@@ -767,9 +768,10 @@ internal fun DuelResult(
 @Composable
 private fun ResultDetails(
     duel: Duel,
+    rows: ResultRows,
     won: Boolean,
 ) {
-    if (won) WonDetails(duel) else NotWonDetails(duel)
+    if (won) WonDetails(rows, duel.read.checkpoint.phase) else NotWonDetails(rows, duel.state.reinforcementLessons)
 }
 
 @Composable
@@ -789,91 +791,65 @@ private fun Section(
 }
 
 @Composable
-private fun WonDetails(duel: Duel) {
-    val checkpoint = duel.read.checkpoint
-    val points = duel.state.completion?.ownBrainPower ?: checkpoint.reward.brainPower
-    val phase = checkpoint.phase?.let { (it.index + 1).toString() }
-
-    Section(stringResource(R.string.checkpoint_rewards)) {
-        DetailRow(
-            R.drawable.ic_psychology,
-            stringResource(R.string.checkpoint_brain_power),
-            trailing =
-                formatNumber(
-                    points.toDouble(),
-                    currentLocale(),
-                ).let { pointsText(stringResource(R.string.checkpoint_prize, it), it) },
-        )
-        if (checkpoint.reward.phaseComplete) {
-            DetailRow(
-                R.drawable.ic_flag,
-                phase?.let { stringResource(R.string.checkpoint_phase_complete, it) }
-                    ?: stringResource(R.string.checkpoint_phase_complete_plain),
-            )
+private fun WonDetails(
+    rows: ResultRows,
+    phase: CheckpointPhase?,
+) {
+    if (rows.phaseComplete || rows.badge) {
+        Section(stringResource(R.string.checkpoint_rewards)) {
+            if (rows.phaseComplete) {
+                DetailRow(
+                    R.drawable.ic_flag,
+                    phase?.let { stringResource(R.string.checkpoint_phase_complete, (it.index + 1).toString()) }
+                        ?: stringResource(R.string.checkpoint_phase_complete_plain),
+                )
+            }
+            if (rows.badge) DetailRow(R.drawable.ic_search_check, stringResource(R.string.checkpoint_badge))
         }
-        if (checkpoint.reward.badge) DetailRow(R.drawable.ic_search_check, stringResource(R.string.checkpoint_badge))
     }
-    checkpoint.nextPhase?.takeIf { checkpoint.reward.phaseComplete && duel.read.isBoss }?.let { next ->
+    rows.nextPhase?.let { next ->
         Section(stringResource(R.string.checkpoint_next_phase)) { DetailRow(R.drawable.ic_arrow_forward, phaseLabel(next)) }
     }
 }
 
 @Composable
-private fun NotWonDetails(duel: Duel) {
-    val checkpoint = duel.read.checkpoint
-    val lessons = duel.state.reinforcementLessons
-    val retry = if (duel.state.completion != null) Checkpoint.Retry.TOMORROW else checkpoint.retry
-    val nextPhase = checkpoint.nextPhase?.takeIf { checkpoint.retry != Checkpoint.Retry.PASSED }
-    val earned = duel.state.completion?.ownBrainPower ?: 0
-
-    if (retry != null || nextPhase != null) {
-        Section(stringResource(R.string.checkpoint_whats_next)) {
-            when (retry) {
-                Checkpoint.Retry.PASSED -> {
-                    DetailRow(
-                        R.drawable.ic_check,
-                        stringResource(R.string.checkpoint_passed_later),
-                        stringResource(R.string.checkpoint_phase_done),
-                    )
-                }
-
-                Checkpoint.Retry.TOMORROW, Checkpoint.Retry.OPEN -> {
-                    DetailRow(
-                        R.drawable.ic_replay,
-                        stringResource(
-                            if (retry ==
-                                Checkpoint.Retry.TOMORROW
-                            ) {
-                                R.string.checkpoint_new_try_tomorrow
-                            } else {
-                                R.string.checkpoint_new_try_next
-                            },
-                        ),
-                        if (lessons == 0) {
-                            stringResource(R.string.checkpoint_nothing_lost)
-                        } else {
-                            pluralStringResource(R.plurals.checkpoint_after_lessons, lessons, lessons)
-                        },
-                    )
-                }
-
-                null -> {}
+private fun NotWonDetails(
+    rows: ResultRows,
+    lessons: Int,
+) {
+    Section(stringResource(R.string.checkpoint_whats_next)) {
+        when (rows.retry) {
+            Checkpoint.Retry.PASSED -> {
+                DetailRow(
+                    R.drawable.ic_check,
+                    stringResource(R.string.checkpoint_passed_later),
+                    stringResource(R.string.checkpoint_phase_done),
+                )
             }
-            nextPhase?.let { DetailRow(R.drawable.ic_arrow_forward, stringResource(R.string.checkpoint_next_phase_open, phaseLabel(it))) }
+
+            Checkpoint.Retry.TOMORROW, Checkpoint.Retry.OPEN -> {
+                DetailRow(
+                    R.drawable.ic_replay,
+                    stringResource(
+                        if (rows.retry ==
+                            Checkpoint.Retry.TOMORROW
+                        ) {
+                            R.string.checkpoint_new_try_tomorrow
+                        } else {
+                            R.string.checkpoint_new_try_next
+                        },
+                    ),
+                    if (lessons == 0) {
+                        stringResource(R.string.checkpoint_nothing_lost)
+                    } else {
+                        pluralStringResource(R.plurals.checkpoint_after_lessons, lessons, lessons)
+                    },
+                )
+            }
+
+            null -> {}
         }
-    }
-    if (earned > 0) {
-        Section(stringResource(R.string.checkpoint_earned)) {
-            DetailRow(
-                R.drawable.ic_psychology,
-                stringResource(R.string.checkpoint_brain_power),
-                trailing =
-                    formatNumber(
-                        earned.toDouble(),
-                        currentLocale(),
-                    ).let { pointsText(stringResource(R.string.checkpoint_prize, it), it) },
-            )
-        }
+        rows.nextPhase?.let { DetailRow(R.drawable.ic_arrow_forward, stringResource(R.string.checkpoint_next_phase_open, phaseLabel(it))) }
     }
 }
 

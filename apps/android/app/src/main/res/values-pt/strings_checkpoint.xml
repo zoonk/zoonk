@@ -6,11 +6,9 @@
   "checkpoint_answers": "0188b51f6121cf698d4306248c50527bf89d796761edaa70f440c3cb69db9fac",
   "checkpoint_badge": "2e0b2bde172cc525f8e757af1c2c607ced320145ae4e28812dc7229f9f1379c9",
   "checkpoint_beat": "68a2c4e4e1f9dc787550af57c9b550e70fa0a37a33e677480344243725f13384",
-  "checkpoint_brain_power": "02b7ee5342a772a32b5c8010b54218a0529fa7e3adbd56ff28ca30182076d67e",
   "checkpoint_broken": "deb4c5f603ba346fad301a1c9c31763a0a7ade3edf8e9e0362883d3b6c2f7f35",
   "checkpoint_broken_all": "66f9d1a41e4f9208877c4e1b147b63fe670d9448646f77be0c3a6791a897b487",
   "checkpoint_confirm": "452650635b7df3497534ad8b1b9e8cf1e6f555543b301483c8e7600493fc9d4f",
-  "checkpoint_earned": "06345ecfa050340fcdb118ac8cb1cff5620a9fb61acba08dc9a8877523be632c",
   "checkpoint_every_answered": "d446083b0c131a48e3b38ba2feda24a45d735489c0bc999dfd85a3f1a44bc7ad",
   "checkpoint_final": "ecfbe972d69a15278814704945c327e7baee7c7ae1b9ca140ec821894746b458",
   "checkpoint_finishing": "06a326da61b879a40470cb4e458ddac98d3dcfb3268785b61a8c3a644af21d82",
@@ -130,7 +128,6 @@
         <item quantity="other">Acertar %1$d de %2$d para vencer</item>
     </plurals>
     <string name="checkpoint_rewards">Recompensas</string>
-    <string name="checkpoint_brain_power">Poder Mental</string>
     <!-- %1$s is the phase's number. -->
     <string name="checkpoint_phase_complete">Fase %1$s concluída</string>
     <string name="checkpoint_phase_complete_plain">Fase concluída</string>
@@ -151,7 +148,6 @@
     </plurals>
     <!-- %1$s is the next phase's name. -->
     <string name="checkpoint_next_phase_open">A próxima fase, %1$s, já está disponível.</string>
-    <string name="checkpoint_earned">Conquistado</string>
     <string name="checkpoint_answers">As respostas</string>
     <string name="checkpoint_review">Revisar as respostas</string>
     <!-- %1$s is the right answer. -->
