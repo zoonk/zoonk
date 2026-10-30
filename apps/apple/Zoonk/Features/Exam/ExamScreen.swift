@@ -541,14 +541,15 @@ private struct ExamMocksSection: View {
                 Text("Time's up", tableName: "Exam", comment: "A running mock's time ran out")
               }
             } label: {
+              let isNext = mock.id == exam.runningMocks.first?.id
+
               Label {
-                Text(MockLabels.title(number: mock.number))
-                  .foregroundStyle(.primary)
+                mockTitle(MockLabels.title(number: mock.number), isNext: isNext)
                 Text(
                   "\(mock.answered) of \(mock.questions) answered", tableName: "Exam",
                   comment: "A running mock's progress")
               } icon: {
-                StatusMark(status: mock.id == exam.runningMocks.first?.id ? .next : .todo)
+                StatusMark(status: isNext ? .next : .todo)
               }
             }
           }
@@ -564,8 +565,9 @@ private struct ExamMocksSection: View {
               }
             } label: {
               Label {
-                Text(MockLabels.daySize(fullLength: next.fullLength, day: nil))
-                  .foregroundStyle(.primary)
+                mockTitle(
+                  MockLabels.daySize(fullLength: next.fullLength, day: nil),
+                  isNext: exam.runningMocks.isEmpty)
                 Text("\(next.questions) questions", tableName: "Exam", comment: "Next mock size")
               } icon: {
                 StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
@@ -599,6 +601,17 @@ private struct ExamMocksSection: View {
       }
     }
   }
+}
+
+/// The blue mark says which mock is next; VoiceOver hears it in the title.
+private func mockTitle(_ title: String, isNext: Bool) -> some View {
+  Text(title)
+    .foregroundStyle(.primary)
+    .accessibilityLabel(
+      isNext
+        ? Text(
+          "Next: \(title)", tableName: "Exam", comment: "Spoken title of the mock to take next")
+        : Text(title))
 }
 
 private struct ExamProgressSection: View {
