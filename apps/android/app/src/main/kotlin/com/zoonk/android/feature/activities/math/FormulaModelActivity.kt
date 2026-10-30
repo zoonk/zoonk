@@ -302,7 +302,8 @@ private fun FormulaChart(
     val delta = view.delta.takeIf { it != 0.0 }?.let { formatAmount(it, locale, charted.unit, signed = true) }
     val before = view.chartedBefore
     val now = view.chartedNow
-    val minDelta = with(LocalDensity.current) { MIN_DELTA.toPx() }
+    val density = LocalDensity.current
+    val minDelta = with(density) { MIN_DELTA.toPx() }
 
     ActivityPlot(
         xDomain = axis.min..axis.max,
@@ -311,7 +312,7 @@ private fun FormulaChart(
         xTicks = listOf(axis.min, axis.max),
         formatY = { formatAmount(it, locale, charted.unit, compact = true) },
         formatX = formatX,
-        area = CHART_AREA,
+        area = CHART_AREA * density.fontScale.coerceIn(1f, MAX_CHART_GROWTH),
     ) {
         view.baselineCurve?.let { line(it, muted, width = 2.dp, dash = BASELINE_DASH) }
         if (view.yDomain.start >= 0) area(view.current, accent.copy(alpha = SOFT))
@@ -396,6 +397,7 @@ private const val Y_TICKS = 3
 private const val SOFT = 0.18f
 private const val GUIDE_ALPHA = 0.4f
 private val CHART_AREA = 132.dp
+private const val MAX_CHART_GROWTH = 1.5f
 private val BASELINE_DASH = 5.dp
 private val MIN_DELTA = 12.dp
 private val MARK_INNER = 3.25.dp
