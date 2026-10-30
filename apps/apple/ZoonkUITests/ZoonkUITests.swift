@@ -566,30 +566,32 @@ final class ZoonkUITests: XCTestCase {
   }
 
   @MainActor
-  func testCatalogSearchUpdatesWhenTheQueryChanges() {
+  func testSearchUpdatesCatalogResultsWhenTheQueryChanges() {
     continueAfterFailure = false
 
     let app = makeApp(for: .catalog)
     launch(app)
-    openCatalog(in: app)
-    let searchField = app.searchFields["Search all courses"]
-    XCTAssertTrue(searchField.waitForExistence(timeout: 5))
-    searchField.tap()
+    let searchField = openSearch(in: app)
     searchField.typeText("water")
     XCTAssertTrue(app.staticTexts["Roots and Water"].waitForExistence(timeout: 5))
 
     let suffix = "zznomatch"
     searchField.typeText(suffix)
-    let emptyDescription = app.staticTexts.matching(
+    let typedQuery = app.staticTexts.matching(
       NSPredicate(format: "label CONTAINS %@", "water" + suffix)
     ).firstMatch
-    XCTAssertTrue(emptyDescription.waitForExistence(timeout: 5))
+    XCTAssertTrue(typedQuery.waitForExistence(timeout: 5))
     XCTAssertFalse(app.staticTexts["Roots and Water"].exists)
 
     searchField.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: suffix.count))
     XCTAssertTrue(app.staticTexts["Roots and Water"].waitForExistence(timeout: 5))
-    XCTAssertFalse(emptyDescription.exists)
+    XCTAssertFalse(typedQuery.exists)
     XCTAssertEqual(searchField.value as? String, "water")
+
+    searchField.typeText(
+      String(repeating: XCUIKeyboardKey.delete.rawValue, count: "water".count) + "light")
+    XCTAssertTrue(app.staticTexts["Leaves and Light"].waitForExistence(timeout: 5))
+    XCTAssertFalse(app.staticTexts["Roots and Water"].exists)
 
     let screenshot = XCTAttachment(screenshot: app.screenshot())
     screenshot.lifetime = .keepAlways
@@ -597,28 +599,21 @@ final class ZoonkUITests: XCTestCase {
   }
 
   @MainActor
-  func testCoursesSearchFindsCoursesAndChapters() {
+  func testSearchFindsCatalogCoursesAndChapters() {
     continueAfterFailure = false
 
     let app = makeApp(for: .catalog)
     launch(app)
-    openCatalog(in: app)
+    openSearch(in: app).typeText("plant")
 
-    let searchField = app.searchFields["Search all courses"]
-    XCTAssertTrue(searchField.waitForExistence(timeout: 5))
-    searchField.tap()
-    searchField.typeText("water")
-
-    XCTAssertFalse(
-      app.scrollViews["Course categories"].exists,
-      "Expected active catalog search to put results directly below the search field")
     XCTAssertTrue(
-      app.staticTexts["Chapters"].waitForExistence(timeout: 5),
-      "Expected catalog search to group chapter matches")
-    XCTAssertTrue(app.staticTexts["Roots and Water"].exists)
-    XCTAssertTrue(app.staticTexts["How Plants Grow"].exists)
+      app.staticTexts["In the catalog"].waitForExistence(timeout: 5),
+      "Expected search to group catalog matches")
+    XCTAssertTrue(app.buttons["How Plants Grow"].exists, "Expected a matching course")
 
-    app.staticTexts["Roots and Water"].firstMatch.tap()
+    let chapter = app.buttons["Roots and Water, How Plants Grow"]
+    XCTAssertTrue(chapter.exists, "Expected a matching chapter to name its course")
+    chapter.tap()
     XCTAssertTrue(
       app.staticTexts["Chapter 1 of 2 · Beginner"].waitForExistence(timeout: 10),
       "Expected a chapter search result to read its course and its place there")
@@ -795,6 +790,15 @@ final class ZoonkUITests: XCTestCase {
       goalSwitcher.waitForExistence(timeout: 5), "Expected the goal switcher to exist")
     goalSwitcher.tap()
     app.buttons["Explore courses"].tap()
+  }
+
+  @MainActor
+  private func openSearch(in app: XCUIApplication) -> XCUIElement {
+    app.primaryNavigationItem("Search").tap()
+    let searchField = app.searchFields["Search or ask…"]
+    XCTAssertTrue(searchField.waitForExistence(timeout: 5), "Expected the search field to exist")
+    searchField.tap()
+    return searchField
   }
 
   @MainActor
