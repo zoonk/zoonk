@@ -123,6 +123,15 @@
         <item quantity="one">%1$d short lesson</item>
         <item quantity="other">%1$d short lessons</item>
     </plurals>
+    <!-- After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now. -->
+    <plurals name="catalog_lessons_written">
+        <item quantity="one">%1$d lesson written so far</item>
+        <item quantity="other">%1$d lessons written so far</item>
+    </plurals>
+    <!-- Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level. -->
+    <string name="catalog_level_unwritten">Not written yet. Zoonk writes its chapters as learners reach it.</string>
+    <!-- Marks the chapter (or level) of the next lesson in the learner's plan on the course's outline. -->
+    <string name="catalog_you_are_here">You are here</string>
     <string name="catalog_outline_plan_dated">Your plan until %1$s, at %2$s a day</string>
     <plurals name="catalog_outline_plan_undated">
         <item quantity="one">Your plan at %1$d minute a day, from scratch</item>

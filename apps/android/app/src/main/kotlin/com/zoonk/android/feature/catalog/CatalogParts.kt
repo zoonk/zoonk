@@ -43,11 +43,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.DoneMark
@@ -64,7 +66,9 @@ import com.zoonk.api.models.CatalogFirstQuestion
 import com.zoonk.api.models.CatalogTryLesson
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
+import kotlinx.coroutines.launch
 import java.util.Locale
+import java.util.UUID
 import kotlin.math.roundToLong
 
 /** Main's readable column (`max-w-column`) on any window. */
@@ -89,6 +93,27 @@ internal fun followsCourse(
     val summary by app.learnerSummary.summary.collectShown()
     return summary.value?.goalOnCourse(courseId) != null
 }
+
+/** Main's `CourseContinueLink`: where "Continue your plan" goes, so it never waits on the start page's redirect. */
+internal sealed interface CourseContinue {
+    data class Setup(
+        val goalId: String,
+    ) : CourseContinue
+
+    data object Today : CourseContinue
+
+    /** Another goal is the active one: make this one active first, as the goal switcher does. */
+    data class Switch(
+        val goalId: UUID,
+    ) : CourseContinue
+}
+
+internal fun courseContinue(goal: LearnerSummaryGoal): CourseContinue =
+    when {
+        goal.isSettingUp -> CourseContinue.Setup(goal.id.toString())
+        goal.isActive -> CourseContinue.Today
+        else -> CourseContinue.Switch(goal.id)
+    }
 
 internal fun LearnerSummary.goalOnCourse(courseId: String): LearnerSummaryGoal? =
     goals.firstOrNull { goal ->
@@ -231,19 +256,43 @@ internal fun StartActions(
     secondary: Boolean = false,
     onTryLesson: (() -> Unit)? = null,
 ) {
-    val follows = followsCourse(app, courseId)
+    val summary by app.learnerSummary.summary.collectShown()
+    val goal = summary.value?.goalOnCourse(courseId)
+    val follows = goal != null
     val visitorNote = if (isVisitor(app)) stringResource(R.string.catalog_start_free) else null
+    val snackbars = LocalSnackbarHostState.current
+    val switchFailed = stringResource(R.string.goal_switcher_failed)
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            val start = {
-                navigator.open(
-                    AppRoute.CourseStart(
-                        courseId = courseId,
-                        chapterId = chapterId.takeUnless { follows },
-                        dailyMinutes = dailyMinutes?.toInt().takeUnless { follows },
-                    ),
-                )
+            val start: () -> Unit = {
+                when (val next = goal?.let(::courseContinue)) {
+                    null -> {
+                        navigator.open(
+                            AppRoute.CourseStart(courseId = courseId, chapterId = chapterId, dailyMinutes = dailyMinutes?.toInt()),
+                        )
+                    }
+
+                    is CourseContinue.Setup -> {
+                        navigator.open(AppRoute.GoalSetup(next.goalId))
+                    }
+
+                    CourseContinue.Today -> {
+                        navigator.showRoot(AppTab.Today)
+                    }
+
+                    is CourseContinue.Switch -> {
+                        app.scope.launch {
+                            val saved =
+                                app.goalSwitch.select(
+                                    next.goalId,
+                                    listOf(app.learnerSummary.summary, app.today.today),
+                                    app.today::shows,
+                                )
+                            if (saved) navigator.showRoot(AppTab.Today) else snackbars.showSnackbar(switchFailed)
+                        }
+                    }
+                }
             }
             val label = @Composable {
                 Text(stringResource(if (follows) R.string.catalog_continue_plan else R.string.catalog_build_plan))

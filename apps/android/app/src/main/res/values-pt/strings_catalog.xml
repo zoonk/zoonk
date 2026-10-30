@@ -45,10 +45,12 @@
   "catalog_lessons": "411972637a7687ab3c11fee5866795b5f92ee6e95e305a14eabf4ff9134c9dc7",
   "catalog_lessons_fit": "ac571a23b25f3f93ad79d6e5db948f828478b557233eaf613d0454153bbf31ec",
   "catalog_lessons_in_plan": "2c5987154afd0c8c232ee32c7bb4619e3a78ba71d2cb938ff5f2daf11516abbc",
+  "catalog_lessons_written": "fe8e88e16b7dee0253a72ba3c6e4041e8329c0bf6ef567c220733c12872b0113",
   "catalog_level_advanced": "b946bfceae18a91a9c5557d1f80128524b54b57d8f1654f1ac4d637cf6ad3825",
   "catalog_level_beginner": "5d394151ad2482262ff4b81216c4e8ace5f991ee10b959d44d3f0541643075fc",
   "catalog_level_intermediate": "11db64925795181d3686d396d9fb7eee1cda7603cb511cd95f1c93279a6819fe",
   "catalog_level_overview": "32684dfaeb846efa680653113e3c41e0a9cad3b0f832fc683ee9d3b267497ea1",
+  "catalog_level_unwritten": "e2f6de66c124c6d0a9ef5fb0d63011549bb14181100f849e53175187e847c8e6",
   "catalog_level_week": "75fb71106500a3183d50383916152da3b3ec8e03c94d7f817a31f00893323b28",
   "catalog_level_weeks": "38b66c64bc3730ee621024507f5a043db703897acd32321c0a3686319852a81e",
   "catalog_load_more_failed": "a71d6a0439f3005a510437253913427dfe471865acc08c41ba7a88c0175e0393",
@@ -124,7 +126,8 @@
   "catalog_workload_total": "f26ce80ac1299b600cd31ddf8221b10959363ceca2accb4108198ccc20b7706b",
   "catalog_workload_unwritten": "59206ec71fdad8a99d180ee7f4c4808e15a4faa2e65013cbbe7730f038efce39",
   "catalog_workload_unwritten_note": "bece3649d29b405428fdf1e08738dd30bd1672e88f424c0c974598f5b80f9015",
-  "catalog_written_later": "979486f556b1f384f7055cff0dbaf1192e0fb7c42f0cf6b8ecf4b0a73b3df5f8"
+  "catalog_written_later": "979486f556b1f384f7055cff0dbaf1192e0fb7c42f0cf6b8ecf4b0a73b3df5f8",
+  "catalog_you_are_here": "1feccef78b6e1f8807845b872bb71786b7917a17db602d0435d391783198bee6"
 }
 -->
 <resources>
@@ -255,6 +258,16 @@
         <item quantity="many">%1$d aulas curtas</item>
         <item quantity="other">%1$d aulas curtas</item>
     </plurals>
+    <!-- After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now. -->
+    <plurals name="catalog_lessons_written">
+        <item quantity="one">%1$d aula criada até agora</item>
+        <item quantity="many">%1$d aulas criadas até agora</item>
+        <item quantity="other">%1$d aulas criadas até agora</item>
+    </plurals>
+    <!-- Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level. -->
+    <string name="catalog_level_unwritten">Ainda sem conteúdo. O Zoonk cria os capítulos conforme as pessoas chegam a esse nível.</string>
+    <!-- Marks the chapter (or level) of the next lesson in the learner's plan on the course's outline. -->
+    <string name="catalog_you_are_here">Você está aqui</string>
     <string name="catalog_outline_plan_dated">Seu plano até %1$s, com %2$s por dia</string>
     <plurals name="catalog_outline_plan_undated">
         <item quantity="one">Seu plano do zero, com %1$d minuto por dia</item>

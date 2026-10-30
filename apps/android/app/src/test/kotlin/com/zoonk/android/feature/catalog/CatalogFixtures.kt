@@ -62,7 +62,7 @@ internal fun chapters(): List<CourseChapter> =
         chapter(CHAPTER_TWO, "Bonds", "beginner", 1, listOf(LESSON_THREE to "Sharing electrons")),
     )
 
-private fun chapter(
+internal fun chapter(
     id: String,
     title: String,
     level: String,

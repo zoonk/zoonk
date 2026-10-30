@@ -283,6 +283,8 @@ private fun LazyListScope.courseContent(
             plan,
             lead = course.description.takeIf { it != promise },
             openLevel = outlineLevel(detail.chapters, courseId, hasSession, summary),
+            levels = course.levels,
+            goal = summary.value?.goalOnCourse(courseId),
         )
     }
 

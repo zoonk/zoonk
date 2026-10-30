@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,6 +36,8 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
@@ -46,7 +49,9 @@ import com.zoonk.api.models.CoursePlanEstimateAnyOf1
 import com.zoonk.api.models.CoursePlanEstimateAnyOf1AreasInner
 import com.zoonk.api.models.CoursePlanEstimateAnyOf1ChaptersInner
 import com.zoonk.api.models.CoursePlanExample
+import com.zoonk.api.models.CourseResourceLevelsInner
 import com.zoonk.api.models.LearnerSummary
+import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.roundToLong
 
@@ -70,12 +75,15 @@ internal fun CourseOutline(
     plan: CoursePlanExample?,
     lead: String?,
     openLevel: CourseChapter.Level?,
+    levels: List<CourseResourceLevelsInner>,
+    goal: LearnerSummaryGoal?,
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
     val lessonCount = chapters.sumOf { it.lessons.size }
-    val totalMinutes = chapters.sumOf { chapter -> chapter.lessons.sumOf { it.estimatedMinutes } }
     val pace = plan?.pace?.takeIf { chapters.isNotEmpty() }
+    val hereChapter = goal?.courseChapterId?.toString()
+    val hereLevel = goal?.takeIf { it.courseChapterId == null }?.courseLevel?.value
     val dated = pace?.estimate?.dated
     val undated = pace?.estimate?.undated
     val examDate = plan?.exam?.days?.firstOrNull()
@@ -86,8 +94,7 @@ internal fun CourseOutline(
         } else {
             listOfNotNull(
                 pluralStringResource(R.plurals.catalog_chapters, chapters.size, chapters.size),
-                pluralStringResource(R.plurals.catalog_short_lessons, lessonCount, lessonCount).takeIf { lessonCount > 0 },
-                formatTotalDuration(totalMinutes.toDouble(), locale).takeIf { lessonCount > 0 },
+                pluralStringResource(R.plurals.catalog_lessons_written, lessonCount, lessonCount).takeIf { lessonCount > 0 },
             ).factsLine()
         }
 
@@ -95,7 +102,7 @@ internal fun CourseOutline(
         Column(Modifier.widthIn(max = COLUMN_WIDTH), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SectionTitle(stringResource(R.string.catalog_outline), facts = facts)
 
-            if (pace != null) {
+            if (pace != null && goal == null) {
                 val text =
                     if (dated != null && examDate != null) {
                         stringResource(
@@ -127,58 +134,67 @@ internal fun CourseOutline(
             chapters.isEmpty() -> {}
 
             dated != null -> {
-                AreaOutline(navigator, courseId, chapters, numbers, dated)
+                AreaOutline(navigator, courseId, chapters, numbers, dated, examples = goal == null, hereChapter = hereChapter)
             }
 
             else -> {
                 val weeks = undated?.chapters.orEmpty().associate { it.chapterId.toString() to (it.week to it.endWeek) }
 
-                chapters
-                    .groupBy { it.level }
-                    .entries
-                    .forEach { (level, levelChapters) ->
-                        val chapterWeeks = levelChapters.mapNotNull { weeks[it.id.toString()] }.filter { it.first != null }
-                        val first = chapterWeeks.minOfOrNull { it.first!! }
-                        val last = chapterWeeks.maxOfOrNull { it.second ?: it.first!! }
-                        val span =
-                            when {
-                                first == null || last == null -> {
-                                    null
-                                }
+                val written = chapters.groupBy { it.level }
+                val covered = levels.map { it.level.value }.toSet()
 
-                                first == last -> {
-                                    stringResource(R.string.catalog_level_week, formatNumber(first.toDouble(), locale))
-                                }
+                CourseChapter.Level.entries.filter { it in written || it.value in covered }.forEach { level ->
+                    val levelChapters = written[level].orEmpty()
+                    val here: (@Composable () -> Unit)? = if (level.value == hereLevel) ({ HereMark() }) else null
 
-                                else -> {
-                                    stringResource(
-                                        R.string.catalog_level_weeks,
-                                        formatNumber(first.toDouble(), locale),
-                                        formatNumber(last.toDouble(), locale),
-                                    )
-                                }
+                    if (levelChapters.isEmpty()) {
+                        UnwrittenLevel(level.label(), here)
+                        return@forEach
+                    }
+
+                    val chapterWeeks = levelChapters.mapNotNull { weeks[it.id.toString()] }.filter { it.first != null }
+                    val first = chapterWeeks.minOfOrNull { it.first!! }
+                    val last = chapterWeeks.maxOfOrNull { it.second ?: it.first!! }
+                    val span =
+                        when {
+                            goal != null || first == null || last == null -> {
+                                null
                             }
 
-                        OutlineZone(
-                            title = level.label(),
-                            aside =
-                                listOfNotNull(
-                                    pluralStringResource(R.plurals.catalog_chapters, levelChapters.size, levelChapters.size),
-                                    span,
-                                ).factsLine(),
-                            closedSummary = levelChapters.take(CHAPTERS_NAMED).map { it.title }.factsLine(),
-                            openByDefault = level == openLevel,
-                        ) {
-                            ChapterRows(navigator, courseId, levelChapters, numbers) { chapter ->
-                                weeks[chapter.id.toString()]?.first?.let {
-                                    stringResource(
-                                        R.string.catalog_chapter_week,
-                                        formatNumber(it.toDouble(), locale),
-                                    )
-                                }
+                            first == last -> {
+                                stringResource(R.string.catalog_level_week, formatNumber(first.toDouble(), locale))
+                            }
+
+                            else -> {
+                                stringResource(
+                                    R.string.catalog_level_weeks,
+                                    formatNumber(first.toDouble(), locale),
+                                    formatNumber(last.toDouble(), locale),
+                                )
+                            }
+                        }
+
+                    OutlineZone(
+                        title = level.label(),
+                        titleMark = here,
+                        aside =
+                            listOfNotNull(
+                                pluralStringResource(R.plurals.catalog_chapters, levelChapters.size, levelChapters.size),
+                                span,
+                            ).factsLine(),
+                        closedSummary = levelChapters.take(CHAPTERS_NAMED).map { it.title }.factsLine(),
+                        openByDefault = level == openLevel,
+                    ) {
+                        ChapterRows(navigator, courseId, levelChapters, numbers, hereChapter) { chapter ->
+                            weeks[chapter.id.toString()]?.first?.takeIf { goal == null }?.let {
+                                stringResource(
+                                    R.string.catalog_chapter_week,
+                                    formatNumber(it.toDouble(), locale),
+                                )
                             }
                         }
                     }
+                }
             }
         }
     }
@@ -192,6 +208,8 @@ private fun AreaOutline(
     chapters: List<CourseChapter>,
     numbers: Map<String, Int>,
     estimate: CoursePlanEstimateAnyOf1,
+    examples: Boolean,
+    hereChapter: String?,
 ) {
     val rows = estimate.chapters.associateBy { it.chapterId.toString() }
     val groups = chapters.groupBy { rows[it.id.toString()]?.area }
@@ -201,16 +219,20 @@ private fun AreaOutline(
             .distinct()
             .filter { it in groups }
     val ordered = { list: List<CourseChapter> -> list.sortedBy { rows[it.id.toString()]?.studyOrder ?: Long.MAX_VALUE } }
-    val mark: @Composable (CourseChapter) -> String = { chapter -> areaChapterMark(chapter, rows[chapter.id.toString()]) }
+    val mark: @Composable (CourseChapter) -> String? = { chapter ->
+        if (examples) areaChapterMark(chapter, rows[chapter.id.toString()]) else null
+    }
 
     if (order.size <= 1) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(
-                areaFitText(estimate.areas.firstOrNull { it.area == order.firstOrNull() }, chapters, rows),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            ChapterRows(navigator, courseId, ordered(chapters), numbers, mark)
+            if (examples) {
+                Text(
+                    areaFitText(estimate.areas.firstOrNull { it.area == order.firstOrNull() }, chapters, rows),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            ChapterRows(navigator, courseId, ordered(chapters), numbers, hereChapter, mark)
         }
         return
     }
@@ -221,11 +243,11 @@ private fun AreaOutline(
         OutlineZone(
             title = area,
             aside = pluralStringResource(R.plurals.catalog_chapters, areaChapters.size, areaChapters.size),
-            closedSummary = areaFitText(estimate.areas.firstOrNull { it.area == area }, areaChapters, rows),
+            closedSummary = if (examples) areaFitText(estimate.areas.firstOrNull { it.area == area }, areaChapters, rows) else null,
             openSummary = true,
             openByDefault = false,
         ) {
-            ChapterRows(navigator, courseId, ordered(areaChapters), numbers, mark)
+            ChapterRows(navigator, courseId, ordered(areaChapters), numbers, hereChapter, mark)
         }
     }
 }
@@ -351,6 +373,7 @@ internal fun OutlineZone(
     closedSummary: String?,
     openByDefault: Boolean,
     openSummary: Boolean = false,
+    titleMark: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     var toggled by rememberSaveable(title) { mutableStateOf<Boolean?>(null) }
@@ -378,11 +401,14 @@ internal fun OutlineZone(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     itemVerticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
-                        title,
+                    Row(
                         modifier = Modifier.padding(end = 12.dp),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(title, style = MaterialTheme.typography.titleMedium)
+                        titleMark?.invoke()
+                    }
                     Text(
                         aside,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -405,26 +431,35 @@ internal fun OutlineZone(
     }
 }
 
-/** A fold that hides two chapters saves nothing, so only long lists fold after six. */
+/** A fold that hides two chapters saves nothing, so only long lists fold after six; one hiding [hereChapter] opens. */
 @Composable
 private fun ChapterRows(
     navigator: AppNavigator,
     courseId: String,
     chapters: List<CourseChapter>,
     numbers: Map<String, Int>,
+    hereChapter: String?,
     mark: @Composable (CourseChapter) -> String?,
 ) {
-    var showAll by rememberSaveable(chapters.firstOrNull()?.id?.toString()) { mutableStateOf(false) }
+    var toggled by rememberSaveable(chapters.firstOrNull()?.id?.toString()) { mutableStateOf<Boolean?>(null) }
     val folds = chapters.size >= CHAPTERS_SHOWN + 3
+    val showAll = toggled ?: chapters.drop(CHAPTERS_SHOWN).any { it.id.toString() == hereChapter }
     val shown = if (folds && !showAll) chapters.take(CHAPTERS_SHOWN) else chapters
 
     Column {
         shown.forEach { chapter ->
-            OutlineChapterRow(navigator, courseId, chapter, numbers[chapter.id.toString()] ?: 0, mark(chapter))
+            OutlineChapterRow(
+                navigator,
+                courseId,
+                chapter,
+                numbers[chapter.id.toString()] ?: 0,
+                mark(chapter),
+                isHere = chapter.id.toString() == hereChapter,
+            )
         }
 
         if (folds) {
-            TextButton(onClick = { showAll = !showAll }, modifier = Modifier.padding(start = 28.dp)) {
+            TextButton(onClick = { toggled = !showAll }, modifier = Modifier.padding(start = 28.dp)) {
                 Text(
                     if (showAll) {
                         stringResource(R.string.catalog_show_fewer_chapters)
@@ -448,6 +483,7 @@ private fun OutlineChapterRow(
     chapter: CourseChapter,
     number: Int,
     mark: String?,
+    isHere: Boolean,
 ) {
     val locale = currentLocale()
     val chapterId = chapter.id.toString()
@@ -475,12 +511,20 @@ private fun OutlineChapterRow(
                 fontWeight = FontWeight.SemiBold,
             )
 
-            mark?.let {
-                Text(
-                    it,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
+            if (isHere || mark != null) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    itemVerticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (isHere) HereMark()
+                    mark?.let {
+                        Text(
+                            it,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                        )
+                    }
+                }
             }
 
             if (chapter.lessons.isNotEmpty()) {
@@ -490,6 +534,41 @@ private fun OutlineChapterRow(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
+        }
+    }
+}
+
+/** Main's `CourseHere`: the chapter of the next lesson in the learner's plan, or its level while no chapter holds it. */
+@Composable
+private fun HereMark() {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        StatusMark(MarkStatus.Next, Modifier.size(16.dp))
+        Text(
+            stringResource(R.string.catalog_you_are_here),
+            color = MaterialTheme.colorScheme.tertiary,
+            style = MaterialTheme.typography.labelMedium,
+        )
+    }
+}
+
+/** A level the course covers with no chapter written yet: a still row, so the outline shows the whole course. */
+@Composable
+private fun UnwrittenLevel(
+    title: String,
+    here: (@Composable () -> Unit)?,
+) {
+    Column {
+        HorizontalDivider()
+        Column(Modifier.fillMaxWidth().padding(vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                here?.invoke()
+            }
+            Text(
+                stringResource(R.string.catalog_level_unwritten),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
     }
 }

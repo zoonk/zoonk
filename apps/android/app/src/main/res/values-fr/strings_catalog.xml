@@ -45,10 +45,12 @@
   "catalog_lessons": "c520e9cf649e9768100605de82c9d6843ea85755599a3f3bc122648159f28821",
   "catalog_lessons_fit": "f289bbb319b9a7575f97b404a414df931c93b63187cce6bd85b977efa4a1ff27",
   "catalog_lessons_in_plan": "b3ca8ecc36006a76397dcd3201c968a43fbecbf5bad791f969321e6e1a35120b",
+  "catalog_lessons_written": "a810b140a5d74917f60f713aec8363f26d3530b7bdbad3e56780a52a18bca7b1",
   "catalog_level_advanced": "942cacab06e6a7c4f4e3d158ca2a58e68cd73c72245a3c4a5c58adbc35a042ef",
   "catalog_level_beginner": "41910d1cdf608b93d2e3b5c78e75fe218d0f47a15f48d1b33ce26f2474686c9d",
   "catalog_level_intermediate": "42b4f62c94daa67ba206735059b06b2b25e4c005abec78ad023ae16463f5531f",
   "catalog_level_overview": "609a4dbd691e0bba77f04c3930025decd165d980178b01c85e4f9c6a97d52ab1",
+  "catalog_level_unwritten": "d335d7923d6caa53011f1be891a0ab70e2d80def5997a4834d8b21aa745be70b",
   "catalog_level_week": "3051275aebcffaf0cbd17a45ead195cbb8e40d9dec40e38ea2f380499da353e6",
   "catalog_level_weeks": "bc48a35d08f59e507be57fa6eceb92642867c44161e6cc84087838c9f1b40cb0",
   "catalog_load_more_failed": "6ecb8c1e05139fea5904d302c8f8d23f60e35cbee1efe0255d2a4592f0ecab50",
@@ -124,7 +126,8 @@
   "catalog_workload_total": "5d3b34a978d1f81b9d301be28ed559d728c6cfcb1846d9bf608cbab1c4377457",
   "catalog_workload_unwritten": "f5f45be4cde5d3a69f9b6226fd807dd6743215b886b3cef92f3e10b0a78f620d",
   "catalog_workload_unwritten_note": "a147c02f9a100b29635e70232d284497ee33368bc438ecdb82ed4fc33d9e3942",
-  "catalog_written_later": "f94f581b74a8ef15c3ce2e461b249d661587d95d261d48967d3f7a01df316c63"
+  "catalog_written_later": "f94f581b74a8ef15c3ce2e461b249d661587d95d261d48967d3f7a01df316c63",
+  "catalog_you_are_here": "ffabb88f8c57b7550868d46122d77948a2407951f0702272ce0c8ee403e9249e"
 }
 -->
 <resources>
@@ -255,6 +258,16 @@
         <item quantity="many">%1$d leçons courtes</item>
         <item quantity="other">%1$d leçons courtes</item>
     </plurals>
+    <!-- After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now. -->
+    <plurals name="catalog_lessons_written">
+        <item quantity="one">%1$d leçon préparée à ce jour</item>
+        <item quantity="many">%1$d leçons préparées à ce jour</item>
+        <item quantity="other">%1$d leçons préparées à ce jour</item>
+    </plurals>
+    <!-- Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level. -->
+    <string name="catalog_level_unwritten">Pas encore préparé. Zoonk prépare ses chapitres quand les apprenants atteignent ce niveau.</string>
+    <!-- Marks the chapter (or level) of the next lesson in the learner's plan on the course's outline. -->
+    <string name="catalog_you_are_here">Tu es ici</string>
     <string name="catalog_outline_plan_dated">Ton plan jusqu’au %1$s, à raison de %2$s par jour</string>
     <plurals name="catalog_outline_plan_undated">
         <item quantity="one">Ton plan en partant de zéro, à raison de %1$d minute par jour</item>

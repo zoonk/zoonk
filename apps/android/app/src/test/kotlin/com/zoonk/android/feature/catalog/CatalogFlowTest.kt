@@ -95,7 +95,22 @@ class CatalogFlowTest {
     @Test
     fun theOutlineKeepsItsLevelsClosedUntilTheLearnersLevelOpensInPlace() {
         var openLevel by mutableStateOf<CourseChapter.Level?>(null)
-        show { _, navigator, _ -> CourseOutline(navigator, COURSE, chapters(), plan = null, lead = null, openLevel = openLevel) }
+        show {
+            _,
+            navigator,
+            _,
+            ->
+            CourseOutline(
+                navigator,
+                COURSE,
+                chapters(),
+                plan = null,
+                lead = null,
+                openLevel = openLevel,
+                levels = course().levels,
+                goal = null,
+            )
+        }
 
         level("Overview").assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Collapsed"))
         level("Beginner").assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Collapsed"))
