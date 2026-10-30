@@ -9,8 +9,10 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertWidthIsAtLeast
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -195,6 +197,20 @@ class KeyboardFretboardFlowTest {
 
         rule.onNodeWithContentDescription("Higher frets").assertIsNotEnabled()
         gate.complete(Unit)
+    }
+
+    @Test
+    @Config(qualifiers = "w360dp-h800dp")
+    fun anExploredChordWiderThanThePhoneShowsEveryKeyItMarks() {
+        harness.play(listOf(ActivityFixtures.exploreStep("keyboardFretboard.byEarChoice"), summaryStep("end")))
+
+        val keyboard = rule.onNode(hasContentDescription("Piano keys")).getUnclippedBoundsInRoot()
+        listOf("A", "C", "E").forEach { name ->
+            val marked = key(name).getUnclippedBoundsInRoot()
+            assertTrue("$name is cut off", marked.left >= keyboard.left && marked.right <= keyboard.right)
+        }
+        val keys = rule.onAllNodes(isToggleable() and hasAnyAncestor(hasContentDescription("Piano keys")))
+        repeat(keys.fetchSemanticsNodes().size) { keys[it].assertWidthIsAtLeast(48.dp) }
     }
 
     @Test
