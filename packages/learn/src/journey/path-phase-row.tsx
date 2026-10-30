@@ -142,7 +142,7 @@ function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
       <span className="text-muted-foreground text-xs">
         {t({
           description:
-            "On a phase of the learner's plan: their time a day leaves no room for its challenge before their goal's date.",
+            "On a phase of the learner's plan: the plan has no room for its challenge before their goal's date.",
           message: "No time for this phase's challenge before your date",
         })}
       </span>

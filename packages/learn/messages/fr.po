@@ -4067,6 +4067,12 @@ msgctxt "-DKe0Q"
 msgid "Continues {date}"
 msgstr "Reprend le {date}"
 
+#. On a phase of the learner's plan: the plan has no room for its challenge before their goal's date.
+#: src/journey/path-phase-row.tsx
+msgctxt "e4_rBx"
+msgid "No time for this phase's challenge before your date"
+msgstr "Pas assez de temps pour le défi de cette phase avant la date de ton objectif"
+
 #: src/journey/path-phase-row.tsx
 msgctxt "LZkGdn"
 msgid "{count, plural, one {# lesson was left out} other {# lessons were left out}}"
@@ -4076,12 +4082,6 @@ msgstr "{count, plural, one {# leçon laissée de côté} other {# leçons laiss
 msgctxt "uDE8Kt"
 msgid "Challenge left out"
 msgstr "Défi laissé de côté"
-
-#. On a phase of the learner's plan: their time a day leaves no room for its challenge before their goal's date.
-#: src/journey/path-phase-row.tsx
-msgctxt "e4_rBx"
-msgid "No time for this phase's challenge before your date"
-msgstr "Pas assez de temps pour le défi de cette phase avant la date de ton objectif"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "nzBtDK"
