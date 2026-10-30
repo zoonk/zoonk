@@ -2,7 +2,7 @@ import { generateKeyPairSync, randomUUID } from "node:crypto";
 import { waitForSleep } from "@workflow/vitest";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, it, vi } from "vitest";
 import { type Run, getRun, start } from "workflow/api";
 import { googlePlayRenewalWorkflow } from "./google-play-renewal-workflow";
 
@@ -89,11 +89,18 @@ async function lapsedRenewal({ acknowledged = true }: { acknowledged?: boolean }
   });
 }
 
-/** Wakes a run at its checkpoint and returns the run it handed the subscription to. */
-async function wakeUp(run: Run<string | null>) {
-  await getRun(run.runId).wakeUp({ correlationIds: [await waitForSleep(run)] });
+async function wakeAndWaitForSuccessor(run: Run<string | null>) {
+  const sleepId = await waitForSleep(run);
+  await run.wakeUp({ correlationIds: [sleepId] });
   const nextRunId = await run.returnValue;
-  return nextRunId ? getRun<string | null>(nextRunId) : null;
+
+  if (!nextRunId) {
+    return null;
+  }
+
+  const nextRun = getRun<string | null>(nextRunId);
+  await waitForSleep(nextRun);
+  return nextRun;
 }
 
 function findSubscription(id: string) {
@@ -134,7 +141,7 @@ describe(googlePlayRenewalWorkflow, () => {
     await expect(duplicate.returnValue).resolves.toBeNull();
     expect(google.reads).toStrictEqual([]);
 
-    await expect(wakeUp(run)).resolves.not.toBeNull();
+    await expect(wakeAndWaitForSuccessor(run)).resolves.not.toBeNull();
     expect(google.reads).toHaveLength(1);
 
     await expect(findSubscription(subscription.id)).resolves.toMatchObject({
@@ -149,13 +156,15 @@ describe(googlePlayRenewalWorkflow, () => {
     google.answer = "down";
 
     const firstRun = await start(googlePlayRenewalWorkflow, [subscription.id]);
-    const retry = await wakeUp(firstRun);
+    const retry = await wakeAndWaitForSuccessor(firstRun);
+    assert(retry);
     const scheduledBySave = await start(googlePlayRenewalWorkflow, [subscription.id]);
     await expect(scheduledBySave.returnValue).resolves.toBeNull();
 
-    const nextRetry = retry && (await wakeUp(retry));
+    const nextRetry = await wakeAndWaitForSuccessor(retry);
+    assert(nextRetry);
     google.answer = "renewed";
-    const afterRenewal = nextRetry && (await wakeUp(nextRetry));
+    const afterRenewal = await wakeAndWaitForSuccessor(nextRetry);
 
     expect(afterRenewal).not.toBeNull();
 
@@ -171,7 +180,7 @@ describe(googlePlayRenewalWorkflow, () => {
 
     const run = await start(googlePlayRenewalWorkflow, [subscription.id]);
 
-    await expect(wakeUp(run)).resolves.toBeNull();
+    await expect(wakeAndWaitForSuccessor(run)).resolves.toBeNull();
     await expect(findSubscription(subscription.id)).resolves.toMatchObject({ status: "canceled" });
   });
 
@@ -180,7 +189,7 @@ describe(googlePlayRenewalWorkflow, () => {
     google.acknowledged = false;
 
     const run = await start(googlePlayRenewalWorkflow, [subscription.id]);
-    await wakeUp(run);
+    await wakeAndWaitForSuccessor(run);
 
     expect(google.acknowledgements).toHaveLength(1);
   });

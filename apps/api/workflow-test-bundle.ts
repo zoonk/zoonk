@@ -10,7 +10,7 @@ class ApiWorkflowTestBuilder extends BaseBuilder {
   constructor() {
     super({
       ...createBaseBuilderConfig({
-        dirs: ["src/workflows"],
+        dirs: ["src"],
         externalPackages: ["@zoonk/ai"],
         workingDir: import.meta.dirname,
       }),
@@ -23,6 +23,7 @@ class ApiWorkflowTestBuilder extends BaseBuilder {
 
   async build() {
     await mkdir(OUT_DIR, { recursive: true });
+    const inputFiles = await this.getInputFiles();
 
     await this.createCombinedBundle({
       bundleFinalOutput: false,
@@ -30,7 +31,7 @@ class ApiWorkflowTestBuilder extends BaseBuilder {
       externalizeNonSteps: true,
       flowOutfile: join(OUT_DIR, "combined.mjs"),
       format: "esm",
-      inputFiles: await this.getInputFiles(),
+      inputFiles: inputFiles.filter((file) => file.endsWith(".integration.test.ts")),
       stepsOutfile: join(OUT_DIR, "__step_registrations.mjs"),
     });
   }
