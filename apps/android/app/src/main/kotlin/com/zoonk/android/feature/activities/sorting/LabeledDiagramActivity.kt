@@ -51,7 +51,6 @@ import com.zoonk.android.feature.activities.ActivityDragDrop
 import com.zoonk.android.feature.activities.ActivityDragDropState
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
-import com.zoonk.android.feature.activities.RestoreActivityAnswer
 import com.zoonk.android.feature.activities.activityDraggable
 import com.zoonk.android.feature.activities.activityDropTarget
 import com.zoonk.android.feature.activities.assignmentPairs
@@ -118,7 +117,6 @@ private fun LabeledDiagramActivity(props: ActivityProps) {
     }
 
     val dragDrop = rememberActivityDragDrop { name, target -> place(name, target) }
-    RestoreActivityAnswer(props) { diagramAnswer(slots, placements) }
 
     ActivityDragDrop(dragDrop) {
         ActivityCanvas(gap = 16.dp) {

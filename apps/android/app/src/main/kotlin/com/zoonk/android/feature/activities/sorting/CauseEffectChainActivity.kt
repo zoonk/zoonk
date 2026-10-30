@@ -64,7 +64,6 @@ import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
-import com.zoonk.android.feature.activities.RestoreActivityAnswer
 import com.zoonk.android.feature.activities.links
 import com.zoonk.android.feature.activities.linksAnswer
 import com.zoonk.android.ui.format.currentLocale
@@ -106,10 +105,6 @@ private fun CauseEffectChainActivity(props: ActivityProps) {
     val resources = LocalResources.current
     val locked = props.isChecked || props.isLocked
     val labelOf = { id: String -> fields.nodes.firstOrNull { it.id == id }?.label ?: id }
-
-    RestoreActivityAnswer(
-        props,
-    ) { links.takeIf { !isGuided && it.isNotEmpty() }?.let { linksAnswer(it.map { link -> link.from to link.to }) } }
 
     fun update(next: List<CauseLink>) {
         links = next

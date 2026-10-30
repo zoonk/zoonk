@@ -41,7 +41,6 @@ import com.zoonk.android.feature.activities.ActivityCanvasLabel
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.ActivitySortableList
-import com.zoonk.android.feature.activities.RestoreActivityAnswer
 import com.zoonk.android.feature.activities.SortableItem
 import com.zoonk.android.feature.activities.orderAnswer
 import com.zoonk.android.feature.activities.orderIds
@@ -67,8 +66,6 @@ private fun ProcessOrderActivity(props: ActivityProps) {
     val steps = content.fields.steps
     val shuffled = remember(content) { shuffleSteps(steps, "${content.prompt}:${steps.joinToString(",") { it.id }}") }
     var order by rememberSaveable { mutableStateOf(props.answer.orderIds ?: shuffled.map { it.id }) }
-    var moved by rememberSaveable { mutableStateOf(props.answer != null) }
-    RestoreActivityAnswer(props) { orderAnswer(order).takeIf { moved } }
     val byId = steps.associateBy { it.id }
 
     if (props.isChecked) {
@@ -86,7 +83,6 @@ private fun ProcessOrderActivity(props: ActivityProps) {
             label = stringResource(R.string.activities_sorting_steps_in_your_order),
             onReorder = { ids ->
                 order = ids
-                moved = true
                 props.onAnswerChange(orderAnswer(ids))
             },
             enabled = !props.isLocked,

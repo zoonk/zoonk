@@ -54,7 +54,6 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityReason
 import com.zoonk.android.feature.activities.ActivityReasons
 import com.zoonk.android.feature.activities.ActivityRenderer
-import com.zoonk.android.feature.activities.RestoreActivityAnswer
 import com.zoonk.android.feature.activities.activityDraggable
 import com.zoonk.android.feature.activities.activityDropTarget
 import com.zoonk.android.feature.activities.assignmentPairs
@@ -117,7 +116,6 @@ private fun CategorizeActivity(props: ActivityProps) {
     }
 
     val dragDrop = rememberActivityDragDrop(::place)
-    RestoreActivityAnswer(props) { placementsAnswer(ids, placements) }
 
     @Composable
     fun chip(

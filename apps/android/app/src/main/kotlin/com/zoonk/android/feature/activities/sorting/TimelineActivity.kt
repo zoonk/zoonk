@@ -83,7 +83,6 @@ import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LIFTED_ELEVATION
-import com.zoonk.android.feature.activities.RestoreActivityAnswer
 import com.zoonk.android.feature.activities.detectLift
 import com.zoonk.android.feature.activities.orderAnswer
 import com.zoonk.android.feature.activities.orderIds
@@ -166,7 +165,6 @@ private fun TimelineActivity(props: ActivityProps) {
     }
 
     LaunchedEffect(focusId) { focusId?.let { focus[it]?.requestFocus() } }
-    RestoreActivityAnswer(props) { orderAnswer(placedOrder(placements)).takeIf { !isQuestion && placements.size == fields.events.size } }
 
     val events =
         fields.events.mapNotNull { event ->

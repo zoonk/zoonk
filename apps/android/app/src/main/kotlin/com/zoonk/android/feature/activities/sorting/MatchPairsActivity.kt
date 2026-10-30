@@ -50,7 +50,6 @@ import com.zoonk.android.feature.activities.ActivityReason
 import com.zoonk.android.feature.activities.ActivityReasons
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
-import com.zoonk.android.feature.activities.RestoreActivityAnswer
 import com.zoonk.android.feature.activities.assignmentPairs
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
@@ -84,7 +83,6 @@ private fun MatchPairsActivity(props: ActivityProps) {
     var announcement by remember { mutableStateOf("") }
     val resources = LocalResources.current
     val isComplete = progress.matched.size == pairIds.size
-    RestoreActivityAnswer(props) { matchAnswer(pairIds, progress) }
     val expected = props.expected.assignmentPairs.takeIf { props.isChecked }
 
     fun tryPair(
