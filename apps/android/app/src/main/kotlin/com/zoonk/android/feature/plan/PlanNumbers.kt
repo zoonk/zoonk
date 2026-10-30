@@ -1,8 +1,5 @@
 package com.zoonk.android.feature.plan
 
-import android.icu.math.BigDecimal
-import android.icu.text.NumberFormat
-import android.icu.util.ULocale
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
@@ -69,6 +66,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatGoalProgress
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
@@ -263,18 +261,6 @@ private fun weekGain(gain: Double): String {
 }
 
 private const val PERCENT = 100
-
-/** Main's goal progress: a percent with up to two decimals, so a small step still moves it. */
-private fun formatGoalProgress(
-    share: Double,
-    locale: Locale,
-): String =
-    NumberFormat
-        .getPercentInstance(ULocale.forLocale(locale))
-        .apply {
-            maximumFractionDigits = 2
-            roundingMode = BigDecimal.ROUND_HALF_UP
-        }.format(share)
 
 @Composable
 private fun paceNumber(

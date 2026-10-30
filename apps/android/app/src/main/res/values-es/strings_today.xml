@@ -108,6 +108,12 @@
   "today_practice_anytime": "e49fa62dc493955b7aec31d62a9608d1100c9e8a45688759434509ccaf40a72e",
   "today_practice_minutes": "5168f3b1ea4ba60b18121027f9fff3e6b8a35bc660f25e18d2fbb6b104cf1e9d",
   "today_practice_with_buddy": "6115127322824bcad7b31314638377fb33e1e56ec6a78871e1254699f9c99cfa",
+  "today_preparation": "21e52bab897718775ad2cbab9beb18d45d776522ecb4e937daf24c43f14ff85a",
+  "today_progress": "5dfbd8124c131ee2a9967fd4765c2b80d53857ed4bb101302b9a1b5676b9c7df",
+  "today_progress_known": "1987c0719849f5c254c1ef28de4f2b76f3fc8cb1eb8d6dfe20fc8032ad8d7f38",
+  "today_progress_lessons_today": "80e950bf95acaa24685f6cd097663cb42d78655854c016f90ac7192a443c1076",
+  "today_progress_studied": "43952de24c8780c96991c178d30afef97e51ca01a65dad1ad50a7e0aaa87e213",
+  "today_progress_today": "a3321e03f1d6a02e4525e281c009a0edca0f5df2e48b4aaf35e8eb1a06add776",
   "today_quick_explanation": "784c8e31c191e2557e4e4483580347c32d6bbd68ebe7daa77f5e9d9ef47f0358",
   "today_reconnect": "3beab12e1eb4ff6fa34b6266b4760e79aef1dc8b88f4e865992186c828f0bca5",
   "today_rest": "baaa6f2940efe6c719af02ae14331707f6bfb51d2a580151980bf23e72540de4",
@@ -126,6 +132,7 @@
   "today_see_you_day": "50667af07da8bbb29359aed9fe04c3d456a095eebcfc2479bab5c4f19ce5f3b3",
   "today_see_you_next_session": "81a9785dcd4965df388532cb696e407b0d7dc70152161cb7e0c03c1fdac6e675",
   "today_see_you_tomorrow": "0068fdc29d7634e90480c6b6102bbe1f37ffa696e2abede5a29ceda73066657d",
+  "today_see_your_plan": "d64c8ec9078c66a75f70f7f2dd0a6eb170980a9544f61522b52f40ff1a317608",
   "today_session_ended_description": "521be8e29dc7204f7d0681db8cda302e3d3bfc32b117fbbdac9c30ec88c4252a",
   "today_setting_up": "d1ae6d4aedf0ae4021f57890290049dcf1980ee4b0f0c770ef53b23b7c772a34",
   "today_setting_up_detail": "3abee4382f633db35a6efbf5479b13ceab04367ad230cb81e84a2ffdaa9df207",
@@ -175,7 +182,9 @@
   "today_week_exam_day": "b553856e99521bb08928607151377348c9a5054ad2462b4cd8b37b6d89698e41",
   "today_week_full_review_detail": "c1b3139a968c48ba77c9b34f23fa0b7a81fbbe933542288c8b607b49a9eae4f3",
   "today_week_full_review_name": "f4e09874728ed3937bb73740e821b1bc7debb1c3f901f29e845d9c4b571d86aa",
+  "today_week_gain": "c9a78d4bea19c9d62649f452efc05743ebc3cfe3f3ad0a426ca9893a173f3aaf",
   "today_week_goal_reached": "8a2305fa691c09907d633c9e7a39408be9832b11eff89217492bd64ace1b17a5",
+  "today_week_loss": "f7206466984f2a7b5e7e7c5a6875816e8a92a7721e5e0535976bede1bf8b303c",
   "today_week_mock_name": "6a2dfa5fee7dac455c2e0ebf0068b0040ea71ab01589581b8a43cb4def988ae5",
   "today_week_not_studied": "a176bb201ae40cbc89310c1e9bb52b0a5bf0ba051f5d72eca950c2a91a6b2ab8",
   "today_week_planned": "0b37f9c51563b2a7fb0b086e1a394ef9d944442fb55b3568e2b5bc9c8bd11eea",
@@ -471,4 +480,26 @@
     <string name="today_connection_lost">Conexión perdida</string>
     <string name="today_connection_lost_detail">Hemos dejado de recibir actualizaciones. Es posible que siga funcionando.</string>
     <string name="today_reconnect">Volver a conectar</string>
+    <!-- The title of a card beside Today's page: how much of the goal is done, as a percent. -->
+    <string name="today_progress">Progreso</string>
+    <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->
+    <string name="today_preparation">Preparación</string>
+    <!-- A link at the end of the progress card that opens the learner's plan. -->
+    <string name="today_see_your_plan">Ver tu plan</string>
+    <!-- A short line beside the preparation percent: %1$s is how many points it rose this week, such as "5". -->
+    <string name="today_week_gain">+%1$s esta semana</string>
+    <!-- A short line beside the preparation percent: %1$s is how many points it fell this week, a negative number such as "-3". -->
+    <string name="today_week_loss">%1$s esta semana</string>
+    <!-- Read by screen readers for the progress card's lesson cells: %s is how many lessons are planned today. -->
+    <plurals name="today_progress_lessons_today">
+        <item quantity="one">Hoy: %s lección</item>
+        <item quantity="many">Hoy: %s lecciones</item>
+        <item quantity="other">Hoy: %s lecciones</item>
+    </plurals>
+    <!-- A legend label in the progress card: lessons the learner studied. -->
+    <string name="today_progress_studied">Estudiadas</string>
+    <!-- A legend label in the progress card: lessons skipped because the learner already knew them. -->
+    <string name="today_progress_known">Ya lo sabías</string>
+    <!-- A legend label in the progress card, and a small tag on a subject's row: lessons or a subject planned for today. -->
+    <string name="today_progress_today">Hoy</string>
 </resources>

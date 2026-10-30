@@ -27,7 +27,7 @@ internal class TodayAsideState(
     val onMission: (MissionOpens) -> Unit,
     val navigate: (AppRoute) -> Unit,
     /** The goal's standing, beside the page only, as main hides it on phones. */
-    val level: (@Composable () -> Unit)? = null,
+    val standing: @Composable () -> Unit = {},
 )
 
 /** The week's side of Today: missions, the week, then the ways to practice anytime. */
@@ -54,7 +54,7 @@ internal fun TodayAside(
             collapseWhenDone = true,
         )
         TodayWeek(model.day, model.today.weeklyChallenge, aside.navigate)
-        if (beside) aside.level?.invoke()
+        if (beside) aside.standing()
         if (beside) aside.notice(SuggestionLayout.Panel)
         // Beside the page, the drawer's Study places hold the same ways in.
         if (!beside) aside.practice()

@@ -14,6 +14,7 @@ import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineGeneration
 import com.zoonk.api.models.StudyNext
+import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.CompletableDeferred
 import java.util.UUID
 import kotlin.time.Instant
@@ -37,6 +38,8 @@ internal class FakePlanApi : PlanApi {
     val changes = mutableListOf<List<PlanOp>>()
     val decisions = mutableListOf<PlanChangeDecisionInput.Status>()
     var shownPlan: Plan = plan()
+    var shownSyllabus: Syllabus = syllabus()
+    var syllabi = 0
     var timeToCover: PlanTimeToCover = timeToCover()
     var timeToCoverGate: CompletableDeferred<Unit>? = null
     var timeToCoverFailure: ApiException? = null
@@ -88,7 +91,10 @@ internal class FakePlanApi : PlanApi {
     override suspend fun syllabus(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) = syllabus()
+    ): Syllabus {
+        syllabi++
+        return shownSyllabus
+    }
 
     override suspend fun progress(
         session: AuthenticatedSession,

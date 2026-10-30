@@ -135,7 +135,7 @@ internal fun SubjectCoverage(
     }
 }
 
-internal enum class LegendDot { Studied, Known, New }
+internal enum class LegendDot { Studied, Known, New, Today }
 
 @Composable
 internal fun LegendItem(
@@ -158,6 +158,7 @@ private fun LegendMark(dot: LegendDot) {
         LegendDot.Studied -> FilledDot(MaterialTheme.colorScheme.tertiary, modifier)
         LegendDot.Known -> FilledDot(quiet, modifier)
         LegendDot.New -> Box(modifier.border(1.dp, quiet, CircleShape))
+        LegendDot.Today -> Box(modifier.border(1.dp, MaterialTheme.colorScheme.tertiary, CircleShape))
     }
 }
 

@@ -1,21 +1,28 @@
 package com.zoonk.android.feature.today
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.feature.goalcontent.examSyllabus
+import com.zoonk.android.feature.goalcontent.modulesSyllabus
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GoalResearch
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -45,16 +52,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonObject
 import org.junit.Assert.assertEquals
+import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
+import java.io.File
 import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
@@ -77,6 +90,7 @@ class TodayFlowTest {
     private fun show(
         vararg sessionFields: Pair<String, Any?>,
         todayFields: List<Pair<String, Any?>> = emptyList(),
+        plans: FakePlanApi = FakePlanApi(),
     ) {
         val blocks =
             JsonArray(
@@ -130,7 +144,7 @@ class TodayFlowTest {
                         CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
                 ),
                 store,
-                PlanStore(FakePlanApi(), cache),
+                PlanStore(plans, cache),
             )
         val read = TodayRead.Day(today, today.session.toDayView())
         val onboarding = OnboardingStore(FakeOnboardingApi(), cache, FakeSession(ana)) { true }
@@ -153,6 +167,7 @@ class TodayFlowTest {
                     language = language,
                     research = research,
                     onboarding = onboarding,
+                    plans = PlanStore(plans, cache),
                 )
             }
         }
@@ -251,6 +266,131 @@ class TodayFlowTest {
 
         rule.onNodeWithText("No study planned today.", substring = true).assertIsDisplayed()
         assertEquals(0, rule.onAllNodesWithText("Start session").fetchSemanticsNodes().size)
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp")
+    fun besideThePageTheProgressCardCountsOnlyTheLessonsStudiedNeverThePlansTotal() {
+        val plans = FakePlanApi().apply { shownSyllabus = modulesSyllabus() }
+        show(todayFields = listOf("progress" to lessonsProgress(done = 3, today = 2, total = 20)), plans = plans)
+
+        rule.onNodeWithText("Progress").assertExists()
+        rule.onNodeWithText("1 lesson studied").assertExists()
+        rule.onNodeWithText("Basics").assertExists()
+        rule.onAllNodesWithText("of 20", substring = true).assertCountEquals(0)
+        assertEquals(1, plans.syllabi)
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp")
+    fun besideThePageAnExamShowsItsPreparationWithTheSubjectsItsPlanHolds() {
+        val exam = fixture("today")["goal"]?.let { JsonObject(it.jsonObject + ("kind" to JsonPrimitive("exam"))) }
+        val preparation =
+            buildJsonObject {
+                put("measure", "preparation")
+                put("status", JsonNull)
+                put("value", 0.37)
+                put("weekGain", 0.05)
+            }
+        show(
+            todayFields = listOf("goal" to exam, "progress" to preparation),
+            plans = FakePlanApi().apply { shownSyllabus = examSyllabus() },
+        )
+
+        rule.onNodeWithText("Preparation").assertExists()
+        rule.onNodeWithText("37%").assertExists()
+        rule.onNodeWithText("+5 this week").assertExists()
+        rule.onNodeWithText("Natural sciences").assertExists()
+        rule.onNodeWithText("Spanish").assertDoesNotExist()
+    }
+
+    @Test
+    fun onAPhoneTheProgressCardStaysOffTodayAsMainKeepsIt() {
+        val plans = FakePlanApi().apply { shownSyllabus = modulesSyllabus() }
+        show(todayFields = listOf("progress" to lessonsProgress(done = 3, today = 2, total = 20)), plans = plans)
+
+        rule.onNodeWithText("1 lesson studied").assertDoesNotExist()
+        rule.waitForIdle()
+        assertEquals(0, plans.syllabi)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderProgressOnAPhone() = render("today-progress-phone")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderProgressOnATablet() = render("today-progress-tablet")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderPreparationOnATablet() = render("today-preparation-tablet", exam = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h1400dp-land-xhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderProgressOnATabletAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        render("today-progress-tablet-font200")
+    }
+
+    /** Review renders, written only with `-Pzoonk.shots=<folder>`. No goldens. */
+    private fun render(
+        name: String,
+        exam: Boolean = false,
+    ) {
+        val folder = System.getProperty("zoonk.shots").orEmpty()
+        assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
+        if (exam) {
+            val goal = fixture("today")["goal"]?.let { JsonObject(it.jsonObject + ("kind" to JsonPrimitive("exam"))) }
+            val preparation =
+                buildJsonObject {
+                    put("measure", "preparation")
+                    put("status", JsonNull)
+                    put("value", 0.37)
+                    put("weekGain", 0.05)
+                }
+            show(
+                todayFields = listOf("goal" to goal, "progress" to preparation),
+                plans =
+                    FakePlanApi().apply {
+                        shownSyllabus =
+                            examSyllabus()
+                    },
+            )
+        } else {
+            show(
+                todayFields = listOf("progress" to lessonsProgress(done = 3, today = 2, total = 20)),
+                plans = FakePlanApi().apply { shownSyllabus = modulesSyllabus() },
+            )
+        }
+        rule.waitForIdle()
+        val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
+        file.outputStream().use {
+            rule
+                .onRoot()
+                .captureToImage()
+                .asAndroidBitmap()
+                .compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
+    }
+
+    private fun lessonsProgress(
+        done: Int,
+        today: Int,
+        total: Int,
+    ) = buildJsonObject {
+        putJsonObject("lessons") {
+            put("done", done)
+            put("today", today)
+            put("total", total)
+        }
+        put("measure", "lessons")
+        put("status", JsonNull)
+        put("value", done.toDouble() / total)
     }
 
     private inner class StartingApi : StudyApi {

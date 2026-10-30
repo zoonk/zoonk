@@ -40,12 +40,14 @@ import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.language.LanguageLevelCard
 import com.zoonk.android.feature.language.hasLanguagePractice
 import com.zoonk.android.feature.onboarding.GoalResearch
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.OpeningWaitLine
 import com.zoonk.android.feature.session.WaitState
@@ -59,6 +61,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.DockedActionBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.api.models.LanguageToday
+import com.zoonk.api.models.TodayGoal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -74,6 +77,11 @@ internal class TodayDayModel(
     val pastDate = today.pastDateLessons()?.takeIf { state == DayState.Rest || state == DayState.Ahead }
     val upNext = day.upNextLessons(pastDate != null)
     val keepLearning = upNext.isNotEmpty()
+    val todaySubjects =
+        day.steps
+            .filterNot(DayStep::isFinished)
+            .mapNotNull(DayStep::subject)
+            .toSet()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -155,10 +163,15 @@ internal fun TodayDay(
                 },
                 onMission = { opens -> openMission(opens, model, actions, today, scope) },
                 navigate = navigator::open,
-                level =
-                    language?.value?.level?.let { level ->
-                        { LanguageLevelCard(level, onOpenPlan = { navigator.open(AppRoute.Plan()) }) }
-                    },
+                standing = {
+                    val openPlan = { navigator.open(AppRoute.Plan()) }
+                    if (read.today.goal.kind == TodayGoal.Kind.LANGUAGE) {
+                        language?.value?.level?.let { LanguageLevelCard(it, onOpenPlan = openPlan) }
+                    } else {
+                        val syllabus = plans?.syllabus?.get(read.today.goal.id)?.collectShown()
+                        TodayPreparation(read.today.progress, syllabus?.value?.value, model.todaySubjects, onOpenPlan = openPlan)
+                    }
+                },
             )
 
         // While a switch is on its way the page still shows the previous goal; a tap would open its session.
