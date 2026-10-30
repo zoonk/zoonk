@@ -76,7 +76,7 @@ final class OnboardingStore {
       throw CancellationError()
     }
 
-    return try await api.generationStatus(id: id, token: token)
+    return try await clients.generationStatus(id: id, token: token)
   }
 
   func readAgain(id: String) async throws -> OnboardingDraft {

@@ -51,6 +51,62 @@ final class GenerationEventsTests: XCTestCase {
     }
   }
 
+  func testAStoppedRunEndsItsStreamEvenWhenTheStreamStaysOpen() async throws {
+    let transport = OpenStreamTransport(status: "failed")
+    let clients = APIClientFactory(
+      baseURL: try XCTUnwrap(URL(string: "https://api.zoonk.test")), transport: transport)
+    let events = clients.generationEvents(
+      id: "run-1", token: "learner-token", stopCheck: .milliseconds(10))
+
+    let ended = await endsWithin(.seconds(2)) {
+      for try await _ in events {}
+    }
+
+    XCTAssertTrue(ended)
+    let statusChecks = await transport.statusChecks
+    XCTAssertEqual(statusChecks, 1)
+  }
+
+  func testARunStillWorkingKeepsItsStreamOpen() async throws {
+    let transport = OpenStreamTransport(status: "running")
+    let clients = APIClientFactory(
+      baseURL: try XCTUnwrap(URL(string: "https://api.zoonk.test")), transport: transport)
+    let events = clients.generationEvents(
+      id: "run-1", token: "learner-token", stopCheck: .milliseconds(10))
+
+    let ended = await endsWithin(.milliseconds(300)) {
+      for try await _ in events {}
+    }
+
+    XCTAssertFalse(ended)
+    let statusChecks = await transport.statusChecks
+    XCTAssertGreaterThan(statusChecks, 1)
+  }
+
+  /// False when `work` failed or is still going at `limit`; it's cancelled then.
+  private func endsWithin(
+    _ limit: Duration, _ work: @escaping @Sendable () async throws -> Void
+  ) async -> Bool {
+    await withTaskGroup(of: Bool.self) { group in
+      group.addTask {
+        do {
+          try await work()
+          return !Task.isCancelled
+        } catch {
+          return false
+        }
+      }
+      group.addTask {
+        try? await Task.sleep(for: limit)
+        return false
+      }
+
+      let first = await group.next() ?? false
+      group.cancelAll()
+      return first
+    }
+  }
+
   func testFollowingAWritingLessonWaitsForTheRunItsReadinessNamesThenReadsItAgain() async throws {
     let transport = LessonWritingTransport(
       readiness: [
@@ -74,6 +130,45 @@ final class GenerationEventsTests: XCTestCase {
         "/v1/generations/run-1/events?startIndex=0",
         "/v1/library/lessons/lesson-1/readiness",
       ])
+  }
+}
+
+/// A run's events stream that never ends, as a run that stopped without closing it (vercel/workflow#964).
+private actor OpenStreamTransport: ClientTransport {
+  private let status: String
+  private(set) var statusChecks = 0
+
+  init(status: String) {
+    self.status = status
+  }
+
+  func send(
+    _ request: HTTPRequest,
+    body: HTTPBody?,
+    baseURL: URL,
+    operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    var headerFields = HTTPFields()
+
+    if operationID == "streamGenerationEvents" {
+      headerFields[.contentType] = "text/event-stream"
+      let stream = AsyncThrowingStream<ArraySlice<UInt8>, any Error> { continuation in
+        continuation.yield(
+          ArraySlice((#"data: {"status":"started","step":"writeLesson"}"# + "\n\n").utf8))
+      }
+      return (
+        HTTPResponse(status: .ok, headerFields: headerFields),
+        HTTPBody(stream, length: .unknown, iterationBehavior: .single)
+      )
+    }
+
+    XCTAssertEqual(operationID, "getGeneration")
+    statusChecks += 1
+    headerFields[.contentType] = "application/json"
+    return (
+      HTTPResponse(status: .ok, headerFields: headerFields),
+      HTTPBody(#"{"id":"run-1","status":"\#(status)"}"#)
+    )
   }
 }
 

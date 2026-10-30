@@ -36,14 +36,32 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
   }
 }
 
+enum GenerationStatus: Sendable {
+  case working
+  case completed
+  /// Failed or cancelled: its content won't come without starting it again.
+  case stopped
+}
+
 extension APIClientFactory {
   /// Resumes a dropped connection after the last event. When the stream ends, read the
-  /// generation's status: a run that stopped ends its stream at once.
+  /// generation's status. A run that stopped may leave its stream open (vercel/workflow#964), so
+  /// its status is read every `stopCheck` too, and a stopped run ends the stream.
   func generationEvents(
     id: String,
-    token: String?
+    token: String?,
+    stopCheck: Duration = .seconds(120)
   ) -> AsyncThrowingStream<GenerationEvent, Error> {
     AsyncThrowingStream { continuation in
+      let watch = Task {
+        while (try? await Task.sleep(for: stopCheck)) != nil {
+          if (try? await generationStatus(id: id, token: token)) == .stopped {
+            continuation.finish()
+            return
+          }
+        }
+      }
+
       let task = Task {
         var received = 0
         var dropsWithoutEvents = 0
@@ -82,7 +100,27 @@ extension APIClientFactory {
 
       continuation.onTermination = { _ in
         task.cancel()
+        watch.cancel()
       }
+    }
+  }
+
+  func generationStatus(id: String, token: String?) async throws -> GenerationStatus {
+    let output = try await perform(token: token) { client in
+      try await client.getGeneration(path: .init(generationId: id))
+    }
+
+    switch output {
+    case .ok(let response):
+      switch try response.body.json.status {
+      case .pending, .running: return .working
+      case .completed: return .completed
+      case .failed, .cancelled: return .stopped
+      }
+    case .notFound:
+      throw APIError.notFound
+    default:
+      throw APIError.unavailable
     }
   }
 
