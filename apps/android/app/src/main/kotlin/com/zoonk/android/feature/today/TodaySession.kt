@@ -551,7 +551,8 @@ private fun rowLabel(
             ?.contains(step.position) == true
     val label =
         when {
-            !catchingUp -> step.subject ?: step.challengePhase
+            !catchingUp && step.checkpoint != null -> listOfNotNull(step.subject, blockDetail(step)).joinToString(" · ")
+            !catchingUp -> step.subject
             step.subject != null -> stringResource(R.string.today_step_catching_up_subject, step.subject)
             else -> stringResource(R.string.today_step_catching_up)
         }

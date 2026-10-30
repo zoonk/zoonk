@@ -262,6 +262,26 @@ class TodayFlowTest {
     }
 
     @Test
+    fun aChallengeRowSaysWhatItIsBesideItsSubject() {
+        val challenge =
+            fixture(
+                "study-block",
+                "kind" to "checkpoint",
+                "position" to 0,
+                "title" to "Ordering food",
+                "subject" to "Spanish",
+                "questions" to 8,
+                "checkpoint" to
+                    ApiJson.parseToJsonElement(
+                        """{"kind":"boss","mock":false,"passMark":70,"phase":2,"rematch":false,"timeLimitMinutes":null}""",
+                    ),
+            )
+        show("blocks" to JsonArray(listOf(challenge)))
+
+        rule.onNodeWithText("Spanish · Ordering food · 8 questions, no hints").assertExists()
+    }
+
+    @Test
     fun aDoneDayLeadsToItsSummary() {
         val done =
             JsonArray(
