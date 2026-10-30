@@ -169,6 +169,7 @@ internal fun RunMeter(
     segments: List<Segment>,
 ) {
     val label = stringResource(R.string.practice_progress, minOf(index + 1, total), total)
+    val done = segments.count { it != Segment.Ahead && it != Segment.Current }
     val parts =
         segments.map { segment ->
             MeterPart(
@@ -189,7 +190,7 @@ internal fun RunMeter(
                 .padding(bottom = 8.dp)
                 .semantics {
                     contentDescription = label
-                    progressBarRangeInfo = ProgressBarRangeInfo(index.toFloat(), 0f..total.toFloat())
+                    progressBarRangeInfo = ProgressBarRangeInfo(done.toFloat(), 0f..total.toFloat())
                 },
         ) { MeterParts(parts) }
     }
