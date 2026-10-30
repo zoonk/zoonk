@@ -21,6 +21,22 @@ export function getPnpmCommand(environment: NodeJS.ProcessEnv): ExecutableComman
   return { args: [], command: pnpmExecutable };
 }
 
+/** Every Node process started with this environment stops once `launcherPid` exits; see `stop-with-launcher.mts`. */
+export function getStopWithLauncherEnvironment({
+  environment,
+  launcherPid,
+}: {
+  environment: NodeJS.ProcessEnv;
+  launcherPid: string;
+}): NodeJS.ProcessEnv {
+  const preload = `--import=${import.meta.resolve("./stop-with-launcher.mts")}`;
+
+  return {
+    NODE_OPTIONS: [environment.NODE_OPTIONS, preload].filter(Boolean).join(" "),
+    ZOONK_DEV_LAUNCHER_PID: launcherPid,
+  };
+}
+
 export function runForegroundCommand({
   args,
   command,

@@ -1,6 +1,11 @@
 import { homedir } from "node:os";
 import { getPortlessEnvironment, getProjectName, getServiceName } from "./config.mts";
-import { applyCommandExit, getPnpmCommand, runForegroundCommand } from "./process.mts";
+import {
+  applyCommandExit,
+  getPnpmCommand,
+  getStopWithLauncherEnvironment,
+  runForegroundCommand,
+} from "./process.mts";
 
 const [serviceName, appScript = "dev:app"] = process.argv
   .slice(2)
@@ -15,13 +20,11 @@ const lanMode = process.argv.includes("--lan") || process.env.PORTLESS_LAN === "
 
 /** `pnpm dev` and `pnpm start` pass their own process; a service started on its own is launched by this script. */
 const launcherPid = process.env.ZOONK_DEV_LAUNCHER_PID ?? String(process.pid);
-const stopWithLauncher = `--import=${import.meta.resolve("./stop-with-launcher.mts")}`;
 
 const environment = {
   ...process.env,
   ...getPortlessEnvironment({ homeDirectory: homedir(), lanMode }),
-  NODE_OPTIONS: [process.env.NODE_OPTIONS, stopWithLauncher].filter(Boolean).join(" "),
-  ZOONK_DEV_LAUNCHER_PID: launcherPid,
+  ...getStopWithLauncherEnvironment({ environment: process.env, launcherPid }),
 };
 
 const pnpmCommand = getPnpmCommand(environment);

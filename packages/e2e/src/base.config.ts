@@ -1,5 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
+import { getStopWithLauncherEnvironment } from "../../../scripts/dev/process.mts";
 import { getTestEnvironment } from "../../db/src/test-environment";
 
 const CHROMIUM_PROJECT = {
@@ -35,6 +36,10 @@ export function createBaseConfig(options: {
       command: `pnpm start:app -p ${options.webServerPort ?? 0}`,
       env: {
         ...getTestEnvironment("e2e"),
+        ...getStopWithLauncherEnvironment({
+          environment: process.env,
+          launcherPid: String(process.pid),
+        }),
         STRIPE_SECRET_KEY: "sk_test_fake",
         ...options.webServerEnv,
       },

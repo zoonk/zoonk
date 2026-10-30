@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { getTestEnvironment } from "../../packages/db/src/test-environment.ts";
+import { getStopWithLauncherEnvironment } from "../dev/process.mts";
 import { stopChildProcess } from "./stop-child-process.mts";
 
 const STARTUP_TIMEOUT_MS = 60_000;
@@ -17,7 +18,15 @@ export async function startLiveCallApi({ port, repository }: { port: number; rep
     [require.resolve("next/dist/bin/next"), "start", "-p", String(port)],
     {
       cwd: directory,
-      env: { ...process.env, ...getTestEnvironment("e2e"), NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth" },
+      env: {
+        ...process.env,
+        ...getTestEnvironment("e2e"),
+        ...getStopWithLauncherEnvironment({
+          environment: process.env,
+          launcherPid: String(process.pid),
+        }),
+        NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth",
+      },
       stdio: ["ignore", "pipe", "pipe"],
     },
   );
