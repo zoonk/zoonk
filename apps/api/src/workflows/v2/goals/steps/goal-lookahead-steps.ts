@@ -47,16 +47,21 @@ export async function findGoalCoursesStep({
   const format = getGoalCourseFormat({ kind: goal.kind, ownerId: scope.ownerId });
   const context = toContentAnalytics({ analytics, scope, workflowRunId });
 
-  const found: [string, string][] = [];
+  const found = await Promise.all(
+    courses.map(async (need) => {
+      const { course } = await withAiRetry(() =>
+        findOrCreateGoalCourse({
+          analytics: context,
+          format,
+          provenance,
+          scope,
+          title: need.title,
+        }),
+      );
 
-  for (const need of courses) {
-    // oxlint-disable-next-line no-await-in-loop -- New courses each acquire a home lock in their own transaction.
-    const { course } = await withAiRetry(() =>
-      findOrCreateGoalCourse({ analytics: context, format, provenance, scope, title: need.title }),
-    );
-
-    found.push([need.key, course.id]);
-  }
+      return [need.key, course.id] as const;
+    }),
+  );
 
   const [first] = found;
 

@@ -73,6 +73,7 @@ async function streamWaitedBand({
       );
 
       const replanned = await replanGoalsWaitingOnSkills({
+        goalIds: analytics?.goalId ? [analytics.goalId] : [],
         skillIds: plan.skills
           .filter((skill) => chapter.skillKeys.includes(skill.key))
           .map((skill) => skill.id),

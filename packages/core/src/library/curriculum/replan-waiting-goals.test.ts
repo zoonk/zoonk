@@ -1,4 +1,6 @@
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { markPlanInputsUntil } from "../../plans/_test-utils/mark-plan-inputs";
@@ -9,7 +11,11 @@ import {
   plannedLessons,
   waitingGoal,
 } from "./_test-utils/waiting-goals";
-import { replanGoalsWaitingOnSkills, replanWaitingGoal } from "./replan-waiting-goals";
+import {
+  listGoalsWaitingOnSkills,
+  replanGoalsWaitingOnSkills,
+  replanWaitingGoal,
+} from "./replan-waiting-goals";
 
 const POPULAR_BAND_GOALS = 12;
 
@@ -25,6 +31,21 @@ describe(replanGoalsWaitingOnSkills, () => {
   afterEach(() => {
     vi.useRealTimers();
     vi.restoreAllMocks();
+  });
+
+  it("preserves requested goal order when listing waiting goals", async () => {
+    const user = await userFixture();
+    const first = await goalFixture({ userId: user.id });
+    const second = await goalFixture({ userId: user.id });
+
+    for (const goalIds of [
+      [first.id, second.id],
+      [second.id, first.id],
+    ]) {
+      // oxlint-disable-next-line no-await-in-loop -- Both orders must be preserved for the same pair of goals.
+      const waiting = await listGoalsWaitingOnSkills({ goalIds, skillIds: [] });
+      expect(waiting).toStrictEqual(goalIds);
+    }
   });
 
   it("reports a goal whose plan kept changing, for later, and re-plans the others", async () => {

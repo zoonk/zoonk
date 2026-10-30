@@ -31,7 +31,8 @@ export async function listGoalsWaitingOnSkills({
     },
   });
 
-  return goals.map((goal) => goal.id);
+  const waiting = new Set(goals.map((goal) => goal.id));
+  return [...new Set([...goalIds.filter((id) => waiting.has(id)), ...waiting])];
 }
 
 /** Throws on a persistent plan conflict so the caller can retry later. */

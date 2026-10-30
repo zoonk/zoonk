@@ -251,6 +251,12 @@ describe(courseOutlineWorkflow, () => {
       ]);
 
       const other = await planWaitingGoal(busy.idsByKey);
+      const readyBeforeRetry: boolean[] = [];
+
+      vi.mocked(sleep).mockImplementationOnce(async () => {
+        const items = await lessonItems(other.id);
+        readyBeforeRetry.push(items.length > 0 && items.every((item) => item.lessonId !== null));
+      });
 
       const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: busy.goal.id } });
       const error = vi.spyOn(logger, "logError");
@@ -267,6 +273,7 @@ describe(courseOutlineWorkflow, () => {
       try {
         await Promise.allSettled([writing.finally(() => stop.abort()), marking]);
         await expect(writing).resolves.toMatchObject({ status: "written" });
+        expect(readyBeforeRetry).toStrictEqual([true]);
 
         expect(error).toHaveBeenCalledWith(
           "[courseOutlineWorkflow] Goals waiting on a band couldn't take its lessons:",
