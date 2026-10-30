@@ -141,7 +141,10 @@ private struct TodaySuggestedGoal: View {
 private struct TodayPreparing: View {
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(PlanStore.self) private var plans
   @Environment(TodayStore.self) private var store
+  @State private var attempt = 0
+  @State private var stoppedFollowing = false
 
   let goalID: String
   let title: String
@@ -184,16 +187,56 @@ private struct TodayPreparing: View {
           Text(
             "Building your plan for \(title)", tableName: "Today",
             comment: "A plan is being built for the goal")
+        } actions: {
+          if stoppedFollowing {
+            Button {
+              stoppedFollowing = false
+              attempt += 1
+            } label: {
+              Text("Try again", tableName: "Today", comment: "Retries loading Today")
+            }
+            .buttonStyle(.bordered)
+          }
         }
-        .task(id: goalID) {
-          while !Task.isCancelled {
-            try? await Task.sleep(for: .seconds(5))
-            await store.today.refresh()
+        .task(id: "\(goalID):\(attempt)") {
+          await waitForPlan()
+
+          // Still here: the build's events ended without the day showing.
+          if !Task.isCancelled {
+            stoppedFollowing = true
           }
         }
       }
     }
     .loads(setup, refreshable: false)
+  }
+
+  /// Follows the plan's build. Once the plan is saved, each further step of the build reads Today
+  /// again until the first day shows, which leaves this screen and ends the task.
+  private func waitForPlan() async {
+    guard let token = plans.cache.session.authenticatedSession?.bearerToken else {
+      return
+    }
+
+    if let id = try? await plans.api.goalGenerationId(token: token, goalId: goalID) {
+      var run = PlanBuildingRun()
+
+      do {
+        for try await event in plans.api.generationEvents(id: id, token: token) {
+          run.record(event)
+
+          if run.isPlanSaved {
+            await store.today.refresh()
+          }
+        }
+      } catch {}
+    }
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    await store.today.refresh()
   }
 }
 
