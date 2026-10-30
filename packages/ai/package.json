@@ -36,6 +36,7 @@
     "./tasks/v2/curriculum/skill-graph": "./src/tasks/v2/curriculum/skill-graph.ts",
     "./tasks/v2/curriculum/skill-graph-checks": "./src/tasks/v2/curriculum/_utils/skill-graph-checks.ts",
     "./tasks/v2/curriculum/skill-twins": "./src/tasks/v2/curriculum/_utils/skill-twins.ts",
+    "./tasks/v2/curriculum/teaching-chapters": "./src/tasks/v2/curriculum/teaching-chapters.ts",
     "./tasks/v2/explain/question-generality": "./src/tasks/v2/explain/question-generality.ts",
     "./tasks/v2/explain/quick-explanation": "./src/tasks/v2/explain/quick-explanation.ts",
     "./tasks/v2/explain/quick-explanation-checks": "./src/tasks/v2/explain/quick-explanation-checks.ts",

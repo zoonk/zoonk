@@ -14,12 +14,13 @@ import { claimRunToken, joinRun } from "../_shared/run-token";
 import { claimCourseWhenFree } from "./claim-course-when-free";
 import { courseIconWorkflow } from "./course-details-workflow";
 import { startCourseDetailsRun } from "./start-course-details-run";
-import { type BandPlan } from "./steps/band-outline";
+import { type BandPlan, toChapterMoves } from "./steps/band-outline";
 import {
+  coverBandSkillsStep,
   finishCourseOutlineStep,
   listWaitingGoalsStep,
   logReplanFailureStep,
-  placeContinuationsStep,
+  placeChaptersAfterStep,
   planOutlineBandStep,
   replanWaitingGoalStep,
   saveOutlineChapterStep,
@@ -125,13 +126,25 @@ async function replanWaitingGoals({
   }
 }
 
-async function writeBand({ context, plan }: { context: RunContext; plan: BandPlan }) {
+async function writeBand({ context, plan: needed }: { context: RunContext; plan: BandPlan }) {
+  const { anchors, plan, taughtSkillIds } = await deliverCourseContent(
+    coverBandSkillsStep({ ...context, plan: needed }),
+  );
+
+  if (taughtSkillIds.length > 0) {
+    await replanWaitingGoals({ context, goalIds: [], skillIds: taughtSkillIds });
+  }
+
+  if (plan.skills.length === 0 && plan.extensions.length === 0) {
+    return [];
+  }
+
   const { chapters, early, provenance } = await writeOutlineBandStep({ ...context, plan });
   const skills = [...plan.skills, ...plan.extensions.map((extension) => extension.skill)];
 
   const saved = await Promise.all(
-    chapters.map((chapter, index) =>
-      deliverCourseContent(
+    chapters.map(async (chapter, index) => {
+      const { chapterId } = await deliverCourseContent(
         saveOutlineChapterStep({
           ...context,
           chapter,
@@ -140,15 +153,26 @@ async function writeBand({ context, plan }: { context: RunContext; plan: BandPla
           position: toPosition({ early, index, plan }),
           provenance,
         }),
-      ),
-    ),
+      );
+
+      return { chapterId, skillKeys: chapter.skillKeys };
+    }),
   );
 
-  const chapterIds = saved.map((chapter) => chapter.chapterId);
+  const waited = plan.skills.filter((skill) => skill.id === context.waitedSkillId);
 
-  if (plan.extensions.length > 0) {
+  const written = early
+    ? saved.toSpliced(early.position - plan.nextPosition, 0, {
+        chapterId: early.chapterId,
+        skillKeys: waited.map((skill) => skill.key),
+      })
+    : saved;
+
+  const moves = toChapterMoves({ anchors, plan, written });
+
+  if (moves.length > 0) {
     await deliverCourseContent(
-      placeContinuationsStep({ chapterIds, chapters, courseId: context.courseId, plan }),
+      placeChaptersAfterStep({ courseId: context.courseId, level: plan.level, moves }),
     );
   }
 
@@ -158,9 +182,7 @@ async function writeBand({ context, plan }: { context: RunContext; plan: BandPla
     skillIds: skills.map((skill) => skill.id),
   });
 
-  return early
-    ? chapterIds.toSpliced(early.position - plan.nextPosition, 0, early.chapterId)
-    : chapterIds;
+  return written.map((chapter) => chapter.chapterId);
 }
 
 async function writeBands({

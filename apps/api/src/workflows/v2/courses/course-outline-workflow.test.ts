@@ -4,6 +4,10 @@ import {
   streamCourseOutline,
 } from "@zoonk/ai/tasks/v2/curriculum/course-outline";
 import { type generateSkillGraph } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
+import {
+  type TeachingChaptersParams,
+  findTeachingChapters,
+} from "@zoonk/ai/tasks/v2/curriculum/teaching-chapters";
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
 import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
@@ -21,10 +25,11 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { sleep } from "workflow";
+import { getWorkflowMetadata, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../../mocks/workflow-runtime";
+import { getStartMock } from "../../_test-utils/start-mock";
 import { courseContentNotificationWorkflow } from "../_shared/course-content-notification-workflow";
 import {
   outlineResult,
@@ -147,6 +152,109 @@ function interviewChapter(title: string, skillKeys: string[]) {
   };
 }
 
+const ITALIAN_SCOPE = { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "it" };
+
+async function writtenBand({
+  chapters,
+  courseId,
+}: {
+  chapters: { lessons: string[]; title: string }[];
+  courseId: string;
+}) {
+  return Promise.all(
+    chapters.map(async ({ lessons, title }, position) => {
+      const chapter = await libraryChapterFixture({ language: "pt", targetLanguage: "it", title });
+
+      const rows = await Promise.all(
+        lessons.map((lesson) =>
+          libraryLessonFixture({
+            estimatedMinutes: 3,
+            homeChapterId: chapter.id,
+            language: "pt",
+            targetLanguage: "it",
+            title: lesson,
+          }),
+        ),
+      );
+
+      await Promise.all([
+        courseChapterFixture({ chapterId: chapter.id, courseId, position }),
+        prisma.chapterLesson.createMany({
+          data: rows.map((lesson, index) => ({
+            chapterId: chapter.id,
+            lessonId: lesson.id,
+            position: index,
+          })),
+        }),
+      ]);
+
+      return { chapter, lessons: rows };
+    }),
+  );
+}
+
+async function italianSkill(name: string) {
+  return skillFixture({
+    language: "pt",
+    name: `${name} ${crypto.randomUUID().slice(0, 8)}`,
+    targetLanguage: "it",
+  });
+}
+
+function toSkillRef(skill: { description: string; id: string; name: string }) {
+  return { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
+}
+
+async function goalWaitingOn({ courseId, skillId }: { courseId: string; skillId: string }) {
+  const [user, skill] = await Promise.all([
+    userFixture(),
+    prisma.skill.findUniqueOrThrow({ where: { id: skillId } }),
+  ]);
+
+  const goal = await goalFixture({
+    details: { answered: ["reason", "level", "targetDate", "buddy", "placement", "schedule"] },
+    kind: "language",
+    language: "pt",
+    primaryCourseId: courseId,
+    targetLanguage: "it",
+    userId: user.id,
+  });
+
+  await prisma.plan.create({
+    data: { goalId: goal.id, settings: { startDate: new Date().toISOString().slice(0, 10) } },
+  });
+
+  await createGoalPlan({
+    goalId: goal.id,
+    graph: {
+      phases: [{ milestone: null, name: "Viagens" }],
+      skills: [
+        {
+          area: "Italiano",
+          courseIds: [courseId],
+          lessons: 2,
+          name: skill.name,
+          phase: 0,
+          skillId,
+          weight: null,
+        },
+      ],
+    },
+  });
+
+  return goal;
+}
+
+function teachNothing(params: TeachingChaptersParams) {
+  return taskResult(
+    params.skills.map((skill) => ({
+      after: params.chapters.length,
+      chapter: null,
+      key: skill.key,
+    })),
+  );
+}
+
 async function writeAfterEarlyAttempt(firstStatus: "completed" | "failed") {
   const [{ bandSkills }, course] = await Promise.all([
     waitingGoal(),
@@ -199,6 +307,274 @@ describe(courseOutlineWorkflow, () => {
     vi.mocked(streamCourseOutline).mockImplementation(
       replayStreamedOutline(recordedOutline) as never,
     );
+
+    vi.mocked(findTeachingChapters).mockImplementation(async (params) => teachNothing(params));
+  });
+
+  describe("on a band other learners already use", { timeout: TIMEOUT }, () => {
+    it("teaches a later goal's skill through the chapter that already covers it, writing no chapter", async () => {
+      const course = await courseFixture({
+        language: "pt",
+        outlineStatus: "completed",
+        targetLanguage: "it",
+        title: "Italiano",
+      });
+
+      const [[lodging, symptoms], skill] = await Promise.all([
+        writtenBand({
+          chapters: [
+            { lessons: ["Disponibilidade de quartos", "Check-in"], title: "Reserva e hospedagem" },
+            { lessons: ["Partes do corpo"], title: "Sintomas e pedidos de ajuda" },
+          ],
+          courseId: course.id,
+        }),
+        italianSkill("Hospedar-se em um hotel"),
+      ]);
+
+      const goal = await goalWaitingOn({ courseId: course.id, skillId: skill.id });
+
+      vi.mocked(findTeachingChapters).mockResolvedValue(
+        taskResult([{ after: 1, chapter: 1, key: skill.id }]),
+      );
+
+      await expect(
+        courseOutlineWorkflow({
+          bands: [{ level: "beginner", skills: [toSkillRef(skill)] }],
+          courseId: course.id,
+          scope: ITALIAN_SCOPE,
+        }),
+      ).resolves.toMatchObject({ chapterIds: [], status: "written" });
+
+      expect(generateCourseOutline).not.toHaveBeenCalled();
+      expect(streamCourseOutline).not.toHaveBeenCalled();
+
+      expect(vi.mocked(findTeachingChapters).mock.calls[0]?.[0].chapters).toStrictEqual([
+        { lessons: ["Disponibilidade de quartos", "Check-in"], title: "Reserva e hospedagem" },
+        { lessons: ["Partes do corpo"], title: "Sintomas e pedidos de ajuda" },
+      ]);
+
+      const [tags, placements, items] = await Promise.all([
+        prisma.chapterSkill.findMany({ select: { chapterId: true }, where: { skillId: skill.id } }),
+        prisma.courseChapter.findMany({
+          orderBy: { position: "asc" },
+          select: { chapterId: true },
+          where: { courseId: course.id },
+        }),
+        lessonItems(goal.id),
+      ]);
+
+      expect(tags).toStrictEqual([{ chapterId: lodging?.chapter.id }]);
+
+      expect(placements.map((placement) => placement.chapterId)).toStrictEqual([
+        lodging?.chapter.id,
+        symptoms?.chapter.id,
+      ]);
+
+      expect(items.map((item) => item.lessonId)).toStrictEqual(
+        lodging?.lessons.map((lesson) => lesson.id),
+      );
+    });
+
+    it("writes a chapter only for the skill no chapter teaches, right after the chapter it builds on", async () => {
+      const course = await courseFixture({
+        language: "pt",
+        outlineStatus: "completed",
+        targetLanguage: "it",
+        title: "Italiano",
+      });
+
+      const [[lodging], stay, complain] = await Promise.all([
+        writtenBand({
+          chapters: [
+            { lessons: ["Disponibilidade de quartos"], title: "Reserva e hospedagem" },
+            { lessons: ["Partes do corpo"], title: "Sintomas e pedidos de ajuda" },
+          ],
+          courseId: course.id,
+        }),
+        italianSkill("Hospedar-se em um hotel"),
+        italianSkill("Reclamar de um problema no quarto"),
+      ]);
+
+      vi.mocked(findTeachingChapters).mockResolvedValue(
+        taskResult([
+          { after: 1, chapter: 1, key: stay.id },
+          { after: 1, chapter: null, key: complain.id },
+        ]),
+      );
+
+      vi.mocked(generateCourseOutline).mockResolvedValue(
+        outlineResult({
+          chapters: [interviewChapter("Problemas na hospedagem", [complain.id])],
+          uncoveredSkillKeys: [],
+        }),
+      );
+
+      await courseOutlineWorkflow({
+        bands: [{ level: "beginner", skills: [toSkillRef(stay), toSkillRef(complain)] }],
+        courseId: course.id,
+        scope: ITALIAN_SCOPE,
+      });
+
+      const params = vi.mocked(generateCourseOutline).mock.calls[0]?.[0];
+
+      expect(params?.requiredSkills?.map((skill) => skill.key)).toStrictEqual([complain.id]);
+      expect(params?.taughtElsewhere).toContain(stay.name);
+
+      const [placements, tags] = await Promise.all([
+        prisma.courseChapter.findMany({
+          include: { chapter: { select: { title: true } } },
+          orderBy: { position: "asc" },
+          where: { courseId: course.id },
+        }),
+        prisma.chapterSkill.findMany({ select: { chapterId: true }, where: { skillId: stay.id } }),
+      ]);
+
+      expect(placements.map((placement) => placement.chapter.title)).toStrictEqual([
+        "Reserva e hospedagem",
+        "Problemas na hospedagem",
+        "Sintomas e pedidos de ajuda",
+      ]);
+
+      expect(tags).toStrictEqual([{ chapterId: lodging?.chapter.id }]);
+    });
+
+    it("leaves an exam's band to the outline, which keeps each chapter to one subject", async () => {
+      const course = await courseFixture({ language: "pt", outlineStatus: "completed" });
+
+      const [, skill] = await Promise.all([
+        writtenBand({
+          chapters: [{ lessons: ["Porcentagem"], title: "Razões e proporções" }],
+          courseId: course.id,
+        }),
+        italianSkill("Calcular juros simples"),
+      ]);
+
+      await courseOutlineWorkflow({
+        bands: [{ level: "beginner", skills: [toSkillRef(skill)] }],
+        courseId: course.id,
+        scope: { ...ITALIAN_SCOPE, exams: [{ name: "ENEM", style: "Five-option items." }] },
+      });
+
+      expect(findTeachingChapters).not.toHaveBeenCalled();
+      expect(generateCourseOutline).toHaveBeenCalledOnce();
+    });
+
+    it("gives a guest who waited on another's run the chapter it wrote, instead of a second copy", async () => {
+      const course = await courseFixture({
+        language: "pt",
+        outlineStatus: "completed",
+        targetLanguage: "it",
+        title: "Italiano",
+      });
+
+      const [, phone, call] = await Promise.all([
+        writtenBand({
+          chapters: [{ lessons: ["Cumprimentos"], title: "Primeiros contatos" }],
+          courseId: course.id,
+        }),
+        italianSkill("Resolver assuntos simples por telefone"),
+        italianSkill("Fazer ligações breves"),
+      ]);
+
+      const [phoneGoal, callGoal] = await Promise.all([
+        goalWaitingOn({ courseId: course.id, skillId: phone.id }),
+        goalWaitingOn({ courseId: course.id, skillId: call.id }),
+      ]);
+
+      const written = "Ligações do dia a dia";
+      const loserDone = Promise.withResolvers<null>();
+
+      vi.mocked(findTeachingChapters)
+        .mockImplementationOnce(async (params) => {
+          await loserDone.promise;
+          return teachNothing(params);
+        })
+        .mockImplementation(async (params) => {
+          const chapter = params.chapters.findIndex((item) => item.title === written) + 1;
+
+          return taskResult(
+            params.skills.map((skill) => ({ after: chapter, chapter, key: skill.key })),
+          );
+        });
+
+      vi.mocked(generateCourseOutline).mockImplementation(async (params) =>
+        outlineResult({
+          chapters: [
+            interviewChapter(
+              written,
+              (params.requiredSkills ?? []).map((skill) => skill.key),
+            ),
+          ],
+          uncoveredSkillKeys: [],
+        }),
+      );
+
+      const inputs = [phone, call].map((skill) => ({
+        bands: [{ level: "beginner" as const, skills: [toSkillRef(skill)] }],
+        courseId: course.id,
+        scope: ITALIAN_SCOPE,
+      }));
+
+      vi.mocked(getRun).mockReturnValue({
+        exists: Promise.resolve(true),
+        status: Promise.resolve("running"),
+      } as unknown as ReturnType<typeof getRun>);
+
+      const metadata = getWorkflowMetadata();
+
+      vi.mocked(getWorkflowMetadata)
+        .mockReturnValueOnce({ ...metadata, workflowRunId: "phone-outline" })
+        .mockReturnValueOnce({ ...metadata, workflowRunId: "call-outline" });
+
+      const runs = inputs.map((input) => courseOutlineWorkflow(input));
+
+      await expect(Promise.race(runs)).resolves.toStrictEqual({ status: "busy" });
+      loserDone.resolve(null);
+      await Promise.all(runs);
+
+      const [nextTurn] = getStartMock().mock.calls.flatMap(([workflow, args]) =>
+        workflow === courseOutlineWorkflow
+          ? (args as Parameters<typeof courseOutlineWorkflow>)
+          : [],
+      );
+
+      if (!nextTurn) {
+        throw new Error("The run that waited didn't take another turn.");
+      }
+
+      await courseOutlineWorkflow(nextTurn);
+
+      const placements = await prisma.courseChapter.findMany({
+        include: { chapter: { select: { id: true, title: true } } },
+        orderBy: { position: "asc" },
+        where: { courseId: course.id },
+      });
+
+      expect(placements.map((placement) => placement.chapter.title)).toStrictEqual([
+        "Primeiros contatos",
+        written,
+      ]);
+
+      expect(generateCourseOutline).toHaveBeenCalledOnce();
+
+      const chapter = placements[1]?.chapter.id;
+
+      const [tags, phoneItems, callItems] = await Promise.all([
+        prisma.chapterSkill.findMany({ select: { skillId: true }, where: { chapterId: chapter } }),
+        lessonItems(phoneGoal.id),
+        lessonItems(callGoal.id),
+      ]);
+
+      expect(tags.map((tag) => tag.skillId).toSorted()).toStrictEqual(
+        [phone.id, call.id].toSorted(),
+      );
+
+      expect(phoneItems.every((item) => item.lessonId !== null)).toBe(true);
+
+      expect(callItems.map((item) => item.lessonId)).toStrictEqual(
+        phoneItems.map((item) => item.lessonId),
+      );
+    });
   });
 
   it(

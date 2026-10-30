@@ -1,0 +1,232 @@
+{
+  "modelId": "anthropic/claude-sonnet-5.5",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "calls": { "chapters": [8] },
+          "directions": { "chapters": [10] },
+          "lost": { "chapters": [15, null] },
+          "restaurant": { "chapters": [12] },
+          "routine": { "chapters": [4] },
+          "stay": { "chapters": [14] },
+          "symptoms": { "chapters": [15] },
+          "weather": { "chapters": [null] }
+        },
+        "id": "pt-italian-beginner-band-repeats-1",
+        "userInput": {
+          "chapters": [
+            {
+              "lessons": [
+                "Vogais e sílaba tônica",
+                "Sons de c e g",
+                "Cumprimentos e despedidas",
+                "Expressões de cortesia",
+                "Pedidos de repetição e esclarecimento"
+              ],
+              "title": "Primeiros contatos e pronúncia"
+            },
+            {
+              "lessons": [
+                "Nomes e apresentações",
+                "Origem e lugar onde mora",
+                "Idade e ocupação",
+                "Perguntas de acompanhamento",
+                "Tratamento com tu e Lei"
+              ],
+              "title": "Conhecer pessoas"
+            },
+            {
+              "lessons": [
+                "Família e amizades",
+                "Adjetivos possessivos",
+                "Artigos e concordância na descrição",
+                "Relações entre pessoas"
+              ],
+              "title": "Pessoas próximas"
+            },
+            {
+              "lessons": [
+                "Horas e partes do dia",
+                "Presente dos verbos regulares",
+                "Verbos reflexivos na rotina",
+                "Frequência e hábitos",
+                "Horários e mudanças na rotina"
+              ],
+              "title": "Rotina e horários"
+            },
+            {
+              "lessons": [
+                "Atividades de lazer",
+                "Preferências com piacere",
+                "Negação com non",
+                "Interesses em comum"
+              ],
+              "title": "Lazer e interesses"
+            },
+            {
+              "lessons": [
+                "Convites informais",
+                "Respostas a convites",
+                "Alternativas de local e horário",
+                "Confirmação de encontros"
+              ],
+              "title": "Convites e encontros"
+            },
+            {
+              "lessons": [
+                "Mensagens sobre planos",
+                "Avisos de atraso",
+                "Pedidos por mensagem",
+                "Confirmações por mensagem"
+              ],
+              "title": "Mensagens do dia a dia"
+            },
+            {
+              "lessons": [
+                "Abertura de ligações",
+                "Motivo da ligação",
+                "Esclarecimentos por telefone",
+                "Encerramento e próximos passos"
+              ],
+              "title": "Assuntos simples por telefone"
+            },
+            {
+              "lessons": [
+                "Endereço e localização da moradia",
+                "Ambientes com c'è e ci sono",
+                "Objetos e preposições de lugar",
+                "Problemas domésticos",
+                "Pedidos para a casa"
+              ],
+              "title": "Moradia e necessidades domésticas"
+            },
+            {
+              "lessons": [
+                "Lugares da cidade",
+                "Direções e movimentos",
+                "Pontos de referência",
+                "Linhas e paradas na cidade",
+                "Confirmação de trajetos"
+              ],
+              "title": "Caminhos pela cidade"
+            },
+            {
+              "lessons": [
+                "Partidas e chegadas",
+                "Compra de passagens",
+                "Conferência do embarque",
+                "Conexões e trocas",
+                "Atrasos no transporte"
+              ],
+              "title": "Viagens curtas de transporte"
+            },
+            {
+              "lessons": [
+                "Recomendações do cardápio",
+                "Ingredientes e dúvidas do cardápio",
+                "Pedido de comida e bebida",
+                "Alterações no pedido",
+                "Conta e cobrança",
+                "Pagamento no restaurante"
+              ],
+              "title": "Comida em estabelecimentos"
+            },
+            {
+              "lessons": [
+                "Preços e números",
+                "Características e disponibilidade",
+                "Comparação de produtos",
+                "Experimentar antes de comprar",
+                "Trocas simples"
+              ],
+              "title": "Compras e trocas"
+            },
+            {
+              "lessons": [
+                "Datas e hóspedes",
+                "Disponibilidade e reserva",
+                "Condições da hospedagem",
+                "Chegada e check-in",
+                "Pedidos durante a estadia"
+              ],
+              "title": "Reserva e hospedagem"
+            },
+            {
+              "lessons": [
+                "Dores e partes do corpo",
+                "Sintomas comuns",
+                "Duração dos sintomas",
+                "Ajuda na farmácia",
+                "Pedido de ajuda urgente"
+              ],
+              "title": "Sintomas e pedidos de ajuda"
+            },
+            {
+              "lessons": [
+                "Marcadores de tempo recente",
+                "Passato prossimo com avere",
+                "Passato prossimo com essere",
+                "Particípios irregulares frequentes",
+                "Sequência de acontecimentos",
+                "Perguntas sobre uma experiência recente"
+              ],
+              "title": "Acontecimentos recentes"
+            }
+          ],
+          "courseTitle": "Italiano",
+          "language": "pt",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Confirmar a reserva, fazer o check-in e perguntar pelos serviços da hospedagem.",
+              "key": "stay",
+              "name": "Hospedar-se em um hotel"
+            },
+            {
+              "description": "Abrir uma ligação, dizer o motivo, pedir repetição e confirmar os dados ouvidos.",
+              "key": "calls",
+              "name": "Resolver um assunto breve por telefone"
+            },
+            {
+              "description": "Dizer onde dói e há quanto tempo, e entender orientações simples de cuidado.",
+              "key": "symptoms",
+              "name": "Descrever sintomas em uma consulta"
+            },
+            {
+              "description": "Dizer horários, frequência e compromissos de um dia comum.",
+              "key": "routine",
+              "name": "Contar a rotina e os compromissos do dia"
+            },
+            {
+              "description": "Escolher no cardápio, tirar dúvidas sobre ingredientes, pedir e pagar a conta.",
+              "key": "restaurant",
+              "name": "Pedir uma refeição em um restaurante"
+            },
+            {
+              "description": "Perguntar como chegar a um lugar e acompanhar um percurso explicado.",
+              "key": "directions",
+              "name": "Pedir e seguir indicações na cidade"
+            },
+            {
+              "description": "Descrever as condições do tempo, entender uma previsão simples e ajustar atividades.",
+              "key": "weather",
+              "name": "Falar do tempo e mudar planos conforme a previsão"
+            },
+            {
+              "description": "Descrever o objeto perdido ou o acidente e dizer onde você está para receber ajuda.",
+              "key": "lost",
+              "name": "Pedir ajuda depois de perder um objeto ou sofrer um acidente"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "teaching-chapters"
+}

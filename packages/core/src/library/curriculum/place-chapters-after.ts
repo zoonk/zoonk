@@ -6,22 +6,26 @@ import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write
 
 const POSITION_OFFSET = 1_000_000;
 
-type ContinuationMove = { afterChapterId: string; chapterId: string };
+/** A null `afterChapterId` puts the chapter first. */
+type ChapterMove = { afterChapterId: string | null; chapterId: string };
 
-function orderWithContinuations({
+function orderWithMoves({
   current,
   moves,
 }: {
   current: readonly string[];
-  moves: readonly ContinuationMove[];
+  moves: readonly ChapterMove[];
 }): string[] {
   const moved = new Set(moves.map((move) => move.chapterId));
   const rest = current.filter((chapterId) => !moved.has(chapterId));
 
-  const placed = rest.flatMap((chapterId) => [
-    chapterId,
-    ...moves.filter((move) => move.afterChapterId === chapterId).map((move) => move.chapterId),
-  ]);
+  const following = (afterChapterId: string | null) =>
+    moves.filter((move) => move.afterChapterId === afterChapterId).map((move) => move.chapterId);
+
+  const placed = [
+    ...following(null),
+    ...rest.flatMap((chapterId) => [chapterId, ...following(chapterId)]),
+  ];
 
   return [
     ...placed,
@@ -30,14 +34,14 @@ function orderWithContinuations({
 }
 
 /** Internal: the calling workflow must hold the course's outline claim. */
-export async function placeContinuations({
+export async function placeChaptersAfter({
   courseId,
   level,
   moves,
 }: {
   courseId: string;
   level: CourseLevel;
-  moves: readonly ContinuationMove[];
+  moves: readonly ChapterMove[];
 }): Promise<void> {
   const valid = moves.filter((move) => move.afterChapterId !== move.chapterId);
 
@@ -45,7 +49,7 @@ export async function placeContinuations({
     return;
   }
 
-  await writePlanInputs(async (tx) => {
+  const reordered = await writePlanInputs(async (tx) => {
     const placements = await tx.courseChapter.findMany({
       orderBy: { position: "asc" },
       select: { chapterId: true },
@@ -53,11 +57,11 @@ export async function placeContinuations({
     });
 
     const current = placements.map((placement) => placement.chapterId);
-    const order = orderWithContinuations({ current, moves: valid });
+    const order = orderWithMoves({ current, moves: valid });
     const moved = order.filter((chapterId, index) => current[index] !== chapterId);
 
     if (moved.length === 0) {
-      return;
+      return false;
     }
 
     await lockPlanSourceWrite(tx, { chapterIds: moved });
@@ -74,7 +78,11 @@ export async function placeContinuations({
         where: { courseId_chapterId: { chapterId, courseId } },
       });
     }
+
+    return true;
   });
 
-  await revalidateCourseContent([getCourseCurriculumCacheTag(courseId)]);
+  if (reordered) {
+    await revalidateCourseContent([getCourseCurriculumCacheTag(courseId)]);
+  }
 }

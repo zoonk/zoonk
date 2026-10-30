@@ -76,6 +76,32 @@ export function pickChapters({
   );
 }
 
+/** Where each skill no band chapter teaches gets its chapter: after a band chapter, or first. */
+export type BandAnchors = Record<string, string | null>;
+
+type ChapterMove = { afterChapterId: string | null; chapterId: string };
+
+export function toChapterMoves({
+  anchors,
+  plan,
+  written,
+}: {
+  anchors: BandAnchors;
+  plan: BandPlan;
+  written: readonly { chapterId: string; skillKeys: readonly string[] }[];
+}): ChapterMove[] {
+  return written.flatMap(({ chapterId, skillKeys }) => {
+    const extension = plan.extensions.find((item) => skillKeys.includes(item.skill.key));
+
+    if (extension) {
+      return [{ afterChapterId: extension.afterChapterId, chapterId }];
+    }
+
+    const key = skillKeys.find((item) => Object.hasOwn(anchors, item));
+    return key === undefined ? [] : [{ afterChapterId: anchors[key] ?? null, chapterId }];
+  });
+}
+
 export type BandInput = {
   analytics?: ContentAnalytics;
   courseId: string;

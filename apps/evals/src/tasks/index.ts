@@ -74,6 +74,7 @@ import { speakingMockScenarioTask } from "./speaking-mock-scenario/task";
 import { speakingScoreTask } from "./speaking-score/task";
 import { statuteDrillsTask } from "./statute-drills/task";
 import { stepVariantTask } from "./step-variant/task";
+import { teachingChaptersTask } from "./teaching-chapters/task";
 import { topicSkillNamesTask } from "./topic-skill-names/task";
 import { transcribeSpeechTask } from "./transcribe-speech/task";
 import { translatePassMarksTask } from "./translate-pass-marks/task";
@@ -129,6 +130,7 @@ export const TASKS: readonly RegisteredTask[] = [
   courseDetailsTask,
   courseIconTask,
   coverageCheckTask,
+  teachingChaptersTask,
   lessonSpecTask,
   pictureNeedTask,
   lessonWriterTask,

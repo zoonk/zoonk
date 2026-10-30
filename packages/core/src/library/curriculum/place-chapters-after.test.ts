@@ -13,9 +13,9 @@ import {
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { placeContinuations } from "./place-continuations";
+import { placeChaptersAfter } from "./place-chapters-after";
 
-describe(placeContinuations, () => {
+describe(placeChaptersAfter, () => {
   it("moves a continuation right after the chapter it continues, before what builds on it", async () => {
     const [course, ...chapters] = await Promise.all([
       courseFixture({ title: "Mathematics" }),
@@ -32,7 +32,7 @@ describe(placeContinuations, () => {
 
     const [equations, functions, quadratics, continuation] = chapters;
 
-    await placeContinuations({
+    await placeChaptersAfter({
       courseId: course.id,
       level: "beginner",
       moves: [{ afterChapterId: equations?.id ?? "", chapterId: continuation?.id ?? "" }],
@@ -49,6 +49,43 @@ describe(placeContinuations, () => {
         chapterId: chapter?.id,
         position,
       })),
+    );
+  });
+
+  it("puts a new chapter that every other builds on first, and keeps the order of chapters after one", async () => {
+    const [course, ...chapters] = await Promise.all([
+      courseFixture({ title: "Italiano" }),
+      ...["Cumprimentos", "Hospedagem", "Pronúncia", "Problemas no quarto", "Check-out"].map(
+        (title) => libraryChapterFixture({ title }),
+      ),
+    ]);
+
+    await Promise.all(
+      chapters.map((chapter, position) =>
+        courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position }),
+      ),
+    );
+
+    const [greetings, lodging, sounds, problems, checkout] = chapters;
+
+    await placeChaptersAfter({
+      courseId: course.id,
+      level: "beginner",
+      moves: [
+        { afterChapterId: null, chapterId: sounds?.id ?? "" },
+        { afterChapterId: lodging?.id ?? "", chapterId: problems?.id ?? "" },
+        { afterChapterId: lodging?.id ?? "", chapterId: checkout?.id ?? "" },
+      ],
+    });
+
+    const placements = await prisma.courseChapter.findMany({
+      orderBy: { position: "asc" },
+      select: { chapterId: true },
+      where: { courseId: course.id },
+    });
+
+    expect(placements.map((placement) => placement.chapterId)).toStrictEqual(
+      [sounds, greetings, lodging, problems, checkout].map((chapter) => chapter?.id),
     );
   });
 
@@ -96,7 +133,7 @@ describe(placeContinuations, () => {
     const before = await readPlans();
     const move = { afterChapterId: second.id, chapterId: first.id };
 
-    await placeContinuations({ courseId: course.id, level: "beginner", moves: [move] });
+    await placeChaptersAfter({ courseId: course.id, level: "beginner", moves: [move] });
 
     await expect(readPlans()).resolves.toStrictEqual(
       before.map((plan) =>
@@ -106,7 +143,7 @@ describe(placeContinuations, () => {
 
     const moved = await readPlans();
 
-    await placeContinuations({ courseId: course.id, level: "beginner", moves: [move] });
+    await placeChaptersAfter({ courseId: course.id, level: "beginner", moves: [move] });
 
     await expect(readPlans()).resolves.toStrictEqual(moved);
   });

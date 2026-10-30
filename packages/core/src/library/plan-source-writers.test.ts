@@ -47,10 +47,11 @@ import { findEarlyOutlineChapter } from "./curriculum/early-outline-chapter";
 import { addMissingExamGraphSkills } from "./curriculum/exam-graph-repair";
 import { resetExamSkillGraphForAdmin } from "./curriculum/exam-skill-graph-reset";
 import { loadGoalCurriculumInputs } from "./curriculum/goal-curriculum-inputs";
-import { placeContinuations } from "./curriculum/place-continuations";
+import { placeChaptersAfter } from "./curriculum/place-chapters-after";
 import { saveExamSkillGraph } from "./curriculum/reusable-curriculum";
 import { saveLessonSpecs } from "./curriculum/save-lesson-specs";
 import { saveOutlineChapter } from "./curriculum/save-outline-chapter";
+import { tagTeachingChapters } from "./curriculum/teaching-chapters";
 import { examStructureSchema } from "./exams/blueprint-contract";
 import { getExamFormats } from "./exams/exam-choice-format";
 import { recordChoiceOptions } from "./exams/record-choice-options";
@@ -185,7 +186,7 @@ const REGISTRY: Record<string, Registration[]> = {
   "library/curriculum/exam-skill-graph-reset.ts": [
     { verdict: "marks", why: "the exam's shared graph", writes: ["examSkillGraph.deleteMany"] },
   ],
-  "library/curriculum/place-continuations.ts": [
+  "library/curriculum/place-chapters-after.ts": [
     {
       verdict: "marks",
       why: "chapter order: lessons are read in it",
@@ -207,10 +208,13 @@ const REGISTRY: Record<string, Registration[]> = {
     },
   ],
   "library/curriculum/save-outline-chapter.ts": [
+    { verdict: "marks", why: "chapter tools", writes: ["chapter.update"] },
+  ],
+  "library/curriculum/teaching-chapters.ts": [
     {
       verdict: "marks",
-      why: "chapter tools and tags",
-      writes: ["chapter.update", "chapterSkill.createMany"],
+      why: "chapter tags: a skill's lessons come from the chapters it tags",
+      writes: ["chapterSkill.createMany"],
     },
   ],
   "library/exams/check-freshness.ts": [
@@ -1090,6 +1094,30 @@ async function earlyOutlineCase(): Promise<WriterCase> {
   };
 }
 
+async function teachingChaptersCase(): Promise<WriterCase> {
+  const [course, chapter, skill] = await Promise.all([
+    courseFixture(),
+    libraryChapterFixture(),
+    skillFixture(),
+  ]);
+
+  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+
+  return {
+    expectWritten: () =>
+      expect(
+        prisma.chapterSkill.count({ where: { chapterId: chapter.id, skillId: skill.id } }),
+      ).resolves.toBe(1),
+    plan,
+    root: skillRoot(skill.id),
+    write: () =>
+      tagTeachingChapters({
+        courseId: course.id,
+        tags: [{ chapterId: chapter.id, skillIds: [skill.id] }],
+      }),
+  };
+}
+
 async function continuationsCase(): Promise<WriterCase> {
   const [course, first, second, continuation, lesson] = await Promise.all([
     courseFixture(),
@@ -1120,7 +1148,7 @@ async function continuationsCase(): Promise<WriterCase> {
     plan,
     root: lessonRoot(lesson.id),
     write: () =>
-      placeContinuations({
+      placeChaptersAfter({
         courseId: course.id,
         level: "beginner",
         moves: [{ afterChapterId: first.id, chapterId: continuation.id }],
@@ -1531,10 +1559,11 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/curriculum/early-outline-chapter.ts": { findEarlyOutlineChapter: earlyOutlineCase },
   "library/curriculum/exam-graph-repair.ts": { addMissingExamGraphSkills: graphRepairCase },
   "library/curriculum/exam-skill-graph-reset.ts": { resetExamSkillGraphForAdmin: graphResetCase },
-  "library/curriculum/place-continuations.ts": { placeContinuations: continuationsCase },
+  "library/curriculum/place-chapters-after.ts": { placeChaptersAfter: continuationsCase },
   "library/curriculum/reusable-curriculum.ts": { saveExamSkillGraph: sharedGraphCase },
   "library/curriculum/save-lesson-specs.ts": { saveLessonSpecs: lessonSpecsCase },
   "library/curriculum/save-outline-chapter.ts": { saveOutlineChapter: outlineCase },
+  "library/curriculum/teaching-chapters.ts": { tagTeachingChapters: teachingChaptersCase },
   "library/exams/record-subject-questions.ts": { recordSubjectQuestions: subjectQuestionsCase },
   "library/exams/record-topic-frequency.ts": { recordTopicFrequency: topicFrequencyCase },
   "library/generation/hold-back-lesson.ts": { holdBackLessonDraft: holdBackCase },

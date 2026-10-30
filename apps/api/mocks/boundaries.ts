@@ -19,6 +19,7 @@ export const boundaries = {
   },
   "@zoonk/ai/tasks/v2/curriculum/coverage-check": { checkCoverage: vi.fn() },
   "@zoonk/ai/tasks/v2/curriculum/skill-graph": { generateSkillGraph: vi.fn() },
+  "@zoonk/ai/tasks/v2/curriculum/teaching-chapters": { findTeachingChapters: vi.fn() },
   "@zoonk/ai/tasks/v2/explain/question-generality": { classifyQuestionGenerality: vi.fn() },
   "@zoonk/ai/tasks/v2/explain/quick-explanation": { generateQuickExplanation: vi.fn() },
   "@zoonk/ai/tasks/v2/goals/understand-goal": { understandGoal: vi.fn() },

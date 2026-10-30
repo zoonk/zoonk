@@ -17,6 +17,7 @@ import {
   type GoalSkillRef,
 } from "./curriculum-scope";
 import { resolveScopeLessons } from "./resolve-lesson-skills";
+import { tagChapterSkills } from "./teaching-chapters";
 
 export type CourseOutline = Awaited<ReturnType<typeof generateCourseOutline>>["data"];
 export type OutlineChapter = CourseOutline["chapters"][number];
@@ -179,14 +180,7 @@ async function linkChapterGoalSkills({
     .filter((skill) => chapter.skillKeys.includes(skill.key))
     .map((skill) => skill.id);
 
-  await writePlanInputs(async (tx) => {
-    await lockPlanSourceWrite(tx, { chapterIds: [chapterId], skillIds });
-
-    await tx.chapterSkill.createMany({
-      data: skillIds.map((skillId) => ({ chapterId, skillId })),
-      skipDuplicates: true,
-    });
-  });
+  await tagChapterSkills([{ chapterId, skillIds }]);
 }
 
 function getChapterArea({
