@@ -317,7 +317,7 @@ private struct BuddyContent: View {
       Button {
         isDayShown = true
       } label: {
-        dayLineLabel(opensDay: true)
+        dayLineLabel
       }
       .buttonStyle(.plain)
       .accessibilityLabel(dayLabel)
@@ -327,16 +327,21 @@ private struct BuddyContent: View {
           comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
       )
     } else {
-      dayLineLabel(opensDay: false)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(dayLabel)
+      // The day's pane beside the conversation shows its numbers: only the face stays here.
+      face
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityHidden(true)
     }
   }
 
-  private func dayLineLabel(opensDay: Bool) -> some View {
+  private var face: some View {
+    BuddyCharacter(look: look, crop: .face, cue: faceCue)
+      .frame(width: 32, height: 32)
+  }
+
+  private var dayLineLabel: some View {
     HStack(spacing: 16) {
-      BuddyCharacter(look: look, crop: .face, cue: faceCue)
-        .frame(width: 32, height: 32)
+      face
 
       let values =
         typeSize.isAccessibilitySize
@@ -368,11 +373,7 @@ private struct BuddyContent: View {
 
       Spacer(minLength: 0)
 
-      if opensDay {
-        Image(systemName: "chevron.right")
-          .font(.footnote.weight(.semibold))
-          .foregroundStyle(.tertiary)
-      }
+      DisclosureChevron()
     }
     .labelStyle(.titleAndIcon)
     .font(.subheadline.monospacedDigit())
