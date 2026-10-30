@@ -1,4 +1,4 @@
-import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
 import { listCourses } from "@/data/courses/list-courses";
 import { parseSearchParams } from "@/lib/parse-search-params";
@@ -42,17 +42,15 @@ async function CachedCourseList({
 
   return (
     <>
-      <div className="overflow-x-auto rounded-lg border">
-        <Table>
-          <CourseTableHeader />
+      <Table>
+        <CourseTableHeader />
 
-          <TableBody>
-            {courses.map((course) => (
-              <CourseRow course={course} key={course.id} />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+        <TableBody>
+          {courses.map((course) => (
+            <CourseRow course={course} key={course.id} />
+          ))}
+        </TableBody>
+      </Table>
 
       <AdminPagination
         basePath="/courses"
@@ -67,15 +65,13 @@ async function CachedCourseList({
 
 export function CourseListSkeleton() {
   return (
-    <AdminTableSkeleton className="overflow-x-auto">
-      <Table>
-        <CourseTableHeader />
+    <Table>
+      <CourseTableHeader />
 
-        <AdminTableSkeletonRows>
-          <CourseSkeletonRow />
-        </AdminTableSkeletonRows>
-      </Table>
-    </AdminTableSkeleton>
+      <AdminTableSkeletonRows>
+        <CourseSkeletonRow />
+      </AdminTableSkeletonRows>
+    </Table>
   );
 }
 
@@ -87,9 +83,9 @@ function CourseTableHeader() {
         <TableHead>Organization</TableHead>
         <TableHead>Language</TableHead>
         <TableHead className="text-right">Chapters</TableHead>
-        <TableHead className="text-right">Written Lessons</TableHead>
+        <TableHead className="text-right">Written lessons</TableHead>
         <TableHead>Published</TableHead>
-        <TableHead>Created At</TableHead>
+        <TableHead>Created</TableHead>
       </TableRow>
     </TableHeader>
   );

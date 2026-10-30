@@ -16,7 +16,7 @@ export function ContentTotalsTable({ rows }: { rows: readonly ContentTotalRow[] 
         <TableRow>
           <TableHead>Type</TableHead>
           <TableHead className="text-right">Total</TableHead>
-          <TableHead className="text-right">Created This Period</TableHead>
+          <TableHead className="text-right">Created this period</TableHead>
         </TableRow>
       </TableHeader>
 

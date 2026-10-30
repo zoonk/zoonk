@@ -62,38 +62,36 @@ function MasteryStateTable({
   const total = sumRows({ rows: states, value: (row) => row.count });
 
   return (
-    <div className="overflow-hidden rounded-xl border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Current state (all time)</TableHead>
-            <TableHead className="text-right">Learner skills</TableHead>
-            <TableHead className="text-right">Share</TableHead>
-          </TableRow>
-        </TableHeader>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Current state (all time)</TableHead>
+          <TableHead className="text-right">Learner skills</TableHead>
+          <TableHead className="text-right">Share</TableHead>
+        </TableRow>
+      </TableHeader>
 
-        <TableBody>
-          {states.length > 0 ? (
-            states.map((row) => (
-              <TableRow key={row.state}>
-                <TableCell className="font-medium">{STATE_LABELS[row.state]}</TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {row.count.toLocaleString()}
-                </TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {formatPercent(toPercent({ denominator: total, numerator: row.count }))}
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell className="text-muted-foreground" colSpan={3}>
-                No learner skills yet.
+      <TableBody>
+        {states.length > 0 ? (
+          states.map((row) => (
+            <TableRow key={row.state}>
+              <TableCell className="font-medium">{STATE_LABELS[row.state]}</TableCell>
+              <TableCell className="text-right tabular-nums">
+                {row.count.toLocaleString()}
+              </TableCell>
+              <TableCell className="text-right tabular-nums">
+                {formatPercent(toPercent({ denominator: total, numerator: row.count }))}
               </TableCell>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell className="text-muted-foreground" colSpan={3}>
+              No learner skills yet.
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   );
 }

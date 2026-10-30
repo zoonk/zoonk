@@ -1,3 +1,4 @@
+import { AdminSection } from "@/components/admin-section";
 import { DetailField } from "@/components/detail-field";
 import { getUser } from "@/data/users/get-user";
 import {
@@ -6,7 +7,6 @@ import {
 } from "@/data/users/get-user-learning-stats";
 import { formatDuration } from "@/lib/format-duration";
 import { getAdminLessonKindLabel } from "@/lib/lesson-label";
-import { Separator } from "@zoonk/ui/components/separator";
 import {
   Table,
   TableBody,
@@ -33,11 +33,8 @@ export async function UserLesson({ userId }: { userId: string }) {
   const { progress, members, _count } = user;
 
   return (
-    <section>
-      <h3 className="mb-2 text-sm font-semibold">Learning</h3>
-      <Separator />
-
-      <dl className="mt-2">
+    <AdminSection title="Learning">
+      <dl className="divide-y">
         <DetailField label="Brain power">
           {progress ? Number(progress.totalBrainPower).toLocaleString() : "0"}
         </DetailField>
@@ -72,7 +69,7 @@ export async function UserLesson({ userId }: { userId: string }) {
       </dl>
 
       <LessonKindBreakdown rows={learningStats.lessonKinds} />
-    </section>
+    </AdminSection>
   );
 }
 
@@ -87,7 +84,7 @@ function LessonKindBreakdown({ rows }: { rows: UserLearningKindStat[] }) {
   }
 
   return (
-    <div className="mt-4 overflow-x-auto rounded-lg border">
+    <div className="mt-4">
       <Table>
         <TableHeader>
           <TableRow>

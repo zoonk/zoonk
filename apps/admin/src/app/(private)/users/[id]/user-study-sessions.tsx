@@ -49,26 +49,24 @@ export async function UserStudySessions({ userId }: { userId: string }) {
       {sessions.length === 0 ? (
         <AdminSectionEmpty>No study sessions yet.</AdminSectionEmpty>
       ) : (
-        <div className="overflow-x-auto rounded-lg border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Day</TableHead>
-                <TableHead>Goal</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Planned</TableHead>
-                <TableHead className="text-right">Blocks done</TableHead>
-                <TableHead>Blocks</TableHead>
-                <TableHead className="text-right">Brain Power</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sessions.map((session) => (
-                <SessionRow key={session.id} session={session} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Day</TableHead>
+              <TableHead>Goal</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Planned</TableHead>
+              <TableHead className="text-right">Blocks done</TableHead>
+              <TableHead>Blocks</TableHead>
+              <TableHead className="text-right">Brain Power</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sessions.map((session) => (
+              <SessionRow key={session.id} session={session} />
+            ))}
+          </TableBody>
+        </Table>
       )}
     </AdminSection>
   );

@@ -21,9 +21,9 @@ export function LessonBreakdownTable({ data }: { data: LessonBreakdownData[] }) 
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Lesson Type</TableHead>
-          <TableHead>Avg Duration</TableHead>
-          <TableHead>Completion Rate</TableHead>
+          <TableHead>Lesson type</TableHead>
+          <TableHead>Avg duration</TableHead>
+          <TableHead>Completion rate</TableHead>
           <TableHead className="text-right">Completions</TableHead>
         </TableRow>
       </TableHeader>

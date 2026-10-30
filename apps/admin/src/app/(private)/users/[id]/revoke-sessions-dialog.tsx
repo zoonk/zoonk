@@ -20,7 +20,7 @@ export function RevokeSessionsDialog({ userId, userName }: { userId: string; use
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger render={<Button variant="outline" size="sm" />}>
-        Revoke Sessions
+        Revoke sessions
       </AlertDialogTrigger>
 
       <AlertDialogContent>
@@ -42,7 +42,7 @@ export function RevokeSessionsDialog({ userId, userName }: { userId: string; use
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <Button type="submit" variant="destructive">
-              Revoke Sessions
+              Revoke sessions
             </Button>
           </AlertDialogFooter>
         </form>

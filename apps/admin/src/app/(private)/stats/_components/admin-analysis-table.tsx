@@ -8,7 +8,7 @@ export function AdminAnalysisTable({
   return (
     <section className="flex flex-col gap-6 py-4">
       <p className="text-muted-foreground max-w-2xl text-sm">{description}</p>
-      <div className="overflow-hidden rounded-xl border">{children}</div>
+      {children}
     </section>
   );
 }

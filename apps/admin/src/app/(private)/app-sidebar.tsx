@@ -1,14 +1,12 @@
 "use client";
 
+import { Sheet, SheetContent, SheetTitle } from "@zoonk/ui/components/sheet";
 import {
+  SIDEBAR_ITEM_CLASS,
   Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarTrigger,
+  SidebarSection,
 } from "@zoonk/ui/components/sidebar";
 import {
   BarChart3Icon,
@@ -30,8 +28,9 @@ import {
   UserXIcon,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AppSidebarMenuItem } from "./app-sidebar-menu-item";
+import { type AdminAccount, AdminAccountMenu } from "./admin-account-menu";
 
 const menuGroups = [
   {
@@ -82,35 +81,76 @@ function isActive(pathname: string, url: string) {
   return pathname.startsWith(url);
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
+  return menuGroups.map((group) => (
+    <SidebarSection aria-label={group.label} key={group.label} label={group.label}>
+      {group.items.map(({ icon: Icon, label, url }) => (
+        <Link
+          aria-current={isActive(pathname, url) ? "page" : undefined}
+          className={SIDEBAR_ITEM_CLASS}
+          href={url}
+          key={label}
+          onNavigate={onNavigate}
+          prefetch
+        >
+          <Icon aria-hidden="true" />
+          <span className="min-w-0 flex-1 truncate">{label}</span>
+        </Link>
+      ))}
+    </SidebarSection>
+  ));
+}
+
+function AdminSidebarContent({
+  account,
+  onNavigate,
+}: {
+  account: AdminAccount;
+  onNavigate?: () => void;
+}) {
   return (
-    <Sidebar {...props}>
+    <>
       <SidebarHeader>
-        <SidebarTrigger />
+        <span className="flex h-8 items-center px-2 text-sm font-semibold">Zoonk Admin</span>
       </SidebarHeader>
 
-      <SidebarContent>
-        {menuGroups.map((group) => (
-          <SidebarGroup key={group.label}>
-            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => (
-                  <AppSidebarMenuItem
-                    icon={item.icon}
-                    isActive={isActive(pathname, item.url)}
-                    key={item.label}
-                    label={item.label}
-                    url={item.url}
-                  />
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
-      </SidebarContent>
+      <AdminNav onNavigate={onNavigate} />
+
+      <SidebarFooter>
+        <AdminAccountMenu account={account} />
+      </SidebarFooter>
+    </>
+  );
+}
+
+export function AppSidebar({ account }: { account: AdminAccount }) {
+  return (
+    <Sidebar aria-label="Sidebar" className="gap-4">
+      <AdminSidebarContent account={account} />
     </Sidebar>
+  );
+}
+
+export function AdminMenuSheet({
+  account,
+  onOpenChange,
+  open,
+}: {
+  account: AdminAccount;
+  onOpenChange: (open: boolean) => void;
+  open: boolean;
+}) {
+  return (
+    <Sheet onOpenChange={onOpenChange} open={open}>
+      <SheetContent
+        className="bg-sidebar text-sidebar-foreground gap-4 overflow-y-auto p-3 data-[side=left]:w-60"
+        side="left"
+      >
+        <SheetTitle className="sr-only">Menu</SheetTitle>
+        <AdminSidebarContent account={account} onNavigate={() => onOpenChange(false)} />
+      </SheetContent>
+    </Sheet>
   );
 }

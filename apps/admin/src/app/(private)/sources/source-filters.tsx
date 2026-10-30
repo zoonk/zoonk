@@ -15,7 +15,7 @@ export async function SourceFilters({ searchParams }: Pick<PageProps<"/sources">
 
   return (
     <div className="flex flex-col gap-3">
-      <AdminSearch placeholder="Search public sources by title..." />
+      <AdminSearch placeholder="Search public sources by title…" />
 
       <div className="flex flex-wrap items-center gap-3">
         <AdminFilterNav

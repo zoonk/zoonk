@@ -33,7 +33,7 @@ export default function CoursesPage({ searchParams }: PageProps<"/courses">) {
         </Suspense>
 
         <Suspense fallback={<AdminSearchSkeleton />}>
-          <AdminSearch placeholder="Search by title..." />
+          <AdminSearch placeholder="Search by title…" />
         </Suspense>
 
         <Suspense fallback={<CourseListSkeleton />}>

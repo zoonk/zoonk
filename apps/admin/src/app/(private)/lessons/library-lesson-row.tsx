@@ -12,7 +12,7 @@ function getStatusVariant(status: GenerationStatus) {
     return "destructive" as const;
   }
 
-  return status === "completed" ? ("default" as const) : ("outline" as const);
+  return status === "completed" ? ("success" as const) : ("outline" as const);
 }
 
 export function LibraryLessonRow({ lesson }: { lesson: ListedLibraryLesson }) {

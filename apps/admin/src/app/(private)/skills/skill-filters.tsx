@@ -11,7 +11,7 @@ export async function SkillFilters({ searchParams }: Pick<PageProps<"/skills">, 
 
   return (
     <div className="flex flex-col gap-3">
-      <AdminSearch placeholder="Search skills by name..." />
+      <AdminSearch placeholder="Search skills by name…" />
 
       <div className="flex flex-wrap items-center gap-3">
         <AdminQuerySelect

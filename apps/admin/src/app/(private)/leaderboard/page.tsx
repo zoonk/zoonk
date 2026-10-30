@@ -20,7 +20,7 @@ export default function LeaderboardPage({ searchParams }: PageProps<"/leaderboar
     <Container>
       <ContainerHeader variant="sidebar">
         <ContainerHeaderGroup>
-          <ContainerTitle>Brain Power Leaderboard</ContainerTitle>
+          <ContainerTitle>Brain Power leaderboard</ContainerTitle>
           <ContainerDescription>
             Users who earned the most Brain Power during the selected period.
           </ContainerDescription>

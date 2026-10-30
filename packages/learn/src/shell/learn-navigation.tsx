@@ -1,6 +1,7 @@
 "use client";
 
 import { Buddy } from "@zoonk/ui/components/buddy";
+import { SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MapIcon, SunIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -9,7 +10,6 @@ import { type MissionsCount, MissionsRing } from "../buddies/missions-ring";
 import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { LEARN_SIDEBAR_ITEM_CLASS } from "./learn-shell";
 import { LEARN_TABS, type LearnTab } from "./learn-tabs";
 
 export type { LearnTab } from "./learn-tabs";
@@ -134,14 +134,14 @@ const TAB_ITEM_CLASS =
   "focus-visible:ring-ring/50 text-muted-foreground hover:bg-foreground/5 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground has-data-link-pending:bg-muted has-data-link-pending:text-foreground press font-medium outline-none focus-visible:ring-[3px]";
 
 const SIDE_TAB_ITEM_CLASS = cn(
-  LEARN_SIDEBAR_ITEM_CLASS,
+  SIDEBAR_ITEM_CLASS,
   "has-data-link-pending:bg-sidebar-accent has-data-link-pending:text-foreground",
 );
 
 const PENDING_NAVIGATION_CLASS =
   "[&:has([data-link-pending])_[aria-current=page]]:bg-transparent [&:has([data-link-pending])_[aria-current=page]]:text-muted-foreground";
 
-/** Place it inside `LearnSidebar`. */
+/** Place it inside `Sidebar`. */
 export function LearnSideNavigation({
   activeTab,
   buddy,

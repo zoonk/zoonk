@@ -3,7 +3,6 @@ import { getStatsFromResults } from "@/lib/stats";
 import { type TaskEvalResults } from "@/lib/types";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { Accordion } from "@zoonk/ui/components/accordion";
-import { ContainerTitle } from "@zoonk/ui/components/container";
 import { ClassificationSummaryCard } from "./classification-summary-card";
 import { IssuesSummary } from "./issues-summary";
 import { SummaryCard } from "./summary-card";
@@ -22,7 +21,7 @@ export async function EvalResults({ results }: { results: TaskEvalResults }) {
       <IssuesSummary results={results.results} />
 
       <div className="flex flex-col gap-4">
-        <ContainerTitle>Test Cases</ContainerTitle>
+        <h2 className="text-lg font-semibold tracking-tight">Test Cases</h2>
 
         <Accordion className="w-full">
           {results.results.map((result, index) => (

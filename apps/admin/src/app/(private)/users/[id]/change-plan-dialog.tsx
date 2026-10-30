@@ -52,7 +52,7 @@ export function ChangePlanDialog({ userId, currentPlan }: { userId: string; curr
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant="outline" size="sm" />}>Change Plan</DialogTrigger>
+      <DialogTrigger render={<Button variant="outline" size="sm" />}>Change plan</DialogTrigger>
 
       <DialogContent closeLabel="Close">
         <DialogHeader>

@@ -9,7 +9,7 @@ export async function ContentStats() {
   const content = await countLibraryContent();
 
   return (
-    <StatsSection subtitle="Library catalog and review pipeline" title="Content & Operations">
+    <StatsSection subtitle="Library catalog and review pipeline" title="Content & operations">
       <Stats
         help="Courses with a Library outline"
         href="/stats/content?view=content-totals"

@@ -1,3 +1,4 @@
+import { Stat, StatDetail, StatIcon, StatLabel, StatValue } from "@zoonk/ui/components/stat";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BigQuantity } from "./big-quantity";
 
@@ -41,40 +42,25 @@ export function StatTile({
   value: React.ReactNode;
 }) {
   return (
-    <li
-      className={cn(
-        "ring-border rounded-option flex min-w-0 flex-col gap-1.5 p-3 text-left ring-1 ring-inset",
-        className,
-      )}
-      data-slot="stat-tile"
-    >
-      <span className="text-label flex min-w-0 items-center gap-1.5">
-        {icon && (
-          <span
-            aria-hidden="true"
-            className={cn("flex shrink-0 [&>svg]:size-3.5", STAT_TONE[tone])}
-          >
-            {icon}
-          </span>
-        )}
+    <Stat className={className} render={<li />}>
+      <StatLabel>
+        {icon && <StatIcon className={STAT_TONE[tone]}>{icon}</StatIcon>}
         <span className="truncate">{label}</span>
-      </span>{" "}
+      </StatLabel>{" "}
       {/* The spaces keep "Questions 20" one phrase for screen readers; the column hides them. */}
-      <span
-        className={cn("text-readout text-2xl leading-tight", tone === "brain" && "text-brain-text")}
-      >
+      <StatValue className={cn(tone === "brain" && "text-brain-text")}>
         {typeof value === "string" && /\d/u.test(value) ? (
           <BigQuantity>{value}</BigQuantity>
         ) : (
           value
         )}
-      </span>
+      </StatValue>
       {detail && (
         <>
           {" "}
-          <span className="text-muted-foreground text-[0.71875rem] leading-snug">{detail}</span>
+          <StatDetail>{detail}</StatDetail>
         </>
       )}
-    </li>
+    </Stat>
   );
 }

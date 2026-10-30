@@ -27,7 +27,7 @@ export default function QuestionsPage({ searchParams }: PageProps<"/questions">)
 
       <ContainerBody>
         <Suspense fallback={<AdminSearchSkeleton />}>
-          <AdminSearch placeholder="Search questions, answers, lessons, courses, or users..." />
+          <AdminSearch placeholder="Search questions, answers, lessons, courses, or users…" />
         </Suspense>
 
         <Suspense fallback={<QuestionListSkeleton />}>

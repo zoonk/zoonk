@@ -1,4 +1,3 @@
-import { Separator } from "@zoonk/ui/components/separator";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 
 export function AdminSection({
@@ -13,18 +12,18 @@ export function AdminSection({
   title: string;
 }) {
   return (
-    <section className="flex flex-col">
-      <div className="mb-2 flex items-center justify-between gap-4">
+    <section className="flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-4">
         <div className="flex flex-col gap-0.5">
           <h3 className="text-sm font-semibold">{title}</h3>
-          {description ? <p className="text-muted-foreground text-xs">{description}</p> : null}
+          {description ? (
+            <p className="text-muted-foreground text-[0.8125rem]">{description}</p>
+          ) : null}
         </div>
         {action}
       </div>
 
-      <Separator />
-
-      <div className="mt-3">{children}</div>
+      {children}
     </section>
   );
 }
@@ -37,7 +36,6 @@ export function AdminSectionSkeleton() {
   return (
     <div className="flex flex-col gap-3">
       <Skeleton className="h-4 w-24" />
-      <Skeleton className="h-px w-full" />
       <Skeleton className="h-4 w-full" />
       <Skeleton className="h-4 w-full" />
       <Skeleton className="h-4 w-3/4" />

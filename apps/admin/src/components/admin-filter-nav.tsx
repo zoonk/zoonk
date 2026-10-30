@@ -11,7 +11,7 @@ export function AdminFilterNav({
   options: AdminFilterOption[];
 }) {
   return (
-    <nav aria-label={label} className="flex flex-wrap gap-1">
+    <nav aria-label={label} className="flex flex-wrap gap-0.5">
       {options.map((option) => (
         <Button
           key={option.href}
@@ -20,7 +20,7 @@ export function AdminFilterNav({
             <Link aria-current={option.isActive ? "page" : undefined} href={option.href} prefetch />
           }
           size="sm"
-          variant={option.isActive ? "default" : "outline"}
+          variant={option.isActive ? "secondary" : "ghost"}
         >
           {option.label}
         </Button>

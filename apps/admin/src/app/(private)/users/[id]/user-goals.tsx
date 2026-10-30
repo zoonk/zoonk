@@ -103,16 +103,14 @@ export async function UserGoals({ userId }: { userId: string }) {
         {goals.length === 0 ? (
           <AdminSectionEmpty>No goals yet.</AdminSectionEmpty>
         ) : (
-          <div className="overflow-x-auto rounded-lg border">
-            <Table>
-              <GoalTableHeader />
-              <TableBody>
-                {goals.map((goal) => (
-                  <GoalRow goal={goal} key={goal.id} />
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <Table>
+            <GoalTableHeader />
+            <TableBody>
+              {goals.map((goal) => (
+                <GoalRow goal={goal} key={goal.id} />
+              ))}
+            </TableBody>
+          </Table>
         )}
       </AdminSection>
 

@@ -23,7 +23,7 @@ export function StatsBreadcrumb({
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href="/" prefetch />}>Dashboard</BreadcrumbLink>
+          <BreadcrumbLink render={<Link href="/" prefetch />}>Home</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>

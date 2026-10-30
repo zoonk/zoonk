@@ -3,8 +3,8 @@
 import { openCommandPalette } from "@/app/[lang]/(app)/(catalog)/_components/command-palette-event";
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import { LEARN_SIDEBAR_ITEM_CLASS } from "@zoonk/learn/shell";
 import { Kbd } from "@zoonk/ui/components/kbd";
+import { SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SearchIcon } from "lucide-react";
@@ -79,7 +79,7 @@ function SidebarLinkView({ count, current, label, menu }: SidebarLinkProps & { c
   return (
     <Link
       aria-current={current ? "page" : undefined}
-      className={LEARN_SIDEBAR_ITEM_CLASS}
+      className={SIDEBAR_ITEM_CLASS}
       href={href}
       prefetch
     >

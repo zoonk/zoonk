@@ -1,4 +1,5 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { Stat, StatDetail, StatIcon, StatLabel, StatValue } from "@zoonk/ui/components/stat";
 import Link from "next/link";
 import { StatsTitle } from "./stats-title";
 
@@ -16,17 +17,14 @@ function StatsContent({
   help?: string;
 }) {
   return (
-    <div className="flex w-full flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-      <header className="text-muted-foreground flex items-center gap-1.5">
-        {icon && <span className="flex size-4 items-center justify-center rounded-lg">{icon}</span>}
+    <>
+      <StatLabel>
+        {icon && <StatIcon>{icon}</StatIcon>}
         <StatsTitle help={help} title={title} />
-      </header>
-
-      <div className="w-full flex-none">
-        <div className="text-foreground text-3xl font-medium tracking-tight">{value}</div>
-        {description && <p className="text-muted-foreground mt-1 text-sm">{description}</p>}
-      </div>
-    </div>
+      </StatLabel>
+      <StatValue>{value}</StatValue>
+      {description && <StatDetail>{description}</StatDetail>}
+    </>
   );
 }
 
@@ -51,25 +49,21 @@ export function Stats({
 
   if (href) {
     return (
-      <Link className="hover:bg-muted/50 rounded-lg p-2 transition-colors" href={href} prefetch>
+      <Stat className="hover:bg-muted/50 transition-colors" render={<Link href={href} prefetch />}>
         {content}
-      </Link>
+      </Stat>
     );
   }
 
-  return <div className="p-2">{content}</div>;
+  return <Stat>{content}</Stat>;
 }
 
 export function StatsSkeleton() {
   return (
-    <div className="flex w-full flex-wrap items-baseline justify-between gap-x-4 gap-y-2 p-2">
-      <header className="text-muted-foreground flex items-center gap-1.5">
-        <Skeleton className="size-4 rounded-lg" />
-        <Skeleton className="h-4 w-24 rounded" />
-      </header>
-      <div className="w-full flex-none">
-        <Skeleton className="h-8 w-32 rounded" />
-      </div>
-    </div>
+    <Stat>
+      <Skeleton className="h-4 w-24 rounded" />
+      <Skeleton className="h-7.5 w-20 rounded" />
+      <Skeleton className="h-4 w-28 rounded" />
+    </Stat>
   );
 }

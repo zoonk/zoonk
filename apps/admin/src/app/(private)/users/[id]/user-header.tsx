@@ -24,7 +24,7 @@ export async function UserHeader({ userId }: { userId: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <Avatar size="lg">
             {user.image && <AvatarImage src={user.image} alt={user.name} />}

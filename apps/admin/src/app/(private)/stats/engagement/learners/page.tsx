@@ -22,7 +22,7 @@ export default function LearnerMilestoneUsersPage({
         <StatsPageLayout
           breadcrumbItems={[
             { href: "/stats/engagement", label: "Engagement & Learning" },
-            { label: "Learner Milestones" },
+            { label: "Learner milestones" },
           ]}
           title="Learner Milestones"
         >
@@ -52,7 +52,7 @@ async function LearnerMilestoneUsersPageContent({
     <StatsPageLayout
       breadcrumbItems={[
         { href: "/stats/engagement", label: "Engagement & Learning" },
-        { label: "Learner Milestones" },
+        { label: "Learner milestones" },
       ]}
       title={copy.pageTitle}
     >

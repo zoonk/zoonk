@@ -11,7 +11,7 @@ import Link from "next/link";
 
 function AppBreadcrumb({ children, className, ...props }: React.ComponentProps<"nav">) {
   return (
-    <Breadcrumb className={cn("px-4 pt-4", className)} {...props}>
+    <Breadcrumb className={cn("px-4 pt-4 sm:px-8 lg:px-10", className)} {...props}>
       <BreadcrumbList>{children}</BreadcrumbList>
     </Breadcrumb>
   );

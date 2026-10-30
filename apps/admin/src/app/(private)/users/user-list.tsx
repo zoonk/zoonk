@@ -1,4 +1,4 @@
-import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
 import { listUsers } from "@/data/users/list-users";
 import { parseSearchParams } from "@/lib/parse-search-params";
@@ -51,17 +51,15 @@ async function CachedUserList({
 
   return (
     <>
-      <div className="rounded-lg border">
-        <Table>
-          <UserTableHeader search={search} sort={sort} />
+      <Table>
+        <UserTableHeader search={search} sort={sort} />
 
-          <TableBody>
-            {users.map((user) => (
-              <UserRow key={user.id} user={user} />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+        <TableBody>
+          {users.map((user) => (
+            <UserRow key={user.id} user={user} />
+          ))}
+        </TableBody>
+      </Table>
 
       <AdminPagination
         basePath="/users"
@@ -77,15 +75,13 @@ async function CachedUserList({
 
 export function UserListSkeleton() {
   return (
-    <AdminTableSkeleton>
-      <Table>
-        <UserTableHeader />
+    <Table>
+      <UserTableHeader />
 
-        <AdminTableSkeletonRows>
-          <UserSkeletonRow />
-        </AdminTableSkeletonRows>
-      </Table>
-    </AdminTableSkeleton>
+      <AdminTableSkeletonRows>
+        <UserSkeletonRow />
+      </AdminTableSkeletonRows>
+    </Table>
   );
 }
 

@@ -21,7 +21,7 @@ export function BanUserDialog({ userId, userName }: { userId: string; userName: 
   return (
     <AlertDialog>
       <AlertDialogTrigger render={<Button variant="outline" size="sm" />}>
-        Ban User
+        Ban user
       </AlertDialogTrigger>
 
       <AlertDialogContent>
@@ -38,7 +38,7 @@ export function BanUserDialog({ userId, userName }: { userId: string; userName: 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="reason">Reason (optional)</Label>
-              <Textarea id="reason" name="reason" placeholder="Reason for banning..." />
+              <Textarea id="reason" name="reason" placeholder="Reason for banning…" />
             </div>
 
             <div className="flex flex-col gap-2">
@@ -50,7 +50,7 @@ export function BanUserDialog({ userId, userName }: { userId: string; userName: 
           <AlertDialogFooter className="mt-6">
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction type="submit" variant="destructive">
-              Ban User
+              Ban user
             </AlertDialogAction>
           </AlertDialogFooter>
         </form>

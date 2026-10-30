@@ -18,7 +18,7 @@ export default function FeedbackMessagesPage({ searchParams }: PageProps<"/feedb
     <Container>
       <ContainerHeader variant="sidebar">
         <ContainerHeaderGroup>
-          <ContainerTitle>Feedback Messages</ContainerTitle>
+          <ContainerTitle>Feedback messages</ContainerTitle>
           <ContainerDescription>
             Messages from the feedback form, with the page and content they were sent from.
           </ContainerDescription>

@@ -17,7 +17,7 @@ export default function Home() {
     <Container>
       <ContainerHeader variant="sidebar">
         <ContainerHeaderGroup>
-          <ContainerTitle>Admin Dashboard</ContainerTitle>
+          <ContainerTitle>Home</ContainerTitle>
           <ContainerDescription>Overview of platform metrics and activity.</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>

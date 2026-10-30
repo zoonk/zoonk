@@ -1,4 +1,4 @@
-import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { type LearnerMilestoneUser } from "@/data/stats/get-learner-milestones";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import {
@@ -24,32 +24,28 @@ export function LearnerMilestoneUsersTable({
   }
 
   return (
-    <div className="rounded-lg border">
-      <Table>
-        <TableCaption className="sr-only">Learners matching the selected milestone</TableCaption>
-        <LearnerMilestoneUsersTableHeader />
+    <Table>
+      <TableCaption className="sr-only">Learners matching the selected milestone</TableCaption>
+      <LearnerMilestoneUsersTableHeader />
 
-        <TableBody>
-          {users.map((user) => (
-            <LearnerMilestoneUserRow key={user.id} user={user} />
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+      <TableBody>
+        {users.map((user) => (
+          <LearnerMilestoneUserRow key={user.id} user={user} />
+        ))}
+      </TableBody>
+    </Table>
   );
 }
 
 export function LearnerMilestoneUsersTableSkeleton() {
   return (
-    <AdminTableSkeleton>
-      <Table>
-        <LearnerMilestoneUsersTableHeader />
+    <Table>
+      <LearnerMilestoneUsersTableHeader />
 
-        <AdminTableSkeletonRows>
-          <LearnerMilestoneSkeletonRow />
-        </AdminTableSkeletonRows>
-      </Table>
-    </AdminTableSkeleton>
+      <AdminTableSkeletonRows>
+        <LearnerMilestoneSkeletonRow />
+      </AdminTableSkeletonRows>
+    </Table>
   );
 }
 

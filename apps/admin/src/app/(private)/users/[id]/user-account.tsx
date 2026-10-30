@@ -1,7 +1,7 @@
+import { AdminSection } from "@/components/admin-section";
 import { DetailField } from "@/components/detail-field";
 import { getUser } from "@/data/users/get-user";
 import { Button } from "@zoonk/ui/components/button";
-import { Separator } from "@zoonk/ui/components/separator";
 import { updateUserAnalyticsDisabledAction } from "./_actions/update-user-analytics-disabled";
 
 export async function UserAccount({ userId }: { userId: string }) {
@@ -17,15 +17,11 @@ export async function UserAccount({ userId }: { userId: string }) {
   const providers = user.accounts.map((a) => a.providerId);
 
   return (
-    <section>
-      <div className="mb-2 flex items-center justify-between gap-4">
-        <h3 className="text-sm font-semibold">Account</h3>
-        <AnalyticsTrackingForm analyticsDisabled={user.analyticsDisabled} userId={user.id} />
-      </div>
-
-      <Separator />
-
-      <dl className="mt-2">
+    <AdminSection
+      action={<AnalyticsTrackingForm analyticsDisabled={user.analyticsDisabled} userId={user.id} />}
+      title="Account"
+    >
+      <dl className="divide-y">
         <DetailField label="Email">{user.email}</DetailField>
         <DetailField label="Email verified">{user.emailVerified ? "Yes" : "No"}</DetailField>
         <DetailField label="Analytics">
@@ -45,7 +41,7 @@ export async function UserAccount({ userId }: { userId: string }) {
           {lastLogin ? new Date(lastLogin).toLocaleDateString() : "—"}
         </DetailField>
       </dl>
-    </section>
+    </AdminSection>
   );
 }
 

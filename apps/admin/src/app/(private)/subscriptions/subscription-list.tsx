@@ -1,4 +1,4 @@
-import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
 import { SubscriptionStatusBadge } from "@/components/subscription-status-badge";
 import { type AdminSubscription, listSubscriptions } from "@/data/subscriptions/list-subscriptions";
@@ -57,21 +57,19 @@ async function CachedSubscriptionList({
         {getSubscriptionCountLabel({ filter, total })}
       </p>
 
-      <div className="overflow-x-auto rounded-lg border">
-        <Table>
-          <SubscriptionTableHeader />
+      <Table>
+        <SubscriptionTableHeader />
 
-          <TableBody>
-            {subscriptions.length > 0 ? (
-              subscriptions.map((subscription) => (
-                <SubscriptionRow key={subscription.id} subscription={subscription} />
-              ))
-            ) : (
-              <SubscriptionEmptyRow filter={filter} />
-            )}
-          </TableBody>
-        </Table>
-      </div>
+        <TableBody>
+          {subscriptions.length > 0 ? (
+            subscriptions.map((subscription) => (
+              <SubscriptionRow key={subscription.id} subscription={subscription} />
+            ))
+          ) : (
+            <SubscriptionEmptyRow filter={filter} />
+          )}
+        </TableBody>
+      </Table>
 
       <AdminPagination
         basePath="/subscriptions"
@@ -89,15 +87,13 @@ export function SubscriptionListSkeleton() {
     <div className="flex flex-col gap-4">
       <Skeleton className="h-4 w-36" />
 
-      <AdminTableSkeleton className="overflow-x-auto">
-        <Table>
-          <SubscriptionTableHeader />
+      <Table>
+        <SubscriptionTableHeader />
 
-          <AdminTableSkeletonRows>
-            <SubscriptionSkeletonRow />
-          </AdminTableSkeletonRows>
-        </Table>
-      </AdminTableSkeleton>
+        <AdminTableSkeletonRows>
+          <SubscriptionSkeletonRow />
+        </AdminTableSkeletonRows>
+      </Table>
     </div>
   );
 }
@@ -111,8 +107,8 @@ function SubscriptionTableHeader() {
         <TableHead>Provider</TableHead>
         <TableHead>Status</TableHead>
         <TableHead>Billing</TableHead>
-        <TableHead>Period Start</TableHead>
-        <TableHead>Stripe Subscription</TableHead>
+        <TableHead>Period start</TableHead>
+        <TableHead>Stripe subscription</TableHead>
       </TableRow>
     </TableHeader>
   );

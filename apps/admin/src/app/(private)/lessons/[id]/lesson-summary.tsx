@@ -34,7 +34,7 @@ function LessonChapters({ lesson }: { lesson: Lesson }) {
 export function LessonSummary({ lesson }: { lesson: Lesson }) {
   return (
     <AdminSection description={lesson.description} title={lesson.title}>
-      <dl>
+      <dl className="divide-y">
         <DetailField label="Content">{libraryLessonStatusLabels[lesson.contentStatus]}</DetailField>
         <DetailField label="Held back">
           <LessonHeldBack lesson={lesson} />

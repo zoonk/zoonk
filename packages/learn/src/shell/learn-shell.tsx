@@ -5,7 +5,7 @@ export function LearnShell({ children, className, ...props }: React.ComponentPro
   return (
     <div
       className={cn(
-        "bg-background text-foreground flex min-h-dvh flex-col lg:has-[>[data-slot=learn-sidebar]]:flex-row",
+        "bg-background text-foreground flex min-h-dvh flex-col lg:has-[>[data-slot=sidebar]]:flex-row",
         className,
       )}
       data-slot="learn-shell"
@@ -13,66 +13,6 @@ export function LearnShell({ children, className, ...props }: React.ComponentPro
     >
       {children}
     </div>
-  );
-}
-
-/** Wide pages and the page bar leave this width out of the viewport. */
-const SIDEBAR_WIDTH_CLASS = "w-60";
-
-export function LearnSidebar({ children, className, ...props }: React.ComponentProps<"aside">) {
-  return (
-    <aside
-      className={cn(
-        "bg-sidebar text-sidebar-foreground border-sidebar-border sticky top-0 z-30 hidden h-dvh shrink-0 flex-col gap-5 overflow-y-auto border-r p-3 lg:flex",
-        SIDEBAR_WIDTH_CLASS,
-        className,
-      )}
-      data-slot="learn-sidebar"
-      {...props}
-    >
-      {children}
-    </aside>
-  );
-}
-
-export function LearnSidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("flex flex-col gap-2", className)}
-      data-slot="learn-sidebar-header"
-      {...props}
-    />
-  );
-}
-
-export function LearnSidebarSection({
-  children,
-  className,
-  label,
-  ...props
-}: React.ComponentProps<"nav"> & { label?: string }) {
-  return (
-    <nav
-      className={cn("flex flex-col gap-0.5", className)}
-      data-slot="learn-sidebar-section"
-      {...props}
-    >
-      {label && <span className="text-label px-2 pb-1">{label}</span>}
-      {children}
-    </nav>
-  );
-}
-
-export const LEARN_SIDEBAR_ITEM_CLASS =
-  "text-muted-foreground hover:bg-sidebar-accent/70 hover:text-foreground aria-[current=page]:bg-sidebar-accent aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area press relative flex h-8 min-w-0 items-center gap-2.5 rounded-md px-2 text-[0.84375rem] font-medium outline-none focus-visible:ring-[3px] [&>svg]:size-4 [&>svg]:shrink-0";
-
-export function LearnSidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("mt-auto flex items-center gap-2 pt-2", className)}
-      data-slot="learn-sidebar-footer"
-      {...props}
-    />
   );
 }
 

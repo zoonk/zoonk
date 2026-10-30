@@ -13,6 +13,7 @@ import {
   type LearnerSummaryPlaces,
 } from "@zoonk/core/learner/summary/contract";
 import { DropdownMenu, DropdownMenuTrigger } from "@zoonk/ui/components/dropdown-menu";
+import { SIDEBAR_ACCOUNT_CLASS } from "@zoonk/ui/components/sidebar";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 import { BeltLevel } from "./learn-bar-end";
@@ -49,9 +50,6 @@ export function StudyLinks() {
   );
 }
 
-const ACCOUNT_ROW_CLASS =
-  "hover:bg-sidebar-accent/70 aria-expanded:bg-sidebar-accent focus-visible:ring-ring/50 flex h-11 w-full min-w-0 items-center gap-2.5 rounded-md px-1 text-left text-[0.84375rem] font-medium transition-colors outline-none focus-visible:ring-[3px]";
-
 function PendingSidebarAccount({ visitor }: { visitor: React.ReactNode }) {
   return (
     <>
@@ -74,7 +72,7 @@ function AccountTrigger({
   said: string[];
 }) {
   return (
-    <DropdownMenuTrigger className={ACCOUNT_ROW_CLASS}>
+    <DropdownMenuTrigger className={SIDEBAR_ACCOUNT_CLASS}>
       <span aria-hidden="true" className="flex size-6 shrink-0 overflow-hidden rounded-full">
         <LearnerAvatar />
       </span>

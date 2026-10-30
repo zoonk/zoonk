@@ -1,4 +1,4 @@
-import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
 import {
   type BrainPowerLeader,
@@ -74,24 +74,20 @@ async function CachedBrainPowerLeaderboard({
         {total.toLocaleString()} {userCountLabel} earned Brain Power {periodDescription}.
       </p>
 
-      <div className="overflow-x-auto rounded-lg border">
-        <Table>
-          <TableCaption className="sr-only">
-            Brain Power leaderboard {periodDescription}
-          </TableCaption>
-          <BrainPowerLeaderboardHeader />
+      <Table>
+        <TableCaption className="sr-only">Brain Power leaderboard {periodDescription}</TableCaption>
+        <BrainPowerLeaderboardHeader />
 
-          <TableBody>
-            {leaders.length > 0 ? (
-              leaders.map((leader) => (
-                <BrainPowerLeaderboardRow key={leader.user.id} leader={leader} />
-              ))
-            ) : (
-              <BrainPowerLeaderboardEmptyRow periodDescription={periodDescription} />
-            )}
-          </TableBody>
-        </Table>
-      </div>
+        <TableBody>
+          {leaders.length > 0 ? (
+            leaders.map((leader) => (
+              <BrainPowerLeaderboardRow key={leader.user.id} leader={leader} />
+            ))
+          ) : (
+            <BrainPowerLeaderboardEmptyRow periodDescription={periodDescription} />
+          )}
+        </TableBody>
+      </Table>
 
       <AdminPagination
         basePath="/leaderboard"
@@ -113,15 +109,13 @@ export function BrainPowerLeaderboardSkeleton() {
     <div className="flex flex-col gap-4">
       <Skeleton className="h-4 w-56" />
 
-      <AdminTableSkeleton className="overflow-x-auto">
-        <Table>
-          <BrainPowerLeaderboardHeader />
+      <Table>
+        <BrainPowerLeaderboardHeader />
 
-          <AdminTableSkeletonRows>
-            <BrainPowerLeaderboardSkeletonRow />
-          </AdminTableSkeletonRows>
-        </Table>
-      </AdminTableSkeleton>
+        <AdminTableSkeletonRows>
+          <BrainPowerLeaderboardSkeletonRow />
+        </AdminTableSkeletonRows>
+      </Table>
     </div>
   );
 }

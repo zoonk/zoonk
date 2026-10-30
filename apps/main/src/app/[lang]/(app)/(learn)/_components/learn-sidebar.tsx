@@ -2,12 +2,12 @@ import { LoginBarLink } from "@/components/login-bar-link";
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import {
-  LEARN_SIDEBAR_ITEM_CLASS,
-  LearnSidebar,
-  LearnSidebarFooter,
-  LearnSidebarHeader,
-  LearnSidebarSection,
-} from "@zoonk/learn/shell";
+  SIDEBAR_ITEM_CLASS,
+  Sidebar,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarSection,
+} from "@zoonk/ui/components/sidebar";
 import { getExtracted } from "next-intl/server";
 import { LearnGoalMenu } from "./learn-goal-menu";
 import { SidebarAccount, StudyLinks } from "./learn-sidebar-learner";
@@ -17,9 +17,9 @@ async function StudyShortcuts() {
   const t = await getExtracted();
 
   return (
-    <LearnSidebarSection aria-label={t("Study")} label={t("Study")}>
+    <SidebarSection aria-label={t("Study")} label={t("Study")}>
       <StudyLinks />
-    </LearnSidebarSection>
+    </SidebarSection>
   );
 }
 
@@ -29,7 +29,7 @@ async function VisitorAccount() {
 
   return (
     <div className="flex flex-col gap-2">
-      <Link className={LEARN_SIDEBAR_ITEM_CLASS} href={url}>
+      <Link className={SIDEBAR_ITEM_CLASS} href={url}>
         <PricingIcon aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate">{t("Pricing")}</span>
       </Link>
@@ -43,19 +43,19 @@ export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
   const t = await getExtracted();
 
   return (
-    <LearnSidebar aria-label={t("Sidebar")} className="gap-4">
-      <LearnSidebarHeader className="gap-4">
+    <Sidebar aria-label={t("Sidebar")} className="gap-4">
+      <SidebarHeader className="gap-4">
         <LearnGoalMenu placement="sidebar" />
         <LearnSidebarSearch />
-      </LearnSidebarHeader>
+      </SidebarHeader>
 
       {tabs}
 
       <StudyShortcuts />
 
-      <LearnSidebarFooter>
+      <SidebarFooter>
         <SidebarAccount visitor={<VisitorAccount />} />
-      </LearnSidebarFooter>
-    </LearnSidebar>
+      </SidebarFooter>
+    </Sidebar>
   );
 }

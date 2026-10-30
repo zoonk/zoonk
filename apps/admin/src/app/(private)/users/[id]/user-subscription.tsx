@@ -1,9 +1,9 @@
+import { AdminSection } from "@/components/admin-section";
 import { DetailField } from "@/components/detail-field";
 import { SubscriptionStatusBadge } from "@/components/subscription-status-badge";
 import { getUserSubscriptions } from "@/data/users/get-user-subscriptions";
 import { getSubscriptionProviderLabel, getSubscriptionStatusLabel } from "@/lib/subscription";
 import { Badge } from "@zoonk/ui/components/badge";
-import { Separator } from "@zoonk/ui/components/separator";
 import { ChangePlanDialog } from "./change-plan-dialog";
 
 type UserSubscriptions = Awaited<ReturnType<typeof getUserSubscriptions>>;
@@ -15,21 +15,19 @@ export async function UserSubscription({ userId }: { userId: string }) {
   const subscriptions = await getUserSubscriptions(userId);
 
   return (
-    <section>
-      <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-sm font-semibold">Subscription</h3>
-        {canChangeSubscriptionPlan(subscriptions.active) && (
+    <AdminSection
+      action={
+        canChangeSubscriptionPlan(subscriptions.active) && (
           <ChangePlanDialog
             userId={userId}
             currentPlan={getCurrentSubscriptionPlan(subscriptions.active)}
           />
-        )}
-      </div>
-
-      <Separator />
-
+        )
+      }
+      title="Subscription"
+    >
       <UserSubscriptionDetails subscriptions={subscriptions} />
-    </section>
+    </AdminSection>
   );
 }
 
@@ -37,7 +35,7 @@ function UserSubscriptionDetails({ subscriptions }: { subscriptions: UserSubscri
   const subscription = subscriptions.active;
 
   return (
-    <dl className="mt-2">
+    <dl className="divide-y">
       <DetailField label="Plan">
         <span className="capitalize">{subscription?.plan ?? "Free"}</span>
       </DetailField>

@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
-import { ContainerTitle } from "@zoonk/ui/components/container";
 
 type Issue = { testCaseId: string; conclusion: string; score: number };
 
@@ -69,7 +68,7 @@ function IssueGroup({ issues, label }: { issues: Issue[]; label: string }) {
 export function IssuesSummary({ results }: { results: EvalResult[] }) {
   return (
     <div className="flex flex-col gap-4">
-      <ContainerTitle>Issues Summary</ContainerTitle>
+      <h2 className="text-lg font-semibold tracking-tight">Issues Summary</h2>
 
       <Accordion className="w-full">
         {ISSUE_KINDS.map((kind) => (

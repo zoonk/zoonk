@@ -10,7 +10,7 @@ export async function UserLearningProfile({ userId }: { userId: string }) {
   return (
     <AdminSection title="Learning profile">
       {profile ? (
-        <dl>
+        <dl className="divide-y">
           <DetailField label="Buddy">
             {[profile.buddyName, profile.buddyKind].filter(Boolean).join(" · ") || "—"}
           </DetailField>

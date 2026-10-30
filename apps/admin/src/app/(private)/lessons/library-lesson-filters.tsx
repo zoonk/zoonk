@@ -61,7 +61,7 @@ export async function LibraryLessonFilters({
 
   return (
     <div className="flex flex-col gap-3">
-      <AdminSearch placeholder="Search by lesson, chapter, or course..." />
+      <AdminSearch placeholder="Search by lesson, chapter, or course…" />
 
       <div className="flex flex-wrap items-center gap-2">
         <AdminFilterNav

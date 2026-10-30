@@ -24,6 +24,7 @@ export function AdminQuerySelect({
   return (
     <NativeSelect
       aria-label={label}
+      className="max-w-60"
       onChange={(event) => setQuery({ page: null, [name]: event.target.value || null })}
       size="sm"
       value={query[name] ?? ""}

@@ -1,4 +1,5 @@
-import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import { AdminSectionEmpty } from "@/components/admin-section";
+import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import {
   Table,
@@ -36,24 +37,15 @@ export function AdminTableColumns({
   emptyLabel: string;
   isEmpty: boolean;
 }) {
-  return (
-    <div className="overflow-x-auto rounded-lg border">
-      <Table>
-        <AdminTableColumnsHeader columns={columns} />
+  if (isEmpty) {
+    return <AdminSectionEmpty>{emptyLabel}</AdminSectionEmpty>;
+  }
 
-        <TableBody>
-          {isEmpty ? (
-            <TableRow>
-              <TableCell className="text-muted-foreground" colSpan={columns.length}>
-                {emptyLabel}
-              </TableCell>
-            </TableRow>
-          ) : (
-            children
-          )}
-        </TableBody>
-      </Table>
-    </div>
+  return (
+    <Table>
+      <AdminTableColumnsHeader columns={columns} />
+      <TableBody>{children}</TableBody>
+    </Table>
   );
 }
 
@@ -71,13 +63,11 @@ function AdminTableColumnsSkeletonRow({ columns }: { columns: AdminTableColumn[]
 
 export function AdminTableColumnsSkeleton({ columns }: { columns: AdminTableColumn[] }) {
   return (
-    <AdminTableSkeleton className="overflow-x-auto">
-      <Table>
-        <AdminTableColumnsHeader columns={columns} />
-        <AdminTableSkeletonRows>
-          <AdminTableColumnsSkeletonRow columns={columns} />
-        </AdminTableSkeletonRows>
-      </Table>
-    </AdminTableSkeleton>
+    <Table>
+      <AdminTableColumnsHeader columns={columns} />
+      <AdminTableSkeletonRows>
+        <AdminTableColumnsSkeletonRow columns={columns} />
+      </AdminTableSkeletonRows>
+    </Table>
   );
 }

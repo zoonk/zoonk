@@ -46,26 +46,24 @@ export async function UserLearnerSkills({ userId }: { userId: string }) {
       {recent.length === 0 ? (
         <AdminSectionEmpty>No skills practiced yet.</AdminSectionEmpty>
       ) : (
-        <div className="overflow-x-auto rounded-lg border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Skill</TableHead>
-                <TableHead>State</TableHead>
-                <TableHead>Due</TableHead>
-                <TableHead className="text-right">Reps</TableHead>
-                <TableHead className="text-right">Lapses</TableHead>
-                <TableHead className="text-right">Days remembered</TableHead>
-                <TableHead>Last review</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {recent.map((learnerSkill) => (
-                <LearnerSkillRow key={learnerSkill.id} learnerSkill={learnerSkill} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Skill</TableHead>
+              <TableHead>State</TableHead>
+              <TableHead>Due</TableHead>
+              <TableHead className="text-right">Reps</TableHead>
+              <TableHead className="text-right">Lapses</TableHead>
+              <TableHead className="text-right">Days remembered</TableHead>
+              <TableHead>Last review</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {recent.map((learnerSkill) => (
+              <LearnerSkillRow key={learnerSkill.id} learnerSkill={learnerSkill} />
+            ))}
+          </TableBody>
+        </Table>
       )}
     </AdminSection>
   );

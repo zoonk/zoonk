@@ -18,7 +18,7 @@ export function UnbanUserDialog({ userId, userName }: { userId: string; userName
   return (
     <AlertDialog>
       <AlertDialogTrigger render={<Button variant="outline" size="sm" />}>
-        Unban User
+        Unban user
       </AlertDialogTrigger>
 
       <AlertDialogContent>

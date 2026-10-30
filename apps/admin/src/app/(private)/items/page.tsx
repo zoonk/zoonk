@@ -37,7 +37,7 @@ export default function ItemsPage({ searchParams }: PageProps<"/items">) {
       <ContainerBody>
         <Suspense fallback={<ItemFiltersSkeleton />}>
           <div className="flex flex-col gap-3">
-            <AdminSearch placeholder="Search items by skill name..." />
+            <AdminSearch placeholder="Search items by skill name…" />
             <div className="flex flex-wrap gap-3">
               <AdminQuerySelect
                 allLabel="All formats"

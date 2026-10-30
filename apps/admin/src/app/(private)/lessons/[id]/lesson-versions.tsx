@@ -54,34 +54,32 @@ export function LessonVersions({ steps }: { steps: LibraryLessonStep[] }) {
       {versions.length === 0 ? (
         <AdminSectionEmpty>No screens written yet.</AdminSectionEmpty>
       ) : (
-        <div className="overflow-x-auto rounded-lg border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Written</TableHead>
-                <TableHead>Model</TableHead>
-                <TableHead>Prompt version</TableHead>
-                <TableHead className="text-right">Step contract</TableHead>
-                <TableHead className="text-right">Rows</TableHead>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Written</TableHead>
+              <TableHead>Model</TableHead>
+              <TableHead>Prompt version</TableHead>
+              <TableHead className="text-right">Step contract</TableHead>
+              <TableHead className="text-right">Rows</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {versions.map((version) => (
+              <TableRow key={versionKey(version)}>
+                <TableCell>
+                  {version.kind === "screen" ? "Screens" : "Versions of screens"}
+                </TableCell>
+                <TableCell className="font-mono text-xs">{version.model}</TableCell>
+                <TableCell className="font-mono text-xs">{version.promptVersion}</TableCell>
+                <TableCell className="text-right tabular-nums">
+                  v{version.contractVersion}
+                </TableCell>
+                <TableCell className="text-right tabular-nums">{version.rows}</TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {versions.map((version) => (
-                <TableRow key={versionKey(version)}>
-                  <TableCell>
-                    {version.kind === "screen" ? "Screens" : "Versions of screens"}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs">{version.model}</TableCell>
-                  <TableCell className="font-mono text-xs">{version.promptVersion}</TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    v{version.contractVersion}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">{version.rows}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+            ))}
+          </TableBody>
+        </Table>
       )}
     </AdminSection>
   );
