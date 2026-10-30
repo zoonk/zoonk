@@ -4,7 +4,7 @@ import { findLargestCount, makeRoomForOutcomes } from "./outcome-room";
 import { addDays } from "./plan-calendar";
 import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
-import { type PlacedBoss, placeBoss, withKeptLessons } from "./whole-boss";
+import { type PlacedBoss, keepDayOverrun, placeBoss, withKeptLessons } from "./whole-boss";
 
 export type FixedEvent = {
   beside?: boolean;
@@ -135,9 +135,9 @@ function layUnits({
   units: readonly QueueUnit[];
 }) {
   return units.reduce<{
-    besideDays: Set<number>;
     boss: PlacedBoss | null;
     dayIndex: number;
+    pastDays: Map<number, number>;
     placed: PlacedUnit[];
     used: number;
   }>(
@@ -150,17 +150,9 @@ function layUnits({
         used: state.used,
       });
 
-      // A day runs past the learner's time by one challenge at most; another has no room.
-      const boss =
-        placedBoss?.beside && state.besideDays.has(placedBoss.dayIndex)
-          ? { ...placedBoss, dayIndex: -1 }
-          : placedBoss;
+      const boss = placedBoss && keepDayOverrun({ boss: placedBoss, cumulative, state, unit });
 
       if (boss) {
-        if (boss.beside && boss.dayIndex >= 0) {
-          state.besideDays.add(boss.dayIndex);
-        }
-
         state.placed.push({
           beside: boss.beside,
           dayIndex: boss.dayIndex,
@@ -169,9 +161,9 @@ function layUnits({
         });
 
         return {
-          besideDays: state.besideDays,
           boss,
           dayIndex: Math.max(state.dayIndex, boss.dayIndex),
+          pastDays: state.pastDays,
           placed: state.placed,
           used: boss.used,
         };
@@ -196,14 +188,14 @@ function layUnits({
       const next = heldOn !== undefined && (found === -1 || found > heldOn) ? heldOn : found;
 
       return {
-        besideDays: state.besideDays,
         boss: null,
         dayIndex: next,
+        pastDays: state.pastDays,
         placed: state.placed,
         used: needed,
       };
     },
-    { besideDays: new Set(), boss: null, dayIndex: 0, placed: [], used: 0 },
+    { boss: null, dayIndex: 0, pastDays: new Map(), placed: [], used: 0 },
   );
 }
 

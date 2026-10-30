@@ -74,6 +74,36 @@ export function placeBoss({
   return { beside: true, dayIndex: lastDay, start: floor, used: floor };
 }
 
+/** Records the minutes `boss` runs past its day in `pastDays`, or leaves it out (day -1). */
+export function keepDayOverrun({
+  boss,
+  cumulative,
+  state: { pastDays, used },
+  unit,
+}: {
+  boss: PlacedBoss;
+  cumulative: readonly number[];
+  state: { pastDays: Map<number, number>; used: number };
+  unit: QueueUnit;
+}): PlacedBoss {
+  const past = boss.beside
+    ? unit.minutes
+    : Math.max(0, boss.start + unit.minutes - (cumulative[boss.dayIndex] ?? 0));
+
+  const before = pastDays.get(boss.dayIndex) ?? 0;
+
+  // A day runs past the learner's time by one challenge at most; another has no room.
+  if (before + past > unit.minutes + PLAN_EPSILON) {
+    return { ...boss, dayIndex: -1, used };
+  }
+
+  if (boss.dayIndex >= 0 && past > 0) {
+    pastDays.set(boss.dayIndex, before + past);
+  }
+
+  return boss;
+}
+
 export function withKeptLessons({
   days,
   units,

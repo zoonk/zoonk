@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { findCurrentPhase, getPhaseStates, isPhaseFinished } from "../_utils/phase-states";
 import { isPlanFinished } from "../_utils/plan-end";
+import { getPlannedBossMinutes } from "./boss-minutes";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { getShownPhaseEnds } from "./kept-phase-ends";
 import { addDays, daysBetween, fromIsoDate, toIsoDate } from "./plan-calendar";
@@ -1468,6 +1469,49 @@ describe("phase challenges on a day the learner's time fills", () => {
           phase.challengeLeftOut === true || bosses.some((boss) => boss.phase === index),
       ),
     ).toStrictEqual([0, 1, 2].map((phase) => taught(phase)));
+  });
+});
+
+describe("phase challenges a learner reaches together, a day before the date", () => {
+  const yesterday = addDays(TODAY, -1);
+  const skills = ["a", "b", "c"];
+
+  const input = planInput({
+    goal: { dailyMinutes: 15, kind: "learn", targetDate: addDays(TODAY, 1) },
+    graph: {
+      phases: ["One", "Two", "Three"].map((name) => ({ milestone: null, name })),
+      skills: skills.map((skillId, phase) => skill(skillId, { phase })),
+    },
+    items: skills.flatMap((skillId, phase) =>
+      [0, 1].map((index) =>
+        existing({
+          completedAt: yesterday,
+          id: `${skillId}-${index}`,
+          lessonId: `${skillId}-${index}`,
+          phase,
+          position: phase * 2 + index,
+          scheduledFor: yesterday,
+          skillId,
+          status: "done",
+        }),
+      ),
+    ),
+    lessons: skills.flatMap((skillId) => lessonsFor(skillId, 2)),
+    settings: parsePlanSettings({ startDate: toIsoDate(addDays(TODAY, -7)) }),
+  });
+
+  it("run the day past the learner's time by one challenge at most, leading or beside", () => {
+    const plan = buildPlan(input);
+    const challenge = getPlannedBossMinutes({ goalKind: "learn", phase: 0 });
+
+    const planned = (phase: number) =>
+      plan.items.some((item) => item.kind === "boss" && item.phase === phase);
+
+    expect(plan.checkpointOverflow.map((day) => day.minutes)).toStrictEqual([challenge]);
+
+    expect(
+      plan.phases.map((phase, index) => phase.challengeLeftOut === true || planned(index)),
+    ).toStrictEqual([true, true, true]);
   });
 });
 
