@@ -70,6 +70,7 @@ export const onboardingResponseSchema = z
       .object({
         brandSlug: z.string(),
         chapterCount: z.int(),
+        courseId: z.uuid().meta({ description: "Open it at GET /v1/courses/{courseId}" }),
         courseSlug: z.string(),
         title: z.string(),
       })

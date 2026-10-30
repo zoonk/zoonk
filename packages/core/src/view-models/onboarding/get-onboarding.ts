@@ -132,6 +132,7 @@ async function findLibraryCourse({
   return {
     brandSlug: course.organization.slug,
     chapterCount,
+    courseId: course.id,
     courseSlug: course.slug,
     title: course.title,
   };

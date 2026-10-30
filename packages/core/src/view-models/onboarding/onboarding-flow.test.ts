@@ -294,6 +294,7 @@ describe("onboarding a new goal", () => {
         libraryCourse: {
           brandSlug: organization.slug,
           chapterCount: 0,
+          courseId: course.id,
           courseSlug: course.slug,
           title: subject,
         },

@@ -196,6 +196,7 @@ export type OnboardingStep = OnboardingQuestion | "buddy" | "placement" | "plan"
 export type OnboardingLibraryCourse = {
   brandSlug: string;
   chapterCount: number;
+  courseId: string;
   courseSlug: string;
   title: string;
 };
