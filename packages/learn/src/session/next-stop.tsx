@@ -86,34 +86,40 @@ function StartButton({
  */
 function useWrittenWhileWaiting({
   actions,
+  block,
   lesson,
 }: {
   actions: NextStopActions;
+  block: DayStep;
   lesson: NextStopLesson;
 }): boolean {
-  const [waited, setWaited] = useState(lesson !== "ready");
-  const waitedSince = useRef<number | null>(null);
+  const ready = lesson === "ready";
+  const [waitedFor, setWaitedFor] = useState(ready ? null : block.position);
+  const waiting = useRef<{ position: number; since: number } | null>(null);
   const record = useEffectEvent((since: number) => actions.recordWait?.(Date.now() - since));
 
-  if (lesson !== "ready" && !waited) {
-    setWaited(true);
+  if (!ready && waitedFor !== block.position) {
+    setWaitedFor(block.position);
   }
 
   useEffect(() => {
-    if (lesson !== "ready") {
-      waitedSince.current ??= Date.now();
+    if (!ready) {
+      if (waiting.current?.position !== block.position) {
+        waiting.current = { position: block.position, since: Date.now() };
+      }
+
       return;
     }
 
-    const since = waitedSince.current;
+    const waited = waiting.current;
 
-    if (since !== null) {
-      waitedSince.current = null;
-      record(since);
+    if (waited?.position === block.position) {
+      waiting.current = null;
+      record(waited.since);
     }
-  }, [lesson]);
+  }, [block.position, ready]);
 
-  return waited && lesson === "ready";
+  return ready && waitedFor === block.position;
 }
 
 function useStartState({
@@ -261,7 +267,7 @@ export function NextStop({
   const queue = getSessionQueue({ blocks, nextPosition: block.position });
   const aside = useSessionQueueAside(queue);
 
-  const written = useWrittenWhileWaiting({ actions, lesson });
+  const written = useWrittenWhileWaiting({ actions, block, lesson });
   const facts = [formatDuration(block.estimatedMinutes), block.oftenTested && t("Often tested")];
 
   return (
