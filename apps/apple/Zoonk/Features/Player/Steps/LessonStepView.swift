@@ -72,6 +72,8 @@ struct LessonStepContext {
 }
 
 private struct HookStepView: View {
+  @Environment(\.isPaneSplit) private var isPaneSplit
+
   let step: LessonStep
   let content: HookContent
   let context: LessonStepContext
@@ -100,6 +102,11 @@ private struct HookStepView: View {
       LessonQuestionText(text: question)
       StepMedia(step: step, description: content.image, visual: content.visual)
     } else {
+      // A read screen leads with its picture; a spread has it on the facing page.
+      if !isPaneSplit {
+        StepMedia(step: step, description: content.image, visual: content.visual)
+      }
+
       LessonTextBlocks(content.text ?? "")
         .font(.title2.weight(.semibold))
     }
@@ -115,14 +122,16 @@ private struct HookStepView: View {
         isLocked: context.isLocked,
         isGuess: true
       ) { context.select(.hookGuess(optionId: $0)) }
-    } else {
+    } else if isPaneSplit {
       StepMedia(step: step, description: content.image, visual: content.visual)
     }
   }
 }
 
+/// It leads with its picture, as main's read screens do; a spread has the picture on the facing page.
 private struct ExplanationStepView: View {
   @Environment(\.activityRenderers) private var activityRenderers
+  @Environment(\.isPaneSplit) private var isPaneSplit
 
   let step: LessonStep
   let content: ExplanationContent
@@ -131,6 +140,10 @@ private struct ExplanationStepView: View {
   var body: some View {
     switch part {
     case .screen:
+      if !isPaneSplit {
+        StepMedia(step: step, description: content.image, visual: content.visual)
+      }
+
       if let title = content.title {
         LessonQuestionText(text: title)
       }
@@ -138,7 +151,9 @@ private struct ExplanationStepView: View {
       LessonTextBlocks(content.text)
         .font(.body)
     case .turn:
-      StepMedia(step: step, description: content.image, visual: content.visual)
+      if isPaneSplit {
+        StepMedia(step: step, description: content.image, visual: content.visual)
+      }
 
       if let explore = content.explore,
         let renderer = activityRenderers.renderer(for: explore.template)
