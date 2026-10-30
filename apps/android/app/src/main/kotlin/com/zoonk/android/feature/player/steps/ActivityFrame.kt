@@ -43,6 +43,7 @@ import com.zoonk.android.feature.activities.decisionTreeRenderer
 import com.zoonk.android.feature.activities.dialogueSimulatorRenderer
 import com.zoonk.android.feature.activities.findErrorRenderer
 import com.zoonk.android.feature.activities.guessRevealRenderer
+import com.zoonk.android.feature.activities.math.areaModelRenderer
 import com.zoonk.android.feature.activities.math.distributionExplorerRenderer
 import com.zoonk.android.feature.activities.math.formulaModelRenderer
 import com.zoonk.android.feature.activities.math.numberLineRenderer
@@ -102,6 +103,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfData.PlayableLib
 /** The one place a template gets its renderer. */
 val activityRenderers: Map<String, ActivityRenderer> =
     mapOf(
+        "areaModel" to areaModelRenderer,
         "argumentBuilder" to argumentBuilderRenderer,
         "beforeAfter" to beforeAfterRenderer,
         "categorize" to categorizeRenderer,

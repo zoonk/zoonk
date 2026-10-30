@@ -248,6 +248,19 @@ class MathFlowTest {
             ).assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "105\u00A0IQ points. 11.7% between the handles."))
     }
 
+    @Test
+    fun areaModelMovingASplitKeepsTheSameTotal() {
+        play("areaModel", isCorrect = true)
+
+        described("Split into 4 parts: 200, 30, 80, 12. Together they make 322\u00A0m².")
+        press(Key.DirectionLeft, 3, handle = slider("Split across the width"))
+        described("Split into 4 parts: 170, 60, 68, 24.")
+        rule.onNodeWithText("322\u00A0m²").performScrollTo().performClick()
+        harness.tap("Check")
+
+        assertEquals(1, harness.api.checks.size)
+    }
+
     private fun precisionStep(): LessonStep {
         val json =
             """

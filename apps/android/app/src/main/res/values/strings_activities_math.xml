@@ -6,6 +6,8 @@
     <string name="activities_math_badge_try_it">Try it</string>
     <!-- A short badge on an activity where the learner drags handles along a distribution's curve; one word where the language allows. -->
     <string name="activities_math_badge_explore">Explore</string>
+    <!-- A badge on an activity where the learner splits a rectangle or a bar into easy parts. -->
+    <string name="activities_math_badge_split_it">Split it</string>
 
     <!-- A number line's name, then the unit its values are measured in, like "Temperature in °C" or "Distance in km". -->
     <string name="activities_math_number_line_label">%1$s in %2$s</string>
@@ -63,4 +65,16 @@
     <string name="activities_math_distribution_uniform">A flat distribution of %1$s, from %2$s to %3$s.</string>
     <!-- The shares inside and outside the handles, for TalkBack, like "49.5% of values fall between 90 IQ points and 110 IQ points, 25.2% below and 25.2% above." -->
     <string name="activities_math_distribution_shares">%1$s of values fall between %2$s and %3$s, %4$s below and %5$s above.</string>
+
+    <!-- The parts a rectangle or bar is split into, for TalkBack, like "Split into 4 parts: 200, 30, 80, 12." -->
+    <plurals name="activities_math_area_parts">
+        <item quantity="one">Split into %1$d part: %2$s.</item>
+        <item quantity="other">Split into %1$d parts: %2$s.</item>
+    </plurals>
+    <!-- The parts' sum with its unit, like "Together they make 322 m²." -->
+    <string name="activities_math_area_total">Together they make %1$s.</string>
+    <!-- A handle that moves where the rectangle's width is split, for TalkBack. -->
+    <string name="activities_math_area_split_width">Split across the width</string>
+    <!-- A handle that moves where the rectangle's height is split, for TalkBack. -->
+    <string name="activities_math_area_split_height">Split across the height</string>
 </resources>

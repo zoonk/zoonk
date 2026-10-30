@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_math_area_parts": "208fa9d219f777866944b7e5f0cdec511efa9f852ef400f59e9366fc0d41fc93",
+  "activities_math_area_split_height": "2c9a742f269a118172b34913b2d0d0d4eacea3a815b174a471bc2cce440338c8",
+  "activities_math_area_split_width": "16c87b875db355917ffb9caa5b22fc03f5c4f8a10b53e91a8a495f52c661d984",
+  "activities_math_area_total": "c241b28f4755fd31ba0e23480df586344bc02e9bc11e3fe38196588db07b53d5",
   "activities_math_badge_explore": "0e2b0af70fa53b238ab5d2a85fef605f91a9da1319e7cabfe16097d8005663d2",
   "activities_math_badge_place_it": "070447ea3aa42921741658c26af5af3d3fe69711ab7e0c1fbce4b9c0c45ab802",
+  "activities_math_badge_split_it": "a24bc6e1c9d8551b8f8c78f2b5030b8786a4007163fb9a4a1b63559e55459783",
   "activities_math_badge_try_it": "70ba697fcc8d2b601d08b1232d73827fceb9bd535e5e6c3b585d026e9a104c56",
   "activities_math_distribution_handle_value": "47376b3e625b633f59fc143305e5bdb84049b8f6bb2bb617b9c17b734a49f6ec",
   "activities_math_distribution_lower": "718de1dffc39cd133219b26d2cd79e2e06867e13fe947ea7ac24506f20e09f79",
@@ -40,6 +45,8 @@
     <string name="activities_math_badge_try_it">Pruébalo</string>
     <!-- A short badge on an activity where the learner drags handles along a distribution's curve; one word where the language allows. -->
     <string name="activities_math_badge_explore">Explora</string>
+    <!-- A badge on an activity where the learner splits a rectangle or a bar into easy parts. -->
+    <string name="activities_math_badge_split_it">Divídelo</string>
     <!-- A number line's name, then the unit its values are measured in, like "Temperature in °C" or "Distance in km". -->
     <string name="activities_math_number_line_label">%1$s en %2$s</string>
     <!-- The dot the learner drags along the number line, for TalkBack. -->
@@ -94,4 +101,16 @@
     <string name="activities_math_distribution_uniform">Una distribución uniforme de %1$s, de %2$s a %3$s.</string>
     <!-- The shares inside and outside the handles, for TalkBack, like "49.5% of values fall between 90 IQ points and 110 IQ points, 25.2% below and 25.2% above." -->
     <string name="activities_math_distribution_shares">El %1$s de los valores está entre %2$s y %3$s, el %4$s por debajo y el %5$s por encima.</string>
+    <!-- The parts a rectangle or bar is split into, for TalkBack, like "Split into 4 parts: 200, 30, 80, 12." -->
+    <plurals name="activities_math_area_parts">
+        <item quantity="one">Dividido en %1$d parte: %2$s.</item>
+        <item quantity="many">Dividido en %1$d partes: %2$s.</item>
+        <item quantity="other">Dividido en %1$d partes: %2$s.</item>
+    </plurals>
+    <!-- The parts' sum with its unit, like "Together they make 322 m²." -->
+    <string name="activities_math_area_total">En total suman %1$s.</string>
+    <!-- A handle that moves where the rectangle's width is split, for TalkBack. -->
+    <string name="activities_math_area_split_width">División a lo ancho</string>
+    <!-- A handle that moves where the rectangle's height is split, for TalkBack. -->
+    <string name="activities_math_area_split_height">División a lo alto</string>
 </resources>
