@@ -37,5 +37,8 @@ Maintainers act on a bug they can run in a minute. Prove the bug is theirs, repr
 
 - Link the issue from the reproduction's README.
 - In this repository, record the issue under the PR description's library issues and in memory, and keep or remove any local workaround as the owner decided.
-- When a local workaround stays in our code, schedule a daily T3 task (`schedule_task`, fixed time) that checks the dependency's releases for the fix and messages the thread that owns the workaround once it ships, so the workaround is removed then. Poll: GitHub sends release webhooks only to a repository's admins. Note the task's id beside the issue in memory, and delete the task once the workaround is gone.
+- When a local workaround stays in our code, track its removal:
+  - Open an issue in this repository through [zoonk-github-issues](../zoonk-github-issues/SKILL.md) that names the upstream issue and the workaround, so every workaround still waiting on a release is listed in one place.
+  - Schedule a daily T3 task (`schedule_task`, fixed time; poll, since GitHub sends release webhooks only to a repository's admins). When a release contains the fix, it starts a new top-level thread in its own worktree that removes the workaround, rather than messaging the thread that filed it, which may be archived by then. That thread closes the tracking issue and deletes the schedule once nothing is left.
+  - Note the tracking issue and the schedule's id in memory.
 - Give the owner both links.
