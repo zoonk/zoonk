@@ -138,8 +138,8 @@ extension AppRoute {
       PronunciationScreen(goalId: goalId)
     case .conversation(let conversationId):
       ConversationScreen(conversationId: conversationId)
-    case .startGoal(let goal):
-      GoalStartScreen(goal: goal)
+    case .startGoal(let goal, let draftId):
+      GoalStartScreen(goal: goal, draftID: draftId)
     case .goalSetup(let goalId):
       GoalSetupScreen(goalId: goalId)
     case .courseStart(let courseId, let chapterId):

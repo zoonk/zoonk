@@ -4,13 +4,16 @@ import SwiftUI
 struct GoalStartScreen: View {
   /// Words a link or another screen filled in; the learner sends them.
   var goal: String?
+  /// A goal typed before and not confirmed yet, opened where it was left.
+  var draftID: String?
 
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(OnboardingStore.self) private var onboarding
 
   var body: some View {
     GoalStartFlow(
-      sentGoal: onboarding.sentGoal, prefill: goal, needsAccount: needsAccount, limit: upFrontLimit)
+      sentGoal: onboarding.sentGoal, prefill: goal, draftID: draftID, needsAccount: needsAccount,
+      limit: upFrontLimit)
   }
 
   private var needsAccount: Bool {
@@ -75,6 +78,7 @@ private enum StartPage: Hashable {
 }
 
 private enum DraftState {
+  case opening(id: String)
   case sending(String)
   case draft(OnboardingDraft, sentHere: Bool)
 }
@@ -94,7 +98,10 @@ private struct GoalStartFlow: View {
   @State private var material: [AttachedSource] = []
   @State private var intent: MaterialIntent?
 
-  init(sentGoal: SentGoal?, prefill: String?, needsAccount: Bool, limit: GoalLimitReason?) {
+  init(
+    sentGoal: SentGoal?, prefill: String?, draftID: String?, needsAccount: Bool,
+    limit: GoalLimitReason?
+  ) {
     self.limit = limit
     _needsAccount = State(initialValue: needsAccount)
     _words = State(initialValue: sentGoal?.words ?? prefill ?? "")
@@ -108,7 +115,10 @@ private struct GoalStartFlow: View {
     case .questions:
       _path = State(initialValue: [.questions])
     case nil:
-      break
+      if let draftID {
+        _draft = State(initialValue: .opening(id: draftID))
+        _path = State(initialValue: [.draft])
+      }
     }
   }
 
@@ -180,6 +190,15 @@ private struct GoalStartFlow: View {
   @ViewBuilder
   private var draftPage: some View {
     switch draft {
+    case .opening(let id):
+      List {
+        ProgressView()
+          .frame(maxWidth: .infinity)
+          .listRowBackground(Color.clear)
+      }
+      .task(id: id) {
+        await open(id)
+      }
     case .sending(let goal):
       UnderstandingWaitView(goal: goal, generationID: nil) { true }
     case .draft(let value, let sentHere):
@@ -202,6 +221,25 @@ private struct GoalStartFlow: View {
       path = [.questions]
     case .goal(let goal):
       send(goal)
+    }
+  }
+
+  /// One saved as a goal meanwhile goes on with that goal's setup; one that can't be read leaves
+  /// the box empty, as main's start page does.
+  private func open(_ id: String) async {
+    do {
+      let value = try await onboarding.understanding(id: id)
+
+      if let goalID = value.goalId {
+        self.goalID = goalID
+      } else {
+        words = value.prompt
+        draft = .draft(value, sentHere: false)
+      }
+    } catch {
+      if !Task.isCancelled {
+        path = []
+      }
     }
   }
 

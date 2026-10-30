@@ -59,6 +59,26 @@ struct MaterialInput: Encodable, Sendable {
   }
 }
 
+/// A goal the learner typed but hasn't confirmed, kept to continue after leaving.
+struct OnboardingResume: Equatable, Sendable {
+  struct Draft: Decodable, Equatable, Sendable {
+    let draftId: String
+    let prompt: String
+  }
+
+  let draft: Draft?
+}
+
+private struct ResumeBody: Decodable {
+  struct Resume: Decodable {
+    let kind: String
+    let draftId: String?
+    let prompt: String?
+  }
+
+  let resume: Resume?
+}
+
 struct MaterialAnswer: Decodable, Equatable, Sendable {
   struct Citation: Decodable, Equatable, Hashable, Sendable {
     let page: Int?
@@ -249,6 +269,30 @@ struct OnboardingAPI: Sendable {
     case .unauthorized:
       throw APIError.unauthorized
     case .badRequest, .internalServerError, .undocumented:
+      throw APIError.unavailable
+    }
+  }
+
+  /// Only a goal typed and not confirmed: a goal or the day continues on its own screens.
+  func resume(token: String) async throws -> OnboardingResume {
+    let output = try await clients.perform(token: token) { client in
+      try await client.getOnboardingResume()
+    }
+
+    switch output {
+    case .ok(let response):
+      let body: ResumeBody = try PracticeJSON.recode(try response.body.json)
+
+      guard let resume = body.resume, resume.kind == "draft", let draftId = resume.draftId,
+        let prompt = resume.prompt
+      else {
+        return OnboardingResume(draft: nil)
+      }
+
+      return OnboardingResume(draft: .init(draftId: draftId, prompt: prompt))
+    case .unauthorized:
+      throw APIError.unauthorized
+    default:
       throw APIError.unavailable
     }
   }

@@ -63,9 +63,11 @@ struct TodayScreen: View {
   }
 }
 
+/// A goal typed and not confirmed yet, on the web or here, comes back where it was left.
 private struct TodayStartGoal: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(OnboardingStore.self) private var onboarding
 
   var body: some View {
     List {
@@ -97,8 +99,27 @@ private struct TodayStartGoal: View {
         }
       }
 
+      if let draft = onboarding.resume.value?.draft {
+        Section {
+          Text(draft.prompt)
+
+          Button {
+            router.open(.startGoal(draftId: draft.draftId))
+          } label: {
+            Text(
+              "Continue", tableName: "Today",
+              comment: "Opens the goal the learner typed and hasn't confirmed yet")
+          }
+        } header: {
+          Text(
+            "What you wrote", tableName: "Onboarding",
+            comment: "Header over the learner's typed goal")
+        }
+      }
+
       GoalStartEntry()
     }
+    .loads(onboarding.resume, refreshable: false)
     .navigationSubtitle(Text(Date.now, format: .dateTime.weekday(.abbreviated).month().day()))
   }
 }

@@ -6,6 +6,7 @@ import Observation
 @Observable
 final class OnboardingStore {
   private(set) var sentGoal: SentGoal?
+  let resume: Resource<OnboardingResume>
 
   @ObservationIgnored private let api: OnboardingAPI
   @ObservationIgnored private let cache: AppCache
@@ -15,10 +16,20 @@ final class OnboardingStore {
   @ObservationIgnored private var planLinks: [String: Resource<Components.Schemas.PlanLink>] = [:]
 
   init(clients: APIClientFactory, cache: AppCache, session: SessionStore) {
-    self.api = OnboardingAPI(clients: clients)
+    let api = OnboardingAPI(clients: clients)
+    self.api = api
     self.cache = cache
     self.clients = clients
     self.session = session
+    resume = cache.resource(
+      audience: .signedIn, domains: [.goals], isEmpty: { $0.draft == nil },
+      fetch: { session in
+        guard let session else {
+          return nil
+        }
+
+        return try await api.resume(token: session.bearerToken)
+      })
   }
 
   func send(_ goal: SentGoal) {
@@ -43,9 +54,12 @@ final class OnboardingStore {
 
   func understand(goal: String) async throws -> OnboardingDraft {
     try await ensureSession()
-    return try await cache.onboardingWrite { [api] identity in
+    let draft = try await cache.onboardingWrite { [api] identity in
       try await api.understand(goal: goal, token: identity.bearerToken)
     }
+
+    resume.invalidate()
+    return draft
   }
 
   /// Reading starts nothing.

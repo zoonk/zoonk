@@ -30,8 +30,9 @@ enum AppRoute: Hashable, Identifiable {
   case mindMap(chapterId: String)
   case pronunciation(goalId: String? = nil)
   case conversation(conversationId: String)
-  /// `goal` only fills the box: reading the words waits for the learner's tap.
-  case startGoal(goal: String? = nil)
+  /// `goal` only fills the box: reading the words waits for the learner's tap. `draftId` opens a
+  /// goal typed before and not confirmed yet.
+  case startGoal(goal: String? = nil, draftId: String? = nil)
   case goalSetup(goalId: String)
   case courseStart(courseId: String, chapterId: String? = nil)
   case explain(goalId: String)
