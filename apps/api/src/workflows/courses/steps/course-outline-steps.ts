@@ -161,8 +161,10 @@ type BandCoverage = { anchors: BandAnchors; plan: BandPlan; taughtSkillIds: stri
 
 /**
  * A shared band's chapters already teach most of what a new goal's skills ask in other words, so
- * they're tagged with those skills, and only the rest get chapters of their own. An exam's band
- * keeps each chapter to one of its subjects, which this doesn't weigh, so it writes as before.
+ * they're tagged with those skills, and only the rest get chapters of their own. A skill's next
+ * chapter may be there too, written for another goal's skill on the same topic, so it's written
+ * only when none is. An exam's band keeps each chapter to one of its subjects, which this doesn't
+ * weigh, so it writes as before.
  */
 export async function coverBandSkillsStep(
   input: BandInput & BandWait,
@@ -179,11 +181,20 @@ async function coverBandSkills({
 }: BandInput & BandWait): Promise<BandCoverage> {
   const { analytics, courseId, plan, scope, workflowRunId } = input;
 
-  if (plan.isNewBand || scope.ownerId || scope.exams?.length || plan.skills.length === 0) {
+  const asked = [...plan.skills, ...plan.extensions.map((extension) => extension.skill)];
+
+  if (plan.isNewBand || scope.ownerId || scope.exams?.length || asked.length === 0) {
     return { anchors: {}, plan, taughtSkillIds: [] };
   }
 
-  const chapters = await loadBandChapters({ courseId, level: plan.level, ownerId: null });
+  const chapters = await loadBandChapters({
+    courseId,
+    level: plan.level,
+    ownerId: null,
+    withToolChapters: !plan.withoutTools,
+  });
+
+  const numbers = new Map(chapters.map((chapter, index) => [chapter.chapterId, index + 1]));
 
   const { data } = await findTeachingChapters({
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
@@ -192,7 +203,15 @@ async function coverBandSkills({
     language: scope.language,
     level: plan.level,
     serviceTier: getBandTier({ ...input, background, waitedSkillId }),
-    skills: plan.skills.map(({ description, key, name }) => ({ description, key, name })),
+    skills: [
+      ...plan.skills.map(({ description, key, name }) => ({ description, key, name })),
+      ...plan.extensions.map(({ chapters: taught, skill }) => ({
+        description: skill.description,
+        key: skill.key,
+        name: skill.name,
+        taughtIn: taught.flatMap((chapter) => numbers.get(chapter.chapterId) ?? []),
+      })),
+    ],
   });
 
   const chapterAt = (number: number | null) =>
@@ -200,7 +219,7 @@ async function coverBandSkills({
 
   const answers = new Map(data.map((answer) => [answer.key, answer]));
 
-  const teaching = plan.skills.flatMap((skill) => {
+  const teaching = asked.flatMap((skill) => {
     const chapterId = chapterAt(answers.get(skill.key)?.chapter ?? null);
     return chapterId ? [{ chapterId, skill }] : [];
   });
@@ -222,6 +241,7 @@ async function coverBandSkills({
     ),
     plan: {
       ...plan,
+      extensions: plan.extensions.filter((extension) => !taught.has(extension.skill.id)),
       skills: untaught,
       taughtElsewhere: [...plan.taughtElsewhere, ...teaching.map((entry) => entry.skill.name)],
     },

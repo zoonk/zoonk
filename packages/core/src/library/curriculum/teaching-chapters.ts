@@ -5,6 +5,7 @@ import { getCourseCurriculumCacheTag } from "../../cache/tags";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { isChallengeIdentityKey } from "../challenges/challenge-lesson-spec";
+import { needsTool } from "../chapters/chapter-tools";
 
 type BandChapter = { chapterId: string; lessons: string[]; title: string };
 
@@ -15,10 +16,12 @@ export async function loadBandChapters({
   courseId,
   level,
   ownerId,
+  withToolChapters,
 }: {
   courseId: string;
   level: CourseLevel;
   ownerId: string | null;
+  withToolChapters: boolean;
 }): Promise<BandChapter[]> {
   const visible = libraryRowsVisibleTo(ownerId);
 
@@ -33,6 +36,7 @@ export async function loadBandChapters({
             where: { lesson: { ...visible, setAsideAt: null } },
           },
           title: true,
+          tools: true,
         },
       },
       chapterId: true,
@@ -40,13 +44,17 @@ export async function loadBandChapters({
     where: { chapter: visible, courseId, level },
   });
 
-  return placements.map(({ chapter, chapterId }) => ({
+  const usable = placements.filter((at) => withToolChapters || !needsTool(at.chapter.tools));
+
+  const chapters = usable.map(({ chapter, chapterId }) => ({
     chapterId,
     lessons: chapter.lessons
       .filter((entry) => !isChallengeIdentityKey(entry.lesson.identityKey))
       .map((entry) => entry.lesson.title),
     title: chapter.title,
   }));
+
+  return chapters.filter((chapter) => chapter.lessons.length > 0);
 }
 
 export async function tagChapterSkills(tags: readonly ChapterSkills[]): Promise<void> {

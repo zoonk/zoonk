@@ -12,6 +12,8 @@ import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
+import { listSkillExtensions } from "@zoonk/core/library/curriculum/skill-extensions";
+import { OUTLINE_AHEAD_DAYS } from "@zoonk/core/lookahead/outline-ahead";
 import { createGoalPlan } from "@zoonk/core/plans/create";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -20,7 +22,11 @@ import {
   courseChapterFixture,
   libraryChapterFixture,
 } from "@zoonk/testing/fixtures/library-chapters";
-import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import {
+  chapterLessonFixture,
+  lessonSkillFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
@@ -55,6 +61,7 @@ const scope = {
 };
 
 const TIMEOUT = 60_000;
+const MAX_ASK_ROUNDS = 10;
 
 async function planWaitingGoal(
   idsByKey: Record<string, string>,
@@ -205,7 +212,15 @@ function toSkillRef(skill: { description: string; id: string; name: string }) {
   return { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
 }
 
-async function goalWaitingOn({ courseId, skillId }: { courseId: string; skillId: string }) {
+async function goalWaitingOn({
+  courseId,
+  lessons = 2,
+  skillId,
+}: {
+  courseId: string;
+  lessons?: number;
+  skillId: string;
+}) {
   const [user, skill] = await Promise.all([
     userFixture(),
     prisma.skill.findUniqueOrThrow({ where: { id: skillId } }),
@@ -232,7 +247,7 @@ async function goalWaitingOn({ courseId, skillId }: { courseId: string; skillId:
         {
           area: "Italiano",
           courseIds: [courseId],
-          lessons: 2,
+          lessons,
           name: skill.name,
           phase: 0,
           skillId,
@@ -243,6 +258,31 @@ async function goalWaitingOn({ courseId, skillId }: { courseId: string; skillId:
   });
 
   return goal;
+}
+
+async function askForNextChapters(goalId: string, round = 0): Promise<void> {
+  const asks = await listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId });
+
+  if (asks.length === 0 || round === MAX_ASK_ROUNDS) {
+    return;
+  }
+
+  await Promise.all(
+    asks.map((ask) =>
+      courseOutlineWorkflow({ bands: ask.bands, courseId: ask.courseId, scope: ask.scope }),
+    ),
+  );
+
+  await askForNextChapters(goalId, round + 1);
+}
+
+async function addLesson(chapterId: string) {
+  const lesson = await libraryLessonFixture({ homeChapterId: chapterId });
+  await chapterLessonFixture({ chapterId, lessonId: lesson.id, position: 0 });
+}
+
+function sortIds(ids: readonly (string | null)[]) {
+  return ids.toSorted((first, second) => (first ?? "").localeCompare(second ?? ""));
 }
 
 function teachNothing(params: TeachingChaptersParams) {
@@ -391,6 +431,165 @@ describe(courseOutlineWorkflow, () => {
       expect(items.map((item) => item.lessonId)).toStrictEqual(
         lodging?.lessons.map((lesson) => lesson.id),
       );
+    });
+
+    it("writes a topic's next chapters once for every goal whose skill maps onto it", async () => {
+      const course = await courseFixture({
+        language: "pt",
+        outlineStatus: "completed",
+        targetLanguage: "it",
+        title: "Italiano",
+      });
+
+      const [[lodging], ...skills] = await Promise.all([
+        writtenBand({
+          chapters: [
+            {
+              lessons: [
+                "Datas e hóspedes",
+                "Disponibilidade e reserva",
+                "Condições da hospedagem",
+                "Chegada e check-in",
+                "Pedidos durante a estadia",
+              ],
+              title: "Reserva e hospedagem",
+            },
+          ],
+          courseId: course.id,
+        }),
+        italianSkill("Hospedar-se em um hotel"),
+        italianSkill("Fazer o check-in em um albergue"),
+        italianSkill("Ficar em uma pousada"),
+      ]);
+
+      const learners = await Promise.all(
+        skills.map(async (skill) => ({
+          goal: await goalWaitingOn({ courseId: course.id, lessons: 20, skillId: skill.id }),
+          skill,
+        })),
+      );
+
+      vi.mocked(findTeachingChapters).mockImplementation(async (params) => {
+        const titles = params.chapters.map((item) => item.title);
+        const first = titles.indexOf(lodging?.chapter.title ?? "") + 1;
+
+        const findNext = (taughtIn: readonly number[]) =>
+          titles.findIndex(
+            (title, index) => title.startsWith("Mais ") && !taughtIn.includes(index + 1),
+          ) + 1;
+
+        const answer = ({ key, taughtIn = [] }: (typeof params.skills)[number]) => {
+          const found = taughtIn.length === 0 ? first : findNext(taughtIn);
+          const chapter = found > 0 ? found : null;
+          return { after: chapter ?? taughtIn.at(-1) ?? 0, chapter, key };
+        };
+
+        return taskResult(params.skills.map((skill) => answer(skill)));
+      });
+
+      vi.mocked(generateCourseOutline).mockImplementation(async (params) =>
+        outlineResult({
+          chapters: (params.extendSkills ?? []).map((skill) =>
+            interviewChapter(`Mais ${skill.name} ${skill.chapters.length}`, [skill.key]),
+          ),
+          uncoveredSkillKeys: [],
+        }),
+      );
+
+      async function mapOnto({ goal, skill }: (typeof learners)[number]) {
+        await courseOutlineWorkflow({
+          bands: [{ level: "beginner", skills: [toSkillRef(skill)] }],
+          courseId: course.id,
+          scope: ITALIAN_SCOPE,
+        });
+
+        await askForNextChapters(goal.id);
+      }
+
+      for (const learner of learners) {
+        // oxlint-disable-next-line no-await-in-loop -- Each goal maps onto the band the goals before it left.
+        await mapOnto(learner);
+      }
+
+      const placements = await prisma.courseChapter.findMany({
+        include: {
+          chapter: {
+            select: {
+              lessons: { orderBy: { position: "asc" }, select: { lessonId: true } },
+              title: true,
+            },
+          },
+        },
+        orderBy: { position: "asc" },
+        where: { courseId: course.id },
+      });
+
+      expect(placements.map((placement) => placement.chapter.title)).toStrictEqual([
+        "Reserva e hospedagem",
+        ...[1, 2, 3, 4].map((count) => `Mais ${skills[0]?.name} ${count}`),
+      ]);
+
+      const [items, asks] = await Promise.all([
+        Promise.all(learners.map(({ goal }) => lessonItems(goal.id))),
+        Promise.all(
+          learners.map(({ goal }) =>
+            listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id }),
+          ),
+        ),
+      ]);
+
+      const bandLessons = placements.flatMap((placement) =>
+        placement.chapter.lessons.map((lesson) => lesson.lessonId),
+      );
+
+      expect(
+        items.map((goalItems) => sortIds(goalItems.map((item) => item.lessonId))),
+      ).toStrictEqual(learners.map(() => sortIds(bandLessons)));
+
+      expect(asks).toStrictEqual([[], [], []]);
+      expect(generateCourseOutline).toHaveBeenCalledTimes(4);
+    });
+
+    it("offers the band check only chapters with lessons a goal can study", async () => {
+      const course = await courseFixture({
+        language: "pt",
+        outlineStatus: "completed",
+        targetLanguage: "it",
+        title: "Italiano",
+      });
+
+      const [[, booking, hostels], skill] = await Promise.all([
+        writtenBand({
+          chapters: [
+            { lessons: ["Disponibilidade de quartos"], title: "Reserva e hospedagem" },
+            { lessons: ["Reserva pelo aplicativo"], title: "Reservas pelo aplicativo" },
+            { lessons: ["Quartos compartilhados"], title: "Albergues e hostels" },
+          ],
+          courseId: course.id,
+        }),
+        italianSkill("Hospedar-se em um hotel"),
+      ]);
+
+      await Promise.all([
+        prisma.chapter.update({
+          data: { tools: [{ essential: true, name: "Aplicativo de reservas" }] },
+          where: { id: booking?.chapter.id },
+        }),
+        prisma.lesson.updateMany({
+          data: { setAsideAt: new Date() },
+          where: { homeChapterId: hostels?.chapter.id },
+        }),
+      ]);
+
+      await courseOutlineWorkflow({
+        bands: [{ level: "beginner", skills: [toSkillRef(skill)], withToolChapters: false }],
+        courseId: course.id,
+        scope: ITALIAN_SCOPE,
+      });
+
+      expect(
+        vi.mocked(findTeachingChapters).mock.calls[0]?.[0].chapters.map((chapter) => chapter.title),
+      ).toStrictEqual(["Reserva e hospedagem"]);
     });
 
     it("queues Main's refresh for the chapters it tags, whether or not Main answers", async () => {
@@ -1081,12 +1280,15 @@ describe(courseOutlineWorkflow, () => {
         libraryChapterFixture({ level: "overview" }),
       ]);
 
-      await courseChapterFixture({
-        chapterId: existing.id,
-        courseId: course.id,
-        level: "overview",
-        position: 0,
-      });
+      await Promise.all([
+        courseChapterFixture({
+          chapterId: existing.id,
+          courseId: course.id,
+          level: "overview",
+          position: 0,
+        }),
+        addLesson(existing.id),
+      ]);
 
       const result = await courseOutlineWorkflow({
         bands: [{ level: "overview", skills: bandSkills }],
@@ -1231,12 +1433,15 @@ describe(courseOutlineWorkflow, () => {
         libraryChapterFixture({ level: "overview" }),
       ]);
 
-      await courseChapterFixture({
-        chapterId: existing.id,
-        courseId: course.id,
-        level: "overview",
-        position: 0,
-      });
+      await Promise.all([
+        courseChapterFixture({
+          chapterId: existing.id,
+          courseId: course.id,
+          level: "overview",
+          position: 0,
+        }),
+        addLesson(existing.id),
+      ]);
 
       const [first, ...rest] = recordedOutline.chapters;
 
@@ -1407,6 +1612,8 @@ describe(courseOutlineWorkflow, () => {
         courseFixture({ outlineRunId: "bands-run", outlineStatus: "running", title: "Immunology" }),
         libraryChapterFixture({ level: "overview" }),
       ]);
+
+      await addLesson(savedChapter.id);
 
       vi.mocked(getRun).mockReturnValueOnce({
         exists: Promise.resolve(true),

@@ -6,6 +6,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { draftAgainWhenFlawed } from "../_utils/draft-again";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type CourseLevel } from "./_utils/course-levels";
 import template from "./teaching-chapters.prompt.md";
 
@@ -19,7 +20,13 @@ type Answer = z.infer<typeof answerSchema>;
 
 type BandChapter = { title: string; lessons: string[] };
 
-type BandSkill = { key: string; name: string; description: string };
+type BandSkill = {
+  key: string;
+  name: string;
+  description: string;
+  /** The band's chapters that teach it so far, by number, when its learners need more of it. */
+  taughtIn?: number[];
+};
 
 export type TeachingChaptersParams = {
   language: string;
@@ -35,7 +42,10 @@ export type TeachingChaptersParams = {
   analytics?: AiGenerationContext;
 };
 
-/** `chapter` teaches the skill already; otherwise a chapter for it goes after `after` (0: first). */
+/**
+ * `chapter` teaches the skill already, or more of it than the chapters it's taught in; otherwise a
+ * chapter for it goes after `after` (0: first).
+ */
 type TeachingChapter = { after: number; chapter: number | null; key: string };
 
 /** Every skill gets an answer: one left out would read as untaught and get a second chapter. */
@@ -49,6 +59,18 @@ function formatChapter({ chapter, index }: { chapter: BandChapter; index: number
   return `${index + 1}. ${chapter.title}: ${chapter.lessons.join("; ")}`;
 }
 
+function formatSkill(skill: BandSkill): string {
+  const taught = skill.taughtIn?.length ? ` (taught in ${skill.taughtIn.join(", ")})` : "";
+  return `- ${skill.key}: ${skill.name}. ${skill.description}${taught}`;
+}
+
+function buildSystemPrompt(params: TeachingChaptersParams): string {
+  return selectPromptVariants({
+    template,
+    variants: { continued: params.skills.some((skill) => skill.taughtIn?.length) },
+  });
+}
+
 function buildUserPrompt(params: TeachingChaptersParams): string {
   return `
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
@@ -57,11 +79,19 @@ function buildUserPrompt(params: TeachingChaptersParams): string {
     BAND_CHAPTERS:
 ${params.chapters.map((chapter, index) => formatChapter({ chapter, index })).join("\n")}
     SKILLS:
-${params.skills.map((skill) => `- ${skill.key}: ${skill.name}. ${skill.description}`).join("\n")}
+${params.skills.map((skill) => formatSkill(skill)).join("\n")}
   `;
 }
 
-function isValid({ answer, count }: { answer?: Answer; count: number }): boolean {
+function isValid({
+  answer,
+  count,
+  skill,
+}: {
+  answer?: Answer;
+  count: number;
+  skill: BandSkill;
+}): boolean {
   if (!answer) {
     return false;
   }
@@ -70,7 +100,10 @@ function isValid({ answer, count }: { answer?: Answer; count: number }): boolean
 
   return chapter === null
     ? Number.isInteger(after) && after >= 0 && after <= count
-    : Number.isInteger(chapter) && chapter >= 1 && chapter <= count;
+    : Number.isInteger(chapter) &&
+        chapter >= 1 &&
+        chapter <= count &&
+        !skill.taughtIn?.includes(chapter);
 }
 
 function countInvalid({
@@ -82,7 +115,7 @@ function countInvalid({
   count: number;
   skills: readonly BandSkill[];
 }): number {
-  return skills.filter(({ key }) => !isValid({ answer: answers[key], count })).length;
+  return skills.filter((skill) => !isValid({ answer: answers[skill.key], count, skill })).length;
 }
 
 function toTeachingChapter({ answer, key }: { answer: Answer; key: string }): TeachingChapter {
@@ -121,7 +154,7 @@ async function draftAnswers({
 }
 
 export async function findTeachingChapters(params: TeachingChaptersParams) {
-  const systemPrompt = template;
+  const systemPrompt = buildSystemPrompt(params);
   const userPrompt = buildUserPrompt(params);
   const count = params.chapters.length;
 
@@ -133,7 +166,9 @@ export async function findTeachingChapters(params: TeachingChaptersParams) {
 
   // Only an answer that names no chapter may write one: a wrong number would repeat a topic.
   if (countInvalid({ answers: kept.answers, count, skills: params.skills }) > 0) {
-    throw new Error("The teaching chapters named a chapter the band doesn't have.");
+    throw new Error(
+      "The teaching chapters named a chapter the band doesn't have, or one the skill has.",
+    );
   }
 
   return {

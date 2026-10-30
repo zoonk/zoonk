@@ -386,6 +386,7 @@ describe("skill extensions", () => {
         afterChapterId: chapter.id,
         chapters: [
           {
+            chapterId: chapter.id,
             lessons: Array.from(
               { length: OUTLINED_LESSONS },
               (_, index) => `Candidaturas e entrevistas ${index + 1}`,

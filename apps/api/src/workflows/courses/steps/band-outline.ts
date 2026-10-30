@@ -124,7 +124,7 @@ export function toOutlineParams({
     exams: scope.exams,
     extendSkills: plan.extensions.map(({ chapters, lessons, skill }) => ({
       area: forExam ? skill.area : null,
-      chapters,
+      chapters: chapters.map((chapter) => ({ lessons: chapter.lessons, title: chapter.title })),
       description: skill.description,
       key: skill.key,
       lessons,

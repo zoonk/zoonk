@@ -18,7 +18,7 @@ import {
 
 const MAX_EXTENSION_LESSONS = 10;
 
-type SkillChapter = { lessons: string[]; title: string };
+type SkillChapter = { chapterId: string; lessons: string[]; title: string };
 
 export type ExtensionPlan = {
   afterChapterId: string;
@@ -130,6 +130,7 @@ function planExtension({
     {
       afterChapterId: last.placement.chapterId,
       chapters: teaching.map((entry) => ({
+        chapterId: entry.placement.chapterId,
         lessons: entry.lessons.map((lesson) => lesson.title),
         title: entry.placement.chapter.title,
       })),

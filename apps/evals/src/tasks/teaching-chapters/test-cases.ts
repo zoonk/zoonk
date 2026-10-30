@@ -4,8 +4,8 @@ import { type TeachingChaptersExpected } from "./scorer";
 
 type TeachingChaptersTestCase = TestCase<TeachingChaptersExpected, TeachingChaptersParams>;
 
-function skill(key: string, name: string, description: string) {
-  return { description, key, name };
+function skill(key: string, name: string, description: string, taughtIn?: number[]) {
+  return { description, key, name, ...(taughtIn ? { taughtIn } : {}) };
 }
 
 /** The Italian course's first beginner band on the PR preview (29 Oct 2026). */
@@ -167,6 +167,33 @@ const ITALIAN_BEGINNER = [
     ],
     title: "Acontecimentos recentes",
   },
+];
+
+/** The beginner band after another learner's plan had its restaurant and lodging topics continued. */
+const ITALIAN_BEGINNER_CONTINUED = [
+  ...ITALIAN_BEGINNER.slice(0, 12),
+  {
+    lessons: [
+      "Alergias e intolerâncias no pedido",
+      "Pratos sem um ingrediente",
+      "Prato errado ou frio",
+      "Reclamação educada ao garçom",
+      "Divisão da conta entre amigos",
+    ],
+    title: "Restrições alimentares e problemas com o pedido",
+  },
+  ...ITALIAN_BEGINNER.slice(12, 14),
+  {
+    lessons: [
+      "Quarto com defeito",
+      "Barulho e troca de quarto",
+      "Cobranças indevidas na conta",
+      "Extensão da estadia",
+      "Check-out com pendências",
+    ],
+    title: "Problemas durante a estadia",
+  },
+  ...ITALIAN_BEGINNER.slice(14),
 ];
 
 /** The Italian course's intermediate band on the PR preview (30 Oct 2026). */
@@ -544,6 +571,66 @@ export const TEST_CASES: TeachingChaptersTestCase[] = [
           "lost",
           "Pedir ajuda depois de perder um objeto ou sofrer um acidente",
           "Descrever o objeto perdido ou o acidente e dizer onde você está para receber ajuda.",
+        ),
+      ],
+    },
+  },
+  {
+    expected: {
+      allergy: { chapters: [13] },
+      calls: { chapters: [null] },
+      directions: { chapters: [null] },
+      restaurant: { chapters: [13] },
+      stay: { chapters: [16] },
+      symptoms: { chapters: [null] },
+      weather: { chapters: [null] },
+    },
+    id: "pt-italian-beginner-band-continued",
+    userInput: {
+      chapters: ITALIAN_BEGINNER_CONTINUED,
+      courseTitle: "Italiano",
+      language: "pt",
+      level: "beginner",
+      skills: [
+        skill(
+          "restaurant",
+          "Pedir uma refeição em um restaurante",
+          "Escolher no cardápio, tirar dúvidas sobre ingredientes, pedir e pagar a conta.",
+          [12],
+        ),
+        skill(
+          "stay",
+          "Hospedar-se em um hotel",
+          "Confirmar a reserva, fazer o check-in e perguntar pelos serviços da hospedagem.",
+          [15],
+        ),
+        skill(
+          "calls",
+          "Resolver um assunto breve por telefone",
+          "Abrir uma ligação, dizer o motivo, pedir repetição e confirmar os dados ouvidos.",
+          [8],
+        ),
+        skill(
+          "directions",
+          "Pedir e seguir indicações na cidade",
+          "Perguntar como chegar a um lugar e acompanhar um percurso explicado.",
+          [10],
+        ),
+        skill(
+          "symptoms",
+          "Descrever sintomas em uma consulta",
+          "Dizer onde dói e há quanto tempo, e entender orientações simples de cuidado.",
+          [17],
+        ),
+        skill(
+          "allergy",
+          "Explicar uma alergia ao pedir comida",
+          "Dizer a que você é alérgico, perguntar pelos ingredientes e pedir um prato sem eles.",
+        ),
+        skill(
+          "weather",
+          "Falar do tempo e mudar planos conforme a previsão",
+          "Descrever as condições do tempo, entender uma previsão simples e ajustar atividades.",
         ),
       ],
     },

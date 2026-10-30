@@ -75,6 +75,34 @@ describe(findTeachingChapters, () => {
     ]);
   });
 
+  it("asks again when a skill the band already teaches gets one of its own chapters", async () => {
+    vi.mocked(generateText)
+      .mockResolvedValueOnce(
+        answer({ check: { after: 1, chapter: 1 }, stay: { after: 1, chapter: 2 } }),
+      )
+      .mockResolvedValueOnce(
+        answer({ check: { after: 1, chapter: null }, stay: { after: 1, chapter: 2 } }),
+      );
+
+    const { data } = await findTeachingChapters({
+      chapters: CHAPTERS,
+      courseTitle: "Italiano",
+      language: "pt",
+      level: "beginner",
+      skills: [
+        { ...skill("stay"), taughtIn: [1] },
+        { ...skill("check"), taughtIn: [1] },
+      ],
+    });
+
+    expect(generateText).toHaveBeenCalledTimes(2);
+
+    expect(data).toStrictEqual([
+      { after: 2, chapter: 2, key: "stay" },
+      { after: 1, chapter: null, key: "check" },
+    ]);
+  });
+
   it("fails instead of writing a chapter when no draft names a real one", async () => {
     vi.mocked(generateText).mockResolvedValue(
       answer({ call: { after: 0, chapter: 5 }, stay: { after: 0, chapter: 1 } }),
