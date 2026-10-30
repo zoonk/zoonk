@@ -727,8 +727,10 @@ final class ZoonkUITests: XCTestCase {
   private func performAccessibilityAudit(
     in app: XCUIApplication, skipping skipped: XCUIAccessibilityAuditType = []
   ) throws {
+    // Frames carry floating-point noise: Zu's bar starts at y 61.99999999999999 and its account
+    // button at 61.99999999999997.
     let bars = [app.navigationBars.firstMatch, app.tabBars.firstMatch, app.searchFields.firstMatch]
-      .filter(\.exists).map(\.frame)
+      .filter(\.exists).map { $0.frame.insetBy(dx: -0.01, dy: -0.01) }
 
     try app.performAccessibilityAudit(for: .all.subtracting(skipped.union(.contrast))) { issue in
       guard let element = issue.element else {
