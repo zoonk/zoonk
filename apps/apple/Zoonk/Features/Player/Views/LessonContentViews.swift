@@ -77,6 +77,8 @@ struct LessonPictureView: View {
   let image: LessonStepImage?
   let description: LessonPictureDescription?
   let isPending: Bool
+  /// A question's picture that never came says what it would show, since the question may need it.
+  var asks = false
 
   var body: some View {
     if let image, let url = URL(string: image.url) {
@@ -91,6 +93,17 @@ struct LessonPictureView: View {
       .font(.subheadline)
       .foregroundStyle(.secondary)
       .accessibilityHint(Text(description.alt))
+    } else if let description, asks {
+      Label {
+        Text(description.alt)
+      } icon: {
+        Image(systemName: "photo")
+      }
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding()
+      .background(.fill.tertiary, in: .rect(cornerRadius: 16))
     }
   }
 

@@ -100,7 +100,7 @@ private struct HookStepView: View {
       .font(.caption.monospaced())
       .foregroundStyle(.secondary)
       LessonQuestionText(text: question)
-      StepMedia(step: step, description: content.image, visual: content.visual)
+      StepMedia(step: step, description: content.image, visual: content.visual, asks: true)
     } else {
       // A read screen leads with its picture; a spread has it on the facing page.
       if !isPaneSplit {
@@ -137,6 +137,11 @@ private struct ExplanationStepView: View {
   let content: ExplanationContent
   let part: LessonStepPart
 
+  /// A labeled diagram's key means nothing without the picture it labels.
+  private var isExploredPictureLost: Bool {
+    content.explore?.template == "labeledDiagram" && step.image == nil && !step.imagePending
+  }
+
   var body: some View {
     switch part {
     case .screen:
@@ -155,7 +160,7 @@ private struct ExplanationStepView: View {
         StepMedia(step: step, description: content.image, visual: content.visual)
       }
 
-      if let explore = content.explore,
+      if let explore = content.explore, !isExploredPictureLost,
         let renderer = activityRenderers.renderer(for: explore.template)
       {
         renderer.canvas(
@@ -254,7 +259,7 @@ private struct CheckStepView: View {
       }
 
       LessonQuestionText(text: content.question)
-      StepMedia(step: step, description: content.image, visual: content.visual)
+      StepMedia(step: step, description: content.image, visual: content.visual, asks: true)
     case .turn:
       LessonOptionList(
         options: content.options.map {
@@ -512,9 +517,11 @@ struct StepMedia: View {
   let step: LessonStep
   let description: LessonPictureDescription?
   let visual: LessonVisual?
+  var asks = false
 
   var body: some View {
-    LessonPictureView(image: step.image, description: description, isPending: step.imagePending)
+    LessonPictureView(
+      image: step.image, description: description, isPending: step.imagePending, asks: asks)
 
     if let visual {
       LessonVisualView(visual: visual)
