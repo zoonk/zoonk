@@ -30,13 +30,13 @@ function daysAgo(date: Date, timeZone: string): number {
   return daysBefore(getDateInTimeZone({ date, timeZone }), timeZone);
 }
 
-async function atStudyClocks(check: () => Promise<void>): Promise<void> {
+const STUDY_CLOCKS = ["2026-10-18T02:30:00Z", "2026-10-18T03:30:00Z"];
+
+async function atStudyClock(clock: string, check: () => Promise<void>): Promise<void> {
   vi.useFakeTimers({ toFake: ["Date"] });
 
   try {
-    vi.setSystemTime(new Date("2026-10-18T02:30:00Z"));
-    await check();
-    vi.setSystemTime(new Date("2026-10-18T03:30:00Z"));
+    vi.setSystemTime(new Date(clock));
     await check();
   } finally {
     vi.useRealTimers();
@@ -216,29 +216,32 @@ describe("persona command", () => {
       },
     );
 
-    it("rewinds a persona to the day its plan was made, before anything after placement", () =>
-      atStudyClocks(async () => {
-        const { email, userId } = await createPersona({ day: 1, name: "ana" });
-        const persona = await loadPersona(userId);
-        const goal = getGoal(persona);
+    it.each(STUDY_CLOCKS)(
+      "rewinds a persona to the day its plan was made, before anything after placement (at %s)",
+      (clock) =>
+        atStudyClock(clock, async () => {
+          const { email, userId } = await createPersona({ day: 1, name: "ana" });
+          const persona = await loadPersona(userId);
+          const goal = getGoal(persona);
 
-        expect(email).toMatch(/^persona-ana-[\da-f]{6}@zoonk\.test$/u);
-        expect(daysAgo(goal.createdAt, goal.timeZone)).toBe(0);
+          expect(email).toMatch(/^persona-ana-[\da-f]{6}@zoonk\.test$/u);
+          expect(daysAgo(goal.createdAt, goal.timeZone)).toBe(0);
 
-        expect(goal.targetDate?.getUTCMonth()).toBe(NOVEMBER);
-        expect(goal.targetDate?.getUTCDay()).toBe(SUNDAY);
+          expect(goal.targetDate?.getUTCMonth()).toBe(NOVEMBER);
+          expect(goal.targetDate?.getUTCDay()).toBe(SUNDAY);
 
-        expect(
-          persona.attempts.map((attempt) => daysAgo(attempt.answeredAt, goal.timeZone)),
-        ).toStrictEqual([0, 0, 0, 0]);
+          expect(
+            persona.attempts.map((attempt) => daysAgo(attempt.answeredAt, goal.timeZone)),
+          ).toStrictEqual([0, 0, 0, 0]);
 
-        expect(persona.attempts.every((attempt) => attempt.answeredAt <= new Date())).toBe(true);
+          expect(persona.attempts.every((attempt) => attempt.answeredAt <= new Date())).toBe(true);
 
-        expect(goal.plan.items.filter((item) => item.status !== "todo")).toStrictEqual([]);
-        expect(persona.mistakes).toStrictEqual([]);
-        expect(persona.learningEvents).toStrictEqual([]);
-        expect(persona.studySessions).toStrictEqual([]);
-      }));
+          expect(goal.plan.items.filter((item) => item.status !== "todo")).toStrictEqual([]);
+          expect(persona.mistakes).toStrictEqual([]);
+          expect(persona.learningEvents).toStrictEqual([]);
+          expect(persona.studySessions).toStrictEqual([]);
+        }),
+    );
 
     it("starts the plan earlier, filling the extra days with the persona's usual history", async () => {
       const { userId } = await createPersona({ day: 30, name: "pedro" });
@@ -260,28 +263,31 @@ describe("persona command", () => {
       });
     });
 
-    it("moves the persona into the past when it's been away, so it comes back to missed days", () =>
-      atStudyClocks(async () => {
-        const { userId } = await createPersona({ awayDays: 5, name: "lucas" });
-        const persona = await loadPersona(userId);
-        const goal = getGoal(persona);
+    it.each(STUDY_CLOCKS)(
+      "moves the persona into the past when it's been away, so it comes back to missed days (at %s)",
+      (clock) =>
+        atStudyClock(clock, async () => {
+          const { userId } = await createPersona({ awayDays: 5, name: "lucas" });
+          const persona = await loadPersona(userId);
+          const goal = getGoal(persona);
 
-        const newestStudy = Math.min(
-          ...persona.studySessions.flatMap((session) =>
-            session.startedAt ? [daysAgo(session.startedAt, goal.timeZone)] : [],
-          ),
-        );
+          const newestStudy = Math.min(
+            ...persona.studySessions.flatMap((session) =>
+              session.startedAt ? [daysAgo(session.startedAt, goal.timeZone)] : [],
+            ),
+          );
 
-        expect(daysAgo(goal.createdAt, goal.timeZone)).toBe(18 + 5);
+          expect(daysAgo(goal.createdAt, goal.timeZone)).toBe(18 + 5);
 
-        expect(listSessionDays(persona, goal.timeZone)).toStrictEqual({
-          finished: listStudyDays(persona, goal.timeZone).filter((day) => day > 5),
-          open: [5],
-        });
+          expect(listSessionDays(persona, goal.timeZone)).toStrictEqual({
+            finished: listStudyDays(persona, goal.timeZone).filter((day) => day > 5),
+            open: [5],
+          });
 
-        expect(newestStudy).toBe(5);
-        expect(daysAgo(persona.progress?.lastActiveAt ?? new Date(), goal.timeZone)).toBe(5);
-      }));
+          expect(newestStudy).toBe(5);
+          expect(daysAgo(persona.progress?.lastActiveAt ?? new Date(), goal.timeZone)).toBe(5);
+        }),
+    );
 
     it("gives the copy the plan, time zone and language asked for", async () => {
       const { userId } = await createPersona({
