@@ -368,8 +368,10 @@ struct ChallengeScreen: View {
     return challenge.status == .done
       ? nil
       : LocalizedStringResource(
-        "You'll see right or wrong after each answer, and why at the end, with the traps he set.",
-        table: "Practice", comment: "How a phase challenge gives feedback, on its intro.")
+        "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day.",
+        table: "Practice",
+        comment:
+          "How a phase challenge gives feedback, and that a loss brings a rematch, on its intro.")
   }
 
   private func titleText(_ challenge: Components.Schemas.Challenge) -> Text {

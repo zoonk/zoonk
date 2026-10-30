@@ -8263,31 +8263,31 @@
         }
       }
     },
-    "You'll see right or wrong after each answer, and why at the end, with the traps he set." : {
-      "comment" : "How a phase challenge gives feedback, on its intro.",
+    "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day." : {
+      "comment" : "How a phase challenge gives feedback, and that a loss brings a rematch, on its intro.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nach jeder Antwort siehst du, ob sie richtig oder falsch ist. Am Ende erfährst du, warum, und welche Fallen er gestellt hat."
+            "value" : "Nach jeder Antwort siehst du, ob sie richtig oder falsch ist. Am Ende erfährst du, warum das so ist und welche Fallen er dir gestellt hat. Wenn er gewinnt, kannst du am nächsten Tag noch einmal gegen ihn antreten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Después de cada respuesta verás si has acertado o fallado y, al final, por qué y qué trampas te ha tendido."
+            "value" : "Después de cada respuesta verás si has acertado o fallado y, al final, la explicación y las trampas que te ha tendido. Si gana, podrás volver a enfrentarte a él al día siguiente."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Après chaque réponse, tu sauras si elle est correcte. À la fin, tu verras les explications et les pièges qu’il a tendus."
+            "value" : "Après chaque réponse, tu sauras si elle est juste ou fausse. À la fin, tu découvriras les explications et les pièges qu’il a tendus. S’il gagne, tu pourras prendre ta revanche le lendemain."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você vai saber se acertou ou errou depois de cada resposta e entender por quê no final, junto com as pegadinhas que ele preparou."
+            "value" : "Você vê se acertou ou errou depois de cada resposta e, no final, as explicações e as pegadinhas que ele preparou. Se ele ganhar, você tem uma revanche no dia seguinte."
           }
         }
       }
