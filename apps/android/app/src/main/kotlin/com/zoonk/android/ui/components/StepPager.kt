@@ -42,8 +42,9 @@ fun StepPagerActions(
     Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         if (dots) StepDots(count, index)
 
-        // Back is measured first, so a long last action wraps beside it instead of covering it.
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        // Back is measured first, so a long last action wraps beside it instead of covering it, and
+        // stays level with the action's last line.
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Bottom) {
             if (index > 0) {
                 OutlinedIconButton(onClick = { onIndexChange(index - 1) }) {
                     Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.navigation_back))
