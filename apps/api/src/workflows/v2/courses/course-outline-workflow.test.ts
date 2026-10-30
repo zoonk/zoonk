@@ -24,7 +24,7 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
@@ -45,7 +45,7 @@ type SkillGraph = Awaited<ReturnType<typeof generateSkillGraph>>["data"];
 type CourseOutline = Awaited<ReturnType<typeof generateCourseOutline>>["data"];
 
 const recordedGraph = recordedOutput<SkillGraph>("skill-graph");
-const recordedOutline = recordedOutput<CourseOutline>("course-outline");
+let recordedOutline: CourseOutline;
 
 const scope = {
   generalGoal: "Understand how vaccines work",
@@ -294,21 +294,39 @@ async function writeAfterEarlyAttempt(firstStatus: "completed" | "failed") {
 
 describe(courseOutlineWorkflow, () => {
   beforeEach(() => {
-    vi.mocked(generateSearchTerms).mockImplementation(
-      async ({ subjects }) =>
-        taskResult({
-          subjects: subjects.map(() => ({ terms: [`zq${crypto.randomUUID().slice(0, 8)}`] })),
-        }) as never,
-    );
+    const testId = crypto.randomUUID();
+    const outline = recordedOutput<CourseOutline>("course-outline");
 
-    vi.mocked(decideLibraryIdentity).mockResolvedValue({ match: null, verdicts: [] });
-    vi.mocked(generateCourseOutline).mockResolvedValue(outlineResult(recordedOutline));
+    recordedOutline = {
+      ...outline,
+      chapters: outline.chapters.map((chapter) => ({
+        ...chapter,
+        lessons: chapter.lessons.map((lesson) => ({
+          ...lesson,
+          skills: lesson.skills.map((name) => `${name} ${testId}`),
+        })),
+      })),
+    };
 
-    vi.mocked(streamCourseOutline).mockImplementation(
-      replayStreamedOutline(recordedOutline) as never,
-    );
+    vi.mocked(generateSearchTerms)
+      .mockReset()
+      .mockImplementation(
+        async ({ subjects }) =>
+          taskResult({
+            subjects: subjects.map(() => ({ terms: [`zq${crypto.randomUUID().slice(0, 8)}`] })),
+          }) as never,
+      );
 
-    vi.mocked(findTeachingChapters).mockImplementation(async (params) => teachNothing(params));
+    vi.mocked(decideLibraryIdentity).mockReset().mockResolvedValue({ match: null, verdicts: [] });
+    vi.mocked(generateCourseOutline).mockReset().mockResolvedValue(outlineResult(recordedOutline));
+
+    vi.mocked(streamCourseOutline)
+      .mockReset()
+      .mockImplementation(replayStreamedOutline(recordedOutline) as never);
+
+    vi.mocked(findTeachingChapters)
+      .mockReset()
+      .mockImplementation(async (params) => teachNothing(params));
   });
 
   describe("on a band other learners already use", { timeout: TIMEOUT }, () => {
@@ -937,7 +955,8 @@ describe(courseOutlineWorkflow, () => {
           return outlineResult(recordedOutline);
         });
 
-        setTimeout(() => resolve(false), 5000);
+        const timeout = setTimeout(() => resolve(false), 5000);
+        onTestFinished(() => clearTimeout(timeout));
       });
 
       vi.mocked(streamCourseOutline).mockImplementationOnce((async (params: never) => {
@@ -1766,25 +1785,15 @@ describe(courseOutlineWorkflow, () => {
         name: skill.name,
       });
 
-      vi.mocked(generateCourseOutline)
-        .mockResolvedValueOnce(
-          outlineResult({
-            chapters: [
-              interviewChapter("Entrevistas com perguntas situacionais", [extended.id]),
-              interviewChapter("Negociação de salário", [missing.id]),
-            ],
-            uncoveredSkillKeys: [],
-          }),
-        )
-        .mockResolvedValueOnce(
-          outlineResult({
-            chapters: [
-              interviewChapter("Entrevistas técnicas", [extended.id]),
-              interviewChapter("Benefícios e contratos", [missing.id]),
-            ],
-            uncoveredSkillKeys: [],
-          }),
-        );
+      vi.mocked(generateCourseOutline).mockResolvedValue(
+        outlineResult({
+          chapters: [
+            interviewChapter("Entrevistas com perguntas situacionais", [extended.id]),
+            interviewChapter("Negociação de salário", [missing.id]),
+          ],
+          uncoveredSkillKeys: [],
+        }),
+      );
 
       const result = await courseOutlineWorkflow({
         bands: [
