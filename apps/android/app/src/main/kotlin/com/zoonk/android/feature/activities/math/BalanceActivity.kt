@@ -33,6 +33,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -151,7 +152,17 @@ private fun BlockBalance(
             ),
         ).joinToString(" ")
 
-    BalanceScale(start, current, tilt, unknown.symbol, format, Modifier.semantics { contentDescription = description })
+    BalanceScale(
+        start,
+        current,
+        tilt,
+        unknown.symbol,
+        format,
+        Modifier.semantics {
+            contentDescription = description
+            liveRegion = LiveRegionMode.Polite
+        },
+    )
     Equation(left, right, level = tilt == 0.0)
     if (tilt != 0.0 && hint != null) Hint(hint)
     if (!props.isChecked) {
@@ -367,12 +378,16 @@ private fun BalanceSteps(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 LineMarker(style) {
-                    Icon(
-                        painterResource(if (done) R.drawable.ic_check_circle else R.drawable.ic_circle),
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = if (done) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    if (done) {
+                        Icon(
+                            painterResource(R.drawable.ic_check_circle),
+                            contentDescription = null,
+                            modifier = Modifier.size(MARKER),
+                            tint = MaterialTheme.colorScheme.tertiary,
+                        )
+                    } else {
+                        DashedCircle(MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
                 Text(shown, color = if (done) Color.Unspecified else MaterialTheme.colorScheme.onSurfaceVariant, style = style)
             }
@@ -538,6 +553,20 @@ private fun DrawScope.drawPan(
     }
 }
 
+/** Main's `CircleDashed`: a step not reached yet, which a plain circle would make look like a choice. */
+@Composable
+private fun DashedCircle(color: Color) {
+    Canvas(Modifier.size(MARKER)) {
+        val stroke = MARKER_STROKE.toPx()
+        val dash = MARKER_DASH.toPx()
+        drawCircle(
+            color,
+            radius = size.minDimension / 2 - stroke,
+            style = Stroke(stroke, pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash, dash))),
+        )
+    }
+}
+
 private fun viewTop(frame: BalanceState): Float {
     val tallest = maxOf(panLayout(frame.left, ITEMS_WIDTH).height, panLayout(frame.right, ITEMS_WIDTH).height, BAG_HEIGHT)
     return PIVOT_Y - PLATE_LIFT - PLATE_HEIGHT - tallest - MAX_TILT_LIFT - TOP_MARGIN
@@ -588,3 +617,6 @@ private const val WEIGHT_RADIUS = 6f
 private const val STAND_ALPHA = 0.6f
 private const val PLATE_ALPHA = 0.7f
 private val MAX_WIDTH = 384.dp
+private val MARKER = 16.dp
+private val MARKER_STROKE = 1.5.dp
+private val MARKER_DASH = 2.5.dp
