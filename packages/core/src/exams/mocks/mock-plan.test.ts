@@ -245,6 +245,34 @@ describe(planMock, () => {
     expect(new Set(asked).size).toBe(16);
   });
 
+  it.each([
+    { fullLength: true, kind: "full-length" },
+    { fullLength: false, kind: "weekly" },
+  ])("fills $kind routed modules with counted subject shares", ({ fullLength }) => {
+    const plan = planMock({
+      adaptive: true,
+      candidates: [...candidates("Info", 100), ...candidates("Expression", 100)],
+      fullLength,
+      mockNumber: 0,
+      structure: structure({
+        adaptive: true,
+        sections: [
+          { day: null, kind: "objective", minutes: 35, name: "Verbal, module 1", questions: 12 },
+          { day: null, kind: "objective", minutes: 35, name: "Verbal, module 2", questions: 15 },
+        ],
+      }),
+      subjectShares: [
+        { name: "Info", questions: 13 },
+        { name: "Expression", questions: 14 },
+      ],
+    });
+
+    const wanted = fullLength ? 15 : 8;
+    expect(plan.sections[1]?.questions).toBe(wanted);
+    expect(plan.sections[1]?.routing?.easier).toHaveLength(wanted);
+    expect(plan.sections[1]?.routing?.harder).toHaveLength(wanted);
+  });
+
   it("holds an adaptive exam's second module until the first is done", () => {
     const plan = planMock({
       adaptive: true,

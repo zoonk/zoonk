@@ -156,7 +156,7 @@ export function planMock({
         pool: sectionPool({ areaSections, candidates, section }).filter(
           (candidate) => !state.used.has(candidate.itemId),
         ),
-        portion: share,
+        portion: routed ? share * 2 : share,
         subjectShares: shares,
         wanted: routed ? wanted * 2 : wanted,
       });
