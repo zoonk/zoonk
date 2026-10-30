@@ -162,11 +162,15 @@ export async function listPlanOutlineNeeds({
 
 type StandIns = NonNullable<Awaited<ReturnType<typeof loadStandIns>>>;
 
-async function toOutlineNeeds(standIns: StandIns): Promise<PlanOutlineNeed[]> {
-  const courseOf = readSkillCourses({
+function readStandInCourses(standIns: StandIns): Map<string, string> {
+  return readSkillCourses({
     graph: standIns.graph,
     primaryCourseId: standIns.goal.primaryCourseId,
   });
+}
+
+async function toOutlineNeeds(standIns: StandIns): Promise<PlanOutlineNeed[]> {
+  const courseOf = readStandInCourses(standIns);
 
   const courseIds = [...new Set(standIns.skillIds.flatMap((id) => courseOf.get(id) ?? []))];
 
@@ -291,10 +295,7 @@ export async function findSkillOutlineNeed({
     return null;
   }
 
-  const courseOf = readSkillCourses({
-    graph: standIns.graph,
-    primaryCourseId: standIns.goal.primaryCourseId,
-  });
+  const courseOf = readStandInCourses(standIns);
 
   const courseId = courseOf.get(skillId);
 
@@ -331,15 +332,12 @@ export async function listSoonStandInCourseIds({
     return [];
   }
 
-  const courseOf = readSkillCourses({
-    graph: standIns.graph,
-    primaryCourseId: standIns.goal.primaryCourseId,
-  });
+  const courseOf = readStandInCourses(standIns);
 
   return [...new Set(standIns.skillIds.flatMap((id) => courseOf.get(id) ?? []))];
 }
 
-/** Workflow bridge: authorize goalId first; includes real lessons and stand-ins within days of the goal's local today. */
+/** Workflow bridge: authorize goalId first; includes real lessons and stand-ins still to do within days of the goal's local today. */
 export async function listPlanSkillIdsWithin({
   days,
   goalId,
@@ -357,6 +355,7 @@ export async function listPlanSkillIdsWithin({
       plan: { goalId },
       scheduledFor: { lte: until },
       skillId: { not: null },
+      status: "todo",
     },
   });
 

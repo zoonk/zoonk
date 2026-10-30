@@ -328,6 +328,40 @@ describe(listPlanSkillIdsWithin, () => {
 
     expect(within.toSorted()).toStrictEqual([written.id, standIn.id].toSorted());
   });
+
+  it("leaves out the skills a placed learner tested out of, which keep their old days", async () => {
+    const user = await userFixture();
+
+    const [goal, known, next] = await Promise.all([
+      goalFixture({ timezone: "UTC", userId: user.id }),
+      skillFixture({ level: "beginner" }),
+      skillFixture({ level: "intermediate" }),
+    ]);
+
+    const plan = await planFixture({ goalId: goal.id });
+    const today = getDateInTimeZone({ date: new Date(), timeZone: "UTC" });
+
+    await Promise.all([
+      planItemFixture({
+        completedAt: new Date(),
+        planId: plan.id,
+        position: 0,
+        scheduledFor: today,
+        skillId: known.id,
+        status: "testedOut",
+      }),
+      planItemFixture({
+        planId: plan.id,
+        position: 1,
+        scheduledFor: addDays(today, 1),
+        skillId: next.id,
+      }),
+    ]);
+
+    await expect(listPlanSkillIdsWithin({ days: 7, goalId: goal.id })).resolves.toStrictEqual([
+      next.id,
+    ]);
+  });
 });
 
 function standInItem(skillId: string) {
