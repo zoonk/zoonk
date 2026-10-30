@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { type PollStatus, usePoll } from "../../_utils/use-poll";
 import { requestWithin } from "../../plan/use-time-to-cover";
+import { createRequestLane } from "./request-lane";
 
 const POLL_MS = 3000;
 
@@ -44,7 +45,7 @@ type Answered<Answer> = {
 /**
  * Asks every few seconds while the plan isn't ready, then once for each new `key`, keeping each
  * answer so going back to an earlier choice needs no new one; `paused` stops asking again a plan
- * whose run stopped.
+ * whose run stopped. Each ask plans the goal, so one is out at a time and the latest `key` goes next.
  */
 export function usePlanAnswer<Answer extends { ready: boolean }>({
   ask,
@@ -63,6 +64,7 @@ export function usePlanAnswer<Answer extends { ready: boolean }>({
     last: null,
   });
 
+  const lane = useRef(createRequestLane());
   const answer = answered.byKey.get(key) ?? null;
 
   const poll = usePoll({
@@ -74,17 +76,13 @@ export function usePlanAnswer<Answer extends { ready: boolean }>({
         await settle(signal);
       }
 
-      if (signal.aborted) {
-        return;
-      }
-
-      const next = await requestWithin(ask);
-
-      if (signal.aborted) {
-        return;
-      }
+      const next = await lane.current({ request: () => requestWithin(ask), signal });
 
       if (!next) {
+        if (signal.aborted) {
+          return;
+        }
+
         throw new Error("The plan couldn't be asked about the schedule");
       }
 
