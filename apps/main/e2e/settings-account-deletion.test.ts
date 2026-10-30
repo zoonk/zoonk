@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 
 test.describe("Account data", () => {
   test("deletes the account after a confirmation and signs the learner out", async ({
@@ -8,7 +9,9 @@ test.describe("Account data", () => {
   }) => {
     await page.goto("/profile");
 
-    await page.getByRole("button", { name: "Delete account" }).click();
+    const remove = page.getByRole("button", { name: "Delete account" });
+    await expectHydrated(remove);
+    await remove.click();
 
     const dialog = page.getByRole("alertdialog", { name: "Delete your account?" });
     await dialog.getByRole("button", { name: "Delete my account" }).click();

@@ -40,7 +40,9 @@ test.describe("Quick explanations", () => {
     });
 
     await page.goto("/start");
-    await page.getByRole("textbox", { name: "I want to" }).fill(question);
+    const box = page.getByRole("textbox", { name: "I want to" });
+    await expectHydrated(box);
+    await box.fill(question);
     await page.keyboard.press("Enter");
 
     await expect(page).toHaveURL(/\/explain\/[0-9a-f-]{36}$/u);

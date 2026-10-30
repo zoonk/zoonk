@@ -1,6 +1,7 @@
 import { type Locator, type Page } from "@playwright/test";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 
 async function selectLanguage({
   expectedPath,
@@ -13,6 +14,7 @@ async function selectLanguage({
   page: Page;
   selector: Locator;
 }) {
+  await expectHydrated(selector);
   await selector.selectOption(locale);
   await expect(page).toHaveURL((url) => url.pathname === expectedPath);
 }

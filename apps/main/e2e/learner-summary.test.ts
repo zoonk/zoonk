@@ -7,6 +7,7 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { mockCentralSignOut } from "./auth-transport";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 
 async function createGoalLearner() {
   const user = await createE2EUser(getBaseURL());
@@ -105,9 +106,9 @@ async function logOutInAnotherTab(context: BrowserContext) {
   await other.setViewportSize({ height: 900, width: 1440 });
   await other.goto("/settings");
 
-  await sidebar(other)
-    .getByRole("button", { name: /User menu$/u })
-    .click();
+  const userMenu = sidebar(other).getByRole("button", { name: /User menu$/u });
+  await expectHydrated(userMenu);
+  await userMenu.click();
 
   await Promise.all([
     other.waitForEvent("framenavigated", { predicate: (frame) => frame === other.mainFrame() }),

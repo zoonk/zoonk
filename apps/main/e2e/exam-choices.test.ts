@@ -3,6 +3,7 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 
 const LANGUAGES = "Linguagens";
 const FOREIGN = "Língua Estrangeira";
@@ -61,7 +62,9 @@ test("a new exam goal asks which option the learner takes, saves it for the plan
   await page.goto(`/start/${goal.id}`);
 
   const options = page.getByRole("radiogroup", { name: FOREIGN });
-  await options.getByRole("radio", { name: /Espanhol/u }).click();
+  const spanish = options.getByRole("radio", { name: /Espanhol/u });
+  await expectHydrated(spanish);
+  await spanish.click();
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
   await expect.poll(() => loadPicks(goal.id)).toStrictEqual([{ group: FOREIGN, subject: SPANISH }]);

@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { expect, test } from "./fixtures";
 import { followRun, stopRuns } from "./generation-run";
+import { expectHydrated } from "./hydration";
 import { ANSWERED, mapGoalSkills } from "./onboarding-fixtures";
 
 /** The page gives a run 45 s to appear. */
@@ -42,7 +43,9 @@ test.describe("Refreshing mid-onboarding", () => {
 
     await page.goto(`/start/${goal.id}`);
 
-    await page.getByRole("radio", { name: /Understand it in depth/u }).click();
+    const purpose = page.getByRole("radio", { name: /Understand it in depth/u });
+    await expectHydrated(purpose);
+    await purpose.click();
 
     const date = page.getByRole("heading", { name: "Is there a date you're aiming for?" });
     await expect(date).toBeVisible();
@@ -153,6 +156,7 @@ test.describe("When a wait can't go on", () => {
 
     // Picking an answer shows the page is interactive, so its wait for the run has begun.
     const deep = page.getByRole("radio", { name: /Understand it in depth/u });
+    await expectHydrated(deep);
     await deep.click();
     await expect(deep).toBeChecked();
 

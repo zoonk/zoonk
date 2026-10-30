@@ -1,6 +1,7 @@
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { mockCentralAuthTransport } from "./auth-transport";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 
 test("a guest can create an account after leaving and returning to the app", async ({ page }) => {
   await ensureGuest(page);
@@ -8,6 +9,7 @@ test("a guest can create an account after leaving and returning to the app", asy
   await page.goto("/today");
 
   const trigger = page.getByRole("button", { name: /Guest.*User menu/iu });
+  await expectHydrated(trigger);
   await trigger.click();
   await expect(page.getByRole("menuitem", { name: "Create an account" })).toBeVisible();
   await expect(page.getByRole("menuitem", { exact: true, name: "Log in" })).toBeVisible();
@@ -22,6 +24,7 @@ test("a guest can create an account after leaving and returning to the app", asy
 
   await page.goBack();
   await expect(page).toHaveURL(/\/today$/u);
+  await expectHydrated(trigger);
   await trigger.click();
   await page.getByRole("menuitem", { name: "Create an account" }).click();
   await expect(page.getByLabel("Email")).toBeVisible();
