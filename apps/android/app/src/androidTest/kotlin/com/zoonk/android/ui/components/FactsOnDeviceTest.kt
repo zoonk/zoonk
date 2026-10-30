@@ -1,4 +1,4 @@
-package com.zoonk.android.feature.exam
+package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.width
@@ -25,7 +25,7 @@ import org.junit.runner.RunWith
 
 /** Robolectric's text layout didn't reproduce the lone dot a device showed, so this runs on a device. */
 @RunWith(AndroidJUnit4::class)
-class ExamFactsOnDeviceTest {
+class FactsOnDeviceTest {
     @get:Rule
     val compose = createComposeRule()
 
@@ -35,7 +35,7 @@ class ExamFactsOnDeviceTest {
         var width by mutableStateOf(411.dp)
         compose.setContent {
             CompositionLocalProvider(LocalDensity provides Density(LocalDensity.current.density, fontScale = 2f)) {
-                ZoonkTheme { Box(Modifier.width(width)) { ExamFacts(listOf(days, "1:30 PM", "estimated from past editions")) } }
+                ZoonkTheme { Box(Modifier.width(width)) { Facts(listOf(days, "1:30 PM", "estimated from past editions")) } }
             }
         }
 
