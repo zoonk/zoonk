@@ -101,6 +101,7 @@ internal fun TodayDay(
     language: LoadState<LanguageToday>? = null,
     research: LoadState<GoalResearch>? = null,
     onboarding: OnboardingStore? = null,
+    refreshIfChanged: suspend () -> Boolean,
 ) {
     val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val poll =
@@ -108,6 +109,7 @@ internal fun TodayDay(
             active = read.day.isWaitingForLessons(read.today.lessonStatus),
             read = today,
             context = Triple(read.today.goal.id, read.day.localDate, read.day.sessionId),
+            poll = refreshIfChanged,
         )
     val model = remember(read, poll.stalled) { TodayDayModel(read, poll.stalled) }
     val activity = LocalActivity.current

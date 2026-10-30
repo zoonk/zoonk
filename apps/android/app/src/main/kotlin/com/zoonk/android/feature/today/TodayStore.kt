@@ -9,6 +9,7 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.api.ApiJson
@@ -31,6 +32,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import java.util.UUID
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Instant
 
 /** What `GET /today` says about the learner's day, its "no" answers included. */
 sealed interface TodayRead {
@@ -61,6 +63,13 @@ interface TodayApi {
         session: AuthenticatedSession,
         timeZone: String,
     ): Today
+
+    /** Whether Today's day for [goalId] changed since [since], cheaply, so a poll reads the day again only then. */
+    suspend fun todayChanged(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        since: Instant,
+    ): Boolean
 
     /** Everything the learner has learned, in points; null before any. */
     suspend fun brainPower(session: AuthenticatedSession): Long?
@@ -126,13 +135,31 @@ class TodayStore(
     private val api: TodayApi,
     private val cache: AppCache,
     scope: CoroutineScope,
-    timeZone: () -> String,
-    now: () -> Long = System::currentTimeMillis,
+    private val timeZone: () -> String,
+    private val now: () -> Long = System::currentTimeMillis,
 ) {
     val today: Resource<TodayRead> =
         cache.resource(Audience.SignedIn, DOMAINS) { session ->
-            session?.let { read(api, it, timeZone()) }
+            session?.let { readToday(it) }
         }
+
+    private var readAt: Instant? = null
+    private var reads = 0
+    private var polledReads = 0
+    private var polling = false
+
+    private suspend fun readToday(session: AuthenticatedSession): TodayRead {
+        // Taken before the first suspension, so a read an invalidation starts meanwhile reads in full.
+        val conditional = polling.also { polling = false }
+        val shown = today.state.value.value as? TodayRead.Day
+        val since = readAt
+        if (conditional && shown != null && since != null && !api.todayChanged(session, shown.today.goal.id, since)) return shown
+        val startedAt = Instant.fromEpochMilliseconds(now()) - PlanStore.CLOCK_MARGIN
+        return read(api, session, timeZone()).also {
+            readAt = startedAt
+            reads++
+        }
+    }
 
     /** Read where the missions' reward explains Brain Power. */
     val brainPower: Resource<Long> =
@@ -162,6 +189,21 @@ class TodayStore(
         cache.keyed<UUID, Boolean>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId ->
             session?.let { api.onboardingLeft(it, goalId) }
         }
+
+    /**
+     * While lessons are written: asks whether the day changed since it was read, and reads it again
+     * only then, since the server plans again on every read. True when the day was read again since
+     * the last poll, by this poll or by anything else.
+     */
+    suspend fun refreshIfChanged(): Boolean {
+        polling = true
+        try {
+            today.refresh()
+        } finally {
+            polling = false
+        }
+        return (reads != polledReads).also { polledReads = reads }
+    }
 
     /** Whether Today shows [goalId]'s day, or no goal's day at all (nothing stale is on screen). */
     fun shows(goalId: UUID): Boolean = (today.state.value.value as? TodayRead.Day)?.let { it.today.goal.id == goalId } ?: true

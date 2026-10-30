@@ -133,6 +133,7 @@ class TodayScreenshots {
                     com.zoonk.android.ui.characters
                         .BuddyLook(),
                 buddyName = "Zu",
+                refreshIfChanged = app.today::refreshIfChanged,
                 brainPower = 1240,
                 practice = { TodayPracticeRows(MistakeListAvailability(ready = 3, tomorrow = 1), MOCKS, SPEAKING, navigate = {}) },
             )

@@ -498,6 +498,6 @@ class PlanStore(
         val WRITE_DOMAINS = setOf(DataDomain.Goals, DataDomain.LearnerModel)
 
         /** Device clocks run a little apart from the server's: asking from a minute earlier never misses a change. */
-        private val CLOCK_MARGIN = 1.minutes
+        internal val CLOCK_MARGIN = 1.minutes
     }
 }

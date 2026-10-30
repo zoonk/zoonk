@@ -73,6 +73,7 @@ import java.io.File
 import java.util.UUID
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
@@ -174,6 +175,7 @@ class TodayFlowTest {
                     research = research,
                     onboarding = onboarding,
                     plans = PlanStore(plans, cache),
+                    refreshIfChanged = store::refreshIfChanged,
                 )
             }
         }
@@ -415,7 +417,7 @@ class TodayFlowTest {
     }
 
     @Test
-    fun aDayLeftOpenWaitsOutTheLearnersAskBeforeSayingItsTakingLonger() {
+    fun aDayLeftOpenAsksWhetherItChangedUntilTheLearnersAskLapsesThenSaysItsTakingLonger() {
         show("blocks" to practiceOnly(), "lessonsComing" to true)
 
         rule.mainClock.advanceTimeBy(10.minutes.plus(30.seconds).inWholeMilliseconds)
@@ -423,11 +425,27 @@ class TodayFlowTest {
 
         rule.mainClock.advanceTimeBy(5.minutes.inWholeMilliseconds)
         rule.onNodeWithText("Taking longer than usual").assertExists()
-        val reads = todayApi.reads
-        assertTrue("read $reads times", reads >= 181)
+        val asks = todayApi.asked.size
+        assertTrue("asked $asks times", asks >= 180)
+        assertEquals(1, todayApi.reads)
 
         rule.mainClock.advanceTimeBy(5.minutes.inWholeMilliseconds)
-        assertEquals(reads, todayApi.reads)
+        assertEquals(asks, todayApi.asked.size)
+    }
+
+    @Test
+    fun anAskRenewedElsewhereKeepsTheWaitGoingPastTheFirstAsksLapse() {
+        show("blocks" to practiceOnly(), "lessonsComing" to true)
+        rule.mainClock.advanceTimeBy(14.minutes.inWholeMilliseconds)
+
+        todayApi.changed = true
+        rule.mainClock.advanceTimeBy(10.seconds.inWholeMilliseconds)
+        todayApi.changed = false
+        rule.mainClock.advanceTimeBy(10.minutes.inWholeMilliseconds)
+        rule.onNodeWithText("Being written for you…").assertExists()
+
+        rule.mainClock.advanceTimeBy(6.minutes.inWholeMilliseconds)
+        rule.onNodeWithText("Taking longer than usual").assertExists()
     }
 
     private fun practiceOnly() =
@@ -516,6 +534,8 @@ class TodayFlowTest {
     private class ShownTodayApi : TodayApi {
         var shown: Today? = null
         var reads = 0
+        var changed = false
+        val asked = mutableListOf<Instant>()
         val prepared = mutableListOf<UUID>()
 
         override suspend fun today(
@@ -524,6 +544,15 @@ class TodayFlowTest {
         ): Today {
             reads++
             return shown ?: error("Shown from the test's read")
+        }
+
+        override suspend fun todayChanged(
+            session: AuthenticatedSession,
+            goalId: UUID,
+            since: Instant,
+        ): Boolean {
+            asked += since
+            return changed
         }
 
         override suspend fun brainPower(session: AuthenticatedSession): Long? = null

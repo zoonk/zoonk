@@ -2,7 +2,9 @@ package com.zoonk.android.feature.today
 
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.api.models.LessonGenerationStatus
@@ -13,9 +15,13 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.UUID
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 
 class TodayStoreTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
@@ -27,6 +33,12 @@ class TodayStoreTest {
                 session: AuthenticatedSession,
                 timeZone: String,
             ) = answer()
+
+            override suspend fun todayChanged(
+                session: AuthenticatedSession,
+                goalId: UUID,
+                since: Instant,
+            ) = false
 
             override suspend fun brainPower(session: AuthenticatedSession): Long? = null
 
@@ -164,4 +176,39 @@ class TodayStoreTest {
             )
             assertEquals(TodayRead.GoalNotActive, read(api { throw ApiException(ApiError.Unavailable, "GOAL_NOT_ACTIVE") }, ana, "UTC"))
         }
+
+    @Test
+    fun aPollReadsTheDayAgainOnlyWhenItChangedSinceAMinuteBeforeTheLastRead() =
+        runTest {
+            val api = FakeTodayApi(listOf(decodeFixture<Today>("today")))
+            val store = TodayStore(api, AppCache(FakeSession(ana), backgroundScope), backgroundScope, { "UTC" }, now = { READ_AT })
+            store.today.refresh()
+            store.refreshIfChanged()
+
+            assertFalse(store.refreshIfChanged())
+            assertEquals(1, api.reads)
+            assertEquals(List(2) { Instant.fromEpochMilliseconds(READ_AT) - 1.minutes }, api.asked)
+
+            api.changed = true
+            assertTrue(store.refreshIfChanged())
+            assertEquals(2, api.reads)
+        }
+
+    @Test
+    fun aReadOutsideThePollStillCountsAsReadingTheDayAgain() =
+        runTest {
+            val api = FakeTodayApi(listOf(decodeFixture<Today>("today")))
+            val store = TodayStore(api, AppCache(FakeSession(ana), backgroundScope), backgroundScope, { "UTC" }, now = { READ_AT })
+            store.today.refresh()
+            store.refreshIfChanged()
+
+            store.today.refresh()
+
+            assertTrue(store.refreshIfChanged())
+            assertFalse(store.refreshIfChanged())
+        }
+
+    private companion object {
+        const val READ_AT = 1_800_000_000_000L
+    }
 }

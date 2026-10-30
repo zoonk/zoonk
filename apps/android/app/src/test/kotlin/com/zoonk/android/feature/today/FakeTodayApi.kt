@@ -7,16 +7,28 @@ import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import java.util.UUID
+import kotlin.time.Instant
 
 internal class FakeTodayApi(
     private val answers: List<Today>,
 ) : TodayApi {
     var reads = 0
+    var changed = false
+    val asked = mutableListOf<Instant>()
 
     override suspend fun today(
         session: AuthenticatedSession,
         timeZone: String,
     ) = answers[minOf(reads++, answers.lastIndex)]
+
+    override suspend fun todayChanged(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        since: Instant,
+    ): Boolean {
+        asked += since
+        return changed
+    }
 
     override suspend fun brainPower(session: AuthenticatedSession): Long? = null
 

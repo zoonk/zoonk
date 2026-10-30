@@ -10,10 +10,12 @@ import com.zoonk.api.models.MemoryInsightAnswer
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.OnboardingStep
+import com.zoonk.api.models.PlanWatch
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.SuggestedGoalAnswer
 import com.zoonk.api.models.Today
 import java.util.UUID
+import kotlin.time.Instant
 
 class LiveTodayApi(
     private val api: ApiClients,
@@ -73,6 +75,12 @@ class LiveTodayApi(
         val status = if (accepted) MemoryInsightAnswer.Status.ACCEPTED else MemoryInsightAnswer.Status.DISMISSED
         perform { api.clients(session).memory.answerMemoryInsight(insightId, MemoryInsightAnswer(status)) }
     }
+
+    override suspend fun todayChanged(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        since: Instant,
+    ) = perform { api.clients(session).plans.getPlanChangedSince(goalId, since, PlanWatch.TODAY) }.changed
 
     override suspend fun prepareLessons(
         session: AuthenticatedSession,
