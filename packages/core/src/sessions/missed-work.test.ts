@@ -16,7 +16,7 @@ import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { catchUpToday } from "./catch-up-today";
-import { getLightMinutes } from "./fresh-start";
+import { getSessionDayMinutes } from "./fresh-start";
 
 function setToday(isoDate: string) {
   const instant = new Date(`${isoDate}T12:00:00Z`);
@@ -570,7 +570,11 @@ describe("coming back", () => {
     const { day, view } = await openTodayView(goal.id);
 
     expect(day.freshStart).toBe("welcomeBack");
-    expect(day.plannedMinutes).toBeLessThanOrEqual(getLightMinutes(goal.dailyMinutes));
+
+    expect(day.plannedMinutes).toBeLessThanOrEqual(
+      getSessionDayMinutes({ dailyMinutes: goal.dailyMinutes, freshStart: "welcomeBack" }),
+    );
+
     expect(day.blocks.some((block) => block.kind === "learn")).toBe(true);
 
     expect(view.freshStart).toBe("welcomeBack");

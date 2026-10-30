@@ -99,7 +99,7 @@ export type StudySessionView = {
   freshStart: StudySessionRow["freshStart"];
   /** Held outlines append at the next Open/Continue; empty days use emptyDay instead. */
   lessonsComing: boolean;
-  /** A day with only practice whose lessons nobody is outlining: the learner asks for them, as on an empty day's lessonsToPrepare. */
+  /** A day holding time for lessons nobody is outlining: the learner asks for them, as on an empty day's lessonsToPrepare. */
   lessonsToPrepare: boolean;
   fullMeal: { bonus: number; earned: boolean; ready: boolean };
   goalId: string | null;

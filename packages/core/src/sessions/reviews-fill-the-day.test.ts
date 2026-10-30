@@ -15,7 +15,7 @@ import {
   sessionGoalFixture,
 } from "./_test-utils/session-goal";
 import { readBlockPayload } from "./block-payload";
-import { getLightMinutes } from "./fresh-start";
+import { getSessionDayMinutes } from "./fresh-start";
 
 const DAILY_MINUTES = 20;
 
@@ -163,7 +163,13 @@ describe("a day nothing but reviews can fill", () => {
     const minutes = views.reduce((sum, block) => sum + block.estimatedMinutes, 0);
 
     expect(views.map((block) => block.kind)).toStrictEqual(["review"]);
-    expect(minutes).toBeLessThanOrEqual(getLightMinutes(RETURN_DAILY_MINUTES));
-    expect(minutes).toBeGreaterThan(getLightMinutes(RETURN_DAILY_MINUTES) / 2);
+
+    const light = getSessionDayMinutes({
+      dailyMinutes: RETURN_DAILY_MINUTES,
+      freshStart: "welcomeBack",
+    });
+
+    expect(minutes).toBeLessThanOrEqual(light);
+    expect(minutes).toBeGreaterThan(light / 2);
   });
 });

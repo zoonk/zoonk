@@ -2,7 +2,6 @@ import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
 import "server-only";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
-import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { withDayState } from "../day-state";
 import { type UnstartedDayView } from "../day-view";
@@ -12,6 +11,7 @@ import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { toDayBlockView } from "./day-block-view";
 import { toDayViewFields } from "./day-view-fields";
+import { hasLessonRoom } from "./empty-day";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
 import { getDayOutlines } from "./outlining-stand-ins";
@@ -83,8 +83,6 @@ export async function loadUnstartedDayView({
 
   const missions = missionViews.map((mission) => asDayMission(mission));
 
-  const hasRoom = dayMinutes - day.plannedMinutes >= DEFAULT_LESSON_MINUTES;
-
   const fields = toDayViewFields({
     answers: [],
     current: true,
@@ -92,7 +90,11 @@ export async function loadUnstartedDayView({
     dayMinutes,
     examAccess,
     fullMealEarned: earned,
-    lessonRoom: hasRoom,
+    lessonRoom: hasLessonRoom({
+      day: day.input,
+      limitMinutes: day.plan.limit?.limitMinutes ?? null,
+      plannedMinutes: day.plannedMinutes,
+    }),
     missions,
     outlines,
     plusLessons,

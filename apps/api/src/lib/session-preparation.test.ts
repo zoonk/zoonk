@@ -45,6 +45,7 @@ vi.mock("next/server", async (importOriginal) => ({
 }));
 
 const TIME_ZONE = "UTC";
+const ONBOARDED = ["reason", "level", "targetDate", "buddy", "placement", "schedule"];
 const pending: Promise<unknown>[] = [];
 
 type StartFailure = (workflow: unknown, args: unknown[]) => boolean;
@@ -83,7 +84,13 @@ async function settle() {
 }
 
 /** The course already teaches a stand-in's skill when the plan hasn't linked its lesson yet. */
-async function teachSkill({ course, skillId }: { course: { id: string }; skillId: string }) {
+async function teachSkill({
+  course,
+  skillId,
+}: {
+  course: { id: string };
+  skillId: string;
+}): Promise<string> {
   const chapter = await libraryChapterFixture({ level: "intermediate" });
   const lesson = await libraryLessonFixture({ homeChapterId: chapter.id });
 
@@ -92,6 +99,8 @@ async function teachSkill({ course, skillId }: { course: { id: string }; skillId
     chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
     lessonSkillFixture({ lessonId: lesson.id, skillId }),
   ]);
+
+  return lesson.id;
 }
 
 /** A level test tested out the band the plan's build outlined, so the plan now starts on a stand-in. */
@@ -115,7 +124,7 @@ async function placedGuestFixture({
 
   const [goal] = await Promise.all([
     goalFixture({
-      details: { answered: ["level", "placement"], level: "B1+" },
+      details: { answered: ONBOARDED, level: "B1+" },
       kind: "language",
       language: "en",
       primaryCourseId: course.id,
@@ -204,7 +213,7 @@ async function partlyWrittenTopicFixture({
 
   const [goal] = await Promise.all([
     goalFixture({
-      details: { answered: ["level", "placement"], level: "A1" },
+      details: { answered: ONBOARDED, level: "A1" },
       kind: "language",
       language: "en",
       primaryCourseId: course.id,
@@ -357,9 +366,9 @@ describe("preparing a guest's lessons", () => {
     },
   );
 
-  it("stops saying lessons are coming when the day's stand-in turns out to be taught already", async () => {
+  it("brings in the day's stand-in lesson the course turns out to teach already, instead of saying it's coming", async () => {
     const guest = await placedGuestFixture();
-    await teachSkill({ course: guest.course, skillId: guest.next.id });
+    const lessonId = await teachSkill({ course: guest.course, skillId: guest.next.id });
     const course = await readCourse(guest);
 
     await startGoalPreparation({ goalId: guest.goal.id });
@@ -371,6 +380,13 @@ describe("preparing a guest's lessons", () => {
 
     await expect(isDayComing(guest)).resolves.toBe(false);
     await expect(readCourse(guest)).resolves.toStrictEqual(course);
+
+    await expect(
+      prisma.planItem.findMany({
+        select: { lessonId: true },
+        where: { plan: { goalId: guest.goal.id }, skillId: guest.next.id },
+      }),
+    ).resolves.toStrictEqual([{ lessonId }]);
   });
 
   it("leaves a long-running outline its course, so it can still finish", async () => {

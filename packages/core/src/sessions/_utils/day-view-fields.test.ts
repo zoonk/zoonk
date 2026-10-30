@@ -96,8 +96,13 @@ describe(toDayViewFields, () => {
     });
   });
 
-  it("never asks a day with a lesson of its own, or one without room, for lessons nobody is writing", () => {
-    expect(dayOf({ kinds: ["learn", "practice"], outlines: "idle" }).lessonsToPrepare).toBe(false);
+  it("asks a day with lessons for the rest of its time nobody is writing, never one without room", () => {
+    expect(dayOf({ kinds: ["learn", "practice"], outlines: "idle" })).toStrictEqual({
+      emptyDay: null,
+      lessonsComing: false,
+      lessonsToPrepare: true,
+    });
+
     expect(dayOf({ kinds: ["learn"], outlines: "awaiting" }).lessonsComing).toBe(true);
 
     expect(dayOf({ kinds: ["practice"], lessonRoom: false, outlines: "idle" })).toStrictEqual({

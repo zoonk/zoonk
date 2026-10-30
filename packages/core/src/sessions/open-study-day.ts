@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getSession } from "../users/get-session";
-import { appendLandedLessons } from "./_utils/append-landed-lessons";
 import { isCurrentSession } from "./_utils/current-session";
 import { persistEntitlementLapseRefill } from "./_utils/entitlement-lapse-refill";
 import { readLessonScreens } from "./_utils/lesson-screens";
@@ -12,7 +11,7 @@ import { findOpenDayTarget } from "./_utils/open-day-target";
 import { loadOpenedDayView } from "./_utils/open-day-view";
 import { followOpenDayZone } from "./_utils/open-day-zone";
 import { openPlannedDay } from "./_utils/open-planned-day";
-import { refreshStudyDaySelection } from "./_utils/refresh-study-day-selection";
+import { followSavedDay } from "./_utils/refresh-study-day-selection";
 import { findOwnedStudySession } from "./_utils/study-session-access";
 import { type StudySessionTimeZoneInput } from "./contract";
 import { type StudySessionResult } from "./get-study-session";
@@ -133,8 +132,7 @@ export async function openStudySession({
     return { status: "retryable" };
   }
 
-  const selected = await refreshStudyDaySelection({ session: refilled, timeZone });
-  const current = await appendLandedLessons({ goal: session.goal, session: selected, timeZone });
+  const current = await followSavedDay({ goal: session.goal, session: refilled, timeZone });
 
   return {
     session: await readLessonScreens(

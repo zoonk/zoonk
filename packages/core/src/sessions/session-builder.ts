@@ -12,7 +12,7 @@ import {
   toBlockPayload,
 } from "./block-payload";
 import { takeReviewCapsules } from "./capsules";
-import { getLightMinutes } from "./fresh-start";
+import { getSessionDayMinutes } from "./fresh-start";
 import { countFullReviewQuestions, isFullReview, isFullReviewDay } from "./full-review";
 
 /** Exam-format reading and working takes longer than quick reviews. */
@@ -102,10 +102,7 @@ function countDrilled(drills: readonly BlockDrill[]): number {
 
 /** Full reviews stay whole on returns so the exam-eve session still reaches every topic. */
 function getSessionBudget(input: SessionBuildInput): number {
-  const light = input.freshStart === "welcomeBack" && !isFullReviewDay(input);
-  const day = light ? getLightMinutes(input.dailyMinutes) : input.dailyMinutes;
-
-  const minutes = Math.max(0, day - (input.usedMinutes ?? 0));
+  const minutes = Math.max(0, getSessionDayMinutes(input) - (input.usedMinutes ?? 0));
 
   return Math.min(minutes, input.remainingLimitMinutes ?? minutes);
 }

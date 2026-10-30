@@ -11,7 +11,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { replanGoalsWaitingOnSkills } from "../library/curriculum/replan-waiting-goals";
-import { askForLessons } from "../lookahead/lessons-ask";
+import { askForLessons, endLessonsAsk } from "../lookahead/lessons-ask";
 import { keepPaceOwn } from "../plans/_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { readSelectedItemFacts } from "../plans/_utils/selected-item-contract";
@@ -123,10 +123,13 @@ async function landWaitingLessons({
   count = LANDING,
   courseId,
   library,
+  replan = true,
 }: {
   count?: number;
   courseId: string;
   library: Library;
+  /** False leaves the plan as saved before they landed, as a re-plan that lost to another write does. */
+  replan?: boolean;
 }): Promise<string[]> {
   const [chapter] = library.chapters;
   const skillId = library.skills[1]?.id ?? "";
@@ -152,7 +155,10 @@ async function landWaitingLessons({
     }),
   );
 
-  await replanGoalsWaitingOnSkills({ skillIds: [skillId] });
+  if (replan) {
+    await replanGoalsWaitingOnSkills({ skillIds: [skillId] });
+  }
+
   await prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: courseId } });
 
   return lessons;
@@ -292,6 +298,81 @@ describe("today's session the learner was shown", () => {
     const after = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
     expect(after.today.session).toMatchObject({ blocks: [], emptyDay: "lessonsComing" });
+  });
+
+  it("asks for the lessons a day with lessons still holds time for when nobody is writing them", async () => {
+    const { goal } = await setupDayWithStandIn({ laterLessons: 0, outlineStatus: "completed" });
+    const before = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+    const day = before.status === "ready" ? before.today.session : null;
+
+    expect(day?.blocks.some((block) => block.kind === "learn")).toBe(true);
+    expect(day?.minutes.planned).toBeLessThan(goal.dailyMinutes);
+
+    expect(day).toMatchObject({
+      lessonsComing: false,
+      lessonsToPrepare: true,
+      status: "unstarted",
+    });
+
+    const opened = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(opened.today.session).toMatchObject({ lessonsComing: false, lessonsToPrepare: true });
+
+    await askForLessons({ goalId: goal.id });
+    const after = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(after.today.session).toMatchObject({ lessonsComing: true, lessonsToPrepare: false });
+  });
+
+  it.each(["completed", "running"] as const)(
+    "adds the lessons written since the plan was saved to a short day opened while its outline was %s, once the learner asks",
+    async (outlineStatus) => {
+      const { course, goal, library } = await setupDayWithStandIn({
+        laterLessons: 0,
+        outlineStatus,
+      });
+
+      const opened = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+      expect(opened.today.session.lessonsComing || opened.today.session.lessonsToPrepare).toBe(
+        true,
+      );
+
+      const landed = await landWaitingLessons({ courseId: course.id, library, replan: false });
+      const askedAt = await askForLessons({ goalId: goal.id });
+
+      await endLessonsAsk({ askedAt: askedAt ?? 0, goalId: goal.id, startedCourseIds: [] });
+
+      const after = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+      const day = after.status === "ready" ? after.today.session : null;
+
+      expect(day?.minutes.planned).toBeGreaterThan(opened.today.session.minutes.planned);
+
+      expect(day?.blocks.map((block) => block.lessonId)).toStrictEqual(
+        expect.arrayContaining(landed),
+      );
+    },
+  );
+
+  it("asks for no lessons past the learner's daily time limit", async () => {
+    const { goal } = await setupDayWithStandIn({ laterLessons: 0, outlineStatus: "completed" });
+    const before = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+    const planned = before.status === "ready" ? before.today.session.minutes.planned : 0;
+
+    expect(before.status === "ready" && before.today.session.lessonsToPrepare).toBe(true);
+
+    await prisma.userLearningProfile.update({
+      data: { dailyLimitMinutes: planned },
+      where: { userId: goal.userId },
+    });
+
+    const capped = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(capped.status === "ready" && capped.today.session).toMatchObject({
+      lessonsComing: false,
+      lessonsToPrepare: false,
+      minutes: { planned },
+    });
   });
 
   it("asks for a practice-only day's lessons nobody is outlining, and says they're coming once asked", async () => {

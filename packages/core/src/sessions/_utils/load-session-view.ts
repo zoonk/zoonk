@@ -7,7 +7,6 @@ import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits"
 import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
-import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { readBlockPayload } from "../block-payload";
@@ -17,6 +16,7 @@ import { loadCatchUpView } from "./catch-up";
 import { getCarryOverEnd, isCurrentSession } from "./current-session";
 import { readDailyTimeLimitStatus } from "./daily-time-limit";
 import { getGoalDayMinutes } from "./day-minutes";
+import { hasLessonRoom } from "./empty-day";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
 import { withLessonDisplayMinutes } from "./lesson-display-minutes";
@@ -39,10 +39,6 @@ async function loadDayOutlines({
   }
 
   return getDayOutlines({ goal: session.goal, localDate: session.localDate });
-}
-
-function hasLessonRoom({ dayMinutes, session }: { dayMinutes: number; session: StudySessionRow }) {
-  return dayMinutes - session.plannedMinutes >= DEFAULT_LESSON_MINUTES;
 }
 
 function loadViewPlan({ fresh, session }: { fresh?: PlannedStudyDay; session: StudySessionRow }) {
@@ -189,7 +185,13 @@ export async function loadStudySessionView({
     dayMinutes,
     examAccess,
     fullMealEarned,
-    lessonRoom: current && hasLessonRoom({ dayMinutes, session }),
+    lessonRoom:
+      current &&
+      hasLessonRoom({
+        day: { dailyMinutes: dayMinutes, freshStart: session.freshStart },
+        limitMinutes: dailyLimit?.limitMinutes ?? null,
+        plannedMinutes: session.plannedMinutes,
+      }),
     missions,
     oftenTestedSkillIds,
     outlines,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getFreshStart, getLightMinutes } from "./fresh-start";
+import { getFreshStart, getSessionDayMinutes } from "./fresh-start";
 
 const THURSDAY = new Date("2026-10-01T00:00:00Z");
 const MONDAY = new Date("2026-09-28T00:00:00Z");
@@ -135,11 +135,27 @@ describe(getFreshStart, () => {
   });
 });
 
-describe(getLightMinutes, () => {
-  it("gives a light session a bit under half the usual time, rounded to five", () => {
-    expect(getLightMinutes(45)).toBe(20);
-    expect(getLightMinutes(60)).toBe(25);
-    expect(getLightMinutes(20)).toBe(10);
-    expect(getLightMinutes(5)).toBe(5);
+function welcomeBackMinutes(dailyMinutes: number): number {
+  return getSessionDayMinutes({ dailyMinutes, freshStart: "welcomeBack" });
+}
+
+describe(getSessionDayMinutes, () => {
+  it("gives a welcome back a bit under half the usual time, rounded to five", () => {
+    expect(welcomeBackMinutes(45)).toBe(20);
+    expect(welcomeBackMinutes(60)).toBe(25);
+    expect(welcomeBackMinutes(20)).toBe(10);
+    expect(welcomeBackMinutes(5)).toBe(5);
+  });
+
+  it("keeps the usual time on other days and on an exam eve's full review", () => {
+    expect(getSessionDayMinutes({ dailyMinutes: 45, freshStart: "newWeek" })).toBe(45);
+
+    expect(
+      getSessionDayMinutes({
+        dailyMinutes: 45,
+        freshStart: "welcomeBack",
+        fullReviewSkillIds: ["skill"],
+      }),
+    ).toBe(45);
   });
 });

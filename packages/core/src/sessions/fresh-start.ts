@@ -1,5 +1,6 @@
 import { type StudyFreshStart } from "@zoonk/db";
 import { daysBetween } from "../plans/planner/plan-calendar";
+import { isFullReviewDay } from "./full-review";
 
 /** Count days since the last study day: Monday to Thursday is three days, with two full days away. */
 const WELCOME_BACK_AFTER_DAYS = 3;
@@ -65,7 +66,21 @@ export function getFreshStart({
 }
 
 /** Rounds to five minutes without exceeding the usual day, including days shorter than the minimum light session. */
-export function getLightMinutes(dailyMinutes: number): number {
+function getLightMinutes(dailyMinutes: number): number {
   const light = Math.round((dailyMinutes * LIGHT_SESSION_SHARE) / MINUTE_STEP) * MINUTE_STEP;
   return Math.min(dailyMinutes, Math.max(MIN_LIGHT_MINUTES, light));
+}
+
+/** The minutes a session fills: a welcome back is a light day, except an exam eve's full review. */
+export function getSessionDayMinutes({
+  dailyMinutes,
+  freshStart,
+  fullReviewSkillIds,
+}: {
+  dailyMinutes: number;
+  freshStart: StudyFreshStart | null;
+  fullReviewSkillIds?: readonly string[] | null;
+}): number {
+  const light = freshStart === "welcomeBack" && !isFullReviewDay({ fullReviewSkillIds });
+  return light ? getLightMinutes(dailyMinutes) : dailyMinutes;
 }

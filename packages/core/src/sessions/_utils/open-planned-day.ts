@@ -1,10 +1,9 @@
 import "server-only";
-import { appendLandedLessons } from "./append-landed-lessons";
 import { persistEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { hasSameGoalInputs } from "./goal-input-snapshot";
 import { persistStudyDay } from "./persist-study-day";
 import { type PlannedStudyDay, planStudyDay } from "./plan-study-day";
-import { refreshStudyDaySelection } from "./refresh-study-day-selection";
+import { followSavedDay } from "./refresh-study-day-selection";
 import { findSavedDaySession } from "./saved-day-session";
 import { selectDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
@@ -28,8 +27,7 @@ export async function openPlannedDay(
       return { status: "stale" };
     }
 
-    const selected = await refreshStudyDaySelection({ session: refilled, timeZone });
-    const session = await appendLandedLessons({ goal, session: selected ?? refilled, timeZone });
+    const session = await followSavedDay({ goal, session: refilled, timeZone });
     return { created: false, session, status: "opened" };
   }
 

@@ -1,4 +1,5 @@
-import { type StudyBlockKind } from "@zoonk/db";
+import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
+import { getSessionDayMinutes } from "../fresh-start";
 import { type DayOutlines } from "./outlining-stand-ins";
 import { type EmptyDay } from "./session-view";
 
@@ -21,10 +22,27 @@ function toEmptyDay({
   return outlines === "idle" ? "lessonsToPrepare" : "nothingNew";
 }
 
+/** Room as the session builder fills it: its day's minutes, capped by the learner's daily time limit. */
+export function hasLessonRoom({
+  day,
+  limitMinutes,
+  plannedMinutes,
+}: {
+  day: Parameters<typeof getSessionDayMinutes>[0];
+  limitMinutes: number | null;
+  plannedMinutes: number;
+}): boolean {
+  const dayMinutes = getSessionDayMinutes(day);
+
+  return (
+    Math.min(dayMinutes, limitMinutes ?? dayMinutes) - plannedMinutes >= DEFAULT_LESSON_MINUTES
+  );
+}
+
 /**
- * A day without a lesson of its own, empty or only practice, waits for its unwritten lessons while
- * they're outlined and asks the learner to request them while nobody is. A day with lessons only
- * says more are coming. `lessonRoom` is whether the day holds time for more lessons now.
+ * A day that holds time for unwritten lessons waits for them while they're outlined and asks the
+ * learner to request them while nobody is, so its time never goes missing without a word.
+ * `lessonRoom` is whether the day holds time for more lessons now.
  */
 export function getDayLessons({
   blocks,
@@ -33,7 +51,7 @@ export function getDayLessons({
   outlines,
   trialEnded,
 }: {
-  blocks: readonly { kind: StudyBlockKind }[];
+  blocks: readonly unknown[];
   dayMinutes: number;
   lessonRoom: boolean;
   outlines: DayOutlines;
@@ -50,11 +68,10 @@ export function getDayLessons({
   }
 
   const open = lessonRoom && !trialEnded;
-  const ownLesson = blocks.some((block) => block.kind === "learn");
 
   return {
     emptyDay: null,
     lessonsComing: open && outlines === "awaiting",
-    lessonsToPrepare: open && !ownLesson && outlines === "idle",
+    lessonsToPrepare: open && outlines === "idle",
   };
 }

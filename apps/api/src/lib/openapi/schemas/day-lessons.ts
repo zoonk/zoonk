@@ -20,7 +20,7 @@ export const lessonsToPrepareSchema = z
   .boolean()
   .meta({
     description:
-      "The day has only practice, holds time for lessons, and its next lessons aren't written while nobody is outlining them: offer one action that posts the goal's lesson preparation, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. Never post it on your own. False otherwise, and on a day without blocks (`emptyDay` says why)",
+      "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: list them after its blocks with one action that posts the goal's lesson preparation, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. Never post it on your own. False otherwise, and on a day without blocks (`emptyDay` says why)",
   });
 
 export const examTomorrowSchema = z
