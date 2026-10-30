@@ -1,9 +1,8 @@
 package com.zoonk.android.feature.activities.code
 
 import com.zoonk.android.feature.activities.assignmentAnswer
+import com.zoonk.android.feature.activities.jsNumberText
 import com.zoonk.android.feature.player.model.ActivityAnswer
-import java.math.BigDecimal
-import kotlin.math.abs
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf17FieldsPausesInner as Pause
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf17FieldsTraceInner as TraceStep
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf17FieldsTraceInnerValuesInnerValue as TraceValue
@@ -15,29 +14,6 @@ data class WatchedValue(
     val previous: String?,
     val changed: Boolean,
 )
-
-private const val PLAIN_MIN = 1e-6
-private const val PLAIN_MAX = 1e21
-
-/** JavaScript's `String(number)` for the numbers a trace holds, which the JVM writes as "3.0" or "1.2E7". */
-internal fun jsNumberText(value: Double): String =
-    when {
-        value == 0.0 -> {
-            "0"
-        }
-
-        abs(value) < PLAIN_MIN || abs(value) >= PLAIN_MAX -> {
-            value
-                .toString()
-                .replace("E", "e")
-                .replace(Regex("""e(\d)"""), "e+$1")
-                .replace(".0e", "e")
-        }
-
-        else -> {
-            BigDecimal(value.toString()).stripTrailingZeros().toPlainString()
-        }
-    }
 
 internal val TraceValue.text: String
     get() =

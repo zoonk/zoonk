@@ -66,12 +66,4 @@ class TracerStepsTest {
         assertNull(tracerAnswer(pauses, mapOf("0" to "a")))
         assertEquals(assignmentAnswer(mapOf("0" to "a", "1" to "c")), tracerAnswer(pauses, mapOf("0" to "a", "1" to "c")))
     }
-
-    @Test
-    fun writesNumbersAsJavaScriptsStringDoes() {
-        assertEquals(
-            listOf("3", "0.5", "12345678.5", "1e+21", "0", "1e-7", "0.30000000000000004", "123456789012", "-2.5", "0.000001"),
-            listOf(3.0, 0.5, 12345678.5, 1e21, -0.0, 1e-7, 0.1 + 0.2, 123456789012.0, -2.5, 1e-6).map(::jsNumberText),
-        )
-    }
 }
