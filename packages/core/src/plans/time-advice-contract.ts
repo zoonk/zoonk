@@ -39,7 +39,7 @@ const suggestedTimeSchema = z
   .default(null)
   .meta({
     description:
-      "The daily time to start the learner on: recommendedMinutes when it's at most 4 hours a day, else coreMinutes when that is. Null when neither is, without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
+      "The daily time to start the learner on: recommendedMinutes, else coreMinutes when not even a whole day covers everything. Null when neither is, without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
   });
 
 const targetDateNamedMonthSchema = z

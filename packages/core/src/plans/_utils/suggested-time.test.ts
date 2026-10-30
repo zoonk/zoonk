@@ -2,24 +2,21 @@ import { describe, expect, it } from "vitest";
 import { getSuggestedTime } from "./suggested-time";
 
 describe(getSuggestedTime, () => {
-  it("suggests the time that covers everything, up to four hours a day", () => {
-    expect(getSuggestedTime({ coreMinutes: null, recommendedMinutes: 240 })).toStrictEqual({
+  it("suggests the time that covers everything, however long a day it takes", () => {
+    expect(getSuggestedTime({ coreMinutes: 45, recommendedMinutes: 900 })).toStrictEqual({
       kind: "everything",
-      minutes: 240,
+      minutes: 900,
     });
   });
 
-  it("suggests the time that reaches every topic when covering everything takes longer", () => {
-    expect(getSuggestedTime({ coreMinutes: 45, recommendedMinutes: 300 })).toStrictEqual({
+  it("suggests the time that reaches every topic when no day can cover everything", () => {
+    expect(getSuggestedTime({ coreMinutes: 300, recommendedMinutes: null })).toStrictEqual({
       kind: "everyTopic",
-      minutes: 45,
+      minutes: 300,
     });
   });
 
-  it.each([
-    { coreMinutes: 300, recommendedMinutes: 900 },
-    { coreMinutes: null, recommendedMinutes: null },
-  ])("suggests nothing a day can't sensibly hold: %o", (time) => {
-    expect(getSuggestedTime(time)).toBeNull();
+  it("suggests nothing when no day can reach every topic either", () => {
+    expect(getSuggestedTime({ coreMinutes: null, recommendedMinutes: null })).toBeNull();
   });
 });

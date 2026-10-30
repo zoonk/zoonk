@@ -1,19 +1,13 @@
 import { type PlanSuggestedTime, type PlanTimeToCover } from "../time-advice-contract";
 
-/** More time a day than this is never a learner's starting time, even when it's what covers it all. */
-const LONGEST_SUGGESTED_MINUTES = 240;
-
+/** Both times are null when more than a whole day would be needed, so neither is ever suggested then. */
 export function getSuggestedTime({
   coreMinutes,
   recommendedMinutes,
 }: Pick<PlanTimeToCover, "coreMinutes" | "recommendedMinutes">): PlanSuggestedTime | null {
-  if (recommendedMinutes !== null && recommendedMinutes <= LONGEST_SUGGESTED_MINUTES) {
+  if (recommendedMinutes !== null) {
     return { kind: "everything", minutes: recommendedMinutes };
   }
 
-  if (coreMinutes !== null && coreMinutes <= LONGEST_SUGGESTED_MINUTES) {
-    return { kind: "everyTopic", minutes: coreMinutes };
-  }
-
-  return null;
+  return coreMinutes === null ? null : { kind: "everyTopic", minutes: coreMinutes };
 }
