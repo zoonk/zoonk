@@ -65,24 +65,26 @@ private struct FeedbackForm: View {
       )
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(action: dismiss.callAsFunction) {
-            if store.state == .sent {
+        if store.state == .sent {
+          ToolbarItem(placement: .confirmationAction) {
+            Button(action: dismiss.callAsFunction) {
               Text(
                 "Done",
                 tableName: "Feedback",
                 comment: "Dismisses the feedback success confirmation.")
-            } else {
+            }
+          }
+        } else {
+          ToolbarItem(placement: .cancellationAction) {
+            Button(action: dismiss.callAsFunction) {
               Text(
                 "Cancel",
                 tableName: "Feedback",
                 comment: "Dismisses the feedback form without sending it.")
             }
+            .disabled(store.state == .submitting)
           }
-          .disabled(store.state == .submitting)
-        }
 
-        if store.state != .sent {
           ToolbarItem(placement: .confirmationAction) {
             Button(action: submit) {
               if store.state == .submitting {
