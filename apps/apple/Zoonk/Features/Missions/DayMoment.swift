@@ -47,7 +47,7 @@ struct DayResult: Decodable, Hashable, Sendable {
 }
 
 /// Main's `DayMoment`: the missions this work completed, then the level and Energy it reached, a
-/// beat after them.
+/// beat after them. A new belt's level isn't said twice: its ceremony shows before the result.
 struct DayMomentSections: View {
   let result: DayResult
 
@@ -68,7 +68,7 @@ private struct DayMomentContent: View {
   }
 
   private var level: DayResult.Reached.Level? {
-    result.reached?.level
+    result.ceremony?.kind == "belt" ? nil : result.reached?.level
   }
 
   private var afterMissions: TimeInterval {
