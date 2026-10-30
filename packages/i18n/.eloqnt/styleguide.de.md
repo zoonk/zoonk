@@ -6,6 +6,7 @@
 - Localize illustrative exam examples for Germany, such as the Abitur.
 - Treat “Brain Power” as a product name without an article in short labels and headings.
 - Lines saying what Zoonk is doing while it works speak as “wir” (“Wir erstellen Seite 3…”), never as an infinitive or an imperative to the learner. The buddy speaks as “ich”.
+- Job roles, such as a learner's goal role: a neutral noun where German has one (“Pflegekraft”, “Lehrkraft”), otherwise the masculine generic (“Datenanalyst”). Never a gender colon or star (“Datenanalyst:in”), and never the field instead of the role (“Datenanalyse”).
 - Imperatives in sentences use the short “du” form: “Versuch es noch einmal.”, not “Versuche”.
 - Buttons, links and menu actions use the infinitive without an article: “Neues Ziel starten”, “Noch einmal versuchen”, not “Ein neues Ziel starten” or “Versuch es noch einmal”.
 - Hyphenate a compound that contains a name or several words: “App-Store-Abo”, “Google-Play-Kauf”, “Zoonk-App”.
