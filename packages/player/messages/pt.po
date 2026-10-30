@@ -2054,7 +2054,7 @@ msgctxt "iHeHi6"
 msgid "Silicon"
 msgstr "Silício"
 
-#. Shows the notes on a music staff instead of guitar tab.
+#. Shows the notes on the five-line music staff (not sheet music) instead of guitar tab.
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "gFJ4sU"
 msgid "Staff"
@@ -2459,6 +2459,7 @@ msgctxt "TFz_E5"
 msgid "{size}. 95% of samples within {margin}."
 msgstr "{size}. 95% das amostras dentro de {margin}."
 
+#. {size} is how many items each sample has.
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "GvL6oK"
 msgid "{runs} samples of {size}"
@@ -3036,6 +3037,7 @@ msgctxt "9DZ20y"
 msgid "Right, watch the spelling"
 msgstr "Correto, atenção à escrita"
 
+#. Verdict when the learner's answer wasn't checked this time.
 #: src/components/verdict-label.tsx
 msgctxt "yRGkJi"
 msgid "Not checked this time"

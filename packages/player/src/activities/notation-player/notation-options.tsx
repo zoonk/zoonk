@@ -18,7 +18,8 @@ export function ViewToggle({
   const views: { label: string; value: NotationView }[] = [
     {
       label: t({
-        description: "Shows the notes on a music staff instead of guitar tab.",
+        description:
+          "Shows the notes on the five-line music staff (not sheet music) instead of guitar tab.",
         message: "Staff",
       }),
       value: "staff",

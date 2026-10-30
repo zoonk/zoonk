@@ -179,7 +179,11 @@ export function SamplingSimulation({ content, labelId, phase }: SamplingProps) {
         <p className="text-muted-foreground text-sm tabular-nums">
           <span aria-live="polite">
             {isDone &&
-              t("{runs} samples of {size}", { runs: format(fields.runs), size: formatSize(size) })}
+              t({
+                description: "{size} is how many items each sample has.",
+                message: "{runs} samples of {size}",
+                values: { runs: format(fields.runs), size: formatSize(size) },
+              })}
           </span>
           {!isDone && (
             <span aria-hidden="true">

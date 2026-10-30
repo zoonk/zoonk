@@ -565,6 +565,7 @@ msgctxt "ZSMfHW"
 msgid "Your plan at {minutes, plural, one {# minute} other {# minutes}} a day, from scratch"
 msgstr "Tu plan desde cero, con {minutes, plural, one {# minuto} other {# minutos}} al día"
 
+#. Heading over the list of the course's chapters and lessons. Not the learner's study plan, so use a different word than “plan”.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "rEPdIs"
 msgid "Course outline"
@@ -2341,6 +2342,7 @@ msgctxt "Kiy_DO"
 msgid "speak Spanish for my move to Madrid in {month}"
 msgstr "hablar español para mi mudanza a Madrid en {month}"
 
+#. An example goal a learner might type; {month} is a month name. Use your language's name for London.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "FWZush"
 msgid "speak English for my move to London in {month}"
@@ -2757,6 +2759,7 @@ msgctxt "53_ATX"
 msgid "Goals of the call"
 msgstr "Objetivos de la llamada"
 
+#. Read by screen readers: the learner reached this goal of the call.
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "JXdbo8"
 msgid "Done"
@@ -2832,7 +2835,7 @@ msgctxt "00sc5X"
 msgid "Lesson · Calling about an apartment"
 msgstr "Lección · Llamar para preguntar por un piso"
 
-#. The buddy answers a learner of English: “flat” and “apartment” are the English words being taught.
+#. The buddy answers a learner of English. Keep only “flat” and “apartment” in English, the words being taught; translate the rest, London and the US included.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "4teyr4"
 msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
@@ -3778,6 +3781,7 @@ msgctxt "rmN6Kk"
 msgid "Start free. <rest>Plus when you want everything.</rest>"
 msgstr "Empieza gratis. <rest>Plus cuando quieras tenerlo todo.</rest>"
 
+#. “Free” and “Plus” are the names of the two subscription tiers.
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "xrpz7X"
 msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."

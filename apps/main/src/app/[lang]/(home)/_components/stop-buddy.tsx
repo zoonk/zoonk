@@ -90,7 +90,7 @@ async function getExchanges(): Promise<Record<ExampleGoal, Exchange>> {
         : {
             answer: t({
               description:
-                "The buddy answers a learner of English: “flat” and “apartment” are the English words being taught.",
+                "The buddy answers a learner of English. Keep only “flat” and “apartment” in English, the words being taught; translate the rest, London and the US included.",
               message:
                 "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there.",
             }),

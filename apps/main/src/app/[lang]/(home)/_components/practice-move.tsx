@@ -152,7 +152,15 @@ export async function MovePractice() {
               >
                 <CallGoalMark done={goal.done} />
                 <span className="min-w-0">{goal.text}</span>
-                <span className="sr-only">{goal.done ? t("Done") : t("Not yet")}</span>
+                <span className="sr-only">
+                  {goal.done
+                    ? t({
+                        description:
+                          "Read by screen readers: the learner reached this goal of the call.",
+                        message: "Done",
+                      })
+                    : t("Not yet")}
+                </span>
               </li>
             ))}
           </ul>

@@ -49,7 +49,11 @@ export async function PricingHero() {
       </h1>
 
       <p className={cn(LEAD_CLASS, "mt-4.5")}>
-        {t("Free covers one goal at a time. Plus covers every goal, all the way to the big day.")}
+        {t({
+          description: "“Free” and “Plus” are the names of the two subscription tiers.",
+          message:
+            "Free covers one goal at a time. Plus covers every goal, all the way to the big day.",
+        })}
       </p>
     </section>
   );

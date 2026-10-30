@@ -82,7 +82,11 @@ export async function LibraryCourseOutline({
       <div className="max-w-column flex flex-col gap-3">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <RouteTitle down id={titleId}>
-            {t("Course outline")}
+            {t({
+              description:
+                "Heading over the list of the course's chapters and lessons. Not the learner's study plan, so use a different word than “plan”.",
+              message: "Course outline",
+            })}
           </RouteTitle>
 
           {stats.chapterCount > 0 && (

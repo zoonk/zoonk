@@ -43,7 +43,10 @@ export function VerdictLabel({ end, verdict }: { end?: React.ReactNode; verdict:
     }),
     sampleAnswer: t("Here's a good answer"),
     typo: t("Right, watch the spelling"),
-    unchecked: t("Not checked this time"),
+    unchecked: t({
+      description: "Verdict when the learner's answer wasn't checked this time.",
+      message: "Not checked this time",
+    }),
   };
 
   return (
