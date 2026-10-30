@@ -139,7 +139,7 @@
   "today_setting_up": "d1ae6d4aedf0ae4021f57890290049dcf1980ee4b0f0c770ef53b23b7c772a34",
   "today_setting_up_detail": "3abee4382f633db35a6efbf5479b13ceab04367ad230cb81e84a2ffdaa9df207",
   "today_setting_up_goal": "0f5fc5ce28e9f4fec99bcfa77fb5e5a72b5da19bae7f9a3ad1dd11129ad4696c",
-  "today_start_new_goal": "6cf68d430f32b47b91bf98cbcc145163affc52cf7ac6dfc63f3df72b41027a15",
+  "today_start_new_goal": "f2e9c4351ac286b6cddd082aa710e7b002fdfb98f76c2c23b439b8c619f91b39",
   "today_start_session": "bb8cda88e1fd941bdf87f31a46cb277d916d9277a94028febce4a986e22c76c7",
   "today_step_after_challenge": "78987443c9e0f50555b97657c0c663161769074ddcb4f74ed1368e03195407bd",
   "today_step_after_challenge_phase": "8d30fdd11f6b7f6b15ea2217da4baace999a86dc6fcc97e4ea0416786b507fcc",
@@ -161,7 +161,7 @@
   "today_suggested_goal_accept": "68a16cb9900047c84f18a8f5a86328b0c71b0f0b401bfe6fea0e10b97eac50f6",
   "today_suggested_goal_detail": "c6583428be84b3ab3ec6c9cec6b14131e8994d1bbb40ec31fbebd87c94cc722c",
   "today_suggested_goal_question": "d8ef6263274c557838bbff15eaea095c36058e353517cdef74b2d5b6de88b304",
-  "today_take_mock": "4f0371daee1d299ad3210f6b1b8c41f6961612ca3278dc48e0cb354d2794bf76",
+  "today_take_mock": "b65e83961d6113cbc3a21fc03a1ad6bdd4fe041fe8b790e9aa6ea46e95dea946",
   "today_take_mock_detail": "d978ef934220685c702468f0e9c0e921b2eea455bc10ce9f176f31a09f909741",
   "today_take_mock_detail_by_subject": "299b505cd76ef9e1035d3bf878684853c0ae35d37feebf205b4f0c326034049f",
   "today_take_the_test": "860a1d48d96fbabe437044504778e56e75cd5021209b0adea0beb259dde5d98a",
@@ -330,7 +330,7 @@
     <!-- %1$s is the goal's title. -->
     <string name="today_finished_goal">Has completado %1$s.</string>
     <string name="today_finished_detail">Empieza un objetivo nuevo o elige otro de los de arriba.</string>
-    <string name="today_start_new_goal">Empezar un objetivo nuevo</string>
+    <string name="today_start_new_goal">Empezar un nuevo objetivo</string>
     <string name="today_paused">En pausa</string>
     <string name="today_paused_goal">El objetivo %1$s está en pausa.</string>
     <string name="today_paused_this_goal">Este objetivo está en pausa.</string>
@@ -425,7 +425,7 @@
     <string name="today_mock_funding">Día más ligero: reservamos tiempo para el simulacro del %1$s</string>
     <!-- %1$s is the mock's date, such as Nov 3. Zoonk sets time aside for that mock. -->
     <string name="today_mock_funding_welcome_back">Reservando tiempo para el simulacro del %1$s</string>
-    <string name="today_take_mock">Haz un simulacro</string>
+    <string name="today_take_mock">Hacer un simulacro</string>
     <string name="today_take_mock_detail">Cuando quieras: un día completo de examen o medio día</string>
     <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
     <string name="today_take_mock_detail_by_subject">Cuando quieras: una jornada completa de examen, media jornada o una asignatura</string>

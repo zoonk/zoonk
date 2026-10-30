@@ -81,7 +81,7 @@
   "activities_geometry_molecule_start": "eada4ba490bc7eba49e363e62c0185721fcba6515b1cb87872844f80b92d0ec8",
   "activities_geometry_molecule_target": "5a3107d829475131dfea4ef9a2310ec67b516fe83c12cc9d0f1cb99594800163",
   "activities_geometry_molecule_triple_bond": "333816bd8693f0c483e1037a946494bb4e4ad0a84efdff159dab2b9e8bc73150",
-  "activities_geometry_molecule_undo": "bb80f556793f1496dd62135bfd7936b635ff7b618b98c1795fe8a4978370df57",
+  "activities_geometry_molecule_undo": "744c68765952ff0161376b68136cc4ecb50bfcba428c75afce38664e964c8119",
   "activities_geometry_molecule_undone": "808bb7c4c15cef9ac4055e5d0cc52c6c2ac572202d19bb1419e304a32c2dacad",
   "activities_geometry_radians": "11fd6819734c3cab4a0d26715c511700061efef11507b5aad59d41706accab0c",
   "activities_geometry_sin": "20a49ec0239f77e0bac33921cae781729003cb7cc18c6b9843ca92aa875d4db3",
@@ -188,7 +188,7 @@
         <item quantity="one">%1$d Bindung</item>
         <item quantity="other">%1$d Bindungen</item>
     </plurals>
-    <string name="activities_geometry_molecule_undo">Rückgängig</string>
+    <string name="activities_geometry_molecule_undo">Rückgängig machen</string>
     <!-- Removes the selected atom, like "Remove Oxygen 2". -->
     <string name="activities_geometry_molecule_remove">%1$s entfernen</string>
     <string name="activities_geometry_molecule_remove_selected">Ausgewähltes Atom entfernen</string>

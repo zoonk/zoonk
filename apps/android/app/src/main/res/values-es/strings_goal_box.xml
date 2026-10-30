@@ -15,7 +15,7 @@
   "goal_box_kind_topic": "e507b04978b34dcdd7a01c78a05dec55d674aa4fe671c37a6460fae75412dc2a",
   "goal_box_label": "a0e0e52fbbdaee849b09d3b9b7189b19b5a2728641c6f4a4f31154cd3f2630fe",
   "goal_box_placeholder": "018ff2d2e342690c12c99e6ba1663d19fd00649b89997c155cad05c9ed5d5cea",
-  "goal_box_submit": "edf9fa8630c990454db9868408fe368be3bd47a032b44cca914206a0c04d9716",
+  "goal_box_submit": "fd379391663d68a346665c2b291654859bc4c2650745638946a0f4c858b3e11c",
   "goal_box_write_first": "0f362ac79df24dd869783f423e2f31c30d6dd5836c9b521a56045673eae30e3c"
 }
 -->
@@ -23,7 +23,7 @@
     <string name="goal_box_label">Quiero</string>
     <!-- Example in the empty goal box. Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the PAU in Spanish, the bac in French, the Abitur in German. %1$s is a language name. -->
     <string name="goal_box_placeholder">aprobar la PAU, hablar %1$s…</string>
-    <string name="goal_box_submit">Crear mi plan</string>
+    <string name="goal_box_submit">Preparar mi plan</string>
     <string name="goal_box_write_first">Escribe primero tu objetivo en el cuadro, con tus propias palabras.</string>
     <string name="goal_box_examples">Ejemplos</string>
     <!-- What TalkBack says a tap on an example does: it sends that example as the learner's goal. -->

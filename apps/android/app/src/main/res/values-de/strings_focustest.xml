@@ -14,7 +14,7 @@
   "focustest_questions": "ec91f7e517e27b052dca98f7bbfd298990a09789a8f595bdc5ed14e11b00cec9",
   "focustest_see_plan": "c515df6c6b193af0e62bb84bd9f10b28a87366708e368c8a3bb78ca8fad872da",
   "focustest_start": "8623c9ea7969728807b88a625df742352d9dab8d0f7c5ea4f883f99549129271",
-  "focustest_starting": "e51750bbdbf142529f6464265323b18a7ac4f3d3ef74da8f2e694ae098592b53",
+  "focustest_starting": "808a1c837a60b079dbcf4082fcaf73e3f1ad4d37db5838a2ebe547b50455b07e",
   "focustest_subjects": "3c7c19e55f4136cac9ea86069685934ff45c3f849d1f430141bde2e86f9206dd",
   "focustest_title": "0f3ebd6faf8f57e086cdcd2215cb3f5e9512460b17cd3d5779b56b14cbd3893b",
   "focustest_undone": "172f5b47a00387156f58d41de49bc7fd5352d0aa612ed5491105a3838f0557d8",
@@ -43,7 +43,7 @@
     <!-- How long the test takes. %1$s is a duration, such as "5 min". -->
     <string name="focustest_about">Etwa %1$s</string>
     <string name="focustest_start">Test starten</string>
-    <string name="focustest_starting">Wird gestartet…</string>
+    <string name="focustest_starting">Wir starten…</string>
     <string name="focustest_writing">Deine Fragen erstellen</string>
     <string name="focustest_writing_questions">Wir erstellen Fragen zu jedem Fach</string>
     <string name="focustest_writing_line">Wir wählen die Fragen für jedes Fach aus…</string>

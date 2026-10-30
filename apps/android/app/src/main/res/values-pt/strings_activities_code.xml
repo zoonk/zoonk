@@ -73,7 +73,7 @@
   "activities_code_step_back": "ac769c4eef2d61653900c7687f493ffc6dfa9b09063ff8aab954771feaf62727",
   "activities_code_step_forward": "a3f85b817b4c6a079c118b5b3c0d06bc6170a3b835f0981662ca2382925a7cfb",
   "activities_code_step_next_line": "8dd1383329f305fb11d45606ff5ed3801c701f94b43f21ba5c93c681a4245220",
-  "activities_code_step_of": "796e38d1526d371e55a1baa082c424d5d52d5cacf679f89df48771d46e221812",
+  "activities_code_step_of": "cfdfcc280437c0e4ac63be94592097a9d4d87527da3f81ab2075291d721d0538",
   "activities_code_step_to_see": "89ffc1eeb783fb6b102cc63556199c3d80d49a1c7ff543d5cf5513b42aed275f",
   "activities_code_stopped_after": "19ea7502d430de49e4077d3f3d527e0c74140732128cd4d4ba67785746ad8738",
   "activities_code_symbols": "25c582279fdc49a310953715b0ed853827df2f7616f8fb585ad646132567d2da",
@@ -259,7 +259,7 @@
     <!-- Where a code trace stands before any line ran. -->
     <string name="activities_code_before_first_line">Antes da primeira linha</string>
     <!-- Where a code trace stands, like "Step 2 of 4". -->
-    <string name="activities_code_step_of">Passo %1$d de %2$d</string>
+    <string name="activities_code_step_of">Etapa %1$d de %2$d</string>
     <!-- The line of code that just ran, for TalkBack. -->
     <string name="activities_code_current_line">Linha atual</string>
     <!-- The variables a code trace watches, for TalkBack. -->

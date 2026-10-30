@@ -55,7 +55,7 @@
   "activities_music_same_chord_guitar": "de769ab59c894bc98df23b555d6610fe53542cc62b94b386dfff5e1ca21b8c8f",
   "activities_music_same_notes_guitar": "e5e6a10f1e8518fa0798ef0ba9bfe72fdf2b77921b481f9e7498ba3eaa03407a",
   "activities_music_show_as": "35e6917bef72e12d0e4a13ff53c91925b7e5d2c57ae1b4f1833886dd00c48552",
-  "activities_music_skip_for_now": "019d326e0f022fe1db44c8ff5446f7cb8c1d714f5ee0eb1dfe705a2d7cc0d9c9",
+  "activities_music_skip_for_now": "6f360f3e3f25b020d6b21f213bc5c52ffea9fed5418b581ec766f131a55b8564",
   "activities_music_sound_check_failed": "232c68191fbc17df78d8900c6d088270ea7195b05ad55728b73cd255ea77a075",
   "activities_music_sound_check_intro": "3e293f03d5fbac471ec6fe2c0cac91810680b619f729e5118753b4510c04f8cc",
   "activities_music_sound_check_late": "7071855fb843237c56f7acea538d1607162e839d83592115d13887de547b2cef",
@@ -253,6 +253,6 @@
     <!-- How late this device plays sound, like "about 120 ms late". -->
     <string name="activities_music_sound_check_late">Le son de cet appareil arrive avec environ %1$d ms de retard. Les rythmes en tiennent compte.</string>
     <string name="activities_music_sound_check_start">Lance le test du son</string>
-    <string name="activities_music_skip_for_now">Ignorer pour l’instant</string>
+    <string name="activities_music_skip_for_now">Sauter pour l’instant</string>
     <string name="activities_music_continue">Continuer</string>
 </resources>

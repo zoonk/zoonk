@@ -91,7 +91,7 @@
   "onboarding_intent_understand": "d2def186b26fc5c1462d9d9ac2b99280269493e6f02251f265e5e30407d44e3a",
   "onboarding_intent_understand_description": "b0a2f883176f461ca6e935289a9224cd26d6c25dce66e9bcf2193391fbf86a99",
   "onboarding_join_waitlist": "c3ff800e249487be3f61b3590865f0ad3f0e373c426fae6e4757650d7b112356",
-  "onboarding_language_test_build_plan": "5874df8b03bd785b750eed777d02d47fec65180add707ded7fdaed7ff70f8815",
+  "onboarding_language_test_build_plan": "bac7bb9b4ec3977a55357cc733a4bf6a295e906c657078a8cf3d5282271589b9",
   "onboarding_language_test_description": "19075bc774bb18fbd038bc4708202a477ae6f7410a43dd7e2696cab8e605ace9",
   "onboarding_language_test_did_not_understand": "5c643b9027cb10cd72e9031bacf64efb6af6ba03eb7b7f7ce202f26575753d5a",
   "onboarding_language_test_done_description": "4a4b5f03516888540bc75dc2943a74e335f5df65ff0c8244bd1e2c1c44441b7f",
@@ -730,7 +730,7 @@
     <string name="onboarding_language_test_skip_part">Saltar esta parte</string>
     <string name="onboarding_language_test_done_title">Tu nivel hoy</string>
     <string name="onboarding_language_test_done_description">Basado en la prueba. Será más preciso cada semana.</string>
-    <string name="onboarding_language_test_build_plan">Crear mi plan</string>
+    <string name="onboarding_language_test_build_plan">Preparar mi plan</string>
     <!-- Language skills, each beside its level. -->
     <string name="onboarding_language_test_reading">Lectura</string>
     <string name="onboarding_language_test_listening">Escucha</string>

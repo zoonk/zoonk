@@ -15,7 +15,7 @@
   "testout_rule": "c17e91f92a3a1642ecc4efe21f059b2846bf572515d803073a2ffaf12fae5129",
   "testout_see_plus": "d145f86d6b2eb8cb96fdbca274bb9af5e5e21405a7ff0281acf7e3d9b4304784",
   "testout_start": "66d59de6282215040714b371553021fb5a35bcdbb989a4d4134dc8b75b6a77ac",
-  "testout_starting": "9b359880a404489f0e612f1568f014654b27dd413ce833cac13b175587cb6b23",
+  "testout_starting": "f87eceeafecf72bdf7d820fd37b1c203dffca3c9f5ffa3f8d7901fe6e812e33f",
   "testout_this_chapter": "6c4ac83a9290f97f3f19aa0c484bc62449e3ee243f69b70196a8109a9c3feb06",
   "testout_title": "44dbc18fe6671b38f936fdec41db4aa1a5cd603ef0ebc82995146c50554835cd",
   "testout_writing": "0f552bbe99eb1a309242c9bcaf06bc9dc16b6dd5937d9f3b005541f7fed0c158",
@@ -33,7 +33,7 @@
     <string name="testout_intro_title">Kennst du das schon?</string>
     <string name="testout_intro_detail">Ein paar Fragen zu diesem Kapitel. Wenn du gut abschneidest, überspringt dein Plan, was du schon weißt.</string>
     <string name="testout_start">Test starten</string>
-    <string name="testout_starting">Wird gestartet…</string>
+    <string name="testout_starting">Wir starten…</string>
     <string name="testout_see_plus">Plus ansehen</string>
     <string name="testout_writing">Deine Fragen erstellen</string>
     <string name="testout_writing_questions">Wir erstellen Fragen zu diesem Kapitel</string>

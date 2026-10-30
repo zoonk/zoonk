@@ -43,7 +43,7 @@
   "challenge_start": "9d4d2d80b58f0a82a9a1dee1ea9616bb4b1c4700f53a72b418d268e2a1e1d5d0",
   "challenge_start_failed": "bf5a1e00dc8023adbf5983efdf29641ace177886260fd58d048d3ba37db798a3",
   "challenge_start_slow": "33504b0864e1a4ef6e243238b2d07c9c7e4c525b5d3d24df441f80368878da82",
-  "challenge_starting": "ded2addbbae3253e6270877ccaf0911fdf96064b6006df8e4cd8e05dca395601",
+  "challenge_starting": "88ac4e6200295928874e480262a7562e9514bfc6570daa1bf80e8e85f112bcba",
   "challenge_today": "4de4bb7d7683dfe6a7721cdba4a3a53b34d22480e37d6bce83db81f7182a5f30",
   "challenge_tomorrow": "7f3ea7f0e4c05dd655abac3473d0968ba8933d6be20a108b66faeecdb0a02490",
   "challenge_topic_count": "11d445d6cd955398aaf45b4bf786751a73c55694bb839abcbf07f2ca55d52d66",
@@ -144,7 +144,7 @@
     </plurals>
     <string name="challenge_call_plus">Gespräche als Herausforderung gibt es mit Plus. Dein Plan geht auch ohne sie weiter.</string>
     <string name="challenge_start">Starten</string>
-    <string name="challenge_starting">Wird gestartet…</string>
+    <string name="challenge_starting">Wir starten…</string>
     <string name="challenge_start_failed">Das hat nicht geklappt. Versuch es gleich noch einmal.</string>
     <string name="challenge_start_slow">Wird noch gestartet. Es dauert länger als üblich.</string>
     <string name="challenge_continue">Weiter</string>

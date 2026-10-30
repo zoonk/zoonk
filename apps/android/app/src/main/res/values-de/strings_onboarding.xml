@@ -8,7 +8,7 @@
   "onboarding_admission_title": "7336af6f5a3b46e8781bdb4a3285efda3d0f19971b6c55adaf5e0e099aa58ea3",
   "onboarding_another_date": "dd08d2a340b3bed8b8e64c83f3153d571e9cd0059f23d3d47d3c54b8c4c4fe8b",
   "onboarding_answers_saved": "035573d01673d449940890465e4d3acf1cef274e8f0e7dc8e24172b7509ebf18",
-  "onboarding_ask": "706e31809cfa266cceaf38c98be26dde898d17282c13ae822a093d85f40fb6d8",
+  "onboarding_ask": "f54e670bdeb624d697b78340b24d403bcd171ace6968444db6319b9f5004281e",
   "onboarding_attach_failed": "1f1078147852b9814c364114d0b227015c0d58d0674112caee34f0cfc9c591b5",
   "onboarding_attach_limit_day": "71be8ec5752f365efaa4ed0583a78c69c142f882c260c133ebdc43912d1a1f84",
   "onboarding_attach_limit_month": "18e1d4aaa70de7f4cc8a7b1ce4153535e901f6fc51cc465b534935082f8bfe18",
@@ -201,7 +201,7 @@
   "onboarding_plus_more_goals_up_front": "9ac4519a6566e397d98d7359c2d23ba7db001f10c4e02f5b7a033ca9ddf756ac",
   "onboarding_position_description": "cf75567c8e39b1dbb3ea35c7252775db5ef547b8694377643a29a82a91f0ad7a",
   "onboarding_position_label": "1187117b9eec43d721781dcc8a3cca832dd9b295e6ea5d4695eba438b8393002",
-  "onboarding_position_placeholder": "63385bc2600b2f52634ba213c19782d4b046f64bd7b5db88a35e6ebd416b0a3c",
+  "onboarding_position_placeholder": "a9f86aaf48e2c41cf67067e0246d02944c789302e4edf75730ee6021c0d0926f",
   "onboarding_position_title": "d47d5a5034195ffc5f8723bddd3c10189b5e15417c902271091aa485acf9cba7",
   "onboarding_purpose_career_change": "f03324a0229939124cf833317e6cfd010a3c8200a35e6593978a2c1d7431214e",
   "onboarding_purpose_career_change_description": "9b77ae2e26b2d9a3b4101d5720c891b442db34ea7d7222d231c4f4fe880806b9",
@@ -321,11 +321,11 @@
   "onboarding_rewrite_hint": "f86b94dbfc8c8e3d27bd172eef07e680df8f27eb0f7a162f454c36e7efcd4136",
   "onboarding_role_career_description": "88f5ceb307667cd2e27f5164d1113d4fd6db67b89a28369b13637638483fd79c",
   "onboarding_role_career_title": "2b2071f5996d90df369a2054fc72c3c956742ab3f6d141dd6698faa8ea461153",
-  "onboarding_role_now_placeholder": "fb3eb28f99eb0cdbf5f7710366a8f43de208403f327a4e795b2125242ee24fb6",
+  "onboarding_role_now_placeholder": "dd169c67ed27a9b64f0f4530d1d42c0666d361cefc8e17aaa3b4215c70d44748",
   "onboarding_role_placeholder": "7b457d044827bcc782cd46792ce7c1088bf5877fc5ce48cb79df9baeeaa2a8f4",
   "onboarding_role_tasks": "e7683cbdbe2763eafbfe4428aeae612818a32e4cf318505ba4be36722908bebd",
   "onboarding_role_tasks_placeholder": "a726be04784b0603647091204f76474ddf7056ac8b72306a5b32e13a95a52ab0",
-  "onboarding_role_wanted_placeholder": "0e8c17a70491fa4e317c0d998e2415805e76520702404ec1a24b5a61b1713f41",
+  "onboarding_role_wanted_placeholder": "908fa283980dfd02d4ed3dd677b7a342786dd5fcb68f8dbcd8f97bc23ba3ba7d",
   "onboarding_role_work_description": "dee38982b0f7b9ee6d89aa968d18c3c2bd0c93c4e103b4bbdf0e95edc6938865",
   "onboarding_role_work_title": "8c7436855b0f3e69d0eba55bc576bc6f67fe5096156c568e2a2ebc0a42a58555",
   "onboarding_row_course": "6fe16e362ce4fdd0dc9cc15abd0fe85f47aabc80cb6ffdf28641863c2d7f5a15",
@@ -629,7 +629,7 @@
     <string name="onboarding_questions_reading">Wir lesen dein Material…</string>
     <string name="onboarding_your_question">Deine Frage</string>
     <string name="onboarding_question_placeholder">Z. B. warum liefert die Glykolyse netto nur 2 ATP?</string>
-    <string name="onboarding_ask">Frag</string>
+    <string name="onboarding_ask">Frage stellen</string>
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="onboarding_citation_page">%1$s, Seite %2$s</string>
     <string name="onboarding_citation_slide">%1$s, Folie %2$s</string>
@@ -941,7 +941,7 @@
     <string name="onboarding_position_description">Laut Ausschreibung kann es für jede Stelle eine andere Prüfung geben.</string>
     <string name="onboarding_position_label">Stelle</string>
     <!-- Example positions in a public service exam; use the kind of positions such exams list in the language's country. -->
-    <string name="onboarding_position_placeholder">Z. B. Sachbearbeitung, Polizeidienst</string>
+    <string name="onboarding_position_placeholder">Z. B. Sachbearbeiter, Analyst</string>
     <string name="onboarding_reason_title">Warum lernst du das?</string>
     <string name="onboarding_reason_description">Die Situationen, die dir wichtig sind, prägen jede Lektion.</string>
     <string name="onboarding_reason_label">Warum</string>
@@ -955,8 +955,8 @@
     <string name="onboarding_role_career_description">Der Plan behandelt, was du für diese Tätigkeit von Anfang an brauchst.</string>
     <string name="onboarding_role_work_title">Was machst du beruflich?</string>
     <string name="onboarding_role_work_description">Wir nutzen Beispiele aus deinem Berufsalltag.</string>
-    <string name="onboarding_role_wanted_placeholder">Z. B. Fachkraft für Datenanalyse, Pflegekraft</string>
-    <string name="onboarding_role_now_placeholder">Z. B. Lehrkraft, im Studium</string>
+    <string name="onboarding_role_wanted_placeholder">Z. B. Datenanalyst, Pflegekraft</string>
+    <string name="onboarding_role_now_placeholder">Z. B. Lehrkraft, Student</string>
     <string name="onboarding_role_placeholder">Z. B. Pflegekraft, Lehrkraft</string>
     <string name="onboarding_role_tasks">Wofür du es nutzen möchtest</string>
     <string name="onboarding_role_tasks_placeholder">Z. B. Berichte, A/B-Tests</string>

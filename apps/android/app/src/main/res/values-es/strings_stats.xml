@@ -24,20 +24,20 @@
   "stats_calendar_energy_summary": "96160d33ee69b6d3b85fbd2ce09cb7f3336c60d65fc48896ce327eae6c70ab77",
   "stats_correct_of_total": "67f61ec0388f2630c4a85e1778c7bf1436ac4536211d7eccd0ce8c2b624a76f5",
   "stats_day_activities": "eb2c741aea01b10a2868e1c34fe1fc648f0649487fe82c942da9b843cda751f4",
-  "stats_day_energy": "f06ac5861c177c7c09f226fecb4a4895d80bcb1a17dc205ba51e79c714f53681",
-  "stats_day_no_energy": "e486af16b5dc097a50b6ab381add2f3e6f07e55f7304d6e4956c0bf3d01c03ba",
+  "stats_day_energy": "866c88a7a4b1e4534ea653083bd41d87439628a27641246e9cb5974319278acd",
+  "stats_day_no_energy": "08d2c728e7ff0432908076dddc086e5e7142c40cc701252a2d70029a113c0c0d",
   "stats_day_no_study": "6c008df78da5a8d6314cd6084855231ff000b8af41e2bc0bcdb9ed10ecbf98cc",
   "stats_days": "252db248b7e798b91b8b3ad34712f9103de0d80e317dfa5a6ddb942cf21e7b04",
   "stats_days_even": "246ec51535ff6967821770e681d8ed6659e734951680dd5740a1ab728dd3bff1",
   "stats_empty_title": "33435b7130f73bf1fb0fced856e4362cca72b9837722b922f81ecffde547593b",
   "stats_energy": "07d22c95c50c8fa146c3ea70c3154dfd2cf740ff0763d54336cd934134fec9ec",
   "stats_energy_average": "617064635ecd06c8a6db6241a3a33958c856dbd70f0f1ddb42ce0f63b1f2f56f",
-  "stats_energy_line": "5b4212672a398371cd1aa99932502b795e735a7ea153f8d6dd33341655c16499",
+  "stats_energy_line": "454b108e803ce5be77f118776edf16f48aa237df5dfdd5848e19c0adc6548ad6",
   "stats_evening": "5fbc1e9fc97d10925c851611727a4d2a63fe270c6f1a1601890b459de3c2ed5a",
   "stats_every_belt": "57639fc781579f68f436cf732e51b33e87de507cf2114ddc47f0ff501b4b6762",
   "stats_finished": "f6af133af9a00d1a1a6dcbe877595da67a08765a924452b7b94b1813a8dfacb5",
   "stats_full_energy": "5164c77c3823282a93131146d43b05c0990e7f402943d81f1c4841d22ed24fa6",
-  "stats_full_energy_days": "e6b1e2823bd32d9cb2e0b1f9e3f40c6b6f88b7374ced3f09feae3c1bd8b05d81",
+  "stats_full_energy_days": "8e50c349172151b1227bb9638a1ae330ce93f5cd0876f14b2cab8d0089033362",
   "stats_go_to_today": "00e08cfa7407700ff71052a7b1cee82c163993ce7ac786cd673d291de68820a9",
   "stats_high": "cb41ea5f386f307b3e1ddc154e2b3403aa1f162f89b211ade30f60840e68011d",
   "stats_last_90": "88ee4da563d4844acaa8b7005014a3d5d3e3e8e9e13184ca22708148a20ec027",
@@ -150,8 +150,8 @@
     <string name="stats_average">Media</string>
     <string name="stats_since_start">Desde que empezaste</string>
     <string name="stats_full_energy">Al 100 %</string>
-    <string name="stats_full_energy_days">Días con la energía al máximo</string>
-    <string name="stats_energy_line">Cada lección que completas aumenta tu energía. Los días que descansas baja un poco, pero conservas tu cinturón y tu progreso.</string>
+    <string name="stats_full_energy_days">Días con Energía al máximo</string>
+    <string name="stats_energy_line">Cada lección que completas aumenta tu Energía. Los días de descanso baja un poco, pero conservas tu cinturón y tu progreso.</string>
     <string name="stats_low">Baja</string>
     <string name="stats_high">Alta</string>
     <string name="stats_any_day_studied">Cualquier día que hayas estudiado</string>
@@ -179,8 +179,8 @@
         <item quantity="many">%1$s · %2$s actividades</item>
         <item quantity="other">%1$s · %2$s actividades</item>
     </plurals>
-    <string name="stats_day_no_energy">%1$s · Sin energía registrada</string>
-    <string name="stats_day_energy">%1$s · %2$s de energía</string>
+    <string name="stats_day_no_energy">%1$s · Sin Energía registrada</string>
+    <string name="stats_day_energy">%1$s · %2$s de Energía</string>
     <string name="stats_calendar_energy_summary">Energía en los últimos 12 meses: %1$s hoy, %2$s de media desde que empezaste</string>
     <string name="stats_right_answers">Respuestas correctas</string>
     <string name="stats_right">Correctas</string>

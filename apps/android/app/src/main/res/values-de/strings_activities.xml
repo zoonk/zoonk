@@ -61,7 +61,7 @@
   "activities_tree_it_leads_to": "5e28eda2d07552ce659ff99500fdfa7735d434d5453defbc35a7d99149853c82",
   "activities_tree_leads_to": "290218c1977b2765f665700e1a4b9f53c7f9a3700af9fc68f5fa991fb0a47bec",
   "activities_tree_still_possible": "8b3298ef1711f7c073d17349ccbbf08ec564cd04fe871a542c45caa73c66d0ff",
-  "activities_tree_undo": "3fec71acf5c7765c668d81b0658450c3c555da2069b8b453ed5f11a7568c812a",
+  "activities_tree_undo": "0d2cd78f961e192ea6a04e26d3688c069a91da84e5e5b4cb1b8dc7e246351455",
   "activities_tree_walk": "d416d7e3e3bda9a07ef6ad5215f8c1e411609aa734fc6ec9a6c9dd8800ed720e",
   "activities_tree_you_chose": "f19039ccc316c06b1fa58e19dad4c7b39206fc894f8273e6a8c18b580becb6d8",
   "activities_tree_your_answers": "1ff759c0f3e668e24f46c9c97c6afae10fe816c28b90020efda97e97d434d163"
@@ -116,7 +116,7 @@
     <string name="activities_tree_still_possible">Noch möglich</string>
     <string name="activities_tree_your_answers">Deine Antworten</string>
     <string name="activities_tree_leads_to">Deine Antworten führen zu</string>
-    <string name="activities_tree_undo">Rückgängig</string>
+    <string name="activities_tree_undo">Rückgängig machen</string>
     <string name="activities_tree_walk">Der Weg durch diesen Fall</string>
     <!-- The branch the learner took where the key went another way, like "You chose Single". -->
     <string name="activities_tree_you_chose">Du hast %1$s gewählt</string>

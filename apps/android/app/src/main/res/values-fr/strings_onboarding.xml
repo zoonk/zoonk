@@ -119,14 +119,14 @@
   "onboarding_level_basic_description": "3c2d62e43f19c19939a8eafa4c01c2e90062a1bec11ff793114a8f8fd5d2b75f",
   "onboarding_level_description": "b1c0e70b9fbe7680d2b2a0ed624cd495c7af9942ac3377948fbc7f40e1a9f3c0",
   "onboarding_level_intermediate": "36485a3e15f4840a15406e98ef96fb8c980d8ef27fe099c2bd3df130dc3aed38",
-  "onboarding_level_intermediate_description": "de24708de7852fb65eb6e69a5ee1ebe7a63a160ed988b8a4cdbd83cd1cde33a7",
+  "onboarding_level_intermediate_description": "66c1bc583b0bf74662ded6984708a6e8ad9fc12c99747b604406f468428165a7",
   "onboarding_level_label": "d8bcf0c7bd89cd0c31784934a06782de87eecdc4c61afc295f3e2b1003b3edf0",
   "onboarding_level_none": "66a27bddce98e8f2aeb87bc396f4dfa64d7b3de73d8cab3afab2da257b9e1300",
   "onboarding_level_none_description": "601fbf632ace18a5c9a34ae1d583d6897962f5b46e46d05cdc6f5be2f914412e",
   "onboarding_level_test": "ed85b804e68ed32a4f7dc53e698e067f8178daaaacdc6423ca2011f23d14b0a1",
   "onboarding_level_test_description": "c65109b2136c7da593e453430e86bba520c6f3701d243b962ddb92c599281ade",
   "onboarding_level_title": "2c280b8021c2deadf664d0b7e7bb5015ec5c8ff05d49d3c2d90c2803b0df27fe",
-  "onboarding_library_course_fits": "ecbc82718c8e9d216da6026eca53f9f400c803bd5f59abc2e50f15a0967d0bf3",
+  "onboarding_library_course_fits": "3924bc6c9239c61b7476e963752d33785a1ad8b559bc5a2043464a911f8c3052",
   "onboarding_limit_daily_explanations": "ea2f5791107208a6ce94f1be3da09edff3fe8064e7ea030a12e140271d1b6e68",
   "onboarding_limit_daily_goals": "d99362d3b27904fa41733cd5680db0a754347a8cdf1e3c2ac7f9345ec18945ca",
   "onboarding_limit_guest": "4ac0933bc0e80ce45243e27673b4fdb7ab599ff2acee1b19f178e96c42e05dc5",
@@ -178,7 +178,7 @@
   "onboarding_placement_set_description": "f39de85a54f6c3a1398a591f61ee89e84eae119b0b3e8e0ccee0fb26751b1168",
   "onboarding_placement_set_title": "80278518a0d984afe30a6893017e4d7c9d2f4192bcb70bee7f9d1a954e6524f5",
   "onboarding_placement_skip_basics": "fb60cb1b3ea886c19703477bc5d6c1ef44483535ca864f759927bfbcfdd7908e",
-  "onboarding_placement_skip_for_now": "51bbbf09699c730eb03cc18289dd979504824670f8297a6e9a2ed089e86c98d8",
+  "onboarding_placement_skip_for_now": "fb6224440109c2b1876bd8d50e0031be6820093cf126a692d185ebfb4254f127",
   "onboarding_placement_skip_note": "f922ee981621536f62f7f1ea80b950f48ba5903cd0f6f5818a49173e2e121bdd",
   "onboarding_placement_start": "75ca2af1f84fdffc5690fb6c41d338ae6344789e4cd3b9510ec63e35309c98c5",
   "onboarding_placement_stop": "d322c25441b98d9c665ba24e9e2ed886e17e0497d44c82084e3cedb0cf40268b",
@@ -663,7 +663,7 @@
     <string name="onboarding_placement_waiting_title">Préparation de tes questions</string>
     <string name="onboarding_placement_waiting_material">Elles viennent des documents que tu as ajoutés. Leur lecture prend quelques minutes.</string>
     <string name="onboarding_placement_waiting_skills">Elles portent sur les compétences nécessaires pour ton objectif. Cela prend généralement une ou deux minutes.</string>
-    <string name="onboarding_placement_skip_for_now">Passer pour l’instant</string>
+    <string name="onboarding_placement_skip_for_now">Sauter pour l’instant</string>
     <string name="onboarding_placement_skip_note">Certaines de ces questions te seront posées pendant tes premières séances.</string>
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
     <string name="onboarding_placement_question_number">Question %1$d</string>
@@ -740,7 +740,7 @@
     <string name="onboarding_reveal_building_title">Préparation de ton plan</string>
     <string name="onboarding_reveal_building_description">On choisit par où commencer et on adapte le plan à tes journées. Pour une nouvelle matière, ça peut prendre une ou deux minutes.</string>
     <!-- Above a published course's title, offered while the learner's plan is built. -->
-    <string name="onboarding_library_course_fits">Un cours de la bibliothèque correspond à ton objectif</string>
+    <string name="onboarding_library_course_fits">Un cours de la Bibliothèque correspond à ton objectif</string>
     <string name="onboarding_reveal_reading_title">Lecture des documents officiels de l’examen</string>
     <string name="onboarding_reveal_reading_last_title">Lecture des documents officiels de la dernière édition</string>
     <string name="onboarding_reveal_reading_notice">Ton plan suivra les matières, les sujets et les dates de l’avis. Cela prend généralement quelques minutes.</string>
@@ -943,7 +943,7 @@
     <string name="onboarding_level_basic">Les bases</string>
     <string name="onboarding_level_basic_description">Je connais quelques notions</string>
     <string name="onboarding_level_intermediate">Je l’ai déjà étudié</string>
-    <string name="onboarding_level_intermediate_description">On passera ce que tu connais déjà</string>
+    <string name="onboarding_level_intermediate_description">On sautera ce que tu connais déjà</string>
     <string name="onboarding_level_advanced">Je le connais bien</string>
     <string name="onboarding_level_advanced_description">Seulement ce qui est nouveau ou difficile</string>
     <string name="onboarding_level_test">Je ne sais pas, propose-moi un test rapide</string>

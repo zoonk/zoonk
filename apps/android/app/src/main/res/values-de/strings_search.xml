@@ -13,7 +13,7 @@
   "search_continue_failed": "a8e36bb685bc86a130dd071b40a2f347f0a583a7e82158673f63acd3ed2546a5",
   "search_group_account": "829c1cabd2d852e69c9b5893449a5e89478192c6e2eeba26c0d1a64798603437",
   "search_group_actions": "087faa68c1dc25c1c286bb17196ee5112b89eb3d7a4b620f8a6f5427909a0fbd",
-  "search_group_ask": "281c2c1afbb8db8e7600bdbc3dc495a4bded850ffd77e2316434e1a3961ebf17",
+  "search_group_ask": "601ac60a60e95df3561d40a293a786ccaf8e2da7bdb541e55d7955a207734db6",
   "search_group_catalog": "c35d6807cb54ab64bef5271223e0d5507046b228ecea4c89c2f683ae959b3adf",
   "search_group_explanations": "de55908dddf8df1119ad88b8e7369adf147117345d5499b27fa1adf256dadd0f",
   "search_group_go_to": "d15e666568df79d232e80d665e05f5b072ae467bc7fcfea716a6ff1a1f061a80",
@@ -64,7 +64,7 @@
     <string name="search_group_catalog">Im Katalog</string>
     <string name="search_group_account">Mein Konto</string>
     <string name="search_group_help">Hilfe</string>
-    <string name="search_group_ask">Frag</string>
+    <string name="search_group_ask">Frage stellen</string>
     <string name="search_group_new_goal">Neues Ziel</string>
     <string name="search_continue">Heutige Lerneinheit fortsetzen</string>
     <string name="search_take_mock">Probeprüfung machen</string>

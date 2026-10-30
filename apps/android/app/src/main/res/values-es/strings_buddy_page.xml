@@ -7,9 +7,9 @@
   "buddy_page_earlier_questions": "d60e26692c517a3b781455752727b45fb96f675e72da6a1a4794accbc8188517",
   "buddy_page_energy": "30e2657a84e0ed6c764674c7d02cfdcc9abdd2b69a91112310986e1d93498efd",
   "buddy_page_energy_napping": "b5ab26ad2595066e3204514348bd87f3745fa3e4e4e08c50a1a0da6d9bd47d98",
-  "buddy_page_energy_starts": "a2390848d4665a964e01a6ee989c848dc21afafc3857b7a089fda4581f109ff8",
-  "buddy_page_energy_studied": "ce9485ba9cd5a74e527537c9ee5aaad56769fef729abbf1b083ccddd50750a37",
-  "buddy_page_energy_study": "5b2081ba1f987f1b0ec228cdea4d86c6a78655d613900993bf59af87251f092d",
+  "buddy_page_energy_starts": "6bf57aec7d10212bbeff48d83c0610cfd119c04f2c6c44635286605c4c4491e6",
+  "buddy_page_energy_studied": "b32e9b01f4b3a031863aab9819b3b3860e4b618920330a070fa4bac22187821e",
+  "buddy_page_energy_study": "f1d74d05e76d074b7c17dc56fbb7d16681df4adcc7792a50b01b6d770badab32",
   "buddy_page_first_anytime": "4960a7d476c19e3a9127b2eaa06f71d23d87b0e5edd2a6fbde7deaf269b87b15",
   "buddy_page_first_ask": "8a8440d9642054f67c1751ac42011d8b8d99cb75ce9d1a14b15ace47dec3a181",
   "buddy_page_first_call": "0df5d64b31e32f715040eab32beabacdf160cff8ceb196d8501fb98b2b822869",
@@ -78,10 +78,10 @@
     <string name="buddy_page_suggest_focus">¿En qué debería centrarme primero?</string>
     <string name="buddy_page_today">%1$s hoy</string>
     <string name="buddy_page_energy">Energía</string>
-    <string name="buddy_page_energy_starts">La energía empieza con tu primera lección y crece a medida que aprendes.</string>
+    <string name="buddy_page_energy_starts">Tu Energía empieza con tu primera lección y crece a medida que aprendes.</string>
     <string name="buddy_page_energy_napping">%1$s se ha echado una siesta. Cualquier cosa que aprendas le despertará.</string>
-    <string name="buddy_page_energy_studied">Has estudiado hoy, así que la energía no bajará.</string>
-    <string name="buddy_page_energy_study">Estudiar hoy mantiene la energía.</string>
+    <string name="buddy_page_energy_studied">Hoy has estudiado, así que tu Energía no bajará.</string>
+    <string name="buddy_page_energy_study">Estudiar hoy mantiene alta tu Energía.</string>
     <string name="buddy_page_not_yet">Aún no</string>
     <string name="buddy_page_missions">Misiones</string>
     <!-- Read aloud for the missions shown as "1/3". -->

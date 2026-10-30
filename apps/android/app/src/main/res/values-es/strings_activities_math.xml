@@ -68,7 +68,7 @@
   "activities_math_sampling_margin": "4ab5c9fc169530019b091a864fc01e51542078c2006ee083a77c13413be85113",
   "activities_math_sampling_margin_points": "fe7b104731355328a454369b3bed3c4e0cf53ae0968114c83a70db902c9322e4",
   "activities_math_sampling_math": "650f792aa6f776092e64033f5489e1db425cb77f32fede3cba07bbfa0889cc18",
-  "activities_math_sampling_range": "bf4eb1f9ca8d7f4d1504ce8e95e07d23370a001b64e841d3056993071c9730ae",
+  "activities_math_sampling_range": "4adb0a0f0f093b42b3c98c8c30f1b83a4e1927974379159aeafb1bc6f7361dfa",
   "activities_math_sampling_running": "a0b9271176d4fce4b07a7f26632b1a9b6c7c682668f4efba07a3e44d6814b133",
   "activities_math_sampling_shrinks": "4dabd432f139bed064d7b383dbb33d80fae863b54b0fa27934aeee5ffc520203",
   "activities_math_sampling_size": "b824f3e0ba8e8c97afbcf30c1e073d250e46e9da26d7c41357513b468665836b",
@@ -216,7 +216,7 @@
     <!-- What the sampling simulation shows, for TalkBack, like "200 samples of 400 from Example town. The true value is 50%; 95% of samples landed between 45% and 55%." -->
     <string name="activities_math_sampling_summary">%1$s muestras de %2$s de %3$s. El valor real es %4$s; el 95%% de las muestras quedó entre %5$s y %6$s.</string>
     <!-- Under the chart, where the middle 95% of the samples landed, like "45% to 55%". -->
-    <string name="activities_math_sampling_range">De %1$s a %2$s</string>
+    <string name="activities_math_sampling_range">%1$s a %2$s</string>
     <!-- Above a dashed line on the chart at the population's real value, like "True value: 50%". -->
     <string name="activities_math_sampling_truth">Valor real: %1$s</string>
     <!-- What the sample size slider says to TalkBack: the size, then the margin it gives, like "400. 95% of samples within ±4.9 points." -->

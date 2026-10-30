@@ -91,7 +91,7 @@
   "mock_step_failed": "e04149f9a3178c8dea8c1dd1fcaba57ce82bdc3e918447a0e255e87d78213653",
   "mock_step_failed_saved": "f9b07e6c3c946f233bde0bf592666620deb899310f006ee55d4dbba00a80efe7",
   "mock_step_slow": "04d2178f33926cdfe638db475670f062f9816fc099eba6738de5c3ffda38e44a",
-  "mock_take": "021aeefaf8d3b037a7bffbcc40d9d0307bb7b2e0c04c65bca41900fe447d8afc",
+  "mock_take": "5424b156585a80d975ad408436dcfb2e36a1605c6a4c0ac2844e4ca2131d0491",
   "mock_take_new": "4459dd01905c8b65c64ca31bc3d4e7ff62726753320ff23bd1ef92393596c320",
   "mock_time_left_caption": "97030723846c3124f0bc7e0e52a40089f319bde35bc6c93d12285a6023f651a5",
   "mock_time_left_label": "9ef2cdc869b54706d3ae928ba63a311a1179ec8ae719c386011ee35d89a788eb",
@@ -126,7 +126,7 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">Probeprüfung machen</string>
+    <string name="mock_take">Probeprüfung ablegen</string>
     <string name="mock_continue">Probeprüfung fortsetzen</string>
     <string name="mock_label">Probeprüfung</string>
     <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->

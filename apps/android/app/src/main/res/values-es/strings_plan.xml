@@ -446,7 +446,7 @@
   "plan_score_band_range": "6d15c1ce3393571649845adbfd1cb18c574fa362b474424e08bb06880321025e",
   "plan_score_percent": "2ecf9425ecee7c0c39c8429d4c4f8c55020e86cb8759647172d717e37a140697",
   "plan_score_percent_range": "1b9bed6ba780d475cf857ced0114d58f6f15e0831a2eeaf8a1fe3878fdd4d16b",
-  "plan_score_range": "c0ed7b8b09c9b1eb1f07713f45802a05a7dc21f69f73df497632f3ab66efebd0",
+  "plan_score_range": "7720a49e6b24b95a468b09b79bf17264c1cd3d45ed926317b6efe10e9f7d905a",
   "plan_setup_left_description": "e0728783426c90a08fba8e432182476f9973cbf048a7a43e5c378ce10fe91f3c",
   "plan_setup_left_title": "a7335f4597c3405fa99df908c12168bfcf81364fda0ea47500af71ee7f208cbd",
   "plan_share": "05795ba164e3af1029870f13857308e25048b0632a2935c76410399b0da9f872",
@@ -901,7 +901,7 @@
     <string name="plan_score_percent_range">%1$s%% a %2$s%%</string>
     <string name="plan_score_band">Banda %1$s</string>
     <string name="plan_score_band_range">Banda de %1$s a %2$s</string>
-    <string name="plan_score_range">De %1$s a %2$s</string>
+    <string name="plan_score_range">%1$s a %2$s</string>
     <string name="plan_lessons">Lecciones</string>
     <string name="plan_coverage">Cobertura</string>
     <plurals name="plan_coverage_caption">
