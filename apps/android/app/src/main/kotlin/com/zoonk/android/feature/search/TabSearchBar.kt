@@ -59,6 +59,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.catalog.CatalogQuery
 import com.zoonk.android.feature.catalog.catalogLanguage
+import com.zoonk.android.feature.feedback.rememberSendFeedback
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.feature.today.TodayStore
@@ -143,6 +144,7 @@ internal fun SearchPanel(
     val continueFailed = stringResource(R.string.search_continue_failed)
     val signOutFailed = stringResource(R.string.account_sign_out_failed)
     val expanded = state.currentValue == SearchBarValue.Expanded
+    val sendFeedback = rememberSendFeedback(app, "command-palette")
 
     // Back, a tap outside a docked panel and an opened result all end a search the same way.
     LaunchedEffect(expanded) { if (!expanded) text.clearText() }
@@ -166,6 +168,10 @@ internal fun SearchPanel(
             SearchAction.SignOut -> {
                 // The app's scope: closing search mustn't cancel it halfway.
                 app.scope.launch { if (app.sessions.signOut() is SignOutResult.Failed) snackbars.showSnackbar(signOutFailed) }
+            }
+
+            SearchAction.SendFeedback -> {
+                sendFeedback.open()
             }
 
             SearchAction.Continue -> {

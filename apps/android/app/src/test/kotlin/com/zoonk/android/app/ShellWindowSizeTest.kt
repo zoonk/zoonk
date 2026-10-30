@@ -4,6 +4,10 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
@@ -14,6 +18,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.feature.feedback.FEEDBACK_DESCRIPTION
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.LearnerSummaryPlaces
 import com.zoonk.api.models.LearnerSummaryToday
@@ -86,6 +91,18 @@ class ShellWindowSizeTest {
         // Onboarding keeps the drawer, as main keeps its sidebar from `lg`.
         rule.runOnIdle { ShellTest.navigator.open(AppRoute.StartGoal()) }
         tab("Today").assertIsSelected()
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land")
+    fun theDrawerOpensSendFeedbackInPlace() {
+        tab("Send feedback")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Selected))
+            .performClick()
+
+        rule.onNodeWithText(FEEDBACK_DESCRIPTION).assertIsDisplayed()
+        assertEquals(AppRoute.Today, ShellTest.navigator.currentRoute)
     }
 
     @Test

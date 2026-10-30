@@ -37,7 +37,7 @@
   "search_preferences": "c34ea9baafd85a102c9cade13ddd6efecbee9a2abebe77991b47728841cce6fa",
   "search_pricing": "5bc6f3f84daccda90a5952fde20b358858931d45b20ae2b7a00e3fdce39e1e24",
   "search_profile": "bbd0527292b09a3a993ee87d5d9a33a0a1f821b4fedf92a20ad305da434deb44",
-  "search_send_feedback": "f03fc4085d689d4facf8289fcf7a2f83ba7a5998ce52626c102e29e9854ce4cd",
+  "search_send_feedback_keywords": "8a61bf7d9033bcbdb556a70e8949f0c1619293bf1c8feeeb8ca50be289c860b8",
   "search_settings": "17e8d16ea034d39394b314f21ac4d22141d6612fd3b30dbf550fd9908f376c7d",
   "search_start_goal": "71396311d6378453a5d26e6b89b80183a4f159a0b40017a3979d76aff8fda218",
   "search_start_goal_named": "655f207569b61784dc283532211f9069b7ded97bb8fcda49b1a4e208defd51b7",
@@ -84,7 +84,8 @@
     <string name="search_log_in">Anmelden</string>
     <string name="search_log_out">Abmelden</string>
     <string name="search_blog">Blog</string>
-    <string name="search_send_feedback">Feedback senden</string>
+    <!-- Words people type to find Send feedback in the search, never shown. Keep “bug” and add the words people use in this language. -->
+    <string name="search_send_feedback_keywords">bug, fehler, problem, melden, bericht, idee, vorschlag, funktionswunsch, kontakt</string>
     <string name="search_help">Hilfe</string>
     <string name="search_settings">Einstellungen</string>
     <string name="search_profile">Profil</string>

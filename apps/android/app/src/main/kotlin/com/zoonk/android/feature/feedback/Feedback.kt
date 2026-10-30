@@ -73,7 +73,7 @@ enum class FeedbackStatus { Idle, Sending, Sent, Failed }
 
 class FeedbackViewModel(
     private val sender: FeedbackSender,
-    private val target: FeedbackTarget,
+    val target: FeedbackTarget,
 ) : ViewModel() {
     var message by mutableStateOf("")
         private set

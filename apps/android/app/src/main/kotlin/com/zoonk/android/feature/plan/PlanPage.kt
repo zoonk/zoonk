@@ -37,8 +37,8 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.feedback.FeedbackSheet
 import com.zoonk.android.feature.feedback.FeedbackTarget
-import com.zoonk.android.feature.feedback.ReportProblem
 import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.feature.goalcontent.PlanSyllabusSection
 import com.zoonk.android.feature.goalcontent.hasSubjectPages
@@ -319,7 +319,7 @@ internal fun PlanContent(
     resume: Resume,
     isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
-    report: ReportProblem? = null,
+    report: FeedbackSheet? = null,
     onAdjust: ((PlanSection?) -> Unit)? = null,
     edits: PlanEdits = PlanEdits(),
     slot: SlotHost = SlotHost(),

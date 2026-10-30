@@ -37,6 +37,8 @@ internal sealed interface SearchAction {
 
     data object SignOut : SearchAction
 
+    data object SendFeedback : SearchAction
+
     /** Main's Continue: opens today's next block itself, as Today's Start does. */
     data object Continue : SearchAction
 }
@@ -113,40 +115,49 @@ internal fun searchGroups(
             emptyList()
         }
 
+    // A learner reaches their account and the help pages from the avatar's menu: here they're found by name.
+    val showsAccount = searching || !learner
+    val sendFeedback =
+        SearchItem(
+            "send-feedback",
+            stringResource(R.string.feedback_send_feedback),
+            SearchAction.SendFeedback,
+            R.drawable.ic_feedback,
+            keywords = stringResource(R.string.search_send_feedback_keywords),
+        )
     val help =
-        if (searching || !learner) {
-            listOf(
-                SearchGroup(
-                    "account",
-                    stringResource(R.string.search_group_account),
-                    listOfNotNull(
-                        SearchItem(
-                            "logout",
-                            stringResource(R.string.search_log_out),
-                            SearchAction.SignOut,
-                            R.drawable.ic_logout,
-                        ).takeIf { isLoggedIn },
-                    ),
+        listOfNotNull(
+            SearchGroup(
+                "account",
+                stringResource(R.string.search_group_account),
+                listOfNotNull(
+                    SearchItem(
+                        "logout",
+                        stringResource(R.string.search_log_out),
+                        SearchAction.SignOut,
+                        R.drawable.ic_logout,
+                    ).takeIf { isLoggedIn },
                 ),
-                SearchGroup(
-                    "help",
-                    stringResource(R.string.search_group_help),
+            ).takeIf { showsAccount },
+            SearchGroup(
+                "help",
+                stringResource(R.string.search_group_help),
+                if (showsAccount) {
                     listOf(
                         SearchItem("blog", stringResource(R.string.search_blog), SearchAction.Open(AppRoute.Blog), R.drawable.ic_newsmode),
-                        // Help opens with its feedback form, so main's Send feedback is found here by its words.
+                        sendFeedback,
                         SearchItem(
                             "support",
                             stringResource(R.string.search_help),
                             SearchAction.Open(AppRoute.Help),
                             R.drawable.ic_support,
-                            keywords = stringResource(R.string.search_send_feedback),
                         ),
-                    ),
-                ),
-            )
-        } else {
-            emptyList()
-        }
+                    )
+                } else {
+                    listOf(sendFeedback)
+                },
+            ),
+        )
 
     val fallback = if (searching) fallbackGroup(query.trim(), learner, canAskBuddy, buddy) else null
 

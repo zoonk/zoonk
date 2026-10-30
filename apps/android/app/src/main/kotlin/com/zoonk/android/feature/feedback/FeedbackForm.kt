@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,11 +27,14 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
@@ -48,15 +53,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.SessionState
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import java.util.UUID
 
 /** Main's message to the team: the message, an email for the reply when there's no account, and Send. */
 @Composable
 fun FeedbackForm(
     app: AppContainer,
-    target: FeedbackTarget,
+    form: FeedbackViewModel,
     modifier: Modifier = Modifier,
-    key: String = target.toString(),
 ) {
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val accountEmail =
@@ -65,7 +73,6 @@ fun FeedbackForm(
             ?.account
             ?.user
             ?.email
-    val form = viewModel(key = "feedback:$key") { FeedbackViewModel(app.feedback, target) }
     val isSending = form.status == FeedbackStatus.Sending
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -78,7 +85,7 @@ fun FeedbackForm(
                     .heightIn(min = 128.dp),
             label = { Text(stringResource(R.string.feedback_message)) },
             placeholder = { Text(stringResource(R.string.feedback_message_placeholder)) },
-            supportingText = target.contentId?.let { { Text(stringResource(R.string.feedback_screen_attached)) } },
+            supportingText = form.target.contentId?.let { { Text(stringResource(R.string.feedback_screen_attached)) } },
             readOnly = isSending,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
         )
@@ -138,52 +145,91 @@ private fun Line(
     )
 }
 
-/**
- * "Report a problem" for a screen's overflow menu (main's item on every AI content page): call
- * [open] from the menu's item. The sheet it opens attaches [FeedbackTarget].
- */
+/** Main's feedback dialog as a sheet: [open] shows it, and a sent message closes it with thanks. */
 @Stable
-class ReportProblem internal constructor(
+class FeedbackSheet internal constructor(
     private val show: () -> Unit,
 ) {
     fun open() = show()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+/** "Report a problem" for a screen's overflow menu (main's item on every AI content page), attaching [target]. */
 @Composable
 fun rememberReportProblem(
     app: AppContainer,
     target: FeedbackTarget,
-): ReportProblem {
-    var isOpen by rememberSaveable { mutableStateOf(false) }
+): FeedbackSheet = rememberFeedbackSheet(app, target, app.feedback, isReport = true)
 
-    if (isOpen) {
-        ModalBottomSheet(onDismissRequest = { isOpen = false }, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-            Column(
-                modifier =
-                    Modifier
-                        .padding(horizontal = 24.dp)
-                        .padding(bottom = 24.dp)
-                        .navigationBarsPadding(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+@Composable
+fun rememberSendFeedback(
+    app: AppContainer,
+    screen: String,
+    sender: FeedbackSender = app.feedback,
+): FeedbackSheet = rememberFeedbackSheet(app, FeedbackTarget(screen), sender, isReport = false)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun rememberFeedbackSheet(
+    app: AppContainer,
+    target: FeedbackTarget,
+    sender: FeedbackSender,
+    isReport: Boolean,
+): FeedbackSheet {
+    // Each opening is a new message, as main's dialog is, and a slow send closes only its own.
+    var opening by rememberSaveable { mutableStateOf<String?>(null) }
+    val snackbars = LocalSnackbarHostState.current
+    val thanks = stringResource(R.string.feedback_thanks)
+
+    opening?.let { id ->
+        val form = viewModel(key = "feedback:$id") { FeedbackViewModel(sender, target) }
+
+        LaunchedEffect(form) {
+            snapshotFlow { form.status }.first { it == FeedbackStatus.Sent }
+            if (opening == id) opening = null
+            app.scope.launch { snackbars.showSnackbar(thanks) }
+        }
+
+        if (form.status != FeedbackStatus.Sent) {
+            ModalBottomSheet(
+                onDismissRequest = { opening = null },
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             ) {
-                Text(
-                    text = stringResource(R.string.feedback_report_problem),
-                    modifier = Modifier.semantics { heading() },
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                FeedbackForm(app, target)
+                Column(
+                    modifier =
+                        Modifier
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 24.dp)
+                            .padding(bottom = 24.dp)
+                            .navigationBarsPadding(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = stringResource(if (isReport) R.string.feedback_report_problem else R.string.feedback_send_feedback),
+                            modifier = Modifier.semantics { heading() },
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        if (!isReport) {
+                            Text(
+                                text = stringResource(R.string.feedback_send_feedback_description),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                    }
+                    FeedbackForm(app, form)
+                }
             }
         }
     }
 
-    return ReportProblem { isOpen = true }
+    return remember { FeedbackSheet { opening = UUID.randomUUID().toString() } }
 }
 
 /** The menu item that opens [report]; [onClick] closes the menu it's in. */
 @Composable
 fun ReportProblemItem(
-    report: ReportProblem,
+    report: FeedbackSheet,
     onClick: () -> Unit,
 ) {
     DropdownMenuItem(

@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,11 +33,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.LocalNavigationSuiteType
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SignOutResult
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.feedback.rememberSendFeedback
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -61,6 +64,8 @@ fun AccountMenu(
     var isOpen by rememberSaveable { mutableStateOf(false) }
     val snackbars = LocalSnackbarHostState.current
     val signOutFailed = stringResource(R.string.account_sign_out_failed)
+    val sendFeedback = rememberSendFeedback(app, "account-menu")
+    val drawerHasFeedback = LocalNavigationSuiteType.current == NavigationSuiteType.NavigationDrawer
 
     fun go(route: AppRoute) {
         isOpen = false
@@ -101,6 +106,12 @@ fun AccountMenu(
             }
 
             MenuItem(stringResource(R.string.account_menu_help), R.drawable.ic_support) { go(AppRoute.Help) }
+            if (!drawerHasFeedback) {
+                MenuItem(stringResource(R.string.feedback_send_feedback), R.drawable.ic_feedback) {
+                    isOpen = false
+                    sendFeedback.open()
+                }
+            }
             HorizontalDivider()
 
             when {

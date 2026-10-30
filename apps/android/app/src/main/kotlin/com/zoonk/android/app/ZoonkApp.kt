@@ -4,16 +4,21 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerDefaults
 import androidx.compose.material3.Icon
@@ -52,12 +57,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
@@ -74,6 +82,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.buddy.BuddyTabIcon
 import com.zoonk.android.feature.buddy.buddyTabMissions
+import com.zoonk.android.feature.feedback.rememberSendFeedback
 import com.zoonk.android.feature.search.SearchHost
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -101,6 +110,9 @@ import com.zoonk.api.models.LearnerSummaryPlaces
  * Outside the shell (previews, tests) nothing shows them.
  */
 val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }
+
+/** How the shell shows its navigation, so a page's own controls leave out what its drawer already has. */
+val LocalNavigationSuiteType = staticCompositionLocalOf { NavigationSuiteType.None }
 
 /** The tops of the docked action bars on screen, so the shell's snackbars rise above them as a Scaffold's do above its bottom bar. */
 class SnackbarAnchors {
@@ -157,8 +169,16 @@ fun ZoonkApp(
 
     // Search opens over any page, so it shares the frame's snackbars.
     CompositionLocalProvider(LocalSnackbarHostState provides snackbars, LocalPrivatePictures provides pictures) {
+        val sendFeedback = rememberSendFeedback(app, "sidebar")
+
         SearchHost(app, navigator, signedIn) {
-            AppShell(navigator, entryProvider, summary = summary.value.takeIf { signedIn }, snackbarHostState = snackbars)
+            AppShell(
+                navigator,
+                entryProvider,
+                sendFeedback::open,
+                summary = summary.value.takeIf { signedIn },
+                snackbarHostState = snackbars,
+            )
         }
     }
 }
@@ -190,6 +210,7 @@ internal data class ShownLearner(
 fun AppShell(
     navigator: AppNavigator,
     entryProvider: (NavKey) -> NavEntry<NavKey>,
+    onSendFeedback: () -> Unit,
     modifier: Modifier = Modifier,
     summary: LearnerSummary? = null,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
@@ -198,10 +219,14 @@ fun AppShell(
     val entries = navigator.rememberEntries(entryProvider)
     val navigationSuiteType = navigationSuiteType(currentWindowAdaptiveInfoV2(), navigator)
 
-    CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState, LocalSnackbarAnchors provides snackbarAnchors) {
+    CompositionLocalProvider(
+        LocalSnackbarHostState provides snackbarHostState,
+        LocalSnackbarAnchors provides snackbarAnchors,
+        LocalNavigationSuiteType provides navigationSuiteType,
+    ) {
         Surface(modifier = modifier) {
             NavigationSuiteScaffoldLayout(
-                navigationSuite = { AppNavigationSuite(navigator, navigationSuiteType, summary) },
+                navigationSuite = { AppNavigationSuite(navigator, navigationSuiteType, summary, onSendFeedback) },
                 navigationSuiteType = navigationSuiteType,
             ) {
                 var contentBottom by remember { mutableFloatStateOf(0f) }
@@ -301,6 +326,7 @@ private fun AppNavigationSuite(
     navigator: AppNavigator,
     navigationSuiteType: NavigationSuiteType,
     summary: LearnerSummary?,
+    onSendFeedback: () -> Unit,
 ) {
     val route = navigator.currentRoute
     val missions = buddyTabMissions(summary?.missions)
@@ -345,6 +371,7 @@ private fun AppNavigationSuite(
                 Column(
                     modifier =
                         Modifier
+                            .weight(1f)
                             .verticalScroll(rememberScrollState())
                             .padding(vertical = 12.dp),
                 ) {
@@ -381,6 +408,13 @@ private fun AppNavigationSuite(
                         }
                     }
                 }
+
+                DrawerAction(
+                    stringResource(R.string.feedback_send_feedback),
+                    R.drawable.ic_feedback,
+                    Modifier.padding(bottom = 12.dp),
+                    onSendFeedback,
+                )
             }
         }
 
@@ -405,6 +439,37 @@ private fun DrawerItem(
         badge = badge?.takeIf { it > 0 }?.let { count -> { Text(formatNumber(count.toDouble(), currentLocale())) } },
         modifier = modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
     )
+}
+
+/** A drawer row that opens something over the page rather than a place, so it reads as a button, not a tab. */
+@Composable
+private fun DrawerAction(
+    label: String,
+    @DrawableRes icon: Int,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Surface(
+        onClick = onClick,
+        modifier =
+            modifier
+                .padding(NavigationDrawerItemDefaults.ItemPadding)
+                .fillMaxWidth()
+                .heightIn(min = 56.dp)
+                .semantics { role = Role.Button },
+        shape = CircleShape,
+        color = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    ) {
+        Row(
+            Modifier.padding(start = 16.dp, end = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            NavigationIcon(icon)
+            Text(label, style = MaterialTheme.typography.labelLarge)
+        }
+    }
 }
 
 /** The buddy's tab carries the name the learner gave it. */

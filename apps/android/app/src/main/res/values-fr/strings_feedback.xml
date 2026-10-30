@@ -11,7 +11,10 @@
   "feedback_report_problem": "87842cffdca5bcdb6686f657e4364abaf66fdd205f3c66efd6941f1e93b3b98e",
   "feedback_screen_attached": "47c4ce0777661393d560b94b0e5a0851cf65ccdc077867423d3b36985a3be2ad",
   "feedback_send": "ed433f79e7d6efe4457ae88399e341c42948e0222c0b3f97f57d3d7dbf45fa68",
-  "feedback_sent": "af3b374733e0c3b4cc67fdca46dab2aa540c26f359b0c362e68e2f54d9dda6d7"
+  "feedback_send_feedback": "90303f5f3ec3d0b24e4a7314ca58cff5604f691823d5dd6b0b1ed528ae064b19",
+  "feedback_send_feedback_description": "283d457a785f9da08f7082c9d2cb74b3e442a56403c08c53bef0c7ced9a1e316",
+  "feedback_sent": "af3b374733e0c3b4cc67fdca46dab2aa540c26f359b0c362e68e2f54d9dda6d7",
+  "feedback_thanks": "27c588581cf61410a09518d9cf65cf53b391e25491c1809af0db677dda266e56"
 }
 -->
 <resources>
@@ -25,5 +28,8 @@
     <string name="feedback_failed">Impossible d’envoyer ton message. Réessaie ou écris-nous à hello@zoonk.com.</string>
     <string name="feedback_follow_us">Suis-nous</string>
     <string name="feedback_report_problem">Signaler un problème</string>
+    <string name="feedback_send_feedback">Donner ton avis</string>
+    <string name="feedback_send_feedback_description">Tu as rencontré un problème ou tu as une idée ? Parles-en ci-dessous ou écris-nous à hello@zoonk.com.</string>
+    <string name="feedback_thanks">Merci ! Nous avons bien reçu ton message.</string>
     <string name="feedback_more">Plus d’options</string>
 </resources>

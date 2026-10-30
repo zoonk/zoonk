@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.navigation.AppNavigator
@@ -69,7 +70,7 @@ fun HelpScreen(
                     style = MaterialTheme.typography.bodyMedium,
                 )
 
-                FeedbackForm(app, FeedbackTarget(screen = "support"))
+                FeedbackForm(app, viewModel { FeedbackViewModel(app.feedback, FeedbackTarget(screen = "support")) })
 
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     SectionHeader(stringResource(R.string.feedback_follow_us))

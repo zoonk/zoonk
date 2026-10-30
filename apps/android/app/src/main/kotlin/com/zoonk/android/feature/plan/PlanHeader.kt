@@ -31,7 +31,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.feedback.ReportProblem
+import com.zoonk.android.feature.feedback.FeedbackSheet
 import com.zoonk.android.feature.feedback.ReportProblemItem
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.ui.characters.BuddyKind
@@ -51,7 +51,7 @@ internal fun PlanHeader(
     isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
     modifier: Modifier = Modifier,
-    report: ReportProblem? = null,
+    report: FeedbackSheet? = null,
     onAdjust: (() -> Unit)? = null,
 ) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -102,7 +102,7 @@ private fun PlanMenu(
     resume: Resume,
     isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
-    report: ReportProblem?,
+    report: FeedbackSheet?,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var dialog by rememberSaveable { mutableStateOf<GoalDialog?>(null) }
@@ -140,7 +140,7 @@ private fun MenuItems(
     resume: Resume,
     isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
-    report: ReportProblem?,
+    report: FeedbackSheet?,
     onDismiss: () -> Unit,
     onDialog: (GoalDialog) -> Unit,
 ) {

@@ -42,7 +42,7 @@ class ShellPanesTest {
                         entry<AppRoute.Preferences>(metadata = ListDetailSceneStrategy.detailPane()) { Text("Preferences detail") }
                     }
                 }
-            AppShell(navigator, entries)
+            AppShell(navigator, entries, onSendFeedback = {})
         }
     }
 

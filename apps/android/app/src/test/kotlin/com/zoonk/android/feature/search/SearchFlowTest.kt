@@ -36,6 +36,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.summary
 import com.zoonk.android.feature.catalog.CHAPTER_TWO
 import com.zoonk.android.feature.catalog.COURSE
+import com.zoonk.android.feature.feedback.FEEDBACK_DESCRIPTION
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -95,7 +96,21 @@ class SearchFlowTest {
         groupsFor("")
 
         assertEquals(listOf("Home page", "Explore courses", "Start a goal", "Pricing", "Log in"), labels("pages"))
-        assertEquals(listOf("Blog", "Help"), labels("help"))
+        assertEquals(listOf("Blog", "Send feedback", "Help"), labels("help"))
+    }
+
+    @Test
+    fun aLearnerSeesSendFeedbackWithoutTyping() {
+        groupsFor("", summary(readAt = 0, nextChangeAt = 0))
+
+        assertEquals(listOf("Send feedback"), labels("help"))
+    }
+
+    @Test
+    fun sendFeedbackIsFoundByTheWordsPeopleUseForIt() {
+        groupsFor("bug", summary(readAt = 0, nextChangeAt = 0))
+
+        assertEquals(listOf("Send feedback"), labels("help"))
     }
 
     @Test
@@ -149,6 +164,19 @@ class SearchFlowTest {
         rule.onNodeWithText("Explore courses").performClick()
 
         assertEquals(AppRoute.Catalog(), navigator.currentRoute)
+    }
+
+    @Test
+    fun sendFeedbackOpensItsFormInPlace() {
+        show { app, navigator -> TabSearchBar(app, navigator) }
+
+        rule.onNodeWithText("Search or ask…").performClick()
+        rule.onAllNodes(hasSetTextAction()).onLast().performTextInput("idea")
+        rule.mainClock.advanceTimeBy(500)
+        rule.onNodeWithText("Send feedback").performClick()
+
+        rule.onNodeWithText(FEEDBACK_DESCRIPTION).assertIsDisplayed()
+        assertEquals(AppRoute.Today, navigator.currentRoute)
     }
 
     @Test
