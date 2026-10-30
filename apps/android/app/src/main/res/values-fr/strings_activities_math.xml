@@ -21,7 +21,7 @@
   "activities_math_number_line_answer": "0eea08a72515de7d1749424ad24ee608fc1b523ebc9e29e540aee6e7fbf3b766",
   "activities_math_number_line_description": "7aa3fbf1aae7556503a03ba37b6a120dff54194ca96b7021c5e3478d15c11e4c",
   "activities_math_number_line_jumps": "ee9948bdbebaea076db2cc6e5d1e73963707282b50e6b97b74b06e623d9ce6fa",
-  "activities_math_number_line_label": "27f970e87bfaeb91200c123d27aca7ab075fa3df5e7ae8e1211927c14be8f0b0"
+  "activities_math_number_line_label": "b7a06d7c4dc14ae351878101b1036fae0070b5b704aa313e552ceb5972589734"
 }
 -->
 <resources>
@@ -29,8 +29,8 @@
     <string name="activities_math_badge_place_it">Place-le</string>
     <!-- A badge on an activity whose sliders change a model's results. -->
     <string name="activities_math_badge_try_it">Essaie</string>
-    <!-- A number line's name and, in parentheses, the unit its values are measured in, like "Temperature (°C)". -->
-    <string name="activities_math_number_line_label">%1$s (%2$s)</string>
+    <!-- A number line's name, then the unit its values are measured in, like "Temperature in °C" or "Distance in km". -->
+    <string name="activities_math_number_line_label">%1$s en %2$s</string>
     <!-- The dot the learner drags along the number line, for TalkBack. -->
     <string name="activities_math_number_line_answer">Ta réponse sur la droite numérique</string>
     <!-- What the number line shows, for TalkBack: its name, its ends, where it starts and where the learner's dot is, like "A number line for Temperature from -5 to 7. It starts at -3 °C, and your dot is at 5 °C." -->

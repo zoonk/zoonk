@@ -5,8 +5,8 @@
     <!-- A badge on an activity whose sliders change a model's results. -->
     <string name="activities_math_badge_try_it">Try it</string>
 
-    <!-- A number line's name and, in parentheses, the unit its values are measured in, like "Temperature (°C)". -->
-    <string name="activities_math_number_line_label">%1$s (%2$s)</string>
+    <!-- A number line's name, then the unit its values are measured in, like "Temperature in °C" or "Distance in km". -->
+    <string name="activities_math_number_line_label">%1$s in %2$s</string>
     <!-- The dot the learner drags along the number line, for TalkBack. -->
     <string name="activities_math_number_line_answer">Your answer on the number line</string>
     <!-- What the number line shows, for TalkBack: its name, its ends, where it starts and where the learner's dot is, like "A number line for Temperature from -5 to 7. It starts at -3 °C, and your dot is at 5 °C." -->
