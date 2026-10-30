@@ -130,6 +130,8 @@
         <item quantity="one">The query took more than %d second and was stopped.</item>
         <item quantity="other">The query took more than %d seconds and was stopped.</item>
     </plurals>
+    <!-- A query that returned more rows than a lesson's small tables could need, most often by joining tables without saying how they match. -->
+    <string name="activities_code_query_too_many_rows">The query returned too many rows. Is a join missing its condition?</string>
     <plurals name="activities_code_table_rows">
         <item quantity="one">%d row</item>
         <item quantity="other">%d rows</item>

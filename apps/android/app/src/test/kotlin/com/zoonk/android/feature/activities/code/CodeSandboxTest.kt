@@ -109,6 +109,7 @@ class CodeSandboxTest {
                 listOf(
                     """{"message":"no such table: country","status":"error"}""" to QueryRun.Error("no such table: country"),
                     """{"status":"timeout"}""" to QueryRun.Timeout,
+                    """{"status":"tooManyRows"}""" to QueryRun.TooManyRows,
                     """{"status":"unavailable"}""" to QueryRun.Unavailable,
                 )
             for ((reply, expected) in failures) {

@@ -31,6 +31,7 @@
   "activities_code_query": "d4ded41f80ef1fa67fec2b973bb6a4302754df68a62ee8a46b851a6bccc834db",
   "activities_code_query_that_works": "a7a46ac351bb6607cf0c5175bf009bbb1c60180b94af5c021e110bdb8e1c6e66",
   "activities_code_query_timeout": "d09908d3783359b6fd9d6fd2fccc802784a0fb07eaa2400ff4a62c1eb54050a4",
+  "activities_code_query_too_many_rows": "6cfb4b7afe8c7fabfee4d7ffb4f0068ef0a83bf2581b93478b2c1f53de543ca1",
   "activities_code_result_no_rows": "3776be106c9219aae9cd44c28a830c72afa7ff5ff9d18a5c440542366ed86fb5",
   "activities_code_row_extra": "f99829e45ab14d56659706921766b6df517f4c7e879adf907634666d58616ec8",
   "activities_code_row_missing": "155fb6809e55f91ebc463aee155641412e0ae24a0d7ce15e376a828e39fc5f4f",
@@ -220,6 +221,8 @@
         <item quantity="one">Die Abfrage dauerte länger als %d Sek. und wurde gestoppt.</item>
         <item quantity="other">Die Abfrage dauerte länger als %d Sek. und wurde gestoppt.</item>
     </plurals>
+    <!-- A query that returned more rows than a lesson's small tables could need, most often by joining tables without saying how they match. -->
+    <string name="activities_code_query_too_many_rows">Die Abfrage hat zu viele Zeilen zurückgegeben. Fehlt bei einer Tabellenverknüpfung die Bedingung?</string>
     <plurals name="activities_code_table_rows">
         <item quantity="one">%d Zeile</item>
         <item quantity="other">%d Zeilen</item>

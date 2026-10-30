@@ -31,6 +31,7 @@
   "activities_code_query": "af79fc33d366525d5df68e1a11b209ac8cf5512ca403c91186eeaa206e6f7860",
   "activities_code_query_that_works": "fe7f3a3206b6badbf255e2e9a2d9073d12b506b59485571666e1fc399fbb65cf",
   "activities_code_query_timeout": "21c47e661360b519116bdec70902bec554a1dcb3114dafc28807c4d4334124e9",
+  "activities_code_query_too_many_rows": "0a46434d666fb6ceb5ba8a354eba51469736a0e42b054cd611e060e5c8abf3c6",
   "activities_code_result_no_rows": "4daa4e291c80ca4a9f5a3fab519e6ec2650641a9caddf390501ad1e21954bb84",
   "activities_code_row_extra": "a268450859f4034baf8a0289733c8bc6c7c15453d9a26696dbccd435e1e932d3",
   "activities_code_row_missing": "3326800ee1688a7181e742e0e660b49351be154a73089f36e2d9119c24396ff6",
@@ -225,6 +226,8 @@
         <item quantity="many">La consulta tardó más de %d segundos y se detuvo.</item>
         <item quantity="other">La consulta tardó más de %d segundos y se detuvo.</item>
     </plurals>
+    <!-- A query that returned more rows than a lesson's small tables could need, most often by joining tables without saying how they match. -->
+    <string name="activities_code_query_too_many_rows">La consulta ha devuelto demasiadas filas. ¿Falta alguna condición al unir las tablas?</string>
     <plurals name="activities_code_table_rows">
         <item quantity="one">%d fila</item>
         <item quantity="many">%d filas</item>

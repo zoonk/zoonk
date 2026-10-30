@@ -86,6 +86,10 @@ sealed interface QueryRun {
     data object Timeout : QueryRun
 
     @Serializable
+    @SerialName("tooManyRows")
+    data object TooManyRows : QueryRun
+
+    @Serializable
     @SerialName("unavailable")
     data object Unavailable : QueryRun
 }

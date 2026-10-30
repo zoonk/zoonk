@@ -31,6 +31,7 @@
   "activities_code_query": "15ade0ad3851f428a2046e12ab4965698f05a1807d1919ad97d337a924c2529f",
   "activities_code_query_that_works": "08fc64de2f1a6e6b0574a502b5c2137e406d3e6e9ad2feccf84c49eed2b492ee",
   "activities_code_query_timeout": "6a4f10b9c8c1d1d2beb84c5ba3efcdc625299a4e6d653932c6fd81f0da8b29cb",
+  "activities_code_query_too_many_rows": "f5ef4beb836d3b7f14e7eece880e24e5099897384ca0ce2b39d62520de34c009",
   "activities_code_result_no_rows": "0dbb2388fde6f72531294c1ee0c8ac1e542c71f27b6cf20a6548cf7c3f75799b",
   "activities_code_row_extra": "7a4e400118b3b33d527c0edf9129dab85fa0b7a28b3c63a0e1af2fdc8fd6a1a2",
   "activities_code_row_missing": "fe832f2773989ebfdb535fb01290eefeb6e6fadf31687895388a0d07498adc7b",
@@ -225,6 +226,8 @@
         <item quantity="many">A consulta levou mais de %d segundos e foi interrompida.</item>
         <item quantity="other">A consulta levou mais de %d segundos e foi interrompida.</item>
     </plurals>
+    <!-- A query that returned more rows than a lesson's small tables could need, most often by joining tables without saying how they match. -->
+    <string name="activities_code_query_too_many_rows">A consulta retornou linhas demais. Falta uma condição de junção?</string>
     <plurals name="activities_code_table_rows">
         <item quantity="one">%d linha</item>
         <item quantity="many">%d linhas</item>

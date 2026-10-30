@@ -170,6 +170,10 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
                         pluralStringResource(R.plurals.activities_code_query_timeout, seconds, seconds)
                     }
 
+                    QueryRun.TooManyRows -> {
+                        stringResource(R.string.activities_code_query_too_many_rows)
+                    }
+
                     else -> {
                         stringResource(R.string.activities_code_runtime_failed, SQLITE)
                     }

@@ -31,6 +31,7 @@
   "activities_code_query": "eaa1772a51c28e1bd70cb9f95209f795f4512633f94d3705a3545b0d7d95c244",
   "activities_code_query_that_works": "3ad0747f7bfa1bcde676374f4c0018cc2b5f0b010d7fcec9ad16ad15926de21f",
   "activities_code_query_timeout": "a14dfe5090881502bc1b83400f25b90dc7c2115316e576ca11d2989d689b6e50",
+  "activities_code_query_too_many_rows": "681a301d0028902a340b0d7a73957ac73ecb45b30c65807cca3950838c31bf3e",
   "activities_code_result_no_rows": "083756978f5112e86d675d91d01d7d67ee2052c602ddad2924f4ba180b0f64d7",
   "activities_code_row_extra": "6ab547def77867ea887a2e759de0e6168ffb63e63d6a28fa23ce07d989ec6df4",
   "activities_code_row_missing": "e3ba317616d29109b0cef94a2fc1e5f6474eb018bb48ac91557f2503236ee5f7",
@@ -225,6 +226,8 @@
         <item quantity="many">La requête a dépassé %d secondes et a été arrêtée.</item>
         <item quantity="other">La requête a dépassé %d secondes et a été arrêtée.</item>
     </plurals>
+    <!-- A query that returned more rows than a lesson's small tables could need, most often by joining tables without saying how they match. -->
+    <string name="activities_code_query_too_many_rows">La requête a renvoyé trop de lignes. Manque-t-il une condition de jointure ?</string>
     <plurals name="activities_code_table_rows">
         <item quantity="one">%d ligne</item>
         <item quantity="many">%d lignes</item>
