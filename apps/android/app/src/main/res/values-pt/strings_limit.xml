@@ -24,14 +24,14 @@
   "limit_outlines_free_month": "8521c6c32129810f14064ea817fe9ac44159787e15b79c908a2c0b6f918d12bc",
   "limit_outlines_guest": "0efb727307803092cfcf8d42993f800205e297a8ce5a6a2058d76d3bb645783b",
   "limit_outlines_plus": "eaa611fddaf48c860ef5477455f6ffa496803af70b67b77270fb365c75f6ff86",
-  "limit_see_plus": "d5c4535b5c8726900de511202d5c2145d46e31319f4dd70ecf531441ca885a96",
+  "limit_see_plus": "34ec4c968d24a30336ecd50da0db2e535461658182d1e64305bb506fee26e573",
   "limit_sign_up_required": "f0aead338c3f275c95714b0eadc3ed7d6cff49a3aa66c3dc700f83c25a7ddb17",
   "limit_slow_down": "1b011a778d43d02d211e9c8b579d88e3708afe40c2c3a824cc9e6a68ac8ebad1"
 }
 -->
 <resources>
     <string name="limit_create_account">Crie uma conta grátis</string>
-    <string name="limit_see_plus">Conheça o Plus</string>
+    <string name="limit_see_plus">Conhecer o Plus</string>
     <string name="limit_slow_down">Faça uma pausa curta e tente de novo.</string>
     <string name="limit_sign_up_required">Crie sua conta grátis para continuar.</string>
     <string name="limit_help_guest_total">Você usou toda a ajuda grátis disponível sem uma conta. Crie uma conta grátis para continuar.</string>

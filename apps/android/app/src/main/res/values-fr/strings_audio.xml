@@ -7,7 +7,7 @@
   "audio_did_not_play": "294995803f58317eed55f285c57d49ba9e0248de1e47dcdee1c83ad25dd77358",
   "audio_getting_ready": "d596797d368b08d32f814b97170ed894e46ccd16ed3a572bbf95c0524b88fc60",
   "audio_here_is_what_it_says": "ff34f0e71bad7db406e8ca4cf59f37860f97033562780917b07d482bd255b167",
-  "audio_listening": "5e9cc21d824e786167521c6fe99e8dbbce3b8e1b85effca73e34a52aa7071d98",
+  "audio_listening": "4ba20cbb162b8f794b3ee8368d3543948d8954e271351dbb57dbea19ce208104",
   "audio_microphone_off_answer": "65c9e2d3df9d350b1debe020f170ccfa00bf0f35b27d34f9148370f693b725ee",
   "audio_microphone_off_title": "1c2d83b96bd413081e3ace44f3249b4bb75b01e8a7691c0d3e14dee60f6c5953",
   "audio_no_speech": "f80a543348f9749c667047c72ed05ae1c1298f8d1952d8de44d11e9df887a887",
@@ -32,7 +32,7 @@
     <!-- Button that stops recording the learner, a short label like a media player's Stop. A hint names it: "Tap Stop to check." -->
     <string name="audio_record_stop">Arrêter</string>
     <!-- Shown while recording the learner. "Stop" is the label of the button that stops recording, so use the same word as that button. -->
-    <string name="audio_listening">Écoute en cours… Appuie sur Arrêter pour vérifier.</string>
+    <string name="audio_listening">Enregistrement en cours… Appuie sur Arrêter pour vérifier.</string>
     <string name="audio_checking">Vérification en cours…</string>
     <string name="audio_checking_slow">La vérification est toujours en cours. Cela prend plus de temps que d’habitude.</string>
     <string name="audio_no_speech">Nous n’avons entendu aucun mot. Réessaie.</string>

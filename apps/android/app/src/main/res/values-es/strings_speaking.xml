@@ -11,10 +11,10 @@
   "speaking_last_none": "62cb7fd3b3e63e1aa7586ec89136f099d5c67a72ce05fd7ff621a2cbd3516c04",
   "speaking_last_result": "5590b907ff18df5f3a92b2440b26e513b3a0b593956ce721311b36bf96e97eac",
   "speaking_mock_failed": "b6209331dfad899793a53189fb3915e54fb2d18b35dec50635d065f5cfc49559",
-  "speaking_mock_ielts": "fbb450e0a7037cb3fc090e66a15490622dad3b3c9c3f66b13716ef1795a635de",
+  "speaking_mock_ielts": "01e7dd7f4cb508e4784163a30797b235f4406e836ebdcb5def0f850e82cda33b",
   "speaking_mock_opens": "df6de5e98cea9832f69ba9b09c21c2271f6c200a3bf34de1e5a70890e72b08ac",
   "speaking_mock_start": "35730430ed5af547637895b9512fb3f915da8207fde2322ec99a87c4a4d0a479",
-  "speaking_mock_toefl": "b66537abc0c69d2a7875c618b930f486186a94be804a13f5a9c5f3939a0727e6",
+  "speaking_mock_toefl": "11f207d35c8f5d484b2b26e908690c961e672dc67bd32925bc95ceb649da1623",
   "speaking_no_time_day": "9770e4471bc72142c3ecf4d4d23762b1b314d7600db5e962bd55c36bdba31313",
   "speaking_no_time_month": "e54ebf57b154442b1cec4cec42aad223b16fd07bf7a13a8370ce0ecceae2fa42",
   "speaking_official": "2428f25e0cef7222fcd126ffc73a4c19f9d8fb727c5a08dc0444813035014e59",
@@ -75,9 +75,9 @@
     <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s tareas en una llamada</string>
     <!-- A band is the exam's score for each criterion. -->
-    <string name="speaking_mock_ielts">Una breve prueba de expresión oral con un examinador. Después, recibirás una banda estimada para cada criterio.</string>
+    <string name="speaking_mock_ielts">Una breve prueba de expresión oral con un examinador. Al terminar, recibirás una banda estimada para cada criterio.</string>
     <!-- A band is the exam's score for each criterion. -->
-    <string name="speaking_mock_toefl">Repite frases y haz una breve entrevista con un examinador. Después, recibirás una banda estimada del 1 al 6 para cada criterio.</string>
+    <string name="speaking_mock_toefl">Repite frases y después participa en una breve entrevista con un examinador. Al terminar, recibirás una banda estimada del 1 al 6 para cada criterio.</string>
     <string name="speaking_mock_start">Empezar el simulacro</string>
     <string name="speaking_mock_opens">Tu simulacro se abrirá en cuanto esté listo.</string>
     <string name="speaking_mock_failed">No se ha iniciado el simulacro. Inténtalo de nuevo en un momento.</string>

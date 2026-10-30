@@ -11,17 +11,17 @@
   "memory_delete": "e9c91f37395e60269af80a78ba62a6cca18cf1d166ae7b4cf0ce3a9626d527ed",
   "memory_description": "6117f23a0ae90c2c48c3cb7e9ac61e316538557e6075920959c17bebde2207d7",
   "memory_download": "eaf3ac77bcf5230890c77f461c10dd18d11d4f87c90f671f547a767ba2afe76c",
-  "memory_download_description": "845bbe2527ae219e114ff6639cb76ccb09263b5f2cd61870dec1fc1b9f12ef7a",
+  "memory_download_description": "7bd45dbed8d715a0e570239cc02abe0d5999f8afafc8d30b282b4ec62f3acbe5",
   "memory_edit": "82d875b2d6949e82fc4c83167d6b44713100a8cb5540c3d18c4f52e38c02edf5",
   "memory_edit_description": "0733fe3027363fa2f877c37d61f03cfee5f78f9a066274d71386980ad57f1bfa",
   "memory_edit_label": "6d3f0a5de48580ad99905a3e0a288632464dfdc81ef85a395c6e04df24609e0e",
-  "memory_edit_title": "e6e857b2dc815a8a80836f685fb683818ffbbc7dd2d1d81dc1c7ec978a503d0e",
+  "memory_edit_title": "a61bd1aa1ae54ed390bd7eebd3c673cabc6c1a3ba76a7355b3280ad9d1211264",
   "memory_empty_off": "df5fbb8e662f216667bacf90415ed979dbb7ca07d5e381ba119cd9be94e05a4a",
   "memory_empty_on": "be5e607df7c4538b4f67c986b0158cd5881f6340d877db997d3688e75a5cd009",
   "memory_fact_options": "77fffd63eb5bfc6451aede5794bdff4f052d6a994d274796f07e376672609a2c",
   "memory_fact_source": "bcd5e26ccd31d059da6b647ac0de55b7959af5339c88d71f7bb79e4e85bcfd39",
   "memory_save_failed": "b9b722b782352903b83d0e7302a27a5cf1a730d1115291260d746edb11a6dd92",
-  "memory_sensitive_note": "7cd100039e2c493ddc859dd56a77e225cc48e41211a3ce12270c0412e57e1bfa",
+  "memory_sensitive_note": "98f3180b47770b340ebb63462f9aff20e50ff64a3c3383852815e9814d823e7d",
   "memory_source_chat": "a4c1243ce5d684c0b55a0f042058aff8bf0fcd973800e0f2b532c681a3934a63",
   "memory_source_noticed": "ab3d7c714ffbb27966a8ae88be8e37651f850ef5f8cd7a35e118c1d757b77ac4",
   "memory_source_onboarding": "78fe03c4a10a2da81e4fe4ac1bfb50fef854e0230926265c3f222af712a61077",
@@ -63,13 +63,13 @@
     <string name="memory_edit">Bearbeiten</string>
     <string name="memory_delete">Löschen</string>
     <!-- Title of the dialog that edits one fact Zoonk remembers about the learner. -->
-    <string name="memory_edit_title">Erinnerung bearbeiten</string>
+    <string name="memory_edit_title">Eintrag bearbeiten</string>
     <string name="memory_edit_description">Formuliere es so, wie es für dich stimmt.</string>
     <string name="memory_edit_label">Was Zoonk sich merkt</string>
     <string name="memory_download">Meine Erinnerungen herunterladen</string>
     <!-- Everything Zoonk remembers about the learner, downloaded as one file. -->
-    <string name="memory_download_description">Alles, was du in deinen Erinnerungen gespeichert hast, als eine Datei</string>
-    <string name="memory_sensitive_note">Zoonk speichert keine Angaben zu Gesundheit, Religion oder andere sensible Daten, außer wenn du darum bittest.</string>
+    <string name="memory_download_description">Alles, was Zoonk sich über dich gemerkt hat, in einer Datei</string>
+    <string name="memory_sensitive_note">Zoonk speichert Angaben zu Gesundheit, Religion oder anderen sensiblen Themen nur, wenn du darum bittest.</string>
     <string name="memory_updated">Erinnerungen aktualisiert:</string>
     <plurals name="memory_updated_more">
         <item quantity="one">und %d weitere</item>

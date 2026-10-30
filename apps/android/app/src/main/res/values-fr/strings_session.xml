@@ -6,7 +6,7 @@
   "session_block_challenge_rematch": "03266af1f2ea54c0d7ae4d5730ef62116632332d89230c045928ac2d54dc3e9b",
   "session_block_final_challenge": "c9c3b779d669b1f92aef6254fa6210e9f073c8cb14d6d828a7844ff66b3cbbc8",
   "session_block_full_review": "a9bd417d56dea00f14c5a9ae0571b5fde08c2842707e8f7c5e6a42baca768523",
-  "session_block_full_review_questions": "8a6821055fa7cb1038015dad79de92a0f551f039b09a3905bcca8034c46fbeec",
+  "session_block_full_review_questions": "0cc0281a29828c40192bd78e8d12f31255d893be2f67386447b50acd440d634c",
   "session_block_live_call": "98509e6edb4a28158f56829fadff2969207e75c33b7cfa1c71d9c3f412a0219a",
   "session_block_mixed_practice": "8b86f637357f21d5ab199a9c9715d009cb58aea6ddb13f481d55007cf1361023",
   "session_block_mock_exam": "4962bab0134f3d6ca2cae0f40a407e57a1de0a020b29551f217ee1558be4ed51",
@@ -125,9 +125,9 @@
     </plurals>
     <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic, weakest first. -->
     <plurals name="session_block_full_review_questions">
-        <item quantity="one">%d question sur chaque sujet, en commençant par ceux que tu maîtrises le moins</item>
-        <item quantity="many">%d questions sur chaque sujet, en commençant par ceux que tu maîtrises le moins</item>
-        <item quantity="other">%d questions sur chaque sujet, en commençant par ceux que tu maîtrises le moins</item>
+        <item quantity="one">%d question pour réviser tous les sujets, les moins maîtrisés d’abord</item>
+        <item quantity="many">%d questions pour réviser tous les sujets, les moins maîtrisés d’abord</item>
+        <item quantity="other">%d questions pour réviser tous les sujets, les moins maîtrisés d’abord</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
     <plurals name="session_topics_and_more">

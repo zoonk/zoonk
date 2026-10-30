@@ -6,7 +6,7 @@
   "exam_add_result_detail": "e1de22f2edb4e80a2f5fde21c6b57b0d6931e6b2dc305578a26bdd2319c6ef96",
   "exam_best_area": "c5a845c770092c635db413f6bec8b3f12ca600e7ba2ac400b27efadbc638d61f",
   "exam_by_subject": "8c4dd89b9c3b6e21699042b90f38e080f9d7b94b1d07bb4fb8b581a8838d176f",
-  "exam_calibration": "6804b63503abacb40d1187db1eae4c9be4f089ce3559c94126373673def50d25",
+  "exam_calibration": "e99a3bb6f4eb452d0616c605cc277bc2bdb5597a643b83992d45060dac8d0e30",
   "exam_calibration_blank_unsure": "52e16b7aba471aad177b2ea831f184e9ac9ca08dbdb1a104dc694e84365ca79d",
   "exam_calibration_keep_answering": "adb4a3ef12076c1cb3a7099efbc679cc40fd2037bdeff00b31abc1245f507593",
   "exam_calibration_right": "e139f54fa8a2772a441af4fe6a4ddea1bda950caeacbc93d6df69674082d10f8",
@@ -26,7 +26,7 @@
   "exam_day_before_learn": "48f1eab3c33619566724a6cea16ebb5a38101c55a5a50575f7c0e5f4f652a96d",
   "exam_day_before_learn_and_mock": "38deaf6745c333a3720cf2a871987f20c2ac4de1061aff40669927034434c3e0",
   "exam_day_before_light": "985e8b5747603fd4ec9b3e867385952772f8d1428ac5eda3668f0cbbbdc7c515",
-  "exam_day_before_mock": "bbd6bff90e531e23453d2579d57c81078b952c09316bfd7a75c0792ba141ed28",
+  "exam_day_before_mock": "569ba0b57051be41029a9055eea9d90cd0ea78f1de4391a0d12459c308b7995e",
   "exam_day_before_review": "af271291a697ea264ee56273788128c581b00a0b1ff05ad1287e0e10af8e1e41",
   "exam_day_time": "436f6e692126b4b016492eb808a515e6d1efd9078e9863a1ffb6531bda696348",
   "exam_did_you_pass": "f975b9839f70609c8c094153e836a7958d8b0f131b19af3767879ce275bf1db0",
@@ -127,7 +127,7 @@
     <string name="exam_how_did_it_go">¿Qué tal ha ido?</string>
     <string name="exam_add_result_detail">Cuando salga tu resultado oficial, añádelo aquí. Así ayudarás a mejorar las estimaciones para todos.</string>
     <!-- %1$s is a line on what the learner did, such as "You did 40 sessions." -->
-    <string name="exam_day_before_mock">Hoy toca un simulacro corto y después revisar lo que descubras. Luego, descansa. %1$s</string>
+    <string name="exam_day_before_mock">Hoy toca tu simulacro corto y revisar lo que detecte. Después, a descansar. %1$s</string>
     <string name="exam_day_before_learn_and_mock">Hoy toca estudiar los temas que más aparecen y después hacer un simulacro corto. Luego, descansa.</string>
     <string name="exam_day_before_learn">Hoy toca estudiar los temas que más aparecen. Luego, descansa.</string>
     <!-- %1$s is a line on what the learner did, such as "You did 40 sessions." -->
@@ -281,7 +281,7 @@
     <string name="exam_rule_raw_title">Cada respuesta correcta cuenta un punto</string>
     <string name="exam_rule_raw">Responde a todas las preguntas.</string>
     <!-- How the learner did on the answers they marked as sure and on those they marked as unsure. %1$s and %2$s are counts like "8 of 10 right". -->
-    <string name="exam_calibration">En tus simulacros: con seguridad, %1$s. Sin seguridad, %2$s.</string>
+    <string name="exam_calibration">En tus simulacros: sin dudas, %1$s. Con dudas, %2$s.</string>
     <plurals name="exam_calibration_right">
         <item quantity="one">%1$d de %2$d correctas</item>
         <item quantity="many">%1$d de %2$d correctas</item>

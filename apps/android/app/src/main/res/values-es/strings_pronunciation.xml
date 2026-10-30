@@ -4,7 +4,7 @@
   "pronunciation_accent": "053ee7fb369ab757fb8c0b7244e5327476d3b80891e6748f40c8d1b5b79bda5a",
   "pronunciation_comes_back": "048db2362c333d74cda551d4fd2290a0ecbc0c8d533d3db4961bc84f0ce3d5e5",
   "pronunciation_continue": "1d4bc5aa06214fdc0e27bc57a021bb5b8aed1197de0be82d4e7af1a6a63311fe",
-  "pronunciation_done": "588154963dff89c10ebff6bd4a426d1a8e8363cd0063f62631b8c1fa771bdbb3",
+  "pronunciation_done": "463a247ad6560ca407d14896bd365c2c7edf7e8576ebc76b8d356562c34a3b2d",
   "pronunciation_failed": "f187db985ebdc00498aab8523db38aa12c144601659fc1fb742285247b59f90f",
   "pronunciation_grading": "59cc2fa562b39031843a276f2ff916e9b09d47dbb44110de7f18df97eb99ae9c",
   "pronunciation_heard": "57c621b0abc2ba120e3ebbdc2bd970cbe095bc82789b4ff8f0f3608496d646bd",
@@ -24,7 +24,7 @@
   "pronunciation_save_retry": "e19aacba02a8cf25fcccc4fe712de8fe8bce221dbdff54e275903db79be4d718",
   "pronunciation_say_it_like": "0c51971cc0f5c27b7c001d66be018658a16768ba3fa8713119f5cb59c85dc268",
   "pronunciation_see_how": "c1e3eadf63702fc5b5141a0c18dd19b347ced1e152bbd5c44cc11cd334884620",
-  "pronunciation_skip": "c9a91b7a7f06e87ba98d71cbab48c7cb8fa95e1d031f204d13d866468478930b",
+  "pronunciation_skip": "c3e00ef0b4f025163a340f131b66e16a2ed82ecbff0fe4dfcc4f4de8180c3d23",
   "pronunciation_sounded_right": "2cbd3ff89fefa425982a21577d2da1ca9a2e7fc90101b66424faaafc3b5173fd",
   "pronunciation_title": "ed8805b8c8f6f3eda8d65372377a4459839473628c5e0cc7000b1b3063969cae",
   "pronunciation_try_again": "b558e0d8bc27cb43d89a43919bf6a24292ace52efaa18cc4f77db07ac3177c71"
@@ -39,7 +39,7 @@
     <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
     <string name="pronunciation_say_it_like">Dilo como %1$s</string>
     <string name="pronunciation_options">Opciones de pantalla</string>
-    <string name="pronunciation_skip">Omitir esta palabra</string>
+    <string name="pronunciation_skip">Saltar esta palabra</string>
     <string name="pronunciation_press_record">Pulsa Grabar y di la palabra en voz alta</string>
     <string name="pronunciation_recording">Grabando… Pulsa Detener cuando termines.</string>
     <string name="pronunciation_grading">Escuchando cómo ha sonado…</string>
@@ -66,5 +66,5 @@
     <string name="pronunciation_nothing_said">Esta vez no has dicho nada</string>
     <string name="pronunciation_accent">Tener acento nunca te impide avanzar. Las palabras que aún suenan diferentes volverán a aparecer mañana.</string>
     <!-- Closes the finished round. -->
-    <string name="pronunciation_done">Listo</string>
+    <string name="pronunciation_done">Hecho</string>
 </resources>

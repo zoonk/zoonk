@@ -7,7 +7,7 @@
   "goalcontent_appears_a_lot": "e3855987b967cbb6a5d57f96d0c717733a628909d1f2853def0ed2e91a502bb7",
   "goalcontent_beyond_guide": "2e1f9a4aede258f4be4b63933bf321925cd0f487cf37409e9f1ed6f334c2c708",
   "goalcontent_beyond_notice": "393397320c5863f5e65784a1a3d08371f89936a8721b8155f4e37cecd4317bbe",
-  "goalcontent_bring_back": "aea50af05cef1b170642aa34e44a3cf4f8934505fff9d51b597573b075b08904",
+  "goalcontent_bring_back": "87f8f9b03dba1431978b9fbddfc3b951b1d7119ff30b259bb7b56983733e8310",
   "goalcontent_chapter_count": "58d2dc698aad9c199ae2680bf8469d0f5b6e11b42803e008c7ed8316d112aca4",
   "goalcontent_chapter_number": "8f9ca80605c51d0dc549768a59f7e5776b6d2f2e66f85b402a3b28adbd9175fb",
   "goalcontent_chapter_summary": "c04256aaf15da344410264bfa7ab4dfaa95b80a4afc077f4a9d32a2711c3a3c0",
@@ -22,7 +22,7 @@
   "goalcontent_coverage": "b9c11f0114baa6dc9827f140c3368e953d2346235f16dc3bc09d84a2c4f42719",
   "goalcontent_details": "9dcb1c48e994ef02fb2cef690cb451bbab2fc6b97e3e190e10c27cc2701737ca",
   "goalcontent_done_and_known": "c04d2e53ae74937ef9184a49b6f7229acf8ffa5806351fe64f1c410d255a30c7",
-  "goalcontent_for_reference": "a876b5d3b3570c4cd983eb381ae2f6101961ff9adda27fcf9d6a750b2c810d71",
+  "goalcontent_for_reference": "ff854b59f52af540d5913685be741654546821a4d17c0bffe5f3341d255f6048",
   "goalcontent_frequency_material": "b61f399b14e2a4f3d95308b3a3441fc9bc1b40e43d0abfbaaf4f6f41f8314d15",
   "goalcontent_frequency_most": "0eb9e45209b9fabcd61a4a86affb0a7e4ed5bc62d71e008ab3c116049e76b2f1",
   "goalcontent_frequency_past_exams": "13263b2935fb19cfeeefe7716e06058d62e6abea3e86ef0791774333466e06a5",
@@ -228,7 +228,7 @@
     <string name="goalcontent_subject_missing">Seu plano ainda não ensina esta matéria.</string>
     <string name="goalcontent_adjust_plan">Ajustar plano</string>
     <!-- Puts a subject the learner took out back in their plan. -->
-    <string name="goalcontent_bring_back">Incluir novamente</string>
+    <string name="goalcontent_bring_back">Colocar de volta</string>
     <string name="goalcontent_save_failed">Não foi possível salvar. Tente de novo.</string>
     <plurals name="goalcontent_chapters_done">
         <item quantity="one">%d capítulo concluído</item>
@@ -291,7 +291,7 @@
     <string name="goalcontent_practice_nothing">Ainda não há nada para praticar neste capítulo.</string>
     <string name="goalcontent_practice_failed">Não deu certo. Tente de novo daqui a pouco.</string>
     <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->
-    <string name="goalcontent_for_reference">Para consultar</string>
+    <string name="goalcontent_for_reference">Para consulta</string>
     <string name="goalcontent_chapter_summary">Resumo do capítulo</string>
     <string name="goalcontent_skills">Habilidades</string>
     <!-- A skill whose recall is fading. -->

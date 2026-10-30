@@ -25,7 +25,7 @@
   "questions_entry_fraction": "d838ea60728aed5015f9d6795fcc9c99d746ff79a2dd40ee5deb52232c0d5d00",
   "questions_entry_integer": "77ccbccfc9a3ff0a0ae91b43b32ace2a0d52570820f34dbdf2fc207b8ffe560e",
   "questions_false": "68776c7e3d7a440567b0434f26b2ab3c1113a9db24be951fbd67460d7ad4c152",
-  "questions_feedback_label": "323751d31cb61759bdea7cabdf59dece48b531217c69987d8143293e7978a93f",
+  "questions_feedback_label": "0240809b94c1e0ddf6e5535585ab853187c0c1cf11b371dcca4b4130355524f2",
   "questions_invalid_fraction": "2254db2676e0fd55a7bcbafc8010b4e70c21e54985147f94cf95b87cd0d7f5a8",
   "questions_invalid_integer": "bcaadb5db5f8cf5208c08bc1a2aa6a0ab9adfd54b993ffd269c0d7d48c7d264c",
   "questions_invalid_number": "2e0cb9277ded06fe46bb733229c045dc0da7e2495dc4600fcf192975070576fa",
@@ -36,7 +36,7 @@
   "questions_matched_with": "f4b3e5acaa767112be164fa7405e78e95b8ddbe5ec77735ef14d8291f830b4e6",
   "questions_mistake_fixed": "94255fb9db59bff45ed755945879d16a72d1cbdbc58c6b53b6af4cba5d6636d1",
   "questions_mistakes_fixed": "5f606109f5b12ffc939e7e243493dfa22b6d7812a225e3cce0c9cefb2cea5f75",
-  "questions_not_quite": "7dcd23037f35aa8da135325f53bf0f657a35457b072eed5e56bb138656107649",
+  "questions_not_quite": "ce26c6caecd5cb05497064c4ceb01b7b3046daa53caea8f78899748bc0f89a38",
   "questions_open_source": "bbb5bb47eadb9e7d42e4223a6d3a47d21cd32075dc9b2cde17841fed9acaff28",
   "questions_order_hint": "7a1cfdd2b5314a0275df7557a6ab51cc070a59573814e80a65405166db260ab8",
   "questions_pick_all": "741b5f7e7cbbbf1d77e4e21823a61d1aafa703d53f4058b96370cc09d4168959",
@@ -103,10 +103,10 @@
     <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_fraction">Digite uma fração, como 2/3, ou um número, como %1$s.</string>
     <string name="questions_invalid_integer">Digite um número inteiro, como 12.</string>
-    <string name="questions_feedback_label">Resultado da resposta</string>
+    <string name="questions_feedback_label">Comentário sobre a resposta</string>
     <string name="questions_correct">Correto!</string>
     <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
-    <string name="questions_not_quite">Não foi dessa vez</string>
+    <string name="questions_not_quite">Não está certo</string>
     <string name="questions_left_blank">Deixou em branco</string>
     <string name="questions_dont_know_yet">Ainda não sei</string>
     <plurals name="questions_streak">

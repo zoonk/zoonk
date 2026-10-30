@@ -12,11 +12,11 @@
   "ceremony_glasses_monocle": "231a085cfa03c17162ca66da4f093848a466b28589afbb364871eb57870b9e4c",
   "ceremony_glasses_monocle_detail": "6c4ba268a0c3ad5461063dea2948a283c951e8169cecaf8adf05fefb9d4230a6",
   "ceremony_glasses_new": "96f4a11af236581b1da03bf3a7f90a4fda1463ef32eed9fe27e2fb6204ae2bb9",
-  "ceremony_glasses_new_detail": "7cbd654ab965ee99cf261723a6eb147baf2c7b86bd35635150cf600e8222f580",
+  "ceremony_glasses_new_detail": "34ee3a375891a4a8a4db55c84995c33474088dfc0b0b0c6baabff7f50e785e2d",
   "ceremony_glasses_retro": "7e6cf999da704d89eb2554184231e649649bd61e59b46dde70b1618b0c061df1",
   "ceremony_glasses_retro_detail": "5b5418829b1955c85a091853e24b8eb664c33e875309a712aad4ceefa2ba2f67",
   "ceremony_glasses_star": "f8aed02b33bf493dd43fd5926a96492aed374eb513b8e6ba8f8540021483d1df",
-  "ceremony_glasses_star_detail": "54291c39f2dd1eb32f0fb5a431501a5f824d5a469b81c4e3a42a6cb6388b562d",
+  "ceremony_glasses_star_detail": "759f1095c4c78f7f6f5ac86beae0314fbcd5b6c33ae0a7e878d5b25a70edba75",
   "ceremony_grew_up": "b3973122b1261b3829796334d622404304834357bc82c457b6fdf85cfe508ae6",
   "ceremony_new_belt": "4c3dfea8509bdb61094127ee4b1a2a8a7e0ff1af8e5dcccb667d4518cea0995b",
   "ceremony_not_now": "41c1c303ad2f2ea604e3a98455ef85f1eb2cea9644ad052764a05939c9c84451",
@@ -39,7 +39,7 @@
     <!-- %1$s is the buddy's name. -->
     <string name="ceremony_stage_adult">%1$s ya es adulto y ha crecido gracias a tu Poder Mental.</string>
     <string name="ceremony_glasses_star">¡Gafas de estrella!</string>
-    <string name="ceremony_glasses_star_detail">Por ganar tu primer Desafío de la fase.</string>
+    <string name="ceremony_glasses_star_detail">Por ganar tu primer desafío de la fase.</string>
     <string name="ceremony_glasses_aviator">¡Gafas de aviador!</string>
     <string name="ceremony_glasses_aviator_detail">Por completar tu primer Desafío semanal.</string>
     <string name="ceremony_glasses_cat_eye">¡Gafas de ojo de gato!</string>
@@ -49,7 +49,7 @@
     <string name="ceremony_glasses_monocle">¡Un monóculo!</string>
     <string name="ceremony_glasses_monocle_detail">Por ganar el desafío final.</string>
     <string name="ceremony_glasses_new">¡Gafas nuevas!</string>
-    <string name="ceremony_glasses_new_detail">Vienen con tu Compañero.</string>
+    <string name="ceremony_glasses_new_detail">Vienen con tu compañero.</string>
     <string name="ceremony_continue">Continuar</string>
     <!-- Button after earning glasses: puts them on the learner's buddy. -->
     <string name="ceremony_wear">Ponérselas</string>

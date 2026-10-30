@@ -6,7 +6,7 @@
   "exam_add_result_detail": "2a3d68f2c93f86ae956a3a7eb655d742813e367361a18d159ada4254aa8a2466",
   "exam_best_area": "b7b6a8c61866d3e5d95a07e5503d2c6bed3cc85e4fddf21a84da5b7da82f4ad9",
   "exam_by_subject": "6edc6d99baacc28f00fc3a55905bc4443c707b936b5865686da6d0add14da8d9",
-  "exam_calibration": "425e2de9beedea82e634fa970e266597b90de9551976fe147c83ba72250be6bb",
+  "exam_calibration": "6eefdc9265369967fadda03ccef59211600ca97fbd8ef2f5e0188b6b9f69731c",
   "exam_calibration_blank_unsure": "07376cd25b7fdcf082b445f366ae6ee95cc8e4de3be0713251c6747432deece6",
   "exam_calibration_keep_answering": "ac96a419deaba1c0b508d2b36dbf9fd1f513dd7dd9cc0c266aac55656f6bec07",
   "exam_calibration_right": "0595ba5750fb891ed95089c21c7a0f62c0d392c7194311b427f3d4dcba7c00be",
@@ -49,7 +49,7 @@
   "exam_latest_mock": "0e1db6250e02163e744ba29fb630f249fe44e4463323c9306ba6497fd18ca451",
   "exam_mock_answered": "494c35e2e134f0ef9f16877cab30a991058f0b2f67d03f128d96aa831cb623e4",
   "exam_mock_handed_in": "0eebeabf27e6d7bf464888dfbc361ebc18ecd7c30fa0c590d91945a67254d2f6",
-  "exam_mock_time_left": "b5ec7bf1eeab62e339ae912f05ab3b26c5602e1f963986a1fb36099fe25f5831",
+  "exam_mock_time_left": "614e13a3b53e6d1e36e4f63c482fa2350d22c5778851a5099123edb74375d85e",
   "exam_mock_time_up": "d091455378f0dc76e6df491f5689ab0252fba36ae6960c6ae5b41ec394a2a28b",
   "exam_mocks": "efe5a5639288864580c42499a9956d1519fe1c1106829dfa1145c1251f490ddf",
   "exam_mocks_plus": "a7a6a96c5eda795f1c96c7078d26e4423d9e4dc81ba4e67f522014ee44a3dfac",
@@ -101,7 +101,7 @@
   "exam_score_irt": "ece8afbf18b7587ddc30e967aaad9348d5c55cdfe09298cf5ac6e355506ad97a",
   "exam_score_off_scale": "40fb4559c14753a7a99392f13d69695e22823fbcea09d33596c6e2ae035eb507",
   "exam_score_sat": "d770fc293a288c57a78e7737ea28c4f7dd45c2a34dd37483e4d0fdc15b2e2b79",
-  "exam_score_toefl": "d7cab6d223496efe00d5d4807197cfec6d00b976d449bc052c5b034bf2b09cdf",
+  "exam_score_toefl": "76f1eabb7828f691ac057f1b713206d45e9d4f27bb95df30cd584e9a6dae2665",
   "exam_scoring_title": "14c2c3e6bed496b72b8cc8a31a8e8c0fefe4eb5447b8d0851fdf412ef7052fcc",
   "exam_see_exam": "5aa3f01c3562a094e6a223ad9c5f05f25619ab751a60b54495acf13a145035a4",
   "exam_sessions": "1a22c0975ac328a314ddaf17df8c858c8cf6218ca517788b30a147ae56d59943",
@@ -111,7 +111,7 @@
   "exam_today": "b835875d5ddbc86b27999480aed8a27e7d19dd4887c06e28b378e6fc715b3505",
   "exam_tomorrow": "75daea3e619964fab302d4a00d445602c8f4969985f31304fd12c4fcfee99598",
   "exam_tools_title": "4de7e265b5824120d065d0490f5583f4771d770635a932f74952dedb3983e81d",
-  "exam_use_date": "1db538cf4af3935d66744d5cbe16fe223234e215c05a0efa1c91d5027f75080c",
+  "exam_use_date": "40380e66300f1ba52cd8aaf63b85d75899316d299f0863db89e4b522113eb57d",
   "exam_use_this_date": "5a697b15f23ec39ee7b711a5614ff0af4de1b14aa4ef92570f000ab8694f486d",
   "exam_work_sessions": "beb3112f531cfd6af8071c31250c3522dfaaf661f140e9f0a526b6dad968683d",
   "exam_work_sessions_and_mocks": "2a9356accdd64a646e860e18b58119800f897f9b80b6be63759b905334306527"
@@ -196,7 +196,7 @@
     <string name="exam_no_sitting_detail_one">Ton plan conserve ta date, sauf si tu choisis la date la plus proche.</string>
     <string name="exam_no_sitting_detail_several">Ton plan conserve ta date, sauf si tu choisis l’une des dates les plus proches.</string>
     <!-- %1$s is a date, such as "November 8". -->
-    <string name="exam_use_date">Utiliser %1$s</string>
+    <string name="exam_use_date">Choisir le %1$s</string>
     <string name="exam_result_detail">Ajoute ton résultat officiel quand il sera publié. Tu pourras le modifier plus tard.</string>
     <string name="exam_result_saved">Résultat enregistré. Merci de nous l’avoir communiqué.</string>
     <!-- %1$s is the score the learner reported, such as 712.4. -->
@@ -205,7 +205,7 @@
     <string name="exam_score_irt">Ton score (la moyenne s’il y en a plusieurs)</string>
     <string name="exam_score_ap">Ton Score AP (de 1 à 5)</string>
     <string name="exam_score_sat">Ton Score total (de 400 à 1 600)</string>
-    <string name="exam_score_toefl">Ta note globale (de 1 à 6)</string>
+    <string name="exam_score_toefl">Ton score total (de 1 à 6)</string>
     <!-- The field for the most points possible, beside the score's field ("62" out of "80"). -->
     <string name="exam_out_of">Sur</string>
     <string name="exam_score_invalid">Saisis un nombre.</string>
@@ -228,7 +228,7 @@
     <string name="exam_mock_handed_in">Rendu</string>
     <string name="exam_mock_time_up">Temps écoulé</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
-    <string name="exam_mock_time_left">%1$s restantes</string>
+    <string name="exam_mock_time_left">Encore %1$s</string>
     <plurals name="exam_questions">
         <item quantity="one">%d question</item>
         <item quantity="many">%d questions</item>
@@ -281,7 +281,7 @@
     <string name="exam_rule_raw_title">Chaque bonne réponse vaut un point</string>
     <string name="exam_rule_raw">Réponds à toutes les questions.</string>
     <!-- How the learner did on the answers they marked as sure and on those they marked as unsure. %1$s and %2$s are counts like "8 of 10 right". -->
-    <string name="exam_calibration">Dans tes examens blancs : réponses sûres, %1$s. Réponses incertaines, %2$s.</string>
+    <string name="exam_calibration">Dans tes examens blancs : réponses données avec certitude, %1$s. Avec un doute, %2$s.</string>
     <plurals name="exam_calibration_right">
         <item quantity="one">%1$d bonne réponse sur %2$d</item>
         <item quantity="many">%1$d bonnes réponses sur %2$d</item>

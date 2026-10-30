@@ -27,7 +27,7 @@
   "generation_not_started_description": "bc266a58d6215c404b08787d56e3a8e553471e1f4270e3a2204e98bc646ad258",
   "generation_notice": "e7d22059f37252cfbbb608ce9415c5334d465676c965fea3f3e3014bea6b6a64",
   "generation_notice_line_1": "65e5d94142e1c36f640ed7f5f7ebd7190b41c1473abfb857e31d355fb61da4b6",
-  "generation_notice_line_2": "1770f63c1a502855753143c3393a1066acc8cb1b1511ca0c50412aff74559554",
+  "generation_notice_line_2": "2f80792cee4c83d3d022d04f9df9176696ab451ae5b3e7ef1e4d72358dba9a23",
   "generation_phase_active": "abcee5619fdad05818e3f1ea7c894d71f51d5e1518bf625f7116f51b7788961b",
   "generation_phase_completed": "81758654b81286e6f45665a67e24271e56abe30527768b0fd2c9a09b62ebe518",
   "generation_phase_failed": "f8ba37cc614305393ccc6bd985345df183a9223b1f0f9140b421e02f3963aa80",
@@ -46,7 +46,7 @@
   "generation_understanding": "ecc8ed721cdf456fff6da3aeb54ef08002870f4a1f2e45a66e024a160f719880",
   "generation_understanding_dates": "135d05a2279cc25cedc06ccd41098a16bc47c5e033a88714c2dc7a2539e6ed1e",
   "generation_understanding_dates_line_1": "7323aa02543b661ae2dbb8e3a495ca92cd517ee1e28134ec4463f6bcee095e0d",
-  "generation_understanding_dates_line_2": "684c56d8f8c26fa94ed8a961d489b8b2938b301f192064450a7969c13a74980a",
+  "generation_understanding_dates_line_2": "68fc398333bcbf8d395521a73dfb7eb94b707fc3fa9cd8421ca9c38ae227c4de",
   "generation_understanding_read": "b99f71dc128a0518ce80fe76a155c3558028dd981a5857d1ca2e8483e4e2aafa",
   "generation_understanding_read_line_1": "c439491b4fd4e7c869d405c5ac2f1aba8f2126607df4c178662ee36c9ef9d860",
   "generation_understanding_read_line_2": "16391e8dceb931e766e11895fd75f5711bff053ca09ac502d57e12fab98d9a69",
@@ -81,7 +81,7 @@
     <!-- A step that only runs for a plan built from the learner's own material. -->
     <string name="generation_notice">Lendo seu material</string>
     <string name="generation_notice_line_1">Buscando os tópicos que ele aborda…</string>
-    <string name="generation_notice_line_2">Organizando os assuntos na ordem em que aparecem…</string>
+    <string name="generation_notice_line_2">Organizando na ordem de ensino…</string>
     <string name="generation_skills">Mapeando as habilidades necessárias</string>
     <string name="generation_skills_line_1">Listando o que sua meta exige…</string>
     <string name="generation_skills_line_2">Organizando as habilidades em ordem…</string>
@@ -95,7 +95,7 @@
     <string name="generation_understanding_dates">Conferindo as datas da prova</string>
     <string name="generation_understanding_dates_line_1">Buscando o calendário da prova…</string>
     <!-- Shown while reading an exam's calendar. "Your year" is the year the learner takes the exam. -->
-    <string name="generation_understanding_dates_line_2">Buscando as datas deste ano…</string>
+    <string name="generation_understanding_dates_line_2">Buscando as datas do ano da sua prova…</string>
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">Montando seu plano</string>
     <string name="generation_curriculum_plan">Encaixando o plano nos seus dias</string>

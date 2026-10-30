@@ -36,7 +36,7 @@
   "questions_matched_with": "97628d68b1cd118e24dc5a5560b6af67e432bb22d2a3ceaa86fef1931550cfb6",
   "questions_mistake_fixed": "41d3e614911d5e9d21c23e6e18b271a2e00c7fd108aadb92cd2246d91f0361be",
   "questions_mistakes_fixed": "b94fa654949463d15703b017a7392de4f2d8b6c1669f270162c46f62bc640ecd",
-  "questions_not_quite": "38a4267f8d0f7134c05250a63a50be4e5e0e03c9ff865d3b60d8cc2cbe9170f6",
+  "questions_not_quite": "c7540536989388360d68e20666aca5c6f93f1d228cc9f0edfb80e4cccc559fa5",
   "questions_open_source": "571366e965ff9338a6e06d37b354b5b0c84c9c3fae8827eda89fa5f24efe1306",
   "questions_order_hint": "1025487c28a4b341279ab7907ecdbc6856fa074202372fd54392b36eaa0fa50f",
   "questions_pick_all": "4ee5fbce9033f5f84f21c287b53b0af3bf4df9397843430108be7988cd9fd8b0",
@@ -104,7 +104,7 @@
     <string name="questions_feedback_label">Rückmeldung zur Antwort</string>
     <string name="questions_correct">Richtig!</string>
     <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
-    <string name="questions_not_quite">Nicht ganz</string>
+    <string name="questions_not_quite">Noch nicht richtig</string>
     <string name="questions_left_blank">Nicht beantwortet</string>
     <string name="questions_dont_know_yet">Das weiß ich noch nicht</string>
     <plurals name="questions_streak">

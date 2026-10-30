@@ -11,7 +11,7 @@
   "research_not_now": "7829d3cd1e71513744ff61c0a182675de356e8319e2ce92e7f8aa5cc0a89e621",
   "research_notice_action": "445a6b66a7f9278f53974f5ca6a26ced04c7209955e7896c79efcc6509a58519",
   "research_notice_body": "3958c426cd8f86af2fe1359951170bb5e081d8e904dfcbb1d2e12a59997baa7e",
-  "research_notice_title": "af491c5809e3f7bc2b77b6d25c6cb914586e633ee2b2834e51e6d081fabbb11b",
+  "research_notice_title": "21f14f7f7af366a82649ed58323fea8cd31e1c475b06cd826e059e9a0aba3724",
   "research_source_action": "5e20b981beb53bbebeed1037836e846a61c25fd97a7fde59585b775533936ca4",
   "research_source_body": "eb78796aebb3fbbcc2821ac000883f9d039a3e38bf40c94e343ac21a2b090a5e",
   "research_source_title": "36889f66a4a822a99fe2da05baceb6ddfa361abe6e15538ef5452d050cf2b733",
@@ -39,7 +39,7 @@
     <string name="research_source_body">Lade den offiziellen Text oder Leitfaden hoch, mit dem du lernst, damit deine Lektionen dazu passen.</string>
     <string name="research_source_action">Dokument hochladen</string>
     <!-- An exam's notice: the official document that announces it and lists what it covers. -->
-    <string name="research_notice_title">Wir konnten die offizielle Mitteilung nicht finden</string>
+    <string name="research_notice_title">Wir konnten die offizielle Prüfungsankündigung nicht finden</string>
     <string name="research_notice_body">Lade die Mitteilung hoch, damit dein Plan zur tatsächlichen Prüfung passt.</string>
     <string name="research_notice_action">Mitteilung hochladen</string>
     <string name="research_guide_title">Wir konnten den offiziellen Leitfaden nicht finden</string>

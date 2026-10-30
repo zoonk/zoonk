@@ -50,7 +50,7 @@
   "mock_moves_review_any": "32d12bf401918c5d8d617412b6ab2d1cb9089b1aa17e662d1b8b1818a74dc214",
   "mock_moves_review_changes": "80bbecf85dc43537bd69874775696229f2fc0fdd357e5387a6c20a08e15cc8b9",
   "mock_moves_review_none": "83ddb28a141fbb9b517c73dd1ab1596b1f36a43b8ad32d545855a68f1824087b",
-  "mock_net_score": "50b9488190432311a08bf62d19565cb942826bb8e178e155cbec21ba4933f228",
+  "mock_net_score": "72c5e74cf3bd604cc816ae7585a5be3952557439e229f230d081330412971c0e",
   "mock_next": "9d53dd050edcc78dcf1c772c21d55604fe9c42fa77440bba6fc2183928d4d123",
   "mock_next_named": "c15b1674b8f710b38daf2828b016021dfce9f179bf849e23b24edd95f1bb5f43",
   "mock_next_section": "7dc00763fa180dd8859f3cc3ebed44c14e78e7d2ae440907926041a9eb879464",
@@ -113,7 +113,7 @@
     <!-- A placement mock, the one that finds where the learner starts. -->
     <string name="mock_starting_point">Ponto de partida</string>
     <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
-    <string name="mock_net_score">Saldo de %1$s de %2$d</string>
+    <string name="mock_net_score">Pontuação líquida: %1$s de %2$d</string>
     <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="one">%1$s de %2$d respostas certas</item>

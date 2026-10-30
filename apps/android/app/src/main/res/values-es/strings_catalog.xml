@@ -65,13 +65,13 @@
   "catalog_outline_plan_undated": "92a35cc375794e0311b1e63cbc145bb5c2dde6181c21d622812455c339788e1e",
   "catalog_outline_unwritten": "3b23c4a805b62f9d9170ae4919ea42b719a4a4457d02ddf24253b1237f001735",
   "catalog_plan_caption": "45a21cdefa6daf3882d1ef1f45ab40eba82e015157573d463ee103ec9a5900d8",
-  "catalog_plan_dated_fitting": "05e9dac162ea872a2a7047b5bb5c48839836c72f512338c581600c89b32112b2",
+  "catalog_plan_dated_fitting": "2335f6cfa9336c7a643b28a8952f5d9447e2c79040502698134e0449e927651c",
   "catalog_plan_dated_quick": "02c133c19f093efc396fd9f1ad8d67f8da3964b5315bec6bc6db39aaa071af9d",
   "catalog_plan_dated_some_written": "3bfa85e83ece9b1a0c684e309952f7fc7345deb9734954ffdf13f629953bfe81",
   "catalog_plan_dated_written_later": "05480ae1da9208b22e28061c8656fa31823e1e447d720e4971bbe90258283114",
   "catalog_plan_every_exam_topic": "8e0d2d05b45296ce14d25a79b992b40769c516b84a06899abf3bc6d26d20c560",
   "catalog_plan_every_topic": "ebcb53291fea1eb39585e451f6236fc858db1c011526bdf4da9c84a3f44d632b",
-  "catalog_plan_finish_around": "3c55ec1fdcfd816d6a6ad597f502c05d288b3d2bf0a0a2159608bce816577a1f",
+  "catalog_plan_finish_around": "8cd687c6da049c3eb8a0c472b25f60f274368eafae12789713764e856aa82bba",
   "catalog_plan_lessons": "9480866368139fdf6275d809277fe7bd3515d8a81692161dca78008aa513a124",
   "catalog_plan_line": "03c70baf18ce9e67d8b54a3a4bed79f84924ec8ddcdd2693760223cabc971023",
   "catalog_plan_line_chapter": "b09cfee65cd4c9d468a01d9d5b95dc163e9cd4d22065dd33a4249a5889c2e2ae",
@@ -116,7 +116,7 @@
   "catalog_try_place": "444a7e97ec6a06de6f2e42802457c91617480f05273892787f63a8aa6b04cf1f",
   "catalog_try_title": "e03ffaaf4b630036e6fe5f9000e29a71406ebbc435835c4c7374b0e3c846dcdf",
   "catalog_what_you_learn": "fe3108e3f314afbc574bc963d78a325a8eaf336e4ccb4b944622b68072a448bc",
-  "catalog_workload_after_exam": "2a1c0300f4495faf9f616d49b37a04b59c4666e5990ef7b670c0d5d4df4983cd",
+  "catalog_workload_after_exam": "6d2c898d0a0a6c048b44a9411387f4895180f137bd9ace90b918ed9633fb88a5",
   "catalog_workload_challenges": "2badeaf00cb83bba654e38a186dd5790a781803dd210138ba78bb9347baaee2f",
   "catalog_workload_challenges_mocks": "04afae40acf3c7dec8e713722022cf1ee52b60b86720dab0e23d34e4fb8f3d1d",
   "catalog_workload_lessons": "710460c58b573d511cbb600958c15fcc0721c913f3a9c37ebc914c3e8ff3a51a",
@@ -203,7 +203,7 @@
         <item quantity="other">para terminar todo el curso desde cero, dedicando %1$d minutos al día de lunes a viernes.</item>
     </plurals>
     <!-- %1$s is a month and year, such as "March 2027". -->
-    <string name="catalog_plan_finish_around">Si empiezas hoy, terminarías alrededor del %1$s.</string>
+    <string name="catalog_plan_finish_around">Si empiezas hoy, terminarías hacia %1$s.</string>
     <string name="catalog_plan_today">Hoy</string>
     <plurals name="catalog_plan_lessons">
         <item quantity="one">%1$d lección</item>
@@ -224,9 +224,9 @@
     </plurals>
     <string name="catalog_plan_dated_quick">hasta el %1$s, con %2$s al día de lunes a viernes, en lecciones rápidas sobre los temas más frecuentes. Las lecciones completas llegan cuando hay más tiempo.</string>
     <plurals name="catalog_plan_dated_fitting">
-        <item quantity="one">hasta el %1$s, con %2$s al día de lunes a viernes y los temas más frecuentes primero: %3$s de la lección que contiene el curso, que tiene %4$d en total.</item>
-        <item quantity="many">hasta el %1$s, con %2$s al día de lunes a viernes y los temas más frecuentes primero: %3$s de las %4$d lecciones del curso.</item>
-        <item quantity="other">hasta el %1$s, con %2$s al día de lunes a viernes y los temas más frecuentes primero: %3$s de las %4$d lecciones del curso.</item>
+        <item quantity="one">para %1$s, con %2$s al día, de lunes a viernes y empezando por lo que más se pregunta: %3$s de %4$d lección del curso.</item>
+        <item quantity="many">para %1$s, con %2$s al día, de lunes a viernes y empezando por lo que más se pregunta: %3$s de %4$d lecciones del curso.</item>
+        <item quantity="other">para %1$s, con %2$s al día, de lunes a viernes y empezando por lo que más se pregunta: %3$s de %4$d lecciones del curso.</item>
     </plurals>
     <string name="catalog_plan_not_all_fits">No da tiempo a todo antes de esa fecha. Antes de empezar, verás cuánto cabe según tu nivel y el tiempo del que dispones.</string>
     <string name="catalog_plan_every_topic">Son todos los temas del curso, en profundidad.</string>
@@ -240,7 +240,7 @@
     <string name="catalog_workload_challenges">Desafíos</string>
     <string name="catalog_workload_challenges_mocks">Desafíos y simulacros</string>
     <string name="catalog_workload_reviews_note">Repasarás lo que has estudiado justo antes de olvidarlo.</string>
-    <string name="catalog_workload_after_exam">De ese tiempo, %1$s corresponde a después del examen.</string>
+    <string name="catalog_workload_after_exam">De ese total, hay %1$s después del examen.</string>
     <string name="catalog_workload_unwritten_note">Las lecciones pendientes se preparan cuando llegas a ellas.</string>
     <string name="catalog_audience">A quién va dirigido</string>
     <string name="catalog_outcomes">Qué podrás hacer</string>

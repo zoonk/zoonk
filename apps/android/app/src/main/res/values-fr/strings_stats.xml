@@ -24,7 +24,7 @@
   "stats_calendar_energy_summary": "5293c0dc36911804afe5c2b5455efd1d2ad9d4ebe6dbd632dfd0de664a58bb1c",
   "stats_correct_of_total": "f5094d2eb1ba873df20c1cee35df97c45142750b53657d38670a02e91f588134",
   "stats_day_activities": "4210e52e4b7022bce00825f9547045dcc4999735b14d318ccecb23bec12c79c9",
-  "stats_day_energy": "d104b8b7b2fb7c492a2d46a355b153dd0bc5800ac40cd47b3b2961db45d1c49c",
+  "stats_day_energy": "fbe4ffe964ca107a553ad74ae1029d2e7f5f23bfdcf214455c64fac50d848f33",
   "stats_day_no_energy": "6821ae43a95a04330ad8ed8775d0286a3afb553b96fafdccc66a1737ad9dcb83",
   "stats_day_no_study": "f11553ebb8e49fa6766d9c9d6f95678bbfd01bdb860811da3c8f6f8ee09f538d",
   "stats_days": "ceb159d20f8d93be0f1b09fcec8286f0fb443d6ebe032e2f6e16fc394c2f62e9",
@@ -65,7 +65,7 @@
   "stats_part_failed": "4cdd07523a0d2ec967ec07fca3be637956924715cc8b99af744725036d9aa4e8",
   "stats_past_year": "1e1eae063d7dfee1df5496a319a6871c456321190ad84c46549b5139527a922a",
   "stats_patterns": "e0fcbac24043a202ec33679937e6ccc9573c95ae9e11ac7a6cff66679547de71",
-  "stats_patterns_90": "8f21585c95210a4a163a96c386d292d266aba5c75af002a8d5e87cc6e7435ea5",
+  "stats_patterns_90": "d7fc7b1c690839df84d860243ec0ae56c100a5ba262036e3bd6c2e9124dc4b9d",
   "stats_patterns_intro": "316dda34d40985b1d4ffe4eeb0949ec5a40f2df95fdcbef822001bf6f9f9dde3",
   "stats_period": "af7b230dbdb8f16bd4b05c6cd0861b3c7b7ffeb3399f890bfef47a691f001d4f",
   "stats_range": "6b0aab72cf86be61a690fac4a03b2b79459d7216fa6e70bd4587dc4d82c10000",
@@ -93,7 +93,7 @@
   "stats_to_go": "c1cc1a5b6242bacf78044730f0a1ace13962a493d6d4004298d0a55abd8426e3",
   "stats_to_level": "9896fa01b15f35d0ea2138fe0ed577c45e38adc12a4c3c1b888dcdbca198c431",
   "stats_today": "596ec4b9e58091ef3d6f76f8e0934c4095b9601a3579d31507624a514daf61e0",
-  "stats_week_spread": "df09b30ade967c0bb53a246ef1a0a334cebef91e8885b82f0ccb1e360b7c5d50",
+  "stats_week_spread": "c687ef4b5060cd2e48d6e74be3006fd0bdb6ea5b3921267a084e18c34e38cc56",
   "stats_within_points": "dceb188f9042c7378746ab8538c69f819cc845ae4255656b243fe70d24b20e3d"
 }
 -->
@@ -121,12 +121,12 @@
     <string name="stats_right_last_90">Bonnes réponses sur les 90 derniers jours</string>
     <string name="stats_score_90">Score · 90 jours</string>
     <string name="stats_score_after_answers">Ton Score s’affiche après tes premières réponses.</string>
-    <string name="stats_patterns_90">Habitudes · 90 jours</string>
+    <string name="stats_patterns_90">Erreurs récurrentes · 90 jours</string>
     <string name="stats_see_all">Tout voir</string>
     <string name="stats_best_day">Meilleur jour</string>
     <string name="stats_best_time">Meilleur moment</string>
     <!-- Noun row label for how much the scores varied over the week; its value is the range from the lowest to the highest weekday score, such as "62%–80%". -->
-    <string name="stats_week_spread">Répartition sur la semaine</string>
+    <string name="stats_week_spread">Variation sur la semaine</string>
     <string name="stats_range">%1$s–%2$s</string>
     <string name="stats_brain_power">Puissance Mentale</string>
     <string name="stats_brain_power_amount">%1$s Puissance Mentale</string>
@@ -179,7 +179,7 @@
         <item quantity="other">%1$s · %2$s activités</item>
     </plurals>
     <string name="stats_day_no_energy">%1$s · Aucune Énergie enregistrée</string>
-    <string name="stats_day_energy">%1$s · %2$s Énergie</string>
+    <string name="stats_day_energy">%1$s · Énergie : %2$s</string>
     <string name="stats_calendar_energy_summary">Énergie sur les 12 derniers mois : %1$s aujourd’hui, %2$s en moyenne depuis tes débuts</string>
     <string name="stats_right_answers">Bonnes réponses</string>
     <string name="stats_right">Correctes</string>

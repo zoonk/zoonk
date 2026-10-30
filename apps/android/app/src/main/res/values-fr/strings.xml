@@ -56,8 +56,8 @@
   "suggestion_save_failed": "3201328931b215cc862758f886986add42f378c955330e0da377b83466bd972d",
   "suggestion_view": "1dcbae3a8851c1faf1f89a935ef862acc0be17cc10baf7fc0590148e7a03cde7",
   "task_leave": "6db565c745931437e4b0783c99b62b93de0ebe9c62e972e0f5db499b0a9c51ad",
-  "test_out_skip_chapter": "6d87aeb3855fdecef472665cf50d2054c88a36872897cea9b360b125406d4389",
-  "test_out_skip_unit": "09abbe5dfc6ddafa89aed422c1f27634d50a648a67da9750d0a900a8c7802788",
+  "test_out_skip_chapter": "f9106392b18327a93056be56e5bdfca331575a9c8266f84892b1f4effa4182d2",
+  "test_out_skip_unit": "e2224145d98616d4b313911e95858932dd691dd7dd8f9e033116958c18729508",
   "test_out_title": "a9cf12aea9bf4e2a49c1f8fb19d2f2ba0449f567cd38a64a6840a8b36dd0630f"
 }
 -->
@@ -119,8 +119,8 @@
     <!-- Heads the key ideas of each lesson in a chapter's or unit's summary. -->
     <string name="lesson_summaries_title">Résumés</string>
     <string name="test_out_title">Tu connais déjà ce contenu ?</string>
-    <string name="test_out_skip_chapter">Passe le test pour passer le chapitre</string>
-    <string name="test_out_skip_unit">Passe le test pour passer l’unité</string>
+    <string name="test_out_skip_chapter">Passer le test et sauter le chapitre</string>
+    <string name="test_out_skip_unit">Passer le test et sauter l’unité</string>
     <string name="not_found_title">Cette page est introuvable</string>
     <string name="not_found_description">Le lien est peut-être ancien ou mal saisi.</string>
     <string name="not_found_go_home">Aller à l’accueil</string>

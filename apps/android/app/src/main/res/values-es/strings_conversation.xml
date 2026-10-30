@@ -30,12 +30,12 @@
   "conversation_criterion_interaction": "5c6e7dd90944b12164d7a05cf0d0f4cea3b38b9a0e69c527669ac98a7816c8f7",
   "conversation_criterion_interviewer": "6fd99fb14124080f86a874efed579a3e43f129f3f91e9e588947554196058fdb",
   "conversation_criterion_language": "ad4bec9ac2f59bdf4907a25b712449c6d01f42e3374c552317648662c2c1aa45",
-  "conversation_criterion_language_use": "dff393200f6f07187e5df7a405b57128a2357b8da6a4fce347cd4bbdb39e5470",
+  "conversation_criterion_language_use": "8a58c372f87758a3cb504cf02986f0f266c42eeeeb22f64ada1638216586a9da",
   "conversation_criterion_line": "2ec4045ff4651afba34ea14d018403b2506bdb2442330c155b1a0fda3919ab37",
   "conversation_criterion_overall": "d8ce53a9801d8f1891321d01499682bc851a0aa3709de6f31d2e8fbad17a582a",
   "conversation_criterion_pronunciation": "cc73ed35ee3c680478eda6dcdd0bf19ee9707ab828c017c44fb555fcb1b78455",
   "conversation_criterion_questions": "ae3d6da2de1f75aea631b4ba18d6a333c8c48e5b2f96ce936e74e5499a6c392d",
-  "conversation_criterion_range": "0496f32fe1576247fb8d175e7f29e9f88bc36663a6e52f44fd6de313053d10d1",
+  "conversation_criterion_range": "3ad28fbb1f430105923adb587e2628acf7794c84db99011cdae1eea207a49027",
   "conversation_criterion_task": "d071574d37166c76f89f4227595fed8335fd52ff19a98403dbe734109eeea36c",
   "conversation_criterion_vocabulary": "f16e70e0e00552653a7cb829bfede7fba8b8519abd35f36f46b36f62d7791877",
   "conversation_diff_line": "534813179835767944e78546b4e3046ce6fa6828326994713380aca192b5fbd2",
@@ -57,7 +57,7 @@
   "conversation_get_ready_description": "e5aee00ad694103392f9c533d9f5371f58f1f4fdd0a45aba2b93d379f1d5d01a",
   "conversation_getting_ready": "77649ac6b98ad444b2fb546fa33662fe02750fa3841efcfe53bd04e7d92671bf",
   "conversation_go_to_task": "8a62111cdd0fa4ccbaab36902a355bf5a53ee1103a5e4dbf185f40ae8e92a200",
-  "conversation_goal_done": "625f92cc238be6cc41ef1aa9a530b98b94a816190f85b2675a3fee7bb263dadd",
+  "conversation_goal_done": "b5cfdd526f430c6b6a40ba9b3367063265e8a184092ffda8dc6b09cd287f1022",
   "conversation_goal_not_yet": "a4bd66508867a16a34feae470048b20ceb670750e1bf65ccfa52413e6fd16203",
   "conversation_goals": "f75ca96c94c6bc2a9cb89f1de5776c4e8637db9ee420959c5678c2b72b4c6042",
   "conversation_goals_met": "1458db12176b95e20d90f723f72fd2b0eeb2a3b3b07553bdc32ae4d6ce2d3814",
@@ -69,7 +69,7 @@
   "conversation_intro_meta": "ce892142e6def08926706f6230ab0f0ea7d9bc862f509c0fef62fe54bfa7f9dd",
   "conversation_keep_talking": "bdc37253c44e551132f87dbe26dac6dbee26c0299904244a4360a797edf7aac6",
   "conversation_level_line": "8b563329798bacb43769e8f1942e42d56e127ab05140a5fc9ce211ec4845878b",
-  "conversation_listen_to": "467d76e75133ae6c53165638ad476e2d6cd80f6309b5f0a417f4b14e673e891b",
+  "conversation_listen_to": "63d25aaeb774412fcc77dade0950af3f2b102548c43b372088de07126e1e349d",
   "conversation_listening": "2c4039d6fc1c3b303af48fc5291a9bac5f940e81b817222167b3d3212c2546e5",
   "conversation_longer_calls_plus": "8fe77845c7dcf9e81f6132de114a355574946ac5adedae38c77f9a03d5b35e4c",
   "conversation_mic_note": "da90447ab0d55ee4f1fc570b0818a3d5a04d80a7103db1d51062b722bc024ef0",
@@ -206,7 +206,7 @@
     <string name="conversation_goals">Objetivos de la llamada</string>
     <!-- How many of the call's goals the learner has met, such as "1 of 3". -->
     <string name="conversation_goals_met">%1$s de %2$s</string>
-    <string name="conversation_goal_done">Conseguido</string>
+    <string name="conversation_goal_done">Completado</string>
     <string name="conversation_goal_not_yet">Aún no</string>
     <string name="conversation_reconnecting">Reconectando…</string>
     <string name="conversation_calling">Llamando…</string>
@@ -265,7 +265,7 @@
     <string name="conversation_you_said_label">Has dicho</string>
     <string name="conversation_better">Mejor</string>
     <!-- A button that plays a word or sentence aloud, such as "Listen to por favor". -->
-    <string name="conversation_listen_to">Escucha a %1$s</string>
+    <string name="conversation_listen_to">Escuchar %1$s</string>
     <!-- One line of a correction, read aloud: its label, then the words, such as "Better: Un café, por favor". -->
     <string name="conversation_diff_line">%1$s: %2$s</string>
     <string name="conversation_practice">Practica una conversación</string>
@@ -321,12 +321,12 @@
     <string name="conversation_criterion_interaction">Interacción</string>
     <string name="conversation_criterion_interviewer">Valoración general del examinador</string>
     <string name="conversation_criterion_language">Idioma</string>
-    <string name="conversation_criterion_language_use">Uso del idioma</string>
+    <string name="conversation_criterion_language_use">Uso de la lengua</string>
     <string name="conversation_criterion_vocabulary">Vocabulario</string>
     <string name="conversation_criterion_pronunciation">Pronunciación</string>
     <string name="conversation_criterion_questions">Preguntas y respuestas</string>
     <!-- A speaking exam criterion: how varied the learner's vocabulary and grammar are. -->
-    <string name="conversation_criterion_range">Variedad del lenguaje</string>
+    <string name="conversation_criterion_range">Variedad de vocabulario y gramática</string>
     <string name="conversation_criterion_task">Realización de la tarea</string>
     <!-- An estimate on the exam's scale for points, such as "18–20 of 25 points". -->
     <string name="conversation_band_points">%1$s de %2$s puntos</string>

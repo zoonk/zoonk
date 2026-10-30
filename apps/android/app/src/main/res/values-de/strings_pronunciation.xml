@@ -15,7 +15,7 @@
   "pronunciation_no_speech": "479e8e063d54967a980a32216995211aea5bdde31796f19c0cd02da5bb686af9",
   "pronunciation_no_words": "93062d3f0f8ee6903c5f459ca65feaaadd281d1888360f0c9ce5f35295785900",
   "pronunciation_nothing_said": "5a072b0e13aad1bb4ddb293b4dd7bfaa2b59975a86fd3c03635fa833e1b12758",
-  "pronunciation_options": "12acf61e3d0c225c1d6f678ec66c5723260796519cb29596fa145ca9c17494b0",
+  "pronunciation_options": "84ff2034a0daf93af9701dcaf8dd8db3b1234eb174b85cabc801a662f08a53ae",
   "pronunciation_position": "f1b5a4d619eac5264c34232d5522fe0c41bc382046e6197f0e3b9e94ae7de464",
   "pronunciation_practice_done": "475ad801a8951fc86180f83691767721c42a3baedabcf8a964f4f836f3ffb755",
   "pronunciation_press_record": "1757347f0375f1684fec7042eba32821bcf1892577f5c13c406ecf77a9eba1f0",
@@ -38,7 +38,7 @@
     <string name="pronunciation_listen_slowly">Langsam anhören</string>
     <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
     <string name="pronunciation_say_it_like">Sag es wie %1$s</string>
-    <string name="pronunciation_options">Ansichtsoptionen</string>
+    <string name="pronunciation_options">Seitenoptionen</string>
     <string name="pronunciation_skip">Dieses Wort überspringen</string>
     <string name="pronunciation_press_record">Tippe auf „Aufnehmen“ und sprich das Wort laut aus</string>
     <string name="pronunciation_recording">Aufnahme läuft… Tippe auf „Stopp“, wenn du fertig bist.</string>

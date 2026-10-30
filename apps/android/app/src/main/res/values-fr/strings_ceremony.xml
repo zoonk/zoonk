@@ -15,14 +15,14 @@
   "ceremony_glasses_new_detail": "17e7284988b3813a589c47b43f251c8258ba23e4d53c2544b0b2212431c1afc5",
   "ceremony_glasses_retro": "0dfcce37cdf0c66fbf837210e41c8a60f1a5748b3645a29a91f8924bb76eda68",
   "ceremony_glasses_retro_detail": "b8779c1c63b244e5ae2c3488d3dc26d1a4422a1c866bb77d131adcb661eef543",
-  "ceremony_glasses_star": "1e2ed9f079b93c04877befe940621ec9596e9f9a8db739de5ed202a11e7d41d0",
+  "ceremony_glasses_star": "d649e716d6e10a42effe097de648e9175f6af48bb33432d4ff596e0b674024e9",
   "ceremony_glasses_star_detail": "11e6bb627c11599905f5eac756fa15c65fa5f22b64e0db67561549baabb99b09",
   "ceremony_grew_up": "9bf8fe9b30da7099bc64b5754e3142ecda42f961ef759e34f639ece334dfee32",
   "ceremony_new_belt": "265853314f76b7a82c709d84dea51a9b762a2456711ccec7faac111d504baba1",
   "ceremony_not_now": "54df31bd67ad39342cab53edb13716dc9b084ca4efb475d5ad63ba2c5625c09e",
   "ceremony_stage_adult": "3d873458571946b110907468f2e31f5b60acb7cb97d63f665e84a2fab0dceb04",
   "ceremony_stage_young": "bea768e856609cace333ae7886bbd06816d4f73c337fb41d61a512d5e85981db",
-  "ceremony_wear": "18b9a448b5e1b1609d2c58f67d3222360453b5e2074b1da532897dd1a786d53a"
+  "ceremony_wear": "645da2c72fcf5c369bd21985592ebc53a1687416340381e097a9db0e64c500fa"
 }
 -->
 <resources>
@@ -38,7 +38,7 @@
     <string name="ceremony_stage_young">%1$s est jeune maintenant et continue de grandir grâce à ta Puissance Mentale.</string>
     <!-- %1$s is the buddy's name. -->
     <string name="ceremony_stage_adult">%1$s est adulte maintenant et a fini de grandir grâce à ta Puissance Mentale.</string>
-    <string name="ceremony_glasses_star">Des lunettes étoiles !</string>
+    <string name="ceremony_glasses_star">Lunettes en forme d’étoiles !</string>
     <string name="ceremony_glasses_star_detail">Pour avoir remporté ton premier Défi de la phase.</string>
     <string name="ceremony_glasses_aviator">Des lunettes aviateur !</string>
     <string name="ceremony_glasses_aviator_detail">Pour avoir terminé ton premier Défi hebdomadaire.</string>
@@ -52,6 +52,6 @@
     <string name="ceremony_glasses_new_detail">Elles accompagnent ton Compagnon.</string>
     <string name="ceremony_continue">Continuer</string>
     <!-- Button after earning glasses: puts them on the learner's buddy. -->
-    <string name="ceremony_wear">Les porter</string>
+    <string name="ceremony_wear">Les lui mettre</string>
     <string name="ceremony_not_now">Pas maintenant</string>
 </resources>

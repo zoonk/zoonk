@@ -25,7 +25,7 @@
   "missions_from_notebook": "8046bde23a280f20ba0e8b4057ef66c546b613ac6702d5776ef77ea2c228617f",
   "missions_just_done": "e78944ed0888054f449f77aa438586bb6b1a2939a4a3c9bb69726b256fec614c",
   "missions_last_lesson": "6e961660afa88895286ea2279f65c7558276a8c5ba288df725486cc9667b61ac",
-  "missions_last_lessons": "e98227bc8af8d968d01264ab9c5a17ea9e792d1ae268a05faa7c52080171d651",
+  "missions_last_lessons": "92e98de20eaa82943c3f11c7718d7f0adf44faef1ca528f0f83c95b3947e38d0",
   "missions_left": "c53f58104c6db21b5b271d8e5291f8d1563dcd9af69df7cdd0999a40d20e6dd7",
   "missions_lesson_and_more": "5ce1403dc5436cac1ea9637609ebc6536daeaa714ca136af818ec5c492de8f20",
   "missions_mock": "dfacd6edd49e9a604d794be3c1f6cdda3f4d30d6a99af2fde7ad271dc111a0a4",
@@ -134,9 +134,9 @@
     <string name="missions_ask_anything">Cualquier cosa sobre las lecciones de hoy</string>
     <string name="missions_last_lesson">La última lección está en el plan de hoy</string>
     <plurals name="missions_last_lessons">
-        <item quantity="one">La última lección (%d) está en el plan de hoy</item>
-        <item quantity="many">Las últimas %d lecciones están en el plan de hoy</item>
-        <item quantity="other">Las últimas %d lecciones están en el plan de hoy</item>
+        <item quantity="one">Te queda %d lección y está en el plan de hoy</item>
+        <item quantity="many">Te quedan %d lecciones y están en el plan de hoy</item>
+        <item quantity="other">Te quedan %d lecciones y están en el plan de hoy</item>
     </plurals>
     <!-- %1$s is a lesson's title; %2$d counts the chapter's other lessons left. -->
     <plurals name="missions_lesson_and_more">

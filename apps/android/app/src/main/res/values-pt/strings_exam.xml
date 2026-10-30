@@ -6,10 +6,10 @@
   "exam_add_result_detail": "c75702a803f3309b584bff3a0d848049d13ef4988cf847e31d2ffb0e71858094",
   "exam_best_area": "6e88da1446d2847394654f4e94eb4c4016df0fec677746079a8c8365cb8632c6",
   "exam_by_subject": "ace3f31219ae363722d38ee9632738bce2f42b164cdb21390fb71892fd14e5d8",
-  "exam_calibration": "6836e0e52b9b29d9c4e2149d93399b8dd751c17ea7e92e028df6ee886355714e",
+  "exam_calibration": "5b79e5923e4a2588e8030063edcd735cfff4a035fc09df51ae6d63009eef8306",
   "exam_calibration_blank_unsure": "e4dca9d90079a27ef46841bfedf37a06fa04a2f30cdbe74f153a3193d611562d",
   "exam_calibration_keep_answering": "b3dca9f2694e8755d4323f0763300429f0545ada7bb5947245850a6203071504",
-  "exam_calibration_right": "b570260d6e488fde00b9f41e2e01511863b97d9af3e0e1b01aee8aa67217d457",
+  "exam_calibration_right": "8edcbba5a9605ed600abd5ce5301475268c1791968e7784d572c64bd71c5dc23",
   "exam_checklist_black_pen": "d1689e8ff005bc2a6b65f5216f54d3fc4e9d96930481242d612a8dd1b1903148",
   "exam_checklist_count": "35b2b73fd95db0d1f25b3342734dbe54b2d8e840fe0e0e18644b544fe3fb7d8b",
   "exam_checklist_documents": "9705b5d8f7652de7eeeb6f1f5366f92bf9be27743e904ce5cc569342888b8c77",
@@ -71,7 +71,7 @@
   "exam_prepared": "c16defbe7efb1f2d5510df6b211bb4d9579cfd5c2e95b9d781d29107290ead5e",
   "exam_progress_better": "2b65da147a047228653c9c1590c7fcadcd72c802b9147215f776419e5d5ea002",
   "exam_progress_better_and_needs_work": "35bad76094f940a4f2378c3ee536d3e6854dce64a686e6a948ffe58416ef399e",
-  "exam_progress_chart_label": "fa1ac04b7178aed5a77ea6fa250993e0a6d3a670daef79b7ae245b20dfb83805",
+  "exam_progress_chart_label": "8ecac5a617427308187797de8126bbe969713a82b24c04492e2b6c4cdb62aad7",
   "exam_progress_locked": "0bcd78b99d38cc16f1d4ad70a3ad2c37c6e788fec920e8f63d5a6a9acb8e5b69",
   "exam_progress_needs_work": "588f63018363124ce41ad376ff3498919c13ad216c25b257092a045474c3b4dd",
   "exam_progress_no_change": "5f5f5fe38e4718cbc4ce12ce6fb5eb759a701f24e0b1ecab18ec14bda0e91d6d",
@@ -84,7 +84,7 @@
   "exam_result_saved_score": "ddc8277b135af8ccb574b49b547ea97f6858009ba2f2aeebf10da174e099eec2",
   "exam_right_answers_in": "e79ba47e80f2c972da3c1d709e2c4d8f868480f9895b88b4649000c0cb1322da",
   "exam_rule_irt": "8f3ea5f529491f4c459a7b1d423c918b63d78c85cd322f42faf48e42b70bf674",
-  "exam_rule_irt_title": "a50b7c51dc30bf137aa123ee45c13d10a1175fa818958de559533dbc779079c6",
+  "exam_rule_irt_title": "b1014f177eb6715b305b7fcf8e24f6a6d4413d47d9d23856ad25808d5603935d",
   "exam_rule_net": "8ff92435a5c7e6f2ec7e6d945dde27b37419c1a6d277247c2dee895936e49b39",
   "exam_rule_net_cancels": "fcae4bb22ffae0bed8f5ddb012ecede9fb77a13768d8a41e9e8432607cc8e2e1",
   "exam_rule_net_costs": "941060b5974890fba2b6939efde7f5058ccbb1b25c3e9263ecb6574ce05efb55",
@@ -99,9 +99,9 @@
   "exam_score_ap": "8f263de5be3ae94bb744f0d4b9f9e5033f09ad9db43fe3e0df1c28717f57b17c",
   "exam_score_invalid": "30ea772eea6bd801757068b0e3828eb428b98dc74be722bdf0470dc280238ded",
   "exam_score_irt": "453392aa1e72c7ec0d0452020e4107d37681d1b06522ecee3c48e2c46ea0116e",
-  "exam_score_off_scale": "e6bea99d660a515638f357f0dafc3c453e963a258407e0a3cd0f54a212e380a2",
+  "exam_score_off_scale": "99cd42e557eceed59a686ebe88cc12c363753a83235f1f9e053933bebdf034b8",
   "exam_score_sat": "1de1b4bb732276e854fa31efaac3e5ca05b82f0e3797bc0493bfa68e03b458cd",
-  "exam_score_toefl": "406be5ebadf808852d5081df4db33dc8aaa09cd4cc40cab4cde015afb6eb958c",
+  "exam_score_toefl": "ebf794661154a8cbfbb787eeaede60b7feac5f097bae8b051606d2d2dfb40c2a",
   "exam_scoring_title": "265df117066a18892c61756ded29d78285bb33c1f5bd619d08af25d35169cdc6",
   "exam_see_exam": "8568d0822696a48b0a9d9167dc0418c4226b2f561fbd521bc6900516cc786456",
   "exam_sessions": "2715b50fd37c39407dbc872671e1536d2cc017c2def6dd28e160bf9855c68b66",
@@ -205,12 +205,12 @@
     <string name="exam_score_irt">Sua pontuação (a média, se houver mais de uma)</string>
     <string name="exam_score_ap">Sua pontuação no AP (de 1 a 5)</string>
     <string name="exam_score_sat">Sua pontuação total (de 400 a 1.600)</string>
-    <string name="exam_score_toefl">Sua nota geral (1 a 6)</string>
+    <string name="exam_score_toefl">Sua pontuação total (1 a 6)</string>
     <!-- The field for the most points possible, beside the score's field ("62" out of "80"). -->
     <string name="exam_out_of">De</string>
     <string name="exam_score_invalid">Digite um número.</string>
     <!-- %1$s and %2$s are the lowest and highest scores, %3$s the step between two scores (10 for the SAT). -->
-    <string name="exam_score_off_scale">As notas vão de %1$s a %2$s, em intervalos de %3$s.</string>
+    <string name="exam_score_off_scale">A pontuação vai de %1$s a %2$s, em intervalos de %3$s.</string>
     <string name="exam_did_you_pass">Você passou?</string>
     <string name="exam_passed_yes">Sim</string>
     <string name="exam_passed_no">Não</string>
@@ -244,7 +244,7 @@
     <string name="exam_since_first">%1$s desde o primeiro</string>
     <string name="exam_best_area">Melhor área</string>
     <!-- %1$s and %2$s are the first and latest scores, such as 45%. -->
-    <string name="exam_progress_chart_label">Suas notas nos simulados, de %1$s a %2$s</string>
+    <string name="exam_progress_chart_label">Suas pontuações nos simulados, de %1$s a %2$s</string>
     <string name="exam_by_subject">Por matéria</string>
     <!-- Read before a subject's change in percentage points, such as "+12". -->
     <string name="exam_since_first_mock">Desde o primeiro simulado: %1$s</string>
@@ -276,16 +276,16 @@
     <string name="exam_rule_net_costs">Uma resposta errada desconta %1$s de uma resposta certa</string>
     <!-- %1$s is a share, such as 50%. -->
     <string name="exam_rule_net">Responda só quando tiver mais de %1$s de certeza.</string>
-    <string name="exam_rule_irt_title">Acertar as perguntas fáceis vale mais</string>
+    <string name="exam_rule_irt_title">Acertar as questões fáceis conta mais</string>
     <string name="exam_rule_irt">Errar uma pergunta fácil custa mais do que errar uma difícil, então resolva as fáceis primeiro.</string>
     <string name="exam_rule_raw_title">Cada resposta certa vale um ponto</string>
     <string name="exam_rule_raw">Responda a todas as perguntas.</string>
     <!-- How the learner did on the answers they marked as sure and on those they marked as unsure. %1$s and %2$s are counts like "8 of 10 right". -->
-    <string name="exam_calibration">Nos seus simulados: com certeza, %1$s. Com dúvida, %2$s.</string>
+    <string name="exam_calibration">Nos seus simulados: quando teve certeza, %1$s. Quando teve dúvida, %2$s.</string>
     <plurals name="exam_calibration_right">
-        <item quantity="one">%1$d acertos de %2$d</item>
-        <item quantity="many">%1$d acertos de %2$d</item>
-        <item quantity="other">%1$d acertos de %2$d</item>
+        <item quantity="one">acertou %1$d de %2$d</item>
+        <item quantity="many">acertou %1$d de %2$d</item>
+        <item quantity="other">acertou %1$d de %2$d</item>
     </plurals>
     <string name="exam_calibration_blank_unsure">Suas respostas com dúvida tiram mais pontos do que rendem: deixe essas perguntas em branco.</string>
     <string name="exam_calibration_keep_answering">Suas respostas com dúvida ainda rendem pontos: continue respondendo essas perguntas.</string>

@@ -42,7 +42,7 @@
   "checkpoint_retry_tomorrow": "837f06e6d828437b6ae50ec12ffbee2e5b9373df37fafc5e3b6b51acdd30384c",
   "checkpoint_review": "c4f0c6da627b8a4c7f7b7a2dbb9be63a057cf81594dc743de0e14a8fc1139b8a",
   "checkpoint_rewards": "3d8fdad80047dbc54b28e5fc7c6bcd1052df02fcf84b530452724022464822aa",
-  "checkpoint_right_to_win": "d777bec94974028855487f35a063d6eb20c57d309144eda4325efc2a72cd898d",
+  "checkpoint_right_to_win": "a9defa2ce0053b9a00f82771019cb150c969086684b14320f272d14226803a97",
   "checkpoint_right_to_win_of": "021505e70657153d86b3ae5d52152865c51f09b620e39cd7183334aa68b511e2",
   "checkpoint_see_result": "1687cb61e19e103aa4120b0c13b15aa6aa2fb8d3d29881f588e487a87ccd808f",
   "checkpoint_shield": "3a56e50164fb8b973dafd1b88082c4bf2bd5354204ebafb7b1c44cb7a1bf72ee",
@@ -106,9 +106,9 @@
     </plurals>
     <!-- %d is how many right answers it takes to win the challenge, not how many are still missing. -->
     <plurals name="checkpoint_right_to_win">
-        <item quantity="one">Falta %d acierto para ganar</item>
-        <item quantity="many">Faltan %d aciertos para ganar</item>
-        <item quantity="other">Faltan %d aciertos para ganar</item>
+        <item quantity="one">%d acierto para ganar</item>
+        <item quantity="many">%d aciertos para ganar</item>
+        <item quantity="other">%d aciertos para ganar</item>
     </plurals>
     <string name="checkpoint_no_hints_boss">Sin pistas. Verás si has acertado o fallado después de cada respuesta y, al final, por qué y qué trampas te ha tendido.</string>
     <string name="checkpoint_no_hints_weekly">Sin pistas. Verás si has acertado o fallado después de cada respuesta y, al final, por qué.</string>

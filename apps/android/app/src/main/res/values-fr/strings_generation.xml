@@ -5,14 +5,14 @@
   "generation_connection_lost_description": "cf843fa91352d8506405f612b3d4599773e2e08e7b76e09c15f9add944a33f8d",
   "generation_curriculum": "64afb0c0fa71d9bf715e0b2bb0669c6a809cd18defd3caa4f2949af714305932",
   "generation_curriculum_plan": "83e3f06d38c34b3cf3078b910192b5d0cee5e5caeb02618e82629cb40861abf8",
-  "generation_curriculum_plan_line_1": "be354e96c4663cda42bbfd48bf35aeba1281d910740782a548b0f74a6e01fece",
+  "generation_curriculum_plan_line_1": "249b6a827b238244cc43b13c75927efb99063ce8668e30744dfaa7f6e61ccac2",
   "generation_curriculum_plan_line_2": "01181b069a9d0b5ea5f6f710a0ce6b8af4c112892326f809f471b7204e29e071",
   "generation_curriculum_plan_line_3": "9f6f855fc1bc4b2c8e3a46d409108c589a759d4ebe9faa3181e8cbe8eed97272",
   "generation_failed": "850befe454fe6dec6151df95280a262bac1566e79472bb51220caa15efd94252",
   "generation_failed_description": "99a64e241f1ff5206f41e15df2f890a7676336cc07cb5bda04ff212082b1b3e2",
   "generation_first_lesson": "11b216a40c1e6f2c7d3c74e0e8c27adc7966c8daead00841ee51588933937785",
   "generation_first_lesson_day": "300fc982cc0d18ea8d8a44f2a7d118f4f3e979f990adddc7e473ee86f896ba4b",
-  "generation_first_lesson_day_line_1": "b2cdf48682731474173ef757896828bfc08263d6c3486693443e710ddb4c7103",
+  "generation_first_lesson_day_line_1": "5c20bc462ffd573fa22c87f6ff0357b0f254fd9d1f50c868c70e2d5e4452aa16",
   "generation_first_lesson_day_line_2": "6a8e4b8c80e789fe8a2d0182937ef125b0c171b6a1d854207c5dc37623bbe748",
   "generation_goal": "ffdedbeb355770e6b28a044d20aed779a975c0ffed621bbe0c745561c4d72040",
   "generation_goal_line_1": "8d05a04b850299224b022570ece1d127b261983bf053225787ab055394e2f592",
@@ -46,11 +46,11 @@
   "generation_understanding": "a2432d3c96655b0ce82a0a87bb3bad085c143eed3d0aae950e005d51b0e1e201",
   "generation_understanding_dates": "aed490fc8e6a62fd0bc93969e494d72358f342b057e7686c897ed4079ca4853c",
   "generation_understanding_dates_line_1": "58aea845ae8125ea563e9b2a0c7322fc97a3a2c1022f58413f009bf5d8209c26",
-  "generation_understanding_dates_line_2": "968d5b7c154898f8854725578949685a45e2cc88269dc462a38ff67c0dc48ceb",
+  "generation_understanding_dates_line_2": "ea0195f4032bd424577bce99fbd56a95823d4de93213f241033e1cb73d73a30e",
   "generation_understanding_read": "872ff311fc64c5e761308671f2b55b906a55e8d08f59c9e39f506553561636ec",
   "generation_understanding_read_line_1": "aa5e9e37776ae3339934a8ac3d9e695d377f118b5f7a722bc4ed13e3022bd6f3",
   "generation_understanding_read_line_2": "680795d7df35545824f267f51bd2e4aee01418388aa7d4b475f5199c76e10089",
-  "generation_understanding_read_line_3": "0c6d76a09f1b953b5367a5291f5b136e0b73004c87b93e1940376b1cff438cc2"
+  "generation_understanding_read_line_3": "1ac6544aa446a5a71b4305903de5ac7b1d596a3ce8ccfca8dcb4499ac73439f4"
 }
 -->
 <resources>
@@ -91,15 +91,15 @@
     <string name="generation_understanding_read">Lecture de ton objectif</string>
     <string name="generation_understanding_read_line_1">Lecture de ce que tu as écrit…</string>
     <string name="generation_understanding_read_line_2">Identification de ce que tu veux atteindre…</string>
-    <string name="generation_understanding_read_line_3">Vérification du type d’objectif : examen, langue ou sujet…</string>
+    <string name="generation_understanding_read_line_3">On vérifie s’il s’agit d’un examen, d’une langue ou d’une matière…</string>
     <string name="generation_understanding_dates">Vérification des dates d’examen</string>
     <string name="generation_understanding_dates_line_1">Recherche du calendrier des examens…</string>
     <!-- Shown while reading an exam's calendar. "Your year" is the year the learner takes the exam. -->
-    <string name="generation_understanding_dates_line_2">Recherche des dates pour ton année…</string>
+    <string name="generation_understanding_dates_line_2">Recherche des dates pour l’année de ton examen…</string>
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">Création de ton plan</string>
     <string name="generation_curriculum_plan">Adaptation du plan à ton emploi du temps</string>
-    <string name="generation_curriculum_plan_line_1">Recherche de leçons dans la bibliothèque…</string>
+    <string name="generation_curriculum_plan_line_1">Recherche de leçons dans la Bibliothèque…</string>
     <string name="generation_curriculum_plan_line_2">Répartition des compétences sur tes journées…</string>
     <string name="generation_curriculum_plan_line_3">Enregistrement de ton plan…</string>
     <!-- The wait while placement questions are written. -->
@@ -109,7 +109,7 @@
     <!-- The wait while the first day of a plan is prepared. -->
     <string name="generation_first_lesson">Préparation de ta première journée</string>
     <string name="generation_first_lesson_day">Planification de ta première journée</string>
-    <string name="generation_first_lesson_day_line_1">Recherche de leçons dans la bibliothèque…</string>
+    <string name="generation_first_lesson_day_line_1">Recherche de leçons dans la Bibliothèque…</string>
     <string name="generation_first_lesson_day_line_2">Choix du point de départ…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">Préparation de ton test de niveau</string>

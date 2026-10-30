@@ -11,8 +11,8 @@
   "practice_finish": "2a0892e4f4042c35a8ded465e06f28b1ed4a938c3ae1648448b446338137bb41",
   "practice_finish_now": "0455693431e5cf8fb94726c040ca32ff17f5d8f5363eefb968d496218dc35ffb",
   "practice_finish_ready_detail": "7026b28be992f295fa35005a1c38d8225fd08eae399bb42b3af86b5161b69c8e",
-  "practice_finish_ready_title": "7ee0c7a526b5ea7c0003a0144f209046afd432f6adf924d3f2b5ea954ec3f422",
-  "practice_net": "773e400b823978fdded4ac71e7ad4c2fcbc2ff93a11178bb6ed7c7fb25652b61",
+  "practice_finish_ready_title": "2b3759bd17f2be574403a2c563eaa2d3fc2549d4e8d3964b6de939e97112b54b",
+  "practice_net": "1d84d56f3027e91992c4bfe93ef20767723db5dc4de06de3976b8610758f27d6",
   "practice_net_hint": "7afc0a0c71bf25648ae05c1ef808bb6e18184db1f62b6e33435ec6d04f1ad41e",
   "practice_net_right": "e813ce58a66a6446aea5559704f3cd7829c4193ee096e9226bb7be6cc821e8dc",
   "practice_net_tally": "58cb3dc280800b6e8c9e7794660d2121a471b250d09b2fbc04596d8affaaad48",
@@ -49,7 +49,7 @@
     <!-- Where the learner is in a test, such as "3 of 10". -->
     <string name="practice_count">%1$d sur %2$d</string>
     <string name="practice_try_again">Réessayer</string>
-    <string name="practice_finish_ready_title">Plus de questions à répondre</string>
+    <string name="practice_finish_ready_title">Plus aucune question</string>
     <string name="practice_finish_ready_detail">Termine pour voir ton résultat.</string>
     <string name="practice_already_answered">Tu as déjà répondu à cette question.</string>
     <string name="practice_save_error">Ça n’a pas fonctionné. Tes réponses sont conservées.</string>
@@ -64,7 +64,7 @@
         <item quantity="other">%d mauvaises réponses</item>
     </plurals>
     <!-- Right answers minus wrong ones, which can be negative. -->
-    <string name="practice_net">net : %1$d</string>
+    <string name="practice_net">score net %1$d</string>
     <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
     <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
     <string name="practice_net_hint">Une mauvaise réponse annule une bonne réponse. Tu n’es pas sûr ? Laisse la réponse vide.</string>

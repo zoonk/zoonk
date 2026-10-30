@@ -22,7 +22,7 @@
   "ceremony_not_now": "dc8cec51e81d63be3d11f696b4bcfea30ae1437b87cc0ec3226cbe654fed082b",
   "ceremony_stage_adult": "7f212f5454b2a599f33f7c0b1ae934ee9c5bfabb047ca6af76d94b3d436519c1",
   "ceremony_stage_young": "da2632b5a3e74bc544fcb5fef2a11caad54b4eded30837b4f1fe1898e2d2136f",
-  "ceremony_wear": "c44bb1baada2e34083b3e5d4fe5aa606d2e6c4a08efad4a8eea70c4874692601"
+  "ceremony_wear": "d3e17a740f8be4f35688fd7c0926cd5f7f9bc2c5b591f872ce71d4ba335bc34e"
 }
 -->
 <resources>
@@ -52,6 +52,6 @@
     <string name="ceremony_glasses_new_detail">Eles vêm com seu parceiro.</string>
     <string name="ceremony_continue">Continuar</string>
     <!-- Button after earning glasses: puts them on the learner's buddy. -->
-    <string name="ceremony_wear">Usar</string>
+    <string name="ceremony_wear">Usar os óculos</string>
     <string name="ceremony_not_now">Agora não</string>
 </resources>

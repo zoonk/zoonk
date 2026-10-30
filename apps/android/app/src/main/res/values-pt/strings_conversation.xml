@@ -35,8 +35,8 @@
   "conversation_criterion_overall": "5500261b54f0f1579edefe5e1770a18de2cffaaa189d7dd5a1db3d2f9fef3bbe",
   "conversation_criterion_pronunciation": "bdac56a0c6c8045a617ff4b8ea5a8abac0e43f29d0f5e8173d95a5a784dbf43b",
   "conversation_criterion_questions": "e75e4f2f890b20755d15bf21ab266794dc8cb46170ccd0911cc12cef3498eae2",
-  "conversation_criterion_range": "a13d868e29e7932c6d3aacdc5200d2e303de12993643860f27acdcf3516c8c94",
-  "conversation_criterion_task": "51c51700a2bf5d6c4c6331b564cf9072ce07df95bed7e1210f4cc6418119980c",
+  "conversation_criterion_range": "0e15594bcb8cded2636d85ffc0d350e869ea8f71effd68731e233cc5fbd9d4e9",
+  "conversation_criterion_task": "f90f2fc146a44ddd9b1e755d87662b1be631c75bd525bf0f89595388178b7d96",
   "conversation_criterion_vocabulary": "70be76a90eb49fbda7a8eecffb5a229cf325cce22042bde4a4312b4b585f7aaa",
   "conversation_diff_line": "04a352ab06a69109da587e102410db70fe9837ab1e04d73bdc72c63a0514f848",
   "conversation_dropped": "c3ff3aec0b2327efd26000adb67e3c93f8ae2691b53f348b1db3e965d95bef3d",
@@ -47,8 +47,8 @@
   "conversation_end_title": "a18a7fe2ecfb885810c1de22fa21ceb9d5fc682392c0a1cc9cccd9781ed86819",
   "conversation_ended": "84f6223dfeac9c57a4683452acc11cdcdf87ed4f9e669d6d336f65bdafd6cd19",
   "conversation_ended_title": "9b544b4954fcf5929eae8655c4f4b5b1957ed14c603bff1bf39a78d46c07e8ee",
-  "conversation_estimate": "039d6262e300e8e1b5c2359fe3a1359033d3f044bbbf829f13c185ad229bf3d6",
-  "conversation_estimate_sound": "9658305d6eca8c03400bb9a104e4d66be9a74e37d678d69cb42aaffa84b0e666",
+  "conversation_estimate": "7b7354031cc54df537c83b2d385f0422a7683f3a3a8b9a8ac62fac9fcb6f847b",
+  "conversation_estimate_sound": "85c5a863d98740b8437e52e39a31b4acc1bc93331516d78eed0b63b83f1bf944",
   "conversation_every_criterion": "f36aa885477de820d10b3b450e46ba33f2a7888c4fc01756ef3e9e35c5e4c5a3",
   "conversation_exam_task_title": "e9724985d4ea6db129e4501e258b8cfc4ff09ebce7047221d9401cc7977bd85a",
   "conversation_focus": "6bc59bba56e275cd2559f631c1ec5e78e65474ab57cea9b9047ff0943228ca0c",
@@ -75,7 +75,7 @@
   "conversation_mic_note": "1ae12e2f62733f723bc876bcfdb99c6f510c0ed55033a6e8925cf44db457e5a5",
   "conversation_microphone_off": "e337fb0c70ff161c7c6843258f8ebc498425134013fe304a01babe92f4caf925",
   "conversation_minutes_range": "0df611f487d0e7733d670fa51d726c81c53717d70e2f988b8a8f81f676b059ab",
-  "conversation_mock_band_ielts": "a324a0b95ea1b74564cee6789afb0746434211f95f6f89fbf30cd481072710c4",
+  "conversation_mock_band_ielts": "de9e2a3a30bf7fa73c1890c607020fe09381ccfd387411073d8ea58826aee7f9",
   "conversation_mock_band_toefl": "c89c56182adcf9272e68743b1293c254d3ecc4e647199d32b37d2999d57d1b0b",
   "conversation_mock_delivery": "a22c3c136f5fb902176fdcd720770969904ff109129d3021d0d7b43636860116",
   "conversation_mock_elaboration": "80e482ad34cdb90e1f73f73ac8ba36448e2fb78c51b3b97ac9e622d9ac993d23",
@@ -87,7 +87,7 @@
   "conversation_near_level": "05f66d79b2c4b0735640be5517f80dbb653ed8cda104d780a1ca47e98c9aaf13",
   "conversation_no_calls_month": "832a46e21e65f2493beb6563284ced6a8344a083bff3df19ca69ad042ea76eb6",
   "conversation_no_calls_today": "e0f24f7f3d427b42bb07746bd9962fe7945bf1d5d70a278416f0c3bdac2963a2",
-  "conversation_no_estimate": "f03704b87c009c681618f77c221d97033d04b183c1771fe37db94788339030ee",
+  "conversation_no_estimate": "0e78411b1c0df2da98eb44b936e524dfe1a7b181ce9bb4697ed83db2f859e8db",
   "conversation_no_estimate_title": "5cf59ffea672ab170ecb442fc8f115361f657a41598eba31d2f16b7bb0553db5",
   "conversation_no_score": "a4a725c32e9caf5504d7af9d90a51bcc94d9a248a587cfff9675a19870e02d1f",
   "conversation_no_score_title": "33693080daf37d6ee01922a727d1cb19906e78de88775403e738a5a06a80c7f0",
@@ -112,7 +112,7 @@
   "conversation_prep_over": "8036f5057dac01b711dfff0ace070c5b1d2dcf4fd29929ecca5713bbfe722a5d",
   "conversation_prep_shared": "e7b136cc2301b180e5ccaac588175752fa3e74294d13ee54b6c4d693bf86b01c",
   "conversation_preparation": "8376d2265449b8e2cabb310c71a4738ec3b00882e6a5cf15bed98df19038c997",
-  "conversation_rated_on": "f212636413a76db1d0f36cf50feac94d04746912ae9cacc11ddb61149a4e4c65",
+  "conversation_rated_on": "6ed121bdef9762cb5b269cd3021f9d52db575abdda290c18d302fbe541de3cf5",
   "conversation_rating": "f2dfc61e2764fa9a0718d5637efad48ed8505ace0cd55508c437db77c3b90379",
   "conversation_rating_slow": "c43773398c096c18bd9822e34c558e40585cde252fe79d9fc7751dec6a4ce0d1",
   "conversation_reconnecting": "0a8ca56371b6ebd1fe6a24e0b5ee97ba00da04738a6234b34dfa9a254e93571e",
@@ -291,7 +291,7 @@
     <string name="conversation_exam_task_title">%1$s · Tarefa %2$s de %3$s</string>
     <string name="conversation_opens_and_card">%1$s começa a conversa, e seu cartão fica na tela.</string>
     <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
-    <string name="conversation_rated_on">Avaliado por %1$s.</string>
+    <string name="conversation_rated_on">A avaliação considera %1$s.</string>
     <string name="conversation_stand_in_partner">%1$s é uma IA que faz o papel de outra pessoa candidata.</string>
     <string name="conversation_stand_in_examiner">%1$s é uma IA que faz o papel de uma pessoa examinadora.</string>
     <string name="conversation_practice_estimate">É uma prática: a estimativa ao final não é uma pontuação oficial.</string>
@@ -326,8 +326,8 @@
     <string name="conversation_criterion_pronunciation">Pronúncia</string>
     <string name="conversation_criterion_questions">Perguntas e respostas</string>
     <!-- A speaking exam criterion: how varied the learner's vocabulary and grammar are. -->
-    <string name="conversation_criterion_range">Variedade de linguagem</string>
-    <string name="conversation_criterion_task">Realização da tarefa</string>
+    <string name="conversation_criterion_range">Variedade de vocabulário e gramática</string>
+    <string name="conversation_criterion_task">Cumprimento da tarefa</string>
     <!-- An estimate on the exam's scale for points, such as "18–20 of 25 points". -->
     <string name="conversation_band_points">%1$s de %2$s pontos</string>
     <!-- An estimate on the exam's band scale, such as "3–4 of 5". -->
@@ -341,18 +341,18 @@
     <string name="conversation_brief_note">Você falou pouco nesta tarefa, então não tivemos muito para avaliar. Uma tentativa mais longa traz uma estimativa mais precisa.</string>
     <string name="conversation_focus">Foco</string>
     <string name="conversation_not_rated">Não avaliado</string>
-    <string name="conversation_estimate_sound">Uma estimativa baseada em uma atividade de prática, não uma pontuação oficial. Sua fala é avaliada pela facilidade de entender você, nunca pelo seu sotaque.</string>
-    <string name="conversation_estimate">Uma estimativa baseada em uma atividade de prática, não uma pontuação oficial.</string>
+    <string name="conversation_estimate_sound">Uma estimativa com base em uma única tarefa de prática, não uma pontuação oficial. Sua fala é avaliada pela facilidade de entender o que você diz, nunca pelo seu sotaque.</string>
+    <string name="conversation_estimate">Uma estimativa com base em uma única tarefa de prática, não uma pontuação oficial.</string>
     <string name="conversation_work_on_first">Comece por aqui</string>
     <string name="conversation_no_estimate_title">Esta tarefa não tem estimativa</string>
-    <string name="conversation_no_estimate">Tente a atividade de novo quando estiver pronto.</string>
+    <string name="conversation_no_estimate">Tente fazer a tarefa de novo quando achar melhor.</string>
     <string name="conversation_try_new_card">Tente esta tarefa com um novo cartão</string>
     <string name="conversation_go_to_task">Ir para a tarefa %1$s</string>
     <string name="conversation_every_criterion">Ver todos os critérios</string>
     <string name="conversation_by_criterion">Por critério</string>
     <!-- A criterion, its estimate and how it stands, such as "Fluency · 3–4 of 5 · At B2". -->
     <string name="conversation_criterion_line">%1$s · %2$s · %3$s</string>
-    <string name="conversation_mock_band_ielts">Faixa estimada, de 0 a 9</string>
+    <string name="conversation_mock_band_ielts">Pontuação estimada, de 0 a 9</string>
     <string name="conversation_mock_band_toefl">Faixa estimada, de 1 a 6</string>
     <string name="conversation_mock_estimate">Uma estimativa baseada em um simulado curto, não uma pontuação oficial.</string>
     <string name="conversation_no_score_title">Este simulado não tem pontuação</string>

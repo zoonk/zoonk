@@ -15,7 +15,7 @@
   "missions_done": "0db7abbec0b9bb411e3747660a882e0afea76c5181e2b21139884db259ae18af",
   "missions_due_today": "bd5c816a95674e2f9ca6929d841e60484b07781b1bf9050be67b026704847a99",
   "missions_earned": "21facc6aeca1d1bd392799b71737c442c8d1d0770943f446dcd09513bd4333d3",
-  "missions_essay": "e39748c7d8765962e25b3af68cd9867686f3daa148ba76885375ee5f2715b5d1",
+  "missions_essay": "6e38970b49632e185ed0af1ea9696adef9d11cf86a20747d2181dffdd64fa9b9",
   "missions_estimate": "b0c10ff8ab1b4461967a18c940fee7cb7aa9755048335207b8a1cbcaccec9e4a",
   "missions_finish_chapter": "7797f9e9e9e1931c28d84c00b2dac23cfe447758f967f5a4af7e32d2cf31bf3e",
   "missions_finish_chapter_named": "e7893c834cc1a0a1bc518320104cb4461d757eab773d8ad813215a9fab1bfeb9",
@@ -47,7 +47,7 @@
   "missions_open_practice": "7f19a851c8d0c2d5142f09ae899196918cc75600af2f4e0be32c40e0994c3537",
   "missions_open_pronunciation": "7ff303c513112ac633fe9b1ae32c86b21fa948b21996b44b1703f7fc5c123f58",
   "missions_open_review": "a412fac0929f394f7cb8a395e90ed1f09bb5ff6e1c85066a04e15becab441759",
-  "missions_pattern": "a98815008a559c12c04df986a4adfe00348d5a4708fc2e637cce4df105ba660c",
+  "missions_pattern": "ea7a002b7d3d514aff2b2bac68bb63c40eea1475a044652210b44e05f82e83f3",
   "missions_points": "b1a7bdf731c4ef84dcc795f9d36033a15dae5c0f9835fa9eaa8273b8afc04d5a",
   "missions_practice": "ad5e97e9252b0db0d8b33ad69cd6b2ee14671e3bdcbe2e36fcb2dc6cfb5223d7",
   "missions_practice_area": "ddfc270ceae25cbf3fd0ef5296859c73ef4e05ab4973428cd462fe9ef4cfa543",
@@ -108,7 +108,7 @@
     <string name="missions_challenge">Affronter le Farceur</string>
     <string name="missions_weekly_challenge">Défi hebdomadaire</string>
     <string name="missions_mock">Passer l’examen blanc</string>
-    <string name="missions_essay">S’entraîner à rédiger</string>
+    <string name="missions_essay">S’entraîner à écrire</string>
     <!-- A verb: a mission to practice. -->
     <string name="missions_practice">S’entraîner</string>
     <string name="missions_fix_a_mistake">Corriger une erreur</string>
@@ -117,7 +117,7 @@
         <item quantity="many">Corriger %d erreurs</item>
         <item quantity="other">Corriger %d erreurs</item>
     </plurals>
-    <string name="missions_pattern">S’entraîner sur un modèle</string>
+    <string name="missions_pattern">Réviser une erreur récurrente</string>
     <string name="missions_pronunciation">Prononciation</string>
     <string name="missions_call">Passer un appel</string>
     <!-- %1$s is the learner's buddy's name. -->

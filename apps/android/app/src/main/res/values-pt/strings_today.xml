@@ -24,14 +24,14 @@
   "today_continue_mock": "2eb07adacb32d734b149113cc543fcc8c0a53c396fae52c7cfde14b58a08e934",
   "today_continue_mock_detail": "b66f4d254ecc88dd43190bfa89ed7f80da3f4396e34bc5b398247a6680d54757",
   "today_continue_session": "1e5b3958283ca54ac3e2e20d26121841ab9d3138d2a4f63cfeb99f92531b0c77",
-  "today_continue_setting_up": "b9e558ff4a83dadc8e5eb544c93540d646ef5aab725242945da54bc2dce40a69",
+  "today_continue_setting_up": "6577e0cb450aa50ec1dbf9e9527973e50e11a714223628935913565031232d64",
   "today_day_is_here": "39856b2fb9828e42ea7e7117892adc38113bb2dcee0ac347a4e1d0c6fba853a4",
   "today_days_left": "ddca4673ac6b00cea1909a18cb3c0574efbd480e38e37156de284d509ef1723d",
   "today_days_left_estimated": "cadf500ed31a488f20531194dafcca17d58b1e3ec65334748406a2563b855706",
   "today_done": "2284463c42ec765f3f80e70ec1c041982f73a14d16b32ea352503db6044c6de7",
-  "today_done_count": "a68d4fc470d5d5d885584c5e28227cdd0b1202e1aaa73a18949204c141b3d750",
+  "today_done_count": "1067047037aee2595f10faed2037260a3d6eca8700c92b0d4d0e9fe271e172d9",
   "today_done_day_off": "947362f77c84d95608a4d7e104714f610b0983b2593241450ba9949be60afd61",
-  "today_earlier_work": "3bf044bebab07660e17fc7f7e299fea760cd5bdbd344ef799e010f7959925ead",
+  "today_earlier_work": "e5e2300b765b1ea11b6eff7f1021dd68a43a82e0455c5b9e163277843ecbbae5",
   "today_earlier_work_detail": "b61a296e26ddbf6a22c61c41e45f4e634240f62ff4876159e2524813e178230e",
   "today_exam_choice_choose": "5bf76a08297b29f5482a62ed9760977b002feeda8dcda4f65a03f9115b83597f",
   "today_exam_choice_detail": "fcb639c19dbbacc51014d675eba6077012c318082827e1b5086388859c54bf84",
@@ -66,8 +66,8 @@
   "today_mistakes_redo": "4441d6fa51616b2df0ba23473be437782bdc1f96ad4930c186ed259987215153",
   "today_mistakes_return_tomorrow": "807a37626b2d0c2fc3c4aa88403416fbdb3cced39912f5de6372749413f300ec",
   "today_mistakes_tomorrow": "383b5a04cb61e35207df6fbca1ea498bb3c4e99b0037846f0a998d6d109ddc57",
-  "today_mock_funding": "2763b918da3e1cc2a18880739c9658bf6ddf950f48b910a08711c70a21b4c63e",
-  "today_mock_funding_welcome_back": "1d85ed7202397bea02560499b4516f3817e13b18715799d078acf7593ac61873",
+  "today_mock_funding": "9a0464f37105db8e2723148ff222f40d0dca8457db39c75509f9ba1422079705",
+  "today_mock_funding_welcome_back": "c47f60f06aa6a88f85cb2203aea30b6cc4e923b13a18be203a2f166cfbca662c",
   "today_more_count": "6fb0c0b27a8677daa2ac6bc72d220ccfd0df6f646e7750407c02e5857022efec",
   "today_more_time_a_day": "5b599cda26f87049fdcaa4a45ae1c2c572f0f41dc74e31a5c45d2e96968b75a4",
   "today_more_time_or_later_date": "ab1f01503c7b86278039160138484dd8cc313549f39aa2abcecba69af1bbb3e6",
@@ -103,7 +103,7 @@
   "today_paused_goal": "858ce1c33d23ec289e9323bdf3d19151dfb6139a03d1f78a97f2114788b9970c",
   "today_paused_this_goal": "0e74d898858754e630b48f6da095e5acdda04e4ff83c0ea97103d23418399621",
   "today_plan_apply": "aa41c326da2648f936f461df07e2e38b3c67d64bab7a1c98cb56d5142237a1a1",
-  "today_plan_keep_mine": "7832518dc1dcf06840c994f161e20cd089247c121f3c2d9fa46061615bb4fd13",
+  "today_plan_keep_mine": "2c7b807b75ce8d94171c02007dd945cafbf2c2200389ade617053c5f002f9ba6",
   "today_plan_stays": "51d62e906cdc6d6385d08e0a218a0e50011ca61ea0fb996f9346464b02ae6e63",
   "today_plan_suggestion": "d14eb17f4e530f46e8ae752f78c7ee99721b6900fbdd7553a91e670c2e03868c",
   "today_plan_use_my_date": "89c836eb8b37696546bbe5f32d6e2b92f93a047d6760903f5de265867e6e5820",
@@ -154,7 +154,7 @@
   "today_step_often_tested": "22fc7f6f0da5481667bf8582b18e4841c36288175f84867beff2740beb8ec226",
   "today_step_often_tested_label": "b1b1f5a90871a9494ef14e098d807cc43a9e252c2a4f77d88e2f01c6012127ce",
   "today_step_skipped": "ba8f6b68b3394a05d52e79825723dbe4a76452d7c634261862edfc4ec0b6a4b4",
-  "today_steps_done": "5b91e8671d60533c3d2dad15642d294e641b484620982fc255761b151992f2a1",
+  "today_steps_done": "806de27a106297e899a2d6d5110cf22298f7d87229332cb05ec951c52a87255d",
   "today_study_everything": "6bc2e587752eddc5206c5313ec0e97bbe92b267bbd64877c8d03d17ea51c3133",
   "today_study_minutes": "3f4075d35cb10baea4e2547728f1a3ef9362bb263edb2517f457a94d2c9c1dfd",
   "today_study_more_minutes": "ffbeef253b7ee52137de3e4fa54ae91e6f887bec51439e35b263da150a3c712d",
@@ -163,7 +163,7 @@
   "today_suggested_goal_question": "044cef04c75b16b4d646788fa05f00dada08356568686eb3a467b0788af1a6dd",
   "today_take_mock": "1781bb70e9e8d5e29eaa23017807c46e31ef3de6ae056248ce9ebb36d3e6164f",
   "today_take_mock_detail": "a967b8dcbac087ab085ed7e3e9c73d1b28dd5f2576da407c08ab5b79392e4fb4",
-  "today_take_mock_detail_by_subject": "9e7588712635e33ff60a3fda5c4bcf2cbc3b66731a022f63cabf9e4e2deefb02",
+  "today_take_mock_detail_by_subject": "56f5ae39c086ad9febf4daae90c8d623c6fe76d3276391290e3564e987fed61a",
   "today_take_the_test": "bc8fcca12dbedb5ed7c68edac5959f0e3748d4af4ad3246347089caf0b634517",
   "today_time_left": "315f4f2dc2e49eb9aa31c280a0f61c30386518f21a6303dd08dd8bef9c9f5e02",
   "today_time_studied": "41a267a9de2d3f36622d47d161721ac97d888c4fbcf62bf4f8ab994ebe02a7c3",
@@ -245,7 +245,7 @@
     <string name="today_time_left">Faltam %1$s</string>
     <string name="today_time_studied">%1$s de estudo</string>
     <!-- How many of today's session steps are done; %1$s and %2$s are formatted numbers: "2 of 5 done". -->
-    <string name="today_steps_done">%1$s de %2$s concluídos</string>
+    <string name="today_steps_done">Concluídas: %1$s de %2$s</string>
     <!-- %1$s is a duration, such as "55 min". -->
     <string name="today_fresh_start_welcome_back">Que bom ter você de volta! Hoje está mais leve, cerca de %1$s, para você retomar aos poucos.</string>
     <string name="today_fresh_start_welcome_back_trial_ended">Que bom ter você de volta! Hoje leva cerca de %1$s, para você retomar aos poucos.</string>
@@ -253,9 +253,9 @@
     <string name="today_fresh_start_new_week">Uma nova semana. Hoje começa com um aquecimento leve.</string>
     <!-- %d is how many of today's session steps are done. -->
     <plurals name="today_done_count">
-        <item quantity="one">%d concluídos</item>
-        <item quantity="many">%d concluídos</item>
-        <item quantity="other">%d concluídos</item>
+        <item quantity="one">Concluídas: %d</item>
+        <item quantity="many">Concluídas: %d</item>
+        <item quantity="other">Concluídas: %d</item>
     </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d</item>
@@ -342,7 +342,7 @@
     <string name="today_setting_up">Preparando</string>
     <string name="today_setting_up_goal">Seu plano para %1$s precisa de mais algumas respostas.</string>
     <string name="today_setting_up_detail">Ele é criado com base no que você conta para a gente.</string>
-    <string name="today_continue_setting_up">Continuar preparação</string>
+    <string name="today_continue_setting_up">Continuar a configuração</string>
     <string name="today_building_plan">Criando seu plano</string>
     <string name="today_building_plan_goal">Criando seu plano para %1$s</string>
     <string name="today_building_plan_detail">Isso costuma levar um ou dois minutos. Seu primeiro dia aparece aqui assim que estiver pronto.</string>
@@ -404,7 +404,7 @@
     <string name="today_already_know_this">Já sabe isso?</string>
     <string name="today_take_the_test">Fazer o teste</string>
     <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
-    <string name="today_earlier_work">Atividades anteriores não concluídas · %1$s</string>
+    <string name="today_earlier_work">Aulas pendentes de outros dias · %1$s</string>
     <string name="today_earlier_work_detail">Comece por estas atividades. Ao iniciar sua sessão, o plano se ajusta ao tempo que você tem hoje.</string>
     <string name="today_practice_anytime">Pratique quando quiser</string>
     <string name="today_mistakes_notebook">Caderno de erros</string>
@@ -421,13 +421,13 @@
         <item quantity="other">Amanhã você terá %d à disposição</item>
     </plurals>
     <!-- %1$s is the mock's date, such as Nov 3. Today is shorter so time is set aside for that mock. -->
-    <string name="today_mock_funding">Dia mais leve: reservando tempo para o simulado de %1$s</string>
+    <string name="today_mock_funding">Dia mais leve: tempo reservado para o simulado de %1$s</string>
     <!-- %1$s is the mock's date, such as Nov 3. Zoonk sets time aside for that mock. -->
-    <string name="today_mock_funding_welcome_back">Reservando tempo para o simulado de %1$s</string>
+    <string name="today_mock_funding_welcome_back">Tempo reservado para o simulado de %1$s</string>
     <string name="today_take_mock">Fazer um simulado</string>
     <string name="today_take_mock_detail">Quando você quiser: um dia inteiro ou meio dia de prova</string>
     <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
-    <string name="today_take_mock_detail_by_subject">Quando você quiser: um dia inteiro, meio dia de prova ou uma matéria</string>
+    <string name="today_take_mock_detail_by_subject">Quando quiser: um dia inteiro de prova, meio dia ou uma matéria</string>
     <string name="today_continue_mock">Continuar seu simulado</string>
     <string name="today_continue_mock_detail">Continue de onde parou</string>
     <string name="today_exam_speaking">Conversação no formato de prova</string>
@@ -461,7 +461,7 @@
     <string name="today_plan_apply">Aplicar</string>
     <string name="today_plan_use_my_date">Usar minha data mesmo assim</string>
     <!-- Declines a suggested change to the plan's dates and keeps the learner's own plan. -->
-    <string name="today_plan_keep_mine">Manter o meu</string>
+    <string name="today_plan_keep_mine">Manter meu plano</string>
     <string name="today_next_suggestion">Próxima sugestão</string>
     <string name="today_notice_falling_behind">Mudança no plano</string>
     <!-- %1$s is the learner's time a day, such as 30 min; %2$s and %3$s are shares, such as 72% and 80%. -->

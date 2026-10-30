@@ -7,7 +7,7 @@
   "checkpoint_badge": "d9e75d5b37006b573cbe20621e5996da5dbdd1b0efb3215f812c0c6f7cbddfaf",
   "checkpoint_beat": "4cb07057a6acd4f595197f1bd0d616dd3ddf0a905baa97a09338ebe4eb9ede02",
   "checkpoint_brain_power": "2c30f5e8c80611c330639a869785d1e809bc396cac2aee28c15bfc614d5f8cf7",
-  "checkpoint_broken": "8b66497b85e8a800e8994b33e87777d2eda55b00f30351e380c6580c11c2e2fa",
+  "checkpoint_broken": "454d6952680717de739f116aa21c3a9b0d6d3880b362d9be707a9040d9067e8d",
   "checkpoint_broken_all": "c96ce74973d5cd54b55b9182d78052e0d7b286f9ff90b0a75840b4f0e3a2ae4f",
   "checkpoint_confirm": "2061a7d828909981b14662574eb0eeafbdfcde62f259cabf65d78b9e4a81a579",
   "checkpoint_earned": "eb0c53de9df0c5147a5d26058aaae8fed5bce74e1e6c86ea5d4ab638736e0e8c",
@@ -42,7 +42,7 @@
   "checkpoint_retry_tomorrow": "2d71230126545f13498c4082b81fa326a510984cd9bf4dbfdc182dc0e8788c98",
   "checkpoint_review": "1665041ef6a964f88d635ad7c60591f6fe9850c6652e1bc9c339c3cb81a12922",
   "checkpoint_rewards": "02f04ebf1fba86fbba5e736b13d8510808cef28ed7316e6c0988073a67992303",
-  "checkpoint_right_to_win": "31c29f347b76845ca3342910a19cde58f83d3311b3dd00ebadd55446cbd248ae",
+  "checkpoint_right_to_win": "ce40b357c66a7be0d5d5e5b54183c23d17ec206a19e104cba98d9141858f5aaf",
   "checkpoint_right_to_win_of": "dfe0cdc3b55553eb6047b6d12fc8d58ce7411e627339d8cbe02a88dca1b53477",
   "checkpoint_see_result": "cf43e634c9cd5929b4cf7da6542b9502596649fa9fd91eaa66570bd650f55678",
   "checkpoint_shield": "252c5a33f4c4823ecc72bf42b97f3e3cd228d0bdb101709c865a31cbcfdebda3",
@@ -94,9 +94,9 @@
     <!-- The whole shield is broken: the learner won. -->
     <string name="checkpoint_broken_all">Brisé</string>
     <plurals name="checkpoint_broken">
-        <item quantity="one">%d plaque brisée}</item>
-        <item quantity="many">%d plaques brisées}</item>
-        <item quantity="other">%d plaques brisées}</item>
+        <item quantity="one">%d brisée</item>
+        <item quantity="many">%d brisées</item>
+        <item quantity="other">%d brisées</item>
     </plurals>
     <string name="checkpoint_no_questions_left">Plus de questions</string>
     <plurals name="checkpoint_questions_left">
@@ -106,9 +106,9 @@
     </plurals>
     <!-- %d is how many right answers it takes to win the challenge, not how many are still missing. -->
     <plurals name="checkpoint_right_to_win">
-        <item quantity="one">Encore %d bonne réponse pour gagner</item>
-        <item quantity="many">Encore %d bonnes réponses pour gagner</item>
-        <item quantity="other">Encore %d bonnes réponses pour gagner</item>
+        <item quantity="one">%d bonne réponse pour gagner</item>
+        <item quantity="many">%d bonnes réponses pour gagner</item>
+        <item quantity="other">%d bonnes réponses pour gagner</item>
     </plurals>
     <string name="checkpoint_no_hints_boss">Pas d’indice. Après chaque réponse, tu sauras si elle est correcte. À la fin, tu découvriras pourquoi et quels pièges il t’a tendus.</string>
     <string name="checkpoint_no_hints_weekly">Pas d’indice. Après chaque réponse, tu sauras si elle est correcte. Tu découvriras pourquoi à la fin.</string>

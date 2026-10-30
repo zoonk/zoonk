@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "recap_days_studied": "5934c607c4ca856d33a6e2737301cdd3cb9bc742196d97577f027fe1ade35658",
-  "recap_first_summary": "4d43fd83c793acdda858f403f73d7d3dabfa85f64f00ed141ae90e72ed2c52e3",
+  "recap_first_summary": "1f99640500b20432dbe872a784e867972a2f15839ae1ff5a2aaafbdcf10bdb5e",
   "recap_first_summary_detail": "593edd31e79ef4f891df9b9928157b068273344484c26ed437ee50ef0a81e6ee",
   "recap_fresh_week": "805d97ac568858a49b94442305895dbfc3a094dcdf50dbad6949e2ded2b46948",
   "recap_learned": "a49bbc95c97d42767c3985fba9af83d4865717aba452c5c6c82004d7f0dee692",
@@ -53,7 +53,7 @@
     <string name="recap_time">Zeit</string>
     <string name="recap_questions">Fragen</string>
     <string name="recap_quiet_week">Eine ruhige Woche</string>
-    <string name="recap_first_summary">Deine erste Zusammenfassung kommt am Sonntag</string>
+    <string name="recap_first_summary">Dein erster Wochenrückblick kommt am Sonntag</string>
     <string name="recap_fresh_week">Jede Woche ist ein neuer Anfang.</string>
     <string name="recap_first_summary_detail">Sie zeigt deine Woche in Zahlen und die Fähigkeit, bei der du die größten Fortschritte gemacht hast.</string>
     <string name="recap_turnaround">Die größte Aufholjagd</string>

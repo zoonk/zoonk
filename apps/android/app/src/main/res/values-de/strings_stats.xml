@@ -11,7 +11,7 @@
   "stats_any_day_studied": "df4e1d083f7e413f9dfea70a1d07e45243ce59ef2959d810848dc9fb0fb1fce8",
   "stats_any_time": "70985521a073d956e2d7cd8409866323eaae95cf65892593d1038e7f63a7c3ef",
   "stats_average": "468483be31ccbc9a780b30f9a11e54b388a3a2fc3ddd68c33c0319a03f4ccb92",
-  "stats_back_from_today": "9f0fb702c8ece8b93f92034c52e26798aabfa8f3a91b89b9cc7c6981df41f2cb",
+  "stats_back_from_today": "e1307acde6de346875652db853d3a6e0c7ca247cb4ab9cfd7da4e98e28fb7596",
   "stats_belt_at": "e30d7bcb1c231876cf704989efdd28428613701e2523f5e5f206a55f0ef7f256",
   "stats_belt_current": "4645e6f2c4b1ce6d3b483b287c3800936e3613a810869e18ae33d749b96a5276",
   "stats_belt_earned": "095bb351d98a38ec750ac05f06be1228a02d793d10a8f188a72749f8ece79609",
@@ -34,7 +34,7 @@
   "stats_energy_average": "7b1182df499bbe8aa06bd83cde43218dae38878c477c673efb2865d9b6ec3b4e",
   "stats_energy_line": "0d5d44b935f87cdcec2c6c3abaa9f427068df5f1f0c899bfe22912ca1e6d148e",
   "stats_evening": "6fb4c6c24f9b72e1262a316b19058393d347211593a27b7a6a02786a5872ad38",
-  "stats_every_belt": "864bce90782c8c6c08ecd98efbfde7c9115627ac03076c5970a7e2b1fca919b0",
+  "stats_every_belt": "dfedc7353796d921c54e61c6003bd8aaaaa5960470bb65449d958d3f8dcb73f8",
   "stats_finished": "420651df9156126deaff1498b78ee680b54656c5f44029abba91ff26a0534261",
   "stats_full_energy": "d487c7701eb1b8c438ac64a677f95950f6c0735f91dcea84e814f908fa4cba85",
   "stats_full_energy_days": "b2f017523a44b3f82627a25fd6f0126b4d77a5b994aea0b9a622ede5b6a9812f",
@@ -93,7 +93,7 @@
   "stats_to_go": "71d2e88873327115e5bf17f4eef385efb3e9c5b4b29f1c79d6fab9f6a7d095d1",
   "stats_to_level": "6ce53d210f30345005a020be6e5d5ea40b903873cdfab2405afc01fe718895d5",
   "stats_today": "56f631a9d430faac238612f7a46a4a9b06bcf91fe9d98f9d1db9b7b7e88321c2",
-  "stats_week_spread": "786643387f9858583571f3fa6223aec70e7ec2b1353480f0f20878e555120f79",
+  "stats_week_spread": "76f817ca928a5e668ac579dc7c8836c98801e83951c0790757bcecb7dce3740d",
   "stats_within_points": "1131b2a8d9fcb91904c0c5a02493dbc5b97bc5da90d57706f5d13a9a4583f8c9"
 }
 -->
@@ -125,7 +125,7 @@
     <string name="stats_best_day">Bester Tag</string>
     <string name="stats_best_time">Beste Uhrzeit</string>
     <!-- Noun row label for how much the scores varied over the week; its value is the range from the lowest to the highest weekday score, such as "62%–80%". -->
-    <string name="stats_week_spread">Verteilung über die Woche</string>
+    <string name="stats_week_spread">Spannweite im Wochenverlauf</string>
     <string name="stats_range">%1$s–%2$s</string>
     <string name="stats_brain_power">Brain Power</string>
     <string name="stats_brain_power_amount">%1$s Brain Power</string>
@@ -140,7 +140,7 @@
     <string name="stats_next_belt">Nächster Gürtel</string>
     <string name="stats_belt_at">%1$s bei %2$s Brain Power</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
-    <string name="stats_every_belt">Alle Gürtel verdient</string>
+    <string name="stats_every_belt">Alle Gürtel erreicht</string>
     <string name="stats_belt_earned">Verdient</string>
     <string name="stats_belt_current">Aktuell</string>
     <string name="stats_level_line">Jede Lektion bringt dir %1$s Brain Power dazu. Brain Power sinkt nie.</string>
@@ -183,7 +183,7 @@
     <string name="stats_correct_of_total">%1$s von %2$s</string>
     <string name="stats_period">Zeitraum</string>
     <!-- Under "Period", a number of days such as "90 days": the stats count those days back from today. -->
-    <string name="stats_back_from_today">Von heute zurück</string>
+    <string name="stats_back_from_today">Von heute zurückgerechnet</string>
     <plurals name="stats_days">
         <item quantity="one">%1$s Tag</item>
         <item quantity="other">%1$s Tage</item>

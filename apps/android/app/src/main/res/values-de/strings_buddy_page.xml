@@ -24,7 +24,7 @@
   "buddy_page_first_steps_done": "0c784523715603cc9e74b51138ec3ca83930dabf65169cfee4b133d7a2856c44",
   "buddy_page_first_today": "5eac2c8b9ed0ca40139117a4aeea782e2880e6eb2f97e76762fc0ce8ea650659",
   "buddy_page_fully_grown": "59d37ed5cb33d9e398e87064c3d552c8f2ede0a8d0b6fc151a62371f0045e7aa",
-  "buddy_page_glasses_description": "6a2621cbc7283819dddbdbe814b5a3841ebf0b943ff982b160f5b025526d5184",
+  "buddy_page_glasses_description": "6cb70f62f5e236fc97bea006003d2622f514b403d84e09e24ea948dec4e7054c",
   "buddy_page_goal_greeting": "dd3179ef0a5a9850e3d60515e09f8bfff1d0f6f24e895a8f0ef7f107d79886b3",
   "buddy_page_greeting": "3c73a2feac34d37991413e05f4665d396034d6b7471850120e5a9f5b91e8eff2",
   "buddy_page_grows_adult": "7a11cbc90e7c63555f289b133ee5f2a7da23122f382878e5cac58e431dfe6e31",
@@ -40,7 +40,7 @@
   "buddy_page_save_failed": "8fe0c98e2359543eb35841d3413781c6acd21685b9806f54dcd20104000a4b27",
   "buddy_page_suggest_focus": "4c82896edb1a31b160dd6838e78bbbb4081b95d6b1ba25698b0a120629bc8c5d",
   "buddy_page_suggest_lighter": "cf307e1cbed3a0a1e62df72d9f59b088f0d32b340ce62a0d7c8edda150b46a19",
-  "buddy_page_suggest_mistake": "7cb39770627eabb47987ae77587a7664c1b0eeefdbdd30d11e2a505530ac5920",
+  "buddy_page_suggest_mistake": "e666c51c5b448be7ef49a73ecb20740826b5dc518a88374d686e0d9f3272603e",
   "buddy_page_suggest_plan_today": "705d9265e98e4e65d8982e9cc80f18b923ab7a01e41939da42ef516c0ed6a94e",
   "buddy_page_today": "e11cda3d71a47881f4e525e619e7f3a1bdfb663c79c31cd835c536f0fc2710ce",
   "buddy_page_weekly_summary": "d5fc1307a41b143db5cd4c2bdbaffe2798d004c62076ea5f9a85f8907c7c6767",
@@ -74,7 +74,7 @@
     <string name="buddy_page_placeholder">Stell eine Frage oder wünsch dir eine Änderung</string>
     <string name="buddy_page_suggest_plan_today">Was steht heute in meinem Plan?</string>
     <string name="buddy_page_suggest_lighter">Ich möchte diese Woche weniger lernen</string>
-    <string name="buddy_page_suggest_mistake">Erkläre mir meinen letzten Fehler</string>
+    <string name="buddy_page_suggest_mistake">Erklär mir meinen letzten Fehler</string>
     <string name="buddy_page_suggest_focus">Worauf sollte ich mich zuerst konzentrieren?</string>
     <string name="buddy_page_today">%1$s heute</string>
     <string name="buddy_page_energy">Energie</string>
@@ -92,7 +92,7 @@
     <string name="buddy_page_grows_adult">Wird bei %1$s erwachsen</string>
     <string name="buddy_page_remembers">Woran sich %1$s erinnert</string>
     <!-- Under the buddy's glasses: the learner picks a pair they've earned, and the buddy wears it. -->
-    <string name="buddy_page_glasses_description">Wähle eine freigeschaltete Brille aus, um sie aufzusetzen.</string>
+    <string name="buddy_page_glasses_description">Wähl eine deiner freigeschalteten Brillen für deinen Kumpel aus.</string>
     <string name="buddy_page_first_steps">Erste Schritte</string>
     <string name="buddy_page_first_steps_done">Du hast alles ausprobiert, was dein Plan nutzt.</string>
     <string name="buddy_page_first_lesson">Deine erste Lektion abschließen</string>

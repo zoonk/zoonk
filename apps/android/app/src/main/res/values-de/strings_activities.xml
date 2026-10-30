@@ -12,7 +12,7 @@
   "activities_before_after_less": "a099efeb19abd0f7d848ff053ea791edae43d8d96b22cea2975d8714f24b5893",
   "activities_before_after_more": "9be97fd1342d924751e7cb0b3f7202db56909a3de818ef43d95d19272ecb52f2",
   "activities_before_after_no_change": "66f771c8a28f3b29c2344e38b6742ab888ae5ce6ce985a907fd63709f29038a7",
-  "activities_before_after_show": "5f061fca3e8904199ce39f89d76d061fc71917c485d0e94c1ccf8d16a0c78a9d",
+  "activities_before_after_show": "9222971280568d5c71f75967fa519b2a7698058ea41f7117a588a0a184e10951",
   "activities_chart_description": "253b4683dd2b81707d5cc361ceeb5fecac6887997d98d3ebd7007f077c71a853",
   "activities_chart_rate": "6625996054a7b1cf35a1f5e3ab917059457cb4ae12e70153cc8ec14253eb30c2",
   "activities_chart_span": "94f91c6df068c07f7dd5e75958a00a69999fe566d038e4b5a67564d01a15bb81",
@@ -95,7 +95,7 @@
     <!-- How many times smaller the guess was than the real value, like "3.5". -->
     <string name="activities_guess_too_small">Deine Schätzung ist etwa %1$s-mal zu klein.</string>
     <!-- Button that shows the "after" state of a before-and-after comparison; %1$s names it, like "With the assembly line". -->
-    <string name="activities_before_after_show">Danach zeigen: %1$s</string>
+    <string name="activities_before_after_show">Nachher anzeigen: %1$s</string>
     <string name="activities_before_after_no_change">Keine Veränderung</string>
     <!-- How a fact shrank, like "3 times less". -->
     <string name="activities_before_after_less">%1$s-mal weniger</string>

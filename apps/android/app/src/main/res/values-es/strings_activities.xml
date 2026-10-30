@@ -48,7 +48,7 @@
   "activities_pattern_endings": "ec593cf138ef69b1b8bad26ecb7ceb747f7d9c8f0e3778507988f2fda034c704",
   "activities_pattern_which_ending": "2f6e20fcb60351a01a50d9acfb43ab3b6c8f4e02f7bd0c4bf9c34040bf2f08a5",
   "activities_solver_first_pick": "e21137f2c8bdbb5b75f71a739dd18d67760986e82e9c0a049324f65f230982a4",
-  "activities_solver_not_quite": "7dc192b39720425f33aa8f5bb22091eb6c75b133cbcec586fcfe2842a52cb3c9",
+  "activities_solver_not_quite": "6fa885ba75ac7c6638c0e0303129bb541c7b98ac7778c972a31eb31c7cbd195d",
   "activities_solver_right": "9c72433ee677b122639e2a8619a0a3639be19c41a43b081797a29acf63ad64a7",
   "activities_solver_steps": "d5b281db39167c8ec5a25d3c1194e32af680b379e6c7bbf739ed36874369d989",
   "activities_sortable_dropped": "ca5a507489252a4ad3b8916efefc6d3cfca31bf47b430d994311a9785b3e8984",
@@ -140,7 +140,7 @@
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Pasos</string>
     <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
-    <string name="activities_solver_not_quite">No del todo:</string>
+    <string name="activities_solver_not_quite">No exactamente:</string>
     <!-- Before why the right pick is right. -->
     <string name="activities_solver_right">Correcto:</string>
     <!-- The learner's first, wrong pick at a step, like "Your first pick: Add 8% first". -->

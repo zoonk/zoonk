@@ -93,7 +93,7 @@
   "mock_result_timing": "987b1cf583c9780c60f49fc10927efb839718f603ce166b1becefeaa630d8212",
   "mock_result_timing_area": "65885e3299f82eea96cfd285870234a10b0e94d1489b89acb7f1689b2b79b0b3",
   "mock_result_to_pass_guide": "4ef8f6a83682aeea9b6078dc036c3c97ad3dee0cb40efaef372c63e78facb6db",
-  "mock_result_to_pass_notice": "d6e29139d2bea7c4fe999f0c21693370291315663dfdf3377cd94238585c9821",
+  "mock_result_to_pass_notice": "ef104d808c715ab17a01f510b0954da9942179c918f936b2dd15155f2b2232ee",
   "mock_result_too_short": "06e2a0c1333614e2c259a5cc1ba51498d416176359c7598a3811a579365d8a99",
   "mock_result_typed_estimate": "7bdf41a6e8f91977c0e21db33ac4e04c220130076e779f524944a984ad399e31",
   "mock_result_typed_no_estimate": "cff0ba0a055a02bac011effab8854363f3472b21ff2c4e0a11f76a0f5b08c0ee",
@@ -128,7 +128,7 @@
     <string name="mock_result_blank">En blanco</string>
     <string name="mock_result_blank_exam_day">Las respuestas en blanco cuentan como incorrectas, igual que el día del examen.</string>
     <string name="mock_result_blank_this_score">Las respuestas en blanco cuentan como incorrectas para esta puntuación.</string>
-    <string name="mock_result_to_pass_notice">Para aprobar, el aviso indica</string>
+    <string name="mock_result_to_pass_notice">Para aprobar, la convocatoria exige</string>
     <string name="mock_result_to_pass_guide">Para aprobar, la guía oficial indica</string>
     <!-- %1$s is a language's name, such as "Portuguese". -->
     <string name="mock_result_pass_marks_language">En %1$s, tal como aparece en los documentos del examen.</string>

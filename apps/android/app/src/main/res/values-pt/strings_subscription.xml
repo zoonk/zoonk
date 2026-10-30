@@ -50,11 +50,11 @@
   "subscription_managed_apple": "7aff4e4bfcfbe7000f244a807874a0a7b2a7ebc393db35c5769d3a8f1ef16894",
   "subscription_managed_google": "9e6674990bdd830faf4c138251c1ddbc3caa372a65ba600e91767e0c8ca277da",
   "subscription_managed_web": "f8e323f58153eef105883ee15d7401649f509b918a604bc6e4daa51c2326509e",
-  "subscription_managed_zoonk": "ce140108a456dd5eb9488e4494ad9690ed92a82bee779790da356d9e4d2e528b",
+  "subscription_managed_zoonk": "32c2b008fb292039e7cc9c58a82ed26e7429d1e6a033eb9b81310867e2d34863",
   "subscription_messages_used": "b951d0c91b656a01587031438849fe45988239a89e9bb14bbf0a207d3f6ee1e9",
   "subscription_monthly": "6318e4608f7a532ca1bf0648a78e324455d1ee06bf47856ad39403fe974184cf",
   "subscription_no_card_needed": "9a604115b8195ad9ee3e04ca2f0de939855d7befaf9a343af82ff7e5a0f611a1",
-  "subscription_offer_title": "a67d3fbbb22b14a640bdfb3e54d073776a4d6027852ebf68c3ee123767a0d89d",
+  "subscription_offer_title": "3c3acf50af66b483295e0d56e32663726cc56dc2a303a80daa7f2db83101b29c",
   "subscription_per_month": "af1d6a95d289ddabbad157bc5867509ad07a99278c20c8d313a1417d16d46836",
   "subscription_per_year": "13881ab64c147e8dbbd140222013f7e3ffae079fffaae48056c6d16c07a42be2",
   "subscription_period_ends_on": "1a497311d6be78fdacd5fd5ede567d91ae14a2ad2a506205fa7edb585b9e5c6e",
@@ -65,7 +65,7 @@
   "subscription_purchase_pending": "501b7eacfa37ba627cba3b12c4e1352bd5ee283207b3cfe9ea1f687f27c0641d",
   "subscription_purchase_play_failed": "1b00adb8cab11f4e40c5d30c747bcb4eb8c9e896c750d3d882e9f9e2608e2251",
   "subscription_question_cancel": "37c026d7f78345ed81dd8fc8173ea3bc9420eac0075bd3d9ad841a8a55065d85",
-  "subscription_question_free": "7e5a07ae693811cb85c01600dcb9c7cf7a7ca55146591255ecf0e5df615f2027",
+  "subscription_question_free": "a9924ca73817e70ab9ea8724691ab15d937a7629ebd828647b0905923a320587",
   "subscription_question_refund": "bdd44918fc942ba278c7ec572c5538f8d88c0ffcb7d6de78b8deaaf27519a3ce",
   "subscription_question_unlimited": "a5806beda549c118812a3739cf213c9b8afd304612d6ee780394e83be3910a29",
   "subscription_questions_email": "3291247dd4d0e8eacfaa54c4f48458f0d56932d281094020c10bd74a3cd36310",
@@ -100,11 +100,11 @@
     <string name="subscription_managed_google">Esta assinatura é gerenciada pelo Google Play. Para alterar ou cancelar, use o Google Play.</string>
     <string name="subscription_managed_apple">Esta assinatura é gerenciada pela App Store. Para alterar ou cancelar, use as configurações de assinatura do seu ID Apple em um iPhone, iPad ou Mac.</string>
     <string name="subscription_managed_web">Esta assinatura é gerenciada no site do Zoonk, onde você pode alterar ou cancelar.</string>
-    <string name="subscription_managed_zoonk">Esta assinatura é gerenciada por Zoonk. Entre em contato com o suporte se precisar de ajuda para alterar ou cancelar.</string>
+    <string name="subscription_managed_zoonk">O Zoonk gerencia esta assinatura. Fale com o suporte se precisar de ajuda para mudar ou cancelar.</string>
     <string name="subscription_manage_google">Gerenciar no Google Play</string>
     <string name="subscription_manage_web">Gerenciar seu plano</string>
     <string name="subscription_contact_support">Entrar em contato com o suporte</string>
-    <string name="subscription_offer_title">Assine Zoonk Plus</string>
+    <string name="subscription_offer_title">Assine o Zoonk Plus</string>
     <string name="subscription_your_plan">Seu plano</string>
     <string name="subscription_free">Grátis</string>
     <!-- %1$d is how many buddy messages were used today and %2$d the day's limit, which picks the plural. -->
@@ -178,7 +178,7 @@
     <!-- What TalkBack says about a question: its answer is showing or not. -->
     <string name="subscription_answer_shown">Expandida</string>
     <string name="subscription_answer_hidden">Recolhida</string>
-    <string name="subscription_question_free">O que está incluído no plano grátis?</string>
+    <string name="subscription_question_free">O que vem no plano grátis?</string>
     <plurals name="subscription_answer_free_guest_lead">
         <item quantity="one">Comece grátis com %d aula, sem precisar de conta. Com uma conta grátis, você tem:</item>
         <item quantity="many">Comece grátis com %d aulas, sem precisar de conta. Com uma conta grátis, você tem:</item>

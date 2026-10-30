@@ -9,13 +9,13 @@
   "mock_chooser_left_out_listening": "89c84fa59e80578237d371a6801a27dc1813952370077bc0316e4b0fab44b15e",
   "mock_chooser_left_out_named": "16bc0076c0ddbe7f1b20089ddc5e44301444bbfcd1e5cd416e66643f3bca8b07",
   "mock_chooser_left_out_numeric": "1582a6cefe55c48ef846c5791f91ad1d9a8140e8d27b2cd67ccd4d0f9b3ac2b3",
-  "mock_chooser_left_out_practical": "8156fd28319a422acae0fec53f744ec2cbbd41428804b62ced354027ca45e066",
+  "mock_chooser_left_out_practical": "bdd6695fd7c675b4e85af9dd0c3d7f33eadb131b6e7f5f5f09b404653c2ceabe",
   "mock_chooser_left_out_practical_named": "3114809bd38dc5c52425fb932945c965a6ad77cb235f655cfb730276727cd2d1",
   "mock_chooser_left_out_short_answer": "34fcdc7b00fa9a51b206435ecea68aa7a3d548796c53a8de81c8eb4548ca9e41",
   "mock_chooser_left_out_speaking": "f59a4181f36b1c0ea4511966984708ba521faa60f3489562ad4a6f89302675f4",
   "mock_chooser_left_out_written": "a4c007c95eee319c8d9649098461f572cf5b361ad7b8ac27b51ef70300e02d67",
   "mock_chooser_not_enough": "90e9f8f1b6b13a50c7e9d444a888f48875a0a306fa91974a18d707d421ab43f9",
-  "mock_chooser_objective_only": "f86652ca3758b81fd1e64edd85574ae69fc98a895540267ce8ba59888b6b74ce",
+  "mock_chooser_objective_only": "be8718b5ae6d3a83ef9fe48c5c0d2a6b8a5299519c805e875b9481850ea666aa",
   "mock_chooser_one_subject": "063908ea394847a8be0d174e05a1019e45d5720d7eec41ee1c02a551302d8a90",
   "mock_chooser_option_size": "2be8f50cf2c9e08ea7c638f5a6261a00ba1e22511f3e7b0ae49c4470f8a9059c",
   "mock_chooser_option_size_spoken": "1b5e29ad83ac2bef6f2fc57dd1971f429c81c66b4eba4f1b407cdd9f0addce4d",
@@ -27,7 +27,7 @@
   "mock_chooser_placement_medium": "2629d9c6d4436bf4438e752f56a80b7ce3d90c6ec2104ac54a8fbc1c66d81c02",
   "mock_chooser_placement_note": "3bb30ae475fe9b1acf3546ce2ff41ab185088b9a6bc84c828d33f08aa63c1164",
   "mock_chooser_placement_plus": "cc55729acb708a7c3022be043c7a15c2844a758c46add2c2221460a20118747e",
-  "mock_chooser_placement_short": "ea24dedf91f6935a90c627dc34d322b8d38913f200b3b5bd2c431118472dc463",
+  "mock_chooser_placement_short": "a9f5a0d86e5f3f1c61e5800233763ee417fc593484f9a01ffd0c92c3bd148310",
   "mock_chooser_placement_size": "ea7be1b9fb22e5da53590761a1e0cb0b5146d2d179cbedf8a2acb0a4d1c5ba99",
   "mock_chooser_placement_size_spoken": "97e8b37c124281d43e95fe0e54d1681c0e541397bfe8f0ed8bb4450625a6cd6e",
   "mock_chooser_placement_start": "fda8d908361708ac029c71cac6f2c3405c85e6f696401399e0072f7e7f98dbcf",
@@ -85,7 +85,7 @@
     <string name="mock_chooser_plus">Mit Plus kannst du jederzeit Probeprüfungen machen und jede Woche eine in deinem Plan.</string>
     <string name="mock_chooser_one_subject">Ein Fach</string>
     <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
-    <string name="mock_chooser_objective_only">nur der objektive Teil</string>
+    <string name="mock_chooser_objective_only">nur der Teil mit vorgegebenen Antworten</string>
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
     <string name="mock_chooser_written">+ %1$s</string>
     <!-- A mock's size in a row: %1$d questions ("q" is short for questions) and about %2$s, a duration such as "5 hr". -->
@@ -142,7 +142,7 @@
         <item quantity="one">Das %d Fach mit der höchsten Gewichtung. In den ersten Tagen kommen die übrigen Fächer dran.</item>
         <item quantity="other">Die %d Fächer mit der höchsten Gewichtung. In den ersten Tagen kommen die übrigen Fächer dran.</item>
     </plurals>
-    <string name="mock_chooser_placement_short">Eine kurze Prüfung. In den ersten Tagen wird dein Ausgangspunkt genauer bestimmt.</string>
+    <string name="mock_chooser_placement_short">Ein kurzer Test. Die Einschätzung wird in den ersten Tagen genauer.</string>
     <string name="mock_chooser_placement_medium">Alle Fächer. Ein guter Ausgangspunkt.</string>
     <string name="mock_chooser_placement_long">Der genaueste Ausgangspunkt.</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
@@ -185,7 +185,7 @@
     <string name="mock_chooser_left_out_speaking">Der Teil Sprechen ist in Probeprüfungen noch nicht enthalten.</string>
     <!-- %1$s is the exam's name for a practical test, such as "Driving test". -->
     <string name="mock_chooser_left_out_practical_named">%1$s kann nicht Teil einer Probeprüfung sein: Es ist eine praktische Prüfung.</string>
-    <string name="mock_chooser_left_out_practical">Der praktische Teil der Prüfung kann nicht Teil einer Probeprüfung sein.</string>
+    <string name="mock_chooser_left_out_practical">Eine Probeprüfung kann den praktischen Prüfungsteil nicht abdecken.</string>
     <string name="mock_chooser_left_out_numeric">Fragen, die mit einer Zahl beantwortet werden, werden als Multiple-Choice-Fragen gestellt.</string>
     <string name="mock_chooser_left_out_short_answer">Fragen, die mit wenigen Worten beantwortet werden, werden als Multiple-Choice-Fragen gestellt.</string>
     <!-- %1$s is the exam's name for a written part, such as "Essay". -->

@@ -60,8 +60,8 @@
   "player_done": "cb7f69657399660da0c86aba0cc00f3949e2c7869b0cb25c7a59769611f297af",
   "player_dont_know_yet": "fc0cb08c3ec16ab07e06e3cdab25d74857a5f2f9557ddd32927a8f5f9624bc09",
   "player_drawing_picture": "90f7c7d66c1ff5e61595c164b38b603c9220684add66268b58abd858af15b897",
-  "player_enter_hint": "93bc31748a58ccd4fb46d9831d48d3840103fdbe3da94e3240245b257a9e3531",
-  "player_explain_first": "f66e6da0dfecd508c3263919d899a9049181d3e3abc7b40acbc2af49f0cc0fc0",
+  "player_enter_hint": "b24027399f9a335fa847429a35696af6a4f30ac77f29a70569c63126f1ca5f17",
+  "player_explain_first": "b3de64aa110d227ca39f32b3eb6da66050ef31edf8ffbb6cae60cb2ef329d8b1",
   "player_finish": "8d29d7d263c9b12062203bd70f7aae4928aa3774188f5281005f85e507faa516",
   "player_free_limit_day_description": "45aba3820874275fd63e7b2ca028c6d2f2da5bab18f3397c78470ec7396ed153",
   "player_free_limit_day_title": "8f71cd2a89946d1e3a48bef12349636925ceb2bc86156247fa21dd72145554f5",
@@ -99,7 +99,7 @@
   "player_nothing_left_title": "4992d01f9922ea8e45eed14ae132895e9e841907ecf5f4fb353d610af957175a",
   "player_notice_answer_not_saved": "93128fbd4011582e59c4990f0a68a84fdae2008283ecfae28b0fee73da8da10a",
   "player_notice_picture_ready": "1548da42120fba36ffcb895688ebb3eb7f8155fdf86382c6a71e3f706257c8fb",
-  "player_notice_self_correct": "a36d39a0a9c6afa68249404b549ca295b3075613f61711b13b0f9b60dc35610c",
+  "player_notice_self_correct": "62aad019a74a3fcc36f27201ed49626ae0f0294cc26a004a285a7a822a246e2a",
   "player_notice_writing_skipped": "f6d4c0006cfd3d3d8df1b39877dafcf3b7b1f8cd533dff8e806fea1d5ba576ed",
   "player_open_failed": "78694bfa4aee6d92baa4dc8a1227c89e93ac4f58a973aab19be868242795338f",
   "player_opening_lesson": "6cc7a732955d694aa8e46962fda968d50ab48a1a2825fa010fd7d9d307661967",
@@ -114,7 +114,7 @@
   "player_previous_screen": "29bcc4e28f777e3a808430e99667a381b78e7794545b73e89ad57444eee31f89",
   "player_progress": "31b2f8f18b5ef38a13f9d8be42b367dbee95c8418b4ac54c8b62b8c7f1e11638",
   "player_quick_check": "6448f3b04ed19c30d421bb7274af41d19397b76cabc0c958374f11d14bb6f5b6",
-  "player_ready_instead": "fc8ebf90304e7255e0ef73945e68f045d2ad984a5c66f45e309260a7091374f4",
+  "player_ready_instead": "c667842747ebcaa0f34da4dc512d2b2ce17a04711a9e34b8cf5bf96b020ce90c",
   "player_ready_while_waiting": "cd7a99a81de703200085069a1263ce6333b851b4cf5cb29ea752863783d4bdb2",
   "player_review_ideas": "72a4e6f2e8efa82575cb907913459bdfbb47e96606a2b41a8e4c68ee55f0ce48",
   "player_review_on": "cbdc35249e2eff772df04c9bf2c04010dee988837cc101d3d7d4c2ce3b9465af",
@@ -152,7 +152,7 @@
   "player_verdict_correct": "cba29979f802f9f987512f442f0e46af173e1094c0d00ffb95368c9a4db4b97e",
   "player_verdict_guess": "bd72a22a62a938aeac56f3356e6cc06a9f5807bd3cd22b18a14f38df697fa95b",
   "player_verdict_guess_right": "0f5f27766303d1c315cd81dd35f4cfcf8da3cadf033fe9d54f03f047cba940a1",
-  "player_verdict_incorrect": "bbd429059c14762388390bd08ff6d9b7f781f9d107fd04425585f232e6eaebb9",
+  "player_verdict_incorrect": "d4378beb61bf139e00d078cc3563e845c83f579a2f0ac3f1dbaac1b6a0de4ef5",
   "player_verdict_sample_answer": "9e22c28bbf0d30d7222331852baecf109b18cf12eb2e8625e074bd755181baf6",
   "player_verdict_typo": "aa344a50eaa3cdd7271dc7f8f83bc4b1ff0ff3b5ece8f287ced0a684b3313da2",
   "player_verdict_unchecked": "258d7411fcafce0e337ca5cc837c527f97497eaee64ecb7610868eab54032f1b",
@@ -190,7 +190,7 @@
     <string name="player_previous_screen">Vorherige Seite</string>
     <string name="player_quick_check">Kurzcheck · %1$s von %2$s</string>
     <!-- Shown on a wrong answer the learner can still fix right away. "Not quite" means "that isn't right", not "better luck next time". -->
-    <string name="player_notice_self_correct">Noch nicht ganz. Schau noch einmal hin und korrigier es selbst. Prüf dann deine Antwort.</string>
+    <string name="player_notice_self_correct">Noch nicht richtig. Schau noch einmal hin, korrigier deine Antwort selbst und prüf sie dann.</string>
     <string name="player_notice_answer_not_saved">Deine Antwort wurde hier nicht gespeichert. Beantworte die Frage noch einmal, um die Lektion abzuschließen.</string>
     <string name="player_notice_picture_ready">Das Bild zu dieser Frage hat noch gefehlt. Beantworte die Frage, um die Lektion abzuschließen.</string>
     <string name="player_notice_writing_skipped">Für heute ist Schluss mit Schreiben.</string>
@@ -200,7 +200,7 @@
     <string name="player_verdict_guess">Hier ist die Antwort</string>
     <string name="player_verdict_guess_right">Gut geraten!</string>
     <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
-    <string name="player_verdict_incorrect">Noch nicht ganz</string>
+    <string name="player_verdict_incorrect">Noch nicht richtig</string>
     <string name="player_verdict_sample_answer">Hier ist eine gute Antwort</string>
     <string name="player_verdict_typo">Richtig, achte auf die Rechtschreibung</string>
     <string name="player_verdict_unchecked">Diesmal nicht geprüft</string>
@@ -243,10 +243,10 @@
     <string name="player_cant_write_now">Ich kann gerade nicht schreiben</string>
     <string name="player_dont_know_yet">Ich weiß es noch nicht</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
-    <string name="player_explain_first">Erkläre zuerst</string>
+    <string name="player_explain_first">Erst Erklärung anzeigen</string>
     <string name="player_check_failed">Wir konnten deine Antwort diesmal nicht prüfen. Versuch es noch einmal.</string>
     <string name="player_still_checking">Wir prüfen noch. Das dauert länger als üblich.</string>
-    <string name="player_enter_hint">Drücke Enter zum Prüfen, Shift+Enter für eine neue Zeile.</string>
+    <string name="player_enter_hint">Drück Enter zum Prüfen und Shift+Enter für eine neue Zeile.</string>
     <string name="player_your_answer">Deine Antwort</string>
     <string name="player_write_your_answer">Schreib deine Antwort</string>
     <string name="player_not_written_title">Diese Lektion ist noch nicht erstellt</string>
@@ -262,7 +262,7 @@
     <string name="player_writing_note">Das dauert normalerweise ein bis zwei Minuten. Die Lektion öffnet sich hier, sobald sie fertig ist.</string>
     <string name="player_ready_while_waiting">Bereit für die Wartezeit</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
-    <string name="player_ready_instead">Bereit als Alternative</string>
+    <string name="player_ready_instead">Das kannst du stattdessen machen</string>
     <plurals name="player_review_ideas">
         <item quantity="one">%1$s Inhalt wiederholen</item>
         <item quantity="other">%1$s Inhalte wiederholen</item>

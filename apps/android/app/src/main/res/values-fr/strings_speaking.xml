@@ -11,10 +11,10 @@
   "speaking_last_none": "1be025264db899c91f743acc8b6debfd106b1aa41a2c015c94c22170cad9b365",
   "speaking_last_result": "e759aa65556a8264000425afeeed4e9781b17704968ec79767aeb2ce147c3bec",
   "speaking_mock_failed": "dfb6e9b99075ce0a8c466e689d1f4df211705239511a9322473e50d7b55256e4",
-  "speaking_mock_ielts": "0e065861abf6f94b4fbc352c6c4697f1e8f6db98f7b025a6d62e60521aa98746",
+  "speaking_mock_ielts": "fc40f56f762f6d468e7f775bc6a6556a3027f27a6be8fd195d3753df793ec8e8",
   "speaking_mock_opens": "3baa3e79c62e61aa339e1908d8260bb4630ccf26da09ed01f4270ef4e3a8dc45",
   "speaking_mock_start": "144431a211a393f2e0274cd2faedc31434f4bb22e4aa50b6387c72ef1acc3e58",
-  "speaking_mock_toefl": "98d395ac73d5950a14f3d60c4f9ac182988ebd2139eae46c15b45c458df177ba",
+  "speaking_mock_toefl": "2257efac20526eff40127fa89d2dfb7521057c7ecc58dca8d2f6d1112889f98b",
   "speaking_no_time_day": "46dd5e10bb9bd2d4a94628250e5fe635f02b33f760b10dd6e630d30e06263de2",
   "speaking_no_time_month": "3ab2317e0710c11a0755fad2d46c595a8cd23da5c0412c2bc64800a664da463c",
   "speaking_official": "4b9586ad347260ec71645ce4192e107962d80e58d4c61761fd04b1874532762e",
@@ -75,9 +75,9 @@
     <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s tâches en appel</string>
     <!-- A band is the exam's score for each criterion. -->
-    <string name="speaking_mock_ielts">Une courte épreuve orale avec un examinateur. Ensuite, une estimation du niveau pour chaque critère.</string>
+    <string name="speaking_mock_ielts">Un court test d’expression orale avec un examinateur. À la fin, un score estimé pour chaque critère.</string>
     <!-- A band is the exam's score for each criterion. -->
-    <string name="speaking_mock_toefl">Répète des phrases, puis passe un court entretien avec un examinateur. Ensuite, une estimation du niveau de 1 à 6 pour chaque critère.</string>
+    <string name="speaking_mock_toefl">Répète des phrases, puis passe un court entretien avec un examinateur. À la fin, un score estimé de 1 à 6 pour chaque critère.</string>
     <string name="speaking_mock_start">Commencer l’examen blanc</string>
     <string name="speaking_mock_opens">Ton examen blanc s’ouvre dès qu’il est prêt.</string>
     <string name="speaking_mock_failed">L’examen blanc n’a pas démarré. Réessaie dans un instant.</string>

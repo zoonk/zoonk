@@ -11,7 +11,7 @@
   "belt_green": "0f267974f5458635b0d0a5c7270da1ceb1c0d7348c1205f850cdff4123bfcaef",
   "belt_level": "d4247b3b9eb4257d7510ccfdd14d293261324db5f1309302f3a48b2a7637354a",
   "belt_orange": "818f56446c683afe225683776c9513405ff19762a2336474f0a4bc476b317c50",
-  "belt_purple": "dca8a15f25dc78ed83a63de833cf1e7901f774d9ca1e981149abf0516c6af881",
+  "belt_purple": "e7446787632ef7f0f017eead848662483dfcb038f1673b0e07986e7708c5cd39",
   "belt_red": "de1ef1d0df57e7c24eed5022d1e96445e23d03ddeac023d4cc05d2268460bf91",
   "belt_white": "91a2b81c2515e0f80c1d8ef7e305294310287d72cee8857eadee669e4a9dbd83",
   "belt_yellow": "5dd844f038b50cbe7d661a387a46339c9dc91c5f5f6bb4f4ed6181a1bd0c0c41",
@@ -52,7 +52,7 @@
   "not_found_description": "68c0ae963e10fe3ebb8016e241287adeef1dffd36929979b7c191d67323fa4b4",
   "not_found_go_home": "15848291f200ce64248588b5e9bbb365050e83c8efc34ba5163b8a0af9879db0",
   "not_found_title": "7c76fad69ccfab206d1daeb348478509cf70c273825f8cbf08cf64ae85dcbe7c",
-  "other_time": "ac06cc4795a89227df16484497ad99fa4764e97d6767dbcf9b3fb24705708332",
+  "other_time": "a20a3e8c150b804a77d235ad70d994e3fa4aa44e23b92d44593010a9cae6dbae",
   "suggestion_save_failed": "cf84bd9a1f3bf0c8c3071f7530f4c3ca9586046a179c7579ecabd845dad930c8",
   "suggestion_view": "50eb71cd92f6c182f3d8422d630b5e5aa95bd81c7df3484085786ed0dac5e0ff",
   "task_leave": "e1bb1d841def987889c30c7e783fa24211f01266bb638d633c974d7082d6f4cf",
@@ -89,7 +89,7 @@
     <string name="belt_orange">Oranger Gürtel</string>
     <string name="belt_green">Grüner Gürtel</string>
     <string name="belt_blue">Blauer Gürtel</string>
-    <string name="belt_purple">Violetter Gürtel</string>
+    <string name="belt_purple">Lila Gürtel</string>
     <string name="belt_brown">Brauner Gürtel</string>
     <string name="belt_red">Roter Gürtel</string>
     <string name="belt_gray">Grauer Gürtel</string>
@@ -104,7 +104,7 @@
     <string name="suggestion_view">Ansehen</string>
     <string name="suggestion_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <!-- Under the daily time chips; opens a menu of other amounts of daily study time, such as "45 min". Not a time of day. -->
-    <string name="other_time">Andere Zeit…</string>
+    <string name="other_time">Andere Lernzeit…</string>
     <string name="disclosure_expanded">Aufgeklappt</string>
     <string name="disclosure_collapsed">Zugeklappt</string>
     <string name="lessons_title">Lektionen</string>

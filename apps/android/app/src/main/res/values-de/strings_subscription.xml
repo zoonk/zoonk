@@ -3,7 +3,7 @@
 {
   "subscription_active": "f750d62e45387f33c4e91d5bbb3b27cc8c24923165ff485e0e7aec45040f862e",
   "subscription_answer_cancel": "3d3817d32579f48968f8c61f9ebbb843a1c75dfb7bdb326b81cda6b90d37e915",
-  "subscription_answer_fair_use": "e3cb1230c38e1b77dcbf229ca8cf49cb547ccd9027ea7938c648e2181c114fca",
+  "subscription_answer_fair_use": "9a906c5e45ab2edbaef7fae5e46a1888219509d0eb961445aa1c8e599a00d582",
   "subscription_answer_free_buddy": "b6ef655f5f2b943c30272fed0acb78f66433a98f07732594e39136281010b7e3",
   "subscription_answer_free_buddy_uploads": "3fa1642dadd821a12fc2a51a1f4a15b5ef7a2364c3ff295d10e9ed3576eaba19",
   "subscription_answer_free_calls": "a8cd29ecb4f1c9eef34a99c76fd1a95faf01b85dd4255eaf13566d5c01b203c7",
@@ -77,7 +77,7 @@
   "subscription_show_answer": "570c4c77482c0ab7d68d379b01c3a7c97d89eaaca67042aebd3345f32c887b7d",
   "subscription_start_free": "9c8eddb8d20009a3f6fcf409cf45ac49149400c90fea5c2c65e0d234242091bb",
   "subscription_subscribe": "7cc8965d6c6ae991879d725ecee58ef25a3aae1e658f6d92b23c7dc6c668cac7",
-  "subscription_unavailable": "a04e3612ae6438611ec3fc669e335f451078cd52a59348a9021a023fa8a237b0",
+  "subscription_unavailable": "529977c454a684698a40c90c2438a19094f07c41788d53f18f12235a2e3a7a5b",
   "subscription_yearly": "523bbf7f6ad76293fdf793e597819f81d75df6fb3496537b8100a74a2f7fa37d",
   "subscription_yearly_per_month": "2e484194db11b31ad587bf0cee813f6e01d0c1d2693c5d82b90a81828c726be6",
   "subscription_your_plan": "82a038f5741e98ab2c4980646a4d47271fb7ff7b6fbf0e4f12b2f48b97c8a8d0"
@@ -123,7 +123,7 @@
     <string name="subscription_billed_monthly">Monatliche Abrechnung.</string>
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">Das sind %1$s pro Monat.</string>
-    <string name="subscription_unavailable">Plus kann auf diesem Gerät gerade nicht gekauft werden. Stelle sicher, dass Google Play installiert ist und du angemeldet bist.</string>
+    <string name="subscription_unavailable">Du kannst Plus auf diesem Gerät gerade nicht kaufen. Stell sicher, dass Google Play installiert ist und du dort angemeldet bist.</string>
     <string name="subscription_get_plus">Plus holen</string>
     <string name="subscription_subscribe">Abonnieren</string>
     <string name="subscription_cancel_anytime">Jederzeit kündbar.</string>
@@ -210,7 +210,7 @@
     <string name="subscription_question_unlimited">Ist Plus wirklich unbegrenzt?</string>
     <string name="subscription_answer_unlimited">Fast. Für Lektionen, Ziele und deinen Kumpel gibt es nur Limits, um Bots und automatisierte Tools zu stoppen, nicht aber Lernende. Für Gespräche gibt es tägliche und monatliche Limits, die höher sind als im Free-Tarif.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
-    <string name="subscription_answer_fair_use">Lies unsere Richtlinie zur fairen Nutzung</string>
+    <string name="subscription_answer_fair_use">Lies unsere Regeln zur fairen Nutzung</string>
     <string name="subscription_question_cancel">Was passiert, wenn ich kündige?</string>
     <string name="subscription_answer_cancel">Du behältst Plus bis zum Ende des Zeitraums, für den du bereits bezahlt hast. Danach wechselst du zurück zum Free-Tarif und behältst deine Ziele und deinen Fortschritt.</string>
     <string name="subscription_question_refund">Kann ich eine Rückerstattung bekommen?</string>

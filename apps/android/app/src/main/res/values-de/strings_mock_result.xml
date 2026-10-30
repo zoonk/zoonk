@@ -93,7 +93,7 @@
   "mock_result_timing": "e52d79328bb861c48adca5de081bbc3acc367817ad11edc98f68b3fe8167919a",
   "mock_result_timing_area": "9aa9f729f77007f381e829f849ee3e6fd7e1efabdf10910a56526e47d36f2698",
   "mock_result_to_pass_guide": "b56a99082eac613e6b662039703b7d86912fb2e9614132aeb04bc1b0cb9a7cb4",
-  "mock_result_to_pass_notice": "67b8351becd7cfb865160240021adeefeb1ad4708b98d426be41f154787d2da3",
+  "mock_result_to_pass_notice": "b02e0be36ad0f767374c90d1e61bacb428fa751da99bbc6ba543fd5aa0285dc9",
   "mock_result_too_short": "0eb9a350be3412b492b2abe28112868784f6de97573d7d04cfb359d9d740eaab",
   "mock_result_typed_estimate": "0c874f40d0a75f5a2b61c2bf3d41bab24b71539e8ec7d850c033117cfe04382f",
   "mock_result_typed_no_estimate": "1ed2d48fd3bda68d2e3be194b11899042237dded85591ac636f80b1e58f7e122",
@@ -127,7 +127,7 @@
     <string name="mock_result_blank">Unbeantwortet</string>
     <string name="mock_result_blank_exam_day">Unbeantwortete Antworten zählen wie am Prüfungstag als falsch.</string>
     <string name="mock_result_blank_this_score">Unbeantwortete Antworten zählen in diesem Score als falsch.</string>
-    <string name="mock_result_to_pass_notice">Zum Bestehen steht in der Bekanntmachung</string>
+    <string name="mock_result_to_pass_notice">Laut Ausschreibung brauchst du zum Bestehen</string>
     <string name="mock_result_to_pass_guide">Zum Bestehen steht im offiziellen Leitfaden</string>
     <!-- %1$s is a language's name, such as "Portuguese". -->
     <string name="mock_result_pass_marks_language">Auf %1$s, wie es in den Prüfungsunterlagen steht.</string>

@@ -3,8 +3,8 @@
 {
   "subscription_active": "e979e3d0df9c7eee1126367c8057e7415b9418f6bd95f6a6e6a2adf913ee2be3",
   "subscription_answer_cancel": "3ed790c340c9f39651ff50d61caf6f6fd814f72987d57ed4f61ee49f16a9b805",
-  "subscription_answer_fair_use": "94b4b4338e0fae7bb9b9d7b94aa2bf70b0244fcf00b922414c23a7439b45fca0",
-  "subscription_answer_free_buddy": "9066a90ed78bc9394c916412a21141b17b68c365e140ae6baf4624cb14dd4aaf",
+  "subscription_answer_fair_use": "0444be73a7a2b220a3a1960e7a609b120b702972b1a6223181e0b39fdcbc95fc",
+  "subscription_answer_free_buddy": "a45cc9db05a2fb1aff28d95187d08fdfd4f69a42fad76a0c2fe073860ee46d1b",
   "subscription_answer_free_buddy_uploads": "a7c5b33addff58a29c3f10a399392b8ff9bc078a731eb134b3b5e71f96579280",
   "subscription_answer_free_calls": "d00a4d628b8df45f3f17089808604cb6e3cdc456ebbd88316d25d97fe766abad",
   "subscription_answer_free_exam": "ff5e48f7d72e132cea9a66a678a8fff15c8b8249ccda3c2ce0eeaa947c7bcaec",
@@ -18,10 +18,10 @@
   "subscription_answer_hidden": "5ba0d637c529e4990a883fc4a7138db65d266df980df5f95b837f1fdb7bb10a7",
   "subscription_answer_refund": "d64a82f6ccd39eec67cbb22e7e2f0d93167289e2a556e0c9f49326a6abaa995e",
   "subscription_answer_shown": "52cfc5d30fce5f149a4df63bd6129acaff012f28f9374d407e409c6c5246d7b0",
-  "subscription_answer_unlimited": "1f06d141022d0940140106e17bdd7debf01e0186d01914bfcb4da28e31e62540",
+  "subscription_answer_unlimited": "89b5edbdf58c498c4d1afede3e30b3254aea6b814cf22c5de7f75a28d4f0afc3",
   "subscription_available_with_plus": "8812b4079aa6602eb03d804bbc74e68b4f855e9b199aeff4f0c59126294c9b4e",
-  "subscription_benefit_buddy": "0cedec91941e17553a052153c798879b67af423ab4344da254c447819827d47b",
-  "subscription_benefit_calls": "0927da5682489885e41a3813e42ec8ad25bdbab2799ca3cfabd584460075e5a7",
+  "subscription_benefit_buddy": "cf3092503dff8d58e928eb01dbaf06fd7e7f9b5f92f5ca708978d15e01bef7af",
+  "subscription_benefit_calls": "5b197a665bd6765a7dc9bce41caf45862bef179b212532148905385d5dd81c42",
   "subscription_benefit_exam": "d4af729aa5159e657d9454f365dbd1380e6b689c3bf45a14230eda8d055fc9fe",
   "subscription_benefit_mocks": "803dd20251107b394d148cd22c408b82464487fe434dbd376494096d58b0c6db",
   "subscription_benefits_summary": "ca7d3ae33daa032561e9f1114b28f77cfbef2fabb443cdef6b4d4a5420f18c42",
@@ -32,7 +32,7 @@
   "subscription_ending": "91703a3d91683a499509418d434e8e91d6e9c4baf6f78bc20d4b6b4d19de8380",
   "subscription_ends_on": "98991f89f34d2368eee60736a58aae31a8d3679d98ffd1b91dcdfecb608fb443",
   "subscription_free": "82fd254ce7cc6c4d3e2e646705ff8728157c6c92c8ac3312be2bfe7e569dbdb3",
-  "subscription_free_buddy": "711be82ada03a109a25c080cf0f464663b081366caa6e13aae016092bd236300",
+  "subscription_free_buddy": "369919b6b93468369202b95fe8d20d8cd16e62d8c242cf9452781021de0ecdcb",
   "subscription_free_calls": "549eb4bdb1a19c53c460ce177554e07098edabef9bcfb24f5cf4a8d2ec59dac3",
   "subscription_free_exam": "4ec5a1cf95f4ab7cabd83fb7c7938fedb230bd78ecc03883c5002caf661685d9",
   "subscription_free_exam_day": "f96f008a60b0534c2a09a60213dc293893357c5f1f7a93c2fbc5988ad5f90a4c",
@@ -51,7 +51,7 @@
   "subscription_managed_google": "4e4596b7615fedf4065d52d777fe869ac9e2ed7a9fd8974807dd14ad02b6ce41",
   "subscription_managed_web": "6a2c649dafb6a3c83c4a3f58d7436e482068f26dda52489ad76ae8cacdc245b5",
   "subscription_managed_zoonk": "e7b0ca34632b86bbf27aebb255d5a64b10ba157ac17b2a504170902dc5fa88d5",
-  "subscription_messages_used": "1efc788025f68e0564ea2e6ffa993d7623d1974543d1f25301768b1fa660407c",
+  "subscription_messages_used": "01df1b3b067c78da263a60f909afbff6820549a5dfa0d81d47b8e4384b907771",
   "subscription_monthly": "4c29a0cd78509c02eaec2042dc11e275cba8367948faba8800ae32ce686091d6",
   "subscription_no_card_needed": "9554aad480b5c644f948f3d466fb692742bf8b210b8adb91d1f3fb073c7067e4",
   "subscription_offer_title": "b3df7d6a5622dbb14e8d2609d02fd802bd899f8036a33a6f9e00bd8da6c40994",
@@ -109,9 +109,9 @@
     <string name="subscription_free">Gratis</string>
     <!-- %1$d is how many buddy messages were used today and %2$d the day's limit, which picks the plural. -->
     <plurals name="subscription_messages_used">
-        <item quantity="one">%1$d/%2$d mensaje al Compañero usado hoy</item>
-        <item quantity="many">%1$d/%2$d mensajes al Compañero usados hoy</item>
-        <item quantity="other">%1$d/%2$d mensajes al Compañero usados hoy</item>
+        <item quantity="one">%1$d/%2$d mensaje usado hoy con tu compañero</item>
+        <item quantity="many">%1$d/%2$d mensajes usados hoy con tu compañero</item>
+        <item quantity="other">%1$d/%2$d mensajes usados hoy con tu compañero</item>
     </plurals>
     <string name="subscription_monthly">Mensual</string>
     <string name="subscription_yearly">Anual</string>
@@ -136,8 +136,8 @@
     <string name="subscription_benefits_summary">Todos los objetivos · todas las lecciones</string>
     <string name="subscription_benefit_exam">Tu plan completo de examen, hasta el día del examen</string>
     <string name="subscription_benefit_mocks">Simulacros con el mismo tiempo que el examen real</string>
-    <string name="subscription_benefit_buddy">Un Compañero de estudio con IA para cuando te atasques</string>
-    <string name="subscription_benefit_calls">Límites más altos para las llamadas de práctica oral</string>
+    <string name="subscription_benefit_buddy">Un compañero de estudio con IA siempre que te atasques</string>
+    <string name="subscription_benefit_calls">Límites más altos para las llamadas de conversación</string>
     <string name="subscription_start_free">Empieza gratis</string>
     <string name="subscription_no_card_needed">No necesitas tarjeta.</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
@@ -163,9 +163,9 @@
         <item quantity="other">Para un examen: el diagnóstico, tu plan y sus primeros %d días</item>
     </plurals>
     <plurals name="subscription_free_buddy">
-        <item quantity="one">Un Compañero de estudio con IA: %d mensaje al día</item>
-        <item quantity="many">Un Compañero de estudio con IA: %d mensajes al día</item>
-        <item quantity="other">Un Compañero de estudio con IA: %d mensajes al día</item>
+        <item quantity="one">Un compañero de estudio con IA: %d mensaje al día</item>
+        <item quantity="many">Un compañero de estudio con IA: %d mensajes al día</item>
+        <item quantity="other">Un compañero de estudio con IA: %d mensajes al día</item>
     </plurals>
     <!-- Calls are spoken practice conversations with an AI partner. -->
     <string name="subscription_free_calls">Llamadas de práctica oral, con límites más bajos que Plus</string>
@@ -208,9 +208,9 @@
     <!-- %1$s is the buddy messages ("10 messages to your buddy"), %2$s the uploads ("3 uploads"). -->
     <string name="subscription_answer_free_buddy_uploads">%1$s y %2$s al día</string>
     <plurals name="subscription_answer_free_buddy">
-        <item quantity="one">%d mensaje para tu Compañero</item>
-        <item quantity="many">%d mensajes para tu Compañero</item>
-        <item quantity="other">%d mensajes para tu Compañero</item>
+        <item quantity="one">%d mensaje a tu compañero</item>
+        <item quantity="many">%d mensajes a tu compañero</item>
+        <item quantity="other">%d mensajes a tu compañero</item>
     </plurals>
     <plurals name="subscription_answer_free_uploads">
         <item quantity="one">%d archivo subido</item>
@@ -219,9 +219,9 @@
     </plurals>
     <string name="subscription_answer_free_calls">Llamadas de práctica, con límites más bajos que en Plus (las tareas de expresión oral para exámenes están incluidas en Plus)</string>
     <string name="subscription_question_unlimited">¿Es Plus realmente ilimitado?</string>
-    <string name="subscription_answer_unlimited">Casi. Las lecciones, los objetivos y tu Compañero solo tienen límites para detener bots y herramientas automatizadas, no a quienes están aprendiendo. Las llamadas de expresión oral tienen límites diarios y mensuales, más altos que en el plan gratuito.</string>
+    <string name="subscription_answer_unlimited">Casi. Las lecciones, los objetivos y tu compañero tienen límites solo para frenar a los bots y las herramientas automatizadas, no a quienes estudian. Las llamadas de conversación tienen límites diarios y mensuales más altos que los del plan gratuito.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
-    <string name="subscription_answer_fair_use">Lee nuestra política de uso responsable</string>
+    <string name="subscription_answer_fair_use">Consulta nuestra política de uso razonable</string>
     <string name="subscription_question_cancel">¿Qué pasa si cancelo?</string>
     <string name="subscription_answer_cancel">Conservas Plus hasta el final del periodo que ya has pagado. Después vuelves al plan gratuito y conservas tus objetivos y tu progreso.</string>
     <string name="subscription_question_refund">¿Puedo solicitar un reembolso?</string>

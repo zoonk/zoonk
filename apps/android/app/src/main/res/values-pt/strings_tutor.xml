@@ -57,20 +57,20 @@
   "tutor_offer_choose": "e0343028906b679c75a17d9a7f6b3ee4e5971bd401cc6744da1da7471d58ca0f",
   "tutor_offer_choose_focus": "3b4fc2067458cf98b2ec30972e082023a274712b21dd252a18386d698ab72d36",
   "tutor_offer_choose_focus_description": "081ede2cddc866c894fb6dbefd324258e00eecdb929a92a80641076e6ef8b022",
-  "tutor_offer_essay_biweekly": "3bfccfe5c8942115fe241050786108142802eea4e7db185d03629caa32f3cfe6",
-  "tutor_offer_essay_final_weeks": "eebec867c85b6acfc7f7212cac7c01e0b7ca6644fb28999ffd193ff606f23821",
+  "tutor_offer_essay_biweekly": "b8d056a90d00114cc9d9563f64120128147d12e0f0c5a1c8602f23323741735e",
+  "tutor_offer_essay_final_weeks": "c73b0e614bbc677c91cddf1b19c1a40cbc8c342ff3770d13f4916e9caecbe67d",
   "tutor_offer_essay_plus": "68f5b7fcdf307f919d48a2209929c3d6756f9529fed35b81ff970911971c9c82",
-  "tutor_offer_essay_weekly": "b5f19b67c4e2f3e48370611337850e83a667f83549d96cd2a402e9c1b6c7e226",
+  "tutor_offer_essay_weekly": "b0ac1418301cb66f6fdf41f4186ca5adef693ac40d6853d7ac5590d0248a78f1",
   "tutor_offer_goal": "86d9b5fc1e1b42347f13bee15f79edc40f17e3e5bdcc26504adf6ef7bd71fe47",
   "tutor_offer_logbook": "5d8334e623e93f7c46f612e3db40fbd0f2123def71dd1b03f7144b651aa46049",
-  "tutor_offer_logbook_description": "c42e8d48c1c648f1b9328a86b5f286dd0c5d7f9fe93b092fd42c3842da5e9dc9",
+  "tutor_offer_logbook_description": "9fdcea8287e586b460d7e915bdb6896001889ccfef6d68252e8107f80c896256",
   "tutor_offer_manage": "2a8d52085f59490101751a021f437eb7cada2637961986799e0ac8adb52c9804",
   "tutor_offer_memory": "15841997435827ffb42f7cbf26716f573046d8290a7d72dbe1776b27d2c3b312",
   "tutor_offer_memory_description": "45f00b91c03d3b5150929957a5b1d3c82bece1ee51a6306d129a027e2af1ea42",
   "tutor_offer_mistakes": "0307d21ef863ec6430c08dec70b0986b6334bdf1d9889741a8b3de6475864c2d",
   "tutor_offer_mistakes_open": "13c1a6a8e268d94a78fbecdfe2b6752472b31f63936b5b2dfe50f67bb2203fda",
   "tutor_offer_mock": "289207f11996d88de2f6c36315c47f899501c3b284f2e16fdb5908959f6a5a49",
-  "tutor_offer_mock_by_subject": "3da35a67691a6a6a191d926c548a120976ba42aa6da1cd5012f5719eae254f8e",
+  "tutor_offer_mock_by_subject": "7d46b4a773e9e4acdccd35a14b5358fd8750d2f7681e0167999a5319ed54a352",
   "tutor_offer_mock_description": "76d73fa3a00af807f112c19235058fce4e69c9a527f616ca450cacf68c63fb72",
   "tutor_offer_mock_plus": "de293dfbfb48eb10f4c2c93499fc965ae5f1b1f6509014e32a43e046afefdd58",
   "tutor_offer_one_goal": "7f79337f973eda720767d53805953ba822fa63974c02453e9413834c08cfe2c0",
@@ -80,7 +80,7 @@
   "tutor_offer_plus_subscribed": "0c94095b89fb99d56a6e16e9021f44f2adc3aef00818c73f98afcff1f2e5a95d",
   "tutor_offer_practice": "7b3c5abd7586fda2f77afbe83c6999e11003de3adcc6f19af4d90d60d3834f18",
   "tutor_offer_pronunciation": "4f55dd7947f73723614c308465764d7c6b8bb1c6f1eae42c229a9cada2e771da",
-  "tutor_offer_see_plus": "225f4aeb986244efdaff40b0451549d0626b436fd4bc43e075a54af2adf3301e",
+  "tutor_offer_see_plus": "5e9940da6ebebf24506d9f4492c316bd66da1e5ff2fff923928f1db44eba901c",
   "tutor_offer_start": "59e17fc562af83e91ea2b41931c367006c872a76ce81a9851c2e12b50071ee84",
   "tutor_offer_start_goal": "5d457eba57a2d947f76c024bc7cb114e02f4e37de1b5c269b3b0a157114223fb",
   "tutor_offer_stats": "d3663ae64ec560a707f0a08e01608e209840ff50da4458e0becf3befe543d12e",
@@ -223,14 +223,14 @@
     <string name="tutor_offer_mock">Fazer um simulado</string>
     <string name="tutor_offer_mock_description">Quando você quiser: um dia inteiro de prova ou meio dia</string>
     <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
-    <string name="tutor_offer_mock_by_subject">Quando você quiser: um dia inteiro de prova, meio dia ou uma matéria</string>
+    <string name="tutor_offer_mock_by_subject">Quando quiser: um dia inteiro de prova, meio dia ou uma matéria</string>
     <string name="tutor_offer_mock_plus">O Plus inclui simulados: quando você quiser e toda semana no seu plano.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
-    <string name="tutor_offer_essay_weekly">Pratique toda semana no seu plano, com correção de cada texto.</string>
+    <string name="tutor_offer_essay_weekly">Prática toda semana no seu plano, com correção de cada rascunho.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
-    <string name="tutor_offer_essay_biweekly">Pratique a cada duas semanas no seu plano, com correção de cada texto.</string>
+    <string name="tutor_offer_essay_biweekly">Prática a cada duas semanas no seu plano, com correção de cada rascunho.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
-    <string name="tutor_offer_essay_final_weeks">Pratique nas últimas semanas antes da prova, com correção de cada texto.</string>
+    <string name="tutor_offer_essay_final_weeks">Prática nas últimas semanas antes da prova, com correção de cada rascunho.</string>
     <string name="tutor_offer_essay_plus">A prática de redação com correção está incluída no Plus.</string>
     <string name="tutor_offer_mistakes">Caderno de erros</string>
     <plurals name="tutor_offer_mistakes_open">
@@ -245,7 +245,7 @@
     </plurals>
     <string name="tutor_offer_logbook">Diário de bordo</string>
     <!-- Describes the Logbook: what the learner did this week compared with the week before, and what comes next. -->
-    <string name="tutor_offer_logbook_description">O que você fez nesta semana e na anterior, e o que vem depois.</string>
+    <string name="tutor_offer_logbook_description">O que você fez nesta semana em comparação com a anterior e o que vem a seguir.</string>
     <string name="tutor_offer_memory">Memória</string>
     <string name="tutor_offer_memory_description">Veja, corrija ou apague o que seu parceiro lembra sobre você.</string>
     <string name="tutor_offer_stats">Estatísticas</string>
@@ -254,7 +254,7 @@
     <string name="tutor_offer_plus_description">O que o Plus inclui e quanto custa.</string>
     <string name="tutor_offer_plus_subscribed">Seu plano e a cobrança.</string>
     <!-- Button that opens the Zoonk Plus page, with what Plus includes and its price. Not "see more". -->
-    <string name="tutor_offer_see_plus">Ver Plus</string>
+    <string name="tutor_offer_see_plus">Conhecer o Plus</string>
     <string name="tutor_offer_manage">Gerenciar</string>
     <!-- A card's title naming the change the buddy suggests: a noun phrase, not an action. -->
     <string name="tutor_plan_change_title">Alteração no seu plano</string>

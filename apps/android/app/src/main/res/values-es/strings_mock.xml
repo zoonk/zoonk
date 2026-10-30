@@ -76,7 +76,7 @@
   "mock_short": "ccc4effea3145518a6e0d68e8046d048b7e78f01356f6e2d33789103d05f3aa3",
   "mock_speaking": "35ca252f160e36945b501d0afa3d986521573e986db6f66007e51e3eab8de570",
   "mock_speaking_all_done": "70d7efdb1178c7b94f214e0d2ecedf6d5dfa8ea10e15d30d103fe677a5b185be",
-  "mock_speaking_done": "8712829870b14f28b839853d552f23686505edc7099623d022e853a694888736",
+  "mock_speaking_done": "03b884d2954f2b27461f9aa413df49f00266fe3ff9cb14b7fa38e819ab90dfc9",
   "mock_speaking_hand_in_done": "c213c916c8e332dee88da43e02738201d81f58c0b8c206d3b5fe9b2f05000176",
   "mock_speaking_hand_in_left": "5fd3743fb7bb533e3ecf6676f1e771eea4ced0e70ffb0240e0684dc59a941e61",
   "mock_speaking_intro": "2c52f09a4512c118aede1694c5dd5ac3e77c3db28021bab87c51025fe5a71871",
@@ -275,7 +275,7 @@
     <string name="mock_speaking_all_done">Has completado todas las tareas. Entrega esta sección para seguir.</string>
     <!-- %2$s is how long the task lasts, such as "4–5 min". -->
     <string name="mock_speaking_task">Tarea %1$d · %2$s</string>
-    <string name="mock_speaking_done">Completada</string>
+    <string name="mock_speaking_done">Listo</string>
     <string name="mock_speaking_start_task">Empezar</string>
     <string name="mock_speaking_start_task_number">Empezar tarea %1$d</string>
     <plurals name="mock_speaking_hand_in_left">

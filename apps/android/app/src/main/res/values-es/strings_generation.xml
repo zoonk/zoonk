@@ -46,7 +46,7 @@
   "generation_understanding": "39e7b14a4f0686b49444a80b273a9f8587bd1bc6ae64dce920dab9aeeb2619ea",
   "generation_understanding_dates": "d0dd8f0e0dc7f5fdcc49af8408904bc2c4662382c17dabe7cfeb6df337d71fc5",
   "generation_understanding_dates_line_1": "a131d2be2004f78fe5c61b81e36f57a2332437e338c00357c59dd14e3fcabb2b",
-  "generation_understanding_dates_line_2": "7510d5a27dadef9c2a4eab99cd39b8d6ec0bf5105c48f67197921f94c3914f30",
+  "generation_understanding_dates_line_2": "efbec6a48c1c00bd8cbf830d03896528bc3210596d21bf07c9032473afc10a14",
   "generation_understanding_read": "953d27f6766cae8895f02678934bbe51aeb3bdabde519de827db04bea3e22569",
   "generation_understanding_read_line_1": "4fcc437d008ae5a7701cfe6d52b1028cc6052ec3803a95a329e9310102ce93bc",
   "generation_understanding_read_line_2": "239fc76e60f78a651998061c2f365f3a005ca16f32b16cd81fd31029f9593e48",
@@ -95,7 +95,7 @@
     <string name="generation_understanding_dates">Comprobando las fechas del examen</string>
     <string name="generation_understanding_dates_line_1">Consultando el calendario de exámenes…</string>
     <!-- Shown while reading an exam's calendar. "Your year" is the year the learner takes the exam. -->
-    <string name="generation_understanding_dates_line_2">Buscando las fechas de tu año…</string>
+    <string name="generation_understanding_dates_line_2">Buscando las fechas del año en que te examinas…</string>
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">Preparando tu plan</string>
     <string name="generation_curriculum_plan">Ajustando el plan a tus días</string>

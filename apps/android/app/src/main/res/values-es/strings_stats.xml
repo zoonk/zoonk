@@ -33,7 +33,7 @@
   "stats_energy": "07d22c95c50c8fa146c3ea70c3154dfd2cf740ff0763d54336cd934134fec9ec",
   "stats_energy_average": "617064635ecd06c8a6db6241a3a33958c856dbd70f0f1ddb42ce0f63b1f2f56f",
   "stats_energy_line": "5b4212672a398371cd1aa99932502b795e735a7ea153f8d6dd33341655c16499",
-  "stats_evening": "5d5f925e84a223148ae22aab0bf14954976e82ec7b7874891f29ef72268f4e28",
+  "stats_evening": "5fbc1e9fc97d10925c851611727a4d2a63fe270c6f1a1601890b459de3c2ed5a",
   "stats_every_belt": "57639fc781579f68f436cf732e51b33e87de507cf2114ddc47f0ff501b4b6762",
   "stats_finished": "f6af133af9a00d1a1a6dcbe877595da67a08765a924452b7b94b1813a8dfacb5",
   "stats_full_energy": "5164c77c3823282a93131146d43b05c0990e7f402943d81f1c4841d22ed24fa6",
@@ -55,7 +55,7 @@
   "stats_never_goes_down": "5356034a5dccff966e02a19696ba83f218899e962436cc45c839b6342aaf879e",
   "stats_next_belt": "8b1906b12e47b079cb14db205c1d267b69f5362c69aac5fe0b8cf6aa27b1281f",
   "stats_next_level": "87bc0e09519b0a0cd11606bede9ca7ec794479856e6e5b20299f80c86aaa5cb3",
-  "stats_night": "96210019d4e6ab9fe2b1d8ddd57b2612b4cf272a07a295c9e5b2ab6a953ed94a",
+  "stats_night": "65629ca6bc00acda94ef12ea600740c4f29f8f658a8ee428092899df5083ca54",
   "stats_no_answers": "65dc192d7fa09e784cbaff201d7ec6650aa62da3d3902434feab9b1584d0324c",
   "stats_not_enough": "e551006284146dc8b1515a17f037307ff727685a05fc7bce649a924ba2e5cb6e",
   "stats_not_yet": "a1cbdba330cc24f8cbacad99abcbfd7c18ccfe0d34fe96466395b1220f24121e",
@@ -93,7 +93,7 @@
   "stats_to_go": "b99d530733982ab200304271f6aa62bb58b262bf82f5fc7e64723ac13fb25e31",
   "stats_to_level": "e0c6970acb102f723bfe59dacd07de1e0ad63bc20d52f572006cf422f5da1557",
   "stats_today": "633f6af1ca5f4704d6b132279eebedae9066bec7c7b06b8a765cac22e79d748f",
-  "stats_week_spread": "3ef0fe9b54462e16adbe3b2727f1444e8ce23ad2a38b07b771aa17e5201e6f68",
+  "stats_week_spread": "0c5081ef930107cf6fbbe5fcdc767d02a1864d85f8f1cae9be999d658066b0d2",
   "stats_within_points": "ea3394557cfe27816328d9b42d39da4cca903389ef39d14001d28ceaa279fe32"
 }
 -->
@@ -126,7 +126,7 @@
     <string name="stats_best_day">Mejor día</string>
     <string name="stats_best_time">Mejor hora</string>
     <!-- Noun row label for how much the scores varied over the week; its value is the range from the lowest to the highest weekday score, such as "62%–80%". -->
-    <string name="stats_week_spread">Distribución durante la semana</string>
+    <string name="stats_week_spread">Variación durante la semana</string>
     <string name="stats_range">%1$s–%2$s</string>
     <string name="stats_brain_power">Poder Mental</string>
     <string name="stats_brain_power_amount">%1$s de Poder Mental</string>
@@ -230,11 +230,11 @@
     <string name="stats_any_day">Cualquier día</string>
     <string name="stats_any_time">Cualquier momento</string>
     <!-- Answers given from midnight to 6 AM. -->
-    <string name="stats_night">Noche</string>
+    <string name="stats_night">Madrugada</string>
     <string name="stats_morning">Mañana</string>
     <string name="stats_afternoon">Tarde</string>
     <!-- Answers given from 6 PM to midnight. -->
-    <string name="stats_evening">Atardecer</string>
+    <string name="stats_evening">Noche</string>
     <plurals name="stats_days_even">
         <item quantity="one">La diferencia entre tus días es de hasta %1$d punto, así que cualquier día te viene bien.</item>
         <item quantity="many">La diferencia entre tus días es de hasta %1$d puntos, así que cualquier día te viene bien.</item>

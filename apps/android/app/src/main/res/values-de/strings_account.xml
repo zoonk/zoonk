@@ -4,7 +4,7 @@
   "account_agreement": "d8a1de839f33408cd1319f343bc9372ebb9e71a62129edb52cabd629a6a47ee1",
   "account_change": "5df5f8f7f2ec7986b527840632436348fcf2458fdaaea7710ac35fd5b82f311a",
   "account_change_email": "e65925f96111c15ecb3ecd4c482fea9ba5df99bf127c84b94b81e7f8d78fa6cd",
-  "account_change_username": "5175aa8fc7732efdb5825e4961a6cc90be40a54c4b36b84a8c1dfb742f0e11a2",
+  "account_change_username": "940cc2e430a8c3ef4d048f11dde77f85c75c4ae3ac11fd8aea45ae81233bec16",
   "account_check_email_description": "404dcb3f16694ace8074dbd6941c8e1aeafa839744b0e9f7522d9cef6f208af6",
   "account_check_email_title": "6ab144d6b4bd8c18c5f11792304fa6818ac3fe6f09865f9f6ed20647c5abe01e",
   "account_code_label": "aa2f573a68a9e5103ee35100c4890a5ea75f93fd2772e1695c384991853e1f64",
@@ -17,7 +17,7 @@
   "account_failure_bot_detected": "bafb54579d2efdc9062b459e10862af62bc21a705730de6c0bdaa2a5a8ae0d84",
   "account_failure_code_expired": "0ba864c0506c627946befe10118a46d85d622a1d5a4503d443543c0e1d7b6a6d",
   "account_failure_code_locked": "52f21b9b3357157ea1c8886ca7c07278bcced64c776de7ebd43845d75e41e3a7",
-  "account_failure_disposable_email": "472b0d1bf4a30e6abddc5fb79cdb28f1f869399c8ac8b5464c7cd6d14dbe3d7d",
+  "account_failure_disposable_email": "537a91c2b753545d148d6b197d074beb83a4dc5fe88fbe6b9e2bf3816f10fae2",
   "account_failure_invalid_email": "0ef6b85396120e8e98d2e02d1d492abef216fc59940ba84669afeba0039c58cd",
   "account_failure_network": "ac4dfdda9a4f0529b98eb7b985ba61f4575c5daeaa95705e4c15cc0bcdce8ab0",
   "account_failure_rate_limited": "1e4b648fa28d3b8c6b6cc83bc9a74ae2995fc14553233523f59bee7c8fb22e10",
@@ -47,10 +47,10 @@
   "account_terms": "1a2a62f1c99935dfe8a96c16230b712b55bb12b8f3234ca8244b9fe601711c20",
   "account_unavailable_description": "e00dc6912fca80807398c3fb01868ea2f940b79ed89b2983bea55dc59ddae731",
   "account_unavailable_title": "f47d6da22508c5cb4cc5051028493295d7f36c8c75a562dacd40fc37eb25cb7e",
-  "account_username": "eacea83c2f2ec7ea4a41c4d33d2009d58fc35e01095d024af8ae7cedaa73ae68",
+  "account_username": "233b6deee82a158fd307302ebd2d7da152d011063bb0b1600f352c2f766194d0",
   "account_username_available": "28dc88738b72409979adbbaa57bef7c832b8ebc861710e1d03d591d2811debf7",
   "account_username_checking": "bfc172866735014513d8665182de533258661705874661956747f7fa1ed959f9",
-  "account_username_line": "ef74778467021744ed16c249d79a84bf3d7c741720ce2c2cfc0cc4a752ccada1",
+  "account_username_line": "74544e383fdf647f18edf60cda27fc1c20b5ab711dd36d7132896ca3534919ec",
   "account_username_rules": "c9fc817bd7610d33b0ffa85276f25f8295951b13a467df301f20c63e91a5bb92",
   "account_username_taken": "70c59a8dde53bbf197070d4a4117aa5b5697f6f758dbf2b82ed96decb5e822b0",
   "account_welcome_description": "7479f9c2a2f88016dbae0e7395771f5830d808e15a00036771d5f2a7cf3c51b0",
@@ -87,7 +87,7 @@
     <string name="account_new_code_wait">Warte eine Minute, bevor du einen weiteren Code anforderst.</string>
     <string name="account_new_code_failed">Wir konnten keinen neuen Code senden. Versuch es noch einmal.</string>
     <string name="account_failure_invalid_email">Gib eine gültige E-Mail-Adresse ein</string>
-    <string name="account_failure_disposable_email">Temporäre E-Mail-Adressen werden nicht unterstützt. Verwende eine andere E-Mail-Adresse oder einen E-Mail-Alias.</string>
+    <string name="account_failure_disposable_email">Wir unterstützen keine Wegwerf-E-Mail-Adressen. Nutz eine andere Adresse oder einen Alias zum Schutz deiner Privatsphäre.</string>
     <string name="account_failure_bot_detected">Eine Sicherheitsprüfung hat diese Anfrage blockiert. Versuch es mit „Mit Google fortfahren“ oder wende dich an hello@zoonk.com.</string>
     <string name="account_failure_network">Zoonk konnte keine Verbindung herstellen. Prüf deine Verbindung und versuch es noch einmal.</string>
     <string name="account_failure_rate_limited">Zu viele Versuche. Warte eine Minute und versuch es dann noch einmal.</string>
@@ -99,11 +99,11 @@
     <string name="account_setup_description">Du kannst das später in deinem Profil ändern.</string>
     <string name="account_name">Name</string>
     <string name="account_name_description">So nennen dich Zoonk und dein Kumpel</string>
-    <string name="account_username">Nutzername</string>
+    <string name="account_username">Benutzername</string>
     <!-- %1$s is a username. -->
-    <string name="account_username_line">Dein Nutzername: @%1$s</string>
+    <string name="account_username_line">Dein Benutzername: @%1$s</string>
     <string name="account_change">Ändern</string>
-    <string name="account_change_username">Nutzernamen ändern</string>
+    <string name="account_change_username">Benutzernamen ändern</string>
     <string name="account_username_checking">Wird geprüft…</string>
     <!-- %1$s is a username. -->
     <string name="account_username_available">%1$s ist verfügbar</string>

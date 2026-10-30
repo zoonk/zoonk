@@ -7,9 +7,9 @@
   "buddy_page_earlier_questions": "02720fbf9ff48933a6f6a539cbb35e7a8a2d61ed28ee9abe7a2e3d25393cea9c",
   "buddy_page_energy": "05b29266e81952273d0f691425ddd925d3e338477ab10bccc3872b4f5926ec4d",
   "buddy_page_energy_napping": "40a7c3cfb045f81fca2e5d025fda691b6b3b6a91ce8e1c0d088e29c70985bdff",
-  "buddy_page_energy_starts": "f904d0de5eb27601db8990eb8a54e5854b71e0b99b663837070cf1bb1645bebd",
-  "buddy_page_energy_studied": "c7ad843727036130b1d9d2275ba6eab142745e4c7d5d6227f5ce3daa92c0e0f0",
-  "buddy_page_energy_study": "ea86d4b9a38f966cd5b2440bca30a39903748c5e640b4f1ce5830d08442c8272",
+  "buddy_page_energy_starts": "d361fc190ac1d041123b7d272075eeeeedc37a9f2cf30d02f3aea33dec2556c1",
+  "buddy_page_energy_studied": "99f87403f3b7b82eaff8d84beb581a8752636baec71b3a04663bc177e8e1f2c5",
+  "buddy_page_energy_study": "6f38e42c932e6a2a4222eb1a1e77c5e77fcc733186832ce21212dc0d0867412f",
   "buddy_page_first_anytime": "76990de936e4448eed83523b30e4e8c2ea67ce065ac713844d6b2cb7563a97db",
   "buddy_page_first_ask": "dfca21311da7889934c0c4001c293f9897d4d704855c45aafa8c5dce1fdbd1e1",
   "buddy_page_first_call": "5f67e3822867b64858da98c509ee8b33ab8ca6c5dfcc02c4345f9fbe1d677c98",
@@ -24,7 +24,7 @@
   "buddy_page_first_steps_done": "c69fd385217be14e495e0cab729711ca8c32b606d101e44e0642a6fa6f5314ce",
   "buddy_page_first_today": "b51c6e5f10e0ba541aaf826ae04582a2c017bcf22690259ed7657af92aaca7d0",
   "buddy_page_fully_grown": "1e6cbf3c4f381f55c21852ea2ee41aff538204177bdaef44e7db803f97cf1a54",
-  "buddy_page_glasses_description": "21aa1d0fea74e3cd1f42ee4279945a2064838cc1b088357ee65ff5293f02311d",
+  "buddy_page_glasses_description": "0653559fd9743f838f504731f7914c95838798c2727cde21675bb0b12b47851f",
   "buddy_page_goal_greeting": "0e1d30436da6fd5b7dedc3eaa06a3b180f41125ca1ef0756ae8d558cada029fa",
   "buddy_page_greeting": "52831b8b9da1ea01db955b260f015a169fca20564eaaaa4c4b6646da0c9a7519",
   "buddy_page_grows_adult": "940001fada9f216101c3c7f6250f7cff395ad3d66eff13f3555c0766c6966981",
@@ -78,10 +78,10 @@
     <string name="buddy_page_suggest_focus">Em que devo focar primeiro?</string>
     <string name="buddy_page_today">%1$s hoje</string>
     <string name="buddy_page_energy">Energia</string>
-    <string name="buddy_page_energy_starts">A energia começa com sua primeira aula e cresce conforme você aprende.</string>
+    <string name="buddy_page_energy_starts">A Energia começa com sua primeira aula e aumenta conforme você aprende.</string>
     <string name="buddy_page_energy_napping">%1$s tirou um cochilo. Aprender qualquer coisa acorda seu parceiro.</string>
-    <string name="buddy_page_energy_studied">Você estudou hoje, então a energia não vai cair.</string>
-    <string name="buddy_page_energy_study">Estudar hoje mantém a energia em alta.</string>
+    <string name="buddy_page_energy_studied">Você estudou hoje, então a Energia não vai cair.</string>
+    <string name="buddy_page_energy_study">Estudar hoje mantém a Energia em alta.</string>
     <string name="buddy_page_not_yet">Ainda não</string>
     <string name="buddy_page_missions">Missões</string>
     <!-- Read aloud for the missions shown as "1/3". -->
@@ -92,7 +92,7 @@
     <string name="buddy_page_grows_adult">Passa para Adulto em %1$s</string>
     <string name="buddy_page_remembers">O que %1$s lembra</string>
     <!-- Under the buddy's glasses: the learner picks a pair they've earned, and the buddy wears it. -->
-    <string name="buddy_page_glasses_description">Escolha um dos óculos que você conquistou para usar.</string>
+    <string name="buddy_page_glasses_description">Escolha um par que você ganhou para seu parceiro usar.</string>
     <string name="buddy_page_first_steps">Primeiros passos</string>
     <string name="buddy_page_first_steps_done">Você já experimentou tudo que seu plano usa.</string>
     <string name="buddy_page_first_lesson">Concluir sua primeira aula</string>

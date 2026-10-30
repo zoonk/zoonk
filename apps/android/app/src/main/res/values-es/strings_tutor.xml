@@ -57,20 +57,20 @@
   "tutor_offer_choose": "0d6cc0042911b39afe7666bc9b07323399029ca033338142456a9a0490c0277a",
   "tutor_offer_choose_focus": "c7ec3d3e8d020a82d85b994351dd2baeccf1dc4cc7fdb358bc7c94560b8899cb",
   "tutor_offer_choose_focus_description": "dce742cd5b6defb564d230e2dcd71ddb8c09a807bfe03a823ec19956414f45f9",
-  "tutor_offer_essay_biweekly": "6d20a3f23b345c122ea1b94d0570b872bf8de17dc5438ac26b70690008de4185",
-  "tutor_offer_essay_final_weeks": "95244539fa155fad8606d1715cf388c0de5a1151f5f16f869596574c2d1f85bf",
+  "tutor_offer_essay_biweekly": "558d5921aa05b19e230c2f95a606e887c79211045610143f3f29726381f09a34",
+  "tutor_offer_essay_final_weeks": "7fde8688c631b0698acd5690a37f781199f170dc110da22c4338d9037e583be6",
   "tutor_offer_essay_plus": "f5a4d8e5a931a93bf0fcf01bb1e8c738d139641ada8e71bde8173c7b7abe304d",
-  "tutor_offer_essay_weekly": "80cfad53d88a921db8222c48998b334016bdea5b0c7b22b12ceba7bcbe03e5ca",
+  "tutor_offer_essay_weekly": "49605cacec1819706043a8c897f5637dd533bdb221a55176387c93c95d3140b1",
   "tutor_offer_goal": "99f3bd57ebe42d4fa93f9550ad39953dfe861b6c790bc86a0aab0018bfbdd62f",
   "tutor_offer_logbook": "0dcb338753bf73276f759bbf3814890066ea44c52d19d10d1143ee8fb48bcb3c",
-  "tutor_offer_logbook_description": "963c9eeb3e8a2ca8180cbbdec8f9bcce698f8e7da408e51200351271793e3215",
+  "tutor_offer_logbook_description": "9a4027f2170a5a7d1444d5211b981d601ae89930c8c3daa40470451cf3efacfa",
   "tutor_offer_manage": "91b45ee13532b939a81a792956a910afdcf6f754bcfa346897f53e47d21b854a",
   "tutor_offer_memory": "1059e71cf298488d13b0fe3ae59979d981fe88cb4950543b3927fa23d162b6f9",
   "tutor_offer_memory_description": "0c00ce9a0091037de5d09f87017fe0c5a92323a1326bea100f9fd3cbae22d434",
   "tutor_offer_mistakes": "6bca06ff4dbdfef321d48af2557e85744ab866c50cc566572e0db4f764df1cf3",
   "tutor_offer_mistakes_open": "d2199bb5e35990e2177501fbb45c2adcbae07b26da75c273cd0c55617c28e09e",
   "tutor_offer_mock": "f5fe6c41e972e71af3f26c6820ad8089e6e6f5244ee65bd457c9e85a30e66959",
-  "tutor_offer_mock_by_subject": "e600325ff8e7a8af19817c193f687e08c9b35a5831510ae42ec60019ca7a5a5b",
+  "tutor_offer_mock_by_subject": "da13c8bee4c6668a821c8062f0b8e9351ebe18994e0a2431cb7da4458213058b",
   "tutor_offer_mock_description": "e2b4f342c2543b6e849c3f431f58354ed3cf51d15e5c16f78b21d1a517afadcc",
   "tutor_offer_mock_plus": "c5da1c243e407a740dacbf074872f4aba82ba3b92457adcc84343b429f1440cb",
   "tutor_offer_one_goal": "3338631f930b31946ecb510536583fffb42870ade74d35051b001da90390898f",
@@ -223,14 +223,14 @@
     <string name="tutor_offer_mock">Hacer un simulacro</string>
     <string name="tutor_offer_mock_description">Cuando quieras: un día completo de examen o medio día</string>
     <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
-    <string name="tutor_offer_mock_by_subject">Cuando quieras: un día completo de examen, medio día o una asignatura</string>
+    <string name="tutor_offer_mock_by_subject">Cuando quieras: una jornada completa de examen, media jornada o una asignatura</string>
     <string name="tutor_offer_mock_plus">Con Plus tienes simulacros cuando quieras y uno cada semana en tu plan.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
-    <string name="tutor_offer_essay_weekly">Practica cada semana en tu plan y recibe una evaluación de cada borrador.</string>
+    <string name="tutor_offer_essay_weekly">Práctica semanal en tu plan, con evaluación de cada borrador.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
-    <string name="tutor_offer_essay_biweekly">Practica cada dos semanas en tu plan y recibe una evaluación de cada borrador.</string>
+    <string name="tutor_offer_essay_biweekly">Práctica cada dos semanas en tu plan, con evaluación de cada borrador.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
-    <string name="tutor_offer_essay_final_weeks">Practica en las últimas semanas antes del examen y recibe una evaluación de cada borrador.</string>
+    <string name="tutor_offer_essay_final_weeks">Práctica en las últimas semanas antes del examen, con evaluación de cada borrador.</string>
     <string name="tutor_offer_essay_plus">La práctica de redacción con evaluación está incluida en Plus.</string>
     <string name="tutor_offer_mistakes">Cuaderno de errores</string>
     <plurals name="tutor_offer_mistakes_open">
@@ -245,7 +245,7 @@
     </plurals>
     <string name="tutor_offer_logbook">Cuaderno de bitácora</string>
     <!-- Describes the Logbook: what the learner did this week compared with the week before, and what comes next. -->
-    <string name="tutor_offer_logbook_description">Lo que hiciste esta semana comparado con la anterior y lo que viene después.</string>
+    <string name="tutor_offer_logbook_description">Lo que has hecho esta semana en comparación con la anterior y lo que viene después.</string>
     <string name="tutor_offer_memory">Memoria</string>
     <string name="tutor_offer_memory_description">Consulta, corrige o borra lo que tu compañero recuerda de ti.</string>
     <string name="tutor_offer_stats">Estadísticas</string>

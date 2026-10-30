@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "checkpoint_after_lessons": "a614c7d440220cbcc1a7cda65f1d8224bee283b3f4e5a2baa0b4dc76a8ebfca1",
+  "checkpoint_after_lessons": "ace161e4c5a002ff7b059aea45009a793b539cca9b7c6929f6e447ab770104ea",
   "checkpoint_answer": "3d8b8d34a71c65b54e010f99783bd0ba1b1d78e20822ebb2cb2168e95950927c",
   "checkpoint_answers": "ed7f3ee38c908d483b902cdf843cfc8a13da0af426a96e7ba1cd652fc1d33178",
   "checkpoint_badge": "1907984b518670661c811da847edba6f1b66eda62b54c6377bcba57c2b786b86",
@@ -38,11 +38,11 @@
   "checkpoint_questions_left": "b84101a243f765133b9852becd21ec7ea31b69310e34d4f65d0955392f2d50e8",
   "checkpoint_removed_detail": "96f3f1b1d7dbfe966e11864bfa86cf487d9dea29cc97e45055d6f2ab5fe3d003",
   "checkpoint_removed_title": "78e2766bf05b2c8da4d8a0a36902f2cdd07b9b483ac3ab7095d36a52e2b24fe6",
-  "checkpoint_retry_after_lessons": "38c3404edaae4e5f7a7bed2b1d1876e453a2fc6d0a202444a37e4e37391e7114",
+  "checkpoint_retry_after_lessons": "ddc1e62186c344e80b5e9ac9b5c4ab8d6541b0d09b0cf00c823f9ac1be6f8240",
   "checkpoint_retry_tomorrow": "55c0d899d080a996ff38b630fdb0c439a1f5200a45619d4ca079207a1cde8445",
   "checkpoint_review": "07a127ae176d1ec834234e2ac606305c97cc9591c7f5b12af9fdd228d46f318e",
   "checkpoint_rewards": "0910641bf0b0a82bb34827febf4a498fbb58347c3bb7b6611609de3cf297c773",
-  "checkpoint_right_to_win": "51201c17030b952d9805e69b94e7d6986b4d179d610e17917f12f7aac59edcce",
+  "checkpoint_right_to_win": "181a1c27692c2c1fad31489117194dc6f3bc46a559c97a28bf2bfc6705a550a3",
   "checkpoint_right_to_win_of": "4009ed7168f447e983be1880198e3e80a9e9fb864f3fe88cfc06e4e6e3a0bd25",
   "checkpoint_see_result": "a5f3f2793443678dfc254c213b75dc8fe623a697b3c79fd43d94d7ef061e25c2",
   "checkpoint_shield": "07ca348dbf9f64d358f408fbd2f65d67194b8da4e76ed8445ef30432eca5dc02",
@@ -72,8 +72,8 @@
     <string name="checkpoint_lost_line">Sein Schild hat diesmal gehalten.</string>
     <string name="checkpoint_retry_tomorrow">Morgen gibt es einen neuen Versuch. Nichts geht verloren.</string>
     <plurals name="checkpoint_retry_after_lessons">
-        <item quantity="one">Morgen gibt es nach %d kurzen Lektion einen neuen Versuch. Nichts geht verloren.</item>
-        <item quantity="other">Morgen gibt es nach %d kurzen Lektionen einen neuen Versuch. Nichts geht verloren.</item>
+        <item quantity="one">Neuer Versuch morgen, nach %d kurzen Lektion. Nichts geht verloren.</item>
+        <item quantity="other">Neuer Versuch morgen, nach %d kurzen Lektionen. Nichts geht verloren.</item>
     </plurals>
     <string name="checkpoint_every_answered">Alle Fragen sind beantwortet.</string>
     <string name="checkpoint_shield">Der Schild des Tricksers</string>
@@ -101,8 +101,8 @@
     </plurals>
     <!-- %d is how many right answers it takes to win the challenge, not how many are still missing. -->
     <plurals name="checkpoint_right_to_win">
-        <item quantity="one">Noch %d richtige Antwort zum Sieg</item>
-        <item quantity="other">Noch %d richtige Antworten zum Sieg</item>
+        <item quantity="one">%d richtige Antwort für den Sieg</item>
+        <item quantity="other">%d richtige Antworten für den Sieg</item>
     </plurals>
     <string name="checkpoint_no_hints_boss">Keine Hinweise. Nach jeder Antwort siehst du, ob sie richtig oder falsch ist. Am Ende erfährst du, warum, und welche Fallen er gestellt hat.</string>
     <string name="checkpoint_no_hints_weekly">Keine Hinweise. Nach jeder Antwort siehst du, ob sie richtig oder falsch ist. Am Ende erfährst du, warum.</string>
@@ -138,8 +138,8 @@
     <string name="checkpoint_new_try_next">Neuer Versuch in deiner nächsten Lerneinheit</string>
     <string name="checkpoint_nothing_lost">Nichts ist verloren.</string>
     <plurals name="checkpoint_after_lessons">
-        <item quantity="one">Nach %d kurzen Lektion zu dem, was dir schwergefallen ist. Nichts ist verloren.</item>
-        <item quantity="other">Nach %d kurzen Lektionen zu dem, was dir schwergefallen ist. Nichts ist verloren.</item>
+        <item quantity="one">Nach %d kurzen Lektion zu dem, was dir schwergefallen ist. Nichts geht verloren.</item>
+        <item quantity="other">Nach %d kurzen Lektionen zu dem, was dir schwergefallen ist. Nichts geht verloren.</item>
     </plurals>
     <!-- %1$s is the next phase's name. -->
     <string name="checkpoint_next_phase_open">Die nächste Phase, %1$s, ist bereits freigeschaltet.</string>

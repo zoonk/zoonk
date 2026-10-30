@@ -28,13 +28,13 @@
   "search_log_in": "5f2c956b029eb784e0a64e2f0424db7c72d16e580508c21e1ad34546d8ba2526",
   "search_log_out": "7cafac042cae3c9127a8002a25ffc068900d6a5a726f8b64b48aefddf52e87dc",
   "search_logbook": "a5cd6a3a102faa4b181be40f2f6583e74b1f9a28e376e483b7e0f7bcfcc18b5d",
-  "search_memory": "9970f62e86e6ded9c2ce10b376ca109ca03536b8c5b3de041781097483029717",
+  "search_memory": "8180e532b0f05f73279526b39afa51a90942c8d7b5a4c4bfca16775dac1e0840",
   "search_mistakes_notebook": "4e3e946372cf6019819a1d6a0d8530864a281f48605e14d40def3a13c40a4d0b",
   "search_mock_exam": "22b7d5f321102ffa7a5596a8ee45ca79b775af0ce29618d43fda4679e934eb46",
   "search_open": "5760f70e491ee905bb386c1db02d4fcf9862747b1c6793ddfd229963ac4705b6",
   "search_placeholder": "d3bb755bf28982ad373e82f37bb782d792ad2d6ee2fa2429a546ebded3dcdab4",
   "search_practice_mistakes": "b1c409d0952301240e9a87aecc1498086ba020bad01b5f922a88c71750364b78",
-  "search_preferences": "204ea34c805cd8176ac04765f81bf14391f0a548d18be969a141fbe2eb80028f",
+  "search_preferences": "c34ea9baafd85a102c9cade13ddd6efecbee9a2abebe77991b47728841cce6fa",
   "search_pricing": "5bc6f3f84daccda90a5952fde20b358858931d45b20ae2b7a00e3fdce39e1e24",
   "search_profile": "bbd0527292b09a3a993ee87d5d9a33a0a1f821b4fedf92a20ad305da434deb44",
   "search_send_feedback": "f03fc4085d689d4facf8289fcf7a2f83ba7a5998ce52626c102e29e9854ce4cd",
@@ -46,7 +46,7 @@
   "search_subscription": "3de03a7d4cd7b441378fa3a044f6792293eee498ea29f396bb4d4c173862da8c",
   "search_switch_goal": "59007bdf9a0ca457a1ec941143c361c6cad09c419da99708cd3a67ec2dd02328",
   "search_take_mock": "f7673d888354c73b0e636c7a4829bf6ad88af744b124c68d3cefa5d0542d3d88",
-  "search_take_mock_detail": "e17a78de8583161abb8cc6de9a96fa061352cea71397da61400f40e8c8b0c491"
+  "search_take_mock_detail": "6ced61ac1065f318ebf636ec9eae72f96fd4986cbf99ffdd3d62d84b78b0490b"
 }
 -->
 <resources>
@@ -69,7 +69,7 @@
     <string name="search_continue">Heutige Lerneinheit fortsetzen</string>
     <string name="search_take_mock">Probeprüfung machen</string>
     <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
-    <string name="search_take_mock_detail">Ganz, halb oder ein Fach</string>
+    <string name="search_take_mock_detail">Ganzer oder halber Prüfungstag oder ein Fach</string>
     <string name="search_practice_mistakes">Deine Fehler üben</string>
     <string name="search_ask_buddy">Frag %1$s…</string>
     <string name="search_start_new_goal">Ein neues Ziel starten</string>
@@ -88,9 +88,9 @@
     <string name="search_help">Hilfe</string>
     <string name="search_settings">Einstellungen</string>
     <string name="search_profile">Profil</string>
-    <string name="search_memory">Gedächtnis</string>
+    <string name="search_memory">Erinnerungen</string>
     <string name="search_subscription">Abonnement</string>
-    <string name="search_preferences">Präferenzen</string>
+    <string name="search_preferences">Vorlieben</string>
     <string name="search_appearance">Erscheinungsbild</string>
     <string name="search_language">Sprache</string>
     <string name="search_ask_question">Frag %1$s: „%2$s“</string>

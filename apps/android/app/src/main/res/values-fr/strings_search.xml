@@ -46,7 +46,7 @@
   "search_subscription": "965a0953e3cb8e29425ce2c1da2b8f1ed88ee540b3fd06183cf80c2e2688c4a3",
   "search_switch_goal": "1d101de054ac938761a893a7e22e6d5f04a301f92650843879cc62e0a2749475",
   "search_take_mock": "19d1993760a00fb5d07767a2e0570cebbaca98f1ab0dd25617b721726b0a66c4",
-  "search_take_mock_detail": "906f18d64af23513bded85762e74e16522fe1258df0aa356c651d111bf885917"
+  "search_take_mock_detail": "cac64dee4ff96314f032af70cc2b62afd3284265c50c66d3556d6b85a2b16b7e"
 }
 -->
 <resources>
@@ -69,7 +69,7 @@
     <string name="search_continue">Continuer la séance du jour</string>
     <string name="search_take_mock">Passer un examen blanc</string>
     <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
-    <string name="search_take_mock_detail">Complet, moitié ou une seule matière</string>
+    <string name="search_take_mock_detail">Journée complète, demi-journée ou une matière</string>
     <string name="search_practice_mistakes">Réviser tes erreurs</string>
     <string name="search_ask_buddy">Demander à %1$s…</string>
     <string name="search_start_new_goal">Commencer un nouvel objectif</string>

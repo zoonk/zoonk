@@ -52,7 +52,7 @@
   "not_found_description": "1f9f90c25b9cdd4a59d58f3d29c44e56568fd95d2d3d254a1779cd835ac342ca",
   "not_found_go_home": "17eae6ccbed3804a1cf0525babe20b1cd764510e1c14871e498ecf775fd017ad",
   "not_found_title": "36d73057b035834eec15241d391c42523400f7217c2c558c7cbb499a07f6692b",
-  "other_time": "4e3715540a13dc1a7df4f2466eb58fdde4bc91675dd5e917191f6ace38afe6de",
+  "other_time": "7888aeca7da8afa88eaef7ce9eb001afe52a64282ae52e0066b7c04e04cde991",
   "suggestion_save_failed": "64f77e2077e7d4f067f974eabdcc53a20ac52105964c1a1d6fe1a1f03e6f09e6",
   "suggestion_view": "3d160efc2a851cc8cb8b887b76439d4c85bf15bdbeec4eb2da058732e8bcad57",
   "task_leave": "177cb39387567943127b8e077274966476e8573f7f4bec70580fe56164773c57",
@@ -104,7 +104,7 @@
     <string name="suggestion_view">Ver</string>
     <string name="suggestion_save_failed">Não foi possível salvar. Tente de novo.</string>
     <!-- Under the daily time chips; opens a menu of other amounts of daily study time, such as "45 min". Not a time of day. -->
-    <string name="other_time">Outro horário…</string>
+    <string name="other_time">Outra duração…</string>
     <string name="disclosure_expanded">Expandido</string>
     <string name="disclosure_collapsed">Recolhido</string>
     <string name="lessons_title">Aulas</string>

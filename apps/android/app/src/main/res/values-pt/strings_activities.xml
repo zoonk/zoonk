@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "8d06e17ddb5c2be64d840a5346d2a16572fa62ce659a3b6d1d451c6c42a4782b",
-  "activities_badge_estimate_first": "e23584d67073a5c9da20b473485b19556705e1237d3edf6a92c8977358f09dad",
+  "activities_badge_estimate_first": "a39f053d277c1f2d218b963a5f0b02b25bb806f70cefe410ae2c5e6d1237aacd",
   "activities_badge_find_error": "a13c3622cfc396444b49f77f06c3326094b925384e5e55f9acce56437982bcc4",
   "activities_badge_follow_questions": "0e180ba9f27e7fa17b961941c9e7b3130c59e6f3d31722912c9cfa7b98d916e8",
   "activities_badge_read_chart": "520ae739730a17e239dbb1bf7942e57f27df52ac06e5a38b533034edfbbb4c14",
@@ -12,7 +12,7 @@
   "activities_before_after_less": "a248591a24eb1420db2151c0b99d50670c106443e58b7b22e267a6657bdeaaca",
   "activities_before_after_more": "9409502abfa2c8e2f5a23a7a13f683b6072549df1dbbd4ae64cf891c2fd26f62",
   "activities_before_after_no_change": "25d28620595c6ee1135cd8bdcb480ea6edbd72a2a4971e0085f4fa755c79dbe7",
-  "activities_before_after_show": "4e6fd93331c7147f962c65b87be41f840cb19bf8e7c5347771edf66c3f38c1b3",
+  "activities_before_after_show": "f957889fd41d294b7b39372754358c80b8834226d881fe854c626ca76ef1a48f",
   "activities_chart_description": "7341107c79623e1573a4938c5706afc98bf5bb4e13246909f5ca723ce1ee0662",
   "activities_chart_rate": "d7f5bc50dbe954ca67517ceba6b779d96a07655974e07a695fe10746de6a25b4",
   "activities_chart_span": "3b6a269fda02457d7d28a8acf13be615fc5e7f26cf3cb899c4687171df09190a",
@@ -23,7 +23,7 @@
   "activities_dialogue_hear_line": "2fae251c44d77422d16b46f6d32914b569e218dbefa6b9aed3acc1bc13e33fdd",
   "activities_dialogue_they_say": "8c609a12905170a7e68dbff5525c5280647cfbb2c3f93e68789810ce3932df10",
   "activities_dialogue_you_said": "1aa4bb3910a8d100188ff88735f48f0b3930e0e4190636678aa481cc7cc8a437",
-  "activities_find_error_ai_answer": "0460672a84bd63126f3652c82617181382a2d6dfdc1e6b89c888987d86130132",
+  "activities_find_error_ai_answer": "0d0a039b5ef3e92f1405e46489bfeb29a1bad8fa5d6568d999b8844973413799",
   "activities_find_error_ai_asked": "fb5a4f9e3c4faf05767979d6bf6927055dc1e160c538165b1eb272ce6bba8a0f",
   "activities_find_error_ai_note": "8d63439d9a29f9741f67215f35ae6959c6a0036e4dfc6de6c358426cf5a3f5a6",
   "activities_find_error_problem": "22d80c93763e1e784044008106ed82676fd8a7695e3c8731896f805968352378",
@@ -48,9 +48,9 @@
   "activities_pattern_endings": "3df606d76e90f9e296eaf02e41bb7b04ea04c3bfdcba501a4725ee45e4984433",
   "activities_pattern_which_ending": "f443c000ce6c97d9ead14ffa02bbf2d50947547f0d103f065602ab5ed6e65fae",
   "activities_solver_first_pick": "48d7ffec4d2730fd94505633e8caf1064a6da672284c21d07f68606d70c5c747",
-  "activities_solver_not_quite": "ef56757a5418e6320c048ff2135df11b907ed80d5fe052e220fa4e24bf2afbe9",
+  "activities_solver_not_quite": "0919614120e46af403ca72a903e2463f2e2a4649d52778557d14662e5a283175",
   "activities_solver_right": "4cdb9ab755d1c53a2136c25939fae4826fd1da978d859653c325b92e8efc69c3",
-  "activities_solver_steps": "2ddce6852365c9e7c3e6f37fb297139236ad4afb02b6ad65acf6b7194756a646",
+  "activities_solver_steps": "8fd3f79f4033c3b621d5874dc2cec70472232add0310e957972d33bd50dc3b42",
   "activities_sortable_dropped": "b3ac839fdcb7f4940364942b49f4cdc66051e071eaaad68543c2c30cabf98025",
   "activities_sortable_move_down": "7f7079035d97d2e5271d4e834771a3765c0ca36159278013c058b248683545d8",
   "activities_sortable_move_up": "dafc37dcb568ec546f0bc5039c5ec6f2d2eced6a88e980be90f47ab198e7fd8b",
@@ -68,7 +68,7 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">Faça uma estimativa primeiro</string>
+    <string name="activities_badge_estimate_first">Dê um palpite primeiro</string>
     <string name="activities_badge_read_chart">Leia o gráfico</string>
     <string name="activities_badge_before_after">Veja o antes e o depois</string>
     <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
@@ -95,7 +95,7 @@
     <!-- How many times smaller the guess was than the real value, like "3.5". -->
     <string name="activities_guess_too_small">Seu palpite é cerca de %1$s vezes menor que o valor real.</string>
     <!-- Button that shows the "after" state of a before-and-after comparison; %1$s names it, like "With the assembly line". -->
-    <string name="activities_before_after_show">Mostrar depois: %1$s</string>
+    <string name="activities_before_after_show">Mostrar o depois: %1$s</string>
     <string name="activities_before_after_no_change">Sem mudança</string>
     <!-- How a fact shrank, like "3 times less". -->
     <string name="activities_before_after_less">%1$s vezes menos</string>
@@ -127,7 +127,7 @@
     <string name="activities_find_error_problem">Problema</string>
     <string name="activities_find_error_ai_note">A resposta da IA. Uma etapa está errada: encontre o erro da IA.</string>
     <!-- The name of the list of the AI's steps, for TalkBack. -->
-    <string name="activities_find_error_ai_answer">A resposta da assistente de IA</string>
+    <string name="activities_find_error_ai_answer">A resposta do assistente de IA</string>
     <!-- The name of the list of a worked answer's steps, for TalkBack. -->
     <string name="activities_find_error_worked">Resolução</string>
     <!-- Read before a step of the answer, for TalkBack, like "Step 2". -->
@@ -138,9 +138,9 @@
     <string name="activities_find_error_your_pick">Sua escolha</string>
     <string name="activities_find_error_wrong_step">A etapa errada é a etapa %1$d.</string>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
-    <string name="activities_solver_steps">Etapas</string>
+    <string name="activities_solver_steps">Passos</string>
     <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
-    <string name="activities_solver_not_quite">Não foi dessa vez:</string>
+    <string name="activities_solver_not_quite">Não é bem isso:</string>
     <!-- Before why the right pick is right. -->
     <string name="activities_solver_right">Certo:</string>
     <!-- The learner's first, wrong pick at a step, like "Your first pick: Add 8% first". -->

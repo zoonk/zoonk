@@ -24,7 +24,7 @@
   "buddy_page_first_steps_done": "5e44c008436a4d3245e73a7f73112c13197695fb2b0d5fbdec2ba2140e3baee7",
   "buddy_page_first_today": "9e8d14224c0719000a032c2e225a8c9d5ff6b3d90fbcace7c57627810a59b5d5",
   "buddy_page_fully_grown": "3e4fd80c21f33d48b008851bbe9a9bd15051d129b23971d83fe935a6809f9f78",
-  "buddy_page_glasses_description": "0cd90db34adfd5f09dbb65c0f888a7e135304561f317efe05ed1138b1a494492",
+  "buddy_page_glasses_description": "4ceabc7a03d0ce0d392c9de5ab1f4db7f37ad8d0ca0b574aca7c3d48bb9bd360",
   "buddy_page_goal_greeting": "c6aca39dd413fbe22878839827ba9bae4744cf2ad1d668a97392728c3221e3d4",
   "buddy_page_greeting": "aa7d5445eb9fba9afbba5d38f0f3a05e005dcdf1b5a655745fb37dbeec7748d3",
   "buddy_page_grows_adult": "c289614be53495f0cb2952197d4078f0d0bdbdc64cccee4acde30cff9eec5fab",
@@ -92,7 +92,7 @@
     <string name="buddy_page_grows_adult">Pasa a adulto en %1$s</string>
     <string name="buddy_page_remembers">Lo que recuerda %1$s</string>
     <!-- Under the buddy's glasses: the learner picks a pair they've earned, and the buddy wears it. -->
-    <string name="buddy_page_glasses_description">Elige unas gafas que hayas conseguido para ponértelas.</string>
+    <string name="buddy_page_glasses_description">Elige unas gafas que hayas conseguido para ponérselas a tu compañero.</string>
     <string name="buddy_page_first_steps">Primeros pasos</string>
     <string name="buddy_page_first_steps_done">Has probado todo lo que incluye tu plan.</string>
     <string name="buddy_page_first_lesson">Completa tu primera lección</string>

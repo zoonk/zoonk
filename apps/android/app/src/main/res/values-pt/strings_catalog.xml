@@ -36,8 +36,8 @@
   "catalog_expand": "9b58eb9922b245c8ac30dc2a30a56d5a4c91164a2e074509da4daa81db23be47",
   "catalog_expanded": "d6c5105cffa7502db61f8d13f74e92003055b297d6287df16e75cb03875e3c2d",
   "catalog_go_to_chapter": "a83d8f2f63fee5f5940ead4a1dec2040ebb1db63fa8e618d0252e5e095c44103",
-  "catalog_goal_example": "e94b6f4cd1edb4de6b5544b4c7597137e2d59193664b27160c9f58c84f1639e1",
-  "catalog_guess_first": "4741c3e42e663666b66a459b6da3d0f0d4086a869e8f8a2346af0d0242037372",
+  "catalog_goal_example": "54e1d427c775f27864fe4facd32dacf3c15e5cda6b47305e44f1981d7ceb9fd8",
+  "catalog_guess_first": "bc53580f58328e28bb9e6ccc8a00012d76392deb72d559f59810e5ffdc4b2997",
   "catalog_guess_note": "e20a2f6fea6b5c8ca6db3f3c930a5e4c9ace1afd712ecd9d493b227ff1857c9a",
   "catalog_ideas": "69b7fcb24d57fef7d9b7760f17d50ec3966475872ecf6627f051323bca013160",
   "catalog_left_out": "794302591aef23ce14b225f1b68ef14680a1f3aab23ba80ff9364cb59852828f",
@@ -73,8 +73,8 @@
   "catalog_plan_every_topic": "7185b03fda43cb972dbe50c162f0f40d8ca6909e1050982cdd5b25b144e71143",
   "catalog_plan_finish_around": "ee9935300b87960ee011fc89458c9ab8cfe8bd6662d78981e4293fa7a4356b9f",
   "catalog_plan_lessons": "bf16385097ceda93052cee31f7af0fad65a5399b4f6abbb19dd3602b6a8b4534",
-  "catalog_plan_line": "833e1096ff4d92da386f101f0aa51b43d7cae74c929efacab5ca243cff54dad7",
-  "catalog_plan_line_chapter": "3c5efd347f72bca4a01d00ff362b732e99b278ca0dba3b271a788f53def4945a",
+  "catalog_plan_line": "0f04618bcfd2ac38316859102befc14779f0b5eea9fa4de87fda48857ebf91fd",
+  "catalog_plan_line_chapter": "ad8b2f5aa229c8d2ec0a5fe1572600bb1fdad2bdd2fd058c4f3ec93ed2b33821",
   "catalog_plan_more_lessons": "80bb84f66835b3e19fd2c8684db15bd8a3a8b641ff475817bc43e42f09530a73",
   "catalog_plan_not_all_fits": "70e0911852df048bff2905480ab700fb650519f1b8321632d001fa5a59c7b0c6",
   "catalog_plan_study": "5c95ad6a779035ed91bac9d3da26052b5bcc92cf103f1a906e95a807ae421b0e",
@@ -125,7 +125,7 @@
   "catalog_workload_title": "0aa568a5280dbcc6c990b2b8ae0561ede12b5fc82e29e8ea3d6a6f612272800d",
   "catalog_workload_total": "f26ce80ac1299b600cd31ddf8221b10959363ceca2accb4108198ccc20b7706b",
   "catalog_workload_unwritten": "59206ec71fdad8a99d180ee7f4c4808e15a4faa2e65013cbbe7730f038efce39",
-  "catalog_workload_unwritten_note": "9d3b2878612989457c313d170c53a464103a1bf3387cc9067842de248cf06976",
+  "catalog_workload_unwritten_note": "bece3649d29b405428fdf1e08738dd30bd1672e88f424c0c974598f5b80f9015",
   "catalog_written_later": "979486f556b1f384f7055cff0dbaf1192e0fb7c42f0cf6b8ecf4b0a73b3df5f8"
 }
 -->
@@ -149,7 +149,7 @@
     <string name="catalog_title">Explore os cursos</string>
     <string name="catalog_category_title">Cursos: %1$s</string>
     <!-- The goal box's example after "I want to", so it starts in lowercase. "Data analyst" is the job the learner wants. -->
-    <string name="catalog_goal_example">ser promovido a analista de dados até junho</string>
+    <string name="catalog_goal_example">conseguir uma promoção para analista de dados até junho</string>
     <string name="catalog_subtitle">Comece por um curso ou conte ao Zoonk para o que você está se preparando.</string>
     <string name="catalog_all">Todos</string>
     <string name="catalog_categories">Categorias de cursos</string>
@@ -178,15 +178,15 @@
         <item quantity="many">Prova por volta de %1$s · faltam cerca de %2$d dias</item>
         <item quantity="other">Prova por volta de %1$s · faltam cerca de %2$d dias</item>
     </plurals>
-    <string name="catalog_plan_line">Com Zoonk, seu plano começa no seu nível e cabe na sua rotina.</string>
-    <string name="catalog_plan_line_chapter">Com Zoonk, seu plano começa neste capítulo e cabe na sua rotina.</string>
+    <string name="catalog_plan_line">Com o Zoonk, seu plano começa no seu nível e se adapta à sua rotina.</string>
+    <string name="catalog_plan_line_chapter">Com o Zoonk, seu plano começa neste capítulo e se adapta à sua rotina.</string>
     <string name="catalog_build_plan">Montar meu plano</string>
     <string name="catalog_continue_plan">Continuar seu plano</string>
     <string name="catalog_try_lesson">Experimentar uma aula</string>
     <string name="catalog_start_free">Comece grátis, sem precisar criar uma conta.</string>
     <string name="catalog_try_title">Experimente uma aula · grátis · %1$s</string>
     <string name="catalog_try_place">%1$s · aula %2$s</string>
-    <string name="catalog_guess_first">Dê seu palpite primeiro. Ele não vale nota.</string>
+    <string name="catalog_guess_first">Dê um palpite primeiro. Não conta.</string>
     <string name="catalog_quick_question">Pergunta rápida</string>
     <string name="catalog_guess_note">Sua resposta dá início à aula de %1$s min.</string>
     <string name="catalog_check_note">Sua escolha abre a aula de %1$s min. Confira sua resposta lá.</string>
@@ -241,7 +241,7 @@
     <string name="catalog_workload_challenges_mocks">Desafios e simulados</string>
     <string name="catalog_workload_reviews_note">O que você estudou volta para revisão pouco antes de você esquecer.</string>
     <string name="catalog_workload_after_exam">Desse tempo, %1$s fica para depois da prova.</string>
-    <string name="catalog_workload_unwritten_note">As aulas ainda não criadas são criadas à medida que você chega nelas.</string>
+    <string name="catalog_workload_unwritten_note">As aulas que ainda não estão prontas são criadas quando você chega a elas.</string>
     <string name="catalog_audience">Para quem é</string>
     <string name="catalog_outcomes">O que você vai conseguir fazer</string>
     <string name="catalog_outline">Conteúdo do curso</string>

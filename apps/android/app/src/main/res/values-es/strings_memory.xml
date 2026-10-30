@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "memory_category_background": "6841cb4ccb8e3b93b256bf8ae16cd59b640e5f2f1793f34ccbc73f77822b86e5",
+  "memory_category_background": "0eb2789db63be20f4f85dc521f56b9d5f0d910b455ff8a3909073fefb0ab4350",
   "memory_category_context": "032165d5bdcde5cd18487e727c04a42e8e6053d620edfe1ff3ac8e6ea365f14c",
   "memory_category_goals": "afae04e7242d4a1f564169d10969ed8bc9f734491d30d4e13473d8a97159f74a",
   "memory_category_learning": "117c8de18730b11c28cfed5aeac6ca95812b126e72aad13baecab5a2697945a7",
@@ -11,11 +11,11 @@
   "memory_delete": "d2eee84a7a858fe344fb3fdf114fd880537244957410a4cfa48aad5a2c36c91e",
   "memory_description": "9320ceedfb95c9d21303bd91d36e7acd0700cf99fa43477869b69f190a7c7261",
   "memory_download": "523221b6a42906c5d0fa53ab883970912f80843caed1b2f025ece2036648453f",
-  "memory_download_description": "49302141c15cfd747c991d62ac68a0e6c30637db6c0a093d2da6c9e80a08db13",
+  "memory_download_description": "b7bb3ceb6d9567adaadec8a6bbc539ed059e07ce466df0ebc573b4935c08b403",
   "memory_edit": "fcc46ba6574aa21e7c065af88a874447638e5f9754b5c1f17922619e4ef2a007",
   "memory_edit_description": "f954777d0a2caf735eca4c9912662c284ccb3aa5d3a3d240693573af4cbe7f41",
   "memory_edit_label": "0da017f33127fea44259e03408ff8e9f247e680d5845756112ce4a7fbe0a1c19",
-  "memory_edit_title": "787abad11b3beaeaca9cd0ad7b1fc4fb0a5301c3dda3473a60d9c3ab2c472fe1",
+  "memory_edit_title": "b6bbfcf4d3b17c1e21d61b252df533cc4ed8e41da5d5523d0c513c0831796892",
   "memory_empty_off": "f39f592578c14bbc11573e0a80f3d954ef69e07864b7bc22b15e651fa0a48590",
   "memory_empty_on": "99f7cbd1df146d21d4f25a27ecdc15cb04b4e1e20dbd4864f390f3c984d00117",
   "memory_fact_options": "3705aac9e05c4436dee15a0227917ce6af02a044962752292278ffc427abb368",
@@ -46,7 +46,7 @@
     <string name="memory_save_failed">No se ha guardado. Vuelve a intentarlo.</string>
     <string name="memory_category_goals">Objetivos</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
-    <string name="memory_category_background">Trayectoria</string>
+    <string name="memory_category_background">Información personal</string>
     <string name="memory_category_routine">Rutina</string>
     <string name="memory_category_preferences">Preferencias</string>
     <string name="memory_category_learning">Aprendizaje</string>
@@ -63,12 +63,12 @@
     <string name="memory_edit">Editar</string>
     <string name="memory_delete">Eliminar</string>
     <!-- Title of the dialog that edits one fact Zoonk remembers about the learner. -->
-    <string name="memory_edit_title">Editar recuerdo</string>
+    <string name="memory_edit_title">Editar dato</string>
     <string name="memory_edit_description">Exprésalo de forma que refleje tu situación.</string>
     <string name="memory_edit_label">Lo que Zoonk recuerda</string>
     <string name="memory_download">Descargar mi memoria</string>
     <!-- Everything Zoonk remembers about the learner, downloaded as one file. -->
-    <string name="memory_download_description">Todo lo que hay en tu memoria, en un solo archivo</string>
+    <string name="memory_download_description">Todo lo que Zoonk recuerda sobre ti, en un solo archivo</string>
     <string name="memory_sensitive_note">Zoonk no guarda datos de salud, religión ni otros datos sensibles, salvo que se lo pidas.</string>
     <string name="memory_updated">Memoria actualizada:</string>
     <plurals name="memory_updated_more">

@@ -36,7 +36,7 @@
   "catalog_expand": "64721faeb3011ab9296571eba5329b3ddec6736e8f05427e3b47aa7b20ecad44",
   "catalog_expanded": "52543aaf013dcde0d92b2dee7b43da3ce5958896451f8f75068e93da40c46a4c",
   "catalog_go_to_chapter": "52fcec3ad65effd7d992610ca319420b71fb01d5a6f7047a288d8bad344283f5",
-  "catalog_goal_example": "3cdb42ee50cb05e57f7553ec98952b1d5cefaaad17a0254c8e40de37f8615f53",
+  "catalog_goal_example": "04ddc77c23fe994f5ad59b48452508ca15836a072944b9060cf560d6f9fbd5ad",
   "catalog_guess_first": "3d4233e72116501c49abe323782b7ac87de577a147b9054639e7553f65fbe6ee",
   "catalog_guess_note": "25c79e71456a361e73f042160e682a39b05c87e2c056ccb36ec86b227c8fe711",
   "catalog_ideas": "bd936f7b72ec5a7505040a3230db07cf454df6ece5e0f9488c0fb11cdeb91023",
@@ -60,7 +60,7 @@
   "catalog_not_found_title": "366f69523d944fbcb7f312d4113937c30033545846a939bfdaca722325ca2c86",
   "catalog_open_course": "82fa99ff137ea5e88543d360dcd9e0c241baddf367df28339b19ee914ebe9af5",
   "catalog_outcomes": "bcc308f747e08ac3d7970bf6cc7640395fccd1bfa07b21c29fdb69f4265c59f2",
-  "catalog_outline": "f570d9d472066ac3d757e692a164866ae7068a3e37050c93303d194b3b01127a",
+  "catalog_outline": "14e5e415394a368b703997b4fbf981c9deacf7bd631534bcc3df96cf5a921281",
   "catalog_outline_plan_dated": "e62012f2a62ea4e0d3c3f345b0597219d7f671935dc6d0f83dd6c3db1d04362d",
   "catalog_outline_plan_undated": "6126808d452ec368e1e19778ed9d1079cf119a51ae098beea9d5463673dc1909",
   "catalog_outline_unwritten": "36ccabbb02cff6528828bf284c5bf6103d56906c117fda31224658f07ff00718",
@@ -71,7 +71,7 @@
   "catalog_plan_dated_written_later": "350b5fb934316ca6477ced9ddd6e69314c0888a47d78c4b440202f87b73f462e",
   "catalog_plan_every_exam_topic": "bdbaf201b6250de1f04fe745979dcb07ab2b7374196c2c12cc000fa3e72a68c9",
   "catalog_plan_every_topic": "6b639f42b445aeef0774025a55fa645e9c85f91335a1890504fb32f6cd24dc35",
-  "catalog_plan_finish_around": "cbb7f2eabe650b8ac94ae939ff84d151aa6e228630a2fa0727399c37a5abaddd",
+  "catalog_plan_finish_around": "ef08f18166a10a4ef7e90cc895e384d05a059c6baab37b5e914a0a9c731ba47b",
   "catalog_plan_lessons": "bedb10c484c618ac14ee01d9c95fdf6eb0f20c3d7bb5aaadc4dc97b62dceb0dc",
   "catalog_plan_line": "05219db10d1ebaa74f73698707f2fc13aed9ab0e63386eda4107fa68438fe981",
   "catalog_plan_line_chapter": "0c5c30df1ca270a73fe6e01fd2a5e25b09a877478b9a308d3eb7b1ceed0047e5",
@@ -94,7 +94,7 @@
   "catalog_start_lesson": "e7ea37bd0bff5d60c43dfbd27dd6604d47ff6bc3189acbbfa6adb823d1313e61",
   "catalog_start_this_lesson": "4c8da8899fca53564282c058d527d8442ea61fdeaab9d85718e6ce2f783e13ff",
   "catalog_subject_arts": "ca87780fc494698142bc89c00570e49fd1f1258d38ca5dc7e9dbd3e3a18879f9",
-  "catalog_subject_business": "1925164508477dabdbc6a8d591817e561e1d8ef8bf6ccd1c3f1390869eff8d36",
+  "catalog_subject_business": "b6f98f320dd0c87f16afcb024ede10da471b376f2d4d2d847b462c70830b802c",
   "catalog_subject_communication": "4e7a7a497332a57951d41cee1de156bb449aca7e1268e2d2ce865b688a4e14e2",
   "catalog_subject_culture": "f167dbd0104fd6363833eab72742b94458b137e04856605ae5d09ef453950f52",
   "catalog_subject_economics": "2c166981754c0251db82b2313e5b3126fc246a5a7de18f463a2199a788926fb4",
@@ -131,7 +131,7 @@
 -->
 <resources>
     <string name="catalog_subject_arts">Arts</string>
-    <string name="catalog_subject_business">Commerce</string>
+    <string name="catalog_subject_business">Gestion d’entreprise</string>
     <string name="catalog_subject_communication">Communication</string>
     <string name="catalog_subject_culture">Culture</string>
     <string name="catalog_subject_economics">Économie</string>
@@ -149,7 +149,7 @@
     <string name="catalog_title">Explorer les cours</string>
     <string name="catalog_category_title">Cours : %1$s</string>
     <!-- The goal box's example after "I want to", so it starts in lowercase. "Data analyst" is the job the learner wants. -->
-    <string name="catalog_goal_example">devenir analyste de données d’ici juin</string>
+    <string name="catalog_goal_example">obtenir une promotion au poste d’analyste de données d’ici juin</string>
     <string name="catalog_subtitle">Commence par un cours ou dis à Zoonk ce que tu prépares.</string>
     <string name="catalog_all">Tout</string>
     <string name="catalog_categories">Catégories de cours</string>
@@ -203,7 +203,7 @@
         <item quantity="other">pour terminer tout le cours en partant de zéro, à raison de %1$d minutes par jour, du lundi au vendredi.</item>
     </plurals>
     <!-- %1$s is a month and year, such as "March 2027". -->
-    <string name="catalog_plan_finish_around">En commençant aujourd’hui, tu terminerais vers le %1$s.</string>
+    <string name="catalog_plan_finish_around">En commençant aujourd’hui, tu finirais vers %1$s.</string>
     <string name="catalog_plan_today">Aujourd’hui</string>
     <plurals name="catalog_plan_lessons">
         <item quantity="one">%1$d leçon</item>
@@ -244,7 +244,7 @@
     <string name="catalog_workload_unwritten_note">Les leçons pas encore préparées le seront au fur et à mesure de ta progression.</string>
     <string name="catalog_audience">À qui s’adresse ce cours</string>
     <string name="catalog_outcomes">Ce que tu sauras faire</string>
-    <string name="catalog_outline">Contenu du cours</string>
+    <string name="catalog_outline">Plan du cours</string>
     <plurals name="catalog_chapters">
         <item quantity="one">%1$d chapitre</item>
         <item quantity="many">%1$d chapitres</item>

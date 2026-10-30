@@ -46,7 +46,7 @@
   "search_subscription": "752e3b15187c3882ae8fc4d4d74fa9bb51ba5b0aa22611e7dca6f82733d74658",
   "search_switch_goal": "aa790988879aaa4c85e16a056bcc0b17ca0a13d0d723c9de148148df950188ad",
   "search_take_mock": "72167a438b806f43dda8882fe742684225dc0fe1c4de1602a6c5aa5f9d5ee0fc",
-  "search_take_mock_detail": "2f07ab9afd2b06b6facc40bcec6c5698ff4f9b1de90afcea4121c0b4c81673e6"
+  "search_take_mock_detail": "c5fa4ebbb291ec0ff0c1f6791ef5825466f48e8e386f2a0e338cdc53e7f7522d"
 }
 -->
 <resources>
@@ -69,7 +69,7 @@
     <string name="search_continue">Continuar a sessão de hoje</string>
     <string name="search_take_mock">Fazer um simulado</string>
     <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
-    <string name="search_take_mock_detail">Completo, metade ou uma matéria</string>
+    <string name="search_take_mock_detail">Dia inteiro, meio dia ou uma matéria</string>
     <string name="search_practice_mistakes">Praticar o que você errou</string>
     <string name="search_ask_buddy">Pergunte para %1$s…</string>
     <string name="search_start_new_goal">Começar uma nova meta</string>

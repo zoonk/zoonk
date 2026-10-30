@@ -22,7 +22,7 @@
   "player_language_remove": "6023582fd97f79ebe7ee821b057bb50f53e752101f12692c2d7724405dd7aef6",
   "player_language_selected": "e57cc644de7f75b51b0752c39fe7428f4f4a67cd403682cefa05023a40bdfef7",
   "player_language_show_translation": "64bf1166cfd16cb0d558fc92814bc068ea160def48b12a805215a7e81a2d5dce",
-  "player_language_stop": "67b02bbcbb0ab76f2192175e5feb0928b4893c14e9115d2076f50fa3c5cfbbe9",
+  "player_language_stop": "39384a67f7ceff696783ee13a339d83f4559316da05e351dccaddb9b4a3d3519",
   "player_language_translate": "8a127ac14d8dd565ac09fc272f44248fbaec8112733b062481665294ef0198bd",
   "player_language_usage": "316d589b51836c8fe37412350330dc5fe21321cf1783a36ad82b3c1963ca0373",
   "player_language_vocabulary": "c51ab5d310158807edfc9400f4a277ebd4990a9af90643ffb1e04e8fca61d2f8",
@@ -39,7 +39,7 @@
     <string name="player_language_what_do_you_hear">Was hörst du?</string>
     <string name="player_language_play">Abspielen</string>
     <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
-    <string name="player_language_stop">Stoppen</string>
+    <string name="player_language_stop">Stopp</string>
     <string name="player_language_play_pronunciation">Aussprache abspielen</string>
     <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
     <string name="player_language_vocabulary">Wortschatz: %1$s</string>

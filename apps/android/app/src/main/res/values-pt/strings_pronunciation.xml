@@ -11,7 +11,7 @@
   "pronunciation_learned": "a31ba4c45e00a7a8278aa98003a2ea42c7e2626301006c2a78baa80f9f56a1dc",
   "pronunciation_listen": "ef9d3a929ed579fd17e91b15fbbbb81f003758fd7852eb6d71d294117875f829",
   "pronunciation_listen_slowly": "f9c4a08cb595bee01aba31fa3d3cbcb1882badd0f931921169348204bcde065a",
-  "pronunciation_microphone_off": "14e781bd7d7f6ae74ebe4c386e8bbb3bb35e05f8b8d06fb9fe5e0aad260344f2",
+  "pronunciation_microphone_off": "03670c712fd1b501c927d82e308ef8d4a02122973a704db8a923c1f6f29a0384",
   "pronunciation_no_speech": "e833a68b3841df2f2af40db728a5bab957f0618f2dcad1f86087a5c87a720520",
   "pronunciation_no_words": "7e6376c1ae409ea2f9e55a90697ca857e7d4b531635722b2742c49af171816c7",
   "pronunciation_nothing_said": "498114653c26ec712edac51c97bb31b0f668aa9ec80082fb94a98dec7d584071",
@@ -45,7 +45,7 @@
     <string name="pronunciation_grading">Ouvindo como soou…</string>
     <string name="pronunciation_no_speech">A gente não conseguiu ouvir a palavra. Tente de novo um pouco mais perto do microfone.</string>
     <string name="pronunciation_failed">Não deu certo. Tente de novo.</string>
-    <string name="pronunciation_microphone_off">Ative o microfone para Zoonk nas configurações para falar a palavra. Você pode pular por enquanto.</string>
+    <string name="pronunciation_microphone_off">Para falar a palavra, permita que o Zoonk acesse o microfone nas Configurações. Você pode pular por enquanto.</string>
     <string name="pronunciation_sounded_right">Soou certo</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">A gente ouviu “%1$s”</string>

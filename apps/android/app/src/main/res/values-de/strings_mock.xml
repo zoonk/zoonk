@@ -34,7 +34,7 @@
   "mock_handed_in_title": "456f13a58aa7362f9002f088f386a9043197678a3a09f3b131fd8f72f95cd944",
   "mock_handing_in": "0b063a7efb19f90f1e1a5356f87d63b7fb9862e5ae87f65838be07399c9ce50a",
   "mock_keep_answering": "f54258b31349c06d148ff0a461e63d4d11283ae7ea42007bdffb3b6dc3b47830",
-  "mock_keep_going": "44cc8109313f64e838b0d9e7e64fd17ecf66459f6141c5a95a8b3e0df7fa80d9",
+  "mock_keep_going": "d1bb3c5982a65bf32e5008f7e289f3ed9c5c7f43b93eb29816ef8377de1d7b30",
   "mock_label": "d94ac68eb53a03d409f080e000c8ac4a782ad63a1ef3ee31dbdc3d2514e07f6e",
   "mock_label_shape": "b4c7c23ef79c77bcd73679fb34d2a568791b329d58f54dc9237f2cad5b2d9be1",
   "mock_last_not_saved": "0a303a61155fbed2c5a6f64a1d1dff4214f14131bfccd96533c6a4fd6ff87e0e",
@@ -269,5 +269,5 @@
         <item quantity="other">%d Aufgaben sind noch offen. Deshalb gibt es für diesen Prüfungsteil keine Schätzung. Danach kannst du die Aufgaben in dieser Probeprüfung nicht mehr bearbeiten.</item>
     </plurals>
     <string name="mock_speaking_hand_in_done">Alle Aufgaben sind erledigt. Danach kannst du sie in dieser Probeprüfung nicht noch einmal bearbeiten.</string>
-    <string name="mock_keep_going">Weiter machen</string>
+    <string name="mock_keep_going">Weiter</string>
 </resources>

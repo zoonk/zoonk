@@ -11,7 +11,7 @@
   "research_not_now": "d58edee6cc9e419ea3ec1835293e9bede42790b5166f7261b310560108b2f368",
   "research_notice_action": "1fb34d9211836fc530ecf2353bce7522879400d82d9a301d36d406a87e483a08",
   "research_notice_body": "36a391eff00b89f9e2dd2b40b4fa0cf6ad2489f7b3f78e9bad26b4c2011d96e3",
-  "research_notice_title": "b66f09409807a1a1d720e5e20e496ddd12f02de73c24b102c15a00509533c3c1",
+  "research_notice_title": "9a27568f92fd0342b56121ff65ddc4109b31079c231afe5eb0939ffd0cea4fa4",
   "research_source_action": "2b5b2d22c251a4f84e7eb09f5f75d9dfb3a2b0e35a10bac8c52c5a141f03c5c4",
   "research_source_body": "37c0efa0953811722489e7b51f4aa927c0c1f01526a3a7149d79531712fe158f",
   "research_source_title": "a388f52d90b4165a8f7578d4deeb556c577c7c22dd8d1914145d377fcc4dc01f",
@@ -39,7 +39,7 @@
     <string name="research_source_body">Envie o texto ou guia oficial que você usa para estudar para que suas aulas sigam esse material.</string>
     <string name="research_source_action">Enviar um documento</string>
     <!-- An exam's notice: the official document that announces it and lists what it covers. -->
-    <string name="research_notice_title">Não encontramos o edital oficial</string>
+    <string name="research_notice_title">A gente não encontrou o edital oficial</string>
     <string name="research_notice_body">Envie o edital para que seu plano acompanhe o conteúdo da prova.</string>
     <string name="research_notice_action">Enviar o edital</string>
     <string name="research_guide_title">Não encontramos o guia oficial</string>

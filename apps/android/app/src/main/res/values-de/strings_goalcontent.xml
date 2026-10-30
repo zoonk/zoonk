@@ -18,7 +18,7 @@
   "goalcontent_continue": "6790170687e620707a85fba4c290d6b4026f4c803ee1882630209925b95bc1c9",
   "goalcontent_count_of": "91eb8d20037cd23099dfd219e0083a4031713a79e195deee74c3cfcdcabe20b4",
   "goalcontent_course_weights_even": "a70a2b2c5c6512ac40998ffff028054bc50eb4e7282eab511ed41b9707e974b8",
-  "goalcontent_course_weights_heavier": "e0dd509f54c77302d7bfa53ce4604f34e23942394f5b3b8d7b4e5daa1c9c7d5d",
+  "goalcontent_course_weights_heavier": "25d160ed988d47c565275f575c9ac90a4feb2c85fe3d593a10d91877455a4d9c",
   "goalcontent_coverage": "fc9564a62e2f3a8015117867aa9d5c129ecaaf03d5e5d48563502c9afade8a73",
   "goalcontent_details": "0daac85f4bc4c072b9b65b727ee1b3fe71c0edd10c1b877d1d8e89250b4abc0c",
   "goalcontent_done_and_known": "4f537c1b5091df63156d0efd4269287fdf36509eb0dde67275cdb783a5413746",
@@ -172,7 +172,7 @@
     <string name="goalcontent_questions_source_edition">Fragen pro Fach in der Ausgabe %1$s, gezählt von %2$s.</string>
     <string name="goalcontent_questions_source_latest">Fragen pro Fach in der letzten Prüfung, gezählt von %1$s.</string>
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
-    <string name="goalcontent_course_weights_heavier">Für %1$s bei %2$s gilt eine %3$s stärkere Gewichtung. Deshalb sieht dein Plan dafür mehr Lernzeit vor. Gewichtung nach %4$s.</string>
+    <string name="goalcontent_course_weights_heavier">Für %1$s an %2$s werden %3$s stärker gewichtet. Deshalb sieht dein Plan dafür mehr Zeit vor. Gewichtung laut %4$s.</string>
     <string name="goalcontent_course_weights_even">Bei %1$s an %2$s zählen alle Prüfungsteile gleich viel. Gewichtung nach %3$s.</string>
     <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
     <string name="goalcontent_subject">Fach</string>

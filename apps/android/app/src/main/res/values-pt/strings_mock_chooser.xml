@@ -12,10 +12,10 @@
   "mock_chooser_left_out_practical": "0a9b927ada6d757c92e9f8e0a57cccba3ee0aa7bc926dd40d1a3f2bc10949f0d",
   "mock_chooser_left_out_practical_named": "427f51e978375b1ba8fda7e121eeaac682a74ac7cea706942c17a420a2acee60",
   "mock_chooser_left_out_short_answer": "0d266df34030aedf9c1dc32754abdb889f0313d789db65b58a9d66c3467f4b89",
-  "mock_chooser_left_out_speaking": "6180fd6ed162d480c2a5f859de7b7fb473f0e6401e9b1504b1824449e60eeb56",
+  "mock_chooser_left_out_speaking": "7d7b6a8c7ac13dac1a42e64d52a982f5505757adec85e112912a1289f124ccf3",
   "mock_chooser_left_out_written": "2b1f79bf67e3dc2e549f61b176d7bb31e8ec1fabdd2156e01567408ff6735bef",
   "mock_chooser_not_enough": "31104f2327c26b3071471c7d622303d28f26d4d4b92a3c429811acceffb62259",
-  "mock_chooser_objective_only": "41ff045af31073ca23f04df2efe417f434581d26e6c42eed220c1678cc17fb1d",
+  "mock_chooser_objective_only": "246e0da27f032c1558947131718e26358dadc8bfa113e3f69bddc6f1dce02963",
   "mock_chooser_one_subject": "4cf12b80426cd68e2a609ee68e0a511086461fc855a2318b778393aa5eb6be09",
   "mock_chooser_option_size": "f9d17bb10fcff0133abf8e3307cf0ae2ece62560773df773d5d9f97ed2c45132",
   "mock_chooser_option_size_spoken": "3078cb118fde96a9ca5b9944c5a6165f3a508df9e6554a46cc49b61da32cc8f6",
@@ -86,7 +86,7 @@
     <string name="mock_chooser_plus">Com o Plus, você pode fazer simulados quando quiser e toda semana no seu plano.</string>
     <string name="mock_chooser_one_subject">Uma matéria</string>
     <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
-    <string name="mock_chooser_objective_only">apenas a parte objetiva</string>
+    <string name="mock_chooser_objective_only">só a parte objetiva</string>
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
     <string name="mock_chooser_written">+ %1$s</string>
     <!-- A mock's size in a row: %1$d questions ("q" is short for questions) and about %2$s, a duration such as "5 hr". -->
@@ -192,7 +192,7 @@
     <!-- %1$s is the exam's name for a section, such as "Listening". -->
     <string name="mock_chooser_left_out_named">%1$s ainda não faz parte dos simulados.</string>
     <string name="mock_chooser_left_out_listening">Escuta ainda não faz parte dos simulados.</string>
-    <string name="mock_chooser_left_out_speaking">A parte de conversação ainda não faz parte dos simulados.</string>
+    <string name="mock_chooser_left_out_speaking">A parte de conversação ainda não está nos simulados.</string>
     <!-- %1$s is the exam's name for a practical test, such as "Driving test". -->
     <string name="mock_chooser_left_out_practical_named">%1$s não pode fazer parte de um simulado: é uma prova prática.</string>
     <string name="mock_chooser_left_out_practical">A prova prática não pode fazer parte de um simulado.</string>

@@ -3,7 +3,7 @@
 {
   "buddy_glasses": "ebc0f35b44d265bb91ee071b455eb9da168751a59aafcac46ebfebf8873b94c8",
   "buddy_glasses_aviator": "3bced2e085a2ad0a9db8b6df237fdfa1340149f99526cbcb3a38ae84ba7f57ca",
-  "buddy_glasses_cat_eye": "012681e8c0b5c3e496c48254ac7ea78b8162bc59eb1413edf228a1e22a07999d",
+  "buddy_glasses_cat_eye": "71139c46d0df5b4c8b574a41a7577169d92dd4abbb57d749310b284ff93dfd14",
   "buddy_glasses_earn_aviator": "337a9970f5aa6e68dae8e327b3a5f6a3093a76db2d3338a0eb7091035d465c02",
   "buddy_glasses_earn_cat_eye": "0925011dd79d8e0aa79bfb4bc8a3b2b8e09914c4912069cf6c20e0ef1d72d55b",
   "buddy_glasses_earn_monocle": "3c9aa4617b7a6727a7484a13260962d6663a76b0f4614fdeb213ae5cacd4f822",
@@ -30,7 +30,7 @@
     <string name="buddy_glasses_round">Rund</string>
     <string name="buddy_glasses_star">Sternförmig</string>
     <string name="buddy_glasses_aviator">Pilotenbrille</string>
-    <string name="buddy_glasses_cat_eye">Katzenaugenform</string>
+    <string name="buddy_glasses_cat_eye">Katzenaugen</string>
     <string name="buddy_glasses_retro">Retro</string>
     <string name="buddy_glasses_monocle">Monokel</string>
     <string name="buddy_glasses_worn_round">Runde Brille</string>

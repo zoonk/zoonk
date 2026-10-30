@@ -4,7 +4,7 @@
   "checkpoint_after_lessons": "81e5c61564b9d3f88d1013815adfe0b01a0e4b8dbacfce8d70a2c34823e3dec7",
   "checkpoint_answer": "7c1f78a3599ee8f53ebf57769034502d8fb5cc8a74e11e3befb2b1f1274a2a6a",
   "checkpoint_answers": "0188b51f6121cf698d4306248c50527bf89d796761edaa70f440c3cb69db9fac",
-  "checkpoint_badge": "da061cf8d54c00b1bdda15c5ea44d28d108a2f63eba1b165b57f9cf07098b3fe",
+  "checkpoint_badge": "e4680b5d946626575af9137d2ffc90209920ab3d32f7c981203d6b52b1da3257",
   "checkpoint_beat": "68a2c4e4e1f9dc787550af57c9b550e70fa0a37a33e677480344243725f13384",
   "checkpoint_brain_power": "02b7ee5342a772a32b5c8010b54218a0529fa7e3adbd56ff28ca30182076d67e",
   "checkpoint_broken": "deb4c5f603ba346fad301a1c9c31763a0a7ade3edf8e9e0362883d3b6c2f7f35",
@@ -47,7 +47,7 @@
   "checkpoint_see_result": "f499877dea627a3689505d031f1955f2b677bb5dda204d3744bf89823b66c834",
   "checkpoint_shield": "7e57f3d8c621a1306b09e40a9cc2734b0175062318f69c62d7eba01b5f790765",
   "checkpoint_shield_value": "98a0134dabcaec7e1aa47c84d172d25c01d4bcd2ef34989022ede98632999679",
-  "checkpoint_to_go": "2d7bfde952c745f7597d3b639e7a196e01d26933d6e3dde38715725f140dddbd",
+  "checkpoint_to_go": "1cf828525d3228815f2e5782dcfdbda63fd772fd20ee38fe047068b47155c82b",
   "checkpoint_trickster": "6fc3316cee5379c5a6c36f6673e364e31c6e6a80119199f894397c7bb88548c4",
   "checkpoint_weekly": "a92306ae14f6a749c73936c7725c2529e1bfdc173c50d7bc1fa8516782f7fafb",
   "checkpoint_weekly_done": "5c3d68e06c75e8ebc66e8ff5ce2079acce68229b3f170286f7f830ee45b359fa",
@@ -85,7 +85,7 @@
         <item quantity="other">%1$d de %2$d quebradas</item>
     </plurals>
     <plurals name="checkpoint_to_go">
-        <item quantity="one">Faltam %d</item>
+        <item quantity="one">Falta %d</item>
         <item quantity="many">Faltam %d</item>
         <item quantity="other">Faltam %d</item>
     </plurals>
@@ -134,7 +134,7 @@
     <!-- %1$s is the phase's number. -->
     <string name="checkpoint_phase_complete">Fase %1$s concluída</string>
     <string name="checkpoint_phase_complete_plain">Fase concluída</string>
-    <string name="checkpoint_badge">Emblema de caçador de pegadinhas</string>
+    <string name="checkpoint_badge">Insígnia de caça a pegadinhas</string>
     <string name="checkpoint_next_phase">Próxima fase</string>
     <!-- A phase without a name, by its number. -->
     <string name="checkpoint_phase_name">Fase %1$d</string>

@@ -32,10 +32,10 @@
   "today_done_count": "49e45af40a4beb4e2c2648cd2bf7d22487472904ca70e8a3efc375833ad92e2a",
   "today_done_day_off": "b1beb0ca215172ed7d12305484fd7d229cd7b64b59e23982d97f827296a2b39e",
   "today_earlier_work": "85177dc82c4aa553fc1dd9c15f1408fa0453660fc658f96d2edb621281d82356",
-  "today_earlier_work_detail": "0fc3862706871dfa65d5f965687238664b978612197f16bd74ebf30eceaea8b7",
+  "today_earlier_work_detail": "82830f02bef46151547311320a79ea431a346d9fbc40fa9bdca90ac5f4257620",
   "today_exam_choice_choose": "72599e07ead37c32473257ea6bc2a28b93a2f6defa9f1041db0721c0be4715dd",
   "today_exam_choice_detail": "9b488d7a5a10624e2bdeb3d32aa8502d2b0656f47b094715e818d68cb1298dc7",
-  "today_exam_choice_question": "9a24327c5c4995190c34f5dce6c29ca48d1280c01511eb8fa15f323f96f55deb",
+  "today_exam_choice_question": "3061add6281c5969325f9b17508568461b4ab248738cb2a255dbaf580fe01c57",
   "today_exam_speaking": "10d41cacb11516d9ae31d77fdda6a62a29ddcb21f3e84de98bbda611c15c95cd",
   "today_exam_speaking_detail": "2db7543297881f776137c3f498311b29bcf96231a152ef5d7cd78fd32e5600da",
   "today_exam_today": "60e32a046536a605505057fe0139063e431b98140d2c35516270c67fe522652b",
@@ -52,10 +52,10 @@
   "today_insight_got_it": "3bccb6f1196c270c1c0232cd10530f77930cbb6ea08b4ab17fb7e1fea8040bca",
   "today_insight_keep_it": "63f00786a39ade1ec50aecbd4ce54a71453b7b3de1047315af2b56c9bba9a926",
   "today_insight_label": "ce9856a765013f07de7a205aa28308f05496dd0ee3f503be83cc62ff616a82f7",
-  "today_insight_move_time": "e15decd133efbadb30a091f8bfd5daba5846d2c8f6e1697c4afc11d5e1ae25d5",
+  "today_insight_move_time": "377fdb1e8bc2852b0df9c929c446e54eb677b5b2dacf1795509b6becf20b236a",
   "today_insight_no_thanks": "5665bc886980c9ae6faa7e4da70469214fb298b5dd34aefd841111c68461758f",
-  "today_insight_time_moved": "a77b645332159733b905f8b2fa6c44e86b92dae6432e80e9620557c358af0074",
-  "today_insight_time_stays": "59d944f308112994b98e21a14d90a0f10318e34ea64d96cf671c4cfa291b922e",
+  "today_insight_time_moved": "d78b90fa28a0b5f122327b97c45aaf29f211f8c3b548fc039f675525eed8f569",
+  "today_insight_time_stays": "4d6d849e978b43eab8ba6c6462018c90d05d0407aced779b7177841cf94cf73b",
   "today_keep_learning": "2eee3490e9ebf9f5ca3943e1980626592ea24e7c5118ae726fcb2bd00232c86b",
   "today_keep_learning_failed": "9b9bc27c9d8e19d0f137428e28c94ce6422a6f7abe23d820279da1254cbd5f46",
   "today_keep_my_time": "e667c32351f32012b0b2d845d150b796311cb60df1d3bb9d03d55147ed212590",
@@ -66,8 +66,8 @@
   "today_mistakes_redo": "a74d16ab7b5d408cfe3843146979e0f0a45f466b88d533396b8250ba1970c030",
   "today_mistakes_return_tomorrow": "6091de61f4e2768f329f6a0e4bdfa8e832157d1dafbfafa960eddf1cf0475d2f",
   "today_mistakes_tomorrow": "74feaf763021995454bd57a1c5c918694aa5473770f2c6f37fcadaab74547a1b",
-  "today_mock_funding": "5798bb7db245d53eb56eb6648300057d3e2ce59eca04b3515bc443699269b572",
-  "today_mock_funding_welcome_back": "2a1774cceac51aa30158efe491a29b517931f158607836e948f43508b2638114",
+  "today_mock_funding": "90a93389b20d6723239f6f27535be2b1c944639eb1f0537e8ce48f1a54a5ee2b",
+  "today_mock_funding_welcome_back": "378b6caa62c4c49d2c8b27bb0efb71f2736a12e1ece76767be708da85f40f025",
   "today_more_count": "5a032211c8db7e9d5ef7d65ccb37dd6e048c2b621f5dec5aef44653cca91cde2",
   "today_more_time_a_day": "4e16e8a05dc962f7465adf6bc12267ef7646a080809a2a145ed6308259b4d0cd",
   "today_more_time_or_later_date": "86848875923c07dc4e842fc2e677d7603343a2e3efe26bf3b9abff980609eaa7",
@@ -99,11 +99,11 @@
   "today_past_date_detail": "34541c94d5365d1058f79d464dcd66693fefdeae5f328fe63370994a564fa0e1",
   "today_past_date_exam": "fb57a8caec19991894479f1174ef09b2a078780dddd85c4f18e92a41d684ba33",
   "today_paused": "ee2f73b6ba96e8b64ab6692e14c0923cb504cad34d4a7ab48805238979549fb9",
-  "today_paused_detail": "d17433a2bf5efb14996c22aac479823854853da13d64a535d4caf7d9f87e9ee0",
+  "today_paused_detail": "d9b95fe7214c8fe59e1e0ae6ea377325db0aa251ce2d9b2ae4eade4fb763f1c4",
   "today_paused_goal": "cca076b4a54cf6bdd7ddeba2096ebd56f97788431d517f2d56a7d26217165c92",
   "today_paused_this_goal": "81ca186ed6ad90e495af7380ccef703960ce4a99d28b4b432d4d234ff8da6b4a",
   "today_plan_apply": "5973e23dafe7b3be83bd617e3b28a4fbb3983974e503f11c9dfbadc2c4572064",
-  "today_plan_keep_mine": "7032c7461dff07dc1667c9b8c292243643accf915cbcf097f5efcefe7639cd72",
+  "today_plan_keep_mine": "1a690186f90dd6d6e4f9089ddc4e7216a354f2abf9376d262c8f85b2feed5927",
   "today_plan_stays": "efaf9728ed969ef78d3fc30c5ec460f955dabaa3df99f36e7c4be78bdc42ff6c",
   "today_plan_suggestion": "10e5f543543ff045f37f3eb0b8722443f818230cb42c3ca73e2e0e4e00259bc7",
   "today_plan_use_my_date": "c204c6427c7e9fc8fdf6091255a4bca051ff2bc1ec0a404b09a858a77f82ce3d",
@@ -180,7 +180,7 @@
   "today_week_challenge_name": "0c92fcfe3800a117a9d3a55934882622212b45afc33994bc03518c52e62ced80",
   "today_week_day": "ccea65e1bcdbc380b4759eb778bd5c00e3fd90a2bf78a8d4fe15b9d2d50b6a68",
   "today_week_days": "7f94af96209a377acc681e1af21e9a52ccfef6e5a48b4c8fe8781a8e3ccb5f7b",
-  "today_week_deadline": "171b8f0e26c00040d8acf8b7517e04e579e6fe98adb24717ee65e74e77f8a910",
+  "today_week_deadline": "d165f25542d4ba6b4471cee656d7c5600f6fcd5d50c7c0789ccc0412a22843fc",
   "today_week_exam_day": "7dfdb547134385b330f8aeb0222a95e0c97f46366a8699fc7fc4061690ae70b7",
   "today_week_full_review_detail": "bba21d6c7a9b3536da1530a93f949390eaa71d8a162764697ffe7e813762c8dc",
   "today_week_full_review_name": "485302967954055c939db91e3712894020c4485b43dfff17406a060ec1221f64",
@@ -324,7 +324,7 @@
     <string name="today_paused">Pausiert</string>
     <string name="today_paused_goal">%1$s ist pausiert.</string>
     <string name="today_paused_this_goal">Dieses Ziel ist pausiert.</string>
-    <string name="today_paused_detail">Bis du es fortsetzt, ist nichts geplant.</string>
+    <string name="today_paused_detail">Bis du deinen Plan fortsetzt, ist nichts geplant.</string>
     <string name="today_resume_goal">%1$s fortsetzen</string>
     <string name="today_new_goal">Neues Ziel</string>
     <string name="today_resume_effect">Dein Plan geht ab heute weiter. Du beginnst mit den Lektionen, die für die Tage deiner Pause geplant waren.</string>
@@ -354,7 +354,7 @@
     <string name="today_week_goal_reached">Ziel erreicht</string>
     <string name="today_week_studied">gelernt</string>
     <string name="today_week_exam_day">Prüfungstag</string>
-    <string name="today_week_deadline">Zieldatum</string>
+    <string name="today_week_deadline">dein Zieldatum</string>
     <string name="today_week_before_plan">vor deinem Plan</string>
     <string name="today_week_after_date">nach deinem Zieldatum</string>
     <string name="today_week_rest_day">Pausentag</string>
@@ -391,7 +391,7 @@
     <string name="today_take_the_test">Test machen</string>
     <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
     <string name="today_earlier_work">Noch offen von früher · %1$s</string>
-    <string name="today_earlier_work_detail">Beginne damit. Wenn du deine Lerneinheit startest, wird der Plan an deine heutige Lernzeit angepasst.</string>
+    <string name="today_earlier_work_detail">Fang damit an. Beim Start deiner Lerneinheit passen wir den Plan an die Zeit an, die du heute hast.</string>
     <string name="today_practice_anytime">Jederzeit üben</string>
     <string name="today_mistakes_notebook">Fehlerheft</string>
     <string name="today_mistakes_redo">Übe noch einmal, was du falsch beantwortet hast</string>
@@ -405,9 +405,9 @@
         <item quantity="other">%d ab morgen verfügbar</item>
     </plurals>
     <!-- %1$s is the mock's date, such as Nov 3. Today is shorter so time is set aside for that mock. -->
-    <string name="today_mock_funding">Weniger Lernstoff heute: Du sparst Zeit für die Probeprüfung am %1$s</string>
+    <string name="today_mock_funding">Heute etwas weniger: Wir halten Zeit für die Probeprüfung am %1$s frei</string>
     <!-- %1$s is the mock's date, such as Nov 3. Zoonk sets time aside for that mock. -->
-    <string name="today_mock_funding_welcome_back">Du sparst Zeit für die Probeprüfung am %1$s</string>
+    <string name="today_mock_funding_welcome_back">Wir halten Zeit für die Probeprüfung am %1$s frei</string>
     <string name="today_take_mock">Probeprüfung ablegen</string>
     <string name="today_take_mock_detail">Wann du möchtest: ein ganzer Prüfungstag oder ein halber Tag</string>
     <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
@@ -425,18 +425,18 @@
     <string name="today_insight_no_thanks">Nein danke</string>
     <string name="today_insight_keep_it">Beibehalten</string>
     <!-- %1$s is a time of day, such as "19:00". Moves the time of day the learner studies, not how long they study. -->
-    <string name="today_insight_move_time">Meine Lernzeit auf %1$s verschieben</string>
+    <string name="today_insight_move_time">Meine Lernzeit auf %1$s verlegen</string>
     <string name="today_insight_got_it">Verstanden</string>
     <!-- Confirms that the time of day the learner studies moved, not how long they study. -->
-    <string name="today_insight_time_moved">Lernzeit verschoben.</string>
+    <string name="today_insight_time_moved">Lernzeit verlegt.</string>
     <!-- After declining to move it: the time of day the learner studies stays the same. -->
-    <string name="today_insight_time_stays">Deine Lernzeit bleibt gleich.</string>
+    <string name="today_insight_time_stays">Die Uhrzeit fürs Lernen bleibt gleich.</string>
     <string name="today_plan_stays">Dein Plan bleibt unverändert.</string>
     <string name="today_noted">Alles klar.</string>
     <string name="today_undo">Rückgängig machen</string>
     <string name="today_notice_exam_choice">Prüfungsauswahl</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
-    <string name="today_exam_choice_question">%1$s: Welche Prüfung wirst du ablegen?</string>
+    <string name="today_exam_choice_question">%1$s: Wofür entscheidest du dich?</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_detail">Bis du dich entscheidest, lässt dein Plan %1$s aus.</string>
     <string name="today_exam_choice_choose">Auswählen</string>
@@ -445,7 +445,7 @@
     <string name="today_plan_apply">Übernehmen</string>
     <string name="today_plan_use_my_date">Mein Datum trotzdem verwenden</string>
     <!-- Declines a suggested change to the plan's dates and keeps the learner's own plan. -->
-    <string name="today_plan_keep_mine">Meinen Vorschlag beibehalten</string>
+    <string name="today_plan_keep_mine">Meinen Plan behalten</string>
     <string name="today_next_suggestion">Nächster Vorschlag</string>
     <string name="today_notice_falling_behind">Planänderung</string>
     <!-- %1$s is the learner's time a day, such as 30 min; %2$s and %3$s are shares, such as 72% and 80%. -->

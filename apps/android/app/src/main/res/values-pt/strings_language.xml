@@ -18,14 +18,14 @@
   "language_level_toward_spoken": "b6131cf49157c78476841f486f943c570e834359d9a279851a14a7202cdee1eb",
   "language_level_up": "2c67746afd51d6da6900a2ad2c6361dc72d3ee586b29a5af912fa8dbf8b7e0c9",
   "language_levels_move": "cfbbaf171bfa3430b6598e5ca0bdf68e23bf5d53e3d84bf7134fa946fdeec2f9",
-  "language_levels_rose": "5ae29f782f42fe9300d6f036c441aa7d40a47cee8277512abfb98c9bcc87ff90",
+  "language_levels_rose": "3f31791e5c0de0a3388ce17a01884c2364e4415ecebd8d82137f757b7f6b6cc1",
   "language_pattern_noticed": "09c3395ac6ca85441d6db4d99e46009d2306ceb8ff5172e5cd198643884f0c19",
   "language_pattern_noticed_summary": "fbe5cf73ff03b8ec0cbe8c56a33545076cc0f6f02ca7dbb91772090b6039c4e4",
   "language_pattern_practice": "a2dc0d3921f7c359b537e7df01f23cd6fe4e520f9c1b0c4bba743c03b82ca613",
   "language_pattern_typos": "dc73eb5359217a091daed4821a48a0385e0af7afd5a1aabdd32f8fe45aae69f3",
   "language_pattern_typos_description": "9b94c2c1eca05428ea6a34678e7c3441c94a4eb33b145f419c138994467088f0",
   "language_say_again": "8e0c0407eb0cc69c21203bc62484cdd281dcb96188cc79649fa452f14299e18e",
-  "language_say_them": "a8ab5982d2d3dfabd299d3fc808e3642e54a972388b50bbe403955ab2d1caa98",
+  "language_say_them": "5d1f501eafeed368990a47b624f83ba02c2d8beb53db9dbdf66917533114acf3",
   "language_see_your_plan": "c6eb78019bd77b5d1e924417a4d14d7a7616b9ed263d1561be2ce75c808132de",
   "language_skill_level": "84ad6ee6c5e72497cc6571f997df02880857d768c51a813a142602e28bb67746",
   "language_skill_level_trend": "a7f66fc5ccf04b526d03fb0d8da88ba307cc7ab925966cba9c96f9d71e1cfaf6",
@@ -45,7 +45,7 @@
   "language_unit_objectives": "bf86f82bcc349ff3851106d01736a57625bac0b025ed68502258d8d971ae9148",
   "language_unit_practice": "aa8574999fe8d24774498bbc52b887a53feb9cd41584fc24403300d3a3618bdb",
   "language_unit_progress": "ae2cfd839248a3caa66a864519ba07ef281b8bc937da710c639e66d5f8f6cfca",
-  "language_unit_reference": "b92efcca24882e7ad6201fde1c7620866c99dfe879888261f2c0e83c9157af22",
+  "language_unit_reference": "6c0766229fd8982bdec4ab61403c2db731c70d123774926d39dd068c3d031174",
   "language_unit_start": "93c6ab85ad17dd453bbffb990a11c11567c1696ee7a01a70db778dec60c46980",
   "language_unit_summary": "a66b27d3dd23806fb3c77f56082f3e9337ff9985c71c5dac6acfd648df7b64d5",
   "language_unit_words": "3db25831a098718254d7890a145897628da727fde0d1e253ec809c61f1f5c0e5",
@@ -69,7 +69,7 @@
     <string name="language_unit_practice">Prática</string>
     <string name="language_unit_mistakes">Seus erros</string>
     <!-- Heading over material to look things up in, such as grammar tips and words, rather than lessons to do. -->
-    <string name="language_unit_reference">Para consultar</string>
+    <string name="language_unit_reference">Para consulta</string>
     <string name="language_unit_grammar_tips">Dicas de gramática</string>
     <string name="language_unit_words">Palavras desta unidade</string>
     <!-- A few of the unit's words, then how many more it teaches: "hola · gracias · adiós and 12 more". -->
@@ -101,9 +101,9 @@
     <string name="language_level_rose">%1$s subiu para %2$s desde o teste de nível.</string>
     <!-- The count is how many skills rose, always two or more; %1$s lists them: "Speaking and Writing went up since the level test." -->
     <plurals name="language_levels_rose">
-        <item quantity="one">%1$s melhorou desde o teste de nível.</item>
-        <item quantity="many">%1$s melhorou desde o teste de nível.</item>
-        <item quantity="other">%1$s melhorou desde o teste de nível.</item>
+        <item quantity="one">%1$s melhoraram desde o teste de nível.</item>
+        <item quantity="many">%1$s melhoraram desde o teste de nível.</item>
+        <item quantity="other">%1$s melhoraram desde o teste de nível.</item>
     </plurals>
     <!-- Heads the list of things the learner is now able to do in the language, from the units they finished. -->
     <string name="language_can_already">Eu já consigo…</string>
@@ -128,7 +128,7 @@
     <string name="language_alphabet_skip">Já consigo ler</string>
     <string name="language_alphabet_skip_failed">Não foi possível salvar. Tente de novo.</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
-    <string name="language_say_them">Fale em voz alta</string>
+    <string name="language_say_them">Repetir as palavras</string>
     <!-- Opens the noticed typos. -->
     <string name="language_typos_open">Abrir</string>
     <!-- %1$s names the rule the learner keeps getting wrong. -->

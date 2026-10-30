@@ -18,7 +18,7 @@
   "research_unverified_guide_body": "2ca26175f52cf66fa923f95135e7e27c6e911cb575866542253f2ffd845c9fd2",
   "research_unverified_notice_body": "0cb6c3476dc2617c4b95cf3d518032261ca3372302c7fb18d6b4dfc97ad5f5d6",
   "research_unverified_title": "9eee45462c2dc40990f695c7d7cc81f74436232deb5250c65f0f6e142024cdfb",
-  "research_upload_label": "8b700fdd345c1e480a827e7211945623394457976d445c61188e4133880d0444",
+  "research_upload_label": "fa1fd2a2e1df3397170325b9a9e7c9471d2eaa05a76033184e96d904f148942a",
   "research_upload_open": "92a94c5dc03abd6b3a80dc494a3084aa923032a54422b059a7b740240f317506",
   "research_upload_sending": "6c572d888ffa36c471d4943e55a0e3d5f0d8128ea4519f78a4d2042440ae90ca",
   "research_upload_thanks": "6d11ca2787f8e415d73c2828e4b3e6a10b76d232f5aa01746795a201c20f7bb2"
@@ -26,7 +26,7 @@
 -->
 <resources>
     <!-- Names Today's notice when research needs the learner to upload a document. -->
-    <string name="research_upload_label">Ton plan a besoin d’un document</string>
+    <string name="research_upload_label">Il manque un document pour ton plan</string>
     <!-- Opens the upload ask from Today's notice line. -->
     <string name="research_upload_open">Importer</string>
     <string name="research_upload_thanks">Merci. Nous le lisons et ton plan sera mis à jour dans quelques minutes.</string>

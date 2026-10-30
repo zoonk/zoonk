@@ -3,7 +3,7 @@
 {
   "missions_after_challenge": "047e744f2e27b5751a492bb3d351c79a5d394d9882e5194110ddf0d4bf78af99",
   "missions_after_lessons": "daee1748881b0b3504a466c246cd35371598fc4664ca370b342ba28e4b3b064a",
-  "missions_already_earned": "c5ed20574e7abeeb14f822e8ddc2fc6e9ba355fcbc36878c64eadab19ed2556a",
+  "missions_already_earned": "1cae78adfa887a683780e64a0d7c757df5110dd8d29b918f3c3fab005ff381b4",
   "missions_ask_anything": "e15e0b04345105e8f6e9d0fc38926f2eb2d80b20d6cadf18eb34e6b8cc87335f",
   "missions_ask_buddy": "aa7b425602a28170a834910fd381d84aa68af6858322a5979caf5ceb6da1ee4f",
   "missions_brain_power": "69c8397141788975a87fd2722ff0d4d52182979fb51bbc9b3dc05541bacb5a59",
@@ -14,7 +14,7 @@
   "missions_count": "31eed96b1a9d71f0d09423f13631bf3822c0985540203756d4e89178791a885a",
   "missions_done": "a1dbe0744a09c17ca185eaf962b1181fe41d3b663a639a358e161e5f151dda5d",
   "missions_due_today": "63611f49e6ff99ece704a80f78b389e8cdbacb0cbc377131e08ab77d00bc2e4f",
-  "missions_earned": "c6da742e93bceff49b548eb96dab0328c9d63528b3fe1636235a9f691e35888e",
+  "missions_earned": "3a1ef0d03cb0a8109528c33b836c0b1ea724e205d977d6566730be49948433b2",
   "missions_essay": "5b44f985733ea7082300c2084a0e1fdee264e78facd274bd57dd5e7aef76d173",
   "missions_estimate": "eaeb12ef52f1ad0de6fdaa6c191b0b6741e9d861f4b69a9ed0d8d1cdbe41ba7d",
   "missions_finish_chapter": "e699c3a64a0aaf7e7c670ad82356b730d4233afd60eb834b86434c7758c64727",
@@ -26,7 +26,7 @@
   "missions_just_done": "620a309cc5df65bcd45a42be83dbf5942366db52cc93fa6d99516cf217399052",
   "missions_last_lesson": "9fb78e482263c5dab5f02fc4294c5a8a40fb7c12b2005f7b7d75de5e8a768ba7",
   "missions_last_lessons": "6ff56ce8589e0d2abc73de474d52ed898fb2832c09e532196cbc6c5ed0535add",
-  "missions_left": "c309b92ffdd0a83b5b8aff4349aa617e8b936935c6d1d4864a60a0a2cd20233d",
+  "missions_left": "7c008511689c69a3b570eb09e0b5f4e04a538e9341dd6db0933f82d7d71bc9c8",
   "missions_lesson_and_more": "0c8b9ac06e834801fa9c0ff509dcfa46fb2c5867b52eb0620b97fd6e739f2131",
   "missions_mock": "d046f057af1665cd684a5d22d45f01229db014228b4004fcd8bb6e34454c38e8",
   "missions_moment_all_done": "e3d5c7d02cb52f9d1fa93ea666ac215efc3359ade4a805572c3da5248376283d",
@@ -66,17 +66,17 @@
     <string name="missions_title">Missões de hoje</string>
     <string name="missions_done">Missões concluídas</string>
     <!-- %1$s is a formatted number of points. -->
-    <string name="missions_earned">Você ganhou +%1$s Poder Mental.</string>
-    <string name="missions_already_earned">Você já ganhou os +%1$s Poder Mental de hoje.</string>
+    <string name="missions_earned">Você ganhou +%1$s de Poder Mental.</string>
+    <string name="missions_already_earned">Você já ganhou os +%1$s de Poder Mental de hoje.</string>
     <plurals name="missions_count">
         <item quantity="one">%d missão</item>
         <item quantity="many">%d missões</item>
         <item quantity="other">%d missões</item>
     </plurals>
     <plurals name="missions_left">
-        <item quantity="one">Faltam %d</item>
-        <item quantity="many">Faltam %d</item>
-        <item quantity="other">Faltam %d</item>
+        <item quantity="one">%d para concluir</item>
+        <item quantity="many">%d para concluir</item>
+        <item quantity="other">%d para concluir</item>
     </plurals>
     <string name="missions_moment_all_done">Missões de hoje concluídas!</string>
     <string name="missions_moment_one_done">Missão concluída!</string>

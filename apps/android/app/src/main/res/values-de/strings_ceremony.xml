@@ -7,7 +7,7 @@
   "ceremony_continue": "5fe825fff6e018e07f0febd0aa019217e3fd8b0115b5eb1c2bbd79c3892d5686",
   "ceremony_glasses_aviator": "c5a69e985548a64dcc6e122724dde54f2a1e6ce9fbdacee889e4a622166cf2e3",
   "ceremony_glasses_aviator_detail": "be4cd628efbc1dc6458cac16d158b07027081cd610a70e0fd71506073597f5f1",
-  "ceremony_glasses_cat_eye": "95b32eb4a82618e1494afe1efe098a6d6a404635c28903bc0cc30cacb0df0ea9",
+  "ceremony_glasses_cat_eye": "48a6a484d648a995a9ec4c3f4adf3af83062d94fece4117cfdb9f53d1c5ca50c",
   "ceremony_glasses_cat_eye_detail": "f690b0ff2a7e789614cb0096ceb70878072073f87e8f264f83aa1d165c566b69",
   "ceremony_glasses_monocle": "8ffd37d072592f81981040e2475b57d3139e2f8535ced05ef4396218d0da3d78",
   "ceremony_glasses_monocle_detail": "44bc788f2fc7737c5c013d42b2c139a49825d8494169f67b679f04d8577c67df",
@@ -42,7 +42,7 @@
     <string name="ceremony_glasses_star_detail">Für deinen Sieg bei der ersten Phasen-Herausforderung.</string>
     <string name="ceremony_glasses_aviator">Eine Pilotenbrille!</string>
     <string name="ceremony_glasses_aviator_detail">Für den Abschluss deiner ersten wöchentlichen Herausforderung.</string>
-    <string name="ceremony_glasses_cat_eye">Eine Cateye-Brille!</string>
+    <string name="ceremony_glasses_cat_eye">Katzenaugenbrille!</string>
     <string name="ceremony_glasses_cat_eye_detail">Für den Abschluss aller Missionen an 7 verschiedenen Tagen.</string>
     <string name="ceremony_glasses_retro">Eine Retrobrille!</string>
     <string name="ceremony_glasses_retro_detail">Für den Abschluss von 50 Wiederholungen.</string>

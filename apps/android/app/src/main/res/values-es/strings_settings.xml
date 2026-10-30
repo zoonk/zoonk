@@ -16,7 +16,7 @@
   "settings_delete_failed": "96dd08b9ddbf90faa0fd7f252f772fc7b85902d26fa7e062c0e24287e3251c85",
   "settings_delete_my_account": "74774bbda7d7794cfb555be805ecf723f305438fb9366753e65164312222f67e",
   "settings_delete_verify": "f93980eb5476f378f46fdcdd3c3841eb6b3ca116f700fb4923111b897d8a6f34",
-  "settings_done": "14c1b10e6054c1406e04ae812374726d093416dc73064052610e0b6cd5a7c065",
+  "settings_done": "10ec425f133e9ed53261cc218d4eca067a2ec0992341d4f77b414e35c7e672a1",
   "settings_download": "467d2bba47ad97932be6245259122291601f196f1291632db8ae32696c3f9a3c",
   "settings_download_data": "53c15f226be1d34a03f4f8f1e6e58863cb1eea994646ba1ca887ef9b66e6af11",
   "settings_download_data_description": "b4174733e53ea4148f2803308e647fea8a2a3e174c7bbb41226377705e6fc076",
@@ -25,7 +25,7 @@
   "settings_licenses": "302a12a7bf7aa2abb4c3dda07a9501e0a4cdce4b27761cf90b4c219f035d915c",
   "settings_licenses_read": "aa99e51ad5403c1ac7dcc2ec70479a273bc737d1949cf0633d064076be8bd125",
   "settings_licenses_website": "52e269e64da2c20c099b1608bc7ba3bdcdf8fd1f28899dc9bd758b1b5c8067e7",
-  "settings_manage_apple": "16a2f89c76e25b47a3d155f8776c8c20d36258234e9d0e1183951755965a5bae",
+  "settings_manage_apple": "29e070b6574222b329455b4c38cbb92348d23387c71cd48768e86f347e2b6635",
   "settings_memory": "4629b94f827295a1d5abd94e05806354f46cf748ebab24abf969cd633672e660",
   "settings_preferences": "03ae7ef82c6e59feb9f27f09ea2714063a525d360650158086d0c2eff6a04aac",
   "settings_preferences_app_language": "5ac1745c2e5715b63c3630aa349990493076c5a805ee54c5dcf0bfab058f1de6",
@@ -84,8 +84,8 @@
     <string name="settings_account_deleted">Tu cuenta se ha eliminado.</string>
     <string name="settings_account_deleted_title">Cuenta eliminada</string>
     <string name="settings_apple_not_revoked">Tus datos de Zoonk se han eliminado, pero Apple no ha podido confirmar que Zoonk se haya eliminado de tu ID de Apple. Elimina Zoonk de Iniciar sesión con Apple para terminar.</string>
-    <string name="settings_manage_apple">Gestionar Iniciar sesión con Apple</string>
-    <string name="settings_done">Listo</string>
+    <string name="settings_manage_apple">Gestionar el inicio de sesión con Apple</string>
+    <string name="settings_done">Hecho</string>
     <string name="settings_preferences_buddy">Tu compañero</string>
     <string name="settings_preferences_change">Cambiar</string>
     <string name="settings_preferences_choose_buddy">Elige a tu compañero</string>

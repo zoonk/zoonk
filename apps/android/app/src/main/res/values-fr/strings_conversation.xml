@@ -21,7 +21,7 @@
   "conversation_character_detail": "cc4d92ac44b1bab4a631766a9ec1ec3c00e71deaf46bb12303816258b0034636",
   "conversation_character_said": "9531cea3e051feae61dbb2c273190cf213de459af7571043691044568d7394c6",
   "conversation_clock": "f52792b7550f33db2f27d7b573683628140380feda01973bdbc7e78004387f39",
-  "conversation_criterion_accuracy": "b8d3f578811da49083f42e4bf4b33741506207aa0cc5062af1403a664299022d",
+  "conversation_criterion_accuracy": "1ed750561a85b46f5bddc704fc822a07c48c4306fc483779402fcfdea708df7c",
   "conversation_criterion_coherence": "8a43f62d730bcc17050ce9e6383ab6c0a8826c6fc60981e4b1a9b52c583f6371",
   "conversation_criterion_discourse": "861b58e82a2e35e47a098d0e5e91e4b8282bf20666f06198af22b6743d904dc9",
   "conversation_criterion_fluency": "679cd88a70cc4520c7d2b46cf9551bc5016cb1bc9b5fbce37ea3fe96d86efe92",
@@ -35,7 +35,7 @@
   "conversation_criterion_overall": "f339994d066e31a7258dcea50a6475e11f2578a197ea4125d30c00fc0db8a1b6",
   "conversation_criterion_pronunciation": "325314ab23a12fe8f7cd71e46dd2af3695598a633b56242f64d74f4625129ece",
   "conversation_criterion_questions": "c177da9298c78cb3a8a1a749e91f46d57d9954e5d7e5bc4603d0fe16d651e139",
-  "conversation_criterion_range": "7b8ee7a82c732ad807682e84832bcdafdb045a7377430f07e6a881cbe2565826",
+  "conversation_criterion_range": "1eb42a29dcefd505d7bf7616633f8abbcf2d7270ed798dd37f569507b33c7ddf",
   "conversation_criterion_task": "479cefdfadad9da8174879e6aeae4e58d08eec581e1ac57bb55b5c132db75f99",
   "conversation_criterion_vocabulary": "0028fac5e25ffcd1a47887cdd0eb48ba4bcf0e79a18ec561ddca3b69876739a0",
   "conversation_diff_line": "25099888e511caad6017e2c6c8f296e5275d8b4030808ebbaeb08fa45cf15e24",
@@ -75,7 +75,7 @@
   "conversation_mic_note": "301c514f4ecadaa55c76dcee36a9c4556c817dd8caf9e08d2e747fd64cc27c95",
   "conversation_microphone_off": "5cca534fbae1851f4e922b6d6e6d618f18cbff7924c97c8a6d966b4f66e903cb",
   "conversation_minutes_range": "12649deb15f103dd58d4405862e6437dea502d4e6e16427c0e1bf42c77a19856",
-  "conversation_mock_band_ielts": "b61af7bd0c211ebf52e6a22ef03a073364f15d0e2f6c47f3a3bd3819d574a3aa",
+  "conversation_mock_band_ielts": "5df9c48d43c255cb5998a31e6744b1d5e4787d38c20c057e36612ca0e482b5d2",
   "conversation_mock_band_toefl": "24a23b5e5556055aa71635292b29152584f9ebd42d663cb6086d626fe369be92",
   "conversation_mock_delivery": "0e6cdbba51fd90d53a72dbd68f15168ea8a25b11fbcc3ce2046a9509607a8bbf",
   "conversation_mock_elaboration": "069fa6e96fcb6a47a7d336575270d3a7ca7feefe0e23ab4519dc07c1246f2c67",
@@ -311,7 +311,7 @@
     <!-- Who the AI plays in a task, after its name: "Ana · other candidate". -->
     <string name="conversation_role_partner">autre candidat</string>
     <string name="conversation_role_examiner">examinateur</string>
-    <string name="conversation_criterion_accuracy">Exactitude</string>
+    <string name="conversation_criterion_accuracy">Précision</string>
     <string name="conversation_criterion_coherence">Cohérence</string>
     <string name="conversation_criterion_discourse">Organisation de tes idées</string>
     <string name="conversation_criterion_fluency">Aisance</string>
@@ -326,7 +326,7 @@
     <string name="conversation_criterion_pronunciation">Prononciation</string>
     <string name="conversation_criterion_questions">Questions et réponses</string>
     <!-- A speaking exam criterion: how varied the learner's vocabulary and grammar are. -->
-    <string name="conversation_criterion_range">Variété de la langue</string>
+    <string name="conversation_criterion_range">Richesse de la langue</string>
     <string name="conversation_criterion_task">Réalisation de la tâche</string>
     <!-- An estimate on the exam's scale for points, such as "18–20 of 25 points". -->
     <string name="conversation_band_points">%1$s sur %2$s points</string>
@@ -352,7 +352,7 @@
     <string name="conversation_by_criterion">Par critère</string>
     <!-- A criterion, its estimate and how it stands, such as "Fluency · 3–4 of 5 · At B2". -->
     <string name="conversation_criterion_line">%1$s · %2$s · %3$s</string>
-    <string name="conversation_mock_band_ielts">Note estimée, de 0 à 9</string>
+    <string name="conversation_mock_band_ielts">Score estimé, de 0 à 9</string>
     <string name="conversation_mock_band_toefl">Note estimée, de 1 à 6</string>
     <string name="conversation_mock_estimate">Une estimation basée sur un examen blanc court, pas un score officiel.</string>
     <string name="conversation_no_score_title">Pas de score pour cet examen blanc</string>

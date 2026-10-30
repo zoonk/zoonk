@@ -12,7 +12,7 @@
   "mock_result_blank_gain": "21208dbc97c695edd9c5ab1ea79b44bffcf16236c5f7c56646af26fd7b39dcd5",
   "mock_result_blank_this_score": "890a65bd95e39127f21650decf63614b64fac9d0a6ad63fccb5cf5a23b9720c9",
   "mock_result_by_area": "f4711b0580a9d092e3b66120280e230d51b32862475f90dec715c37123f3fba4",
-  "mock_result_by_topic": "45b093633d227256ddd60a62349c6c18a76d7756cb3522d98bede8feef709ccc",
+  "mock_result_by_topic": "d89fea118fc66137717a411e309fe474a8e134dd89a5e2bb14d2fecef78d44d9",
   "mock_result_calibration": "47d2573365a419c1937930f6d4777d6cedabb8111d5199b27de67d2cc010c404",
   "mock_result_calibration_detail": "660175d961debb19924de52442f69c2d0222ef1be644c2933d52d4337eff534e",
   "mock_result_cant_move": "e053b399f5f473c4a2eb3ec3c8a1fe23b10a4050c9312085299047f34d054f0e",
@@ -144,7 +144,7 @@
     <string name="mock_result_relative">Ton résultat réel dépend des résultats des autres personnes de ta session.</string>
     <string name="mock_result_shows_right">Cet examen blanc indique combien de réponses tu as trouvées.</string>
     <string name="mock_result_left_out_written_in_full">%1$s apparaît uniquement dans les examens blancs complets.</string>
-    <string name="mock_result_by_topic">Par thème</string>
+    <string name="mock_result_by_topic">Par sujet</string>
     <string name="mock_result_by_area">Par domaine</string>
     <plurals name="mock_result_more_topics">
         <item quantity="one">%d thème supplémentaire</item>

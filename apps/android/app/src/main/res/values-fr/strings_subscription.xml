@@ -3,11 +3,11 @@
 {
   "subscription_active": "10c8e8de707d432e118da243816d9354896de75ce0dc7cfeef185f85e351f079",
   "subscription_answer_cancel": "d3132813b894ffe378a842b5ce29953128c4f2753be236c43de0689bf3eff1b0",
-  "subscription_answer_fair_use": "7039a345156a7f6adf68211317c6b7edeef24d203018653e7b765ccc1a0ca7ce",
+  "subscription_answer_fair_use": "6523e9ef70c2e1f4586d637f2a43cb3f112ab7ee92bcfa97b952c9e5b1fbbf9f",
   "subscription_answer_free_buddy": "63c190dd1186e249b909a371b44b0dc35260aa84bfc3e5b572141ca6581c5a1b",
   "subscription_answer_free_buddy_uploads": "67cb73256a734250f59ab207b8a620208938367534b6019f8e130459077a1855",
   "subscription_answer_free_calls": "455c642cb1322e891bdbe97512bc3f22b03951234d47d02a1d7876f47b21eabc",
-  "subscription_answer_free_exam": "dc3a1b45045d30cfec92c71ea67582962be82ba036ecf50a736c9f9de69012a7",
+  "subscription_answer_free_exam": "ea901c20807d560bffeca8a157887669b77d23c6697cf9163f8264a90db4ec63",
   "subscription_answer_free_exam_day": "3de1468dc6420d38efcb88d4699c4a7d0ee032c5d84b8734c7abb2038f6b35ab",
   "subscription_answer_free_exam_week": "216b1eec732b4d18507c37c92308999db5ff61cb25e1c6a7a02632c3a7c5e1a9",
   "subscription_answer_free_goals": "146985b1c1526059bc0146992d939b26c3c4ef3cc1873101a761c506f5ab4b52",
@@ -34,7 +34,7 @@
   "subscription_free": "f2e5f3c52c974703ca35778dedfad4bd1f1598f485fb50b2fc812214d3de77a2",
   "subscription_free_buddy": "041f7a911ca84630851255f5dddd04c91688c90d3b5004bbef47c27b46d6363b",
   "subscription_free_calls": "f188828ce1b318dd26098b976f0b4f5e1897e3fac8aed8dba168953bddf864db",
-  "subscription_free_exam": "fc5b9d20ee8829205429d40a1f3ef9d1f014c8a115539251dc8992501a64cb01",
+  "subscription_free_exam": "a15edac89e66bb7bf4bcaf6dc23e1e4cb0b1c3e70c7ba18538b5302e1f489fec",
   "subscription_free_exam_day": "61ae2056d6e6472a22cf1c74d2f01c181b6477b82084d4cd12a9bb431a45bc52",
   "subscription_free_exam_week": "ac5f9ea371ced628028224438d9ac0ca72389843afe545728809b41d392c52e7",
   "subscription_free_goals": "361b81f5d07a6ba1510e7b0522c928eee37f0004970ba0e007715135932c66ce",
@@ -158,7 +158,7 @@
     <string name="subscription_free_exam_day">Pour un examen : le diagnostic, ton plan et son premier jour</string>
     <!-- Never shown for 1 or 7 days, which have their own strings; "one" is there only because every language needs it. -->
     <plurals name="subscription_free_exam">
-        <item quantity="one">Pour un examen : le diagnostic, ton plan et son premier jour (%d jour)</item>
+        <item quantity="one">Pour un examen : le diagnostic, ton plan et ses %d premiers jours</item>
         <item quantity="many">Pour un examen : le diagnostic, ton plan et ses %d premiers jours</item>
         <item quantity="other">Pour un examen : le diagnostic, ton plan et ses %d premiers jours</item>
     </plurals>
@@ -201,7 +201,7 @@
     <string name="subscription_answer_free_exam_day">Le premier jour de préparation à l’examen</string>
     <!-- Never shown for 1 or 7 days, which have their own strings; "one" is there only because every language needs it. -->
     <plurals name="subscription_answer_free_exam">
-        <item quantity="one">Le premier %d jour de préparation à l’examen</item>
+        <item quantity="one">Les %d premiers jours de préparation à l’examen</item>
         <item quantity="many">Les %d premiers jours de préparation à l’examen</item>
         <item quantity="other">Les %d premiers jours de préparation à l’examen</item>
     </plurals>
@@ -221,7 +221,7 @@
     <string name="subscription_question_unlimited">Plus est-il vraiment illimité ?</string>
     <string name="subscription_answer_unlimited">Presque. Les leçons, les objectifs et ton Compagnon ont des limites qui visent uniquement à bloquer les robots et les outils automatisés, pas les personnes qui apprennent. Les appels d’expression orale ont des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
-    <string name="subscription_answer_fair_use">Lire notre politique d’utilisation équitable</string>
+    <string name="subscription_answer_fair_use">Lire notre politique d’utilisation raisonnable</string>
     <string name="subscription_question_cancel">Que se passe-t-il si je résilie ?</string>
     <string name="subscription_answer_cancel">Tu gardes Plus jusqu’à la fin de la période déjà payée. Tu repasses ensuite à la formule gratuite et tu conserves tes objectifs et ta progression.</string>
     <string name="subscription_question_refund">Puis-je obtenir un remboursement ?</string>

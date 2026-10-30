@@ -6,10 +6,10 @@
   "session_block_challenge_rematch": "c12d2238840cb47b4293084b27cbaf0948115c2a142d846e4029145e5f36f18c",
   "session_block_final_challenge": "3bd0162d3dd65087234b4507d4796e83bfdf3432a135c468a05cc9c0e6671302",
   "session_block_full_review": "43dd6f5fdf211f04db85206c674403dd412dc321993116b062608ac7bf2bd9a3",
-  "session_block_full_review_questions": "280d98dc70264cf2430d58d8de2603dba51c3b6ad7493f81d50f157f0ddbfbee",
+  "session_block_full_review_questions": "130bc1cdd18fc21e5dfc8f3c858aaed3cd5a4edd278a637741831e65ef116ed3",
   "session_block_live_call": "11c64d5ce3fcb2857f0d284deb7fe7ebcecd3309d3fb69d1dc44563cdd815787",
   "session_block_mixed_practice": "fd994e90957f22c66da46ecf9839017704aeddd2624fbb59bee4592c8394aa24",
-  "session_block_mock_exam": "22dcc6c51afb24bed128908943c8cc852596b7c75adea1a47c6321cc0ff15413",
+  "session_block_mock_exam": "a7305e4b85a2194479b2ccc0d0da13fb8dad0e7bb2249a9d40b525cbc4921796",
   "session_block_new_lesson": "b14746ab8e54f38aacf56a70c0e0a7c72842c1757d04a6b16201e7d3eed76a1d",
   "session_block_phase_challenge": "6bf45447371b38fc36a496acea6e043708bec4c17b8bb8dab1753b0917818c43",
   "session_block_phase_live_call": "230a9e77edf69edbf9f1a25769f994df37f361ceab877eb7ebb1a6f85a6c396c",
@@ -33,7 +33,7 @@
   "session_level_up": "0c8e13eda0a22a045c2aaf87da1816439aeb43e29a3d30d719e64ba48f65bb48",
   "session_next_eyebrow": "9a4bd910739077c5b904e20667add82cd1cd301d47c83c455df82c7cd0abf073",
   "session_next_getting_ready": "c4021b79857ae7bbf2a0b86b69767398fe8a6e0b012b8ee69090fd3e1d0e4241",
-  "session_next_instead": "56072d4724a17db3334075a155f1dbd1ba3355e88829ed5be129f9fdfb20b152",
+  "session_next_instead": "7aeff6ba9d09f5a27a60a008c5a230a035bb03ebb85d5a2fc9d5e125b6ed60e8",
   "session_next_start": "b8c4197a15a471311d41e0c915971af90009ddd117af1a9d3b7d75d79a391139",
   "session_next_stop": "4c56480b45f6b5ba26c3afab9c896a3df100370d55dbb2d70899bef0fe99a5d7",
   "session_next_stop_failed": "437a5fe9eab317b587ec64936e554bafeed09d5aa1c873325eba9ea1947679e8",
@@ -72,7 +72,7 @@
 }
 -->
 <resources>
-    <string name="session_block_mock_exam">Simulacro</string>
+    <string name="session_block_mock_exam">Simulacro de examen</string>
     <string name="session_block_weekly_challenge">Desafío semanal</string>
     <string name="session_block_final_challenge">Desafío final</string>
     <string name="session_block_challenge_rematch">Desafío, segundo intento</string>
@@ -125,9 +125,9 @@
     </plurals>
     <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic, weakest first. -->
     <plurals name="session_block_full_review_questions">
-        <item quantity="one">%d pregunta sobre todos los temas, empezando por los que más te cuestan</item>
-        <item quantity="many">%d preguntas sobre todos los temas, empezando por los que más te cuestan</item>
-        <item quantity="other">%d preguntas sobre todos los temas, empezando por los que más te cuestan</item>
+        <item quantity="one">%d pregunta en total sobre todos los temas, primero los que más te cuestan</item>
+        <item quantity="many">%d preguntas en total sobre todos los temas, primero los que más te cuestan</item>
+        <item quantity="other">%d preguntas en total sobre todos los temas, primero los que más te cuestan</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
     <plurals name="session_topics_and_more">
@@ -202,5 +202,5 @@
     <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->
     <string name="session_next_while_waiting">Mientras esperas: %1$s</string>
     <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
-    <string name="session_next_instead">Otra opción: %1$s</string>
+    <string name="session_next_instead">Como alternativa: %1$s</string>
 </resources>

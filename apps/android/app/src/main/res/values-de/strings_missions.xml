@@ -5,7 +5,7 @@
   "missions_after_lessons": "8a546d2c9fa7679afc15e0f3038bc1a583e4da26db9c8c43e0d566ea38436a72",
   "missions_already_earned": "87f72e04144d99f31e9a78661e5a1056aa54559cca7681b8bf019c687a31f769",
   "missions_ask_anything": "24b9892e07f9c0f849cd9aa385f10bfbb3e0239bac7b59d97961c51428a7883b",
-  "missions_ask_buddy": "23e32be31bdad163af1b586c826a2fe3c4b01dec87f2b9a1fc6bf6b40e4a5e23",
+  "missions_ask_buddy": "6aed88771cfc2eb5f36dfb30e6022fdb1aa78061da65d27b0806bd35c1f5c2c3",
   "missions_brain_power": "86997b83168b52a5096e6188ab9f26ec032565367c9795f849707ce2276e768b",
   "missions_brain_power_about": "a64c2320bcde9cd1611e7b5a57de2c64033086e51f66f28b10cabe7e86cead9d",
   "missions_brain_power_total": "c6e21d9072b23d90952e9263e4a4f1832e32b29727f844db02567150508ebf9a",
@@ -35,7 +35,7 @@
   "missions_moment_one_done": "2cf3966f5cefa11621c636760dc296e085ec99fcad4008fa1da946a84e6be0db",
   "missions_most_room": "e0761f49aad3cf2b2eaf8f2fde8a3ed0873a2c9cf6ec3411948fa278b94e83f7",
   "missions_open_buddy": "65499004d72b7656a2830792cf32dc3605c1954085b53b6ce8d8a550fd7897d1",
-  "missions_open_call": "0c4ec53fbdae9f8e5a8c4ad89eac46c9bf469573e04c36757a29cdc15c4ddd0f",
+  "missions_open_call": "c47e614d1c9857b6e557df51ca494486dc0d06f1bca53c2943a6330ea6c0b878",
   "missions_open_challenge": "3ac2e798c5837063ba6f8d5950d0e1d26c46057533a85035cd278cf4407ab759",
   "missions_open_chapter": "5ef32e1613a7269b6c6ac4e3bd24fbddb549b0a05f59bfc354ed6b430952949f",
   "missions_open_essay": "79e664e0b9d127787b51698f6fac5f13bbbe09b28c3bd8e3f81aba843b97f153",
@@ -55,7 +55,7 @@
   "missions_pronunciation": "c5ff021342aac2b1bd53548a7bf0b31539b9f1930e188eb25d9e6165555b4a55",
   "missions_quick_call": "f2af8e96ab82c601bd2ea9ad3773f1ca3cbf2bd7e28cfd8f626a257f227cbfab",
   "missions_quick_call_unit": "91205e19433d834c50c3392185497b03db4f5fb9f3f212cfb4a64428d7615c89",
-  "missions_rematch": "df0fcbe87c7469df43282c508917743a89276c9ce55b0dbdca72c932b7619642",
+  "missions_rematch": "a0b3b411867c003e1e01de86e411826d7ad2ab413399acacde3f35367fd2ce49",
   "missions_review": "dd1884e68287f585f032097028fe8284cd99b9349cb093d13a6d15675bf88a8e",
   "missions_something_new": "502d1d74f449f373e7b9931fd6ac04fd67de027b4c6fe0fae8c82ead3654ec67",
   "missions_title": "50c52bd281b70d59c0268f3a78471c456940b600191e7e7822ac11a5a55b63bd",
@@ -100,7 +100,7 @@
     <!-- %1$s is a chapter's title. -->
     <string name="missions_finish_chapter_named">„%1$s“ abschließen</string>
     <string name="missions_finish_chapter">Das Kapitel abschließen</string>
-    <string name="missions_rematch">Erneut gegen den Trickser antreten</string>
+    <string name="missions_rematch">Noch einmal gegen den Trickser antreten</string>
     <string name="missions_challenge">Gegen den Trickser antreten</string>
     <string name="missions_weekly_challenge">Wöchentliche Herausforderung</string>
     <string name="missions_mock">Die Probeprüfung machen</string>
@@ -116,7 +116,7 @@
     <string name="missions_pronunciation">Aussprache</string>
     <string name="missions_call">Ein Gespräch führen</string>
     <!-- %1$s is the learner's buddy's name. -->
-    <string name="missions_ask_buddy">Frag %1$s etwas</string>
+    <string name="missions_ask_buddy">%1$s etwas fragen</string>
     <!-- %1$s is a skill area's title. -->
     <string name="missions_practice_area">%1$s üben</string>
     <string name="missions_after_lessons">Nach den heutigen Lektionen</string>
@@ -153,7 +153,7 @@
     <string name="missions_open_mistakes">Deine Fehler üben</string>
     <string name="missions_open_pattern">Zum Muster</string>
     <string name="missions_open_pronunciation">Zur Ausspracheübung</string>
-    <string name="missions_open_call">Wähle ein Gespräch</string>
+    <string name="missions_open_call">Ein Gespräch auswählen</string>
     <!-- %1$s is the learner's buddy's name. -->
     <string name="missions_open_buddy">Zu %1$s</string>
 </resources>

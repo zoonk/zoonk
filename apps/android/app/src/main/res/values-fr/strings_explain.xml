@@ -5,7 +5,7 @@
   "explain_deeper": "8bb671e4741e23a849f19f579418ded37bf43ace1abfa8f1ea420b793c16561c",
   "explain_deeper_course": "9faa18d98244096f6b88ee9bf33db88a2b0820dfd4cf343a59c74869d94daebb",
   "explain_deeper_goal": "2f18c10ddba088755ec1d43bd6a869694abc21b18fb6e23615981fd9ec2a7725",
-  "explain_deeper_subject": "127d4d74dc29af2aba39eca898d588a4f24347c83cf7ca44f35398f558779848",
+  "explain_deeper_subject": "68193013cf0441e743dfdb939a64d1227915960d9680d3576b6cc21f1aba843b",
   "explain_go_further": "52f163b06d7eaf0e45cb2897f24636f0fd9a478c74ea9884e1d8dbd904a96e8b",
   "explain_load_failed": "1c7253fc32a876c6ede27d523c6a1199d83a54fee96c88995a95de06f00d2136",
   "explain_no_plan": "1ce1b6110c6680b38fa070be2bff53a86bf9f8a92699a11efd61bb339e1f6e94",
@@ -44,7 +44,7 @@
     <string name="explain_deeper">Je veux approfondir ce sujet</string>
     <!-- %1$s is a course's title. -->
     <string name="explain_deeper_course">Préparer un plan pour %1$s</string>
-    <string name="explain_deeper_subject">Préparer un plan pour tout le sujet</string>
+    <string name="explain_deeper_subject">Créer un plan pour toute la matière</string>
     <!-- A goal typed for the learner from the explanation's topic, which %1$s is, mid-sentence. -->
     <string name="explain_deeper_goal">Je veux comprendre %1$s en profondeur</string>
     <string name="explain_slow">Cela prend plus de temps que d’habitude.</string>

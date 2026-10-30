@@ -21,7 +21,7 @@
   "player_back": "0a70e5bcd7acf620cfd8dfcdde649947d1a120d37568ec0e959778a6b5aac4f2",
   "player_back_to_chapter": "b13d90c1ba4ce0653c8c110cb87b55b6cd46e2c4d9785f0bf2a38e22469da5b9",
   "player_back_to_unit": "118935561852a046c1413926a8d231b0af6aadb9698f60ddd52e5832517da8ad",
-  "player_build_my_plan": "eef69464bd28f46e9ef407922bc253f8e41668e5aec2d13cf293f8d9756e5ea5",
+  "player_build_my_plan": "02277a7dc28e85d5ede500f49586f1fc3a8692566c0fc641196a48cbcd6e149e",
   "player_can_talk_now": "bab11818c6669056c15f0d514d9d1669fff2230ebcd80f0e78950ce2dac42560",
   "player_cant_talk_now": "caba6fe3a67e472c2b0c2035d1a4e3ab44da83a2f386e1ba7c80781c236cdd38",
   "player_cant_write_now": "778dd85d71021e72ea9b99487b511f317c1f3be323c0dcc4c81b115a4091b9d1",
@@ -61,7 +61,7 @@
   "player_dont_know_yet": "7e05563ef48817f0d8c348a88cd47b29e124f5148532d056bf5e3d6db66c05ca",
   "player_drawing_picture": "6a2bfe1939744e01b878d99f7e44d237380229b17aca82578f48c5f601f8a3a6",
   "player_enter_hint": "06108e643aaf58826b9fdf6b737ed38ae91af43e51a42473120fdcc2edc9aa2e",
-  "player_explain_first": "113506c017611be215aaefb2177bed7d22299b9b8448203a116ce7357dc8b8df",
+  "player_explain_first": "a2e3044e25892add22954ec24e4bef4e2a5b7921e855a7495d9ddbd23cb27f31",
   "player_finish": "2dca9741c7e1e9718dd81bd623f95d5496c40684a15797ed08d1f7ee101cae7c",
   "player_free_limit_day_description": "89143c613a87c1b3158120b2251a318268d87b668c191429cf976035272c7f12",
   "player_free_limit_day_title": "7cedb80ea2cd458312493047637eb9829d95d5ebf9da97d81559abec9e8a2324",
@@ -99,7 +99,7 @@
   "player_nothing_left_title": "c0b16cddab711190c257beccb198a40c2952bba0f9867121e22c9141e2dce5c8",
   "player_notice_answer_not_saved": "56f75c60eb844d8849658737700fbee81abc5e2ba9763189647c760292172e78",
   "player_notice_picture_ready": "dcf5e54e5edbd59bab7c7e850bd4d5d0f4db789a877675e1d30d4d2c32a8c8fe",
-  "player_notice_self_correct": "59c6b1f58c2ca6f119060a7ef124dc9b4c0a7b66272fcb5496e80d91ded9170f",
+  "player_notice_self_correct": "99d65f95ef078e827584e8187c5647e4dc2548b05b1ddab02624725bbfccfc27",
   "player_notice_writing_skipped": "df007e8a56ecbfea724de47b420bd9f5ad326f7cfe2396a005846fbbd8f4c785",
   "player_open_failed": "2b81deb6cd9d5c6bcbffd3d0b07ea80c46c104e0fd6d1211f9b88fe066ac4650",
   "player_opening_lesson": "2def0126b2d22c708245cd90e5f53e62c3a2b0b3c0f3962731e13f63c38a2e60",
@@ -119,7 +119,7 @@
   "player_review_ideas": "327ae348479aa648083730680f21250a27967744c649ba1df33e6de8b29a662c",
   "player_review_on": "a8153f82dba84c476047067081e6631b693f85f246ecf9b20eac3edae02d9510",
   "player_save_failed": "d1987bd52db878f734aa87a28d732162709154e4640d35958dd95a93d84ac4fa",
-  "player_saved_to_mistakes": "2416cd00b01f8d38c3916e97869f1643a50cef3e48e53a4da4c4365a58267bb0",
+  "player_saved_to_mistakes": "6e7efaa738e99ebcdb1c825a53451217d765133ccd304cbc1699003f4afb6a84",
   "player_saved_to_mistakes_back_at_end": "1bd7248c1b827649fad2fcd0eb69717e84794c551812219e2ccd8499b2545ada",
   "player_saved_to_mistakes_back_date": "56833966817c461c34442437552863003bd3f04e232fdc6c9d1f81f7d72b232a",
   "player_saved_to_mistakes_back_today": "d42b4d91f221f8441835e418c7048fd64ab322d9841d6a0d228076aa076b4594",
@@ -152,7 +152,7 @@
   "player_verdict_correct": "50ea600d79b2233a449350b6917df7d5af0a7339968df8cd0b46d0d40992ca87",
   "player_verdict_guess": "25c4156473eece9581cb0348086ee4c8df36938f9a85db9391157570dc5a0617",
   "player_verdict_guess_right": "115ba834a5e128587142486352df765bc275867e8c7026882698e67c16d61165",
-  "player_verdict_incorrect": "b91cae23dc1a7c65994600b6318e8685077c4e4c54ce9cf64464883edd721be9",
+  "player_verdict_incorrect": "c47f957247cbdbbba009742e3c8748d6e67845d2d8a11862274641090b8158b9",
   "player_verdict_sample_answer": "8a6d12d6e693a703b58762ea3cdb43e2a2ea830d9371a4b44c4c32a259e9cb04",
   "player_verdict_typo": "ee8149a01f684e9d0b8ee1e5145f862fc112a9cf13fdfcec34cb1d8dcd8e01bc",
   "player_verdict_unchecked": "277d5decb264716278e906534d3231cd51c968599afb1104f4245b8ea1200be5",
@@ -190,7 +190,7 @@
     <string name="player_previous_screen">Écran précédent</string>
     <string name="player_quick_check">Vérification rapide · %1$s sur %2$s</string>
     <!-- Shown on a wrong answer the learner can still fix right away. "Not quite" means "that isn't right", not "better luck next time". -->
-    <string name="player_notice_self_correct">Pas tout à fait. Regarde à nouveau et corrige toi-même, puis vérifie.</string>
+    <string name="player_notice_self_correct">Ce n’est pas ça. Regarde à nouveau, corrige ta réponse, puis vérifie.</string>
     <string name="player_notice_answer_not_saved">Ta réponse à cette question n’a pas été enregistrée. Réponds à nouveau pour terminer la leçon.</string>
     <string name="player_notice_picture_ready">Cette question attendait son image. Réponds-y pour terminer la leçon.</string>
     <string name="player_notice_writing_skipped">Tu n’as plus besoin d’écrire aujourd’hui.</string>
@@ -200,7 +200,7 @@
     <string name="player_verdict_guess">Voici la réponse</string>
     <string name="player_verdict_guess_right">Bien deviné !</string>
     <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
-    <string name="player_verdict_incorrect">Pas tout à fait</string>
+    <string name="player_verdict_incorrect">Ce n’est pas ça</string>
     <string name="player_verdict_sample_answer">Voici une bonne réponse</string>
     <string name="player_verdict_typo">Correct, attention à l’orthographe</string>
     <string name="player_verdict_unchecked">Non vérifié cette fois</string>
@@ -219,7 +219,7 @@
     <string name="player_correction_right">Bonne réponse</string>
     <string name="player_hyperdrive_streak">%1$s bonnes réponses de suite</string>
     <string name="player_comes_back_at_end">Cette question reviendra à la fin de la leçon</string>
-    <string name="player_saved_to_mistakes">Enregistré dans ton Carnet d’erreurs</string>
+    <string name="player_saved_to_mistakes">Ajouté à ton carnet d’erreurs</string>
     <string name="player_saved_to_mistakes_back_at_end">Enregistré dans ton Carnet d’erreurs · reviendra à la fin de cette leçon</string>
     <string name="player_saved_to_mistakes_back_today">Enregistré dans ton Carnet d’erreurs · à revoir plus tard aujourd’hui</string>
     <string name="player_saved_to_mistakes_back_tomorrow">Enregistré dans ton Carnet d’erreurs · à revoir demain</string>
@@ -245,7 +245,7 @@
     <string name="player_cant_write_now">Je ne peux pas écrire maintenant</string>
     <string name="player_dont_know_yet">Je ne sais pas encore</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
-    <string name="player_explain_first">Explique d’abord</string>
+    <string name="player_explain_first">Voir d’abord l’explication</string>
     <string name="player_check_failed">Nous n’avons pas pu vérifier ta réponse cette fois. Réessaie.</string>
     <string name="player_still_checking">Vérification en cours. Cela prend plus de temps que d’habitude.</string>
     <string name="player_enter_hint">Appuie sur Entrée pour vérifier, Maj+Entrée pour passer à la ligne.</string>
@@ -369,7 +369,7 @@
         <item quantity="other">Leçon %1$s sur %2$s</item>
     </plurals>
     <string name="player_guest_save_note">Enregistre ta progression et une courte révision t’aidera à retenir ce que tu as appris.</string>
-    <string name="player_build_my_plan">Construire mon plan</string>
+    <string name="player_build_my_plan">Créer mon plan</string>
     <string name="player_create_account_to_save">Créer un compte pour enregistrer</string>
     <string name="player_nothing_left_title">Plus aucune question</string>
     <string name="player_nothing_left_description">Termine pour voir ton résultat.</string>

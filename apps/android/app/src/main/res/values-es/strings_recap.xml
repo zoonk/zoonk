@@ -7,7 +7,7 @@
   "recap_fresh_week": "c670b24d0f1d6d0d7c4966e0cac8fbf46fdec6a89a4f538eec953656ea1f0125",
   "recap_learned": "f07b91c411b8fe132205e57b36c8feb69657c1f2d4476234b07cf2fb053eb53e",
   "recap_lets_go": "e42117b9114a4c9c736263364bf4f08ddeba6a465a271f89c6c1d2c95d3a6456",
-  "recap_mastered": "eb7d9f7a4445f29c4eacb7cefb2c59a83e5c3b6350e9e081748b8e039c5b9d68",
+  "recap_mastered": "4e0055531c461c4e4d3030d6fb5f1a9985830f9319f1ccf4f33f34d4353c8918",
   "recap_mistake_fixed": "ce15acd5a8d1b8d6f43de5ee87dfa7d3ab3cae82f0b549c1dd487786c985494e",
   "recap_mistakes_fixed": "c92a3e3be3f47d5593191e62699fdf7854a27368a956648f69701a06cee2bf23",
   "recap_more_questions": "a466381cbb6b0b30599e5174f6955c6137727ef0d1286f388ab5c30ba6004806",
@@ -15,12 +15,12 @@
   "recap_new_idea": "0e2a5060936ff05e7c4835f5db63dd89dd11232ad0a6fcf28fb1fda6d220f456",
   "recap_new_ideas": "bc25a085f39710ab140188b68c7d9e374763c10359175ac9800369affb25efec",
   "recap_next_week": "9f479787da7241143a43eda342380605c18fd81a5a2c189d9887cdf19787b4a4",
-  "recap_phase_done": "855e13f27f486b73a66b532bed79e982989c93a0f53bbb91df7b6d2c4d5a9397",
+  "recap_phase_done": "9837e9f87d08ae7f2780bedbcdad032b9305632c0b741c89cb3a550fa962ca77",
   "recap_questions": "6fdcbe96fcc26c79c2f22795981cc2d4a81fdc715575a660d99e16f8c8dc51af",
   "recap_quiet_week": "66e34b0a56c65a5cc2ac5c176373dcdde437694ae7bd6f0abbc09fceb6e50f17",
   "recap_review": "2206cb3c27f0cb0af45b3fd165d9f4b2aabb975ebee9a83cef929cfe3747ddce",
   "recap_reviews": "d0e3e027d0faaecf6bc94ca435fe618e386096a1593f9f0fc88f4c700a306ce6",
-  "recap_solid": "9914e8a95514d335a3cdeb54126fe9f0a77c74024a3b024af4e7dd7134a6d7f7",
+  "recap_solid": "98ded47594637229870c26e35261cd25f9265030252d0eb848a3d6bbc3d7e34e",
   "recap_time": "fa399d7f515dee830355c712223fd70885d6acedb044ea651aa7c57536a52749",
   "recap_trap_hunter_badge": "1f3ce69fe28b711f9c752590d3b23b6f28c6be9883d99dc9fb303bf3feff99cf",
   "recap_trap_hunter_badges": "5d303c18053ec1335cc18dd2fe8536cc5d7b612dee20b6903a39e4db36a8429d",
@@ -46,7 +46,7 @@
         <item quantity="other">¡%d preguntas más que la semana anterior!</item>
     </plurals>
     <!-- %1$s is the phase's number, %2$s its name. -->
-    <string name="recap_phase_done">Fase %1$s · %2$s completado</string>
+    <string name="recap_phase_done">Fase %1$s · %2$s completada</string>
     <!-- %1$s is the week's dates, such as "Oct 20 – 26". -->
     <string name="recap_weekly_summary">Resumen semanal · %1$s</string>
     <!-- %1$s is the learner's first name. -->
@@ -63,11 +63,11 @@
     <string name="recap_turnaround_detail">%1$s → %2$s respuestas correctas</string>
     <!-- %1$s is a skill's name. -->
     <plurals name="recap_mastered">
-        <item quantity="one">Ahora dominas %1$s: lo recordaste en %2$d día diferente.</item>
-        <item quantity="many">Ahora dominas %1$s: lo recordaste en %2$d días diferentes.</item>
-        <item quantity="other">Ahora dominas %1$s: lo recordaste en %2$d días diferentes.</item>
+        <item quantity="one">Has alcanzado el nivel Dominado en %1$s: has recordado lo aprendido en %2$d día distinto.</item>
+        <item quantity="many">Has alcanzado el nivel Dominado en %1$s: has recordado lo aprendido en %2$d días distintos.</item>
+        <item quantity="other">Has alcanzado el nivel Dominado en %1$s: has recordado lo aprendido en %2$d días distintos.</item>
     </plurals>
-    <string name="recap_solid">Has afianzado %1$s: seguiste acertando en los días siguientes.</string>
+    <string name="recap_solid">Has alcanzado el nivel Firme en %1$s: has seguido acertando en días posteriores.</string>
     <string name="recap_turnaround_chart">Respuestas correctas en esta habilidad cada día de la semana</string>
     <string name="recap_learned">Lo que has aprendido</string>
     <!-- A count stands beside these; the singular reads beside 1. -->

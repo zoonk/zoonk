@@ -22,7 +22,7 @@
   "goalcontent_coverage": "f32cda5edd92eb7b58671b13991b4c2f1f34b8fe505f8b2c1a1c835e05243855",
   "goalcontent_details": "5380ed3c2e6eac9c8eea0e2200c2d7a83faa2c7b273bdb8926f5c8a76c31c493",
   "goalcontent_done_and_known": "a06696e3b674415b643ebb5f3e5475518ed04a3ade6626e89d988e62ba376573",
-  "goalcontent_for_reference": "c073109904ac3693f0ff7c56dc00a56e951ee3e19e2297e13fad13a562eaae26",
+  "goalcontent_for_reference": "62cc543bc357ecc43feb26a55a9129053efc71811deeaf06f5dd11363935b1bd",
   "goalcontent_frequency_material": "396aa28915e95c6c0465ec694377082b7d37596ed6bc6c97a5cd70c3bfafbbb8",
   "goalcontent_frequency_most": "71e9ea56bdf306f67466f72e1015aaee7f1638cb6960248ce8aad00e851cdc4e",
   "goalcontent_frequency_past_exams": "9ebf6da5706b484599bccc9731bdea775f3559d88af397948cdfe5d751983480",
@@ -291,7 +291,7 @@
     <string name="goalcontent_practice_nothing">Rien à travailler dans ce chapitre pour le moment.</string>
     <string name="goalcontent_practice_failed">Ça n’a pas marché. Réessaie dans un instant.</string>
     <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->
-    <string name="goalcontent_for_reference">Pour aller plus loin</string>
+    <string name="goalcontent_for_reference">À consulter</string>
     <string name="goalcontent_chapter_summary">Résumé du chapitre</string>
     <string name="goalcontent_skills">Compétences</string>
     <!-- A skill whose recall is fading. -->

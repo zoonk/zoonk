@@ -15,7 +15,7 @@
   "mock_chooser_left_out_speaking": "e9b988f44aab47fbfe37d6a87a21c91a6783bccf55f66310b9cdc8d342a0d811",
   "mock_chooser_left_out_written": "f6f22e6c31e24033fb278d5e3329e230c14241ceedf8ba239bb727f09a201407",
   "mock_chooser_not_enough": "5d3c31fb99163af13c1b4a7b369e771acd172557bc027f145673df9b8ba1678f",
-  "mock_chooser_objective_only": "b9d9541dbc33aaaba208bae2505a453bc66fea1239b38ad42939d312f0f8c631",
+  "mock_chooser_objective_only": "e961eeebb0f8e5ea1918ba192e5fcf2f4fb26cfd095bc51929aa9aba9ef8893a",
   "mock_chooser_one_subject": "7dda8105567554fac64b787135170ffa872153a626b7af6ee5323c419c1a5ee5",
   "mock_chooser_option_size": "6b5e68e52100c3f140efb115845107646574171eebe946410f2a6eff0d5c7b52",
   "mock_chooser_option_size_spoken": "750bc9624981829cf610f66d5d7aebac6e2ff17ce55de403857772f6dd89cfa9",
@@ -33,7 +33,7 @@
   "mock_chooser_placement_start": "a1dbf146bd2a930082fd16234896b740523c912c8869c7faeb29ce7459b0ef55",
   "mock_chooser_placement_title": "dbcf03531ad917a97d8795f6a59b0c2eb9d5fbf107aa41cc4740d2d84b8ab4f5",
   "mock_chooser_placement_top_subject": "55eedaf82288ee32af579e3e94a8ed02ad38c2ec0cb8873718075deb882766c0",
-  "mock_chooser_placement_top_subjects": "c81fe182905d7d9194ad657b0c42896424b6ce57e939b0e6a15510a09366c7b6",
+  "mock_chooser_placement_top_subjects": "3819dca3f3b0df3c38600d627a60a5d4a130415642af94769c2e8f0c92e06bee",
   "mock_chooser_plus": "852a1cce4189c573b591745e676d5d54974ec82c6dea5a9c4307a76ac23b5cde",
   "mock_chooser_preparing": "954c3e4ec80a8a67596f4222f9e05933f74d09652cf682fdc2702cfc3f40c32e",
   "mock_chooser_preparing_detail": "c0b638db76ebb51afe9e50227c647d8f8c5d0a98f8a1e5ad2160032025c14aa8",
@@ -86,7 +86,7 @@
     <string name="mock_chooser_plus">Avec Plus, passe des examens blancs quand tu veux et chaque semaine dans ton plan.</string>
     <string name="mock_chooser_one_subject">Une matière</string>
     <!-- After a mock's parts or subjects: the mock covers only the exam's objective part, questions with set answers, and leaves the exam day's written part out. -->
-    <string name="mock_chooser_objective_only">questions à réponse courte uniquement</string>
+    <string name="mock_chooser_objective_only">questions à réponses prédéfinies uniquement</string>
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
     <string name="mock_chooser_written">+ %1$s</string>
     <!-- A mock's size in a row: %1$d questions ("q" is short for questions) and about %2$s, a duration such as "5 hr". -->
@@ -143,9 +143,9 @@
     <string name="mock_chooser_placement_top_subject">La matière qui compte le plus. Tes premiers jours couvrent les autres.</string>
     <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
     <plurals name="mock_chooser_placement_top_subjects">
-        <item quantity="one">La matière qui compte le plus parmi les %d. Tes premiers jours couvrent les autres.</item>
-        <item quantity="many">Les %d matières qui comptent le plus. Tes premiers jours couvrent les autres.</item>
-        <item quantity="other">Les %d matières qui comptent le plus. Tes premiers jours couvrent les autres.</item>
+        <item quantity="one">Les %d matières qui comptent le plus dans le score. Les premiers jours, tu répondras à des questions sur les autres.</item>
+        <item quantity="many">Les %d matières qui comptent le plus dans le score. Les premiers jours, tu répondras à des questions sur les autres.</item>
+        <item quantity="other">Les %d matières qui comptent le plus dans le score. Les premiers jours, tu répondras à des questions sur les autres.</item>
     </plurals>
     <string name="mock_chooser_placement_short">Une vérification rapide. Tes premiers jours affinent le résultat.</string>
     <string name="mock_chooser_placement_medium">Toutes les matières. Un bon point de départ.</string>

@@ -22,7 +22,7 @@
   "recap_reviews": "446ee8591fc7757127a2151e25e694fdc1f22d9ae19e0e572d601fcb425b7ab7",
   "recap_solid": "c3126699d79211c0b11078f74aff0037b129836fae2728debfb1084a7e81bc91",
   "recap_time": "51d5c652a64f2d9b8c6c2f2db7d8e4c1cc5e8c19edea490777f0fefae25aacb3",
-  "recap_trap_hunter_badge": "100a587085e6236f7ce6c36362949d4771cbfd0791816fbe70434ad90597eee8",
+  "recap_trap_hunter_badge": "0cc41422cc01957cbfd3fb7f155aba6db53b24cc715325760e0733f737cf8331",
   "recap_trap_hunter_badges": "6b1c424f0111a6f6d0cb2d23503b99ca9501ac3acd1fef4a9c3444cb80eaa9cd",
   "recap_turnaround": "67b49c1c807c9ceceabe6756fa46cc47c57a595c14d1dd3767e3361325519c2a",
   "recap_turnaround_chart": "abd343c2ed73169da768f436f81669e0fc0ec6cf7bffa019b0fb00ff4c497574",
@@ -77,7 +77,7 @@
     <string name="recap_reviews">revisões</string>
     <string name="recap_mistake_fixed">erro corrigido</string>
     <string name="recap_mistakes_fixed">erros corrigidos</string>
-    <string name="recap_trap_hunter_badge">insígnia de caçador de pegadinhas</string>
+    <string name="recap_trap_hunter_badge">Insígnia de caça às pegadinhas</string>
     <string name="recap_trap_hunter_badges">insígnias de caçador de pegadinhas</string>
     <string name="recap_next_week">Próxima semana</string>
     <string name="recap_lets_go">Vamos lá</string>

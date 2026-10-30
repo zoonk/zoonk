@@ -36,7 +36,7 @@
   "questions_matched_with": "7232392de3bec39a29aa07d616dea1e0c2336ffd82cc68d8bcbed6a6bb666992",
   "questions_mistake_fixed": "c61b55baa2c2924595aaf2481eb5232018ae33589fafc3fbd7499f554bc6a01c",
   "questions_mistakes_fixed": "2b132a3b72ac26ffc19971ffe92e33c6cdd6bc3e30051f109b075adc78222614",
-  "questions_not_quite": "6cf6134e2905560be96851418ac0d2b50cf09747959a1dd548a6d16765a70add",
+  "questions_not_quite": "d07e50f2948994559cbc9bd689e60d905acd4a44602b14fa1786622f250577b2",
   "questions_open_source": "b3b83fbe5fc505dd8adc663b258241a088a19544dad0f6f40072e4a165790a79",
   "questions_order_hint": "6cb3c78bf075225c4adc5c61781eac079cea9402431551e611b777ef45a4f7c8",
   "questions_pick_all": "591aabe79ea073ab12d821200e561488db0e99332d5a74f8751390dcd7138fce",
@@ -48,7 +48,7 @@
   "questions_quoted_source": "dcbeabbeac176d94e6ee15f68b4b3ac2e3b84b0762f5eb7b75bacdec60dcf21c",
   "questions_read_again": "ce237de3f66d8cbe7fb72324efb822f4cda885d5d82fe7aae94b9d0f838f2216",
   "questions_result": "e889c403d36dd56d086d12c72aa134283e0e2d4551e43f9006c265f2312db170",
-  "questions_right": "ee2a8e095e129993e454f112ac91f4f93e2735b52a0e15ed7f01956a22b57443",
+  "questions_right": "4acd626fc55fb211811947bd768239dcff5276dc1b38cb8a2b3c31035683bca8",
   "questions_right_answer": "e32799071478125a7b4e167b0fab6b3e8d646b2fde629f8f1a3746c39138ba66",
   "questions_saved": "0f2ccaa15be860feada4e95afddb3515bedc8e7b4b55ea9207e6af3af247b90f",
   "questions_saved_tomorrow": "c7ab6b4f6d3a3a38b0225e9201bad61880a727382cb24aef10476b5dd34aea64",
@@ -62,7 +62,7 @@
   "questions_sources_chip": "bc85051de82dea2cd66c9495870a1c1686915889ec9dad4fcdcbdcc6db2021be",
   "questions_streak": "8248e5d81ac498ed728e1af884a9d4b68c836bd42a7f1b5559645116ab8e4bf8",
   "questions_true": "df5b826e552559aa97bace36cb21e20d0404117b8822414b1c8cc0fefc340c7f",
-  "questions_wrong": "d9028d50b820c41568bc7a9654e982e1c61d1dc57c3939f246f92f0957e33502",
+  "questions_wrong": "894341894ad7cf63794869221c200e4bc716c2ac38aac05e898714c5139b79e2",
   "questions_your_answer": "d9078659bea0e0fa102bd042e428b8ae0a874f69a05fa3ddfd2989de662db025"
 }
 -->
@@ -76,9 +76,9 @@
     <string name="questions_true">Vrai</string>
     <string name="questions_false">Faux</string>
     <!-- An answer option judging a statement right, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
-    <string name="questions_right">Bonne réponse</string>
+    <string name="questions_right">Vrai</string>
     <!-- An answer option judging a statement wrong, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
-    <string name="questions_wrong">Mauvaise réponse</string>
+    <string name="questions_wrong">Faux</string>
     <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Laisser vide</string>
     <string name="questions_order_hint">Appuie sur les étapes dans l’ordre.</string>
@@ -106,7 +106,7 @@
     <string name="questions_feedback_label">Retour sur ta réponse</string>
     <string name="questions_correct">Correct !</string>
     <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
-    <string name="questions_not_quite">Pas tout à fait</string>
+    <string name="questions_not_quite">Ce n’est pas ça</string>
     <string name="questions_left_blank">Sans réponse</string>
     <string name="questions_dont_know_yet">Je ne sais pas encore</string>
     <plurals name="questions_streak">

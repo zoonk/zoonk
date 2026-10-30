@@ -10,7 +10,7 @@
   "practice_done_title": "b6e89208d8800a97cc08818fd2d6c56202c39bfe0e6a45dfc86ebe86ec5e14af",
   "practice_finish": "f301f6230c1f62a9e583d3b759042943d1b3038a0d9b2c2c9a96a864074a77f5",
   "practice_finish_now": "313a8b31ff349ee6b7172e48596d45f3fbd5466204b0a3132a20098f599d7c8a",
-  "practice_finish_ready_detail": "9fb35f3d9262308725ec52626ddf272e6f3f1bfceffc2680d87ad8c124c14bbd",
+  "practice_finish_ready_detail": "7e2de77ab82bce12824c118ce849a47b70623453de6e0e003f91c782da157d2e",
   "practice_finish_ready_title": "7049901b57ac2c9ab70dea3fa15660024a08b155ed070d7312876650959080c9",
   "practice_net": "9f90ee2a68b48a971b4e58ae3f869e31844056e04698fca06a8388dc8ce56c71",
   "practice_net_hint": "43b6eddf57add9e4d7b47ef650b35a269b43be7017cf21346f10181eaf7ba9ed",
@@ -50,7 +50,7 @@
     <string name="practice_count">%1$d von %2$d</string>
     <string name="practice_try_again">Versuch es noch einmal</string>
     <string name="practice_finish_ready_title">Keine Fragen mehr offen</string>
-    <string name="practice_finish_ready_detail">Schließe die Übung ab, um dein Ergebnis zu sehen.</string>
+    <string name="practice_finish_ready_detail">Schließ die Übung ab, um zu sehen, wie es lief.</string>
     <string name="practice_already_answered">Du hast diese Frage bereits beantwortet.</string>
     <string name="practice_save_error">Das hat nicht geklappt. Deine Antworten bleiben erhalten.</string>
     <plurals name="practice_net_right">

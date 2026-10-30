@@ -10,7 +10,7 @@
   "listening_note_one_more": "16a5454c6c9e7b1d21eb73128c720e11364a0fb87468db19ff495d23794982be",
   "listening_note_restarted": "47b550b58cb2c0dff5b40977c7c8bd32b315465c9f710249896723ab48a47335",
   "listening_note_twice": "9a04b35f23d55d37c7d45bac4e28283980c438b6e2aeab7ee4365e584e591971",
-  "listening_note_used": "54ba6c5e724ba59eb07d138f430ab6a17579855dde337d438ee56301f0025d1e",
+  "listening_note_used": "64367985d77c26bbb08dc9baa49b05e2c480f865112fe7a71fbd8a6d5abfef69",
   "listening_play": "3d196c7d39382c036ce36929101f87fde3ffad64d69fe6cfa92e846f118c2926",
   "listening_play_again": "a1434fbab4399f8aab55aa990a2922b01e2105ef8fd0d9c4ac200ceae4d9c4a6",
   "listening_playing": "0cc4a08759116ab9f5133190b4699c02f5335d4023d76f3d4c45b4a7d33f748c",
@@ -31,7 +31,7 @@
     <string name="listening_elapsed">%1$s de %2$s</string>
     <string name="listening_note_free">Ouça de novo quantas vezes quiser.</string>
     <string name="listening_note_restarted">A gravação parou antes do fim, então você pode ouvir mais uma vez desde o começo.</string>
-    <string name="listening_note_used">Você já ouviu todas as vezes disponíveis. Responda com base no que ouviu.</string>
+    <string name="listening_note_used">Você já usou todas as chances de ouvir. Responda com base no que ouviu.</string>
     <string name="listening_note_one_more">Você pode ouvir mais uma vez.</string>
     <string name="listening_note_once">Você ouve uma vez, como na prova. Leia as perguntas primeiro.</string>
     <string name="listening_note_twice">Você ouve duas vezes, como na prova. Leia as perguntas primeiro.</string>
