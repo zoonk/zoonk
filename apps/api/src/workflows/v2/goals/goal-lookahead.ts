@@ -157,7 +157,9 @@ export async function followPlanStart({
   const initial: Followed = { openingToken: undefined, started };
 
   await repeatUntil<Followed>({
-    done: () => false,
+    // A guest's start is followed once, for placement moving it: later lessons go through the
+    // guest's lesson limit as they ask for them.
+    done: (followed) => inputs.isGuest && followed.started.length > started.length,
     run: async (previous = initial) => {
       const openingToken = await readPlanOpeningTokenStep(inputs.goal.id);
 

@@ -254,6 +254,37 @@ function isGoalReady(goalId: string): boolean {
   );
 }
 
+/** Placement marking the plan's first `lessons` known moves its start, as the learner's answers would. */
+async function testOutPlanStart({
+  goalId,
+  lessons,
+  userId,
+}: {
+  goalId: string;
+  lessons: number;
+  userId: string;
+}) {
+  const opening = await prisma.planItem.findMany({
+    orderBy: { position: "asc" },
+    take: lessons,
+    where: { kind: "lesson", plan: { goalId }, status: "todo" },
+  });
+
+  await prisma.$transaction(async (tx) => {
+    await markPlanInputsChanged(tx, { userIds: [userId] });
+
+    await tx.planItem.updateMany({
+      data: { completedAt: new Date(), status: "testedOut" },
+      where: {
+        kind: "lesson",
+        plan: { goalId },
+        skillId: { in: opening.flatMap((item) => item.skillId ?? []) },
+        status: "todo",
+      },
+    });
+  });
+}
+
 /** The plan's start is followed with more sleeps once the first lesson is on its way. */
 function countSleepsBeforeFirstLesson(): number {
   const calls = getStartMock().mock.calls;
@@ -949,26 +980,7 @@ describe(goalContentWorkflow, () => {
         }
 
         testedOut = true;
-
-        const opening = await prisma.planItem.findMany({
-          orderBy: { position: "asc" },
-          take: 4,
-          where: { kind: "lesson", plan: { goalId: goal.id } },
-        });
-
-        await prisma.$transaction(async (tx) => {
-          await markPlanInputsChanged(tx, { userIds: [user.id] });
-
-          await tx.planItem.updateMany({
-            data: { completedAt: new Date(), status: "testedOut" },
-            where: {
-              kind: "lesson",
-              plan: { goalId: goal.id },
-              skillId: { in: opening.flatMap((item) => item.skillId ?? []) },
-              status: "todo",
-            },
-          });
-        });
+        await testOutPlanStart({ goalId: goal.id, lessons: 4, userId: user.id });
       });
 
       const result = await goalContentWorkflow({ goalId: goal.id });
@@ -995,6 +1007,34 @@ describe(goalContentWorkflow, () => {
           wait: "learner",
         },
       ]);
+    },
+  );
+
+  it(
+    "follows a guest's start only once, so lessons done after it write nothing more ahead",
+    { timeout: TIMEOUT },
+    async () => {
+      const { goal, user } = await newGoal();
+      await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
+      runOutlinesInline();
+      let moves = 0;
+
+      vi.mocked(sleep).mockImplementation(async () => {
+        if (moves >= 2 || !isGoalReady(goal.id)) {
+          return;
+        }
+
+        moves += 1;
+        await testOutPlanStart({ goalId: goal.id, lessons: 4, userId: user.id });
+      });
+
+      await goalContentWorkflow({ goalId: goal.id });
+
+      expect(moves).toBeGreaterThan(0);
+
+      expect(
+        getStartMock().mock.calls.filter(([workflow]) => workflow === lessonContentWorkflow),
+      ).toHaveLength(2);
     },
   );
 
