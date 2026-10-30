@@ -131,7 +131,7 @@ private fun PianoBoard(
     )
 
     PianoKeyboard(
-        label = if (props.isChecked) pressedKeys(pressed.map(board.spell), labels) else stringResource(R.string.activities_music_piano_keys),
+        label = pianoLabel(props.isChecked, pressed.map(board.spell), labels),
         marks = marks,
         nameOf = { labels.display(board.spell(it)) },
         spokenNameOf = { labels.spoken(board.spell(it)) },
@@ -145,10 +145,13 @@ private fun PianoBoard(
 }
 
 @Composable
-private fun pressedKeys(
+private fun pianoLabel(
+    isChecked: Boolean,
     notes: List<String>,
     labels: MusicLabels,
 ): String {
+    if (!isChecked) return stringResource(R.string.activities_music_piano_keys)
+
     val from = labels.spoken(MusicNotes.pitchClassName(KeyboardFretboard.KEYBOARD_FROM))
     val to = labels.spoken(MusicNotes.pitchClassName(KeyboardFretboard.KEYBOARD_TO))
 
@@ -337,7 +340,10 @@ private fun SoundAsText(
     if (props.cantListen) {
         GhostAction(R.drawable.ic_hearing, stringResource(R.string.activities_music_can_listen_now)) { props.onCantListenChange(false) }
     } else if (!isSoundUnavailable) {
-        GhostAction(R.drawable.ic_hearing_disabled, stringResource(R.string.activities_music_cant_listen_now)) { props.onCantListenChange(true) }
+        GhostAction(
+            R.drawable.ic_hearing_disabled,
+            stringResource(R.string.activities_music_cant_listen_now),
+        ) { props.onCantListenChange(true) }
     }
 }
 
