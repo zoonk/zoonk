@@ -123,6 +123,20 @@
               cues += 1
               tricksterCue = ActCue(id: cues, act: act)
             }
+
+            // Main's gallery take: the challenge's result, smug at first, then beaten.
+            Button {
+              Task {
+                cues += 1
+                tricksterCue = ActCue(id: cues, act: .smug)
+                try? await Task.sleep(for: .seconds(TricksterAct.smug.act.duration + 0.7))
+                cues += 1
+                tricksterCue = ActCue(id: cues, act: .defeat)
+              }
+            } label: {
+              Text(verbatim: "Smug, then defeated")
+            }
+            .buttonStyle(.bordered)
           } header: {
             Text(verbatim: "The Trickster")
           }
