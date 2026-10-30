@@ -12614,7 +12614,7 @@ msgstr "Deine nächsten Lektionen"
 #: src/today/today-coming-lessons.tsx
 msgctxt "Bhd3E-"
 msgid "Taking longer than usual"
-msgstr "Dauert länger als sonst"
+msgstr "Dauert länger als üblich"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
