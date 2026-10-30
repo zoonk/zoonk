@@ -75,7 +75,7 @@ export function TaskHeaderProgress({ label, value }: { label: string; value: num
       value={Math.min(100, Math.max(0, value))}
     >
       <ProgressTrack className="bg-surface-3 h-1 rounded-xs">
-        <ProgressIndicator className="bg-foreground rounded-xs" />
+        <ProgressIndicator className="bg-success rounded-xs" />
       </ProgressTrack>
     </ProgressRoot>
   );
