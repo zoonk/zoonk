@@ -172,8 +172,8 @@ model ExamSkillGraph {
   @@map("exam_skill_graphs")
 }
 
-/// The first graph built for a shared language goal's prompt: every later goal with the same prompt
-/// plans from it, so the same answers give the same plan.
+/// The first graph kept for a shared language goal's typed words and shared answers: every later
+/// goal with the same ones plans from it, so the same answers give the same plan.
 model LanguageSkillGraph {
   id              String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   promptKey       String   @unique @map("prompt_key")
