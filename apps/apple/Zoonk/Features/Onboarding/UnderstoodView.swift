@@ -240,7 +240,7 @@ private struct RewritableWords: View {
           } label: {
             Text("Read it again", tableName: "Onboarding", comment: "Reads the changed words again")
           }
-          .buttonStyle(.borderedProminent)
+          .buttonStyle(.mainAction)
           .disabled(isDisabled || value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
 
           Button(role: .cancel) {
@@ -470,7 +470,7 @@ private struct RowEditor: View {
             Text("Save", tableName: "Onboarding", comment: "Saves a fix to an understood fact")
           }
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.mainAction)
         .disabled(isSaving || (field.editor == .text && trimmed.isEmpty))
 
         Button(role: .cancel, action: onCancel) {

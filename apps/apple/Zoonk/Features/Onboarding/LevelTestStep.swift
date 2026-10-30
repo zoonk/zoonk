@@ -369,7 +369,7 @@ private struct ListeningMessage: View {
           .labelStyle(.iconOnly)
           .frame(width: 28, height: 28)
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.mainAction)
         .buttonBorderShape(.circle)
         .controlSize(.large)
 

@@ -319,7 +319,7 @@ private struct PasteMaterialRow: View {
             ? Text("Add link", tableName: "Onboarding", comment: "Adds the pasted link")
             : Text("Add text", tableName: "Onboarding", comment: "Adds the pasted text")
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.mainAction)
         .disabled(trimmed.isEmpty || isAdding)
 
         Button(role: .cancel, action: onCancel) {
@@ -442,7 +442,7 @@ struct MaterialQuestionsView: View {
           }
           .labelStyle(.iconOnly)
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.mainAction)
         .buttonBorderShape(.circle)
         .controlSize(.large)
         .disabled(trimmed.isEmpty || isAsking)
