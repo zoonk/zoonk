@@ -154,7 +154,8 @@ final class WebRTCLiveCallTransport: LiveCallTransport {
     let offer = try await connection.offer(for: constraints)
     try await connection.setLocalDescription(offer)
 
-    if connection.iceGatheringState != .complete {
+    // `close()` may have run while WebRTC worked: a wait it can't end anymore would never resume.
+    if !isClosed, connection.iceGatheringState != .complete {
       await withCheckedContinuation { gathered = $0 }
     }
 
@@ -171,6 +172,10 @@ final class WebRTCLiveCallTransport: LiveCallTransport {
     }
 
     try await connection.setRemoteDescription(RTCSessionDescription(type: .answer, sdp: answer))
+
+    guard !isClosed else {
+      throw CancellationError()
+    }
 
     if channel?.readyState != .open {
       try await withCheckedThrowingContinuation { opened = $0 }
