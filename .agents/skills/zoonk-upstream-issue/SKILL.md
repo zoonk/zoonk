@@ -37,4 +37,5 @@ Maintainers act on a bug they can run in a minute. Prove the bug is theirs, repr
 
 - Link the issue from the reproduction's README.
 - In this repository, record the issue under the PR description's library issues and in memory, and keep or remove any local workaround as the owner decided.
+- When a local workaround stays in our code, schedule a daily T3 task (`schedule_task`, fixed time) that checks the dependency's releases for the fix and messages the thread that owns the workaround once it ships, so the workaround is removed then. Poll: GitHub sends release webhooks only to a repository's admins. Note the task's id beside the issue in memory, and delete the task once the workaround is gone.
 - Give the owner both links.
