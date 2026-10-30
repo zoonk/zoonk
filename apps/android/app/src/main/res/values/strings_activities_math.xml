@@ -4,6 +4,8 @@
     <string name="activities_math_badge_place_it">Place it</string>
     <!-- A badge on an activity whose sliders change a model's results. -->
     <string name="activities_math_badge_try_it">Try it</string>
+    <!-- A short badge on an activity where the learner drags handles along a distribution's curve; one word where the language allows. -->
+    <string name="activities_math_badge_explore">Explore</string>
 
     <!-- A number line's name, then the unit its values are measured in, like "Temperature in °C" or "Distance in km". -->
     <string name="activities_math_number_line_label">%1$s in %2$s</string>
@@ -44,4 +46,21 @@
     <string name="activities_math_formula_before_curve">Before</string>
     <!-- The chart legend's dashed line: the model at the sliders' starting values. -->
     <string name="activities_math_formula_at_start">At the start</string>
+
+    <!-- The range between a distribution's two handles, like "IQ score from 90 to 110". -->
+    <string name="activities_math_distribution_range">%1$s from %2$s to %3$s</string>
+    <!-- What a distribution handle says to TalkBack: its value, then the share between the handles, like "90 IQ points. 49.5% between the handles." -->
+    <string name="activities_math_distribution_handle_value">%1$s. %2$s between the handles.</string>
+    <!-- Once checked, the target range and its share, like "70 to 130: 95.4%". -->
+    <string name="activities_math_distribution_target">%1$s to %2$s: %3$s</string>
+    <!-- The handle at the low end of the range, for TalkBack. -->
+    <string name="activities_math_distribution_lower">Lower handle</string>
+    <!-- The handle at the high end of the range, for TalkBack. -->
+    <string name="activities_math_distribution_upper">Upper handle</string>
+    <!-- What a normal distribution shows, for TalkBack, like "A bell curve of IQ score, with an average of 100 IQ points and a standard deviation of 15 IQ points." -->
+    <string name="activities_math_distribution_normal">A bell curve of %1$s, with an average of %2$s and a standard deviation of %3$s.</string>
+    <!-- What a uniform distribution shows, for TalkBack, like "A flat distribution of Waiting time, from 0 min to 10 min." -->
+    <string name="activities_math_distribution_uniform">A flat distribution of %1$s, from %2$s to %3$s.</string>
+    <!-- The shares inside and outside the handles, for TalkBack, like "49.5% of values fall between 90 IQ points and 110 IQ points, 25.2% below and 25.2% above." -->
+    <string name="activities_math_distribution_shares">%1$s of values fall between %2$s and %3$s, %4$s below and %5$s above.</string>
 </resources>

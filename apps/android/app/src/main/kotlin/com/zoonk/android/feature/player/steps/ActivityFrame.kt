@@ -43,6 +43,7 @@ import com.zoonk.android.feature.activities.decisionTreeRenderer
 import com.zoonk.android.feature.activities.dialogueSimulatorRenderer
 import com.zoonk.android.feature.activities.findErrorRenderer
 import com.zoonk.android.feature.activities.guessRevealRenderer
+import com.zoonk.android.feature.activities.math.distributionExplorerRenderer
 import com.zoonk.android.feature.activities.math.formulaModelRenderer
 import com.zoonk.android.feature.activities.math.numberLineRenderer
 import com.zoonk.android.feature.activities.music.keyboardFretboardRenderer
@@ -111,6 +112,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "combinationGrid" to combinationGridRenderer,
         "decisionTree" to decisionTreeRenderer,
         "dialogueSimulator" to dialogueSimulatorRenderer,
+        "distributionExplorer" to distributionExplorerRenderer,
         "findError" to findErrorRenderer,
         "formulaModel" to formulaModelRenderer,
         "guessReveal" to guessRevealRenderer,

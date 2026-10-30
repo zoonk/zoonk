@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_math_badge_explore": "cebf9d4f804cf488c90030deb83bcc6059a701ab783c66e6477b9d50ee19259e",
   "activities_math_badge_place_it": "766e3986b1e6d307dc12ebfb926c22cbe270ca25ae0f3103da433088f8f89084",
   "activities_math_badge_try_it": "a19055b0e29d4a00c404894d81c848e145e5a8179025347b4a298a771fbf7ee0",
+  "activities_math_distribution_handle_value": "0d6bc2d9f703acc50896a2d58a6c0c8fdfc82e385640852b7030ca147f1da2bf",
+  "activities_math_distribution_lower": "ce6bb07f11dedcde352602e9032db055bb36fbdf7cf4aef616621c2b8511cd8a",
+  "activities_math_distribution_normal": "f93eaaf47328eceb1ef549beaf0985f3a8fe8fc77c74f2b3cc4d87a78d2a125c",
+  "activities_math_distribution_range": "b9e92adf9a5eff8a5efd272b68cbb8790a8d89a43b07a21a8cdb5c12a27edba1",
+  "activities_math_distribution_shares": "4c1feec394842f6cdf6e3b5a1c2607e0751bd8323d7a110be3b4737750a68091",
+  "activities_math_distribution_target": "ca5fbbff64894f9f7a4b2c26a3842bc3ccc407b0e7e7952ff7c0dfb95b408fe6",
+  "activities_math_distribution_uniform": "dad90c249ed00d1edcce196c274c7d348fc6f1271df53c2734d51eb79b07bcab",
+  "activities_math_distribution_upper": "5330a6c3d94e71d078c059239f09768395586257202fe7fd4e30466320023ea9",
   "activities_math_formula_at_start": "8395936a42bcd74fa454fc100129fb511ed330ac0ed4badf126bdfa593984b17",
   "activities_math_formula_before": "995d08636f03f07660cbdef18464181587dd5ff9e1e5739827a482b78d25f9db",
   "activities_math_formula_before_curve": "b270fc4c9861b97956131e012c69bb4467867ca196df396c79897ad08fc44ed2",
@@ -29,6 +38,8 @@
     <string name="activities_math_badge_place_it">Ordne ein</string>
     <!-- A badge on an activity whose sliders change a model's results. -->
     <string name="activities_math_badge_try_it">Probier es aus</string>
+    <!-- A short badge on an activity where the learner drags handles along a distribution's curve; one word where the language allows. -->
+    <string name="activities_math_badge_explore">Erkunden</string>
     <!-- A number line's name, then the unit its values are measured in, like "Temperature in °C" or "Distance in km". -->
     <string name="activities_math_number_line_label">%1$s in %2$s</string>
     <!-- The dot the learner drags along the number line, for TalkBack. -->
@@ -67,4 +78,20 @@
     <string name="activities_math_formula_before_curve">Zuvor</string>
     <!-- The chart legend's dashed line: the model at the sliders' starting values. -->
     <string name="activities_math_formula_at_start">Am Anfang</string>
+    <!-- The range between a distribution's two handles, like "IQ score from 90 to 110". -->
+    <string name="activities_math_distribution_range">%1$s von %2$s bis %3$s</string>
+    <!-- What a distribution handle says to TalkBack: its value, then the share between the handles, like "90 IQ points. 49.5% between the handles." -->
+    <string name="activities_math_distribution_handle_value">%1$s. %2$s zwischen den Reglern.</string>
+    <!-- Once checked, the target range and its share, like "70 to 130: 95.4%". -->
+    <string name="activities_math_distribution_target">%1$s bis %2$s: %3$s</string>
+    <!-- The handle at the low end of the range, for TalkBack. -->
+    <string name="activities_math_distribution_lower">Unterer Regler</string>
+    <!-- The handle at the high end of the range, for TalkBack. -->
+    <string name="activities_math_distribution_upper">Oberer Regler</string>
+    <!-- What a normal distribution shows, for TalkBack, like "A bell curve of IQ score, with an average of 100 IQ points and a standard deviation of 15 IQ points." -->
+    <string name="activities_math_distribution_normal">Eine Glockenkurve für %1$s mit einem Mittelwert von %2$s und einer Standardabweichung von %3$s.</string>
+    <!-- What a uniform distribution shows, for TalkBack, like "A flat distribution of Waiting time, from 0 min to 10 min." -->
+    <string name="activities_math_distribution_uniform">Eine gleichmäßige Verteilung für %1$s von %2$s bis %3$s.</string>
+    <!-- The shares inside and outside the handles, for TalkBack, like "49.5% of values fall between 90 IQ points and 110 IQ points, 25.2% below and 25.2% above." -->
+    <string name="activities_math_distribution_shares">%1$s der Werte liegen zwischen %2$s und %3$s, %4$s darunter und %5$s darüber.</string>
 </resources>

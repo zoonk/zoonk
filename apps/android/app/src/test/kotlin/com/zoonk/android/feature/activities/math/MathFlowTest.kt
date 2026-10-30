@@ -224,6 +224,30 @@ class MathFlowTest {
         typedValue("38.32")
     }
 
+    @Test
+    fun distributionExplorerCoveringTheTargetGivesItsShare() {
+        play("distributionExplorer", isCorrect = true)
+
+        press(Key.DirectionLeft, 4, handle = slider("Lower handle"))
+        press(Key.DirectionRight, 4, handle = slider("Upper handle"))
+        typedValue("95.45")
+        harness.tap("Check")
+
+        described("70 to 130: 95.4%")
+    }
+
+    @Test
+    fun distributionExplorerHandlesKeepAStepBetweenThem() {
+        play("distributionExplorer", isCorrect = false)
+
+        rule.onNode(slider("Lower handle")).performSemanticsAction(SemanticsActions.SetProgress) { it(200f) }
+
+        rule
+            .onNode(
+                slider("Lower handle"),
+            ).assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "105\u00A0IQ points. 11.7% between the handles."))
+    }
+
     private fun precisionStep(): LessonStep {
         val json =
             """
