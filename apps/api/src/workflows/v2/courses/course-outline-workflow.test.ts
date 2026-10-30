@@ -1699,7 +1699,13 @@ describe(courseOutlineWorkflow, () => {
       );
 
       await courseOutlineWorkflow({
-        bands: [{ extend: [{ lessons: 12, skill: ref }], level: "beginner", skills: [] }],
+        bands: [
+          {
+            extend: [{ afterChapterId: existing.id, lessons: 12, skill: ref }],
+            level: "beginner",
+            skills: [],
+          },
+        ],
         courseId: course.id,
         scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "en" },
       });
@@ -1752,6 +1758,64 @@ describe(courseOutlineWorkflow, () => {
   );
 
   it(
+    "writes a skill's next chapter once when a second ask for it, made before the first wrote it, runs after",
+    { timeout: TIMEOUT },
+    async () => {
+      const [course, skill, existing] = await Promise.all([
+        courseFixture({ language: "pt", outlineStatus: "completed", title: "Inglês" }),
+        skillFixture({ language: "pt", name: `Descrever experiência ${crypto.randomUUID()}` }),
+        libraryChapterFixture({ language: "pt", title: "Candidaturas e entrevistas" }),
+      ]);
+
+      const written = await libraryLessonFixture({
+        estimatedMinutes: 3,
+        homeChapterId: existing.id,
+        language: "pt",
+        title: "Formação acadêmica",
+      });
+
+      await Promise.all([
+        courseChapterFixture({ chapterId: existing.id, courseId: course.id, position: 0 }),
+        prisma.chapterSkill.create({ data: { chapterId: existing.id, skillId: skill.id } }),
+        prisma.chapterLesson.create({
+          data: { chapterId: existing.id, lessonId: written.id, position: 0 },
+        }),
+      ]);
+
+      const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
+
+      vi.mocked(generateCourseOutline).mockResolvedValue(
+        outlineResult({
+          chapters: [interviewChapter("Entrevistas com perguntas situacionais", [ref.key])],
+          uncoveredSkillKeys: [],
+        }),
+      );
+
+      const ask = {
+        bands: [
+          {
+            extend: [{ afterChapterId: existing.id, lessons: 12, skill: ref }],
+            level: "beginner" as const,
+            skills: [],
+          },
+        ],
+        courseId: course.id,
+        scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "en" },
+      };
+
+      await courseOutlineWorkflow(ask);
+
+      await expect(courseOutlineWorkflow(ask)).resolves.toStrictEqual({
+        bandsWritten: 0,
+        chapterIds: [],
+        status: "written",
+      });
+
+      expect(generateCourseOutline).toHaveBeenCalledOnce();
+    },
+  );
+
+  it(
     "writes a level a run lists twice as one band, so its chapters never claim the same place",
     { timeout: TIMEOUT },
     async () => {
@@ -1798,7 +1862,11 @@ describe(courseOutlineWorkflow, () => {
       const result = await courseOutlineWorkflow({
         bands: [
           { level: "beginner", skills: [toRef(missing)] },
-          { extend: [{ lessons: 12, skill: toRef(extended) }], level: "beginner", skills: [] },
+          {
+            extend: [{ afterChapterId: existing.id, lessons: 12, skill: toRef(extended) }],
+            level: "beginner",
+            skills: [],
+          },
         ],
         courseId: course.id,
         scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: null },

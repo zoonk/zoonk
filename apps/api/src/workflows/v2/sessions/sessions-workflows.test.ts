@@ -528,7 +528,7 @@ describe(sessionPreparationWorkflow, () => {
           ...(background ? {} : { waitedSkillId: skill.id }),
           bands: [
             {
-              extend: [{ lessons: 11, skill: ref }],
+              extend: [{ afterChapterId: chapter.id, lessons: 11, skill: ref }],
               level: "beginner",
               skills: [],
               withToolChapters: true,

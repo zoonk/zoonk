@@ -200,7 +200,7 @@ describe("skill extensions", () => {
   });
 
   it("asks for the next chapter of a skill whose stand-in is due soon, in its course and band", async () => {
-    const { course, goal, skill } = await setup();
+    const { chapter, course, goal, skill } = await setup();
 
     await expect(listSkillExtensions({ goalId: goal.id, timeZone: "UTC" })).resolves.toStrictEqual([
       {
@@ -208,6 +208,7 @@ describe("skill extensions", () => {
           {
             extend: [
               {
+                afterChapterId: chapter.id,
                 lessons: SKILL_LESSONS - OUTLINED_LESSONS,
                 skill: {
                   area: "Inglês",

@@ -60,7 +60,8 @@ export type GoalSkillRef = {
   area?: string | null;
 };
 
-export type SkillExtension = { lessons: number; skill: GoalSkillRef };
+/** Asks for the chapter after `afterChapterId`; once the course has a later one for the skill, the ask is answered. */
+export type SkillExtension = { afterChapterId: string; lessons: number; skill: GoalSkillRef };
 
 export type CourseBandNeed = {
   extend?: SkillExtension[];

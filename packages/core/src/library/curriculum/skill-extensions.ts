@@ -37,6 +37,8 @@ export type CourseExtensionRequest = {
 
 type Placement = Awaited<ReturnType<typeof loadSkillPlacements>>[number];
 
+type WantedExtension = Pick<SkillExtension, "lessons" | "skill"> & { afterChapterId?: string };
+
 function loadSkillPlacements({
   courseId,
   ownerId,
@@ -105,7 +107,7 @@ function planExtension({
   extension,
   placements,
 }: {
-  extension: SkillExtension;
+  extension: WantedExtension;
   placements: readonly Placement[];
 }): ExtensionPlan[] {
   const teaching = placements
@@ -118,6 +120,13 @@ function planExtension({
   const last = teaching.at(-1);
 
   if (!last || extension.lessons <= 0) {
+    return [];
+  }
+
+  const alreadyExtended =
+    extension.afterChapterId !== undefined && extension.afterChapterId !== last.placement.chapterId;
+
+  if (alreadyExtended) {
     return [];
   }
 
@@ -142,7 +151,7 @@ export async function planSkillExtensions({
   ownerId,
 }: {
   courseId: string;
-  extensions: readonly SkillExtension[];
+  extensions: readonly WantedExtension[];
   ownerId: string | null;
 }): Promise<ExtensionPlan[]> {
   if (extensions.length === 0) {
@@ -191,16 +200,20 @@ function groupByBand({
   plans,
   withToolChapters,
 }: {
-  extensions: readonly SkillExtension[];
+  extensions: readonly WantedExtension[];
   plans: readonly ExtensionPlan[];
   withToolChapters: boolean;
 }) {
   const levels = [...new Set(plans.map((plan) => plan.level))];
 
   return levels.map((level): CourseBandNeed => ({
-    extend: extensions.filter((extension) =>
-      plans.some((plan) => plan.level === level && plan.skill.id === extension.skill.id),
-    ),
+    extend: plans
+      .filter((plan) => plan.level === level)
+      .flatMap((plan) =>
+        extensions
+          .filter((extension) => extension.skill.id === plan.skill.id)
+          .map((extension) => ({ ...extension, afterChapterId: plan.afterChapterId })),
+      ),
     level,
     skills: [],
     withToolChapters,
@@ -214,7 +227,7 @@ async function toCourseRequest({
   withToolChapters,
 }: {
   course: ExtensionCourse;
-  extensions: readonly SkillExtension[];
+  extensions: readonly WantedExtension[];
   goal: Parameters<typeof toPlanCourseScope>[0]["goal"];
   withToolChapters: boolean;
 }): Promise<CourseExtensionRequest[]> {
