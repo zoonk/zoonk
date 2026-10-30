@@ -1,3 +1,4 @@
+import { AdminAnswerMarkdown } from "@/components/admin-answer-markdown";
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
 import { ProvenanceLine } from "@/components/provenance";
@@ -32,7 +33,7 @@ export async function ItemExplanations({ itemId }: { itemId: string }) {
               {explanation.normalizedAnswer}
             </TableCell>
             <TableCell className="max-w-120 min-w-72 whitespace-normal">
-              {explanation.explanation}
+              <AdminAnswerMarkdown answer={explanation.explanation} />
             </TableCell>
             <TableCell className="uppercase">{explanation.language}</TableCell>
             <TableCell>

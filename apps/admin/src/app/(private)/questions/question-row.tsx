@@ -6,6 +6,7 @@ import {
 } from "@/lib/lesson-question";
 import { Badge } from "@zoonk/ui/components/badge";
 import { TableCell } from "@zoonk/ui/components/table";
+import { markdownToPlainText } from "@zoonk/utils/markdown-text";
 import Link from "next/link";
 
 function QuestionLessonCell({ question }: { question: ListedLessonQuestion }) {
@@ -36,7 +37,9 @@ export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
         </AdminTableRowLink>
       </TableCell>
       <TableCell className="text-muted-foreground max-w-80 min-w-64 whitespace-normal">
-        <span className="line-clamp-2">{question.answer || "No answer yet"}</span>
+        <span className="line-clamp-2">
+          {question.answer ? markdownToPlainText(question.answer) : "No answer yet"}
+        </span>
       </TableCell>
       <TableCell className="max-w-48 min-w-40">
         <Link className="block hover:underline" href={`/users/${user.id}`} prefetch>

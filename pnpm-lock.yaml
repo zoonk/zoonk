@@ -396,6 +396,9 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@zoonk/player':
+        specifier: workspace:*
+        version: link:../../packages/player
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui

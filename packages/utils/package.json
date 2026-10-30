@@ -62,7 +62,8 @@
     "./upload": "./src/upload.ts",
     "./uuid": "./src/uuid.ts",
     "./url": "./src/url.ts",
-    "./user-blobs": "./src/user-blobs.ts"
+    "./user-blobs": "./src/user-blobs.ts",
+    "./markdown-text": "./src/markdown-text.ts"
   },
   "scripts": {
     "test": "vitest run",

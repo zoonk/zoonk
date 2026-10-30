@@ -1,3 +1,4 @@
+import { AdminAnswerMarkdown } from "@/components/admin-answer-markdown";
 import { AdminBreadcrumb } from "@/components/admin-breadcrumb";
 import { getLessonQuestion } from "@/data/questions/get-lesson-question";
 import { getAdminQuestionStatusVariant } from "@/lib/lesson-question";
@@ -81,9 +82,13 @@ async function QuestionDetailContent({ params }: Pick<PageProps<"/questions/[id]
         <h2 className="text-muted-foreground text-sm font-medium" id="answer-heading">
           Answer
         </h2>
-        <p className="max-w-3xl leading-7 wrap-break-word whitespace-pre-wrap">
-          {question.answer || "No answer is available yet."}
-        </p>
+        <div className="max-w-3xl leading-7">
+          {question.answer ? (
+            <AdminAnswerMarkdown answer={question.answer} />
+          ) : (
+            <p>No answer is available yet.</p>
+          )}
+        </div>
       </section>
 
       <Separator />
