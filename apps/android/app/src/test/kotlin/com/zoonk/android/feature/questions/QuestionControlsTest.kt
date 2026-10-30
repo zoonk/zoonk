@@ -230,7 +230,7 @@ class QuestionControlsTest {
 
         rule.onNodeWithText("Not quite").assertExists()
         rule.onNodeWithText("Right answer: 68 km").assertExists()
-        rule.onNodeWithContentDescription("Result: 80 − 12 = 68").assertExists()
+        rule.onNodeWithText("Result: 80 − 12 = 68").assertExists()
         rule.onNodeWithText("Saved to your mistakes · it comes back tomorrow").assertExists()
     }
 

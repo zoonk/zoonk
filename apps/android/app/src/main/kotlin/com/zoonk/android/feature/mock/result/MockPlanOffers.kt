@@ -1,7 +1,5 @@
 package com.zoonk.android.feature.mock.result
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -19,14 +17,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
@@ -45,6 +40,10 @@ import com.zoonk.android.data.SessionSource
 import com.zoonk.android.feature.mock.runner.MockRunStore
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
+import com.zoonk.android.ui.components.DiffKind
+import com.zoonk.android.ui.components.DiffLine
+import com.zoonk.android.ui.components.DiffLines
+import com.zoonk.android.ui.components.DiffTone
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
@@ -304,13 +303,6 @@ private fun answerLine(
         }
     }
 
-private enum class LineKind { Removed, Context, Added }
-
-private data class OfferLine(
-    val kind: LineKind,
-    val text: String,
-)
-
 /** Topics off the plan are good news, so they take the progress blue, as main's `DiffLines` do. */
 @Composable
 private fun OfferLines(adapt: MockAdapt) {
@@ -319,17 +311,14 @@ private fun OfferLines(adapt: MockAdapt) {
     val named = skip?.topics.orEmpty().take(TOPICS_NAMED)
     val more = (skip?.topics?.size ?: 0) - named.size
     val lines =
-        named.map { OfferLine(LineKind.Removed, it) } +
+        named.map { DiffLine(DiffKind.Removed, it, DiffTone.Good) } +
             listOfNotNull(
                 more.takeIf { it > 0 }?.let {
-                    OfferLine(
-                        LineKind.Removed,
-                        pluralStringResource(R.plurals.mock_result_more_topics, it, it),
-                    )
+                    DiffLine(DiffKind.Removed, pluralStringResource(R.plurals.mock_result_more_topics, it, it), DiffTone.Good)
                 },
                 skip?.let {
                     val lessons = it.lessons.toInt()
-                    OfferLine(LineKind.Context, pluralStringResource(R.plurals.mock_result_lessons_less, lessons, lessons))
+                    DiffLine(DiffKind.Context, pluralStringResource(R.plurals.mock_result_lessons_less, lessons, lessons))
                 },
                 focus?.let {
                     // Partial credit reads to the hundredth.
@@ -341,55 +330,11 @@ private fun OfferLines(adapt: MockAdapt) {
                             formatNumber(correct, currentLocale()),
                             it.total.toInt(),
                         )
-                    OfferLine(LineKind.Added, stringResource(R.string.mock_result_more_time, it.area, right))
+                    DiffLine(DiffKind.Added, stringResource(R.string.mock_result_more_time, it.area, right), DiffTone.Neutral)
                 },
             )
-    val removed = stringResource(R.string.mock_result_off_plan)
-    val added = stringResource(R.string.mock_result_new)
-    val shape = MaterialTheme.shapes.medium
 
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
-            .padding(vertical = 4.dp),
-    ) {
-        lines.forEach { line ->
-            val (container, content) = line.colors()
-            val spoken =
-                when (line.kind) {
-                    LineKind.Removed -> "$removed: ${line.text}"
-                    LineKind.Added -> "$added: ${line.text}"
-                    LineKind.Context -> line.text
-                }
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .background(container)
-                    .padding(horizontal = 12.dp, vertical = 3.dp)
-                    .clearAndSetSemantics { contentDescription = spoken },
-            ) {
-                val style = MaterialTheme.typography.bodySmall.withTabularFigures()
-                when (line.kind) {
-                    LineKind.Removed -> Text("− ", style = style, color = content)
-                    LineKind.Added -> Text("+ ", style = style, color = content)
-                    LineKind.Context -> Unit
-                }
-                Text(line.text, style = style, color = content)
-            }
-        }
-    }
-}
-
-@Composable
-private fun OfferLine.colors(): Pair<Color, Color> {
-    val colors = MaterialTheme.colorScheme
-    return when (kind) {
-        LineKind.Removed -> colors.tertiaryContainer to colors.onTertiaryContainer
-        LineKind.Context -> Color.Transparent to colors.onSurfaceVariant
-        LineKind.Added -> Color.Transparent to colors.onSurface
-    }
+    DiffLines(lines, added = stringResource(R.string.mock_result_new), removed = stringResource(R.string.mock_result_off_plan))
 }
 
 private const val PERCENT = 100.0

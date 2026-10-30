@@ -47,7 +47,7 @@
   "questions_placement_note": "be44103529d4d400db44c0744d6f2e06a5f388128823e2a69d52e93d7c4eaf42",
   "questions_quoted_source": "d85dad6660d612fbd72f623c3d02b6779988dbe37533db0d379e7b8e6e34263f",
   "questions_read_again": "7c967c5aa0fa9172536c9eef62ce45ffe7b8ebf7261caf3a9d1c359f786fa28a",
-  "questions_result": "d34af4b55c4ec0fa6230d1c664b25835ac1388bf5e29c678de65b2f917a3b0db",
+  "questions_result": "49d4d62ad386d6ad4eb88d796647ecc46cb397ff50c7a164f9271054f91c21d7",
   "questions_right": "a6de96fdc470204f67467381174840309f3834b80e36ed6459f8f034fc2a59cf",
   "questions_right_answer": "44756f617ee7425ab2b09266192fb9e9e4c4772de73276fefc3f2f70252bd08c",
   "questions_saved": "d73f0f361cac5edc7bba0b15266147fcc9031d1d87e612e8a8f66cc35ca42b92",
@@ -115,8 +115,8 @@
         <item quantity="other">%d aciertos seguidos</item>
     </plurals>
     <string name="questions_right_answer">Respuesta correcta: %1$s</string>
-    <!-- The last line of a worked solution, read aloud. -->
-    <string name="questions_result">Resultado: %1$s</string>
+    <!-- Names the last line of a worked solution for TalkBack, read before it as in "Result: x = 4". -->
+    <string name="questions_result">Resultado</string>
     <string name="questions_mistake_fixed">Error corregido. Sale de tu cuaderno.</string>
     <!-- Always several: one fixed mistake reads questions_mistake_fixed. -->
     <plurals name="questions_mistakes_fixed">

@@ -47,7 +47,7 @@
   "questions_placement_note": "8a1fd72bdc8e970a1d55728a32fb424f6098d27147a4e926459b873307b55912",
   "questions_quoted_source": "4f737f4bfaa63eb0a46d0fdf2863f473da34f70dd06f9018176d01941cee095b",
   "questions_read_again": "f597e45e8ecf55495e0f3ac218cdf94772fa864ce45eaab0aafd4f60590c5768",
-  "questions_result": "883ec99d73b8f7ec028486f6ee091b8f6829f28d4f9b4c5cf0e99852f3e7bcef",
+  "questions_result": "07e82c87677694881bd451fb8b6148182e2b0996b66cf4b07760c274d7ed6792",
   "questions_right": "9b10dbf6d9c437b0430f7fe9e067cbf5702484bdb818d4bf6aa5b2cd4ea44238",
   "questions_right_answer": "16e7a7cd7e1aa12f8bae9255abee742e86864d70d01a6bc7a3a2b59e3772b815",
   "questions_saved": "3a35e84d13cbb25cd40e05a4766672026b05df67f3fae4c0c7a8d0cff7ce5cf4",
@@ -112,8 +112,8 @@
         <item quantity="other">%d richtig hintereinander</item>
     </plurals>
     <string name="questions_right_answer">Richtige Antwort: %1$s</string>
-    <!-- The last line of a worked solution, read aloud. -->
-    <string name="questions_result">Ergebnis: %1$s</string>
+    <!-- Names the last line of a worked solution for TalkBack, read before it as in "Result: x = 4". -->
+    <string name="questions_result">Ergebnis</string>
     <string name="questions_mistake_fixed">Fehler korrigiert. Er wird aus deinem Fehlerheft entfernt.</string>
     <!-- Always several: one fixed mistake reads questions_mistake_fixed. -->
     <plurals name="questions_mistakes_fixed">

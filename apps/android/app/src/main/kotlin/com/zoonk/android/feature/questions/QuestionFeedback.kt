@@ -1,36 +1,25 @@
 package com.zoonk.android.feature.questions
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.DiffKind
+import com.zoonk.android.ui.components.DiffLine
+import com.zoonk.android.ui.components.DiffLines
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMathAnswer
-import com.zoonk.android.ui.theme.withTabularFigures
 
 /**
  * What a checked question got (main's `QuestionFeedback`): the verdict and any streak, the right
@@ -151,56 +140,23 @@ fun WorkedSteps(
     modifier: Modifier = Modifier,
 ) {
     if (steps.isEmpty()) return
-    // A formula reads left to right in every language.
-    val style =
-        MaterialTheme.typography.bodyMedium
-            .withTabularFigures()
-            .copy(textDirection = TextDirection.Ltr)
-    val result = stringResource(R.string.questions_result, plainItemLine(steps.last()))
-
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) { WorkedStepLines(steps, style, result, modifier) }
-}
-
-@Composable
-private fun WorkedStepLines(
-    steps: List<String>,
-    style: TextStyle,
-    result: String,
-    modifier: Modifier,
-) {
-    val shape = RoundedCornerShape(10.dp)
-
-    Column(
-        modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
-            .padding(vertical = 4.dp),
-    ) {
-        steps.forEachIndexed { index, step ->
-            val last = index == steps.lastIndex
-            val line = plainItemLine(step)
-
-            if (last) {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.tertiaryContainer)
-                        .clearAndSetSemantics { contentDescription = result }
-                        .padding(horizontal = 12.dp, vertical = 2.dp),
+    val lines =
+        steps.mapIndexed { index, step ->
+            DiffLine(
+                if (index ==
+                    steps.lastIndex
                 ) {
-                    Text(text = "+ ", color = MaterialTheme.colorScheme.onTertiaryContainer, style = style)
-                    Text(text = line, color = MaterialTheme.colorScheme.onTertiaryContainer, style = style)
-                }
-            } else {
-                Text(
-                    text = line,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = style,
-                )
-            }
+                    DiffKind.Added
+                } else {
+                    DiffKind.Context
+                },
+                plainItemLine(step),
+            )
         }
+
+    // A formula reads left to right in every language.
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        DiffLines(lines, added = stringResource(R.string.questions_result), modifier = modifier)
     }
 }
 

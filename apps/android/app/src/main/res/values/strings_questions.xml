@@ -45,8 +45,8 @@
         <item quantity="other">%d right in a row</item>
     </plurals>
     <string name="questions_right_answer">Right answer: %1$s</string>
-    <!-- The last line of a worked solution, read aloud. -->
-    <string name="questions_result">Result: %1$s</string>
+    <!-- Names the last line of a worked solution for TalkBack, read before it as in "Result: x = 4". -->
+    <string name="questions_result">Result</string>
     <string name="questions_mistake_fixed">Mistake fixed. It leaves your notebook.</string>
     <!-- Always several: one fixed mistake reads questions_mistake_fixed. -->
     <plurals name="questions_mistakes_fixed">
