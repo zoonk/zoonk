@@ -322,6 +322,12 @@ private struct PlanReveal: View {
             .font(.subheadline)
             .monospacedDigit()
             .foregroundStyle(.secondary)
+
+          if let pace = paceLine(goal: goal) {
+            Text(pace)
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
         }
         .listRowBackground(Color.clear)
       }
@@ -428,6 +434,25 @@ private struct PlanReveal: View {
       status: .active,
       targetDate: plan.schedule.targetDate,
       title: view.goal.title)
+  }
+
+  /// A language ends at its level and an exam at its date; a learn goal without a date runs as long
+  /// as its subject takes, so the reveal says what sets that. Planning without a date stops at the
+  /// longest plan there can be, so only a plan holding every part says it does.
+  private func paceLine(goal: LearnerGoal) -> String? {
+    guard goal.kind == .learn, plan.schedule.targetDate == nil, plan.estimate.endDate != nil else {
+      return nil
+    }
+
+    return plan.feasibility?.fits == true
+      ? String(
+        localized:
+          "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
+        table: "Onboarding", comment: "Under a plan without a date that holds the whole goal")
+      : String(
+        localized:
+          "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
+        table: "Onboarding", comment: "Under a plan without a date that the time a day limits")
   }
 
   private var facts: [String] {
