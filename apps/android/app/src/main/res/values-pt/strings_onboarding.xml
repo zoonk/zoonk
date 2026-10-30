@@ -91,7 +91,7 @@
   "onboarding_intent_understand_description": "13df91bffe8fd7af97b704ab66d5d6212d1809448535af14e6c1bc0ab3b82325",
   "onboarding_join_waitlist": "4139543cf41b809c63fa4e49c06e056ba94944c7f6f7e86311f7df6cca835a96",
   "onboarding_language_test_build_plan": "f1b491508374827b1a404a1836afae0a5e16df01bcef39291b9464993de56aa3",
-  "onboarding_language_test_description": "70f0317a0b0b3568097bd505e9aaf30e8707adae71301ec865f3961474968b2d",
+  "onboarding_language_test_description": "0876fa28c5040ab2b0ba2de2e9f0567ae225cdb168005ab0c4371ac323eb9616",
   "onboarding_language_test_did_not_understand": "85982f82eb8a6e000dd41051da82da5626c94212ee062676fcee19898a6cf310",
   "onboarding_language_test_done_description": "3dc7b86e2323a058903e513670f5adc94ebabfef495a60f99851c2e9586e4c00",
   "onboarding_language_test_done_title": "61fc2899af3185e702c10df2d58cf48430bdf4924a3927a15a5e638b4d5e3a5e",
@@ -691,7 +691,8 @@
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">Vamos ver seu nível em %1$s</string>
-    <string name="onboarding_language_test_description">Cerca de três minutos de leitura, escuta e uma frase em voz alta, para seu plano começar no seu nível.</string>
+    <!-- %1$s is how long the test takes, such as "3 min". -->
+    <string name="onboarding_language_test_description">São cerca de %1$s de leitura e escuta, e uma frase em voz alta, para seu plano começar no seu nível.</string>
     <string name="onboarding_language_test_new_alphabet">Ainda não conhece esse alfabeto? Pule o teste. Sua primeira sessão começa com uma aula rápida sobre como lê-lo.</string>
     <string name="onboarding_language_test_skip">Pular o teste</string>
     <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->

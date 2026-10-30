@@ -174,6 +174,21 @@ class GoalSetupFlowTest {
     }
 
     @Test
+    fun aLanguageGoalsQuickTestTakesItsLevelTestsThreeMinutesOnBothScreens() {
+        api.setup = { setupView(listOf("level", "placement", "plan"), kind = "language", targetLanguage = "it") }
+        api.reply = { _, _ ->
+            setupView(listOf("placement", "plan"), kind = "language", targetLanguage = "it", details = """{"answered":["level"]}""")
+        }
+        show()
+
+        rule.onNodeWithText("Adapts to your answers, about 3\u00A0min").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Not sure, give me a quick test").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        rule.onNodeWithText("About 3\u00A0min of reading", substring = true).performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
     fun aPlacementQuestionsBackLeavesTheSetupWithoutStepsBackOrStartOver() {
         api.setup = { setupView(listOf("placement", "plan"), details = """{"answered":["purpose"]}""") }
         api.placement = placementOf(next = trueFalseQuestion())

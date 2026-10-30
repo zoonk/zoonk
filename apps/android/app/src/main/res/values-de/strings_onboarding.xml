@@ -91,7 +91,7 @@
   "onboarding_intent_understand_description": "3bc7fc66bf7562d0fd242f3053bf13ad9ce227a1b0092909f9bec079ad0cf06f",
   "onboarding_join_waitlist": "f522ca533164115fc213b3805641c8ac5513a551cde5f5551e22d71060ec8f9e",
   "onboarding_language_test_build_plan": "69e464df699419d32db26a92fcae4f246b81f7569ddfb6e5f2cead33e416ee08",
-  "onboarding_language_test_description": "bce9c79366e01c5378c573697adf63d43c6365488e6c4e06b57864dbbbe2d1f2",
+  "onboarding_language_test_description": "932a31b502fb210c25c25e6c2eeb2c5025de51d427eded19f15ee83d017d8e46",
   "onboarding_language_test_did_not_understand": "4396495bc2cde01b78d90d388df0a250e33df2df94afcde3342cac205c3a798e",
   "onboarding_language_test_done_description": "69f8a4bd1f07391a5ed096fc28ca9cb5f4d9deeb8f46f7d116f277f2bb3f13cd",
   "onboarding_language_test_done_title": "555bb0a1ba3edee75ec598d04a02f01b81fe8a8b7b31fe4ba5404778e5d857fe",
@@ -686,7 +686,8 @@
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">Finden wir dein Level in %1$s heraus</string>
-    <string name="onboarding_language_test_description">Etwa drei Minuten lesen, hören und einen Satz laut sagen, damit dein Plan auf deinem Level beginnt.</string>
+    <!-- %1$s is how long the test takes, such as "3 min". -->
+    <string name="onboarding_language_test_description">Etwa %1$s lesen, hören und einen Satz laut sprechen, damit dein Plan auf deinem Level beginnt.</string>
     <string name="onboarding_language_test_new_alphabet">Du kennst das Alphabet noch nicht? Überspringe den Test. Deine erste Lerneinheit beginnt mit einer kurzen Lektion zum Lesen des Alphabets.</string>
     <string name="onboarding_language_test_skip">Test überspringen</string>
     <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->

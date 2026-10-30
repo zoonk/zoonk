@@ -259,7 +259,8 @@
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">Let\'s see your level in %1$s</string>
-    <string name="onboarding_language_test_description">About three minutes of reading, listening and one sentence out loud, so your plan starts at your level.</string>
+    <!-- %1$s is how long the test takes, such as "3 min". -->
+    <string name="onboarding_language_test_description">About %1$s of reading, listening and one sentence out loud, so your plan starts at your level.</string>
     <string name="onboarding_language_test_new_alphabet">New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.</string>
     <string name="onboarding_language_test_skip">Skip the test</string>
     <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->

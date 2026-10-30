@@ -251,6 +251,7 @@ internal fun ColumnScope.LevelStep(
     initial: LevelChoice?,
     pending: Boolean,
     onAnswer: (OnboardingAnswerInput) -> Unit,
+    testMinutes: Int = QUICK_TEST_MINUTES,
 ) {
     var level by remember { mutableStateOf(initial) }
     val answer = { picked: LevelChoice ->
@@ -268,7 +269,7 @@ internal fun ColumnScope.LevelStep(
         pending = pending,
         onContinue = { level?.let(answer) },
     ) {
-        LevelChoiceList(level, onChange = { level = it }, onPick = answer, readOnly = pending)
+        LevelChoiceList(level, onChange = { level = it }, onPick = answer, readOnly = pending, testMinutes = testMinutes)
     }
 }
 
@@ -279,6 +280,7 @@ internal fun LevelChoiceList(
     onChange: (LevelChoice) -> Unit,
     onPick: ((LevelChoice) -> Unit)? = null,
     readOnly: Boolean = false,
+    testMinutes: Int = QUICK_TEST_MINUTES,
 ) {
     val choices: List<Choice<LevelChoice>> =
         listOf(
@@ -305,7 +307,7 @@ internal fun LevelChoiceList(
             Choice(
                 LevelChoice.QuickTest,
                 stringResource(R.string.onboarding_level_test),
-                stringResource(R.string.onboarding_level_test_description, formatMinutes(QUICK_TEST_MINUTES, currentLocale())),
+                stringResource(R.string.onboarding_level_test_description, formatMinutes(testMinutes, currentLocale())),
             ),
         )
     ChoiceList(choices, value, stringResource(R.string.onboarding_level_label), onChange = onChange, onPick = onPick, readOnly = readOnly)
@@ -835,6 +837,6 @@ private fun AnswerField(
     if (focusFirst) LaunchedEffect(Unit) { focus.requestFocus() }
 }
 
-private const val QUICK_TEST_MINUTES = 2
+internal const val QUICK_TEST_MINUTES = 2
 private const val MAX_ANSWER_LENGTH = 200
 private const val MAX_DAYS_AHEAD = 3650L

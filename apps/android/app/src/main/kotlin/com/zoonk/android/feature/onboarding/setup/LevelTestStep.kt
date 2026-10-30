@@ -70,6 +70,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LevelBar
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ChoiceAnswer
 import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
@@ -160,7 +161,7 @@ private fun ColumnScope.LevelTestIntro(
 ) {
     OnboardingHeading(
         stringResource(R.string.onboarding_language_test_title, languageName(targetLanguage, currentLocale())),
-        stringResource(R.string.onboarding_language_test_description),
+        stringResource(R.string.onboarding_language_test_description, formatMinutes(LEVEL_TEST_MINUTES, currentLocale())),
     )
     if (usesNonLatinScript(targetLanguage)) {
         Text(
@@ -494,3 +495,6 @@ private val NON_LATIN_SCRIPT_LANGUAGES =
 
 private const val LISTENING_RATE = 0.9f
 private const val NAME_SHARE_LIMIT = 0.4f
+
+/** Three reading and three listening questions and one sentence out loud; a language goal's quick test is this test. */
+internal const val LEVEL_TEST_MINUTES = 3

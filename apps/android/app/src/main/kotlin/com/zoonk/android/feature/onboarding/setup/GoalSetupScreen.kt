@@ -274,7 +274,8 @@ private fun ColumnScope.QuestionStep(
             if (view.examSubjects.size > 1) {
                 SubjectsLevelStep(subject, view.examSubjects, view.goal.details.texts("knownSubjects"), pending, vm::answer)
             } else {
-                LevelStep(subject, view.goal.levelChoice(), pending, vm::answer)
+                val testMinutes = if (view.goal.kind == Goal.Kind.LANGUAGE) LEVEL_TEST_MINUTES else QUICK_TEST_MINUTES
+                LevelStep(subject, view.goal.levelChoice(), pending, vm::answer, testMinutes)
             }
         }
 

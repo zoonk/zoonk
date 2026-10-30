@@ -91,7 +91,7 @@
   "onboarding_intent_understand_description": "b0a2f883176f461ca6e935289a9224cd26d6c25dce66e9bcf2193391fbf86a99",
   "onboarding_join_waitlist": "c3ff800e249487be3f61b3590865f0ad3f0e373c426fae6e4757650d7b112356",
   "onboarding_language_test_build_plan": "5874df8b03bd785b750eed777d02d47fec65180add707ded7fdaed7ff70f8815",
-  "onboarding_language_test_description": "27b8b5b539fc20c7d4f580ff793a4e12d6c78d5d79dc4730ff7daf0392130f93",
+  "onboarding_language_test_description": "19075bc774bb18fbd038bc4708202a477ae6f7410a43dd7e2696cab8e605ace9",
   "onboarding_language_test_did_not_understand": "5c643b9027cb10cd72e9031bacf64efb6af6ba03eb7b7f7ce202f26575753d5a",
   "onboarding_language_test_done_description": "4a4b5f03516888540bc75dc2943a74e335f5df65ff0c8244bd1e2c1c44441b7f",
   "onboarding_language_test_done_title": "67de8d8a012c6728557a86f2b48f7b543f2bfef795b0e95daa705a7f49fe3ce0",
@@ -691,7 +691,8 @@
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">Vamos a ver tu nivel de %1$s</string>
-    <string name="onboarding_language_test_description">Unos tres minutos de lectura, escucha y una frase en voz alta para que tu plan empiece en tu nivel.</string>
+    <!-- %1$s is how long the test takes, such as "3 min". -->
+    <string name="onboarding_language_test_description">Unos %1$s de lectura, escucha y una frase en voz alta para que tu plan empiece en tu nivel.</string>
     <string name="onboarding_language_test_new_alphabet">¿No conoces su alfabeto? Omite la prueba. Tu primera sesión empezará con una breve lección para aprender a leerlo.</string>
     <string name="onboarding_language_test_skip">Omitir la prueba</string>
     <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->

@@ -91,7 +91,7 @@
   "onboarding_intent_understand_description": "6b2bd6e01af9c49dd115783a99170af4bbb78bda55f0add290ef05441d1297a3",
   "onboarding_join_waitlist": "385c01cbc0b5478c81b07bb5f0471794aa2199b2ec92f8ac187a05d4f5694465",
   "onboarding_language_test_build_plan": "d549c5d105d77121b1e1ed8b0bc6dac005185c902a725c167d7f2608902f9490",
-  "onboarding_language_test_description": "fada530a77da8df7e7964f3bd306ed0a6737675d8be421530608e6c9fe1a2a90",
+  "onboarding_language_test_description": "58f23af180b7429257823caea72dc0ba3dff96daf7aabf9cff5b0e08b1950073",
   "onboarding_language_test_did_not_understand": "593910036efa805ecadff7440d9f879b90b17b1f6beedbbd274abd834163bc09",
   "onboarding_language_test_done_description": "e823ddbd2bba77911fa406f905badcf0974d81368b46f4e98adb0e7509463364",
   "onboarding_language_test_done_title": "51a09c4c45476c17392d29b2f9210bd2723f28b6d667957778cb1aedb190f327",
@@ -691,7 +691,8 @@
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">Découvrons ton niveau en %1$s</string>
-    <string name="onboarding_language_test_description">Environ trois minutes de lecture, d’écoute et une phrase à dire à voix haute, pour que ton plan parte de ton niveau.</string>
+    <!-- %1$s is how long the test takes, such as "3 min". -->
+    <string name="onboarding_language_test_description">Environ %1$s de lecture, d’écoute et une phrase à dire à voix haute pour que ton plan parte de ton niveau.</string>
     <string name="onboarding_language_test_new_alphabet">Tu ne connais pas encore cet alphabet ? Passe le test. Ta première séance commencera par une courte leçon pour apprendre à le lire.</string>
     <string name="onboarding_language_test_skip">Passer le test</string>
     <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
