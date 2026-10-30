@@ -236,6 +236,7 @@ internal fun timeToCover(
         fittingDate = fittingDate?.let(kotlinx.datetime.LocalDate::parse),
         ready = ready,
         recommendedMinutes = recommended,
+        suggested = null,
         targetDate = kotlinx.datetime.LocalDate.parse("2027-01-31"),
         targetDateNamedMonth = false,
     )

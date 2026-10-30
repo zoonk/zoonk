@@ -20,6 +20,7 @@ class ScheduleRulesTest {
             fittingDate = null,
             ready = true,
             recommendedMinutes = recommended,
+            suggested = null,
             targetDate = LocalDate(2028, 10, 29),
             targetDateNamedMonth = false,
         ),

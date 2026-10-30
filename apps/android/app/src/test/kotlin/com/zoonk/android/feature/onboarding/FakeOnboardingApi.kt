@@ -442,6 +442,7 @@ internal fun coverOf(
     fittingDate = null,
     ready = ready,
     recommendedMinutes = recommended,
+    suggested = null,
     targetDate = targetDate,
     targetDateNamedMonth = false,
 )
