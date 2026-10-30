@@ -12,6 +12,7 @@ import { StepDots } from "../_components/step-dots";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
 import { type FlowState, applyAnswer } from "./_utils/answered-step";
+import { getSetupProgress } from "./_utils/setup-progress";
 import {
   type OnboardingActions,
   type OnboardingNavigation,
@@ -48,10 +49,6 @@ function isStepScreen(step: unknown): step is OnboardingStep {
 function getAnsweredScreens(view: OnboardingView): OnboardingStep[] {
   const answered = view.goal.details.answered;
   return Array.isArray(answered) ? answered.filter((step) => isStepScreen(step)) : [];
-}
-
-function countSteps(steps: OnboardingStep[]): number {
-  return steps.filter((step) => isStepScreen(step)).length;
 }
 
 export function StepsFlow({
@@ -143,13 +140,8 @@ export function StepsFlow({
   };
 
   const isPlan = state.current === "plan";
-  const remaining = countSteps(state.view.steps.filter((step) => step !== state.current));
-  const answeredCount = countSteps(state.history);
   const showDots = isStepScreen(state.current);
-
-  const progress = showDots
-    ? { current: answeredCount, total: answeredCount + 1 + remaining }
-    : null;
+  const progress = getSetupProgress(state);
 
   return (
     <OnboardingRailProvider rail={<PlanReceipt goal={state.view.goal} />}>
