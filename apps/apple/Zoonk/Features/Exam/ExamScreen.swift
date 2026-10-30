@@ -536,7 +536,9 @@ private struct ExamMocksSection: View {
                 Text(timerInterval: Date.now...deadline, countsDown: true)
                   .monospacedDigit()
               } else if mock.deadline == nil {
-                Text("Handed in", tableName: "Exam", comment: "A mock waiting to be graded")
+                Text(
+                  "All parts handed in", tableName: "Exam",
+                  comment: "A running mock's status once every part of it is handed in")
               } else {
                 Text("Time's up", tableName: "Exam", comment: "A running mock's time ran out")
               }

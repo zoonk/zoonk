@@ -603,6 +603,35 @@
         }
       }
     },
+    "All parts handed in" : {
+      "comment" : "A running mock's status once every part of it is handed in",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Teile abgegeben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todas las partes entregadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toutes les parties rendues"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todas as partes entregues"
+          }
+        }
+      }
+    },
     "Answer every question." : {
       "comment" : "Raw advice",
       "localizations" : {
@@ -1358,35 +1387,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Acertar as questões fáceis vale mais"
-          }
-        }
-      }
-    },
-    "Handed in" : {
-      "comment" : "A mock waiting to be graded",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abgegeben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entregado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rendu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entregue"
           }
         }
       }
