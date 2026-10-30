@@ -175,6 +175,31 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "preciso do Goethe-Zertifikat B1 pra visto de trabalho na Alemanha",
     language: "pt",
   }),
+  testCase("en-language-mandarin", {
+    expected: { goals: [{ kind: "language", targetLanguage: "zh" }], route: "goals" },
+    goal: "learn Mandarin for my business trips to Shanghai",
+    language: "en",
+  }),
+  testCase("pt-language-chinese", {
+    expected: { goals: [{ kind: "language", targetLanguage: "zh" }], route: "goals" },
+    goal: "quero aprender chinês do zero",
+    language: "pt",
+  }),
+  testCase("pt-language-chinese-traditional", {
+    expected: { goals: [{ kind: "language", targetLanguage: "zh-TW" }], route: "goals" },
+    goal: "quero aprender chinês com caracteres tradicionais",
+    language: "pt",
+  }),
+  testCase("es-language-chinese-taiwan", {
+    expected: { goals: [{ kind: "language", targetLanguage: "zh-TW" }], route: "goals" },
+    goal: "quiero aprender chino porque me mudo a Taipéi el próximo año",
+    language: "es",
+  }),
+  testCase("en-language-cantonese", {
+    expected: { goals: [{ kind: "language", targetLanguage: "yue" }], route: "goals" },
+    goal: "I want to speak Cantonese with my grandparents in Hong Kong",
+    language: "en",
+  }),
   testCase("en-learn-work-minutes", {
     expected: { dailyMinutes: 20, goals: [{ kind: "learn", purpose: "work" }], route: "goals" },
     goal: "statistics for making marketing decisions at work, I have 20 min a day",

@@ -229,6 +229,18 @@ describe(normalizeGoalUnderstanding, () => {
     ]);
   });
 
+  it("stores Mandarin under the same code as Chinese", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [rawGoal({ kind: "language", nativeLanguage: "pt-BR", targetLanguage: "cmn" })],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({ goals: [{ nativeLanguage: "pt", targetLanguage: "zh" }] });
+  });
+
   it("asks for more when nothing usable is left", () => {
     expect(
       normalizeGoalUnderstanding({

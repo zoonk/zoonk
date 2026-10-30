@@ -1,5 +1,5 @@
 import { GoalKind } from "@zoonk/db";
-import { LANGUAGE_CODE_PATTERN } from "@zoonk/utils/languages";
+import { LANGUAGE_CODE_PATTERN, toCanonicalLanguage } from "@zoonk/utils/languages";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
@@ -12,7 +12,11 @@ const MAX_GOAL_SOURCES = 5;
 const MAX_LANGUAGE_LENGTH = 10;
 const STUDY_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
 
-const languageSchema = z.string().max(MAX_LANGUAGE_LENGTH).regex(LANGUAGE_CODE_PATTERN);
+const languageSchema = z
+  .string()
+  .max(MAX_LANGUAGE_LENGTH)
+  .regex(LANGUAGE_CODE_PATTERN, { abort: true })
+  .overwrite((language) => toCanonicalLanguage(language));
 
 export const dailyMinutesSchema = z
   .int()

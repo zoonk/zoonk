@@ -2,7 +2,8 @@ import { getBaseLanguage } from "./languages";
 
 /**
  * Each language shows the country whose variety courses teach, and Arabic the Arab League's since
- * courses teach Modern Standard Arabic. Codes are `flag-icons` file names.
+ * courses teach Modern Standard Arabic. A variety with its own courses (`zh-TW`) shows its own
+ * country. Codes are `flag-icons` file names.
  */
 const LANGUAGE_FLAGS = {
   af: "za",
@@ -85,6 +86,7 @@ const LANGUAGE_FLAGS = {
   uz: "uz",
   vi: "vn",
   zh: "cn",
+  "zh-TW": "tw",
   zu: "za",
 } as const satisfies Record<string, string>;
 
@@ -97,8 +99,8 @@ function isFlagLanguage(language: string): language is keyof typeof LANGUAGE_FLA
 }
 
 export function getLanguageFlagCode(language: string): LanguageFlagCode | null {
-  const base = getBaseLanguage(language);
-  return isFlagLanguage(base) ? LANGUAGE_FLAGS[base] : null;
+  const key = isFlagLanguage(language) ? language : getBaseLanguage(language);
+  return isFlagLanguage(key) ? LANGUAGE_FLAGS[key] : null;
 }
 
 export function getLanguageFlagLabel({

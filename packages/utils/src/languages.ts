@@ -1,8 +1,8 @@
 /**
  * From https://ai.google.dev/gemini-api/docs/speech-generation. Gemini detects the language from
- * the text, so we keep ISO 639-1 codes (`zh`, `tl`, `no`) where Gemini's differ.
+ * the text, so these are our canonical tags (`zh`, `fil`, `no`), not Gemini's codes.
  */
-export const TTS_SUPPORTED_LANGUAGE_CODES = [
+const TTS_SUPPORTED_LANGUAGE_CODES = [
   "af",
   "am",
   "ar",
@@ -21,6 +21,7 @@ export const TTS_SUPPORTED_LANGUAGE_CODES = [
   "eu",
   "fa",
   "fi",
+  "fil",
   "fr",
   "ga",
   "gu",
@@ -67,7 +68,6 @@ export const TTS_SUPPORTED_LANGUAGE_CODES = [
   "ta",
   "te",
   "th",
-  "tl",
   "tr",
   "uk",
   "ur",
@@ -111,10 +111,8 @@ export function getMaiVoiceLocale(code: string): string | null {
 
 const TTS_SUPPORTED_LANGUAGE_SET: ReadonlySet<string> = new Set(TTS_SUPPORTED_LANGUAGE_CODES);
 
-export function isTTSSupportedLanguage(
-  code: unknown,
-): code is (typeof TTS_SUPPORTED_LANGUAGE_CODES)[number] {
-  return typeof code === "string" && TTS_SUPPORTED_LANGUAGE_SET.has(code);
+export function isTTSSupportedLanguage(language: string): boolean {
+  return TTS_SUPPORTED_LANGUAGE_SET.has(getBaseLanguage(language));
 }
 
 /** Without `userLanguage`, returns the native name ("Español", "日本語"). */
@@ -169,6 +167,11 @@ const NON_LATIN_SCRIPT_LANGUAGES = new Set([
 
 /** `Intl` reads every code this matches; a made-up or underscored one ("pt_BR") would throw. */
 export const LANGUAGE_CODE_PATTERN = /^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\d{3}))?$/u;
+
+/** Tags for the same language and variety become one, so they share courses: `cmn`, `zh-CN` and `zh-Hans` are `zh`. */
+export function toCanonicalLanguage(language: string): string {
+  return new Intl.Locale(language).minimize().toString();
+}
 
 export function getBaseLanguage(language: string): string {
   return language.toLowerCase().split(/[-_]/u)[0] ?? "";

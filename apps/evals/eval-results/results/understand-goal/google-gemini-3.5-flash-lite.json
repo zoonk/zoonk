@@ -30,34 +30,6 @@
           "goals": [
             {
               "kind": "language",
-              "month": "2027-03",
-              "nativeLanguage": "es",
-              "ownLevel": "basic",
-              "targetLanguage": "en"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-language-moving-us-1",
-        "userInput": {
-          "goal": "i want to speak english from spanish because I'm moving to the US. my current level is A2. i need to become fluent in the next 6 months",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": { "expected": "goals", "predicted": "goals" },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "kind": "language",
               "ownLevel": "intermediate",
               "role": {},
               "targetLanguage": "en",
@@ -712,25 +684,6 @@
       "testCase": {
         "expected": {
           "goals": [
-            { "examName": {}, "kind": "exam" },
-            { "kind": "language", "targetLanguage": "en" }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-two-goals-1",
-        "userInput": { "goal": "ENEM e inglês", "language": "pt", "today": "2026-09-26" }
-      }
-    },
-    {
-      "classification": { "expected": "goals", "predicted": "goals" },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
             {
               "examName": {},
               "examTarget": "score",
@@ -801,6 +754,147 @@
         "expected": { "goals": [{ "kind": "learn", "ownLevel": "none" }], "route": "goals" },
         "id": "pt-learn-music-zero-1",
         "userInput": { "goal": "Aprender música do zero", "language": "pt", "today": "2026-09-26" }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "month": "2027-03",
+              "nativeLanguage": "es",
+              "ownLevel": "basic",
+              "targetLanguage": "en"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-language-moving-us-1",
+        "userInput": {
+          "goal": "i want to speak english from spanish because I'm moving to the US. my current level is A2. i need to become fluent in the next 6 months",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            { "examName": {}, "kind": "exam" },
+            { "kind": "language", "targetLanguage": "en" }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-two-goals-1",
+        "userInput": { "goal": "ENEM e inglês", "language": "pt", "today": "2026-09-26" }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "kind": "language", "targetLanguage": "zh" }], "route": "goals" },
+        "id": "en-language-mandarin-1",
+        "userInput": {
+          "goal": "learn Mandarin for my business trips to Shanghai",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "kind": "language", "targetLanguage": "zh" }], "route": "goals" },
+        "id": "pt-language-chinese-1",
+        "userInput": {
+          "goal": "quero aprender chinês do zero",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "kind": "language", "targetLanguage": "zh-TW" }],
+          "route": "goals"
+        },
+        "id": "pt-language-chinese-traditional-1",
+        "userInput": {
+          "goal": "quero aprender chinês com caracteres tradicionais",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "kind": "language", "targetLanguage": "zh-TW" }],
+          "route": "goals"
+        },
+        "id": "es-language-chinese-taiwan-1",
+        "userInput": {
+          "goal": "quiero aprender chino porque me mudo a Taipéi el próximo año",
+          "language": "es",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "kind": "language", "targetLanguage": "yue" }],
+          "route": "goals"
+        },
+        "id": "en-language-cantonese-1",
+        "userInput": {
+          "goal": "I want to speak Cantonese with my grandparents in Hong Kong",
+          "language": "en",
+          "today": "2026-09-26"
+        }
       }
     }
   ],

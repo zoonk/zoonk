@@ -1,4 +1,4 @@
-import { getBaseLanguage, isTTSSupportedLanguage } from "@zoonk/utils/languages";
+import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { z } from "zod";
 import { languageCodeSchema } from "../library/steps/contract/content-schemas";
 
@@ -10,7 +10,7 @@ export function normalizeSpeechText(text: string): string {
 
 export const speechClipInputSchema = z.object({
   language: languageCodeSchema
-    .refine((language) => isTTSSupportedLanguage(getBaseLanguage(language)), {
+    .refine((language) => isTTSSupportedLanguage(language), {
       message: "There's no voice for this language",
     })
     .meta({ description: 'The language the text is in, such as "it", "es" or "pt-BR"' }),

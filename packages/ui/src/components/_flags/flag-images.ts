@@ -63,6 +63,7 @@ import siFlag from "flag-icons/flags/4x3/si.svg";
 import skFlag from "flag-icons/flags/4x3/sk.svg";
 import thFlag from "flag-icons/flags/4x3/th.svg";
 import trFlag from "flag-icons/flags/4x3/tr.svg";
+import twFlag from "flag-icons/flags/4x3/tw.svg";
 import tzFlag from "flag-icons/flags/4x3/tz.svg";
 import uaFlag from "flag-icons/flags/4x3/ua.svg";
 import usFlag from "flag-icons/flags/4x3/us.svg";
@@ -135,6 +136,7 @@ export const FLAG_IMAGES: Record<LanguageFlagCode, FlagImage> = {
   sk: skFlag,
   th: thFlag,
   tr: trFlag,
+  tw: twFlag,
   tz: tzFlag,
   ua: uaFlag,
   us: usFlag,

@@ -2,7 +2,7 @@ import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type Goal } from "@zoonk/db";
 import { parseCefrScore } from "@zoonk/utils/cefr";
-import { getBaseLanguage, isTTSSupportedLanguage } from "@zoonk/utils/languages";
+import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { findSpeechClip, toSpeechClip } from "../../../audio/_utils/speech-clips";
 import { type SpeechClip } from "../../../audio/speech-clip-contract";
 import { getSpeechClipKey } from "../../../audio/speech-clip-key";
@@ -116,7 +116,7 @@ async function findQuestionAudio({
   language: string;
   question: LevelTestQuestion;
 }): Promise<{ audio: SpeechClip | null; audioPending: boolean }> {
-  if (question.skill !== "listening" || !isTTSSupportedLanguage(getBaseLanguage(language))) {
+  if (question.skill !== "listening" || !isTTSSupportedLanguage(language)) {
     return { audio: null, audioPending: false };
   }
 

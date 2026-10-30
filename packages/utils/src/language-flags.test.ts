@@ -19,6 +19,14 @@ describe(getLanguageFlagCode, () => {
     expect(getLanguageFlagCode("ar")).toBe("arab");
   });
 
+  it("shows Taiwan's flag for the Chinese taught there", () => {
+    expect(getLanguageFlagCode("zh-TW")).toBe("tw");
+
+    expect(getLanguageFlagLabel({ language: "zh-TW", userLanguage: "en" })).toBe(
+      "Chinese (Taiwan)",
+    );
+  });
+
   it("has no flag for a language it doesn't know", () => {
     expect(getLanguageFlagCode("eo")).toBeNull();
     expect(getLanguageFlagCode("")).toBeNull();

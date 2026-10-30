@@ -1,6 +1,6 @@
 "use client";
 
-import { getBaseLanguage, isTTSSupportedLanguage } from "@zoonk/utils/languages";
+import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type HelpLimit } from "../_components/help-limit-notice";
 import { type SpeechClipOutcome, useSpeechPlayer } from "./speech-player-provider";
@@ -166,10 +166,5 @@ export function useSpokenAudio(language: string) {
     [player],
   );
 
-  return {
-    cancel,
-    isAvailable: player !== null && isTTSSupportedLanguage(getBaseLanguage(language)),
-    speak,
-    state,
-  };
+  return { cancel, isAvailable: player !== null && isTTSSupportedLanguage(language), speak, state };
 }

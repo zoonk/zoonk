@@ -1,4 +1,4 @@
-import { LANGUAGE_CODE_PATTERN } from "@zoonk/utils/languages";
+import { LANGUAGE_CODE_PATTERN, toCanonicalLanguage } from "@zoonk/utils/languages";
 
 const DAYS_PER_WEEK = 7;
 const MAX_GOALS = 3;
@@ -137,7 +137,7 @@ function cleanTargetDate({ date, today }: { date: string | null; today: string }
 
 function cleanLanguageCode(code: string | null): string | undefined {
   const trimmed = code?.trim();
-  return trimmed && LANGUAGE_CODE_PATTERN.test(trimmed) ? trimmed : undefined;
+  return trimmed && LANGUAGE_CODE_PATTERN.test(trimmed) ? toCanonicalLanguage(trimmed) : undefined;
 }
 
 const MONTHS_PER_YEAR = 12;

@@ -3,6 +3,7 @@ import {
   getLanguageName,
   getMaiVoiceLocale,
   isTTSSupportedLanguage,
+  toCanonicalLanguage,
   usesNonLatinScript,
 } from "./languages";
 
@@ -29,12 +30,27 @@ describe(isTTSSupportedLanguage, () => {
     expect(isTTSSupportedLanguage("xx")).toBe(false);
   });
 
-  it("returns false for null", () => {
-    expect(isTTSSupportedLanguage(null)).toBe(false);
+  it("reads the language from a code with a region", () => {
+    expect(isTTSSupportedLanguage("zh-TW")).toBe(true);
+  });
+});
+
+describe(toCanonicalLanguage, () => {
+  it("gives every code for simplified Mandarin the same tag", () => {
+    expect(
+      ["cmn", "zh-CN", "zh-Hans", "zh-Hans-CN"].map((code) => toCanonicalLanguage(code)),
+    ).toStrictEqual(["zh", "zh", "zh", "zh"]);
   });
 
-  it("returns false for a number", () => {
-    expect(isTTSSupportedLanguage(42)).toBe(false);
+  it("keeps traditional characters apart as Taiwan's Chinese", () => {
+    expect(toCanonicalLanguage("zh-Hant")).toBe("zh-TW");
+  });
+
+  it("drops a region only when it's the language's usual one", () => {
+    expect([toCanonicalLanguage("pt-BR"), toCanonicalLanguage("pt-PT")]).toStrictEqual([
+      "pt",
+      "pt-PT",
+    ]);
   });
 });
 

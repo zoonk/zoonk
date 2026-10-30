@@ -112,7 +112,7 @@ describe(writeAlphabetLesson, () => {
     expect(lesson).toMatchObject({
       canDo: HANGUL.canDo,
       contentStatus: "completed",
-      identityKey: "alphabet:ko",
+      identityKey: "alphabet:ko-Kore",
       language: learnerLanguage,
       model: "openai/gpt-6-luna",
       ownerId: null,
@@ -192,7 +192,7 @@ describe(writeAlphabetLesson, () => {
     ).rejects.toThrow("Provider down");
 
     const lesson = await prisma.lesson.findUniqueOrThrow({
-      where: { languageIdentity: { identityKey: "alphabet:ja", language: learnerLanguage } },
+      where: { languageIdentity: { identityKey: "alphabet:ja-Jpan", language: learnerLanguage } },
     });
 
     expect(lesson.contentStatus).toBe("failed");

@@ -30,4 +30,16 @@ describe("a goal draft's languages", () => {
       ),
     ).toStrictEqual([]);
   });
+
+  it("stores every code for a language and variety the same way", () => {
+    const draft = goalDraftSchema.parse({
+      kind: "language",
+      language: "pt-BR",
+      prompt: "Learn Chinese",
+      targetLanguage: "zh-tw",
+      title: "Chinese",
+    });
+
+    expect(draft).toMatchObject({ language: "pt", targetLanguage: "zh-TW" });
+  });
 });

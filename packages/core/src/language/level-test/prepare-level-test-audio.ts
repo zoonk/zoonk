@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { getBaseLanguage, isTTSSupportedLanguage } from "@zoonk/utils/languages";
+import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { voiceSpeechClip } from "../../audio/_utils/speech-clips";
 import { normalizeSpeechText } from "../../audio/speech-clip-contract";
 import { getSpeechClipKey } from "../../audio/speech-clip-key";
@@ -15,7 +15,7 @@ import {
 export async function listLevelTestPassagesToVoice(pair: LanguagePair): Promise<string[]> {
   const language = pair.targetLanguage;
 
-  if (!isTTSSupportedLanguage(getBaseLanguage(language))) {
+  if (!isTTSSupportedLanguage(language)) {
     return [];
   }
 
