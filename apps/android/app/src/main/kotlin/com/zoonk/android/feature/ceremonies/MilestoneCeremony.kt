@@ -68,6 +68,7 @@ fun MilestoneCeremony(
     onShown: (UUID) -> Unit,
     onClose: () -> Unit,
     onWearGlasses: (suspend (BuddyGlasses) -> Boolean)? = null,
+    timeSource: TimeSource = TimeSource.Monotonic,
 ) {
     LaunchedEffect(milestone.id) {
         onShown(milestone.id)
@@ -85,7 +86,7 @@ fun MilestoneCeremony(
             }.takeIf { milestone.kind == Milestone.Kind.BELT }
     val glasses = BuddyGlasses.entries.firstOrNull { it.key == milestone.key }.takeIf { milestone.kind == Milestone.Kind.GLASSES }
     val canWear = glasses != null && onWearGlasses != null
-    val shownAt = remember { TimeSource.Monotonic.markNow() }
+    val shownAt = remember { timeSource.markNow() }
     val scope = rememberCoroutineScope()
     var closing by remember { mutableStateOf(false) }
 

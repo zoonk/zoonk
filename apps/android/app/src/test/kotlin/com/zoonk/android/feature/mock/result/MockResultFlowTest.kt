@@ -35,6 +35,8 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TestTimeSource
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
@@ -46,6 +48,7 @@ class MockResultFlowTest {
     val folder = TemporaryFolder()
 
     private lateinit var navigator: AppNavigator
+    private val clock = TestTimeSource()
 
     private fun show(
         mock: MockExam,
@@ -55,7 +58,7 @@ class MockResultFlowTest {
         rule.setContent {
             ZoonkTheme {
                 val context = LocalContext.current
-                val app = remember { AppContainer.preview(context) }
+                val app = remember { AppContainer.preview(context, timeSource = clock) }
                 val scope = remember { CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate) }
                 val store =
                     remember {
@@ -91,8 +94,7 @@ class MockResultFlowTest {
 
         rule.onNodeWithText("Yellow belt!").assertIsDisplayed()
         rule.onNodeWithText("Mock exam 3 done").assertDoesNotExist()
-        // The ceremony ignores taps for its first half second, by the real clock.
-        Thread.sleep(600)
+        clock += 500.milliseconds
         rule.onNodeWithText("Continue").performClick()
 
         rule.onNodeWithText("Mock exam 3 done").assertIsDisplayed()

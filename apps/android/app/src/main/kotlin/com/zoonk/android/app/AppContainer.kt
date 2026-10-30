@@ -128,11 +128,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
+import kotlin.time.TimeSource
 
 class AppContainer private constructor(
     context: Context,
     credentials: SessionCredentials,
     previewAccess: LearnerAccess?,
+    val timeSource: TimeSource = TimeSource.Monotonic,
 ) {
     constructor(context: Context) : this(context, EncryptedSessionCredentials(context), previewAccess = null)
 
@@ -156,7 +158,7 @@ class AppContainer private constructor(
             },
             clearCredentialState = { clearCredentialState(context) },
         )
-    val cache = AppCache(sessions, scope)
+    val cache = AppCache(sessions, scope, timeSource)
     val learnerSummary =
         LearnerSummaryStore(
             api = { session -> perform { api.clients(session).account.getCurrentUserSummary() }.summary },
@@ -307,7 +309,8 @@ class AppContainer private constructor(
         fun preview(
             context: Context,
             access: LearnerAccess = LearnerAccess.Learner,
-        ) = AppContainer(context, NoStoredSession, access)
+            timeSource: TimeSource = TimeSource.Monotonic,
+        ) = AppContainer(context, NoStoredSession, access, timeSource)
     }
 }
 

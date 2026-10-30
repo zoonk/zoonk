@@ -43,6 +43,7 @@ fun SessionCeremony(
         buddyName = moment.name,
         onShown = { id -> app.scope.launch { app.milestoneViews.markShown(id) } },
         onClose = onClose,
+        timeSource = app.timeSource,
         onWearGlasses =
             learnerBuddy?.let { buddy ->
                 { glasses ->
