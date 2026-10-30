@@ -45,6 +45,7 @@
 - “musicianship”: “formação musical”
 - “email”: “e-mail”
 - “hello@zoonk.com”: “contato@zoonk.com”
+- “Send feedback” (to Zoonk): “Enviar feedback”, not “Enviar comentários”
 
 ## Feature names and states
 

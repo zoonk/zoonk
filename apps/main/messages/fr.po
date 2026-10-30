@@ -73,6 +73,33 @@ msgctxt "xIoGG9"
 msgid "Go to"
 msgstr "Accéder à"
 
+#. Words people type to find Send feedback in the search, never shown. Keep “bug” and add the words people use in this language.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "CbsWrd"
+msgid "bug, problem, report, idea, suggestion, feature request, contact"
+msgstr "bug, problème, signalement, idée, suggestion, demande de fonctionnalité, contact"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-links.tsx
+msgctxt "G5YSJR"
+msgid "Send feedback"
+msgstr "Donner ton avis"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "tv5FG3"
+msgid "Blog"
+msgstr "Blog"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/support/page.tsx
+#: src/app/[lang]/(app)/(settings)/support/support-content.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "SENRqu"
+msgid "Help"
+msgstr "Aide"
+
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 #: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
@@ -86,26 +113,6 @@ msgstr "Ton plan"
 msgctxt "dXSivY"
 msgid "My account"
 msgstr "Mon compte"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-msgctxt "tv5FG3"
-msgid "Blog"
-msgstr "Blog"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-msgctxt "G5YSJR"
-msgid "Send feedback"
-msgstr "Donner ton avis"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
-#: src/app/[lang]/(app)/(settings)/support/page.tsx
-#: src/app/[lang]/(app)/(settings)/support/support-content.tsx
-#: src/components/public/public-footer.tsx
-msgctxt "SENRqu"
-msgid "Help"
-msgstr "Aide"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "y7pLO8"

@@ -62,7 +62,11 @@ export function ContentFeedbackProvider({
       {children}
       {showFeedbackForm && (
         <Suspense fallback={null}>
-          <FeedbackFormDialog onClose={() => setFormRequest(null)} request={formRequest} />
+          {/* A slow send can finish after its form was closed and another opened: it closes only its own. */}
+          <FeedbackFormDialog
+            onClose={(closed) => setFormRequest((current) => (current === closed ? null : current))}
+            request={formRequest}
+          />
         </Suspense>
       )}
     </ContentFeedbackContext>

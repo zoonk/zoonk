@@ -3063,19 +3063,25 @@ msgid "Report a problem"
 msgstr "Relatar um problema"
 
 #: src/feedback/feedback-form-dialog.tsx
-msgctxt "feedback.Ejhdi4"
-msgid "Feedback"
-msgstr "Comentários"
+#: src/feedback/report-problem-item.tsx
+msgctxt "feedback.G5YSJR"
+msgid "Send feedback"
+msgstr "Enviar feedback"
 
 #: src/feedback/feedback-form-dialog.tsx
-msgctxt "feedback.eUzs3M"
-msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
-msgstr "Envie seus comentários, dúvidas ou sugestões. Preencha o formulário abaixo ou envie um email para contato@zoonk.com."
+msgctxt "feedback.Kz11c4"
+msgid "Found a problem or have an idea? Tell us below or email hello@zoonk.com."
+msgstr "Encontrou um problema ou tem uma ideia? Conte para a gente abaixo ou mande um e-mail para contato@zoonk.com."
 
 #: src/feedback/feedback-form-dialog.tsx
 msgctxt "feedback.rbrahO"
 msgid "Close"
 msgstr "Fechar"
+
+#: src/feedback/feedback-form-dialog.tsx
+msgctxt "feedback.NDni4R"
+msgid "Thanks! We got your message."
+msgstr "Obrigado! Recebemos sua mensagem."
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.IVDs_9"

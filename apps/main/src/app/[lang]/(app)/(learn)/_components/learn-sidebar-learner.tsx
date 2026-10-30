@@ -123,7 +123,7 @@ function AccountRow({ summary }: { summary: LearnerSummary }) {
         <AccountTriggerWithoutLevel name={name} />
       )}
 
-      <UserDropdownMenu align="start" side="top" />
+      <UserDropdownMenu align="start" includeFeedback={false} side="top" />
     </DropdownMenu>
   );
 }

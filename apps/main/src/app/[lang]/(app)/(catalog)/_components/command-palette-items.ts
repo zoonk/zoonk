@@ -114,13 +114,19 @@ export function createLogoutPaletteItem({ label }: { label: string }): LogoutPal
   return { icon: LogOutIcon, id: "logout", kind: "logout", label, searchValue: label };
 }
 
-export function createFeedbackPaletteItem({ label }: { label: string }): FeedbackPaletteItem {
+export function createFeedbackPaletteItem({
+  keywords,
+  label,
+}: {
+  keywords: string;
+  label: string;
+}): FeedbackPaletteItem {
   return {
     icon: MessageSquareIcon,
     id: "send-feedback",
     kind: "feedback",
     label,
-    searchValue: label,
+    searchValue: `${label} ${keywords}`,
   };
 }
 

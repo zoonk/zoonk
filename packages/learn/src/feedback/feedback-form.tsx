@@ -134,10 +134,12 @@ export function FeedbackForm({
   context,
   defaultEmail,
   layout = "page",
+  onSent,
 }: {
   context: FeedbackFormContext;
   defaultEmail?: string | null;
   layout?: FeedbackFormLayout;
+  onSent?: () => void;
 }) {
   const t = useExtracted("feedback");
   const feedback = useContentFeedback();
@@ -146,17 +148,28 @@ export function FeedbackForm({
   const [typedEmail, setTypedEmail] = useState("");
   const email = (viewerEmail ?? typedEmail).trim();
 
-  const [status, formAction, isPending] = useActionState<FormStatus, FormData>(
+  // React clears the form after every send, so a failed one gives the message back as its default.
+  const [{ message: unsentMessage, status }, formAction, isPending] = useActionState<
+    { message: string; status: FormStatus },
+    FormData
+  >(
     async (_state, formData) => {
       const message = parseFormField(formData, "message") ?? "";
 
       if (!feedback || !email || !message) {
-        return "error";
+        return { message, status: "error" };
       }
 
-      return sendMessage({ context, email, feedback, message });
+      const result = await sendMessage({ context, email, feedback, message });
+
+      if (result === "success") {
+        onSent?.();
+        return { message: "", status: result };
+      }
+
+      return { message, status: result };
     },
-    "idle",
+    { message: "", status: "idle" },
   );
 
   return (
@@ -166,6 +179,7 @@ export function FeedbackForm({
           <FieldLabel htmlFor={messageId}>{t("Message")}</FieldLabel>
           <Textarea
             className="min-h-32"
+            defaultValue={unsentMessage}
             id={messageId}
             name="message"
             placeholder={t("How can we help you?")}
@@ -202,7 +216,9 @@ export function FeedbackForm({
           <SendButton disabled={viewerEmail === undefined} pending={isPending} />
         </div>
       ) : (
-        <SubmitButton disabled={viewerEmail === undefined}>{t("Send message")}</SubmitButton>
+        <div className="flex justify-end">
+          <SubmitButton disabled={viewerEmail === undefined}>{t("Send message")}</SubmitButton>
+        </div>
       )}
     </form>
   );

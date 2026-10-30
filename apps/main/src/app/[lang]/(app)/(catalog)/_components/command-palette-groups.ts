@@ -77,8 +77,25 @@ export function usePaletteGroups({
     label: t("Go to"),
   };
 
-  // A learner reaches their account from the avatar's menu: here it's found by name.
+  // A learner reaches their account and help pages from the avatar's menu: here they're found by name.
   const showsAccount = searching || !learner;
+
+  const sendFeedback = createFeedbackPaletteItem({
+    keywords: t({
+      description:
+        "Words people type to find Send feedback in the search, never shown. Keep “bug” and add the words people use in this language.",
+      message: "bug, problem, report, idea, suggestion, feature request, contact",
+    }),
+    label: t("Send feedback"),
+  });
+
+  const helpItems = showsAccount
+    ? [
+        createNavigationPaletteItem({ id: "blog", label: t("Blog"), menu: getMenu("blog") }),
+        sendFeedback,
+        createNavigationPaletteItem({ id: "support", label: t("Help"), menu: getMenu("support") }),
+      ]
+    : [sendFeedback];
 
   const plan: PaletteGroup = {
     id: "plan",
@@ -98,28 +115,8 @@ export function usePaletteGroups({
               : group,
           )
         : [catalogPages]),
-      ...(showsAccount
-        ? [
-            { id: "account", items: accountItems, label: t("My account") },
-            {
-              id: "help",
-              items: [
-                createNavigationPaletteItem({
-                  id: "blog",
-                  label: t("Blog"),
-                  menu: getMenu("blog"),
-                }),
-                createFeedbackPaletteItem({ label: t("Send feedback") }),
-                createNavigationPaletteItem({
-                  id: "support",
-                  label: t("Help"),
-                  menu: getMenu("support"),
-                }),
-              ],
-              label: t("Help"),
-            },
-          ]
-        : []),
+      ...(showsAccount ? [{ id: "account", items: accountItems, label: t("My account") }] : []),
+      { id: "help", items: helpItems, label: t("Help") },
     ],
     query,
   });

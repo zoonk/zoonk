@@ -11,7 +11,7 @@ import {
 import { getExtracted } from "next-intl/server";
 import { LearnGoalMenu } from "./learn-goal-menu";
 import { SidebarAccount, StudyLinks } from "./learn-sidebar-learner";
-import { LearnSidebarSearch } from "./learn-sidebar-links";
+import { LearnSidebarFeedback, LearnSidebarSearch } from "./learn-sidebar-links";
 
 async function StudyShortcuts() {
   const t = await getExtracted();
@@ -54,6 +54,7 @@ export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
       <StudyShortcuts />
 
       <SidebarFooter>
+        <LearnSidebarFeedback />
         <SidebarAccount visitor={<VisitorAccount />} />
       </SidebarFooter>
     </Sidebar>

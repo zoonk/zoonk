@@ -31,6 +31,7 @@
 - “area” (a weighted part of an exam or a goal): “domaine”, not “matière”
 - “notice” (an exam's official notice): “avis” or “avis d’examen”, never “notice”
 - “material” (the learner's own files and notes): “documents”, “contenu” or “support”, never “matière”
+- “Send feedback” (to Zoonk): “Donner ton avis”, not “Envoyer un retour” or “Envoyer un avis”
 
 ## Feature names and states
 

@@ -3,11 +3,12 @@
 import { openCommandPalette } from "@/app/[lang]/(app)/(catalog)/_components/command-palette-event";
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
+import { useContentFeedback } from "@zoonk/learn/feedback";
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
-import { SearchIcon } from "lucide-react";
+import { MessageSquareIcon, SearchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 
@@ -50,6 +51,25 @@ export function LearnSidebarSearch({
       <Kbd aria-hidden="true" className="hidden pointer-fine:inline-flex">
         {shortcut}
       </Kbd>
+    </button>
+  );
+}
+
+export function LearnSidebarFeedback() {
+  const t = useExtracted();
+  const feedback = useContentFeedback();
+
+  return (
+    <button
+      aria-haspopup="dialog"
+      className={SIDEBAR_ITEM_CLASS}
+      onClick={() =>
+        feedback?.openFeedbackForm({ context: { screen: "sidebar" }, isReport: false })
+      }
+      type="button"
+    >
+      <MessageSquareIcon aria-hidden="true" />
+      <span className="min-w-0 flex-1 truncate text-left">{t("Send feedback")}</span>
     </button>
   );
 }

@@ -45,7 +45,7 @@ export const SIDEBAR_ACCOUNT_CLASS =
 export function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("mt-auto flex items-center gap-2 pt-2", className)}
+      className={cn("mt-auto flex flex-col gap-0.5 pt-2", className)}
       data-slot="sidebar-footer"
       {...props}
     />

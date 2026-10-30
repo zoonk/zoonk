@@ -5,6 +5,7 @@ import { type LearnerSummaryState } from "@/lib/learner/learner-snapshot";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { getMenu } from "@/lib/menu";
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
+import { SendFeedbackItem } from "@zoonk/learn/feedback/menu-items";
 import { PlusMark } from "@zoonk/learn/plus-lock";
 import {
   DropdownMenuContent,
@@ -77,10 +78,12 @@ function getAccountStatus(learner: LearnerSummaryState) {
 /** A guest is offered an account instead of signing out, which would lose their plan. */
 export function UserDropdownMenu({
   align = "end",
+  includeFeedback = true,
   includeSearch = false,
   side = "bottom",
 }: {
   align?: "end" | "start";
+  includeFeedback?: boolean;
   includeSearch?: boolean;
   side?: "bottom" | "top";
 }) {
@@ -97,6 +100,7 @@ export function UserDropdownMenu({
       <MenuPageItem page="settings">{t("Settings")}</MenuPageItem>
       <PlanItem isAccount={isAccount} plus={summary?.tier === "plus"} />
       <MenuPageItem page="support">{t("Help")}</MenuPageItem>
+      {includeFeedback && <SendFeedbackItem screen="account-menu" />}
       <DropdownMenuSeparator />
       <AccountDropdownItem status={status} />
     </DropdownMenuContent>

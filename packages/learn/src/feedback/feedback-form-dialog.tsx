@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
+import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { useExtracted } from "next-intl";
 import { type FeedbackFormRequest } from "./feedback-contract";
 import { FeedbackForm } from "./feedback-form";
@@ -25,11 +26,9 @@ function FeedbackFormHeader({ isReport }: { isReport: boolean }) {
 
   return (
     <DialogHeader>
-      <DialogTitle>{t("Feedback")}</DialogTitle>
+      <DialogTitle>{t("Send feedback")}</DialogTitle>
       <DialogDescription>
-        {t(
-          "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com.",
-        )}
+        {t("Found a problem or have an idea? Tell us below or email hello@zoonk.com.")}
       </DialogDescription>
     </DialogHeader>
   );
@@ -39,7 +38,7 @@ export function FeedbackFormDialog({
   onClose,
   request,
 }: {
-  onClose: () => void;
+  onClose: (request: FeedbackFormRequest) => void;
   request: FeedbackFormRequest | null;
 }) {
   const t = useExtracted("feedback");
@@ -47,8 +46,8 @@ export function FeedbackFormDialog({
   return (
     <Dialog
       onOpenChange={(open) => {
-        if (!open) {
-          onClose();
+        if (!open && request) {
+          onClose(request);
         }
       }}
       open={request !== null}
@@ -57,7 +56,16 @@ export function FeedbackFormDialog({
         <FeedbackFormHeader isReport={request?.isReport ?? false} />
 
         <DialogFooter>
-          {request && <FeedbackForm context={request.context} layout="dialog" />}
+          {request && (
+            <FeedbackForm
+              context={request.context}
+              layout="dialog"
+              onSent={() => {
+                showSuccessToast(t("Thanks! We got your message."));
+                onClose(request);
+              }}
+            />
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
