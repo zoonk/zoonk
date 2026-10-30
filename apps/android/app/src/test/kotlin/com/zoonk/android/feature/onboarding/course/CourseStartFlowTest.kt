@@ -29,6 +29,7 @@ import com.zoonk.android.feature.catalog.course
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.noAllowance
 import com.zoonk.android.feature.onboarding.setupView
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -71,7 +72,15 @@ class CourseStartFlowTest {
         setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
-                CourseStartScreen(route, CatalogStore(catalog, cache), store, signedIn = true, existingGoalId, navigator)
+                CourseStartScreen(
+                    route,
+                    CatalogStore(catalog, cache),
+                    store,
+                    cache.noAllowance(),
+                    signedIn = true,
+                    existingGoalId,
+                    navigator,
+                )
             }
         }
     }

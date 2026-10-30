@@ -57,6 +57,7 @@ import com.zoonk.android.feature.catalog.FakeCatalogApi
 import com.zoonk.android.feature.exam.FakeMockApi
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.course.CourseStartScreen
+import com.zoonk.android.feature.onboarding.noAllowance
 import com.zoonk.android.feature.onboarding.setup.GoalSetupScreen
 import com.zoonk.android.feature.onboarding.setup.LocalSetupSpeech
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
@@ -491,6 +492,7 @@ class OnboardingScreenshots {
                 route = route,
                 catalog = remember { CatalogStore(FakeCatalogApi(), cache) },
                 store = remember { OnboardingStore(FakeOnboardingApi(), cache, session) { SignInResult.SignedIn } },
+                allowance = remember { cache.noAllowance() },
                 signedIn = false,
                 existingGoalId = null,
                 navigator = rememberAppNavigator(),
@@ -508,16 +510,17 @@ class OnboardingScreenshots {
             api: FakeOnboardingApi,
             route: AppRoute.StartGoal,
         ) {
-            val store =
-                remember {
-                    val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-                    OnboardingStore(
-                        api,
-                        AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
-                        session,
-                    ) { SignInResult.SignedIn }
-                }
-            StartGoalScreen(route, store, sessionKey = "local-a", canAttach = true, rememberAppNavigator())
+            val session = remember { FakeSession(AuthenticatedSession("ana", "token-a", "local-a")) }
+            val cache = remember { AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)) }
+            val store = remember { OnboardingStore(api, cache, session) { SignInResult.SignedIn } }
+            StartGoalScreen(
+                route,
+                store,
+                remember { cache.noAllowance() },
+                sessionKey = "local-a",
+                canAttach = true,
+                rememberAppNavigator(),
+            )
         }
 
         @Composable

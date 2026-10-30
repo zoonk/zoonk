@@ -2,6 +2,8 @@ package com.zoonk.android.feature.onboarding
 
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
@@ -105,6 +107,9 @@ internal fun uploadAskOf(
     )
 
 internal const val EXAM_GOAL_ID = "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"
+
+/** An allowance with nothing to say, for screens whose caps a test doesn't exercise. */
+internal fun AppCache.noAllowance() = resource<AllowanceResponse>(Audience.SignedIn) { null }
 
 internal fun setupView(
     steps: List<String>,
@@ -253,8 +258,6 @@ internal class FakeOnboardingApi : OnboardingApi {
         instrument: String,
         language: String,
     ) = Unit
-
-    override suspend fun allowance(session: AuthenticatedSession): AllowanceResponse = throw ApiException(ApiError.Unavailable)
 
     var setup: (String) -> Onboarding = { throw ApiException(ApiError.NotFound) }
     val answers = mutableListOf<Pair<String, OnboardingAnswerInput>>()

@@ -24,6 +24,7 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.failedDraft
+import com.zoonk.android.feature.onboarding.noAllowance
 import com.zoonk.android.feature.onboarding.readingDraft
 import com.zoonk.android.feature.onboarding.understoodDraft
 import com.zoonk.android.navigation.AppNavigator
@@ -60,16 +61,12 @@ class StartGoalFlowTest {
     ) {
         sessionKey = if (hasSession) "local-a" else null
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a").takeIf { hasSession })
-        store =
-            OnboardingStore(
-                api,
-                AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
-                session,
-            ) { SignInResult.SignedIn }
+        val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+        store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         rule.setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
-                StartGoalScreen(route, store, sessionKey = sessionKey, canAttach = sessionKey != null, navigator)
+                StartGoalScreen(route, store, cache.noAllowance(), sessionKey = sessionKey, canAttach = sessionKey != null, navigator)
             }
         }
     }

@@ -9,7 +9,6 @@ import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.perform
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.api.ApiJson
-import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.CreateResearchRequest
 import com.zoonk.api.models.CreateUploadRequest
 import com.zoonk.api.models.Goal
@@ -117,8 +116,6 @@ interface OnboardingApi {
         instrument: String,
         language: String,
     )
-
-    suspend fun allowance(session: AuthenticatedSession): AllowanceResponse
 
     suspend fun onboarding(
         session: AuthenticatedSession,
@@ -301,8 +298,6 @@ class LiveOnboardingApi(
     ) {
         perform { api.clients(session).onboarding.joinInstrumentWaitlist(JoinInstrumentWaitlistRequest(instrument, language)) }
     }
-
-    override suspend fun allowance(session: AuthenticatedSession) = perform { api.clients(session).account.getCurrentUserAllowance() }
 
     override suspend fun onboarding(
         session: AuthenticatedSession,

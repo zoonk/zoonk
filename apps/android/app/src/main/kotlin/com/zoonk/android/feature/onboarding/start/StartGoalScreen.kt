@@ -59,6 +59,7 @@ import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -77,6 +78,7 @@ import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.GoalUnderstanding
 import com.zoonk.api.models.OnboardingDraft
 
@@ -88,7 +90,14 @@ fun StartGoalScreen(
 ) {
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = session as? SessionState.SignedIn
-    StartGoalScreen(route, app.onboarding, sessionKey = signedIn?.session?.localId, canAttach = signedIn?.isGuest == false, navigator)
+    StartGoalScreen(
+        route,
+        app.onboarding,
+        app.subscriptions.allowance,
+        sessionKey = signedIn?.session?.localId,
+        canAttach = signedIn?.isGuest == false,
+        navigator,
+    )
 }
 
 /** [sessionKey] names the session the screen shows, null for a visitor; material needs an account ([canAttach]). */
@@ -96,6 +105,7 @@ fun StartGoalScreen(
 fun StartGoalScreen(
     route: AppRoute.StartGoal,
     store: OnboardingStore,
+    allowance: Resource<AllowanceResponse>,
     sessionKey: String?,
     canAttach: Boolean,
     navigator: AppNavigator,
@@ -103,8 +113,8 @@ fun StartGoalScreen(
     val vm = viewModel { StartGoalViewModel(store, createSavedStateHandle(), route.goal, route.draftId, route.planId) }
     val hasSession = sessionKey != null
     LaunchedEffect(sessionKey) { vm.followSession(sessionKey) }
-    val allowance by store.allowance.collectShown()
-    val upFront = allowance.value?.goalStartLimit()
+    val caps by allowance.collectShown()
+    val upFront = caps.value?.goalStartLimit()
     val language = appLanguage()
     val screen = vm.flow.screen
     val actions =

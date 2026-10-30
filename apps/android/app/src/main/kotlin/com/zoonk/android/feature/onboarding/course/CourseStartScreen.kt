@@ -42,6 +42,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -65,6 +66,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.CourseChapter
 import kotlinx.coroutines.launch
 
@@ -80,6 +82,7 @@ fun CourseStartScreen(
         route = route,
         catalog = app.catalog,
         store = app.onboarding,
+        allowance = app.subscriptions.allowance,
         signedIn = session is SessionState.SignedIn,
         existingGoalId =
             summary.value
@@ -96,6 +99,7 @@ internal fun CourseStartScreen(
     route: AppRoute.CourseStart,
     catalog: CatalogStore,
     store: OnboardingStore,
+    allowance: Resource<AllowanceResponse>,
     signedIn: Boolean,
     existingGoalId: String?,
     navigator: AppNavigator,
@@ -103,7 +107,7 @@ internal fun CourseStartScreen(
     val vm = viewModel { CourseStartViewModel(store, createSavedStateHandle()) }
     val resource = catalog.course[route.courseId]
     val state by resource.collectShown()
-    val allowance by store.allowance.collectShown()
+    val caps by allowance.collectShown()
     val scope = rememberCoroutineScope()
     val openGoal = { goalId: String, inSetup: Boolean ->
         navigator.closeSection()
@@ -127,7 +131,7 @@ internal fun CourseStartScreen(
             when (val shown = state) {
                 is LoadState.Loaded -> {
                     if (existingGoalId == null) {
-                        CourseStartForm(shown.value, route, vm, allowance.value?.goalStartLimit(), signedIn, navigator)
+                        CourseStartForm(shown.value, route, vm, caps.value?.goalStartLimit(), signedIn, navigator)
                     } else {
                         Loading()
                     }

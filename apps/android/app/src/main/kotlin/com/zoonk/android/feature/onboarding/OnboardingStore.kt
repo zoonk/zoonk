@@ -131,11 +131,6 @@ class OnboardingStore(
             session?.let { api.draft(it, id) }
         }
 
-    val allowance =
-        cache.resource(Audience.SignedIn, setOf(DataDomain.Allowance, DataDomain.Goals)) { session ->
-            session?.let { api.allowance(it) }
-        }
-
     /** A goal's setup; each answer replies with the whole new setup. */
     val onboardings =
         cache.keyed<String, Onboarding>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.LearnerModel)) {
