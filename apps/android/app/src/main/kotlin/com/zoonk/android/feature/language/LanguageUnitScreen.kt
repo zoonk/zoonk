@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -20,8 +19,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,7 +38,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -315,16 +311,10 @@ private fun UnitObjectives(
 ) {
     Column {
         SectionHeader(
-            stringResource(if (finished) R.string.language_unit_can_already else R.string.language_unit_objectives),
+            stringResource(if (finished) R.string.language_can_already else R.string.language_unit_objectives),
             Modifier.padding(horizontal = LIST_ITEM_INSET),
         )
-        objectives.take(SHOWN_OBJECTIVES).forEach { objective ->
-            ListItem(
-                headlineContent = { Text(objective) },
-                leadingContent = { Box(Modifier.size(MARK_SLOT), contentAlignment = Alignment.Center) { CanDoMark(done = finished) } },
-                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-            )
-        }
+        objectives.take(SHOWN_OBJECTIVES).forEach { CanDoRow(it, done = finished) }
     }
 }
 
@@ -534,7 +524,6 @@ private fun SnapshotStateList<String>.show(
 private val EXPANDED_SAVER = listSaver<SnapshotStateList<String>, String>(save = { it.toList() }, restore = { it.toMutableStateList() })
 
 private const val SEPARATOR = " · "
-private val MARK_SLOT = 24.dp
 private const val SHOWN_OBJECTIVES = 3
 private val PAGE_WIDTH = 720.dp
 private val SECTION_GAP = 40.dp

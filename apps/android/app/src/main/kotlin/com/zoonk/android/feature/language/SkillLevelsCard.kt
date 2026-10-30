@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.LevelBar
+import com.zoonk.android.ui.components.MarkedLine
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.levelShare
 import com.zoonk.android.ui.format.DateStyle
@@ -316,15 +317,17 @@ private fun RiseLine(levels: List<LanguageSkillLevel>) {
         } else {
             pluralStringResource(R.plurals.language_levels_rose, rises.size, formatList(rises.map { skillName(it.skill) }, currentLocale()))
         }
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Box(Modifier.size(with(LocalDensity.current) { style.lineHeight.toDp() }), contentAlignment = Alignment.Center) {
+    MarkedLine(
+        style,
+        mark = {
             Icon(
                 painterResource(R.drawable.ic_trending_up),
                 contentDescription = null,
                 modifier = Modifier.size(with(LocalDensity.current) { style.fontSize.toDp() }),
                 tint = MaterialTheme.colorScheme.onTertiaryContainer,
             )
-        }
+        },
+    ) {
         Text(text, style = style)
     }
 }

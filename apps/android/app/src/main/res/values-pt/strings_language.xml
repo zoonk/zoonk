@@ -36,7 +36,6 @@
   "language_skill_writing": "0c211ff3a1c65eaef79721fbc548294edca918698c607c0df36a5e5f3936a04a",
   "language_typos_open": "4666b76e29e76783864fbc9026327e50440d9ada3d41820e0002a5c0ac973347",
   "language_unit_about": "17e20e9672ddb81670fa8928a32341702b3f16fb7639bcae45441b7cbd4ac816",
-  "language_unit_can_already": "3f710f380d3796de0870678f64fb06124bed18819e6e651b1ebf343a8f3dcdaf",
   "language_unit_continue": "bcb5d8e1fab57510bef013b78c766dc70a6ad5d864fce9d09525e3dff37575b8",
   "language_unit_done_share": "2e9d0ba3def927cbe7205bc3010c3c50f7948762ee48ac4581f6946c6c38ecd5",
   "language_unit_eyebrow": "d54a44c28c6855fbbdcba7ef4c639b68586a6362140670e2ac3054047bf9da46",
@@ -66,8 +65,6 @@
     <string name="language_unit_start">Começar</string>
     <string name="language_unit_continue">Continuar</string>
     <string name="language_unit_objectives">Ao final desta unidade</string>
-    <!-- Heads a finished unit's list of things the learner is now able to do in the language. -->
-    <string name="language_unit_can_already">Eu já consigo…</string>
     <string name="language_unit_progress">Progresso</string>
     <string name="language_unit_practice">Prática</string>
     <string name="language_unit_mistakes">Seus erros</string>

@@ -36,7 +36,6 @@
   "language_skill_writing": "361f95af933795021be5826548fcc023ece8495c818d766a973d0270119af14c",
   "language_typos_open": "53a6a45dab4c7170895f01de25ac27d77477bd51d178ef6400767d166cf8f1d8",
   "language_unit_about": "3e925ccc1a4be8c42352272b42d4f5e1a810f29b68f81164ec4d3aba4d17bb33",
-  "language_unit_can_already": "206b6c698c1b4110b128ce762e8e9e4dd6aa75c477101e5e84f540f336fc90ca",
   "language_unit_continue": "74bde2162165d2a04bf413521d16c1221e5842388313f8e0900df657386f2fc3",
   "language_unit_done_share": "26a95258aff2bf54808753e51682c55ef40b48211c3617f42b56ba514ffc5b23",
   "language_unit_eyebrow": "058f1fd90e3366fc43dca96cc2857f903308039513aad2351cd85c35436acd1a",
@@ -66,8 +65,6 @@
     <string name="language_unit_start">Commencer</string>
     <string name="language_unit_continue">Continuer</string>
     <string name="language_unit_objectives">À la fin de cette unité</string>
-    <!-- Heads a finished unit's list of things the learner is now able to do in the language. -->
-    <string name="language_unit_can_already">Je sais déjà…</string>
     <string name="language_unit_progress">Progression</string>
     <string name="language_unit_practice">S’entraîner</string>
     <string name="language_unit_mistakes">Tes erreurs</string>

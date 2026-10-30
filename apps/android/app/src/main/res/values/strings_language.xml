@@ -11,8 +11,6 @@
     <string name="language_unit_start">Start</string>
     <string name="language_unit_continue">Continue</string>
     <string name="language_unit_objectives">By the end of this unit</string>
-    <!-- Heads a finished unit's list of things the learner is now able to do in the language. -->
-    <string name="language_unit_can_already">I can already…</string>
     <string name="language_unit_progress">Progress</string>
     <string name="language_unit_practice">Practice</string>
     <string name="language_unit_mistakes">Your mistakes</string>

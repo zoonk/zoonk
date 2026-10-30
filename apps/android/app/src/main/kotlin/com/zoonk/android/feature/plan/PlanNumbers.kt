@@ -530,7 +530,12 @@ internal fun LanguageDetails(
     SkillLevelsCard(language)
     CanDoList(language.canDo)
     language.speaking?.let { paper ->
-        SpeakingPracticeRow(paper.title, paper.access == SpeakingPaper.Access.PLUS_REQUIRED, onOpen = links::speaking)
+        SpeakingPracticeRow(
+            paper.title,
+            paper.access == SpeakingPaper.Access.PLUS_REQUIRED,
+            onOpen = links::speaking,
+            modifier = Modifier.bleed(LIST_ITEM_INSET),
+        )
     }
     language.speakingMock?.let { exam ->
         SpeakingMockCard(exam, language.goal.id, language.speakingMockPaused, start = standing.startCall, open = links::open)

@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -21,6 +23,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -28,6 +31,7 @@ import androidx.compose.ui.semantics.collapse
 import androidx.compose.ui.semantics.expand
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -122,6 +126,24 @@ fun ListRow(
 /** Where a row's words start, past its mark, for what opens under a row to line up with them. */
 @Composable
 fun listRowWordsStart(): Dp = LIST_ITEM_INSET + markSize() + LEADING_GAP
+
+/**
+ * A mark and words that aren't a list row, in a row's leading slot and gap so their words start where
+ * rows' do. The mark centers on the first line of [firstLine].
+ */
+@Composable
+fun MarkedLine(
+    firstLine: TextStyle,
+    mark: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val line = with(LocalDensity.current) { firstLine.lineHeight.toDp() }
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(LEADING_GAP)) {
+        Box(Modifier.width(markSize()).height(line), contentAlignment = Alignment.Center) { mark() }
+        content()
+    }
+}
 
 @Composable
 private fun TitleAndMeta(

@@ -1,22 +1,19 @@
 package com.zoonk.android.feature.language
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.api.models.LanguageProgressCanDoInner
 
 /** Main's `CanDoList`: what the finished units taught the learner to do, then the next one ahead. */
@@ -25,28 +22,29 @@ fun CanDoList(
     canDo: List<LanguageProgressCanDoInner>,
     modifier: Modifier = Modifier,
 ) {
-    val shown = canDo.filter { it.done } + listOfNotNull(canDo.firstOrNull { !it.done })
-    if (shown.isEmpty()) return
-    val style = MaterialTheme.typography.bodyMedium
-    val line = with(LocalDensity.current) { style.lineHeight.toDp() }
-    val notYet = stringResource(R.string.language_can_do_not_yet)
+    val done = canDo.filter { it.done }
+    val next = canDo.firstOrNull { !it.done }
+    if (done.isEmpty() && next == null) return
 
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.language_can_already))
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            shown.forEach { item ->
-                Row(
-                    modifier = Modifier.semantics(mergeDescendants = true) { if (!item.done) stateDescription = notYet },
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Box(Modifier.height(line), contentAlignment = Alignment.Center) { CanDoMark(item.done) }
-                    Text(
-                        text = item.text,
-                        color = if (item.done) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = style,
-                    )
-                }
-            }
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
+            done.forEach { CanDoRow(it.text, done = true) }
+            next?.let { CanDoRow(it.text, done = false, notYet = true) }
         }
     }
+}
+
+/** Something a unit teaches the learner to do; [notYet] is the next one, which TalkBack hears isn't done. */
+@Composable
+fun CanDoRow(
+    text: String,
+    done: Boolean,
+    notYet: Boolean = false,
+) {
+    ListRow(
+        headline = { Text(text, color = if (notYet) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified) },
+        stateDescription = if (notYet) stringResource(R.string.language_can_do_not_yet) else null,
+        leading = { CanDoMark(done) },
+    )
 }

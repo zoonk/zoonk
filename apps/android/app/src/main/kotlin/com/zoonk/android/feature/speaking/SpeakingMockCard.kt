@@ -1,16 +1,11 @@
 package com.zoonk.android.feature.speaking
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
@@ -31,6 +26,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.MarkedLine
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.api.models.SpeakingMockExam
 import java.util.UUID
@@ -53,15 +49,9 @@ fun SpeakingMockCard(
     val startMock = { model.start(CallRequest.SpeakingMock(goalId)) }
     OpenStartedCall(model) { id -> open(AppRoute.Conversation(id.toString(), from = from)) }
     val writing = model.state == CallStartModel.State.Writing || model.state == CallStartModel.State.WriteFailed
-    val titleLine =
-        with(LocalDensity.current) {
-            MaterialTheme.typography.titleSmall.lineHeight
-                .toDp()
-        }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Box(Modifier.height(titleLine), contentAlignment = Alignment.Center) { KindDot(LearnKind.Conversation) }
+        MarkedLine(MaterialTheme.typography.titleSmall, mark = { KindDot(LearnKind.Conversation) }) {
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
                     stringResource(

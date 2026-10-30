@@ -18,6 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.DOT_SHARE
+import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.theme.zoonk
@@ -31,8 +33,8 @@ fun CanDoMark(
     val fill = MaterialTheme.colorScheme.tertiary
     val ring = MaterialTheme.colorScheme.onSurface.copy(alpha = RING_ALPHA)
 
-    Canvas(modifier.size(MARK_BOX)) {
-        val radius = DOT.toPx() / 2
+    Canvas(modifier.size(markSize())) {
+        val radius = size.minDimension * DOT_SHARE / 2
         if (done) {
             drawCircle(fill, radius)
         } else {
@@ -80,7 +82,5 @@ fun PronunciationRow(
     )
 }
 
-private val MARK_BOX = 16.dp
-private val DOT = 8.dp
 private val RING = 1.5.dp
 private const val RING_ALPHA = 0.3f
