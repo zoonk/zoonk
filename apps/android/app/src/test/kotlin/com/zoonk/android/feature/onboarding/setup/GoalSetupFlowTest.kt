@@ -319,6 +319,69 @@ class GoalSetupFlowTest {
     }
 
     @Test
+    fun aPassedDateStartsTheDateScreenEmptyAndSaysItPassed() {
+        api.setup = { setupView(listOf("targetDate", "plan"), targetDate = "2020-01-10", dateProblem = """{"kind":"passed"}""") }
+        show()
+
+        rule.onNodeWithText("Your date, January 10, 2020, has passed.", substring = true).assertIsDisplayed()
+        rule.onNodeWithContentDescription("Date").assertIsDisplayed()
+        rule.onNodeWithText("Continue").assertIsNotEnabled()
+    }
+
+    @Test
+    fun aDateThatIsTodaySaysThereAreNoDaysLeftToPlan() {
+        val today =
+            java.time.LocalDate
+                .now(java.time.ZoneOffset.UTC)
+                .toString()
+        api.setup = { setupView(listOf("targetDate", "plan"), targetDate = today, dateProblem = """{"kind":"today"}""") }
+        show()
+
+        rule.onNodeWithText("Your date is today, so there are no days left to plan.", substring = true).assertIsDisplayed()
+        rule.onNodeWithContentDescription("Date").assertIsDisplayed()
+    }
+
+    @Test
+    fun anExamWhoseDatePassedLeadsWithItsNextSitting() {
+        api.setup = {
+            setupView(
+                listOf("targetDate", "plan"),
+                kind = "exam",
+                targetDate = "2020-01-10",
+                dateProblem = """{"kind":"passed"}""",
+                examDays = """{"days":["2030-11-08"],"estimated":false}""",
+            )
+        }
+        show()
+
+        rule.onNodeWithText("Your exam is on Nov 8, 2030").assertIsDisplayed()
+        rule.onNodeWithText("Your date, January 10, 2020, has passed.", substring = true).assertIsDisplayed()
+    }
+
+    @Test
+    fun aMonthWithNoSittingOffersTheClosestSittingsInOneTap() {
+        api.setup = {
+            setupView(
+                listOf("targetDate", "plan"),
+                kind = "exam",
+                targetDate = "2030-08-15",
+                dateProblem = """{"kind":"noSitting","month":"2030-08-01","closest":["2030-06-10","2030-10-05"]}""",
+            )
+        }
+        show()
+
+        rule.onNodeWithText("No exam date in August 2030").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Use October 5, 2030").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Use June 10, 2030").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        assertEquals(
+            kotlinx.datetime.LocalDate(2030, 6, 10),
+            (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf4Value).value.targetDate,
+        )
+    }
+
+    @Test
     fun aGoalTypedWithAnotherSaysHowCoreSharesTheDay() {
         api.setup = {
             setupView(

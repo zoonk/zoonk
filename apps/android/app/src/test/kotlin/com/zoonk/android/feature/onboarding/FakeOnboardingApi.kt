@@ -119,10 +119,12 @@ internal fun setupView(
     timeChoices: List<Int> = DAILY_TIMES,
     split: (Int) -> String? = { null },
     quickTestMinutes: Int = 2,
+    dateProblem: String? = null,
+    examDays: String? = null,
 ): Onboarding =
     ApiJson.decodeFromString(
         """
-        {"examChoices":[],"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":${goalIds.joinToString(
+        {"dateProblem":${dateProblem ?: "null"},"examChoices":[],"examDays":${examDays ?: "null"},"examSubjects":[],"followUps":[],"generationId":null,"goalIds":${goalIds.joinToString(
             ",",
             "[",
             "]",

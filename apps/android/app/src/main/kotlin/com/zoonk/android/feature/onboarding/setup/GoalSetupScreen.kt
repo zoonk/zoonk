@@ -256,7 +256,15 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.TARGET_DATE -> {
-            DateStep(subject, view.examDays, view.goal.targetDate?.toJavaLocalDate(), pending, vm::answer)
+            DateStep(
+                subject,
+                view.examDays,
+                view.goal.targetDate?.toJavaLocalDate(),
+                view.dateProblem,
+                view.goal.timezone,
+                pending,
+                vm::answer,
+            )
         }
 
         OnboardingStep.FOLLOW_UPS -> {

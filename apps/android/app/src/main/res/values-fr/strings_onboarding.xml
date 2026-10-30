@@ -36,8 +36,10 @@
   "onboarding_create_account": "e156329ca281c90dc90348e9aa9bf992f5667a4810cd559f16049104cd38d519",
   "onboarding_create_account_short": "ee492c0efad78a304cc1c43399d677e2aaea92f5f76466299d8fffa3cc4b3325",
   "onboarding_date_description": "80f18124bcd5c0482d67736b737ef5aed5d6f9291a3bd11e0af00653f10ee200",
+  "onboarding_date_is_today": "8378ce5b9c6b9b9db244a8372319cce7d95209e5ffcd09cdb33d2813dd55b106",
   "onboarding_date_label": "7f409b88baca068679bef0edf58c72f19960d1f610f4b34302b8514b4f30dedc",
   "onboarding_date_none": "07acf872bb329c41a6c7b713cb954dd979d681453eda2314626c2e93700b9395",
+  "onboarding_date_passed": "202c12e85d37a01408c359c1b9421458b2e0efb911ec63c17f4eef3e4445e702",
   "onboarding_date_title": "51c2031d98187a7983f9ddb1a252d735e3871aa0038b9fb2c4a953d4503f5bfe",
   "onboarding_day_too_short": "4e6b998301410a4d86dec4996af9d05e99b3a17efe434821fd8f437ab15f3ed4",
   "onboarding_days": "543f8d53c09fbf78ce5ce102eeb7852a36a5ba9d2dee7d72e65189c61bb0bb44",
@@ -999,6 +1001,10 @@
     <string name="onboarding_date_description">Sans date, tu étudies tout à ton rythme et on t’indique quand tu atteindras chaque étape.</string>
     <string name="onboarding_date_none">Pas de date, tout étudier</string>
     <string name="onboarding_date_label">Date</string>
+    <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
+    <string name="onboarding_date_passed">La date prévue (%1$s) est passée.</string>
+    <!-- Leads the date question asked again because the goal's date is today. -->
+    <string name="onboarding_date_is_today">La date prévue tombe aujourd’hui, il ne reste donc plus de jours à planifier.</string>
     <string name="onboarding_exam_choice_title_one">Lequel vas-tu passer ?</string>
     <string name="onboarding_exam_choice_title_other">Lesquels vas-tu passer ?</string>
     <string name="onboarding_exam_choice_description">Ton plan et tes examens blancs suivent ton choix. Tu peux le modifier dans ton plan.</string>

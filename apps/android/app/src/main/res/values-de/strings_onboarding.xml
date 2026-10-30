@@ -36,8 +36,10 @@
   "onboarding_create_account": "ac27f94ba2e9fb3763e2eb55408c08646c6dd14d676ae3845512812e31ec3848",
   "onboarding_create_account_short": "dcd1dc6344997a95fb2e4346e7eb2016ee36ad5096ec47b737000c075e2e2e29",
   "onboarding_date_description": "ed8a9ea691509cdfafcf2fe2cdc190fcbc335af04362f2a287be8db63b549689",
+  "onboarding_date_is_today": "ae1fd3f636a268e8d7b7b14d5910eb2fa8fe7597b36200a6a594ff33ad622a96",
   "onboarding_date_label": "753446bb6bc9baccedb47dd621c10f3a563c34bb6691b842e48bdf8201f00699",
   "onboarding_date_none": "c95c96c5656cd6c7a63230278d02cfe255a6ddfb29407881dd43ef5e48ee9f44",
+  "onboarding_date_passed": "aefa9fe122f55f592ca34df3a4a0601e13406142577b58ed6a60934fa84499d9",
   "onboarding_date_title": "c7fc37985846506e6ac0a9589f324595da48781c24509ffadeb6a2dab1ed10d0",
   "onboarding_day_too_short": "5efcc947b5edc8c7f3186e3cd59a2f7947f7932bbe10f363676fcefa3bd9a920",
   "onboarding_days": "ca4a5780553711cc9bb6209dafc173716db3e96d7c65df9422c6ac7e6169cbb0",
@@ -978,6 +980,10 @@
     <string name="onboarding_date_description">Ohne Datum lernst du alle Inhalte in deinem eigenen Tempo. Wir zeigen dir, wann du die einzelnen Meilensteine erreichst.</string>
     <string name="onboarding_date_none">Kein Datum, alle Inhalte lernen</string>
     <string name="onboarding_date_label">Datum</string>
+    <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
+    <string name="onboarding_date_passed">Dein Termin am %1$s ist schon vorbei.</string>
+    <!-- Leads the date question asked again because the goal's date is today. -->
+    <string name="onboarding_date_is_today">Dein Termin ist heute, deshalb bleiben keine Tage mehr für deinen Plan.</string>
     <string name="onboarding_exam_choice_title_one">Welche wirst du ablegen?</string>
     <string name="onboarding_exam_choice_title_other">Welche wirst du ablegen?</string>
     <string name="onboarding_exam_choice_description">Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl. Du kannst sie in deinem Plan ändern.</string>

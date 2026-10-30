@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -82,12 +83,16 @@ import com.zoonk.api.models.OnboardingAnswerInputOneOf4
 import com.zoonk.api.models.OnboardingAnswerInputOneOf5
 import com.zoonk.api.models.OnboardingAnswerInputOneOf6
 import com.zoonk.api.models.OnboardingAnswerInputOneOf7
+import com.zoonk.api.models.OnboardingDateProblem
+import com.zoonk.api.models.OnboardingDateProblemOneOf2
 import com.zoonk.api.models.OnboardingExamDays
 import com.zoonk.api.models.OnboardingExamSubjectsInner
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.Instant
 import java.time.LocalDate
+import java.time.YearMonth
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.TimeZone
 
@@ -572,17 +577,35 @@ internal fun ColumnScope.RoleStep(
     }
 }
 
-/** An exam's notice day is offered first; "Another date" picks the learner's own. */
+/**
+ * An exam's notice day is offered first; "Another date" picks the learner's own. A date that passed
+ * or is today ([problem]) starts the screen empty and says so; a month with no sitting offers the
+ * closest ones. Days count in the goal's [timeZone], UTC without one, as core counts them.
+ */
 @Composable
 internal fun ColumnScope.DateStep(
     subject: String,
     exam: OnboardingExamDays?,
     initialDate: LocalDate?,
+    problem: OnboardingDateProblem?,
+    timeZone: String?,
     pending: Boolean,
     onAnswer: (OnboardingAnswerInput) -> Unit,
 ) {
     val examDay = exam?.days?.firstOrNull()?.toJavaLocalDate()
-    var otherDate by rememberSaveable { mutableStateOf(examDay == null || (initialDate != null && initialDate != examDay)) }
+    val gone =
+        problem is OnboardingDateProblem.OnboardingDateProblemOneOfValue ||
+            problem is OnboardingDateProblem.OnboardingDateProblemOneOf1Value
+    val kept = initialDate.takeUnless { gone }
+    var otherDate by rememberSaveable { mutableStateOf(examDay == null || (kept != null && kept != examDay)) }
+    val passedNote =
+        initialDate?.takeIf { gone }?.let {
+            if (problem is OnboardingDateProblem.OnboardingDateProblemOneOf1Value) {
+                stringResource(R.string.onboarding_date_is_today)
+            } else {
+                stringResource(R.string.onboarding_date_passed, formatDate(it, currentLocale(), DateStyle.Long))
+            }
+        }
     val answer = { date: LocalDate? ->
         onAnswer(
             OnboardingAnswerInput.OnboardingAnswerInputOneOf4Value(
@@ -606,7 +629,9 @@ internal fun ColumnScope.DateStep(
                         formatDate(second, locale, DateStyle.Day),
                     )
                 },
-            description = if (exam.estimated) "$ready ${stringResource(R.string.onboarding_exam_expected)}" else ready,
+            description =
+                listOfNotNull(passedNote, ready, exam.estimated.takeIf { it }?.let { stringResource(R.string.onboarding_exam_expected) })
+                    .joinToString(" "),
             subject = subject,
             skipLabel = stringResource(R.string.onboarding_another_date),
             pending = pending,
@@ -616,14 +641,18 @@ internal fun ColumnScope.DateStep(
         return
     }
 
-    var date by rememberSaveable { mutableStateOf(initialDate?.toString()) }
+    var date by rememberSaveable { mutableStateOf(kept?.toString()) }
     var picking by rememberSaveable { mutableStateOf(false) }
-    val today = LocalDate.now()
+    val today = LocalDate.now(goalZone(timeZone))
     val picked = date?.let(LocalDate::parse)
+    val noSitting =
+        (problem as? OnboardingDateProblem.OnboardingDateProblemOneOf2Value)
+            ?.value
+            ?.takeIf { picked != null && YearMonth.from(picked) == YearMonth.from(it.month.toJavaLocalDate()) }
 
     StepForm(
         title = stringResource(R.string.onboarding_date_title),
-        description = stringResource(R.string.onboarding_date_description),
+        description = listOfNotNull(passedNote, stringResource(R.string.onboarding_date_description)).joinToString(" "),
         subject = subject,
         canContinue = picked != null && picked > today,
         skipLabel = stringResource(R.string.onboarding_date_none),
@@ -654,12 +683,38 @@ internal fun ColumnScope.DateStep(
             trailingIcon = { Icon(painterResource(R.drawable.ic_calendar_month), contentDescription = null) },
             interactionSource = presses,
         )
+        noSitting?.let { NoSittingLine(it, pending, onUse = answer) }
     }
 
     if (picking) {
         TargetDatePicker(today, picked, onDismiss = { picking = false }, onPick = { date = it.toString() })
     }
 }
+
+@Composable
+private fun NoSittingLine(
+    noSitting: OnboardingDateProblemOneOf2,
+    pending: Boolean,
+    onUse: (LocalDate) -> Unit,
+) {
+    val locale = currentLocale()
+    Column {
+        Text(
+            stringResource(R.string.onboarding_reveal_no_sitting, formatDate(noSitting.month.toJavaLocalDate(), locale, DateStyle.Month)),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        FlowRow {
+            noSitting.closest.map { it.toJavaLocalDate() }.forEach { day ->
+                TextButton(onClick = { onUse(day) }, enabled = !pending) {
+                    Text(stringResource(R.string.exam_use_date, formatDate(day, locale, DateStyle.Long)))
+                }
+            }
+        }
+    }
+}
+
+private fun goalZone(timeZone: String?): ZoneId = timeZone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: ZoneOffset.UTC
 
 /** From tomorrow to ten years ahead, the deadlines core accepts. */
 @OptIn(ExperimentalMaterial3Api::class)

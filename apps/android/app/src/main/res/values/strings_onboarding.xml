@@ -539,6 +539,10 @@
     <string name="onboarding_date_description">Without a date, you study everything at your own pace, and we show when you reach each milestone.</string>
     <string name="onboarding_date_none">No date, study everything</string>
     <string name="onboarding_date_label">Date</string>
+    <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
+    <string name="onboarding_date_passed">Your date, %1$s, has passed.</string>
+    <!-- Leads the date question asked again because the goal's date is today. -->
+    <string name="onboarding_date_is_today">Your date is today, so there are no days left to plan.</string>
     <string name="onboarding_exam_choice_title_one">Which one will you take?</string>
     <string name="onboarding_exam_choice_title_other">Which ones will you take?</string>
     <string name="onboarding_exam_choice_description">The plan and the mocks follow your pick. You can change it in your plan.</string>
