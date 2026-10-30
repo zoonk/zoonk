@@ -5,7 +5,7 @@ import { Switch } from "@zoonk/ui/components/switch";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { ChangeSaveError } from "../_components/save-error";
-import { useFormatGoalDate, useFormatIsoDate } from "../_utils/iso-date";
+import { useFormatIsoDate, useGoalDateValues } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
@@ -56,7 +56,7 @@ type Finish = {
 function useFinishText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
-  const formatGoalDate = useFormatGoalDate();
+  const goalDate = useGoalDateValues();
   const formatDuration = useFormatDuration();
 
   return function finishText({
@@ -74,14 +74,20 @@ function useFinishText() {
     const time = formatDuration(dailyMinutes);
 
     return isExam
-      ? t("At {time} a day, you finish in {month}, after the exam on {date}.", {
-          date: formatGoalDate({
-            isoDate: targetDate,
-            namedMonth: targetDateNamedMonth,
-            style: "longYear",
-          }),
-          month,
-          time,
+      ? t({
+          description:
+            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+          message:
+            "{dateKind, select, month {At {time} a day, you finish in {month}, after the exam on {date}.} other {At {time} a day, you finish in {month}, after the exam on {date}.}}",
+          values: {
+            ...goalDate({
+              isoDate: targetDate,
+              namedMonth: targetDateNamedMonth,
+              style: "longYear",
+            }),
+            month,
+            time,
+          },
         })
       : t("At {time} a day, you finish in {month}.", { month, time });
   };
@@ -104,7 +110,7 @@ export function useExamFullCourseText() {
 
 export function useFullCourseText() {
   const t = useExtracted();
-  const formatGoalDate = useFormatGoalDate();
+  const goalDate = useGoalDateValues();
   const finishText = useFinishText();
   const examText = useExamFullCourseText();
   const { plan } = usePlanScreen();
@@ -118,8 +124,12 @@ export function useFullCourseText() {
         ? t(
             "Until the exam, nothing changes: what comes up most comes first, with mocks and the final stretch. What doesn't fit comes after it.",
           )
-        : t("Your deadline of {date} comes off your plan. You can set one again anytime.", {
-            date: formatGoalDate({
+        : t({
+            description:
+              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            message:
+              "{dateKind, select, month {Your deadline of {date} comes off your plan. You can set one again anytime.} other {Your deadline of {date} comes off your plan. You can set one again anytime.}}",
+            values: goalDate({
               isoDate: course.targetDate,
               namedMonth: course.targetDateNamedMonth,
               style: "long",

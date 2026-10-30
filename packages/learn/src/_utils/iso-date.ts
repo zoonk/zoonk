@@ -84,7 +84,8 @@ export function useFormatIsoDate() {
   };
 }
 
-export function useFormatGoalDate() {
+/** Messages `select` on `dateKind`, since a month and a day take different words around them. */
+export function useGoalDateValues() {
   const formatDate = useFormatIsoDate();
 
   return ({
@@ -95,5 +96,8 @@ export function useFormatGoalDate() {
     isoDate: string;
     namedMonth: boolean;
     style?: DateStyle;
-  }): string => formatDate(isoDate, namedMonth ? "month" : style);
+  }): { date: string; dateKind: "day" | "month" } => ({
+    date: formatDate(isoDate, namedMonth ? "month" : style),
+    dateKind: namedMonth ? "month" : "day",
+  });
 }

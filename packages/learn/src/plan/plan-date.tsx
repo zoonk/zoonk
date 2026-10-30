@@ -6,7 +6,7 @@ import { Input } from "@zoonk/ui/components/input";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ChangeSaveError } from "../_components/save-error";
-import { useFormatGoalDate } from "../_utils/iso-date";
+import { useFormatIsoDate } from "../_utils/iso-date";
 import { UseDateButton, useNoticeDayText } from "./notice-day";
 import { usePlanScreen } from "./plan-context";
 import { useFullCourse } from "./plan-full-course";
@@ -15,7 +15,7 @@ import { usePlanChange } from "./use-plan-change";
 
 function useDateNote() {
   const t = useExtracted();
-  const formatGoalDate = useFormatGoalDate();
+  const formatDate = useFormatIsoDate();
 
   return function dateNote({
     isExam,
@@ -28,7 +28,7 @@ function useDateNote() {
   }): string | null {
     if (namedMonth && targetDate) {
       return t("{month} for now. Pick the day when you know it.", {
-        month: formatGoalDate({ isoDate: targetDate, namedMonth: true }),
+        month: formatDate(targetDate, "month"),
       });
     }
 

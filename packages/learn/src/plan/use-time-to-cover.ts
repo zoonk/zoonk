@@ -4,7 +4,7 @@ import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
-import { useFormatGoalDate, useFormatIsoDate } from "../_utils/iso-date";
+import { useFormatIsoDate, useGoalDateValues } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 
@@ -52,7 +52,7 @@ export function useTimeToCoverTexts() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const formatDate = useFormatIsoDate();
-  const formatGoalDate = useFormatGoalDate();
+  const goalDate = useGoalDateValues();
 
   return {
     building: t("Your plan is still being built. Try again in a moment."),
@@ -65,14 +65,11 @@ export function useTimeToCoverTexts() {
       }) =>
       t({
         description:
-          '{date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.',
-        message: "{time} a day covers everything in depth by {date}.",
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+        message:
+          "{dateKind, select, month {{time} a day covers everything in depth by {date}.} other {{time} a day covers everything in depth by {date}.}}",
         values: {
-          date: formatGoalDate({
-            isoDate: targetDate,
-            namedMonth: targetDateNamedMonth,
-            style: "long",
-          }),
+          ...goalDate({ isoDate: targetDate, namedMonth: targetDateNamedMonth, style: "long" }),
           time: formatDuration(minutes),
         },
       }),
@@ -94,15 +91,10 @@ export function useTimeToCoverTexts() {
     }: Pick<PlanTimeToCover, "targetDateNamedMonth"> & { targetDate: string }) =>
       t({
         description:
-          '{date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.',
-        message: "No amount of time a day covers everything in depth by {date}.",
-        values: {
-          date: formatGoalDate({
-            isoDate: targetDate,
-            namedMonth: targetDateNamedMonth,
-            style: "long",
-          }),
-        },
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+        message:
+          "{dateKind, select, month {No amount of time a day covers everything in depth by {date}.} other {No amount of time a day covers everything in depth by {date}.}}",
+        values: goalDate({ isoDate: targetDate, namedMonth: targetDateNamedMonth, style: "long" }),
       }),
     note: (answer: TimeToCoverAnswer, minutes: number): string | null => {
       if (getOfferedMinutes(answer) !== minutes) {

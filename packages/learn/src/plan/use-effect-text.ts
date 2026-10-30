@@ -68,9 +68,10 @@ function usePlanEndEffectText() {
 
     return t({
       description:
-        '{after} and {before} are both days, like "May 5", or both months, like "May 2027".',
-      message: "Ends around {after} instead of {before}.",
-      values: { after, before },
+        'In the month form, {after} and {before} are months, like "May 2027"; otherwise days, like "May 5".',
+      message:
+        "{dateKind, select, month {Ends around {after} instead of {before}.} other {Ends around {after} instead of {before}.}}",
+      values: { after, before, dateKind: "day" },
     });
   };
 }
@@ -113,16 +114,19 @@ function useAppliedEndText() {
       return null;
     }
 
+    const dateKind = plan.targetDate ? "month" : "day";
+
     const shown = (isoDate: string) =>
-      plan.targetDate ? formatDate(isoDate, "month") : formatPlanDate(isoDate);
+      dateKind === "month" ? formatDate(isoDate, "month") : formatPlanDate(isoDate);
 
     return shown(after) === shown(before)
       ? null
       : t({
           description:
-            '{after} and {before} are both days, like "May 5", or both months, like "May 2027".',
-          message: "Ends around {after} instead of {before}.",
-          values: { after: shown(after), before: shown(before) },
+            'In the month form, {after} and {before} are months, like "May 2027"; otherwise days, like "May 5".',
+          message:
+            "{dateKind, select, month {Ends around {after} instead of {before}.} other {Ends around {after} instead of {before}.}}",
+          values: { after: shown(after), before: shown(before), dateKind },
         });
   };
 }

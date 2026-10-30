@@ -52,7 +52,14 @@ export function PlanDateText({
   return (
     <span className={cn(PLAN_DATE_CLASS, className)}>
       <span aria-hidden="true">{t("~{date}", { date })}</span>
-      <span className="sr-only">{t("About {date}", { date })}</span>
+      <span className="sr-only">
+        {t({
+          description:
+            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+          message: "{dateKind, select, month {About {date}} other {About {date}}}",
+          values: { date, dateKind: month ? "month" : "day" },
+        })}
+      </span>
     </span>
   );
 }

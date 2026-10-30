@@ -3,7 +3,7 @@
 import { type PlanSuggestedTime } from "@zoonk/core/plans/time-advice-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { useFormatGoalDate, useFormatIsoDate } from "../../_utils/iso-date";
+import { useFormatIsoDate, useGoalDateValues } from "../../_utils/iso-date";
 import { useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
 import { type DaySplit, type TimeLine, type TooClose } from "./schedule-time";
@@ -55,38 +55,84 @@ function TooCloseWords({ tooClose }: { tooClose: TooClose }) {
 
 function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line: DatedLine }) {
   const t = useExtracted();
-  const formatGoalDate = useFormatGoalDate();
+  const goalDate = useGoalDateValues();
   const formatShare = useFormatShare();
-  const shown = formatGoalDate({ ...date, style: "long" });
+  const shown = goalDate({ ...date, style: "long" });
 
   switch (line.kind) {
     case "everything":
       if (line.suggested) {
         return exam
-          ? t("What it takes to cover all your exam topics by {date}.", { date: shown })
-          : t("What it takes to cover your whole goal by {date}.", { date: shown });
+          ? t({
+              description:
+                'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+              message:
+                "{dateKind, select, month {What it takes to cover all your exam topics by {date}.} other {What it takes to cover all your exam topics by {date}.}}",
+              values: shown,
+            })
+          : t({
+              description:
+                'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+              message:
+                "{dateKind, select, month {What it takes to cover your whole goal by {date}.} other {What it takes to cover your whole goal by {date}.}}",
+              values: shown,
+            });
       }
 
       return exam
-        ? t("Covers all your exam topics by {date}.", { date: shown })
-        : t("Covers your whole goal by {date}.", { date: shown });
+        ? t({
+            description:
+              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            message:
+              "{dateKind, select, month {Covers all your exam topics by {date}.} other {Covers all your exam topics by {date}.}}",
+            values: shown,
+          })
+        : t({
+            description:
+              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            message:
+              "{dateKind, select, month {Covers your whole goal by {date}.} other {Covers your whole goal by {date}.}}",
+            values: shown,
+          });
     case "everyTopic":
       return exam
-        ? t("Reaches every exam topic by {date}, some in less depth.", { date: shown })
-        : t("Reaches every part of your goal by {date}, some in less depth.", { date: shown });
+        ? t({
+            description:
+              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            message:
+              "{dateKind, select, month {Reaches every exam topic by {date}, some in less depth.} other {Reaches every exam topic by {date}, some in less depth.}}",
+            values: shown,
+          })
+        : t({
+            description:
+              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            message:
+              "{dateKind, select, month {Reaches every part of your goal by {date}, some in less depth.} other {Reaches every part of your goal by {date}, some in less depth.}}",
+            values: shown,
+          });
     case "share":
       return exam
-        ? t(
-            "Covers about {share} of your exam topics in depth by {date}, what comes up most first.",
-            { date: shown, share: formatShare(line.share) },
-          )
-        : t("Covers about {share} of your goal in depth by {date}, what matters most first.", {
-            date: shown,
-            share: formatShare(line.share),
+        ? t({
+            description:
+              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            message:
+              "{dateKind, select, month {Covers about {share} of your exam topics in depth by {date}, what comes up most first.} other {Covers about {share} of your exam topics in depth by {date}, what comes up most first.}}",
+            values: { ...shown, share: formatShare(line.share) },
+          })
+        : t({
+            description:
+              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            message:
+              "{dateKind, select, month {Covers about {share} of your goal in depth by {date}, what matters most first.} other {Covers about {share} of your goal in depth by {date}, what matters most first.}}",
+            values: { ...shown, share: formatShare(line.share) },
           });
     case "pastDate":
-      return t("Your date, {date}, has passed. You can choose a new one on the next screen.", {
-        date: shown,
+      return t({
+        description:
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+        message:
+          "{dateKind, select, month {Your date, {date}, has passed. You can choose a new one on the next screen.} other {Your date, {date}, has passed. You can choose a new one on the next screen.}}",
+        values: shown,
       });
     default:
       return line satisfies never;

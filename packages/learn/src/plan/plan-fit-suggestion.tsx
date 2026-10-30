@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { SuggestionAction } from "../_components/suggestion";
-import { useFormatGoalDate } from "../_utils/iso-date";
+import { useGoalDateValues } from "../_utils/iso-date";
 import { usePlanScreen } from "./plan-context";
 import { PlanOfferSuggestion } from "./plan-offer-suggestion";
 import { type SlotItem, usePlanSuggestionSlot } from "./plan-suggestion-context";
@@ -12,7 +12,7 @@ const NAMED_TOPICS = 2;
 
 export function FitLessonsSuggestion({ item }: { item: SlotItem }) {
   const t = useExtracted();
-  const formatGoalDate = useFormatGoalDate();
+  const goalDate = useGoalDateValues();
   const topicsMoved = useTopicsMovedSentence();
   const { dismiss } = usePlanSuggestionSlot();
   const { plan } = usePlanScreen();
@@ -23,15 +23,14 @@ export function FitLessonsSuggestion({ item }: { item: SlotItem }) {
     offer?.fits && targetDate
       ? t({
           description:
-            '{date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.',
-          message: "Your time covers everything by {date}",
-          values: {
-            date: formatGoalDate({
-              isoDate: targetDate,
-              namedMonth: targetDateNamedMonth,
-              style: "long",
-            }),
-          },
+            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+          message:
+            "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
+          values: goalDate({
+            isoDate: targetDate,
+            namedMonth: targetDateNamedMonth,
+            style: "long",
+          }),
         })
       : t(
           "{count, plural, one {# more lesson fits in your time} other {# more lessons fit in your time}}",

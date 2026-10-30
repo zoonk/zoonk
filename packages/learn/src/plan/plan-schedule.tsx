@@ -7,7 +7,7 @@ import { useState } from "react";
 import { ChangeSaveError } from "../_components/save-error";
 import { WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime } from "../_components/weekend-time";
-import { useFormatGoalDate } from "../_utils/iso-date";
+import { useGoalDateValues } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { ChoiceList } from "../onboarding/choice-list";
 import { OtherTimeSelect, TimeSelect, getTimeChoices } from "../onboarding/steps/daily-minutes";
@@ -52,7 +52,7 @@ function DailyCoverage({
   planChange: PlanChange;
 }) {
   const t = useExtracted();
-  const formatGoalDate = useFormatGoalDate();
+  const goalDate = useGoalDateValues();
   const { plan } = usePlanScreen();
   const pending = planChange.isPending;
   const coverage = usePlanCoverage();
@@ -81,15 +81,14 @@ function DailyCoverage({
                 <p>
                   {t({
                     description:
-                      '{date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.',
-                    message: "Your time covers everything by {date}",
-                    values: {
-                      date: formatGoalDate({
-                        isoDate: plan.schedule.targetDate,
-                        namedMonth: plan.schedule.targetDateNamedMonth,
-                        style: "long",
-                      }),
-                    },
+                      'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+                    message:
+                      "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
+                    values: goalDate({
+                      isoDate: plan.schedule.targetDate,
+                      namedMonth: plan.schedule.targetDateNamedMonth,
+                      style: "long",
+                    }),
                   })}
                 </p>
               ) : (

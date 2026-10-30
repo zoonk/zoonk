@@ -217,9 +217,10 @@ export function useAnswerOffer() {
         operations: [{ kind: "setTargetDate", targetDate: fittingDate }],
         title: t({
           description:
-            '{date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.',
-          message: "Your time covers everything by {date}",
-          values: { date: formatDate(fittingDate, "long") },
+            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+          message:
+            "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
+          values: { date: formatDate(fittingDate, "long"), dateKind: "day" },
         }),
       };
     }

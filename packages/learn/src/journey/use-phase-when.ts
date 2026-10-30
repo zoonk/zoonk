@@ -2,7 +2,7 @@
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
-import { daysBetween, useFormatGoalDate, useFormatIsoDate } from "../_utils/iso-date";
+import { daysBetween, useFormatIsoDate, useGoalDateValues } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
 import { usePlanScreen } from "../plan/plan-context";
 import { useShortDays } from "../plan/use-short-plan";
@@ -13,11 +13,12 @@ function useFormatEstimate() {
   const formatDate = useFormatIsoDate();
   const { plan } = usePlanScreen();
 
-  return (isoDate: string): string =>
-    formatDate(
-      isoDate,
-      daysBetween(plan.week.startDate, isoDate) <= NEAR_ESTIMATE_DAYS ? "day" : "month",
-    );
+  return (isoDate: string): { date: string; dateKind: "day" | "month" } => {
+    const dateKind =
+      daysBetween(plan.week.startDate, isoDate) <= NEAR_ESTIMATE_DAYS ? "day" : "month";
+
+    return { date: formatDate(isoDate, dateKind), dateKind };
+  };
 }
 
 export function usePlanEndText(): string | null {
@@ -26,7 +27,14 @@ export function usePlanEndText(): string | null {
   const { plan } = usePlanScreen();
   const { endDate } = plan.estimate;
 
-  return endDate ? t("Until about {date}", { date: formatEstimate(endDate) }) : null;
+  return endDate
+    ? t({
+        description:
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+        message: "{dateKind, select, month {Until about {date}} other {Until about {date}}}",
+        values: formatEstimate(endDate),
+      })
+    : null;
 }
 
 function useFinishHasDate(): boolean {
@@ -66,8 +74,13 @@ export function usePhaseWhen() {
     const isEstimate =
       (phase.kind === "learn" || phase.kind === "afterExam") && phase.state === "upcoming";
 
-    return t("Until {date}", {
-      date: isEstimate ? formatEstimate(phase.endDate) : formatDate(phase.endDate),
+    return t({
+      description:
+        'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+      message: "{dateKind, select, month {Until {date}} other {Until {date}}}",
+      values: isEstimate
+        ? formatEstimate(phase.endDate)
+        : { date: formatDate(phase.endDate), dateKind: "day" },
     });
   };
 }
@@ -75,19 +88,26 @@ export function usePhaseWhen() {
 export function useFinishDate(): string | null {
   const t = useExtracted();
   const formatEstimate = useFormatEstimate();
-  const formatGoalDate = useFormatGoalDate();
+  const goalDate = useGoalDateValues();
   const finishHasDate = useFinishHasDate();
   const { plan } = usePlanScreen();
   const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
 
   if (targetDate) {
-    const date = formatGoalDate({ isoDate: targetDate, namedMonth: targetDateNamedMonth });
+    const shown = goalDate({ isoDate: targetDate, namedMonth: targetDateNamedMonth });
 
     if (targetDateNamedMonth) {
-      return toLabelCase(date);
+      return toLabelCase(shown.date);
     }
 
-    return targetDateEstimated ? t("About {date}", { date }) : date;
+    return targetDateEstimated
+      ? t({
+          description:
+            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+          message: "{dateKind, select, month {About {date}} other {About {date}}}",
+          values: shown,
+        })
+      : shown.date;
   }
 
   if (!finishHasDate) {
@@ -96,5 +116,12 @@ export function useFinishDate(): string | null {
 
   const { endDate } = plan.estimate;
 
-  return endDate ? t("About {date}", { date: formatEstimate(endDate) }) : null;
+  return endDate
+    ? t({
+        description:
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+        message: "{dateKind, select, month {About {date}} other {About {date}}}",
+        values: formatEstimate(endDate),
+      })
+    : null;
 }

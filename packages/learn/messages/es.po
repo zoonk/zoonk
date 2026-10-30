@@ -4346,21 +4346,24 @@ msgctxt "vzHrGX"
 msgid "Here's what to study next."
 msgstr "Esto es lo que puedes estudiar a continuación."
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/journey/use-phase-when.ts
-msgctxt "G6L9Ya"
-msgid "Until about {date}"
-msgstr "Hasta aproximadamente {date}"
+msgctxt "bs_tuX"
+msgid "{dateKind, select, month {Until about {date}} other {Until about {date}}}"
+msgstr ""
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/journey/use-phase-when.ts
-msgctxt "AnykoJ"
-msgid "Until {date}"
-msgstr "Hasta {date}"
+msgctxt "w5zaIw"
+msgid "{dateKind, select, month {Until {date}} other {Until {date}}}"
+msgstr ""
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/journey/use-phase-when.ts
 #: src/plan/plan-date-text.tsx
-msgctxt "ogKkR6"
-msgid "About {date}"
-msgstr "Aproximadamente {date}"
+msgctxt "IGvm5x"
+msgid "{dateKind, select, month {About {date}} other {About {date}}}"
+msgstr ""
 
 #: src/journey/use-roadmap.ts
 msgctxt "nnaL1H"
@@ -9181,50 +9184,59 @@ msgctxt "GPWSBB"
 msgid "Your date is close: covering everything in depth takes {time} a day."
 msgstr "La fecha está cerca: estudiar todo en profundidad requiere {time} al día."
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/onboarding/steps/schedule-line.tsx
-msgctxt "pygqwo"
-msgid "What it takes to cover all your exam topics by {date}."
-msgstr "Tiempo necesario para estudiar todos los temas de tu examen antes del {date}."
+msgctxt "JDCgAn"
+msgid "{dateKind, select, month {What it takes to cover all your exam topics by {date}.} other {What it takes to cover all your exam topics by {date}.}}"
+msgstr ""
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/onboarding/steps/schedule-line.tsx
-msgctxt "yW7SXR"
-msgid "What it takes to cover your whole goal by {date}."
-msgstr "Tiempo necesario para estudiar todo tu objetivo antes del {date}."
+msgctxt "jecJ21"
+msgid "{dateKind, select, month {What it takes to cover your whole goal by {date}.} other {What it takes to cover your whole goal by {date}.}}"
+msgstr ""
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/onboarding/steps/schedule-line.tsx
-msgctxt "Nuzpxh"
-msgid "Covers all your exam topics by {date}."
-msgstr "Cubre todos los temas de tu examen antes del {date}."
+msgctxt "wtnatU"
+msgid "{dateKind, select, month {Covers all your exam topics by {date}.} other {Covers all your exam topics by {date}.}}"
+msgstr ""
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/onboarding/steps/schedule-line.tsx
-msgctxt "IOOHW7"
-msgid "Covers your whole goal by {date}."
-msgstr "Cubre todo tu objetivo antes del {date}."
+msgctxt "foaBe9"
+msgid "{dateKind, select, month {Covers your whole goal by {date}.} other {Covers your whole goal by {date}.}}"
+msgstr ""
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/onboarding/steps/schedule-line.tsx
-msgctxt "y6GKLH"
-msgid "Reaches every exam topic by {date}, some in less depth."
-msgstr "Cubre todos los temas de tu examen antes del {date}, algunos con menos profundidad."
+msgctxt "uQS5m2"
+msgid "{dateKind, select, month {Reaches every exam topic by {date}, some in less depth.} other {Reaches every exam topic by {date}, some in less depth.}}"
+msgstr ""
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/onboarding/steps/schedule-line.tsx
-msgctxt "o8oyND"
-msgid "Reaches every part of your goal by {date}, some in less depth."
-msgstr "Cubre todas las partes de tu objetivo antes del {date}, algunas con menos profundidad."
+msgctxt "EaMjeU"
+msgid "{dateKind, select, month {Reaches every part of your goal by {date}, some in less depth.} other {Reaches every part of your goal by {date}, some in less depth.}}"
+msgstr ""
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/onboarding/steps/schedule-line.tsx
-msgctxt "27gzEN"
-msgid "Covers about {share} of your exam topics in depth by {date}, what comes up most first."
-msgstr "Cubre aproximadamente {share} de los temas de tu examen en profundidad antes del {date}, empezando por los que más aparecen."
+msgctxt "SDrPkr"
+msgid "{dateKind, select, month {Covers about {share} of your exam topics in depth by {date}, what comes up most first.} other {Covers about {share} of your exam topics in depth by {date}, what comes up most first.}}"
+msgstr ""
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/onboarding/steps/schedule-line.tsx
-msgctxt "DFxvWf"
-msgid "Covers about {share} of your goal in depth by {date}, what matters most first."
-msgstr "Cubre aproximadamente {share} de tu objetivo en profundidad antes del {date}, empezando por lo más importante."
+msgctxt "TJwHEP"
+msgid "{dateKind, select, month {Covers about {share} of your goal in depth by {date}, what matters most first.} other {Covers about {share} of your goal in depth by {date}, what matters most first.}}"
+msgstr ""
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/onboarding/steps/schedule-line.tsx
-msgctxt "EoRV3G"
-msgid "Your date, {date}, has passed. You can choose a new one on the next screen."
-msgstr "La fecha que elegiste, {date}, ya ha pasado. Puedes elegir otra en la siguiente pantalla."
+msgctxt "Nmkk7T"
+msgid "{dateKind, select, month {Your date, {date}, has passed. You can choose a new one on the next screen.} other {Your date, {date}, has passed. You can choose a new one on the next screen.}}"
+msgstr ""
 
 #: src/onboarding/steps/schedule-line.tsx
 msgctxt "lzWfsi"
@@ -9985,13 +9997,13 @@ msgctxt "6Due7K"
 msgid "You finish around {month}."
 msgstr "Terminas hacia {month}."
 
-#. {date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-schedule.tsx
-msgctxt "NSCA2O"
-msgid "Your time covers everything by {date}"
-msgstr "Te da tiempo a estudiar todo de aquí a {date}"
+msgctxt "VNHyd8"
+msgid "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}"
+msgstr ""
 
 #: src/plan/plan-fit-suggestion.tsx
 msgctxt "JzlCcg"
@@ -10053,10 +10065,11 @@ msgctxt "WrlQpj"
 msgid "The subjects you pick come first and get more depth."
 msgstr "Las asignaturas que elijas irán primero y se tratarán con más profundidad."
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-full-course.tsx
-msgctxt "Fb5Un8"
-msgid "At {time} a day, you finish in {month}, after the exam on {date}."
-msgstr "Con {time} al día, terminas en {month}, después del examen del {date}."
+msgctxt "9vcpVc"
+msgid "{dateKind, select, month {At {time} a day, you finish in {month}, after the exam on {date}.} other {At {time} a day, you finish in {month}, after the exam on {date}.}}"
+msgstr ""
 
 #: src/plan/plan-full-course.tsx
 msgctxt "UlOt3a"
@@ -10079,10 +10092,11 @@ msgctxt "Wkhove"
 msgid "Until the exam, nothing changes: what comes up most comes first, with mocks and the final stretch. What doesn't fit comes after it."
 msgstr "Hasta el examen, nada cambia: lo que más suele aparecer va primero, con simulacros y la recta final. Lo que no dé tiempo a estudiar irá después."
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-full-course.tsx
-msgctxt "_LZyQU"
-msgid "Your deadline of {date} comes off your plan. You can set one again anytime."
-msgstr "La fecha límite del {date} se elimina de tu plan. Puedes volver a establecer una cuando quieras."
+msgctxt "2UFMxN"
+msgid "{dateKind, select, month {Your deadline of {date} comes off your plan. You can set one again anytime.} other {Your deadline of {date} comes off your plan. You can set one again anytime.}}"
+msgstr ""
 
 #: src/plan/plan-full-course.tsx
 msgctxt "9N2W7h"
@@ -10895,11 +10909,11 @@ msgctxt "IUkTus"
 msgid "Ends {after} instead of {before}."
 msgstr "Termina el {after} en lugar del {before}."
 
-#. {after} and {before} are both days, like "May 5", or both months, like "May 2027".
+#. In the month form, {after} and {before} are months, like "May 2027"; otherwise days, like "May 5".
 #: src/plan/use-effect-text.ts
-msgctxt "006n7B"
-msgid "Ends around {after} instead of {before}."
-msgstr "Termina alrededor de {after} en lugar de {before}."
+msgctxt "OZ4Mxp"
+msgid "{dateKind, select, month {Ends around {after} instead of {before}.} other {Ends around {after} instead of {before}.}}"
+msgstr ""
 
 #: src/plan/use-estimate-sentence.ts
 msgctxt "FJ-d5Y"
@@ -11183,11 +11197,11 @@ msgctxt "XnimdQ"
 msgid "Windows"
 msgstr "Windows"
 
-#. {date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/use-time-to-cover.ts
-msgctxt "BkRrj9"
-msgid "{time} a day covers everything in depth by {date}."
-msgstr "Con {time} al día puedes estudiar todo en profundidad para {date}."
+msgctxt "UvdTWC"
+msgid "{dateKind, select, month {{time} a day covers everything in depth by {date}.} other {{time} a day covers everything in depth by {date}.}}"
+msgstr ""
 
 #: src/plan/use-time-to-cover.ts
 msgctxt "3ZJZJ3"
@@ -11220,11 +11234,11 @@ msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "No hemos podido encontrar una fecha para cubrirlo todo."
 
-#. {date} is a day, like "May 5", or a month, like "May 2027", when the learner gave only a month.
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/use-time-to-cover.ts
-msgctxt "4HljXi"
-msgid "No amount of time a day covers everything in depth by {date}."
-msgstr "No es posible estudiar todo en profundidad para {date}, por mucho tiempo que dediques al día."
+msgctxt "YV4Gvt"
+msgid "{dateKind, select, month {No amount of time a day covers everything in depth by {date}.} other {No amount of time a day covers everything in depth by {date}.}}"
+msgstr ""
 
 #. A note beside a daily time saying what it achieves.
 #: src/plan/use-time-to-cover.ts
