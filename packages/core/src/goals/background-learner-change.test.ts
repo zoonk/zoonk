@@ -1,7 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture, layOutPlanFixture, planChangeFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  layOutPlanFixture,
+  planChangeFixture,
+  planFixture,
+} from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import {
   studySessionFixture,
@@ -112,6 +117,28 @@ describe("background goal plan marks", () => {
     await expect(
       linkGoalToExamBlueprint({ examBlueprintId: blueprint.id, goalId: randomUUID() }),
     ).resolves.toBe(false);
+  });
+
+  it.each(["link", "unlink"] as const)("%s marks only the researched goal", async (writer) => {
+    const [{ goal, plan, user }, blueprint] = await Promise.all([setup(), examBlueprintFixture()]);
+    const other = await goalFixture({ userId: user.id });
+    const otherPlan = await planFixture({ goalId: other.id });
+    await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
+
+    if (writer === "link") {
+      const next = await examBlueprintFixture();
+      await linkGoalToExamBlueprint({ examBlueprintId: next.id, goalId: goal.id });
+    } else {
+      await unlinkGoalFromSharedExam(goal.id);
+    }
+
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
+      inputVersion: plan.inputVersion + 1,
+    });
+
+    await expect(stamp(user.id, otherPlan.id)).resolves.toStrictEqual({
+      inputVersion: otherPlan.inputVersion,
+    });
   });
 
   it("marks cited notice formats once, preserving answers without changing plan inputs or versions", async () => {

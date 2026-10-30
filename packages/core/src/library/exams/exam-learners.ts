@@ -51,27 +51,30 @@ export async function linkGoalToExamBlueprint({
     return false;
   }
 
-  return writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
-    const current = await tx.goal.findUnique({ where: { id: goalId } });
+  return writeLearnerChange(
+    { goalIds: [goalId], planInputs: true, userId: goal.userId },
+    async (tx) => {
+      const current = await tx.goal.findUnique({ where: { id: goalId } });
 
-    if (!current) {
-      return unchanged(false);
-    }
+      if (!current) {
+        return unchanged(false);
+      }
 
-    const language =
-      current.kind === "exam" && targetLanguage ? targetLanguage : current.targetLanguage;
+      const language =
+        current.kind === "exam" && targetLanguage ? targetLanguage : current.targetLanguage;
 
-    if (current.examBlueprintId === examBlueprintId && current.targetLanguage === language) {
-      return unchanged(true);
-    }
+      if (current.examBlueprintId === examBlueprintId && current.targetLanguage === language) {
+        return unchanged(true);
+      }
 
-    await tx.goal.update({
-      data: { examBlueprintId, targetLanguage: language },
-      where: { id: goalId },
-    });
+      await tx.goal.update({
+        data: { examBlueprintId, targetLanguage: language },
+        where: { id: goalId },
+      });
 
-    return true;
-  });
+      return true;
+    },
+  );
 }
 
 export async function unlinkGoalFromSharedExam(goalId: string): Promise<void> {
@@ -81,16 +84,19 @@ export async function unlinkGoalFromSharedExam(goalId: string): Promise<void> {
     return;
   }
 
-  await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
-    const updated = await tx.goal.updateMany({
-      data: { examBlueprintId: null },
-      where: { examBlueprint: { is: { visibility: "public" } }, id: goalId },
-    });
+  await writeLearnerChange(
+    { goalIds: [goalId], planInputs: true, userId: goal.userId },
+    async (tx) => {
+      const updated = await tx.goal.updateMany({
+        data: { examBlueprintId: null },
+        where: { examBlueprint: { is: { visibility: "public" } }, id: goalId },
+      });
 
-    if (updated.count === 0) {
-      return unchanged(null);
-    }
-  });
+      if (updated.count === 0) {
+        return unchanged(null);
+      }
+    },
+  );
 }
 
 export async function linkGoalToResearchSources({

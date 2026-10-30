@@ -28,12 +28,13 @@ export async function markLockedPlanSourcesChanged(
  */
 export async function lockLearnerPlans(
   tx: LearnerWriteTransaction,
-  { userIds }: { userIds: readonly string[] },
+  { goalIds, userIds }: { goalIds?: readonly string[]; userIds: readonly string[] },
 ): Promise<string[]> {
   const plans = await tx.$queryRaw<{ id: string }[]>`
     SELECT plan.id FROM plans AS plan
     JOIN goals AS goal ON goal.id = plan.goal_id
     WHERE goal.user_id = ANY(${[...userIds]}::uuid[])
+      AND (${goalIds === undefined} OR goal.id = ANY(${[...(goalIds ?? [])]}::uuid[]))
     ORDER BY plan.id FOR UPDATE OF plan
   `;
 
@@ -42,9 +43,9 @@ export async function lockLearnerPlans(
 
 export async function markPlanInputsChanged(
   tx: LearnerWriteTransaction,
-  { userIds }: { userIds: readonly string[] },
+  { goalIds, userIds }: { goalIds?: readonly string[]; userIds: readonly string[] },
 ): Promise<string[]> {
-  const planIds = await lockLearnerPlans(tx, { userIds });
+  const planIds = await lockLearnerPlans(tx, { goalIds, userIds });
   await markLockedPlanInputsChanged(tx, { planIds });
   return planIds;
 }

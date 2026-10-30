@@ -74,6 +74,22 @@ describe(markLearnerChanged, () => {
     expect(rows.every((row) => row.version === 1)).toBe(true);
   });
 
+  it("resolves a scoped goal's current plan in the transaction without invalidating siblings", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const marker = { goalIds: [goal.id], planInputs: true, userId: user.id };
+    const [created, sibling] = await Promise.all([planFixture({ goalId: goal.id }), plan(user.id)]);
+    await prisma.$transaction((tx) => markLearnerChanged(tx, marker));
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { id: created.id } }),
+    ).resolves.toMatchObject({ inputVersion: created.inputVersion + 1 });
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { id: sibling.id } }),
+    ).resolves.toMatchObject({ inputVersion: sibling.inputVersion });
+  });
+
   it("locks requested owned plans before the learner without invalidating planning inputs", async () => {
     const user = await userFixture();
     const plans = await Promise.all([plan(user.id), plan(user.id)]);

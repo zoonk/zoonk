@@ -108,16 +108,13 @@ async function copyToGoal({
     subjects: readCourseWeightSubjects(stored.subjects),
   };
 
-  const goal = await prisma.goal.findUnique({
-    include: { plan: { select: { id: true } } },
-    where: { id: goalId },
-  });
+  const goal = await prisma.goal.findUnique({ select: { userId: true }, where: { id: goalId } });
 
   if (!goal) {
     return;
   }
 
-  const marker = { planInputs: goal.plan ? [goal.plan.id] : [], userId: goal.userId };
+  const marker = { goalIds: [goalId], planInputs: true, userId: goal.userId };
 
   const count = await writeLearnerChange(marker, async (tx) => {
     const current = await tx.goal.findUnique({ where: { id: goalId } });

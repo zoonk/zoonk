@@ -11,15 +11,19 @@ import {
 export async function markLearnerChanged(
   tx: LearnerWriteTransaction,
   {
+    goalIds,
     lockPlanIds = [],
     planInputs = false,
     userId,
-  }: { lockPlanIds?: readonly string[]; planInputs?: boolean | readonly string[]; userId: string },
+  }: {
+    goalIds?: readonly string[];
+    lockPlanIds?: readonly string[];
+    planInputs?: boolean;
+    userId: string;
+  },
 ): Promise<void> {
-  if (planInputs === true) {
-    await markPlanInputsChanged(tx, { userIds: [userId] });
-  } else if (planInputs) {
-    await markPlansChanged(tx, { planIds: planInputs });
+  if (planInputs) {
+    await markPlanInputsChanged(tx, { goalIds, userIds: [userId] });
   }
 
   await lockLearner(tx, { lockPlanIds: planInputs ? [] : lockPlanIds, userId });
