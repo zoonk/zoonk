@@ -9,6 +9,7 @@ import { type PlanStepOutcome, retryPlanConflicts } from "../_shared/plan-confli
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken } from "../_shared/run-token";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
+import { settleOutlines } from "../goals/goal-outlines";
 import { preparePlacementItems, preparePlacementWeekItems } from "../goals/placement-items";
 import {
   listLessonFieldItemTargetsStep,
@@ -19,7 +20,6 @@ import {
   listPlanOutlineNeedsStep,
   listSoonStandInCourseIdsStep,
   readPlanFirstSkillStep,
-  settleOutlineAsksStep,
 } from "../goals/steps/goal-lookahead-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { prepareLanguageCallsStep } from "./steps/language-call-steps";
@@ -93,7 +93,7 @@ async function startLessonWork({
   const asked = input.askedOutlines ?? [];
 
   if (claim.conflict) {
-    await settleOutlineAsksStep({ asked, started: [] });
+    await settleOutlines({ asked, started: [] });
     return { conflict: false, value: null };
   }
 
@@ -107,10 +107,7 @@ async function startLessonWork({
 
   const courseRequests = mergeCourseRequests([...extensions, ...outlines]);
 
-  await settleOutlineAsksStep({
-    asked,
-    started: courseRequests.map((request) => request.courseId),
-  });
+  await settleOutlines({ asked, started: courseRequests.map((request) => request.courseId) });
 
   const { forExam, laterLessonIds, lessonIds } = preparation;
   const soonCourseIds = new Set(soon);

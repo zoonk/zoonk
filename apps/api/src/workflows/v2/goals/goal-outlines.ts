@@ -37,6 +37,20 @@ export async function startOutlines({
   );
 }
 
+export async function settleOutlines({
+  asked,
+  started,
+}: {
+  asked: OutlineAsk[];
+  started: string[];
+}): Promise<void> {
+  if (asked.length === 0 && started.length === 0) {
+    return;
+  }
+
+  await settleOutlineAsksStep({ asked, started });
+}
+
 export async function outlinePlanAhead({
   asked = [],
   context,
@@ -55,6 +69,6 @@ export async function outlinePlanAhead({
     readPlanFirstSkillStep(goalId),
   ]);
 
-  await settleOutlineAsksStep({ asked, started: needs.map((need) => need.courseId) });
+  await settleOutlines({ asked, started: needs.map((need) => need.courseId) });
   await startOutlines({ context, courses: needs, firstSkillId, forGuest });
 }
