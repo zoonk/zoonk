@@ -25,14 +25,14 @@ class GoalSwitch(
 
     /**
      * [shown] are the reads that show the active goal, read again once it's saved; [shows] says when
-     * they do. False when the switch couldn't be saved; a pick while one is saving is ignored.
+     * they do. False when the switch couldn't be saved; null for a pick while one is saving, which is ignored.
      */
     suspend fun select(
         goalId: UUID,
         shown: List<Resource<*>>,
         shows: (UUID) -> Boolean,
-    ): Boolean {
-        if (writing.value) return true
+    ): Boolean? {
+        if (writing.value) return null
         writing.value = true
         target.value = goalId
 

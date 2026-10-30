@@ -21,6 +21,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -66,6 +67,7 @@ import com.zoonk.api.models.CatalogFirstQuestion
 import com.zoonk.api.models.CatalogTryLesson
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.UUID
@@ -114,6 +116,24 @@ internal fun courseContinue(goal: LearnerSummaryGoal): CourseContinue =
         goal.isActive -> CourseContinue.Today
         else -> CourseContinue.Switch(goal.id)
     }
+
+/**
+ * Main's `CourseContinueLink` switch: Today opens once the goal is saved, unless the learner moved on
+ * since the tap. Run it in the app's scope, so leaving the page doesn't cut the save short.
+ */
+internal fun CoroutineScope.switchThenOpenToday(
+    navigator: AppNavigator,
+    onFailed: () -> Unit,
+    select: suspend () -> Boolean?,
+) {
+    val tappedOn = navigator.currentRoute
+
+    launch {
+        val saved = select() ?: return@launch
+        if (navigator.currentRoute != tappedOn) return@launch
+        if (saved) navigator.showRoot(AppTab.Today) else onFailed()
+    }
+}
 
 internal fun LearnerSummary.goalOnCourse(courseId: String): LearnerSummaryGoal? =
     goals.firstOrNull { goal ->
@@ -262,6 +282,8 @@ internal fun StartActions(
     val visitorNote = if (isVisitor(app)) stringResource(R.string.catalog_start_free) else null
     val snackbars = LocalSnackbarHostState.current
     val switchFailed = stringResource(R.string.goal_switcher_failed)
+    val saving by app.goalSwitch.saving.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -282,14 +304,8 @@ internal fun StartActions(
                     }
 
                     is CourseContinue.Switch -> {
-                        app.scope.launch {
-                            val saved =
-                                app.goalSwitch.select(
-                                    next.goalId,
-                                    listOf(app.learnerSummary.summary, app.today.today),
-                                    app.today::shows,
-                                )
-                            if (saved) navigator.showRoot(AppTab.Today) else snackbars.showSnackbar(switchFailed)
+                        app.scope.switchThenOpenToday(navigator, onFailed = { scope.launch { snackbars.showSnackbar(switchFailed) } }) {
+                            app.goalSwitch.select(next.goalId, listOf(app.learnerSummary.summary, app.today.today), app.today::shows)
                         }
                     }
                 }
@@ -305,9 +321,15 @@ internal fun StartActions(
             }
 
             if (secondary) {
-                FilledTonalButton(onClick = start, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) { label() }
+                FilledTonalButton(
+                    onClick = start,
+                    enabled = !saving,
+                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                ) { label() }
             } else {
-                Button(onClick = start, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) { label() }
+                Button(onClick = start, enabled = !saving, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+                    label()
+                }
             }
 
             if (onTryLesson != null) {

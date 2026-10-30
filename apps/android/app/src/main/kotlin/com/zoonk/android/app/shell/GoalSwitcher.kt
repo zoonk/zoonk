@@ -205,7 +205,7 @@ class GoalSwitcherViewModel(
         viewModelScope.launch {
             val saved = app.goalSwitch.select(goalId, listOf(app.learnerSummary.summary, app.today.today), shows = app.today::shows)
             // A switch its session didn't outlive (sign-out, another account) isn't the next learner's to retry.
-            if (!saved && app.sessions.current == session) failed.send(Unit)
+            if (saved == false && app.sessions.current == session) failed.send(Unit)
         }
     }
 }
