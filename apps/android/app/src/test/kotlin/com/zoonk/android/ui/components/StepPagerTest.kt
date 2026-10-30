@@ -23,7 +23,7 @@ class StepPagerTest {
     val rule: ComposeContentTestRule = createComposeRule()
 
     @Test
-    fun onAPhoneContinueFillsTheBarAndTheDotsStayInTheTopBar() {
+    fun onAPhoneContinueFillsTheBarWithoutTheDots() {
         rule.setContent { ZoonkTheme { StepPagerActions(count = 3, index = 1, onIndexChange = {}) { Text("Done") } } }
 
         val bar = rule.onRoot().getBoundsInRoot()
