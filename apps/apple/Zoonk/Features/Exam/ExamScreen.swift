@@ -684,15 +684,15 @@ private struct ExamMocksSection: View {
             } label: {
               Label {
                 Text(MockLabels.title(number: mock.number))
+                  .foregroundStyle(.primary)
                 Text(
                   "\(mock.answered) of \(mock.questions) answered", tableName: "Exam",
                   comment: "A running mock's progress")
               } icon: {
-                KindDot(kind: .mock)
+                StatusMark(status: mock.id == exam.runningMocks.first?.id ? .next : .todo)
               }
             }
           }
-          .foregroundStyle(.primary)
         }
 
         if let next = exam.nextMock {
@@ -706,16 +706,16 @@ private struct ExamMocksSection: View {
             } label: {
               Label {
                 Text(MockLabels.daySize(fullLength: next.fullLength, day: nil))
+                  .foregroundStyle(.primary)
                 Text("\(next.questions) questions", tableName: "Exam", comment: "Next mock size")
               } icon: {
-                KindDot(kind: .mock)
+                StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
               }
             }
           }
-          .foregroundStyle(.primary)
         }
 
-        ForEach(exam.mocks.reversed()) { mock in
+        ForEach(exam.mocks) { mock in
           if let blockId = mock.blockId {
             MockSummaryRow(mock: mock, blockId: blockId)
           }

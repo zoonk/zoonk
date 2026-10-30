@@ -532,13 +532,17 @@ struct MockSummaryRow: View {
       LabeledContent {
         Text(score).monospacedDigit()
       } label: {
-        Text(MockLabels.title(number: mock.number))
-        Text(
-          [shape, mock.finishedAt.formatted(.dateTime.month(.abbreviated).day())]
-            .compactMap { $0 }.joined(separator: " · "))
+        Label {
+          Text(MockLabels.title(number: mock.number))
+            .foregroundStyle(.primary)
+          Text(
+            [shape, mock.finishedAt.formatted(.dateTime.month(.abbreviated).day())]
+              .compactMap { $0 }.joined(separator: " · "))
+        } icon: {
+          StatusMark(status: .done)
+        }
       }
     }
-    .foregroundStyle(.primary)
   }
 
   private var shape: String? {
@@ -555,13 +559,13 @@ struct MockSummaryRow: View {
 
   private var score: String {
     switch mock.scoring {
-    case .irt:
-      MockLabels.number(mock.measure.rounded())
     case .net:
       String(
         localized: "Net \(MockLabels.number(mock.measure)) of \(mock.total)", table: "Mock",
         comment: "A net score")
-    case .raw:
+    // An IRT score is only an estimate, shown as a range on the Plan, so a past mock shows its
+    // right answers.
+    case .irt, .raw:
       String(
         localized: "\(MockLabels.number(mock.correct)) of \(mock.total) right", table: "Mock",
         comment: "Right answers")
