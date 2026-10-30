@@ -274,7 +274,8 @@ export function SuggestionSaveError() {
 
 const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
   line: "flex shrink-0 items-center gap-2",
-  panel: "flex flex-wrap items-center gap-2 pt-1",
+  panel:
+    "flex flex-wrap items-center gap-2 pt-1 [&>*]:h-auto [&>*]:min-h-7.5 [&>*]:max-w-full [&>*]:py-1 [&>*]:text-balance [&>*]:whitespace-normal",
   sheet:
     "flex gap-2 pt-1 [&>*:first-child]:h-auto [&>*:first-child]:min-h-11 [&>*:first-child]:min-w-0 [&>*:first-child]:flex-1 [&>*:first-child]:text-balance [&>*:first-child]:whitespace-normal has-[>:nth-child(3)]:flex-col",
 };
