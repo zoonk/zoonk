@@ -4,7 +4,8 @@
   "global": {
     "env": [
       "AI_GATEWAY_API_KEY",
-      "ANDROID_*",
+      "ANDROID_DEBUG_CERT_FINGERPRINTS",
+      "ANDROID_RELEASE_CERT_FINGERPRINTS",
       "APPLE_*",
       "AUTH_COOKIE_CACHE_ENABLED",
       "BETTER_AUTH_SECRET",
@@ -28,6 +29,7 @@
     ],
     "ui": "tui",
     "passThroughEnv": [
+      "ANDROID_*",
       "APP_CACHE_SECRET",
       "CODEX_SANDBOX",
       "DATABASE_*",
