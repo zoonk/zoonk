@@ -53,6 +53,7 @@ struct LessonOptionList: View {
       .disabled(isLocked)
       .modifier(NumberShortcut(index: index))
       .accessibilityAddTraits(option.id == selectedId ? .isSelected : [])
+      .modifier(PictureOptionLabel(option: option, isPicture: isPictureGrid, isChecked: isChecked))
       .accessibilityValue(verdictValue(option))
     }
   }
@@ -101,11 +102,14 @@ struct LessonOptionList: View {
         }
       }
 
-      HStack(alignment: .firstTextBaseline) {
-        LessonRichText(option.text)
-          .multilineTextAlignment(.center)
-          .frame(maxWidth: .infinity)
-        verdictSymbol(option)
+      // Its name would give the answer away, so it shows once the answer is checked, as on main.
+      if isChecked {
+        HStack(alignment: .firstTextBaseline) {
+          LessonRichText(option.text)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+          verdictSymbol(option)
+        }
       }
     }
   }
@@ -149,6 +153,21 @@ struct LessonOptionList: View {
     }
 
     return .dimmed
+  }
+}
+
+/// Before the check VoiceOver hears what a picture option shows, not its name.
+private struct PictureOptionLabel: ViewModifier {
+  let option: LessonOption
+  let isPicture: Bool
+  let isChecked: Bool
+
+  func body(content: Content) -> some View {
+    if isPicture {
+      content.accessibilityLabel(Text(isChecked ? option.text : option.pictureAlt ?? option.text))
+    } else {
+      content
+    }
   }
 }
 

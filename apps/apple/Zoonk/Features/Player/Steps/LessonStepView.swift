@@ -249,7 +249,8 @@ private struct CheckStepView: View {
         },
         selectedId: context.answer.flatMap { if case .check(let id) = $0 { id } else { nil } },
         isChecked: context.result != nil,
-        isLocked: context.isLocked,
+        // Nothing is picked while a picture the question needs is still drawn, as on main.
+        isLocked: context.isLocked || step.imagePending,
         picturesPending: step.imagePending
       ) { context.select(.check(optionId: $0)) }
     }
