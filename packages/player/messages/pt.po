@@ -2058,7 +2058,7 @@ msgstr "Silício"
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "gFJ4sU"
 msgid "Staff"
-msgstr "Partitura"
+msgstr "Pentagrama"
 
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "1xqT9N"
@@ -3041,7 +3041,7 @@ msgstr "Correto, atenção à escrita"
 #: src/components/verdict-label.tsx
 msgctxt "yRGkJi"
 msgid "Not checked this time"
-msgstr "Não conferido desta vez"
+msgstr "Não conferida desta vez"
 
 #. Starts the explanation of why the learner's answer is wrong.
 #: src/components/verdict-label.tsx

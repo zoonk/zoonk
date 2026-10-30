@@ -1023,12 +1023,12 @@ msgstr "{count} sur {total, plural, =0 {# case} one {# case} other {# cases}} :
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right"
-msgstr "Cases correctes : {count} sur {total, plural, =0 {# au total} other {#}}"
+msgstr "{count} sur {total, plural, =0 {# case correcte} one {# case correcte} other {# cases correctes}}"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "7Pftj-"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} filled"
-msgstr "Cases remplies : {count} sur {total, plural, =0 {# au total} other {#}}"
+msgstr "{count} sur {total, plural, =0 {# case remplie} one {# case remplie} other {# cases remplies}}"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "hyp4AH"
@@ -1073,7 +1073,7 @@ msgstr "Tes réponses mènent à"
 #: src/activities/decision-tree/decision-tree-activity.tsx
 msgctxt "PTXFe3"
 msgid "You reached {outcome} after {count, plural, =0 {# questions} one {# question} other {# questions}}."
-msgstr "Tu as atteint {outcome} après {count, plural, =0 {# question posée} one {# question} other {# questions}}."
+msgstr "Tu as atteint {outcome} après {count, plural, =0 {# question} one {# question} other {# questions}}."
 
 #: src/activities/decision-tree/decision-tree-activity.tsx
 msgctxt "MtII9q"
@@ -2463,7 +2463,7 @@ msgstr "{size}. 95 % des échantillons dans une marge de {margin}."
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "GvL6oK"
 msgid "{runs} samples of {size}"
-msgstr "{runs} échantillons de taille {size}"
+msgstr "{runs} échantillons de {size}"
 
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "-Dxr5R"
@@ -2473,7 +2473,7 @@ msgstr "Simulation de l’échantillon {count} sur {runs}…"
 #: src/activities/random-simulation/use-sampling-format.ts
 msgctxt "vUQRu0"
 msgid "±{value} {count, plural, =0 {points} one {point} other {points}}"
-msgstr "±{value} {count, plural, =0 {point de marge} one {point} other {points}}"
+msgstr "±{value} {count, plural, =0 {point} one {point} other {points}}"
 
 #: src/activities/random-simulation/use-sampling-format.ts
 msgctxt "_dayPZ"
@@ -2579,7 +2579,7 @@ msgstr "Frappe {tap} manquée."
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "DDydNj"
 msgid "{onTime} of {total, plural, =0 {# taps} one {# tap} other {# taps}} on time."
-msgstr "Frappes au bon moment : {onTime} sur {total, plural, =0 {# au total} other {#}}."
+msgstr "{onTime} sur {total, plural, =0 {# frappe} one {# frappe} other {# frappes}} au bon moment."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx

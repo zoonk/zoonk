@@ -751,7 +751,7 @@ msgstr "Conexión eliminada: {cause} llevó a {effect}."
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "jFy9ot"
 msgid "Linked: {cause} led to {effect}."
-msgstr "Relación creada: {cause} dio lugar a {effect}."
+msgstr "Relación creada: {cause} ha dado lugar a {effect}."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "xCm5pu"
@@ -3041,7 +3041,7 @@ msgstr "Correcto, revisa la ortografía"
 #: src/components/verdict-label.tsx
 msgctxt "yRGkJi"
 msgid "Not checked this time"
-msgstr "Esta vez no se ha comprobado"
+msgstr "Sin comprobar esta vez"
 
 #. Starts the explanation of why the learner's answer is wrong.
 #: src/components/verdict-label.tsx

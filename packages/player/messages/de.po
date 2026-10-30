@@ -2058,7 +2058,7 @@ msgstr "Silicium"
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "gFJ4sU"
 msgid "Staff"
-msgstr "Notenschrift"
+msgstr "Notensystem"
 
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "1xqT9N"
@@ -2463,7 +2463,7 @@ msgstr "{size}. 95 % der Stichproben innerhalb von {margin}."
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "GvL6oK"
 msgid "{runs} samples of {size}"
-msgstr "{runs} Stichproben der Größe {size}"
+msgstr "{runs} Stichproben mit je {size} Elementen"
 
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "-Dxr5R"
