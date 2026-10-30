@@ -28,7 +28,7 @@ export function getStopWithLauncherEnvironment({
 }: {
   environment: NodeJS.ProcessEnv;
   launcherPid: string;
-}): NodeJS.ProcessEnv {
+}): { NODE_OPTIONS: string; ZOONK_DEV_LAUNCHER_PID: string } {
   const preload = `--import=${import.meta.resolve("./stop-with-launcher.mts")}`;
 
   return {
