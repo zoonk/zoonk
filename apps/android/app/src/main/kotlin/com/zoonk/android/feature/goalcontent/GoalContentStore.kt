@@ -8,10 +8,12 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
+import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.GoalChapter
 import com.zoonk.api.models.StudyBlock
 import kotlinx.datetime.TimeZone
@@ -71,6 +73,13 @@ class GoalContentStore(
     // Subscribing opens the lessons a free exam plan held for Plus.
     val chapter: KeyedResources<ChapterKey, GoalChapter> =
         cache.keyed(Audience.SignedIn, PlanStore.PLAN_DOMAINS) { session, key -> session?.let { api.chapter(it, key) } }
+
+    suspend fun lessons(key: ChapterKey): List<ChapterLesson>? {
+        val read = chapter[key]
+        read.load()
+        return read.state.value.value
+            ?.lessons
+    }
 
     /** Extra practice on a chapter, opened where its block plays; null when the session changed meanwhile. */
     suspend fun practice(key: ChapterKey): PracticeOutcome? =

@@ -164,6 +164,7 @@ internal fun PlayingLesson(
                         ?.toString()
                 },
                 lessonStarted = app.catalog.lessonStarted[route.lessonId],
+                chapters = app.goalContent,
             )
         }
     val session by app.sessions.state.collectAsStateWithLifecycle()

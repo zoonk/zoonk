@@ -4,12 +4,18 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.goalcontent.ChapterKey
+import com.zoonk.android.feature.goalcontent.GoalContentApi
+import com.zoonk.android.feature.goalcontent.goalChapter
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityExpected
+import com.zoonk.api.models.AreaPractice
+import com.zoonk.api.models.AreaPracticeInput
 import com.zoonk.api.models.ChapterLesson
+import com.zoonk.api.models.GoalChapter
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.LessonReadiness
@@ -19,6 +25,7 @@ import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonRun
 import com.zoonk.api.models.SpokenAnswerGrade
 import kotlinx.coroutines.CompletableDeferred
+import java.util.UUID
 
 const val LESSON_ID = "00000000-0000-4000-8000-0000000000aa"
 const val RUN_ID = "00000000-0000-4000-8000-0000000000bb"
@@ -163,29 +170,40 @@ class FakeLessonPlayerApi(
         return writeResponse()
     }
 
-    var chapterGate: CompletableDeferred<Unit>? = null
-
-    override suspend fun chapterLessons(
-        session: AuthenticatedSession,
-        goalId: String,
-        chapterId: String,
-    ): List<ChapterLesson> {
-        chapterGate?.await()
-        return chapterLessonsRead()
-    }
-
-    private fun chapterLessonsRead(): List<ChapterLesson> =
-        listOf(LESSON_ID to "done", DONE_LESSON_ID to "done", NEXT_LESSON_ID to "upcoming").map { (id, state) ->
-            ApiJson.decodeFromString(
-                ChapterLesson.serializer(),
-                """{"lessonId":"$id","minutes":5,"plusRequired":false,"skillIds":[],"state":"$state","title":"Lesson","written":true}""",
-            )
-        }
-
     var fit: LessonFit? = null
 
     override suspend fun fit(
         session: AuthenticatedSession,
         lessonId: String,
     ) = fit
+}
+
+/** The fixture lesson's chapter: it and another done, the next one still to come. */
+fun chapterLessons(): List<ChapterLesson> =
+    listOf(LESSON_ID to "done", DONE_LESSON_ID to "done", NEXT_LESSON_ID to "upcoming").map { (id, state) ->
+        ApiJson.decodeFromString(
+            ChapterLesson.serializer(),
+            """{"lessonId":"$id","minutes":5,"plusRequired":false,"skillIds":[],"state":"$state","title":"Lesson","written":true}""",
+        )
+    }
+
+/** The chapter page's read of the fixture lesson's chapter; [gate] holds it. */
+class FakeChapterApi : GoalContentApi {
+    var reads = 0
+    var gate: CompletableDeferred<Unit>? = null
+
+    override suspend fun chapter(
+        session: AuthenticatedSession,
+        key: ChapterKey,
+    ): GoalChapter {
+        reads++
+        gate?.await()
+        return goalChapter().copy(lessons = chapterLessons())
+    }
+
+    override suspend fun practiceArea(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        input: AreaPracticeInput,
+    ): AreaPractice = error("Not used")
 }

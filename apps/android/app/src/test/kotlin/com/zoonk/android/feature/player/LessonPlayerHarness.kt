@@ -22,6 +22,8 @@ import com.zoonk.android.feature.activities.code.LocalCodeSandbox
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.FakeCatalogApi
 import com.zoonk.android.feature.ceremonies.MomentCeremony
+import com.zoonk.android.feature.goalcontent.ChapterKey
+import com.zoonk.android.feature.goalcontent.GoalContentStore
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
@@ -34,6 +36,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.time.LocalDate
+import java.util.UUID
 
 /** Plays a lesson in the real player against [FakeLessonPlayerApi], recording where it leads. */
 internal class LessonPlayerHarness(
@@ -48,6 +51,9 @@ internal class LessonPlayerHarness(
     lateinit var api: FakeLessonPlayerApi
     val catalogApi = FakeCatalogApi()
     lateinit var catalog: CatalogStore
+    val chapterApi = FakeChapterApi()
+    lateinit var chapters: GoalContentStore
+    val chapterKey = ChapterKey(UUID.fromString(GOAL_ID), UUID.fromString(CHAPTER_ID))
     lateinit var openAgain: () -> LessonPlayerViewModel
     lateinit var viewModel: LessonPlayerViewModel
 
@@ -85,6 +91,7 @@ internal class LessonPlayerHarness(
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val cache = AppCache(session, scope)
         catalog = CatalogStore(catalogApi, cache)
+        chapters = GoalContentStore(chapterApi, cache)
         val drafts = DraftStore(newFolder(), scope, io = Dispatchers.Main.immediate)
         runBlocking { drafts.follow { DraftsChange(ana.accountId) } }
         val newViewModel = {
@@ -101,6 +108,7 @@ internal class LessonPlayerHarness(
                 isGuest = { guest },
                 activeGoalId = { GOAL_ID },
                 lessonStarted = catalog.lessonStarted[LESSON_ID],
+                chapters = chapters,
             )
         }
         viewModel = newViewModel()

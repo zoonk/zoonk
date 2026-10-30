@@ -16,6 +16,8 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.toGradeOutcome
+import com.zoonk.android.feature.goalcontent.ChapterKey
+import com.zoonk.android.feature.goalcontent.GoalContentStore
 import com.zoonk.android.feature.player.engine.CheckIssue
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.HyperdriveStart
@@ -145,6 +147,7 @@ class LessonPlayerViewModel(
     private val isGuest: () -> Boolean = { false },
     private val activeGoalId: () -> String? = { null },
     private val lessonStarted: Resource<Boolean>? = null,
+    private val chapters: GoalContentStore? = null,
     private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)
@@ -615,7 +618,7 @@ class LessonPlayerViewModel(
                 if (isGuest()) {
                     LessonEnding(guest = true, fit = store.api.fit(session, lessonId))
                 } else {
-                    LessonEnding(nextLessonId = lesson?.chapterId?.let { nextLessonIn(session, it) })
+                    LessonEnding(nextLessonId = lesson?.chapterId?.let { nextLessonIn(it) })
                 }
             } catch (e: ApiException) {
                 LessonEnding(guest = isGuest())
@@ -625,12 +628,9 @@ class LessonPlayerViewModel(
     }
 
     /** Main's: the first lesson after this one in its chapter that the learner hasn't finished. */
-    private suspend fun nextLessonIn(
-        session: AuthenticatedSession,
-        chapterId: String,
-    ): String? {
+    private suspend fun nextLessonIn(chapterId: String): String? {
         val goalId = activeGoalId() ?: return null
-        val lessons = store.api.chapterLessons(session, goalId, chapterId)
+        val lessons = chapters?.lessons(ChapterKey(UUID.fromString(goalId), UUID.fromString(chapterId))) ?: return null
         val index = lessons.indexOfFirst { it.lessonId.toString() == lessonId }
         return lessons
             .drop(index + 1)

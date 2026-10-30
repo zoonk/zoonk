@@ -362,9 +362,23 @@ class LessonPlayerFlowTest {
     }
 
     @Test
+    fun theChapterPageShowsTheChapterTheLessonsEndRead() {
+        play(listOf(checkStep("quiz")))
+
+        tap("Right")
+        tap("Check")
+        tap("Continue")
+        rule.onNodeWithText("Next lesson").assertIsDisplayed()
+        runBlocking { harness.chapters.chapter[harness.chapterKey].load() }
+
+        assertEquals(1, harness.chapterApi.reads)
+    }
+
+    @Test
     fun theLessonsEndWaitsForWhereItLeadsBeforeItsButtonWorks() {
         val gate = CompletableDeferred<Unit>()
-        play(listOf(checkStep("quiz"))) { chapterGate = gate }
+        harness.chapterApi.gate = gate
+        play(listOf(checkStep("quiz")))
 
         tap("Right")
         tap("Check")
