@@ -163,7 +163,7 @@ internal fun PlayingLesson(
                         ?.activeGoalId
                         ?.toString()
                 },
-                started = app.catalog.lessonStarted[route.lessonId],
+                lessonStarted = app.catalog.lessonStarted[route.lessonId],
             )
         }
     val session by app.sessions.state.collectAsStateWithLifecycle()

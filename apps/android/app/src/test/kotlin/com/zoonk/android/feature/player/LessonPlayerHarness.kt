@@ -100,7 +100,7 @@ internal class LessonPlayerHarness(
                 sessionSteps = sessionSteps,
                 isGuest = { guest },
                 activeGoalId = { GOAL_ID },
-                started = catalog.lessonStarted[LESSON_ID],
+                lessonStarted = catalog.lessonStarted[LESSON_ID],
             )
         }
         viewModel = newViewModel()

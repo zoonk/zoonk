@@ -144,7 +144,7 @@ class LessonPlayerViewModel(
     private val sessionSteps: SessionSteps? = null,
     private val isGuest: () -> Boolean = { false },
     private val activeGoalId: () -> String? = { null },
-    private val started: Resource<Boolean>? = null,
+    private val lessonStarted: Resource<Boolean>? = null,
     private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)
@@ -260,7 +260,10 @@ class LessonPlayerViewModel(
         dispatch(LessonAction.CheckStarted(stepId))
         val outcome =
             withTimeoutOrNull(SPOKEN_TIMEOUT) {
-                cache.mutate { session -> store.api.speak(session, stepId, recording, studySessionId) }.toGradeOutcome()
+                cache
+                    .mutate(replacing = { markStarted(recorded = true) }) { session ->
+                        store.api.speak(session, stepId, recording, studySessionId)
+                    }.toGradeOutcome()
             } ?: GradeOutcome.Failed
 
         return when (outcome) {
@@ -514,11 +517,12 @@ class LessonPlayerViewModel(
 
     private fun unsentAnswers() = owner?.let { drafts.open(it, "player.unsent.$lessonId", ListSerializer(UnsentAnswer.serializer())) }
 
+    /** A lesson is started once one of its answers is recorded, which a check the server didn't make isn't. */
+    private fun markStarted(recorded: Boolean) = listOfNotNull(lessonStarted?.takeIf { recorded }?.replacing(true))
+
     private suspend fun send(pending: PendingCheck): CheckOutcome {
         val result =
-            cache.mutate(replacing = { outcome ->
-                listOfNotNull(started?.takeIf { outcome is CheckOutcome.Checked }?.replacing(true))
-            }) { session ->
+            cache.mutate(replacing = { markStarted(recorded = (it as? CheckOutcome.Checked)?.result?.checked == true) }) { session ->
                 if (session != owner) return@mutate CheckOutcome.Failed
                 try {
                     CheckOutcome.Checked(store.api.check(session, pending.stepId, pending.input))

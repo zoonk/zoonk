@@ -158,6 +158,45 @@ class LessonPlayerFlowTest {
     }
 
     @Test
+    fun anAnswerTheServerDidNotCheckLeavesTheLessonUnstarted() {
+        play(listOf(checkStep("quiz"), summaryStep("end"))) { grade = { _, _ -> checkResult(isCorrect = true, checked = false) } }
+
+        tap("Right")
+        tap("Check")
+        rule.waitUntil { api.checks.isNotEmpty() }
+        rule.waitForIdle()
+
+        assertEquals(
+            LoadState.Idle,
+            harness.catalog.lessonStarted[LESSON_ID]
+                .state.value,
+        )
+    }
+
+    @Test
+    fun aGradedSpokenTakeMarksTheLessonStarted() {
+        play(listOf(spokenStep("say"), summaryStep("end"))) {
+            spokenGrade = {
+                ApiJson.decodeFromString(
+                    SpokenAnswerGrade.serializer(),
+                    """
+                    {"attemptId":"00000000-0000-4000-8000-000000000021","explanation":null,"isCorrect":true,"score":1,
+                     "transcript":"Tengo hambre","words":[],"wordsToPractice":[]}
+                    """.trimIndent(),
+                )
+            }
+        }
+
+        runBlocking { viewModel.gradeSpoken("say", VoiceRecording(ByteArray(8), 1_200)) }
+
+        assertEquals(
+            LoadState.Loaded(true),
+            harness.catalog.lessonStarted[LESSON_ID]
+                .state.value,
+        )
+    }
+
+    @Test
     fun anAnswerThatDidNotSaveIsSentAgainUnderItsAttemptBeforeFinishing() {
         play(listOf(checkStep("quiz"), summaryStep("end"))) { checkFailures = 1 }
 
