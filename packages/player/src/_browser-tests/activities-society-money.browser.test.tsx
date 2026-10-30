@@ -136,6 +136,16 @@ describe("money and society activities", () => {
     await expectVerdict("Correct!");
   });
 
+  it("line crossing: the drag hint goes once the answer is checked", async () => {
+    openActivity({ content: breakEven, template: "lineCrossing" });
+    const hint = page.getByText("Drag a line by its handle, or use the arrow keys.");
+    await expect.element(hint).toBeVisible();
+    await valueInput().fill("250");
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await expect.element(hint).not.toBeInTheDocument();
+  });
+
   it("timeline: events placed in order are right, and the real gaps show", async () => {
     openActivity({ template: "timeline" });
     await page.getByRole("button", { name: "Place Moon landing on the timeline" }).click();

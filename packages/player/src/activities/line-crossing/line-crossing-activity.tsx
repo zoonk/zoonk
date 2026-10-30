@@ -112,7 +112,13 @@ export function LineCrossingActivity({
         yLabel={fields.yLabel}
       />
 
-      <LineCrossingChanges fields={fields} moved={moved} xChange={xChange} yChange={yChange} />
+      <LineCrossingChanges
+        fields={fields}
+        isChecked={isChecked}
+        moved={moved}
+        xChange={xChange}
+        yChange={yChange}
+      />
 
       {showsAnswer && (
         <LineCrossingAnswer

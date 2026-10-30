@@ -50,11 +50,13 @@ export function useLineWords() {
 
 export function LineCrossingChanges({
   fields,
+  isChecked,
   moved,
   xChange,
   yChange,
 }: {
   fields: Fields;
+  isChecked: boolean;
   moved: boolean;
   xChange: Change;
   yChange: Change;
@@ -62,6 +64,10 @@ export function LineCrossingChanges({
   const t = useExtracted();
   const changeWords = useChangeWords();
   const [YArrow, XArrow] = [Y_ARROWS[yChange], X_ARROWS[xChange]];
+
+  if (!moved && isChecked) {
+    return null;
+  }
 
   if (!moved) {
     return (
