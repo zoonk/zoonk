@@ -108,11 +108,11 @@
     <string name="activities_music_bar_notes">Bar %1$d: %2$s.</string>
 
     <!-- The rhythm's tempo while one round plays, like "90 bpm · Round 1 of 2". -->
-    <string name="activities_music_rhythm_round">%1$d bpm · Round %2$d of %3$d</string>
+    <string name="activities_music_rhythm_round">%1$d bpm · Round %2$d of %3$d</string>
     <!-- The rhythm's tempo and how many times it repeats, like "90 bpm · 2 rounds". -->
     <plurals name="activities_music_rhythm_rounds">
-        <item quantity="one">%1$d bpm · %2$d round</item>
-        <item quantity="other">%1$d bpm · %2$d rounds</item>
+        <item quantity="one">%1$d bpm · %2$d round</item>
+        <item quantity="other">%1$d bpm · %2$d rounds</item>
     </plurals>
     <!-- For TalkBack: the rhythm in words, like "A rhythm of 16 steps with a beat every 4. Tap on steps 1, 4, 7, 11, 13, over a click on every beat." -->
     <plurals name="activities_music_rhythm_description">
@@ -161,7 +161,7 @@
     </plurals>
     <string name="activities_music_sound_check_listen">Listen to the clicks…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
-    <string name="activities_music_sound_check_tap">Tap with each click · %1$d of %2$d</string>
+    <string name="activities_music_sound_check_tap">Tap with each click · %1$d of %2$d</string>
     <string name="activities_music_sound_check_failed">We couldn\'t match enough taps to the clicks. Try again, tapping with each one.</string>
     <string name="activities_music_sound_check_on_time">Sound on this device arrives on time.</string>
     <!-- How late this device plays sound, like "about 120 ms late". -->

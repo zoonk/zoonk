@@ -26,6 +26,8 @@
 - Language skills “Listening” / “Speaking” / “Reading” / “Writing” / “Words”: “Escucha” / “Expresión oral” / “Lectura” / “Expresión escrita” / “Vocabulario”
 - “Use of language” (a speaking exam criterion): “Uso de la lengua”
 - “card”: “tarjeta”, not “carta”
+- “tap” (the screen): “tocar”; a key: “pulsar”
+- “bpm” (a tempo): “bpm”, not “ppm”
 - “link” (between a cause and its effect): “relación”, not “conexión”
 - “Free” (subscription name): “Gratis”
 - “Get Plus”: “pásate a Plus”, not “hazte Plus”

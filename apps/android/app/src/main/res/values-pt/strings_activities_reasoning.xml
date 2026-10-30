@@ -19,7 +19,7 @@
   "activities_reasoning_grid_square": "55960a85b42bacae39977e193c54707134001ce4c8bbab3a71436cf137a82f16",
   "activities_reasoning_grid_square_empty": "a29da70c4fb286609d517d4e73ad708f83526fa8c7843206b97da04f2e8fc8f7",
   "activities_reasoning_grid_sums": "0e4e72e362a9cc9254ef2efcc27d9130506e74da977d41c782d2374569d51b83",
-  "activities_reasoning_grid_traits": "fa5dfcdf2bcc598b51b396afc7166c1e9ce2eba3bb1770b21948fadac7790b9c",
+  "activities_reasoning_grid_traits": "65a9fb42cc778e5a30c8985edb915dd2d374973404d1b5e23ee26fc002f1b1a1",
   "activities_reasoning_grid_value_trait": "797b3b6bb0dd1055e708283bab3d32ee31e8fbd344f2f96683431a829e11ba12",
   "activities_reasoning_grid_what_goes": "2d24472d25651b9e601e3172599f22736e7a1c2011fcfc1f4782548fb3702f7d",
   "activities_reasoning_grid_which_genotype": "98b7e0bf4f18bce74dcabbefa1ceb001d0a98a908ee1cea19f8f7bbbbf1743f9",
@@ -123,7 +123,7 @@
         <item quantity="other">%1$d de %2$d quadrados preenchidos</item>
     </plurals>
     <!-- How many filled squares show each trait so far, out of all the squares, like "Purple: 2 of 4 · White: 1 of 4". -->
-    <string name="activities_reasoning_grid_traits">%1$s: %2$d de %5$d · %3$s: %4$d de %5$d</string>
+    <string name="activities_reasoning_grid_traits">%1$s: %2$d de %5$d · %3$s: %4$d de %5$d</string>
     <string name="activities_reasoning_grid_all_filled">Todos os quadrados estão preenchidos. Toque em um deles para mudar o valor.</string>
     <!-- Asks for the genotype of a square of a Punnett square, like "Which genotype goes in square 2?" -->
     <string name="activities_reasoning_grid_which_genotype">Qual genótipo vai no quadrado %1$d?</string>

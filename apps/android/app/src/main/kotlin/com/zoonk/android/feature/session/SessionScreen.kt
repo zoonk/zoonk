@@ -59,6 +59,7 @@ import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -446,7 +447,7 @@ private fun StepFacts(step: DayStep) {
             stringResource(R.string.today_step_often_tested).takeIf { step.oftenTested },
         )
     Text(
-        facts.joinToString(" · "),
+        facts.factsLine(),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.labelMedium.withTabularFigures(),
     )

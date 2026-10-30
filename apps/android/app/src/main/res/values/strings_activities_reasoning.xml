@@ -33,7 +33,7 @@
         <item quantity="other">%1$d of %2$d squares filled</item>
     </plurals>
     <!-- How many filled squares show each trait so far, out of all the squares, like "Purple: 2 of 4 · White: 1 of 4". -->
-    <string name="activities_reasoning_grid_traits">%1$s: %2$d of %5$d · %3$s: %4$d of %5$d</string>
+    <string name="activities_reasoning_grid_traits">%1$s: %2$d of %5$d · %3$s: %4$d of %5$d</string>
     <string name="activities_reasoning_grid_all_filled">Every square is filled. Tap one to change it.</string>
     <!-- Asks for the genotype of a square of a Punnett square, like "Which genotype goes in square 2?" -->
     <string name="activities_reasoning_grid_which_genotype">Which genotype goes in square %1$d?</string>

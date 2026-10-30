@@ -103,7 +103,7 @@ class ReasoningFlowTest {
         play("combinationGrid", isCorrect = true)
 
         fillSquare(listOf("Pp", "Pp", "pp", "pp"))
-        shows("Purple: 2 of 4 · White: 2 of 4")
+        shows("Purple: 2 of 4\u00A0· White: 2 of 4")
         tap("1 in 2")
         harness.tap("Check")
 

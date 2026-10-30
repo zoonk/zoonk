@@ -68,7 +68,7 @@ class RhythmTapperFlowTest {
         preferences.edit(commit = true) { putString(DeviceDelayStore.KEY, "skipped") }
         harness.play(listOf(ActivityFixtures.step("rhythmTapper")))
 
-        shows("90 bpm · 2 rounds")
+        shows("90 bpm\u00A0· 2 rounds")
         rule
             .onNode(
                 hasContentDescription(

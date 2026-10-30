@@ -37,7 +37,7 @@
 - “again”, including “Retry” and “Rematch”: “noch einmal”, not “erneut”
 - “longer than usual” (a wait): “länger als üblich”, not “länger als sonst”
 - “Ask about …” (to the buddy): “Frag etwas zu …”
-- “tap” (a beat the learner taps in a rhythm activity): “Schlag”, never “Tipp”
+- “tap” (a beat the learner taps in a rhythm activity): “Schlag”, never “Tipp”; the verb: “tippe”, never “tipp”
 - “examiner” / “another candidate” (the AI's roles in a speaking exam): “prüfende Person” / “andere teilnehmende Person”
 - Speaking criteria “Fluency” / “Accuracy” / “Interaction”: “Redefluss” / “Korrektheit” / “Interaktion”
 - “musicianship”: “musikalische Grundlagen”

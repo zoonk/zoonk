@@ -50,8 +50,8 @@
   "activities_music_play_sound": "216b53a240b95464501d7c17c17174ad6942ce58cd7632ded71df0dac2c5ae59",
   "activities_music_rhythm_description": "09d872399604d4d33b1da3514cd70b2c3e42534ebea639e4f13159b1c709ff1c",
   "activities_music_rhythm_hits": "0a399686a3ac9711f75e712e374f327c8f251434bcfc9545a0c26dc19feab9eb",
-  "activities_music_rhythm_round": "35645b095cb5ffd061d3b823814ac0fdefe66dd17ab5863072e06881f60178ac",
-  "activities_music_rhythm_rounds": "a3c2b383316bc52f889d1733ef2a2f35fb60212353b3005d5c11de34868533f8",
+  "activities_music_rhythm_round": "b4c19b8bf1baa09b66e6e593b46b8fc08fd6115f0dcaf1510b0d6c141d16f89b",
+  "activities_music_rhythm_rounds": "e15c8dc2b468258e1f21559ae529653eacc97192d6ce0b14908979846ce0ff64",
   "activities_music_same_chord_guitar": "de769ab59c894bc98df23b555d6610fe53542cc62b94b386dfff5e1ca21b8c8f",
   "activities_music_same_notes_guitar": "e5e6a10f1e8518fa0798ef0ba9bfe72fdf2b77921b481f9e7498ba3eaa03407a",
   "activities_music_show_as": "35e6917bef72e12d0e4a13ff53c91925b7e5d2c57ae1b4f1833886dd00c48552",
@@ -62,7 +62,7 @@
   "activities_music_sound_check_listen": "38a1073642ec271773046f6fb5a5bac00faf3090d165d1a6a885933876450f90",
   "activities_music_sound_check_on_time": "fce5f0d3474355c7cebbd345e848b245ec9e7d349d8bc80e4fb97743a42b6350",
   "activities_music_sound_check_start": "6400cca151f6f9ab5d283b2dd0be75a9039f7cc9ba3cce339503d423626fbb83",
-  "activities_music_sound_check_tap": "b67f8065a52b072686fc34bfce4179e499162cb5721c0400948a158a1fc33833",
+  "activities_music_sound_check_tap": "5f5f89ee49d4e8d43b119bff6e7007e25a26bd41baed8df151df8ac0d5b903ac",
   "activities_music_sound_check_title": "6a490a4cf1dd3a6360278efeef9fd14e3672b5237239eb0a6124a707346d8ba6",
   "activities_music_sound_notes": "9cd89fb50fc76a9f309fd100136c92bf3fca1826b3e337cddfb0cf55f248fa93",
   "activities_music_sound_unavailable": "fee8331a7961a8f597bdedd61fca9560053f70af2a6a0762409a5f7a23807104",
@@ -189,12 +189,12 @@
     <!-- For TalkBack: one bar of the melody and its notes, like "Bar 1: E, E, F, G." -->
     <string name="activities_music_bar_notes">Mesure %1$d : %2$s.</string>
     <!-- The rhythm's tempo while one round plays, like "90 bpm · Round 1 of 2". -->
-    <string name="activities_music_rhythm_round">%1$d bpm · Manche %2$d sur %3$d</string>
+    <string name="activities_music_rhythm_round">%1$d bpm · Répétition %2$d sur %3$d</string>
     <!-- The rhythm's tempo and how many times it repeats, like "90 bpm · 2 rounds". -->
     <plurals name="activities_music_rhythm_rounds">
-        <item quantity="one">%1$d bpm · %2$d manche</item>
-        <item quantity="many">%1$d bpm · %2$d manches</item>
-        <item quantity="other">%1$d bpm · %2$d manches</item>
+        <item quantity="one">%1$d bpm · %2$d répétition</item>
+        <item quantity="many">%1$d bpm · %2$d répétitions</item>
+        <item quantity="other">%1$d bpm · %2$d répétitions</item>
     </plurals>
     <!-- For TalkBack: the rhythm in words, like "A rhythm of 16 steps with a beat every 4. Tap on steps 1, 4, 7, 11, 13, over a click on every beat." -->
     <plurals name="activities_music_rhythm_description">
@@ -247,7 +247,7 @@
     </plurals>
     <string name="activities_music_sound_check_listen">Écoute les clics…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
-    <string name="activities_music_sound_check_tap">Tape à chaque clic · %1$d sur %2$d</string>
+    <string name="activities_music_sound_check_tap">Appuie à chaque clic · %1$d sur %2$d</string>
     <string name="activities_music_sound_check_failed">Nous n’avons pas réussi à faire correspondre assez de frappes aux clics. Réessaie en tapant à chaque clic.</string>
     <string name="activities_music_sound_check_on_time">Le son de cet appareil arrive à temps.</string>
     <!-- How late this device plays sound, like "about 120 ms late". -->
