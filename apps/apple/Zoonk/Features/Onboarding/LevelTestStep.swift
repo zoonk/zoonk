@@ -349,13 +349,19 @@ private struct ListeningMessage: View {
           }
         } label: {
           Label {
-            played
-              ? Text(
+            if state == .loading || state == .playing {
+              Text(
+                "Stop the message", tableName: "Onboarding",
+                comment: "Stops a listening question's message while it loads or plays")
+            } else if played {
+              Text(
                 "Play the message again", tableName: "Onboarding",
                 comment: "Plays a listening question's message again")
-              : Text(
+            } else {
+              Text(
                 "Play the message", tableName: "Onboarding",
                 comment: "Plays a listening question's message")
+            }
           } icon: {
             switch state {
             case .loading:

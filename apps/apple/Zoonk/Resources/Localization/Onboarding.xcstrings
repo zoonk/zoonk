@@ -7937,6 +7937,35 @@
         }
       }
     },
+    "Stop the message" : {
+      "comment" : "Stops a listening question's message while it loads or plays",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nachricht stoppen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detener el mensaje"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrêter le message"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parar a mensagem"
+          }
+        }
+      }
+    },
     "Study days" : {
       "comment" : "Header over the days the learner studies",
       "localizations" : {
