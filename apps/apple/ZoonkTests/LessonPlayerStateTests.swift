@@ -224,11 +224,14 @@ final class LessonPlayerStateTests: XCTestCase {
     state.continueLesson()
     state.continueLesson()
     try answerCheck(&state, optionId: "wrong", attemptId: "second")
+    var saved = LessonStepResult(
+      isCorrect: false, answerText: nil, correctAnswer: nil, feedback: nil)
+    saved.savedMistake = true
 
-    state.confirm("check", attemptId: "first", nextReviewAt: .now, savedMistake: true)
+    state.confirm("check", attemptId: "first", verdict: saved)
     XCTAssertEqual(state.currentResult?.savedMistake, false)
 
-    state.confirm("check", attemptId: "second", nextReviewAt: .now, savedMistake: true)
+    state.confirm("check", attemptId: "second", verdict: saved)
     XCTAssertEqual(state.currentResult?.savedMistake, true)
   }
 
@@ -288,14 +291,25 @@ final class LessonGradingTests: XCTestCase {
     XCTAssertEqual(wrong?.isCorrect, false)
   }
 
+  func testArrangedWordsCompareWordByWordAsCoreDoes() throws {
+    let step = try step(japaneseReading)
+
+    let spelled = LessonGrading.grade(
+      .reading(arrangedWords: ["私", "は", "学", "生", "です。"]), step: step)
+    let right = LessonGrading.grade(.reading(arrangedWords: ["私", "は", "学生", "です"]), step: step)
+
+    XCTAssertEqual(spelled?.isCorrect, false, "two tiles that spell a word aren't that word")
+    XCTAssertEqual(right?.isCorrect, true)
+  }
+
   func testEachArrangedWordIsMarkedAgainstItsPlaceInTheSentence() {
     XCTAssertEqual(
       LessonGrading.arrangedWordMarks(
-        ["Marie", "suis", "je", "ici"], target: "Je suis Marie.", isCorrect: false),
+        ["Marie", "suis", "je", "ici"], expected: ["Je", "suis", "Marie."], isCorrect: false),
       [false, true, false, false])
     XCTAssertEqual(
       LessonGrading.arrangedWordMarks(
-        ["je", "suis", "Marie"], target: "Je suis Marie.", isCorrect: true),
+        ["je", "suis", "Marie"], expected: ["Je", "suis", "Marie."], isCorrect: true),
       [true, true, true])
   }
 
@@ -525,16 +539,23 @@ private let typedAnswer = teaching(
 private let summary = teaching(
   "summary", kind: "summary", content: #"{"ideas": [{"text": "Paris"}]}"#)
 
-private func language(_ id: String, kind: String, content: String, sentence: String = "null")
-  -> String
-{
-  """
-  {"id": "\(id)", "position": 0, "skillId": null, "kind": "\(kind)", "wordHints": null,
-   "exercise": {"id": "\(id)", "position": 0, "kind": "\(kind)", "content": \(content),
-     "sentence": \(sentence), "word": null, "wordBankOptions": [], "sentenceWordOptions": [],
-     "fillBlankOptions": [], "translationOptions": [], "vocabularyOptions": [],
-     "matchColumnsRightItems": []}}
-  """
+/// `sentenceWords` are the sentence as core splits it into words.
+private func language(
+  _ id: String, kind: String, content: String, sentence: String = "null",
+  sentenceWords: [String] = []
+) -> String {
+  let options = sentenceWords.map {
+    #"{"word": "\#($0)", "audioUrl": null, "romanization": null, "translation": null}"#
+  }
+
+  return """
+    {"id": "\(id)", "position": 0, "skillId": null, "kind": "\(kind)", "wordHints": null,
+     "exercise": {"id": "\(id)", "position": 0, "kind": "\(kind)", "content": \(content),
+       "sentence": \(sentence), "word": null, "wordBankOptions": [],
+       "sentenceWordOptions": [\(options.joined(separator: ", "))],
+       "fillBlankOptions": [], "translationOptions": [], "vocabularyOptions": [],
+       "matchColumnsRightItems": []}}
+    """
 }
 
 private let fillBlank = language(
@@ -548,7 +569,15 @@ private let reading = language(
   sentence: #"""
     {"id": "s", "sentence": "Je suis Marie.", "translation": "I am Marie.", "explanation": null,
      "audioUrl": null, "romanization": null, "distractors": [], "translationDistractors": []}
-    """#)
+    """#, sentenceWords: ["Je", "suis", "Marie."])
+
+private let japaneseReading = language(
+  "reading-ja", kind: "reading", content: "{}",
+  sentence: #"""
+    {"id": "s", "sentence": "私は学生です。", "translation": "I am a student.", "explanation": null,
+     "audioUrl": null, "romanization": null, "distractors": ["学", "生"],
+     "translationDistractors": []}
+    """#, sentenceWords: ["私", "は", "学生", "です。"])
 
 private let numericActivity = teaching(
   "numeric", kind: "activity",
@@ -961,8 +990,55 @@ final class LessonPlayerSavingTests: XCTestCase {
     state.answerSaved("match", attemptId: "older")
     XCTAssertNotNil(state.unsavedAnswers["match"], "a reply about another attempt changes nothing")
 
-    state.confirm("match", attemptId: "first", nextReviewAt: nil, savedMistake: false)
+    state.confirm("match", attemptId: "first", verdict: LessonStepResult(grade))
     XCTAssertTrue(state.unsavedAnswers.isEmpty)
+  }
+
+  func testTheServersVerdictOnADeviceGradedAnswerIsTheOneThatCounts() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(reading), try step(summary)])
+    let step = try XCTUnwrap(state.currentStep)
+    let grade = try XCTUnwrap(
+      LessonGrading.grade(.reading(arrangedWords: ["Je", "suis", "Marie"]), step: step))
+    state.resolve(step.id, result: LessonStepResult(grade, attemptId: "first"))
+    XCTAssertEqual(state.firstVerdicts, [step.id: true])
+
+    var server = LessonStepResult(
+      isCorrect: false, answerText: nil, correctAnswer: "Je suis Marie.", feedback: nil)
+    server.nextReviewAt = .distantFuture
+    state.confirm(step.id, attemptId: "first", verdict: server)
+
+    XCTAssertEqual(state.results[step.id]?.isCorrect, false)
+    XCTAssertEqual(state.results[step.id]?.correctAnswer, "Je suis Marie.")
+    XCTAssertEqual(state.results[step.id]?.nextReviewAt, .distantFuture)
+    XCTAssertEqual(state.firstVerdicts, [step.id: false], "the lesson counts the server's verdict")
+  }
+
+  func testAFirstTrySentBackToSelfCorrectThatTheServerCallsRightShowsAsRight() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(fillBlank)])
+    let step = try XCTUnwrap(state.currentStep)
+    let answer = LessonAnswer.fillBlank(userAnswers: ["est"])
+    state.select(answer, for: step.id)
+    let grade = try XCTUnwrap(LessonGrading.grade(answer, step: step))
+    state.resolve(
+      step.id, result: LessonStepResult(grade, attemptId: "first"),
+      saving: .init(answer: answer, attemptId: "first", durationMs: 1, usedHelp: false))
+    XCTAssertEqual(state.notice, .selfCorrect)
+
+    state.confirm(
+      step.id, attemptId: "first",
+      verdict: LessonStepResult(isCorrect: true, answerText: nil, correctAnswer: nil, feedback: nil)
+    )
+
+    XCTAssertEqual(state.firstVerdicts, [step.id: true])
+    XCTAssertNil(state.notice)
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertEqual(state.currentResult?.isCorrect, true)
+  }
+
+  func testAListeningTranslationWithoutSpacesIsOneWordAsInCore() {
+    XCTAssertEqual(LessonGrading.segmentWords("Mexa-se!"), ["Mexa-se!"])
+    XCTAssertEqual(LessonGrading.segmentWords("Je suis là !"), ["Je", "suis", "là!"])
   }
 
   func testANumberedPictureThatNeverCameLeavesItsQuestionOut() throws {

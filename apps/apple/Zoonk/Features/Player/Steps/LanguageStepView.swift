@@ -402,12 +402,12 @@ private struct ArrangeWordsView: View {
   }
 
   private var marks: [Bool]? {
-    guard let result = context.result, let target = LessonGrading.arrangedTarget(exercise) else {
+    guard let result = context.result, let expected = LessonGrading.arrangedWords(exercise) else {
       return nil
     }
 
     return LessonGrading.arrangedWordMarks(
-      arranged.map { exercise.wordBankOptions[$0].word }, target: target,
+      arranged.map { exercise.wordBankOptions[$0].word }, expected: expected,
       isCorrect: result.isCorrect)
   }
 

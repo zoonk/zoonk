@@ -81,6 +81,7 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var results: [String: LessonStepResult] = [:]
   /// The first verdict on each answerable screen, which is what the lesson counts.
   private(set) var firstVerdicts: [String: Bool] = [:]
+  private var firstVerdictAttemptIds: [String: String] = [:]
   private(set) var answerOrder: [String] = []
   /// Questions already sent to the end of the lesson once.
   private(set) var retried: Set<String> = []
@@ -427,7 +428,7 @@ struct LessonPlayerState: Equatable, Sendable {
 
     if isMiss, step.canSelfCorrect, quickCheck == nil, !selfCorrected.contains(stepId) {
       if isFirst {
-        recordFirstVerdict(stepId, isCorrect: false)
+        recordFirstVerdict(stepId, isCorrect: false, attemptId: result.attemptId)
       }
 
       checkFailed = false
@@ -442,7 +443,7 @@ struct LessonPlayerState: Equatable, Sendable {
       && !unavailableStepIds.contains(stepId)
 
     if isFirst {
-      recordFirstVerdict(stepId, isCorrect: result.isCorrect)
+      recordFirstVerdict(stepId, isCorrect: result.isCorrect, attemptId: result.attemptId)
     }
 
     if counts {
@@ -469,19 +470,42 @@ struct LessonPlayerState: Equatable, Sendable {
     }
   }
 
-  /// The server recorded a device-graded answer: when its idea comes back, and whether it went to
-  /// the mistakes notebook. A reply about an earlier answer to the screen changes nothing.
-  mutating func confirm(
-    _ stepId: String, attemptId: String, nextReviewAt: Date?, savedMistake: Bool
-  ) {
+  /// The server recorded a device-graded answer: its verdict, when its idea comes back, and whether
+  /// it went to the mistakes notebook. Where the device's verdict differs, the lesson's count and
+  /// the screen's result take the server's; a screen already queued to come back still does.
+  mutating func confirm(_ stepId: String, attemptId: String, verdict: LessonStepResult) {
+    let sent = unsavedAnswers[stepId]
     answerSaved(stepId, attemptId: attemptId)
+
+    if firstVerdictAttemptIds[stepId] == attemptId {
+      firstVerdicts[stepId] = verdict.isCorrect
+    }
+
+    // A first try sent back to self-correct was right after all, and its answer is still on screen.
+    if verdict.isCorrect, notice == .selfCorrect, phase == .playing, currentStep?.id == stepId,
+      sent?.attemptId == attemptId, answers[stepId] == sent?.answer
+    {
+      var result = verdict
+      result.attemptId = attemptId
+      notice = nil
+      phase = .feedback
+      results[stepId] = result
+      return
+    }
 
     guard var result = results[stepId], result.attemptId == attemptId else {
       return
     }
 
-    result.nextReviewAt = nextReviewAt
-    result.savedMistake = savedMistake
+    result.nextReviewAt = verdict.nextReviewAt
+    result.savedMistake = verdict.savedMistake
+
+    if result.isCorrect != verdict.isCorrect {
+      result.isCorrect = verdict.isCorrect
+      result.correctAnswer = verdict.isCorrect ? nil : verdict.correctAnswer ?? result.correctAnswer
+      result.feedback = verdict.feedback ?? result.feedback
+    }
+
     results[stepId] = result
   }
 
@@ -640,8 +664,9 @@ struct LessonPlayerState: Equatable, Sendable {
     phase = .completed
   }
 
-  private mutating func recordFirstVerdict(_ stepId: String, isCorrect: Bool) {
+  private mutating func recordFirstVerdict(_ stepId: String, isCorrect: Bool, attemptId: String?) {
     firstVerdicts[stepId] = isCorrect
+    firstVerdictAttemptIds[stepId] = attemptId
     answerOrder.append(stepId)
   }
 
@@ -816,6 +841,7 @@ struct LessonPlayerState: Equatable, Sendable {
     answers = [:]
     results = [:]
     firstVerdicts = [:]
+    firstVerdictAttemptIds = [:]
     answerOrder = []
     retried = []
     selfCorrected = []

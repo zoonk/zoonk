@@ -1,6 +1,7 @@
 import Foundation
 
-/// Mirrors core's `gradeStepAnswer`, so feedback is instant and the server's grade agrees with it.
+/// Mirrors core's `gradeStepAnswer`, so feedback is instant. When the server's verdict differs,
+/// it replaces this one (`LessonPlayerState.confirm`).
 struct LocalGrade: Hashable, Sendable {
   let isCorrect: Bool
   let answerText: String?
@@ -205,11 +206,15 @@ enum LessonGrading {
         correctAnswer: fillBlankSentence(exercise.content.template ?? "", answers: answers),
         feedback: exercise.content.feedback)
     case (.reading, .reading(let words)), (.listening, .listening(let words)):
-      guard let target = arrangedTarget(exercise) else {
+      guard let expected = arrangedWords(exercise) else {
         return nil
       }
 
-      return gradeArrangedWords(words, target: target, feedback: exercise.sentence?.explanation)
+      return LocalGrade(
+        isCorrect: arrangementKey(words) == arrangementKey(expected),
+        answerText: words.joined(separator: " "),
+        correctAnswer: expected.joined(separator: " "),
+        feedback: exercise.sentence?.explanation)
     case (.matchColumns, .matchColumns(let pairs, let mistakes)):
       let expected = (exercise.content.pairs ?? []).map { pairKey($0.left, $0.right) }.sorted()
       let given = pairs.map { pairKey($0.left, $0.right) }.sorted()
@@ -234,68 +239,55 @@ enum LessonGrading {
     "\(left)\u{0}\(right)"
   }
 
-  private static func gradeArrangedWords(_ words: [String], target: String, feedback: String?)
-    -> LocalGrade
-  {
-    let expected = segmentWords(target)
-    let separator = target.contains(" ") ? " " : ""
-
-    return LocalGrade(
-      isCorrect: arrangementKey(words, separator) == arrangementKey(expected, separator),
-      answerText: words.joined(separator: " "),
-      correctAnswer: expected.joined(separator: " "),
-      feedback: feedback)
-  }
-
-  /// A reading builds the sentence it translates; a listening builds the translation of what it plays.
-  static func arrangedTarget(_ exercise: LanguageExercise) -> String? {
+  /// The words core checks an arranged answer against. A reading builds the sentence it translates,
+  /// in the words the server split it into (its tiles), so text without spaces splits as core
+  /// splits it; a listening builds the translation of what it plays, in the learner's language.
+  static func arrangedWords(_ exercise: LanguageExercise) -> [String]? {
     guard let sentence = exercise.sentence else {
       return nil
     }
 
-    return exercise.kind == .listening ? sentence.translation : sentence.sentence
+    return exercise.kind == .listening
+      ? segmentWords(sentence.translation) : exercise.sentenceWordOptions.map(\.word)
   }
 
   /// Whether each arranged word sits where the sentence has it, as main marks them after a check.
-  static func arrangedWordMarks(_ words: [String], target: String, isCorrect: Bool) -> [Bool] {
-    let expected = segmentWords(target)
-
-    return words.indices.map { index in
+  static func arrangedWordMarks(_ words: [String], expected: [String], isCorrect: Bool) -> [Bool] {
+    words.indices.map { index in
       isCorrect
-        || (expected.indices.contains(index)
-          && arrangementKey([words[index]], "") == arrangementKey([expected[index]], ""))
+        || (expected.indices.contains(index) && wordKey(words[index]) == wordKey(expected[index]))
     }
   }
 
-  /// Punctuation and case never decide an arranged answer. Text without spaces (Japanese,
-  /// Chinese) compares as one run, so word boundaries the device and the server draw differently
-  /// can't fail a right answer.
-  private static func arrangementKey(_ words: [String], _ separator: String) -> String {
-    words.map { word in
-      String(word.unicodeScalars.filter { CharacterSet.letters.union(.decimalDigits).contains($0) })
-        .lowercased()
-    }
-    .filter { !$0.isEmpty }
-    .joined(separator: separator)
+  /// Core's `matchesAcceptedArrangeWords`: the same words in the same order.
+  private static func arrangementKey(_ words: [String]) -> [String] {
+    words.map(wordKey)
   }
 
-  /// The words of a sentence as the word bank shows them: punctuation stays with its word.
+  /// Core's `normalizeArrangeWord`: punctuation and case never decide an arranged answer.
+  private static func wordKey(_ word: String) -> String {
+    var kept = String.UnicodeScalarView()
+    kept.append(
+      contentsOf: word.unicodeScalars.filter { $0.properties.isWhitespace || isLetterOrNumber($0) })
+    return String(kept).lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+  }
+
+  /// JavaScript's `\p{L}` and `\p{N}`.
+  private static func isLetterOrNumber(_ scalar: Unicode.Scalar) -> Bool {
+    switch scalar.properties.generalCategory {
+    case .uppercaseLetter, .lowercaseLetter, .titlecaseLetter, .modifierLetter, .otherLetter,
+      .decimalNumber, .letterNumber, .otherNumber:
+      true
+    default:
+      false
+    }
+  }
+
+  /// A sentence in the learner's language split into words as core splits it: at spaces, with
+  /// punctuation kept on its word. Without a space it's one word, as core keeps "Mexa-se!" whole.
   static func segmentWords(_ text: String) -> [String] {
     // Spaces before punctuation go, so "Oui !" is one word.
     let normalized = text.replacing(/(\S)\s+([!?.,;:。、！？؟])/) { "\($0.output.1)\($0.output.2)" }
-
-    if normalized.contains(" ") {
-      return normalized.split(separator: " ").map(String.init)
-    }
-
-    var words: [String] = []
-    normalized.enumerateSubstrings(in: normalized.startIndex..., options: .byWords) {
-      word, _, _, _ in
-      if let word {
-        words.append(word)
-      }
-    }
-
-    return words.isEmpty ? [normalized] : words
+    return normalized.split(separator: " ").map(String.init)
   }
 }

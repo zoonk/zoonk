@@ -502,9 +502,7 @@ final class LessonPlayerStore {
 
     switch recorded {
     case .done(.checked(let result)):
-      state?.confirm(
-        stepId, attemptId: unsaved.attemptId, nextReviewAt: result.nextReviewAt,
-        savedMistake: result.savedMistake)
+      state?.confirm(stepId, attemptId: unsaved.attemptId, verdict: result)
     case .done(.refused):
       state?.answerSaved(stepId, attemptId: unsaved.attemptId)
     case .done(.failed), .failed, .obsolete:
