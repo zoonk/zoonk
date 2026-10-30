@@ -99,6 +99,9 @@ class PlanEditorTest {
         }
     }
 
+    private fun estimate(endDate: String) =
+        """"estimate":{"endDate":"$endDate","fullCourseEndDate":null,"pace":null,"remainingHours":10,"totalHours":12}"""
+
     private fun report(change: PlanChange) {
         shownChanges = shownChanges + (change.id to EditorChange(change))
         shownLatest = shownChanges.values.maxBy { it.change.createdAt }
@@ -127,6 +130,35 @@ class PlanEditorTest {
                 "No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then.",
             ).performScrollTo()
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun aPlanWithoutADateSaysWhenItFinishes() {
+        show(estimate(endDate = "2027-05-20"))
+
+        compose.onNodeWithText("You finish around May 2027.").assertIsDisplayed()
+    }
+
+    @Test
+    fun aPlanWithoutADateWorksOutItsFinishWhileTheTimeSaves() {
+        show(estimate(endDate = "2027-05-20"), pending = setOf(PlanPart.Schedule))
+
+        compose.onNodeWithText("Working out when you'd finish…").assertIsDisplayed()
+        compose.onNodeWithText("You finish around May 2027.").assertDoesNotExist()
+    }
+
+    @Test
+    fun aFinishThatHasPassedIsNotShown() {
+        show(estimate(endDate = "2026-10-25"))
+
+        compose.onNodeWithText("You finish around", substring = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun aFinishedPlanSaysNothingAboutWhenItFinishes() {
+        show(estimate(endDate = "2027-05-20") + ""","end":{"kind":"finished"}""")
+
+        compose.onNodeWithText("You finish around", substring = true).assertDoesNotExist()
     }
 
     @Test

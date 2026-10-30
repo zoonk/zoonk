@@ -132,8 +132,11 @@ internal fun DailyCoverage(
     focus: CoverageFocus,
 ) {
     val plan = page.plan
-    if (plan.feasibility?.deadline == null) return
     val pending = edits.isPending(PlanPart.Schedule)
+    if (plan.feasibility?.deadline == null) {
+        FinishLine(page, pending)
+        return
+    }
     val coverage = planCoverage(plan)
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
@@ -171,6 +174,32 @@ internal fun DailyCoverage(
             Text(stringResource(R.string.plan_working_out_coverage), style = MaterialTheme.typography.bodyMedium, color = muted)
         }
     }
+}
+
+/** Main's `PlanFinish`: when a plan without a date finishes. */
+@Composable
+private fun FinishLine(
+    page: PlanPageState,
+    pending: Boolean,
+) {
+    val end =
+        page.plan.estimate.endDate
+            ?.toJavaLocalDate()
+    // The end is the saved schedule's last day, laid out again only by a change: once it has
+    // passed, it no longer says when the learner finishes.
+    if (end == null || end < page.today || page.plan.end != null) return
+
+    Text(
+        text =
+            if (pending) {
+                stringResource(R.string.plan_finish_working)
+            } else {
+                stringResource(R.string.plan_finish_around, formatDate(end, currentLocale(), DateStyle.Month))
+            },
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }
 
 /**

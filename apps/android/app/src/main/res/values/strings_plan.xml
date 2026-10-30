@@ -737,6 +737,9 @@
     <string name="plan_tell_buddy_description">In your own words, like “less on weekends”. You\'ll see the change before it applies.</string>
 
     <string name="plan_working_out_coverage">Working out what your time covers…</string>
+    <!-- %1$s is a month and year, like "March 2027". -->
+    <string name="plan_finish_around">You finish around %1$s.</string>
+    <string name="plan_finish_working">Working out when you\'d finish…</string>
     <string name="plan_covers_whole_goal">Covers your whole goal.</string>
     <string name="plan_time_covers_everything_by">Your time covers everything by %1$s</string>
     <string name="plan_covered_not_enough">%1$s a day isn\'t enough time to cover your goal.</string>

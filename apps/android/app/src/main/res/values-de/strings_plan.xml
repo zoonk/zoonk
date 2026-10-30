@@ -275,6 +275,8 @@
   "plan_finding": "612b6f66b6b027f4f6660b84d24f1e6fe83e9f96ca4f9786ad7553c323b056cd",
   "plan_finish": "b7ac26455cec76afa8a46f34115beb239ae5407151f4cdb8e9af111eb8b348af",
   "plan_finish_after_exam": "8f9882faaa985ae6eeb7b2ca6ecfa5fa55cd66df83598136913be28e3a245b43",
+  "plan_finish_around": "8e1551710fb54fa22df18127cffb4d13f18d96d9a58fd0d453bc6a065d237009",
+  "plan_finish_working": "61fad240449cc4e8a41317e82eed1ffcc1fed80f2997f8fa3521b78f4f6ce203",
   "plan_finished_title": "683e031a676874792ce1fbb61516c3e562c70c623a43cebc52d3b45c5ab4c0c4",
   "plan_focus_already_in": "16352ec2f65ebb4cf9fc8428f02fa6278e0b5c7dc4987ec2aa57ac262f696897",
   "plan_focus_cant_move": "e01d446817492630eb9702c57f70c1e68d69b5dd6ef851aa0b357881464270c3",
@@ -1269,6 +1271,9 @@
     <string name="plan_tell_buddy">Etwas anderes? Sag es %1$s</string>
     <string name="plan_tell_buddy_description">In deinen eigenen Worten, zum Beispiel „am Wochenende weniger“. Du siehst die Änderung, bevor sie übernommen wird.</string>
     <string name="plan_working_out_coverage">Wir ermitteln, was du in deiner Zeit schaffen kannst…</string>
+    <!-- %1$s is a month and year, like "March 2027". -->
+    <string name="plan_finish_around">Du bist etwa im %1$s fertig.</string>
+    <string name="plan_finish_working">Wir berechnen, wann du fertig wirst…</string>
     <string name="plan_covers_whole_goal">Deckt dein ganzes Ziel ab.</string>
     <string name="plan_time_covers_everything_by">Mit deiner Zeit schaffst du alles bis %1$s</string>
     <string name="plan_covered_not_enough">%1$s am Tag reichen nicht aus, um dein Ziel vollständig abzudecken.</string>

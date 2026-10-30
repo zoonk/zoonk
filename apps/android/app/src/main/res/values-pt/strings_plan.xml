@@ -275,6 +275,8 @@
   "plan_finding": "5277fcf0e016441fb308a80323e9ca79b750dc6ed14985d1b5633790d42d7cd6",
   "plan_finish": "fa182753dc6f87896ac6f512af4fbfa4034f8036c517a9687193116994675049",
   "plan_finish_after_exam": "9b94a30c7d370689465055461f94a16198d265ef629afc282fe520af899f25c3",
+  "plan_finish_around": "dde1e4afd92cf476b6de139566080aa09aa127109a0418a84b0f694e2b382abf",
+  "plan_finish_working": "4cd7437d92596febd184addabcf35fcae98e13f58172766389655f4f7a3852b1",
   "plan_finished_title": "cb7d1a7861e8c3b726616b4b2eb525b43ab7e7ea644c5f7b23be36662ddf6fe2",
   "plan_focus_already_in": "3e41f77c6cc7bf9db1f68be58b9d118173dd54b7ebdbb837ec2273368f8312f9",
   "plan_focus_cant_move": "0c7ce14bbd6f271767c9f9be37138b0ae15ee56ee578559feb446778e5e1bd78",
@@ -1350,6 +1352,9 @@
     <string name="plan_tell_buddy">Mais alguma coisa? Conte para %1$s</string>
     <string name="plan_tell_buddy_description">Com suas palavras, como “menos nos fins de semana”. Você vai ver a mudança antes de ela ser aplicada.</string>
     <string name="plan_working_out_coverage">Calculando o que cabe no seu tempo…</string>
+    <!-- %1$s is a month and year, like "March 2027". -->
+    <string name="plan_finish_around">Você termina por volta de %1$s.</string>
+    <string name="plan_finish_working">Calculando quando você terminaria…</string>
     <string name="plan_covers_whole_goal">Cobre toda a sua meta.</string>
     <string name="plan_time_covers_everything_by">Seu tempo é suficiente para estudar tudo até %1$s</string>
     <string name="plan_covered_not_enough">%1$s por dia não é tempo suficiente para estudar toda a sua meta.</string>
