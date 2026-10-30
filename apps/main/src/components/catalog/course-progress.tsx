@@ -1,5 +1,6 @@
 "use client";
 
+import { VisitorLook } from "@/components/learner/visitor-look";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { type CourseLevel } from "@zoonk/db/enums";
 import { RouteZone } from "@zoonk/learn/route-line";
@@ -133,8 +134,13 @@ export function CourseGoalSwitch({
   );
 }
 
-/** Opens the level the learner's plan is at, or the first one when no plan follows the course. */
+/**
+ * Opens the level the learner's plan is at, or the first one when no plan follows the course. Until
+ * the summary answers, a browser with a session keeps every level closed, so the learner's level
+ * opens without another one closing above it.
+ */
 export function CourseLevelZone({
+  children,
   courseId,
   isFirst,
   level,
@@ -146,12 +152,32 @@ export function CourseLevelZone({
 }) {
   const learner = useLearnerSummary();
 
+  if (learner.status === "not-loaded" && isFirst) {
+    return (
+      <>
+        <VisitorLook>
+          <RouteZone {...zone} open>
+            {children}
+          </RouteZone>
+        </VisitorLook>
+
+        <div aria-hidden="true" className="signed-in:contents hidden" inert>
+          <RouteZone {...zone}>{null}</RouteZone>
+        </div>
+      </>
+    );
+  }
+
   const learnerLevel =
     learner.status === "ready"
       ? learner.summary.goals.find((goal) => goal.courseId === courseId)?.courseLevel
       : null;
 
-  return <RouteZone {...zone} open={learnerLevel ? learnerLevel === level : isFirst} />;
+  return (
+    <RouteZone {...zone} open={learnerLevel ? learnerLevel === level : isFirst}>
+      {children}
+    </RouteZone>
+  );
 }
 
 const LESSON_VERSION_CLASS = "col-start-1 row-start-1 flex min-w-0 flex-col";
