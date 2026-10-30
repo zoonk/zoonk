@@ -19,6 +19,8 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.player.SessionEndActions
+import com.zoonk.android.feature.player.leaveTaskFor
 import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.ActionFlow
 import com.zoonk.android.feature.practice.AnswerActions
@@ -69,7 +71,15 @@ fun QuestionBlockScreen(
                 ?.takeIf { it.sessionId?.toString() == route.sessionId }
                 ?.examTomorrow == true
         }
-    QuestionBlock(route.sessionId, route.blockId, app, navigator, onClose = navigator::closeTask, examTomorrow = examTomorrow)
+    QuestionBlock(
+        route.sessionId,
+        route.blockId,
+        app,
+        navigator,
+        onClose = navigator::closeTask,
+        onLeave = navigator::leaveTaskFor,
+        examTomorrow = examTomorrow,
+    )
 }
 
 /**
@@ -84,6 +94,7 @@ fun QuestionBlock(
     app: AppContainer,
     navigator: AppNavigator,
     onClose: () -> Unit,
+    onLeave: (AppRoute) -> Unit,
     examTomorrow: Boolean = false,
     finished: (@Composable (StudyBlockCompletion) -> Unit)? = null,
 ) {
@@ -93,13 +104,29 @@ fun QuestionBlock(
         RunNotFound(onClose)
         return
     }
-    val viewModel = viewModel(key = "block:$blockId:${runAccount(app)}") { QuestionBlockViewModel(key, app.questionBlocks) }
+    val viewModel =
+        viewModel(key = "block:$blockId:${runAccount(app)}") { QuestionBlockViewModel(key, app.questionBlocks, app.studyOpener) }
+    QuestionBlockContent(viewModel, app, navigator, onClose, onLeave, examTomorrow, finished)
+}
+
+@Composable
+internal fun QuestionBlockContent(
+    viewModel: QuestionBlockViewModel,
+    app: AppContainer,
+    navigator: AppNavigator,
+    onClose: () -> Unit,
+    onLeave: (AppRoute) -> Unit,
+    examTomorrow: Boolean = false,
+    finished: (@Composable (StudyBlockCompletion) -> Unit)? = null,
+) {
     val loaded by viewModel.block.collectShown()
     val closed by viewModel.closed.collectAsStateWithLifecycle()
+    val move by viewModel.sessionMove.collectAsStateWithLifecycle()
     val close = viewModel::close
 
     BackHandler(onBack = close)
     LaunchedEffect(closed) { if (closed) onClose() }
+    LaunchedEffect(move.leaving) { move.leaving?.let(onLeave) }
 
     when (val state = loaded) {
         is LoadState.Loaded -> {
@@ -111,7 +138,7 @@ fun QuestionBlock(
                 when {
                     phase !is RunPhase.Finished -> Runner(read, shown, viewModel, app, navigator, close, examTomorrow)
                     finished != null -> finished(phase.completion)
-                    else -> BlockFinished(phase.completion, read.detail.isReview, app, close)
+                    else -> BlockFinished(phase.completion, read.detail.isReview, app, viewModel, close)
                 }
             }
         }
@@ -145,14 +172,29 @@ internal fun BlockFinished(
     completion: StudyBlockCompletion?,
     review: Boolean,
     app: AppContainer,
+    viewModel: QuestionBlockViewModel,
     onClose: () -> Unit,
 ) {
+    val move by viewModel.sessionMove.collectAsStateWithLifecycle()
+
     MomentAfterCeremony(app, completion?.ceremony) { buddy ->
         RunFinished(
             title = stringResource(if (review) R.string.practice_done_review else R.string.practice_done_title),
             action = stringResource(R.string.practice_continue),
             saving = completion == null,
             onClose = onClose,
+            actions =
+                completion?.let { done ->
+                    {
+                        SessionEndActions(
+                            move,
+                            completed = done.sessionCompleted,
+                            canStop = true,
+                            onStop = viewModel::stopSession,
+                            onContinue = viewModel::continueSession,
+                        )
+                    }
+                },
         ) {
             completion?.let {
                 MomentReadouts(it.ownBrainPower, score = MomentScore(it.total.toInt(), it.correct.toInt()))
@@ -181,7 +223,7 @@ internal fun Runner(
     val draft = saved.answerFor(run, question)
 
     if (run.phase == RunPhase.Finishing) {
-        BlockFinished(null, detail.isReview, app, onClose)
+        BlockFinished(null, detail.isReview, app, viewModel, onClose)
         return
     }
 

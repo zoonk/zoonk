@@ -82,11 +82,11 @@ private class FakeSessionSteps : SessionSteps {
     val nexts = ArrayDeque<MutationResult<AppRoute>>()
     val stops = mutableListOf<UUID>()
 
-    override suspend fun next(sessionId: UUID) = nexts.removeFirst()
+    override suspend fun continueSession(sessionId: UUID) = nexts.removeFirst()
 
-    override suspend fun stop(sessionId: UUID): MutationResult<Any> {
+    override suspend fun stop(sessionId: UUID): MutationResult<AppRoute> {
         stops += sessionId
-        return MutationResult.Done(Unit)
+        return MutationResult.Done(AppRoute.Session(sessionId = sessionId.toString(), stopped = true))
     }
 }
 

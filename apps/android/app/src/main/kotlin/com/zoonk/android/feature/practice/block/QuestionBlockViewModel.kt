@@ -6,6 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.recode
+import com.zoonk.android.feature.player.SessionMove
+import com.zoonk.android.feature.player.SessionMover
+import com.zoonk.android.feature.player.SessionSteps
 import com.zoonk.android.feature.practice.QuestionRun
 import com.zoonk.android.feature.practice.RunControls
 import com.zoonk.android.feature.practice.RunPhase
@@ -38,6 +41,7 @@ data class BlockQuestions(
 class QuestionBlockViewModel(
     private val key: BlockKey,
     private val store: QuestionBlockStore,
+    steps: SessionSteps,
     private val now: () -> Long = SystemClock::elapsedRealtime,
 ) : ViewModel(),
     RunControls {
@@ -46,13 +50,13 @@ class QuestionBlockViewModel(
 
     private val closing = MutableStateFlow(false)
 
-    /** The learner left, the block isn't open anymore (finished elsewhere) or the session stopped. */
+    /** The learner left, or the block isn't open anymore (finished elsewhere). */
     val closed: StateFlow<Boolean> = closing.asStateFlow()
 
     private var closeWhenFinished = false
 
-    private val stopping = MutableStateFlow<StopState>(StopState.Idle)
-    val stop: StateFlow<StopState> = stopping.asStateFlow()
+    private val sessionMover = SessionMover(steps, key.sessionId, viewModelScope)
+    val sessionMove: StateFlow<SessionMove> = sessionMover.move
 
     private var shownAt = now()
     private var read: BlockQuestions? = null
@@ -129,7 +133,7 @@ class QuestionBlockViewModel(
     }
 
     override fun next(questions: List<Question>) {
-        if (run.value?.phase !is RunPhase.Checked) return
+        if (run.value?.phase !is RunPhase.Checked || sessionMove.value.busy) return
         shownAt = now()
         run.update { it?.next(questions) }
         if (run.value?.phase == RunPhase.Finishing) finish()
@@ -169,19 +173,9 @@ class QuestionBlockViewModel(
         }
     }
 
-    /** The pause suggestion's Stop for today. */
-    fun stopSession() {
-        stopping.value = StopState.Stopping
-        viewModelScope.launch {
-            when (store.stop(key.sessionId)) {
-                is MutationResult.Done -> closing.value = true
-                is MutationResult.Failed -> stopping.value = StopState.Failed
-                MutationResult.Obsolete -> stopping.value = StopState.Idle
-            }
-        }
-    }
+    fun continueSession() = sessionMover.continueSession()
 
-    enum class StopState { Idle, Stopping, Failed }
+    fun stopSession() = sessionMover.stop()
 
     private companion object {
         const val ALREADY_ANSWERED = "ALREADY_ANSWERED"

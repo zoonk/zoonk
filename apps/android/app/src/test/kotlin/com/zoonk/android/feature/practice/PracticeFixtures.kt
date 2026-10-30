@@ -3,17 +3,19 @@ package com.zoonk.android.feature.practice
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.player.SessionSteps
 import com.zoonk.android.feature.practice.block.BlockKey
 import com.zoonk.android.feature.practice.block.QuestionBlockApi
 import com.zoonk.android.feature.practice.block.QuestionBlockStore
 import com.zoonk.android.feature.practice.block.QuestionBlockViewModel
 import com.zoonk.android.feature.session.fixture
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.StudyAnswerFeedback
 import com.zoonk.api.models.StudyAnswerInput
 import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.StudyBlockDetail
-import com.zoonk.api.models.StudySessionSummary
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -70,10 +72,18 @@ internal fun studyFeedback(
         """.trimMargin(),
     )
 
-/** A runner over [detail] whose answers get [feedback]; finishing and stopping fail. */
+internal object UnusedSessionSteps : SessionSteps {
+    override suspend fun continueSession(sessionId: UUID): MutationResult<AppRoute> = error("Not used")
+
+    override suspend fun stop(sessionId: UUID): MutationResult<AppRoute> = error("Not used")
+}
+
+/** A runner over [detail] whose answers get [feedback] and whose finish gets [completion]; without one, finishing fails. */
 internal fun practiceViewModel(
     cache: AppCache,
     detail: StudyBlockDetail,
+    steps: SessionSteps = UnusedSessionSteps,
+    completion: StudyBlockCompletion? = null,
     feedback: (StudyAnswerInput) -> StudyAnswerFeedback = { studyFeedback(isCorrect = true) },
 ): QuestionBlockViewModel {
     val api =
@@ -93,13 +103,7 @@ internal fun practiceViewModel(
                 session: AuthenticatedSession,
                 key: BlockKey,
                 timeZone: String,
-            ): StudyBlockCompletion = error("Not used")
-
-            override suspend fun stop(
-                session: AuthenticatedSession,
-                sessionId: UUID,
-                timeZone: String,
-            ): StudySessionSummary = error("Not used")
+            ): StudyBlockCompletion = completion ?: error("Not used")
         }
     return QuestionBlockViewModel(
         BlockKey(
@@ -109,6 +113,7 @@ internal fun practiceViewModel(
         QuestionBlockStore(api, cache) {
             "UTC"
         },
+        steps,
     )
 }
 

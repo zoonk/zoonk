@@ -16,19 +16,20 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.feature.player.SessionStep
 import com.zoonk.android.feature.practice.NoteText
 import com.zoonk.android.feature.questions.NoteRow
 
 @Composable
 internal fun PauseSuggestion(viewModel: QuestionBlockViewModel) {
-    val stop by viewModel.stop.collectAsStateWithLifecycle()
+    val move by viewModel.sessionMove.collectAsStateWithLifecycle()
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         NoteRow(R.drawable.ic_local_cafe) { NoteText(stringResource(R.string.practice_pause_text)) }
-        FilledTonalButton(onClick = viewModel::stopSession, enabled = stop != QuestionBlockViewModel.StopState.Stopping) {
+        FilledTonalButton(onClick = viewModel::stopSession, enabled = !move.busy) {
             Text(stringResource(R.string.practice_pause_stop))
         }
-        if (stop == QuestionBlockViewModel.StopState.Failed) {
+        if (move.failed == SessionStep.Stop) {
             Text(
                 text = stringResource(R.string.practice_pause_failed),
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },

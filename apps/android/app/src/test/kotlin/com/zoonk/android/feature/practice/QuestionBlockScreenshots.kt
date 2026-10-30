@@ -227,7 +227,23 @@ class QuestionBlockScreenshots {
                         ),
                     ),
             )
-        rule.setContent { ZoonkTheme { BlockFinished(completion, review = false, AppContainer.preview(rule.activity), onClose = {}) } }
+        val cache =
+            AppCache(
+                FakeSession(AuthenticatedSession(ANA, "token", "local")),
+                CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+            )
+        val viewModel = practiceViewModel(cache, blockDetail(emptyList()))
+        rule.setContent {
+            ZoonkTheme {
+                BlockFinished(
+                    completion,
+                    review = false,
+                    AppContainer.preview(rule.activity),
+                    viewModel,
+                    onClose = {},
+                )
+            }
+        }
         rule.mainClock.advanceTimeBy(10_000)
         write(name)
     }

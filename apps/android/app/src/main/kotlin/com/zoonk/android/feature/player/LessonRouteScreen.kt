@@ -56,13 +56,11 @@ import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 /** `/learn/{lessonId}`: the lesson's screens, its outline while it waits to be written, or a visitor's way in. */
 @Composable
@@ -83,10 +81,7 @@ fun LessonRouteScreen(
 
                 override fun open(route: AppRoute) = navigator.open(route)
 
-                override fun replace(route: AppRoute) {
-                    navigator.closeTask()
-                    if (route == AppRoute.Today) navigator.showRoot(AppTab.Today) else navigator.open(route)
-                }
+                override fun replace(route: AppRoute) = navigator.leaveTaskFor(route)
             }
         }
 
@@ -161,12 +156,7 @@ internal fun PlayingLesson(
                 sessions = app.sessions,
                 choices = app.todayChoices,
                 drafts = app.drafts,
-                sessionSteps =
-                    object : SessionSteps {
-                        override suspend fun next(sessionId: UUID) = app.studyOpener.continueSession(sessionId)
-
-                        override suspend fun stop(sessionId: UUID) = app.questionBlocks.stop(sessionId)
-                    },
+                sessionSteps = app.studyOpener,
                 isGuest = { (app.sessions.state.value as? SessionState.SignedIn)?.isGuest == true },
                 activeGoalId = {
                     app.learnerSummary.summary.state.value.value

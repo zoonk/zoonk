@@ -18,7 +18,6 @@ import com.zoonk.api.models.StudyAnswerFeedback
 import com.zoonk.api.models.StudyAnswerInput
 import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.StudyBlockDetail
-import com.zoonk.api.models.StudySessionSummary
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -108,14 +107,8 @@ class QuestionBlockViewModelTest {
                     key: BlockKey,
                     timeZone: String,
                 ) = finish()
-
-                override suspend fun stop(
-                    session: AuthenticatedSession,
-                    sessionId: UUID,
-                    timeZone: String,
-                ): StudySessionSummary = error("Not used")
             }
-        return QuestionBlockViewModel(key, QuestionBlockStore(api, cache) { "UTC" }, clock)
+        return QuestionBlockViewModel(key, QuestionBlockStore(api, cache) { "UTC" }, UnusedSessionSteps, clock)
     }
 
     private suspend fun TestScope.started(viewModel: QuestionBlockViewModel) =

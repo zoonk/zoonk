@@ -7,6 +7,7 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.player.LessonWriting
+import com.zoonk.android.feature.player.SessionSteps
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.toNotWritten
 import com.zoonk.android.navigation.AppRoute
@@ -93,7 +94,7 @@ class StudyOpener(
     private val cache: AppCache,
     private val timeZone: () -> String,
     private val scope: CoroutineScope,
-) {
+) : SessionSteps {
     private val refusals = mutableMapOf<UUID, LessonWriting>()
 
     /** Why the API wouldn't write the lesson a tap asked for on this block, for the session's step to say. */
@@ -121,7 +122,7 @@ class StudyOpener(
      * opens it, or the session's summary once nothing is left. Today when the day is over or the
      * step can't start, so Today says why.
      */
-    suspend fun continueSession(sessionId: UUID): MutationResult<AppRoute> =
+    override suspend fun continueSession(sessionId: UUID): MutationResult<AppRoute> =
         cache.mutate(invalidating = OPENING) { session ->
             val read = api.session(session, sessionId, timeZone())
             val goalId = read.goalId
@@ -144,7 +145,7 @@ class StudyOpener(
         }
 
     /** Stop for today: the session's summary says what's done so far and offers to keep going. */
-    suspend fun stop(sessionId: UUID): MutationResult<AppRoute> =
+    override suspend fun stop(sessionId: UUID): MutationResult<AppRoute> =
         cache.mutate(invalidating = STOPPING) { session ->
             api.stop(session, sessionId, timeZone())
             AppRoute.Session(sessionId = sessionId.toString(), stopped = true)

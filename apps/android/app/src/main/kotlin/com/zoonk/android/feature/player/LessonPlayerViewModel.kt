@@ -41,7 +41,6 @@ import com.zoonk.android.feature.player.model.toApi
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.model.writtenText
 import com.zoonk.android.feature.player.steps.isPlayable
-import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.LessonFit
@@ -80,24 +79,6 @@ data class LessonEnding(
     val guest: Boolean = false,
     val fit: LessonFit? = null,
     val inSession: Boolean = false,
-)
-
-/** A session lesson's Continue and Stop for today (main's `useStudyNavigation`). */
-interface SessionSteps {
-    /** The session's next step, its summary once nothing is left, or Today when the day is over. */
-    suspend fun next(sessionId: UUID): MutationResult<AppRoute>
-
-    suspend fun stop(sessionId: UUID): MutationResult<Any>
-}
-
-enum class SessionStep { Continue, Stop }
-
-/** A session lesson's end while [pending] saves, after [failed], or [leaving] for the route it opened. */
-@Immutable
-data class SessionMove(
-    val pending: SessionStep? = null,
-    val failed: SessionStep? = null,
-    val leaving: AppRoute? = null,
 )
 
 /** An answer on its way to the server, sent again under the same attempt until the server has it. */
@@ -165,7 +146,10 @@ class LessonPlayerViewModel(
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)
     private val mutableEnding = MutableStateFlow(LessonEnding(inSession = studySessionId != null))
-    private val mutableSessionMove = MutableStateFlow(SessionMove())
+    private val sessionMover =
+        sessionSteps?.let { steps ->
+            studySessionId?.let { id -> runCatching { UUID.fromString(id) }.getOrNull() }?.let { SessionMover(steps, it, viewModelScope) }
+        }
 
     /** Null until the run starts or is refused. */
     val state: StateFlow<LessonPlayerState?> = mutableState.asStateFlow()
@@ -173,7 +157,7 @@ class LessonPlayerViewModel(
     /** Where the lesson's end leads, read once it's saved. */
     val ending: StateFlow<LessonEnding> = mutableEnding.asStateFlow()
 
-    val sessionMove: StateFlow<SessionMove> = mutableSessionMove.asStateFlow()
+    val sessionMove: StateFlow<SessionMove> = sessionMover?.move ?: MutableStateFlow(SessionMove())
 
     private var lesson: PlayableLesson? = null
     private var openedAt = 0L
@@ -204,34 +188,12 @@ class LessonPlayerViewModel(
         startRun()
     }
 
-    fun continueSession() = moveSession(SessionStep.Continue) { steps, sessionId -> steps.next(sessionId) }
+    fun continueSession() {
+        sessionMover?.continueSession()
+    }
 
-    fun stopSession() =
-        moveSession(SessionStep.Stop) { steps, sessionId ->
-            when (val stopped = steps.stop(sessionId)) {
-                is MutationResult.Done -> MutationResult.Done(AppRoute.Session(sessionId = sessionId.toString(), stopped = true))
-                is MutationResult.Failed -> stopped
-                MutationResult.Obsolete -> MutationResult.Obsolete
-            }
-        }
-
-    private fun moveSession(
-        step: SessionStep,
-        write: suspend (SessionSteps, UUID) -> MutationResult<AppRoute>,
-    ) {
-        val steps = sessionSteps ?: return
-        val sessionId = studySessionId?.let(UUID::fromString) ?: return
-        if (mutableSessionMove.value.pending != null) return
-
-        mutableSessionMove.value = SessionMove(pending = step)
-        viewModelScope.launch {
-            mutableSessionMove.value =
-                when (val result = write(steps, sessionId)) {
-                    is MutationResult.Done -> SessionMove(leaving = result.value)
-                    is MutationResult.Failed -> SessionMove(failed = step)
-                    MutationResult.Obsolete -> SessionMove()
-                }
-        }
+    fun stopSession() {
+        sessionMover?.stop()
     }
 
     /** After "Try again", or once a slow-down's wait is over. */

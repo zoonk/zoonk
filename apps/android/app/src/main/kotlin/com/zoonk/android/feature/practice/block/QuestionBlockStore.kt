@@ -16,7 +16,6 @@ import com.zoonk.api.models.StudyAnswerInput
 import com.zoonk.api.models.StudyAnswerInputAnswer
 import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.StudyBlockDetail
-import com.zoonk.api.models.StudySessionSummary
 import com.zoonk.api.models.StudySessionTimeZone
 import java.util.UUID
 
@@ -42,12 +41,6 @@ interface QuestionBlockApi {
         key: BlockKey,
         timeZone: String,
     ): StudyBlockCompletion
-
-    suspend fun stop(
-        session: AuthenticatedSession,
-        sessionId: UUID,
-        timeZone: String,
-    ): StudySessionSummary
 }
 
 class LiveQuestionBlockApi(
@@ -74,12 +67,6 @@ class LiveQuestionBlockApi(
             .studySessions
             .createStudyBlockCompletion(key.sessionId, key.blockId, StudySessionTimeZone(timeZone))
     }
-
-    override suspend fun stop(
-        session: AuthenticatedSession,
-        sessionId: UUID,
-        timeZone: String,
-    ) = perform { api.clients(session).studySessions.createStudySessionStop(sessionId, StudySessionTimeZone(timeZone)) }
 }
 
 /** A session's question blocks: each block's questions by [BlockKey], and the writes that play them. */
@@ -118,9 +105,6 @@ class QuestionBlockStore(
 
     suspend fun finish(key: BlockKey): MutationResult<StudyBlockCompletion> =
         cache.mutate(invalidating = FINISHED) { session -> api.finish(session, key, timeZone()) }
-
-    suspend fun stop(sessionId: UUID): MutationResult<StudySessionSummary> =
-        cache.mutate(invalidating = FINISHED) { session -> api.stop(session, sessionId, timeZone()) }
 
     private companion object {
         val ANSWERED = setOf(DataDomain.LearnerModel, DataDomain.UserProgress, DataDomain.UserSession)

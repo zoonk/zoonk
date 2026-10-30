@@ -55,7 +55,6 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
-import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -409,7 +408,7 @@ fun CompletionActions(
     val back = if (lesson.targetLanguage != null) R.string.player_back_to_unit else R.string.player_back_to_chapter
 
     if (status == CompletionStatus.Saved && ending.inSession) {
-        SessionEndActions(state, viewModel, exits)
+        LessonSessionEnd(state, viewModel, exits)
         return
     }
 
@@ -431,40 +430,24 @@ fun CompletionActions(
     }
 }
 
-/**
- * Main's `MomentActions`: Stop for today sits above Continue, so a quick second tap after the last
- * answer's Continue never stops the session. A finished session's Continue opens its summary.
- */
 @Composable
-private fun SessionEndActions(
+private fun LessonSessionEnd(
     state: LessonPlayerState,
     viewModel: LessonPlayerViewModel,
     exits: LessonPlayerExits,
 ) {
     val move by viewModel.sessionMove.collectAsStateWithLifecycle()
     val block = state.completion?.result?.studyBlock
-    val completed = block?.sessionCompleted == true
 
     LaunchedEffect(move.leaving) { move.leaving?.let(exits::replace) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        move.failed?.let { failed ->
-            Text(
-                stringResource(if (failed == SessionStep.Stop) R.string.player_stop_failed else R.string.player_next_step_failed),
-                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        if (block != null && !completed) {
-            OutlinedButton(onClick = viewModel::stopSession, enabled = move.pending == null, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.player_stop_for_today))
-            }
-        }
-        Button(onClick = viewModel::continueSession, enabled = move.pending == null, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(if (completed) R.string.player_see_todays_summary else R.string.player_action_continue))
-        }
-    }
+    SessionEndActions(
+        move,
+        completed = block?.sessionCompleted == true,
+        canStop = block != null,
+        onStop = viewModel::stopSession,
+        onContinue = viewModel::continueSession,
+    )
 }
 
 /** Where a guest's lesson sits: its course and its place in its chapter (main's `GuestLessonNext`). */

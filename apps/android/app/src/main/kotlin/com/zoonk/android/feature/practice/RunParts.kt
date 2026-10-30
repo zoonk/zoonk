@@ -171,13 +171,18 @@ internal fun RunFinished(
     saving: Boolean,
     onClose: () -> Unit,
     detail: String? = null,
+    actions: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     TaskScaffold(
         onClose = onClose,
         bottomBar = {
             ActionBarWidth {
-                ActionFlow { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
+                if (actions != null) {
+                    actions()
+                } else {
+                    ActionFlow { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
+                }
             }
         },
     ) { padding -> RunDone(title, saving, Modifier.fillMaxSize().padding(padding), detail, content) }
