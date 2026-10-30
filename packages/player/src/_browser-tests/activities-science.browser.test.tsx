@@ -152,6 +152,10 @@ describe("science activities", () => {
     await expect.element(valueInput()).toHaveValue("38.32");
     await checkActivity();
     await expectVerdict("Not quite");
+
+    await expect
+      .poll(() => document.querySelector("[data-slot='activity-plot']")?.textContent)
+      .toContain("40.77");
   });
 
   it("labeled diagram: every name on its part is right", async () => {

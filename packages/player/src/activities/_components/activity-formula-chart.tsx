@@ -17,6 +17,8 @@ const PLOT_HEIGHT = 168;
 const MARK_RADIUS = 4.5;
 const EXPECTED_RADIUS = 7;
 const DELTA_LABEL_GAP = 8;
+const EXPECTED_LABEL_GAP = EXPECTED_RADIUS + DELTA_LABEL_GAP;
+const EXPECTED_LABEL_HALO = 3;
 const MIN_DELTA_PIXELS = 12;
 
 type Curve = { points: readonly PlotPoint[]; y: number | null };
@@ -52,6 +54,26 @@ function DeltaMark({ from, label, to, x }: { from: number; label: string; to: nu
   );
 }
 
+function ExpectedMark({ label, x, y }: { label: string; x: number; y: number }) {
+  const scales = usePlotScales();
+
+  return (
+    <>
+      <ActivityPlotDot className="fill-success" radius={EXPECTED_RADIUS} x={x} y={y} />
+      <text
+        aria-hidden="true"
+        className="fill-success-text stroke-background text-xs font-semibold tabular-nums [paint-order:stroke]"
+        strokeWidth={EXPECTED_LABEL_HALO}
+        textAnchor="middle"
+        x={scales.x.toPixel(x)}
+        y={scales.y.toPixel(y) - EXPECTED_LABEL_GAP}
+      >
+        {label}
+      </text>
+    </>
+  );
+}
+
 export function ActivityFormulaChart({
   baseline,
   compare = null,
@@ -68,7 +90,7 @@ export function ActivityFormulaChart({
   compare?: { x: number; y: number } | null;
   current: Curve;
   deltaLabel: string | null;
-  expected: { x: number; y: number } | null;
+  expected: { label: string; x: number; y: number } | null;
   formatTick: (value: number) => string;
   formatX: (value: number) => string;
   x: number;
@@ -112,14 +134,7 @@ export function ActivityFormulaChart({
         />
       )}
 
-      {expected && (
-        <ActivityPlotDot
-          className="fill-success"
-          radius={EXPECTED_RADIUS}
-          x={expected.x}
-          y={expected.y}
-        />
-      )}
+      {expected && <ExpectedMark label={expected.label} x={expected.x} y={expected.y} />}
 
       {current.y !== null && (
         <>

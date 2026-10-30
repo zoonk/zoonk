@@ -12,6 +12,18 @@ import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 type ChoiceCheck = Extract<ActivityStepContent["check"], { kind: "choice" }>;
 type NumericCheck = Extract<ActivityStepContent["check"], { kind: "numeric" }>;
 
+/** How a numeric check's numbers are written, with the digits its answer (and the learner's) needs. */
+export function exactAnswerFormat({ check, value }: { check: NumericCheck; value?: number }) {
+  return {
+    maximumFractionDigits: exactFractionDigitsFor({
+      expected: check.answer,
+      tolerance: check.tolerance,
+      value,
+    }),
+    unit: check.unit,
+  };
+}
+
 function FeedbackText({ children }: { children: string }) {
   return (
     <FeedbackExplanation>
@@ -61,13 +73,12 @@ function NumericFeedback({
   const t = useExtracted();
   const format = useFormatNumber();
 
-  const maximumFractionDigits = exactFractionDigitsFor({
-    expected: check.answer,
-    tolerance: check.tolerance,
+  const written = exactAnswerFormat({
+    check,
     value: answer?.kind === "numeric" ? answer.value : undefined,
   });
 
-  const exact = (value: number) => format(value, { maximumFractionDigits, unit: check.unit });
+  const exact = (value: number) => format(value, written);
 
   return (
     <>

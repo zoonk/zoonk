@@ -4,6 +4,7 @@ import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ActivityCanvas, ActivityCanvasLabel } from "../_components/activity-canvas";
+import { exactAnswerFormat } from "../_components/activity-feedback";
 import { ActivityFormulaChart } from "../_components/activity-formula-chart";
 import { ActivityModelSliders } from "../_components/activity-model-sliders";
 import { ActivityOutputReadouts } from "../_components/activity-output-readouts";
@@ -35,10 +36,12 @@ function expectedPoint({
   axis,
   content,
   expected,
+  format,
 }: {
   axis: Fields["variables"][number];
   content: Content;
   expected: FormulaModelProps["expected"];
+  format: ReturnType<typeof useFormatNumber>;
 }) {
   const { check } = content;
 
@@ -47,7 +50,12 @@ function expectedPoint({
   }
 
   const input = check.inputs?.find((item) => item.name === axis.name);
-  return { x: input?.value ?? axis.initial, y: expected.value };
+
+  return {
+    label: format(expected.value, exactAnswerFormat({ check })),
+    x: input?.value ?? axis.initial,
+    y: expected.value,
+  };
 }
 
 export function FormulaModelActivity(props: FormulaModelProps) {
@@ -134,7 +142,7 @@ function FormulaModelBoard({
         deltaLabel={
           view.delta === 0 ? null : format(view.delta, { signed: true, unit: charted.unit })
         }
-        expected={isChecked ? expectedPoint({ axis, content, expected }) : null}
+        expected={isChecked ? expectedPoint({ axis, content, expected, format }) : null}
         formatTick={(value) => format(value, { compact: true, unit: charted.unit })}
         formatX={formatX}
         x={view.x}
