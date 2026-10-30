@@ -9,6 +9,7 @@ struct SessionSummary: Decodable, Equatable, Sendable {
 
     let after: Level
     let colorChanged: Bool
+    let stripesGained: Int
   }
 
   struct ComesBack: Decodable, Equatable, Sendable {
@@ -47,6 +48,8 @@ struct SessionSummary: Decodable, Equatable, Sendable {
 
   let accuracy: Double?
   let belt: Belt?
+  /// The most right answers in a row on new or due material.
+  let bestStreak: Int
   let brainPower: Int
   let ceremony: Milestone?
   let comesBack: [ComesBack]

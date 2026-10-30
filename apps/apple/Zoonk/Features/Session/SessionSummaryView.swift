@@ -48,18 +48,24 @@ struct SessionSummaryView: View {
   }
 
   private func content(_ summary: SessionSummary) -> some View {
-    PaneSplit {
-      List {
-        dayResult(summary)
-      }
-    } secondary: {
-      List {
-        onward(summary)
-      }
-    } single: {
-      List {
-        dayResult(summary)
-        onward(summary)
+    let visit = "\(sessionID):\(summary.brainPower)"
+
+    return SummaryVisit(visit: visit) {
+      PaneSplit {
+        List {
+          dayResult(summary)
+        }
+        .celebratesOnce(id: visit)
+      } secondary: {
+        List {
+          onward(summary)
+        }
+      } single: {
+        List {
+          dayResult(summary)
+          onward(summary)
+        }
+        .celebratesOnce(id: visit)
       }
     }
   }
@@ -68,9 +74,7 @@ struct SessionSummaryView: View {
   private func dayResult(_ summary: SessionSummary) -> some View {
     Section {
       VStack(alignment: .leading, spacing: 4) {
-        SummaryBuddy(
-          look: learner.summary.value?.buddy ?? BuddyLook(),
-          visit: "\(sessionID):\(summary.brainPower)")
+        SummaryBuddy(look: learner.summary.value?.buddy ?? BuddyLook())
 
         title(summary)
           .font(.largeTitle.bold())
@@ -94,19 +98,7 @@ struct SessionSummaryView: View {
     .listRowBackground(Color.clear)
     .listRowInsets(EdgeInsets())
 
-    if !stopped, !summary.missions.isEmpty {
-      Section {
-        ForEach(Array(summary.missions.enumerated()), id: \.offset) { _, mission in
-          MissionRow(mission: mission, buddyName: buddyName)
-        }
-      } header: {
-        Text("Today's missions", tableName: "Session", comment: "The missions' header")
-      } footer: {
-        if summary.fullMeal {
-          Text("All done. +50 Brain Power.", tableName: "Session", comment: "Missions done")
-        }
-      }
-    }
+    EarnedToday(summary: summary, missionsBonus: store.session(id: sessionID).value?.fullMeal.bonus)
   }
 
   @ViewBuilder
@@ -206,10 +198,6 @@ struct SessionSummaryView: View {
     .listRowInsets(EdgeInsets())
   }
 
-  private var buddyName: String {
-    learner.buddyDisplayName
-  }
-
   private func title(_ summary: SessionSummary) -> Text {
     if stopped || !summary.finished {
       return Text("Done for now", tableName: "Session", comment: "Summary after stopping")
@@ -266,8 +254,8 @@ struct SessionSummaryView: View {
   }
 }
 
-/// Main's session numbers: right answers, where the goal stands, what comes back to review and the
-/// Brain Power earned.
+/// Main's session numbers: right answers, where the goal stands and what comes back to review. What
+/// the session earned is its own section.
 private struct SummaryTiles: View {
   let summary: SessionSummary
   let goalKind: LearnerGoal.Kind?
@@ -295,15 +283,6 @@ private struct SummaryTiles: View {
         label: Text("To review", tableName: "Session", comment: "Topics that come back to review"),
         value: Text(summary.comesBack.reduce(0) { $0 + $1.skills }, format: .number),
         systemImage: "arrow.counterclockwise", detail: comesBack)
-
-      StatTile(
-        label: Text("Brain Power", tableName: "Session", comment: "Brain Power earned"),
-        value: Text(verbatim: "+\(summary.brainPower)"), systemImage: "brain", tone: .brain,
-        detail: summary.belt.map {
-          Text(
-            "\(beltName($0.after.color) ?? $0.after.color), level \($0.after.level)",
-            tableName: "Session", comment: "The belt and level reached")
-        })
     }
   }
 
@@ -362,31 +341,142 @@ private struct SummaryTiles: View {
   }
 }
 
-/// Only the summary's first visit plays it, as main's `useFirstSummaryVisit` decides.
-private struct SummaryBuddy: View {
-  private static let celebratedKey = "celebratedSessionSummary"
+/// Main's `useFirstSummaryVisit`: only the summary's first visit celebrates.
+private let celebratedSummaryKey = "celebratedSessionSummary"
 
-  let look: BuddyLook
+private struct SummaryVisit<Content: View>: View {
   let visit: String
+  @ViewBuilder let content: Content
 
   @State private var isFirstVisit: Bool
 
-  init(look: BuddyLook, visit: String) {
-    self.look = look
+  init(visit: String, @ViewBuilder content: () -> Content) {
     self.visit = visit
+    self.content = content()
     _isFirstVisit = State(
-      initialValue: UserDefaults.standard.string(forKey: Self.celebratedKey) != visit)
+      initialValue: UserDefaults.standard.string(forKey: celebratedSummaryKey) != visit)
   }
+
+  var body: some View {
+    content
+      .environment(\.celebrates, isFirstVisit)
+      .onAppear {
+        UserDefaults.standard.set(visit, forKey: celebratedSummaryKey)
+      }
+  }
+}
+
+private struct SummaryBuddy: View {
+  @Environment(\.celebrates) private var celebrates
+
+  let look: BuddyLook
 
   var body: some View {
     var studied = look
     studied.studiedToday = true
 
     return BuddyCharacter(
-      look: studied, expression: isFirstVisit ? .happy : .proud,
-      reaction: isFirstVisit ? ActReaction(act: .proud, delay: .beat) : nil
+      look: studied, expression: celebrates ? .happy : .proud,
+      reaction: celebrates ? ActReaction(act: .proud, delay: .beat) : nil
     )
     .frame(width: 96, height: 96)
-    .onAppear { UserDefaults.standard.set(visit, forKey: Self.celebratedKey) }
+  }
+}
+
+/// Main's `EarnedToday`: the Brain Power the session earned, then the day's missions bonus, a belt's
+/// new levels and the best streak as rows. The bonus is once a day across goals, so another goal's
+/// earning it never says this goal's missions are done.
+private struct EarnedToday: View {
+  let summary: SessionSummary
+  let missionsBonus: Int?
+
+  private static let shownStreak = 3
+
+  private var missionsDone: Bool {
+    summary.fullMeal && !summary.missions.isEmpty && summary.missions.allSatisfy(\.isDone)
+  }
+
+  private var stripes: SessionSummary.Belt? {
+    guard let belt = summary.belt, belt.stripesGained > 0 else { return nil }
+    return belt
+  }
+
+  private var streak: Int? {
+    summary.bestStreak >= Self.shownStreak ? summary.bestStreak : nil
+  }
+
+  var body: some View {
+    if summary.brainPower > 0 || missionsDone || stripes != nil || streak != nil {
+      Section {
+        if summary.brainPower > 0 {
+          HStack(alignment: .firstTextBaseline, spacing: 6) {
+            EarnedNumber(value: summary.brainPower)
+              .font(.largeTitle.weight(.semibold))
+              .foregroundStyle(.brain)
+
+            Text("Brain Power", tableName: "Session", comment: "Brain Power earned")
+              .font(.subheadline.weight(.medium))
+              .foregroundStyle(.secondary)
+          }
+          .accessibilityElement(children: .combine)
+        }
+
+        if missionsDone {
+          LabeledContent {
+            if let missionsBonus {
+              Text(missionsBonus, format: .number.sign(strategy: .always()))
+                .monospacedDigit()
+                .foregroundStyle(.brain)
+            }
+          } label: {
+            Label {
+              Text("Today's missions", tableName: "Session", comment: "The missions' header")
+              Text(
+                "All \(summary.missions.count) done", tableName: "Session",
+                comment: "Every one of the day's missions is done")
+            } icon: {
+              Image(systemName: "checklist")
+            }
+          }
+        }
+
+        if let stripes, let belt = ProgressBelt(rawValue: stripes.after.color) {
+          VStack(alignment: .leading, spacing: 8) {
+            LabeledContent {
+              Text(
+                "+\(stripes.stripesGained) levels", tableName: "Session",
+                comment: "How many belt levels the session added"
+              )
+              .monospacedDigit()
+              .foregroundStyle(.success)
+            } label: {
+              Label {
+                Text(
+                  "\(beltName(stripes.after.color) ?? stripes.after.color), level \(stripes.after.level)",
+                  tableName: "Session", comment: "The belt and level reached")
+              } icon: {
+                BeltDot(belt: belt)
+              }
+            }
+
+            // The ticks hold still: each level already landed at the end of the block that reached it.
+            BeltTicks(belt: belt, level: stripes.after.level)
+          }
+          .accessibilityElement(children: .combine)
+        }
+
+        if let streak {
+          Label {
+            Text(
+              "\(streak) right in a row", tableName: "Session",
+              comment: "The session's most right answers in a row")
+          } icon: {
+            Image(systemName: "chevron.up.2")
+          }
+        }
+      } header: {
+        Text("Earned today", tableName: "Session", comment: "What the session earned")
+      }
+    }
   }
 }
