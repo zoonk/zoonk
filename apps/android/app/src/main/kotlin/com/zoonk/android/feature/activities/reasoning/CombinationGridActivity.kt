@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
@@ -232,12 +233,18 @@ private fun GridBoard(
                     Text(grid.rows.label, color = muted, textAlign = TextAlign.Center, style = label)
                 }
                 grid.columns.values.forEachIndexed { index, value ->
-                    GridHeader(value, grid.isAllele, lit = active?.columnIndex == index, Modifier.weight(1f))
+                    GridHeader(value, grid.isAllele, compact, lit = active?.columnIndex == index, Modifier.weight(1f))
                 }
             }
             grid.rows.values.forEachIndexed { rowIndex, row ->
                 Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(GAP)) {
-                    GridHeader(row, grid.isAllele, lit = active?.rowIndex == rowIndex, Modifier.width(side).clearAndSetSemantics {})
+                    GridHeader(
+                        row,
+                        grid.isAllele,
+                        compact,
+                        lit = active?.rowIndex == rowIndex,
+                        Modifier.width(side).clearAndSetSemantics {},
+                    )
                     grid.places.withIndex().filter { it.value.rowIndex == rowIndex }.forEach { (index, place) ->
                         if (checked != null || onSelectCell == null) {
                             CheckedCell(
@@ -322,6 +329,7 @@ private fun gridDescription(grid: CombinationGrid): String {
 private fun GridHeader(
     value: String,
     isAllele: Boolean,
+    compact: Boolean,
     lit: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -336,7 +344,17 @@ private fun GridHeader(
             .border(if (lit) BorderStroke(2.dp, accent) else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), shape),
         contentAlignment = Alignment.Center,
     ) {
-        CellValue(value, isAllele, MaterialTheme.typography.titleLarge)
+        if (isAllele) {
+            CellValue(value, isAllele = true, MaterialTheme.typography.titleLarge)
+        } else {
+            CellValue(
+                value,
+                isAllele = false,
+                cellStyle(compact),
+                weight = FontWeight.Normal,
+                color = if (lit) Color.Unspecified else MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 
@@ -485,6 +503,8 @@ private fun CellValue(
     value: String,
     isAllele: Boolean,
     style: TextStyle,
+    weight: FontWeight = FontWeight.SemiBold,
+    color: Color = Color.Unspecified,
 ) {
     val accent = MaterialTheme.zoonk.vizAccent
     val text =
@@ -495,7 +515,12 @@ private fun CellValue(
                 }
             }
         }
-    Text(text, style = style.copy(fontWeight = FontWeight.SemiBold).withTabularFigures(), textAlign = TextAlign.Center)
+    Text(
+        text,
+        color = color,
+        style = style.copy(fontWeight = weight).withTabularFigures(),
+        textAlign = TextAlign.Center,
+    )
 }
 
 @Composable
@@ -504,14 +529,15 @@ private fun Trait(
     traits: GridTraits,
 ) {
     val dominant = isDominantPhenotype(value)
-    val accent = MaterialTheme.zoonk.vizAccent
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         Box(
             Modifier
                 .size(8.dp)
                 .clip(CircleShape)
-                .then(if (dominant) Modifier.background(accent) else Modifier.border(1.dp, muted, CircleShape)),
+                .then(
+                    if (dominant) Modifier.background(MaterialTheme.colorScheme.onSurface) else Modifier.border(1.dp, muted, CircleShape),
+                ),
         )
         Text(if (dominant) traits.dominant else traits.recessive, color = muted, style = MaterialTheme.typography.labelSmall)
     }
