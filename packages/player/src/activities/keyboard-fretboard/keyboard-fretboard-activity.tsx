@@ -23,8 +23,8 @@ import {
   pitchSpelling,
   pitchesToNotes,
   targetPitches,
-  targetSpelling,
   targetSound,
+  targetSpelling,
   togglePitch,
 } from "./keyboard-fretboard-notes";
 import { SoundAsText, useCantListen } from "./sound-as-text";

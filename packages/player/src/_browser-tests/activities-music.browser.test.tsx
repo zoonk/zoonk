@@ -20,10 +20,13 @@ import { CANT_LISTEN_TODAY } from "../lesson/use-today-choice";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
 
-vi.mock("smplr", () => {
-  const instrument = () => ({ ready: Promise.resolve(), start: vi.fn(), stop: vi.fn() });
-  return { Soundfont: instrument, SplendidGrandPiano: instrument };
-});
+const instrument = vi.hoisted(() => () => ({
+  ready: Promise.resolve(),
+  start: vi.fn(),
+  stop: vi.fn(),
+}));
+
+vi.mock("smplr", () => ({ Soundfont: instrument, SplendidGrandPiano: instrument }));
 
 const DEVICE_DELAY_KEY = "zoonk:rhythm-device-delay";
 
