@@ -15,16 +15,16 @@ The launcher detects the standard SDK location; set `ANDROID_HOME` for a custom 
 
 Run from the repository root:
 
-| Command                        | Purpose                                                               |
-| ------------------------------ | --------------------------------------------------------------------- |
-| `pnpm android:phone`           | Build, install, and launch on a phone emulator.                       |
-| `pnpm android:tablet`          | Build, install, and launch on a tablet emulator.                      |
-| `pnpm android:build`           | Build the Release APK.                                                |
-| `pnpm android:check`           | Run translation checks, tests, formatting, lint, and a Release build. |
-| `make -C apps/android lint`    | Check formatting, Android Lint, and the custom lint rules' tests.     |
-| `make -C apps/android test`    | Run JVM unit tests.                                                   |
-| `make -C apps/android format`  | Format Kotlin and Gradle files.                                       |
-| `make -C apps/android ui-test` | Run instrumented tests on connected devices.                          |
+| Command                        | Purpose                                                                            |
+| ------------------------------ | ---------------------------------------------------------------------------------- |
+| `pnpm android:phone`           | Build, install, and launch on a phone emulator.                                    |
+| `pnpm android:tablet`          | Build, install, and launch on a tablet emulator.                                   |
+| `pnpm android:build`           | Build the Release APK.                                                             |
+| `pnpm android:check`           | Run translation checks, tests, and formatting; CI runs lint and the Release build. |
+| `make -C apps/android lint`    | Check formatting, Android Lint, and the custom lint rules' tests.                  |
+| `make -C apps/android test`    | Run JVM unit tests.                                                                |
+| `make -C apps/android format`  | Format Kotlin and Gradle files.                                                    |
+| `make -C apps/android ui-test` | Run instrumented tests on connected devices.                                       |
 
 The launcher prefers a running compatible emulator. Pass an exact Device Manager name to select another AVD:
 

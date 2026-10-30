@@ -6,16 +6,17 @@ Read the relevant section when starting local services, signing in, or choosing 
 
 Run commands from the repository root using `mise x -- pnpm ...` in this environment. Read package scripts to select supported commands. Commits require the change's relevant checks and reported results. Before opening a PR (including a draft), marking it ready for review, or merging it, the [root PR verification gate](../../AGENTS.md#pr-verification-gate) requires the full PR and `main` CI quality checks:
 
-| Change                            | Relevant checks                                                                                          |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Markdown or instruction files     | `pnpm exec oxfmt --check <files>`, links/frontmatter, `git diff --check`                                 |
-| TypeScript behavior               | Focused `pnpm --filter <workspace> test <file>`, `pnpm --filter <workspace> typecheck`, root `pnpm lint` |
-| Module boundaries or dependencies | `pnpm knip --production`                                                                                 |
-| App runtime or build integration  | `pnpm --filter <app> build`                                                                              |
-| E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>`; both suites with `pnpm e2e`                     |
-| Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                         |
-| Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                       |
-| Translated copy                   | Affected app extraction, `i18n`, and `i18n:lint`                                                         |
+| Change                            | Relevant checks                                                                                              |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Markdown or instruction files     | `pnpm exec oxfmt --check <files>`, links/frontmatter, `git diff --check`                                     |
+| TypeScript behavior               | Focused `pnpm --filter <workspace> test <file>`, `pnpm --filter <workspace> typecheck`, root `pnpm lint`     |
+| Module boundaries or dependencies | `pnpm knip --production`                                                                                     |
+| App runtime or build integration  | `pnpm --filter <app> build`                                                                                  |
+| E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>`; both suites with `pnpm e2e`                         |
+| Android app                       | `pnpm android:check`; with lint rules, R8 rules or release-only code, also `make -C apps/android lint build` |
+| Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                             |
+| Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                           |
+| Translated copy                   | Affected app extraction, `i18n`, and `i18n:lint`                                                             |
 
 - Builds, test suites and E2E runs take turns through `pnpm dev:queue`, one per 20 GB of the machine's memory (`ZOONK_QUEUE_SLOTS` overrides it), so parallel agents don't push the machine into swap. `pnpm start`'s build, `pnpm build`, `pnpm test`, the E2E builds and runs, the device launchers' builds (`pnpm iphone`, `pnpm android:phone`) and the Apple and Android Makefiles already queue; prefix other heavy commands, such as `pnpm dev:queue pnpm --filter @zoonk/core test`. A job started inside a queued job runs at once, and CI skips the queue.
 - Turbo shares task results through Vercel Remote Cache, so typecheck, lint and test runs replay what CI or another checkout already ran for unchanged packages. Link a machine once with `pnpm exec turbo login` and `pnpm exec turbo link` (it needs access to Zoonk's Vercel team); runs then print "Remote caching enabled". Only builds hash the database URL, which differs between CI, the primary checkout and each worktree.

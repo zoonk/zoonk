@@ -62,6 +62,7 @@ Agents also share one disk, and every worktree fills it: its own dependencies, b
 - Run relevant local checks and fix failures caused by the requested change without pausing for review after each step. Investigate failures, including intermittent ones; do not rerun until green and dismiss them. Fix failures in the affected scope, and report unrelated failures with evidence instead of silently expanding the task.
 - During implementation, once the affected scope has been verified, broaden or repeat checks only for new changes, failures, unresolved risks, or an explicit request. For timing, concurrency, or fixture-isolation changes, repeat the focused affected coverage to establish stability.
 - Before each commit, run the change's relevant checks: typecheck, lint and format of the touched files, and affected tests, where applicable. Report the checks and results. Commits do not require the full PR verification gate.
+- Caches make repeated checks cheap: Turbo replays typecheck, lint and test results that CI or another checkout already produced for unchanged packages. Android's release lint and R8 run in CI on every push to a pull request and in the PR verification gate, not in a commit's checks: `pnpm android:check` covers formatting and the unit tests, and `make -C apps/android lint build` runs the rest when you change lint rules, R8 rules or release-only code.
 
 ### Cross-model review
 
