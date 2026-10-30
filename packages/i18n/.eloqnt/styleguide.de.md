@@ -41,6 +41,7 @@
 - “examiner” / “another candidate” (the AI's roles in a speaking exam): “prüfende Person” / “andere teilnehmende Person”
 - Speaking criteria “Fluency” / “Accuracy” / “Interaction”: “Redefluss” / “Korrektheit” / “Interaktion”
 - “musicianship”: “musikalische Grundlagen”
+- “You've reached today's study time”: “Deine Lernzeit für heute ist aufgebraucht”, in every line that starts with it
 
 ## Feature names and states
 

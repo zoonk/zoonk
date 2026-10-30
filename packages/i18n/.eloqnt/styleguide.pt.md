@@ -46,6 +46,7 @@
 - “email”: “e-mail”
 - “hello@zoonk.com”: “contato@zoonk.com”
 - “Send feedback” (to Zoonk): “Enviar feedback”, not “Enviar comentários”
+- “You've reached today's study time”: “Você usou todo o seu tempo de estudo de hoje”, in every line that starts with it
 
 ## Feature names and states
 

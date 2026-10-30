@@ -1594,11 +1594,11 @@ msgctxt "c9tebJ"
 msgid "You've reached today's study time. Move the challenge to Monday to keep it."
 msgstr "Deine Lernzeit für heute ist aufgebraucht. Verschieb die Herausforderung auf Montag, damit sie nicht wegfällt."
 
-#. Study time is the learner's daily amount.
+#. Study time is the learner's daily amount. The weekly challenge can't move to another day, so the learner misses it this week.
 #: src/challenge/challenge-used-up.tsx
-msgctxt "PjSBHJ"
-msgid "You've reached today's study time."
-msgstr "Du hast deine Lernzeit für heute erreicht."
+msgctxt "oMsVbG"
+msgid "You've reached today's study time. You'll miss this week's challenge."
+msgstr "Deine Lernzeit für heute ist aufgebraucht. Du verpasst die Herausforderung dieser Woche."
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx

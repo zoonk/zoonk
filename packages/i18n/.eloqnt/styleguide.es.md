@@ -32,6 +32,7 @@
 - “Free” (subscription name): “Gratis”
 - “Get Plus”: “pásate a Plus”, not “hazte Plus”
 - “hello@zoonk.com”: “contacto@zoonk.com”
+- “You've reached today's study time”: “Has completado tu tiempo de estudio de hoy”, in every line that starts with it
 
 ## Feature names and states
 

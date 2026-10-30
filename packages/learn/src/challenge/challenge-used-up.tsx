@@ -63,8 +63,9 @@ export function WeeklyUsedUpLine({ movable }: { movable: boolean }) {
             message: "You've reached today's study time. Move the challenge to Monday to keep it.",
           })
         : t({
-            description: "Study time is the learner's daily amount.",
-            message: "You've reached today's study time.",
+            description:
+              "Study time is the learner's daily amount. The weekly challenge can't move to another day, so the learner misses it this week.",
+            message: "You've reached today's study time. You'll miss this week's challenge.",
           })}
     </StudyTimeUsedUpNote>
   );

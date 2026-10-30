@@ -1594,11 +1594,11 @@ msgctxt "c9tebJ"
 msgid "You've reached today's study time. Move the challenge to Monday to keep it."
 msgstr "Has completado tu tiempo de estudio de hoy. Pasa el desafío al lunes para conservarlo."
 
-#. Study time is the learner's daily amount.
+#. Study time is the learner's daily amount. The weekly challenge can't move to another day, so the learner misses it this week.
 #: src/challenge/challenge-used-up.tsx
-msgctxt "PjSBHJ"
-msgid "You've reached today's study time."
-msgstr "Has completado tu tiempo de estudio de hoy."
+msgctxt "oMsVbG"
+msgid "You've reached today's study time. You'll miss this week's challenge."
+msgstr "Has completado tu tiempo de estudio de hoy. Te perderás el desafío de esta semana."
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
