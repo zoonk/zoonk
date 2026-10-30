@@ -4,10 +4,8 @@ import { type GoalView } from "@zoonk/core/goals/contract";
 import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { useState } from "react";
-import { hasIsoDatePassed } from "../../_utils/iso-date";
 import { type PollStatus } from "../../_utils/use-poll";
 import {
-  type FoundTime,
   type StudyWeek,
   asksAboutTime,
   getShownMinutes,
@@ -22,17 +20,6 @@ export type ScheduleActions = {
   findTimeToCover: (week: StudyWeek) => Promise<PlanTimeToCover | null>;
   getTimeAdvice: (week: StudyWeek & { dailyMinutes: number }) => Promise<PlanTimeAdvice | null>;
 };
-
-function withPastDate(time: PlanTimeToCover | null): FoundTime | null {
-  return (
-    time && {
-      ...time,
-      pastDate:
-        time.targetDate !== null &&
-        hasIsoDatePassed({ isoDate: time.targetDate, today: new Date() }),
-    }
-  );
-}
 
 function hasStopped(status: PollStatus): boolean {
   return status === "failed" || status === "timedOut";
@@ -80,7 +67,7 @@ function useFoundTime({
   const week = toFindWeek({ days, weekend });
 
   const covering = usePlanAnswer({
-    ask: async () => withPastDate(await ask(week)),
+    ask: () => ask(week),
     enabled: dated && days.length > 0,
     key: JSON.stringify(week),
     paused,

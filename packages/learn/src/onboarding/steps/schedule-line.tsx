@@ -1,11 +1,12 @@
 "use client";
 
+import { type PlanSuggestedTime } from "@zoonk/core/plans/time-advice-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useFormatGoalDate, useFormatIsoDate } from "../../_utils/iso-date";
 import { useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
-import { type SuggestedTime, type TimeLine } from "./schedule-time";
+import { type TimeLine } from "./schedule-time";
 
 export type GoalDate = { isoDate: string; namedMonth: boolean };
 
@@ -157,7 +158,7 @@ function LineWords({
   return <StatusWords dated={date !== null} line={line} minutes={minutes} />;
 }
 
-function OfferLabel({ offer }: { offer: SuggestedTime }) {
+function OfferLabel({ offer }: { offer: PlanSuggestedTime }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const time = formatDuration(offer.minutes);
@@ -182,7 +183,7 @@ export function ScheduleLine({
   exam: boolean;
   line: TimeLine;
   minutes: number | null;
-  offer: SuggestedTime | null;
+  offer: PlanSuggestedTime | null;
   onRetry: () => void;
   onUseOffer: (minutes: number) => void;
   tooClose: { recommendedMinutes: number | null } | null;

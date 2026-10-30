@@ -25,6 +25,23 @@ const readySchema = z
       "False while the plan is being built, or while it waits for placement or its exam's notice reading, which change what it needs: ask again in a few seconds",
   });
 
+const suggestedTimeSchema = z
+  .object({
+    kind: z
+      .enum(["everything", "everyTopic"])
+      .meta({
+        description:
+          "everything: the time covers the whole goal in depth by its date (recommendedMinutes); everyTopic: it brings every topic in, some in less depth (coreMinutes)",
+      }),
+    minutes: z.int(),
+  })
+  .nullable()
+  .default(null)
+  .meta({
+    description:
+      "The daily time to start the learner on: recommendedMinutes when it's at most 4 hours a day, else coreMinutes when that is. Null when neither is, without a date, while not ready, and when the date has passed",
+  });
+
 const targetDateNamedMonthSchema = z
   .boolean()
   .meta({
@@ -86,6 +103,13 @@ export const planTimeToCoverSchema = z
         description:
           "For a goal that isn't an exam and doesn't cover everything by its date in its own week, or whose date passed (no studyDays or weekendMinutes asked about): the earliest date the learner's own time covers everything by, measured as the plan measures what it covers (once moved there, the plan says it covers everything), to send as it is with `setTargetDate`. Null otherwise, and when no date within a week of the plan's end without a date does",
       }),
+    pastDate: z
+      .boolean()
+      .default(false)
+      .meta({
+        description:
+          "The goal's date has passed in the learner's time zone: no daily time covers it, so recommendedMinutes, coreMinutes and suggested are null",
+      }),
     readingNotice: readingNoticeSchema,
     ready: readySchema,
     recommendedMinutes: z
@@ -95,6 +119,7 @@ export const planTimeToCoverSchema = z
         description:
           "Daily minutes that study the whole goal in depth by its date: the fewest up to 4 hours a day; above that, a time that does, which a weekly mock can make a little more than the fewest. Null without a date, while the plan is being built, or when not even a whole day does",
       }),
+    suggested: suggestedTimeSchema,
     targetDate: isoDateSchema
       .nullable()
       .meta({ description: "The goal's date, which the recommended time covers everything by" }),
@@ -103,6 +128,8 @@ export const planTimeToCoverSchema = z
   .meta({ id: "PlanTimeToCover" });
 
 export type PlanTimeToCover = z.infer<typeof planTimeToCoverSchema>;
+
+export type PlanSuggestedTime = NonNullable<PlanTimeToCover["suggested"]>;
 
 /** `studyDays` are weekdays from Sunday (0); absent, the plan's own. */
 export type PlanTimeToCoverInput = { studyDays?: readonly number[]; weekendMinutes?: number };

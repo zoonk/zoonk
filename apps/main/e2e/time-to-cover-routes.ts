@@ -11,9 +11,11 @@ export async function routeTimeToCover(
     const json: PlanTimeToCover = {
       coreMinutes: null,
       fittingDate: null,
+      pastDate: false,
       readingNotice: false,
       ready: true,
       recommendedMinutes: null,
+      suggested: null,
       targetDateNamedMonth: false,
       ...time,
     };

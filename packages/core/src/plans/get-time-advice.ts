@@ -9,6 +9,7 @@ import { buildPlanNumbersView } from "./_utils/plan-numbers-view";
 import { isPlanSetupTaskOwed } from "./_utils/plan-setup-tasks";
 import { computePlan } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
+import { getSuggestedTime } from "./_utils/suggested-time";
 import { MIN_DAILY_MINUTES } from "./daily-minutes";
 import { getNoticeWaitState } from "./notice-wait";
 import { type LearnerPlanOperation } from "./plan-contract";
@@ -227,9 +228,11 @@ export async function findPlanTimeToCover({
       time: {
         coreMinutes: null,
         fittingDate: null,
+        pastDate: false,
         readingNotice: asked.readingNotice,
         ready: false,
         recommendedMinutes: null,
+        suggested: null,
         targetDate: null,
         targetDateNamedMonth: false,
       },
@@ -267,15 +270,21 @@ export async function findPlanTimeToCover({
   const pastDate = context.goal.targetDate !== null && context.goal.targetDate < context.today;
   const movesDate = ownWeek && context.goal.kind !== "exam" && (pastDate || !feasibility.fits);
 
+  // Nothing covers a date that has passed, so no time is searched for.
+  const minutes = {
+    coreMinutes: pastDate ? null : feasibility.coreMinutes,
+    recommendedMinutes: pastDate ? null : feasibility.recommendedMinutes,
+  };
+
   return {
     status: "ready",
     time: {
-      // Nothing covers a date that has passed, so no time is searched for.
-      coreMinutes: pastDate ? null : feasibility.coreMinutes,
+      ...minutes,
       fittingDate: movesDate && context.goal.targetDate ? await findCoveringDate(context) : null,
+      pastDate,
       readingNotice: false,
       ready: true,
-      recommendedMinutes: pastDate ? null : feasibility.recommendedMinutes,
+      suggested: getSuggestedTime(minutes),
       targetDate: context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null,
       targetDateNamedMonth: dateKind.namedMonth,
     },

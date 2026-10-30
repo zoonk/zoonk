@@ -192,7 +192,7 @@ describe("a plan whose date came with lessons left", () => {
 
     await expect(findPlanTimeToCover({ goalId: goal.id, input: {} })).resolves.toMatchObject({
       status: "ready",
-      time: { fittingDate: null },
+      time: { fittingDate: null, pastDate: true, suggested: null },
     });
 
     const applied = await changeGoalPlan({

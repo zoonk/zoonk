@@ -1,17 +1,11 @@
 import {
+  type PlanSuggestedTime,
   type PlanTimeAdvice,
   type PlanTimeAdviceInput,
   type PlanTimeToCover,
 } from "@zoonk/core/plans/time-advice-contract";
 
 export type StudyWeek = Omit<PlanTimeAdviceInput, "dailyMinutes"> & { studyDays: number[] };
-
-export type FoundTime = PlanTimeToCover & { pastDate: boolean };
-
-/** More time a day than this is never a learner's starting time, even when it's what covers it all. */
-const LONGEST_SUGGESTED_MINUTES = 240;
-
-export type SuggestedTime = { kind: "everyTopic" | "everything"; minutes: number };
 
 export type TimeLine =
   | { kind: "asking" }
@@ -56,24 +50,8 @@ export function toFindWeek({
   return weekend === null ? { studyDays: days } : { studyDays: days, weekendMinutes: weekend };
 }
 
-function getSuggestedTime(
-  found: Pick<PlanTimeToCover, "coreMinutes" | "recommendedMinutes">,
-): SuggestedTime | null {
-  const { coreMinutes, recommendedMinutes } = found;
-
-  if (recommendedMinutes !== null && recommendedMinutes <= LONGEST_SUGGESTED_MINUTES) {
-    return { kind: "everything", minutes: recommendedMinutes };
-  }
-
-  if (coreMinutes !== null && coreMinutes <= LONGEST_SUGGESTED_MINUTES) {
-    return { kind: "everyTopic", minutes: coreMinutes };
-  }
-
-  return null;
-}
-
-export function getSuggestedMinutes(found: FoundTime | null): number | null {
-  return found && !found.pastDate ? (getSuggestedTime(found)?.minutes ?? null) : null;
+export function getSuggestedMinutes(found: PlanTimeToCover | null): number | null {
+  return found?.suggested?.minutes ?? null;
 }
 
 /**
@@ -89,8 +67,8 @@ export function getShownMinutes({
   settled,
 }: {
   fallback: number;
-  first: FoundTime | null;
-  found: FoundTime | null;
+  first: PlanTimeToCover | null;
+  found: PlanTimeToCover | null;
   picked: number | null;
   settled: boolean;
 }): number | null {
@@ -117,8 +95,8 @@ export function toPickedMinutes({
   found,
   minutes,
 }: {
-  first: FoundTime | null;
-  found: FoundTime | null;
+  first: PlanTimeToCover | null;
+  found: PlanTimeToCover | null;
   minutes: number;
 }): number | null {
   const follows = getSuggestedMinutes(first) !== null;
@@ -130,14 +108,14 @@ export function getTooClose({
   found,
   line,
 }: {
-  found: FoundTime | null;
+  found: PlanTimeToCover | null;
   line: TimeLine;
 }): { recommendedMinutes: number | null } | null {
   if (
     !found ||
     found.pastDate ||
     line.kind === "everything" ||
-    getSuggestedTime(found)?.kind === "everything"
+    found.suggested?.kind === "everything"
   ) {
     return null;
   }
@@ -151,11 +129,11 @@ export function getOffer({
   line,
   minutes,
 }: {
-  found: FoundTime | null;
+  found: PlanTimeToCover | null;
   line: TimeLine;
   minutes: number | null;
-}): SuggestedTime | null {
-  const suggested = found && !found.pastDate ? getSuggestedTime(found) : null;
+}): PlanSuggestedTime | null {
+  const suggested = found?.suggested ?? null;
 
   return suggested && suggested.minutes !== minutes && line.kind !== "everything"
     ? suggested
@@ -172,7 +150,7 @@ function getDatedLine({
   advice: PlanTimeAdvice | null;
   askFailed: boolean;
   findFailed: boolean;
-  found: FoundTime | null;
+  found: PlanTimeToCover | null;
   minutes: number;
 }): TimeLine {
   if (!found) {
@@ -183,7 +161,7 @@ function getDatedLine({
     return { kind: "pastDate" };
   }
 
-  const suggested = getSuggestedTime(found);
+  const { suggested } = found;
 
   if (suggested?.minutes === minutes) {
     return suggested.kind === "everything"
@@ -230,7 +208,7 @@ export function getTimeLine({
   askFailed: boolean;
   dated: boolean;
   findFailed: boolean;
-  found: FoundTime | null;
+  found: PlanTimeToCover | null;
   hasDays: boolean;
   minutes: number | null;
 }): TimeLine {
@@ -255,7 +233,7 @@ export function asksAboutTime({
   minutes,
 }: {
   dated: boolean;
-  found: FoundTime | null;
+  found: PlanTimeToCover | null;
   fullCourse: boolean;
   minutes: number | null;
 }): boolean {
@@ -271,7 +249,7 @@ export function asksAboutTime({
     return false;
   }
 
-  return fullCourse || getSuggestedTime(found)?.minutes !== minutes;
+  return fullCourse || found.suggested?.minutes !== minutes;
 }
 
 /** An exam's choice to study everything holds until the time picked is known to cover it all. */

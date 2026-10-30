@@ -1,7 +1,6 @@
-import { type PlanTimeAdvice } from "@zoonk/core/plans/time-advice-contract";
+import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { describe, expect, it } from "vitest";
 import {
-  type FoundTime,
   asksAboutTime,
   getOffer,
   getShownMinutes,
@@ -14,7 +13,11 @@ import {
   toStudyWeek,
 } from "./schedule-time";
 
-function foundTime(time: Partial<FoundTime> = {}): FoundTime {
+const PAST_DATE = { pastDate: true, recommendedMinutes: null, suggested: null };
+
+const TOO_CLOSE = { coreMinutes: 300, recommendedMinutes: 900, suggested: null };
+
+function foundTime(time: Partial<PlanTimeToCover> = {}): PlanTimeToCover {
   return {
     coreMinutes: null,
     fittingDate: null,
@@ -22,9 +25,22 @@ function foundTime(time: Partial<FoundTime> = {}): FoundTime {
     readingNotice: false,
     ready: true,
     recommendedMinutes: 35,
+    suggested: { kind: "everything", minutes: 35 },
     targetDate: "2028-10-29",
     targetDateNamedMonth: false,
     ...time,
+  };
+}
+
+function everythingAt(minutes: number): Partial<PlanTimeToCover> {
+  return { recommendedMinutes: minutes, suggested: { kind: "everything", minutes } };
+}
+
+function everyTopicAt(minutes: number): Partial<PlanTimeToCover> {
+  return {
+    coreMinutes: minutes,
+    recommendedMinutes: 300,
+    suggested: { kind: "everyTopic", minutes },
   };
 }
 
@@ -54,26 +70,14 @@ const LINE = {
 };
 
 describe(getSuggestedMinutes, () => {
-  it("suggests the time that covers everything, up to four hours a day", () => {
-    expect(getSuggestedMinutes(foundTime({ recommendedMinutes: 240 }))).toBe(240);
-  });
-
-  it("suggests the time that reaches every topic when covering everything takes longer", () => {
-    expect(getSuggestedMinutes(foundTime({ coreMinutes: 45, recommendedMinutes: 300 }))).toBe(45);
-  });
-
-  it.each([
-    { coreMinutes: 300, recommendedMinutes: 900 },
-    { coreMinutes: null, recommendedMinutes: null },
-    { pastDate: true },
-  ])("suggests nothing a day can't sensibly hold, or for a date that has passed: %o", (time) => {
-    expect(getSuggestedMinutes(foundTime(time))).toBeNull();
+  it("takes the plan's suggestion, or none while the plan hasn't answered", () => {
+    expect(getSuggestedMinutes(foundTime(everyTopicAt(45)))).toBe(45);
+    expect(getSuggestedMinutes(foundTime(TOO_CLOSE))).toBeNull();
+    expect(getSuggestedMinutes(null)).toBeNull();
   });
 });
 
 describe(getShownMinutes, () => {
-  const TOO_CLOSE = foundTime({ coreMinutes: 300, recommendedMinutes: 900 });
-
   const SHOWN = {
     fallback: 60,
     first: foundTime(),
@@ -88,11 +92,11 @@ describe(getShownMinutes, () => {
 
   it("starts on the plan's suggestion and follows it as the days change", () => {
     expect(getShownMinutes(SHOWN)).toBe(35);
-    expect(getShownMinutes({ ...SHOWN, found: foundTime({ recommendedMinutes: 30 }) })).toBe(30);
+    expect(getShownMinutes({ ...SHOWN, found: foundTime(everythingAt(30)) })).toBe(30);
   });
 
   it("keeps the first suggestion when other days have none", () => {
-    expect(getShownMinutes({ ...SHOWN, found: TOO_CLOSE })).toBe(35);
+    expect(getShownMinutes({ ...SHOWN, found: foundTime(TOO_CLOSE) })).toBe(35);
   });
 
   it("keeps the learner's own time over the suggestion", () => {
@@ -100,12 +104,14 @@ describe(getShownMinutes, () => {
   });
 
   it("keeps the screen's own time when it started without a suggestion, whatever the days find later", () => {
-    expect(getShownMinutes({ ...SHOWN, first: TOO_CLOSE, found: TOO_CLOSE })).toBe(60);
-    expect(getShownMinutes({ ...SHOWN, first: TOO_CLOSE, found: foundTime() })).toBe(60);
+    const tooClose = foundTime(TOO_CLOSE);
+
+    expect(getShownMinutes({ ...SHOWN, first: tooClose, found: tooClose })).toBe(60);
+    expect(getShownMinutes({ ...SHOWN, first: tooClose, found: foundTime() })).toBe(60);
   });
 
   it.each([
-    { first: foundTime({ pastDate: true, recommendedMinutes: null }), settled: false },
+    { first: foundTime(PAST_DATE), settled: false },
     { first: null, settled: true },
   ])("falls back to the screen's own time when no suggestion comes: %o", ({ first, settled }) => {
     expect(getShownMinutes({ ...SHOWN, first, found: first, settled })).toBe(60);
@@ -122,8 +128,9 @@ describe(toPickedMinutes, () => {
   });
 
   it("keeps the suggestion as the learner's own on a screen that started without one", () => {
-    const tooClose = foundTime({ coreMinutes: 300, recommendedMinutes: 900 });
-    expect(toPickedMinutes({ first: tooClose, found: foundTime(), minutes: 35 })).toBe(35);
+    expect(toPickedMinutes({ first: foundTime(TOO_CLOSE), found: foundTime(), minutes: 35 })).toBe(
+      35,
+    );
   });
 });
 
@@ -135,13 +142,9 @@ describe(getTimeLine, () => {
   it("says why the suggested time without asking the plan again", () => {
     expect(getTimeLine(LINE)).toStrictEqual({ kind: "everything", suggested: true });
 
-    expect(
-      getTimeLine({
-        ...LINE,
-        found: foundTime({ coreMinutes: 45, recommendedMinutes: 300 }),
-        minutes: 45,
-      }),
-    ).toStrictEqual({ kind: "everyTopic" });
+    expect(getTimeLine({ ...LINE, found: foundTime(everyTopicAt(45)), minutes: 45 })).toStrictEqual(
+      { kind: "everyTopic" },
+    );
   });
 
   it("says what another time covers once the plan answers for it", () => {
@@ -170,9 +173,9 @@ describe(getTimeLine, () => {
   });
 
   it("says a date that has passed instead of what any time covers by it", () => {
-    expect(
-      getTimeLine({ ...LINE, found: foundTime({ pastDate: true, recommendedMinutes: null }) }),
-    ).toStrictEqual({ kind: "pastDate" });
+    expect(getTimeLine({ ...LINE, found: foundTime(PAST_DATE) })).toStrictEqual({
+      kind: "pastDate",
+    });
   });
 
   it("says when an undated goal would finish at the time picked", () => {
@@ -209,26 +212,29 @@ describe(asksAboutTime, () => {
   it("waits for the suggestion, and never asks about a date that has passed", () => {
     expect(asksAboutTime({ ...ASK, found: null })).toBe(false);
     expect(asksAboutTime({ ...ASK, minutes: null })).toBe(false);
-    expect(asksAboutTime({ ...ASK, found: foundTime({ pastDate: true }) })).toBe(false);
+    expect(asksAboutTime({ ...ASK, found: foundTime(PAST_DATE) })).toBe(false);
   });
 });
 
 describe(getTooClose, () => {
   const SHORT = { kind: "share", share: 0.15 } as const;
-  const TOO_CLOSE = foundTime({ coreMinutes: 300, recommendedMinutes: 900 });
 
   it("says why only when no sensible time covers everything", () => {
     expect(getTooClose({ found: foundTime(), line: SHORT })).toBeNull();
-    expect(getTooClose({ found: foundTime({ pastDate: true }), line: SHORT })).toBeNull();
+    expect(getTooClose({ found: foundTime(PAST_DATE), line: SHORT })).toBeNull();
 
-    expect(getTooClose({ found: TOO_CLOSE, line: SHORT })).toStrictEqual({
+    expect(getTooClose({ found: foundTime(TOO_CLOSE), line: SHORT })).toStrictEqual({
       recommendedMinutes: 900,
+    });
+
+    expect(getTooClose({ found: foundTime(everyTopicAt(45)), line: SHORT })).toStrictEqual({
+      recommendedMinutes: 300,
     });
   });
 
   it("says nothing once the time picked covers everything anyway", () => {
     const covers = { kind: "everything", suggested: false } as const;
-    expect(getTooClose({ found: TOO_CLOSE, line: covers })).toBeNull();
+    expect(getTooClose({ found: foundTime(TOO_CLOSE), line: covers })).toBeNull();
   });
 });
 
@@ -246,7 +252,7 @@ describe(getOffer, () => {
 
   it("offers nothing to a time that already covers everything", () => {
     const covers = { kind: "everything", suggested: false } as const;
-    const found = foundTime({ coreMinutes: 240, recommendedMinutes: 900 });
+    const found = foundTime(everyTopicAt(240));
 
     expect(getOffer({ found, line: covers, minutes: 900 })).toBeNull();
   });

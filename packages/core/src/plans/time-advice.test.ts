@@ -320,7 +320,9 @@ describe(getPlanTimeAdvice, () => {
     expect(advice.recommendedMinutes).toBeGreaterThan(goal.dailyMinutes);
 
     await expect(readPlanTime(goal.id)).resolves.toMatchObject({
+      pastDate: false,
       recommendedMinutes: advice.recommendedMinutes,
+      suggested: { kind: "everything", minutes: advice.recommendedMinutes },
     });
 
     await change(goal.id, [{ kind: "setDailyMinutes", minutes: advice.recommendedMinutes ?? 0 }]);
