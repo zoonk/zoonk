@@ -4,6 +4,7 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
+import { draftAgainWhenFlawed } from "../../_utils/draft-again";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { type CourseLevel } from "./_utils/course-levels";
 import template from "./teaching-chapters.prompt.md";
@@ -12,9 +13,9 @@ import template from "./teaching-chapters.prompt.md";
 const defaultModel = "anthropic/claude-sonnet-5.5";
 const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6.1-sol"] as const;
 
-const schema = z.object({
-  skills: z.array(z.object({ after: z.number(), chapter: z.number().nullable(), key: z.string() })),
-});
+const answerSchema = z.object({ after: z.number(), chapter: z.number().nullable() });
+
+type Answer = z.infer<typeof answerSchema>;
 
 type BandChapter = { title: string; lessons: string[] };
 
@@ -37,6 +38,13 @@ export type TeachingChaptersParams = {
 /** `chapter` teaches the skill already; otherwise a chapter for it goes after `after` (0: first). */
 type TeachingChapter = { after: number; chapter: number | null; key: string };
 
+/** Every skill gets an answer: one left out would read as untaught and get a second chapter. */
+function toSchema(skills: readonly BandSkill[]) {
+  return z.object({
+    skills: z.object(Object.fromEntries(skills.map((skill) => [skill.key, answerSchema]))),
+  });
+}
+
 function formatChapter({ chapter, index }: { chapter: BandChapter; index: number }): string {
   return `${index + 1}. ${chapter.title}: ${chapter.lessons.join("; ")}`;
 }
@@ -53,37 +61,57 @@ ${params.skills.map((skill) => `- ${skill.key}: ${skill.name}. ${skill.descripti
   `;
 }
 
-function toChapterNumber({ count, value }: { count: number; value: number | null }) {
-  return value !== null && Number.isInteger(value) && value >= 1 && value <= count ? value : null;
+function isValid({ answer, count }: { answer?: Answer; count: number }): boolean {
+  if (!answer) {
+    return false;
+  }
+
+  const { after, chapter } = answer;
+
+  return chapter === null
+    ? Number.isInteger(after) && after >= 0 && after <= count
+    : Number.isInteger(chapter) && chapter >= 1 && chapter <= count;
 }
 
-function toAfter({ count, value }: { count: number; value: number }): number {
-  return Number.isInteger(value) ? Math.min(Math.max(value, 0), count) : count;
-}
-
-/** One answer per requested skill, in their order: a skill left out is written after the band. */
-function normalizeTeachingChapters({
+function countInvalid({
   answers,
   count,
   skills,
 }: {
-  answers: readonly TeachingChapter[];
+  answers: Readonly<Record<string, Answer>>;
   count: number;
-  skills: readonly Pick<BandSkill, "key">[];
-}): TeachingChapter[] {
-  return skills.map(({ key }) => {
-    const answer = answers.find((entry) => entry.key === key);
-    const chapter = answer ? toChapterNumber({ count, value: answer.chapter }) : null;
-    const after = chapter ?? (answer ? toAfter({ count, value: answer.after }) : count);
-
-    return { after, chapter, key };
-  });
+  skills: readonly BandSkill[];
+}): number {
+  return skills.filter(({ key }) => !isValid({ answer: answers[key], count })).length;
 }
 
-export async function findTeachingChapters(params: TeachingChaptersParams) {
+/** A skill whose answer is still invalid after a second draft gets a chapter after the band. */
+function toTeachingChapter({
+  answer,
+  count,
+  key,
+}: {
+  answer?: Answer;
+  count: number;
+  key: string;
+}): TeachingChapter {
+  if (!answer || !isValid({ answer, count })) {
+    return { after: count, chapter: null, key };
+  }
+
+  return { after: answer.chapter ?? answer.after, chapter: answer.chapter, key };
+}
+
+async function draftAnswers({
+  params,
+  systemPrompt,
+  userPrompt,
+}: {
+  params: TeachingChaptersParams;
+  systemPrompt: string;
+  userPrompt: string;
+}) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
-  const systemPrompt = template;
-  const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
@@ -92,7 +120,7 @@ export async function findTeachingChapters(params: TeachingChaptersParams) {
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object({ schema: toSchema(params.skills) }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
@@ -102,11 +130,27 @@ export async function findTeachingChapters(params: TeachingChaptersParams) {
     task: "teaching-chapters",
   });
 
-  const data = normalizeTeachingChapters({
-    answers: result.output.skills,
-    count: params.chapters.length,
-    skills: params.skills,
+  return { answers: result.output.skills, provenance, usage: result.usage };
+}
+
+export async function findTeachingChapters(params: TeachingChaptersParams) {
+  const systemPrompt = template;
+  const userPrompt = buildUserPrompt(params);
+  const count = params.chapters.length;
+
+  const kept = await draftAgainWhenFlawed({
+    countProblems: (draft) =>
+      countInvalid({ answers: draft.answers, count, skills: params.skills }),
+    draft: () => draftAnswers({ params, systemPrompt, userPrompt }),
   });
 
-  return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
+  return {
+    data: params.skills.map(({ key }) =>
+      toTeachingChapter({ answer: kept.answers[key], count, key }),
+    ),
+    provenance: kept.provenance,
+    systemPrompt,
+    usage: kept.usage,
+    userPrompt,
+  };
 }

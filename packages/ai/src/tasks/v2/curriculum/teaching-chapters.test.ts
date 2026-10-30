@@ -1,5 +1,5 @@
 import { generateText } from "ai";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { findTeachingChapters } from "./teaching-chapters";
 import type * as Ai from "ai";
@@ -22,32 +22,56 @@ function skill(key: string) {
   return { description: `O que ${key} pede`, key, name: `Habilidade ${key}` };
 }
 
+function answer(skills: Record<string, { after: number; chapter: number | null }>) {
+  return createGenerateTextResult({ skills }) as never;
+}
+
+function find(keys: string[]) {
+  return findTeachingChapters({
+    chapters: CHAPTERS,
+    courseTitle: "Italiano",
+    language: "pt",
+    level: "beginner",
+    skills: keys.map((key) => skill(key)),
+  });
+}
+
 describe(findTeachingChapters, () => {
-  it("answers every skill once, in order, sending a skill the model skipped or misplaced after the band", async () => {
+  beforeEach(() => {
+    vi.mocked(generateText).mockReset();
+  });
+
+  it("answers every skill in order, with a new chapter's place in the band", async () => {
     vi.mocked(generateText).mockResolvedValue(
-      createGenerateTextResult({
-        skills: [
-          { after: 2, chapter: null, key: "complain" },
-          { after: 1, chapter: 1, key: "stay" },
-          { after: 9, chapter: 7, key: "call" },
-          { after: 1, chapter: 2, key: "unknown" },
-        ],
-      }) as never,
+      answer({ complain: { after: 1, chapter: null }, stay: { after: 0, chapter: 1 } }),
     );
 
-    const { data } = await findTeachingChapters({
-      chapters: CHAPTERS,
-      courseTitle: "Italiano",
-      language: "pt",
-      level: "beginner",
-      skills: ["stay", "complain", "call", "travel"].map((key) => skill(key)),
-    });
+    const { data } = await find(["stay", "complain"]);
 
     expect(data).toStrictEqual([
       { after: 1, chapter: 1, key: "stay" },
-      { after: 2, chapter: null, key: "complain" },
+      { after: 1, chapter: null, key: "complain" },
+    ]);
+
+    expect(generateText).toHaveBeenCalledOnce();
+  });
+
+  it("asks again when a chapter doesn't exist, and keeps a skill still unplaced after the band", async () => {
+    vi.mocked(generateText)
+      .mockResolvedValueOnce(
+        answer({ call: { after: 0, chapter: 7 }, stay: { after: 9, chapter: null } }),
+      )
+      .mockResolvedValueOnce(
+        answer({ call: { after: 0, chapter: 5 }, stay: { after: 0, chapter: 1 } }),
+      );
+
+    const { data } = await find(["stay", "call"]);
+
+    expect(generateText).toHaveBeenCalledTimes(2);
+
+    expect(data).toStrictEqual([
+      { after: 1, chapter: 1, key: "stay" },
       { after: 2, chapter: null, key: "call" },
-      { after: 2, chapter: null, key: "travel" },
     ]);
   });
 });
