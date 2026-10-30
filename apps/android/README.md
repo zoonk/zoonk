@@ -39,7 +39,7 @@ The Makefile shortcuts require GNU Make and a POSIX shell. On native Windows, us
 
 ## Local API
 
-`pnpm dev` writes the API URL it serves for this checkout to `local-development.properties` (ignored by Git), and the next Debug build calls it; without that file, Debug builds call `http://localhost:4000` (`pnpm dev:direct`). On the emulator, `localhost` names resolve to the Mac at `10.0.2.2` and keep their name, so the local proxy still routes them. Android 17 counts the Mac as the local network, so Debug builds ask for `ACCESS_LOCAL_NETWORK`: `pnpm android:phone` and `pnpm android:tablet` grant it on install; after installing another way, run `adb shell pm grant com.zoonk.debug android.permission.ACCESS_LOCAL_NETWORK`. Release builds call `https://api.zoonk.com`.
+`pnpm dev main api` (or `pnpm start main api` for a production build) starts only main, the API and the mailbox, and writes the API URL it serves for this checkout to `local-development.properties` (ignored by Git); the next Debug build calls it. Without that file, Debug builds call `http://localhost:4000` (`pnpm dev:direct main api`). On the emulator, `localhost` names resolve to the Mac at `10.0.2.2` and keep their name, so the local proxy still routes them. Android 17 counts the Mac as the local network, so Debug builds ask for `ACCESS_LOCAL_NETWORK`: `pnpm android:phone` and `pnpm android:tablet` grant it on install; after installing another way, run `adb shell pm grant com.zoonk.debug android.permission.ACCESS_LOCAL_NETWORK`. Release builds call `https://api.zoonk.com`.
 
 To sign a Debug build in as a persona, get a session token from the local API with the persona's email (`pnpm dev:persona <name>` prints it) and hand it to the app:
 
