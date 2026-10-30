@@ -297,6 +297,8 @@ struct PlanPhase: Decodable, Equatable, Identifiable, Sendable {
     let nextDate: String?
   }
 
+  /// The phase keeps lessons but its challenge has no room before the plan's date.
+  let challengeLeftOut: Bool
   let chapters: [PlanChapter]
   let checkpoint: Checkpoint?
   let endDate: String?
@@ -311,6 +313,24 @@ struct PlanPhase: Decodable, Equatable, Identifiable, Sendable {
   let state: State
 
   var id: Int { index }
+
+  enum LeftOut: Equatable {
+    case challenge
+    case lessons(Int)
+    case noTimeForChallenge
+    case notInPlan
+  }
+
+  var leftOut: LeftOut? {
+    switch state {
+    case .leftOut:
+      .notInPlan
+    case .unfinished:
+      lessonsTotal > lessonsDone ? .lessons(lessonsTotal - lessonsDone) : .challenge
+    case .current, .done, .upcoming:
+      challengeLeftOut ? .noTimeForChallenge : nil
+    }
+  }
 
   var lessonShare: Double {
     if state == .done {

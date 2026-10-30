@@ -11247,6 +11247,35 @@
         }
       }
     },
+    "No time for this phase's challenge before your date" : {
+      "comment" : "On a phase of the learner's plan: the plan has no room for its challenge before their goal's date",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vor deinem Zieldatum bleibt keine Zeit für die Herausforderung dieser Phase"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay tiempo para el desafío de esta fase antes de tu fecha objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas assez de temps pour le défi de cette phase avant la date de ton objectif"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem tempo para o desafio desta fase antes da data da sua meta"
+          }
+        }
+      }
+    },
     "No tools? You can do it all with examples." : {
       "comment" : "Says every tool is optional",
       "localizations" : {

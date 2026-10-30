@@ -250,24 +250,26 @@ private struct PlanPhaseRow: View {
   }
 
   private var meta: Text? {
-    switch phase.state {
-    case .leftOut:
+    switch phase.leftOut {
+    case .notInPlan:
       return Text(
         "Not in your plan", tableName: "Plan", comment: "A phase the plan holds nothing of")
-    case .unfinished:
-      let leftOut = phase.lessonsTotal - phase.lessonsDone
-
-      return leftOut > 0
-        ? Text(
-          "\(leftOut) lessons were left out", tableName: "Plan",
-          comment: "A phase moved past with lessons set aside")
-        : Text(
-          "Challenge left out", tableName: "Plan",
-          comment: "A phase moved past with only its challenge set aside")
-    case .current where !isOpen:
-      return resumes
-    case .current, .done, .upcoming:
-      return nil
+    case .lessons(let count):
+      return Text(
+        "\(count) lessons were left out", tableName: "Plan",
+        comment: "A phase moved past with lessons set aside")
+    case .challenge:
+      return Text(
+        "Challenge left out", tableName: "Plan",
+        comment: "A phase moved past with only its challenge set aside")
+    case .noTimeForChallenge:
+      return Text(
+        "No time for this phase's challenge before your date", tableName: "Plan",
+        comment:
+          "On a phase of the learner's plan: the plan has no room for its challenge before their goal's date"
+      )
+    case nil:
+      return phase.state == .current && !isOpen ? resumes : nil
     }
   }
 
