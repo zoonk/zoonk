@@ -7,7 +7,8 @@ TEST_ARGUMENTS ?=
 XCODEBUILD_ARGUMENTS ?=
 # The WebRTC package is a binary download; with the default Keychain credential lookup, xcodebuild
 # can wait forever on a Keychain prompt in non-interactive shells. Public downloads need no login.
-XCODEBUILD := xcodebuild -quiet -skipPackagePluginValidation -packageAuthorizationProvider netrc $(XCODEBUILD_ARGUMENTS) -project "$(PROJECT)"
+# Builds stay in the checkout, so removing an agent's worktree removes them too.
+XCODEBUILD := xcodebuild -quiet -skipPackagePluginValidation -packageAuthorizationProvider netrc -derivedDataPath DerivedData/Make $(XCODEBUILD_ARGUMENTS) -project "$(PROJECT)"
 BUILD_FLAGS := -configuration "$(CONFIGURATION)" CODE_SIGNING_ALLOWED=NO
 
 .PHONY: build build-ios test format format-check check
