@@ -45,7 +45,7 @@
     <string name="mistakes_cause_guess">Guessed</string>
     <string name="mistakes_cause_unsorted">Not sorted yet</string>
     <!-- %1$s is why the learner got the question wrong, such as "Misread". -->
-    <string name="mistakes_cause_fixed">%1$s · Fixed</string>
+    <string name="mistakes_cause_fixed">%1$s · Fixed</string>
     <string name="mistakes_practice_tomorrow">Practice tomorrow</string>
     <string name="mistakes_practice_skill">Practice this skill</string>
     <string name="mistakes_open_lesson">Open the lesson</string>

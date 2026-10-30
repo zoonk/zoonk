@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "mistakes_cause_fixed": "81f65dc112172c835f75943357be022f4b5436f652d8a4f44e266e4b0f756ea6",
+  "mistakes_cause_fixed": "e7867117729c4a8790e97713df581008de924529538953dc612d0c06b71c78db",
   "mistakes_cause_gap": "ffd79e89f0f65a359d7b8b1dbd18365a09fd2888dc7909245f77cf6012f91047",
   "mistakes_cause_guess": "917effe4becbf114975ceabc2421d58d2a9d7d08bb3cb29238ef0832d59ea511",
   "mistakes_cause_misread": "d7931cd9da9a60ee8c80f75c10fec8dd48da8f445d273565bf2d751961ca79fa",
@@ -83,7 +83,7 @@
     <string name="mistakes_cause_guess">Réponse au hasard</string>
     <string name="mistakes_cause_unsorted">Pas encore classée</string>
     <!-- %1$s is why the learner got the question wrong, such as "Misread". -->
-    <string name="mistakes_cause_fixed">%1$s · Corrigée</string>
+    <string name="mistakes_cause_fixed">%1$s · Corrigée</string>
     <string name="mistakes_practice_tomorrow">À réviser demain</string>
     <string name="mistakes_practice_skill">S’entraîner sur cette compétence</string>
     <string name="mistakes_open_lesson">Ouvrir la leçon</string>

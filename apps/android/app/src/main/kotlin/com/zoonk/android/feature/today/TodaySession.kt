@@ -77,6 +77,7 @@ import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
@@ -556,7 +557,7 @@ private fun rowLabel(
             ?.contains(step.position) == true
     val label =
         when {
-            !catchingUp && step.checkpoint != null -> listOfNotNull(step.subject, blockDetail(step)).joinToString(" · ")
+            !catchingUp && step.checkpoint != null -> listOfNotNull(step.subject, blockDetail(step)).factsLine()
             !catchingUp -> step.subject
             step.subject != null -> stringResource(R.string.today_step_catching_up_subject, step.subject)
             else -> stringResource(R.string.today_step_catching_up)

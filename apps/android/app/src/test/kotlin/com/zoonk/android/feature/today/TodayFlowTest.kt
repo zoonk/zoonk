@@ -280,7 +280,7 @@ class TodayFlowTest {
             )
         show("blocks" to JsonArray(listOf(challenge)))
 
-        rule.onNodeWithText("Spanish · Ordering food · 8 questions, no hints").assertExists()
+        rule.onNodeWithText("Spanish\u00A0· Ordering food\u00A0· 8 questions, no hints").assertExists()
     }
 
     @Test
