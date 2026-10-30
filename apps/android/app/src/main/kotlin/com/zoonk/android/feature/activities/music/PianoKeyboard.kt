@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalDensity
@@ -43,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.ui.components.fadingHorizontalScroll
-import com.zoonk.android.ui.theme.LightTheme
 
 private class PianoKey(
     val midi: Int,
@@ -183,7 +183,8 @@ private fun Key(
             Box(Modifier.clearAndSetSemantics {}) {
                 when {
                     mark != null -> {
-                        LightTheme { NoteMark(mark, name) }
+                        val ring = colors.markRing
+                        NoteMark(mark, name, Modifier.drawBehind { drawCircle(ring, size.minDimension / 2 + MARK_RING.toPx()) })
                     }
 
                     key.midi % MusicNotes.OCTAVE == 0 -> {
@@ -209,6 +210,8 @@ private class PianoColors(
     val black: Color,
     val blackBorder: Color?,
     val label: Color,
+    /** Keys keep their shade in dark theme, so a ring in the screen's color sets a mark off a key of its shade. */
+    val markRing: Color,
 )
 
 private fun pianoColors(colors: ColorScheme): PianoColors {
@@ -220,6 +223,7 @@ private fun pianoColors(colors: ColorScheme): PianoColors {
         black = colors.onPrimaryFixed,
         blackBorder = colors.outline.takeIf { isDark },
         label = colors.onPrimaryFixedVariant,
+        markRing = colors.surface,
     )
 }
 
@@ -227,6 +231,7 @@ private const val HALF = 0.5f
 private const val BLACK_KEY_SHARE = 0.62f
 private const val BLACK_KEY_HEIGHT = 0.6f
 private val KEYBOARD_HEIGHT = 144.sp
+private val MARK_RING = 2.dp
 
 /** Wide enough that a black key, at [BLACK_KEY_SHARE] of a white one, is still a 48dp target. */
 private val PRESSABLE_WHITE_KEY: Dp = 78.dp
