@@ -93,7 +93,7 @@
   "plan_change_fewer": "a7947ebdf9684253087663b0c3295fe739fd3f7bce843149771c8782c45f1109",
   "plan_change_fewer_lessons": "042b73973d92c3d478b31c43ecaf8544d97b32b4ff8c4724edf4ce4aa3245460",
   "plan_change_finish_area_instead": "05257853d7a1a301ea5de3906e1ad52f716d477b9cafc22bbad450ff2cb27b4e",
-  "plan_change_finish_around": "203594aa30a8b96424d293790eeced835f75c6b23b05281bec81d4d33907b7ee",
+  "plan_change_finish_around": "147a6d2c6a5f958501126efba0b5e96b095af5faf5cb2b4c804daf13cd8d48c3",
   "plan_change_fit_lessons": "430391e92d705f69493ab330ff26d9df68817b87805916d24be9b54b717af195",
   "plan_change_follows_guide": "ebdcb508999783fdf723b02e0ad884e957b5477e9770d06171a978b56b8a4b7f",
   "plan_change_follows_notice": "79fe18ab8c49594c33ef0af87f2006b2046d13acfd121ef5b7c6353641d5ca54",
@@ -1099,7 +1099,8 @@
     <string name="plan_change_phase_end_row">%1$s : %2$s (au lieu de %3$s)</string>
     <string name="plan_change_ends_instead">Se termine le %1$s au lieu du %2$s.</string>
     <string name="plan_change_ends_around_instead">Se termine vers le %1$s au lieu du %2$s.</string>
-    <string name="plan_change_finish_around">Tu termines vers le %1$s.</string>
+    <!-- %1$s is a month and year, like "March 2027". -->
+    <string name="plan_change_finish_around">Tu termines vers %1$s.</string>
     <string name="plan_change_start_area_on">Tu commences %1$s le %2$s.</string>
     <string name="plan_change_start_area_instead">Tu commences %1$s le %2$s au lieu du %3$s.</string>
     <string name="plan_change_still_start_area">Tu commences toujours %1$s le %2$s.</string>
