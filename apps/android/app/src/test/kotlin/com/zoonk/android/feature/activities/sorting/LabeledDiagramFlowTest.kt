@@ -96,6 +96,15 @@ class LabeledDiagramFlowTest : SortingFlow() {
 
         rule.onNodeWithContentDescription("Spot 5: Aorta").assertExists()
     }
+
+    @Test
+    fun labeledDiagramExploredNamesEveryNumberWithNoNamesToPlace() {
+        explore("labeledDiagram")
+
+        rule.onNodeWithContentDescription("What each number shows").performScrollTo()
+        HEART_SPOTS.forEachIndexed { index, name -> rule.onNodeWithContentDescription("Spot ${index + 1}: $name").assertExists() }
+        rule.onNodeWithText("Pulmonary valve").assertDoesNotExist()
+    }
 }
 
 private val HEART_SPOTS = listOf("Right atrium", "Left atrium", "Right ventricle", "Left ventricle", "Aorta")

@@ -65,6 +65,7 @@
   "activities_sorting_time_between": "210fc96e8e0dae6855737ee9683d5860e68bf771f2cbd9023a99bc66b2767b86",
   "activities_sorting_timeline_from": "79fd35a7c7bfa4c98fd2cd97cba412e1be98b05439032fa2e348a7ab064ea2a9",
   "activities_sorting_to_sort": "a81fb74d1a17c7cb5f3e20b2cc367c6d8268c0fda4a44943d52a35ca7c045738",
+  "activities_sorting_what_each_number_shows": "de8d9a4f77c46385870402db71147b30a2ee8d263fd1980cf4ad566053119034",
   "activities_sorting_wrong_group": "f8870ca476e94ec83f21e5f32fff55b814b9b6702b412d20e4f60e5e28419e34",
   "activities_sorting_year_and_guess": "3017f101e6139745de48f120a2fe5c79cd575778cce1cec8535c44c7f70069d5",
   "activities_sorting_year_bce": "4650d128d92dcfbef2178876c5f36e4d63681c8af0a9a35a39712fe770941692",
@@ -226,6 +227,8 @@
     <string name="activities_sorting_put_on_spot">Coloque %1$s na posição %2$d</string>
     <!-- The name of the list of numbered spots, for TalkBack. -->
     <string name="activities_sorting_spots_to_label">Posições para nomear</string>
+    <!-- The name of the list that says what each number on an explored picture shows, for TalkBack. -->
+    <string name="activities_sorting_what_each_number_shows">O que cada número indica</string>
     <!-- A numbered spot with no name yet, for TalkBack, like "Spot 3: empty". -->
     <string name="activities_sorting_spot_empty">Posição %1$d: vazia</string>
     <!-- A numbered spot and its name, for TalkBack, like "Spot 3: Right ventricle". -->

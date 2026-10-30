@@ -27,8 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CollectionInfo
 import androidx.compose.ui.semantics.CollectionItemInfo
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.collectionInfo
 import androidx.compose.ui.semantics.collectionItemInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +40,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityCanvasLabel
+import com.zoonk.android.feature.activities.ActivityPhase
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.ActivitySortableList
@@ -68,11 +71,16 @@ private fun ProcessOrderActivity(props: ActivityProps) {
     var order by rememberSaveable { mutableStateOf(props.answer.orderIds ?: shuffled.map { it.id }) }
     val byId = steps.associateBy { it.id }
 
-    if (props.isChecked) {
-        val results = stepResults(steps.map { it.id }, order)
+    if (props.phase != ActivityPhase.Answering) {
+        val results = if (props.isChecked) stepResults(steps.map { it.id }, order) else null
         ActivityCanvas(gap = 8.dp) {
-            ActivityCanvasLabel(stringResource(R.string.activities_sorting_right_order))
-            steps.forEachIndexed { index, step -> OrderedStep(step, results[index], index) }
+            if (props.isChecked) ActivityCanvasLabel(stringResource(R.string.activities_sorting_right_order))
+            Column(
+                Modifier.semantics { collectionInfo = CollectionInfo(rowCount = steps.size, columnCount = 1) },
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                steps.forEachIndexed { index, step -> OrderedStep(step, results?.get(index), index) }
+            }
         }
         return
     }
@@ -101,10 +109,10 @@ private fun ProcessOrderActivity(props: ActivityProps) {
 @Composable
 private fun OrderedStep(
     step: ProcessStep,
-    result: StepResult,
+    result: StepResult?,
     index: Int,
 ) {
-    val outcome = if (result.learnerPosition == result.position) AnswerResult.Right else AnswerResult.Wrong
+    val outcome = result?.let { if (it.learnerPosition == it.position) AnswerResult.Right else AnswerResult.Wrong }
     val tone = answerTone(picked = false, result = outcome)
     val shape = RoundedCornerShape(12.dp)
 
@@ -117,13 +125,13 @@ private fun OrderedStep(
             .padding(horizontal = 12.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        StepMarks(step.icon, result.position, outcome)
+        StepMarks(step.icon, index + 1, outcome)
         Column(Modifier.weight(1f).padding(top = TEXT_TOP), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             RichText(step.text, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
             step.why?.let {
                 RichText(it, style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
             }
-            val had = result.learnerPosition
+            val had = result?.learnerPosition
             if (outcome == AnswerResult.Wrong && had != null) {
                 Text(
                     stringResource(R.string.activities_sorting_you_had_it_at, had),

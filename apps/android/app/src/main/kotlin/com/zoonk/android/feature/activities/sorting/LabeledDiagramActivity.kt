@@ -68,9 +68,35 @@ val labeledDiagramRenderer =
 
 private enum class SpotState { Empty, Filled, Active, Right, Wrong }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun LabeledDiagramActivity(props: ActivityProps) {
+    val parts = (props.content as LabeledDiagramContent).value.fields.parts
+    if (props.isExploring) DiagramKey(diagramSlots(parts.map { it.label })) else DiagramBoard(props)
+}
+
+@Composable
+private fun DiagramKey(slots: List<DiagramSlot>) {
+    val label = stringResource(R.string.activities_sorting_what_each_number_shows)
+    ActivityCanvas {
+        Column(Modifier.semantics { contentDescription = label }, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            slots.forEach { slot ->
+                val description = stringResource(R.string.activities_sorting_spot_named, slot.number, slot.label)
+                Row(
+                    Modifier.heightIn(min = 32.dp).clearAndSetSemantics { contentDescription = description },
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    SpotNumber(slot.number, SpotState.Filled)
+                    Text(slot.label, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun DiagramBoard(props: ActivityProps) {
     val fields = (props.content as LabeledDiagramContent).value.fields
     val slots = remember(fields) { diagramSlots(fields.parts.map { it.label }) }
     val names =

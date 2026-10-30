@@ -2,6 +2,7 @@ package com.zoonk.android.feature.activities.sorting
 
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -99,5 +100,16 @@ class CauseEffectChainFlowTest : SortingFlow() {
         rule.onNodeWithContentDescription("Remove the link from Years of drought to Dust storms").performScrollTo().performClick()
 
         shows("0 of 2 links")
+    }
+
+    @Test
+    fun causeEffectExploredDrawsEveryLinkWithWhyAndNothingToPick() {
+        explore("causeEffectChain")
+
+        shows("Bare soil blew away.")
+        shows("Dry soil lifted.")
+        rule.onNodeWithText("Prairie plowed for wheat").assertIsNotEnabled()
+        rule.onNodeWithText("Pick a cause, then pick what it led to.").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Remove the link from Years of drought to Dust storms").assertDoesNotExist()
     }
 }

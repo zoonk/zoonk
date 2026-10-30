@@ -95,6 +95,7 @@ import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.roundToInt
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf22Value as TimelineContent
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf22Fields as TimelineFields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue as ChoiceCheck
 
 val timelineRenderer =
@@ -134,6 +135,22 @@ private class TrackAxis(
 
 @Composable
 private fun TimelineActivity(props: ActivityProps) {
+    if (props.isExploring) ExploredTimeline((props.content as TimelineContent).value.fields) else TimelineQuestion(props)
+}
+
+@Composable
+private fun ExploredTimeline(fields: TimelineFields) {
+    val formatYear = rememberYearFormat(fields.start)
+    val dated = (fields.anchors.map { Dated(it.label, it.year) } + fields.events.map { Dated(it.label, it.year) }).sortedBy { it.year }
+
+    ActivityCanvas {
+        TimelineTrack(fields, anchors = dated, events = emptyList(), movable = false, formatYear = formatYear)
+        TimelineGaps(dated, formatYear)
+    }
+}
+
+@Composable
+private fun TimelineQuestion(props: ActivityProps) {
     val content = (props.content as TimelineContent).value
     val fields = content.fields
     val isQuestion = content.check is ChoiceCheck
@@ -148,7 +165,6 @@ private fun TimelineActivity(props: ActivityProps) {
     val expected = props.expected.orderIds
     val unplaced = fields.events.filter { event -> placements.none { it.first == event.id } }
     val trayEvent = fields.events.firstOrNull { it.id == dragId } ?: unplaced.firstOrNull()
-    val step = yearStep(fields.start, fields.end)
 
     fun place(
         id: String,
@@ -182,27 +198,16 @@ private fun TimelineActivity(props: ActivityProps) {
 
     ActivityCanvas {
         var track by remember { mutableStateOf<LayoutCoordinates?>(null) }
-        BoxWithConstraints(Modifier.fillMaxWidth()) {
-            val fontScale = LocalDensity.current.fontScale
-            val gutter = rememberTrackGutter(fields.start, fields.end, formatYear)
-            val labels = (fields.anchors.map { it.label } + fields.events.map { it.label })
-            val gap = cardGap(labels, maxWidth, fontScale, gutter)
-            val axis = TrackAxis(fields.start, fields.end, max(MIN_HEIGHT.value, gap.value * (labels.size + 1)).dp)
-            TimelineTrack(
-                axis = axis,
-                anchors = fields.anchors.map { Dated(it.label, it.year) },
-                events = events,
-                cardGap = gap,
-                gutter = gutter,
-                width = maxWidth,
-                step = step,
-                movable = !props.isLocked && !showTruth,
-                formatYear = formatYear,
-                focus = focus,
-                onTrack = { track = it },
-                onMove = ::place,
-            )
-        }
+        TimelineTrack(
+            fields = fields,
+            anchors = fields.anchors.map { Dated(it.label, it.year) },
+            events = events,
+            movable = !props.isLocked && !showTruth,
+            formatYear = formatYear,
+            focus = focus,
+            onTrack = { track = it },
+            onMove = ::place,
+        )
 
         if (!props.isChecked && trayEvent != null) {
             TimelineTray(
@@ -307,19 +312,21 @@ private fun rememberYearFormat(start: Long): (Long) -> String {
 
 @Composable
 private fun TimelineTrack(
-    axis: TrackAxis,
+    fields: TimelineFields,
     anchors: List<Dated>,
     events: List<TrackEvent>,
-    cardGap: Dp,
-    gutter: TrackGutter,
-    width: Dp,
-    step: Long,
     movable: Boolean,
     formatYear: (Long) -> String,
-    focus: Map<String, FocusRequester>,
-    onTrack: (LayoutCoordinates) -> Unit,
-    onMove: (String, Long?) -> Unit,
-) {
+    focus: Map<String, FocusRequester> = emptyMap(),
+    onTrack: (LayoutCoordinates) -> Unit = {},
+    onMove: (String, Long?) -> Unit = { _, _ -> },
+) = BoxWithConstraints(Modifier.fillMaxWidth()) {
+    val gutter = rememberTrackGutter(fields.start, fields.end, formatYear)
+    val labels = fields.anchors.map { it.label } + fields.events.map { it.label }
+    val cardGap = cardGap(labels, maxWidth, LocalDensity.current.fontScale, gutter)
+    val axis = TrackAxis(fields.start, fields.end, max(MIN_HEIGHT.value, cardGap.value * (labels.size + 1)).dp)
+    val width = maxWidth
+    val step = yearStep(fields.start, fields.end)
     val density = LocalDensity.current.density
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val shown = anchors.map { it.year } + events.map { if (it.isRevealed) it.year else it.guess }

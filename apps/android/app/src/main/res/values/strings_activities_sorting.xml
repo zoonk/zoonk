@@ -149,6 +149,8 @@
     <string name="activities_sorting_put_on_spot">Put %1$s on spot %2$d</string>
     <!-- The name of the list of numbered spots, for TalkBack. -->
     <string name="activities_sorting_spots_to_label">Spots to label</string>
+    <!-- The name of the list that says what each number on an explored picture shows, for TalkBack. -->
+    <string name="activities_sorting_what_each_number_shows">What each number shows</string>
     <!-- A numbered spot with no name yet, for TalkBack, like "Spot 3: empty". -->
     <string name="activities_sorting_spot_empty">Spot %1$d: empty</string>
     <!-- A numbered spot and its name, for TalkBack, like "Spot 3: Right ventricle". -->

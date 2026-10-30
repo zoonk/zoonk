@@ -20,6 +20,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
+import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonStepCheckInput
 import kotlinx.serialization.json.JsonObject
@@ -54,6 +55,8 @@ abstract class SortingFlow {
             checkResult(isCorrect, expected = ActivityFixtures.expected(fixture))
         }
     }
+
+    protected fun explore(fixture: String) = harness.play(listOf(ActivityFixtures.exploreStep(fixture), summaryStep("end")))
 
     protected fun sentAnswer() = ApiJson.encodeToString(LessonStepCheckInput.serializer(), checkNotNull(sent))
 

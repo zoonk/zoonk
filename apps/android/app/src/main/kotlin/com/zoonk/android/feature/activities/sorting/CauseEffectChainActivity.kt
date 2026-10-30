@@ -90,12 +90,16 @@ private fun CauseEffectChainActivity(props: ActivityProps) {
     val nodes = remember(fields) { orderNodes(fields.nodes) { it.year } }
     val order = nodes.map { it.id }
     val truth = fields.links.map { CauseLink(it.from, it.to) }
-    val isGuided = content.check is ChoiceCheck
+    val isGuided = content.check is ChoiceCheck && !props.isExploring
     var links by rememberSaveable(stateSaver = LinksSaver) {
         mutableStateOf(
-            props.answer.links
-                .orEmpty()
-                .map { (from, to) -> CauseLink(from, to) },
+            if (props.isExploring) {
+                truth
+            } else {
+                props.answer.links
+                    .orEmpty()
+                    .map { (from, to) -> CauseLink(from, to) }
+            },
         )
     }
     var causeId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -103,7 +107,7 @@ private fun CauseEffectChainActivity(props: ActivityProps) {
     var announcement by remember { mutableStateOf("") }
     val centers = remember { mutableStateMapOf<String, Float>() }
     val resources = LocalResources.current
-    val locked = props.isChecked || props.isLocked
+    val locked = props.isChecked || props.isLocked || props.isExploring
     val labelOf = { id: String -> fields.nodes.firstOrNull { it.id == id }?.label ?: id }
 
     fun update(next: List<CauseLink>) {
@@ -149,21 +153,23 @@ private fun CauseEffectChainActivity(props: ActivityProps) {
 
     Box {
         ActivityCanvas {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(
-                    causeId?.let { stringResource(R.string.activities_sorting_now_pick, labelOf(it)) }
-                        ?: stringResource(R.string.activities_sorting_pick_cause),
-                    Modifier.weight(1f).alignByBaseline(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                if (!isGuided) {
+            if (!props.isExploring) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
-                        pluralStringResource(R.plurals.activities_sorting_links_count, truth.size, links.size, truth.size),
-                        Modifier.alignByBaseline(),
+                        causeId?.let { stringResource(R.string.activities_sorting_now_pick, labelOf(it)) }
+                            ?: stringResource(R.string.activities_sorting_pick_cause),
+                        Modifier.weight(1f).alignByBaseline(),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                        style = MaterialTheme.typography.bodyMedium,
                     )
+                    if (!isGuided) {
+                        Text(
+                            pluralStringResource(R.plurals.activities_sorting_links_count, truth.size, links.size, truth.size),
+                            Modifier.alignByBaseline(),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                        )
+                    }
                 }
             }
 

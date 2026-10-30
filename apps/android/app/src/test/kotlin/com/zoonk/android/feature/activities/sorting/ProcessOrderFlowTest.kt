@@ -3,7 +3,9 @@ package com.zoonk.android.feature.activities.sorting
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onFirst
@@ -132,6 +134,25 @@ class ProcessOrderFlowTest : SortingFlow() {
         }
 
         assertEquals(before, stepOrder())
+    }
+
+    @Test
+    fun processOrderExploredShowsTheStepsInOrderWithWhy() {
+        explore("processOrder")
+
+        shows("The absorbed light energy is what splits water.")
+        val tops =
+            PHOTOSYNTHESIS.map {
+                rule
+                    .onNodeWithText(it)
+                    .fetchSemanticsNode()
+                    .positionInRoot.y
+            }
+        assertEquals(tops.sorted(), tops)
+        val stepList = SemanticsMatcher("a list of 5 steps") { it.config.getOrNull(SemanticsProperties.CollectionInfo)?.rowCount == 5 }
+        rule.onNode(stepList).assertExists()
+        rule.onNodeWithText("Hold and drag the steps into order.").assertDoesNotExist()
+        rule.onNodeWithText("The right order").assertDoesNotExist()
     }
 }
 

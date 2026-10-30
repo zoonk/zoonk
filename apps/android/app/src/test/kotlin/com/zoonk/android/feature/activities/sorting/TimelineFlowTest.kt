@@ -11,6 +11,7 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -175,6 +176,17 @@ class TimelineFlowTest : SortingFlow() {
         slider("Moon landing").performSemanticsAction(SemanticsActions.SetProgress) { it(1969f) }
 
         sliderSays("Moon landing", "1950\u00A0CE")
+    }
+
+    @Test
+    fun timelineExploredDatesEveryEventAndTheTimeBetween() {
+        explore("timeline")
+
+        rule.onNode(hasText("Moon landing") and hasText("1969\u00A0CE")).performScrollTo().assertExists()
+        rule.onNode(hasText("Cleopatra rules Egypt") and hasText("51\u00A0BCE")).performScrollTo().assertExists()
+        rule.onNodeWithContentDescription("Time between the dates").performScrollTo().assertExists()
+        rule.onNodeWithContentDescription("Place Moon landing on the timeline").assertDoesNotExist()
+        rule.onNodeWithText("Show the real dates").assertDoesNotExist()
     }
 }
 
