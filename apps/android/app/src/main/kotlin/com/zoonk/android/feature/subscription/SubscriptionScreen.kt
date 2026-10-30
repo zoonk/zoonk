@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.subscription
 
+import android.content.ActivityNotFoundException
 import androidx.activity.compose.LocalActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
@@ -137,7 +138,7 @@ private fun Account(
                     subscription,
                     navigator,
                     openWebPlusCancellation = app.subscriptions::webPlusCancellation,
-                    readPlanAgain = { app.subscriptions.account.refresh() },
+                    readPlanAgain = app.subscriptions::readPlanAgain,
                 )
             } else {
                 Offer(app, navigator, hasAccount = true, isVisitor = false)
@@ -159,7 +160,7 @@ internal fun CurrentPlan(
     subscription: MeSubscription,
     navigator: AppNavigator,
     openWebPlusCancellation: suspend () -> MutationResult<String>,
-    readPlanAgain: suspend () -> Unit,
+    readPlanAgain: () -> Unit,
 ) {
     val context = LocalContext.current
     val isEnding = subscription.cancelAt != null
@@ -219,7 +220,7 @@ internal fun CurrentPlan(
 @Composable
 private fun WebPlusCancellation(
     open: suspend () -> MutationResult<String>,
-    readPlanAgain: suspend () -> Unit,
+    readPlanAgain: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -230,7 +231,7 @@ private fun WebPlusCancellation(
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         if (awaitingReturn) {
             awaitingReturn = false
-            scope.launch { readPlanAgain() }
+            readPlanAgain()
         }
     }
 
@@ -242,8 +243,12 @@ private fun WebPlusCancellation(
                 scope.launch {
                     when (val result = open()) {
                         is MutationResult.Done -> {
-                            awaitingReturn = true
-                            CustomTabsIntent.Builder().build().launchUrl(context, result.value.toUri())
+                            try {
+                                CustomTabsIntent.Builder().build().launchUrl(context, result.value.toUri())
+                                awaitingReturn = true
+                            } catch (_: ActivityNotFoundException) {
+                                failed = true
+                            }
                         }
 
                         is MutationResult.Failed -> {

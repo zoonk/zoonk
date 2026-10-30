@@ -21,11 +21,13 @@ import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeResponse
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StoreSubscriptionResponse
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -39,18 +41,23 @@ import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import java.util.UUID
+import kotlin.time.Instant
 
-private fun subscribed(id: String): MeResponse =
+private fun subscribed(
+    id: String,
+    provider: String = "google",
+    cancelAt: Instant? = null,
+): MeResponse =
     account(id).let {
         val subscription =
             MeSubscription(
-                cancelAt = null,
-                cancelAtPeriodEnd = false,
+                cancelAt = cancelAt,
+                cancelAtPeriodEnd = cancelAt != null,
                 id = UUID.fromString("0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0d4"),
                 periodEnd = null,
                 periodStart = null,
                 plan = "plus",
-                provider = "google",
+                provider = provider,
                 status = "active",
             )
         it.copy(account = it.account.copy(hasActiveSubscription = true, subscription = subscription))
@@ -87,8 +94,9 @@ private class FakePlayBilling : PlayBilling {
 private class FakeSubscriptionApi : SubscriptionApi {
     val linked = mutableListOf<Pair<String, String>>()
     var failure: ApiException? = null
+    var accountRead: suspend (AuthenticatedSession) -> MeResponse = { account(it.accountId) }
 
-    override suspend fun account(session: AuthenticatedSession): MeResponse = account(session.accountId)
+    override suspend fun account(session: AuthenticatedSession): MeResponse = accountRead(session)
 
     override suspend fun allowance(session: AuthenticatedSession): AllowanceResponse = throw UnsupportedOperationException()
 
@@ -245,6 +253,31 @@ class SubscriptionStoreTest {
         }
 
     @Test
+    fun comingBackFromStripeReadsThePlanAgainEvenWhileAnOlderReadIsOnItsWay() =
+        runTest {
+            val (_, store) = store(ana)
+            val olderRead = CompletableDeferred<MeResponse>()
+            api.accountRead = { olderRead.await() }
+            val shown = launch { store.account.shown.collect {} }
+            advanceUntilIdle()
+
+            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
+            launch { store.readPlanAgain() }
+            advanceUntilIdle()
+            olderRead.complete(subscribed(ANA, provider = "stripe"))
+            advanceUntilIdle()
+
+            assertEquals(
+                ENDS,
+                store.account.state.value.value
+                    ?.account
+                    ?.subscription
+                    ?.cancelAt,
+            )
+            shown.cancel()
+        }
+
+    @Test
     fun anotherAccountStartsWithoutTheLastOnesPurchaseState() =
         runTest {
             val (sessions, store) = store(ana)
@@ -256,4 +289,8 @@ class SubscriptionStoreTest {
 
             assertEquals(PurchaseState.Idle, store.purchase.value)
         }
+
+    private companion object {
+        val ENDS = Instant.parse("2026-12-01T00:00:00Z")
+    }
 }

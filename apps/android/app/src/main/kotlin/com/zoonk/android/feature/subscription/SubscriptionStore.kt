@@ -148,6 +148,9 @@ class SubscriptionStore(
     /** Stripe's page where a Plus bought on the web is canceled. An expired session signs out, as any write's. */
     suspend fun webPlusCancellation(): MutationResult<String> = cache.mutate { api.webPlusCancellation(it) }
 
+    /** After a change made outside the app: a read that started before it can't land. */
+    fun readPlanAgain() = account.invalidate()
+
     /** Only an account can buy: a guest creates one first, as main asks. */
     suspend fun buy(
         activity: Activity,

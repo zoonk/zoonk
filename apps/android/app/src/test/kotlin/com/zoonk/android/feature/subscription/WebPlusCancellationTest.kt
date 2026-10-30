@@ -2,6 +2,7 @@ package com.zoonk.android.feature.subscription
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -77,6 +78,21 @@ class WebPlusCancellationTest {
 
         rule.onNodeWithText("Unable to manage your subscription. Contact us at hello@zoonk.com").assertExists()
         assertNull(shadowOf(rule.activity).nextStartedActivity)
+    }
+
+    @Test
+    fun aPhoneWithoutABrowserSaysWhomToContact() {
+        shadowOf(rule.activity.application).checkActivities(true)
+        show("stripe")
+
+        rule.onNodeWithText("Cancel subscription").performClick()
+
+        rule.onNodeWithText("Unable to manage your subscription. Contact us at hello@zoonk.com").assertExists()
+        rule.onNodeWithText("Cancel subscription").assertIsEnabled()
+        rule.activityRule.scenario.moveToState(Lifecycle.State.STARTED)
+        rule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+        rule.waitForIdle()
+        assertEquals(0, readAgain)
     }
 
     @Test
