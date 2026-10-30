@@ -27,6 +27,7 @@ import {
   useFindAnswer,
   useFocusFindAnswer,
 } from "./plan-find-line";
+import { PlanFinish } from "./plan-finish";
 import { ChooseFocus, useCanChooseFocus } from "./plan-focus";
 import { FullCourseSwitch } from "./plan-full-course";
 import { usePlanChange } from "./use-plan-change";
@@ -59,7 +60,7 @@ function DailyCoverage({
   const canMoveDate = useCanMoveDate();
 
   if (!plan.feasibility?.deadline) {
-    return null;
+    return <PlanFinish pending={pending} />;
   }
 
   return (

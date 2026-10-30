@@ -111,6 +111,27 @@ function RevealFacts() {
   );
 }
 
+/**
+ * A language ends at the level the learner picked and an exam at its date; a learn goal without a
+ * date runs as long as its whole subject takes, so the reveal says what sets that.
+ */
+function RevealPace() {
+  const t = useExtracted();
+  const { goal, plan } = usePlanScreen();
+
+  if (goal.kind !== "learn" || plan.schedule.targetDate || !plan.estimate.endDate) {
+    return null;
+  }
+
+  return (
+    <p className="text-muted-foreground max-w-prose text-sm text-pretty">
+      {t(
+        "Your plan covers your whole goal in depth. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
+      )}
+    </p>
+  );
+}
+
 function RevealRailBlock({ children, title }: { children: React.ReactNode; title: string }) {
   return (
     <div className="flex flex-col gap-2 not-has-[>:nth-child(2)]:hidden">
@@ -156,6 +177,7 @@ export function RevealBody({
           <SuccessEyebrow>{t("Plan created")}</SuccessEyebrow>
           <OnboardingTitle className="text-balance">{goal.title}</OnboardingTitle>
           <RevealFacts />
+          <RevealPace />
           <RevealNoticeDay />
         </DetailHeroText>
 

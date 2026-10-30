@@ -53,10 +53,11 @@ export function LessonsCard({
   return (
     <ProgressCard
       className={className}
-      detail={t(
-        "{total, plural, one {{done, number} of # lesson} other {{done, number} of # lessons}}",
-        lessons,
-      )}
+      detail={t({
+        description: "A short line under the progress percent, in a small tile.",
+        message: "{done, plural, =0 {No lessons yet} one {# lesson done} other {# lessons done}}",
+        values: { done: lessons.done },
+      })}
       ids={ids}
       summary={
         counts.today > 0

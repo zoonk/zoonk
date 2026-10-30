@@ -21,6 +21,8 @@ function NamedTitle({ buddy }: { buddy: PlanTutor["buddy"] }) {
 
 function TutorRow({ tutor }: { tutor: PlanTutor }) {
   const t = useExtracted();
+  const { goal, plan } = usePlanScreen();
+  const hasModules = goal.kind === "learn" && plan.areas.length > 1;
 
   return (
     <ListGroup>
@@ -33,9 +35,13 @@ function TutorRow({ tutor }: { tutor: PlanTutor }) {
             <NamedTitle buddy={tutor.buddy} />
           </ListRowTitle>
           <ListRowDescription>
-            {t(
-              "In your own words, like “less on weekends”. You'll see the change before it applies.",
-            )}
+            {hasModules
+              ? t(
+                  "In your own words, like “skip a module” or “less on weekends”. You'll see the change before it applies.",
+                )
+              : t(
+                  "In your own words, like “less on weekends”. You'll see the change before it applies.",
+                )}
           </ListRowDescription>
         </ListRowContent>
       </ListRowLink>

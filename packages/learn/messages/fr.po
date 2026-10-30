@@ -3710,13 +3710,12 @@ msgctxt "Kus9gk"
 msgid "Preparation"
 msgstr "Préparation"
 
+#. A short line under the progress percent, in a small tile.
 #: src/journey/journey-hero.tsx
-#: src/journey/preparation/use-preparation-parts.ts
-#: src/syllabus/use-subject-progress.ts
 #: src/today/today-lessons-card.tsx
-msgctxt "jrDQIZ"
-msgid "{total, plural, one {{done, number} of # lesson} other {{done, number} of # lessons}}"
-msgstr "{total, plural, one {{done, number} sur # leçon} other {{done, number} sur # leçons}}"
+msgctxt "L6dnbU"
+msgid "{done, plural, =0 {No lessons yet} one {# lesson done} other {# lessons done}}"
+msgstr "{done, plural, =0 {Aucune leçon pour l’instant} one {# leçon terminée} other {# leçons terminées}}"
 
 #: src/journey/journey-hero.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -4173,6 +4172,12 @@ msgstr "Défis hebdomadaires"
 msgctxt "2NIffY"
 msgid "{count, plural, =0 {# mock exams taken} one {# mock exam taken} other {# mock exams taken}}"
 msgstr "{count, plural, =0 {# examen blanc passé} one {# examen blanc effectué} other {# examens blancs passés}}"
+
+#: src/journey/preparation/use-preparation-parts.ts
+#: src/syllabus/use-subject-progress.ts
+msgctxt "jrDQIZ"
+msgid "{total, plural, one {{done, number} of # lesson} other {{done, number} of # lessons}}"
+msgstr "{total, plural, one {{done, number} sur # leçon} other {{done, number} sur # leçons}}"
 
 #: src/journey/preparation/use-preparation-parts.ts
 msgctxt "577gc8"
@@ -8965,6 +8970,11 @@ msgid "about {time} of study"
 msgstr "environ {time} d’étude"
 
 #: src/onboarding/steps/reveal-body.tsx
+msgctxt "Y3WKHs"
+msgid "Your plan covers your whole goal in depth. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
+msgstr "Ton plan couvre tout ton objectif en profondeur. Pour finir plus tôt, consacre-lui plus de temps chaque jour ou choisis une date : il inclura d’ici là ce qui compte le plus."
+
+#: src/onboarding/steps/reveal-body.tsx
 msgctxt "q_N3d-"
 msgid "What fits"
 msgstr "Ce qui rentre dans ton plan"
@@ -9157,6 +9167,7 @@ msgid "Working out what {time} a day covers…"
 msgstr "Calcul de ce que tu peux étudier avec {time} par jour…"
 
 #: src/onboarding/steps/schedule-line.tsx
+#: src/plan/plan-finish.tsx
 msgctxt "OGpEA-"
 msgid "Working out when you'd finish…"
 msgstr "Calcul de ta date de fin…"
@@ -9827,15 +9838,19 @@ msgid "{month} for now. Pick the day when you know it."
 msgstr "{month} pour l’instant. Choisis le jour quand tu le connaîtras."
 
 #: src/plan/plan-date.tsx
-#: src/plan/use-choice-sentence.ts
-msgctxt "c8OqeU"
-msgid "No deadline: you study everything at your own pace."
-msgstr "Sans date limite : tu étudies tout à ton rythme."
+msgctxt "7_AJHO"
+msgid "No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then."
+msgstr "Sans date limite : tu étudies tout à ton rythme. Avec une date limite, ton plan prévoit l’essentiel d’ici là."
 
 #: src/plan/plan-edit-request.tsx
 msgctxt "d42SLL"
 msgid "Something else? Tell {name}"
 msgstr "Autre chose ? Dis-le à {name}"
+
+#: src/plan/plan-edit-request.tsx
+msgctxt "nJBi9i"
+msgid "In your own words, like “skip a module” or “less on weekends”. You'll see the change before it applies."
+msgstr "Avec tes mots, par exemple « sauter un module » ou « moins le week-end ». Tu verras le changement avant qu’il soit appliqué."
 
 #: src/plan/plan-edit-request.tsx
 msgctxt "3HJP7W"
@@ -9863,6 +9878,12 @@ msgstr "{group} : quelle épreuve passeras-tu ?"
 msgctxt "dsWMOn"
 msgid "Until you pick, your plan leaves {group} out."
 msgstr "En attendant ton choix, ton plan laisse {group} de côté."
+
+#: src/plan/plan-finish.tsx
+#: src/plan/use-effect-text.ts
+msgctxt "6Due7K"
+msgid "You finish around {month}."
+msgstr "Tu termines vers {month}."
 
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -10617,6 +10638,11 @@ msgid "{count, plural, one {# prerequisite is skipped.} other {# prerequisites a
 msgstr "{count, plural, one {# prérequis est sauté.} other {# prérequis sont sautés.}}"
 
 #: src/plan/use-choice-sentence.ts
+msgctxt "c8OqeU"
+msgid "No deadline: you study everything at your own pace."
+msgstr "Sans date limite : tu étudies tout à ton rythme."
+
+#: src/plan/use-choice-sentence.ts
 msgctxt "H05M2k"
 msgid "You study everything: what doesn't fit before the exam comes after it."
 msgstr "Tu étudies tout : ce qui ne tient pas avant l’examen vient après."
@@ -10762,11 +10788,6 @@ msgstr "Se termine le {after} au lieu du {before}."
 msgctxt "006n7B"
 msgid "Ends around {after} instead of {before}."
 msgstr "Se termine vers {after} au lieu de {before}."
-
-#: src/plan/use-effect-text.ts
-msgctxt "6Due7K"
-msgid "You finish around {month}."
-msgstr "Tu termines vers {month}."
 
 #: src/plan/use-estimate-sentence.ts
 msgctxt "FJ-d5Y"

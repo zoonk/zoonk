@@ -104,10 +104,11 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
     const share = getLessonShare(lessons);
 
     return {
-      detail: t(
-        "{total, plural, one {{done, number} of # lesson} other {{done, number} of # lessons}}",
-        lessons,
-      ),
+      detail: t({
+        description: "A short line under the progress percent, in a small tile.",
+        message: "{done, plural, =0 {No lessons yet} one {# lesson done} other {# lessons done}}",
+        values: { done: lessons.done },
+      }),
       label: t("Progress"),
       numeric: true,
       share,
