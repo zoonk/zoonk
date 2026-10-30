@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -137,7 +138,7 @@ class Plot internal constructor(
         drawText(measured, topLeft = Offset(left, point.y - measured.size.height / 2))
     }
 
-    /** Text centered on a point, or ending at it when [end], lifted by [lift]. */
+    /** Text centered on a point, or ending at it when [end], lifted by [lift]; a [halo] keeps it clear of the lines under it. */
     fun label(
         text: String,
         x: Double,
@@ -145,11 +146,14 @@ class Plot internal constructor(
         color: Color,
         lift: Dp = 12.dp,
         end: Boolean = false,
+        halo: Color? = null,
     ) = with(scope) {
         val measured = measurer.measure(text, style.copy(color = color, fontWeight = FontWeight.SemiBold))
         val point = at(x, y)
         val left = if (end) point.x - measured.size.width else point.x - measured.size.width / 2
-        drawText(measured, topLeft = Offset(left, point.y - lift.toPx() - measured.size.height / 2))
+        val topLeft = Offset(left, point.y - lift.toPx() - measured.size.height / 2)
+        halo?.let { drawText(measured, color = it, topLeft = topLeft, drawStyle = Stroke(HALO_WIDTH.toPx(), join = StrokeJoin.Round)) }
+        drawText(measured, topLeft = topLeft, drawStyle = Fill)
     }
 
     /** A bar from the plot's bottom up to [y], [width] pixels wide and centered on [x]. */
@@ -247,6 +251,7 @@ private val LABEL_GAP = 6.dp
 private val DASH = 3.dp
 private val DASH_GAP = 4.dp
 private val DOT_RING = 2.5.dp
+private val HALO_WIDTH = 3.dp
 private val GUIDE_DASH = 3.dp
 private val GUIDE_WIDTH = 1.5.dp
 private val MAX_BAR_RADIUS = 3.dp

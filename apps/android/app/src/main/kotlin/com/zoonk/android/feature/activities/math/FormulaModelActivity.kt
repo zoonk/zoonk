@@ -44,8 +44,10 @@ import com.zoonk.android.feature.activities.ActivitySlider
 import com.zoonk.android.feature.activities.SnapRange
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
+import com.zoonk.android.feature.player.steps.allowed
 import com.zoonk.android.ui.components.niceTicks
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.exactFractionDigitsFor
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -127,8 +129,15 @@ private fun FormulaModelBoard(
             charted = charted,
             view = view,
             expected =
-                props.expected.numericValue?.takeIf { props.isChecked && numeric != null }?.let { y ->
-                    (numeric?.inputs?.find { it.name == axis.name }?.`value` ?: axis.initial) to y
+                numeric?.let { check ->
+                    props.expected.numericValue?.takeIf { props.isChecked }?.let { y ->
+                        val digits = exactFractionDigitsFor(check.answer, check.allowed, check.answer)
+                        AnswerPoint(
+                            x = check.inputs?.find { it.name == axis.name }?.`value` ?: axis.initial,
+                            y = y,
+                            label = formatAmount(y, locale, check.unit, maximumFractionDigits = digits),
+                        )
+                    }
                 },
             formatX = formatX,
         )
@@ -295,13 +304,19 @@ private fun OutputReadouts(readouts: List<Readout>) {
     }
 }
 
+private data class AnswerPoint(
+    val x: Double,
+    val y: Double,
+    val label: String,
+)
+
 /** Main's `ActivityFormulaChart`: the plotted output across the axis slider, with its start or before curve dashed and the change between them. */
 @Composable
 private fun FormulaChart(
     axis: ModelVariable,
     charted: ModelOutput,
     view: ModelView,
-    expected: Pair<Double, Double>?,
+    expected: AnswerPoint?,
     formatX: (Double) -> String,
 ) {
     val locale = currentLocale()
@@ -334,7 +349,10 @@ private fun FormulaChart(
         }
         before?.let { dot(view.x, it, ring, muted, radius = MARK_INNER) }
         view.compared?.let { (x, y) -> dot(x, y, accent.copy(alpha = SOFT).compositeOver(ring), accent, radius = MARK_INNER) }
-        expected?.let { (x, y) -> dot(x, y, right, ring, radius = EXPECTED_INNER) }
+        expected?.let { (x, y, label) ->
+            dot(x, y, right, ring, radius = EXPECTED_INNER)
+            label(label, x, y, right, lift = EXPECTED_LIFT, halo = ring)
+        }
         now?.let {
             guide(view.x, it, accent.copy(alpha = GUIDE_ALPHA))
             dot(view.x, it, accent, ring, radius = CURRENT_INNER)
@@ -413,4 +431,5 @@ private val BASELINE_DASH = 5.dp
 private val MIN_DELTA = 12.dp
 private val MARK_INNER = 3.25.dp
 private val EXPECTED_INNER = 5.75.dp
+private val EXPECTED_LIFT = 20.dp
 private val CURRENT_INNER = 4.75.dp
