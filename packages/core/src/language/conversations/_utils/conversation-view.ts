@@ -2,10 +2,13 @@ import "server-only";
 import { buildLiveConversationInstructions } from "@zoonk/ai/tasks/v2/language/live-conversation-instructions";
 import { type Chapter, type LanguageConversation } from "@zoonk/db";
 import { isCefrLevel } from "@zoonk/utils/cefr";
-import { type ExamTaskSnapshot } from "../../exam-speaking/speaking-contract";
+import { type ExamTaskSnapshot, type ExamTaskView } from "../../exam-speaking/speaking-contract";
 import { getSpeakingFormat, getSpeakingTask } from "../../exam-speaking/speaking-formats";
+import { getLevelStanding, getSpeakingEstimate } from "../../exam-speaking/speaking-standing";
 import { toExamTaskView } from "../../exam-speaking/speaking-views";
 import {
+  type ConversationFeedback,
+  type ConversationFeedbackView,
   type ConversationScenario,
   type LanguageConversationView,
   type SpeakingMockExam,
@@ -87,12 +90,48 @@ export function getCheckpointOutcome({
   };
 }
 
+/** A grade whose criterion the task doesn't rate has no level mark to stand against, so it's left out. */
+function toFeedbackView({
+  examTask,
+  feedback,
+}: {
+  examTask: ExamTaskView | null;
+  feedback: ConversationFeedback;
+}): ConversationFeedbackView | null {
+  if (feedback.kind !== "examSpeaking") {
+    return feedback;
+  }
+
+  if (!examTask) {
+    return null;
+  }
+
+  return {
+    ...feedback,
+    criteria: feedback.criteria.flatMap((grade) => {
+      const criterion = examTask.criteria.find((item) => item.key === grade.criterion);
+
+      return criterion
+        ? [
+            {
+              ...grade,
+              estimate: getSpeakingEstimate({ ...grade, criterion }),
+              standing: getLevelStanding({ ...grade, levelMark: criterion.levelMark }),
+            },
+          ]
+        : [];
+    }),
+  };
+}
+
 function toResult({
   bossKind,
+  examTask,
   objectives,
   row,
 }: {
   bossKind: "boss" | "finalBoss";
+  examTask: ExamTaskView | null;
   objectives: number;
   row: ConversationRow;
 }): LanguageConversationView["result"] {
@@ -105,7 +144,7 @@ function toResult({
 
   return {
     brainPower: getConversationBrainPower({ checkpoint, objectivesMet: row.objectivesMet.length }),
-    feedback: feedback.success ? feedback.data : null,
+    feedback: feedback.success ? toFeedbackView({ examTask, feedback: feedback.data }) : null,
     passed: hasPassedConversation({ objectives, objectivesMet: row.objectivesMet.length }),
     spokenSeconds: row.spokenSeconds,
     stars: getConversationStars({
@@ -150,12 +189,14 @@ export function toConversationView({
 
   const met = new Set(row.objectivesMet);
 
+  const examTask = data.examTask
+    ? toExamTaskView({ sectionId: row.sectionId, snapshot: data.examTask })
+    : null;
+
   return {
     character: data.character,
     exam: data.exam,
-    examTask: data.examTask
-      ? toExamTaskView({ sectionId: row.sectionId, snapshot: data.examTask })
-      : null,
+    examTask,
     goalId: row.goalId,
     hints: data.hints,
     id: row.id,
@@ -168,7 +209,7 @@ export function toConversationView({
       met: met.has(objective.label),
     })),
     openingLine: data.openingLine,
-    result: toResult({ bossKind, objectives: data.objectives.length, row }),
+    result: toResult({ bossKind, examTask, objectives: data.objectives.length, row }),
     situation: data.situation,
     status: row.status,
     targetLanguage: row.targetLanguage,

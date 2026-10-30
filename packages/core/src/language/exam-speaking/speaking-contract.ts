@@ -205,26 +205,65 @@ const criterionGradeSchema = z.object({
   tip: z.string(),
 });
 
-export const examSpeakingFeedbackSchema = z
-  .object({
-    brief: z
-      .boolean()
+export const examSpeakingFeedbackSchema = z.object({
+  brief: z
+    .boolean()
+    .meta({ description: "The candidate said too little to judge well; the result says so once" }),
+  criteria: z.array(criterionGradeSchema),
+  focus: z.string().meta({ description: "The criterion to work on first" }),
+  heard: z
+    .boolean()
+    .meta({
+      description:
+        "The candidate spoke rather than only typed; typed tasks have no grade on criteria only the voice shows",
+    }),
+  kind: z.literal("examSpeaking"),
+});
+
+export type ExamSpeakingFeedback = z.infer<typeof examSpeakingFeedbackSchema>;
+
+const bandRangeShape = { high: z.number(), low: z.number(), max: z.number() };
+
+const speakingEstimateSchema = z
+  .discriminatedUnion("display", [
+    z
+      .object({ display: z.literal("band"), ...bandRangeShape })
+      .meta({ description: "A band range of the scale's highest", id: "SpeakingBandEstimate" }),
+    z
+      .object({
+        display: z.literal("letter"),
+        high: z.string().meta({ description: "The letter of the range's high band; A is best" }),
+        low: z.string().meta({ description: "The letter of the range's low band" }),
+      })
+      .meta({ description: "Goethe's letters, shown best first", id: "SpeakingLetterEstimate" }),
+    z
+      .object({ display: z.literal("points"), ...bandRangeShape })
       .meta({
-        description: "The candidate said too little to judge well; the result says so once",
+        description: "The points the range's bands give on the task's line, of the line's most",
+        id: "SpeakingPointsEstimate",
       }),
-    criteria: z.array(criterionGradeSchema),
-    focus: z.string().meta({ description: "The criterion to work on first" }),
-    heard: z
-      .boolean()
-      .meta({
-        description:
-          "The candidate spoke rather than only typed; typed tasks have no grade on criteria only the voice shows",
+  ])
+  .meta({ id: "SpeakingEstimate" });
+
+export type SpeakingEstimate = z.infer<typeof speakingEstimateSchema>;
+
+export const examSpeakingFeedbackViewSchema = examSpeakingFeedbackSchema
+  .extend({
+    criteria: z.array(
+      criterionGradeSchema.extend({
+        estimate: speakingEstimateSchema,
+        standing: z
+          .enum(["at", "near", "below"])
+          .meta({
+            description:
+              "The estimate against the exam's level: at it, near it (only the top of its range reaches it), or below it",
+          }),
       }),
-    kind: z.literal("examSpeaking"),
+    ),
   })
   .meta({ id: "ExamSpeakingFeedback" });
 
-export type ExamSpeakingFeedback = z.infer<typeof examSpeakingFeedbackSchema>;
+export type ExamSpeakingFeedbackView = z.infer<typeof examSpeakingFeedbackViewSchema>;
 
 export const speakingSectionViewSchema = z
   .object({

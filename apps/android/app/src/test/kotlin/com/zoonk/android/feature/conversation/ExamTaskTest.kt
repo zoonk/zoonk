@@ -61,8 +61,10 @@ class ExamTaskTest {
         val graded =
             """
             {"brainPower":8,"passed":true,"spokenSeconds":120,"stars":0,"feedback":{"kind":"examSpeaking","brief":false,"heard":true,"focus":"range",
-            "criteria":[{"criterion":"fluency","bandLow":2,"bandHigh":3,"evidence":"Spoke steadily.","tip":"Keep going."},
-                        {"criterion":"range","bandLow":1,"bandHigh":2,"evidence":"Few linking words.","tip":"Use sin embargo."}]}}
+            "criteria":[{"criterion":"fluency","bandLow":2,"bandHigh":3,"evidence":"Spoke steadily.","tip":"Keep going.",
+                         "standing":"at","estimate":{"display":"band","high":3,"low":2,"max":3}},
+                        {"criterion":"range","bandLow":1,"bandHigh":2,"evidence":"Few linking words.","tip":"Use sin embargo.",
+                         "standing":"near","estimate":{"display":"band","high":2,"low":1,"max":3}}]}}
             """.trimIndent()
         harness.api.stored = examConversation(harness.id, result = graded)
         show()

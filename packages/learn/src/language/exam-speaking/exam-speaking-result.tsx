@@ -2,7 +2,7 @@
 
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import {
-  type ExamSpeakingFeedback,
+  type ExamSpeakingFeedbackView,
   type ExamTaskView,
   type SpeakingCriterionView,
 } from "@zoonk/core/language/exam-speaking/contract";
@@ -26,10 +26,10 @@ import { TaskMainLink } from "../../shell/task-frame";
 import { CallNote } from "../conversation/call-note";
 import { EstimateNote, ResultRow, ResultRows } from "../conversation/result-rows";
 import { CriteriaDetails } from "./exam-speaking-criteria";
-import { useBandText, useCriterionGloss, useStandingText } from "./exam-speaking-labels";
+import { useCriterionGloss, useEstimateText, useStandingText } from "./exam-speaking-labels";
 import { useExamTaskTitle } from "./exam-task-intro";
 
-type Grade = ExamSpeakingFeedback["criteria"][number];
+type Grade = ExamSpeakingFeedbackView["criteria"][number];
 type GradedCriterion = { criterion: SpeakingCriterionView; grade: Grade };
 
 function listCriteria({
@@ -37,7 +37,7 @@ function listCriteria({
   feedback,
 }: {
   examTask: ExamTaskView;
-  feedback: ExamSpeakingFeedback;
+  feedback: ExamSpeakingFeedbackView;
 }): { criterion: SpeakingCriterionView; grade: Grade | null }[] {
   return examTask.criteria.map((criterion) => ({
     criterion,
@@ -84,7 +84,7 @@ function useLevelLine({ examTask }: { examTask: ExamTaskView }): string | null {
   });
 }
 
-function useEvidenceNotes({ feedback }: { feedback: ExamSpeakingFeedback }): string[] {
+function useEvidenceNotes({ feedback }: { feedback: ExamSpeakingFeedbackView }): string[] {
   const t = useExtracted();
 
   return [
@@ -106,19 +106,19 @@ function CriterionEstimate({
   level: string;
 }) {
   const t = useExtracted();
-  const band = useBandText();
+  const estimateText = useEstimateText();
   const standingText = useStandingText();
-  const { standing, text } = standingText(graded.grade, graded.criterion, level);
+  const { standing } = graded.grade;
 
   return (
     <span className="flex shrink-0 flex-col items-end gap-1">
       <span className="font-mono font-medium whitespace-nowrap tabular-nums">
-        {band(graded.grade, graded.criterion)}
+        {estimateText(graded.grade.estimate)}
       </span>
       <span
         className={cn("text-xs", standing === "at" ? "text-success-text" : "text-muted-foreground")}
       >
-        {text}
+        {standingText(standing, level)}
       </span>
       {focus && <span className={CHIP_CLASS}>{t("Focus")}</span>}
     </span>
@@ -132,7 +132,7 @@ function CriteriaStep({
 }: {
   conversation: LanguageConversationView;
   examTask: ExamTaskView;
-  feedback: ExamSpeakingFeedback;
+  feedback: ExamSpeakingFeedbackView;
 }) {
   const t = useExtracted();
   const title = useExamTaskTitle();
@@ -247,7 +247,7 @@ export function ExamSpeakingResult({
   dayMoment: React.ReactNode;
   examTask: ExamTaskView;
   exitHref: string;
-  feedback: ExamSpeakingFeedback | null;
+  feedback: ExamSpeakingFeedbackView | null;
   nextHref: string;
   nextTaskHref: string | null;
   onTryAgain: (() => Promise<void>) | null;

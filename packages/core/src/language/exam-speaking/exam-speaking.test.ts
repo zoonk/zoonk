@@ -365,6 +365,58 @@ describe("exam speaking tasks", () => {
     ).resolves.toMatchObject({ kind: "mock", seconds: 200 });
   });
 
+  it("says where each estimate in a task's result stands against the exam's level", async () => {
+    const ranges = [
+      { bandHigh: 3, bandLow: 2 },
+      { bandHigh: 2, bandLow: 1 },
+    ];
+
+    vi.mocked(scoreSpeaking).mockImplementation(async ({ criteria }) => ({
+      data: {
+        brief: false,
+        criteria: criteria.map((criterion, index) => ({
+          ...(ranges[index] ?? { bandHigh: 1, bandLow: 1 }),
+          criterion: criterion.key,
+          evidence: "Você disse «crear más carriles bici».",
+          tip: "Use «sin embargo».",
+        })),
+        focus: criteria[0]?.key ?? "",
+        heard: true,
+      },
+      provenance: PROVENANCE,
+      systemPrompt: "",
+      usage: undefined as never,
+      userPrompt: "",
+    }));
+
+    const { goal } = await deleLearner();
+    const conversationId = await startTask({ goalId: goal.id, task: "t3" });
+    await connect(conversationId);
+
+    await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
+    });
+
+    const view = await readView(conversationId);
+
+    expect(view.result?.feedback).toMatchObject({
+      criteria: [
+        {
+          criterion: "coherence",
+          estimate: { display: "band", high: 3, low: 2, max: 3 },
+          standing: "at",
+        },
+        { criterion: "fluency", standing: "near" },
+        { criterion: "accuracy", standing: "below" },
+        { criterion: "range", standing: "below" },
+        { criterion: "holistic", standing: "below" },
+      ],
+      kind: "examSpeaking",
+    });
+  });
+
   it("lists each task's last finished try with its estimates at the level, to open its result again", async () => {
     const { goal } = await deleLearner();
 

@@ -6,6 +6,7 @@ import { activityBrainPowerSchema, missionMomentSchema } from "../../sessions/co
 import { progressCelebrationShape } from "../../sessions/progress-celebration";
 import {
   examSpeakingFeedbackSchema,
+  examSpeakingFeedbackViewSchema,
   examTaskSnapshotSchema,
   examTaskViewSchema,
 } from "../exam-speaking/speaking-contract";
@@ -113,6 +114,14 @@ export const conversationFeedbackSchema = z.discriminatedUnion("kind", [
 ]);
 
 export type ConversationFeedback = z.infer<typeof conversationFeedbackSchema>;
+
+const conversationFeedbackViewSchema = z.discriminatedUnion("kind", [
+  callFeedbackSchema,
+  speakingMockFeedbackSchema,
+  examSpeakingFeedbackViewSchema,
+]);
+
+export type ConversationFeedbackView = z.infer<typeof conversationFeedbackViewSchema>;
 export type CallFeedback = z.infer<typeof callFeedbackSchema>;
 export type SpeakingMockFeedback = z.infer<typeof speakingMockFeedbackSchema>;
 export type SpeakingCriterion = SpeakingMockFeedback["criteria"][number]["criterion"];
@@ -231,7 +240,7 @@ export const languageConversationViewSchema = z
     result: z
       .object({
         brainPower: activityBrainPowerSchema,
-        feedback: conversationFeedbackSchema.nullable(),
+        feedback: conversationFeedbackViewSchema.nullable(),
         passed: z.boolean(),
         spokenSeconds: z.int(),
         stars: z.int().min(0).max(3),

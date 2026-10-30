@@ -38607,6 +38607,18 @@
                 },
                 "tip": {
                   "type": "string"
+                },
+                "estimate": {
+                  "$ref": "#/components/schemas/SpeakingEstimate"
+                },
+                "standing": {
+                  "type": "string",
+                  "enum": [
+                    "at",
+                    "near",
+                    "below"
+                  ],
+                  "description": "The estimate against the exam's level: at it, near it (only the top of its range reaches it), or below it"
                 }
               },
               "required": [
@@ -38614,7 +38626,9 @@
                 "bandLow",
                 "criterion",
                 "evidence",
-                "tip"
+                "tip",
+                "estimate",
+                "standing"
               ],
               "additionalProperties": false
             }
@@ -38642,6 +38656,110 @@
           "kind"
         ],
         "additionalProperties": false
+      },
+      "SpeakingEstimate": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SpeakingBandEstimate"
+          },
+          {
+            "$ref": "#/components/schemas/SpeakingLetterEstimate"
+          },
+          {
+            "$ref": "#/components/schemas/SpeakingPointsEstimate"
+          }
+        ],
+        "type": "object",
+        "discriminator": {
+          "propertyName": "display",
+          "mapping": {
+            "band": "#/components/schemas/SpeakingBandEstimate",
+            "letter": "#/components/schemas/SpeakingLetterEstimate",
+            "points": "#/components/schemas/SpeakingPointsEstimate"
+          }
+        }
+      },
+      "SpeakingBandEstimate": {
+        "type": "object",
+        "properties": {
+          "display": {
+            "type": "string",
+            "enum": [
+              "band"
+            ]
+          },
+          "high": {
+            "type": "number"
+          },
+          "low": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "display",
+          "high",
+          "low",
+          "max"
+        ],
+        "additionalProperties": false,
+        "description": "A band range of the scale's highest"
+      },
+      "SpeakingLetterEstimate": {
+        "type": "object",
+        "properties": {
+          "display": {
+            "type": "string",
+            "enum": [
+              "letter"
+            ]
+          },
+          "high": {
+            "type": "string",
+            "description": "The letter of the range's high band; A is best"
+          },
+          "low": {
+            "type": "string",
+            "description": "The letter of the range's low band"
+          }
+        },
+        "required": [
+          "display",
+          "high",
+          "low"
+        ],
+        "additionalProperties": false,
+        "description": "Goethe's letters, shown best first"
+      },
+      "SpeakingPointsEstimate": {
+        "type": "object",
+        "properties": {
+          "display": {
+            "type": "string",
+            "enum": [
+              "points"
+            ]
+          },
+          "high": {
+            "type": "number"
+          },
+          "low": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "display",
+          "high",
+          "low",
+          "max"
+        ],
+        "additionalProperties": false,
+        "description": "The points the range's bands give on the task's line, of the line's most"
       },
       "CompletedLanguageConversation": {
         "type": "object",

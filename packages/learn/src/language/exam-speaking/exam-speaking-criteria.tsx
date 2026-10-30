@@ -1,16 +1,16 @@
 "use client";
 
 import {
-  type ExamSpeakingFeedback,
+  type ExamSpeakingFeedbackView,
   type SpeakingCriterionView,
 } from "@zoonk/core/language/exam-speaking/contract";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../../_components/details-drawer";
-import { useBandText, useCriterionGloss, useStandingText } from "./exam-speaking-labels";
+import { useCriterionGloss, useEstimateText, useStandingText } from "./exam-speaking-labels";
 
 type GradedCriterion = {
   criterion: SpeakingCriterionView;
-  grade: ExamSpeakingFeedback["criteria"][number];
+  grade: ExamSpeakingFeedbackView["criteria"][number];
 };
 
 export function CriteriaDetails({
@@ -24,7 +24,7 @@ export function CriteriaDetails({
 }) {
   const t = useExtracted();
   const gloss = useCriterionGloss();
-  const band = useBandText();
+  const estimateText = useEstimateText();
   const standingText = useStandingText();
 
   return (
@@ -35,8 +35,8 @@ export function CriteriaDetails({
             <p className="font-semibold">
               {t("{criterion} · {estimate} · {standing}", {
                 criterion: gloss(criterion),
-                estimate: band(grade, criterion),
-                standing: standingText(grade, criterion, level).text,
+                estimate: estimateText(grade.estimate),
+                standing: standingText(grade.standing, level),
               })}
             </p>
             <p className="text-muted-foreground text-xs" lang={language}>

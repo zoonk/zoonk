@@ -1,18 +1,16 @@
 "use client";
 
 import {
+  type ExamSpeakingFeedbackView,
   type SpeakingCriterionView,
+  type SpeakingEstimate,
   type SpeakingTaskView,
 } from "@zoonk/core/language/exam-speaking/contract";
-import { getLevelStanding } from "@zoonk/core/language/exam-speaking/standing";
 import { useExtracted, useFormatter } from "next-intl";
-
-/** Goethe's letters by band: 0 is E, 4 is A. */
-const LETTERS = ["E", "D", "C", "B", "A"];
 
 const POINT_DIGITS = 2;
 
-type BandRange = { bandHigh: number; bandLow: number };
+type Standing = ExamSpeakingFeedbackView["criteria"][number]["standing"];
 
 function span(low: string, high: string): string {
   return low === high ? low : `${low}–${high}`;
@@ -61,45 +59,36 @@ export function useTaskRoleNoun() {
     role === "partner" ? t("other candidate") : t("examiner");
 }
 
-export function useBandText() {
+export function useEstimateText() {
   const t = useExtracted();
   const format = useFormatter();
 
   const number = (value: number) => format.number(value, { maximumFractionDigits: POINT_DIGITS });
 
-  return ({ bandHigh, bandLow }: BandRange, criterion: SpeakingCriterionView): string => {
-    if (criterion.display === "letter") {
-      return span(LETTERS[Math.round(bandHigh)] ?? "", LETTERS[Math.round(bandLow)] ?? "");
+  return (estimate: SpeakingEstimate): string => {
+    if (estimate.display === "letter") {
+      return span(estimate.high, estimate.low);
     }
 
-    if (criterion.display === "points" && criterion.points) {
-      const points = (band: number) => criterion.points?.[Math.round(band)] ?? 0;
+    const range = span(number(estimate.low), number(estimate.high));
+    const max = number(estimate.max);
 
-      return t("{range} of {max} points", {
-        max: number(criterion.points.at(-1) ?? 0),
-        range: span(number(points(bandLow)), number(points(bandHigh))),
-      });
-    }
-
-    return t("{range} of {max}", {
-      max: number(criterion.maxBand),
-      range: span(number(bandLow), number(bandHigh)),
-    });
+    return estimate.display === "points"
+      ? t("{range} of {max} points", { max, range })
+      : t("{range} of {max}", { max, range });
   };
 }
 
 export function useStandingText() {
   const t = useExtracted();
 
-  return (grade: BandRange, criterion: SpeakingCriterionView, level: string) => {
-    const standing = getLevelStanding({ ...grade, levelMark: criterion.levelMark });
-
+  return (standing: Standing, level: string) => {
     const texts = {
       at: t("At {level}", { level }),
       below: t("Below {level}", { level }),
       near: t("Near {level}", { level }),
     };
 
-    return { standing, text: texts[standing] };
+    return texts[standing];
   };
 }
