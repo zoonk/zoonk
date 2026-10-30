@@ -71,7 +71,8 @@ export function ActivityCodeLine({
         "flex items-center rounded-lg pr-2 whitespace-pre",
         tone === "current" &&
           "bg-viz-highlight-soft border-viz-highlight rounded-l-none border-l-[3px]",
-        tone === "editable" && "bg-background ring-viz-accent/40 ring-1",
+        tone === "editable" &&
+          "bg-background ring-viz-accent/40 contrast-more:ring-viz-accent ring-1",
         tone === "error" && "bg-destructive/10",
         className,
       )}
