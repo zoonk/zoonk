@@ -17,9 +17,10 @@ export async function getLanguageLevelTest(goalId: string): Promise<LanguageLeve
 
   return {
     status: "ready",
-    test: toLevelTestView({
+    test: await toLevelTestView({
       bank: context.bank,
       bankStartedAt: context.bankStartedAt,
+      bankWrittenAt: context.bankWrittenAt,
       goal: context.owned.goal,
       progress: context.progress,
     }),

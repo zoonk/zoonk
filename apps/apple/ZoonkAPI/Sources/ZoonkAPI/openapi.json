@@ -24152,6 +24152,10 @@
           "questionId": {
             "type": "string",
             "minLength": 1
+          },
+          "skipped": {
+            "description": "Skips a listening question whose audio couldn't be made; it doesn't count toward a level",
+            "type": "boolean"
           }
         },
         "required": [
@@ -36875,6 +36879,44 @@
                       "question": {
                         "type": "object",
                         "properties": {
+                          "audio": {
+                            "nullable": true,
+                            "description": "For listening, the message's recording; null while it's being made (audioPending) or when it couldn't be: then ask for it with POST /speech-clips when the learner plays it",
+                            "type": "object",
+                            "properties": {
+                              "durationMs": {
+                                "nullable": true,
+                                "description": "How long the clip plays, when known",
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "language": {
+                                "type": "string"
+                              },
+                              "url": {
+                                "type": "string",
+                                "format": "uri",
+                                "description": "The MP3 file to play: a shared clip's public file, or a personal one's file route, which only its learner can read"
+                              }
+                            },
+                            "required": [
+                              "durationMs",
+                              "id",
+                              "language",
+                              "url"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "audioPending": {
+                            "type": "boolean",
+                            "description": "The listening message's recording is still being made: read the test again in a few seconds"
+                          },
                           "id": {
                             "type": "string"
                           },
@@ -36911,6 +36953,8 @@
                           }
                         },
                         "required": [
+                          "audio",
+                          "audioPending",
                           "id",
                           "level",
                           "options",

@@ -1,5 +1,6 @@
 import { CEFR_LEVELS, MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
 import { z } from "zod";
+import { speechClipSchema } from "../../audio/speech-clip-contract";
 import { answerDurationSchema } from "../../learner/contract";
 import { LANGUAGE_SKILLS } from "../levels/skill-level-rules";
 
@@ -38,6 +39,7 @@ const levelTestAnswerSchema = z.object({
     .nullable(),
   durationMs: z.int().min(0).default(0),
   id: z.string(),
+  skipped: z.boolean().optional(),
 });
 
 export const levelTestProgressSchema = z.object({
@@ -76,6 +78,13 @@ export const levelTestAnswerInputSchema = z
           "Milliseconds from showing the question to the answer, which count toward the learner's study time; anything over an hour counts as an hour",
       }),
     questionId: z.string().min(1),
+    skipped: z
+      .boolean()
+      .optional()
+      .meta({
+        description:
+          "Skips a listening question whose audio couldn't be made; it doesn't count toward a level",
+      }),
   })
   .strict()
   .meta({ id: "LanguageLevelTestAnswerInput" });
@@ -83,6 +92,18 @@ export const levelTestAnswerInputSchema = z
 export type LevelTestAnswerInput = z.infer<typeof levelTestAnswerInputSchema>;
 
 const questionViewSchema = z.object({
+  audio: speechClipSchema
+    .nullable()
+    .meta({
+      description:
+        "For listening, the message's recording; null while it's being made (audioPending) or when it couldn't be: then ask for it with POST /speech-clips when the learner plays it",
+    }),
+  audioPending: z
+    .boolean()
+    .meta({
+      description:
+        "The listening message's recording is still being made: read the test again in a few seconds",
+    }),
   id: z.string(),
   level: z.enum(CEFR_LEVELS),
   options: z.array(z.string()),

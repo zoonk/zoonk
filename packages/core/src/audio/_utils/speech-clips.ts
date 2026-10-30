@@ -4,6 +4,7 @@ import { type MediaAsset, prisma } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { getPrivateAudioFolder } from "@zoonk/utils/user-blobs";
 import { createOrFindByIdentity, toProvenanceData } from "../../library/_utils/library-rows";
+import { type SpeechClip } from "../speech-clip-contract";
 import { uploadAudio } from "../upload-audio";
 
 type SpeechClipAnalytics = Omit<
@@ -17,6 +18,15 @@ const voicing = new Map<string, Promise<MediaAsset | null>>();
 
 export function findSpeechClip(reuseKey: string): Promise<MediaAsset | null> {
   return prisma.mediaAsset.findUnique({ where: { reuseKey } });
+}
+
+export function toSpeechClip(asset: MediaAsset): SpeechClip {
+  return {
+    durationMs: asset.durationMs,
+    id: asset.id,
+    language: asset.language ?? "",
+    url: asset.url,
+  };
 }
 
 function getUploadTarget({ language, ownerId }: { language: string; ownerId: string | null }) {

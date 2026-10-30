@@ -99,6 +99,11 @@ export async function gradeLevelTestSpeech({
   return {
     heard: { score: match.score, transcript, words: match.words },
     status: "ready",
-    test: toLevelTestView({ bank, goal: owned.goal, progress: next }),
+    test: await toLevelTestView({
+      bank,
+      bankWrittenAt: context.bankWrittenAt,
+      goal: owned.goal,
+      progress: next,
+    }),
   };
 }

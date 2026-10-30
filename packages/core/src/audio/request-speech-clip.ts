@@ -1,9 +1,13 @@
 import "server-only";
-import { type MediaAsset } from "@zoonk/db";
 import { claimAssist } from "../entitlements/claim-usage";
 import { type RefusedUsage } from "../entitlements/contract";
 import { getSession } from "../users/get-session";
-import { findSpeechClip, getPendingSpeechClip, voiceSpeechClip } from "./_utils/speech-clips";
+import {
+  findSpeechClip,
+  getPendingSpeechClip,
+  toSpeechClip,
+  voiceSpeechClip,
+} from "./_utils/speech-clips";
 import {
   NEW_SPEECH_CLIP_MAX_CHARACTERS,
   type SpeechClip,
@@ -19,15 +23,6 @@ type RequestSpeechClipResult =
   | { status: "failed" }
   | RefusedUsage
   | { clip: SpeechClip; status: "ready" };
-
-function toSpeechClip(asset: MediaAsset): SpeechClip {
-  return {
-    durationMs: asset.durationMs,
-    id: asset.id,
-    language: asset.language ?? "",
-    url: asset.url,
-  };
-}
 
 /** Requires a signed-in learner or guest. Call only after a learner action: a new clip spends AI help. */
 export async function requestSpeechClip(input: SpeechClipInput): Promise<RequestSpeechClipResult> {

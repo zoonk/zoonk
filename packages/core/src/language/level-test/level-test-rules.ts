@@ -8,7 +8,7 @@ import {
 } from "./level-test-contract";
 
 type TestAnswers = {
-  answers: readonly Pick<LevelTestProgress["answers"][number], "answerIndex" | "id">[];
+  answers: readonly Pick<LevelTestProgress["answers"][number], "answerIndex" | "id" | "skipped">[];
   speaking: LevelTestProgress["speaking"];
 };
 
@@ -94,6 +94,21 @@ function getTargetBand({ answers, start }: { answers: ScoredAnswer[]; start: num
   return last.correct ? Math.ceil(likely) : Math.floor(likely);
 }
 
+function countAsked({
+  bank,
+  progress,
+  skill,
+}: {
+  bank: LevelTestBank;
+  progress: TestAnswers;
+  skill: QuestionSkill;
+}): number {
+  return progress.answers.filter((answer) =>
+    bank.questions.some((item) => item.id === answer.id && item.skill === skill),
+  ).length;
+}
+
+/** A skipped question uses up its turn without moving the level. */
 function scoreAnswers({
   bank,
   progress,
@@ -106,7 +121,7 @@ function scoreAnswers({
   return progress.answers.flatMap((answer) => {
     const question = bank.questions.find((item) => item.id === answer.id && item.skill === skill);
 
-    if (!question) {
+    if (!question || answer.skipped) {
       return [];
     }
 
@@ -189,7 +204,7 @@ export function getNextLevelTestStep({
   };
 
   const counts = QUESTION_SKILLS.map((skill) => ({
-    count: scoreAnswers({ bank, progress, skill }).length,
+    count: countAsked({ bank, progress, skill }),
     skill,
   }));
 

@@ -198,13 +198,13 @@ internal fun readingQuestion(
     id: String = "reading-1",
     passage: String = "Marco va al mercato ogni sabato.",
 ) = """
-    {"kind":"question","question":{"id":"$id","level":"A2","options":["Every Saturday","Every Sunday","Never"],
+    {"kind":"question","question":{"audio":null,"audioPending":false,"id":"$id","level":"A2","options":["Every Saturday","Every Sunday","Never"],
      "passage":"$passage","question":"When does Marco go to the market?","skill":"reading"}}
     """.trimIndent()
 
 internal fun listeningQuestion(id: String = "listening-1") =
     """
-    {"kind":"question","question":{"id":"$id","level":"A2","options":["At the station","At home"],
+    {"kind":"question","question":{"audio":null,"audioPending":false,"id":"$id","level":"A2","options":["At the station","At home"],
      "passage":"Ci vediamo alla stazione alle otto.","question":"Where are they meeting?","skill":"listening"}}
     """.trimIndent()
 

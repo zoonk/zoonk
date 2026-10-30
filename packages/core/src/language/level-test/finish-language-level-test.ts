@@ -79,7 +79,7 @@ async function recordTestActivity({
   transaction: TransactionClient;
   userId: string;
 }) {
-  const fresh = progress.answers.slice(progress.counted);
+  const fresh = progress.answers.slice(progress.counted).filter((answer) => !answer.skipped);
 
   if (fresh.length === 0) {
     return;

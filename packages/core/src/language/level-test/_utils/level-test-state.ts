@@ -2,6 +2,10 @@ import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type Goal } from "@zoonk/db";
 import { parseCefrScore } from "@zoonk/utils/cefr";
+import { getBaseLanguage, isTTSSupportedLanguage } from "@zoonk/utils/languages";
+import { findSpeechClip, toSpeechClip } from "../../../audio/_utils/speech-clips";
+import { type SpeechClip } from "../../../audio/speech-clip-contract";
+import { getSpeechClipKey } from "../../../audio/speech-clip-key";
 import { type OwnedGoal, findOwnedGoal } from "../../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readGoalDetails } from "../../_utils/language-goal";
@@ -10,6 +14,7 @@ import {
   type LanguageLevelTestView,
   type LevelTestBank,
   type LevelTestProgress,
+  type LevelTestQuestion,
   levelTestProgressSchema,
 } from "../level-test-contract";
 import {
@@ -22,12 +27,16 @@ import { type LevelTestBankState, loadLevelTestBank } from "./level-test-bank";
 
 const DEFAULT_START = 1;
 
+/** About how long the bank's run takes to voice its clips, retries included, after the questions. */
+const AUDIO_PENDING_MS = 90_000;
+
 export type LevelTestGoal = { goal: Goal & { targetLanguage: string }; userId: string };
 
 export type LevelTestContext =
   | {
       bank: LevelTestBank | null;
       bankStartedAt: Date | null;
+      bankWrittenAt: Date | null;
       owned: LevelTestGoal;
       progress: LevelTestProgress;
       status: "ready";
@@ -94,25 +103,51 @@ export async function loadLevelTestContext(
   return {
     bank: state.status === "ready" ? state.bank : null,
     bankStartedAt: state.status === "preparing" ? state.startedAt : null,
+    bankWrittenAt: state.status === "ready" ? state.writtenAt : null,
     owned: { goal: { ...goal, targetLanguage }, userId },
     progress: readLevelTestProgress(goal),
     status: "ready",
   };
 }
 
-export function toLevelTestView({
+async function findQuestionAudio({
+  bankWrittenAt,
+  language,
+  question,
+}: {
+  bankWrittenAt: Date | null;
+  language: string;
+  question: LevelTestQuestion;
+}): Promise<{ audio: SpeechClip | null; audioPending: boolean }> {
+  if (question.skill !== "listening" || !isTTSSupportedLanguage(getBaseLanguage(language))) {
+    return { audio: null, audioPending: false };
+  }
+
+  const clip = await findSpeechClip(getSpeechClipKey({ language, text: question.passage }));
+
+  if (clip) {
+    return { audio: toSpeechClip(clip), audioPending: false };
+  }
+
+  const writtenAt = bankWrittenAt?.getTime() ?? 0;
+  return { audio: null, audioPending: Date.now() - writtenAt < AUDIO_PENDING_MS };
+}
+
+export async function toLevelTestView({
   bank,
   bankStartedAt = null,
+  bankWrittenAt,
   goal,
   lastCorrect = null,
   progress,
 }: {
   bank: LevelTestBank | null;
   bankStartedAt?: Date | null;
+  bankWrittenAt: Date | null;
   goal: LevelTestGoal["goal"];
   lastCorrect?: boolean | null;
   progress: LevelTestProgress;
-}): LanguageLevelTestView {
+}): Promise<LanguageLevelTestView> {
   if (!bank) {
     return {
       expectedSeconds: LEVEL_TEST_PREPARING_SECONDS,
@@ -130,6 +165,11 @@ export function toLevelTestView({
       ? {
           kind: "question" as const,
           question: {
+            ...(await findQuestionAudio({
+              bankWrittenAt,
+              language: goal.targetLanguage,
+              question: step.question,
+            })),
             id: step.question.id,
             level: step.question.level,
             options: step.question.options,

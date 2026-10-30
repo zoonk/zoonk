@@ -24,7 +24,7 @@ export async function answerLanguageLevelTest({
     return context;
   }
 
-  const { bank, owned, progress } = context;
+  const { bank, bankWrittenAt, owned, progress } = context;
 
   if (!bank) {
     return { status: "notReady" };
@@ -36,13 +36,18 @@ export async function answerLanguageLevelTest({
     return { status: "invalid" };
   }
 
-  const next = {
-    ...progress,
-    answers: [
-      ...progress.answers,
-      { answerIndex: input.answerIndex, durationMs: input.durationMs ?? 0, id: input.questionId },
-    ],
+  if (input.skipped && step.question.skill !== "listening") {
+    return { status: "invalid" };
+  }
+
+  const answer = {
+    answerIndex: input.skipped ? null : input.answerIndex,
+    durationMs: input.durationMs ?? 0,
+    id: input.questionId,
+    ...(input.skipped && { skipped: true }),
   };
+
+  const next = { ...progress, answers: [...progress.answers, answer] };
 
   if (!(await saveLevelTestProgress({ from: progress, goal: owned.goal, progress: next }))) {
     return { status: "invalid" };
@@ -50,10 +55,11 @@ export async function answerLanguageLevelTest({
 
   return {
     status: "ready",
-    test: toLevelTestView({
+    test: await toLevelTestView({
       bank,
+      bankWrittenAt,
       goal: owned.goal,
-      lastCorrect: input.answerIndex === step.question.answerIndex,
+      lastCorrect: input.skipped ? null : input.answerIndex === step.question.answerIndex,
       progress: next,
     }),
   };

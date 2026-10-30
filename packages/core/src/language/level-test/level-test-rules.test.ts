@@ -29,7 +29,7 @@ const bank: LevelTestBank = {
   speaking: TEST_LEVELS.map((level) => ({ level, sentence: `Say ${level}`, translation: "" })),
 };
 
-type Answer = Pick<LevelTestProgress["answers"][number], "answerIndex" | "id">;
+type Answer = Pick<LevelTestProgress["answers"][number], "answerIndex" | "id" | "skipped">;
 
 function progress(answers: Answer[] = []) {
   return { answers, speaking: null };
@@ -79,6 +79,19 @@ describe("level estimates", () => {
 
     expect(right.reading).toBeGreaterThan(A2);
     expect(wrong.reading).toBeLessThan(A2);
+  });
+
+  it("doesn't move for a listening question skipped because its audio couldn't be made", () => {
+    const skipped = progress([
+      { answerIndex: 0, id: "reading-A2-0" },
+      { answerIndex: null, id: "listening-A2-0", skipped: true },
+    ]);
+
+    expect(getLevelTestScores({ bank, progress: skipped, start: A2 }).listening).toBe(A2);
+
+    expect(getNextLevelTestStep({ bank, progress: skipped, start: A2 })).toMatchObject({
+      question: { skill: "reading" },
+    });
   });
 });
 

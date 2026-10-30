@@ -101,6 +101,17 @@ function voiceBank(pair: { language: string; targetLanguage: string }) {
   );
 }
 
+async function answerFirstQuestion(goalId: string) {
+  const view = await getLanguageLevelTest(goalId);
+
+  const questionId =
+    view.status === "ready" && view.test.status === "ready" && view.test.next.kind === "question"
+      ? view.test.next.question.id
+      : "";
+
+  return answerLanguageLevelTest({ goalId, input: { answerIndex: 0, questionId } });
+}
+
 function findRow(pair: { language: string; targetLanguage: string }) {
   return prisma.languageLevelTest.findUniqueOrThrow({ where: { languagePair: pair } });
 }
@@ -324,6 +335,46 @@ describe("placement listening audio", () => {
 
     audio.resolve(voiced);
     await writing;
+  });
+
+  it("says a listening question's audio is still being made, then gives the clip once it's voiced", async () => {
+    const { goalId, pair } = await learnerOfFreshPair();
+    const passage = crypto.randomUUID();
+    vi.mocked(generateLevelTestBank).mockResolvedValueOnce(bankFrom(passage));
+    await writeLevelTestBank({ pair });
+
+    await expect(answerFirstQuestion(goalId)).resolves.toMatchObject({
+      test: { next: { question: { audio: null, audioPending: true, skill: "listening" } } },
+    });
+
+    await voiceBank(pair);
+
+    await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
+      test: {
+        next: {
+          question: {
+            audio: { url: expect.stringContaining("blob.test") },
+            audioPending: false,
+            skill: "listening",
+          },
+        },
+      },
+    });
+  });
+
+  it("doesn't keep the learner waiting for a clip the bank's run is no longer making", async () => {
+    const { goalId, pair } = await learnerOfFreshPair();
+    vi.mocked(generateLevelTestBank).mockResolvedValueOnce(bankFrom(crypto.randomUUID()));
+    await writeLevelTestBank({ pair });
+
+    await prisma.languageLevelTest.updateMany({
+      data: { generatedAt: new Date(Date.now() - 3_600_000) },
+      where: pair,
+    });
+
+    await expect(answerFirstQuestion(goalId)).resolves.toMatchObject({
+      test: { next: { question: { audio: null, audioPending: false, skill: "listening" } } },
+    });
   });
 
   it("lets an early listening tap join a long passage being prepared without another model call or AI help", async () => {

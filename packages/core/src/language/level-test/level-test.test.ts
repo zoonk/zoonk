@@ -271,6 +271,47 @@ describe("language level test", () => {
     expect(progress.reduce((sum, day) => sum + day.timeSpentSeconds, 0)).toBe(60);
   });
 
+  it("lets a listening question whose audio couldn't be made be skipped, without counting it", async () => {
+    await saveBank();
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    await expect(
+      answerLanguageLevelTest({
+        goalId: goal.id,
+        input: { answerIndex: null, questionId: "reading-A2-0", skipped: true },
+      }),
+    ).resolves.toStrictEqual({ status: "invalid" });
+
+    await answerLanguageLevelTest({
+      goalId: goal.id,
+      input: { answerIndex: 1, durationMs: 30_000, questionId: "reading-A2-0" },
+    });
+
+    const skipped = await answerLanguageLevelTest({
+      goalId: goal.id,
+      input: { answerIndex: null, durationMs: 50_000, questionId: "listening-A2-0", skipped: true },
+    });
+
+    expect(skipped).toMatchObject({
+      status: "ready",
+      test: {
+        answered: 2,
+        lastCorrect: null,
+        levels: expect.arrayContaining([{ label: "A2", score: 1, skill: "listening" }]),
+        next: { kind: "question", question: { skill: "reading" } },
+      },
+    });
+
+    await finishLanguageLevelTest(goal.id);
+
+    await expect(
+      prisma.learningEvent.findFirst({
+        where: { goalId: goal.id, lessonKind: "levelTest", userId: user.id },
+      }),
+    ).resolves.toMatchObject({ correctAnswers: 1, incorrectAnswers: 0, seconds: 30 });
+  });
+
   it("marks finish details and skill levels once when an identical retry writes equal values", async () => {
     await saveBank();
     const { goal, user } = await languageGoalFixture();
