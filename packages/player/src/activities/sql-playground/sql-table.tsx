@@ -67,35 +67,37 @@ export function SqlRowsTable({
   rows: readonly (readonly ActivityCell[])[];
 }) {
   return (
-    <div
-      aria-label={caption}
-      className="bg-background focus-visible:ring-ring/50 overflow-x-auto rounded-xl border outline-none focus-visible:ring-[3px]"
-      role="region"
-      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A wide table scrolls sideways, which needs focus by keyboard.
-      tabIndex={0}
-    >
-      <table className="w-full text-sm">
-        <caption className="sr-only">{caption}</caption>
-        <thead className="bg-muted/60 text-muted-foreground font-mono text-xs">
-          <tr>
-            {keyedByPosition(columns, (column) => column).map(({ item, key }) => (
-              <th
-                className="px-3.5 py-1.5 text-left font-normal whitespace-nowrap"
-                key={key}
-                scope="col"
-              >
-                {item}
-              </th>
-            ))}
-          </tr>
-        </thead>
+    <div className="bg-background has-focus-visible:ring-ring/50 overflow-hidden rounded-xl border has-focus-visible:ring-[3px]">
+      <div
+        aria-label={caption}
+        className="scroll-fade-x overflow-x-auto outline-none"
+        role="region"
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A wide table scrolls sideways, which needs focus by keyboard.
+        tabIndex={0}
+      >
+        <table className="w-full text-sm">
+          <caption className="sr-only">{caption}</caption>
+          <thead className="bg-muted/60 text-muted-foreground font-mono text-xs">
+            <tr>
+              {keyedByPosition(columns, (column) => column).map(({ item, key }) => (
+                <th
+                  className="px-3.5 py-1.5 text-left font-normal whitespace-nowrap"
+                  key={key}
+                  scope="col"
+                >
+                  {item}
+                </th>
+              ))}
+            </tr>
+          </thead>
 
-        <tbody>
-          {keyedByPosition(rows, (row) => JSON.stringify(row)).map(({ item, key }, position) => (
-            <SqlRow key={key} row={item} state={rowStates?.[position] ?? "plain"} />
-          ))}
-        </tbody>
-      </table>
+          <tbody>
+            {keyedByPosition(rows, (row) => JSON.stringify(row)).map(({ item, key }, position) => (
+              <SqlRow key={key} row={item} state={rowStates?.[position] ?? "plain"} />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

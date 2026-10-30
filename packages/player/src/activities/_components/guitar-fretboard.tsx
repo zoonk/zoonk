@@ -177,45 +177,47 @@ export function GuitarFretboard(props: FretboardProps) {
   const { firstFret, label, onChange, stringNames } = props;
 
   return (
-    <div
-      aria-hidden={onChange ? undefined : true}
-      aria-label={onChange ? label : undefined}
-      className="grid w-full items-center"
-      data-slot="guitar-fretboard"
-      role={onChange ? "group" : undefined}
-      style={gridColumns(Boolean(onChange))}
-    >
-      {STRINGS_TOP_DOWN.map((stringIndex) => (
-        <div className="contents" key={stringIndex}>
-          <span aria-hidden="true" className="text-muted-foreground text-xs font-medium">
-            {stringNames[stringIndex]}
+    <div className="scroll-fade-x overflow-x-auto">
+      <div
+        aria-hidden={onChange ? undefined : true}
+        aria-label={onChange ? label : undefined}
+        className="grid w-full items-center"
+        data-slot="guitar-fretboard"
+        role={onChange ? "group" : undefined}
+        style={gridColumns(Boolean(onChange))}
+      >
+        {STRINGS_TOP_DOWN.map((stringIndex) => (
+          <div className="contents" key={stringIndex}>
+            <span aria-hidden="true" className="text-muted-foreground text-xs font-medium">
+              {stringNames[stringIndex]}
+            </span>
+
+            {onChange ? (
+              <StringPicker
+                {...props}
+                name={`${name}-${stringIndex}`}
+                onChange={onChange}
+                stringIndex={stringIndex}
+              />
+            ) : (
+              <StringRow {...props} stringIndex={stringIndex} />
+            )}
+          </div>
+        ))}
+
+        <span aria-hidden="true" />
+        <span aria-hidden="true" />
+        {onChange && <span aria-hidden="true" />}
+        {frets(firstFret).map((fret) => (
+          <span
+            aria-hidden="true"
+            className="text-muted-foreground pt-1 text-center text-xs tabular-nums"
+            key={fret}
+          >
+            {fret}
           </span>
-
-          {onChange ? (
-            <StringPicker
-              {...props}
-              name={`${name}-${stringIndex}`}
-              onChange={onChange}
-              stringIndex={stringIndex}
-            />
-          ) : (
-            <StringRow {...props} stringIndex={stringIndex} />
-          )}
-        </div>
-      ))}
-
-      <span aria-hidden="true" />
-      <span aria-hidden="true" />
-      {onChange && <span aria-hidden="true" />}
-      {frets(firstFret).map((fret) => (
-        <span
-          aria-hidden="true"
-          className="text-muted-foreground pt-1 text-center text-xs tabular-nums"
-          key={fret}
-        >
-          {fret}
-        </span>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

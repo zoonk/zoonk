@@ -39,15 +39,19 @@ export function ActivityCodeBlock({ className, children, ...props }: React.Compo
   return (
     <div
       className={cn(
-        "focus-visible:ring-ring/50 -mx-1 overflow-x-auto rounded-md px-1 pb-1 outline-none focus-visible:ring-[3px]",
+        "has-focus-visible:ring-ring/50 -mx-1 rounded-md has-focus-visible:ring-[3px]",
         className,
       )}
       data-slot="activity-code-block"
-      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A scrolling region needs focus to scroll by keyboard.
-      tabIndex={0}
-      {...props}
     >
-      <div className={cn("flex w-max min-w-full flex-col", CODE_TEXT)}>{children}</div>
+      <div
+        className="scroll-fade-x overflow-x-auto px-1 pb-1 outline-none"
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A scrolling region needs focus to scroll by keyboard.
+        tabIndex={0}
+        {...props}
+      >
+        <div className={cn("flex w-max min-w-full flex-col", CODE_TEXT)}>{children}</div>
+      </div>
     </div>
   );
 }
@@ -177,39 +181,41 @@ export function ActivityCodeEditor({
   return (
     <div
       className={cn(
-        "bg-background focus-within:border-ring focus-within:ring-ring/50 overflow-x-auto rounded-xl border px-4 py-3 focus-within:ring-[3px]",
+        "bg-background focus-within:border-ring focus-within:ring-ring/50 rounded-xl border focus-within:ring-[3px]",
         className,
       )}
       data-slot="activity-code-editor"
     >
-      <div className={cn("grid w-max min-w-full", CODE_TEXT)}>
-        <div aria-hidden="true" className="col-start-1 row-start-1 whitespace-pre">
-          {keyedByPosition(highlightCode(value, language), lineText).map(({ item, key }) => (
-            <div key={key}>
-              <ActivityCodeTokens tokens={item} />
-            </div>
-          ))}
-        </div>
+      <div className="scroll-fade-x overflow-x-auto px-4 py-3">
+        <div className={cn("grid w-max min-w-full", CODE_TEXT)}>
+          <div aria-hidden="true" className="col-start-1 row-start-1 whitespace-pre">
+            {keyedByPosition(highlightCode(value, language), lineText).map(({ item, key }) => (
+              <div key={key}>
+                <ActivityCodeTokens tokens={item} />
+              </div>
+            ))}
+          </div>
 
-        <textarea
-          autoCapitalize="off"
-          autoComplete="off"
-          autoCorrect="off"
-          className={cn(FIELD_RESET, "min-h-11 w-full [font:inherit]")}
-          onChange={(event) => onChange(event.target.value)}
-          onKeyDown={(event) => {
-            if (onSubmit && event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
-              event.preventDefault();
-              onSubmit();
-            }
-          }}
-          ref={editorRef}
-          rows={lines.length}
-          spellCheck={false}
-          value={value}
-          wrap="off"
-          {...props}
-        />
+          <textarea
+            autoCapitalize="off"
+            autoComplete="off"
+            autoCorrect="off"
+            className={cn(FIELD_RESET, "min-h-11 w-full [font:inherit]")}
+            onChange={(event) => onChange(event.target.value)}
+            onKeyDown={(event) => {
+              if (onSubmit && event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+                event.preventDefault();
+                onSubmit();
+              }
+            }}
+            ref={editorRef}
+            rows={lines.length}
+            spellCheck={false}
+            value={value}
+            wrap="off"
+            {...props}
+          />
+        </div>
       </div>
     </div>
   );
@@ -276,7 +282,7 @@ export function ActivitySnippetBar({
   return (
     <div
       aria-label={label}
-      className="flex gap-1.5 overflow-x-auto pb-1"
+      className="scroll-fade-x flex gap-1.5 overflow-x-auto pb-1"
       data-slot="activity-snippet-bar"
       role="toolbar"
     >

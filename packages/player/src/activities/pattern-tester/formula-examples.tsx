@@ -55,34 +55,36 @@ export function FormulaExamples({
   const names = examples[0]?.inputs.map((input) => input.name) ?? [];
 
   return (
-    <div className="bg-background overflow-x-auto rounded-xl border">
-      <table className="w-full text-sm tabular-nums">
-        <caption className="sr-only">{t("Examples for your formula")}</caption>
+    <div className="bg-background overflow-hidden rounded-xl border">
+      <div className="scroll-fade-x overflow-x-auto">
+        <table className="w-full text-sm tabular-nums">
+          <caption className="sr-only">{t("Examples for your formula")}</caption>
 
-        <thead className="bg-muted/60 text-muted-foreground text-xs">
-          <tr>
-            {names.map((name) => (
-              <th className="px-3 py-2 text-left font-mono font-medium" key={name} scope="col">
-                {name}
+          <thead className="bg-muted/60 text-muted-foreground text-xs">
+            <tr>
+              {names.map((name) => (
+                <th className="px-3 py-2 text-left font-mono font-medium" key={name} scope="col">
+                  {name}
+                </th>
+              ))}
+              <th className="px-3 py-2 text-right font-medium" scope="col">
+                {t("Should give")}
               </th>
-            ))}
-            <th className="px-3 py-2 text-right font-medium" scope="col">
-              {t("Should give")}
-            </th>
-            <th className="px-3 py-2 text-right font-medium" scope="col">
-              {t("Your result")}
-            </th>
-          </tr>
-        </thead>
+              <th className="px-3 py-2 text-right font-medium" scope="col">
+                {t("Your result")}
+              </th>
+            </tr>
+          </thead>
 
-        <tbody>
-          {keyedByPosition(examples, (example) => String(example.output)).map(
-            ({ item, key }, position) => (
-              <FormulaExampleRow example={item} key={key} result={results?.[position] ?? null} />
-            ),
-          )}
-        </tbody>
-      </table>
+          <tbody>
+            {keyedByPosition(examples, (example) => String(example.output)).map(
+              ({ item, key }, position) => (
+                <FormulaExampleRow example={item} key={key} result={results?.[position] ?? null} />
+              ),
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

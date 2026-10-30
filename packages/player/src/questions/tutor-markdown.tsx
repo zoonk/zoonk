@@ -10,6 +10,7 @@ import {
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { ExternalLinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ComponentProps, type MouseEvent, createContext, use } from "react";
@@ -130,6 +131,15 @@ function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
 
 const TUTOR_ANSWER_COMPONENTS: Components = { a: TutorAnswerLink };
 
+// Streamdown's code and table scrollers carry their own border and background, which the sideways
+// fade would fade with them, so their outer card is the one frame. A table keeps its words whole
+// and scrolls instead of breaking them letter by letter.
+const TUTOR_MARKDOWN_CLASS = cn(
+  "min-w-0 wrap-anywhere [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden [&_.katex-display]:py-1 [&_a]:underline [&_a]:underline-offset-4",
+  "**:data-[streamdown=code-block]:bg-background **:data-[streamdown=code-block-body]:scroll-fade-x **:data-[streamdown=code-block-body]:border-0 **:data-[streamdown=code-block-body]:bg-transparent",
+  "**:data-[streamdown=table-wrapper]:bg-background [&_[data-streamdown=table-wrapper]>div:has(>table)]:scroll-fade-x **:data-[streamdown=table-wrapper]:wrap-normal [&_[data-streamdown=table-wrapper]>div:has(>table)]:border-0 [&_[data-streamdown=table-wrapper]>div:has(>table)]:bg-transparent",
+);
+
 export function TutorMarkdown({
   answer,
   appLinks,
@@ -147,7 +157,7 @@ export function TutorMarkdown({
     <TutorAnswerLinksContext value={appLinks ?? null}>
       <Streamdown
         animated={isAnimating}
-        className="min-w-0 wrap-anywhere [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden [&_.katex-display]:py-1 [&_a]:underline [&_a]:underline-offset-4"
+        className={TUTOR_MARKDOWN_CLASS}
         components={appLinks ? TUTOR_ANSWER_COMPONENTS : undefined}
         controls={false}
         disallowedElements={DISALLOWED_ANSWER_ELEMENTS}

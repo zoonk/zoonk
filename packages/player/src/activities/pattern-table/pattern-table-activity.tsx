@@ -27,6 +27,18 @@ function WordHeader({ meaning, word }: { meaning?: string; word: string }) {
   );
 }
 
+function PatternTableHead({ fields }: { fields: PatternTableProps["content"]["fields"] }) {
+  return (
+    <thead>
+      <tr className="border-border border-b">
+        <td />
+        <WordHeader meaning={fields.modelMeaning} word={fields.modelWord} />
+        <WordHeader meaning={fields.newMeaning} word={fields.newWord} />
+      </tr>
+    </thead>
+  );
+}
+
 export function PatternTableActivity(props: PatternTableProps) {
   const t = useExtracted();
   const { answer, content, labelId, onAnswerChange, phase } = props;
@@ -62,33 +74,29 @@ export function PatternTableActivity(props: PatternTableProps) {
 
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
-      <div className="bg-background overflow-x-auto rounded-xl px-2 py-3">
-        <table className="w-full border-collapse text-base">
-          <thead>
-            <tr className="border-border border-b">
-              <td />
-              <WordHeader meaning={fields.modelMeaning} word={fields.modelWord} />
-              <WordHeader meaning={fields.newMeaning} word={fields.newWord} />
-            </tr>
-          </thead>
+      <div className="bg-background rounded-xl">
+        <div className="scroll-fade-x overflow-x-auto px-2 py-3">
+          <table className="w-full border-collapse text-base">
+            <PatternTableHead fields={fields} />
 
-          <tbody className="divide-border divide-y">
-            {fields.rows.map((row, index) => (
-              <PatternRow
-                choices={fields.choices}
-                chosen={filled[String(index)] ?? null}
-                expected={isChecked ? (expected[String(index)] ?? null) : null}
-                isActive={!isChecked && active === index}
-                isChecked={isChecked}
-                key={`${row.label}-${row.model}`}
-                modelStem={modelStem}
-                newStem={newStem}
-                onSelect={() => setActive(index)}
-                row={row}
-              />
-            ))}
-          </tbody>
-        </table>
+            <tbody className="divide-border divide-y">
+              {fields.rows.map((row, index) => (
+                <PatternRow
+                  choices={fields.choices}
+                  chosen={filled[String(index)] ?? null}
+                  expected={isChecked ? (expected[String(index)] ?? null) : null}
+                  isActive={!isChecked && active === index}
+                  isChecked={isChecked}
+                  key={`${row.label}-${row.model}`}
+                  modelStem={modelStem}
+                  newStem={newStem}
+                  onSelect={() => setActive(index)}
+                  row={row}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {!isChecked && activeRow && (

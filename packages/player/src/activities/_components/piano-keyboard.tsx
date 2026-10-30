@@ -120,7 +120,10 @@ export function PianoKeyboard({
   );
 
   return isInteractive ? (
-    <div className={cn("w-full overflow-x-auto", className)} data-slot="piano-keyboard-scroll">
+    <div
+      className={cn("scroll-fade-x w-full overflow-x-auto", className)}
+      data-slot="piano-keyboard-scroll"
+    >
       {keyboard}
     </div>
   ) : (

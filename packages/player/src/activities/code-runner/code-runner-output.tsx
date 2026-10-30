@@ -22,7 +22,7 @@ function OutputCell({
   return (
     <div className={cn("flex min-w-0 flex-col gap-0.5 px-4 py-3", className)}>
       <p className="text-muted-foreground text-xs font-medium">{label}</p>
-      <div className="overflow-x-auto">{children}</div>
+      <div className="scroll-fade-x overflow-x-auto">{children}</div>
     </div>
   );
 }
@@ -146,7 +146,7 @@ export function CodeRunnerOutput({
       {run && !isStale && <StopNotice language={language} run={run} />}
 
       {run?.errorOutput && !isStale && (
-        <pre className="text-muted-foreground overflow-x-auto font-mono text-xs whitespace-pre">
+        <pre className="text-muted-foreground scroll-fade-x overflow-x-auto font-mono text-xs whitespace-pre">
           {run.errorOutput}
         </pre>
       )}
