@@ -21,7 +21,6 @@ import com.zoonk.api.models.LanguageLevelTestSpokenResult
 import com.zoonk.api.models.LanguageLevelTestSpokenResultHeard
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
-import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
@@ -390,7 +389,6 @@ internal class FakeOnboardingApi : OnboardingApi {
 
     var placement: Placement = placementOf()
     var answered: (PlacementAnswerInput) -> Placement = { placementOf(status = "done", next = null, answered = 1, complete = true) }
-    var mockOptions: MockOptions? = null
     var writeFailure: ApiException? = null
     var placementReads = 0
     val placementAnswers = mutableListOf<PlacementAnswerInput>()
@@ -424,11 +422,6 @@ internal class FakeOnboardingApi : OnboardingApi {
         writeFailure?.let { throw it }
         finishedPlacements += fromScratch
     }
-
-    override suspend fun mockOptions(
-        session: AuthenticatedSession,
-        goalId: String,
-    ): MockOptions = mockOptions ?: throw ApiException(ApiError.Unavailable, code = "NOT_AN_EXAM")
 
     override suspend fun finishMock(
         session: AuthenticatedSession,

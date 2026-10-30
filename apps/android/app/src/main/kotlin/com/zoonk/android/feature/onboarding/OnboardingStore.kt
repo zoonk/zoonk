@@ -30,7 +30,6 @@ import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestSpokenResult
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
-import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
@@ -430,17 +429,6 @@ class OnboardingStore(
             session?.let { api.placement(it, goalId) }
         }
 
-    val placementMocks =
-        cache.keyed<String, MockOptions>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.UserSubscription)) { session, goalId ->
-            session?.let {
-                try {
-                    api.mockOptions(it, goalId)
-                } catch (e: ApiException) {
-                    if (e.code == "NOT_AN_EXAM") null else throw e
-                }
-            }
-        }
-
     suspend fun answerPlacement(
         goalId: String,
         itemId: String,
@@ -467,12 +455,8 @@ class OnboardingStore(
         fromScratch: Boolean,
     ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel)) { api.finishPlacement(it, goalId, fromScratch) }
 
-    /** The goal's mock offer is read again, so a stopped mock no longer shows as running. */
-    suspend fun stopPlacementMock(
-        goalId: String,
-        mockId: String,
-    ) = write(setOf(DataDomain.LearnerModel)) { api.finishMock(it, mockId) }
-        .also { if (it is WriteOutcome.Done) placementMocks[goalId].invalidate() }
+    /** The learner model is what the goal's mock offer follows, so a stopped mock no longer shows as running. */
+    suspend fun stopPlacementMock(mockId: String) = write(setOf(DataDomain.LearnerModel)) { api.finishMock(it, mockId) }
 
     /** A language goal's level test; each answer replies with its next step. */
     val levelTests =

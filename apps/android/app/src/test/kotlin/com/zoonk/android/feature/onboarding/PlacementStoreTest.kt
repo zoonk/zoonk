@@ -3,7 +3,6 @@ package com.zoonk.android.feature.onboarding
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
-import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.value
 import com.zoonk.api.models.ChoiceAnswer
@@ -54,15 +53,6 @@ class PlacementStoreTest {
                     .itemId
                     .toString(),
             )
-        }
-
-    @Test
-    fun aGoalThatIsNotAnExamHasNoMockOptions() =
-        runTest {
-            val store = store()
-            store.placementMocks[GOAL_ID].load()
-
-            assertEquals(LoadState.Empty, store.placementMocks[GOAL_ID].state.value)
         }
 
     private companion object {

@@ -22,6 +22,8 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.SignInResult
+import com.zoonk.android.feature.exam.FakeMockApi
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.MOCK_ID
@@ -53,17 +55,15 @@ class PlacementStepFlowTest {
     val rule: ComposeContentTestRule = createComposeRule()
 
     private val api = FakeOnboardingApi()
+    private val mockApi = FakeMockApi(options = null)
     private lateinit var navigator: AppNavigator
     private var done = 0
 
     private fun show(run: GenerationRun = GenerationRun()) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-        val store =
-            OnboardingStore(
-                api,
-                AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
-                session,
-            ) { SignInResult.SignedIn }
+        val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+        val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
+        val mocks = MockStore(mockApi, cache)
         rule.setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
@@ -75,6 +75,7 @@ class PlacementStepFlowTest {
                         run,
                         onRetryRun = null,
                         store,
+                        mocks,
                         navigator,
                         onProgress = {},
                         onDone = { done++ },
@@ -203,7 +204,7 @@ class PlacementStepFlowTest {
 
     @Test
     fun aMockExamOfferOpensTheMockChooser() {
-        api.mockOptions = mockOptionsOf()
+        mockApi.options = mockOptionsOf()
         show()
         tap("Or take a mock exam")
 
@@ -212,7 +213,7 @@ class PlacementStepFlowTest {
 
     @Test
     fun aMockExamLeftRunningGoesOnOrStops() {
-        api.mockOptions = mockOptionsOf(mock = runningMock())
+        mockApi.options = mockOptionsOf(mock = runningMock())
         show()
 
         tap("Continue the mock exam")

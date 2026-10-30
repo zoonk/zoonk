@@ -25,7 +25,6 @@ import com.zoonk.api.models.LanguageLevelTestGeneration
 import com.zoonk.api.models.LanguageLevelTestSpokenResult
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
-import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.MockTimeZoneInput
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
@@ -208,11 +207,6 @@ interface OnboardingApi {
         goalId: String,
         fromScratch: Boolean,
     )
-
-    suspend fun mockOptions(
-        session: AuthenticatedSession,
-        goalId: String,
-    ): MockOptions
 
     suspend fun finishMock(
         session: AuthenticatedSession,
@@ -482,11 +476,6 @@ class LiveOnboardingApi(
             )
         }
     }
-
-    override suspend fun mockOptions(
-        session: AuthenticatedSession,
-        goalId: String,
-    ) = perform { api.clients(session).exams.listMocks(UUID.fromString(goalId)) }
 
     override suspend fun finishMock(
         session: AuthenticatedSession,

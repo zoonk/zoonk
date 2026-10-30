@@ -62,6 +62,7 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.audio.buttonIconSize
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
@@ -95,6 +96,7 @@ import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.PlacementAnswerAnyOf
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
+import java.util.UUID
 import kotlin.math.max
 import kotlin.time.Duration.Companion.seconds
 import com.zoonk.api.models.LessonVisual as ApiLessonVisual
@@ -108,6 +110,7 @@ internal fun ColumnScope.PlacementStep(
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
     store: OnboardingStore,
+    mocks: MockStore,
     navigator: AppNavigator,
     onProgress: (Float?) -> Unit,
     onDone: () -> Unit,
@@ -116,8 +119,8 @@ internal fun ColumnScope.PlacementStep(
     val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle()) }
     val resource = store.placements[goalId]
     val placement by resource.collectShown()
-    val mocks by store.placementMocks[goalId].collectShown()
-    val phase = vm.phase(placement, mocks)
+    val options by mocks.options[UUID.fromString(goalId)].collectShown()
+    val phase = vm.phase(placement, options)
     val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { resource.refreshed() }
     val finish = { fromScratch: Boolean -> vm.finish(fromScratch, onDone = onDone) }
     val progress = (phase as? PlacementPhase.Question)?.spent?.toFloat()
