@@ -124,7 +124,7 @@ export async function findAndStoreSources({
     topic,
   });
 
-  const hasOfficial = stored.some((source) => source.kind === "official");
+  const hasOfficial = found.documents.some((document) => document.kind === "official");
 
   if (requireOfficial && !hasOfficial) {
     return [];

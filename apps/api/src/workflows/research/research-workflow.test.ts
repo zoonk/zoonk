@@ -635,99 +635,108 @@ describe(researchWorkflow, () => {
     expect(pages.every((page) => texts.some((text) => text.includes(page.url)))).toBe(true);
   });
 
-  it("reads a copy from another site when the notice's own site refuses the download", async () => {
-    const { goal } = await examGoal();
-    const { extraction, plan } = await replayTcdfResearch();
+  it.each([false, true])(
+    "reads a notice copy when all official downloads are blocked: %s",
+    async (allBlocked) => {
+      const { goal } = await examGoal();
+      const { extraction, plan } = await replayTcdfResearch();
 
-    const [recorded, noticeText] = await Promise.all([
-      readJsonFixture<RecordedSearch>("tcdf-2026-search.json"),
-      readFixture("tcdf-2026-notice.txt"),
-    ]);
+      const [recorded, noticeText] = await Promise.all([
+        readJsonFixture<RecordedSearch>("tcdf-2026-search.json"),
+        readFixture("tcdf-2026-notice.txt"),
+      ]);
 
-    const fromCopy = JSON.parse(
-      JSON.stringify(extraction).replaceAll('"document":1', '"document":2'),
-    ) as BlueprintExtraction;
+      const fromCopy = allBlocked
+        ? extraction
+        : (JSON.parse(
+            JSON.stringify(extraction).replaceAll('"document":1', '"document":2'),
+          ) as BlueprintExtraction);
 
-    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: fromCopy });
+      vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: fromCopy });
 
-    const suffix = randomUUID();
+      const suffix = randomUUID();
 
-    const found = recorded.documents.map((document) => ({
-      ...document,
-      url: `${document.url}?test=${suffix}`,
-    }));
+      const found = recorded.documents.map((document) => ({
+        ...document,
+        url: `${document.url}?test=${suffix}`,
+      }));
 
-    const notice = found.find((document) => document.documentType === "notice");
-    const newsPage = found.find((document) => document.url.includes("tc.df.gov.br"));
+      const notice = found.find((document) => document.documentType === "notice");
+      const newsPage = found.find((document) => document.url.includes("tc.df.gov.br"));
 
-    if (!notice || !newsPage) {
-      throw new Error("The recorded search has the notice and the court's news page.");
-    }
-
-    const copy = (url: string) => ({
-      ...notice,
-      kind: "secondary" as const,
-      publisher: "Exam site",
-      url: `${url}?test=${suffix}`,
-    });
-
-    const blockedCopy = copy("https://arquivos.cdn.cebraspe.org.br/edital-tcdf.pdf");
-    const readableCopy = copy("https://www.examsite.com.br/editais/tcdf-2026.pdf");
-
-    vi.mocked(findOfficialSources).mockImplementation(async ({ unreadable = [] }) => ({
-      ...TASK_RESULT,
-      data: {
-        documents: unreadable.length > 0 ? [blockedCopy, readableCopy] : found,
-        officialFound: true,
-        searchCalls: 2,
-      },
-    }));
-
-    vi.mocked(fetch).mockImplementation(async (input) => {
-      const url = requestedUrl(input);
-
-      if (url.includes("cebraspe.org.br")) {
-        return new PageResponse("Access Denied", { status: 403 });
+      if (!notice || !newsPage) {
+        throw new Error("The recorded search has the notice and the court's news page.");
       }
 
-      return url.includes("examsite.com.br")
-        ? new PageResponse(noticeText, { headers: { "content-type": "text/plain" } })
-        : new PageResponse(`<main>${`<p>${url} announces the notice.</p>`.repeat(4)}</main>`, {
-            headers: { "content-type": "text/html" },
-          });
-    });
+      const copy = (url: string) => ({
+        ...notice,
+        kind: "secondary" as const,
+        publisher: "Exam site",
+        url: `${url}?test=${suffix}`,
+      });
 
-    const result = await researchWorkflow({ goalId: goal.id });
+      const blockedCopy = copy("https://arquivos.cdn.cebraspe.org.br/edital-tcdf.pdf");
+      const readableCopy = copy("https://www.examsite.com.br/editais/tcdf-2026.pdf");
 
-    expect(result).toMatchObject({ examBlueprintId: expect.any(String), status: "ready" });
+      const initialDocuments = allBlocked ? [notice] : found;
 
-    const searches = vi.mocked(findOfficialSources).mock.calls.map(([input]) => input);
-
-    expect(searches).toHaveLength(2);
-    expect(searches[1]?.unreadable).toContain(notice.url);
-    expect(searches[1]?.analytics).toMatchObject({ contentScope: "shared" });
-
-    expect(
-      vi.mocked(fetch).mock.calls.some(([input]) => requestedUrl(input).includes("arquivos.cdn")),
-    ).toBe(false);
-
-    const [reading] = vi.mocked(extractExamBlueprint).mock.calls.map(([input]) => input);
-    const urls = reading?.documents.map((document) => document.url) ?? [];
-
-    expect(urls).toStrictEqual([newsPage.url, readableCopy.url]);
-
-    const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
-      include: { source: true },
-      where: {
-        languageIdentity: {
-          identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
-          language: "pt",
+      vi.mocked(findOfficialSources).mockImplementation(async ({ unreadable = [] }) => ({
+        ...TASK_RESULT,
+        data: {
+          documents: unreadable.length > 0 ? [blockedCopy, readableCopy] : initialDocuments,
+          officialFound: true,
+          searchCalls: 2,
         },
-      },
-    });
+      }));
 
-    expect(examStructureSchema.parse(blueprint.structure).subjects.length).toBeGreaterThan(0);
-  });
+      vi.mocked(fetch).mockImplementation(async (input) => {
+        const url = requestedUrl(input);
+
+        if (url.includes("cebraspe.org.br")) {
+          return new PageResponse("Access Denied", { status: 403 });
+        }
+
+        return url.includes("examsite.com.br")
+          ? new PageResponse(noticeText, { headers: { "content-type": "text/plain" } })
+          : new PageResponse(`<main>${`<p>${url} announces the notice.</p>`.repeat(4)}</main>`, {
+              headers: { "content-type": "text/html" },
+            });
+      });
+
+      const result = await researchWorkflow({ goalId: goal.id });
+
+      expect(result).toMatchObject({ examBlueprintId: expect.any(String), status: "ready" });
+
+      const searches = vi.mocked(findOfficialSources).mock.calls.map(([input]) => input);
+
+      expect(searches).toHaveLength(2);
+      expect(searches[1]?.unreadable).toContain(notice.url);
+      expect(searches[1]?.analytics).toMatchObject({ contentScope: "shared" });
+
+      expect(
+        vi.mocked(fetch).mock.calls.some(([input]) => requestedUrl(input).includes("arquivos.cdn")),
+      ).toBe(false);
+
+      const [reading] = vi.mocked(extractExamBlueprint).mock.calls.map(([input]) => input);
+      const urls = reading?.documents.map((document) => document.url) ?? [];
+
+      expect(urls).toStrictEqual(
+        allBlocked ? [readableCopy.url] : [newsPage.url, readableCopy.url],
+      );
+
+      const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
+        include: { source: true },
+        where: {
+          languageIdentity: {
+            identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+            language: "pt",
+          },
+        },
+      });
+
+      expect(examStructureSchema.parse(blueprint.structure).subjects.length).toBeGreaterThan(0);
+    },
+  );
 
   it("fails the step storing a document whose download timed out, so the runtime retries it alone", async () => {
     await replayTcdfResearch();
