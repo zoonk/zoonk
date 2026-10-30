@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "pattern_also_came_up": "6338378eb30c125248ae8f00e8f0e62c318dc8027041e5be0ed60a0604605e4c",
+  "pattern_correct_version": "8d760aa4b837310fc2ced13dcb7dc517ff8707a4582c06e153cd418350f716b9",
+  "pattern_done": "e731804dec1b61998f2470fa813fdce427c428b97b188afeea18d1afd9805f37",
+  "pattern_got_it": "3983f8d07b67c102e7a823c5f31bae1c9f6af92587f74a20c6f8189e23ad7a58",
+  "pattern_just_typos": "fd48f9cffa7518679c34d5353eff4d1086068d73f4bcf7955b12bd7835a5a2b0",
+  "pattern_keep_going": "4bd8b7f096823b8efd02414d9f858de099f553f67c60f76d4581929ca1df0c89",
+  "pattern_noticed": "6b459af3c41efeb747ce267004beeb4279b907dd851e4d02d739e73b8115ae83",
+  "pattern_practice": "e100732844971c650d3353a3fa7bbe2acbc66a4fb14b6804f9adb2d267fad210",
+  "pattern_quoted": "4dc0de4a5839552c2b5e23d354ea3a463208f95b847fd62da2d1dc2ad7e6f59f",
+  "pattern_rule": "767d96689a01ddf44a903b7b9f0b451fd1b75869e70b0805a37a924b47ba886b",
+  "pattern_see_how_you_did": "372e09b978d18970cb6182c8dc17fedbf8ae5e79d6181781a73b61418fdfc21e",
+  "pattern_see_rule": "172e87c00506c075ed7359d752af9fdf3eb245b9c0c79c321f35e887e7c6030f",
+  "pattern_seen": "2293b61ca6e1026dcb2d3aeeb11b5b17f96b267902ac22f668b83c9d9953f00d",
+  "pattern_seen_times": "1ec463ca52fb06bed7cd5add36b378934d5a16b1f42d2a15d7827a4e7a26ad09",
+  "pattern_title": "2e7bcb1457390cd31670879f6e506b7a6e08e94cb31d8e69b60036259864f6cb",
+  "pattern_typos_detail": "6efe442155ff1ae420c69b09eb2c73d2b947831e6ac4bc6b12e750f3f4852700",
+  "pattern_where_you_slipped": "91fd40aacac2ae21501635b735f4ea047a372dc813ee8cbf33b637498efa9ef3",
+  "pattern_you_said": "5b44f35687265bca35227d2d4608d8be3d1560aa387c8ea1331fc3aa3ddc85e3"
+}
+-->
+<resources>
+    <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
+    <string name="pattern_title">Error recurrente</string>
+    <string name="pattern_noticed">Hemos detectado un patrón</string>
+    <string name="pattern_seen">Ha aparecido en tus respuestas recientes.</string>
+    <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
+    <plurals name="pattern_seen_times">
+        <item quantity="one">Ha aparecido %d vez en tus respuestas recientes.</item>
+        <item quantity="many">Ha aparecido %d veces en tus respuestas recientes.</item>
+        <item quantity="other">Ha aparecido %d veces en tus respuestas recientes.</item>
+    </plurals>
+    <!-- Starts a short practice of the rule. %1$s is how long it takes, like "3 min". -->
+    <string name="pattern_practice">Practicar · %1$s</string>
+    <!-- Heads the learner's other sentences that show the same mistake. -->
+    <string name="pattern_also_came_up">También ha aparecido en</string>
+    <!-- A sentence the learner said or wrote, in quotation marks. -->
+    <string name="pattern_quoted">«%1$s»</string>
+    <string name="pattern_rule">La regla</string>
+    <!-- Read aloud before the learner's own wrong sentence. -->
+    <string name="pattern_you_said">Has dicho</string>
+    <!-- Read aloud before the corrected sentence. -->
+    <string name="pattern_correct_version">Versión correcta</string>
+    <!-- Heads the learner's own wrong sentence beside its corrected version. -->
+    <string name="pattern_where_you_slipped">Dónde te has equivocado</string>
+    <string name="pattern_see_rule">Ver la regla</string>
+    <!-- After the practice's last question, opens its result. -->
+    <string name="pattern_see_how_you_did">Ver cómo te ha ido</string>
+    <string name="pattern_got_it">Ya dominas esta regla.</string>
+    <string name="pattern_keep_going">Conocer la regla es el primer paso. Cada vez que la uses te resultará más fácil.</string>
+    <!-- The button that closes the practice result or the typos note and leaves the screen. -->
+    <string name="pattern_done">Terminar</string>
+    <string name="pattern_just_typos">Solo errores al escribir</string>
+    <string name="pattern_typos_detail">Tus errores recientes fueron despistes al escribir, no una regla que desconozcas. No hay nada que practicar.</string>
+</resources>

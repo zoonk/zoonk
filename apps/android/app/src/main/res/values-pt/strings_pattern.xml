@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "pattern_also_came_up": "7cd9eb1e6e93fe5c4abc4d57380f154ff8b148a7ce3fa3a08b6dc47570274c53",
+  "pattern_correct_version": "bb693a3ff99735c8959841c71f334a4e43b1d7bf4af9be5a127f1ed7b5f44ff4",
+  "pattern_done": "ad7b05cb64cbc4952404f9717b21bbf8225c4388c25111a1c3bda2835fef8bee",
+  "pattern_got_it": "86ec501bf2c21e3aa93829658ec392ec54830b3f87e7b185cb5fd38bfdc25e8c",
+  "pattern_just_typos": "5c1c5115fbceb762dc29f9477c0e66040befd8cd7ace9f1cc394509ca4bbeff6",
+  "pattern_keep_going": "13eebf458372e39a7b4aef3ba01f1034718cc9a8fb9dad12b109eeb2c46822c8",
+  "pattern_noticed": "9842a1224d57fffe912ea91ba36a554c634813f40ea68ae4d55eebbc9270d0f1",
+  "pattern_practice": "c8e8608c09aa71e45eeed56db70c0d04641a11e8ff377e279f3169777115ad95",
+  "pattern_quoted": "65ad6f76bd851f35e3454cce549d1087cfd21713d45bc8074a57af906d873506",
+  "pattern_rule": "1579988959eb2089971d976b2473b3286cbb9992839762de85b5bcb1406b348e",
+  "pattern_see_how_you_did": "19aae6c8188e3afd3a4ffde3bd0d6702a24a11e982f1c94a48a1c28461d3b3a1",
+  "pattern_see_rule": "dc29a38c675eb6ced54b854eb4c8a24f6bdc892abd40cbfbd376c4dd26c774a4",
+  "pattern_seen": "4c5927ca1aca9837a13122aaf1219ef11fd55c40084291bde2baf3cbc390939d",
+  "pattern_seen_times": "4732db7fc6c35e84d4fe9be8de3bf43b4d4cc69611178289c8e52f4d00eff2f9",
+  "pattern_title": "a27e09640909c9d0dab6e2e784adae9aabc6ffab71850ca08d439cfa3205e0bb",
+  "pattern_typos_detail": "12237218a6304d91b2aa3f69a42c318dae1199ac6305e71d65baa9d7d3e31757",
+  "pattern_where_you_slipped": "37f48ef31c729f25e92a18a32b771adaa96ed61215784f891454ce97a761e171",
+  "pattern_you_said": "95da299587c4afddb0c8d31af48e803a157e395316986fc133ab3a932cacee16"
+}
+-->
+<resources>
+    <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
+    <string name="pattern_title">Erro recorrente</string>
+    <string name="pattern_noticed">A gente percebeu um padrão</string>
+    <string name="pattern_seen">Apareceu nas suas respostas recentes.</string>
+    <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
+    <plurals name="pattern_seen_times">
+        <item quantity="one">Apareceu %d vez nas suas respostas recentes.</item>
+        <item quantity="many">Apareceu %d vezes nas suas respostas recentes.</item>
+        <item quantity="other">Apareceu %d vezes nas suas respostas recentes.</item>
+    </plurals>
+    <!-- Starts a short practice of the rule. %1$s is how long it takes, like "3 min". -->
+    <string name="pattern_practice">Praticar · %1$s</string>
+    <!-- Heads the learner's other sentences that show the same mistake. -->
+    <string name="pattern_also_came_up">Também apareceu em</string>
+    <!-- A sentence the learner said or wrote, in quotation marks. -->
+    <string name="pattern_quoted">“%1$s”</string>
+    <string name="pattern_rule">A regra</string>
+    <!-- Read aloud before the learner's own wrong sentence. -->
+    <string name="pattern_you_said">Você falou</string>
+    <!-- Read aloud before the corrected sentence. -->
+    <string name="pattern_correct_version">Versão correta</string>
+    <!-- Heads the learner's own wrong sentence beside its corrected version. -->
+    <string name="pattern_where_you_slipped">Onde você se confundiu</string>
+    <string name="pattern_see_rule">Ver a regra</string>
+    <!-- After the practice's last question, opens its result. -->
+    <string name="pattern_see_how_you_did">Veja como você se saiu</string>
+    <string name="pattern_got_it">Você aprendeu esta regra.</string>
+    <string name="pattern_keep_going">Saber a regra é o primeiro passo. Fica mais fácil cada vez que você usa.</string>
+    <!-- The button that closes the practice result or the typos note and leaves the screen. -->
+    <string name="pattern_done">Concluir</string>
+    <string name="pattern_just_typos">Só erros de digitação</string>
+    <string name="pattern_typos_detail">Seus erros recentes foram de digitação, não de uma regra que você precisa aprender. Não há nada para praticar.</string>
+</resources>

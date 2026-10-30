@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
+    <string name="pattern_title">Mistake pattern</string>
+    <string name="pattern_noticed">We noticed a pattern</string>
+    <string name="pattern_seen">It came up in your recent answers.</string>
+    <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
+    <plurals name="pattern_seen_times">
+        <item quantity="one">It came up once in your recent answers.</item>
+        <item quantity="other">It came up %d times in your recent answers.</item>
+    </plurals>
+    <!-- Starts a short practice of the rule. %1$s is how long it takes, like "3 min". -->
+    <string name="pattern_practice">Practice this · %1$s</string>
+    <!-- Heads the learner's other sentences that show the same mistake. -->
+    <string name="pattern_also_came_up">Also came up in</string>
+    <!-- A sentence the learner said or wrote, in quotation marks. -->
+    <string name="pattern_quoted">“%1$s”</string>
+    <string name="pattern_rule">The rule</string>
+    <!-- Read aloud before the learner's own wrong sentence. -->
+    <string name="pattern_you_said">You said</string>
+    <!-- Read aloud before the corrected sentence. -->
+    <string name="pattern_correct_version">Correct version</string>
+    <!-- Heads the learner's own wrong sentence beside its corrected version. -->
+    <string name="pattern_where_you_slipped">Where you slipped</string>
+    <string name="pattern_see_rule">See the rule</string>
+    <!-- After the practice's last question, opens its result. -->
+    <string name="pattern_see_how_you_did">See how you did</string>
+    <string name="pattern_got_it">You\'ve got this rule.</string>
+    <string name="pattern_keep_going">Knowing the rule is the first step. It gets easier each time you use it.</string>
+    <!-- The button that closes the practice result or the typos note and leaves the screen. -->
+    <string name="pattern_done">Done</string>
+    <string name="pattern_just_typos">Just typos</string>
+    <string name="pattern_typos_detail">Your recent mistakes were slips while typing, not a rule you\'re missing. There\'s nothing to practice.</string>
+</resources>
