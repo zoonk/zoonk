@@ -143,6 +143,7 @@ extension GoalSyllabus {
           "lessons": { "done": 0, "known": 0, "total": 2 },
           "subjects": [
             {
+              "areas": ["math"],
               "chapters": [
                 {
                   "chapterId": "fractions", "far": false, "known": false, "lessonsDone": 0,
@@ -160,7 +161,8 @@ extension GoalSyllabus {
               "questions": null, "shortName": "Math", "source": "notice", "topics": []
             },
             {
-              "chapters": [], "key": "physics", "lessonsDone": 0, "lessonsKnown": 0,
+              "areas": ["physics"], "chapters": [], "key": "physics", "lessonsDone": 0,
+              "lessonsKnown": 0,
               "lessonsTotal": 0, "name": "Physics", "nextDate": null, "notPlannedReason": null,
               "preparation": null, "questions": null, "shortName": "Physics", "source": "notice",
               "topics": []

@@ -28,7 +28,7 @@ final class SyllabusSummaryTests: XCTestCase {
 
   private func subject(_ name: String, topics: [String] = []) -> String {
     """
-    {"chapters":[],"key":"\(name)","lessonsDone":0,"lessonsKnown":0,"lessonsTotal":0,
+    {"areas":["\(name)"],"chapters":[],"key":"\(name)","lessonsDone":0,"lessonsKnown":0,"lessonsTotal":0,
     "name":"\(name)","nextDate":null,"notPlannedReason":null,"preparation":null,"questions":null,
     "shortName":"\(name)","source":"notice","topics":[\(topics.joined(separator: ","))]}
     """
