@@ -883,7 +883,7 @@ private fun usedUpText(
     movable: Boolean,
 ): String {
     if (challenge.kind == Challenge.Kind.WEEKLY) {
-        return stringResource(if (movable) R.string.challenge_used_up_move else R.string.challenge_used_up)
+        return stringResource(if (movable) R.string.challenge_used_up_move else R.string.challenge_used_up_weekly)
     }
     val next = challenge.nextStudyDate?.toJavaLocalDate() ?: return stringResource(R.string.challenge_used_up_next_session)
     return if (ChronoUnit.DAYS.between(challenge.today.toJavaLocalDate(), next) == 1L) {

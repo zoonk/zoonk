@@ -55,11 +55,11 @@
   "challenge_trickster_recordings": "311880f05c5cb04eda5c63731118fd73059ea933cc8ca37cd8c6d736a46a543b",
   "challenge_trickster_rule": "cb27a0bd0c0d69bb5ea905ffd8597c480ccfe3c6278b54d0a46807c217c09083",
   "challenge_undo": "87d93eff54465f5dda3ec2338421f27583948ab28f291861528ddc11ed9026ae",
-  "challenge_used_up": "d63b52e8895c96ca8660ba9255f4161bcb61f857043cb612b74c56675eb72996",
-  "challenge_used_up_move": "f869df2b7dcbc1a76a670e5b88d55d4e8f10e0a92041bf00b5be97befcb96397",
-  "challenge_used_up_next_session": "0e0620b4266b8aa888ef29dd0c9bb0d953c57730895d6b8107faf0929647be70",
-  "challenge_used_up_on": "233a7e015d46f65d20f88eb2bc66ef6a67c7a3206b486f720f1bab757e4b6a58",
-  "challenge_used_up_tomorrow": "500f994be37f374d5f26d844075fa855975002d7b23f59407e678161a71a8c8f",
+  "challenge_used_up_move": "017f8f978126a48bafb10f958bbb8dc1d849652bf1d920a6e95342755701b173",
+  "challenge_used_up_next_session": "6fd0d23642e491cf1c202c4a5f67703581b19c81271fda9fa7ab21ca7471bc57",
+  "challenge_used_up_on": "eaaedb46a3e71cc73b0cdb8f4d18b0fb7cade8875c4a83d6241394426f234812",
+  "challenge_used_up_tomorrow": "14411f00dec1bc023e9a3b806d89dbd4f4e43ec9d12e240f3691f6b0b5fee44b",
+  "challenge_used_up_weekly": "4c118345ec8f87f2ad1eec2cac26074fe8803a93d18d983a4bda0d3b45896291",
   "challenge_weekly_detail": "e51bcb663229e38b3a9d64738c037b63de5a2eb95a3111c7fd37f61e30d30c89",
   "challenge_weekly_rule": "814c4de11f133eeab6126a5e4d32699ed5b262538a8ab7b7d2632062be873bb0",
   "challenge_writing": "a8c7d5787c299e63979e0880e3070af6afbcf505aaf11d08b6570153c0d9e46d",
@@ -166,12 +166,13 @@
     <string name="challenge_opens_after_lessons">S’ouvre après les leçons de cette phase</string>
     <string name="challenge_not_ready">Ce défi n’est pas encore prêt.</string>
     <string name="challenge_next_session">À ta prochaine séance</string>
-    <string name="challenge_used_up">Tu as atteint ta durée d’étude d’aujourd’hui.</string>
-    <string name="challenge_used_up_move">Tu as atteint la durée d’étude prévue pour aujourd’hui. Décale le défi à lundi pour le garder.</string>
-    <string name="challenge_used_up_next_session">Tu as atteint la durée d’étude prévue pour aujourd’hui. Le défi sera dans ta prochaine séance.</string>
-    <string name="challenge_used_up_tomorrow">Tu as atteint la durée d’étude prévue pour aujourd’hui. Le défi sera là demain.</string>
+    <!-- The weekly challenge can't move to another day, so the learner misses it this week. -->
+    <string name="challenge_used_up_weekly">Tu as utilisé tout ton temps d’étude pour aujourd’hui. Tu manqueras le défi de cette semaine.</string>
+    <string name="challenge_used_up_move">Tu as utilisé tout ton temps d’étude pour aujourd’hui. Reporte le défi à lundi pour le garder.</string>
+    <string name="challenge_used_up_next_session">Tu as utilisé tout ton temps d’étude pour aujourd’hui. Tu retrouveras le défi lors de ta prochaine séance.</string>
+    <string name="challenge_used_up_tomorrow">Tu as utilisé tout ton temps d’étude pour aujourd’hui. Le défi sera là demain.</string>
     <!-- %1$s is a weekday, like Monday. -->
-    <string name="challenge_used_up_on">Tu as atteint la durée d’étude prévue pour aujourd’hui. Le défi sera disponible le %1$s.</string>
+    <string name="challenge_used_up_on">Tu as utilisé tout ton temps d’étude pour aujourd’hui. Le défi sera là %1$s.</string>
     <string name="challenge_back_to_today">Retour à Aujourd’hui</string>
     <string name="challenge_move">Déplacer à lundi</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
