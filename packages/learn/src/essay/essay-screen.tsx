@@ -86,7 +86,7 @@ function useKeptText(blockId: string): string | null {
   );
 }
 
-function useEssayWriter(onGraded: (draft: EssayDraft) => void) {
+function useEssayWriter(onGraded: (draft: EssayDraft, sent: { editedSince: boolean }) => void) {
   const { actions, drafts, essay } = useEssayScreen();
   const graded = drafts[0]?.text ?? "";
   const [typed, setTyped] = useState<string | null>(null);
@@ -94,10 +94,13 @@ function useEssayWriter(onGraded: (draft: EssayDraft) => void) {
   const text = typed ?? (kept?.trim() && kept !== graded ? kept : graded);
   const [status, setStatus] = useState<Status>("idle");
   const startedAt = useRef<number | null>(null);
+  const editedSinceSentAt = useRef<number | null>(null);
+  const lastTyped = useRef<string | null>(null);
   const ungraded = useRef<{ attemptId: string; text: string } | null>(null);
   const words = countWords(text);
   const gradesLeft = Math.max(0, essay.gradesLeft - (drafts.length - essay.drafts.length));
 
+  /** The editor stays open while it's graded, so text changed meanwhile stays as the rewrite. */
   async function send() {
     setStatus("pending");
 
@@ -107,6 +110,7 @@ function useEssayWriter(onGraded: (draft: EssayDraft) => void) {
       ungraded.current?.text === text ? ungraded.current.attemptId : crypto.randomUUID();
 
     ungraded.current = { attemptId, text };
+    editedSinceSentAt.current = null;
 
     const settled = await settleWithin({
       ms: GRADING_BOUNDS.timeoutMs,
@@ -120,15 +124,22 @@ function useEssayWriter(onGraded: (draft: EssayDraft) => void) {
       return;
     }
 
+    const editedSince = lastTyped.current !== null && lastTyped.current !== text;
     setStatus("idle");
-    startedAt.current = null;
     ungraded.current = null;
-    clearUnsentText(essay.blockId);
-    onGraded(result);
+    startedAt.current = editedSince ? editedSinceSentAt.current : null;
+
+    if (!editedSince) {
+      clearUnsentText(essay.blockId);
+    }
+
+    onGraded(result, { editedSince });
   }
 
   function write(next: string) {
     startedAt.current ??= Date.now();
+    editedSinceSentAt.current ??= Date.now();
+    lastTyped.current = next;
     setTyped(next);
     keepUnsentText({ blockId: essay.blockId, text: next });
   }
@@ -208,18 +219,11 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
   );
 }
 
-function EssayWriteScreen({
-  onGraded,
-  onSeeGrade,
-}: {
-  onGraded: (draft: EssayDraft) => void;
-  onSeeGrade: () => void;
-}) {
+function EssayWriteScreen({ onSeeGrade, writer }: { onSeeGrade: () => void; writer: EssayWriter }) {
   const t = useExtracted();
   const { drafts, essay, hrefs } = useEssayScreen();
   const label = usePromptLabel(essay.rubric);
   const textsLabel = useTextsLabel(essay.rubric);
-  const writer = useEssayWriter(onGraded);
   const lastGrade = drafts[0]?.grade;
   const criteria = Boolean(lastGrade) && lastGrade?.zeroReason !== "tooShort";
   const texts = isLongText(essay.context) ? essay.context : null;
@@ -262,6 +266,27 @@ function EssayWriteScreen({
   );
 }
 
+/** Above both the grade and the editor, so a draft being graded and text typed meanwhile survive a look at the grade. */
+function EssayModes({ onGraded }: { onGraded: (draft: EssayDraft) => void }) {
+  const { drafts } = useEssayScreen();
+  const [mode, setMode] = useState<"grade" | "write">(drafts.length > 0 ? "grade" : "write");
+  const grade = drafts[0]?.grade;
+
+  const writer = useEssayWriter((draft, { editedSince }) => {
+    onGraded(draft);
+
+    if (!editedSince) {
+      setMode("grade");
+    }
+  });
+
+  return mode === "grade" && grade ? (
+    <EssayGradeSteps grade={grade} onRewrite={() => setMode("write")} />
+  ) : (
+    <EssayWriteScreen onSeeGrade={() => setMode("grade")} writer={writer} />
+  );
+}
+
 export function EssayScreen({
   actions,
   essay,
@@ -272,22 +297,10 @@ export function EssayScreen({
   hrefs: EssayHrefs;
 }) {
   const [drafts, setDrafts] = useState(essay.drafts);
-  const [mode, setMode] = useState<"grade" | "write">(drafts.length > 0 ? "grade" : "write");
-  const grade = drafts[0]?.grade;
 
   return (
     <EssayScreenProvider value={{ actions, drafts, essay, hrefs }}>
-      {mode === "grade" && grade ? (
-        <EssayGradeSteps grade={grade} onRewrite={() => setMode("write")} />
-      ) : (
-        <EssayWriteScreen
-          onGraded={(draft) => {
-            setDrafts((current) => [draft, ...current]);
-            setMode("grade");
-          }}
-          onSeeGrade={() => setMode("grade")}
-        />
-      )}
+      <EssayModes onGraded={(draft) => setDrafts((current) => [draft, ...current])} />
     </EssayScreenProvider>
   );
 }
