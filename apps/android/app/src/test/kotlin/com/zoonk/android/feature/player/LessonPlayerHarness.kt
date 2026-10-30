@@ -53,6 +53,7 @@ internal class LessonPlayerHarness(
     lateinit var catalog: CatalogStore
     val chapterApi = FakeChapterApi()
     lateinit var chapters: GoalContentStore
+    lateinit var cache: AppCache
     val chapterKey = ChapterKey(UUID.fromString(GOAL_ID), UUID.fromString(CHAPTER_ID))
     lateinit var openAgain: () -> LessonPlayerViewModel
     lateinit var viewModel: LessonPlayerViewModel
@@ -89,7 +90,7 @@ internal class LessonPlayerHarness(
         val lesson = playable(steps)
         api = FakeLessonPlayerApi(LessonLoad.Ready(lesson)).apply(configure)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-        val cache = AppCache(session, scope)
+        cache = AppCache(session, scope)
         catalog = CatalogStore(catalogApi, cache)
         chapters = GoalContentStore(chapterApi, cache)
         val drafts = DraftStore(newFolder(), scope, io = Dispatchers.Main.immediate)

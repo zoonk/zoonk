@@ -210,11 +210,13 @@ class Resource<T : Any> internal constructor(
         }
     }
 
+    // Cancelling last: on Main.immediate a caller awaiting the request resumes inside cancel(), and must find it gone.
     private fun cancelRequest() {
-        request?.cancel()
+        val cancelled = request
         request = null
         refreshing.value = false
         if (stored.value == LoadState.Loading) stored.value = LoadState.Idle
+        cancelled?.cancel()
     }
 }
 

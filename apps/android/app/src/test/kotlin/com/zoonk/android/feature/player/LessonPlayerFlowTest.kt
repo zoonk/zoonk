@@ -29,6 +29,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
@@ -369,9 +370,26 @@ class LessonPlayerFlowTest {
         tap("Check")
         tap("Continue")
         rule.onNodeWithText("Next lesson").assertIsDisplayed()
+        assertEquals(1, harness.chapterApi.reads)
         runBlocking { harness.chapters.chapter[harness.chapterKey].load() }
 
         assertEquals(1, harness.chapterApi.reads)
+    }
+
+    @Test
+    fun aWriteThatCancelsTheChaptersReadStillLeadsToTheNextLesson() {
+        val gate = CompletableDeferred<Unit>()
+        harness.chapterApi.gate = gate
+        play(listOf(checkStep("quiz")))
+
+        tap("Right")
+        tap("Check")
+        tap("Continue")
+        rule.waitUntil { harness.chapterApi.reads == 1 }
+        rule.runOnIdle { harness.cache.invalidate(setOf(DataDomain.UserSubscription)) }
+        gate.complete(Unit)
+
+        rule.onNodeWithText("Next lesson").assertIsDisplayed()
     }
 
     @Test

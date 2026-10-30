@@ -6,6 +6,7 @@ import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.KeyedResources
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.value
@@ -74,11 +75,24 @@ class GoalContentStore(
     val chapter: KeyedResources<ChapterKey, GoalChapter> =
         cache.keyed(Audience.SignedIn, PlanStore.PLAN_DOMAINS) { session, key -> session?.let { api.chapter(it, key) } }
 
+    /** A write's invalidation can cancel the read before it lands, so it's read again then, a few times at most. */
     suspend fun lessons(key: ChapterKey): List<ChapterLesson>? {
         val read = chapter[key]
-        read.load()
-        return read.state.value.value
-            ?.lessons
+        repeat(READ_ATTEMPTS) {
+            read.load()
+            when (val state = read.state.value) {
+                is LoadState.Loaded -> {
+                    return state.value.lessons
+                }
+
+                LoadState.Idle, LoadState.Loading -> {}
+
+                LoadState.Empty, is LoadState.Failed -> {
+                    return null
+                }
+            }
+        }
+        return null
     }
 
     /** Extra practice on a chapter, opened where its block plays; null when the session changed meanwhile. */
@@ -109,6 +123,7 @@ class GoalContentStore(
     private companion object {
         const val EXTRA_TIME_UNAVAILABLE = "EXTRA_TIME_UNAVAILABLE"
         const val NOTHING_TO_PRACTICE = "NOTHING_TO_PRACTICE"
+        const val READ_ATTEMPTS = 3
     }
 }
 

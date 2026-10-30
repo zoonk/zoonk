@@ -178,7 +178,6 @@ class FakeLessonPlayerApi(
     ) = fit
 }
 
-/** The fixture lesson's chapter: it and another done, the next one still to come. */
 fun chapterLessons(): List<ChapterLesson> =
     listOf(LESSON_ID to "done", DONE_LESSON_ID to "done", NEXT_LESSON_ID to "upcoming").map { (id, state) ->
         ApiJson.decodeFromString(
@@ -187,7 +186,6 @@ fun chapterLessons(): List<ChapterLesson> =
         )
     }
 
-/** The chapter page's read of the fixture lesson's chapter; [gate] holds it. */
 class FakeChapterApi : GoalContentApi {
     var reads = 0
     var gate: CompletableDeferred<Unit>? = null
