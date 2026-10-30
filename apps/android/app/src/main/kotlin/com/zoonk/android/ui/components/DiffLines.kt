@@ -44,8 +44,8 @@ class DiffLine(
 fun DiffLines(
     lines: List<DiffLine>,
     added: String,
-    removed: String? = null,
     modifier: Modifier = Modifier,
+    removed: String? = null,
 ) {
     val shape = MaterialTheme.shapes.medium
 
