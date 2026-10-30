@@ -20,7 +20,7 @@ Zoonk helps anyone learn anything, especially first-time learners in small towns
 
 - “Finished”: the learner completed the plan. “Past date”: its date passed with lessons left, and the plan can still be adjusted.
 - “Left out”: the plan omitted it for lack of time. “Skipped”: a test showed the learner knew it. “Skip”: the learner's choice.
-- Write proposed changes as proposals and applied changes as done.
+- Write proposed changes as proposals and applied changes as done. A sentence that says what a plan change does is shown for both, so keep it in the present.
 
 ## Placeholders
 
