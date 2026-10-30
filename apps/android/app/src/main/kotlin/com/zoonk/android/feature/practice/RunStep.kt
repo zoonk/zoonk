@@ -356,11 +356,11 @@ internal fun AnswerActions(
         }
 
         run.stage == DrillStage.Ideas -> {
-            DrillStartButton(onStart = { controls.startDrill(questions) })
+            ActionFlow { width -> DrillStartButton(onStart = { controls.startDrill(questions) }, modifier = width) }
         }
 
         run.stage == DrillStage.Reading -> {
-            ShowAnswersButton(onReveal = controls::reveal)
+            ActionFlow { width -> ShowAnswersButton(onReveal = controls::reveal, modifier = width) }
         }
 
         else -> {

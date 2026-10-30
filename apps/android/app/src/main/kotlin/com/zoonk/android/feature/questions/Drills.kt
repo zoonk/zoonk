@@ -122,7 +122,7 @@ fun DrillStartButton(
     onStart: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Button(onClick = onStart, modifier = modifier.fillMaxWidth()) { Text(stringResource(R.string.questions_drill_start)) }
+    Button(onClick = onStart, modifier = modifier) { Text(stringResource(R.string.questions_drill_start)) }
 }
 
 /**
@@ -297,7 +297,7 @@ fun ShowAnswersButton(
     onReveal: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Button(onClick = onReveal, modifier = modifier.fillMaxWidth()) {
+    Button(onClick = onReveal, modifier = modifier) {
         Icon(painterResource(R.drawable.ic_visibility), contentDescription = null, modifier = Modifier.padding(end = 8.dp).size(18.dp))
         Text(stringResource(R.string.questions_drill_show_answers))
     }
