@@ -159,7 +159,7 @@ private struct DayMomentContent: View {
           VStack(alignment: .leading, spacing: payoff ? 8 : 2) {
             missionsTitle(moment, justDone: justDone.count)
               .font(payoff ? .title3.bold() : .headline)
-              .foregroundStyle(.primary)
+              .foregroundStyle(Color.primary)
 
             if payoff {
               bonus(moment.fullMeal.bonus)
