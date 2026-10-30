@@ -71,8 +71,11 @@ struct TodayDayView: View {
     .task(id: view.session.localDate) {
       await refreshAtDayEnd()
     }
-    .task(id: [view.isWaitingForLessons, isCovered]) {
-      await pollWhileWriting()
+    .task(id: followedLessonIDs) {
+      await store.followWriting(lessonIDs: followedLessonIDs)
+    }
+    .task(id: view.isAwaitingOutlines && !isCovered) {
+      await rereadWhileOutlining()
     }
     .onDisappear {
       tapTask?.cancel()
@@ -118,6 +121,10 @@ struct TodayDayView: View {
         adjusting = section
       }
     }
+  }
+
+  private var followedLessonIDs: [String] {
+    isCovered ? [] : store.writingLessonIDs(in: view)
   }
 
   private var language: LanguageTodayView? {
@@ -291,12 +298,13 @@ struct TodayDayView: View {
     await store.today.refresh()
   }
 
-  /// As main's `usePoll`: ten minutes at most, then Today says it's taking longer. Not while a task
-  /// covers Today.
-  private func pollWhileWriting() async {
+  /// The API names no run for a day's outlines (one can wait for its course before any run starts),
+  /// so Today reads the day again as main's `usePoll` does: ten minutes at most, then it says it's
+  /// taking longer. Not while a task covers Today.
+  private func rereadWhileOutlining() async {
     writingStalled = false
 
-    guard view.isWaitingForLessons, !isCovered else {
+    guard view.isAwaitingOutlines, !isCovered else {
       return
     }
 

@@ -434,6 +434,10 @@
       throw APIError.network
     }
 
+    func followWriting(token: String, lessonID: String, run: String?) async throws -> String {
+      throw APIError.network
+    }
+
     func languageCheckpointCall(token: String, blockID: String) async throws
       -> LanguageCheckpointCall
     {

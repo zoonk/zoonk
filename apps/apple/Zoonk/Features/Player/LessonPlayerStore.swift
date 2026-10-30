@@ -289,10 +289,10 @@ final class LessonPlayerStore {
       return
     }
 
-    let status = await readiness(outline.id, identity: identity)
+    let lesson = await readiness(outline.id, identity: identity)
     guard isCurrent(identity) else { return }
 
-    switch status {
+    switch lesson?.status {
     case .generating: screen = .waiting(outline, .writing)
     case .ready: await load(refresh: true)
     case .failed: screen = .waiting(outline, .failed)
@@ -300,7 +300,7 @@ final class LessonPlayerStore {
     }
 
     if case .waiting(_, .writing) = screen {
-      await followWriting(outline, identity: identity)
+      await followWriting(outline, run: lesson?.generationId, identity: identity)
     }
   }
 
@@ -325,38 +325,47 @@ final class LessonPlayerStore {
 
     switch outcome {
     case .ready: await load(refresh: true)
-    case .writing: await followWriting(outline, identity: identity)
+    case .writing(let run): await followWriting(outline, run: run, identity: identity)
     case .setAside: screen = .waiting(outline, .setAside)
     case .refused(let refusal): screen = .waiting(outline, .refused(refusal))
     case .failed: screen = .waiting(outline, .failed)
     }
   }
 
-  /// Reading never writes anything.
-  private func followWriting(_ outline: LessonOutline, identity: AuthenticatedSession) async {
-    while !Task.isCancelled, isCurrent(identity), case .waiting(_, .writing) = screen {
-      try? await Task.sleep(for: .seconds(3))
-      let status = await readiness(outline.id, identity: identity)
-      guard isCurrent(identity), case .waiting(_, .writing) = screen else { return }
+  /// Reading never writes anything. A run that ended without the lesson, or a follow that couldn't
+  /// finish, leaves it to the learner to try again.
+  private func followWriting(
+    _ outline: LessonOutline, run: String?, identity: AuthenticatedSession
+  ) async {
+    let status = await signingOutOnUnauthorized(identity) {
+      try await api.followWriting(id: outline.id, run: run, token: identity.bearerToken)
+    }
 
-      switch status {
-      case .ready:
-        await load(refresh: true)
-        return
-      case .failed:
-        screen = .waiting(outline, .failed)
-      default:
-        continue
-      }
+    guard !Task.isCancelled, isCurrent(identity), case .waiting(_, .writing) = screen else {
+      return
+    }
+
+    switch status {
+    case .ready: await load(refresh: true)
+    case .failed, nil: screen = .waiting(outline, .failed)
+    case .generating, .notStarted: screen = .waiting(outline, .notStarted)
+    }
+  }
+
+  private func readiness(_ lessonId: String, identity: AuthenticatedSession) async
+    -> Components.Schemas.LessonReadiness?
+  {
+    await signingOutOnUnauthorized(identity) {
+      try await api.getReadiness(id: lessonId, token: identity.bearerToken)
     }
   }
 
   /// A 401 signs that identity out, so the screen reloads.
-  private func readiness(_ lessonId: String, identity: AuthenticatedSession) async
-    -> Components.Schemas.LessonReadiness.StatusPayload?
-  {
+  private func signingOutOnUnauthorized<Value>(
+    _ identity: AuthenticatedSession, _ read: () async throws -> Value
+  ) async -> Value? {
     do {
-      return try await api.getReadiness(id: lessonId, token: identity.bearerToken)
+      return try await read()
     } catch APIError.unauthorized {
       await session.expire(identity)
       return nil

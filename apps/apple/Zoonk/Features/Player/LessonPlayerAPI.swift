@@ -70,7 +70,7 @@ enum LessonCompletionOutcome: Equatable, Sendable {
 /// Only asked on the learner's tap.
 enum LessonWritingOutcome: Hashable, Sendable {
   case ready
-  case writing
+  case writing(run: String?)
   /// Every draft was held back by its checks; plans moved on without it.
   case setAside
   case refused(LessonRunRefusal)
@@ -263,9 +263,7 @@ struct LessonPlayerAPI: Sendable {
     }
   }
 
-  func getReadiness(id: String, token: String) async throws
-    -> Components.Schemas.LessonReadiness.StatusPayload
-  {
+  func getReadiness(id: String, token: String) async throws -> Components.Schemas.LessonReadiness {
     let output = try await clients.perform(token: token) {
       try await $0.getLibraryLessonReadiness(
         path: .init(lessonId: id))
@@ -273,13 +271,57 @@ struct LessonPlayerAPI: Sendable {
 
     switch output {
     case .ok(let response):
-      return try response.body.json.status
+      return try response.body.json
     case .unauthorized:
       throw APIError.unauthorized
     case .notFound, .badRequest:
       throw APIError.notFound
     case .internalServerError, .undocumented:
       throw APIError.network
+    }
+  }
+
+  /// Waits while a run writes the lesson (`run` when the learner's tap just started it, since the
+  /// lesson names its run only once the run claims it) and returns how it stands once none does:
+  /// `failed` when a run ended without writing it, as main's waits give up on a stalled lesson.
+  func followWriting(id: String, run: String?, token: String) async throws
+    -> Components.Schemas.LessonReadiness.StatusPayload
+  {
+    var followed: String
+
+    if let run {
+      followed = run
+    } else {
+      let readiness = try await getReadiness(id: id, token: token)
+
+      guard let generationId = readiness.generationId else {
+        return readiness.status
+      }
+
+      followed = generationId
+    }
+
+    while true {
+      do {
+        for try await event in clients.generationEvents(id: followed, token: token)
+        where event.step == "lessonReady" {
+          break
+        }
+      } catch {}
+
+      try Task.checkCancellation()
+      let readiness = try await getReadiness(id: id, token: token)
+
+      if readiness.status == .ready {
+        return .ready
+      }
+
+      guard readiness.status == .generating, let next = readiness.generationId, next != followed
+      else {
+        return .failed
+      }
+
+      followed = next
     }
   }
 
@@ -294,9 +336,9 @@ struct LessonPlayerAPI: Sendable {
 
     switch output {
     case .ok(let response):
-      return (try? response.body.json.status) == .ready ? .ready : .writing
+      return Self.outcome(try? response.body.json)
     case .accepted(let response):
-      return (try? response.body.json.status) == .ready ? .ready : .writing
+      return Self.outcome(try? response.body.json)
     case .conflict:
       return .setAside
     case .code402(let response):
@@ -393,6 +435,12 @@ struct LessonPlayerAPI: Sendable {
     }
 
     return line
+  }
+
+  private static func outcome(_ generation: Components.Schemas.LessonGeneration?)
+    -> LessonWritingOutcome
+  {
+    generation?.status == .ready ? .ready : .writing(run: generation?.generationId)
   }
 
   /// Reads a refused allowance or AI claim: `USAGE_LIMIT_REACHED` with `details.limit`,

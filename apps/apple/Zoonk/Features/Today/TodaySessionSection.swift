@@ -375,6 +375,7 @@ private struct DayProgressRow: View {
 
 struct BlockRow: View {
   @Environment(\.dynamicTypeSize) private var typeSize
+  @Environment(TodayStore.self) private var today
 
   let block: StudyBlock
   let view: TodayView?
@@ -453,7 +454,7 @@ struct BlockRow: View {
   private var lines: [String] {
     var lines: [String] = []
 
-    if let view, view.isBeingWritten(block) {
+    if let view, today.isBeingWritten(block, in: view) {
       lines.append(
         String(
           localized: "Being written for you…", table: "Today",

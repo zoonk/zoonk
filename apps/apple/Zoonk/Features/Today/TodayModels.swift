@@ -155,7 +155,7 @@ struct TodayView: Decodable, Equatable, Sendable {
   /// At most one, until it's answered.
   let insight: MemoryInsight?
   /// `ready`, `generating`, `notStarted` or `failed`, by lesson.
-  let lessonStatus: [String: String]
+  var lessonStatus: [String: String]
   let mockFunding: MockFunding?
   let notice: Notice?
   let pattern: Pattern?
@@ -189,12 +189,15 @@ struct TodayView: Decodable, Equatable, Sendable {
     return progress?.status?.kind == "pastDate" && (state == .rest || state == .ahead)
   }
 
-  var isWaitingForLessons: Bool {
-    let beingWritten = session.blocks.contains {
-      ($0.status == .pending || $0.status == .active) && isBeingWritten($0)
+  /// With `isAwaitingOutlines`, mirrors main's `isWaitingForLessons`.
+  var writingLessonIDs: [String] {
+    session.blocks.compactMap {
+      ($0.status == .pending || $0.status == .active) && isBeingWritten($0) ? $0.lessonId : nil
     }
+  }
 
-    return beingWritten || session.lessonsComing || session.state == .waiting
+  var isAwaitingOutlines: Bool {
+    session.lessonsComing || session.state == .waiting
   }
 }
 

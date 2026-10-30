@@ -13,7 +13,7 @@ enum StudyDestination: Equatable, Sendable {
 }
 
 enum LessonWriting: Hashable, Sendable {
-  case writing
+  case writing(run: String?)
   case preparing
   /// Every draft was held back by its checks; the plan moved on without it.
   case setAside
@@ -21,7 +21,15 @@ enum LessonWriting: Hashable, Sendable {
   case failed
 
   var isRunning: Bool {
-    self == .writing || self == .preparing
+    switch self {
+    case .writing, .preparing: true
+    case .setAside, .refused, .failed: false
+    }
+  }
+
+  /// The run the learner's tap started.
+  var run: String? {
+    if case .writing(let run) = self { run } else { nil }
   }
 }
 
@@ -38,6 +46,10 @@ final class TodayStore {
   private var answered:
     (owner: AuthenticatedSession, day: OpenedSession.Day, value: AnsweredPlanChange)?
   private var writings: [String: (owner: AuthenticatedSession, writing: LessonWriting)] = [:]
+  /// Lessons whose run ended without writing them, or that couldn't be followed, while Today still
+  /// reads them as being written; main's Today stops saying so once its wait gives up. Asking for
+  /// one again clears it.
+  private var stalledLessons: [String: AuthenticatedSession] = [:]
 
   @ObservationIgnored private let api: any StudyAPIClient
   @ObservationIgnored private let cache: AppCache
@@ -88,6 +100,63 @@ final class TodayStore {
 
     languageTodays[goalID] = resource
     return resource
+  }
+
+  func isBeingWritten(_ block: StudyBlock, in view: TodayView) -> Bool {
+    view.isBeingWritten(block) && !(block.lessonId.map(isStalled) ?? false)
+  }
+
+  func writingLessonIDs(in view: TodayView) -> [String] {
+    view.writingLessonIDs.filter { !isStalled($0) }
+  }
+
+  /// Reads Today again as each lesson's writing ends.
+  func followWriting(lessonIDs: [String]) async {
+    guard let owner = cache.session.authenticatedSession else {
+      return
+    }
+
+    let api = api
+
+    await withTaskGroup { group in
+      for lessonID in lessonIDs {
+        group.addTask {
+          let status = try? await api.followWriting(
+            token: owner.bearerToken, lessonID: lessonID, run: nil)
+          await self.followed(lessonID, endedAs: status, owner: owner)
+        }
+      }
+    }
+  }
+
+  /// What the follow found shows even if Today can't be read again.
+  private func followed(_ lessonID: String, endedAs status: String?, owner: AuthenticatedSession)
+    async
+  {
+    guard !Task.isCancelled, owner == cache.session.authenticatedSession else {
+      return
+    }
+
+    if let status, status != "failed" {
+      today.update { content in
+        guard case .day(var view) = content else {
+          return content
+        }
+
+        view.lessonStatus[lessonID] = status
+        return .day(view)
+      }
+    } else {
+      stalledLessons[lessonID] = owner
+    }
+
+    // A read already on its way may predate the lesson's end.
+    today.invalidate()
+    await today.refresh()
+  }
+
+  private func isStalled(_ lessonID: String) -> Bool {
+    stalledLessons[lessonID].map { $0 == cache.session.authenticatedSession } ?? false
   }
 
   var day: TodayView? {
@@ -415,13 +484,15 @@ final class TodayStore {
       return .lessonWait(blockID: blockID, writing: .preparing)
     }
 
+    stalledLessons[lessonID] = nil
+
     switch try await api.writeLesson(token: token, lessonID: lessonID) {
     case .ready:
       return try await startedDestination(
         .lesson(lessonID: lessonID, sessionID: sessionID), block: blockID, sessionID: sessionID,
         token: token)
-    case .writing:
-      return .lessonWait(blockID: blockID, writing: .writing)
+    case .writing(let run):
+      return .lessonWait(blockID: blockID, writing: .writing(run: run))
     case .setAside:
       return .lessonWait(blockID: blockID, writing: .setAside)
     case .refused(let refusal):

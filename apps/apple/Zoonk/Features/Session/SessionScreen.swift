@@ -280,7 +280,8 @@ private struct NextStopView: View {
 
   /// A lesson nobody is writing keeps Continue, whose tap asks for it.
   private var isLessonWorkRunning: Bool {
-    next?.kind == .learn && (lessonStatus == "generating" || writing?.isRunning == true)
+    next?.kind == .learn && lessonStatus != "failed"
+      && (lessonStatus == "generating" || writing?.isRunning == true)
   }
 
   private var isLessonUnavailable: Bool {
@@ -412,7 +413,10 @@ private struct NextStopView: View {
     }
   }
 
-  /// Opens the lesson on its own once it's written only when the learner asked for it.
+  /// Opens the lesson on its own once it's written only when the learner asked for it; a run that
+  /// ended without writing it reads as failed, with Try again. Only the plan's preparation has no
+  /// run to follow yet (it picks the lesson, then starts writing it), so that wait reads again for
+  /// a few minutes at most.
   private func followLesson() async {
     guard let next, next.kind == .learn else {
       lessonStatus = nil
@@ -423,6 +427,17 @@ private struct NextStopView: View {
       if let lessonID = next.lessonId {
         lessonStatus = await store.lessonStatus(lessonID: lessonID)
 
+        if lessonStatus == "generating" || (writing?.run != nil && lessonStatus != "ready") {
+          lessonStatus = "generating"
+          let followed = await store.followWriting(lessonID: lessonID, run: writing?.run)
+
+          guard !Task.isCancelled else {
+            return
+          }
+
+          lessonStatus = followed ?? "failed"
+        }
+
         if lessonStatus == "ready" {
           if writing?.isRunning == true {
             open(next)
@@ -430,16 +445,13 @@ private struct NextStopView: View {
 
           return
         }
-
-        guard lessonStatus == "generating" || writing?.isRunning == true else {
-          return
-        }
       } else {
-        guard writing == .preparing else {
-          return
-        }
-
+        lessonStatus = nil
         await store.session(id: sessionID).refresh()
+      }
+
+      guard writing == .preparing, lessonStatus != "failed" else {
+        return
       }
 
       do {

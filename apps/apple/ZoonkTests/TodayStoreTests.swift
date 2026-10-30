@@ -82,6 +82,34 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(readinessReads, [], "the block says where it opens")
   }
 
+  func testALessonsEndShowsOverAReadOfTodayThatStartedBeforeIt() async throws {
+    let lesson = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
+    let session = try day(blocks: [lesson], nextPosition: 0, id: "s1")
+    let api = StudyAPIStub(
+      today: .day(try today(session: session, lessonStatus: ["l1": "generating"])))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    await api.holdNextTodayRead()
+    let pull = Task { await store.today.refresh() }
+    await api.waitForHeldTodayRead()
+    await api.serve(.day(try today(session: session, lessonStatus: ["l1": "ready"])))
+
+    let followed = expectation(description: "the lesson's end doesn't wait on the older read")
+    let follow = Task {
+      await store.followWriting(lessonIDs: ["l1"])
+      followed.fulfill()
+    }
+    await fulfillment(of: [followed], timeout: 10)
+    await api.releaseTodayRead()
+    await follow.value
+    await pull.value
+
+    let shown = try XCTUnwrap(store.day)
+    XCTAssertEqual(shown.lessonStatus["l1"], "ready")
+    XCTAssertEqual(store.writingLessonIDs(in: shown), [])
+  }
+
   func testALessonTheReadDidntCheckAsksForItsReadinessFirst() async throws {
     let api = StudyAPIStub()
     let store = TodayStore(api: api, cache: signedInCache())
@@ -115,6 +143,46 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(starts, ["b1"])
   }
 
+  func testAWrittenLessonStopsShowingAsBeingWrittenWhenTodayCantBeReadAgain() async throws {
+    let lesson = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
+    let api = StudyAPIStub(
+      today: .day(
+        try today(
+          session: day(blocks: [lesson], nextPosition: 0, id: "s1"),
+          lessonStatus: ["l1": "generating"])))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+    await api.failTodayReads()
+
+    await store.followWriting(lessonIDs: ["l1"])
+
+    let shown = try XCTUnwrap(store.day)
+    XCTAssertFalse(store.isBeingWritten(lesson, in: shown))
+    XCTAssertEqual(store.writingLessonIDs(in: shown), [])
+  }
+
+  func testALessonWhoseWritingStalledStopsShowingAsBeingWrittenUntilAskedAgain() async throws {
+    let lesson = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
+    let other = try block(position: 1, kind: "learn", id: "b2", lessonID: "l2")
+    let view = try today(
+      session: day(blocks: [lesson, other], nextPosition: 0, id: "s1"),
+      lessonStatus: ["l1": "generating", "l2": "generating"])
+    let api = StudyAPIStub(today: .day(view), unwrittenLessons: ["l1"], unreachableLessons: ["l2"])
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    await store.followWriting(lessonIDs: ["l1"])
+    await store.followWriting(lessonIDs: ["l2"])
+
+    XCTAssertFalse(store.isBeingWritten(lesson, in: view), "main stops saying so once it gives up")
+    XCTAssertEqual(store.writingLessonIDs(in: view), [], "nothing is left to follow")
+
+    _ = await store.open(lesson, next: false, in: view)
+
+    XCTAssertTrue(store.isBeingWritten(lesson, in: view), "the tap asked for it again")
+    XCTAssertFalse(store.isBeingWritten(other, in: view), "a run that couldn't be followed")
+  }
+
   func testAnUnwrittenLessonIsAskedForByTheTapWithoutStartingTheBlock() async throws {
     let api = StudyAPIStub()
     let store = TodayStore(api: api, cache: signedInCache())
@@ -123,8 +191,8 @@ final class TodayStoreTests: XCTestCase {
 
     let destination = await store.open(view.session.blocks[0], next: false, in: view).destination
 
-    XCTAssertEqual(destination, .lessonWait(blockID: "b1", writing: .writing))
-    XCTAssertEqual(store.writing(for: lesson), .writing)
+    XCTAssertEqual(destination, .lessonWait(blockID: "b1", writing: .writing(run: "run-1")))
+    XCTAssertEqual(store.writing(for: lesson), .writing(run: "run-1"))
     let written = await api.writtenLessons
     XCTAssertEqual(written, ["l1"])
     let starts = await api.startedBlocks
@@ -572,12 +640,14 @@ private func planChange(
     """)
 }
 
-private func today(session: StudyDay, planChange: TodayView.PlanChange? = nil) throws -> TodayView {
+private func today(
+  session: StudyDay, planChange: TodayView.PlanChange? = nil, lessonStatus: [String: String] = [:]
+) throws -> TodayView {
   TodayView(
     earlierWork: [], exam: nil, examChoice: nil,
     goal: try decode(
       #"{"dateEstimated":false,"daysLeft":null,"id":"g1","kind":"learn","title":"Goal"}"#),
-    insight: nil, lessonStatus: [:], mockFunding: nil, notice: nil, pattern: nil,
+    insight: nil, lessonStatus: lessonStatus, mockFunding: nil, notice: nil, pattern: nil,
     planChange: planChange, progress: nil, session: session, sourceChange: nil,
     studiedToday: false, suggestedGoal: nil, uploadRequest: nil, weeklyChallenge: nil)
 }
@@ -616,13 +686,22 @@ private actor StudyAPIStub: StudyAPIClient {
   private(set) var preparedGoals: [String] = []
   private(set) var readinessReads: [String] = []
   private(set) var todayReads = 0
+  private let unwrittenLessons: Set<String>
+  private let unreachableLessons: Set<String>
+  private var holdsNextTodayRead = false
+  private var failsTodayReads = false
+  private var heldTodayRead: CheckedContinuation<Void, Never>?
+  private var todayReadWaiter: CheckedContinuation<Void, Never>?
 
   init(
     opened: OpenedStudyDay? = nil, start: BlockStart = .started, startError: APIError? = nil,
     call: LanguageCheckpointCall = .notLanguage(.init(status: .notLanguage)),
     today: TodayContent = .goalNotActive, session: StudyDay? = nil,
-    decided: TodayView.PlanChange? = nil, holdsOpening: Bool = false
+    decided: TodayView.PlanChange? = nil, holdsOpening: Bool = false,
+    unwrittenLessons: Set<String> = [], unreachableLessons: Set<String> = []
   ) {
+    self.unwrittenLessons = unwrittenLessons
+    self.unreachableLessons = unreachableLessons
     self.session = session
     self.decided = decided
     self.opened = opened
@@ -654,9 +733,46 @@ private actor StudyAPIStub: StudyAPIClient {
     heldOpening = nil
   }
 
+  func failTodayReads() {
+    failsTodayReads = true
+  }
+
+  func holdNextTodayRead() {
+    holdsNextTodayRead = true
+  }
+
+  func waitForHeldTodayRead() async {
+    guard heldTodayRead == nil else {
+      return
+    }
+
+    await withCheckedContinuation { todayReadWaiter = $0 }
+  }
+
+  func releaseTodayRead() {
+    heldTodayRead?.resume()
+    heldTodayRead = nil
+  }
+
   func getToday(token: String, timeZone: String) async throws -> TodayContent {
     todayReads += 1
-    return today
+    let served = today
+
+    if failsTodayReads {
+      throw APIError.network
+    }
+
+    if holdsNextTodayRead {
+      holdsNextTodayRead = false
+
+      await withCheckedContinuation { continuation in
+        heldTodayRead = continuation
+        todayReadWaiter?.resume()
+        todayReadWaiter = nil
+      }
+    }
+
+    return served
   }
 
   func openDay(
@@ -718,6 +834,14 @@ private actor StudyAPIStub: StudyAPIClient {
     return "ready"
   }
 
+  func followWriting(token: String, lessonID: String, run: String?) async throws -> String {
+    if unreachableLessons.contains(lessonID) {
+      throw APIError.network
+    }
+
+    return unwrittenLessons.contains(lessonID) ? "failed" : "ready"
+  }
+
   func languageCheckpointCall(token: String, blockID: String) async throws
     -> LanguageCheckpointCall
   {
@@ -726,7 +850,7 @@ private actor StudyAPIStub: StudyAPIClient {
 
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
     writtenLessons.append(lessonID)
-    return .writing
+    return .writing(run: "run-1")
   }
 
   func prepareSession(token: String, sessionID: String) async throws {

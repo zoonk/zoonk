@@ -32,6 +32,8 @@ protocol StudyAPIClient: Sendable {
     -> LanguageCheckpointCall
   /// Only on the learner's tap, since it runs AI.
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome
+  /// The lesson's status once no run writes it; `run` is the one the learner's tap started.
+  func followWriting(token: String, lessonID: String, run: String?) async throws -> String
   func prepareSession(token: String, sessionID: String) async throws
   /// Only on the learner's tap, since it outlines the day's lessons with AI.
   func prepareLessons(token: String, goalID: String) async throws
@@ -300,6 +302,11 @@ struct StudyAPI: StudyAPIClient {
 
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
     try await LessonPlayerAPI(clients: clients).writeLesson(id: lessonID, token: token)
+  }
+
+  func followWriting(token: String, lessonID: String, run: String?) async throws -> String {
+    try await LessonPlayerAPI(clients: clients).followWriting(id: lessonID, run: run, token: token)
+      .rawValue
   }
 
   func getLanguageToday(token: String, goalID: String) async throws -> LanguageTodayView {

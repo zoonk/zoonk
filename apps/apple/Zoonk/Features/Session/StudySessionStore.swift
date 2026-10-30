@@ -118,4 +118,13 @@ final class StudySessionStore {
 
     return try? await api.lessonStatus(token: token, lessonID: lessonID)
   }
+
+  /// The lesson's status once no run writes it.
+  func followWriting(lessonID: String, run: String?) async -> String? {
+    guard let token = cache.session.authenticatedSession?.bearerToken else {
+      return nil
+    }
+
+    return try? await api.followWriting(token: token, lessonID: lessonID, run: run)
+  }
 }
