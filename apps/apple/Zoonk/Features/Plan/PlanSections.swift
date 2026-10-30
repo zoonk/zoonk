@@ -64,8 +64,8 @@ struct PlanRoadmapSection: View {
         if listsPhases {
           RoadmapCompact(context: context, opens: false)
 
-          ForEach(phases) { phase in
-            RoadmapPhaseRow(phase: phase, today: context.plan.today)
+          ForEach(Array(zip(phases, PhaseWhen.of(phases))), id: \.0.id) { phase, when in
+            RoadmapPhaseRow(phase: phase, when: when, today: context.plan.today)
           }
         } else if structure != nil {
           Button {
@@ -116,8 +116,28 @@ struct PlanRoadmapSection: View {
   }
 }
 
+/// What main's roadmap says under each phase: "Today" under the current one and the start of each
+/// one after it. Earlier phases say nothing, since one settled by placement would claim today's date.
+enum PhaseWhen: Equatable {
+  case today
+  case starts(String)
+
+  static func of(_ phases: [PlanPhase]) -> [PhaseWhen?] {
+    let current = phases.firstIndex { $0.state == .current }
+
+    return phases.enumerated().map { position, phase in
+      guard let current, position >= current, let start = phase.startDate else {
+        return nil
+      }
+
+      return position == current ? .today : .starts(start)
+    }
+  }
+}
+
 private struct RoadmapPhaseRow: View {
   let phase: PlanPhase
+  let when: PhaseWhen?
   let today: String
 
   var body: some View {
@@ -129,18 +149,19 @@ private struct RoadmapPhaseRow: View {
         StatusMark(status: phase.mark)
       }
     } value: {
-      if let start = phase.startDate {
-        Group {
-          if phase.state == .current {
-            Text("Today", tableName: "Plan", comment: "When the learner's current phase starts")
-          } else {
-            Text(PlanDate.text(start, today: today))
-          }
+      Group {
+        switch when {
+        case .today?:
+          Text("Today", tableName: "Plan", comment: "When the learner's current phase starts")
+        case .starts(let start)?:
+          Text(PlanDate.text(start, today: today))
+        case nil:
+          EmptyView()
         }
-        .font(.subheadline)
-        .monospacedDigit()
-        .foregroundStyle(.secondary)
       }
+      .font(.subheadline)
+      .monospacedDigit()
+      .foregroundStyle(.secondary)
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(
