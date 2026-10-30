@@ -137,6 +137,10 @@ private struct EssayContent: View {
           List {
             EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
           }
+          // An essay too short to grade has no comments, and an empty list draws the plain
+          // background.
+          .scrollContentBackground(.hidden)
+          .background(Color(.systemGroupedBackground))
           .safeAreaBar(edge: .bottom) { actionBar }
         } single: {
           List {

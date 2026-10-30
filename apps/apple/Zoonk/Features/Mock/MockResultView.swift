@@ -26,6 +26,9 @@ struct MockResultView: View {
       List {
         planSections
       }
+      // Without a plan change it's empty, and an empty list draws the plain background.
+      .scrollContentBackground(.hidden)
+      .background(Color(.systemGroupedBackground))
       .safeAreaBar(edge: .bottom) { actionBar }
     } single: {
       List {
