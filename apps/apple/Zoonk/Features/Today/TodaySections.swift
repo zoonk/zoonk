@@ -958,18 +958,24 @@ struct TodayPracticeSection: View {
       }
 
       NavigationLink(value: AppRoute.mistakes) {
-        Label {
-          VStack(alignment: .leading, spacing: 2) {
-            Text("Mistakes notebook", tableName: "Today", comment: "Opens the mistakes notebook")
-            Text("Redo what you got wrong", tableName: "Today", comment: "The notebook's line")
-              .font(.footnote)
-              .foregroundStyle(.secondary)
+        LabeledContent {
+          if let ready = places?.readyMistakes, ready > 0 {
+            Text(ready, format: .number)
+              .monospacedDigit()
           }
-        } icon: {
-          KindMark(kind: .mistakes)
+        } label: {
+          Label {
+            VStack(alignment: .leading, spacing: 2) {
+              Text("Mistakes notebook", tableName: "Today", comment: "Opens the mistakes notebook")
+              Text("Redo what you got wrong", tableName: "Today", comment: "The notebook's line")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            }
+          } icon: {
+            KindMark(kind: .mistakes)
+          }
         }
       }
-      .badge(places?.readyMistakes ?? 0)
 
     } header: {
       Text("Practice anytime", tableName: "Today", comment: "Practice section header")
