@@ -254,6 +254,15 @@ function isGoalReady(goalId: string): boolean {
   );
 }
 
+/** The plan's start is followed with more sleeps once the first lesson is on its way. */
+function countSleepsBeforeFirstLesson(): number {
+  const calls = getStartMock().mock.calls;
+  const lessonCall = calls.findIndex(([workflow]) => workflow === lessonContentWorkflow);
+  const lessonOrder = getStartMock().mock.invocationCallOrder[lessonCall] ?? Infinity;
+
+  return vi.mocked(sleep).mock.invocationCallOrder.filter((order) => order < lessonOrder).length;
+}
+
 function runOutlinesInline() {
   getStartMock().mockImplementation(async (workflow, args) => {
     if (workflow === courseOutlineWorkflow) {
@@ -922,11 +931,15 @@ describe(goalContentWorkflow, () => {
     },
   );
 
-  it(
-    "writes the plan's new first lesson when placement moves the learner's start",
+  it.each([
+    { anonymous: false, learner: "a learner" },
+    { anonymous: true, learner: "a guest" },
+  ])(
+    "writes the plan's new first lesson when placement moves $learner's start",
     { timeout: TIMEOUT },
-    async () => {
+    async ({ anonymous }) => {
       const { goal, user } = await newGoal();
+      await prisma.user.update({ data: { isAnonymous: anonymous }, where: { id: user.id } });
       runOutlinesInline();
       let testedOut = false;
 
@@ -1012,7 +1025,7 @@ describe(goalContentWorkflow, () => {
 
       expect(first?.lessonId).toStrictEqual(expect.any(String));
       expect(result).toMatchObject({ speculativeLessonIds: [first?.lessonId], status: "built" });
-      expect(sleep).toHaveBeenCalledOnce();
+      expect(countSleepsBeforeFirstLesson()).toBe(1);
 
       await expect(
         prisma.planItem.count({ where: { lessonId: { not: null }, plan: { goalId: goal.id } } }),
@@ -1037,7 +1050,7 @@ describe(goalContentWorkflow, () => {
 
     const result = await goalContentWorkflow({ goalId: goal.id });
 
-    expect(sleep).not.toHaveBeenCalled();
+    expect(countSleepsBeforeFirstLesson()).toBe(0);
 
     const [first] = await loadPlanLessons(goal.id);
     expect(first?.lessonId).toStrictEqual(expect.any(String));

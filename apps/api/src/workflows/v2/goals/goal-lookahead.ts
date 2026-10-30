@@ -152,10 +152,6 @@ export async function followPlanStart({
   inputs: GoalCurriculumInputs;
   started: string[];
 }): Promise<void> {
-  if (inputs.isGuest) {
-    return;
-  }
-
   const writer = toWriter({ context, inputs });
 
   const initial: Followed = { openingToken: undefined, started };
