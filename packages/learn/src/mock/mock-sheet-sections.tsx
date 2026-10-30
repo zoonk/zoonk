@@ -26,7 +26,14 @@ function SectionTrailing({ section }: { section: MockSectionView }) {
   const counts = useSectionCounts();
 
   if (section.status === "done") {
-    return <span className="font-sans">{t("Handed in")}</span>;
+    return (
+      <span className="font-sans">
+        {t({
+          description: "A part's status in the list of the mock's parts.",
+          message: "Handed in",
+        })}
+      </span>
+    );
   }
 
   const answered = section.status === "current" ? counts.answered : 0;

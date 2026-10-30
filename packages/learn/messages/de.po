@@ -2871,10 +2871,9 @@ msgid "Save my result"
 msgstr "Ergebnis speichern"
 
 #: src/exam/exam-running-mock.tsx
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "QT1r8L"
-msgid "Handed in"
-msgstr "Abgegeben"
+msgctxt "S5LKIv"
+msgid "All parts handed in"
+msgstr "Alle Teile abgegeben"
 
 #: src/exam/exam-running-mock.tsx
 #: src/mistakes/drill/drill-countdown.tsx
@@ -7777,6 +7776,12 @@ msgstr "Probeprüfung abgegeben"
 msgctxt "1Dqoec"
 msgid "Your answers so far are saved."
 msgstr "Deine bisherigen Antworten sind gespeichert."
+
+#. A part's status in the list of the mock's parts.
+#: src/mock/mock-sheet-sections.tsx
+msgctxt "QT1r8L"
+msgid "Handed in"
+msgstr "Abgegeben"
 
 #: src/mock/mock-sheet-sections.tsx
 msgctxt "4osCkq"

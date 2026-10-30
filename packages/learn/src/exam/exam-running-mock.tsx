@@ -28,7 +28,7 @@ function RunningMockClock({ deadline }: { deadline: string | null }) {
   const minutes = Math.ceil(useTimeLeft({ deadline, tickMs: TICK_MS }) / MS_PER_MINUTE);
 
   if (deadline === null) {
-    return <ListRowTrailing className="font-sans">{t("Handed in")}</ListRowTrailing>;
+    return <ListRowTrailing className="font-sans">{t("All parts handed in")}</ListRowTrailing>;
   }
 
   // The server renders the time left a moment before the browser takes over.
