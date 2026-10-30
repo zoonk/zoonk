@@ -74,10 +74,13 @@ async function replanWaitingGoals({
   goalIds: string[];
   skillIds: string[];
 }): Promise<void> {
-  const waiting = await listWaitingGoalsStep({
-    goalIds: [...(context.analytics?.goalId ? [context.analytics.goalId] : []), ...goalIds],
-    skillIds,
-  });
+  const listed = await listWaitingGoalsStep({ goalIds, skillIds });
+  const initiating = context.analytics?.goalId;
+
+  const waiting =
+    initiating && listed.includes(initiating)
+      ? [initiating, ...listed.filter((id) => id !== initiating)]
+      : listed;
 
   const conflicts: string[] = [];
   const failures: { goalId: string; reason: unknown }[] = [];
