@@ -1,189 +1,84 @@
 name: Android App
-
+run-name: Same-host R8 JVM pairs 1
 on:
   push:
-    branches: [main]
-    paths: [apps/android/**, .github/workflows/android.yml, .github/workflows/native-changes.yml]
-  pull_request:
-    branches: [main]
-    paths: [apps/android/**, .github/workflows/android.yml, .github/workflows/native-changes.yml]
-    types: [opened, synchronize, reopened]
-
+    branches: [ci/android-speed]
+    paths: [.github/workflows/android.yml]
 permissions:
   contents: read
-
+  actions: read
 env:
-  GRADLE_ARGUMENTS: --no-daemon --console=plain --profile -Dorg.gradle.jvmargs="-Xmx6g -Dfile.encoding=UTF-8" -Pkotlin.daemon.jvmargs=-Xmx2g
-
+  SOURCE_SHA: fd10c679dc4840319a1221729910970ce3b207bc
 jobs:
-  changes:
-    uses: ./.github/workflows/native-changes.yml
-    with:
-      app: android
-
-  compile-release:
-    name: compile (release)
-    needs: changes
-    if: needs.changes.outputs.changed == 'true'
+  r8-pairs:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    env:
-      COMPILE_VARIANT: release
-      COMPILE_TASKS: :app:compileReleaseKotlin
-    concurrency:
-      group: ${{ github.workflow }}-compile-release-${{ github.event.pull_request.number || github.ref }}
-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-    steps: &compile-steps
-      - &checkout
-        name: Check out code
-        uses: actions/checkout@v7
-
-      - &java
-        name: Set up JDK 25
-        uses: actions/setup-java@v6
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 25
-
-      - &android
-        name: Set up Android SDK
-        uses: android-actions/setup-android@v4
+      - uses: android-actions/setup-android@v4
         with:
           packages: platform-tools platforms;android-37.0 build-tools;36.0.0
-
-      - &gradle
-        name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6
         with:
           cache-provider: enhanced
-          cache-read-only: false
-
-      - name: Compile shared inputs
-        run: make -C apps/android build BUILD_TASKS="${{ env.COMPILE_TASKS }}"
-
-      - name: Share compiled task outputs
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: android-compile-cache-${{ env.COMPILE_VARIANT }}
-          path: |
-            ~/.gradle/caches/build-cache-1/*
-            !~/.gradle/caches/build-cache-1/*.lock
-            !~/.gradle/caches/build-cache-1/gc.properties
-          compression-level: 0
-          retention-days: 1
-          if-no-files-found: error
-
-      - name: Upload task profiles
-        if: always()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: profile-${{ github.job }}
-          path: apps/android/build/reports/profile/
-
-  compile-tests:
-    name: compile (tests)
-    needs: changes
-    if: needs.changes.outputs.changed == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    env:
-      COMPILE_VARIANT: tests
-      COMPILE_TASKS: :app:compileDebugUnitTestKotlin :api:compileTestKotlin
-    concurrency:
-      group: ${{ github.workflow }}-compile-tests-${{ github.event.pull_request.number || github.ref }}
-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-    steps: *compile-steps
-
-  tests:
-    name: tests
-    needs: compile-tests
-    if: ${{ !cancelled() && needs.compile-tests.result != 'skipped' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    concurrency:
-      group: ${{ github.workflow }}-tests-${{ github.event.pull_request.number || github.ref }}
-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-    steps:
-      - *checkout
-      - *java
-      - *android
-      - *gradle
-      - name: Restore compiled task outputs
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: android-compile-cache-tests
-          path: ~/.gradle/caches/build-cache-1
-          digest-mismatch: error
-      - name: Run Gradle
-        run: make -C apps/android test GRADLE_ARGUMENTS="$GRADLE_ARGUMENTS -Pzoonk.testForks=2"
-      - name: Upload task profiles
-        if: always()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: profile-gradle-tests
-          path: apps/android/build/reports/profile/
-
-  gradle:
-    name: ${{ matrix.job }}
-    needs: compile-release
-    if: ${{ !cancelled() && needs.compile-release.result != 'skipped' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    concurrency:
-      group: ${{ github.workflow }}-${{ matrix.job }}-${{ github.event.pull_request.number || github.ref }}
-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - job: checks
-            target: lint
-            tasks: :app:lintRelease
-          - job: release
-            target: build
-            arguments: -x :app:lintVitalRelease
-    steps:
-      - *checkout
-      - *java
-      - *android
-      - *gradle
-
-      - name: Restore compiled task outputs
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+          cache-read-only: true
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: android-compile-cache-release
           path: ~/.gradle/caches/build-cache-1
+          run-id: 41104856912
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           digest-mismatch: error
-
-      - name: Run Gradle
-        run: make -C apps/android ${{ matrix.target }} GRADLE_ARGUMENTS="$GRADLE_ARGUMENTS ${{ matrix.arguments }}" ${{ matrix.tasks && format('LINT_TASKS="{0}"', matrix.tasks) || '' }}
-
-      - name: Upload task profiles
+      - name: Validate candidate settings without building
+        run: python3 apps/android/.ci-r8-pairs.py validate
+      - name: Prewarm both complete release builds
+        run: python3 apps/android/.ci-r8-pairs.py warmup
+      - name: Save warmup evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: profile-${{ github.job }}-${{ matrix.job }}
-          path: apps/android/build/reports/profile/
-
-  style:
-    name: style
-    needs: changes
-    if: needs.changes.outputs.changed == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    concurrency:
-      group: ${{ github.workflow }}-style-${{ github.event.pull_request.number || github.ref }}
-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-    steps:
-      - *checkout
-      - *java
-      - *android
-      - *gradle
-      - name: Check formatting and lint detectors
-        run: make -C apps/android lint LINT_TASKS="spotlessCheck :lint-checks:test"
-      - name: Upload task profiles
+          name: r8-jvm-warmup
+          path: |
+            probe/*settings.gradle.kts
+            probe/cpuinfo.txt
+            probe/results.json
+            probe/validate-candidate/
+            probe/warmup-*/
+          retention-days: 2
+      - name: Pair 1 baseline then candidate
+        run: python3 apps/android/.ci-r8-pairs.py pair1
+      - name: Save pair 1
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: profile-style
-          path: apps/android/build/reports/profile/
+          name: r8-jvm-pair1
+          path: |
+            probe/results.json
+            probe/pair1-*/
+          retention-days: 2
+      - name: Pair 2 candidate then baseline
+        run: python3 apps/android/.ci-r8-pairs.py pair2
+      - name: Save pair 2
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: r8-jvm-pair2
+          path: |
+            probe/results.json
+            probe/pair2-*/
+          retention-days: 2
+      - name: Pair 3 baseline then candidate
+        run: python3 apps/android/.ci-r8-pairs.py pair3
+      - name: Save pair 3
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: r8-jvm-pair3
+          path: |
+            probe/results.json
+            probe/pair3-*/
+          retention-days: 2
