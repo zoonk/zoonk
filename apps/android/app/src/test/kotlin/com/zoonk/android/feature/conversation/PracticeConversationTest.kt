@@ -8,6 +8,8 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
@@ -33,17 +35,20 @@ class PracticeConversationTest {
     private val opened = mutableListOf<AppRoute>()
     private var answer: CompletableDeferred<CallStart>? = null
 
-    private fun show(call: LanguagePracticeCall = practiceCall()) {
+    private fun show(
+        call: LanguagePracticeCall = practiceCall(),
+        start: suspend (CallRequest) -> CallStart = { request ->
+            requests += request
+            answer?.await() ?: CallStart.Started(started)
+        },
+    ) {
         compose.setContent {
             ZoonkTheme {
                 PracticeConversation(
                     call = call,
                     chapterId = chapter,
                     goalId = null,
-                    start = { request ->
-                        requests += request
-                        answer?.await() ?: CallStart.Started(started)
-                    },
+                    start = start,
                     open = { opened += it },
                 )
             }
@@ -99,6 +104,24 @@ class PracticeConversationTest {
 
         compose.onNodeWithText("The call didn't start. Try again in a moment.").assertExists()
         assertTrue(opened.isEmpty())
+    }
+
+    @Test
+    fun aStartRefusedBecauseCallsArePausedSaysSoAndStartsOnceTheyreBack() {
+        val harness = ConversationHarness()
+        harness.api.startRefusal = ApiException(ApiError.Unavailable, "CALLS_PAUSED", 503)
+        show(start = harness.store::start)
+        compose.onNodeWithText("Start the call").performClick()
+        compose.waitForIdle()
+
+        compose.onNodeWithText("It's the same for everyone right now. Try again later.").assertExists()
+        compose.onNodeWithText("The call didn't start. Try again in a moment.").assertDoesNotExist()
+
+        harness.api.startRefusal = null
+        compose.onNodeWithText("Start the call").performClick()
+        compose.waitForIdle()
+
+        assertEquals(1, opened.size)
     }
 
     @Test

@@ -86,6 +86,9 @@ sealed interface CallStart {
     ) : CallStart
 
     data object Failed : CallStart
+
+    /** Calls are paused for everyone. */
+    data object Paused : CallStart
 }
 
 /** A checkpoint call's start, read as main's `startCheckpointCallAction` reads it: only [Failed] is worth another try. */
@@ -211,8 +214,11 @@ class ConversationStore(
             }
 
             is MutationResult.Failed -> {
-                (CallReservation.refused(started.code, started.details) as? CallReservation.Limited)?.let { CallStart.Limited(it.limit) }
-                    ?: CallStart.Failed
+                when (val refused = CallReservation.refused(started.code, started.details)) {
+                    is CallReservation.Limited -> CallStart.Limited(refused.limit)
+                    CallReservation.CallsPaused -> CallStart.Paused
+                    else -> CallStart.Failed
+                }
             }
 
             MutationResult.Obsolete -> {

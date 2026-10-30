@@ -83,6 +83,28 @@ class SpeakingSectionTest {
     }
 
     @Test
+    fun aMockStartThatFindsCallsPausedSaysSo() {
+        compose.setContent {
+            ZoonkTheme {
+                SpeakingMockCard(
+                    SpeakingMockExam.TOEFL,
+                    goal,
+                    paused = false,
+                    start = { CallStart.Paused },
+                    open = { opened += it },
+                )
+            }
+        }
+
+        compose.onNodeWithText("Start the mock").performClick()
+        compose.waitForIdle()
+
+        compose.onNodeWithText("Calls are paused").assertExists()
+        compose.onNodeWithText("Start the mock").assertExists()
+        assertTrue(opened.isEmpty())
+    }
+
+    @Test
     fun pausedCallsLeaveTheMockCardWithoutStart() {
         compose.setContent {
             ZoonkTheme { SpeakingMockCard(SpeakingMockExam.TOEFL, goal, paused = true, start = start, open = { opened += it }) }

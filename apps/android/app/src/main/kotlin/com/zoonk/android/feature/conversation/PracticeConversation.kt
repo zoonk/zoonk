@@ -68,7 +68,7 @@ import java.util.UUID
 class CallStartModel(
     private val startCall: suspend (CallRequest) -> CallStart,
 ) : ViewModel() {
-    enum class State { Idle, Starting, Writing, Failed, WriteFailed }
+    enum class State { Idle, Starting, Writing, Failed, WriteFailed, Paused }
 
     var state by mutableStateOf(State.Idle)
         private set
@@ -99,6 +99,8 @@ class CallStartModel(
                 if (started is CallStart.Started) {
                     this@CallStartModel.started = started.conversationId
                     State.Idle
+                } else if (started == CallStart.Paused) {
+                    State.Paused
                 } else if (wrote) {
                     State.WriteFailed
                 } else {
@@ -237,13 +239,7 @@ private fun CallSetup(
 
     when {
         call.paused -> {
-            CallOffMessage(stringResource(R.string.conversation_paused_title)) {
-                Text(
-                    stringResource(R.string.conversation_paused),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+            CallsPausedMessage()
         }
 
         model.state == CallStartModel.State.Writing || model.state == CallStartModel.State.WriteFailed -> {
@@ -294,6 +290,7 @@ private fun CallSetup(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
+            if (model.state == CallStartModel.State.Paused) CallsPausedMessage()
             if (model.state == CallStartModel.State.Failed) {
                 Text(
                     stringResource(R.string.conversation_start_failed),
@@ -303,6 +300,17 @@ private fun CallSetup(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun CallsPausedMessage() {
+    CallOffMessage(stringResource(R.string.conversation_paused_title)) {
+        Text(
+            stringResource(R.string.conversation_paused),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 

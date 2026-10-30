@@ -252,8 +252,8 @@ fun SpeakingPaperSection(
     from: String? = null,
 ) {
     val locked = paper.access == SpeakingPaper.Access.PLUS_REQUIRED
-    val paused = paper.access == SpeakingPaper.Access.CALLS_PAUSED
     val model = viewModel(key = "speaking-start:$goalId") { CallStartModel(start) }
+    val paused = paper.access == SpeakingPaper.Access.CALLS_PAUSED
     var started by rememberSaveable { mutableStateOf<String?>(null) }
     val busy = model.state == CallStartModel.State.Starting || model.state == CallStartModel.State.Writing
     val openCall = { id: UUID -> open(AppRoute.Conversation(id.toString(), from = from)) }
@@ -281,7 +281,7 @@ fun SpeakingPaperSection(
                 }
             }
             if (locked) PlusNotice(onSeePlus = { open(AppRoute.Subscription) }, description = stringResource(R.string.speaking_plus))
-            if (paused) CallsPaused()
+            if (paused || model.state == CallStartModel.State.Paused) CallsPaused()
         }
         paper.tasks.forEachIndexed { index, task ->
             if (index > 0) HorizontalDivider()

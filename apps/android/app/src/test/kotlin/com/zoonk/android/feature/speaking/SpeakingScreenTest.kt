@@ -105,6 +105,20 @@ class SpeakingScreenTest {
     }
 
     @Test
+    fun aTaskStartThatFindsCallsPausedSaysSo() {
+        answer = CallStart.Paused
+        show()
+
+        compose.onNodeWithText("Valorar propuestas").performClick()
+        compose.onNodeWithText("Start this task").performClick()
+        compose.waitForIdle()
+
+        compose.onNodeWithText("It's the same for everyone right now. Try again later.").assertExists()
+        compose.onNodeWithText("Start this task").assertExists()
+        assertTrue(opened.isEmpty())
+    }
+
+    @Test
     fun noCallTimeLeftSaysSo() {
         answer = CallStart.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day))
         show()

@@ -102,6 +102,7 @@ fun SpeakingMockCard(
 
             else -> {
                 val starting = model.state == CallStartModel.State.Starting
+                if (model.state == CallStartModel.State.Paused) CallsPaused()
                 OutlinedButton(onClick = startMock, enabled = !starting) {
                     Text(stringResource(if (starting) R.string.conversation_starting else R.string.speaking_mock_start))
                 }
