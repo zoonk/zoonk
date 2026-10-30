@@ -34,6 +34,7 @@ class StudyOpenerTest {
         val opened = mutableListOf<JsonObject>()
         val started = mutableListOf<UUID>()
         val prepared = mutableListOf<UUID>()
+        val stopped = mutableListOf<UUID>()
         var target: JsonObject? = null
         var targetStatus = "resolved"
         var startError: String? = null
@@ -61,6 +62,14 @@ class StudyOpenerTest {
             sessionId: UUID,
             timeZone: String,
         ): StudySession = this.session
+
+        override suspend fun stop(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+            timeZone: String,
+        ) {
+            stopped += sessionId
+        }
 
         override suspend fun summary(
             session: AuthenticatedSession,
@@ -279,6 +288,15 @@ class StudyOpenerTest {
             api.startError = "DAILY_LIMIT_REACHED"
             assertEquals(MutationResult.Done(AppRoute.Today), opener(api).continueSession(SESSION))
             assertEquals(emptyList<UUID>(), api.started)
+        }
+
+    @Test
+    fun stoppingForTodayOpensTheSessionsStoppedSummary() =
+        runTest {
+            val api = FakeStudyApi()
+
+            assertEquals(MutationResult.Done(AppRoute.Session(sessionId = SESSION.toString(), stopped = true)), opener(api).stop(SESSION))
+            assertEquals(listOf(SESSION), api.stopped)
         }
 
     private fun studySession(

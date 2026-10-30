@@ -31,9 +31,11 @@
   "session_level_up": "0c8e13eda0a22a045c2aaf87da1816439aeb43e29a3d30d719e64ba48f65bb48",
   "session_next_getting_ready": "c4021b79857ae7bbf2a0b86b69767398fe8a6e0b012b8ee69090fd3e1d0e4241",
   "session_next_start": "b8c4197a15a471311d41e0c915971af90009ddd117af1a9d3b7d75d79a391139",
+  "session_next_stop": "4c56480b45f6b5ba26c3afab9c896a3df100370d55dbb2d70899bef0fe99a5d7",
+  "session_next_stop_failed": "437a5fe9eab317b587ec64936e554bafeed09d5aa1c873325eba9ea1947679e8",
   "session_opening_slow": "c811d1d79512bddbfcb9454a09369afd262ba7c2e2035cce66902bc5e7c1e4df",
   "session_opening_very_slow": "15a33464fbace3a6ba4b5473646b57442d24462c07756dd9ffe4fa44ee727e87",
-  "session_summary_back_on": "2bef9ec2e1426c34263e3f1f32644da00a9c8c2b0dc285d479ecd5e5d09c1a4b",
+  "session_summary_back_on": "dcf2a31f2a777c47286939b88febcd9d3a64383858914aadc1425ec614a272a5",
   "session_summary_brain_power": "d6888ae922b57b4bf759e8b52e80129f70a81761141106a41573c81661d2cb19",
   "session_summary_buddy_happy": "627bcf46cfd46348898bb74e88834044d103f53def80d1fbf6e2ba9e7db7b9d6",
   "session_summary_create_account": "c5d500f052b6ec950d8cef694b6ec7e7be0d098278fa77c1ec06c6f31d952665",
@@ -152,8 +154,8 @@
     <string name="session_summary_progress">Progreso</string>
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">Por repasar</string>
-    <!-- %1$s lists the days they come back, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">De vuelta %1$s</string>
+    <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
+    <string name="session_summary_back_on">De vuelta el %1$s</string>
     <string name="session_summary_brain_power">Poder Mental</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
@@ -184,4 +186,6 @@
     <string name="session_summary_create_account">Crear una cuenta</string>
     <string name="session_next_start">Empezar</string>
     <string name="session_next_getting_ready">Preparándolo…</string>
+    <string name="session_next_stop">Terminar por hoy</string>
+    <string name="session_next_stop_failed">No hemos podido terminar la sesión. Inténtalo de nuevo.</string>
 </resources>

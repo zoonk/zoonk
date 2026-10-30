@@ -232,6 +232,12 @@ class TodayFlowTest {
             body: JsonObject,
         ): OpenedStudyDay = error("The day is saved")
 
+        override suspend fun stop(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+            timeZone: String,
+        ) = Unit
+
         override suspend fun summary(
             session: AuthenticatedSession,
             sessionId: UUID,

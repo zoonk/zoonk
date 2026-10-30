@@ -61,6 +61,12 @@ interface StudyApi {
         timeZone: String,
     )
 
+    suspend fun stop(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+        timeZone: String,
+    )
+
     /** Starts writing the session's coming lessons, so they're ready when the learner gets there. */
     suspend fun prepare(
         session: AuthenticatedSession,
@@ -121,6 +127,13 @@ class StudyOpener(
                 next == null -> AppRoute.Session(sessionId = sessionId.toString())
                 else -> route(session, sessionId, next.toDayStep()) ?: AppRoute.Today
             }
+        }
+
+    /** Stop for today: the session's summary says what's done so far and offers to keep going. */
+    suspend fun stop(sessionId: UUID): MutationResult<AppRoute> =
+        cache.mutate(invalidating = STOPPING) { session ->
+            api.stop(session, sessionId, timeZone())
+            AppRoute.Session(sessionId = sessionId.toString(), stopped = true)
         }
 
     /** Saves an unopened day first, keeping it even with nothing in it. */
@@ -248,6 +261,9 @@ class StudyOpener(
     private companion object {
         /** Opening saves the day's plan and session and starting marks a block begun; progress changes only as work finishes. */
         val OPENING = setOf(DataDomain.Goals, DataDomain.UserSession)
+
+        /** As a finished block's, since stopping ends the session where it is. */
+        val STOPPING = setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress, DataDomain.UserSession)
 
         val STARTABLE = setOf(OpenedStudyDay.TargetStatus.NEXT, OpenedStudyDay.TargetStatus.RESOLVED)
     }

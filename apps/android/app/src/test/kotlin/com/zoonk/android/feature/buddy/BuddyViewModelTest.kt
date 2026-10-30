@@ -180,6 +180,12 @@ class BuddyViewModelTest {
             body: JsonObject,
         ): OpenedStudyDay = error("Not used")
 
+        override suspend fun stop(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+            timeZone: String,
+        ) = Unit
+
         override suspend fun summary(
             session: AuthenticatedSession,
             sessionId: UUID,

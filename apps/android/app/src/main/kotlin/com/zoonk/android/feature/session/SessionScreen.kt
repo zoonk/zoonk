@@ -2,6 +2,7 @@ package com.zoonk.android.feature.session
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +17,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +40,7 @@ import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudySession
@@ -49,7 +50,7 @@ import java.util.UUID
 
 /**
  * Main's session page: a day's summary once nothing is left or the learner stopped, else its next
- * step to start. Opening it only reads; every write is a tap.
+ * step to start, a day not opened yet included. Opening it only reads; every write is a tap.
  */
 @Composable
 fun SessionScreen(
@@ -59,23 +60,14 @@ fun SessionScreen(
 ) {
     val today by app.today.today.collectShown()
     val todayDay = (today as? LoadState.Loaded)?.value as? TodayRead.Day
-    val sessionId =
-        route.sessionId?.let(UUID::fromString)
-            ?: todayDay
-                ?.day
-                ?.takeIf { day ->
-                    (route.goalId == null || route.goalId == (day.goalId ?: todayDay.today.goal.id).toString()) &&
-                        (route.blockId == null || day.steps.any { it.id?.toString() == route.blockId })
-                }?.sessionId
+    val shown =
+        todayDay?.takeIf { read ->
+            (route.goalId == null || route.goalId == (read.day.goalId ?: read.today.goal.id).toString()) &&
+                (route.blockId == null || read.day.steps.any { it.id?.toString() == route.blockId })
+        }
+    val sessionId = route.sessionId?.let(UUID::fromString) ?: shown?.day?.sessionId
+    val viewModel = viewModel(key = "session:${sessionId ?: route.goalId}") { SessionViewModel(app.studyOpener) }
 
-    if (sessionId == null) {
-        // Only a link can name a day Today doesn't hold, and Today says where that goal is.
-        LaunchedEffect(today) { if (today is LoadState.Loaded || today is LoadState.Failed) navigator.closeTask() }
-        SessionLoading(navigator::closeTask)
-        return
-    }
-
-    val viewModel = viewModel(key = "session:$sessionId") { SessionViewModel(app.studyOpener) }
     LaunchedEffect(viewModel) {
         viewModel.routes.collect {
             navigator.closeTask()
@@ -83,23 +75,72 @@ fun SessionScreen(
         }
     }
 
+    when {
+        sessionId != null -> {
+            SavedDay(app, navigator, viewModel, route, sessionId, goal = todayDay?.today?.goal)
+        }
+
+        shown != null -> {
+            val day = shown.day
+            val step = day.steps.firstOrNull { it.position == day.nextPosition }
+            if (step == null) {
+                LaunchedEffect(Unit) { navigator.closeTask() }
+            } else {
+                NextStop(
+                    viewModel,
+                    day,
+                    step,
+                    day.goalId ?: shown.today.goal.id,
+                    asked = false,
+                    refresh = null,
+                    onStop = null,
+                    onClose = navigator::closeTask,
+                )
+            }
+        }
+
+        else -> {
+            // Only a link can name a day Today doesn't hold, and Today says where that goal is.
+            LaunchedEffect(today) { if (today is LoadState.Loaded || today is LoadState.Failed) navigator.closeTask() }
+            SessionLoading(navigator::closeTask)
+        }
+    }
+}
+
+@Composable
+private fun SavedDay(
+    app: AppContainer,
+    navigator: AppNavigator,
+    viewModel: SessionViewModel,
+    route: AppRoute.Session,
+    sessionId: UUID,
+    goal: TodayGoal?,
+) {
     val read by app.studySessions.day[sessionId].collectShown()
+
     when (val state = read) {
         is LoadState.Loaded -> {
             val session = state.value
-            val step =
-                session.blocks.firstOrNull { it.id.toString() == route.blockId && it.status in OPEN }
-                    ?: session.blocks.firstOrNull { it.id == session.nextBlockId }
+            val opened = session.blocks.firstOrNull { it.id.toString() == route.blockId && it.status in OPEN }
+            val step = opened ?: session.blocks.firstOrNull { it.id == session.nextBlockId }
             if (route.stopped || step == null) {
-                val goal = todayDay?.today?.goal?.takeIf { it.id == session.goalId }
-                SessionSummaryContent(app, navigator, viewModel, session, stopped = route.stopped, goalKind = goal?.kind)
-            } else {
-                NextStop(
+                SessionSummaryContent(
                     app,
+                    navigator,
                     viewModel,
                     session,
-                    step.toDayStep(),
-                    asked = step.id.toString() == route.blockId,
+                    stopped = route.stopped,
+                    goalKind = goal?.takeIf { it.id == session.goalId }?.kind,
+                )
+            } else {
+                NextStop(
+                    viewModel = viewModel,
+                    day = session.toDayView(),
+                    step = step.toDayStep(),
+                    goalId = session.goalId,
+                    asked = opened != null,
+                    refresh = { app.studySessions.day[sessionId].refresh() },
+                    onStop = if (session.sessionBar.completed > 0) ({ viewModel.stop(sessionId) }) else null,
                     onClose = navigator::closeTask,
                 )
             }
@@ -133,7 +174,6 @@ private fun SessionSummaryContent(
     val read by app.studySessions.summary[session.id].collectShown()
     val learner by app.learnerSummary.summary.collectShown()
     val summary = (read as? LoadState.Loaded)?.value
-    var closedCeremony by rememberSaveable { mutableStateOf<String?>(null) }
 
     if (summary == null) {
         if (read is LoadState.Failed) {
@@ -146,9 +186,20 @@ private fun SessionSummaryContent(
         return
     }
 
-    val ceremony = summary.ceremony?.takeIf { it.id.toString() != closedCeremony }
-    if (ceremony != null) {
-        SessionCeremony(app, ceremony) { closedCeremony = ceremony.id.toString() }
+    // The day was read before work was added elsewhere: reading both again shows that work's next step.
+    if (!stopped && !summary.finished) {
+        LaunchedEffect(summary) {
+            app.studySessions.day[session.id].refresh()
+            app.studySessions.summary[session.id].refresh()
+        }
+        SessionLoading(navigator::closeTask)
+        return
+    }
+
+    // Showing a ceremony marks it shown, which reads the summary again without it: the first one stays until closed.
+    var ceremony by remember(session.id) { mutableStateOf(summary.ceremony) }
+    ceremony?.let { milestone ->
+        SessionCeremony(app, milestone) { ceremony = null }
         return
     }
 
@@ -185,45 +236,72 @@ private fun SessionSummaryContent(
 }
 
 /**
- * The step a tap opened when it can't play yet, or the day's next step. A lesson still being made
- * shows its wait, reading the day again until it's there, then opens: the tap asked for it.
+ * The day's next step, or the one a tap opened when its lesson isn't made yet. That wait reads the
+ * day again until the lesson is there, then opens it, since the tap asked for it; a link or a
+ * screen restored later waits for Start instead. [refresh] is null on a day not opened yet, which
+ * has no lesson to wait for; [onStop] once the session has work done.
  */
 @Composable
 private fun NextStop(
-    app: AppContainer,
     viewModel: SessionViewModel,
-    session: StudySession,
+    day: DayView,
     step: DayStep,
+    goalId: UUID?,
     asked: Boolean,
+    refresh: (suspend () -> Unit)?,
+    onStop: (() -> Unit)?,
     onClose: () -> Unit,
 ) {
-    val goalId = session.goalId
-    val waiting = step.waitsForItsLesson()
+    val rereading = refresh?.takeIf { step.waitsForItsLesson() }
+    val waiting = rereading != null
+    var waited by remember(step.id) { mutableStateOf(false) }
+    val busy = viewModel.busy != null
+    val startsFor = goalId?.takeIf { !waiting }
 
-    LaunchedEffect(session.id, waiting) {
-        while (waiting) {
+    LaunchedEffect(waiting) {
+        val reread = rereading ?: return@LaunchedEffect
+        waited = true
+        while (true) {
             delay(LESSON_CHECK_MILLIS)
-            app.studySessions.day[session.id].refresh()
+            reread()
         }
     }
-    LaunchedEffect(waiting) {
-        if (!waiting && asked && goalId != null) viewModel.start(session.toDayView(), step, goalId)
+    LaunchedEffect(waiting, waited) {
+        if (!waiting && waited && asked && goalId != null) viewModel.start(day, step, goalId)
     }
 
     TaskScaffold(
         onClose = onClose,
         bottomBar =
-            if (waiting || goalId == null) {
-                null
-            } else {
+            if (startsFor != null || onStop != null) {
                 {
-                    Button(
-                        onClick = { viewModel.start(session.toDayView(), step, goalId) },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled =
-                            viewModel.busy == null,
-                    ) { Text(stringResource(R.string.session_next_start)) }
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        when (viewModel.failed) {
+                            SessionAction.Start -> ErrorLine(stringResource(R.string.today_open_failed))
+                            SessionAction.Stop -> ErrorLine(stringResource(R.string.session_next_stop_failed))
+                            else -> Unit
+                        }
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            onStop?.let {
+                                OutlinedButton(
+                                    onClick = it,
+                                    enabled = !busy,
+                                ) { Text(stringResource(R.string.session_next_stop)) }
+                            }
+                            startsFor?.let { goal ->
+                                Button(onClick = { viewModel.start(day, step, goal) }, enabled = !busy) {
+                                    Text(stringResource(R.string.session_next_start))
+                                }
+                            }
+                        }
+                    }
                 }
+            } else {
+                null
             },
     ) { padding ->
         Column(
@@ -253,16 +331,14 @@ private fun NextStop(
                         Text(stringResource(R.string.session_next_getting_ready), style = MaterialTheme.typography.bodyMedium)
                     }
                 }
-                if (viewModel.failed == SessionAction.Start) {
-                    Text(
-                        stringResource(R.string.today_open_failed),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
             }
         }
     }
+}
+
+@Composable
+private fun ErrorLine(text: String) {
+    Text(text, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
 }
 
 @Composable

@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-enum class SessionAction { Start, KeepGoing, ExtraTime }
+enum class SessionAction { Start, Stop, KeepGoing, ExtraTime }
 
 /** The session screen's taps, one at a time: its only writes, so opening the screen changes nothing. */
 class SessionViewModel(
@@ -36,6 +36,8 @@ class SessionViewModel(
         goalId: UUID,
     ) = run(SessionAction.Start) { opener.open(day, step, next = true, goalId = goalId) }
 
+    fun stop(sessionId: UUID) = run(SessionAction.Stop) { opener.stop(sessionId) }
+
     fun keepGoing(sessionId: UUID) = run(SessionAction.KeepGoing) { opener.continueSession(sessionId) }
 
     fun extraTime(
@@ -43,7 +45,7 @@ class SessionViewModel(
         goalId: UUID,
     ) = run(SessionAction.ExtraTime) { opener.addExtraTime(day, goalId) }
 
-    /** A null route means the day changed meanwhile: its read refreshes, and nothing opens. */
+    /** A null route means the step can't open now (the day changed, its limit, earlier work first), which Today explains. */
     private fun run(
         action: SessionAction,
         write: suspend () -> MutationResult<AppRoute?>,
@@ -57,7 +59,7 @@ class SessionViewModel(
             busy = null
             when (result) {
                 is MutationResult.Done -> {
-                    result.value?.let { opened.send(it) }
+                    opened.send(result.value ?: AppRoute.Today)
                 }
 
                 is MutationResult.Failed -> {

@@ -31,9 +31,11 @@
   "session_level_up": "0b9fbcfb39acb2a474d3c57c1e97f0c06790cee327e9a89f84e4afbcca73ef68",
   "session_next_getting_ready": "4c69eedb4ba162ed9bc83ff860a1906a048ba930d9e2ba01afc1ce21ae1c3613",
   "session_next_start": "3f280bf14e2b4c501ae76d10fcb78c66a294c88572e588ce77b46c1069eeb7ae",
+  "session_next_stop": "fb866918fed036f4cb7e7b115333c93ba090ea981e2964581896d342e7fd5d95",
+  "session_next_stop_failed": "215f669d94b4de038a638f60daa2a72ee7699d05071e96380aa62954c93db622",
   "session_opening_slow": "f9c63825fe3afdc0bf79b4929071f4b66028789e744f0b3fd5ea67fd0375f611",
   "session_opening_very_slow": "a52bf4df1ddcbedfed4fa631454db6595d4e078816d2f5fe6b49eb00e38d3871",
-  "session_summary_back_on": "a6401e7d73ac5d3a4e8e20263c345df69b42b99f75cd9abc1e6ee5ea39c65ead",
+  "session_summary_back_on": "7dd438ecebf23d1dbfd1c66c195cf8aac7690d3c5399ddeb60013b234b40460c",
   "session_summary_brain_power": "6443ff68d21a1da19547ce8f3b6a48319ba12471d5f6519d7e3067eb9c8bf10d",
   "session_summary_buddy_happy": "696fe993fb0c6d397ee892703f736ff6423cf8bd96622972b519d712b91d9819",
   "session_summary_create_account": "d5cd639343e0c61fb789a72f2459814d06d0dc1049cde576243024a258452eb7",
@@ -144,8 +146,8 @@
     <string name="session_summary_progress">Fortschritt</string>
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">Zum Wiederholen</string>
-    <!-- %1$s lists the days they come back, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">Wieder da: %1$s</string>
+    <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
+    <string name="session_summary_back_on">Am %1$s geht es weiter</string>
     <string name="session_summary_brain_power">Brain Power</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
@@ -174,4 +176,6 @@
     <string name="session_summary_create_account">Konto erstellen</string>
     <string name="session_next_start">Starten</string>
     <string name="session_next_getting_ready">Wir bereiten alles vor…</string>
+    <string name="session_next_stop">Für heute aufhören</string>
+    <string name="session_next_stop_failed">Wir konnten die Lerneinheit nicht beenden. Versuch es noch einmal.</string>
 </resources>
