@@ -146,6 +146,35 @@
         }
       }
     },
+    "%@ · a live call" : {
+      "comment" : "A language unit's challenge: its phase, and that it's a live call",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · ein Live-Gespräch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · una llamada en directo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · un appel en direct"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · uma conversa ao vivo"
+          }
+        }
+      }
+    },
     "%@ · after the challenge before it" : {
       "comment" : "A phase challenge waiting for the one before it",
       "localizations" : {
@@ -2539,6 +2568,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uma nova semana. Hoje começamos com um aquecimento tranquilo."
+          }
+        }
+      }
+    },
+    "A live call" : {
+      "comment" : "A language unit's challenge",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Live-Gespräch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una llamada en directo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un appel en direct"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma conversa ao vivo"
           }
         }
       }

@@ -105,6 +105,17 @@ extension StudyBlock {
         : canDo
     }
 
+    // A language unit's challenge is a live call, with no questions.
+    if let checkpoint, !checkpoint.mock, questions == 0 {
+      return challengePhase.map {
+        String(
+          localized: "\($0) · a live call", table: "Today",
+          comment: "A language unit's challenge: its phase, and that it's a live call")
+      }
+        ?? String(
+          localized: "A live call", table: "Today", comment: "A language unit's challenge")
+    }
+
     if let phase = challengePhase {
       return String(
         localized: "\(phase) · \(questions) questions, no hints", table: "Today",
@@ -165,8 +176,11 @@ extension StudyBlock {
             comment: "A lesson left from earlier days, and its subject")
         }
         ?? String(localized: "Catching up", table: "Today", comment: "A lesson from earlier days")
+    } else if checkpoint != nil {
+      let parts = [subject, detail].compactMap(\.self)
+      part = parts.isEmpty ? nil : parts.joined(separator: " · ")
     } else {
-      part = subject ?? challengePhase
+      part = subject
     }
 
     guard oftenTested else {

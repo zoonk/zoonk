@@ -462,7 +462,9 @@ struct BlockRow: View {
       lines.append(label)
     }
 
-    if block.weakest || block.fullReview || showsDetail, let detail = block.detail {
+    if block.weakest || block.fullReview || showsDetail && block.checkpoint == nil,
+      let detail = block.detail
+    {
       lines.append(detail)
     }
 
