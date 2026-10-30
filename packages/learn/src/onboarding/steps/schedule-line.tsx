@@ -33,24 +33,12 @@ function FinishMonth(chunks: React.ReactNode) {
 
 function TooCloseWords({ tooClose }: { tooClose: TooClose }) {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const { cause, recommendedMinutes } = tooClose;
-  const time = formatDuration(recommendedMinutes ?? 0);
 
-  if (cause === "days") {
-    return recommendedMinutes === null
-      ? t(
-          "The days you picked can't cover everything in depth by your date. More study days would help.",
-        )
-      : t(
-          "Covering everything in depth by your date takes {time} a day on the days you picked. More study days bring that down.",
-          { time },
-        );
-  }
-
-  return recommendedMinutes === null
-    ? t("Your date is too close to cover everything in depth.")
-    : t("Your date is close: covering everything in depth takes {time} a day.", { time });
+  return tooClose === "days"
+    ? t(
+        "The days you picked can't cover everything in depth by your date. More study days would help.",
+      )
+    : t("Your date is too close to cover everything in depth.");
 }
 
 function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line: DatedLine }) {

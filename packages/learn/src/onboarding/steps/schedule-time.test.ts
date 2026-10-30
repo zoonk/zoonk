@@ -17,7 +17,7 @@ import {
 
 const PAST_DATE = { pastDate: true, recommendedMinutes: null, suggested: null };
 
-const TOO_CLOSE = { coreMinutes: 300, recommendedMinutes: 900, suggested: null };
+const TOO_CLOSE = { coreMinutes: null, recommendedMinutes: null, suggested: null };
 
 function foundTime(time: Partial<PlanTimeToCover> = {}): PlanTimeToCover {
   return {
@@ -41,7 +41,7 @@ function everythingAt(minutes: number): Partial<PlanTimeToCover> {
 function everyTopicAt(minutes: number): Partial<PlanTimeToCover> {
   return {
     coreMinutes: minutes,
-    recommendedMinutes: 300,
+    recommendedMinutes: null,
     suggested: { kind: "everyTopic", minutes },
   };
 }
@@ -243,26 +243,26 @@ describe(asksAboutTime, () => {
 describe(getTooClose, () => {
   const SHORT = { kind: "share", share: 0.15 } as const;
 
-  it("says why only when no sensible time covers everything", () => {
+  it("says why only when not even a whole day covers everything", () => {
     expect(getTooClose({ found: foundTime(), line: SHORT, studiesEveryDay: true })).toBeNull();
 
     expect(
       getTooClose({ found: foundTime(PAST_DATE), line: SHORT, studiesEveryDay: true }),
     ).toBeNull();
 
-    expect(
-      getTooClose({ found: foundTime(TOO_CLOSE), line: SHORT, studiesEveryDay: true }),
-    ).toStrictEqual({ cause: "date", recommendedMinutes: 900 });
+    expect(getTooClose({ found: foundTime(TOO_CLOSE), line: SHORT, studiesEveryDay: true })).toBe(
+      "date",
+    );
 
     expect(
       getTooClose({ found: foundTime(everyTopicAt(45)), line: SHORT, studiesEveryDay: true }),
-    ).toStrictEqual({ cause: "date", recommendedMinutes: 300 });
+    ).toBe("date");
   });
 
   it("blames the study days, not the date, while there are days left to add", () => {
-    expect(
-      getTooClose({ found: foundTime(TOO_CLOSE), line: SHORT, studiesEveryDay: false }),
-    ).toStrictEqual({ cause: "days", recommendedMinutes: 900 });
+    expect(getTooClose({ found: foundTime(TOO_CLOSE), line: SHORT, studiesEveryDay: false })).toBe(
+      "days",
+    );
   });
 
   it("says nothing once the time picked covers everything anyway", () => {

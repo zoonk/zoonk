@@ -9223,19 +9223,9 @@ msgid "The days you picked can't cover everything in depth by your date. More st
 msgstr "Con los días que has elegido no da tiempo a estudiarlo todo a fondo para la fecha que has fijado. Añadir más días de estudio ayudaría."
 
 #: src/onboarding/steps/schedule-line.tsx
-msgctxt "xCMWWU"
-msgid "Covering everything in depth by your date takes {time} a day on the days you picked. More study days bring that down."
-msgstr "Estudiarlo todo a fondo para la fecha que has fijado requiere {time} al día los días que has elegido. Añadir más días de estudio reduce ese tiempo."
-
-#: src/onboarding/steps/schedule-line.tsx
 msgctxt "YNFEUo"
 msgid "Your date is too close to cover everything in depth."
 msgstr "La fecha está demasiado cerca para estudiar todo en profundidad."
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "GPWSBB"
-msgid "Your date is close: covering everything in depth takes {time} a day."
-msgstr "La fecha está cerca: estudiar todo en profundidad requiere {time} al día."
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/onboarding/steps/schedule-line.tsx
