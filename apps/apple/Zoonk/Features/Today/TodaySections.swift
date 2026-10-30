@@ -858,9 +858,8 @@ struct TodayProgressSection: View {
             title: Text(
               "Progress", tableName: "Today", comment: "Title of the goal's progress card"),
             value: progress.value.formatted(.percent.precision(.fractionLength(0...2))),
-            detail: Text(
-              "\(lessons.done) of \(lessons.total) lessons", tableName: "Today",
-              comment: "Lessons studied or known of the plan's lessons")
+            // Until the syllabus says what was known, known lessons would read as studied.
+            detail: syllabus.value.map { studied(lessons, known: $0.lessons.known) }
           ) {
             if lessons.total > 0 {
               MeterParts(parts: parts(lessons, known: syllabus.value?.lessons.known ?? 0))
@@ -916,6 +915,20 @@ struct TodayProgressSection: View {
     } header: {
       title
     }
+  }
+
+  /// Only what was studied: a long plan never leads with its thousand lessons, and what the
+  /// learner already knew stays in the number and the bars.
+  private func studied(_ lessons: TodayView.Progress.Lessons, known: Int) -> Text {
+    let studied = lessons.done - min(lessons.done, known)
+
+    return studied == 0
+      ? Text(
+        "No lessons studied yet", tableName: "Today",
+        comment: "Under the goal's progress, before any lesson is studied")
+      : Text(
+        "\(studied) lessons studied", tableName: "Today",
+        comment: "Lessons studied, under the goal's progress")
   }
 
   private func parts(_ lessons: TodayView.Progress.Lessons, known: Int) -> [MeterParts.Part] {
