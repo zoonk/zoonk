@@ -118,6 +118,7 @@ function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule })
         onUseOffer={(offer) =>
           setPicked(toPickedMinutes({ first: found.first, found: found.found, minutes: offer }))
         }
+        split={schedule.split}
         tooClose={getTooClose({ found: found.found, line })}
       />
     </div>
@@ -184,6 +185,7 @@ export function ScheduleStep({
   findTimeToCover,
   getTimeAdvice,
   goal,
+  goalCount,
   onAnswer,
   pending,
   recommendedMinutes,
@@ -192,6 +194,7 @@ export function ScheduleStep({
   dated: boolean;
   exam?: boolean;
   goal: GoalView;
+  goalCount: number;
   onAnswer: (input: OnboardingAnswerInput) => void;
   pending: boolean;
   recommendedMinutes: number;
@@ -204,6 +207,7 @@ export function ScheduleStep({
     dated,
     exam,
     goal,
+    goalCount,
     paused: isRunStopped(run),
     recommendedMinutes,
   });

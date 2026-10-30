@@ -9194,6 +9194,16 @@ msgid "We couldn't work out when you'd finish."
 msgstr "No hemos podido calcular cuándo terminarías."
 
 #: src/onboarding/steps/schedule-line.tsx
+msgctxt "AHugH9"
+msgid "This goal gets {main} a day and your other goal {other}."
+msgstr "Este objetivo recibe {main} al día y tu otro objetivo, {other}."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "htrFnU"
+msgid "This goal gets {main} a day and each of your other goals {other}."
+msgstr "Este objetivo recibe {main} al día y cada uno de tus otros objetivos, {other}."
+
+#: src/onboarding/steps/schedule-line.tsx
 msgctxt "lOJOQa"
 msgid "Cover everything with {time} a day"
 msgstr "Estudia todo con {time} al día"

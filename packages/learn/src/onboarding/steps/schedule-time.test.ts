@@ -2,13 +2,16 @@ import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/tim
 import { describe, expect, it } from "vitest";
 import {
   asksAboutTime,
+  getDaySplit,
   getOffer,
   getShownMinutes,
   getSuggestedMinutes,
   getTimeLine,
   getTooClose,
   keepsFullCourse,
+  toDayTime,
   toFindWeek,
+  toMainGoalWeek,
   toPickedMinutes,
   toStudyWeek,
 } from "./schedule-time";
@@ -288,5 +291,53 @@ describe(toFindWeek, () => {
     });
 
     expect(toFindWeek({ days: [1, 2], weekend: null })).toStrictEqual({ studyDays: [1, 2] });
+  });
+});
+
+describe("goals typed together", () => {
+  it("asks the main goal's plan about its share of the day's time", () => {
+    expect(
+      toMainGoalWeek({
+        goalCount: 2,
+        week: { dailyMinutes: 60, studyDays: [1], weekendMinutes: 90 },
+      }),
+    ).toStrictEqual({ dailyMinutes: 40, studyDays: [1], weekendMinutes: 60 });
+
+    expect(toMainGoalWeek({ goalCount: 2, week: { studyDays: [1] } })).toStrictEqual({
+      studyDays: [1],
+    });
+
+    expect(
+      toMainGoalWeek({ goalCount: 1, week: { dailyMinutes: 60, studyDays: [1] } }),
+    ).toStrictEqual({ dailyMinutes: 60, studyDays: [1] });
+  });
+
+  it("suggests the day's time that gives the main goal the time its plan found", () => {
+    expect(
+      toDayTime({ goalCount: 2, time: foundTime({ coreMinutes: 20, recommendedMinutes: 40 }) }),
+    ).toMatchObject({ coreMinutes: 25, recommendedMinutes: 55 });
+
+    expect(
+      toMainGoalWeek({ goalCount: 2, week: { dailyMinutes: 55, studyDays: [1] } }),
+    ).toStrictEqual({ dailyMinutes: 40, studyDays: [1] });
+
+    expect(toDayTime({ goalCount: 1, time: foundTime() })).toStrictEqual(foundTime());
+  });
+
+  it("says how the day's time is shared only between goals typed together", () => {
+    expect(getDaySplit({ goalCount: 2, minutes: 60 })).toStrictEqual({
+      main: 40,
+      other: 20,
+      others: 1,
+    });
+
+    expect(getDaySplit({ goalCount: 3, minutes: 50 })).toStrictEqual({
+      main: 30,
+      other: 10,
+      others: 2,
+    });
+
+    expect(getDaySplit({ goalCount: 1, minutes: 60 })).toBeNull();
+    expect(getDaySplit({ goalCount: 2, minutes: null })).toBeNull();
   });
 });

@@ -1,10 +1,13 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { getBudgetForMainGoal } from "../goals/daily-budget";
 import { updateGoal } from "../goals/update-goal";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
+import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { roundShare } from "./_utils/plan-feasibility-view";
 import { changeGoalPlan } from "./change-goal-plan";
@@ -332,6 +335,39 @@ describe(getPlanTimeAdvice, () => {
     await expect(readPlanTime(goal.id)).resolves.toMatchObject({
       recommendedMinutes: advice.recommendedMinutes,
     });
+  });
+
+  it("gives the main goal of goals typed together the time found for it when the learner takes the day it needs", async () => {
+    const { goal, library, user } = await setup();
+    const onboardingId = randomUUID();
+
+    await prisma.goal.update({ data: { details: { onboardingId } }, where: { id: goal.id } });
+
+    const { goal: other } = await unplannedGoalFixture({
+      createdAt: new Date(NOW.getTime() + 1000),
+      details: { onboardingId },
+      userId: user.id,
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    const found = await readPlanTime(goal.id);
+    const main = found.recommendedMinutes ?? 0;
+    const day = getBudgetForMainGoal({ count: 2, main });
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { dailyMinutes: day, question: "schedule", timeZone: "UTC" },
+    });
+
+    await expect(
+      prisma.goal.findMany({
+        orderBy: { createdAt: "asc" },
+        select: { dailyMinutes: true },
+        where: { id: { in: [goal.id, other.id] } },
+      }),
+    ).resolves.toStrictEqual([{ dailyMinutes: main }, { dailyMinutes: day - main }]);
+
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1 });
   });
 
   it("says what the time the learner looks at covers, without changing the time recommended", async () => {

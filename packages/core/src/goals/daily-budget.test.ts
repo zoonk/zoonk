@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { splitDailyBudget } from "./daily-budget";
+import { getBudgetForMainGoal, splitDailyBudget } from "./daily-budget";
 
 describe(splitDailyBudget, () => {
   it("gives the main goal twice each other goal's share and keeps the total", () => {
@@ -11,5 +11,26 @@ describe(splitDailyBudget, () => {
   it("keeps one goal's time whole and never goes below the minimum", () => {
     expect(splitDailyBudget({ budget: 25, count: 1 })).toStrictEqual([25]);
     expect(splitDailyBudget({ budget: 10, count: 3 })).toStrictEqual([5, 5, 5]);
+  });
+});
+
+describe(getBudgetForMainGoal, () => {
+  it("gives the main goal exactly its time from the least day that does", () => {
+    expect(getBudgetForMainGoal({ count: 1, main: 45 })).toBe(45);
+    expect(getBudgetForMainGoal({ count: 2, main: 40 })).toBe(55);
+    expect(getBudgetForMainGoal({ count: 2, main: 50 })).toBe(70);
+    expect(getBudgetForMainGoal({ count: 3, main: 30 })).toBe(50);
+  });
+
+  it("finds a day for every time the main goal can get", () => {
+    const times = Array.from({ length: 288 }, (_, index) => (index + 1) * 5);
+
+    for (const count of [2, 3, 4]) {
+      const mains = times.map(
+        (main) => splitDailyBudget({ budget: getBudgetForMainGoal({ count, main }), count })[0],
+      );
+
+      expect(mains).toStrictEqual(times);
+    }
   });
 });

@@ -124,6 +124,7 @@
     "./goals/course-start-contract": "./src/goals/course-start-contract.ts",
     "./goals/course-weights-research": "./src/goals/course-weights-research.ts",
     "./goals/create": "./src/goals/create-goals.ts",
+    "./goals/daily-budget": "./src/goals/daily-budget.ts",
     "./goals/generation-id": "./src/goals/get-goal-generation-id.ts",
     "./goals/get": "./src/goals/get-goal.ts",
     "./goals/goal-input-limits": "./src/goals/goal-input-limits.ts",

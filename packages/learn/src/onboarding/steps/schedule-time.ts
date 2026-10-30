@@ -1,3 +1,4 @@
+import { getBudgetForMainGoal, splitDailyBudget } from "@zoonk/core/goals/daily-budget";
 import {
   type PlanSuggestedTime,
   type PlanTimeAdvice,
@@ -19,6 +20,70 @@ export type TimeLine =
   | { kind: "pastDate" }
   | { kind: "share"; share: number }
   | { kind: "working" };
+
+export type DaySplit = { main: number; other: number; others: number };
+
+function getMainShare({ goalCount, minutes }: { goalCount: number; minutes: number }): number {
+  return splitDailyBudget({ budget: minutes, count: goalCount })[0] ?? minutes;
+}
+
+/** Goals typed together share the day's time, the main one the most: its plan answers for its share. */
+export function toMainGoalWeek<Week extends StudyWeek & Pick<PlanTimeAdviceInput, "dailyMinutes">>({
+  goalCount,
+  week,
+}: {
+  goalCount: number;
+  week: Week;
+}): Week {
+  const { dailyMinutes, weekendMinutes } = week;
+
+  return {
+    ...week,
+    ...(dailyMinutes === undefined
+      ? {}
+      : { dailyMinutes: getMainShare({ goalCount, minutes: dailyMinutes }) }),
+    ...(weekendMinutes === undefined
+      ? {}
+      : { weekendMinutes: getMainShare({ goalCount, minutes: weekendMinutes }) }),
+  };
+}
+
+/** The times the main goal's plan found, as the day's time that gives the main goal them. */
+export function toDayTime({
+  goalCount,
+  time,
+}: {
+  goalCount: number;
+  time: PlanTimeToCover;
+}): PlanTimeToCover {
+  const toDay = (main: number | null) =>
+    main === null ? null : getBudgetForMainGoal({ count: goalCount, main });
+
+  return {
+    ...time,
+    coreMinutes: toDay(time.coreMinutes),
+    recommendedMinutes: toDay(time.recommendedMinutes),
+    suggested: time.suggested && {
+      ...time.suggested,
+      minutes: toDay(time.suggested.minutes) ?? time.suggested.minutes,
+    },
+  };
+}
+
+export function getDaySplit({
+  goalCount,
+  minutes,
+}: {
+  goalCount: number;
+  minutes: number | null;
+}): DaySplit | null {
+  if (goalCount < 2 || minutes === null) {
+    return null;
+  }
+
+  const [main = minutes, other = 0] = splitDailyBudget({ budget: minutes, count: goalCount });
+  return { main, other, others: goalCount - 1 };
+}
 
 export function toStudyWeek({
   days,

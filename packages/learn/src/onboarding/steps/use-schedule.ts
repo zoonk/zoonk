@@ -8,9 +8,12 @@ import { type PollStatus } from "../../_utils/use-poll";
 import {
   type StudyWeek,
   asksAboutTime,
+  getDaySplit,
   getShownMinutes,
   getTimeLine,
+  toDayTime,
   toFindWeek,
+  toMainGoalWeek,
   toStudyWeek,
 } from "./schedule-time";
 import { getStartingDays } from "./study-week";
@@ -55,19 +58,24 @@ function useFoundTime({
   ask,
   dated,
   days,
+  goalCount,
   paused,
   weekend,
 }: {
   ask: ScheduleActions["findTimeToCover"];
   dated: boolean;
   days: number[];
+  goalCount: number;
   paused: boolean;
   weekend: number | null;
 }) {
   const week = toFindWeek({ days, weekend });
 
   const covering = usePlanAnswer({
-    ask: () => ask(week),
+    ask: async () => {
+      const time = await ask(toMainGoalWeek({ goalCount, week }));
+      return time && toDayTime({ goalCount, time });
+    },
     enabled: dated && days.length > 0,
     key: JSON.stringify(week),
     paused,
@@ -91,6 +99,7 @@ export function useSchedule({
   dated: datedGuess,
   exam,
   goal,
+  goalCount,
   paused,
   recommendedMinutes,
 }: {
@@ -98,6 +107,7 @@ export function useSchedule({
   dated: boolean;
   exam: boolean;
   goal: GoalView;
+  goalCount: number;
   paused: boolean;
   recommendedMinutes: number;
 }) {
@@ -110,6 +120,7 @@ export function useSchedule({
     ask: actions.findTimeToCover,
     dated: datedGuess,
     days: week.days,
+    goalCount,
     paused,
     weekend: week.weekend,
   });
@@ -133,7 +144,13 @@ export function useSchedule({
   });
 
   const timeAdvice = usePlanAnswer({
-    ask: () => actions.getTimeAdvice({ ...asked, dailyMinutes: minutes ?? recommendedMinutes }),
+    ask: () =>
+      actions.getTimeAdvice(
+        toMainGoalWeek({
+          goalCount,
+          week: { ...asked, dailyMinutes: minutes ?? recommendedMinutes },
+        }),
+      ),
     enabled:
       hasDays &&
       asksAboutTime({ dated, found: found.found, fullCourse: studiesEverything, minutes }),
@@ -164,6 +181,7 @@ export function useSchedule({
     picked,
     setFullCourse,
     setPicked,
+    split: hasDays ? getDaySplit({ goalCount, minutes }) : null,
     timeAdvice,
     week,
   };

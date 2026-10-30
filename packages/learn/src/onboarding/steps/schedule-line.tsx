@@ -6,7 +6,7 @@ import { useExtracted } from "next-intl";
 import { useFormatGoalDate, useFormatIsoDate } from "../../_utils/iso-date";
 import { useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
-import { type TimeLine } from "./schedule-time";
+import { type DaySplit, type TimeLine } from "./schedule-time";
 
 export type GoalDate = { isoDate: string; namedMonth: boolean };
 
@@ -158,6 +158,17 @@ function LineWords({
   return <StatusWords dated={date !== null} line={line} minutes={minutes} />;
 }
 
+function DaySplitWords({ split }: { split: DaySplit }) {
+  const t = useExtracted();
+  const formatDuration = useFormatDuration();
+  const main = formatDuration(split.main);
+  const other = formatDuration(split.other);
+
+  return split.others === 1
+    ? t("This goal gets {main} a day and your other goal {other}.", { main, other })
+    : t("This goal gets {main} a day and each of your other goals {other}.", { main, other });
+}
+
 function OfferLabel({ offer }: { offer: PlanSuggestedTime }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -177,6 +188,7 @@ export function ScheduleLine({
   offer,
   onRetry,
   onUseOffer,
+  split,
   tooClose,
 }: {
   date: GoalDate | null;
@@ -186,6 +198,7 @@ export function ScheduleLine({
   offer: PlanSuggestedTime | null;
   onRetry: () => void;
   onUseOffer: (minutes: number) => void;
+  split: DaySplit | null;
   tooClose: { recommendedMinutes: number | null } | null;
 }) {
   const t = useExtracted();
@@ -204,6 +217,13 @@ export function ScheduleLine({
       )}
 
       <LineWords date={date} exam={exam} line={line} minutes={minutes} />
+
+      {split && (
+        <>
+          {" "}
+          <DaySplitWords split={split} />
+        </>
+      )}
 
       {failed && (
         <>
