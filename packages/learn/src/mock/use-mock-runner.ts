@@ -77,6 +77,24 @@ function useEssayGrading({
   setView: (view: MockView) => void;
 }) {
   const [essayGrading, setEssayGrading] = useState<MockEssayGradingStatus>("idle");
+  const [gradesUsedOn, setGradesUsedOn] = useState<string | null>(null);
+
+  // The day's essay grades come back at the learner's midnight.
+  useEffect(() => {
+    if (gradesUsedOn === null) {
+      return;
+    }
+
+    function offerGradingOnANewDay() {
+      if (document.visibilityState === "visible" && new Date().toDateString() !== gradesUsedOn) {
+        setGradesUsedOn(null);
+        setEssayGrading("idle");
+      }
+    }
+
+    document.addEventListener("visibilitychange", offerGradingOnANewDay);
+    return () => document.removeEventListener("visibilitychange", offerGradingOnANewDay);
+  }, [gradesUsedOn]);
 
   async function gradeEssays() {
     setEssayGrading("grading");
@@ -95,6 +113,7 @@ function useEssayGrading({
 
     setView(outcome.mock);
     setEssayGrading(outcome.status === "limitReached" ? "limitReached" : "idle");
+    setGradesUsedOn(outcome.status === "limitReached" ? new Date().toDateString() : null);
   }
 
   return { essayGrading, gradeEssays };
