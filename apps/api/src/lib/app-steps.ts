@@ -1,5 +1,5 @@
-import { type PlayableLibraryStep } from "@zoonk/core/lesson-player/playable-lesson";
 import { getScreenPicture } from "@zoonk/core/lesson-player/picture-policy";
+import { type PlayableLibraryStep } from "@zoonk/core/lesson-player/playable-lesson";
 import { getBaseMapView } from "@zoonk/player/base-map-view";
 
 function mapFields(step: PlayableLibraryStep) {
