@@ -194,27 +194,20 @@ private fun RightOfReadout(
     )
 }
 
-/**
- * The change since the last mock, for scores on the exam's scale or net of penalties: the header's
- * quietest line. One that rounds to 0 still says so, level, where main's arrow points down.
- */
+/** The change since the last mock, for scores on the exam's scale or net of penalties: the header's quietest line. */
 @Composable
 private fun Delta(result: MockResult) {
     val current = result.irt?.score ?: result.net?.net ?: return
     val previous = result.previous ?: return
-    if (current == previous) return
     val change = (current - previous).roundToInt()
+    if (change == 0) return
     val number = formatNumber(change.toDouble(), currentLocale())
     val style = MaterialTheme.typography.bodySmall.withTabularFigures()
 
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
         Icon(
             painterResource(
-                when {
-                    change > 0 -> R.drawable.ic_trending_up
-                    change < 0 -> R.drawable.ic_trending_down
-                    else -> R.drawable.ic_trending_flat
-                },
+                if (change > 0) R.drawable.ic_trending_up else R.drawable.ic_trending_down,
             ),
             contentDescription = null,
             modifier = Modifier.size(with(LocalDensity.current) { style.lineHeight.toDp() }),

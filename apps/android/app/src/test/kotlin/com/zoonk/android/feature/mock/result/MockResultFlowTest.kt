@@ -128,6 +128,14 @@ class MockResultFlowTest {
     }
 
     @Test
+    fun aChangeThatRoundsToZeroIsLeftOut() {
+        show(finishedMock(result = result(scoring = "net", extra = NET.replace(""""previous":35""", """"previous":41.3"""))))
+
+        rule.onNodeWithText("41.5").assertIsDisplayed()
+        rule.onNode(hasText("since the last one", substring = true)).assertDoesNotExist()
+    }
+
+    @Test
     fun aPlanOfferChangesThePlanOnlyOnYes() {
         val api = show(finishedMock(extra = """"adapt":$SKIP_OFFER"""))
 
