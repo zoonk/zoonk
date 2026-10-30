@@ -37,8 +37,9 @@ struct LessonRichText: View {
     let options = AttributedString.MarkdownParsingOptions(
       interpretedSyntax: .inlineOnlyPreservingWhitespace)
     let restored = text.replacingOccurrences(of: dollarPlaceholder, with: "$")
-    return (try? AttributedString(markdown: restored, options: options))
-      ?? AttributedString(restored)
+    return RichTextTypography.typesetNumbers(
+      in: (try? AttributedString(markdown: restored, options: options))
+        ?? AttributedString(restored))
   }
 
   /// Prices ("$5 and $10") stay text: a formula has math in it.

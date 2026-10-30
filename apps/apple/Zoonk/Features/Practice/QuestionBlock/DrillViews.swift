@@ -227,7 +227,7 @@ enum TimeMachineText {
     let saved =
       format == .trueFalse
       ? TrueFalseWords.savedAnswer(machine.answer, labels: labels)
-      : machine.answer.map(ItemTextBlock.plain)
+      : machine.answer.map(ItemTextBlock.asWritten)
 
     if let saved, !saved.isEmpty {
       let answer = saved.replacingOccurrences(of: #"\.+$"#, with: "", options: .regularExpression)

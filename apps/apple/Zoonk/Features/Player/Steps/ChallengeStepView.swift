@@ -141,7 +141,7 @@ struct ChallengeStepView: View {
       ForEach(Array(decision.node.messages.enumerated()), id: \.offset) { _, message in
         bubble(message)
       }
-      Text(named(decision.choice.text))
+      LessonRichText(named(decision.choice.text))
         .font(.subheadline.weight(.medium))
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .trailing)

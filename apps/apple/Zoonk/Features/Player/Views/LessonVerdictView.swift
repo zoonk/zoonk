@@ -189,7 +189,7 @@ private struct LessonKeyPointsView: View {
 
       ForEach(keyPoints, id: \.self) { point in
         Label {
-          Text(point.text)
+          LessonRichText(point.text)
         } icon: {
           Image(systemName: point.met ? "checkmark.circle" : "circle.dashed")
             .foregroundStyle(point.met ? .success : .secondary)
@@ -198,10 +198,10 @@ private struct LessonKeyPointsView: View {
         .accessibilityLabel(
           point.met
             ? Text(
-              "Stated: \(point.text)", tableName: "Player", comment: "A key point the answer stated"
-            )
+              "Stated: \(LessonRichText.plain(point.text))", tableName: "Player",
+              comment: "A key point the answer stated")
             : Text(
-              "Missing: \(point.text)", tableName: "Player",
+              "Missing: \(LessonRichText.plain(point.text))", tableName: "Player",
               comment: "A key point the answer missed"))
       }
     }
