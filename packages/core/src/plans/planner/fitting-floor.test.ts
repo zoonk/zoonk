@@ -55,7 +55,7 @@ describe("the least time that could cover a goal", () => {
         input,
       })?.fits ?? false;
 
-    expect(findFittingMinutes(fits)).toBe(15);
-    expect(getPlanFeasibility({ input }).recommendedMinutes).toBe(15);
+    expect(findFittingMinutes(fits)).toBe(10);
+    expect(getPlanFeasibility({ input }).recommendedMinutes).toBe(10);
   });
 });
