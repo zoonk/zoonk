@@ -14,6 +14,7 @@ Run commands from the repository root using `mise x -- pnpm ...` in this environ
 | App runtime or build integration  | `pnpm --filter <app> build`                                                                                  |
 | E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>`; both suites with `pnpm e2e`                         |
 | Android app                       | `pnpm android:check`; with lint rules, R8 rules or release-only code, also `make -C apps/android lint build` |
+| Apple app                         | `pnpm apple:check`; for flows the UI tests cover, also `make -C apps/apple ui-test`                          |
 | Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                             |
 | Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                           |
 | Translated copy                   | Affected app extraction, `i18n`, and `i18n:lint`                                                             |

@@ -21,16 +21,17 @@ Build and run the Debug app from the repository root:
 
 Run commands from this directory:
 
-| Command             | Purpose                                                       |
-| ------------------- | ------------------------------------------------------------- |
-| `make build`        | Build the iPhone and iPad app in Debug configuration.         |
-| `make build-ios`    | Build the iPhone and iPad app in Debug configuration.         |
-| `make test`         | Run the app's test targets on the default iPhone simulator.   |
-| `make format`       | Format Swift source files in place.                           |
-| `make format-check` | Check Swift formatting without changing files.                |
-| `make check`        | Run formatting checks, build the app, and run its test suite. |
+| Command             | Purpose                                               |
+| ------------------- | ----------------------------------------------------- |
+| `make build`        | Build the iPhone and iPad app in Debug configuration. |
+| `make build-ios`    | Build the iPhone and iPad app in Debug configuration. |
+| `make test`         | Run the unit tests on the default iPhone simulator.   |
+| `make ui-test`      | Run the UI tests on the default iPhone simulator.     |
+| `make format`       | Format Swift source files in place.                   |
+| `make format-check` | Check Swift formatting without changing files.        |
+| `make check`        | Check formatting and run the unit tests.              |
 
-From the repository root, add `-C apps/apple`, for example `make -C apps/apple check`.
+From the repository root, add `-C apps/apple`, for example `make -C apps/apple check`. Before committing, run `pnpm apple:check` from the repository root: it also validates the translations.
 
 To check a Release build, run `make build CONFIGURATION=Release`.
 
@@ -43,7 +44,7 @@ make test TEST_DESTINATION='platform=iOS Simulator,name=iPhone 16 Pro,OS=latest'
 Run one test or test class by passing an Xcode test identifier:
 
 ```sh
-make test TEST_ARGUMENTS='-only-testing:ZoonkUITests/ZoonkUITests/testPrimaryTabsNavigateToTheirScreens'
+make ui-test ONLY_TESTING=ZoonkUITests/ZoonkUITests/testPrimaryScreenShowsTitleAndLogIn
 ```
 
 ## API client
