@@ -70,8 +70,11 @@ struct LessonStageView: View {
                   LessonStepView(step: step, state: state, store: store, part: .screen)
                 }
 
-                LessonStepView(step: step, state: state, store: store, part: .turn)
-                  .id(Self.turnId)
+                // One container, so the id names the whole turn rather than each of its views.
+                VStack(alignment: .leading, spacing: 20) {
+                  LessonStepView(step: step, state: state, store: store, part: .turn)
+                }
+                .id(Self.turnId)
 
                 if spread == nil {
                   LessonStepNotes(step: step, store: store)
