@@ -1,6 +1,6 @@
 import "server-only";
 import { type CourseLevel, type Goal, type LibraryVisibility, prisma } from "@zoonk/db";
-import { getOutlineHorizon } from "../../lookahead/outline-horizon";
+import { type OutlineWindow, getOutlineWindow } from "../../lookahead/outline-window";
 import { toPlanCourseScope } from "../../lookahead/plan-outline-needs";
 import { goalUsesTools } from "../../plans/_utils/plan-tools";
 import { loadGoalPlannerLessons } from "../../plans/_utils/planner-lessons";
@@ -165,7 +165,13 @@ export async function planSkillExtensions({
   return extensions.flatMap((extension) => planExtension({ extension, placements }));
 }
 
-async function loadSoonStandInSkillIds({ goalId, until }: { goalId: string; until: Date }) {
+async function loadSoonStandInSkillIds({
+  goalId,
+  outlineWindow,
+}: {
+  goalId: string;
+  outlineWindow: OutlineWindow;
+}) {
   const items = await prisma.planItem.findMany({
     distinct: ["skillId"],
     select: { skillId: true },
@@ -174,7 +180,7 @@ async function loadSoonStandInSkillIds({ goalId, until }: { goalId: string; unti
       kind: "lesson",
       lessonId: null,
       plan: { goalId },
-      scheduledFor: { lte: until },
+      ...outlineWindow,
       skillId: { not: null },
       status: "todo",
     },
@@ -279,8 +285,8 @@ export async function listSkillExtensions({
   }
 
   const graph = parsePlanGraph(goal.plan.graph);
-  const until = await getOutlineHorizon({ days, goalId });
-  const soon = await loadSoonStandInSkillIds({ goalId, until });
+  const outlineWindow = await getOutlineWindow({ days, goalId });
+  const soon = await loadSoonStandInSkillIds({ goalId, outlineWindow });
   const graphSkills = graph.skills.filter((skill) => soon.has(skill.skillId));
 
   const courseIds = [

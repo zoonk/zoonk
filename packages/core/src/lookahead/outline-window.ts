@@ -5,6 +5,7 @@ import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { addDays } from "../plans/planner/plan-calendar";
 import { isStandIn } from "../plans/planner/plan-item-rules";
 import { isExamSchedule } from "../plans/planner/plan-queue";
+import { getGoalDayMinutes } from "../sessions/_utils/day-minutes";
 
 /** A long stand-in may start by `localDate` while its due date is later; detect its consumed interval. */
 export async function loadNextStandIn({
@@ -15,7 +16,7 @@ export async function loadNextStandIn({
   client?: TransactionClient;
   goal: Pick<Goal, "id" | "kind" | "targetDate">;
   localDate: Date;
-}): Promise<Pick<PlanItem, "scheduledFor" | "skillId">[]> {
+}): Promise<Pick<PlanItem, "id" | "skillId">[]> {
   if (isExamSchedule(goal)) {
     return [];
   }
@@ -30,7 +31,7 @@ export async function loadNextStandIn({
     }),
     client.planItem.findFirst({
       orderBy: [{ scheduledFor: "asc" }, { position: "asc" }],
-      select: { chapterId: true, kind: true, lessonId: true, scheduledFor: true, skillId: true },
+      select: { chapterId: true, id: true, kind: true, lessonId: true, skillId: true },
       where: { plan, scheduledFor: { gt: localDate }, status: "todo" },
     }),
   ]);
@@ -38,23 +39,29 @@ export async function loadNextStandIn({
   return next && isStandIn(next) && last?.kind !== "boss" ? [next] : [];
 }
 
-/** `days` after the goal's local today, or through the end of the stand-in the learner is on when it runs longer. */
-export async function getOutlineHorizon({
-  days,
-  goalId,
-}: {
-  days: number;
-  goalId: string;
-}): Promise<Date> {
+/** Plan items due within `days` of the goal's local today and, on a study day, the stand-in the learner is on, as Today shows it. */
+export async function getOutlineWindow({ days, goalId }: { days: number; goalId: string }) {
   const goal = await prisma.goal.findUnique({
-    select: { id: true, kind: true, targetDate: true, timezone: true },
+    select: {
+      dailyMinutes: true,
+      id: true,
+      kind: true,
+      plan: { select: { settings: true } },
+      targetDate: true,
+      timezone: true,
+    },
     where: { id: goalId },
   });
 
   const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
-  const horizon = addDays(today, days);
-  const [current] = goal ? await loadNextStandIn({ goal, localDate: today }) : [];
-  const currentEnd = current?.scheduledFor;
+  const dueBy = { scheduledFor: { lte: addDays(today, days) } };
 
-  return currentEnd && currentEnd > horizon ? currentEnd : horizon;
+  if (!goal || getGoalDayMinutes({ date: today, goal, planSettings: goal.plan?.settings }) === 0) {
+    return dueBy;
+  }
+
+  const [current] = await loadNextStandIn({ goal, localDate: today });
+  return current ? { OR: [dueBy, { id: current.id }] } : dueBy;
 }
+
+export type OutlineWindow = Awaited<ReturnType<typeof getOutlineWindow>>;

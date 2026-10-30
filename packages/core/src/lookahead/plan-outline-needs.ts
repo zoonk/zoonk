@@ -9,7 +9,7 @@ import { goalUsesTools } from "../plans/_utils/plan-tools";
 import { isStandIn } from "../plans/planner/plan-item-rules";
 import { type ExistingPlanItem } from "../plans/planner/plan-items";
 import { parsePlanGraph } from "../plans/planner/plan-state";
-import { getOutlineHorizon } from "./outline-horizon";
+import { type OutlineWindow, getOutlineWindow } from "./outline-window";
 
 export type PlanOutlineNeed = { bands: CourseBandNeed[]; courseId: string; scope: CurriculumScope };
 
@@ -24,7 +24,13 @@ type PlanGoal = Pick<
 
 const DEFAULT_LEVEL: CourseBandNeed["level"] = "beginner";
 
-async function loadStandIns({ goalId, until }: { goalId: string; until: Date | null }) {
+async function loadStandIns({
+  goalId,
+  outlineWindow,
+}: {
+  goalId: string;
+  outlineWindow: OutlineWindow | null;
+}) {
   const plan = await prisma.plan.findUnique({
     select: {
       goal: {
@@ -45,7 +51,7 @@ async function loadStandIns({ goalId, until }: { goalId: string; until: Date | n
         where: {
           kind: "lesson",
           lessonId: null,
-          ...(until ? { scheduledFor: { lte: until } } : {}),
+          ...outlineWindow,
           skillId: { not: null },
           status: "todo",
         },
@@ -141,8 +147,8 @@ export async function listPlanOutlineNeeds({
   days: number;
   goalId: string;
 }): Promise<PlanOutlineNeed[]> {
-  const until = await getOutlineHorizon({ days, goalId });
-  const standIns = await loadStandIns({ goalId, until });
+  const outlineWindow = await getOutlineWindow({ days, goalId });
+  const standIns = await loadStandIns({ goalId, outlineWindow });
 
   if (!standIns || standIns.skillIds.length === 0) {
     return [];
@@ -280,7 +286,7 @@ export async function findSkillOutlineNeed({
 }): Promise<
   { courseId: string; status: "taught" } | { need: PlanOutlineNeed; status: "untaught" } | null
 > {
-  const standIns = await loadStandIns({ goalId, until: null });
+  const standIns = await loadStandIns({ goalId, outlineWindow: null });
 
   if (!standIns?.skillIds.includes(skillId)) {
     return null;
@@ -316,8 +322,8 @@ export async function listSoonStandInCourseIds({
   days: number;
   goalId: string;
 }): Promise<string[]> {
-  const until = await getOutlineHorizon({ days, goalId });
-  const standIns = await loadStandIns({ goalId, until });
+  const outlineWindow = await getOutlineWindow({ days, goalId });
+  const standIns = await loadStandIns({ goalId, outlineWindow });
 
   if (!standIns) {
     return [];
@@ -336,7 +342,7 @@ export async function listPlanSkillIdsWithin({
   days: number;
   goalId: string;
 }): Promise<string[]> {
-  const until = await getOutlineHorizon({ days, goalId });
+  const outlineWindow = await getOutlineWindow({ days, goalId });
 
   const items = await prisma.planItem.findMany({
     distinct: ["skillId"],
@@ -344,7 +350,7 @@ export async function listPlanSkillIdsWithin({
     where: {
       kind: "lesson",
       plan: { goalId },
-      scheduledFor: { lte: until },
+      ...outlineWindow,
       skillId: { not: null },
       status: "todo",
     },

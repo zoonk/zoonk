@@ -19,8 +19,52 @@ import { addDays } from "../plans/planner/plan-calendar";
 import {
   listPlanOutlineNeeds,
   listPlanSkillIdsWithin,
+  listSoonStandInCourseIds,
   listTaughtStandInSkills,
 } from "./plan-outline-needs";
+
+/** The plan's next item is a long stand-in due in 20 days, and another course's stand-in is due the same day. */
+async function longStandInFixture({ weekdayMinutes }: { weekdayMinutes: number[] | null }) {
+  const user = await userFixture();
+
+  const [goal, course, otherCourse, onIt, sameDay] = await Promise.all([
+    goalFixture({ timezone: "UTC", userId: user.id }),
+    courseFixture({ language: "pt" }),
+    courseFixture({ language: "pt" }),
+    skillFixture(),
+    skillFixture(),
+  ]);
+
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [{ milestone: null, name: "One" }],
+      skills: [
+        { courseId: course.id, skill: onIt },
+        { courseId: otherCourse.id, skill: sameDay },
+      ].map(({ courseId, skill }) => ({
+        area: null,
+        courseIds: [courseId],
+        lessons: 4,
+        name: skill.name,
+        phase: 0,
+        skillId: skill.id,
+        weight: null,
+      })),
+    },
+    settings: { weekdayMinutes },
+  });
+
+  const due = addDays(getDateInTimeZone({ date: new Date(), timeZone: "UTC" }), 20);
+
+  await Promise.all(
+    [onIt, sameDay].map((skill, position) =>
+      planItemFixture({ planId: plan.id, position, scheduledFor: due, skillId: skill.id }),
+    ),
+  );
+
+  return { course, goal, onIt };
+}
 
 describe(listPlanOutlineNeeds, () => {
   it("lists the bands a copied plan's courses still need, the course reached first first", async () => {
@@ -270,6 +314,33 @@ describe(listPlanOutlineNeeds, () => {
     expect(need?.bands.flatMap((band) => band.skills.map((skill) => skill.id))).toStrictEqual([
       soon.id,
     ]);
+  });
+
+  it("lists the long stand-in a learner is on, and not one due on its last day", async () => {
+    const { course, goal, onIt } = await longStandInFixture({ weekdayMinutes: null });
+
+    const [needs, soon] = await Promise.all([
+      listPlanOutlineNeeds({ days: 14, goalId: goal.id }),
+      listSoonStandInCourseIds({ days: 0, goalId: goal.id }),
+    ]);
+
+    expect(needs.flatMap((need) => need.bands.flatMap((band) => band.skills))).toStrictEqual([
+      expect.objectContaining({ id: onIt.id }),
+    ]);
+
+    expect(soon).toStrictEqual([course.id]);
+  });
+
+  it("leaves a long stand-in to its window on a rest day", async () => {
+    const { goal } = await longStandInFixture({ weekdayMinutes: [0, 0, 0, 0, 0, 0, 0] });
+
+    const [needs, soon] = await Promise.all([
+      listPlanOutlineNeeds({ days: 14, goalId: goal.id }),
+      listSoonStandInCourseIds({ days: 0, goalId: goal.id }),
+    ]);
+
+    expect(needs).toStrictEqual([]);
+    expect(soon).toStrictEqual([]);
   });
 
   it("needs nothing when every lesson of the plan is in its courses already", async () => {

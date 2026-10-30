@@ -1,7 +1,7 @@
 import { type GenerationStatus, type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import "server-only";
 import { getOutlineStaleBefore } from "../../lookahead/outline-ahead";
-import { loadNextStandIn } from "../../lookahead/outline-horizon";
+import { loadNextStandIn } from "../../lookahead/outline-window";
 import { readSkillCourses } from "../../lookahead/plan-outline-needs";
 
 const OUTLINING: GenerationStatus[] = ["pending", "running"];
