@@ -9,7 +9,7 @@ msgstr ""
 #: src/app/auth/layout.tsx
 msgctxt "dVItHD"
 msgid "Sign in to Zoonk"
-msgstr "Entrar em Zoonk"
+msgstr "Entrar no Zoonk"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/otp/otp-form.tsx
@@ -31,7 +31,7 @@ msgstr "Digite um email válido"
 #: src/app/auth/login/email-login-form.tsx
 msgctxt "sy-pv5"
 msgid "Email"
-msgstr "Email"
+msgstr "E-mail"
 
 #. An example address shown in the empty email field. Keep it as written, like the app's other example addresses.
 #: src/app/auth/login/email-login-form.tsx
@@ -165,7 +165,7 @@ msgstr "Como podemos te chamar?"
 #: src/app/auth/setup/page.tsx
 msgctxt "y9wzAs"
 msgid "You can change it later in your profile."
-msgstr "Você pode mudar seu nome depois no perfil."
+msgstr "Você pode mudar isso depois no seu perfil."
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "1SvspN"
@@ -225,17 +225,17 @@ msgstr "Não foi possível redirecionar"
 #: src/app/auth/untrusted-origin/page.tsx
 msgctxt "83K2kN"
 msgid "The destination URL is not recognized as a trusted Zoonk application."
-msgstr "A URL de destino não é reconhecida como um aplicativo confiável de Zoonk."
+msgstr "Não foi possível confirmar que o endereço de destino é de um aplicativo confiável do Zoonk."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgctxt "-e4BVR"
 msgid "Continue to Zoonk"
-msgstr "Continuar para Zoonk"
+msgstr "Continuar para o Zoonk"
 
 #: src/components/auth-frame.tsx
 msgctxt "m-X1D0"
 msgid "Back to Zoonk"
-msgstr "Voltar para Zoonk"
+msgstr "Voltar para o Zoonk"
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "Sd1Qq1"
@@ -290,7 +290,7 @@ msgstr "Abaixo, você pode repetir as palavras que foram difíceis de pronunciar
 #: src/lib/tutor-confirmation.ts
 msgctxt "BXdAAo"
 msgid "I've put the change to your plan below. Nothing changes until you apply it."
-msgstr "Coloquei a alteração no seu plano abaixo. Nada muda até você aplicar a alteração."
+msgstr "Deixei abaixo a proposta de mudança no seu plano. Nada muda até você aplicar."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "cVQNWB"

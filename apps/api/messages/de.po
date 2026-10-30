@@ -165,7 +165,7 @@ msgstr "Wie sollen wir dich nennen?"
 #: src/app/auth/setup/page.tsx
 msgctxt "y9wzAs"
 msgid "You can change it later in your profile."
-msgstr "Du kannst deinen Namen später in deinem Profil ändern."
+msgstr "Du kannst beides später in deinem Profil ändern."
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "1SvspN"
