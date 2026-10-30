@@ -6,6 +6,7 @@ import { stepContentSchemas } from "@zoonk/core/library/steps/contract";
 import { EXERCISE_KINDS } from "@zoonk/core/player/contracts/exercise-content";
 import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
 import { CourseLevel } from "@zoonk/db";
+import { baseMapViewSchema } from "@zoonk/player/base-map-view";
 import { z } from "zod";
 import { serializedStepSchema } from "./language-exercise";
 
@@ -100,7 +101,16 @@ const languageStepSchema = z
   })
   .meta({ description: "A language exercise screen: `exercise` holds what it shows and checks" });
 
+const baseMapSchema = baseMapViewSchema
+  .nullable()
+  .meta({
+    description:
+      "The base map a `mapExplorer` activity's places sit on, drawn in its own units (`width` by `height`): region and street paths are SVG path data, and each place is already projected to its spot. Null on any other activity, or when the map can't be shown",
+    id: "ActivityBaseMap",
+  });
+
 const activityStepSchema = teachingStepSchema("activity").extend({
+  baseMap: baseMapSchema,
   minTolerance: toleranceSchema
     .nullable()
     .meta({
@@ -111,6 +121,7 @@ const activityStepSchema = teachingStepSchema("activity").extend({
 
 // A ref to the named union needs an allOf wrapper to be optional, which strict clients can't decode; its options stay refs.
 const explanationStepSchema = teachingStepSchema("explanation").extend({
+  baseMap: baseMapSchema,
   exploreExpected: z.discriminatedUnion("kind", activityExpectedSchema.options).optional(),
 });
 

@@ -1,5 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { withBaseMaps } from "@/lib/base-maps";
 import { withApiImageUrls } from "@/lib/file-urls";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
@@ -18,9 +19,18 @@ async function getGoalExplanation(
     return errors.unauthorized();
   }
 
-  return result.status === "ready"
-    ? NextResponse.json(withApiImageUrls(result.explanation))
-    : errors.notFound();
+  if (result.status !== "ready") {
+    return errors.notFound();
+  }
+
+  const { lesson } = result.explanation;
+
+  return NextResponse.json(
+    withApiImageUrls({
+      ...result.explanation,
+      lesson: lesson && { ...lesson, steps: await withBaseMaps(lesson.steps) },
+    }),
+  );
 }
 
 export const GET = withApiErrorBoundary(getGoalExplanation);

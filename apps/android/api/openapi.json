@@ -55050,6 +55050,9 @@
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
               },
+              "baseMap": {
+                "$ref": "#/components/schemas/ActivityBaseMap"
+              },
               "minTolerance": {
                 "nullable": true,
                 "description": "How far a `numeric` answer may always be from the right one on this template, when the check's own tolerance is tighter (a guess on a slider can't land closer than its steps): right within either. Null when the template has none",
@@ -55083,6 +55086,7 @@
               "image",
               "imagePending",
               "kind",
+              "baseMap",
               "minTolerance"
             ],
             "additionalProperties": false
@@ -61416,6 +61420,9 @@
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
               },
+              "baseMap": {
+                "$ref": "#/components/schemas/ActivityBaseMap"
+              },
               "exploreExpected": {
                 "oneOf": [
                   {
@@ -61447,7 +61454,8 @@
               "content",
               "image",
               "imagePending",
-              "kind"
+              "kind",
+              "baseMap"
             ],
             "additionalProperties": false
           },
@@ -68775,6 +68783,209 @@
             "description": "A language exercise screen: `exercise` holds what it shows and checks"
           }
         ]
+      },
+      "ActivityBaseMap": {
+        "nullable": true,
+        "description": "The base map a `mapExplorer` activity's places sit on, drawn in its own units (`width` by `height`): region and street paths are SVG path data, and each place is already projected to its spot. Null on any other activity, or when the map can't be shown",
+        "type": "object",
+        "properties": {
+          "height": {
+            "type": "number"
+          },
+          "insets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "height": {
+                  "type": "number"
+                },
+                "width": {
+                  "type": "number"
+                },
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "height",
+                "width",
+                "x",
+                "y"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "angle": {
+                  "type": "number"
+                },
+                "key": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "region",
+                    "street"
+                  ]
+                },
+                "text": {
+                  "type": "string"
+                },
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "angle",
+                "key",
+                "kind",
+                "text",
+                "x",
+                "y"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "legend": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "tone": {
+                  "type": "string",
+                  "enum": [
+                    "context",
+                    "focus",
+                    "groupA",
+                    "groupB",
+                    "groupC"
+                  ]
+                }
+              },
+              "required": [
+                "key",
+                "tone"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "maxZoom": {
+            "type": "number"
+          },
+          "regions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "tone": {
+                  "type": "string",
+                  "enum": [
+                    "context",
+                    "focus",
+                    "groupA",
+                    "groupB",
+                    "groupC"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "path",
+                "tone"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "sphere": {
+            "nullable": true,
+            "type": "string"
+          },
+          "streets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "path"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "width": {
+            "type": "number"
+          },
+          "places": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "id",
+                "x",
+                "y"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Each place the map covers, at its spot in the drawing's units"
+          }
+        },
+        "required": [
+          "height",
+          "insets",
+          "labels",
+          "legend",
+          "maxZoom",
+          "regions",
+          "sphere",
+          "streets",
+          "width",
+          "places"
+        ],
+        "additionalProperties": false
       },
       "ActivityExpectedChoice": {
         "type": "object",

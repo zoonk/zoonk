@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./base-map-view": "./src/activities/_assets/base-maps/base-map-view.ts",
     "./lesson": "./src/lesson/lesson-player-provider.tsx",
     "./lesson/shell": "./src/lesson/lesson-player-shell.tsx",
     "./lesson/rich-text": "./src/lesson/_components/lesson-rich-text.tsx",

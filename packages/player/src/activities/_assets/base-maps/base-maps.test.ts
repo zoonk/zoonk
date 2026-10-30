@@ -1,6 +1,7 @@
 import { activityBaseMaps } from "@zoonk/core/library/activities/base-maps";
 import { describe, expect, it } from "vitest";
 import { projectPlace } from "./base-map-projection";
+import { getBaseMapView } from "./base-map-view";
 import { loadBaseMap } from "./load-base-map";
 
 describe("base map drawings", () => {
@@ -39,5 +40,34 @@ describe("base map drawings", () => {
 
   it("resolves an unknown map to nothing", async () => {
     await expect(loadBaseMap("paris-1789")).resolves.toBeNull();
+  });
+});
+
+describe(getBaseMapView, () => {
+  it("draws the map with each place where the drawing puts it", async () => {
+    const pump = { id: "pump", latitude: 51.51334, longitude: -0.13667 };
+    const soho = await loadBaseMap("london-1854");
+    const view = await getBaseMapView({ baseMapId: "london-1854", places: [pump] });
+    const projected = soho ? projectPlace(soho.projection, pump) : null;
+
+    expect(view?.regions).toStrictEqual(soho?.regions);
+    expect(view).not.toHaveProperty("projection");
+    expect(view?.places).toStrictEqual([{ id: "pump", x: projected?.x, y: projected?.y }]);
+  });
+
+  it("leaves out a place its projection doesn't cover", async () => {
+    const view = await getBaseMapView({
+      baseMapId: "usa-states",
+      places: [
+        { id: "kansas", latitude: 38.5, longitude: -98 },
+        { id: "paris", latitude: 48.86, longitude: 2.35 },
+      ],
+    });
+
+    expect(view?.places.map((place) => place.id)).toStrictEqual(["kansas"]);
+  });
+
+  it("has no view of an unknown map", async () => {
+    await expect(getBaseMapView({ baseMapId: "paris-1789", places: [] })).resolves.toBeNull();
   });
 });

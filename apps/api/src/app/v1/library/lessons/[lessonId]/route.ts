@@ -1,5 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { withBaseMaps } from "@/lib/base-maps";
 import { withApiImageUrls } from "@/lib/file-urls";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
@@ -23,8 +24,14 @@ async function getLibraryLessonRoute(
     return NextResponse.json(withApiImageUrls(result));
   }
 
-  const tutorSuggestions = await wordTutorSuggestions(result.lesson.language);
-  return NextResponse.json(withApiImageUrls({ ...result, tutorSuggestions }));
+  const [tutorSuggestions, steps] = await Promise.all([
+    wordTutorSuggestions(result.lesson.language),
+    withBaseMaps(result.lesson.steps),
+  ]);
+
+  return NextResponse.json(
+    withApiImageUrls({ ...result, lesson: { ...result.lesson, steps }, tutorSuggestions }),
+  );
 }
 
 export const GET = withApiErrorBoundary(getLibraryLessonRoute);
