@@ -136,40 +136,40 @@ private struct GoalSwitcherPlaceholder: View {
           comment: "Spoken label of the toolbar button shown when the learner's goals didn't load"
         ))
     } else {
-      Button {
-      } label: {
-        HStack(spacing: 4) {
-          if isCompact {
-            Image(systemName: "target")
-          } else {
-            startGoalTitle
+      HStack(spacing: 4) {
+        if isCompact {
+          Image(systemName: "target")
+        } else {
+          startGoalTitle
 
-            Image(systemName: "chevron.down")
-              .imageScale(.small)
-          }
+          Image(systemName: "chevron.down")
+            .imageScale(.small)
         }
-        .fontWeight(.semibold)
       }
-      .disabled(true)
-      .redacted(reason: .placeholder)
-      .accessibilityHidden(true)
+      .fontWeight(.semibold)
+      .placeholderShape()
     }
   }
 }
 
 private struct LevelPlaceholder: View {
   var body: some View {
-    Button {
-    } label: {
-      HStack(spacing: 6) {
-        BeltDot(belt: .white)
+    HStack(spacing: 6) {
+      BeltDot(belt: .white)
 
-        Text(verbatim: "1")
-      }
+      Text(verbatim: "1")
     }
-    .disabled(true)
-    .redacted(reason: .placeholder)
-    .accessibilityHidden(true)
+    .placeholderShape()
+  }
+}
+
+extension View {
+  /// The bar turns a toolbar item's text and images into its own, which reach accessibility even
+  /// when the item hides them, so a placeholder keeps only their size and draws a shape.
+  fileprivate func placeholderShape() -> some View {
+    fixedSize()
+      .hidden()
+      .background(.quaternary, in: .capsule)
   }
 }
 
