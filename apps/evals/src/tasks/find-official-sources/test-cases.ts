@@ -64,6 +64,7 @@ const EXAMS: Exam[] = [
   },
   {
     expected: {
+      board: "IDEPI",
       noticeHints: ["edital"],
       officialDomains: ["idepi.org.br", "piracema.mg.gov.br"],
       sectionHints: ["quadro de provas", "conteúdos programáticos"],
@@ -81,6 +82,27 @@ const EXAMS: Exam[] = [
         "concurso Piracema MG 2026 Assistente Administrativo",
       ],
       role: "Assistente Administrativo",
+    },
+  },
+  {
+    expected: {
+      board: "Cebraspe",
+      noticeHints: ["cgu_26", "2026"],
+      officialDomains: ["cebraspe.org.br", "gov.br"],
+    },
+    id: "cgu-2026",
+    language: "pt",
+    plan: {
+      board: null,
+      country: "BR",
+      edition: "2026",
+      name: "CGU",
+      officialDomains: ["gov.br/cgu", "in.gov.br"],
+      queries: [
+        "edital concurso CGU 2026 Auditor Federal de Finanças e Controle",
+        "concurso CGU 2026 AFFC edital retificação",
+      ],
+      role: "Auditor Federal de Finanças e Controle",
     },
   },
   {

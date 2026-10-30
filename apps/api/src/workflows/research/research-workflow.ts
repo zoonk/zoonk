@@ -89,6 +89,25 @@ async function joinRunningResearch({
   });
 }
 
+async function findExamSources({
+  analytics,
+  goal,
+  plan,
+  uploads,
+}: ResearchContext<ExamResearchPlan>): Promise<{ board: string | null; sourceIds: string[] }> {
+  if (uploads.length > 0) {
+    return { board: null, sourceIds: uploads };
+  }
+
+  return findAndStoreSources({
+    analytics,
+    personalPlan: goal.planPersonal,
+    plan,
+    requireOfficial: true,
+    topic: "exam",
+  });
+}
+
 async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise<ResearchResult> {
   const { analytics, goal, plan, uploads } = context;
 
@@ -130,16 +149,7 @@ async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise
     return joined;
   }
 
-  const sourceIds =
-    uploads.length > 0
-      ? uploads
-      : await findAndStoreSources({
-          analytics,
-          personalPlan: goal.planPersonal,
-          plan,
-          requireOfficial: true,
-          topic: "exam",
-        });
+  const { board, sourceIds } = await findExamSources(context);
 
   // A reading of the learner's uploads is theirs, even when the exam is shared, so its calls never
   // reach providers that train on prompts.
@@ -147,7 +157,7 @@ async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise
     analytics: uploads.length > 0 ? { ...analytics, contentScope: "personal" as const } : analytics,
     background: false,
     exceptGoalId: goal.id,
-    identity,
+    identity: { ...identity, board: board ?? identity.board },
     isNew: !blueprintId,
     sourceIds,
   };

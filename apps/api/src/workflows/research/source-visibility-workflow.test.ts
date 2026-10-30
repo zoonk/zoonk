@@ -65,6 +65,7 @@ describe(sourceVisibilityWorkflow, () => {
     vi.mocked(findOfficialSources).mockResolvedValue({
       ...TASK_RESULT,
       data: {
+        board: null,
         documents: [
           {
             documentType: "notice",
@@ -124,7 +125,7 @@ describe(sourceVisibilityWorkflow, () => {
 
     vi.mocked(findOfficialSources).mockResolvedValue({
       ...TASK_RESULT,
-      data: { documents: [], officialFound: false, searchCalls: 2 },
+      data: { board: null, documents: [], officialFound: false, searchCalls: 2 },
     });
 
     await expect(
@@ -143,6 +144,7 @@ describe(sourceVisibilityWorkflow, () => {
     vi.mocked(findOfficialSources).mockResolvedValue({
       ...TASK_RESULT,
       data: {
+        board: null,
         documents: [
           {
             documentType: "notice",

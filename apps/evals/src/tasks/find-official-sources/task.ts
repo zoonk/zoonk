@@ -6,10 +6,12 @@ import {
 } from "@zoonk/ai/tasks/research/find-official-sources";
 import { fetchDocument } from "@zoonk/core/library/sources/fetch";
 import { parseDocument } from "@zoonk/core/library/sources/parse-document";
+import { namesMatchAcrossSpellings } from "@zoonk/utils/name-words";
 import { normalizeString } from "@zoonk/utils/string";
 import { TEST_CASES } from "./test-cases";
 
 export type FindOfficialSourcesExpected = {
+  board?: string;
   officialDomains: string[];
   noticeHints: string[];
   sectionHints?: string[];
@@ -17,6 +19,7 @@ export type FindOfficialSourcesExpected = {
 };
 
 type FoundOutput = {
+  board: string | null;
   documents: { kind: string; title: string; url: string }[];
   officialFound: boolean;
   searchCalls: number;
@@ -48,6 +51,20 @@ function listMissingSections({
         `${document.url} ${document.title}`.toLowerCase().includes(hint.toLowerCase()),
       ),
   );
+}
+
+function findBoardMiss({
+  expected,
+  found,
+}: {
+  expected: FindOfficialSourcesExpected;
+  found: FoundOutput;
+}): string | null {
+  if (!expected.board || (found.board && namesMatchAcrossSpellings(found.board, expected.board))) {
+    return null;
+  }
+
+  return `Named ${found.board ?? "no board"} instead of ${expected.board}`;
 }
 
 async function readCopy(url: string): Promise<string | null> {
@@ -125,16 +142,19 @@ const scoreFoundSources: TaskScorer<FindOfficialSourcesExpected> = ({ output, te
   );
 
   const missing = listMissingSections({ expected, official });
+  const boardMiss = findBoardMiss({ expected, found });
 
-  if (current.length > 0 && missing.length > 0) {
-    return createFixedScore({
-      conclusion: `No official page for these sections' format: ${missing.join(", ")}`,
-      score: 8,
-    });
-  }
+  const gaps = [
+    ...(missing.length > 0
+      ? [`No official page for these sections' format: ${missing.join(", ")}`]
+      : []),
+    ...(boardMiss ? [boardMiss] : []),
+  ];
 
   if (current.length > 0) {
-    return createFixedScore({ conclusion: "None", score: 10 });
+    return gaps.length > 0
+      ? createFixedScore({ conclusion: gaps.join("; "), score: 8 })
+      : createFixedScore({ conclusion: "None", score: 10 });
   }
 
   if (official.length > 0) {

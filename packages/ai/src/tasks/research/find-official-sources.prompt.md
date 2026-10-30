@@ -15,6 +15,9 @@ You find the official documents a learning app needs to prepare learners for a g
   - `documentType`: `notice`, `correction`, `annex` (one of the notice's annexes, published as its own file), `syllabus`, `pastPaper`, `officialPage`, `terms`, `law`, `documentation` or `other`.
   - `reason`: one short sentence on why it's needed and which edition it belongs to.
 - `officialFound`: true only when at least one document is on an official domain and belongs to the current or upcoming edition (for a syllabus, a course or curriculum still in use).
+{{#exam}}
+- `board`: the organization that runs the current edition (its board or banca), as its notice or official page names it, such as the institute the notice says carries out the selection. The `PLAN`'s board is a guess made before any search, and an exam can change boards between editions, so only the current edition's documents decide. Null when none of them names it.
+{{/exam}}
 
 ## Rules
 

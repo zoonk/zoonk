@@ -41,7 +41,11 @@ const documentSchema = z.object({
   url: z.string(),
 });
 
-const schema = z.object({ documents: z.array(documentSchema), officialFound: z.boolean() });
+const schema = z.object({
+  board: z.string().nullable(),
+  documents: z.array(documentSchema),
+  officialFound: z.boolean(),
+});
 
 export type FoundSourceDocument = z.infer<typeof documentSchema>;
 
@@ -105,7 +109,7 @@ export async function findOfficialSources({
 
   const systemPrompt = selectPromptVariants({
     template: promptTemplate,
-    variants: { unreadable: unreadable.length > 0 },
+    variants: { exam: topic === "exam", unreadable: unreadable.length > 0 },
   });
 
   const { isSearched, output, provenance, searchCalls, usage } = await runSearchTask({
@@ -127,6 +131,7 @@ export async function findOfficialSources({
 
   return {
     data: {
+      board: topic === "exam" ? output.board?.trim() || null : null,
       documents,
       officialFound:
         output.officialFound && documents.some((document) => document.kind === "official"),

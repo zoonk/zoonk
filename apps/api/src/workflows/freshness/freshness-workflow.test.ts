@@ -343,7 +343,7 @@ describe(freshnessWorkflow, () => {
     const nextUrl = `https://cdn.cebraspe.org.br/concursos/tc_df_27_analista/${randomUUID()}.txt`;
 
     await prisma.examBlueprint.update({
-      data: { examDate: new Date(Date.now() - 30 * DAY_MS) },
+      data: { board: "FGV", examDate: new Date(Date.now() - 30 * DAY_MS) },
       where: { id: blueprint.id },
     });
 
@@ -371,6 +371,7 @@ describe(freshnessWorkflow, () => {
     vi.mocked(findOfficialSources).mockResolvedValue({
       ...TASK,
       data: {
+        board: "Cebraspe",
         documents: [
           {
             documentType: "notice",
@@ -415,7 +416,10 @@ describe(freshnessWorkflow, () => {
       prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
     ]);
 
-    expect(stored.examDate).toStrictEqual(new Date("2027-11-21T00:00:00.000Z"));
+    expect(stored).toMatchObject({
+      board: "Cebraspe",
+      examDate: new Date("2027-11-21T00:00:00.000Z"),
+    });
 
     expect(kept.targetDate).toStrictEqual(new Date("2027-11-28T00:00:00.000Z"));
 
@@ -452,6 +456,7 @@ describe(freshnessWorkflow, () => {
     vi.mocked(findOfficialSources).mockResolvedValue({
       ...TASK,
       data: {
+        board: "Cebraspe",
         documents: [
           {
             documentType: "notice",

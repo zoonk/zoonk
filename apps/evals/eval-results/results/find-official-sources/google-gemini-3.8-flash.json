@@ -1472,6 +1472,7 @@
       ],
       "testCase": {
         "expected": {
+          "board": "IDEPI",
           "noticeHints": [
             "edital"
           ],
@@ -1500,6 +1501,59 @@
               "concurso Piracema MG 2026 Assistente Administrativo"
             ],
             "role": "Assistente Administrativo"
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "board": "Cebraspe",
+          "noticeHints": [
+            "cgu_26",
+            "2026"
+          ],
+          "officialDomains": [
+            "cebraspe.org.br",
+            "gov.br"
+          ]
+        },
+        "id": "cgu-2026:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": null,
+            "country": "BR",
+            "edition": "2026",
+            "name": "CGU",
+            "officialDomains": [
+              "gov.br/cgu",
+              "in.gov.br"
+            ],
+            "queries": [
+              "edital concurso CGU 2026 Auditor Federal de Finanças e Controle",
+              "concurso CGU 2026 AFFC edital retificação"
+            ],
+            "role": "Auditor Federal de Finanças e Controle"
           },
           "searchTool": "parallel",
           "topic": "exam"

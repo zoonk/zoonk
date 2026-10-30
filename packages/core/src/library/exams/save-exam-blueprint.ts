@@ -149,6 +149,7 @@ async function updateBlueprint({
     const updated = await tx.examBlueprint.update({
       data: {
         ...toContentColumns(content),
+        board: input.identity.board,
         sourceId: input.sourceId,
         ...(changes.length > 0 ? toProvenanceData(input.provenance) : {}),
       },

@@ -58,7 +58,7 @@ export async function findSourcesStep({
   plan: ExamResearchPlan | SourceResearchPlan;
   topic: ResearchTopic;
   unreadable?: string[];
-}): Promise<{ documents: FoundSourceDocument[]; officialFound: boolean }> {
+}): Promise<{ board: string | null; documents: FoundSourceDocument[]; officialFound: boolean }> {
   "use step";
 
   const { data } = await findOfficialSources({ analytics, plan, topic, unreadable });
@@ -68,5 +68,5 @@ export async function findSourcesStep({
       ? selectCopies({ documents: data.documents, unreadable })
       : selectDocuments(data.documents);
 
-  return { documents, officialFound: data.officialFound };
+  return { board: data.board, documents, officialFound: data.officialFound };
 }

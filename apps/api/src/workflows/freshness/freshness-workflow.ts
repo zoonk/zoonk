@@ -33,14 +33,20 @@ async function searchNextNotice({
 
   const plan = await planNextNoticeStep({ analytics, identity });
 
-  const sourceIds = await findAndStoreSources({
+  const { board, sourceIds } = await findAndStoreSources({
     analytics,
     plan,
     requireOfficial: true,
     topic: "exam",
   });
 
-  await readExamBlueprint({ analytics, background: true, identity, isNew: false, sourceIds });
+  await readExamBlueprint({
+    analytics,
+    background: true,
+    identity: { ...identity, board: board ?? identity.board },
+    isNew: false,
+    sourceIds,
+  });
 }
 
 async function applyChanges({

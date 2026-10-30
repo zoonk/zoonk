@@ -101,6 +101,7 @@ async function storeCopies({
   return copies.stored;
 }
 
+/** `board` runs the edition the found documents are for; null outside exams or when they don't say. */
 export async function findAndStoreSources({
   analytics,
   personalPlan = false,
@@ -113,7 +114,7 @@ export async function findAndStoreSources({
   plan: ExamResearchPlan | SourceResearchPlan;
   requireOfficial: boolean;
   topic: SourceTopic;
-}): Promise<string[]> {
+}): Promise<{ board: string | null; sourceIds: string[] }> {
   const searchAnalytics = toPlanAnalytics({ analytics, personal: personalPlan });
   const found = await findSourcesStep({ analytics: searchAnalytics, plan, topic });
 
@@ -127,7 +128,7 @@ export async function findAndStoreSources({
   const hasOfficial = found.documents.some((document) => document.kind === "official");
 
   if (requireOfficial && !hasOfficial) {
-    return [];
+    return { board: null, sourceIds: [] };
   }
 
   const copies = await storeCopies({ analytics, plan, searchAnalytics, stored, topic, unreadable });
@@ -139,7 +140,7 @@ export async function findAndStoreSources({
 
   const sourceIds = readable.map((source) => source.sourceId);
 
-  return [...new Set(sourceIds)];
+  return { board: found.board, sourceIds: [...new Set(sourceIds)] };
 }
 
 async function findTopicSources({
@@ -159,7 +160,15 @@ async function findTopicSources({
     return stored;
   }
 
-  return findAndStoreSources({ analytics, personalPlan, plan, requireOfficial: false, topic });
+  const found = await findAndStoreSources({
+    analytics,
+    personalPlan,
+    plan,
+    requireOfficial: false,
+    topic,
+  });
+
+  return found.sourceIds;
 }
 
 function toNothingFound(topic: ResearchSourceTopic): ResearchResult {

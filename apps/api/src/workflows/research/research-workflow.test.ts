@@ -165,6 +165,7 @@ function findNothingOfficial() {
   vi.mocked(findOfficialSources).mockResolvedValue({
     ...TASK_RESULT,
     data: {
+      board: null,
       documents: [
         {
           documentType: "other",
@@ -281,6 +282,8 @@ describe(researchWorkflow, () => {
     });
 
     expect(result).toMatchObject({ examBlueprintId: blueprint.id });
+    expect(plan.board).toBeNull();
+    expect(blueprint.board).toBe("Cebraspe");
 
     expect(vi.mocked(extractExamBlueprint).mock.calls[0]?.[0].serviceTier).toBe("priority");
 
@@ -689,6 +692,7 @@ describe(researchWorkflow, () => {
     vi.mocked(findOfficialSources).mockImplementation(async ({ unreadable = [] }) => ({
       ...TASK_RESULT,
       data: {
+        board: "Cebraspe",
         documents: unreadable.length > 0 ? [blockedCopy, readableCopy] : initialDocuments,
         officialFound: true,
         searchCalls: 2,
@@ -1202,6 +1206,34 @@ describe(researchWorkflow, () => {
     ).resolves.toBe(0);
   });
 
+  it("takes the board from the new edition's search when the exam changed boards", async () => {
+    const { goal } = await examGoal();
+    const { plan } = await replayTcdfResearch();
+
+    const lastEdition = await examBlueprintFixture({
+      board: "FGV",
+      examDate: new Date(Date.now() - 300 * 86_400_000),
+      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+      language: "pt",
+      name: plan.name,
+      role: plan.role,
+    });
+
+    vi.mocked(generateSourceChangeNotice).mockResolvedValue({
+      ...TASK_RESULT,
+      data: { message: "Saiu o edital de 2026." },
+    });
+
+    await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+      examBlueprintId: lastEdition.id,
+      status: "ready",
+    });
+
+    await expect(
+      prisma.examBlueprint.findUniqueOrThrow({ where: { id: lastEdition.id } }),
+    ).resolves.toMatchObject({ board: "Cebraspe" });
+  });
+
   it("keeps the exam's subjects and scoring when the check rejects every detail their passages don't state", async () => {
     const { goal } = await examGoal();
     const { extraction, plan } = await replayTcdfResearch();
@@ -1527,6 +1559,7 @@ describe("research for goals that aren't exams", () => {
     vi.mocked(findOfficialSources).mockResolvedValue({
       ...TASK_RESULT,
       data: {
+        board: null,
         documents: [syllabusDocument(word, "MIT"), syllabusDocument(word, "Stanford")],
         officialFound: true,
         searchCalls: 2,
