@@ -166,11 +166,43 @@ private struct LandsActsOnInput: ViewModifier {
   func body(content: Content) -> some View {
     content
       .environment(\.actLandings, landings)
-      .simultaneousGesture(TapGesture().onEnded { landings += 1 })
+      .gesture(PassingTap { landings += 1 })
       .onKeyPress(keys: [.return, .escape], phases: .down) { _ in
         landings += 1
         return .ignored
       }
+  }
+}
+
+/// A SwiftUI tap gesture here would cancel the touch a list row needs to open, so a tap only
+/// listens, as main's capture-phase click listener does.
+private struct PassingTap: UIGestureRecognizerRepresentable {
+  let action: () -> Void
+
+  func makeUIGestureRecognizer(context: Context) -> PassingTapRecognizer {
+    PassingTapRecognizer()
+  }
+
+  func handleUIGestureRecognizerAction(_ recognizer: PassingTapRecognizer, context: Context) {
+    if recognizer.state == .ended {
+      action()
+    }
+  }
+}
+
+private final class PassingTapRecognizer: UITapGestureRecognizer {
+  init() {
+    super.init(target: nil, action: nil)
+    cancelsTouchesInView = false
+    delaysTouchesEnded = false
+  }
+
+  override func canPrevent(_ preventedGestureRecognizer: UIGestureRecognizer) -> Bool {
+    false
+  }
+
+  override func canBePrevented(by preventingGestureRecognizer: UIGestureRecognizer) -> Bool {
+    false
   }
 }
 
