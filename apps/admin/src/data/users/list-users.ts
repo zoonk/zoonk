@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { getUserSearchWhere } from "@/data/users/_utils/user-search";
 import { findUserActiveSubscription } from "@/data/users/find-active-subscription";
 import { type UserSort } from "@/lib/user-sort";
 import { type Subscription, prisma } from "@zoonk/db";
@@ -53,20 +54,6 @@ function getUserOrderBy({ sort }: { sort: UserSort }) {
     { createdAt: "desc" as const },
     { id: "asc" as const },
   ];
-}
-
-function getUserSearchWhere({ search }: { search?: string }) {
-  if (!search) {
-    return;
-  }
-
-  return {
-    OR: [
-      { name: { contains: search, mode: "insensitive" as const } },
-      { email: { contains: search, mode: "insensitive" as const } },
-      { username: { contains: search, mode: "insensitive" as const } },
-    ],
-  };
 }
 
 function addUserPlan<TUser extends { id: string }>({

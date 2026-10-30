@@ -2,6 +2,7 @@ import { requireAdminRouteAccess } from "@/lib/admin-guard";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
+import { AdminCommandPalette } from "./admin-command-palette";
 import { AdminMobileBar } from "./admin-mobile-bar";
 import { AppSidebar } from "./app-sidebar";
 
@@ -11,6 +12,7 @@ async function PrivateLayoutContent({ children }: React.PropsWithChildren) {
 
   return (
     <NuqsAdapter>
+      <AdminCommandPalette />
       <div className="flex min-h-dvh flex-col lg:flex-row">
         <AppSidebar account={account} />
 
