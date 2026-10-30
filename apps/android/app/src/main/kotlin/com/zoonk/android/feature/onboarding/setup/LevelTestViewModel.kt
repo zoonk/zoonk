@@ -22,6 +22,7 @@ private class SentTestAnswer(
     val questionId: String,
     val answerIndex: Long?,
     val durationMs: Long,
+    val skipped: Boolean,
 )
 
 /**
@@ -87,14 +88,15 @@ internal class LevelTestViewModel(
         return read
     }
 
-    /** [answerIndex] is null for "I don't know". */
+    /** [answerIndex] is null for "I don't know"; a [skipped] listening question doesn't count toward a level. */
     fun answer(
         questionId: String,
         answerIndex: Long?,
         durationMs: Long,
+        skipped: Boolean = false,
     ) {
         if (isSaving) return
-        sent = SentTestAnswer(questionId, answerIndex, durationMs)
+        sent = SentTestAnswer(questionId, answerIndex, durationMs, skipped)
         send()
     }
 
@@ -146,7 +148,7 @@ internal class LevelTestViewModel(
         isSaving = true
         answerFailed = false
         viewModelScope.launch {
-            when (store.answerLevelTest(goalId, answer.questionId, answer.answerIndex, answer.durationMs)) {
+            when (store.answerLevelTest(goalId, answer.questionId, answer.answerIndex, answer.durationMs, answer.skipped)) {
                 is WriteOutcome.Done -> {
                     sent = null
                 }

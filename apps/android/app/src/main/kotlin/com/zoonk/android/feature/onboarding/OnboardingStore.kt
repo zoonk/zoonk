@@ -465,8 +465,13 @@ class OnboardingStore(
         questionId: String,
         answerIndex: Long?,
         durationMs: Long,
+        skipped: Boolean,
     ) = write(replacing = { listOf(levelTests[goalId].replacing(it)) }) {
-        api.answerLevelTest(it, goalId, LanguageLevelTestAnswerInput(questionId, answerIndex, durationMs))
+        api.answerLevelTest(
+            it,
+            goalId,
+            LanguageLevelTestAnswerInput(questionId, answerIndex, durationMs, skipped = true.takeIf { skipped }),
+        )
     }
 
     /** The recorder's grading write; its reply is the test's next step. */

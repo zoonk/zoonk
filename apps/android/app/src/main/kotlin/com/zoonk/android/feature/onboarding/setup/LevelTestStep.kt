@@ -56,6 +56,7 @@ import com.zoonk.android.feature.audio.SpeechFailedNote
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.SpeechState
 import com.zoonk.android.feature.audio.SpeechStatusIcon
+import com.zoonk.android.feature.audio.SpokenAudio
 import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.VoiceAnswerModel
 import com.zoonk.android.feature.audio.VoiceAnswerRecorder
@@ -69,6 +70,7 @@ import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LevelBar
+import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -98,6 +100,8 @@ internal fun ColumnScope.LanguageLevelTestStep(
     val test by store.levelTests[goalId].collectShown()
     val phase = vm.phase(test)
     val poll = rememberPoll(active = phase == LevelTestPhase.Waiting && !vm.bank.isStopped) { vm.check() }
+    val audioQuestion = (phase as? LevelTestPhase.Question)?.question?.takeIf { it.audioPending }?.id
+    val audioPoll = rememberPoll(active = audioQuestion != null, key = audioQuestion) { vm.check() }
     val progress =
         when (phase) {
             is LevelTestPhase.Question -> phase.progress
@@ -136,7 +140,8 @@ internal fun ColumnScope.LanguageLevelTestStep(
 
         is LevelTestPhase.Question -> {
             key(phase.question.id) {
-                TestQuestion(phase.question, targetLanguage, vm, navigator)
+                val audioPending = audioPoll.status(audioQuestion != null) == PollStatus.Polling
+                TestQuestion(phase.question, targetLanguage, audioPending, vm, navigator)
             }
         }
 
@@ -230,15 +235,21 @@ private fun ColumnScope.LevelTestWaiting(
     }
 }
 
-/** Reading questions show their passage; listening ones play it as a voice message. */
+/**
+ * Reading questions show their passage; listening ones play it as a voice message. While the
+ * message can't play, its question is skipped instead, which doesn't count toward a level.
+ */
 @Composable
 private fun ColumnScope.TestQuestion(
     question: LevelTestQuestion,
     targetLanguage: String,
+    audioPending: Boolean,
     vm: LevelTestViewModel,
     navigator: AppNavigator,
 ) {
     val listening = question.skill == LanguageLevelTestOneOf1NextOneOfQuestion.Skill.LISTENING
+    val audio = LocalSetupSpeech.current?.let { rememberSpokenAudio(it, targetLanguage) }
+    val noAudio = listening && (audioPending || audio?.state is SpeechState.Failed)
     PlacementQuestion(
         item =
             PlacementItem(
@@ -255,33 +266,61 @@ private fun ColumnScope.TestQuestion(
         pending = vm.isSaving,
         answerFailed = vm.answerFailed,
         finishFailed = false,
-        onAnswer = { answer, durationMs -> vm.answer(question.id, answer.selectedIndex(), durationMs) },
+        onAnswer = { answer, durationMs ->
+            val index = answer.selectedIndex()
+            vm.answer(question.id, index, durationMs, skipped = noAudio && index == null)
+        },
         onRetry = vm::retryAnswer,
         onStop = vm::stop,
         dontKnowLabel =
             stringResource(
-                if (listening) R.string.onboarding_language_test_did_not_understand else R.string.onboarding_placement_dont_know,
+                when {
+                    noAudio -> R.string.onboarding_language_test_skip_question
+                    listening -> R.string.onboarding_language_test_did_not_understand
+                    else -> R.string.onboarding_placement_dont_know
+                },
             ),
-        media = { if (listening) ListeningMessage(question.passage, targetLanguage, navigator) },
+        media = { if (listening) ListeningMessage(question, targetLanguage, audioPending, audio, navigator) },
     )
 }
 
 private fun PlacementAnswer.selectedIndex(): Long? =
     (((this as? PlacementAnswer.ChoiceAnswerValue)?.value as? ChoiceAnswer.ChoiceAnswerAnyOfValue)?.value)?.selectedIndex
 
-/** Read a little slower than normal, so the test isn't one of catching fast speech. */
+/**
+ * Read a little slower than normal, so the test isn't one of catching fast speech. A stored
+ * recording plays as it is; without one, the learner's tap asks for it.
+ */
 @Composable
 private fun ListeningMessage(
-    text: String,
+    question: LevelTestQuestion,
     language: String,
+    pending: Boolean,
+    audio: SpokenAudio?,
     navigator: AppNavigator,
 ) {
-    val player = LocalSetupSpeech.current
-    if (player == null) {
-        Text(text, style = MaterialTheme.typography.bodyLarge.copy(localeList = TextLocales(language)))
+    if (audio == null) {
+        Text(question.passage, style = MaterialTheme.typography.bodyLarge.copy(localeList = TextLocales(language)))
         return
     }
-    val audio = rememberSpokenAudio(player, language)
+    if (pending) {
+        MediaPending(Modifier.fillMaxWidth().heightIn(min = MESSAGE_MIN_HEIGHT)) {
+            Icon(
+                painterResource(R.drawable.ic_headphones),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp * LocalDensity.current.fontScale),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                stringResource(R.string.onboarding_language_test_audio_on_its_way),
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        return
+    }
     var played by rememberSaveable { mutableStateOf(false) }
     val state = audio.state.withoutFailure()
     val label =
@@ -291,11 +330,14 @@ private fun ListeningMessage(
         )
     val play = {
         played = true
-        audio.speak(listOf(SpokenText(text)), rate = LISTENING_RATE)
+        audio.speak(listOf(SpokenText(question.passage, recording = question.audio?.url?.toString())), rate = LISTENING_RATE)
     }
 
     OutlinedCard(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(
+            Modifier.heightIn(min = MESSAGE_MIN_HEIGHT).padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+        ) {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                 FilledIconButton(
                     onClick = { if (audio.isBusy) audio.cancel() else play() },
@@ -333,7 +375,7 @@ private fun ListeningMessage(
                 }
             }
             (audio.state as? SpeechState.Failed)?.let { failed ->
-                SpeechFailedNote(language, failed.limit, onRetry = play, navigator = navigator, text = text)
+                SpeechFailedNote(language, failed.limit, onRetry = play, navigator = navigator)
             }
         }
     }
@@ -494,6 +536,9 @@ private val NON_LATIN_SCRIPT_LANGUAGES =
     )
 
 private const val LISTENING_RATE = 0.9f
+
+/** The ready message's height, so Play replaces the on-its-way panel without moving the question. */
+private val MESSAGE_MIN_HEIGHT = 80.dp
 private const val NAME_SHARE_LIMIT = 0.4f
 
 /** Three reading and three listening questions and one sentence out loud; a language goal's quick test is this test. */

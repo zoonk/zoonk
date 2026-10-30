@@ -91,6 +91,7 @@
   "onboarding_intent_understand": "e0d291db1f315f9002d992378ff00217cee3d766e36d44b911d5bdcec69c1d4c",
   "onboarding_intent_understand_description": "6b2bd6e01af9c49dd115783a99170af4bbb78bda55f0add290ef05441d1297a3",
   "onboarding_join_waitlist": "385c01cbc0b5478c81b07bb5f0471794aa2199b2ec92f8ac187a05d4f5694465",
+  "onboarding_language_test_audio_on_its_way": "e0d3a8471f47b3a88cc3b1d21d84cb6dd47eea4374abd677de8bb50f352b0518",
   "onboarding_language_test_build_plan": "d549c5d105d77121b1e1ed8b0bc6dac005185c902a725c167d7f2608902f9490",
   "onboarding_language_test_description": "58f23af180b7429257823caea72dc0ba3dff96daf7aabf9cff5b0e08b1950073",
   "onboarding_language_test_did_not_understand": "593910036efa805ecadff7440d9f879b90b17b1f6beedbbd274abd834163bc09",
@@ -109,6 +110,7 @@
   "onboarding_language_test_skip": "43812aa0e8847d57e19c223f13cb9bbca3f46e69327d069bed60bebd6fd0b8a0",
   "onboarding_language_test_skip_note": "a1d60509e2413873877950007dedcb6de45b7ee5b3816114fdf27245c6b37fd0",
   "onboarding_language_test_skip_part": "08b493d2d5333cce2d1c657cb7d0a3ee6a2c19e770c08e0875d3a4a3a7c01024",
+  "onboarding_language_test_skip_question": "0afb1cd286ff78fb94976faa65fd6771ea9b2ca0d6bd69d1b6afdd3e5d14fe33",
   "onboarding_language_test_speaking": "c22f997eb9cd1d4a560d9b4e35f94e2ed4dd30ed75e0544b36e14a79a5c37c26",
   "onboarding_language_test_title": "100945e16b8c9061727caacb3c6e9d3e5dd5aad343eedce3a1ae236172dc0659",
   "onboarding_language_test_use_app_in": "192253f3ee1e0a2372a1a2bad9c580c3e9a71331bbafd8e1f1282094dd3d7454",
@@ -720,6 +722,10 @@
     <string name="onboarding_language_test_skip_note">Ton plan part du niveau que tu as indiqué, puis tes premières séances l’affinent.</string>
     <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">Je n’ai pas compris l’enregistrement</string>
+    <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
+    <string name="onboarding_language_test_skip_question">Sauter cette question</string>
+    <!-- Shown while a listening question's recording is still being made. -->
+    <string name="onboarding_language_test_audio_on_its_way">Le message vocal arrive…</string>
     <string name="onboarding_language_test_play">Écouter le message</string>
     <string name="onboarding_language_test_play_again">Réécouter le message</string>
     <string name="onboarding_language_test_message_loading">Préparation du message. La première fois, cela peut prendre quelques secondes.</string>

@@ -277,6 +277,10 @@
     <string name="onboarding_language_test_skip_note">Your plan starts from the level you gave, and your first sessions fine-tune it.</string>
     <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">I didn\'t understand the audio</string>
+    <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
+    <string name="onboarding_language_test_skip_question">Skip this question</string>
+    <!-- Shown while a listening question's recording is still being made. -->
+    <string name="onboarding_language_test_audio_on_its_way">The voice message is on its way…</string>
     <string name="onboarding_language_test_play">Play the message</string>
     <string name="onboarding_language_test_play_again">Play the message again</string>
     <string name="onboarding_language_test_message_loading">Getting the message ready. The first time can take a few seconds.</string>

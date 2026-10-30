@@ -202,11 +202,18 @@ internal fun readingQuestion(
      "passage":"$passage","question":"When does Marco go to the market?","skill":"reading"}}
     """.trimIndent()
 
-internal fun listeningQuestion(id: String = "listening-1") =
-    """
-    {"kind":"question","question":{"audio":null,"audioPending":false,"id":"$id","level":"A2","options":["At the station","At home"],
-     "passage":"Ci vediamo alla stazione alle otto.","question":"Where are they meeting?","skill":"listening"}}
-    """.trimIndent()
+internal fun listeningQuestion(
+    id: String = "listening-1",
+    audioUrl: String? = null,
+    audioPending: Boolean = false,
+): String {
+    val audio =
+        audioUrl?.let { """{"durationMs":null,"id":"00000000-0000-4000-8000-0000000000c1","language":"it","url":"$it"}""" } ?: "null"
+    return """
+        {"kind":"question","question":{"audio":$audio,"audioPending":$audioPending,"id":"$id","level":"A2","options":["At the station","At home"],
+         "passage":"Ci vediamo alla stazione alle otto.","question":"Where are they meeting?","skill":"listening"}}
+        """.trimIndent()
+}
 
 internal const val SPEAKING_NEXT =
     """{"kind":"speaking","speaking":{"level":"A2","sentence":"Vorrei un caffè, per favore.","translation":"I'd like a coffee, please."}}"""

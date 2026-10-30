@@ -45,6 +45,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -238,35 +241,103 @@ class LevelTestStepFlowTest {
         tap("I didn't understand the audio")
 
         assertEquals("listening-1" to null, api.levelTestAnswers.last().let { it.questionId to it.answerIndex })
+        assertNull(api.levelTestAnswers.last().skipped)
         rule.onNodeWithText("Your level today").assertIsDisplayed()
         assertNull(progress)
     }
 
+    private val asked = mutableListOf<Pair<String, String>>()
+    private val downloads = mutableListOf<String>()
+
+    private fun speech(): SpeechPlayer {
+        val http =
+            OkHttpClient
+                .Builder()
+                .addInterceptor { chain ->
+                    downloads += chain.request().url.toString()
+                    Response
+                        .Builder()
+                        .request(chain.request())
+                        .protocol(Protocol.HTTP_1_1)
+                        .code(200)
+                        .message("")
+                        .body("mp3".toResponseBody())
+                        .build()
+                }.build()
+        return SpeechPlayer(
+            clips = { _, language, text, _ ->
+                asked += language to text
+                throw ApiException(ApiError.Unavailable)
+            },
+            files = VoiceFiles(folder.root, http, { false }, session, Dispatchers.Main.immediate),
+            output = SilentOutput,
+            sessions = session,
+            scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+        )
+    }
+
     @Test
-    fun aListeningQuestionAsksForItsMessageInTheLanguageAndShowsItWhenItCannotPlay() {
-        val asked = mutableListOf<Pair<String, String>>()
-        val speech =
-            SpeechPlayer(
-                clips = { _, language, text, _ ->
-                    asked += language to text
-                    throw ApiException(ApiError.Unavailable)
-                },
-                files = VoiceFiles(folder.root, OkHttpClient(), { false }, session),
-                output = SilentOutput,
-                sessions = session,
-                scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
-            )
+    fun aListeningMessageWithoutItsRecordingIsAskedForInTheLanguageAndCanBeSkippedWhenItCannotPlay() {
         api.levelTest = levelTestOf(next = listeningQuestion(), answered = 1)
-        show(speech = speech)
+        show(speech = speech())
 
         rule.onNodeWithText("You got a voice message. Listen and answer.").assertIsDisplayed()
         rule.onNodeWithText(MESSAGE).assertDoesNotExist()
         rule.onNodeWithContentDescription("Play the message").performClick()
 
         assertEquals(listOf("it" to MESSAGE), asked)
-        rule.onNodeWithText("The audio didn't play. Here's what it says:").assertIsDisplayed()
-        rule.onNodeWithText(MESSAGE).assertIsDisplayed()
+        rule.onNodeWithText("The audio didn't play.").assertIsDisplayed()
+        rule.onNodeWithText("Try again").assertIsDisplayed()
+        rule.onNodeWithText(MESSAGE).assertDoesNotExist()
+        rule.onNodeWithText("I didn't understand the audio").assertDoesNotExist()
+        tap("Skip this question")
+
+        assertEquals(
+            listOf(Triple("listening-1", null, true)),
+            api.levelTestAnswers.map { Triple(it.questionId, it.answerIndex, it.skipped) },
+        )
+    }
+
+    @Test
+    fun aStoredRecordingPlaysWithoutAskingForAClip() {
+        api.levelTest = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 1)
+        show(speech = speech())
+        rule.onNodeWithContentDescription("Play the message").performClick()
+
+        assertEquals(listOf(CLIP_URL), downloads)
+        assertEquals(emptyList<Pair<String, String>>(), asked)
         rule.onNodeWithContentDescription("Play the message again").assertIsDisplayed()
+    }
+
+    @Test
+    fun aListeningMessageOnItsWayShowsUntilARereadBringsIt() {
+        api.levelTest = levelTestOf(next = listeningQuestion(audioPending = true), answered = 1)
+        show(speech = speech())
+
+        rule.onNodeWithText("The voice message is on its way…").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Play the message").assertDoesNotExist()
+        rule.onNodeWithText("Skip this question").assertIsDisplayed()
+        val reads = api.levelTestReads
+
+        api.levelTest = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 1)
+        rule.mainClock.advanceTimeBy(POLL_MS)
+
+        assertEquals(reads + 1, api.levelTestReads)
+        rule.onNodeWithText("The voice message is on its way…").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Play the message").assertIsDisplayed()
+        rule.onNodeWithText("I didn't understand the audio").assertIsDisplayed()
+    }
+
+    @Test
+    fun skippingAListeningQuestionWhoseMessageIsOnItsWayDoesNotScoreIt() {
+        api.levelTest = levelTestOf(next = listeningQuestion(audioPending = true), answered = 1)
+        show(speech = speech())
+        tap("Skip this question")
+
+        assertEquals(
+            listOf(Triple("listening-1", null, true)),
+            api.levelTestAnswers.map { Triple(it.questionId, it.answerIndex, it.skipped) },
+        )
     }
 
     @Test
@@ -340,5 +411,6 @@ class LevelTestStepFlowTest {
     private companion object {
         const val POLL_MS = 3_500L
         const val MESSAGE = "Ci vediamo alla stazione alle otto."
+        const val CLIP_URL = "https://clips.test/level-test/stazione.mp3"
     }
 }
