@@ -306,7 +306,7 @@ private struct EssayContent: View {
   }
 
   /// Reuses the id when the text didn't change since a send that failed, so the server grades it
-  /// once.
+  /// once. Text changed while it was graded stays open as the rewrite.
   private func send() async {
     let text = text
     let attemptId = ungraded?.text == text ? ungraded!.attemptId : UUID().uuidString.lowercased()
@@ -332,18 +332,23 @@ private struct EssayContent: View {
 
     switch result {
     case .done(.graded(let grade)):
+      let isChangedSince = self.text != text
       status = .idle
-      startedAt = nil
       ungraded = nil
-      typed = nil
-      UnsentEssay.clear(blockId)
+      writing = isChangedSince
+
+      if !isChangedSince {
+        startedAt = nil
+        typed = nil
+        UnsentEssay.clear(blockId)
+      }
+
       resource.update { essay in
         var essay = essay
         essay.drafts.insert(.init(grade: grade, submittedAt: .now, text: text), at: 0)
         essay.gradesLeft = max(0, essay.gradesLeft - 1)
         return essay
       }
-      writing = false
     case .done(.limitReached):
       status = .limitReached
     case .obsolete:
