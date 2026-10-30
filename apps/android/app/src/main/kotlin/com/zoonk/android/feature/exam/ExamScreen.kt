@@ -264,17 +264,7 @@ private fun ExamHero(
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             ExamEyebrow(exam)
             Text(exam.examName, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-            if (facts.isNotEmpty()) {
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    facts.forEachIndexed { index, fact ->
-                        Text(
-                            text = if (index < facts.lastIndex) "$fact ·" else fact,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-            }
+            if (facts.isNotEmpty()) ExamFacts(facts)
         }
         options?.let {
             MockEntryButton(
@@ -284,6 +274,20 @@ private fun ExamHero(
             )
         }
         if (exam.noticeDay != null || exam.noSitting != null) NoticeDatesCard(exam, viewModel)
+    }
+}
+
+@Composable
+internal fun ExamFacts(facts: List<String>) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        facts.forEachIndexed { index, fact ->
+            Text(
+                // A no-break space keeps the dot on the fact's last line when the fact wraps.
+                text = if (index < facts.lastIndex) "$fact\u00A0·" else fact,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
     }
 }
 
