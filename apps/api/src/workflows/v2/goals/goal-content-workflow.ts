@@ -4,6 +4,7 @@ import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { GOAL_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
+import { closeStreamAfter } from "../../_shared/stream-status";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { claimRunToken } from "../_shared/run-token";
 import { prepareAhead, startPairLevelTest } from "./goal-ahead";
@@ -213,9 +214,7 @@ async function buildGoal({
   return { goalId, speculativeLessonIds, status: "built" };
 }
 
-export async function goalContentWorkflow(input: GoalContentInput): Promise<GoalContentResult> {
-  "use workflow";
-
+async function prepareGoalContent(input: GoalContentInput): Promise<GoalContentResult> {
   const { goalId } = input;
   const { workflowRunId } = getWorkflowMetadata();
   const token = `goal-${input.rebuild ? "rebuild" : "content"}:${goalId}`;
@@ -263,4 +262,10 @@ export async function goalContentWorkflow(input: GoalContentInput): Promise<Goal
   }
 
   return buildGoal({ context, initial, input });
+}
+
+export async function goalContentWorkflow(input: GoalContentInput): Promise<GoalContentResult> {
+  "use workflow";
+
+  return closeStreamAfter(() => prepareGoalContent(input));
 }

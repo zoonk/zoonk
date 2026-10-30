@@ -5,6 +5,7 @@ import { type PlanGenerationManifest } from "@zoonk/core/lookahead/speculative-l
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { type Run, start } from "workflow/api";
+import { closeStreamAfter } from "../../_shared/stream-status";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
@@ -171,11 +172,7 @@ async function planAndWrite({
   }
 }
 
-export async function lessonContentWorkflow(
-  input: LessonContentInput,
-): Promise<LessonContentResult> {
-  "use workflow";
-
+async function prepareLessonContent(input: LessonContentInput): Promise<LessonContentResult> {
   const { lessonId } = input;
 
   if (
@@ -229,4 +226,12 @@ export async function lessonContentWorkflow(
   }
 
   return ready;
+}
+
+export async function lessonContentWorkflow(
+  input: LessonContentInput,
+): Promise<LessonContentResult> {
+  "use workflow";
+
+  return closeStreamAfter(() => prepareLessonContent(input));
 }

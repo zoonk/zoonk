@@ -15,7 +15,10 @@ export const workflowReleaseLockMock = vi.fn();
 export const workflowWriteMock = vi.fn().mockResolvedValue(null);
 
 function createWritable() {
-  return { getWriter: () => ({ releaseLock: workflowReleaseLockMock, write: workflowWriteMock }) };
+  return {
+    close: vi.fn(),
+    getWriter: () => ({ releaseLock: workflowReleaseLockMock, write: workflowWriteMock }),
+  };
 }
 
 export class FatalError extends Error {

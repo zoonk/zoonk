@@ -1,6 +1,7 @@
 import { LEVEL_TEST_BANK_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { createHook, getWorkflowMetadata, sleep } from "workflow";
+import { closeStreamAfter } from "../../_shared/stream-status";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { repeatUntil } from "../_shared/repeat-until";
 import {
@@ -25,6 +26,10 @@ export async function levelTestBankWorkflow(
 ): Promise<LevelTestBankResult> {
   "use workflow";
 
+  return closeStreamAfter(() => prepareLevelTestBank(input));
+}
+
+async function prepareLevelTestBank(input: LevelTestBankInput): Promise<LevelTestBankResult> {
   const { pair } = input;
   const { workflowRunId } = getWorkflowMetadata();
   const hook = createHook({ token: `level-test-bank:${pair.language}:${pair.targetLanguage}` });

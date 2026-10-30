@@ -1,8 +1,11 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { generateLevelTestBank } from "@zoonk/ai/tasks/v2/language/level-test-bank";
+import { LEVEL_TEST_BANK_READY_STEP } from "@zoonk/core/library/generation/steps";
+import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { describe, expect, it, vi } from "vitest";
-import { start } from "workflow/api";
+import { FatalError } from "workflow";
+import { type Run, start } from "workflow/api";
 import { levelTestBankWorkflow } from "./level-test-bank-workflow";
 
 vi.mock("@zoonk/ai/tasks/audio", async (importOriginal) => ({
@@ -72,7 +75,59 @@ function voiced(): Awaited<ReturnType<typeof generateLanguageAudio>> {
   };
 }
 
+const STREAM_END_MS = 5000;
+
+/** Null when the stream is still open a few seconds after the run ended. */
+async function readStreamToEnd(run: Run<unknown>): Promise<string | null> {
+  let text = "";
+
+  const sink = new WritableStream<string>({
+    write: (chunk) => {
+      text += chunk;
+    },
+  });
+
+  const ended = await run
+    .getReadable<string>()
+    .pipeTo(sink, { signal: AbortSignal.timeout(STREAM_END_MS) })
+    .then(
+      () => true,
+      () => false,
+    );
+
+  return ended ? text : null;
+}
+
+function uniquePair() {
+  return { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };
+}
+
 describe(levelTestBankWorkflow, () => {
+  it("ends the run's stream once the bank is ready", async () => {
+    vi.mocked(generateLevelTestBank).mockResolvedValue(bankOf(crypto.randomUUID()));
+    vi.mocked(generateLanguageAudio).mockResolvedValue(voiced());
+
+    const run = await start(levelTestBankWorkflow, [{ pair: uniquePair() }]);
+
+    await expect(run.returnValue).resolves.toStrictEqual({ status: "written" });
+
+    await expect(readStreamToEnd(run)).resolves.toStrictEqual(
+      expect.stringContaining(`"step":"${LEVEL_TEST_BANK_READY_STEP}"`),
+    );
+  });
+
+  it("ends the run's stream when the bank can't be written", async () => {
+    vi.mocked(generateLevelTestBank).mockRejectedValue(new FatalError("No model answered"));
+
+    const run = await start(levelTestBankWorkflow, [{ pair: uniquePair() }]);
+
+    await expect(run.returnValue).rejects.toThrow("No model answered");
+
+    await expect(readStreamToEnd(run)).resolves.toStrictEqual(
+      expect.stringContaining(`"step":"${WORKFLOW_ERROR_STEP}"`),
+    );
+  });
+
   it("retries a failed clip alone and finishes with its questions ready when one never voices", async () => {
     const passage = crypto.randomUUID();
     const pair = { language: `x${passage.slice(0, 8)}`, targetLanguage: "ja" };

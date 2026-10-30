@@ -3,6 +3,7 @@ import { EXPLANATION_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
 import { start } from "workflow/api";
+import { closeStreamAfter } from "../../_shared/stream-status";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken } from "../_shared/run-token";
@@ -146,15 +147,12 @@ async function finish(result: ExplainQuestionResult): Promise<ExplainQuestionRes
   return result;
 }
 
-export async function explainQuestionWorkflow({
+type ExplainQuestionInput = { goalId: string; platform?: AnalyticsPlatform | null };
+
+async function explainQuestion({
   goalId,
   platform,
-}: {
-  goalId: string;
-  platform?: AnalyticsPlatform | null;
-}): Promise<ExplainQuestionResult> {
-  "use workflow";
-
+}: ExplainQuestionInput): Promise<ExplainQuestionResult> {
   const { workflowRunId } = getWorkflowMetadata();
   const { conflict } = await claimRunToken(`explain:${goalId}`);
 
@@ -232,4 +230,12 @@ export async function explainQuestionWorkflow({
   await linkGoFurther({ course, goal, lessonId: saved.lessonId });
 
   return finish({ goalId, lessonId: saved.lessonId, status: "ready" });
+}
+
+export async function explainQuestionWorkflow(
+  input: ExplainQuestionInput,
+): Promise<ExplainQuestionResult> {
+  "use workflow";
+
+  return closeStreamAfter(() => explainQuestion(input));
 }

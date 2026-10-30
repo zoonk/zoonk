@@ -35,3 +35,20 @@ export async function progressStep<T extends string>(message: StepStreamMessage<
   await using stream = createStepStream<T>();
   await stream.status(message);
 }
+
+// The SDK leaves a finished run's stream open (https://github.com/vercel/workflow/issues/964), so
+// readers wait out the function limit. Remove this once that ships.
+async function closeStreamStep(): Promise<void> {
+  "use step";
+
+  await getWritable().close();
+}
+
+/** Closes the run's stream once `work` settles, even when it throws: nothing can write to it after. */
+export async function closeStreamAfter<T>(work: () => Promise<T>): Promise<T> {
+  try {
+    return await work();
+  } finally {
+    await closeStreamStep();
+  }
+}

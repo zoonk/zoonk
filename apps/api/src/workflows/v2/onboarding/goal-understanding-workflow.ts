@@ -6,6 +6,7 @@ import {
 } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
+import { closeStreamAfter } from "../../_shared/stream-status";
 import { claimRunToken } from "../_shared/run-token";
 import {
   completeUnderstandingStep,
@@ -55,13 +56,7 @@ export type GoalUnderstandingRunResult = {
   status: "joined" | "missing" | "understood";
 };
 
-export async function goalUnderstandingWorkflow({
-  draftId,
-}: {
-  draftId: string;
-}): Promise<GoalUnderstandingRunResult> {
-  "use workflow";
-
+async function understandGoal(draftId: string): Promise<GoalUnderstandingRunResult> {
   const { workflowRunId } = getWorkflowMetadata();
   const { conflict } = await claimRunToken(`goal-understanding:${draftId}`);
 
@@ -99,4 +94,14 @@ export async function goalUnderstandingWorkflow({
   await startLevelTests({ pairs, userId: draft.userId });
 
   return { draftId, status: "understood" };
+}
+
+export async function goalUnderstandingWorkflow({
+  draftId,
+}: {
+  draftId: string;
+}): Promise<GoalUnderstandingRunResult> {
+  "use workflow";
+
+  return closeStreamAfter(() => understandGoal(draftId));
 }
