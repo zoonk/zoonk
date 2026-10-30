@@ -134,7 +134,7 @@
   "conversation_starting": "ad754f6cf5271d17632b742b3172539c6a7705e35e12ae1ae7c850ddbea8403a",
   "conversation_still_closing": "135b2915c09f7957aa9133cab8ba5f20ea41992e8b38a7d8268dc4298326891d",
   "conversation_still_to_get_across": "5b5d2a057856102c77210047dad4eefd94767a921b15904522fa0a1c0ed2f627",
-  "conversation_study_time_used_up": "b993f04af4f1c7faba0748351dbdfa66bced89c365619586e5fd11303e356f72",
+  "conversation_study_time_used_up": "2bd27612849ed3872ddc533129c64bcdaf84372c0996d3e1db5e925b7ed5a5b1",
   "conversation_take_over": "b9500ebdb0bbbf4467f931e7fa95d8e5e05d4498bf3f3999257e7383fc4861ed",
   "conversation_taken_over": "5a13ba92e3666c2402d3b76b5a9a870ef91cd3c8429e73fa3c96df102155a800",
   "conversation_talking": "392fed3346bdda39005afdfcc14edb959d5678c4b880bb6e7a720ddebb5aeb3d",
@@ -274,7 +274,7 @@
     <string name="conversation_call_length">Duração da conversa</string>
     <string name="conversation_longer_calls_plus">O Plus inclui conversas mais longas.</string>
     <string name="conversation_opens_when_ready">Sua conversa abre assim que estiver pronta.</string>
-    <string name="conversation_study_time_used_up">Você chegou ao fim do tempo de estudo de hoje. A conversa estará na sua próxima sessão.</string>
+    <string name="conversation_study_time_used_up">Você atingiu o tempo de estudo de hoje. Você pode fazer essa conversa na sua próxima sessão.</string>
     <string name="conversation_back_to_today">Voltar para Hoje</string>
     <string name="conversation_get_ready">Preparar a conversa</string>
     <string name="conversation_get_ready_description">Este desafio é uma conversa curta sobre a unidade. Primeiro, a conversa é criada para o seu nível de conversação, o que leva até meio minuto.</string>

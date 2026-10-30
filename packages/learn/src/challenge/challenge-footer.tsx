@@ -8,11 +8,7 @@ import { useExtracted } from "next-intl";
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { PlusNotice } from "../_components/plus-lock";
-import {
-  StudyTimeUsedUpActions,
-  StudyTimeUsedUpLine,
-  StudyTimeUsedUpNote,
-} from "../_components/study-time-used-up";
+import { StudyTimeUsedUpActions } from "../_components/study-time-used-up";
 import { TaskActions } from "../_components/task-layout";
 import { daysBetween } from "../_utils/iso-date";
 import { useLearnRoutes } from "../learn-context";
@@ -22,6 +18,7 @@ import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
 import { MoveFailed } from "./challenge-move-failed";
 import { ChallengeCallPlusNotice, SeePlusAction } from "./challenge-plus-lock";
+import { ChallengeUsedUpLine, WeeklyUsedUpLine } from "./challenge-used-up";
 
 function StatusLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
   return (
@@ -226,29 +223,6 @@ function WaitReasonLine({ reason }: { reason: "challenge" | "lessons" }) {
   );
 }
 
-/**
- * Past today's study time the week's challenge doesn't come back on its own: the next study day
- * re-plans without it (RULES R24).
- */
-function WeeklyUsedUpLine({ movable }: { movable: boolean }) {
-  const t = useExtracted();
-
-  return (
-    <StudyTimeUsedUpNote>
-      {movable
-        ? t({
-            description:
-              'Study time is the learner\'s daily amount. "It" is this weekly challenge.',
-            message: "You've reached today's study time. Move it to Monday to keep it.",
-          })
-        : t({
-            description: "Study time is the learner's daily amount.",
-            message: "You've reached today's study time.",
-          })}
-    </StudyTimeUsedUpNote>
-  );
-}
-
 function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } {
   const t = useExtracted();
   const { challenge, hrefs, start } = useChallengeScreen();
@@ -280,7 +254,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
             challenge.kind === "weekly" ? (
               <WeeklyUsedUpLine movable={movable} />
             ) : (
-              <StudyTimeUsedUpLine
+              <ChallengeUsedUpLine
                 nextStudyDate={challenge.nextStudyDate}
                 today={challenge.today}
               />

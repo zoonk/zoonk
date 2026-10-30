@@ -484,24 +484,6 @@ msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Voltar"
 
-#. Study time is the learner's daily amount. "It" is the call or challenge they opened.
-#: src/_components/study-time-used-up.tsx
-msgctxt "jwkazv"
-msgid "You've reached today's study time. It'll be in your next session."
-msgstr "Você já usou seu tempo de estudo de hoje. Vai ficar para sua próxima sessão."
-
-#. Study time is the learner's daily amount. "It" is the call or challenge they opened.
-#: src/_components/study-time-used-up.tsx
-msgctxt "-Eq2VH"
-msgid "You've reached today's study time. It'll be here tomorrow."
-msgstr "Você já usou seu tempo de estudo de hoje. Fica para amanhã."
-
-#. Study time is the learner's daily amount. "It" is the call or challenge they opened. {day} is a weekday, like "Monday".
-#: src/_components/study-time-used-up.tsx
-msgctxt "--X_qb"
-msgid "You've reached today's study time. It'll be here on {day}."
-msgstr "Você já usou seu tempo de estudo de hoje. Fica para {day}."
-
 #: src/_components/study-time-used-up.tsx
 #: src/challenge/challenge-moved-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
@@ -1327,18 +1309,6 @@ msgctxt "zgw8mc"
 msgid "Mock exams come with Plus: whenever you want, and every week in your plan."
 msgstr "O Plus inclui simulados: quando você quiser e toda semana no seu plano."
 
-#. Study time is the learner's daily amount. "It" is this weekly challenge.
-#: src/challenge/challenge-footer.tsx
-msgctxt "4jTLf0"
-msgid "You've reached today's study time. Move it to Monday to keep it."
-msgstr "Você já estudou o tempo previsto para hoje. Passe para segunda-feira para não perder o desafio."
-
-#. Study time is the learner's daily amount.
-#: src/challenge/challenge-footer.tsx
-msgctxt "PjSBHJ"
-msgid "You've reached today's study time."
-msgstr "Você já estudou o tempo previsto para hoje."
-
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
@@ -1585,6 +1555,36 @@ msgstr "O que ele vai perguntar"
 msgctxt "eNbJHf"
 msgid "{count, plural, one {# topic} other {# topics}}"
 msgstr "{count, plural, one {# tópico} other {# tópicos}}"
+
+#. Study time is the learner's daily amount.
+#: src/challenge/challenge-used-up.tsx
+msgctxt "mRVajh"
+msgid "You've reached today's study time. The challenge will be in your next session."
+msgstr "Você usou todo o seu tempo de estudo de hoje. O desafio fica para a sua próxima sessão."
+
+#. Study time is the learner's daily amount.
+#: src/challenge/challenge-used-up.tsx
+msgctxt "8FeiIg"
+msgid "You've reached today's study time. The challenge will be here tomorrow."
+msgstr "Você usou todo o seu tempo de estudo de hoje. O desafio vai estar aqui amanhã."
+
+#. Study time is the learner's daily amount. {day} is a weekday, like "Monday".
+#: src/challenge/challenge-used-up.tsx
+msgctxt "aWkKNY"
+msgid "You've reached today's study time. The challenge will be here on {day}."
+msgstr "Você usou todo o seu tempo de estudo de hoje. O desafio vai estar aqui {day}."
+
+#. Study time is the learner's daily amount.
+#: src/challenge/challenge-used-up.tsx
+msgctxt "c9tebJ"
+msgid "You've reached today's study time. Move the challenge to Monday to keep it."
+msgstr "Você usou todo o seu tempo de estudo de hoje. Para manter o desafio, passe ele para segunda-feira."
+
+#. Study time is the learner's daily amount.
+#: src/challenge/challenge-used-up.tsx
+msgctxt "PjSBHJ"
+msgid "You've reached today's study time."
+msgstr "Você já estudou o tempo previsto para hoje."
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
@@ -4627,6 +4627,12 @@ msgstr "Preparando sua conversa"
 msgctxt "dKxF7Y"
 msgid "It opens here as soon as it's ready."
 msgstr "Ela abre aqui assim que estiver pronta."
+
+#. Study time is the learner's daily amount.
+#: src/language/conversation/conversation-intro.tsx
+msgctxt "KD6-UQ"
+msgid "You've reached today's study time. You can make this call in your next session."
+msgstr "Você usou todo o seu tempo de estudo de hoje. Você pode começar essa conversa na sua próxima sessão."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/unit/practice-conversation.tsx

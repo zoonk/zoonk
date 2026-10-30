@@ -6,7 +6,7 @@ import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { PageEyebrow, PageSectionTitle } from "../../_components/page";
-import { StudyTimeUsedUpActions, StudyTimeUsedUpLine } from "../../_components/study-time-used-up";
+import { StudyTimeUsedUpActions, StudyTimeUsedUpNote } from "../../_components/study-time-used-up";
 import { TaskActions, TaskAsideContent } from "../../_components/task-layout";
 import { useFormatDuration } from "../../_utils/time-format";
 import { ChallengeCallPlusNotice, SeePlusAction } from "../../challenge/challenge-plus-lock";
@@ -132,10 +132,20 @@ function preloadLiveCall() {
  * Its status region is mounted from the start, so a line that replaces a refused Start is read out.
  */
 function CallIntroFooter({ onStart, start }: { onStart: () => void; start: CallIntroFooterState }) {
+  const t = useExtracted();
+
   return (
     <>
       <div aria-atomic="true" aria-live="polite" className="empty:absolute" role="status">
-        {start === "dailyLimitReached" && <StudyTimeUsedUpLine />}
+        {start === "dailyLimitReached" && (
+          <StudyTimeUsedUpNote>
+            {t({
+              description: "Study time is the learner's daily amount.",
+              message:
+                "You've reached today's study time. You can make this call in your next session.",
+            })}
+          </StudyTimeUsedUpNote>
+        )}
       </div>
       <CallIntroActions onStart={onStart} start={start} />
     </>

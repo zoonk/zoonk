@@ -105,7 +105,7 @@
     <string name="conversation_call_length">Call length</string>
     <string name="conversation_longer_calls_plus">Longer calls come with Plus.</string>
     <string name="conversation_opens_when_ready">Your call opens as soon as it\'s ready.</string>
-    <string name="conversation_study_time_used_up">You\'ve reached today\'s study time. It\'ll be in your next session.</string>
+    <string name="conversation_study_time_used_up">You\'ve reached today\'s study time. You can make this call in your next session.</string>
     <string name="conversation_back_to_today">Back to Today</string>
     <string name="conversation_get_ready">Get the call ready</string>
     <string name="conversation_get_ready_description">This challenge is a short call about the unit. It\'s written for your speaking level first, which takes up to half a minute.</string>

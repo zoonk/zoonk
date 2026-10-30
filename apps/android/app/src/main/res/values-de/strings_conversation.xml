@@ -134,7 +134,7 @@
   "conversation_starting": "4cc25e058f47e9ac5a1d4049fc13c74eef173dcecab745e0f1ee298e65667e02",
   "conversation_still_closing": "d5437f3ce77c03bea2a4f644cf0344f65155a1752ba735995ce281bab219bf1b",
   "conversation_still_to_get_across": "a2d649b881fa08a2bd794336c5e222a709ee0f6c671626a55a739f3f1a7ee676",
-  "conversation_study_time_used_up": "cd3bed811be7b3e6d06670df6fdc692cf5fd0bed6eb3d59c9dd1460e5814843e",
+  "conversation_study_time_used_up": "a1e79fd1c2a450384eda797e246965f0919b13c91cd214be6a7d92ff66912601",
   "conversation_take_over": "15f446f205a55395ea340e481766c132acb4d12e477d437c2e31bf9e3fd1caf7",
   "conversation_taken_over": "a998162b0d0a55e292cef204ce55e2124e22319be1a12cfd82e1b162ca4ef310",
   "conversation_talking": "d4e6a87623d68d6e103762c562073f9d82d6224bf649881cfbc36e8fce54c0cf",
@@ -273,7 +273,7 @@
     <string name="conversation_call_length">Gesprächsdauer</string>
     <string name="conversation_longer_calls_plus">Mit Plus sind längere Gespräche möglich.</string>
     <string name="conversation_opens_when_ready">Dein Gespräch öffnet sich, sobald es bereit ist.</string>
-    <string name="conversation_study_time_used_up">Deine Lernzeit für heute ist aufgebraucht. Das Gespräch ist in deiner nächsten Lerneinheit dabei.</string>
+    <string name="conversation_study_time_used_up">Du hast deine heutige Lernzeit aufgebraucht. Du kannst dieses Gespräch in deiner nächsten Lerneinheit führen.</string>
     <string name="conversation_back_to_today">Zurück zu Heute</string>
     <string name="conversation_get_ready">Gespräch vorbereiten</string>
     <string name="conversation_get_ready_description">Diese Herausforderung ist ein kurzes Gespräch über die Lerneinheit. Es wird zuerst für dein Sprachniveau erstellt. Das dauert bis zu einer halben Minute.</string>

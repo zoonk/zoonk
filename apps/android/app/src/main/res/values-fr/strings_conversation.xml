@@ -134,7 +134,7 @@
   "conversation_starting": "0aba5c1f4b6454eed21279422e0e48de39bb63e4bdab274312a9406e1ba8dbfd",
   "conversation_still_closing": "cbb9e4caecbe05a28a7aeb26b7d3a6a3a7a7886fa6516d6ac249c9a29ba3b40b",
   "conversation_still_to_get_across": "e6da7b76beeecf6786abdcc2535574116681ada10c32c3b414e2ca3e3264d870",
-  "conversation_study_time_used_up": "063374564a7c88a663222b967769f4bc60cbd5abcda3f8bb878f0302d970784d",
+  "conversation_study_time_used_up": "f6b8b7b223267f988779a1525e5d271f7c0b167c7d65bd29c2caa0cdb55a694c",
   "conversation_take_over": "1cf0136b4978af1f34b5f3acaa3fca452746a7a73aaaddb68b9278aa7b54d652",
   "conversation_taken_over": "153273ebe7c6256aaffaeb256de1e8952e17174d91ba212a160d81a19eb04715",
   "conversation_talking": "d8280965024ddc06237ff3b86f68f248a57bbb9affbc024e9b1b1b1622a773c0",
@@ -274,7 +274,7 @@
     <string name="conversation_call_length">Durée de l’appel</string>
     <string name="conversation_longer_calls_plus">Avec Plus, les appels durent plus longtemps.</string>
     <string name="conversation_opens_when_ready">Ton appel s’ouvrira dès qu’il sera prêt.</string>
-    <string name="conversation_study_time_used_up">Tu as atteint ta durée d’étude pour aujourd’hui. L’appel sera dans ta prochaine séance.</string>
+    <string name="conversation_study_time_used_up">Tu as atteint ta durée d’étude pour aujourd’hui. Tu pourras passer cet appel lors de ta prochaine séance.</string>
     <string name="conversation_back_to_today">Retour à Aujourd’hui</string>
     <string name="conversation_get_ready">Préparer l’appel</string>
     <string name="conversation_get_ready_description">Ce défi est un court appel sur l’unité. Il est d’abord préparé pour ton niveau à l’oral, ce qui prend jusqu’à 30 secondes.</string>

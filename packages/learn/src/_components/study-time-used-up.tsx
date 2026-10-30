@@ -2,54 +2,15 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { daysBetween, useFormatIsoDate } from "../_utils/iso-date";
 import { LearnLink } from "../learn-link";
 import { TaskMainLink } from "../shell/task-frame";
 import { TaskActions } from "./task-layout";
-
-type NextStudyDay = { nextStudyDate?: string | null; today?: string };
-
-function BackOn({ nextStudyDate, today }: NextStudyDay) {
-  const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-
-  if (!nextStudyDate || !today) {
-    return t({
-      description:
-        'Study time is the learner\'s daily amount. "It" is the call or challenge they opened.',
-      message: "You've reached today's study time. It'll be in your next session.",
-    });
-  }
-
-  if (daysBetween(today, nextStudyDate) === 1) {
-    return t({
-      description:
-        'Study time is the learner\'s daily amount. "It" is the call or challenge they opened.',
-      message: "You've reached today's study time. It'll be here tomorrow.",
-    });
-  }
-
-  return t({
-    description:
-      'Study time is the learner\'s daily amount. "It" is the call or challenge they opened. {day} is a weekday, like "Monday".',
-    message: "You've reached today's study time. It'll be here on {day}.",
-    values: { day: formatDate(nextStudyDate, "weekday") },
-  });
-}
 
 /**
  * Not an alert: its footer's status region reads it out, and Next.js announces a new page itself.
  */
 export function StudyTimeUsedUpNote({ children }: { children: React.ReactNode }) {
   return <p className="text-muted-foreground text-sm text-pretty">{children}</p>;
-}
-
-export function StudyTimeUsedUpLine({ nextStudyDate, today }: NextStudyDay) {
-  return (
-    <StudyTimeUsedUpNote>
-      <BackOn nextStudyDate={nextStudyDate} today={today} />
-    </StudyTimeUsedUpNote>
-  );
 }
 
 export function StudyTimeUsedUpActions({ href, main }: { href: string; main?: React.ReactNode }) {

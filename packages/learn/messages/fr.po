@@ -484,24 +484,6 @@ msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Retour"
 
-#. Study time is the learner's daily amount. "It" is the call or challenge they opened.
-#: src/_components/study-time-used-up.tsx
-msgctxt "jwkazv"
-msgid "You've reached today's study time. It'll be in your next session."
-msgstr "Tu as utilisé tout ton temps d’étude du jour. Tu retrouveras cette activité à ta prochaine séance."
-
-#. Study time is the learner's daily amount. "It" is the call or challenge they opened.
-#: src/_components/study-time-used-up.tsx
-msgctxt "-Eq2VH"
-msgid "You've reached today's study time. It'll be here tomorrow."
-msgstr "Tu as utilisé tout ton temps d’étude du jour. Tu retrouveras cette activité demain."
-
-#. Study time is the learner's daily amount. "It" is the call or challenge they opened. {day} is a weekday, like "Monday".
-#: src/_components/study-time-used-up.tsx
-msgctxt "--X_qb"
-msgid "You've reached today's study time. It'll be here on {day}."
-msgstr "Tu as utilisé tout ton temps d’étude du jour. Tu retrouveras cette activité {day}."
-
 #: src/_components/study-time-used-up.tsx
 #: src/challenge/challenge-moved-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
@@ -1327,18 +1309,6 @@ msgctxt "zgw8mc"
 msgid "Mock exams come with Plus: whenever you want, and every week in your plan."
 msgstr "Les examens blancs sont inclus dans Plus : quand tu veux, et chaque semaine dans ton plan."
 
-#. Study time is the learner's daily amount. "It" is this weekly challenge.
-#: src/challenge/challenge-footer.tsx
-msgctxt "4jTLf0"
-msgid "You've reached today's study time. Move it to Monday to keep it."
-msgstr "Tu as étudié tout le temps prévu aujourd’hui. Reporte ce défi à lundi pour le garder."
-
-#. Study time is the learner's daily amount.
-#: src/challenge/challenge-footer.tsx
-msgctxt "PjSBHJ"
-msgid "You've reached today's study time."
-msgstr "Tu as étudié tout le temps prévu aujourd’hui."
-
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
@@ -1585,6 +1555,36 @@ msgstr "Ce qu’il demandera"
 msgctxt "eNbJHf"
 msgid "{count, plural, one {# topic} other {# topics}}"
 msgstr "{count, plural, one {# sujet} other {# sujets}}"
+
+#. Study time is the learner's daily amount.
+#: src/challenge/challenge-used-up.tsx
+msgctxt "mRVajh"
+msgid "You've reached today's study time. The challenge will be in your next session."
+msgstr "Tu as utilisé tout ton temps d’étude pour aujourd’hui. Tu retrouveras le défi à ta prochaine séance."
+
+#. Study time is the learner's daily amount.
+#: src/challenge/challenge-used-up.tsx
+msgctxt "8FeiIg"
+msgid "You've reached today's study time. The challenge will be here tomorrow."
+msgstr "Tu as utilisé tout ton temps d’étude pour aujourd’hui. Le défi sera là demain."
+
+#. Study time is the learner's daily amount. {day} is a weekday, like "Monday".
+#: src/challenge/challenge-used-up.tsx
+msgctxt "aWkKNY"
+msgid "You've reached today's study time. The challenge will be here on {day}."
+msgstr "Tu as utilisé tout ton temps d’étude pour aujourd’hui. Le défi sera là {day}."
+
+#. Study time is the learner's daily amount.
+#: src/challenge/challenge-used-up.tsx
+msgctxt "c9tebJ"
+msgid "You've reached today's study time. Move the challenge to Monday to keep it."
+msgstr "Tu as utilisé tout ton temps d’étude pour aujourd’hui. Reporte le défi à lundi pour le garder."
+
+#. Study time is the learner's daily amount.
+#: src/challenge/challenge-used-up.tsx
+msgctxt "PjSBHJ"
+msgid "You've reached today's study time."
+msgstr "Tu as étudié tout le temps prévu aujourd’hui."
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
@@ -4627,6 +4627,12 @@ msgstr "Préparation de ton appel"
 msgctxt "dKxF7Y"
 msgid "It opens here as soon as it's ready."
 msgstr "Il s’ouvrira ici dès qu’il sera prêt."
+
+#. Study time is the learner's daily amount.
+#: src/language/conversation/conversation-intro.tsx
+msgctxt "KD6-UQ"
+msgid "You've reached today's study time. You can make this call in your next session."
+msgstr "Tu as utilisé tout ton temps d’étude pour aujourd’hui. Tu pourras passer cet appel à ta prochaine séance."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/unit/practice-conversation.tsx
