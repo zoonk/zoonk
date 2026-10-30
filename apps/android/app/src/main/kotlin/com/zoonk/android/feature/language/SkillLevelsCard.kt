@@ -116,7 +116,7 @@ private fun TargetLabel(
     date: LocalDate?,
 ) {
     val style = MaterialTheme.typography.bodySmall
-    val tick = MaterialTheme.colorScheme.onSurface.copy(alpha = TARGET_ALPHA)
+    val tick = MaterialTheme.colorScheme.onSurfaceVariant
     val tickHeight = with(LocalDensity.current) { style.fontSize.toDp() }
 
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -279,7 +279,7 @@ private fun TrendArrow(trend: LanguageSkillLevel.Trend) {
 @Composable
 private fun Modifier.targetTick(share: Double?): Modifier {
     if (share == null) return this
-    val color = MaterialTheme.colorScheme.onSurface.copy(alpha = TARGET_ALPHA)
+    val color = MaterialTheme.colorScheme.onSurfaceVariant
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     return drawWithContent {
         drawContent()
@@ -343,4 +343,3 @@ private val TREND_GAP = 2.dp
 private val TARGET_WIDTH = 1.5.dp
 private val DASH = 3.dp
 private val TICK_REACH = 8.dp
-private const val TARGET_ALPHA = 0.5f

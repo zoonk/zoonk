@@ -31,7 +31,7 @@ fun CanDoMark(
     modifier: Modifier = Modifier,
 ) {
     val fill = MaterialTheme.colorScheme.tertiary
-    val ring = MaterialTheme.colorScheme.onSurface.copy(alpha = RING_ALPHA)
+    val ring = MaterialTheme.colorScheme.onSurfaceVariant
 
     Canvas(modifier.size(markSize())) {
         val radius = size.minDimension * DOT_SHARE / 2
@@ -83,4 +83,3 @@ fun PronunciationRow(
 }
 
 private val RING = 1.5.dp
-private const val RING_ALPHA = 0.3f

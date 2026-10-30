@@ -36,7 +36,7 @@ fun LevelValue(
         text =
             buildAnnotatedString {
                 append(label)
-                withStyle(quiet) { append(" → $target") }
+                withStyle(quiet) { append("\u00A0→\u00A0$target") }
             },
         modifier = modifier.clearAndSetSemantics { text = spoken },
         style = style,
