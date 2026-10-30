@@ -8,6 +8,7 @@ import { PageSectionTitle } from "../_components/page";
 import { useEssayScreen } from "./essay-context";
 import { CriteriaRows } from "./essay-feedback";
 import { useCriterionName } from "./essay-labels";
+import { rewriteStep } from "./essay-rewrite-step";
 
 export function CriteriaInView() {
   const t = useExtracted();
@@ -41,21 +42,31 @@ export function RewriteGuide({ onSeeGrade }: { onSeeGrade: () => void }) {
     return null;
   }
 
-  const { nextStep } = grade;
-  const criterion = grade.criteria.find((item) => item.id === nextStep?.criterionId);
+  const step = rewriteStep(grade);
 
   return (
     <Callout>
       <LightbulbIcon aria-hidden="true" />
       <div className="flex flex-col gap-1">
-        <p>
-          {criterion && (
-            <span className="font-semibold">
-              {t("Next step: {criterion}", { criterion: criterionName(criterion) })}{" "}
-            </span>
-          )}
-          {nextStep ? nextStep.text : t("Every criterion has full marks in this estimate.")}
-        </p>
+        {step.kind === "tooShort" && (
+          <p>
+            <span className="font-semibold">{t("Too short to grade")} </span>
+            {t("Write the whole essay, then send it again.")}
+          </p>
+        )}
+        {step.kind === "nextStep" && (
+          <p>
+            {step.criterion && (
+              <span className="font-semibold">
+                {t("Next step: {criterion}", { criterion: criterionName(step.criterion) })}{" "}
+              </span>
+            )}
+            {step.text}
+          </p>
+        )}
+        {step.kind === "fullMarks" && (
+          <p>{t("Every criterion has full marks in this estimate.")}</p>
+        )}
         <Button className="mt-1 self-start" onClick={onSeeGrade} size="sm" variant="outline">
           {t("See the grade")}
         </Button>
