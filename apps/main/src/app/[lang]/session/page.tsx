@@ -157,7 +157,6 @@ async function NextStepView({
     <SessionMain>
       <SessionNextStopClient
         alternative={lesson === "ready" ? null : alternative}
-        asked={screen.request.status !== "idle"}
         day={day}
         generationId={getWritingRunId({ request: screen.request, state })}
         goalId={facts.goal.id}

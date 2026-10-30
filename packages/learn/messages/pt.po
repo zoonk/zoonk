@@ -11688,6 +11688,11 @@ msgctxt "d562ST"
 msgid "Often tested"
 msgstr "Cai bastante em provas"
 
+#: src/session/next-stop.tsx
+msgctxt "z-nS8k"
+msgid "Your lesson is ready."
+msgstr "Sua aula está pronta."
+
 #: src/session/question-block/block-aside.tsx
 msgctxt "KpN3WY"
 msgid "Case"

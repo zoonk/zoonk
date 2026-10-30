@@ -295,8 +295,6 @@ export function useStudyNavigation(sessionId: string) {
   return {
     addExtraTime: () => navigate(() => addExtraStudyBlockAction(input())),
     continueSession: () => navigate(() => openNextStudyBlockAction(input())),
-    openWrittenLesson: (blockId: string) =>
-      navigate(() => openWrittenLessonAction({ ...input(), blockId })),
     stop: async () => {
       const stopped = await stopStudySessionAction(input());
 

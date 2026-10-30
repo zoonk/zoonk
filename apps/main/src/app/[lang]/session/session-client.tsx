@@ -135,7 +135,6 @@ function useApplyTap({ entry, tap }: { entry: DayEntry | null; tap: NextStopTap 
 
 export function SessionNextStopClient({
   alternative,
-  asked,
   day,
   generationId,
   goalId,
@@ -146,7 +145,6 @@ export function SessionNextStopClient({
   userId,
 }: {
   alternative: StudyBlock | null;
-  asked: boolean;
   day: StudyDay;
   generationId: string | null;
   goalId: string;
@@ -192,8 +190,6 @@ export function SessionNextStopClient({
     <GenerationFollowerProvider follower={WorkflowRunFollower}>
       <NextStop
         actions={{
-          openWrittenLesson: (target) =>
-            "id" in target ? navigation.openWrittenLesson(target.id) : start(target),
           readLesson: readWaitedLesson,
           recordWait: (milliseconds) =>
             void recordGenerationWaitAction({ contentKind: "lesson", locale, milliseconds }),
@@ -202,7 +198,6 @@ export function SessionNextStopClient({
           stop: navigation.stop,
         }}
         alternative={tapped ? null : alternative}
-        asked={tapped ? false : asked}
         block={drawn}
         blocks={day.blocks}
         exitHref={EXIT_HREF}

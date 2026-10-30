@@ -237,7 +237,7 @@ test.describe("Today's session", () => {
     await page.context().close();
   });
 
-  test("shows the lesson's writing as it happens and opens it once written", async ({
+  test("shows the lesson's writing as it happens and offers it once written", async ({
     browser,
   }) => {
     const { lesson, user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
@@ -268,6 +268,13 @@ test.describe("Today's session", () => {
     await writeStudyLesson(lesson.id);
     events.push({ entityId: lesson.id, status: "completed", step: "lessonReady" });
 
+    await expect(
+      page.getByRole("status").filter({ hasText: "Your lesson is ready." }),
+    ).toBeVisible();
+
+    await expect(page).toHaveURL(/\/session/u);
+
+    await page.getByRole("main").getByRole("button", { exact: true, name: "Start" }).click();
     await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
     await page.context().close();
   });

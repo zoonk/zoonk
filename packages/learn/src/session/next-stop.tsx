@@ -30,8 +30,6 @@ export type NextStopActions = {
   readLesson?: (
     lessonId: string,
   ) => Promise<{ generationId: string | null; lesson: NextStopLesson } | null>;
-  /** Opens an already-written lesson, never asking for more generation. */
-  openWrittenLesson?: (step: DayStep) => Promise<boolean>;
   start: (step: DayStep) => Promise<boolean>;
   stop: () => Promise<boolean>;
 };
@@ -83,42 +81,39 @@ function StartButton({
 }
 
 /**
- * A written lesson the learner waited for opens on its own, since they already asked; one ready
- * when the screen opened waits for Start.
+ * A lesson written while the learner waited is offered, never opened on its own: the learner may be
+ * reading, or doing what "While you wait" offered.
  */
-function useOpenWhenWritten({
+function useWrittenWhileWaiting({
   actions,
-  asked,
   lesson,
-  open,
 }: {
   actions: NextStopActions;
-  asked: boolean;
   lesson: NextStopLesson;
-  open: () => void;
-}) {
+}): boolean {
+  const [waited, setWaited] = useState(lesson !== "ready");
   const waitedSince = useRef<number | null>(null);
+  const record = useEffectEvent((since: number) => actions.recordWait?.(Date.now() - since));
 
-  const onWritten = useEffectEvent((since: number) => {
-    actions.recordWait?.(Date.now() - since);
-    open();
-  });
+  if (lesson !== "ready" && !waited) {
+    setWaited(true);
+  }
 
-  // A lesson the learner already asked for counts as waited for, so one written before the screen
-  // showed it opens too.
   useEffect(() => {
     if (lesson !== "ready") {
       waitedSince.current ??= Date.now();
       return;
     }
 
-    const since = waitedSince.current ?? (asked ? Date.now() : null);
+    const since = waitedSince.current;
 
     if (since !== null) {
       waitedSince.current = null;
-      onWritten(since);
+      record(since);
     }
-  }, [asked, lesson]);
+  }, [lesson]);
+
+  return waited && lesson === "ready";
 }
 
 function useStartState({
@@ -126,16 +121,13 @@ function useStartState({
   block,
   isReady,
   tap,
-  written,
 }: {
   actions: NextStopActions;
   block: DayStep;
   isReady: boolean;
   tap: NextStopTap | null;
-  written: { failed: boolean; isPending: boolean };
 }) {
-  const tapOpening = tap?.state === "opening";
-  const opening = tapOpening || written.isPending;
+  const opening = tap?.state === "opening";
 
   const start = useSessionAction({
     action: () => actions.start(block),
@@ -143,21 +135,19 @@ function useStartState({
   });
 
   const busy = start.isPending || opening;
-
-  const failed =
-    start.failed || ((tap?.state === "failed" || written.failed) && !start.isPending && !opening);
+  const failed = start.failed || (tap?.state === "failed" && !start.isPending && !opening);
 
   // The tap's wait goes on through what opens the step after it, so its line neither starts over
   // nor blinks when the tap hands over.
   const [tappedAt, setTappedAt] = useState<number>();
 
-  if (tapOpening && tappedAt !== tap.tappedAt) {
+  if (opening && tappedAt !== tap.tappedAt) {
     setTappedAt(tap.tappedAt);
   } else if (!busy && tappedAt !== undefined) {
     setTappedAt(undefined);
   }
 
-  const wait = useSlowWait(busy, { since: tapOpening ? tap.tappedAt : tappedAt });
+  const wait = useSlowWait(busy, { since: opening ? tap.tappedAt : tappedAt });
 
   return { busy, failed, run: start.run, wait };
 }
@@ -179,10 +169,10 @@ function NextStopActionBar({
   notWritten: LessonNotWritten | null;
   sessionBar: { completed: number; total: number };
   tap: NextStopTap | null;
-  written: { failed: boolean; isPending: boolean };
+  written: boolean;
 }) {
   const t = useExtracted();
-  const start = useStartState({ actions, block, isReady, tap, written });
+  const start = useStartState({ actions, block, isReady, tap });
   const stop = useSessionAction({ action: actions.stop });
   const canStop = sessionBar.completed > 0;
 
@@ -219,7 +209,7 @@ function NextStopActionBar({
         {isReady && (
           <StartButton
             busy={start.busy}
-            focus={Boolean(tap?.focus)}
+            focus={Boolean(tap?.focus) || written}
             onClick={start.run}
             step={block}
           />
@@ -240,7 +230,6 @@ function NextStopActionBar({
 export function NextStop({
   actions,
   alternative,
-  asked = false,
   block,
   blocks,
   exitHref,
@@ -253,7 +242,6 @@ export function NextStop({
 }: {
   actions: NextStopActions;
   alternative: DayStep | null;
-  asked?: boolean;
   block: DayStep;
   blocks: readonly DayStep[];
   exitHref: string;
@@ -273,15 +261,7 @@ export function NextStop({
   const queue = getSessionQueue({ blocks, nextPosition: block.position });
   const aside = useSessionQueueAside(queue);
 
-  const written = useSessionAction({
-    action: () => actions.openWrittenLesson?.(block) ?? Promise.resolve(false),
-  });
-
-  useOpenWhenWritten({ actions, asked, lesson, open: written.run });
-
-  // Busy as soon as the asked-for lesson is written, so nothing looks idle before it opens.
-  const writtenOpening = written.isPending || (asked && isReady && !written.failed);
-
+  const written = useWrittenWhileWaiting({ actions, lesson });
   const facts = [formatDuration(block.estimatedMinutes), block.oftenTested && t("Often tested")];
 
   return (
@@ -301,6 +281,11 @@ export function NextStop({
           <TaskMeta facts={facts} />
         </div>
 
+        {/* Empty, it stays in the page, so it's heard when it speaks. */}
+        <p className="text-sm text-pretty empty:sr-only" role="status">
+          {written && t("Your lesson is ready.")}
+        </p>
+
         {!isReady && notWritten && (
           <NotWritten actions={actions} block={block} reason={notWritten} />
         )}
@@ -318,7 +303,7 @@ export function NextStop({
         notWritten={notWritten}
         sessionBar={sessionBar}
         tap={tap}
-        written={{ failed: written.failed, isPending: writtenOpening }}
+        written={written}
       />
     </SessionFrame>
   );
