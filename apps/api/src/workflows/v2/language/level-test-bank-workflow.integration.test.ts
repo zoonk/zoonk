@@ -142,6 +142,7 @@ describe(levelTestBankWorkflow, () => {
     });
 
     const owner = await start(levelTestBankWorkflow, [{ pair }]);
+
     await vi.waitFor(() => expect(generateLevelTestBank).toHaveBeenCalledOnce(), {
       timeout: OWNER_WRITING_MS,
     });
