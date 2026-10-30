@@ -2,6 +2,7 @@ import StoreKit
 import SwiftUI
 
 private enum AccountDestination: Hashable {
+  case createAccount
   case deleteAccount(AccountDeletionDestination)
   case memory
   case preferences
@@ -29,42 +30,38 @@ struct AccountSheet: View {
   @State private var path = [AccountDestination]()
 
   var body: some View {
-    NavigationStack(path: $path) {
-      accountContent
-        .toolbar {
-          if !requiresProfileSetup {
-            ToolbarItem(placement: .topBarTrailing) {
-              closeButton
-            }
+    Group {
+      if showsSections {
+        PaneSplit {
+          NavigationStack {
+            accountContent(
+              sectionOpen: AccountSectionOpen(shown: shownSection) { path = [$0] })
           }
-        }
-        .navigationDestination(for: AccountDestination.self) { destination in
-          switch destination {
-          case .deleteAccount(let deletion):
-            AccountDeletionView(
-              email: deletion.email,
-              hasAppleAccount: deletion.hasAppleAccount,
-              storeSubscriptionProvider: deletion.storeSubscriptionProvider)
-          case .memory:
-            MemoryView()
-          case .preferences:
-            PreferencesView()
-          case .profile:
-            if let account = session.account {
-              ProfileEditorView(account: account, isRequiredSetup: false) {
-                path.append(.deleteAccount(makeDeletionDestination(account)))
+        } secondary: {
+          NavigationStack(path: sectionPath) {
+            destination(shownSection)
+              .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                  closeButton
+                }
               }
-              .id(account.user.id)
-            }
-          case .plus(let subscription):
-            PlusStatusView(subscription: subscription)
-          case .subscription(let appAccountToken):
-            SubscriptionView(appAccountToken: appAccountToken)
+              .navigationDestination(for: AccountDestination.self, destination: destination)
           }
+        } single: {
+          stack
         }
-        .onChange(of: session.state) { _, state in
-          reconcileNavigation(state)
-        }
+      } else {
+        stack
+      }
+    }
+    .onChange(of: session.state) { _, state in
+      reconcileNavigation(state)
+    }
+    .onChange(of: path) {
+      // Closing a deletion's result leaves nothing of the deleted account to show.
+      if session.account == nil, !isShowingDeletion {
+        path.removeAll()
+      }
     }
     .interactiveDismissDisabled(requiresProfileSetup)
     .presentationDetents([.large])
@@ -100,6 +97,79 @@ struct AccountSheet: View {
     }
   }
 
+  private var stack: some View {
+    NavigationStack(path: $path) {
+      accountContent(sectionOpen: nil)
+        .toolbar {
+          if !requiresProfileSetup {
+            ToolbarItem(placement: .topBarTrailing) {
+              closeButton
+            }
+          }
+        }
+        .navigationDestination(for: AccountDestination.self, destination: destination)
+    }
+  }
+
+  /// Also while a deletion's result shows, so signing out underneath doesn't rebuild the page
+  /// holding it.
+  private var showsSections: Bool {
+    isShowingHub || isShowingDeletion
+  }
+
+  private var isShowingDeletion: Bool {
+    path.contains { if case .deleteAccount = $0 { true } else { false } }
+  }
+
+  private var isShowingHub: Bool {
+    guard case .signedIn(let account) = session.state else {
+      return false
+    }
+
+    return isGuest ? !signsIn : !account.needsProfileSetup
+  }
+
+  /// As main: the profile, or preferences for a guest, who has none.
+  private var shownSection: AccountDestination {
+    path.first ?? (isGuest ? .preferences : .profile)
+  }
+
+  private var sectionPath: Binding<[AccountDestination]> {
+    Binding {
+      Array(path.dropFirst())
+    } set: {
+      path = [shownSection] + $0
+    }
+  }
+
+  @ViewBuilder
+  private func destination(_ destination: AccountDestination) -> some View {
+    switch destination {
+    case .createAccount:
+      LoginView()
+    case .deleteAccount(let deletion):
+      AccountDeletionView(
+        email: deletion.email,
+        hasAppleAccount: deletion.hasAppleAccount,
+        storeSubscriptionProvider: deletion.storeSubscriptionProvider)
+    case .memory:
+      MemoryView()
+    case .preferences:
+      PreferencesView()
+    case .profile:
+      if let account = session.account {
+        ProfileEditorView(account: account, isRequiredSetup: false) {
+          path = [.profile, .deleteAccount(makeDeletionDestination(account))]
+        }
+        .id(account.user.id)
+      }
+    case .plus(let subscription):
+      PlusStatusView(subscription: subscription)
+    case .subscription(let appAccountToken):
+      SubscriptionView(appAccountToken: appAccountToken)
+    }
+  }
+
   private var isSignedInForGood: Bool {
     guard case .signedIn(let account) = session.state else {
       return false
@@ -125,7 +195,7 @@ struct AccountSheet: View {
   }
 
   @ViewBuilder
-  private var accountContent: some View {
+  private func accountContent(sectionOpen: AccountSectionOpen?) -> some View {
     switch session.state {
     case .restoring:
       ProgressView()
@@ -144,6 +214,7 @@ struct AccountSheet: View {
       } else {
         SettingsHubView(
           account: account,
+          sectionOpen: sectionOpen,
           manageAppStoreSubscription: { isAppStoreSubscriptionManagementPresented = true },
           showGooglePlayManagement: { isGooglePlayManagementPresented = true }
         )
@@ -194,7 +265,7 @@ struct AccountSheet: View {
       path.removeAll()
     case .signedOut, .unavailable:
       switch path.last {
-      case .memory, .plus, .preferences, .profile, .subscription:
+      case .createAccount, .memory, .plus, .preferences, .profile, .subscription:
         path.removeAll()
       case .deleteAccount, nil:
         break
@@ -216,6 +287,7 @@ private struct SettingsHubView: View {
   @ScaledMetric(relativeTo: .body) private var avatarSize = 40.0
 
   let account: CurrentAccount
+  let sectionOpen: AccountSectionOpen?
   let manageAppStoreSubscription: () -> Void
   let showGooglePlayManagement: () -> Void
 
@@ -223,7 +295,7 @@ private struct SettingsHubView: View {
     List {
       if !isGuest {
         Section {
-          NavigationLink(value: AccountDestination.profile) {
+          AccountSectionLink(destination: .profile, sectionOpen: sectionOpen) {
             let layout =
               dynamicTypeSize.isAccessibilitySize
               ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
@@ -246,7 +318,7 @@ private struct SettingsHubView: View {
       }
 
       Section {
-        NavigationLink(value: AccountDestination.preferences) {
+        AccountSectionLink(destination: .preferences, sectionOpen: sectionOpen) {
           LabeledContent {
             if let buddy = settings.preferences.value?.buddy {
               Text(verbatim: "\(buddy.displayName) · \(appLanguageName)")
@@ -258,7 +330,7 @@ private struct SettingsHubView: View {
           }
         }
 
-        NavigationLink(value: AccountDestination.memory) {
+        AccountSectionLink(destination: .memory, sectionOpen: sectionOpen) {
           LabeledContent {
             if let count = settings.memory.value?.facts.count {
               Text(count, format: .number)
@@ -274,6 +346,7 @@ private struct SettingsHubView: View {
         AccountSubscriptionRow(
           access: account.account,
           appAccountToken: UUID(uuidString: account.user.id),
+          sectionOpen: sectionOpen,
           manageAppStoreSubscription: manageAppStoreSubscription,
           showGooglePlayManagement: showGooglePlayManagement)
 
@@ -294,9 +367,7 @@ private struct SettingsHubView: View {
 
       Section {
         if isGuest {
-          NavigationLink {
-            LoginView()
-          } label: {
+          AccountSectionLink(destination: .createAccount, sectionOpen: sectionOpen) {
             Text(
               "Create an account", tableName: "Account",
               comment: "Settings row where a guest creates the account that keeps their plan")
@@ -330,6 +401,37 @@ private struct SettingsHubView: View {
   }
 }
 
+private struct AccountSectionOpen {
+  let shown: AccountDestination
+  let open: (AccountDestination) -> Void
+}
+
+/// Beside the sections a row shows its section there instead of pushing it.
+private struct AccountSectionLink<Label: View>: View {
+  let destination: AccountDestination?
+  let sectionOpen: AccountSectionOpen?
+  @ViewBuilder let label: Label
+
+  var body: some View {
+    if let sectionOpen, let destination {
+      let isShown = sectionOpen.shown == destination
+
+      Button {
+        sectionOpen.open(destination)
+      } label: {
+        label
+      }
+      .foregroundStyle(.primary)
+      .listRowBackground(isShown ? Color(.tertiarySystemFill) : nil)
+      .accessibilityAddTraits(isShown ? .isSelected : [])
+    } else {
+      NavigationLink(value: destination) {
+        label
+      }
+    }
+  }
+}
+
 /// Captured in the navigation value so the deletion result stays visible after the session is removed.
 private func makeDeletionDestination(_ account: CurrentAccount) -> AccountDeletionDestination {
   AccountDeletionDestination(
@@ -343,6 +445,7 @@ private func makeDeletionDestination(_ account: CurrentAccount) -> AccountDeleti
 private struct AccountSubscriptionRow: View {
   let access: AccountAccess
   let appAccountToken: UUID?
+  let sectionOpen: AccountSectionOpen?
   let manageAppStoreSubscription: () -> Void
   let showGooglePlayManagement: () -> Void
 
@@ -350,7 +453,9 @@ private struct AccountSubscriptionRow: View {
   var body: some View {
     switch access.subscriptionAction {
     case .subscribe:
-      NavigationLink(value: appAccountToken.map(AccountDestination.subscription)) {
+      AccountSectionLink(
+        destination: appAccountToken.map(AccountDestination.subscription), sectionOpen: sectionOpen
+      ) {
         rowLabel(status: freeStatus)
       }
       .accessibilityLabel(subscriptionLabel)
@@ -368,7 +473,9 @@ private struct AccountSubscriptionRow: View {
       .accessibilityLabel(subscriptionLabel)
       .accessibilityValue(googlePlayStatus)
     case .contactSupport:
-      NavigationLink(value: access.subscription.map(AccountDestination.plus)) {
+      AccountSectionLink(
+        destination: access.subscription.map(AccountDestination.plus), sectionOpen: sectionOpen
+      ) {
         rowLabel(status: activeStatus)
       }
       .accessibilityLabel(subscriptionLabel)

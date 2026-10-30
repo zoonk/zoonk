@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProfileEditorView: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.isPaneSplit) private var isBesideTheList
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
   @State private var name: String
@@ -290,7 +291,7 @@ struct ProfileEditorView: View {
       let didUpdate = await session.updateProfile(
         name: normalizedName, username: normalizedUsername)
 
-      if didUpdate && !isRequiredSetup {
+      if didUpdate && !isRequiredSetup && !isBesideTheList {
         dismiss()
       }
     }
