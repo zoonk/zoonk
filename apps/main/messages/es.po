@@ -3785,7 +3785,7 @@ msgstr "Empieza gratis. <rest>Plus cuando quieras tenerlo todo.</rest>"
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "xrpz7X"
 msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "El plan Gratis te ayuda con un objetivo a la vez. Plus te ayuda con todos tus objetivos hasta el gran día."
+msgstr "Gratis cubre un objetivo a la vez. Plus cubre todos tus objetivos hasta el gran día."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"
