@@ -40,6 +40,10 @@ function explanation(text: string): Extract<WrittenScreen, { kind: "explanation"
   };
 }
 
+function labeledOption(text: string, isCorrect = false) {
+  return { isCorrect, picture: null, reason: `${text} is what the picture shows.`, text };
+}
+
 function codesOf(lesson: WrittenLesson, options: CheckOptions = {}) {
   return check(lesson, options).problems.map((problem) => [problem.screen, problem.code]);
 }
@@ -113,7 +117,7 @@ describe(checkWrittenLesson, () => {
     }
 
     const image = {
-      alt: "A thermometer from −10 °C to 10 °C with three numbered marks.",
+      alt: "A thermometer from −10 °C to 10 °C: 1 sits low on the scale, 2 at its middle line, 3 just above it.",
       parts: ["−6 °C mark", "zero mark", "3 °C mark"],
       prompt: "A thermometer from −10 °C to 10 °C.",
     };
@@ -134,6 +138,62 @@ describe(checkWrittenLesson, () => {
 
     expect(shown.problems).toStrictEqual([]);
     expect(shown.screens[7]?.ok && shown.screens[7].content).toMatchObject({ image });
+  });
+
+  it("asks a question's picture alt to say what each label its options name shows", () => {
+    const application = writtenTemperatureLesson().screens[7];
+
+    if (application?.kind !== "check") {
+      throw new Error("Screen 8 is a check.");
+    }
+
+    const numbered = {
+      ...application,
+      context: null,
+      image: {
+        alt: "A thermometer from −10 °C to 10 °C with three numbered marks.",
+        parts: ["−6 °C mark", "zero mark", "3 °C mark"],
+        prompt: "A thermometer from −10 °C to 10 °C.",
+      },
+      options: [labeledOption("2", true), labeledOption("1"), labeledOption("3")],
+      question: "Which number marks where water freezes?",
+    };
+
+    expect(codesOf(withScreen(7, numbered))).toStrictEqual([[7, "visual"]]);
+
+    const compared = {
+      ...application,
+      context: "In the picture, two thermometers hang outside a window.",
+      image: {
+        alt: "Two thermometers hang outside a window, one higher than the other.",
+        parts: null,
+        prompt: "Two street thermometers labeled 1 and 2, at −6 °C and at 4 °C.",
+      },
+      options: [
+        labeledOption("Thermometer 1: below zero", true),
+        labeledOption("Thermometer 2: above zero"),
+      ],
+      question: "Which thermometer shows a day when puddles freeze?",
+    };
+
+    expect(codesOf(withScreen(7, compared))).toStrictEqual([[7, "visual"]]);
+
+    const described = {
+      ...compared,
+      image: { ...compared.image, alt: "Thermometer 1 reads −6 °C and thermometer 2 reads 4 °C." },
+    };
+
+    expect(codesOf(withScreen(7, described))).toStrictEqual([]);
+
+    const counted = {
+      ...compared,
+      context: "In the picture, a window shows the morning's thermometers.",
+      image: { ...compared.image, alt: "Three thermometers below zero hang by a window." },
+      options: [labeledOption("3", true), labeledOption("1"), labeledOption("2")],
+      question: "How many thermometers in the picture are below zero?",
+    };
+
+    expect(codesOf(withScreen(7, counted))).toStrictEqual([]);
   });
 
   it("keeps a question's picture options, even where the plan drew none", () => {

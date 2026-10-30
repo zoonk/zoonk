@@ -33,7 +33,7 @@ const SHARED_EXPECTATIONS = `
   - A \`hookGuess\` is a guess that doesn't count: one \`reveal\` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead
   - Calculations written as \`mathCheck\` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting
   - Activities are JSON inside \`content\`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea
-  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on
+  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its \`prompt\` and its \`alt\` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)
   - Charts and timelines in \`visual\` are drawn by the app from their data; judge whether the data is right and matches the text
   - An explanation's \`explore\` is a template the app draws under the text with nothing asked, its fields as JSON in \`content\`; judge whether its fields are right and match the text
   - A question's \`basis\` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides
@@ -432,7 +432,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for beginners
-      - The application compares two drawings as one \`image\` with both in it, labeled 1 and 2, and its options name them by those labels
+      - The application compares two drawings as one \`image\` with both in it, labeled 1 and 2, and its options name them by those labels; its \`alt\` says what drawing 1 and drawing 2 each show, so a learner who can't see the picture can still answer
       - The guess and the check don't offer three drawings or charts as options: each shows one chart as a \`visual\` and asks about it (which bar is wrong, whether it matches), or asks in words; no option is labeled as a drawing or chart the screen doesn't show
       - The explanation with 2, 5 and 7 shows a bar chart \`visual\` with those values
       - The explanation that compares two versions of the same data (bars standing with cramped names, bars lying with full names) shows them as one \`image\` with both, labeled 1 and 2, instead of only describing them
@@ -491,6 +491,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       - MUST be in US English, for beginners
       - The check about the flower has an \`image\` of one flower cut in half whose \`parts\` lists the petal, stamen, stigma and ovary in English, and whose \`prompt\` asks for no labels or text
       - Its options are numbers from 1 to the number of parts, and exactly the ovary's number (its place in \`parts\`, 1 for the first) is correct; the stigma's number is among the wrong options, with a reason about the stalk it sits on
+      - Its \`alt\` says where each number sits and how that spot looks, without naming the part it marks
       - No other picture numbers parts (only a check's \`image\` has \`parts\`), and no option has a \`picture\`
 
       ${SHARED_EXPECTATIONS}

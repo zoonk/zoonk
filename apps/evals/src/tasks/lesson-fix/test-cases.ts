@@ -168,7 +168,7 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
           context:
             "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
           image: {
-            alt: "A thermometer from −10 °C to 10 °C with three numbered marks.",
+            alt: "A thermometer from −10 °C to 10 °C: 1 sits low on the scale, 2 at its middle line, 3 just above it.",
             parts: ["−6 °C mark", "zero mark", "3 °C mark"],
             prompt: "A thermometer from −10 °C to 10 °C.",
           },

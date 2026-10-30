@@ -1657,254 +1657,6 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The doorway features correctly distinguish the three styles at the intended introductory level. Exactly the pointed-arch doorway is marked correct, the Lisbon answer is appropriately qualified as most likely, and every reason matches its option. No accuracy cap is triggered.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 30
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "The writing is short and accessible, and the style names are linked to visible features. However, “arches” and “columns” are introduced without prior everyday explanations or comparisons. Several unexplained architectural terms trigger the cap of 7.",
-          "score": 7,
-          "label": "Clarity & plain words",
-          "weight": 25
-        },
-        {
-          "categoryId": "checks",
-          "reasoning": "Both checks ask learners to classify doorways, and the distractors include the planned decoration and age misconceptions. Feedback explains the distinguishing features, and both basis quotations support the answers. The picture prompts and alt text meet the visual requirements, but the required post-answer style labels are missing from every pictured option's text, weakening the identification feedback.",
-          "score": 8,
-          "label": "Checks & feedback",
-          "weight": 20
-        },
-        {
-          "categoryId": "fitAndApplication",
-          "reasoning": "The lesson uses US English, opens directly with the planned Paris building story without naming Gothic, follows the four planned screens in order, and ends with one-sentence summary ideas. The Lisbon visit supplies the required concrete application, with no formulas, filler, or unrelated material. No category cap is triggered.",
-          "score": 10,
-          "label": "Level, hook & application",
-          "weight": 25
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3352,
-          "outputTokens": 988,
-          "reasoningTokens": 439
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The three-picture check violates the explicit requirement that each option's text name its style. All three texts name physical features instead. Replace them with “Gothic,” “Baroque,” and “Romanesque,” respectively, so the post-answer labels identify the styles.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The hook uses “arches” and “columns” without explaining these architectural terms first. The later descriptions help, but beginners would benefit from immediate plain-language definitions.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Make the correct picture's feedback explicitly connect the feature to the style: “The pointed arch and thin columns identify this doorway as Gothic.” This would make the revealed answer more self-contained.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in US English, for beginners\n      - The check about the three doorways gives every option a `picture` (one doorway alone each, no text in the picture) and the screen no `image` or `visual`\n      - Each option's `picture.alt` says what that doorway looks like (its arch, columns, walls or decoration) without naming its style, so it never gives the answer away; `text` names the style (the app shows each option's `text` only once the learner answers, so the question can name the style it asks for)\n      - Exactly the Gothic doorway (the pointed arch) is correct, and each reason says what in the doorway's shape gives its style away\n      - No other screen gives its options pictures\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "en-church-doorways-picture-options-1",
-        "userInput": {
-          "chapterTitle": "Reading buildings",
-          "courseTitle": "Art history",
-          "language": "en",
-          "level": "beginner",
-          "spec": {
-            "canDo": "Tell Romanesque, Gothic and Baroque church doorways apart by how they look",
-            "description": "Spot the shapes that give away when a church doorway was built.",
-            "estimatedMinutes": 3,
-            "screens": [
-              {
-                "activityTemplate": null,
-                "brief": "Tell the story of the builders in Paris around 1160 who pointed their arches: the weight went down thin columns, so churches could grow taller and lighter. Don't name the style yet.",
-                "kind": "hook",
-                "skills": [],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Three styles of church doorway: Romanesque (round arch, thick walls, small openings), Gothic (pointed arch, thin columns, tall) and Baroque (twisting columns, curves and rich decoration). The arch's shape is the first thing to look at.",
-                "kind": "explanation",
-                "skills": [0],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Show three doorways, one of each style, and ask which one is Gothic. Tempting wrong answer: the Baroque one, because it is the most decorated.",
-                "kind": "check",
-                "skills": [0],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Ana visits a church in Lisbon whose doorway has a round arch set in thick walls. Ask which style it most likely is (Romanesque) and why. Tempting wrong answer: Gothic, because the church is old.",
-                "kind": "application",
-                "skills": [0],
-                "visual": null
-              }
-            ],
-            "skills": [
-              {
-                "description": "Romanesque doorways have round arches, Gothic ones pointed arches and Baroque ones twisting columns and curves.",
-                "example": "A pointed arch over thin columns means Gothic.",
-                "hard": false,
-                "name": "Recognize church doorway styles",
-                "topic": "Architecture styles",
-                "useCase": "Telling how old a church is on a trip."
-              }
-            ],
-            "supportMode": "explanationFirst",
-            "title": "Reading a church doorway"
-          },
-          "activityTemplates": []
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The ovary is correctly part 4, the stigma is a wrong option with appropriate stalk-based feedback, and the pea-pod question has exactly one defensible answer. The flower-to-fruit and ovule-to-seed relationships are correct at this level. Describing entire stamens and the pistil as stalks introduces a small anatomical imprecision, triggering the cap of 8.",
-          "score": 8,
-          "label": "Accuracy",
-          "weight": 30
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "Sentences are generally short, but the explanation packs several new technical terms into one screen and does not introduce them through everyday comparisons. Some terms receive functional definitions, but the learner must absorb the full anatomical hierarchy at once. These multiple terminology and scaffolding weaknesses trigger the cap of 7.",
-          "score": 7,
-          "label": "Clarity & plain words",
-          "weight": 25
-        },
-        {
-          "categoryId": "checks",
-          "reasoning": "Both checks require applying the explanation: identifying a structure in a picture and tracing a garden pea pod and its peas back to flower parts. Distractors include the specified stigma and petals misconceptions, and every reason explains the relevant distinction. Both questions cite the earlier sentence that decides the answer. The image lists the four required parts in English, requests no text or labels, and has correctly mapped numeric options. No option supplies a picture.",
-          "score": 10,
-          "label": "Checks & feedback",
-          "weight": 20
-        },
-        {
-          "categoryId": "fitAndApplication",
-          "reasoning": "The output uses US English, opens directly with familiar foods, follows the planned sequence, and ends with one sentence per summary idea. Leo's garden supplies a concrete, realistic application. However, the concentrated technical vocabulary is a beginner-level fit slip, so this category is capped at 8.",
-          "score": 8,
-          "label": "Level, hook & application",
-          "weight": 25
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3618,
-          "outputTokens": 971,
-          "reasoningTokens": 330
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The explanation introduces stamens, pollen, stigma, pistil, ovary, and ovules on one screen. This violates the one-new-term-per-screen expectation and gives beginners several unfamiliar relationships to remember without the required everyday comparisons.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Calling stamens 'thin stalks' and the pistil a 'central stalk' is anatomically imprecise: a stamen includes a pollen-producing anther, and the pistil includes the stigma, style, and ovary. The intended part identification and seed–fruit relationships remain correct.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Within the planned explanation screen, use the labeled picture and familiar comparisons to make the relationships easier to follow—for example, describe the ovary as a small container holding the future seeds. Describe pollen-making parts as having stalks rather than simply being stalks.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in US English, for beginners\n      - The check about the flower has an `image` of one flower cut in half whose `parts` lists the petal, stamen, stigma and ovary in English, and whose `prompt` asks for no labels or text\n      - Its options are numbers from 1 to the number of parts, and exactly the ovary's number (its place in `parts`, 1 for the first) is correct; the stigma's number is among the wrong options, with a reason about the stalk it sits on\n      - No other picture numbers parts (only a check's `image` has `parts`), and no option has a `picture`\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "en-flower-parts-numbered-1",
-        "userInput": {
-          "chapterTitle": "How plants reproduce",
-          "courseTitle": "Biology",
-          "language": "en",
-          "level": "beginner",
-          "spec": {
-            "canDo": "Find the parts of a flower that make seeds",
-            "description": "Find where a flower makes its seeds, and which parts help.",
-            "estimatedMinutes": 3,
-            "screens": [
-              {
-                "activityTemplate": null,
-                "brief": "Every apple, bean and grain of rice started inside a flower: open with the fact that the fruit you eat grew from one small part at a flower's base.",
-                "kind": "hook",
-                "skills": [],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "The flower's parts for seeds: stamens make pollen; the stigma on top of the pistil catches it; the ovary at the pistil's base holds the ovules that become seeds, and it grows into the fruit. Petals only attract insects.",
-                "kind": "explanation",
-                "skills": [0],
-                "visual": "A flower cut in half lengthwise, with the petals, stamens, stigma and ovary labeled."
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Show a flower cut in half with its petal, stamen, stigma and ovary numbered, and ask which number is the ovary. Tempting wrong answer: the stigma, at the top of the same stalk.",
-                "kind": "check",
-                "skills": [0],
-                "visual": "A flower cut in half lengthwise, with the petal, stamen, stigma and ovary numbered."
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Leo cuts a young pea pod open and finds tiny peas in a row. Ask which part of the flower the pod grew from (the ovary) and what the peas were (the ovules). Tempting wrong answer: the petals.",
-                "kind": "application",
-                "skills": [0],
-                "visual": null
-              }
-            ],
-            "skills": [
-              {
-                "description": "Stamens make pollen, the stigma catches it and the ovary at the pistil's base holds the ovules that become seeds.",
-                "example": "A pea pod is a ripe ovary, and the peas inside were its ovules.",
-                "hard": false,
-                "name": "Name the flower parts that make seeds",
-                "topic": "Flowers and seeds",
-                "useCase": "Knowing where fruit comes from in a garden."
-              }
-            ],
-            "supportMode": "explanationFirst",
-            "title": "Where seeds come from"
-          },
-          "activityTemplates": []
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
           "reasoning": "The model uses the required formula, a 0–12% yearly-rate slider starting at 5%, and matching labels and units. The numerical results are correct: approximately $2,653 at 5%, $2,191 at 4%, and $4,661 at 8%. The 8%-to-10% increase correctly rounds to $2,067, correcting the plan's erroneous $1,994. Ana's difference correctly rounds to $5,080. The model is labeled as an example.",
           "score": 10,
           "label": "Accuracy",
@@ -3168,133 +2920,6 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The caption judgments are correct, each check has exactly one defensible answer, and the reasons match their options. The image prompts specify the distinguishing details, including movement arrows that make putting the book in versus taking it out visually distinguishable.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 30
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "The language is short and beginner-friendly, and “legenda” is explained through the everyday comparison with a label. However, the first explanation lists the comparison criteria without a concrete caption-and-picture example demonstrating their use.",
-          "score": 8,
-          "label": "Clarity & plain words",
-          "weight": 25
-        },
-        {
-          "categoryId": "checks",
-          "reasoning": "The checks test image–caption matching rather than recall. They include the planned tempting mistakes, and every check option has a relevant explanation. The hook appropriately uses a shared reveal instead of option reasons. Both later checks point to the earlier comparison rule as their basis.",
-          "score": 10,
-          "label": "Checks & feedback",
-          "weight": 20
-        },
-        {
-          "categoryId": "fitAndApplication",
-          "reasoning": "The lesson uses Brazilian Portuguese, follows the planned screen sequence, keeps both explanation exampleLineIdea values null, and provides a realistic bookstore advertisement application in Londrina. Its application image correctly requests two adjacent panels labeled 1 and 2, and the summary states each idea in one sentence. However, there are several explicit presentation slips: captions are repeatedly not italicized, and the application question does not say “a imagem”.",
-          "score": 7,
-          "label": "Level, hook & application",
-          "weight": 25
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "5 of 6 parts passed. Screen 2: Its words point at a picture (a scene, a diagram, a map or an illustration), but it shows none: give it an `image` whose `prompt` describes that picture with every label and detail the words use.",
-          "score": 8.5,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3838,
-          "outputTokens": 927,
-          "reasoningTokens": 397
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The hook's caption options and repeated caption in its reveal, and all three caption options in the Otávio check, lack the required italics. The application question also omits the required words “a imagem”; neither its question nor its context includes them.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Make the first explanation more concrete by briefly applying its comparison rule to the already-seen Danilo picture and caption. This would demonstrate how to compare the person, action, and details instead of only listing what to compare.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese, for beginners preparing for a concurso's Portuguese test\n      - Every question about a picture (the guess, the check and the application) has an `image` whose prompt names what the answer depends on, and its text says \"a imagem\" without describing what the picture shows (no \"Na imagem, Otávio está parado…\")\n      - The two scenes of the application are one picture with both side by side, labeled 1 and 2\n      - Captions and quoted words are in _italics_, never between « » or << >>\n      - Checks ask which caption fits, with the tempting wrong caption the brief names and a reason on every option\n      - Every explanation has `exampleLineIdea` null: matching a caption to a picture is an everyday reading skill that a sentence about the learner's life wouldn't make clearer\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "pt-imagens-e-legendas-visual-1",
-        "userInput": {
-          "chapterTitle": "Interpretação de imagens",
-          "courseTitle": "Língua Portuguesa",
-          "language": "pt",
-          "level": "beginner",
-          "spec": {
-            "canDo": "Escolher a legenda que corresponde ao que uma imagem mostra",
-            "description": "Comparar imagem e legenda pelo que aparece nas duas: quem ou o quê, a ação e detalhes como cor e quantidade.",
-            "estimatedMinutes": 3,
-            "screens": [
-              {
-                "activityTemplate": null,
-                "brief": "Guess first: a picture shows Danilo standing at a door holding a closed red umbrella. Which caption fits: he holds a closed red umbrella; he walks in the rain under an open red umbrella; he holds a red backpack.",
-                "kind": "hook",
-                "skills": [],
-                "visual": "Danilo standing at a door, holding a closed red umbrella; no rain."
-              },
-              {
-                "activityTemplate": null,
-                "brief": "A caption is the text that goes with a picture, like a label: it should say what the picture shows. Check three things in both: who or what, the action, and details like color and quantity.",
-                "kind": "explanation",
-                "skills": [0],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "The picture shows Otávio standing next to a blue bicycle; he isn't riding it. The learner picks the caption that fits. Tempting wrong caption: 'Otávio rides a blue bicycle' (right color and object, wrong action).",
-                "kind": "check",
-                "skills": [0],
-                "visual": "Otávio standing still next to a blue bicycle, both feet on the ground."
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Quantity matters too: three boxes stacked fit 'Três caixas empilhadas', not 'Duas caixas empilhadas'.",
-                "kind": "explanation",
-                "skills": [0],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Two scenes side by side, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of it. The learner picks which scene fits 'Nayara coloca um livro na caixa vermelha'. Tempting wrong answer: scene 2 (same box and book, opposite action).",
-                "kind": "application",
-                "skills": [0],
-                "visual": "Two panels labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box."
-              }
-            ],
-            "skills": [
-              {
-                "description": "A caption fits a picture when who or what, the action and the details (color, quantity) all match what the picture shows.",
-                "example": "Otávio standing next to a blue bike fits 'Otávio está ao lado de uma bicicleta azul'.",
-                "hard": false,
-                "name": "Relacionar imagem e legenda",
-                "topic": "Imagens e legendas",
-                "useCase": "Interpretar charges, anúncios e fotos com legenda em provas de português."
-              }
-            ],
-            "supportMode": "explanationFirst",
-            "title": "Imagens e legendas"
-          },
-          "activityTemplates": []
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
           "reasoning": "All numerical comparisons are correct: June alone has more answered than received letters, and 7h and 9h both have nine bicycles. The chart contains 35, 36 and 40 in the correct month order, and the explanation appropriately treats earlier arrivals as a possibility rather than a proven cause. However, the office and bicycle records are not labeled as illustrative or established as real, contrary to the data-grounding requirement.",
           "score": 8,
           "label": "Accuracy",
@@ -3425,137 +3050,6 @@
             ],
             "supportMode": "explanationFirst",
             "title": "Tabela e gráfico de barras"
-          },
-          "activityTemplates": []
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "All numerical mappings, correct answers, and option explanations are consistent. The 2–5–7 visual has the right values and starts at zero, and both orientation comparisons preserve their counts. However, the invented data are not explicitly labeled as examples, as required; the contact-count visual has neither an example label nor a source.",
-          "score": 8,
-          "label": "Accuracy",
-          "weight": 30
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "The Portuguese is accessible to Brazilian beginners, with short explanations and concrete counts. Bars are introduced through names and lengths, and the orientation comparison explains the practical benefit without formulas or academic language. The correspondence between each category name and its bar is understandable from the surrounding explanation.",
-          "score": 9,
-          "label": "Clarity & plain words",
-          "weight": 25
-        },
-        {
-          "categoryId": "checks",
-          "reasoning": "The first check explicitly violates the required single-chart-or-words design by presenting three drawings as choices. Otherwise, its alternatives represent genuine value swaps, including the requested tempting 6–8–3 error, and the reasons correctly explain them. The application tests readability while preserving values, and its basis points to the relevant earlier explanation. No subsequent screen judges the learner's selection.",
-          "score": 6,
-          "label": "Checks & feedback",
-          "weight": 20
-        },
-        {
-          "categoryId": "fitAndApplication",
-          "reasoning": "The lesson uses Brazilian Portuguese, plausible Brazilian settings, an immediate hook, five screens in the intended sequence, and a one-sentence-per-idea summary. The application correctly uses one image containing drawings labeled 1 and 2, with options naming those labels. However, there are several departures from the explicit presentation requirements: the hook and first check use three-chart comparisons, and the orientation explanation omits the required numbered labels.",
-          "score": 7,
-          "label": "Level, hook & application",
-          "weight": 25
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 4364,
-          "outputTokens": 1127,
-          "reasoningTokens": 483
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "Both the guess and the first check violate the explicit requirement to avoid choosing among three drawings: each requests an image containing three charts instead of showing one chart as a visual and asking about it, or asking entirely in words. The first check also labels its options as drawings. These screens need redesigning, not merely different wording.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The explanation comparing upright and horizontal bars correctly requests one combined image, but does not request labels 1 and 2. The invented counts are also not explicitly identified as example data, particularly the 2–5–7 contact counts.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "In the application, use just 'Desenho 1' and 'Desenho 2' as option text. Describing the options as having complete versus cut-off names largely supplies the answer instead of encouraging inspection of the image.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese, for beginners\n      - The application compares two drawings as one `image` with both in it, labeled 1 and 2, and its options name them by those labels\n      - The guess and the check don't offer three drawings or charts as options: each shows one chart as a `visual` and asks about it (which bar is wrong, whether it matches), or asks in words; no option is labeled as a drawing or chart the screen doesn't show\n      - The explanation with 2, 5 and 7 shows a bar chart `visual` with those values\n      - The explanation that compares two versions of the same data (bars standing with cramped names, bars lying with full names) shows them as one `image` with both, labeled 1 and 2, instead of only describing them\n      - No screen has both an image and a visual, and nothing is drawn with characters\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "pt-graficos-de-barras-visual-1",
-        "userInput": {
-          "chapterTitle": "Comparações visuais",
-          "courseTitle": "Excel e análise de dados",
-          "language": "pt",
-          "level": "beginner",
-          "spec": {
-            "canDo": "Criar um gráfico de barras com categorias legíveis",
-            "description": "Mostra como transformar contagens por categoria em barras fáceis de comparar, sem trocar valores ou apertar os nomes.",
-            "estimatedMinutes": 3,
-            "screens": [
-              {
-                "activityTemplate": null,
-                "brief": "Otávio contou pedidos em Teresina: retirada 3, entrega 6 e balcão 4. Mostre três desenhos com faixas para essas opções, sempre nessa ordem: comprimentos 3–4–6, 3–6–4 e 6–3–4; pergunte qual representa a contagem, revele que é o segundo.",
-                "kind": "hook",
-                "skills": [],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Apresente o gráfico de barras: cada barra representa uma categoria, e um número maior pede uma barra mais comprida. Mostre três categorias com 2, 5 e 7 ocorrências em barras que partem do mesmo ponto.",
-                "kind": "explanation",
-                "skills": [0],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Peça ao aluno que escolha o gráfico para os dados visita 6, telefonema 3 e mensagem 8; mostre as três opções como gráficos de barras com os nomes visíveis. A correta mantém 6–3–8; inclua a opção tentadora 6–8–3.",
-                "kind": "check",
-                "skills": [0],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Nomes compridos ficam apertados sob barras em pé; com barras deitadas, há espaço para o nome ao lado de cada uma sem mudar os valores. Compare duas versões dos mesmos dados: atendimento presencial 5, pedido pelo aplicativo 8 e retirada com agendamento 3.",
-                "kind": "explanation",
-                "skills": [0],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Para entrega na portaria do prédio 7 e retirada em horário combinado 4, peça que o aluno escolha entre dois desenhos com os mesmos comprimentos: barras deitadas com nomes inteiros ou barras em pé com nomes cortados. A segunda é tentadora porque os comprimentos estão certos.",
-                "kind": "application",
-                "skills": [0],
-                "visual": null
-              }
-            ],
-            "skills": [
-              {
-                "description": "Transformar contagens por categoria em barras com comprimentos correspondentes e nomes que possam ser lidos.",
-                "example": "Para 3, 6 e 4 pedidos em três canais, desenhar barras de comprimentos 3, 6 e 4 junto aos respectivos nomes.",
-                "hard": true,
-                "name": "Criar um gráfico de barras",
-                "topic": "Gráficos de barras",
-                "useCase": "Apresentar contagens de pedidos ou respostas para comparar categorias no trabalho."
-              }
-            ],
-            "supportMode": "explanationFirst",
-            "title": "Gráficos de barras"
           },
           "activityTemplates": []
         }
@@ -4785,6 +4279,508 @@
             ],
             "supportMode": "explanationFirst",
             "title": "Membrana, citoplasma e material genético"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The reading principle is correct, each question has exactly one defensible answer, and all option reasons match the requested pictures. The application uses directional arrows to distinguish putting the book in from taking it out. No factual or answer-key errors appear.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The explanations are short, concrete, and suitable for beginners. “Legenda” is explained through an everyday label comparison before the checks use it. Color and quantity examples make the comparison process explicit, with no unexplained technical vocabulary or skipped conceptual steps.",
+          "score": 10,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The checks require comparing captions with visual evidence rather than recalling lesson wording. They include the planned action-based distractors, and every check option has an accurate reason. Both basis references quote the relevant earlier comparison rule. The hook correctly omits option reasons and supplies a common reveal; that reveal could be more instructive by explicitly connecting the answer to distinguishing visual evidence.",
+          "score": 9,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson uses Brazilian Portuguese, follows the planned sequence, provides a concrete Brazilian marketplace context, and ends with concise summary sentences. All explanations have null exampleLineIdea values, and the application requests one image with panels labeled 1 and 2. However, the repeated missing caption italics and the application's missing reference to “a imagem” are multiple explicit task-fit slips, triggering the cap of 7.",
+          "score": 7,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3850,
+          "outputTokens": 944,
+          "reasoningTokens": 382
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The caption options in the hook and the Otávio check are not italicized, contrary to the explicit requirement. The hook reveal also repeats its caption without italics. The application question says “Qual cena combina com a legenda?” but never refers to “a imagem,” as required for every picture-based question.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The hook reveal could immediately connect the answer to the visible evidence—especially the closed umbrella and absence of rain—instead of promising a later explanation. This would make the initial comparison more instructive without adding another screen.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for beginners preparing for a concurso's Portuguese test\n      - Every question about a picture (the guess, the check and the application) has an `image` whose prompt names what the answer depends on, and its text says \"a imagem\" without describing what the picture shows (no \"Na imagem, Otávio está parado…\")\n      - The two scenes of the application are one picture with both side by side, labeled 1 and 2\n      - Captions and quoted words are in _italics_, never between « » or << >>\n      - Checks ask which caption fits, with the tempting wrong caption the brief names and a reason on every option\n      - Every explanation has `exampleLineIdea` null: matching a caption to a picture is an everyday reading skill that a sentence about the learner's life wouldn't make clearer\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-imagens-e-legendas-visual-1",
+        "userInput": {
+          "chapterTitle": "Interpretação de imagens",
+          "courseTitle": "Língua Portuguesa",
+          "language": "pt",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Escolher a legenda que corresponde ao que uma imagem mostra",
+            "description": "Comparar imagem e legenda pelo que aparece nas duas: quem ou o quê, a ação e detalhes como cor e quantidade.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Guess first: a picture shows Danilo standing at a door holding a closed red umbrella. Which caption fits: he holds a closed red umbrella; he walks in the rain under an open red umbrella; he holds a red backpack.",
+                "kind": "hook",
+                "skills": [],
+                "visual": "Danilo standing at a door, holding a closed red umbrella; no rain."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A caption is the text that goes with a picture, like a label: it should say what the picture shows. Check three things in both: who or what, the action, and details like color and quantity.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The picture shows Otávio standing next to a blue bicycle; he isn't riding it. The learner picks the caption that fits. Tempting wrong caption: 'Otávio rides a blue bicycle' (right color and object, wrong action).",
+                "kind": "check",
+                "skills": [0],
+                "visual": "Otávio standing still next to a blue bicycle, both feet on the ground."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Quantity matters too: three boxes stacked fit 'Três caixas empilhadas', not 'Duas caixas empilhadas'.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Two scenes side by side, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of it. The learner picks which scene fits 'Nayara coloca um livro na caixa vermelha'. Tempting wrong answer: scene 2 (same box and book, opposite action).",
+                "kind": "application",
+                "skills": [0],
+                "visual": "Two panels labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box."
+              }
+            ],
+            "skills": [
+              {
+                "description": "A caption fits a picture when who or what, the action and the details (color, quantity) all match what the picture shows.",
+                "example": "Otávio standing next to a blue bike fits 'Otávio está ao lado de uma bicicleta azul'.",
+                "hard": false,
+                "name": "Relacionar imagem e legenda",
+                "topic": "Imagens e legendas",
+                "useCase": "Interpretar charges, anúncios e fotos com legenda em provas de português."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Imagens e legendas"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All counts, bar lengths, correct-answer designations, and explanations of swapped values are internally correct. The 2–5–7 visual matches its text, and the orientation comparison preserves 5–8–3. However, several asserted counting scenarios are neither sourced as real data nor explicitly labeled as examples, as required.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The Brazilian Portuguese is short, concrete, and suitable for beginners. Channels provide an accessible example of categories, and 'barras em pé' versus 'barras deitadas' explains orientation without unnecessary terminology. Each explanation focuses on one main idea.",
+          "score": 9,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The intended value-matching check tests understanding and includes the specified tempting 6–8–3 swap, with useful reasons. Both basis quotations are relevant, and the hook reveal correctly identifies 3–6–4. Nevertheless, the checks depend on option-level pictures rather than the required displayed comparison, and the application largely repeats the preceding rule while its alt states the requested distinguishing property. These weaknesses substantially reduce the evidence of learning.",
+          "score": 7,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson uses appropriate Brazilian settings, opens directly with a concrete problem, and ends with one sentence per summary idea. It also supplies the required 2–5–7 visual and the combined standing-versus-lying explanation image. However, it violates multiple explicit task requirements: three drawing options in the hook, three chart options in the check, and no single labeled comparison image or label-based options in the application. These are structural task-fit failures, not merely stylistic slips.",
+          "score": 6,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "4 of 6 parts passed. Screen 3: Its words name numbered drawings or charts (Desenho 1, Gráfico 2) it doesn't show: put two side by side in one `image` labeled 1 and 2 (never more than two), or show one chart as a `visual` and ask about it without numbering charts. Screen 5: Its words name numbered drawings or charts (Desenho 1, Gráfico 2) it doesn't show: put two side by side in one `image` labeled 1 and 2 (never more than two), or show one chart as a `visual` and ask about it without numbering charts.",
+          "score": 7,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4712,
+          "outputTokens": 1208,
+          "reasoningTokens": 514
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The hook explicitly violates the required interaction by offering three drawings instead of asking about one chart or using words. The first check likewise offers three charts through option-level pictures, with no screen-level visual. The application also lacks the required single image containing drawings labeled 1 and 2, and its options identify orientations rather than those labels. These are substantive presentation failures: the intended comparisons are not supplied in the required display format.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The application's alternative text does not reproduce the category names and directly announces whether they are complete—the property the question asks learners to recognize. Also, although the 2–5–7 example is explicitly hypothetical, the other invented counting scenarios are not labeled as examples or supported as real data.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the application ask which version is suitable for sharing the building's delivery counts, requiring learners to consider both correct values and readable names. In the combined image's alt, reproduce the full and truncated labels rather than announcing which drawing meets the question's criterion.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for beginners\n      - The application compares two drawings as one `image` with both in it, labeled 1 and 2, and its options name them by those labels; its `alt` says what drawing 1 and drawing 2 each show, so a learner who can't see the picture can still answer\n      - The guess and the check don't offer three drawings or charts as options: each shows one chart as a `visual` and asks about it (which bar is wrong, whether it matches), or asks in words; no option is labeled as a drawing or chart the screen doesn't show\n      - The explanation with 2, 5 and 7 shows a bar chart `visual` with those values\n      - The explanation that compares two versions of the same data (bars standing with cramped names, bars lying with full names) shows them as one `image` with both, labeled 1 and 2, instead of only describing them\n      - No screen has both an image and a visual, and nothing is drawn with characters\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-graficos-de-barras-visual-1",
+        "userInput": {
+          "chapterTitle": "Comparações visuais",
+          "courseTitle": "Excel e análise de dados",
+          "language": "pt",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Criar um gráfico de barras com categorias legíveis",
+            "description": "Mostra como transformar contagens por categoria em barras fáceis de comparar, sem trocar valores ou apertar os nomes.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Otávio contou pedidos em Teresina: retirada 3, entrega 6 e balcão 4. Mostre três desenhos com faixas para essas opções, sempre nessa ordem: comprimentos 3–4–6, 3–6–4 e 6–3–4; pergunte qual representa a contagem, revele que é o segundo.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente o gráfico de barras: cada barra representa uma categoria, e um número maior pede uma barra mais comprida. Mostre três categorias com 2, 5 e 7 ocorrências em barras que partem do mesmo ponto.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça ao aluno que escolha o gráfico para os dados visita 6, telefonema 3 e mensagem 8; mostre as três opções como gráficos de barras com os nomes visíveis. A correta mantém 6–3–8; inclua a opção tentadora 6–8–3.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Nomes compridos ficam apertados sob barras em pé; com barras deitadas, há espaço para o nome ao lado de cada uma sem mudar os valores. Compare duas versões dos mesmos dados: atendimento presencial 5, pedido pelo aplicativo 8 e retirada com agendamento 3.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Para entrega na portaria do prédio 7 e retirada em horário combinado 4, peça que o aluno escolha entre dois desenhos com os mesmos comprimentos: barras deitadas com nomes inteiros ou barras em pé com nomes cortados. A segunda é tentadora porque os comprimentos estão certos.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Transformar contagens por categoria em barras com comprimentos correspondentes e nomes que possam ser lidos.",
+                "example": "Para 3, 6 e 4 pedidos em três canais, desenhar barras de comprimentos 3, 6 e 4 junto aos respectivos nomes.",
+                "hard": true,
+                "name": "Criar um gráfico de barras",
+                "topic": "Gráficos de barras",
+                "useCase": "Apresentar contagens de pedidos ou respostas para comparar categorias no trabalho."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Gráficos de barras"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The doorway descriptions are appropriate introductory recognition cues. Each check has exactly one defensible correct answer, and the reasons match the options. The hook follows the planned simplified historical account without introducing a clear factual error.",
+          "score": 9,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Sentences are short and the descriptions are concrete. However, “arches” and “columns” appear without beginner definitions or everyday comparisons, and three new style terms are introduced together. These multiple departures from the explicit terminology requirements trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The first check requires visual classification, and the application transfers the clues to Ana's visit rather than merely asking for a memorized definition. Both planned misconceptions appear with useful feedback. Every doorway option has its own standalone, text-free picture request and a descriptive alt that does not name the style. Only the pointed doorway is correct, no other screen supplies option pictures, and both basis quotes identify decisive earlier evidence.",
+          "score": 10,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses US English, opens directly with the planned building story, and follows the four planned screens in order before the summary. Ana's visit to a church in Lisbon supplies the requested concrete application. The lesson remains brief, avoids formulas and filler, and summarizes the recognition cues in complete sentences.",
+          "score": 9,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3416,
+          "outputTokens": 1223,
+          "reasoningTokens": 695
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The beginner-language requirements are not fully met: the hook uses “arches” and “columns” without explaining them, and the explanation introduces three technical style names on one screen despite the one-new-term requirement. The visible features help, but everyday comparisons are missing.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the hook's structural explanation more concrete by connecting the supporting structure to larger window openings and therefore more daylight. Keep this brief and avoid implying that doorway shape alone made taller churches possible.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for beginners\n      - The check about the three doorways gives every option a `picture` (one doorway alone each, no text in the picture) and the screen no `image` or `visual`\n      - Each option's `picture.alt` says what that doorway looks like (its arch, columns, walls or decoration) without naming its style, so it never gives the answer away; `text` names the style (the app shows each option's `text` only once the learner answers, so the question can name the style it asks for)\n      - Exactly the Gothic doorway (the pointed arch) is correct, and each reason says what in the doorway's shape gives its style away\n      - No other screen gives its options pictures\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-church-doorways-picture-options-1",
+        "userInput": {
+          "chapterTitle": "Reading buildings",
+          "courseTitle": "Art history",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Tell Romanesque, Gothic and Baroque church doorways apart by how they look",
+            "description": "Spot the shapes that give away when a church doorway was built.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Tell the story of the builders in Paris around 1160 who pointed their arches: the weight went down thin columns, so churches could grow taller and lighter. Don't name the style yet.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Three styles of church doorway: Romanesque (round arch, thick walls, small openings), Gothic (pointed arch, thin columns, tall) and Baroque (twisting columns, curves and rich decoration). The arch's shape is the first thing to look at.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Show three doorways, one of each style, and ask which one is Gothic. Tempting wrong answer: the Baroque one, because it is the most decorated.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ana visits a church in Lisbon whose doorway has a round arch set in thick walls. Ask which style it most likely is (Romanesque) and why. Tempting wrong answer: Gothic, because the church is old.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Romanesque doorways have round arches, Gothic ones pointed arches and Baroque ones twisting columns and curves.",
+                "example": "A pointed arch over thin columns means Gothic.",
+                "hard": false,
+                "name": "Recognize church doorway styles",
+                "topic": "Architecture styles",
+                "useCase": "Telling how old a church is on a trip."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Reading a church doorway"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The biological relationships are correct at the requested level. Both checks have exactly one defensible answer, the numbered ovary is correctly mapped to position 4, and the feedback matches each option. No factual-error cap applies.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Several technical terms appear together in the explanation without prior everyday comparisons. Functional descriptions help, but they do not satisfy the explicit terminology constraints. The cap of 7 for several terminology or explanation problems applies.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The checks require visual identification and transfer to a garden pea pod rather than simple sentence repetition. They include the specified stigma and petal distractors, useful option-specific feedback, and decisive earlier evidence in their bases. The image alt supports finding the correct answer, but its description of number 3 needs an appearance cue to fully meet the accessibility requirement.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses US English, opens directly with the idea, follows the planned sequence, and provides a realistic garden application. The summary states the main ideas concisely. The main level-fit slip is the densely packed technical vocabulary on the explanation screen, which warrants the one-slip cap of 8.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3653,
+          "outputTokens": 1037,
+          "reasoningTokens": 471
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation introduces stamens, pollen, pistil, stigma, ovary, and ovules on one screen. This violates the one-new-term-per-screen requirement, and the terms are not introduced with everyday comparisons before use. Although their functions are mostly explained, the vocabulary load is substantial for beginners.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The numbered image's alt gives number 3's location at the central stalk's tip but does not describe how that spot looks, as explicitly required. The other numbers have both location and appearance cues.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make the explanation more concrete by connecting its structures to the pea example: the ovary becomes the pod, and the ovules become the peas. Everyday comparisons such as a pollen-catching sticky tip would also reduce the vocabulary burden without adding screens.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for beginners\n      - The check about the flower has an `image` of one flower cut in half whose `parts` lists the petal, stamen, stigma and ovary in English, and whose `prompt` asks for no labels or text\n      - Its options are numbers from 1 to the number of parts, and exactly the ovary's number (its place in `parts`, 1 for the first) is correct; the stigma's number is among the wrong options, with a reason about the stalk it sits on\n      - Its `alt` says where each number sits and how that spot looks, without naming the part it marks\n      - No other picture numbers parts (only a check's `image` has `parts`), and no option has a `picture`\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-flower-parts-numbered-1",
+        "userInput": {
+          "chapterTitle": "How plants reproduce",
+          "courseTitle": "Biology",
+          "language": "en",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Find the parts of a flower that make seeds",
+            "description": "Find where a flower makes its seeds, and which parts help.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Every apple, bean and grain of rice started inside a flower: open with the fact that the fruit you eat grew from one small part at a flower's base.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The flower's parts for seeds: stamens make pollen; the stigma on top of the pistil catches it; the ovary at the pistil's base holds the ovules that become seeds, and it grows into the fruit. Petals only attract insects.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A flower cut in half lengthwise, with the petals, stamens, stigma and ovary labeled."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Show a flower cut in half with its petal, stamen, stigma and ovary numbered, and ask which number is the ovary. Tempting wrong answer: the stigma, at the top of the same stalk.",
+                "kind": "check",
+                "skills": [0],
+                "visual": "A flower cut in half lengthwise, with the petal, stamen, stigma and ovary numbered."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Leo cuts a young pea pod open and finds tiny peas in a row. Ask which part of the flower the pod grew from (the ovary) and what the peas were (the ovules). Tempting wrong answer: the petals.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Stamens make pollen, the stigma catches it and the ovary at the pistil's base holds the ovules that become seeds.",
+                "example": "A pea pod is a ripe ovary, and the peas inside were its ovules.",
+                "hard": false,
+                "name": "Name the flower parts that make seeds",
+                "topic": "Flowers and seeds",
+                "useCase": "Knowing where fruit comes from in a garden."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Where seeds come from"
           },
           "activityTemplates": []
         }
