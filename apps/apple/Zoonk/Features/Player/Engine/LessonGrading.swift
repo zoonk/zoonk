@@ -88,9 +88,7 @@ enum LessonGrading {
       // One precision for both, as main's verdict shows them.
       let digits = exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value)
       let format = { (number: Double) in
-        let text = formatLocalizedNumber(
-          number, fractionDigits: digits, locale: .current, grouping: true)
-        return unit.map { "\(text) \($0)" } ?? text
+        ActivityNumberFormat.format(number, unit: unit, digits: digits)
       }
 
       return LocalGrade(

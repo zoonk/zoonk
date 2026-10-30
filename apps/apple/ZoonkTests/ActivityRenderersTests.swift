@@ -42,6 +42,13 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertTrue(ActivityNumberFormat.format(3, unit: "days").hasSuffix("\u{00A0}days"))
   }
 
+  func testMoneyLeadsWhereTheLanguageWritesItFirst() {
+    XCTAssertTrue(ActivityNumberFormat.unitLeads("R$", locale: Locale(identifier: "pt_BR")))
+    XCTAssertTrue(ActivityNumberFormat.unitLeads("$", locale: Locale(identifier: "en_US")))
+    XCTAssertFalse(ActivityNumberFormat.unitLeads("€", locale: Locale(identifier: "de_DE")))
+    XCTAssertFalse(ActivityNumberFormat.unitLeads("km", locale: Locale(identifier: "en_US")))
+  }
+
   private let categorizeJSON = #"""
     {"template":"categorize","prompt":"Sort each change.","check":{"kind":"interaction","explanation":"Here is why."},
      "fields":{"groups":[{"id":"chemical","label":"New substance","rule":"Something new forms."},

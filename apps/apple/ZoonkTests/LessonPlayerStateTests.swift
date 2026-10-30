@@ -400,6 +400,27 @@ final class LessonGradingTests: XCTestCase {
       "without a floor, the check's own tolerance decides")
   }
 
+  func testANumericVerdictWritesItsUnitAsMainDoes() throws {
+    let grade = { (unit: String) in
+      LessonGrading.grade(
+        .activity(.numeric(50)),
+        step: try step(
+          teaching(
+            "price", kind: "activity",
+            content: #"""
+              {"template": "formulaModel", "prompt": "Slide", "fields": {},
+               "check": {"kind": "numeric", "question": "How much?", "answer": 52,
+                 "explanation": "65% of 80.", "unit": "\#(unit)",
+                 "tolerance": {"kind": "absolute", "value": 0}}}
+              """#)))
+    }
+
+    XCTAssertEqual(
+      try grade("R$")?.correctAnswer, ActivityNumberFormat.format(52, unit: "R$"),
+      "money is written where the language writes it")
+    XCTAssertEqual(try grade("%")?.correctAnswer, ActivityNumberFormat.format(52, unit: "%"))
+  }
+
   func testAnActivityIsGradedWithTheToleranceFloorItsScreenCarries() throws {
     let guess = { (floor: String) in
       try step(

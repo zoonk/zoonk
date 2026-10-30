@@ -144,16 +144,23 @@ private struct NumericAnswerField: View {
   let onChange: (Double?) -> Void
 
   var body: some View {
+    let unitLeads = unit.map { ActivityNumberFormat.unitLeads($0, locale: locale) } ?? false
+
     HStack {
+      if let unit, unitLeads {
+        Text(unit).foregroundStyle(.secondary).accessibilityHidden(true)
+      }
+
       TextField(text: Binding(get: { typed ?? shown }, set: type)) {
         Text("Your answer", tableName: "Player", comment: "Placeholder of a number answer")
       }
       .keyboardType(.decimalPad)
       .disabled(isLocked)
       .font(.title3.monospacedDigit())
+      .accessibilityHint(Text(verbatim: unit ?? ""))
 
-      if let unit {
-        Text(unit).foregroundStyle(.secondary)
+      if let unit, !unitLeads {
+        Text(unit).foregroundStyle(.secondary).accessibilityHidden(true)
       }
     }
     .padding()

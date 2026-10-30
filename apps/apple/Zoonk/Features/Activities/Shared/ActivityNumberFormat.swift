@@ -91,6 +91,16 @@ enum ActivityNumberFormat {
     return (currency, words[1])
   }
 
+  /// Main's `getUnitPosition`: money goes where the language writes its sign ("R$ 52", "52 €").
+  static func unitLeads(_ unit: String, locale: Locale = .current) -> Bool {
+    guard let currency = currency(for: unit) else {
+      return false
+    }
+
+    let one = 1.0.formatted(.currency(code: currency).locale(locale).precision(.fractionLength(0)))
+    return one.first?.isNumber == false
+  }
+
   private static func currency(for unit: String) -> String? {
     currencies[unit]
       ?? (unit.count == 3 && unit.allSatisfy { $0.isASCII && $0.isUppercase } ? unit : nil)
