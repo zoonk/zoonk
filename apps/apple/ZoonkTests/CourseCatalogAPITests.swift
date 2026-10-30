@@ -350,6 +350,7 @@ final class CourseCatalogAPITests: XCTestCase {
             "id": "00000000-0000-7000-8000-000000000002",
             "imageUrl": null,
             "language": "en",
+            "levels": [],
             "organization": {
               "id": "00000000-0000-7000-8000-000000000001",
               "logo": null,
