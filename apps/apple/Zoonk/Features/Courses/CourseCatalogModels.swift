@@ -76,6 +76,8 @@ struct Course: Codable, Equatable, Identifiable, Sendable {
   let language: String
   let languageFlag: String?
   let organization: CourseOrganization?
+  /// How long starting the course's "Not sure" quick test takes.
+  let quickTestMinutes: Int
   let slug: String
   let targetLanguage: String?
   let title: String

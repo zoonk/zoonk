@@ -44,7 +44,7 @@ internal fun counts(): CourseCategoryCounts =
 internal fun course(tryLesson: Boolean = true): CourseResource =
     ApiJson.decodeFromString(
         """{"categories":["science"],"description":"Atoms, from the inside.","editions":[],"format":"core",
-            "generationStatus":"completed","id":"$COURSE","language":"en","levels":[{"level":"overview","written":true}],"slug":"atoms","title":"Atoms",
+            "generationStatus":"completed","id":"$COURSE","language":"en","levels":[{"level":"overview","written":true}],"quickTestMinutes":2,"slug":"atoms","title":"Atoms",
             "landingPage":{"audience":["Curious people"],"outcomes":["Explain what an atom is"],"valueProposition":"See what matter is made of."},
             "examplePlan":{"pace":{"minutes":15,"estimate":{"chapters":[{"chapterId":"$CHAPTER_ONE","week":1,"endWeek":1,"workKinds":[]}],
               "endDate":"2027-03-01","firstDay":[{"chapterId":"$CHAPTER_ONE","dayMinutes":10,"estimatedMinutes":10,"lessonId":"$LESSON_ONE","title":"Inside an atom"}],

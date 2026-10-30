@@ -1,3 +1,4 @@
+import { type GoalKind } from "@zoonk/db/enums";
 import { CEFR_LEVELS, MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
 import { z } from "zod";
 import { speechClipSchema } from "../../audio/speech-clip-contract";
@@ -129,7 +130,12 @@ export const LEVEL_TEST_PREPARING_SECONDS = 120;
 /** Three reading and three listening questions and one sentence out loud. */
 export const LEVEL_TEST_MINUTES = 3;
 
-export const PLACEMENT_MINUTES = 2;
+const PLACEMENT_MINUTES = 2;
+
+/** How long the level question's quick test takes: a language goal's is its level test. */
+export function getQuickTestMinutes(kind: GoalKind): number {
+  return kind === "language" ? LEVEL_TEST_MINUTES : PLACEMENT_MINUTES;
+}
 
 export const languageLevelTestViewSchema = z
   .discriminatedUnion("status", [

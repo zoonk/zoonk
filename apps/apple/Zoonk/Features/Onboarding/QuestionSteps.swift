@@ -872,10 +872,8 @@ enum LevelChoices {
   /// "Not sure": placement finds the level instead.
   private static let quickTest = "quickTest"
 
-  /// A course's page asks before there's a goal, so its quick test is the placement's length.
-  static let placementMinutes = 2
-
-  static func all(testMinutes: Int) -> [ChoiceRows<String>.Choice] {
+  /// The quick test gives its length once it's known: a course start reads it with its course.
+  static func all(testMinutes: Int?) -> [ChoiceRows<String>.Choice] {
     [
       .init(
         value: "none",
@@ -903,9 +901,11 @@ enum LevelChoices {
         value: quickTest,
         label: Text(
           "Not sure, give me a quick test", tableName: "Onboarding", comment: "Level choice"),
-        detail: Text(
-          "Adapts to your answers, about \(Duration.seconds(testMinutes * 60), format: .units(allowed: [.minutes], width: .wide))",
-          tableName: "Onboarding", comment: "Level choice detail; the time a quick test takes")),
+        detail: testMinutes.map { minutes in
+          Text(
+            "Adapts to your answers, about \(Duration.seconds(minutes * 60), format: .units(allowed: [.minutes], width: .wide))",
+            tableName: "Onboarding", comment: "Level choice detail; the time a quick test takes")
+        }),
     ]
   }
 

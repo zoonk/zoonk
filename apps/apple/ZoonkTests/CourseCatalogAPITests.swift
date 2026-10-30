@@ -158,6 +158,7 @@ final class CourseCatalogAPITests: XCTestCase {
               "name": "Zoonk",
               "slug": "zoonk"
             },
+            "quickTestMinutes": 2,
             "slug": "astronomy",
             "targetLanguage": null,
             "title": "Astronomy"
@@ -236,6 +237,7 @@ final class CourseCatalogAPITests: XCTestCase {
             "languageFlag": null,
             "levels": [],
             "organization": null,
+            "quickTestMinutes": 2,
             "slug": "enem",
             "targetLanguage": null,
             "title": "ENEM"
@@ -357,6 +359,7 @@ final class CourseCatalogAPITests: XCTestCase {
               "name": "Zoonk",
               "slug": "zoonk"
             },
+            "quickTestMinutes": 2,
             "slug": "astronomy",
             "targetLanguage": null,
             "title": "Astronomy"

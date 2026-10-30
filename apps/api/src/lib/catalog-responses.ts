@@ -83,6 +83,7 @@ export function toCourseResource(course: CourseResource) {
     languageFlag: toLanguageFlag(course.targetLanguage),
     levels: course.levels,
     organization: toCourseOrganization(course.organization),
+    quickTestMinutes: course.quickTestMinutes,
     slug: course.slug,
     targetLanguage: course.targetLanguage,
     title: course.title,

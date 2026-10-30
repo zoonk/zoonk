@@ -122,6 +122,7 @@
     "./goals/active-goal": "./src/goals/get-active-goal-id.ts",
     "./goals/continue-next-level": "./src/goals/continue-goal-at-next-level.ts",
     "./goals/contract": "./src/goals/goal-contract.ts",
+    "./goals/course-quick-test": "./src/goals/course-quick-test.ts",
     "./goals/course-start-contract": "./src/goals/course-start-contract.ts",
     "./goals/course-weights-research": "./src/goals/course-weights-research.ts",
     "./goals/create": "./src/goals/create-goals.ts",

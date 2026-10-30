@@ -133,6 +133,13 @@ export const courseResourceSchema = z
           "Every level the course covers, in order: a course on the path to mastery covers Beginner to Advanced, and `written` is false for a level with no chapter yet, written as learners reach it; empty until any chapter is written",
       }),
     organization: nullableOrganizationSummarySchema,
+    quickTestMinutes: z
+      .int()
+      .positive()
+      .meta({
+        description:
+          "About how long the level question's quick test (\"Not sure\") takes when starting this course: the level test of the language goal it starts, or another goal's placement",
+      }),
     slug: z.string(),
     targetLanguage: z.string().nullable(),
     title: z.string(),

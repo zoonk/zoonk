@@ -1,6 +1,5 @@
 "use client";
 
-import { PLACEMENT_MINUTES } from "@zoonk/core/language/level-test/contract";
 import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../../_utils/time-format";
@@ -40,13 +39,13 @@ export function LevelChoiceList({
   onChange,
   onPick,
   readOnly,
-  testMinutes = PLACEMENT_MINUTES,
+  testMinutes,
   value,
 }: {
   onChange: (value: LevelChoice) => void;
   onPick?: (value: LevelChoice) => void;
   readOnly?: boolean;
-  testMinutes?: number;
+  testMinutes: number;
   value: LevelChoice | null;
 }) {
   const t = useExtracted();

@@ -223,6 +223,7 @@ private func makeCourse(
     language: payload.language,
     languageFlag: payload.languageFlag,
     organization: payload.organization.map { makeCourseOrganization($0.value1) },
+    quickTestMinutes: payload.quickTestMinutes,
     slug: payload.slug,
     targetLanguage: payload.targetLanguage,
     title: payload.title)

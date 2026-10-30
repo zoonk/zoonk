@@ -124,6 +124,7 @@ extension Course {
     language: "en",
     languageFlag: nil,
     organization: .testFixture,
+    quickTestMinutes: 2,
     slug: "astronomy",
     targetLanguage: nil,
     title: "Astronomy")

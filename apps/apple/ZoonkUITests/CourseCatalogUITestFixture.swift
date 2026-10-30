@@ -25,6 +25,7 @@ let courseCatalogUITestSnapshotJSON =
           "name": "Zoonk AI",
           "slug": "ai"
         },
+        "quickTestMinutes": 2,
         "slug": "how-plants-grow",
         "targetLanguage": null,
         "title": "How Plants Grow"
@@ -44,6 +45,7 @@ let courseCatalogUITestSnapshotJSON =
           "name": "Zoonk",
           "slug": "zoonk"
         },
+        "quickTestMinutes": 2,
         "slug": "ocean-worlds",
         "targetLanguage": null,
         "title": "Ocean Worlds"
@@ -63,6 +65,7 @@ let courseCatalogUITestSnapshotJSON =
           "name": "Zoonk",
           "slug": "zoonk"
         },
+        "quickTestMinutes": 2,
         "slug": "everyday-numbers",
         "targetLanguage": null,
         "title": "Everyday Numbers"
@@ -82,6 +85,7 @@ let courseCatalogUITestSnapshotJSON =
           "name": "Zoonk AI",
           "slug": "ai"
         },
+        "quickTestMinutes": 2,
         "slug": "night-sky-basics",
         "targetLanguage": null,
         "title": "Night Sky Basics"
@@ -96,6 +100,7 @@ let courseCatalogUITestSnapshotJSON =
         "imageURL": null,
         "language": "en",
         "organization": null,
+        "quickTestMinutes": 2,
         "slug": "my-backyard-field-notes",
         "targetLanguage": null,
         "title": "My Backyard Field Notes"

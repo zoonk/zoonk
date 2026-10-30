@@ -29,7 +29,7 @@ import { useState } from "react";
 
 type StartTarget = {
   chapter: { id: string; title: string } | null;
-  course: { id: string; title: string };
+  course: { id: string; quickTestMinutes: number; title: string };
   dailyMinutes: number | null;
 };
 
@@ -227,7 +227,7 @@ function CourseLevelStart({
       level={level}
       note={note}
     >
-      <LevelChoiceList onChange={setLevel} value={level} />
+      <LevelChoiceList onChange={setLevel} testMinutes={course.quickTestMinutes} value={level} />
     </CourseStartForm>
   );
 }

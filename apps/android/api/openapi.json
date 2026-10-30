@@ -30039,6 +30039,13 @@
               }
             ]
           },
+          "quickTestMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "About how long the level question's quick test (\"Not sure\") takes when starting this course: the level test of the language goal it starts, or another goal's placement"
+          },
           "slug": {
             "type": "string"
           },
@@ -30075,6 +30082,7 @@
           "languageFlag",
           "levels",
           "organization",
+          "quickTestMinutes",
           "slug",
           "targetLanguage",
           "title",

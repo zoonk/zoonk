@@ -8,6 +8,7 @@ import { CHAPTER_PARAM, MINUTES_PARAM, readDailyMinutes } from "@/lib/public/pub
 import { getAllowanceCacheTag, getGoalsCacheTag } from "@zoonk/core/cache-tags";
 import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
 import { findGoalStartLimit } from "@zoonk/core/entitlements/goal-start-limit";
+import { getCourseQuickTestMinutes } from "@zoonk/core/goals/course-quick-test";
 import { findCourseGoalStart } from "@zoonk/core/goals/start-course";
 import { getLibraryCourse } from "@zoonk/core/library/courses/get";
 import { getSession } from "@zoonk/core/users/session";
@@ -92,7 +93,10 @@ async function loadCourseStart(courseId: string) {
   }
 
   const [course, existing, limit] = await Promise.all([
-    loadStartableCourse(courseId),
+    loadStartableCourse(courseId).then(
+      async (found) =>
+        found && { ...found, quickTestMinutes: await getCourseQuickTestMinutes(found) },
+    ),
     findCourseGoalStart(courseId),
     findGoalStartLimit(),
   ]);
@@ -166,7 +170,7 @@ async function CourseStartContent({ params, searchParams }: Props) {
       lessons: item.lessons.length,
       title: item.title,
     })),
-    course: { id: course.id, title: course.title },
+    course: { id: course.id, quickTestMinutes: course.quickTestMinutes, title: course.title },
     dailyMinutes: readDailyMinutes(query[MINUTES_PARAM]),
     initialFailure: toFailure(readParam(query[COURSE_START_ERROR_PARAM])) ?? toLimitFailure(limit),
     note: (
