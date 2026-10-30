@@ -125,6 +125,7 @@
   "onboarding_level_test": "aaac30f647e74153d788c4454550835fdceeae13d51bc36a35f5d0a1cc3c62a2",
   "onboarding_level_test_description": "9d03f364d552253924da5d8bb1df3b245c1003068d3faaedddb81da631df7cf7",
   "onboarding_level_title": "683f36ee3509a7337c08da16d4f2f3fdb1c7fb33795c98e501bc30ceb2314290",
+  "onboarding_library_course_fits": "35220e221858b8859d542af250c3ce91a012c7a36e795f54809a5c5e8b9536d0",
   "onboarding_limit_daily_explanations": "aafe2d182e26be6389b588817d0231d38caa6ff424e7909ed905df3a7ec23572",
   "onboarding_limit_daily_goals": "e48d4867197211867e49ae8b8a9e565a1e7a4b65897008d35139d7ea0ff82b7f",
   "onboarding_limit_guest": "89598dadd7dca851b82f6bda88f0d6ddb1e05acb64b0ef4b363558e32078287f",
@@ -720,6 +721,8 @@
     <!-- The plan reveal: the plan the setup built, ready to start. -->
     <string name="onboarding_reveal_building_title">Criando seu plano</string>
     <string name="onboarding_reveal_building_description">A gente está escolhendo o que você vai aprender primeiro e organizando seus dias de estudo. Uma matéria nova pode levar um ou dois minutos.</string>
+    <!-- Above a published course's title, offered while the learner's plan is built. -->
+    <string name="onboarding_library_course_fits">Um curso da Biblioteca combina com sua meta</string>
     <string name="onboarding_reveal_reading_title">Lendo os documentos oficiais da prova</string>
     <string name="onboarding_reveal_reading_last_title">Lendo os documentos oficiais da última edição</string>
     <string name="onboarding_reveal_reading_notice">Seu plano vai seguir as matérias, os tópicos e as datas do edital. Isso costuma levar alguns minutos.</string>

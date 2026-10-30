@@ -289,6 +289,8 @@
     <!-- The plan reveal: the plan the setup built, ready to start. -->
     <string name="onboarding_reveal_building_title">Building your plan</string>
     <string name="onboarding_reveal_building_description">We\'re choosing what to learn first and fitting it into your days. A new subject can take a minute or two.</string>
+    <!-- Above a published course's title, offered while the learner's plan is built. -->
+    <string name="onboarding_library_course_fits">A course in the Library fits your goal</string>
     <string name="onboarding_reveal_reading_title">Reading the exam\'s official documents</string>
     <string name="onboarding_reveal_reading_last_title">Reading the last edition\'s official documents</string>
     <string name="onboarding_reveal_reading_notice">Your plan will follow the notice\'s subjects, topics and dates. This usually takes a few minutes.</string>

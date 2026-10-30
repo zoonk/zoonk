@@ -16,7 +16,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -24,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -94,9 +98,11 @@ internal fun ColumnScope.PlanRevealStep(
         }
 
         plan?.ready != true -> {
-            // Main offers the Library course that fits the goal here (`libraryCourse`), but the API's
-            // `OnboardingLibraryCourse` has no course id for `AppRoute.CatalogCourse` yet.
-            PlanBuilding(run.withPoll(poll), onRetry = if (poll.stopped) poll::restart else onRetryRun)
+            PlanBuilding(run.withPoll(poll), onRetry = if (poll.stopped) poll::restart else onRetryRun) {
+                libraryCourse?.let { course ->
+                    LibraryCourseOffer(course) { navigator.open(AppRoute.CatalogCourse(course.courseId.toString())) }
+                }
+            }
         }
 
         readingNotice -> {
@@ -130,11 +136,38 @@ internal fun ColumnScope.PlanRevealStep(
 internal fun PlanBuilding(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
+    offer: @Composable () -> Unit = {},
 ) {
-    GenerationWait(kind = GenerationKind.Curriculum, run = run, onRetry = onRetry) {
-        OnboardingHeading(
-            stringResource(R.string.onboarding_reveal_building_title),
-            stringResource(if (run.isStopped) R.string.onboarding_answers_saved else R.string.onboarding_reveal_building_description),
+    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        GenerationWait(kind = GenerationKind.Curriculum, run = run, onRetry = onRetry) {
+            OnboardingHeading(
+                stringResource(R.string.onboarding_reveal_building_title),
+                stringResource(if (run.isStopped) R.string.onboarding_answers_saved else R.string.onboarding_reveal_building_description),
+            )
+        }
+        offer()
+    }
+}
+
+@Composable
+private fun LibraryCourseOffer(
+    course: OnboardingLibraryCourse,
+    onOpen: () -> Unit,
+) {
+    val chapters = course.chapterCount.toInt()
+
+    OutlinedCard(onClick = onOpen, modifier = Modifier.fillMaxWidth()) {
+        ListItem(
+            overlineContent = { Text(stringResource(R.string.onboarding_library_course_fits)) },
+            headlineContent = { Text(course.title) },
+            supportingContent =
+                if (chapters > 0) {
+                    { Text(pluralStringResource(R.plurals.catalog_chapters, chapters, chapters)) }
+                } else {
+                    null
+                },
+            leadingContent = { Icon(painterResource(R.drawable.ic_menu_book), contentDescription = null) },
+            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         )
     }
 }

@@ -125,6 +125,7 @@
   "onboarding_level_test": "2672af47d17839c298973a4c6a996bbb1334c26bfea9da6afe90575fe4bf94d4",
   "onboarding_level_test_description": "935feabedce00be4e1177f24c3ab64d65988dcd4366f7b2908eaa067fb07eee8",
   "onboarding_level_title": "c76f8aea0b82b1b8f8efa91013e034ad8b94725c72d91c88c91b88b6597479c4",
+  "onboarding_library_course_fits": "f4a6b96d732a0741de0e8add7cf70755a0bda97ff08e066f5a65aa71764553a1",
   "onboarding_limit_daily_explanations": "6a0e0d7ebe95b40d879aa3383de4bae7a4c1300343dbf1a6eee0db3423153187",
   "onboarding_limit_daily_goals": "a4aa13d88bfda35d03749c6fd78a1d0acda60df7fa0ed96de5ad5285c086d0a9",
   "onboarding_limit_guest": "3407e42e8c02cb0b3a2b891aaea5e30de1ad0d9ea6ca3fedb37a37e027e5064f",
@@ -715,6 +716,8 @@
     <!-- The plan reveal: the plan the setup built, ready to start. -->
     <string name="onboarding_reveal_building_title">Wir erstellen deinen Plan</string>
     <string name="onboarding_reveal_building_description">Wir wählen aus, was du zuerst lernst, und verteilen es auf deine Tage. Bei einem neuen Thema kann das ein bis zwei Minuten dauern.</string>
+    <!-- Above a published course's title, offered while the learner's plan is built. -->
+    <string name="onboarding_library_course_fits">Ein Kurs in der Bibliothek passt zu deinem Ziel</string>
     <string name="onboarding_reveal_reading_title">Wir lesen die offiziellen Prüfungsunterlagen</string>
     <string name="onboarding_reveal_reading_last_title">Wir lesen die offiziellen Unterlagen der letzten Prüfung</string>
     <string name="onboarding_reveal_reading_notice">Dein Plan richtet sich nach den Fächern, Themen und Terminen der Prüfungsausschreibung. Das dauert normalerweise ein paar Minuten.</string>

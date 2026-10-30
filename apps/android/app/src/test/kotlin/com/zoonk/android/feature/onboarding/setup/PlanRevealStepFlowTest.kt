@@ -30,6 +30,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Goal
+import com.zoonk.api.models.OnboardingLibraryCourse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -39,6 +40,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import java.time.LocalDate
+import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
@@ -53,6 +55,7 @@ class PlanRevealStepFlowTest {
         isGuest: Boolean = false,
         run: GenerationRun = GenerationRun(status = GenerationRun.Status.Following),
         goal: Goal = examGoal(),
+        libraryCourse: OnboardingLibraryCourse? = null,
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val store = OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
@@ -60,7 +63,7 @@ class PlanRevealStepFlowTest {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    PlanRevealStep(goal, isGuest, libraryCourse = null, run, onRetryRun = null, store, navigator)
+                    PlanRevealStep(goal, isGuest, libraryCourse, run, onRetryRun = null, store, navigator)
                 }
             }
         }
@@ -144,6 +147,18 @@ class PlanRevealStepFlowTest {
     }
 
     @Test
+    fun aLibraryCourseThatFitsTheGoalIsOfferedWhileThePlanIsBuiltAndOpens() {
+        api.plan = planOf(ready = false)
+        show(libraryCourse = OnboardingLibraryCourse("zoonk", 12, UUID.fromString(LIBRARY_COURSE), "statistics", "Statistics"))
+
+        rule.onNodeWithText("A course in the Library fits your goal").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("12 chapters").assertIsDisplayed()
+        rule.onNodeWithText("Statistics").performClick()
+
+        assertEquals(AppRoute.CatalogCourse(LIBRARY_COURSE), navigator.currentRoute)
+    }
+
+    @Test
     fun anExamsDocumentsBeingReadShowThatWait() {
         api.plan = planOf(notice = "reading")
         show()
@@ -156,5 +171,6 @@ class PlanRevealStepFlowTest {
 
     private companion object {
         const val POLL_MILLIS = 3_500L
+        const val LIBRARY_COURSE = "44444444-4444-4444-8444-444444444444"
     }
 }

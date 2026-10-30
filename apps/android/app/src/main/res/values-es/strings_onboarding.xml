@@ -125,6 +125,7 @@
   "onboarding_level_test": "c66573c91e547f03661d328331d40e243b2a4382c702953e3b071909c4ea6660",
   "onboarding_level_test_description": "c2c31d843b73cbfb50d41ddef669f626e74273f5123cefe694b97805994bce1c",
   "onboarding_level_title": "9e958c583bd512ec8dc1ad1c5611e29237224755d04f678b16ce2e83fa931343",
+  "onboarding_library_course_fits": "2f3d15ce960b5e0d115c2b52a02e7abe248fc73260c9f3e65801ac43ab76b1fd",
   "onboarding_limit_daily_explanations": "e4e665fef32551fc747834355e1c8bb692175a790e1eb66cad3bdfc8cc2fcd86",
   "onboarding_limit_daily_goals": "df607747bfba2f314c3fc1805f852f78b2b52c5130f8920d6991e2c160bdb28b",
   "onboarding_limit_guest": "8304fe6577a49b46154cd8a7aea3e48031fbecf62e4edfc7ef3d9b42ac675850",
@@ -720,6 +721,8 @@
     <!-- The plan reveal: the plan the setup built, ready to start. -->
     <string name="onboarding_reveal_building_title">Estamos creando tu plan</string>
     <string name="onboarding_reveal_building_description">Estamos eligiendo qué aprender primero y organizándolo en tus días. Una asignatura nueva puede tardar un par de minutos.</string>
+    <!-- Above a published course's title, offered while the learner's plan is built. -->
+    <string name="onboarding_library_course_fits">Un curso de la Biblioteca encaja con tu objetivo</string>
     <string name="onboarding_reveal_reading_title">Estamos leyendo los documentos oficiales del examen</string>
     <string name="onboarding_reveal_reading_last_title">Estamos leyendo los documentos oficiales de la última edición</string>
     <string name="onboarding_reveal_reading_notice">Tu plan seguirá las asignaturas, los temas y las fechas de la convocatoria. Esto suele tardar unos minutos.</string>
