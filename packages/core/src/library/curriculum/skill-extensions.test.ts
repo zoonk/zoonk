@@ -19,6 +19,7 @@ import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { replanGoalsWaitingOnSkills } from "./replan-waiting-goals";
 import { listSkillExtensions, planSkillExtensions } from "./skill-extensions";
+import { tagTeachingChapters } from "./teaching-chapters";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 const NEXT_WEEK = new Date("2020-10-05T00:00:00Z");
@@ -400,6 +401,36 @@ describe("skill extensions", () => {
 
     expect(small?.map((plan) => plan.lessons)).toStrictEqual([5]);
     expect(none).toStrictEqual([]);
+  });
+
+  it("drops an ask for a skill's next chapter once a later band chapter is found to teach it", async () => {
+    const [{ chapter, course, skill }, other] = await Promise.all([
+      courseSetup(),
+      skillFixture({ language: "pt", name: `Negociar salário ${crypto.randomUUID()}` }),
+    ]);
+
+    const later = await addChapter({
+      courseId: course.id,
+      lessons: 3,
+      position: 1,
+      skillId: other.id,
+      title: "Negociação de salário",
+    });
+
+    await tagTeachingChapters({
+      courseId: course.id,
+      tags: [{ chapterId: later.id, skillIds: [skill.id] }],
+    });
+
+    const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
+
+    await expect(
+      planSkillExtensions({
+        courseId: course.id,
+        extensions: [{ afterChapterId: chapter.id, lessons: 12, skill: ref }],
+        ownerId: null,
+      }),
+    ).resolves.toStrictEqual([]);
   });
 
   it("continues after every chapter that teaches the skill, one that needs a tool included", async () => {
