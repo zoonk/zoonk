@@ -16,7 +16,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -45,6 +44,7 @@ import com.zoonk.android.feature.questions.plainItemLine
 import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -238,17 +238,7 @@ internal fun BusyButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier) { BusyLabel(label, busy) }
-}
-
-/** Any button's label, with a spinner while its write is on its way. */
-@Composable
-internal fun BusyLabel(
-    label: String,
-    busy: Boolean,
-) {
-    if (busy) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(16.dp), color = LocalContentColor.current, strokeWidth = 2.dp)
-    Text(label)
+    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier) { PendingLabel(busy, label) }
 }
 
 /** [onRetry] sends the same answer again: the only way to resend an "I don't know" or a time-up answer. */

@@ -63,7 +63,6 @@ import com.zoonk.android.feature.practice.ActionBarWidth
 import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.ActionFlow
 import com.zoonk.android.feature.practice.BusyButton
-import com.zoonk.android.feature.practice.BusyLabel
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunNotFound
@@ -73,12 +72,14 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.characters.TricksterArt
 import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.TitleAndMeta
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -267,7 +268,7 @@ internal fun ChallengeMoved(
                     MoveFailed(ui)
                     ActionFlow { width ->
                         OutlinedButton(onClick = viewModel::undoMove, enabled = !ui.moving) {
-                            BusyLabel(stringResource(R.string.challenge_undo), ui.moving)
+                            PendingLabel(ui.moving, stringResource(R.string.challenge_undo))
                         }
                         Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
                             Text(stringResource(R.string.challenge_back_to_today))
@@ -597,17 +598,22 @@ private fun DetailRow(
     meta: String?,
     details: List<String> = emptyList(),
 ) {
-    ListRow(end = {}) {
-        TitleAndMeta(
-            modifier = Modifier.weight(1f),
-            meta = {
-                meta?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium) }
-            },
-        ) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
-            details.forEach { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
-        }
-    }
+    ListRow(
+        headline = { Text(title) },
+        supporting = details.takeIf { it.isNotEmpty() }?.let { lines -> { Column { lines.forEach { Text(it) } } } },
+        meta = meta?.let { { Text(it) } },
+    )
+}
+
+/** Rows reach past the column's margin so their words line up with the heading above them. */
+@Composable
+private fun DetailRows(content: @Composable ColumnScope.() -> Unit) {
+    Column(Modifier.bleed(LIST_ITEM_INSET), content = content)
+}
+
+@Composable
+private fun DetailDivider() {
+    HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
 }
 
 /** A subject's topics on one row, or a topic without a subject on its own. */
@@ -625,16 +631,18 @@ private fun Topics(
             }
     Column {
         title?.let { SectionHeader(it) }
-        rows.forEachIndexed { index, (subject, names) ->
-            if (index > 0) HorizontalDivider()
-            if (subject == null) {
-                DetailRow(names.first(), meta = null)
-            } else {
-                DetailRow(
-                    subject,
-                    meta = pluralStringResource(R.plurals.challenge_topic_count, names.size, names.size),
-                    details = listOf(names.joinToString(", ")),
-                )
+        DetailRows {
+            rows.forEachIndexed { index, (subject, names) ->
+                if (index > 0) DetailDivider()
+                if (subject == null) {
+                    DetailRow(names.first(), meta = null)
+                } else {
+                    DetailRow(
+                        subject,
+                        meta = pluralStringResource(R.plurals.challenge_topic_count, names.size, names.size),
+                        details = listOf(names.joinToString(", ")),
+                    )
+                }
             }
         }
     }
@@ -646,9 +654,9 @@ private fun MockDetails(challenge: Challenge) {
     val locale = currentLocale()
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         if (challenge.sections.size + challenge.written.size > 1) {
-            Column {
+            DetailRows {
                 challenge.sections.forEachIndexed { index, section ->
-                    if (index > 0) HorizontalDivider()
+                    if (index > 0) DetailDivider()
                     val count = section.questions.toInt()
                     DetailRow(
                         section.name ?: stringResource(R.string.challenge_section_questions),
@@ -663,7 +671,7 @@ private fun MockDetails(challenge: Challenge) {
                     )
                 }
                 challenge.written.forEach { part ->
-                    HorizontalDivider()
+                    DetailDivider()
                     DetailRow(
                         part.name,
                         meta = part.minutes?.let { formatMinutes(it.toInt(), locale) },
@@ -801,7 +809,7 @@ private fun ChallengeFooter(
             if (movable) {
                 ActionFlow { width ->
                     OutlinedButton(onClick = vm::moveToMonday, enabled = !ui.moving && !ui.starting, modifier = width) {
-                        BusyLabel(stringResource(R.string.challenge_move), ui.moving)
+                        PendingLabel(ui.moving, stringResource(R.string.challenge_move))
                     }
                 }
             }
@@ -830,7 +838,7 @@ private fun StartActions(
     ActionFlow { width ->
         if (movable) {
             OutlinedButton(onClick = vm::moveToMonday, enabled = !ui.moving && !ui.starting) {
-                BusyLabel(stringResource(R.string.challenge_move), ui.moving)
+                PendingLabel(ui.moving, stringResource(R.string.challenge_move))
             }
         }
         val label =
