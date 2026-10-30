@@ -12,6 +12,8 @@ import { openAs } from "./study-day";
 const LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
 const GOAL_DAYS_AHEAD = 90;
 const ANSWERED = ["reason", "targetDate", "level", "schedule", "buddy", "followUps"];
+/** No run voices this bank's clips, so it's dated long ago: a missing clip is asked for on Play. */
+const BANK_WRITTEN_AT = new Date("2026-01-01T00:00:00.000Z");
 
 function createCall({
   chapterId,
@@ -89,13 +91,14 @@ async function ensureLevelTestBank() {
   await prisma.languageLevelTest.upsert({
     create: {
       content,
+      generatedAt: BANK_WRITTEN_AT,
       language: "pt",
       model: "test",
       promptVersion: "test",
       runId: "test",
       targetLanguage: "en",
     },
-    update: { content },
+    update: { content, generatedAt: BANK_WRITTEN_AT },
     where: { languagePair: { language: "pt", targetLanguage: "en" } },
   });
 }
