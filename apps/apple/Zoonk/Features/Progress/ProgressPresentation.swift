@@ -35,6 +35,13 @@ func metricPercent(_ value: Double) -> String {
     .percent.precision(.fractionLength(0...1)).rounded(rule: .toNearestOrAwayFromZero))
 }
 
+/// Mirrors main's `formatGoalProgress`: to the hundredth of a percent, since a whole percentage
+/// would sit at "0%" for weeks. `share` is 0–1.
+func goalProgressPercent(_ share: Double) -> String {
+  share.formatted(
+    .percent.precision(.fractionLength(0...2)).rounded(rule: .toNearestOrAwayFromZero))
+}
+
 func wholePercent(_ value: Double) -> String {
   (value / 100).formatted(
     .percent.precision(.fractionLength(0)).rounded(rule: .toNearestOrAwayFromZero))

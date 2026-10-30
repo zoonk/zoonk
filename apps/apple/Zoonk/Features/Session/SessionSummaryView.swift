@@ -316,7 +316,7 @@ private struct SummaryTiles: View {
     let format: (Double) -> String =
       goalKind == .exam
       ? { $0.formatted(.percent.precision(.fractionLength(0))) }
-      : { $0.formatted(.percent.precision(.fractionLength(0...2))) }
+      : { goalProgressPercent($0) }
     let moved = format(after) != format(start)
 
     return (

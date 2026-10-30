@@ -881,7 +881,7 @@ struct TodayProgressSection: View {
           card(
             title: Text(
               "Progress", tableName: "Today", comment: "Title of the goal's progress card"),
-            value: progress.value.formatted(.percent.precision(.fractionLength(0...2))),
+            value: goalProgressPercent(progress.value),
             // Until the syllabus says what was known, known lessons would read as studied.
             detail: syllabus.value.map { studied(lessons, known: $0.lessons.known) }
           ) {

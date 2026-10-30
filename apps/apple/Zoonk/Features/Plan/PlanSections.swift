@@ -304,7 +304,7 @@ struct PlanNumbersSection: View {
     return PlanNumber(
       label: String(
         localized: "Progress", table: "Plan", comment: "Label of the goal's progress number"),
-      value: share.formatted(.percent.precision(.fractionLength(0...2))),
+      value: goalProgressPercent(share),
       detail: studiedText(lessons.done - lessons.known))
   }
 
