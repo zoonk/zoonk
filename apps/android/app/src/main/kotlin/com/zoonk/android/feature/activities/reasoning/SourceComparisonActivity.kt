@@ -267,8 +267,8 @@ private fun passageColors() =
     PassageColors(
         unmarked = MaterialTheme.zoonk.vizAccent,
         marked = MaterialTheme.zoonk.vizHighlight.copy(alpha = SOFT),
-        correct = MaterialTheme.colorScheme.tertiaryContainer,
-        incorrect = MaterialTheme.colorScheme.errorContainer,
+        correct = MaterialTheme.colorScheme.tertiary.copy(alpha = PASSAGE_TINT),
+        incorrect = MaterialTheme.colorScheme.error.copy(alpha = PASSAGE_TINT),
         missed = MaterialTheme.colorScheme.onTertiaryContainer,
     )
 
@@ -351,7 +351,7 @@ private fun Legend(
         if (found) {
             LegendEntry(
                 stringResource(R.string.activities_reasoning_source_what_to_mark),
-                Modifier.tint(MaterialTheme.colorScheme.tertiaryContainer),
+                Modifier.tint(MaterialTheme.colorScheme.tertiary),
             )
         }
         if (missed) {
@@ -371,7 +371,7 @@ private fun Legend(
         if (wrong) {
             LegendEntry(
                 stringResource(R.string.activities_reasoning_source_wrong_mark),
-                Modifier.tint(MaterialTheme.colorScheme.errorContainer),
+                Modifier.tint(MaterialTheme.colorScheme.error),
             )
         }
     }
@@ -388,9 +388,12 @@ private fun LegendEntry(
     }
 }
 
-private fun Modifier.tint(color: Color) = size(width = 16.dp, height = 12.dp).clip(RoundedCornerShape(2.dp)).background(color)
+private fun Modifier.tint(color: Color) =
+    size(width = 16.dp, height = 12.dp).clip(RoundedCornerShape(2.dp)).background(color.copy(alpha = SWATCH_TINT))
 
 private const val SOFT = 0.16f
+private const val PASSAGE_TINT = 0.15f
+private const val SWATCH_TINT = 0.25f
 private const val LINE_HEIGHT = 1.9f
 
 /** Roughly how far the font's letters reach above and below the baseline, as shares of its size. */
