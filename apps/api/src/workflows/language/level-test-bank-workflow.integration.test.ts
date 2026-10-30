@@ -5,7 +5,8 @@ import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { describe, expect, it, vi } from "vitest";
 import { FatalError } from "workflow";
-import { type Run, start } from "workflow/api";
+import { start } from "workflow/api";
+import { readStreamToEnd } from "../_test-utils/read-run-stream";
 import { levelTestBankWorkflow } from "./level-test-bank-workflow";
 
 vi.mock("@zoonk/ai/tasks/audio", async (importOriginal) => ({
@@ -75,29 +76,7 @@ function voiced(): Awaited<ReturnType<typeof generateLanguageAudio>> {
   };
 }
 
-const STREAM_END_MS = 5000;
 const OWNER_WRITING_MS = 30_000;
-
-/** Null when the stream is still open a few seconds after the run ended. */
-async function readStreamToEnd(run: Run<unknown>): Promise<string | null> {
-  let text = "";
-
-  const sink = new WritableStream<string>({
-    write: (chunk) => {
-      text += chunk;
-    },
-  });
-
-  const ended = await run
-    .getReadable<string>()
-    .pipeTo(sink, { signal: AbortSignal.timeout(STREAM_END_MS) })
-    .then(
-      () => true,
-      () => false,
-    );
-
-  return ended ? text : null;
-}
 
 function uniquePair() {
   return { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };
