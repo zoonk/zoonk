@@ -70,6 +70,7 @@ private struct EssayContent: View {
   @State private var status = EssaySendStatus.idle
   @State private var slow = false
   @State private var startedAt: Date?
+  @State private var editedSinceSentAt: Date?
   @State private var ungraded: (attemptId: String, text: String)?
   @State private var finishing = false
   @State private var finishFailed = false
@@ -260,6 +261,7 @@ private struct EssayContent: View {
       get: { text },
       set: { next in
         startedAt = startedAt ?? .now
+        editedSinceSentAt = editedSinceSentAt ?? .now
         typed = next
         UnsentEssay.keep(next, blockId: essay.blockId)
       })
@@ -313,6 +315,7 @@ private struct EssayContent: View {
     let durationMs = startedAt.map { Int(Date.now.timeIntervalSince($0) * 1000) } ?? 0
     let blockId = essay.blockId
     ungraded = (attemptId, text)
+    editedSinceSentAt = nil
     status = .grading
     slow = false
 
@@ -336,9 +339,9 @@ private struct EssayContent: View {
       status = .idle
       ungraded = nil
       writing = isChangedSince
+      startedAt = isChangedSince ? editedSinceSentAt : nil
 
       if !isChangedSince {
-        startedAt = nil
         typed = nil
         UnsentEssay.clear(blockId)
       }
