@@ -21,24 +21,19 @@ jobs:
     with:
       app: android
 
-  compile:
-    name: compile (${{ matrix.job }})
+  compile-release:
+    name: compile (release)
     needs: changes
     if: needs.changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - job: release
-            tasks: :app:compileReleaseKotlin
-          - job: tests
-            tasks: :app:compileDebugUnitTestKotlin :api:compileTestKotlin
+    env:
+      COMPILE_VARIANT: release
+      COMPILE_TASKS: :app:compileReleaseKotlin
     concurrency:
-      group: ${{ github.workflow }}-compile-${{ matrix.job }}-${{ github.event.pull_request.number || github.ref }}
+      group: ${{ github.workflow }}-compile-release-${{ github.event.pull_request.number || github.ref }}
       cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-    steps:
+    steps: &compile-steps
       - &checkout
         name: Check out code
         uses: actions/checkout@v7
@@ -64,12 +59,12 @@ jobs:
           cache-read-only: false
 
       - name: Compile shared inputs
-        run: make -C apps/android build BUILD_TASKS="${{ matrix.tasks }}"
+        run: make -C apps/android build BUILD_TASKS="${{ env.COMPILE_TASKS }}"
 
       - name: Share compiled task outputs
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: android-compile-cache-${{ matrix.job }}
+          name: android-compile-cache-${{ env.COMPILE_VARIANT }}
           path: |
             ~/.gradle/caches/build-cache-1/*
             !~/.gradle/caches/build-cache-1/*.lock
@@ -78,18 +73,60 @@ jobs:
           retention-days: 1
           if-no-files-found: error
 
-      - &profiles
-        name: Upload task profiles
+      - name: Upload task profiles
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: profile-${{ github.job }}-${{ matrix.job }}
+          name: profile-${{ github.job }}
+          path: apps/android/build/reports/profile/
+
+  compile-tests:
+    name: compile (tests)
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      COMPILE_VARIANT: tests
+      COMPILE_TASKS: :app:compileDebugUnitTestKotlin :api:compileTestKotlin
+    concurrency:
+      group: ${{ github.workflow }}-compile-tests-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+    steps: *compile-steps
+
+  tests:
+    name: tests
+    needs: compile-tests
+    if: ${{ !cancelled() && needs.compile-tests.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: ${{ github.workflow }}-tests-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+    steps:
+      - *checkout
+      - *java
+      - *android
+      - *gradle
+      - name: Restore compiled task outputs
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: android-compile-cache-tests
+          path: ~/.gradle/caches/build-cache-1
+          digest-mismatch: error
+      - name: Run Gradle
+        run: make -C apps/android test GRADLE_ARGUMENTS="$GRADLE_ARGUMENTS -Pzoonk.testForks=2"
+      - name: Upload task profiles
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: profile-gradle-tests
           path: apps/android/build/reports/profile/
 
   gradle:
     name: ${{ matrix.job }}
-    needs: compile
-    if: ${{ !cancelled() && needs.compile.result != 'skipped' }}
+    needs: compile-release
+    if: ${{ !cancelled() && needs.compile-release.result != 'skipped' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     concurrency:
@@ -102,10 +139,6 @@ jobs:
           - job: checks
             target: lint
             tasks: :app:lintRelease
-          - job: tests
-            target: test
-            cache: tests
-            arguments: -Pzoonk.testForks=2
           - job: release
             target: build
             arguments: -x :app:lintVitalRelease
@@ -118,14 +151,19 @@ jobs:
       - name: Restore compiled task outputs
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: android-compile-cache-${{ matrix.cache || 'release' }}
+          name: android-compile-cache-release
           path: ~/.gradle/caches/build-cache-1
           digest-mismatch: error
 
       - name: Run Gradle
         run: make -C apps/android ${{ matrix.target }} GRADLE_ARGUMENTS="$GRADLE_ARGUMENTS ${{ matrix.arguments }}" ${{ matrix.tasks && format('LINT_TASKS="{0}"', matrix.tasks) || '' }}
 
-      - *profiles
+      - name: Upload task profiles
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: profile-${{ github.job }}-${{ matrix.job }}
+          path: apps/android/build/reports/profile/
 
   style:
     name: style
