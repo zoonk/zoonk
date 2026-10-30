@@ -97,6 +97,7 @@ function useEssayGrading({
   }, [gradesUsedOn]);
 
   async function gradeEssays() {
+    const askedOn = new Date().toDateString();
     setEssayGrading("grading");
 
     const settled = await settleWithin({
@@ -113,7 +114,7 @@ function useEssayGrading({
 
     setView(outcome.mock);
     setEssayGrading(outcome.status === "limitReached" ? "limitReached" : "idle");
-    setGradesUsedOn(outcome.status === "limitReached" ? new Date().toDateString() : null);
+    setGradesUsedOn(outcome.status === "limitReached" ? askedOn : null);
   }
 
   return { essayGrading, gradeEssays };
