@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-13T18:31:50.759Z",
+  "fetchedAt": "2026-10-30T22:41:22.613Z",
   "models": {
     "alibaba/qwen-3-14b": { "input": 1.2e-7, "output": 2.4e-7 },
     "alibaba/qwen-3-235b": { "input": 2.2e-7, "output": 8.8e-7 },
@@ -167,10 +167,10 @@
       "output": 0.000012
     },
     "alibaba/qwen3.8-omni-flash": { "input": 1.5e-7, "inputCacheRead": 1.6e-8, "output": 4.7e-7 },
-    "amazon/nova-2-lite": { "input": 3e-7, "inputCacheRead": 7.5e-8, "output": 0.0000025 },
-    "amazon/nova-lite": { "input": 6e-8, "output": 2.4e-7 },
-    "amazon/nova-micro": { "input": 3.5e-8, "output": 1.4e-7 },
-    "amazon/nova-pro": { "input": 8e-7, "output": 0.0000032 },
+    "amazon/nova-2-lite": { "input": 3.3e-7, "inputCacheRead": 8.25e-8, "output": 0.00000275 },
+    "amazon/nova-lite": { "input": 6e-8, "inputCacheRead": 1.5e-8, "output": 2.4e-7 },
+    "amazon/nova-micro": { "input": 3.5e-8, "inputCacheRead": 8.7e-9, "output": 1.4e-7 },
+    "amazon/nova-pro": { "input": 8e-7, "inputCacheRead": 2e-7, "output": 0.0000032 },
     "anthropic/claude-fable-5": {
       "input": 0.00001,
       "inputCacheRead": 0.000001,
@@ -341,28 +341,6 @@
       "inputCacheWrite": 0.0000025,
       "output": 0.00001
     },
-    "anthropic/claude-sonnet-4": {
-      "input": 0.000003,
-      "inputCacheRead": 3e-7,
-      "inputCacheReadTiers": [
-        { "cost": 3e-7, "max": 200001, "min": 0 },
-        { "cost": 6e-7, "min": 200001 }
-      ],
-      "inputCacheWrite": 0.00000375,
-      "inputCacheWriteTiers": [
-        { "cost": 0.00000375, "max": 200001, "min": 0 },
-        { "cost": 0.0000075, "min": 200001 }
-      ],
-      "inputTiers": [
-        { "cost": 0.000003, "max": 200001, "min": 0 },
-        { "cost": 0.000006, "min": 200001 }
-      ],
-      "output": 0.000015,
-      "outputTiers": [
-        { "cost": 0.000015, "max": 200001, "min": 0 },
-        { "cost": 0.0000225, "min": 200001 }
-      ]
-    },
     "anthropic/claude-sonnet-4.5": {
       "input": 0.000003,
       "inputCacheRead": 3e-7,
@@ -443,17 +421,31 @@
       "inputCacheWrite": 0.00000125,
       "output": 0.000005
     },
-    "arcee-ai/trinity-large-thinking": { "input": 2.5e-7, "output": 8e-7 },
+    "baseten/elephant-1": { "input": 3.5e-8, "output": 0 },
+    "baseten/joey-1": { "input": 1e-8, "output": 0 },
+    "baseten/mammoth-1": { "input": 1e-7, "output": 0 },
     "bfl/flux-3-image": {
       "input": 0,
       "output": 0,
-      "perImage": 0.024,
+      "perImage": 0.048,
       "perImageBySize": {
-        "768x768": 0.0205,
-        "1024x1024": 0.024,
-        "1536x1536": 0.035,
-        "2048x2048": 0.05,
-        "4096x4096": 0.3035
+        "768x768": 0.041,
+        "1024x1024": 0.048,
+        "1536x1536": 0.07,
+        "2048x2048": 0.1,
+        "4096x4096": 0.607
+      }
+    },
+    "bfl/flux-3-image-klein": {
+      "input": 0,
+      "output": 0,
+      "perImage": 0.009,
+      "perImageBySize": {
+        "768x768": 0.008,
+        "1024x1024": 0.009,
+        "1536x1536": 0.011,
+        "2048x2048": 0.014,
+        "4096x4096": 0.036
       }
     },
     "bfl/flux-kontext-max": { "input": 0, "output": 0, "perImage": 0.08 },
@@ -518,11 +510,35 @@
       "output": 0.00000198
     },
     "deepseek/deepseek-v4.1-flash": { "input": 3e-7, "inputCacheRead": 7e-9, "output": 0.0000012 },
+    "deepseek/deepseek-v4.1-flash-1017": {
+      "input": 3e-7,
+      "inputCacheRead": 7e-9,
+      "output": 0.0000012
+    },
+    "deepseek/deepseek-v4.1-flash-1017-fast": {
+      "input": 6e-7,
+      "inputCacheRead": 1.4e-8,
+      "output": 0.0000024
+    },
     "deepseek/deepseek-v4.1-flash-fast": {
       "input": 6e-7,
       "inputCacheRead": 1.4e-8,
       "output": 0.0000024
     },
+    "elevenlabs/eleven-realtime-v1-max": {
+      "input": 9e-7,
+      "inputCacheRead": 9e-8,
+      "output": 0.0000045,
+      "perSecond": 0.0006667
+    },
+    "elevenlabs/eleven-realtime-v1-mini": {
+      "input": 1e-7,
+      "inputCacheRead": 1e-8,
+      "output": 0.000003,
+      "perSecond": 0.0006667
+    },
+    "elevenlabs/scribe-v2": { "input": 0, "output": 0, "perSecond": 0.000030556 },
+    "elorian/glimpse": { "input": 6e-7, "inputCacheRead": 6e-8, "output": 0.000003 },
     "fireworks/ember-1": { "input": 0.000003, "inputCacheRead": 3e-7, "output": 0.000015 },
     "fish-audio/transcribe-1": { "input": 1e-10, "output": 0, "perSecond": 0.0001 },
     "google/gemini-2.5-flash": {
@@ -805,6 +821,7 @@
     "google/gemma-4-31b-it": { "input": 1.4e-7, "output": 4e-7 },
     "inception/mercury-2": { "input": 2.5e-7, "inputCacheRead": 2.5e-8, "output": 7.5e-7 },
     "inception/mercury-2.5": { "input": 4e-8, "inputCacheRead": 4e-9, "output": 1.5e-7 },
+    "inception/mercury-3": { "input": 1e-7, "inputCacheRead": 1e-8, "output": 3.5e-7 },
     "inception/mercury-coder-small": { "input": 2.5e-7, "output": 0.000001 },
     "inclusionai/ling-3.0-flash": { "input": 2.1e-8, "inputCacheRead": 4.2e-9, "output": 6.3e-8 },
     "inclusionai/ling-3.0-flash-fin": {
@@ -822,8 +839,8 @@
       "inputCacheRead": 1.5e-8,
       "output": 2.2e-7
     },
-    "inclusionai/ling-3.1-flash": { "input": 0, "output": 0 },
-    "inclusionai/ling-3.1-flash-free": { "input": 0, "output": 0 },
+    "inclusionai/ling-3.1-flash": { "input": 3e-7, "inputCacheRead": 6e-8, "output": 9e-7 },
+    "inclusionai/ling-3.1-flash-1019": { "input": 0, "output": 0 },
     "inference-net/schematron-v2-small": {
       "input": 5e-8,
       "inputCacheRead": 5e-8,
@@ -835,7 +852,9 @@
       "output": 1.5e-7
     },
     "interfaze/interfaze-beta": { "input": 0.0000015, "output": 0.0000035 },
-    "liquid/d1": { "input": 4e-8, "output": 0 },
+    "liquid/d1": { "input": 2e-8, "output": 0 },
+    "liquid/d1-ultra": { "input": 4.2e-8, "output": 0 },
+    "liquid/lfm2.5-24b-a2b": { "input": 5e-8, "inputCacheRead": 2.5e-8, "output": 7e-7 },
     "meituan/longcat-2.5-preview": { "input": 3e-7, "inputCacheRead": 6e-9, "output": 0.0000012 },
     "meta/llama-3.1-70b": { "input": 7.2e-7, "output": 7.2e-7 },
     "meta/llama-3.1-8b": { "input": 2.2e-7, "output": 2.2e-7 },
@@ -849,7 +868,10 @@
     "meta/muse-spark-1.2-contributor": { "input": 1e-7, "inputCacheRead": 2e-9, "output": 2e-7 },
     "meta/muse-spark-1.3": { "input": 0.00000125, "inputCacheRead": 1.5e-7, "output": 0.00000425 },
     "meta/muse-spark-1.3-contributor": { "input": 1e-7, "inputCacheRead": 2e-9, "output": 2e-7 },
+    "meta/muse-spark-open": { "input": 0.00000125, "inputCacheRead": 1.5e-7, "output": 0.00000425 },
     "meta/muse-wonder-1.0": { "input": 0.000004, "inputCacheRead": 2e-7, "output": 0.00002 },
+    "microsoft/mai-image-2.6": { "input": 0.000005, "output": 0.000038 },
+    "microsoft/mai-image-2.6-flash": { "input": 0.00000175, "output": 0.000019 },
     "microsoft/mai-transcribe-2": { "input": 0, "output": 0, "perSecond": 0.00002778 },
     "microsoft/microsoft-decision-1": { "input": 4.2e-8, "output": 0 },
     "minimax/minimax-m2": {
@@ -895,12 +917,13 @@
       "output": 0.0000024
     },
     "minimax/minimax-m3": { "input": 3e-7, "inputCacheRead": 6e-8, "output": 0.0000012 },
+    "minimax/minimax-m3.1-flash": { "input": 1.5e-7, "inputCacheRead": 1.5e-8, "output": 6e-7 },
     "mistral/codestral": { "input": 3e-7, "inputCacheRead": 3e-8, "output": 9e-7 },
     "mistral/ministral-14b": { "input": 2e-7, "inputCacheRead": 2e-8, "output": 2e-7 },
     "mistral/ministral-3b": { "input": 1e-7, "inputCacheRead": 1e-8, "output": 1e-7 },
     "mistral/ministral-8b": { "input": 1.5e-7, "inputCacheRead": 1.5e-8, "output": 1.5e-7 },
     "mistral/mistral-large-3": { "input": 5e-7, "inputCacheRead": 5e-8, "output": 0.0000015 },
-    "mistral/mistral-large-4": { "input": 6.8e-7, "inputCacheRead": 7e-8, "output": 0.00000209 },
+    "mistral/mistral-large-4": { "input": 7e-7, "inputCacheRead": 7e-8, "output": 0.0000021 },
     "mistral/mistral-medium-3.5": {
       "input": 0.0000015,
       "inputCacheRead": 1.5e-7,
@@ -908,6 +931,8 @@
     },
     "mistral/mistral-nemo": { "input": 2.9e-8, "output": 3e-8 },
     "mistral/mistral-small": { "input": 1.5e-7, "inputCacheRead": 1.5e-8, "output": 6e-7 },
+    "mistral/voxtral-mini-transcribe-3": { "input": 0, "output": 0, "perSecond": 0.00005834 },
+    "mistral/voxtral-small-transcribe-3": { "input": 0, "output": 0, "perSecond": 0.00006667 },
     "mixedbread/toast-1": { "input": 3e-7, "inputCacheRead": 3.6e-8, "output": 7.2e-7 },
     "moonshotai/kimi-k2": { "input": 5.7e-7, "output": 0.0000023 },
     "moonshotai/kimi-k2.5": { "input": 6e-7, "output": 0.000003 },
@@ -924,6 +949,18 @@
       "inputCacheRead": 4.5e-7,
       "output": 0.0000225
     },
+    "moonshotai/kimi-k3.1-pro": {
+      "input": 0.000002,
+      "inputCacheRead": 2e-7,
+      "inputCacheWrite": 0.000002,
+      "output": 0.00001
+    },
+    "moonshotai/kimi-k3.1-pro-highspeed": {
+      "input": 0.000004,
+      "inputCacheRead": 2e-7,
+      "inputCacheWrite": 0.000004,
+      "output": 0.00002
+    },
     "morph/morph-v3-fast": { "input": 8e-7, "output": 0.0000012 },
     "morph/morph-v3-large": { "input": 9e-7, "output": 0.0000019 },
     "nvidia/nemotron-3-nano-30b-a3b": { "input": 5e-8, "inputCacheRead": 2.5e-8, "output": 2e-7 },
@@ -934,10 +971,10 @@
       "output": 0.0000024
     },
     "nvidia/nemotron-3.5-lightning": { "input": 5e-8, "inputCacheRead": 1e-8, "output": 2e-7 },
+    "nvidia/nemotron-3.5-lightning-free": { "input": 0, "output": 0 },
+    "nvidia/nemotron-3.5-super-vl": { "input": 2e-7, "inputCacheRead": 4e-8, "output": 5e-7 },
     "nvidia/nemotron-nano-12b-v2-vl": { "input": 2e-7, "output": 6e-7 },
     "nvidia/nemotron-nano-9b-v2": { "input": 6e-8, "output": 2.3e-7 },
-    "openai/gpt-3.5-turbo": { "input": 5e-7, "output": 0.0000015 },
-    "openai/gpt-4-turbo": { "input": 0.00001, "output": 0.00003 },
     "openai/gpt-4.1": {
       "input": 0.000002,
       "inputCacheRead": 5e-7,
@@ -958,14 +995,7 @@
     },
     "openai/gpt-4.1-mini-fast": { "input": 7e-7, "inputCacheRead": 1.75e-7, "output": 0.0000028 },
     "openai/gpt-4.1-mini-batch": { "input": 2e-7, "inputCacheRead": 5e-8, "output": 8e-7 },
-    "openai/gpt-4.1-nano": {
-      "input": 1e-7,
-      "inputCacheRead": 2.5e-8,
-      "output": 4e-7,
-      "serviceTiers": { "priority": { "input": 2e-7, "inputCacheRead": 5e-8, "output": 8e-7 } }
-    },
-    "openai/gpt-4.1-nano-fast": { "input": 2e-7, "inputCacheRead": 5e-8, "output": 8e-7 },
-    "openai/gpt-4.1-nano-batch": { "input": 5e-8, "inputCacheRead": 1.25e-8, "output": 2e-7 },
+    "openai/gpt-4.1-nano": { "input": 1e-7, "inputCacheRead": 3e-8, "output": 4e-7 },
     "openai/gpt-4o": {
       "input": 0.0000025,
       "inputCacheRead": 0.00000125,
@@ -1563,7 +1593,24 @@
         { "cost": 3.75e-7, "min": 272001 }
       ]
     },
-    "openai/gpt-6-luna-decisions": { "input": 1e-7, "output": 0 },
+    "openai/gpt-6-luna-decisions": {
+      "input": 1e-7,
+      "inputCacheRead": 1e-8,
+      "inputCacheReadTiers": [
+        { "cost": 1e-8, "max": 272001, "min": 0 },
+        { "cost": 2e-8, "min": 272001 }
+      ],
+      "inputCacheWrite": 1.25e-7,
+      "inputCacheWriteTiers": [
+        { "cost": 1.25e-7, "max": 272001, "min": 0 },
+        { "cost": 2.5e-7, "min": 272001 }
+      ],
+      "inputTiers": [
+        { "cost": 1e-7, "max": 272001, "min": 0 },
+        { "cost": 2e-7, "min": 272001 }
+      ],
+      "output": 0
+    },
     "openai/gpt-6-sol": {
       "input": 0.000002,
       "inputCacheRead": 2e-7,
@@ -1704,7 +1751,54 @@
         { "cost": 0.0000075, "min": 272001 }
       ]
     },
-    "openai/gpt-image-1": { "input": 0.000005, "inputCacheRead": 0.00000125, "output": 0.00004 },
+    "openai/gpt-6.1-terra": {
+      "input": 0.000001,
+      "inputCacheRead": 5e-8,
+      "inputCacheReadTiers": [
+        { "cost": 5e-8, "max": 272001, "min": 0 },
+        { "cost": 1e-7, "min": 272001 }
+      ],
+      "inputCacheWrite": 0.00000125,
+      "inputCacheWriteTiers": [
+        { "cost": 0.00000125, "max": 272001, "min": 0 },
+        { "cost": 0.0000025, "min": 272001 }
+      ],
+      "inputTiers": [
+        { "cost": 0.000001, "max": 272001, "min": 0 },
+        { "cost": 0.000002, "min": 272001 }
+      ],
+      "output": 0.000005,
+      "outputTiers": [
+        { "cost": 0.000005, "max": 272001, "min": 0 },
+        { "cost": 0.0000075, "min": 272001 }
+      ],
+      "serviceTiers": {
+        "flex": { "input": 5e-7, "inputCacheRead": 2.5e-8, "output": 0.0000025 },
+        "priority": { "input": 0.000002, "inputCacheRead": 1e-7, "output": 0.00001 }
+      }
+    },
+    "openai/gpt-6.1-terra-fast": {
+      "input": 0.000002,
+      "inputCacheRead": 1e-7,
+      "inputCacheReadTiers": [
+        { "cost": 1e-7, "max": 272001, "min": 0 },
+        { "cost": 2e-7, "min": 272001 }
+      ],
+      "inputCacheWrite": 0.0000025,
+      "inputCacheWriteTiers": [
+        { "cost": 0.0000025, "max": 272001, "min": 0 },
+        { "cost": 0.000005, "min": 272001 }
+      ],
+      "inputTiers": [
+        { "cost": 0.000002, "max": 272001, "min": 0 },
+        { "cost": 0.000004, "min": 272001 }
+      ],
+      "output": 0.00001,
+      "outputTiers": [
+        { "cost": 0.00001, "max": 272001, "min": 0 },
+        { "cost": 0.000015, "min": 272001 }
+      ]
+    },
     "openai/gpt-image-1-mini": { "input": 0.000002, "inputCacheRead": 2e-7, "output": 0.000008 },
     "openai/gpt-image-1.5": { "input": 0.000005, "inputCacheRead": 0.00000125, "output": 0.000032 },
     "openai/gpt-image-2": { "input": 0.000005, "inputCacheRead": 0.00000125, "output": 0.00003 },
@@ -1719,6 +1813,7 @@
       "output": 0.00003
     },
     "openai/gpt-live-1": { "input": 0, "output": 0, "perSecond": 0.0008334 },
+    "openai/gpt-live-transcribe": { "input": 2e-10, "output": 0, "perSecond": 0.00028334 },
     "openai/gpt-oss-120b": { "input": 1e-7, "inputCacheRead": 1e-7, "output": 5e-7 },
     "openai/gpt-oss-20b": { "input": 3e-8, "output": 1.4e-7 },
     "openai/gpt-oss-safeguard-120b": { "input": 1.5e-7, "output": 6e-7 },
@@ -1728,6 +1823,7 @@
     "openai/gpt-realtime-2.1": { "input": 0.000004, "inputCacheRead": 4e-7, "output": 0.000024 },
     "openai/gpt-realtime-mini": { "input": 6e-7, "inputCacheRead": 6e-8, "output": 0.0000024 },
     "openai/gpt-realtime-whisper": { "input": 2e-10, "output": 0, "perSecond": 0.000284 },
+    "openai/gpt-transcribe": { "input": 0, "output": 0, "perSecond": 0.000075 },
     "openai/o1": { "input": 0.000015, "inputCacheRead": 0.0000075, "output": 0.00006 },
     "openai/o3": {
       "input": 0.000002,
@@ -1741,17 +1837,11 @@
     "openai/o3-fast": { "input": 0.0000035, "inputCacheRead": 8.75e-7, "output": 0.000014 },
     "openai/o3-mini": { "input": 0.0000011, "inputCacheRead": 5.5e-7, "output": 0.0000044 },
     "openai/o3-pro": { "input": 0.00002, "output": 0.00008 },
-    "openai/o4-mini": {
-      "input": 0.0000011,
-      "inputCacheRead": 2.75e-7,
-      "output": 0.0000044,
-      "serviceTiers": {
-        "flex": { "input": 5.5e-7, "inputCacheRead": 1.38e-7, "output": 0.0000022 },
-        "priority": { "input": 0.000002, "inputCacheRead": 5e-7, "output": 0.000008 }
-      }
-    },
-    "openai/o4-mini-fast": { "input": 0.000002, "inputCacheRead": 5e-7, "output": 0.000008 },
+    "openai/o4-mini": { "input": 0.0000011, "inputCacheRead": 2.75e-7, "output": 0.0000044 },
     "openai/whisper-1": { "input": 1e-10, "output": 0, "perSecond": 0.0001 },
+    "particle/particle-1": { "input": 1.25e-7, "inputCacheRead": 1.5e-8, "output": 5e-7 },
+    "perplexity/pplx-decider-flash-v1.2": { "input": 1e-8, "output": 0 },
+    "perplexity/pplx-decider-v1.2": { "input": 2e-8, "output": 0 },
     "perplexity/sonar": { "input": 2.5e-7, "inputCacheWrite": 6.25e-8, "output": 0.0000025 },
     "poolside/laguna-s-2.1": { "input": 9e-8, "inputCacheRead": 9e-9, "output": 1.8e-7 },
     "poolside/laguna-s-2.1-free": { "input": 0, "output": 0 },
@@ -1776,6 +1866,8 @@
     "recraft/recraft-v4.1-pro": { "input": 0, "output": 0, "perImage": 0.21 },
     "recraft/recraft-v4.1-utility": { "input": 0, "output": 0, "perImage": 0.035 },
     "recraft/recraft-v4.1-utility-pro": { "input": 0, "output": 0, "perImage": 0.21 },
+    "reflection/beam": { "input": 0, "output": 0 },
+    "reflection/beam-free": { "input": 0, "output": 0 },
     "sakana/fugu-max": { "input": 0.000002, "inputCacheRead": 2.5e-7, "output": 0.000006 },
     "sakana/fugu-ultra": {
       "input": 0.000005,
@@ -1813,9 +1905,11 @@
     },
     "sakana/namazu": { "input": 9.5e-7, "inputCacheRead": 1.5e-7, "output": 0.000004 },
     "scaledown/scaledown-classify-1": { "input": 5e-8, "output": 0 },
+    "scaledown/scaledown-extract-1": { "input": 5e-8, "output": 0 },
+    "scaledown/scaledown-summarize-1": { "input": 5e-8, "output": 0 },
     "stealth/glyph-cluster": { "input": 0, "output": 0 },
     "stepfun/step-3.7-flash": { "input": 2e-7, "inputCacheRead": 4e-8, "output": 0.00000115 },
-    "stepfun/step-5-preview": { "input": 0.000001, "inputCacheRead": 5e-8, "output": 0.0000027 },
+    "stepfun/step-5-preview": { "input": 0.000001, "inputCacheRead": 1e-7, "output": 0.0000027 },
     "tencent/hy-mt2-lite": { "input": 4.4e-8, "output": 1.77e-7 },
     "tencent/hy-mt2-plus": { "input": 7.4e-8, "output": 2.95e-7 },
     "tencent/hy-mt2-pro": { "input": 7.4e-8, "output": 2.95e-7 },
@@ -1832,12 +1926,8 @@
       "output": 0.0000012
     },
     "typesafe-ai/jev": { "input": 4.2e-8, "output": 0 },
-    "spacexai/grok-4.1-fast-non-reasoning": {
-      "input": 2e-7,
-      "inputCacheRead": 5e-8,
-      "output": 5e-7
-    },
-    "spacexai/grok-4.1-fast-reasoning": { "input": 2e-7, "inputCacheRead": 5e-8, "output": 5e-7 },
+    "typesafe-ai/jev-1.13.0": { "input": 4.2e-8, "output": 0 },
+    "typesafe-ai/jev-1.14.0": { "input": 4.2e-8, "output": 0 },
     "spacexai/grok-4.20-multi-agent": {
       "input": 0.00000125,
       "inputCacheRead": 2e-7,
@@ -2117,10 +2207,10 @@
     "spacexai/grok-imagine-image": { "input": 0, "output": 0, "perImage": 0.02 },
     "spacexai/grok-imagine-image-2.0": { "input": 0, "output": 0, "perImage": 0.06 },
     "spacexai/grok-stt": { "input": 0, "output": 0, "perSecond": 0.000028 },
-    "spacexai/grok-voice-think-fast-1.0": { "input": 0, "output": 0, "perSecond": 0.000834 },
+    "spacexai/grok-voice-3.0": { "input": 0, "output": 0, "perSecond": 0.001334 },
     "spacexai/grok-voice-think-fast-2.0": { "input": 0, "output": 0, "perSecond": 0.001334 },
-    "xiaomi/mimo-v2.5": { "input": 1.4e-7, "inputCacheRead": 2.8e-9, "output": 2.8e-7 },
-    "xiaomi/mimo-v2.5-pro": { "input": 4.35e-7, "inputCacheRead": 3.6e-9, "output": 8.7e-7 },
+    "xiaomi/mimo-v2.5": { "input": 1.19e-7, "inputCacheRead": 2.5e-9, "output": 2.38e-7 },
+    "xiaomi/mimo-v2.5-pro": { "input": 3.045e-7, "inputCacheRead": 2.8e-9, "output": 6.09e-7 },
     "xiaomi/mimo-v2.6-flash": { "input": 1.4e-7, "inputCacheRead": 2.8e-9, "output": 2.8e-7 },
     "xiaomi/mimo-v2.6-pro": { "input": 4.35e-7, "inputCacheRead": 3.6e-9, "output": 8.7e-7 },
     "xiaomi/mimo-v2.6-pro-ultraspeed": {
