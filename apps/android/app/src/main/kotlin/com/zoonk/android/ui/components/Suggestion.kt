@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -180,8 +181,11 @@ fun SuggestionHeader(text: String) {
 }
 
 @Composable
-fun SuggestionDescription(text: String) {
-    Text(text = text, style = bodyStyle(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+fun SuggestionDescription(
+    text: String,
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+) {
+    Text(text = text, style = bodyStyle(), color = color)
 }
 
 @Composable
@@ -249,6 +253,8 @@ private fun SuggestionLine(
     modifier: Modifier,
     action: (@Composable () -> Unit)?,
 ) {
+    // With nothing to open, the line is all there is to read.
+    val whole = answered || action == null
     Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, border = frameBorder()) {
         CompositionLocalProvider(LocalPresentation provides Presentation.Line) {
             Row(
@@ -267,8 +273,8 @@ private fun SuggestionLine(
                             .then(if (answered) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = if (answered) FontWeight.Medium else null,
-                    color = if (answered) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = if (answered || LocalDensity.current.fontScale > FULL_SUMMARY_FONT_SCALE) Int.MAX_VALUE else 2,
+                    color = if (whole) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = if (whole || LocalDensity.current.fontScale > FULL_SUMMARY_FONT_SCALE) Int.MAX_VALUE else 2,
                     overflow = TextOverflow.Ellipsis,
                 )
                 action?.invoke()

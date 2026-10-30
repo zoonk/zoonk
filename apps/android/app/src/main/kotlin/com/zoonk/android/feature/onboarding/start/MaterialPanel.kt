@@ -18,6 +18,7 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,8 +28,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -95,7 +98,36 @@ fun attachErrorMessage(outcome: WriteOutcome<*>): String =
         },
     )
 
-private enum class Pasting { Text, Link }
+enum class Pasting { Text, Link }
+
+/** What the attach controls are pasting and the words typed so far, held where they should outlive the controls. */
+@Stable
+class AttachDraft(
+    pasting: Pasting? = null,
+    text: String = "",
+    link: String = "",
+) {
+    var pasting by mutableStateOf(pasting)
+    var text by mutableStateOf(text)
+    var link by mutableStateOf(link)
+
+    fun clear() {
+        pasting = null
+        text = ""
+        link = ""
+    }
+
+    companion object {
+        val Saver =
+            listSaver<AttachDraft, String>(
+                save = { listOf(it.pasting?.name.orEmpty(), it.text, it.link) },
+                restore = { (pasting, text, link) -> AttachDraft(Pasting.entries.find { it.name == pasting }, text, link) },
+            )
+    }
+}
+
+@Composable
+fun rememberAttachDraft() = rememberSaveable(saver = AttachDraft.Saver) { AttachDraft() }
 
 /** Shared with Today's research ask. [error] is the last attempt's, in words; [pendingText] says what [pending] waits for. */
 @Composable
@@ -106,9 +138,11 @@ fun AttachControls(
     onText: (String) -> Unit,
     onLink: (String) -> Unit,
     pendingText: String? = null,
+    draft: AttachDraft = rememberAttachDraft(),
 ) {
     val resolver = LocalContext.current.contentResolver
-    var pasting by rememberSaveable { mutableStateOf<Pasting?>(null) }
+    val pasting = draft.pasting
+    val chipColors = FilterChipDefaults.filterChipColors(labelColor = MaterialTheme.colorScheme.onSurface)
     val picker =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             uri?.let { onFile(resolver.picked(it)) }
@@ -124,15 +158,17 @@ fun AttachControls(
             )
             FilterChip(
                 selected = pasting == Pasting.Text,
-                onClick = { pasting = if (pasting == Pasting.Text) null else Pasting.Text },
+                onClick = { draft.pasting = if (pasting == Pasting.Text) null else Pasting.Text },
                 enabled = !pending,
+                colors = chipColors,
                 label = { Text(stringResource(R.string.onboarding_paste_text)) },
                 leadingIcon = { Icon(painterResource(R.drawable.ic_description), contentDescription = null, Modifier.size(18.dp)) },
             )
             FilterChip(
                 selected = pasting == Pasting.Link,
-                onClick = { pasting = if (pasting == Pasting.Link) null else Pasting.Link },
+                onClick = { draft.pasting = if (pasting == Pasting.Link) null else Pasting.Link },
                 enabled = !pending,
+                colors = chipColors,
                 label = { Text(stringResource(R.string.onboarding_paste_link)) },
                 leadingIcon = { Icon(painterResource(R.drawable.ic_link), contentDescription = null, Modifier.size(18.dp)) },
             )
@@ -141,6 +177,8 @@ fun AttachControls(
         when (pasting) {
             Pasting.Text -> {
                 PasteField(
+                    value = draft.text,
+                    onValueChange = { draft.text = it },
                     label = stringResource(R.string.onboarding_your_text),
                     placeholder = stringResource(R.string.onboarding_paste_text_placeholder),
                     action = stringResource(R.string.onboarding_add_text),
@@ -153,6 +191,8 @@ fun AttachControls(
 
             Pasting.Link -> {
                 PasteField(
+                    value = draft.link,
+                    onValueChange = { draft.link = it },
                     label = stringResource(R.string.onboarding_link),
                     placeholder = stringResource(R.string.onboarding_paste_link_placeholder),
                     action = stringResource(R.string.onboarding_add_link),
@@ -190,6 +230,8 @@ fun AttachControls(
 
 @Composable
 private fun PasteField(
+    value: String,
+    onValueChange: (String) -> Unit,
     label: String,
     placeholder: String,
     action: String,
@@ -198,11 +240,10 @@ private fun PasteField(
     keyboardType: KeyboardType,
     onAdd: (String) -> Unit,
 ) {
-    var value by rememberSaveable { mutableStateOf("") }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
             value = value,
-            onValueChange = { value = it },
+            onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
             label = { Text(label) },
             placeholder = { Text(placeholder) },

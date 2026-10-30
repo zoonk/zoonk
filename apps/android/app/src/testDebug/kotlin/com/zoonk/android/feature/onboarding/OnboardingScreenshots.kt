@@ -473,7 +473,7 @@ class OnboardingScreenshots {
         private fun ResearchNotices(layout: SuggestionLayout) {
             val store = rememberStore(FakeOnboardingApi())
             Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                UploadRequestNotice(UUID.fromString(GOAL_ID), uploadAskOf(), store, layout)
+                UploadRequestNotice(UUID.fromString(GOAL_ID), uploadAskOf(), store, visit = 0, layout = layout)
                 SourceChangeNotice("The 2027 notice moves the exam to March 14 and adds Statistics to what it covers.", layout)
             }
         }

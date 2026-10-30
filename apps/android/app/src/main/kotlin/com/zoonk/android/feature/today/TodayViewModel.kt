@@ -160,7 +160,8 @@ class TodayViewModel(
     }
 
     /** An answer that comes back after the learner left Today belongs to no card. */
-    private var visit = 0
+    var visit = 0
+        private set
 
     /** A plan change answered here, so its card says what the answer did after Today moves on. */
     var planChangeAnswer by mutableStateOf<PlanChangeAnswer?>(null)

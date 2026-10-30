@@ -107,7 +107,7 @@ internal fun TodayNotice(
         }
 
         TodayNoticeKind.UploadRequest -> {
-            state.onboarding?.let { UploadRequestNotice(read.today.goal.id, state.research?.upload, it, layout, modifier) }
+            state.onboarding?.let { UploadRequestNotice(read.today.goal.id, state.research?.upload, it, viewModel.visit, layout, modifier) }
         }
 
         null -> {}

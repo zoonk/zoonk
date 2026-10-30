@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -37,16 +39,18 @@ internal fun UploadRequestNotice(
     goalId: UUID,
     request: GoalUploadRequestRequest?,
     store: OnboardingStore,
+    visit: Int,
     layout: SuggestionLayout,
     modifier: Modifier = Modifier,
 ) {
-    val vm = viewModel(key = "upload-request-$goalId") { UploadRequestViewModel(store, goalId) }
-    val shown = vm.answered ?: request
-    if (shown == null || vm.dismissed) return
+    val vm = viewModel(key = "upload-request-$goalId") { UploadRequestViewModel(store, goalId, createSavedStateHandle()) }
+    val answer = vm.on(visit)
+    val shown = answer.answered ?: request
+    if (shown == null || answer.dismissed) return
 
     val copy = requestCopy(shown)
     val thanks = stringResource(R.string.research_upload_thanks)
-    val answered = vm.answered != null
+    val answered = answer.answered != null
     val idle = vm.work == null
 
     Suggestion(
@@ -58,25 +62,27 @@ internal fun UploadRequestNotice(
         answered = answered,
         lineAction = if (answered) null else ({ SuggestionOpen(stringResource(R.string.research_upload_open)) }),
     ) {
+        // The header stays once answered: an answer moves a keyboard's or screen reader's focus to it.
+        SuggestionHeader(copy.title)
         if (answered) {
             SuggestionResult(thanks)
         } else {
-            SuggestionHeader(copy.title)
             SuggestionDescription(copy.body)
-            if (vm.isUploading) {
+            if (answer.uploading) {
                 AttachControls(
                     pending = !idle,
-                    error = vm.attachFailure?.let { attachErrorMessage(it) },
-                    onFile = { vm.attachFile(shown, it) },
-                    onText = { vm.attachText(shown, it) },
-                    onLink = { vm.attachLink(shown, it) },
+                    error = answer.attachFailure?.let { attachErrorMessage(it) },
+                    onFile = { vm.attachFile(visit, shown, it) },
+                    onText = { vm.attachText(visit, shown, it) },
+                    onLink = { vm.attachLink(visit, shown, it) },
                     pendingText = if (vm.work == UploadWork.Sending) stringResource(R.string.research_upload_sending) else null,
+                    draft = vm.draft,
                 )
             } else {
                 SuggestionActions {
                     SuggestionAction(
                         onClick = {
-                            vm.upload()
+                            vm.upload(visit)
                             focus()
                         },
                         enabled = idle,
@@ -85,11 +91,11 @@ internal fun UploadRequestNotice(
                         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                         Text(copy.action)
                     }
-                    SuggestionAction(stringResource(R.string.research_not_now), vm::dismiss, enabled = idle, secondary = true)
+                    SuggestionAction(stringResource(R.string.research_not_now), { vm.dismiss(visit) }, enabled = idle, secondary = true)
                 }
             }
         }
-        if (vm.saveFailed) SuggestionSaveError()
+        if (answer.saveFailed) SuggestionSaveError()
     }
 }
 
@@ -108,9 +114,10 @@ internal fun SourceChangeNotice(
         layout = layout,
         modifier = modifier,
         mark = SuggestionMark.Symbol(R.drawable.ic_history),
+        lineAction = null,
     ) {
         SuggestionHeader(label)
-        SuggestionDescription(message)
+        SuggestionDescription(message, color = MaterialTheme.colorScheme.onSurface)
     }
 }
 
