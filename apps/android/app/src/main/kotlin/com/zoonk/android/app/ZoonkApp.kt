@@ -467,7 +467,7 @@ private fun DrawerAction(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             NavigationIcon(icon)
-            Text(label, style = MaterialTheme.typography.labelLarge)
+            Text(label)
         }
     }
 }
