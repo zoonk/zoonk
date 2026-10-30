@@ -168,7 +168,9 @@ private struct PlanFocusSection: View {
                 var next = selection
                 if on { next.insert(area.name) } else { next.remove(area.name) }
                 picked = next
-              }))
+              })
+          )
+          .tint(.success)
         }
 
         Button {
@@ -184,7 +186,6 @@ private struct PlanFocusSection: View {
           "The subjects you pick come first and get more depth.", tableName: "Plan",
           comment: "What focusing on subjects does")
       }
-      .tint(.success)
     }
   }
 
