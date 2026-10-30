@@ -1,4 +1,3 @@
-import { isPlanConflictError } from "@zoonk/core/plans/conflict";
 import { prisma } from "@zoonk/db";
 import { markPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -12,16 +11,14 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createHook, sleep } from "workflow";
 import { start } from "workflow/api";
+import * as plannerLessons from "../../../../../../packages/core/src/plans/_utils/planner-lessons";
 import { buildPlan } from "../../../../../../packages/core/src/plans/planner/build-plan";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { sessionPreparationWorkflow } from "./session-preparation-workflow";
-import * as preparationSteps from "./steps/session-preparation-steps";
 
 vi.mock("../../../../../../packages/core/src/plans/planner/build-plan", { spy: true });
 
 const TODAY = new Date("2026-09-30T00:00:00Z");
-/** The workflow runtime's default `maxRetries`. */
-const STEP_RETRIES = 3;
 
 async function sessionWithLesson() {
   const user = await userFixture();
@@ -51,7 +48,10 @@ describe("session preparation records admission for its children", () => {
     vi.setSystemTime(new Date("2026-09-30T12:00:00Z"));
   });
 
-  afterEach(() => vi.useRealTimers());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
 
   it("publishes one parent manifest for the selected children without a planner entry", async () => {
     const { goal, item, lesson, plan, user } = await sessionWithLesson();
@@ -94,42 +94,16 @@ describe("session preparation records admission for its children", () => {
     const skill = await skillFixture();
     await planItemFixture({ planId: plan.id, skillId: skill.id });
 
-    const createManifest = preparationSteps.createSessionGenerationManifestStep;
-    const burst = { over: false, started: false };
-    let marks: Promise<unknown> = Promise.resolve();
+    const load = plannerLessons.loadGoalPlannerLessons;
 
-    const markUntilTheRunWaits = async () => {
-      while (!burst.over) {
-        // oxlint-disable-next-line no-await-in-loop -- each write marks the plan in turn
-        await prisma.$transaction((tx) => markPlanInputsChanged(tx, { userIds: [user.id] }));
-      }
+    const markWhileReading = async (input: Parameters<typeof load>[0]) => {
+      await prisma.$transaction((tx) => markPlanInputsChanged(tx, { userIds: [user.id] }));
+      return load(input);
     };
 
-    const createAsTheRuntimeDoes = async (
-      input: Parameters<typeof createManifest>[0],
-      attempt = 0,
-    ): ReturnType<typeof createManifest> => {
-      try {
-        return await createManifest(input);
-      } catch (error) {
-        if (!isPlanConflictError(error) || attempt >= STEP_RETRIES) {
-          throw error;
-        }
-
-        return createAsTheRuntimeDoes(input, attempt + 1);
-      }
-    };
-
-    const manifest = vi
-      .spyOn(preparationSteps, "createSessionGenerationManifestStep")
-      .mockImplementation((input) => {
-        if (!burst.started) {
-          burst.started = true;
-          marks = Promise.all(Array.from({ length: 3 }, () => markUntilTheRunWaits()));
-        }
-
-        return createAsTheRuntimeDoes(input);
-      });
+    vi.spyOn(plannerLessons, "loadGoalPlannerLessons")
+      .mockImplementationOnce(markWhileReading)
+      .mockImplementationOnce(markWhileReading);
 
     const held = new Set<string>();
     const heldWhileWaiting: boolean[] = [];
@@ -148,29 +122,24 @@ describe("session preparation records admission for its children", () => {
     });
 
     vi.mocked(sleep).mockImplementation(async () => {
-      if (!burst.started) {
-        return;
-      }
-
       heldWhileWaiting.push(held.has(`session-prep:${user.id}`));
-      burst.over = true;
-      await marks;
+      expect(start).not.toHaveBeenCalledWith(lessonContentWorkflow, expect.anything());
     });
 
-    try {
-      await expect(
-        sessionPreparationWorkflow({ goalId: goal.id, timeZone: "UTC", userId: user.id }),
-      ).resolves.toMatchObject({ lessonIds: [lesson.id], status: "prepared" });
+    await expect(
+      sessionPreparationWorkflow({ goalId: goal.id, timeZone: "UTC", userId: user.id }),
+    ).resolves.toMatchObject({ lessonIds: [lesson.id], status: "prepared" });
 
-      expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
-        expect.objectContaining({ lessonId: lesson.id, planGoalId: goal.id }),
-      ]);
+    expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
+      expect.objectContaining({
+        lessonId: lesson.id,
+        planGoalId: goal.id,
+        planManifest: expect.objectContaining({
+          basis: expect.objectContaining({ inputVersion: plan.inputVersion + 2 }),
+        }),
+      }),
+    ]);
 
-      expect(heldWhileWaiting).toStrictEqual([false]);
-    } finally {
-      burst.over = true;
-      await marks;
-      manifest.mockRestore();
-    }
+    expect(heldWhileWaiting).toStrictEqual([false]);
   });
 });
