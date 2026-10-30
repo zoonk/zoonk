@@ -130,7 +130,7 @@ private fun PianoBoard(
     )
 
     PianoKeyboard(
-        label = stringResource(R.string.activities_music_piano_keys),
+        label = if (props.isChecked) pressedKeys(pressed.map(board.spell), labels) else stringResource(R.string.activities_music_piano_keys),
         marks = marks,
         nameOf = { labels.display(board.spell(it)) },
         spokenNameOf = { labels.spoken(board.spell(it)) },
@@ -140,6 +140,21 @@ private fun PianoBoard(
     )
 
     if (board.showsGuitar) GuitarMirror(shown, board.spell, isChecked = board.showsAnswer, labels = labels)
+}
+
+@Composable
+private fun pressedKeys(
+    notes: List<String>,
+    labels: MusicLabels,
+): String {
+    val from = labels.spoken(MusicNotes.pitchClassName(KeyboardFretboard.KEYBOARD_FROM))
+    val to = labels.spoken(MusicNotes.pitchClassName(KeyboardFretboard.KEYBOARD_TO))
+
+    return if (notes.isEmpty()) {
+        stringResource(R.string.activities_music_piano_nothing_pressed, from, to)
+    } else {
+        stringResource(R.string.activities_music_piano_pressed, from, to, labels.spokenList(notes))
+    }
 }
 
 @Composable

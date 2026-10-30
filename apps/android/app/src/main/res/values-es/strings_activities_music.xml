@@ -42,6 +42,8 @@
   "activities_music_open_string": "309f6db6dad96b456f3363307d5a0fb1171460b4379ad75f041e1ffb4d92a5d6",
   "activities_music_or_space": "416448c32f4bbd9c475ee12e7b322c293bb593f1b6d461896494026e54933d2a",
   "activities_music_piano_keys": "c2fb7d7d294bed6820e6178f99411f3ccd31d4ad0c6d805f6cd735f24ecf30cf",
+  "activities_music_piano_nothing_pressed": "0c726e213672d7453af63688aca839579ba82bf7dd943978d9b0dd1729f37f9a",
+  "activities_music_piano_pressed": "073998796e42ee8b9825b51c44d46bf930741c5dd988a7655643a8d1c0fa011a",
   "activities_music_play_melody": "96d3eb25cca83da17579235fbff1b573ac7dcc93fff00e9833d76404b1de02de",
   "activities_music_play_sound": "ac4f7052f14394c16009f60b89c80ed8859c40efe88d36406a9139b470c1018f",
   "activities_music_rhythm_description": "0f99ad720016e8bc8eccafdb624950690a7d107161688a579c51c88c6f4c30c7",
@@ -124,6 +126,10 @@
     <string name="activities_music_sound_unavailable">No se ha podido reproducir el sonido. Aun así, puedes ver todas las notas.</string>
     <!-- For TalkBack: the piano keyboard's name. -->
     <string name="activities_music_piano_keys">Teclas del piano</string>
+    <!-- For TalkBack: the checked piano keyboard, its lowest and highest notes, then the notes the learner pressed, like "A piano keyboard from C to B. Pressed: C, E flat, G." -->
+    <string name="activities_music_piano_pressed">Teclado de piano de %1$s a %2$s. Teclas pulsadas: %3$s.</string>
+    <!-- For TalkBack: the checked piano keyboard, its lowest and highest notes, when the learner pressed no key, like "A piano keyboard from C to B. Nothing pressed." -->
+    <string name="activities_music_piano_nothing_pressed">Teclado de piano de %1$s a %2$s. No se ha pulsado ninguna tecla.</string>
     <!-- For TalkBack: the guitar neck's name. -->
     <string name="activities_music_guitar_strings">Cuerdas de la guitarra</string>
     <!-- Above a guitar shape that plays the chord on the keys. -->

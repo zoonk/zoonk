@@ -56,7 +56,7 @@ private fun layoutKeys(
 /**
  * Main's `PianoKeyboard`, low notes on the left in every language. With [onPress] each key toggles and the keyboard is one
  * Tab stop whose arrows move between keys; keys stay wide enough to press, so a narrow window scrolls them sideways.
- * Without it the keyboard is a picture the screen describes in words.
+ * Without it the keyboard is a picture that [label] describes.
  */
 @Composable
 internal fun PianoKeyboard(
@@ -83,7 +83,7 @@ internal fun PianoKeyboard(
             val whiteWidth = width / whiteCount
             val board =
                 if (onPress == null) {
-                    Modifier.clearAndSetSemantics {}
+                    Modifier.clearAndSetSemantics { contentDescription = label }
                 } else {
                     Modifier.horizontalScroll(rememberScrollState()).semantics {
                         contentDescription = label

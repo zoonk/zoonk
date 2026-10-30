@@ -87,6 +87,17 @@ class KeyboardFretboardFlowTest {
     }
 
     @Test
+    fun aCheckedKeyboardStillSaysWhichKeysWerePressed() {
+        play("keyboardFretboard", isCorrect = false)
+
+        key("E flat").performScrollTo().performClick()
+        harness.tap("Check")
+
+        shows("Not quite")
+        rule.onNode(hasContentDescription("A piano keyboard from C to B. Pressed: C, E flat, E, G.")).assertExists()
+    }
+
+    @Test
     fun byEarTheSoundIsNotNamedUntilItsNotesAreFound() {
         play("keyboardFretboard.byEar", isCorrect = true)
 

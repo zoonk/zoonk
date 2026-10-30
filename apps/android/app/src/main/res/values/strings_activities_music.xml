@@ -45,6 +45,10 @@
 
     <!-- For TalkBack: the piano keyboard's name. -->
     <string name="activities_music_piano_keys">Piano keys</string>
+    <!-- For TalkBack: the checked piano keyboard, its lowest and highest notes, then the notes the learner pressed, like "A piano keyboard from C to B. Pressed: C, E flat, G." -->
+    <string name="activities_music_piano_pressed">A piano keyboard from %1$s to %2$s. Pressed: %3$s.</string>
+    <!-- For TalkBack: the checked piano keyboard, its lowest and highest notes, when the learner pressed no key, like "A piano keyboard from C to B. Nothing pressed." -->
+    <string name="activities_music_piano_nothing_pressed">A piano keyboard from %1$s to %2$s. Nothing pressed.</string>
     <!-- For TalkBack: the guitar neck's name. -->
     <string name="activities_music_guitar_strings">Guitar strings</string>
     <!-- Above a guitar shape that plays the chord on the keys. -->
