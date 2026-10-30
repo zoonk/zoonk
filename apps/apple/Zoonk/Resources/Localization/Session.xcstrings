@@ -4030,6 +4030,35 @@
           }
         }
       }
+    },
+    "Your lesson is ready." : {
+      "comment" : "A lesson written while the learner waited, offered with Start",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Lektion ist bereit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu lección está lista."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta leçon est prête."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua aula está pronta."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

@@ -155,6 +155,9 @@ private struct NextStopView: View {
   @State private var isStopping = false
   @State private var failed = false
   @State private var lessonStatus: String?
+  /// The block whose lesson this screen showed being written.
+  @State private var waitedFor: String?
+  @AccessibilityFocusState private var isStartFocused: Bool
 
   private var next: StudyBlock? { day.nextBlock }
 
@@ -177,6 +180,16 @@ private struct NextStopView: View {
     }
     .task(id: FollowedLesson(lessonID: next?.lessonId, writing: writing, waits: waits)) {
       await followLesson()
+    }
+    .onChange(of: isLessonWorkRunning, initial: true) { _, running in
+      if running {
+        waitedFor = next?.id
+      }
+    }
+    .onChange(of: isWrittenWhileWaiting) { _, written in
+      if written {
+        offerWrittenLesson()
+      }
     }
     .onDisappear {
       action?.cancel()
@@ -239,6 +252,7 @@ private struct NextStopView: View {
         } else if let next, !isLessonUnavailable {
           mainButton(continueTitle, block: next)
             .disabled(isLessonWorkRunning)
+            .accessibilityFocused($isStartFocused)
         }
 
         Button {
@@ -282,8 +296,14 @@ private struct NextStopView: View {
 
   /// A lesson nobody is writing keeps Continue, whose tap asks for it.
   private var isLessonWorkRunning: Bool {
-    next?.kind == .learn && lessonStatus != "failed"
+    next?.kind == .learn && lessonStatus != "failed" && lessonStatus != "ready"
       && (lessonStatus == "generating" || writing?.isRunning == true)
+  }
+
+  /// Offered, never opened on its own: the learner may be reading, or doing what "While you wait"
+  /// offered.
+  private var isWrittenWhileWaiting: Bool {
+    lessonStatus == "ready" && waitedFor != nil && waitedFor == next?.id
   }
 
   private var isLessonUnavailable: Bool {
@@ -318,6 +338,13 @@ private struct NextStopView: View {
   private var lessonLine: AnyView? {
     guard next?.kind == .learn else {
       return nil
+    }
+
+    if isWrittenWhileWaiting {
+      return AnyView(
+        Text(
+          "Your lesson is ready.", tableName: "Session",
+          comment: "A lesson written while the learner waited, offered with Start"))
     }
 
     if writing == .setAside {
@@ -404,6 +431,17 @@ private struct NextStopView: View {
     }
   }
 
+  /// VoiceOver says it however busy it is, and lands on Start.
+  private func offerWrittenLesson() {
+    var announcement = AttributedString(
+      String(
+        localized: "Your lesson is ready.", table: "Session",
+        comment: "A lesson written while the learner waited, offered with Start"))
+    announcement.accessibilitySpeechAnnouncementPriority = .high
+    AccessibilityNotification.Announcement(announcement).post()
+    isStartFocused = true
+  }
+
   private func stop() {
     isStopping = true
     failed = false
@@ -417,10 +455,9 @@ private struct NextStopView: View {
     }
   }
 
-  /// Opens the lesson on its own once it's written only when the learner asked for it; a run that
-  /// ended without writing it reads as failed, with Try again. Only the plan's preparation has no
-  /// run to follow yet (it picks the lesson, then starts writing it), so that wait reads again for
-  /// a few minutes at most.
+  /// A run that ended without writing the lesson reads as failed, with Try again. Only the plan's
+  /// preparation has no run to follow yet (it picks the lesson, then starts writing it), so that
+  /// wait reads again for a few minutes at most.
   private func followLesson() async {
     guard let next, next.kind == .learn else {
       lessonStatus = nil
@@ -443,10 +480,6 @@ private struct NextStopView: View {
         }
 
         if lessonStatus == "ready" {
-          if writing?.isRunning == true {
-            open(next)
-          }
-
           return
         }
       } else {
