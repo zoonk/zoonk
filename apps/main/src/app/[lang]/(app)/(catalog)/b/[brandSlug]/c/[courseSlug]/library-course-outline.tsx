@@ -113,9 +113,12 @@ export async function LibraryCourseOutline({
               <SparklesIcon aria-hidden="true" className="text-muted-foreground size-4" />
             </LineMarker>
             <span>
-              {t(
-                "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level.",
-              )}
+              {t({
+                description:
+                  "Describes what happens once the learner builds a plan; not a command. The learner builds and Zoonk writes, so use a different verb for each.",
+                message:
+                  "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level.",
+              })}
             </span>
           </p>
         )}

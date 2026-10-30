@@ -36,7 +36,11 @@ export function VerdictLabel({ end, verdict }: { end?: React.ReactNode; verdict:
     correct: t("Correct!"),
     guess: t("Here's the answer"),
     guessRight: t("Good guess!"),
-    incorrect: t({ description: "Verdict on a wrong answer.", message: "Not quite" }),
+    incorrect: t({
+      description:
+        "Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.",
+      message: "Not quite",
+    }),
     sampleAnswer: t("Here's a good answer"),
     typo: t("Right, watch the spelling"),
     unchecked: t("Not checked this time"),

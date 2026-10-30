@@ -42,7 +42,13 @@ function HookGuess({
   return (
     <PlayerChoiceScene>
       <PlayerChoiceScenePrompt>
-        <LessonEyebrow icon={<SparklesIcon aria-hidden="true" />}>{t("Guess first")}</LessonEyebrow>
+        <LessonEyebrow icon={<SparklesIcon aria-hidden="true" />}>
+          {t({
+            description:
+              "Over a question the learner answers with a guess; “first” means before the lesson teaches the answer.",
+            message: "Guess first",
+          })}
+        </LessonEyebrow>
         <ScreenSupport>
           <LessonStepPicture asks priority step={step} />
           <LessonVisual visual={step.content.visual} />

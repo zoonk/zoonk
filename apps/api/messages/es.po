@@ -33,7 +33,7 @@ msgctxt "sy-pv5"
 msgid "Email"
 msgstr "Correo electrónico"
 
-#. An example address shown in the empty email field. Write a name that fits your language.
+#. An example address shown in the empty email field. Keep it as written, like the app's other example addresses.
 #: src/app/auth/login/email-login-form.tsx
 msgctxt "apQW0E"
 msgid "me@gmail.com"

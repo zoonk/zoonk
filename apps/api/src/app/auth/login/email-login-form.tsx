@@ -44,7 +44,7 @@ export function EmailLoginForm({ redirectTo }: { redirectTo: string | null }) {
           aria-invalid={hasError}
           placeholder={t({
             description:
-              "An example address shown in the empty email field. Write a name that fits your language.",
+              "An example address shown in the empty email field. Keep it as written, like the app's other example addresses.",
             message: "me@gmail.com",
           })}
         />

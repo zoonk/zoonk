@@ -3020,7 +3020,7 @@ msgctxt "WbwDD5"
 msgid "Good guess!"
 msgstr "Good guess!"
 
-#. Verdict on a wrong answer.
+#. Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
 #: src/components/verdict-label.tsx
 msgctxt "--l7ni"
 msgid "Not quite"
@@ -3629,6 +3629,7 @@ msgctxt "ziwOEf"
 msgid "Your example"
 msgstr "Your example"
 
+#. Over a question the learner answers with a guess; “first” means before the lesson teaches the answer.
 #: src/lesson/steps/hook-step.tsx
 msgctxt "p6MDZm"
 msgid "Guess first"
