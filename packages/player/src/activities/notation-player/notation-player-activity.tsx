@@ -93,7 +93,7 @@ export function NotationPlayerActivity({ content, labelId }: NotationPlayerProps
         </button>
 
         <div className="flex flex-1 flex-col gap-1.5">
-          <div aria-hidden="true" className="bg-border h-1.5 overflow-hidden rounded-full">
+          <div aria-hidden="true" className="bg-surface-3 h-1.5 overflow-hidden rounded-full">
             <div
               className="bg-viz-secondary h-full rounded-full motion-safe:transition-[width]"
               style={{ width: `${progress}%` }}
