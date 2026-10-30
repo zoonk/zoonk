@@ -1,4 +1,5 @@
 import { type CourseBandNeed, type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import { type OutlineAsk } from "@zoonk/core/lookahead/today-outlines";
 import { start } from "workflow/api";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { type GoalRunContext } from "./goal-run-context";
@@ -6,6 +7,7 @@ import {
   listPlanOutlineNeedsStep,
   readGoalLookaheadStep,
   readPlanFirstSkillStep,
+  settleOutlineAsksStep,
 } from "./steps/goal-lookahead-steps";
 
 type OutlineCourse = { bands: CourseBandNeed[]; courseId: string; scope: CurriculumScope };
@@ -36,10 +38,12 @@ export async function startOutlines({
 }
 
 export async function outlinePlanAhead({
+  asked = [],
   context,
   forGuest,
   goalId,
 }: {
+  asked?: OutlineAsk[];
   context: GoalRunContext;
   forGuest: boolean;
   goalId: string;
@@ -51,5 +55,6 @@ export async function outlinePlanAhead({
     readPlanFirstSkillStep(goalId),
   ]);
 
+  await settleOutlineAsksStep({ asked, started: needs.map((need) => need.courseId) });
   await startOutlines({ context, courses: needs, firstSkillId, forGuest });
 }

@@ -1,6 +1,7 @@
 import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
 import { OUTLINE_AHEAD_DAYS, OUTLINE_SOON_DAYS } from "@zoonk/core/lookahead/outline-ahead";
 import { type SessionPreparation } from "@zoonk/core/lookahead/session-preparation";
+import { type OutlineAsk } from "@zoonk/core/lookahead/today-outlines";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
@@ -18,6 +19,7 @@ import {
   listPlanOutlineNeedsStep,
   listSoonStandInCourseIdsStep,
   readPlanFirstSkillStep,
+  settleOutlineAsksStep,
 } from "../goals/steps/goal-lookahead-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { prepareLanguageCallsStep } from "./steps/language-call-steps";
@@ -40,6 +42,7 @@ export type ClaimQuestions = {
 };
 
 export type SessionPreparationInput = {
+  askedOutlines?: OutlineAsk[];
   claimQuestions?: ClaimQuestions | null;
   goalId: string;
   platform?: AnalyticsPlatform | null;
@@ -87,8 +90,10 @@ async function startLessonWork({
   input: SessionPreparationInput;
 }): Promise<PlanStepOutcome<SessionPreparation | null>> {
   using claim = await claimRunToken(`session-prep:${input.userId}`);
+  const asked = input.askedOutlines ?? [];
 
   if (claim.conflict) {
+    await settleOutlineAsksStep({ asked, started: [] });
     return { conflict: false, value: null };
   }
 
@@ -99,6 +104,13 @@ async function startLessonWork({
     listSoonStandInCourseIdsStep({ days: OUTLINE_SOON_DAYS, goalId: input.goalId }),
     readPlanFirstSkillStep(input.goalId),
   ]);
+
+  const courseRequests = mergeCourseRequests([...extensions, ...outlines]);
+
+  await settleOutlineAsksStep({
+    asked,
+    started: courseRequests.map((request) => request.courseId),
+  });
 
   const { forExam, laterLessonIds, lessonIds } = preparation;
   const soonCourseIds = new Set(soon);
@@ -130,7 +142,7 @@ async function startLessonWork({
           { analytics, forExam, lessonId, planGoalId: input.goalId, planManifest, wait: "later" },
         ]),
       ),
-    ...mergeCourseRequests([...extensions, ...outlines]).map((request) =>
+    ...courseRequests.map((request) =>
       start(courseOutlineWorkflow, [
         {
           ...request,

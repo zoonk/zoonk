@@ -17,6 +17,7 @@ import {
   pickPlanStartToWrite,
   pickSpeculativeLessons,
 } from "@zoonk/core/lookahead/speculative-lessons";
+import { type OutlineAsk, settleOutlineAsks } from "@zoonk/core/lookahead/today-outlines";
 import { type GoalKind, prisma } from "@zoonk/db";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
@@ -132,6 +133,15 @@ export async function listPlanOutlineNeedsStep(input: {
   "use step";
 
   return listPlanOutlineNeeds(input);
+}
+
+export async function settleOutlineAsksStep(input: {
+  asked: OutlineAsk[];
+  started: string[];
+}): Promise<void> {
+  "use step";
+
+  await settleOutlineAsks(input);
 }
 
 export async function listSoonStandInCourseIdsStep(input: {

@@ -17,7 +17,11 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
-import { mockGuestSession } from "../../../../packages/core/src/_test-utils/mock-session";
+import {
+  mockGuestSession,
+  mockSession,
+} from "../../../../packages/core/src/_test-utils/mock-session";
+import { mockHookConflict } from "../../mocks/workflow";
 import { getStartMock } from "../workflows/_test-utils/start-mock";
 import { courseOutlineWorkflow } from "../workflows/v2/courses/course-outline-workflow";
 import {
@@ -55,8 +59,20 @@ async function settle() {
   }
 }
 
-/** A guest's level test tested out the band the plan's build outlined, so the plan now starts on a stand-in. */
-async function placedGuestFixture() {
+/** The course already teaches a stand-in's skill when the plan hasn't linked its lesson yet. */
+async function teachSkill({ course, skillId }: { course: { id: string }; skillId: string }) {
+  const chapter = await libraryChapterFixture({ level: "intermediate" });
+  const lesson = await libraryLessonFixture({ homeChapterId: chapter.id });
+
+  await Promise.all([
+    courseChapterFixture({ chapterId: chapter.id, courseId: course.id, level: "intermediate" }),
+    chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
+    lessonSkillFixture({ lessonId: lesson.id, skillId }),
+  ]);
+}
+
+/** A level test tested out the band the plan's build outlined, so the plan now starts on a stand-in. */
+async function placedGuestFixture({ guest = true }: { guest?: boolean } = {}) {
   const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
 
   const [user, course, chapter, basics, next] = await Promise.all([
@@ -79,7 +95,7 @@ async function placedGuestFixture() {
       timezone: TIME_ZONE,
       userId: user.id,
     }),
-    prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } }),
+    prisma.user.update({ data: { isAnonymous: guest }, where: { id: user.id } }),
     courseChapterFixture({ chapterId: chapter.id, courseId: course.id, level: "beginner" }),
     chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
     lessonSkillFixture({ lessonId: lesson.id, skillId: basics.id }),
@@ -115,12 +131,21 @@ async function placedGuestFixture() {
     planItemFixture({ planId: plan.id, position: 1, scheduledFor: today, skillId: next.id }),
   ]);
 
-  mockGuestSession(user.id);
+  if (guest) {
+    mockGuestSession(user.id);
+  } else {
+    mockSession(user.id);
+  }
 
   return { course, goal, next, user };
 }
 
 type PlacedGuest = Awaited<ReturnType<typeof placedGuestFixture>>;
+
+async function readOutlineStatus({ course }: PlacedGuest) {
+  const row = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
+  return row.outlineStatus;
+}
 
 async function startSessionFor({ goal, user }: PlacedGuest) {
   const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
@@ -145,8 +170,6 @@ describe("preparing a guest's lessons", () => {
   it.each([
     ["asked for the goal", (guest: PlacedGuest) => startGoalPreparation({ goalId: guest.goal.id })],
     ["after a plan write", (guest: PlacedGuest) => scheduleGoalPreparation(guest.goal.id)],
-    ["asked for a session", startSessionFor],
-    ["after a session write", scheduleSessionFor],
   ])(
     "marks the band's course as awaiting its outline before the work starts, %s",
     async (_when, prepare: (guest: PlacedGuest) => Promise<unknown>) => {
@@ -154,13 +177,40 @@ describe("preparing a guest's lessons", () => {
 
       await prepare(guest);
 
-      const course = await prisma.course.findUniqueOrThrow({ where: { id: guest.course.id } });
-
-      expect(course.outlineStatus).toBe("pending");
+      await expect(readOutlineStatus(guest)).resolves.toBe("pending");
 
       await settle();
     },
   );
+
+  it.each([
+    ["asked for a session", startSessionFor],
+    ["after a session write", scheduleSessionFor],
+  ])(
+    "marks the band's course only once its outline starts, %s",
+    async (_when, prepare: (guest: PlacedGuest) => Promise<unknown>) => {
+      const guest = await placedGuestFixture();
+
+      await prepare(guest);
+
+      await expect(readOutlineStatus(guest)).resolves.toBe("completed");
+
+      await settle();
+
+      await expect(readOutlineStatus(guest)).resolves.toBe("pending");
+    },
+  );
+
+  it("gives a course back when its stand-in's skill turns out to be taught already", async () => {
+    const guest = await placedGuestFixture();
+    await teachSkill({ course: guest.course, skillId: guest.next.id });
+
+    await startGoalPreparation({ goalId: guest.goal.id });
+    await settle();
+
+    expect(start).not.toHaveBeenCalledWith(courseOutlineWorkflow, expect.anything());
+    await expect(readOutlineStatus(guest)).resolves.toBe("completed");
+  });
 
   it.each([
     ["asked for the goal", (guest: PlacedGuest) => startGoalPreparation({ goalId: guest.goal.id })],
@@ -190,4 +240,22 @@ describe("preparing a guest's lessons", () => {
       ]);
     },
   );
+});
+
+describe("preparing an account's lessons", () => {
+  beforeEach(() => {
+    pending.length = 0;
+    runStartedWorkflowsInline();
+  });
+
+  it("gives the courses it asked for back when another goal's preparation holds the learner", async () => {
+    const account = await placedGuestFixture({ guest: false });
+    mockHookConflict({ returnValue: Promise.resolve(null), runId: "other-goal-run" });
+
+    await startGoalPreparation({ goalId: account.goal.id });
+    await settle();
+
+    expect(start).not.toHaveBeenCalledWith(courseOutlineWorkflow, expect.anything());
+    await expect(readOutlineStatus(account)).resolves.toBe("completed");
+  });
 });
