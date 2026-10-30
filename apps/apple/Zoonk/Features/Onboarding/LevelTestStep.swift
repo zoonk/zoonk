@@ -6,6 +6,7 @@ struct LevelTestStep: View {
   /// The learner's own language.
   let language: String
   let targetLanguage: String
+  let testMinutes: Int
   let onDone: () -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
@@ -31,7 +32,8 @@ struct LevelTestStep: View {
         ProgressView()
       case .intro:
         LevelTestIntro(
-          language: language, targetLanguage: targetLanguage, isSaving: isSaving, failed: failed,
+          language: language, targetLanguage: targetLanguage, minutes: testMinutes,
+          isSaving: isSaving, failed: failed,
           onStart: { Task { await begin() } }, onSkip: finish)
       case .preparing(let generationID):
         preparing(generationID)
@@ -248,6 +250,7 @@ private func languageName(_ code: String) -> String {
 private struct LevelTestIntro: View {
   let language: String
   let targetLanguage: String
+  let minutes: Int
   let isSaving: Bool
   let failed: Bool
   let onStart: () -> Void
@@ -262,8 +265,9 @@ private struct LevelTestIntro: View {
           "Let's see your level in \(languageName(targetLanguage))", tableName: "Onboarding",
           comment: "Title of a language goal's level test"),
         description: Text(
-          "About three minutes of reading, listening and one sentence out loud, so your plan starts at your level.",
-          tableName: "Onboarding", comment: "What the level test is"))
+          "About \(Duration.seconds(minutes * 60), format: .units(allowed: [.minutes], width: .wide)) of reading, listening and one sentence out loud, so your plan starts at your level.",
+          tableName: "Onboarding",
+          comment: "What the level test is; %@ is about how long it takes, such as \"3 minutes\""))
 
       if usesNonLatinScript {
         Section {

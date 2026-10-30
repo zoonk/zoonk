@@ -312,7 +312,7 @@ private struct StepScreen: View {
       if view.goal.kind == .language, let targetLanguage = view.goal.targetLanguage {
         LevelTestStep(
           goalID: view.goal.id, language: view.goal.language, targetLanguage: targetLanguage,
-          onDone: onPlacementDone)
+          testMinutes: view.quickTestMinutes, onDone: onPlacementDone)
       } else {
         PlacementStep(view: view, subject: subject, onDone: onPlacementDone)
       }

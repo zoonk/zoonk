@@ -43,7 +43,7 @@ struct QuestionStep: View {
       if view.examSubjects.count > 1 {
         SubjectsLevelQuestion(subject: subject, subjects: view.examSubjects, onAnswer: onAnswer)
       } else {
-        LevelQuestion(subject: subject, onAnswer: onAnswer)
+        LevelQuestion(subject: subject, testMinutes: view.quickTestMinutes, onAnswer: onAnswer)
       }
     case .buddy:
       BuddyQuestion(onAnswer: onAnswer)
@@ -850,6 +850,7 @@ private struct ExamChoiceQuestion: View {
 /// "Not sure" is still an answer: a quick test finds it.
 private struct LevelQuestion: View {
   let subject: String
+  let testMinutes: Int
   let onAnswer: ([String: Any]) -> Void
 
   var body: some View {
@@ -861,7 +862,7 @@ private struct LevelQuestion: View {
         "It only changes where your plan starts.", tableName: "Onboarding",
         comment: "Under the level question"))
 
-    ChoiceRows(choices: LevelChoices.all) { level in
+    ChoiceRows(choices: LevelChoices.all(testMinutes: testMinutes)) { level in
       onAnswer(["level": LevelChoices.answer(level) ?? NSNull(), "question": "level"])
     }
   }
@@ -871,7 +872,10 @@ enum LevelChoices {
   /// "Not sure": placement finds the level instead.
   private static let quickTest = "quickTest"
 
-  static var all: [ChoiceRows<String>.Choice] {
+  /// A course's page asks before there's a goal, so its quick test is the placement's length.
+  static let placementMinutes = 2
+
+  static func all(testMinutes: Int) -> [ChoiceRows<String>.Choice] {
     [
       .init(
         value: "none",
@@ -900,7 +904,7 @@ enum LevelChoices {
         label: Text(
           "Not sure, give me a quick test", tableName: "Onboarding", comment: "Level choice"),
         detail: Text(
-          "Adapts to your answers, about \(Duration.seconds(120), format: .units(allowed: [.minutes], width: .wide))",
+          "Adapts to your answers, about \(Duration.seconds(testMinutes * 60), format: .units(allowed: [.minutes], width: .wide))",
           tableName: "Onboarding", comment: "Level choice detail; the time a quick test takes")),
     ]
   }

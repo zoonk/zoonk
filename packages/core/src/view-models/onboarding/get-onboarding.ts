@@ -12,6 +12,10 @@ import { loadCourseExam } from "../../goals/_utils/course-exam";
 import { findActiveGoalId, loadGoalViews } from "../../goals/_utils/goal-view";
 import { readCourseStart } from "../../goals/course-start-details";
 import { getDaySplit } from "../../goals/daily-budget";
+import {
+  LEVEL_TEST_MINUTES,
+  PLACEMENT_MINUTES,
+} from "../../language/level-test/level-test-contract";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { DAILY_TIME_CHOICES } from "../../plans/daily-minutes";
@@ -282,6 +286,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       goal: view,
       goalIds,
       libraryCourse,
+      quickTestMinutes: goal.kind === "language" ? LEVEL_TEST_MINUTES : PLACEMENT_MINUTES,
       recommendedMinutes,
       steps,
       timeChoices: [...new Set([...DAILY_TIME_CHOICES, recommendedMinutes])]

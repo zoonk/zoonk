@@ -47,7 +47,7 @@ struct CourseStartScreen: View {
             comment: "Under the level question"))
 
         ChoiceRows(
-          choices: LevelChoices.all,
+          choices: LevelChoices.all(testMinutes: LevelChoices.placementMinutes),
           picked: level
         ) { level = $0 }
       }

@@ -1992,6 +1992,35 @@
         }
       }
     },
+    "About %@ of reading, listening and one sentence out loud, so your plan starts at your level." : {
+      "comment" : "What the level test is; %@ is about how long it takes, such as \"3 minutes\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa %@ lesen, hören und einen Satz laut sprechen, damit dein Plan auf deinem Level beginnt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unos %@ de lectura, escucha y una frase en voz alta para que tu plan empiece en tu nivel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Environ %@ de lecture, d’écoute et une phrase à dire à voix haute pour que ton plan parte de ton niveau."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "São cerca de %@ de leitura e escuta, e uma frase em voz alta, para seu plano começar no seu nível."
+          }
+        }
+      }
+    },
     "about %@ of study" : {
       "comment" : "The study time a plan adds up to",
       "localizations" : {
@@ -2112,35 +2141,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "About three minutes of reading, listening and one sentence out loud, so your plan starts at your level." : {
-      "comment" : "What the level test is",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Etwa drei Minuten lesen, zuhören und einen Satz laut sagen, damit dein Plan auf deinem Level beginnt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unos tres minutos de lectura, escucha y una frase en voz alta para que tu plan empiece a tu nivel."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Environ trois minutes de lecture, d’écoute et une phrase à dire à voix haute, pour que ton plan commence à ton niveau."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cerca de três minutos de leitura, escuta e uma frase em voz alta, para seu plano começar no seu nível."
           }
         }
       }

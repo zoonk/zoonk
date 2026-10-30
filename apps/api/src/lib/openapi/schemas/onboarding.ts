@@ -104,6 +104,13 @@ export const onboardingResponseSchema = z
         description:
           "A published Library course that teaches the goal, searched again once every question is answered",
       }),
+    quickTestMinutes: z
+      .int()
+      .positive()
+      .meta({
+        description:
+          "About how long the level question's quick test (\"Not sure\") takes: a language goal's level test, or another goal's placement",
+      }),
     recommendedMinutes: z
       .int()
       .positive()

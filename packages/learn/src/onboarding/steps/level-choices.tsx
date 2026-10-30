@@ -1,12 +1,11 @@
 "use client";
 
+import { PLACEMENT_MINUTES } from "@zoonk/core/language/level-test/contract";
 import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../../_utils/time-format";
 import { readOwnLevel } from "../_utils/setup-level";
 import { type Choice, ChoiceList } from "../choice-list";
-
-const QUICK_TEST_MINUTES = 2;
 
 const QUICK_TEST = "test";
 
@@ -41,13 +40,12 @@ export function LevelChoiceList({
   onChange,
   onPick,
   readOnly,
-  testMinutes = QUICK_TEST_MINUTES,
+  testMinutes = PLACEMENT_MINUTES,
   value,
 }: {
   onChange: (value: LevelChoice) => void;
   onPick?: (value: LevelChoice) => void;
   readOnly?: boolean;
-  /** A language goal's quick test is its level test, which takes longer. */
   testMinutes?: number;
   value: LevelChoice | null;
 }) {

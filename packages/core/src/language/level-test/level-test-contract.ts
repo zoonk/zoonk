@@ -129,6 +129,8 @@ export const LEVEL_TEST_PREPARING_SECONDS = 120;
 /** Three reading and three listening questions and one sentence out loud. */
 export const LEVEL_TEST_MINUTES = 3;
 
+export const PLACEMENT_MINUTES = 2;
+
 export const languageLevelTestViewSchema = z
   .discriminatedUnion("status", [
     z.object({

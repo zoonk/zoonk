@@ -1,6 +1,5 @@
 "use client";
 
-import { LEVEL_TEST_MINUTES } from "@zoonk/core/language/level-test/contract";
 import {
   type OnboardingAnswerInput,
   type OnboardingStep,
@@ -133,7 +132,7 @@ function QuestionStepScreen({
           {...props}
           initialLevel={readLevelChoice(view.goal.details)}
           subject={subject}
-          testMinutes={view.goal.kind === "language" ? LEVEL_TEST_MINUTES : undefined}
+          testMinutes={view.quickTestMinutes}
         />
       );
     default:

@@ -89,7 +89,7 @@ export function LevelStep({
   pending,
   subject,
   testMinutes,
-}: StepProps & { initialLevel?: LevelChoice | null; testMinutes?: number }) {
+}: StepProps & { initialLevel?: LevelChoice | null; testMinutes: number }) {
   const t = useExtracted();
   const [level, setLevel] = useState<LevelChoice | null>(initialLevel);
 

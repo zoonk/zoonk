@@ -509,6 +509,23 @@ describe("onboarding a new goal", () => {
     });
   });
 
+  it("times the quick test as a language goal's level test, and other goals' placement", async () => {
+    const user = await useLearner();
+
+    const [language, learn] = await Promise.all([
+      goalFixture({ kind: "language", targetLanguage: "en", userId: user.id }),
+      goalFixture({ kind: "learn", userId: user.id }),
+    ]);
+
+    await expect(getOnboarding({ goalId: language.id })).resolves.toMatchObject({
+      onboarding: { quickTestMinutes: 3 },
+    });
+
+    await expect(getOnboarding({ goalId: learn.id })).resolves.toMatchObject({
+      onboarding: { quickTestMinutes: 2 },
+    });
+  });
+
   it("splits the day's time between goals typed together, the main one first", async () => {
     await useLearner({ plus: true });
     const onboardingId = randomUUID();

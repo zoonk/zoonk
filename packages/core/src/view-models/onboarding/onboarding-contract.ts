@@ -227,6 +227,8 @@ export type OnboardingView = {
   goalIds: string[];
   /** Searched again after all questions; null before then or when no public course fits. */
   libraryCourse: OnboardingLibraryCourse | null;
+  /** How long the level question's quick test takes: a language goal's is its level test. */
+  quickTestMinutes: number;
   /** Initial choice only; preserve course-page selections and never imply the recommendation guarantees plan coverage. */
   recommendedMinutes: number;
   /** Onboarding screens still ahead, in order, ending with the plan. */

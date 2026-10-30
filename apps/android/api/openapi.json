@@ -84342,6 +84342,13 @@
             ],
             "additionalProperties": false
           },
+          "quickTestMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "About how long the level question's quick test (\"Not sure\") takes: a language goal's level test, or another goal's placement"
+          },
           "recommendedMinutes": {
             "type": "integer",
             "minimum": 0,
@@ -84419,6 +84426,7 @@
           "goal",
           "goalIds",
           "libraryCourse",
+          "quickTestMinutes",
           "recommendedMinutes",
           "steps",
           "timeChoices"
