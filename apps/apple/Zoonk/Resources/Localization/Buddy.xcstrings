@@ -2255,7 +2255,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido guardar tu compañero. Inténtalo de nuevo."
+            "value" : "No hemos podido guardar a tu compañero. Inténtalo de nuevo."
           }
         },
         "fr" : {

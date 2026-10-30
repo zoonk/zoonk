@@ -1557,7 +1557,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App Store-Abo verwalten"
+            "value" : "App-Store-Abo verwalten"
           }
         },
         "es" : {
@@ -2468,7 +2468,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meld dich mit dem Zoonk-Konto an, zu dem dieser App Store-Kauf gehört, oder hol dir Hilfe beim Support."
+            "value" : "Meld dich mit dem Zoonk-Konto an, zu dem dieser App-Store-Kauf gehört, oder hol dir Hilfe beim Support."
           }
         },
         "es" : {
@@ -3217,7 +3217,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine App Store-Käufe sind jetzt in diesem Zoonk-Konto verfügbar."
+            "value" : "Deine App-Store-Käufe sind jetzt in diesem Zoonk-Konto verfügbar."
           }
         },
         "es" : {
@@ -3537,7 +3537,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seus dados do Zoonk foram excluídos, mas Apple não conseguiu confirmar que a autorização foi removida. Remova o Zoonk de Iniciar sessão com a Apple para concluir."
+            "value" : "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar que a autorização foi removida. Remova o Zoonk de Iniciar sessão com a Apple para concluir."
           }
         }
       }
@@ -3548,7 +3548,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk hat deine App Store-Käufe geprüft, aber keiner davon schaltet aktuell Plus frei."
+            "value" : "Zoonk hat deine App-Store-Käufe geprüft, aber keiner davon schaltet aktuell Plus frei."
           }
         },
         "es" : {

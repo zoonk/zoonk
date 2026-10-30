@@ -5712,7 +5712,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "# Fach mit der höchsten Gewichtung. In deinen ersten Tagen kommen die übrigen dran."
+                  "value" : "%lld Fach mit der höchsten Gewichtung. In deinen ersten Tagen kommen die übrigen dran."
                 }
               },
               "other" : {
