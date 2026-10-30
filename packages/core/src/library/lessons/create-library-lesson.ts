@@ -166,19 +166,23 @@ export async function createHomeChapterLessons({
     listHomeSlugs(homeChapterId),
   ]);
 
-  return Promise.all(
-    assignSlugs({ lessons: inputs, taken }).map(async ({ lesson, slug }) => {
-      const inserted = await safeAsync(() => insertLesson({ input: lesson, slug }));
+  const created: CreatedLesson[] = [];
 
-      if (!inserted.error) {
-        return { created: true, lesson: inserted.data };
-      }
+  for (const { lesson, slug } of assignSlugs({ lessons: inputs, taken })) {
+    // oxlint-disable-next-line no-await-in-loop -- Keep one lesson transaction in flight per chapter.
+    const inserted = await safeAsync(() => insertLesson({ input: lesson, slug }));
 
+    if (inserted.error) {
       if (!isPrismaUniqueConstraintError(inserted.error)) {
         throw inserted.error;
       }
 
-      return createLibraryLesson(lesson);
-    }),
-  );
+      // oxlint-disable-next-line no-await-in-loop -- A uniqueness race resolves before starting the next lesson transaction.
+      created.push(await createLibraryLesson(lesson));
+    } else {
+      created.push({ created: true, lesson: inserted.data });
+    }
+  }
+
+  return created;
 }

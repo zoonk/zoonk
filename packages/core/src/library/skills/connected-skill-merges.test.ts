@@ -4,7 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { getSession } from "../../users/get-session";
-import { setSkillPrerequisites } from "./create-skill";
+import { setSkillsPrerequisites } from "./create-skill";
 import { mergeSkillForAdmin } from "./merge-skill";
 
 const GATE_NAMESPACE = 1_553_971;
@@ -134,8 +134,8 @@ describe("concurrent prerequisite writes with new endpoints", () => {
       const among = new Set([a!.id, b!.id, x!.id, y!.id]);
 
       const outcomes = Promise.allSettled([
-        setSkillPrerequisites({ among, prerequisiteIds: [x!.id, b!.id], skillId: a!.id }),
-        setSkillPrerequisites({ among, prerequisiteIds: [y!.id, x!.id], skillId: b!.id }),
+        setSkillsPrerequisites({ among, prerequisitesBySkill: new Map([[a!.id, [x!.id, b!.id]]]) }),
+        setSkillsPrerequisites({ among, prerequisitesBySkill: new Map([[b!.id, [y!.id, x!.id]]]) }),
       ]);
 
       try {
@@ -181,10 +181,9 @@ describe("parallel curriculum prerequisites", () => {
 
     await Promise.all(
       skills.map((skill, index) =>
-        setSkillPrerequisites({
+        setSkillsPrerequisites({
           among,
-          prerequisiteIds: skills.slice(0, index).map(({ id }) => id),
-          skillId: skill.id,
+          prerequisitesBySkill: new Map([[skill.id, skills.slice(0, index).map(({ id }) => id)]]),
         }),
       ),
     );

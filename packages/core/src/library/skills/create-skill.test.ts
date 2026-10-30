@@ -4,7 +4,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { describe, expect, it } from "vitest";
-import { createSkill, setSkillPrerequisites } from "./create-skill";
+import { createSkill, setSkillsPrerequisites } from "./create-skill";
 
 function skillInput(identityKey: string) {
   return {
@@ -57,7 +57,7 @@ describe(createSkill, () => {
   });
 });
 
-describe(setSkillPrerequisites, () => {
+describe(setSkillsPrerequisites, () => {
   it("adds each prerequisite once and never the skill itself", async () => {
     const [skill, first, second] = await Promise.all([
       skillFixture(),
@@ -67,16 +67,14 @@ describe(setSkillPrerequisites, () => {
 
     const among = new Set<string>();
 
-    await setSkillPrerequisites({
+    await setSkillsPrerequisites({
       among,
-      prerequisiteIds: [first.id, skill.id],
-      skillId: skill.id,
+      prerequisitesBySkill: new Map([[skill.id, [first.id, skill.id]]]),
     });
 
-    await setSkillPrerequisites({
+    await setSkillsPrerequisites({
       among,
-      prerequisiteIds: [first.id, second.id],
-      skillId: skill.id,
+      prerequisitesBySkill: new Map([[skill.id, [first.id, second.id]]]),
     });
 
     const edges = await prisma.skillPrerequisite.findMany({ where: { skillId: skill.id } });

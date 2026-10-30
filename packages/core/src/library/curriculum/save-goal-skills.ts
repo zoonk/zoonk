@@ -1,7 +1,7 @@
 import "server-only";
 import { type generateSkillGraph } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
 import { type LibraryProvenance } from "../_utils/library-rows";
-import { setSkillPrerequisites } from "../skills/create-skill";
+import { setSkillsPrerequisites } from "../skills/create-skill";
 import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
 import { resolveScopeSkills } from "./resolve-lesson-skills";
 
@@ -50,9 +50,5 @@ export async function linkGoalSkillPrerequisites({
     return bySkill.set(skillId, [...(bySkill.get(skillId) ?? []), ...prerequisiteIds]);
   }, new Map<string, string[]>());
 
-  await Promise.all(
-    [...listed].map(([skillId, prerequisiteIds]) =>
-      setSkillPrerequisites({ among, prerequisiteIds, skillId }),
-    ),
-  );
+  await setSkillsPrerequisites({ among, prerequisitesBySkill: listed });
 }

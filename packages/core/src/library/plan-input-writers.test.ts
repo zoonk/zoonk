@@ -11,7 +11,7 @@ import { moveGoalTimeZoneInTransaction } from "../learner/follow-goal-time-zone"
 import { getSession } from "../users/get-session";
 import { buildExamIdentityKey } from "./exams/exam-identity";
 import { readBlueprintContent, saveExamBlueprint } from "./exams/save-exam-blueprint";
-import { setSkillPrerequisites } from "./skills/create-skill";
+import { setSkillsPrerequisites } from "./skills/create-skill";
 import { mergeSkillForAdmin } from "./skills/merge-skill";
 
 const WRITERS = ["prerequisites", "blueprint", "merge", "zone"] as const;
@@ -119,10 +119,9 @@ async function fixture(writer: Writer) {
       plans: plans.map(({ plan }) => plan),
       read: () => prisma.skillPrerequisite.findMany({ where: { skillId: duplicate.id } }),
       write: () =>
-        setSkillPrerequisites({
+        setSkillsPrerequisites({
           among: new Set([survivor.id]),
-          prerequisiteIds: [survivor.id],
-          skillId: duplicate.id,
+          prerequisitesBySkill: new Map([[duplicate.id, [survivor.id]]]),
         }),
     };
   }

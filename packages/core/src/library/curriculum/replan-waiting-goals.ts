@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 
@@ -42,18 +43,16 @@ export async function replanGoalsWaitingOnSkills(
   query: WaitingGoalsQuery,
 ): Promise<WaitingGoalsReplan> {
   const goalIds = await listGoalsWaitingOnSkills(query);
-  const results = await Promise.allSettled(goalIds.map((goalId) => replanWaitingGoal(goalId)));
+  const failed: { goalId: string; reason: unknown }[] = [];
 
-  const failed = goalIds.flatMap((goalId, index) => {
-    const result = results[index];
+  for (const goalId of goalIds) {
+    // oxlint-disable-next-line no-await-in-loop -- Re-planning owns a transaction; a popular band must not exhaust the pool.
+    const { error } = await safeAsync(() => replanWaitingGoal(goalId));
 
-    if (result?.status !== "rejected") {
-      return [];
+    if (error) {
+      failed.push({ goalId, reason: error });
     }
-
-    const reason: unknown = result.reason;
-    return [{ goalId, reason }];
-  });
+  }
 
   failed.forEach(({ goalId, reason }) => {
     logError(`Could not re-plan goal ${goalId} with the lessons it waited for.`, reason);

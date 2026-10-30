@@ -56,27 +56,46 @@ export async function createSkill(
   return { created, skill: row };
 }
 
-export async function setSkillPrerequisites({
+export async function setSkillsPrerequisites({
   among,
-  prerequisiteIds,
-  skillId,
+  prerequisitesBySkill,
 }: {
   among: ReadonlySet<string>;
-  prerequisiteIds: readonly string[];
-  skillId: string;
+  prerequisitesBySkill: ReadonlyMap<string, readonly string[]>;
 }): Promise<void> {
-  const kept = new Set(prerequisiteIds.filter((prerequisiteId) => prerequisiteId !== skillId));
-  const removed = [...among].filter((prerequisiteId) => !kept.has(prerequisiteId));
+  const updates = [...prerequisitesBySkill].map(([skillId, prerequisiteIds]) => {
+    const kept = new Set(prerequisiteIds.filter((prerequisiteId) => prerequisiteId !== skillId));
+    return { kept: [...kept], skillId };
+  });
+
+  if (updates.length === 0) {
+    return;
+  }
 
   await writePlanInputs(async (tx) => {
-    await lockSkillPlanInputs({ referencedSkillIds: [...kept], skillIds: [skillId], tx });
-    await tx.skillPrerequisite.deleteMany({ where: { prerequisiteId: { in: removed }, skillId } });
+    await lockSkillPlanInputs({
+      referencedSkillIds: updates.flatMap((update) => update.kept),
+      skillIds: updates.map((update) => update.skillId),
+      tx,
+    });
+
+    await tx.skillPrerequisite.deleteMany({
+      where: {
+        NOT: {
+          OR: updates.map(({ kept, skillId }) => ({ prerequisiteId: { in: kept }, skillId })),
+        },
+        prerequisiteId: { in: [...among] },
+        skillId: { in: updates.map((update) => update.skillId) },
+      },
+    });
 
     await tx.skillPrerequisite.createMany({
-      data: [...kept].map((prerequisiteId) => ({ prerequisiteId, skillId })),
+      data: updates.flatMap(({ kept, skillId }) =>
+        kept.map((prerequisiteId) => ({ prerequisiteId, skillId })),
+      ),
       skipDuplicates: true,
     });
   });
 
-  revalidateCacheTags([getSkillCacheTag(skillId)]);
+  revalidateCacheTags(updates.map(({ skillId }) => getSkillCacheTag(skillId)));
 }

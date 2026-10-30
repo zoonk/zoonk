@@ -1,8 +1,10 @@
+import { type SavedOutlineChapter } from "@zoonk/core/library/curriculum/save-outline-chapter";
 import {
   type CourseBandNeed,
   type CurriculumScope,
   joinLevelBands,
 } from "@zoonk/core/library/curriculum/scope";
+import { safeAsync } from "@zoonk/utils/error";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
@@ -75,20 +77,16 @@ async function replanWaitingGoals({
 }): Promise<void> {
   const waiting = await listWaitingGoalsStep({ goalIds, skillIds });
 
-  const outcomes = await Promise.allSettled(
-    waiting.map((goalId) => retryPlanConflicts(replanWaitingGoalStep, goalId)),
-  );
+  const failures: { goalId: string; reason: unknown }[] = [];
 
-  const failures = waiting.flatMap((goalId, index) => {
-    const outcome = outcomes[index];
+  for (const goalId of waiting) {
+    // oxlint-disable-next-line no-await-in-loop -- Bound the transactions started for a popular course's waiting plans.
+    const { error } = await safeAsync(() => retryPlanConflicts(replanWaitingGoalStep, goalId));
 
-    if (outcome?.status !== "rejected") {
-      return [];
+    if (error) {
+      failures.push({ goalId, reason: error });
     }
-
-    const reason: unknown = outcome.reason;
-    return [{ goalId, reason }];
-  });
+  }
 
   const [first] = failures;
 
@@ -113,18 +111,21 @@ async function writeBand({ context, plan }: { context: RunContext; plan: BandPla
   const { chapters, early, provenance } = await writeOutlineBandStep({ ...context, plan });
   const skills = [...plan.skills, ...plan.extensions.map((extension) => extension.skill)];
 
-  const saved = await Promise.all(
-    chapters.map((chapter, index) =>
-      saveOutlineChapterStep({
-        ...context,
-        chapter,
-        goalSkills: skills,
-        level: plan.level,
-        position: toPosition({ early, index, plan }),
-        provenance,
-      }),
-    ),
-  );
+  const saved: SavedOutlineChapter[] = [];
+
+  for (const [index, chapter] of chapters.entries()) {
+    // oxlint-disable-next-line no-await-in-loop -- Each chapter starts transactions while saving its outline.
+    const result = await saveOutlineChapterStep({
+      ...context,
+      chapter,
+      goalSkills: skills,
+      level: plan.level,
+      position: toPosition({ early, index, plan }),
+      provenance,
+    });
+
+    saved.push(result);
+  }
 
   const chapterIds = saved.map((chapter) => chapter.chapterId);
 

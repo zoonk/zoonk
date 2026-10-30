@@ -6,7 +6,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { getSession } from "../../users/get-session";
-import { setSkillPrerequisites } from "./create-skill";
+import { setSkillsPrerequisites } from "./create-skill";
 import { mergeSkillForAdmin } from "./merge-skill";
 
 async function planFor(skillId: string) {
@@ -62,10 +62,9 @@ describe("a merge's inputs while it waits", () => {
         writes.push(
           writer === "merge"
             ? mergeSkillForAdmin({ duplicateId: duplicate.id, survivorId: survivor.id })
-            : setSkillPrerequisites({
+            : setSkillsPrerequisites({
                 among: new Set([survivor.id]),
-                prerequisiteIds: [survivor.id],
-                skillId: duplicate.id,
+                prerequisitesBySkill: new Map([[duplicate.id, [survivor.id]]]),
               }),
         );
 
