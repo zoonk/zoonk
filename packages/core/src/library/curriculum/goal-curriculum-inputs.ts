@@ -5,7 +5,7 @@ import { type Course, type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { readCourseStart } from "../../goals/course-start-details";
-import { getKnownSubjects } from "../../learner/placement/placement-contract";
+import { getKnownSubjects, getOwnLevel } from "../../learner/placement/placement-contract";
 import { isOwnMaterialTest } from "../../learner/placement/placement-material";
 import { usesTools } from "../../plans/_utils/plan-tools";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
@@ -38,7 +38,6 @@ const MAX_REFERENCE_CHARACTERS = 30_000;
 const MAX_REFERENCES = 3;
 
 const PURPOSES = ["overview", "deep", "work", "careerChange", "refresh"] as const;
-const OWN_LEVELS = ["none", "basic", "intermediate", "advanced"] as const;
 
 const SYLLABUS_PURPOSES = new Set<(typeof PURPOSES)[number]>(["deep", "careerChange"]);
 
@@ -305,7 +304,7 @@ export async function loadGoalCurriculumInputs(
       goalKind: goal.kind,
       language: goal.language,
       lessonBudget: toLessonBudget({ goal, hasMaterial: material.length > 0 }),
-      ownLevel: readChoice({ allowed: OWN_LEVELS, value: details.level }),
+      ownLevel: getOwnLevel({ goal }) ?? undefined,
       purpose: readChoice({ allowed: PURPOSES, value: details.purpose }),
       targetLanguage: goal.targetLanguage ?? undefined,
     },

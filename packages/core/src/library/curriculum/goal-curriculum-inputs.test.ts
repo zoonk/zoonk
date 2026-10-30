@@ -311,6 +311,48 @@ describe(loadGoalCurriculumInputs, () => {
     expect(owned).toMatchObject({ goal: linked.prompt, ownLevel: "advanced" });
     expect(owned.context).toMatch(/Medicina/u);
   });
+
+  it("writes a language's shared graph the same before and after the level test, which places each learner", async () => {
+    const user = await userFixture();
+
+    const answers = {
+      kind: "language" as const,
+      language: "pt",
+      prompt: "Quero ficar fluente em italiano",
+      targetLanguage: "it",
+      title: "Falar italiano com fluência",
+      userId: user.id,
+    };
+
+    const [beforeTest, afterTest] = await Promise.all([
+      goalFixture({ ...answers, details: { answered: ["reason", "level"], level: "basic" } }),
+      goalFixture({
+        ...answers,
+        details: { answered: ["reason", "level"], level: "B1+", levelTest: { answers: [] } },
+      }),
+    ]);
+
+    const [before, after] = await Promise.all([
+      loadGoalCurriculumInputs(beforeTest.id),
+      loadGoalCurriculumInputs(afterTest.id),
+    ]);
+
+    if (!before || !after) {
+      throw new Error("Expected the goals' inputs");
+    }
+
+    const scope = { generalGoal: answers.title, ownerId: null };
+
+    expect(toScopedGraphPrompt({ inputs: after, scope })).toStrictEqual(
+      toScopedGraphPrompt({ inputs: before, scope }),
+    );
+
+    expect(toScopedGraphPrompt({ inputs: after, scope }).ownLevel).toBeUndefined();
+
+    expect(
+      toScopedGraphPrompt({ inputs: after, scope: { generalGoal: null, ownerId: user.id } }),
+    ).toMatchObject({ ownLevel: "intermediate" });
+  });
 });
 
 describe(getReferenceSyllabusNeed, () => {

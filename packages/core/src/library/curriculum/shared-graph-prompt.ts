@@ -88,5 +88,7 @@ export function toScopedGraphPrompt({
     ...inputs.graphPrompt,
     context: inputs.sharedContext,
     goal: scope.generalGoal ?? inputs.goal.title,
+    // A language's level test places each learner, and rewrites their level while this graph is built.
+    ...(inputs.goal.kind === "language" && { ownLevel: undefined }),
   };
 }
