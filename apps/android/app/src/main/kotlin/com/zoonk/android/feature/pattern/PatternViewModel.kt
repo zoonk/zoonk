@@ -56,7 +56,7 @@ data class PatternDrill(
 class PatternViewModel(
     private val patternId: UUID,
     private val store: PatternStore,
-    private val saved: SavedStateHandle = SavedStateHandle(),
+    private val saved: SavedStateHandle,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<PatternDrill?>(null)
     val state: StateFlow<PatternDrill?> = mutableState.asStateFlow()
