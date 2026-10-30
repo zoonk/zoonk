@@ -259,7 +259,7 @@ class GoalSetupFlowTest {
     @Test
     fun theTimeAScreenStartedOnStaysThroughRecreationWhenFewerDaysHaveNoSuggestion() {
         api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
-        api.cover = { input -> coverOf(recommended = if (input.studyDays.orEmpty().size == 5) 45 else 900) }
+        api.cover = { input -> coverOf(recommended = if (input.studyDays.orEmpty().size == 5) 45 else 2_000) }
         api.advice = { adviceOf(0.6) }
         val restoration = StateRestorationTester(rule)
         show(restoration = restoration)
@@ -272,6 +272,38 @@ class GoalSetupFlowTest {
         restoration.emulateSavedInstanceStateRestore()
         rule.mainClock.advanceTimeBy(1_000)
         rule.onNodeWithContentDescription("Time a day, 45\u00A0min").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun theTimesAndTheWeekendsTimeAreTheOnesTheSetupSends() {
+        api.setup = { setupView(listOf("schedule", "plan"), timeChoices = listOf(5, 30, 45)) }
+        api.advice = { adviceOf(null, LocalDate(2027, 3, 15), targetDate = null) }
+        show()
+
+        rule.onNodeWithContentDescription("Time a day, 30\u00A0min").performScrollTo().performClick()
+        rule.onNodeWithText("15\u00A0min").assertDoesNotExist()
+        rule.onNodeWithText("5\u00A0min").performClick()
+        rule.onNodeWithContentDescription("Saturday").performScrollTo().performClick()
+        rule.onNodeWithText("Different time on weekends").performScrollTo().performClick()
+        rule.onNodeWithText("Time on weekends").performScrollTo().performClick()
+
+        rule.onNodeWithText("45\u00A0min").assertIsDisplayed()
+        rule.onNodeWithText("15\u00A0min").assertDoesNotExist()
+    }
+
+    @Test
+    fun aDayThatCantHoldEverythingOpensOnTheTimeThatReachesEveryTopicAndSaysWhy() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { coverOf(recommended = 2_000, core = 300) }
+        show()
+
+        rule.onNodeWithContentDescription("Time a day, 5\u00A0hr").assertIsDisplayed()
+        rule
+            .onNodeWithText(
+                "The days you picked can't cover everything in depth by your date. More study days would help.",
+                substring = true,
+            ).performScrollTo()
+            .assertIsDisplayed()
     }
 
     @Test

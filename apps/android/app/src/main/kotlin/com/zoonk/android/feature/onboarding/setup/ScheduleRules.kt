@@ -151,16 +151,12 @@ internal fun pickedMinutes(
     minutes: Int,
 ): Int? = minutes.takeUnless { suggestedMinutes(first) != null && suggestedMinutes(found) == minutes }
 
-internal data class TooClose(
-    val recommendedMinutes: Int?,
-    val cause: Cause,
-) {
-    enum class Cause { Date, Days }
-}
+internal enum class TooClose { Date, Days }
 
 /**
- * Why no suggestion covers everything; null when one does, the time shown does, or the date passed.
- * The date is to blame only once every day is a study day: until then, more days bring the time down.
+ * Why no suggestion covers everything, which happens only when not even a whole day does; null when
+ * one does, the time shown does, or the date passed. The date is to blame only once every day is a
+ * study day: until then, more days bring the time down.
  */
 internal fun tooClose(
     found: PlanTimeToCover?,
@@ -170,7 +166,8 @@ internal fun tooClose(
     when {
         found == null || found.pastDate || line is TimeLine.Everything -> null
         found.suggested?.kind == PlanTimeToCoverSuggested.Kind.EVERYTHING -> null
-        else -> TooClose(found.recommendedMinutes?.toInt(), if (studiesEveryDay) TooClose.Cause.Date else TooClose.Cause.Days)
+        studiesEveryDay -> TooClose.Date
+        else -> TooClose.Days
     }
 
 /** Only while the time shown falls short of everything. */

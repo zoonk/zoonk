@@ -3,6 +3,7 @@ package com.zoonk.android.feature.planlink
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -59,12 +60,27 @@ class PlanLinkFlowTest {
         rule.onNodeWithText("A study plan someone shared with you").assertIsDisplayed()
         rule.onNodeWithText("Bar exam").assertIsDisplayed()
         rule.onNodeWithText("Foundations").performScrollTo().assertIsDisplayed()
-        rule.onNodeWithText("45", substring = true).performClick()
+        rule.onNodeWithContentDescription("Time a day, 30\u00A0min").performClick()
+        rule.onNodeWithText("45\u00A0min").performClick()
         rule.onNodeWithText("Start from this plan").performClick()
         rule.waitForIdle()
 
         assertEquals(listOf(PLAN_ID to 45L), api.fromPlans.map { it.first to it.second.dailyMinutes })
         assertEquals(AppRoute.Plan(), navigator.currentRoute)
+    }
+
+    @Test
+    fun theTimeIsPickedFromTheTimesTheLinkSends() {
+        api.planLink = planLinkOf(dailyTimes = listOf(5, 30, 45))
+        show()
+
+        rule.onNodeWithContentDescription("Time a day, 30\u00A0min").performClick()
+        rule.onNodeWithText("15\u00A0min").assertDoesNotExist()
+        rule.onNodeWithText("5\u00A0min").performClick()
+        rule.onNodeWithText("Start from this plan").performClick()
+        rule.waitForIdle()
+
+        assertEquals(listOf(5L), api.fromPlans.map { it.second.dailyMinutes })
     }
 
     @Test

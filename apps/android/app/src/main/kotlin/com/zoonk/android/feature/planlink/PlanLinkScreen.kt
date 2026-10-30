@@ -49,10 +49,9 @@ import com.zoonk.android.feature.plan.phaseKindName
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.OtherTime
-import com.zoonk.android.ui.components.timeChoices
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -105,7 +104,7 @@ internal fun PlanLinkScreen(
                     ) {
                         Heading(shown.value)
                         if (signedIn) {
-                            StartForm(vm, onStart = { vm.start(route.planId) { navigator.showRoot(AppTab.Plan) } })
+                            StartForm(vm, shown.value.dailyTimes, onStart = { vm.start(route.planId) { navigator.showRoot(AppTab.Plan) } })
                         } else {
                             val title =
                                 shown.value.outline.subject
@@ -175,23 +174,12 @@ private fun Heading(link: PlanLink) {
 @Composable
 private fun StartForm(
     vm: PlanLinkViewModel,
+    times: List<Long>,
     onStart: () -> Unit,
 ) {
-    val locale = currentLocale()
     Column(Modifier.widthIn(max = FORM_WIDTH), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        val minutesLabel = stringResource(R.string.planlink_minutes_label)
-        Text(minutesLabel, fontWeight = FontWeight.Medium)
-        FlowRow(Modifier.semantics { contentDescription = minutesLabel }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            timeChoices(vm.minutes).forEach { option ->
-                FilterChip(
-                    selected = option == vm.minutes,
-                    onClick = { vm.pick(option) },
-                    leadingIcon = selectedCheck(option == vm.minutes),
-                    label = { Text(formatMinutes(option, locale), style = MaterialTheme.typography.labelLarge.withTabularFigures()) },
-                )
-            }
-        }
-        OtherTime(vm.minutes, stringResource(R.string.onboarding_schedule_other_time_label), vm::pick)
+        Text(stringResource(R.string.planlink_minutes_label), fontWeight = FontWeight.Medium)
+        DailyTimePicker(times, vm.minutes, stringResource(R.string.onboarding_schedule_time_label), vm::pick)
         Button(onClick = onStart, enabled = !vm.isStarting, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.planlink_start))
         }

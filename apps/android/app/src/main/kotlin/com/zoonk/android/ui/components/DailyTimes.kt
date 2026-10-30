@@ -1,14 +1,22 @@
 package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -18,21 +26,30 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.theme.withTabularFigures
 
 /** The time chips, with the learner's own times among them, so a time picked in [OtherTime] joins the chips. */
 fun timeChoices(vararg times: Int?): List<Int> = (MINUTE_OPTIONS + times.filterNotNull()).distinct().sorted()
 
-/** Every daily time a menu offers, with the ones shown among them. */
-fun otherTimes(vararg shown: Int?): List<Int> = (DAILY_TIMES + shown.filterNotNull()).distinct().sorted()
+/** Core's daily [times], with the ones shown among them. */
+fun pickerTimes(
+    times: List<Long>,
+    vararg shown: Int?,
+): List<Int> = (times.map(Long::toInt) + shown.filterNotNull()).distinct().sorted()
 
 /** The daily times' menu, opened at the time [shown]. */
 @Composable
@@ -60,10 +77,66 @@ fun TimeMenu(
     }
 }
 
+/** Main's daily time picker: the big time a day, picked from core's [times]; its menu marks the time the plan [suggested]. */
+@Composable
+fun DailyTimePicker(
+    times: List<Long>,
+    minutes: Int?,
+    label: String,
+    onChange: (Int) -> Unit,
+    suggested: Int? = null,
+    stale: Boolean = false,
+) {
+    if (minutes == null) {
+        Box(
+            Modifier
+                .size(width = 160.dp, height = 48.dp)
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest, MaterialTheme.shapes.small),
+        )
+        return
+    }
+
+    var open by rememberSaveable { mutableStateOf(false) }
+    val locale = currentLocale()
+    val shown = formatMinutes(minutes, locale)
+
+    Box {
+        Row(
+            modifier =
+                Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable(role = Role.DropdownList) { open = true }
+                    .semantics(mergeDescendants = true) { contentDescription = "$label, $shown" }
+                    .alpha(if (stale) STALE_ALPHA else 1f)
+                    .padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(shown, style = MaterialTheme.typography.displaySmall.withTabularFigures())
+            Icon(painterResource(R.drawable.ic_expand_more), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        TimeMenu(
+            expanded = open,
+            onDismissRequest = { open = false },
+            times = pickerTimes(times, minutes, suggested),
+            shown = minutes,
+            onPick = onChange,
+            label = { time ->
+                if (time == suggested) {
+                    stringResource(R.string.onboarding_schedule_suggested, formatMinutes(time, locale))
+                } else {
+                    formatMinutes(time, locale)
+                }
+            },
+        )
+    }
+}
+
 /** Main's other-time menu under the time chips; [label] says what the time is for. */
 @Composable
 fun OtherTime(
     shown: Int,
+    times: List<Long>,
     label: String,
     onPick: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -74,7 +147,7 @@ fun OtherTime(
         TextButton(onClick = { open = true }, modifier = Modifier.semantics { contentDescription = label }) {
             Text(stringResource(R.string.other_time))
         }
-        TimeMenu(open, { open = false }, otherTimes(shown), shown, onPick)
+        TimeMenu(open, { open = false }, pickerTimes(times, shown), shown, onPick)
     }
 }
 
@@ -83,6 +156,7 @@ fun OtherTime(
 @Composable
 fun TimeSelect(
     label: String,
+    times: List<Long>,
     value: Int?,
     onPick: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -101,7 +175,7 @@ fun TimeSelect(
             singleLine = true,
         )
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            otherTimes(value).forEach { minutes ->
+            pickerTimes(times, value).forEach { minutes ->
                 DropdownMenuItem(
                     text = { Text(formatMinutes(minutes, locale)) },
                     onClick = {
@@ -117,8 +191,6 @@ fun TimeSelect(
 
 private val MINUTE_OPTIONS = listOf(15, 30, 45, 60, 90, 120, 180, 240)
 
-private const val MAX_DAILY_MINUTES = 1440
-
-private val DAILY_TIMES = (15..240 step 15) + (270..MAX_DAILY_MINUTES step 30)
-
 private val MENU_ITEM_HEIGHT = 48.dp
+
+private const val STALE_ALPHA = 0.6f

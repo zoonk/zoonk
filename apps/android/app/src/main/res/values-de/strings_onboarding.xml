@@ -369,12 +369,10 @@
   "onboarding_saving_goal": "22f0da451d87c4fe3f3dc7840b7ae2be80eb43d091b4d6343beef1f9479956fa",
   "onboarding_schedule_ask_failed": "7af59f7b2f89329959fc1e1c6b124d654e5ea4725e0ae63935d805afd9be2e02",
   "onboarding_schedule_asking": "3eafcf38c457c1cee7c4480fc4c8e8e0fef353de8a281f816100a159c41a992e",
-  "onboarding_schedule_close": "551772b99c6b48b60c5bbf5993c4b0cb7e40384e2c0ea2f71cb5dcf9463017b2",
   "onboarding_schedule_covers_exam_all": "d40ca3bcc5626ba86d64c6d357d222c199c3d24b0f779c6e32a6f3239f8f418f",
   "onboarding_schedule_covers_exam_all_month": "b8904f3076b0c8b6f6b3d6ec27c2bcb3c82c86c4647e4791a6cf08e22417d547",
   "onboarding_schedule_covers_goal_all": "a53e1c5ba2123f99bbde4adbf4cc478ad1255470736d88dc39fde56e445c53b3",
   "onboarding_schedule_covers_goal_all_month": "5620de8d42a8a19d6ef41896ae7fcdee9520e5a6c6970673a118cbd19f662b16",
-  "onboarding_schedule_days_close": "5b806fa2ec2e4a4f822bfa2cd0b8add0dbce0fa62fd4604a3723d31d1c6271d1",
   "onboarding_schedule_days_too_close": "985cead1d9a7c128b37e1561f54e96facd9e763a25b36072975d69c4e4d71ea7",
   "onboarding_schedule_find_failed": "9cef5f764e76b4f055d01e464d19b6d9900d7e7f89501e5900906c93f917a9a5",
   "onboarding_schedule_no_days": "3549777c2338fa21fa6b510c1510f6258a08cd65100995233d33a48c48b410ef",
@@ -1013,11 +1011,7 @@
     <string name="onboarding_schedule_time_label">Tägliche Lernzeit</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_suggested">%1$s (vorgeschlagen)</string>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_schedule_close">Dein Zieldatum ist nah: Um alles gründlich zu lernen, brauchst du %1$s pro Tag.</string>
     <string name="onboarding_schedule_too_close">Dein Zieldatum ist zu nah, um alles gründlich zu lernen.</string>
-    <!-- %1$s is a time, such as "1 hr 30 min". -->
-    <string name="onboarding_schedule_days_close">Um bis zu deinem Datum alles gründlich abzudecken, brauchst du an deinen gewählten Tagen täglich %1$s. Mehr Lerntage senken das.</string>
     <string name="onboarding_schedule_days_too_close">Deine gewählten Tage reichen nicht, um bis zu deinem Datum alles gründlich abzudecken. Mehr Lerntage würden helfen.</string>
     <!-- After the line about the time a day, when two goals were typed together. %1$s is this goal's time, %2$s the other goal's, such as "20 min". -->
     <string name="onboarding_schedule_split_one">Dieses Ziel bekommt %1$s am Tag, dein anderes Ziel %2$s.</string>

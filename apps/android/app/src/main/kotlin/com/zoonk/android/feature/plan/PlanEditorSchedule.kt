@@ -58,7 +58,7 @@ internal fun PlanScheduleSection(
         Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
             DailyMinutes(page, edits, shape, weekendOn, modifier)
             StudyDays(page, edits, shape, daysModifier)
-            WeekendMinutes(edits, shape, weekendOn, onWeekendOn = { drafts.weekendOn = it })
+            WeekendMinutes(edits, shape, page.plan.schedule.dailyTimes, weekendOn, onWeekendOn = { drafts.weekendOn = it })
         }
         if (edits.hasFailed(PlanPart.Schedule)) SaveFailedText()
     }
@@ -99,7 +99,7 @@ private fun DailyMinutes(
                 )
             }
         }
-        OtherTime(shown, stringResource(R.string.onboarding_schedule_other_time_label), ::setMinutes)
+        OtherTime(shown, page.plan.schedule.dailyTimes, stringResource(R.string.onboarding_schedule_other_time_label), ::setMinutes)
         DailyCoverage(page, edits, focus)
         FullCourseSwitch(page, edits, focus.studyEverything)
     }
@@ -208,6 +208,7 @@ private fun dayName(
 private fun WeekendMinutes(
     edits: PlanEdits,
     shape: WeekShape,
+    times: List<Long>,
     weekendOn: Boolean,
     onWeekendOn: (Boolean) -> Unit,
 ) {
@@ -241,7 +242,7 @@ private fun WeekendMinutes(
             Switch(checked = weekendOn, onCheckedChange = null)
         }
         if (weekendOn) {
-            TimeSelect(label = stringResource(R.string.plan_time_on_weekends), value = shown, onPick = ::setWeekend)
+            TimeSelect(label = stringResource(R.string.plan_time_on_weekends), times = times, value = shown, onPick = ::setWeekend)
         }
     }
 }

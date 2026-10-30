@@ -116,6 +116,7 @@ internal fun setupView(
     details: String = """{"answered":[]}""",
     targetDate: String? = null,
     targetLanguage: String? = null,
+    timeChoices: List<Int> = DAILY_TIMES,
 ): Onboarding =
     ApiJson.decodeFromString(
         """
@@ -125,7 +126,7 @@ internal fun setupView(
             "]",
         ) { "\"$it\"" }},
          "libraryCourse":null,"quickTestMinutes":2,"recommendedMinutes":30,"steps":[${steps.joinToString(",") { "\"$it\"" }}],
-         "timeChoices":[{"minutes":30,"split":null}],
+         "timeChoices":[${timeChoices.joinToString(",") { "{\"minutes\":$it,\"split\":null}" }}],
          "goal":{"createdAt":"2026-10-28T12:00:00Z","dailyMinutes":30,"details":$details,"examBlueprintId":null,"id":"$goalId",
           "isActive":true,"kind":"$kind","language":"en","plan":null,"primaryCourseId":null,"prompt":"learn statistics","status":"active",
           "studyDays":[],"studyTime":null,"targetDate":${targetDate?.let {
@@ -134,10 +135,13 @@ internal fun setupView(
         """.trimIndent(),
     )
 
-internal fun planLinkOf(owner: String? = null): PlanLink =
+internal fun planLinkOf(
+    owner: String? = null,
+    dailyTimes: List<Int> = DAILY_TIMES,
+): PlanLink =
     ApiJson.decodeFromString(
         """
-        {"dailyTimes":[15,30,45],"owner":${owner?.let { "{\"goalId\":\"$it\"}" } ?: "null"},
+        {"dailyTimes":${dailyTimes.joinToString(",", "[", "]")},"owner":${owner?.let { "{\"goalId\":\"$it\"}" } ?: "null"},
          "outline":{"goalKind":"exam","hours":40.5,"language":"en","skillCount":24,"targetLanguage":null,
           "subject":{"title":"Bar exam","description":"Pass the state bar on the first try."},
           "phases":[{"hours":20.0,"kind":"foundations","milestone":"Every subject once","name":""},
@@ -506,8 +510,8 @@ internal fun suggestionFor(
     core: Long?,
 ): PlanTimeToCoverSuggested? =
     when {
-        recommended != null && recommended <= 240 -> PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended, null)
-        core != null && core <= 240 -> PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERY_TOPIC, core, null)
+        recommended != null && recommended <= A_DAY -> PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended, null)
+        core != null && core <= A_DAY -> PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERY_TOPIC, core, null)
         else -> null
     }
 
@@ -515,12 +519,13 @@ internal fun coverOf(
     recommended: Long?,
     targetDate: LocalDate = LocalDate(2030, 11, 8),
     ready: Boolean = true,
+    core: Long? = null,
 ) = PlanTimeToCover(
-    coreMinutes = null,
+    coreMinutes = core,
     fittingDate = null,
     ready = ready,
     recommendedMinutes = recommended,
-    suggested = suggestionFor(recommended, core = null).takeIf { ready },
+    suggested = suggestionFor(recommended, core).takeIf { ready },
     targetDate = targetDate,
     targetDateNamedMonth = false,
 )
@@ -539,3 +544,8 @@ internal fun adviceOf(
     targetDate = targetDate,
     targetDateNamedMonth = false,
 )
+
+/** Core's `DAILY_TIME_CHOICES`: 5 and 10 minutes, quarter hours to 4 hours, then half hours to a whole day. */
+internal val DAILY_TIMES = listOf(5, 10) + (15..240 step 15) + (270..1440 step 30)
+
+private const val A_DAY = 1440L

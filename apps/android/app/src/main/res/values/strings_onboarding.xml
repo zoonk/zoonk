@@ -574,11 +574,7 @@
     <string name="onboarding_schedule_time_label">Time a day</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_suggested">%1$s (suggested)</string>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_schedule_close">Your date is close: covering everything in depth takes %1$s a day.</string>
     <string name="onboarding_schedule_too_close">Your date is too close to cover everything in depth.</string>
-    <!-- %1$s is a time, such as "1 hr 30 min". -->
-    <string name="onboarding_schedule_days_close">Covering everything in depth by your date takes %1$s a day on the days you picked. More study days bring that down.</string>
     <string name="onboarding_schedule_days_too_close">The days you picked can\'t cover everything in depth by your date. More study days would help.</string>
     <!-- After the line about the time a day, when two goals were typed together. %1$s is this goal's time, %2$s the other goal's, such as "20 min". -->
     <string name="onboarding_schedule_split_one">This goal gets %1$s a day and your other goal %2$s.</string>

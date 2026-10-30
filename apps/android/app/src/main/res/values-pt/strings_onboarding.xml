@@ -369,12 +369,10 @@
   "onboarding_saving_goal": "e696f39f92ad58f4ddbcf2f4ab34900db43cae156f745e625f332cf561cc8a4f",
   "onboarding_schedule_ask_failed": "4fbc8efaa5cf275513be27c09d6fc7119597fb93d430b5c504c1f9ca3f6cf5d6",
   "onboarding_schedule_asking": "b676bef9f2a158242c7ce337145897a3ecf87cd41c07d960bf3e0022fbea92b9",
-  "onboarding_schedule_close": "90a33328a33ec686ecef980104ff31095304e5fa2636854e6970624b442a615a",
   "onboarding_schedule_covers_exam_all": "5561b2a8ca66094c9710aa4eb68bb32663eaac43accece8d7924aba99e7e007e",
   "onboarding_schedule_covers_exam_all_month": "4fcb9eee5c04c227e0b74bc599a5426ef8b375f84900cf3b5d35a79c613ce1c9",
   "onboarding_schedule_covers_goal_all": "f9a887baa52be20e49eaf7967564bd9cfc3bf1a9583bb0b30fbb2e93bbfd3d08",
   "onboarding_schedule_covers_goal_all_month": "9b483fcbd5ac53a8c47811c213512caba8f9e9e0e715e19b2d6de3dc5ffb3f71",
-  "onboarding_schedule_days_close": "ca5b2832d3383e94a8e83bddee241a1705a071b3a679a5d60657a731e01da7b0",
   "onboarding_schedule_days_too_close": "4e875a0d18879bf1b34fe292730951db73215d1ff9ea78b85693560b06465308",
   "onboarding_schedule_find_failed": "ec200b3845b822aa20e450a3cfe1972c22cd092741d60c2d58d54313c5b9ef7a",
   "onboarding_schedule_no_days": "5689e1ac91667482d4de787c4e4bec043bd932e76ca1ed81f41584d3e4612b26",
@@ -1035,11 +1033,7 @@
     <string name="onboarding_schedule_time_label">Tempo diário</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_suggested">%1$s (sugerido)</string>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_schedule_close">Sua data está próxima: para estudar tudo a fundo, são necessários %1$s por dia.</string>
     <string name="onboarding_schedule_too_close">Sua data está próxima demais para estudar tudo a fundo.</string>
-    <!-- %1$s is a time, such as "1 hr 30 min". -->
-    <string name="onboarding_schedule_days_close">Para estudar tudo a fundo até a sua data, você precisa de %1$s por dia nos dias que escolheu. Mais dias de estudo diminuem esse tempo.</string>
     <string name="onboarding_schedule_days_too_close">Os dias que você escolheu não bastam para estudar tudo a fundo até a sua data. Mais dias de estudo ajudariam.</string>
     <!-- After the line about the time a day, when two goals were typed together. %1$s is this goal's time, %2$s the other goal's, such as "20 min". -->
     <string name="onboarding_schedule_split_one">Esta meta fica com %1$s por dia e sua outra meta com %2$s.</string>

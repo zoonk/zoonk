@@ -48,10 +48,9 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.onboarding.AdviceQuery
 import com.zoonk.android.feature.onboarding.CoverQuery
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.LabelChip
-import com.zoonk.android.ui.components.TimeMenu
 import com.zoonk.android.ui.components.TimeSelect
-import com.zoonk.android.ui.components.otherTimes
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -75,6 +74,7 @@ import java.util.TimeZone
 internal fun ColumnScope.ScheduleStep(
     goal: Goal,
     recommendedMinutes: Int,
+    timeChoices: List<Long>,
     run: GenerationRun,
     store: OnboardingStore,
     vm: GoalSetupViewModel,
@@ -175,10 +175,12 @@ internal fun ColumnScope.ScheduleStep(
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             DailyTimePicker(
+                times = timeChoices,
                 minutes = minutes,
+                label = stringResource(R.string.onboarding_schedule_time_label),
+                onChange = pick,
                 suggested = suggestedMinutes(found),
                 stale = stale,
-                onChange = pick,
             )
             ScheduleLine(
                 date = date,
@@ -203,6 +205,7 @@ internal fun ColumnScope.ScheduleStep(
             WeekdayToggles(days, onChange = { days = it })
             if (days.any(::isWeekend)) {
                 WeekendTime(
+                    times = timeChoices,
                     checked = weekendOn,
                     minutes = weekendPicked ?: minutes ?: recommendedMinutes,
                     onCheckedChange = {
@@ -235,60 +238,6 @@ private data class ExamFinish(
     val end: LocalDate,
     val exam: ShownDate,
 )
-
-/** The big time a day; its menu marks the time the plan suggests. */
-@Composable
-private fun DailyTimePicker(
-    minutes: Int?,
-    suggested: Int?,
-    stale: Boolean,
-    onChange: (Int) -> Unit,
-) {
-    if (minutes == null) {
-        Box(
-            Modifier
-                .size(width = 160.dp, height = 48.dp)
-                .background(MaterialTheme.colorScheme.surfaceContainerHighest, MaterialTheme.shapes.small),
-        )
-        return
-    }
-
-    var open by rememberSaveable { mutableStateOf(false) }
-    val locale = currentLocale()
-    val label = stringResource(R.string.onboarding_schedule_time_label)
-    val shown = formatMinutes(minutes, locale)
-
-    Box {
-        Row(
-            modifier =
-                Modifier
-                    .clip(MaterialTheme.shapes.small)
-                    .clickable(role = Role.DropdownList) { open = true }
-                    .semantics(mergeDescendants = true) { contentDescription = "$label, $shown" }
-                    .alpha(if (stale) STALE_ALPHA else 1f)
-                    .padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(shown, style = MaterialTheme.typography.displaySmall.withTabularFigures())
-            Icon(painterResource(R.drawable.ic_expand_more), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        TimeMenu(
-            expanded = open,
-            onDismissRequest = { open = false },
-            times = otherTimes(minutes, suggested),
-            shown = minutes,
-            onPick = onChange,
-            label = { time ->
-                if (time == suggested) {
-                    stringResource(R.string.onboarding_schedule_suggested, formatMinutes(time, locale))
-                } else {
-                    formatMinutes(time, locale)
-                }
-            },
-        )
-    }
-}
 
 /** One polite live region for the time shown: what it means, why, and the way back to the suggestion. */
 @Composable
@@ -340,19 +289,13 @@ private fun ScheduleLine(
 }
 
 @Composable
-private fun tooCloseWords(tooClose: TooClose): String {
-    val time = tooClose.recommendedMinutes?.let { formatMinutes(it, currentLocale()) }
-    return when (tooClose.cause) {
-        TooClose.Cause.Date -> {
-            time?.let { stringResource(R.string.onboarding_schedule_close, it) } ?: stringResource(R.string.onboarding_schedule_too_close)
-        }
-
-        TooClose.Cause.Days -> {
-            time?.let { stringResource(R.string.onboarding_schedule_days_close, it) }
-                ?: stringResource(R.string.onboarding_schedule_days_too_close)
-        }
-    }
-}
+private fun tooCloseWords(tooClose: TooClose): String =
+    stringResource(
+        when (tooClose) {
+            TooClose.Date -> R.string.onboarding_schedule_too_close
+            TooClose.Days -> R.string.onboarding_schedule_days_too_close
+        },
+    )
 
 @Composable
 private fun splitWords(split: DaySplit): String {
@@ -531,6 +474,7 @@ private fun WeekdayToggles(
 /** The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'. */
 @Composable
 private fun WeekendTime(
+    times: List<Long>,
     checked: Boolean,
     minutes: Int,
     onCheckedChange: (Boolean) -> Unit,
@@ -538,7 +482,7 @@ private fun WeekendTime(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SwitchRow(stringResource(R.string.onboarding_weekend_time), checked, onCheckedChange)
-        if (checked) TimeSelect(stringResource(R.string.onboarding_weekend_time_label), minutes, onChange)
+        if (checked) TimeSelect(stringResource(R.string.onboarding_weekend_time_label), times, minutes, onChange)
     }
 }
 
@@ -558,8 +502,6 @@ internal fun goalDate(
     namedMonth: Boolean,
     style: DateStyle = DateStyle.Day,
 ): String = formatDate(date.toJavaLocalDate(), currentLocale(), if (namedMonth) DateStyle.Month else style)
-
-private const val STALE_ALPHA = 0.6f
 
 internal fun selectedCheck(selected: Boolean): (@Composable () -> Unit)? =
     if (selected) {

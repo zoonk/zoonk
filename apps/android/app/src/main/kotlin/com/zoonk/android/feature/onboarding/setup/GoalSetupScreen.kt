@@ -283,6 +283,7 @@ private fun ColumnScope.QuestionStep(
             ScheduleStep(
                 view.goal,
                 view.recommendedMinutes.toInt(),
+                view.timeChoices.map { it.minutes },
                 run,
                 store,
                 vm,

@@ -42,7 +42,9 @@ class ScheduleRulesTest {
         targetDateNamedMonth = false,
     )
 
-    private val tooClose = found(recommended = 900, core = 300)
+    private val tooClose = found(recommended = 2_000, core = 300)
+
+    private val noSuggestion = found(recommended = 2_000, core = 2_000)
 
     private fun line(
         advice: PlanTimeAdvice? = null,
@@ -89,9 +91,9 @@ class ScheduleRulesTest {
         assertNull(shown(first = null, found = null))
         assertEquals(35, shown())
         assertEquals(30, shown(found = found(recommended = 30)))
-        assertEquals(35, shown(found = tooClose))
+        assertEquals(35, shown(found = noSuggestion))
         assertEquals(90, shown(picked = 90))
-        assertEquals(60, shown(first = tooClose, found = found()))
+        assertEquals(60, shown(first = noSuggestion, found = found()))
         assertEquals(60, shown(first = pastDate, found = null))
         assertEquals(60, shown(first = null, found = null, settled = true))
     }
@@ -100,14 +102,14 @@ class ScheduleRulesTest {
     fun pickingTheSuggestionBackFollowsItAgainWhereItIsFollowed() {
         assertNull(pickedMinutes(found(), found(), 35))
         assertEquals(30, pickedMinutes(found(), found(), 30))
-        assertEquals(35, pickedMinutes(tooClose, found(), 35))
+        assertEquals(35, pickedMinutes(noSuggestion, found(), 35))
     }
 
     @Test
     fun theLineSaysWhatTheTimeShownMeansOrWhyThatIsNotKnownYet() {
         assertEquals(TimeLine.NoDays, line(hasDays = false))
         assertEquals(TimeLine.Everything(suggested = true), line())
-        assertEquals(TimeLine.EveryTopic, line(found = found(recommended = 300, core = 45), minutes = 45))
+        assertEquals(TimeLine.EveryTopic, line(found = found(recommended = 2_000, core = 45), minutes = 45))
         assertEquals(TimeLine.Asking, line(minutes = 15))
         assertEquals(TimeLine.Share(0.48), line(advice = advice(), minutes = 15))
         assertEquals(TimeLine.Everything(suggested = false), line(advice = advice(share = 1.0), minutes = 60))
@@ -139,12 +141,12 @@ class ScheduleRulesTest {
     }
 
     @Test
-    fun aTooCloseDateIsSaidOnlyWhenNoSensibleTimeCoversEverything() {
+    fun aTooCloseDateIsSaidOnlyWhenNoDayCoversEverything() {
         val short = TimeLine.Share(0.15)
         assertNull(tooClose(found(), short, studiesEveryDay = true))
         assertNull(tooClose(pastDate, short, studiesEveryDay = true))
-        assertEquals(TooClose(900, TooClose.Cause.Date), tooClose(tooClose, short, studiesEveryDay = true))
-        assertEquals(TooClose(900, TooClose.Cause.Days), tooClose(tooClose, short, studiesEveryDay = false))
+        assertEquals(TooClose.Date, tooClose(tooClose, short, studiesEveryDay = true))
+        assertEquals(TooClose.Days, tooClose(tooClose, short, studiesEveryDay = false))
         assertNull(tooClose(tooClose, TimeLine.Everything(suggested = false), studiesEveryDay = true))
     }
 
@@ -153,7 +155,7 @@ class ScheduleRulesTest {
         val short = TimeLine.Share(0.48)
         assertNull(offer(found(), short, 35))
         assertEquals(PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERYTHING, 35, null), offer(found(), short, 15))
-        assertNull(offer(found(recommended = 900, core = 240), TimeLine.Everything(suggested = false), 900))
+        assertNull(offer(found(recommended = 2_000, core = 240), TimeLine.Everything(suggested = false), 900))
     }
 
     @Test
@@ -172,7 +174,7 @@ class ScheduleRulesTest {
         assertFalse(waitsForSuggestion(failed = true, first = found(), found = null, picked = null))
         assertFalse(waitsForSuggestion(failed = false, first = found(), found = found(), picked = null))
         assertFalse(waitsForSuggestion(failed = false, first = found(), found = null, picked = 30))
-        assertFalse(waitsForSuggestion(failed = false, first = tooClose, found = null, picked = null))
+        assertFalse(waitsForSuggestion(failed = false, first = noSuggestion, found = null, picked = null))
     }
 
     @Test
