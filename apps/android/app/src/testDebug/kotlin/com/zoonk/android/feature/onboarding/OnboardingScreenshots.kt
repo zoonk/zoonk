@@ -60,9 +60,12 @@ import com.zoonk.android.feature.onboarding.setup.PlacementStep
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
 import com.zoonk.android.feature.planlink.PlanLinkScreen
+import com.zoonk.android.feature.research.SourceChangeNotice
+import com.zoonk.android.feature.research.UploadRequestNotice
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
@@ -80,6 +83,7 @@ import org.robolectric.annotation.GraphicsMode
 import org.robolectric.util.ReflectionHelpers
 import java.io.File
 import java.time.LocalDate
+import java.util.UUID
 
 /**
  * Review screenshots of the start flow and goal setup, written only on demand:
@@ -148,6 +152,15 @@ class OnboardingScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun levelTestWaiting() = captureLevelTestWaiting("phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun uploadAskOpen() {
+        compose.setContent { ZoonkTheme { Surface { ResearchNotices(SuggestionLayout.Panel) } } }
+        compose.onNodeWithText("Upload the notice").performClick()
+        compose.waitForIdle()
+        write("research-upload-open-phone-screen", compose.onRoot().captureToImage().asAndroidBitmap())
+    }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
@@ -372,6 +385,8 @@ class OnboardingScreenshots {
                 "plan-link" to { PlanLink(FakeOnboardingApi()) },
                 "course-start" to { CourseStart(AppRoute.CourseStart(COURSE)) },
                 "course-start-chapter" to { CourseStart(AppRoute.CourseStart(COURSE, chapterId = CHAPTER_ONE, dailyMinutes = 15)) },
+                "research-notices" to { ResearchNotices(SuggestionLayout.Panel) },
+                "research-notices-line" to { ResearchNotices(SuggestionLayout.Line) },
                 "level-test-intro" to { LevelTest(FakeOnboardingApi(), targetLanguage = "ja", native = "pt") },
                 "level-test-reading" to { LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(answered = 3) }) },
                 "level-test-listening" to {
@@ -452,6 +467,15 @@ class OnboardingScreenshots {
                 signedIn = true,
                 rememberAppNavigator(),
             )
+        }
+
+        @Composable
+        private fun ResearchNotices(layout: SuggestionLayout) {
+            val store = rememberStore(FakeOnboardingApi())
+            Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                UploadRequestNotice(UUID.fromString(GOAL_ID), uploadAskOf(), store, layout)
+                SourceChangeNotice("The 2027 notice moves the exam to March 14 and adds Statistics to what it covers.", layout)
+            }
         }
 
         @Composable

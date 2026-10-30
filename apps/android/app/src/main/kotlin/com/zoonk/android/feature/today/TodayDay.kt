@@ -43,6 +43,8 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.language.LanguageLevelCard
 import com.zoonk.android.feature.language.hasLanguagePractice
+import com.zoonk.android.feature.onboarding.GoalResearch
+import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.OpeningWaitLine
@@ -89,6 +91,8 @@ internal fun TodayDay(
     practice: @Composable () -> Unit = {},
     plans: PlanStore? = null,
     language: LoadState<LanguageToday>? = null,
+    research: LoadState<GoalResearch>? = null,
+    onboarding: OnboardingStore? = null,
 ) {
     val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val stalled =
@@ -135,15 +139,18 @@ internal fun TodayDay(
                 brainPower = brainPower,
                 practice = practice,
                 notice = { layout ->
-                    // A language goal's notice waits for its language read, since the one picked first is held for the visit.
-                    if (language != LoadState.Idle && language != LoadState.Loading) {
+                    // The notice waits for the reads that can pick it, since the one picked first is held for the visit.
+                    if (language.isSettled() && research.isSettled()) {
                         val practice = language?.value
+                        val sources = research?.value
                         val host =
                             HostNotices(
                                 practice =
                                     practice != null && hasLanguagePractice(read.today.pattern, practice.pronunciation),
+                                sourceChange = sources?.change != null,
+                                uploadRequest = sources?.upload != null,
                             )
-                        TodayNotice(TodayNoticeState(read, viewModel, navigator::open, plans, host, practice), layout)
+                        TodayNotice(TodayNoticeState(read, viewModel, navigator::open, plans, host, practice, sources, onboarding), layout)
                     }
                 },
                 onMission = { opens -> openMission(opens, model, actions, today, scope) },
@@ -185,6 +192,8 @@ internal fun TodayDay(
         }
     }
 }
+
+private fun LoadState<*>?.isSettled() = this != LoadState.Idle && this != LoadState.Loading
 
 /** A mission's block opens as its row does; its page opens where it lives. */
 private fun openMission(

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "research_change_label": "6f0b6dcac48478f9317534222c92a70e539259c4ae025689ac0dc6125739c577",
+  "research_class_action": "bfc24e7cca5ebe693d0c5fd9175f133b850d9ffec31f465b0fb852737dd825f1",
+  "research_class_body": "c507331a4a1098b4d926d2d85c6efcab28e6c99ea7c317818f10496a78829007",
+  "research_class_title": "28ccafcc0c2712995f84e90a81bed1e6f039f95cbc27b1e8b577d5c2a30611d5",
+  "research_guide_action": "f2a04ebfac970f9e19e8c9a64bfd34a2f82757cc912fbb604ba53f5769dbce70",
+  "research_guide_body": "9ec02deb19d1186483c59d10fda954431a592537bd7f2eb7fcc20ffb25e5da3c",
+  "research_guide_title": "366490a8a42d12ea55e38c3b613b595163dbc9e705c33f9906985a7feaa9335e",
+  "research_not_now": "7b26907f65e1e5bca21bcf458ed18c639970ed939076330ac672c1611f3fcd16",
+  "research_notice_action": "291d0133d406a0f4e1593aca9f2dd5cb3eac55d0e2090d0d853d0037db5e10db",
+  "research_notice_body": "0cbf4b8215be94e7d1cd3c6e4add56917516ae8c40bcac65941b928d6328828e",
+  "research_notice_title": "269380ddbecb39ae50434c1701a00382e4afdb1c49d65d786064cc92c6fb6be9",
+  "research_source_action": "809140b2ad87e6358ac7724cdf144ee2deaa8917a1234c3642eae5f4536a30b7",
+  "research_source_body": "1a907fbe86ddfaa79172950cfe56e2f9d98f6da57c7d31fdc6cd1a3df2f07ff1",
+  "research_source_title": "57240de621a72d5265cf84d147f00f7bf81adbd959dd9417a35bb0f85da40124",
+  "research_unverified_guide_body": "2ca26175f52cf66fa923f95135e7e27c6e911cb575866542253f2ffd845c9fd2",
+  "research_unverified_notice_body": "0cb6c3476dc2617c4b95cf3d518032261ca3372302c7fb18d6b4dfc97ad5f5d6",
+  "research_unverified_title": "9eee45462c2dc40990f695c7d7cc81f74436232deb5250c65f0f6e142024cdfb",
+  "research_upload_label": "8b700fdd345c1e480a827e7211945623394457976d445c61188e4133880d0444",
+  "research_upload_open": "92a94c5dc03abd6b3a80dc494a3084aa923032a54422b059a7b740240f317506",
+  "research_upload_sending": "6c572d888ffa36c471d4943e55a0e3d5f0d8128ea4519f78a4d2042440ae90ca",
+  "research_upload_thanks": "6d11ca2787f8e415d73c2828e4b3e6a10b76d232f5aa01746795a201c20f7bb2"
+}
+-->
+<resources>
+    <!-- Names Today's notice when research needs the learner to upload a document. -->
+    <string name="research_upload_label">Ton plan a besoin d’un document</string>
+    <!-- Opens the upload ask from Today's notice line. -->
+    <string name="research_upload_open">Importer</string>
+    <string name="research_upload_thanks">Merci. Nous le lisons et ton plan sera mis à jour dans quelques minutes.</string>
+    <string name="research_upload_sending">Envoi pour lecture…</string>
+    <string name="research_not_now">Pas maintenant</string>
+    <string name="research_class_title">Ajoute le contenu de ton cours</string>
+    <string name="research_class_body">Le sujet de l’examen de ton professeur n’est publié nulle part. Importe les diapositives, tes notes ou la liste des thèmes pour que ton plan soit adapté à ton cours.</string>
+    <string name="research_class_action">Importer ton contenu</string>
+    <string name="research_source_title">Nous n’avons pas trouvé la source officielle</string>
+    <string name="research_source_body">Importe le texte ou le guide officiel que tu utilises pour étudier afin que tes leçons le suivent.</string>
+    <string name="research_source_action">Importer un document</string>
+    <!-- An exam's notice: the official document that announces it and lists what it covers. -->
+    <string name="research_notice_title">Nous n’avons pas trouvé l’avis officiel</string>
+    <string name="research_notice_body">Importe l’avis pour que ton plan corresponde à l’examen.</string>
+    <string name="research_notice_action">Importer l’avis</string>
+    <string name="research_guide_title">Nous n’avons pas trouvé le guide officiel</string>
+    <string name="research_guide_body">Importe le guide officiel pour que ton plan corresponde à l’examen.</string>
+    <string name="research_guide_action">Importer le guide officiel</string>
+    <string name="research_unverified_title">Nous n’avons pas pu confirmer les détails de l’examen</string>
+    <string name="research_unverified_notice_body">Les informations trouvées ne correspondaient pas aux détails de l’examen. Importe l’avis officiel pour que ton plan corresponde à l’examen.</string>
+    <string name="research_unverified_guide_body">Les informations trouvées ne correspondaient pas aux détails de l’examen. Importe le guide officiel pour que ton plan corresponde à l’examen.</string>
+    <!-- Names Today's notice that says what changed in a source the goal follows, like a new exam notice. -->
+    <string name="research_change_label">Ce qui a changé</string>
+</resources>

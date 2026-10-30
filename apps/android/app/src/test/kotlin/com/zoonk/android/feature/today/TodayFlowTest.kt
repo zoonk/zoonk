@@ -16,6 +16,10 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.feature.onboarding.FakeOnboardingApi
+import com.zoonk.android.feature.onboarding.GoalResearch
+import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.uploadAskOf
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.StudyApi
@@ -68,6 +72,7 @@ class TodayFlowTest {
     private val reviewBlock = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d42"
 
     private var language by mutableStateOf<LoadState<LanguageToday>?>(null)
+    private var research by mutableStateOf<LoadState<GoalResearch>?>(null)
 
     private fun show(
         vararg sessionFields: Pair<String, Any?>,
@@ -127,6 +132,7 @@ class TodayFlowTest {
                 PlanStore(FakePlanApi(), cache),
             )
         val read = TodayRead.Day(today, today.session.toDayView())
+        val onboarding = OnboardingStore(FakeOnboardingApi(), cache, FakeSession(ana)) { true }
 
         rule.setContent {
             ZoonkTheme {
@@ -144,6 +150,8 @@ class TodayFlowTest {
                             .BuddyLook(),
                     buddyName = "Zu",
                     language = language,
+                    research = research,
+                    onboarding = onboarding,
                 )
             }
         }
@@ -169,6 +177,24 @@ class TodayFlowTest {
             )
 
         rule.onNodeWithText("Say 2 words again").assertExists()
+        rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
+    }
+
+    @Test
+    fun anUploadAskReadAfterTheDayWinsOverASuggestion() {
+        research = LoadState.Loading
+        show(
+            todayFields =
+                listOf(
+                    "studiedToday" to true,
+                    "suggestedGoal" to fixture("suggested-goal", "title" to "Chemistry"),
+                ),
+        )
+        rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
+
+        research = LoadState.Loaded(GoalResearch(change = null, upload = uploadAskOf()))
+
+        rule.onNodeWithText("We couldn't find the official notice").assertExists()
         rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
     }
 

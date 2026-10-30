@@ -10,6 +10,7 @@ import com.zoonk.android.data.perform
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
+import com.zoonk.api.models.CreateResearchRequest
 import com.zoonk.api.models.CreateUploadRequest
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
@@ -17,6 +18,7 @@ import com.zoonk.api.models.GoalCreateResponse
 import com.zoonk.api.models.GoalGenerationRun
 import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.GoalUploadRequestRequest
 import com.zoonk.api.models.JoinInstrumentWaitlistRequest
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
@@ -42,6 +44,7 @@ import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.Source
+import com.zoonk.api.models.SourceChangeNoticesNoticesInner
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.UploadTokenRequest
 import com.zoonk.api.models.UploadTokenRequestPayload
@@ -177,6 +180,28 @@ interface OnboardingApi {
         session: AuthenticatedSession,
         input: MaterialQuestionInput,
     ): MaterialQuestionAnswer
+
+    suspend fun uploadRequest(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): GoalUploadRequestRequest?
+
+    suspend fun sourceChanges(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): List<SourceChangeNoticesNoticesInner>
+
+    suspend fun dismissUploadRequest(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    )
+
+    /** Starts research with the uploads, which clears the ask. */
+    suspend fun answerUploadRequest(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        sourceIds: List<UUID>,
+    )
 
     fun generations(session: AuthenticatedSession?): GenerationSource
 
@@ -383,6 +408,29 @@ class LiveOnboardingApi(
         session: AuthenticatedSession,
         input: MaterialQuestionInput,
     ) = perform { api.streamingClients(session).sources.askMaterialQuestion(input) }
+
+    override suspend fun uploadRequest(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = perform { api.clients(session).sources.getGoalUploadRequest(goalId) }.request
+
+    override suspend fun sourceChanges(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = perform { api.clients(session).sources.listSourceChangeNotices(goalId) }.notices
+
+    override suspend fun dismissUploadRequest(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = perform { api.clients(session).sources.dismissGoalUploadRequest(goalId) }
+
+    override suspend fun answerUploadRequest(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        sourceIds: List<UUID>,
+    ) {
+        perform { api.clients(session).sources.createResearch(CreateResearchRequest(goalId, sourceIds)) }
+    }
 
     override fun generations(session: AuthenticatedSession?) = LiveGenerationSource(api, session)
 

@@ -15,12 +15,16 @@ import com.zoonk.android.feature.exam.ExamMomentCard
 import com.zoonk.android.feature.exam.examMomentTitle
 import com.zoonk.android.feature.exam.icon
 import com.zoonk.android.feature.language.LanguagePracticeNotice
+import com.zoonk.android.feature.onboarding.GoalResearch
+import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.feature.plan.PlanEnd
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.planChangeAppliedLine
 import com.zoonk.android.feature.plan.planChangeProposalEffect
 import com.zoonk.android.feature.plan.planChangeSentence
+import com.zoonk.android.feature.research.SourceChangeNotice
+import com.zoonk.android.feature.research.UploadRequestNotice
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
@@ -47,6 +51,8 @@ internal class TodayNoticeState(
     val plans: PlanStore? = null,
     val host: HostNotices = HostNotices(),
     val language: LanguageToday? = null,
+    val research: GoalResearch? = null,
+    val onboarding: OnboardingStore? = null,
 )
 
 /**
@@ -96,7 +102,15 @@ internal fun TodayNotice(
             }
         }
 
-        else -> {}
+        TodayNoticeKind.SourceChange -> {
+            state.research?.change?.let { SourceChangeNotice(it, layout, modifier) }
+        }
+
+        TodayNoticeKind.UploadRequest -> {
+            state.onboarding?.let { UploadRequestNotice(read.today.goal.id, state.research?.upload, it, layout, modifier) }
+        }
+
+        null -> {}
     }
 }
 

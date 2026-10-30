@@ -170,6 +170,11 @@ private fun TodayRead(
                         practice = { TodayPractice(app.today, read.today.goal, navigator::open) },
                         plans = app.plans,
                         language = language,
+                        research =
+                            app.onboarding.research[read.today.goal.id]
+                                .collectShown()
+                                .value,
+                        onboarding = app.onboarding,
                     )
                 }
 

@@ -14,6 +14,7 @@ import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalCreateResponse
 import com.zoonk.api.models.GoalGenerationRun
+import com.zoonk.api.models.GoalUploadRequestRequest
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestGeneration
@@ -37,12 +38,14 @@ import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.Source
+import com.zoonk.api.models.SourceChangeNoticesNoticesInner
 import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.JsonObject
+import java.util.UUID
 
 internal const val DRAFT_ID = "6f9d2c1e-3b4a-4c5d-8e6f-7a8b9c0d1e2f"
 internal const val GOAL_ID = "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
@@ -90,6 +93,17 @@ internal fun goalCreated(): GoalCreateResponse =
          "prompt":"pass the bar exam","status":"active","studyDays":[],"studyTime":null,"targetDate":null,"targetLanguage":null,
          "timezone":null,"title":"Pass the bar exam"}]}
         """.trimIndent(),
+    )
+
+internal const val UPLOAD_ID = "8c1d2e3f-4a5b-4c6d-9e7f-8a9b0c1d2e3f"
+
+internal fun uploadAskOf(
+    reason: String = "noOfficialSource",
+    goalKind: String = "exam",
+    examDocument: String = "notice",
+): GoalUploadRequestRequest =
+    ApiJson.decodeFromString(
+        """{"examDocument":"$examDocument","goalId":"$GOAL_ID","goalKind":"$goalKind","language":"pt","reason":"$reason"}""",
     )
 
 internal const val EXAM_GOAL_ID = "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"
@@ -293,10 +307,52 @@ internal class FakeOnboardingApi : OnboardingApi {
         file: PickedFile,
     ) = Unit
 
+    val attached = mutableListOf<CreateUploadRequest>()
+
     override suspend fun attach(
         session: AuthenticatedSession,
         request: CreateUploadRequest,
-    ): Source = throw ApiException(ApiError.Unavailable)
+    ): Source {
+        attached += request
+        return ApiJson.decodeFromString(
+            """
+            {"fetchedAt":"2026-10-29T12:00:00Z","id":"$UPLOAD_ID","kind":"upload","language":"pt","mimeType":"text/plain",
+             "publisher":null,"reusePolicy":null,"title":"Edital","url":null,"validUntil":null,"visibility":"private"}
+            """.trimIndent(),
+        )
+    }
+
+    var uploadAsk: GoalUploadRequestRequest? = null
+    var changes: List<SourceChangeNoticesNoticesInner> = emptyList()
+    val dismissedAsks = mutableListOf<UUID>()
+    val researchAnswers = mutableListOf<Pair<UUID, List<UUID>>>()
+    var researchFailure: ApiException? = null
+
+    override suspend fun uploadRequest(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = uploadAsk
+
+    override suspend fun sourceChanges(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = changes
+
+    override suspend fun dismissUploadRequest(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) {
+        dismissedAsks += goalId
+    }
+
+    override suspend fun answerUploadRequest(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        sourceIds: List<UUID>,
+    ) {
+        researchFailure?.let { throw it }
+        researchAnswers += goalId to sourceIds
+    }
 
     override suspend fun askMaterial(
         session: AuthenticatedSession,

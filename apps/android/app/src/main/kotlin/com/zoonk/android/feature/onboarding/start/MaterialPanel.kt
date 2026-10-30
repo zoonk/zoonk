@@ -97,7 +97,7 @@ fun attachErrorMessage(outcome: WriteOutcome<*>): String =
 
 private enum class Pasting { Text, Link }
 
-/** Shared with Today's research ask. [error] is the last attempt's, in words. */
+/** Shared with Today's research ask. [error] is the last attempt's, in words; [pendingText] says what [pending] waits for. */
 @Composable
 fun AttachControls(
     pending: Boolean,
@@ -105,6 +105,7 @@ fun AttachControls(
     onFile: (PickedFile) -> Unit,
     onText: (String) -> Unit,
     onLink: (String) -> Unit,
+    pendingText: String? = null,
 ) {
     val resolver = LocalContext.current.contentResolver
     var pasting by rememberSaveable { mutableStateOf<Pasting?>(null) }
@@ -172,7 +173,7 @@ fun AttachControls(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
-                Text(stringResource(R.string.onboarding_adding_material), style = MaterialTheme.typography.bodyMedium)
+                Text(pendingText ?: stringResource(R.string.onboarding_adding_material), style = MaterialTheme.typography.bodyMedium)
             }
         }
 

@@ -22,6 +22,7 @@ import com.zoonk.api.models.CreateUploadRequestOneOf2
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalGenerationRun
+import com.zoonk.api.models.GoalUploadRequestRequest
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestSpokenResult
@@ -279,18 +280,21 @@ class OnboardingStore(
         language: String,
     ) = write(setOf(DataDomain.InstrumentWaitlist)) { api.joinWaitlist(it, instrument, language) }
 
+    /** With a [goalId], the upload is that goal's source; without one, onboarding attaches it before the goal exists. */
     suspend fun attachText(
         text: String,
         language: String,
+        goalId: UUID? = null,
     ) = attach(
         CreateUploadRequest.CreateUploadRequestOneOf2Value(
-            CreateUploadRequestOneOf2(language = language, kind = CreateUploadRequestOneOf2.Kind.TEXT, text = text),
+            CreateUploadRequestOneOf2(language = language, kind = CreateUploadRequestOneOf2.Kind.TEXT, text = text, goalId = goalId),
         ),
     )
 
     suspend fun attachLink(
         url: String,
         language: String,
+        goalId: UUID? = null,
     ): WriteOutcome<AttachedSource> {
         val uri =
             try {
@@ -300,7 +304,7 @@ class OnboardingStore(
             } ?: return WriteOutcome.Refused(Refusal.Unsupported)
         return attach(
             CreateUploadRequest.CreateUploadRequestOneOf1Value(
-                CreateUploadRequestOneOf1(language = language, kind = CreateUploadRequestOneOf1.Kind.LINK, url = uri),
+                CreateUploadRequestOneOf1(language = language, kind = CreateUploadRequestOneOf1.Kind.LINK, url = uri, goalId = goalId),
             ),
         )
     }
@@ -309,6 +313,7 @@ class OnboardingStore(
     suspend fun attachFile(
         file: PickedFile,
         language: String,
+        goalId: UUID? = null,
     ): WriteOutcome<AttachedSource> =
         write(setOf(DataDomain.Allowance)) { session ->
             val name = file.name.replace('/', '-').replace(Regex("\\.{2,}"), ".")
@@ -318,7 +323,12 @@ class OnboardingStore(
                 .attach(
                     session,
                     CreateUploadRequest.CreateUploadRequestOneOfValue(
-                        CreateUploadRequestOneOf(language = language, kind = CreateUploadRequestOneOf.Kind.FILE, pathname = pathname),
+                        CreateUploadRequestOneOf(
+                            language = language,
+                            kind = CreateUploadRequestOneOf.Kind.FILE,
+                            pathname = pathname,
+                            goalId = goalId,
+                        ),
                     ),
                 ).let { AttachedSource(it.id.toString(), it.title) }
         }
@@ -331,6 +341,27 @@ class OnboardingStore(
         write(setOf(DataDomain.Allowance)) {
             api.askMaterial(it, MaterialQuestionInput(language, question, sourceIds.map(UUID::fromString)))
         }
+
+    /** Today's word on a goal's sources: the latest change to what it studies, and what research asked to upload. */
+    val research =
+        cache.keyed<UUID, GoalResearch>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId ->
+            session?.let {
+                coroutineScope {
+                    val changes = async { api.sourceChanges(it, goalId) }
+                    val upload = async { api.uploadRequest(it, goalId) }
+                    GoalResearch(changes.await().firstOrNull()?.message, upload.await())
+                }
+            }
+        }
+
+    /** The learner doesn't have the document: the ask leaves for good, and the plan follows the goal as typed. */
+    suspend fun dismissUploadRequest(goalId: UUID) = write(setOf(DataDomain.Goals)) { api.dismissUploadRequest(it, goalId) }
+
+    /** Research reads the uploads and rebuilds the plan from them minutes later. */
+    suspend fun answerUploadRequest(
+        goalId: UUID,
+        sourceIds: List<String>,
+    ) = write(setOf(DataDomain.Goals)) { api.answerUploadRequest(it, goalId, sourceIds.map(UUID::fromString)) }
 
     private suspend fun attach(request: CreateUploadRequest) =
         write(setOf(DataDomain.Allowance)) { session ->
@@ -504,6 +535,11 @@ data class AdviceQuery(
 data class CoverQuery(
     val goal: Goal,
     val input: PlanTimeToCoverInput,
+)
+
+data class GoalResearch(
+    val change: String?,
+    val upload: GoalUploadRequestRequest?,
 )
 
 internal data class CourseStarted(
