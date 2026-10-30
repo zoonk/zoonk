@@ -1,11 +1,11 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { Stats } from "@/components/stats";
 import { type PlusBilling, listPlusLearnerCosts } from "@/data/ai/list-plus-learner-costs";
 import { formatUsd } from "@/lib/ai-format";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
-import Link from "next/link";
 
 type PlusLearners = Awaited<ReturnType<typeof listPlusLearnerCosts>>;
 type PlusLearner = PlusLearners["learners"][number];
@@ -173,11 +173,11 @@ function LearnerGoals({ goals }: { goals: PlusLearner["goals"] }) {
 
 function LearnerRow({ learner }: { learner: PlusLearner }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>
-        <Link className="hover:underline" href={`/users/${learner.id}`} prefetch>
+        <AdminTableRowLink href={`/users/${learner.id}`} prefetch>
           {learner.user?.name ?? learner.user?.email ?? "Deleted"}
-        </Link>
+        </AdminTableRowLink>
         {learner.user ? (
           <span className="text-muted-foreground block text-xs">{learner.user.email}</span>
         ) : null}
@@ -198,7 +198,7 @@ function LearnerRow({ learner }: { learner: PlusLearner }) {
       <TableCell className="text-right tabular-nums">
         {formatPays(learner.paysUsd, learner.billing)}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

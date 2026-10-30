@@ -4,12 +4,13 @@ import {
   AdminTableColumns,
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import {
   MAX_MISSING_AUDIO_ROWS,
   type MissingAudioResource,
   listMissingAudio,
 } from "@/data/media/list-missing-audio";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 import Link from "next/link";
 import { type MissingAudioResourceKind } from "./_actions/upload-missing-audio";
 import { MissingAudioUploadForm } from "./missing-audio-upload-form";
@@ -72,7 +73,7 @@ function MissingAudioTable({
       isEmpty={resources.length === 0}
     >
       {resources.map((resource) => (
-        <TableRow key={resource.id}>
+        <AdminTableRow key={resource.id}>
           <TableCell className="max-w-80 min-w-48 font-medium whitespace-normal">
             {resource.text}
           </TableCell>
@@ -87,7 +88,7 @@ function MissingAudioTable({
               text={resource.text}
             />
           </TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );
@@ -98,16 +99,20 @@ function MissingAudioLessons({ resource }: { resource: MissingAudioResource }) {
 
   return (
     <span className="flex flex-col gap-0.5 text-sm">
-      {resource.lessons.map((lesson) => (
-        <Link
-          className="hover:underline"
-          href={`/lessons/${lesson.id}`}
-          key={lesson.id}
-          prefetch={false}
-        >
-          {lesson.title}
-        </Link>
-      ))}
+      {resource.lessons.map((lesson, index) => {
+        const LessonLink = index === 0 ? AdminTableRowLink : Link;
+
+        return (
+          <LessonLink
+            className={index > 0 ? "flex min-h-11 items-center hover:underline" : undefined}
+            href={`/lessons/${lesson.id}`}
+            key={lesson.id}
+            prefetch={false}
+          >
+            {lesson.title}
+          </LessonLink>
+        );
+      })}
       {hiddenCount > 0 ? (
         <span className="text-muted-foreground text-xs">and {hiddenCount} more</span>
       ) : null}

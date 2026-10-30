@@ -1,25 +1,25 @@
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { ProvenanceLine } from "@/components/provenance";
 import { type ListedMediaAsset } from "@/data/media/list-media";
 import { formatDate } from "@/lib/format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import Link from "next/link";
+import { TableCell } from "@zoonk/ui/components/table";
 import { formatMediaSize, formatMediaUsage } from "./_utils/media-format";
 import { MediaPreview } from "./media-preview";
 
 export function MediaRow({ asset }: { asset: ListedMediaAsset }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>
         <MediaPreview asset={asset} size="thumbnail" />
       </TableCell>
       <TableCell className="max-w-72 min-w-48 whitespace-normal">
-        <Link
-          className="font-mono text-xs break-all hover:underline"
+        <AdminTableRowLink
+          className="font-mono text-xs break-all"
           href={`/media/${asset.id}`}
           prefetch
         >
           {asset.reuseKey}
-        </Link>
+        </AdminTableRowLink>
       </TableCell>
       <TableCell className="capitalize">{asset.kind}</TableCell>
       <TableCell className="uppercase">{asset.language ?? "—"}</TableCell>
@@ -31,6 +31,6 @@ export function MediaRow({ asset }: { asset: ListedMediaAsset }) {
         <ProvenanceLine provenance={asset} />
       </TableCell>
       <TableCell className="text-muted-foreground">{formatDate(asset.createdAt)}</TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }

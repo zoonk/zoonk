@@ -1,3 +1,4 @@
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
 import { SubscriptionStatusBadge } from "@/components/subscription-status-badge";
@@ -19,7 +20,6 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
-import Link from "next/link";
 
 const TABLE_COLUMN_COUNT = 7;
 
@@ -162,12 +162,12 @@ function SubscriptionSkeletonRow() {
 
 function SubscriptionRow({ subscription }: { subscription: AdminSubscription }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>
-        <Link className="block" href={`/users/${subscription.user.id}`} prefetch>
+        <AdminTableRowLink className="block" href={`/users/${subscription.user.id}`} prefetch>
           <span className="font-medium">{subscription.user.name || "—"}</span>
           <span className="text-muted-foreground block text-xs">{subscription.user.email}</span>
-        </Link>
+        </AdminTableRowLink>
       </TableCell>
 
       <TableCell>
@@ -188,7 +188,7 @@ function SubscriptionRow({ subscription }: { subscription: AdminSubscription }) 
       <TableCell className="text-muted-foreground">
         {subscription.stripeSubscriptionId ?? "—"}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

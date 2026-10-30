@@ -1,3 +1,4 @@
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
 import {
@@ -16,7 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
-import Link from "next/link";
 import {
   type LeaderboardPeriod,
   getLeaderboardPeriodDays,
@@ -145,21 +145,21 @@ function BrainPowerLeaderboardEmptyRow({ periodDescription }: { periodDescriptio
 
 function BrainPowerLeaderboardRow({ leader }: { leader: BrainPowerLeader }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell className="text-muted-foreground text-right tabular-nums">
         {leader.rank.toLocaleString()}
       </TableCell>
       <TableCell>
-        <Link className="block" href={`/users/${leader.user.id}`} prefetch>
+        <AdminTableRowLink className="block" href={`/users/${leader.user.id}`} prefetch>
           <span className="font-medium">{leader.user.name || "—"}</span>
           <span className="text-muted-foreground block text-xs">{leader.user.email}</span>
-        </Link>
+        </AdminTableRowLink>
       </TableCell>
       <TableCell>{leader.user.username || "—"}</TableCell>
       <TableCell className="text-right font-medium tabular-nums">
         {leader.brainPower.toLocaleString()}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

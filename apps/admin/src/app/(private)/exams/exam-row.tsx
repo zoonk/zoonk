@@ -1,16 +1,16 @@
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type ListedExam } from "@/data/exams/list-exams";
 import { formatDate } from "@/lib/format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import Link from "next/link";
+import { TableCell } from "@zoonk/ui/components/table";
 import { formatExamDate } from "./_utils/format-exam-date";
 
 export function ExamRow({ exam }: { exam: ListedExam }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell className="max-w-72 min-w-40 whitespace-normal">
-        <Link className="font-medium hover:underline" href={`/exams/${exam.id}`} prefetch>
+        <AdminTableRowLink className="font-medium" href={`/exams/${exam.id}`} prefetch>
           {exam.name}
-        </Link>
+        </AdminTableRowLink>
       </TableCell>
       <TableCell>{exam.country}</TableCell>
       <TableCell>{exam.board ?? "—"}</TableCell>
@@ -24,6 +24,6 @@ export function ExamRow({ exam }: { exam: ListedExam }) {
       <TableCell className="text-muted-foreground">{formatDate(exam.nextCheckAt)}</TableCell>
       <TableCell className="text-right tabular-nums">{exam._count.goals}</TableCell>
       <TableCell className="text-right tabular-nums">{exam._count.items}</TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }

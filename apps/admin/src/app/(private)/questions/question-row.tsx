@@ -1,10 +1,11 @@
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type ListedLessonQuestion } from "@/data/questions/list-lesson-questions";
 import {
   getAdminQuestionLessonContext,
   getAdminQuestionStatusVariant,
 } from "@/lib/lesson-question";
 import { Badge } from "@zoonk/ui/components/badge";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 import Link from "next/link";
 
 function QuestionLessonCell({ question }: { question: ListedLessonQuestion }) {
@@ -28,15 +29,11 @@ export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
   const { user } = question.thread;
 
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell className="max-w-72 min-w-56 whitespace-normal">
-        <Link
-          className="line-clamp-2 font-medium hover:underline"
-          href={`/questions/${question.id}`}
-          prefetch
-        >
-          {question.question}
-        </Link>
+        <AdminTableRowLink className="font-medium" href={`/questions/${question.id}`} prefetch>
+          <span className="line-clamp-2">{question.question}</span>
+        </AdminTableRowLink>
       </TableCell>
       <TableCell className="text-muted-foreground max-w-80 min-w-64 whitespace-normal">
         <span className="line-clamp-2">{question.answer || "No answer yet"}</span>
@@ -63,6 +60,6 @@ export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
           </time>
         </div>
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }

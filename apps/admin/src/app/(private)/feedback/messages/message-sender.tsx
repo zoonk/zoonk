@@ -13,8 +13,8 @@ export function MessageSender({ email, user }: MessageSenderProps) {
 
   return (
     <span className="flex flex-col">
-      <Link className="truncate font-medium hover:underline" href={`/users/${user.id}`} prefetch>
-        {getLearnerLabel(user)}
+      <Link className="font-medium hover:underline" href={`/users/${user.id}`} prefetch>
+        <span className="block truncate">{getLearnerLabel(user)}</span>
       </Link>
       <span className="text-muted-foreground truncate text-xs">{email ?? user.email}</span>
     </span>

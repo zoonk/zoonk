@@ -1,9 +1,9 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { listTopAiSpenders } from "@/data/ai/list-top-ai-spenders";
 import { formatUsd } from "@/lib/ai-format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import Link from "next/link";
+import { TableCell } from "@zoonk/ui/components/table";
 
 const goalColumns: AdminTableColumn[] = [
   { label: "Goal" },
@@ -28,15 +28,15 @@ function GoalSpenders({ goals }: { goals: TopSpenders["goals"] }) {
       isEmpty={goals.length === 0}
     >
       {goals.map((row) => (
-        <TableRow key={row.id}>
+        <AdminTableRow key={row.id}>
           <TableCell>
             {row.goal ? `${row.goal.title} (${row.goal.kind})` : "Deleted goal"}
           </TableCell>
           <TableCell>
             {row.goal ? (
-              <Link className="hover:underline" href={`/users/${row.goal.user.id}`} prefetch>
+              <AdminTableRowLink href={`/users/${row.goal.user.id}`} prefetch>
                 {row.goal.user.email}
-              </Link>
+              </AdminTableRowLink>
             ) : (
               "—"
             )}
@@ -45,7 +45,7 @@ function GoalSpenders({ goals }: { goals: TopSpenders["goals"] }) {
           <TableCell className="text-right font-medium tabular-nums">
             {formatUsd(row.costUsd)}
           </TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );
@@ -59,11 +59,11 @@ function LearnerSpenders({ learners }: { learners: TopSpenders["learners"] }) {
       isEmpty={learners.length === 0}
     >
       {learners.map((row) => (
-        <TableRow key={row.id}>
+        <AdminTableRow key={row.id}>
           <TableCell>
-            <Link className="hover:underline" href={`/users/${row.id}`} prefetch>
+            <AdminTableRowLink href={`/users/${row.id}`} prefetch>
               {row.user?.isAnonymous ? "Guest" : (row.user?.name ?? row.user?.email ?? "Deleted")}
-            </Link>
+            </AdminTableRowLink>
             {row.user && !row.user.isAnonymous ? (
               <span className="text-muted-foreground block text-xs">{row.user.email}</span>
             ) : null}
@@ -72,7 +72,7 @@ function LearnerSpenders({ learners }: { learners: TopSpenders["learners"] }) {
           <TableCell className="text-right font-medium tabular-nums">
             {formatUsd(row.costUsd)}
           </TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );

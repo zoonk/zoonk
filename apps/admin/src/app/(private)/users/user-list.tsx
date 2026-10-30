@@ -159,8 +159,8 @@ function SortableUserTableHead({
 
   const linkClassName =
     align === "right"
-      ? "hover:text-foreground inline-flex w-full items-center justify-end gap-1 text-inherit transition-colors"
-      : "hover:text-foreground inline-flex w-full items-center justify-start gap-1 text-inherit transition-colors";
+      ? "min-h-11 hover:text-foreground inline-flex w-full items-center justify-end gap-1 text-inherit transition-colors"
+      : "min-h-11 hover:text-foreground inline-flex w-full items-center justify-start gap-1 text-inherit transition-colors";
 
   return (
     <TableHead aria-sort={isSelected ? "descending" : undefined} className={className}>

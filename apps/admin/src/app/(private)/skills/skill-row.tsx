@@ -1,17 +1,17 @@
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { ProvenanceLine } from "@/components/provenance";
 import { type ListedSkill } from "@/data/skills/list-skills";
 import { formatDate } from "@/lib/format";
 import { Badge } from "@zoonk/ui/components/badge";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import Link from "next/link";
+import { TableCell } from "@zoonk/ui/components/table";
 
 export function SkillRow({ skill }: { skill: ListedSkill }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell className="max-w-80 min-w-56 whitespace-normal">
-        <Link className="font-medium hover:underline" href={`/skills/${skill.id}`} prefetch>
+        <AdminTableRowLink className="font-medium" href={`/skills/${skill.id}`} prefetch>
           {skill.name}
-        </Link>
+        </AdminTableRowLink>
         {skill.mergedIntoId ? (
           <Badge className="ml-2" variant="outline">
             Merged
@@ -29,6 +29,6 @@ export function SkillRow({ skill }: { skill: ListedSkill }) {
         <ProvenanceLine provenance={skill} />
       </TableCell>
       <TableCell className="text-muted-foreground">{formatDate(skill.createdAt)}</TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }

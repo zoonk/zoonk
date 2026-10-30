@@ -1,30 +1,23 @@
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { ProvenanceLine } from "@/components/provenance";
 import { type ItemAnswerStats, getItemAccuracy } from "@/data/items/get-item-answer-stats";
 import { type ListedItem } from "@/data/items/list-items";
 import { formatDate, formatPercent } from "@/lib/format";
 import { ITEM_FORMAT_LABELS, getItemLabel } from "@/lib/item-label";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 import Link from "next/link";
 
 export function ItemRow({ answerStats, item }: { answerStats: ItemAnswerStats; item: ListedItem }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell className="max-w-80 min-w-64 whitespace-normal">
-        <Link
-          className="line-clamp-2 font-medium hover:underline"
-          href={`/items/${item.id}`}
-          prefetch
-        >
-          {getItemLabel(item)}
-        </Link>
+        <AdminTableRowLink className="font-medium" href={`/items/${item.id}`} prefetch>
+          <span className="line-clamp-2">{getItemLabel(item)}</span>
+        </AdminTableRowLink>
       </TableCell>
       <TableCell className="max-w-56 min-w-40 whitespace-normal">
-        <Link
-          className="line-clamp-2 hover:underline"
-          href={`/skills/${item.skill.id}`}
-          prefetch={false}
-        >
-          {item.skill.name}
+        <Link className="hover:underline" href={`/skills/${item.skill.id}`} prefetch={false}>
+          <span className="line-clamp-2">{item.skill.name}</span>
         </Link>
       </TableCell>
       <TableCell>{ITEM_FORMAT_LABELS[item.format]}</TableCell>
@@ -51,6 +44,6 @@ export function ItemRow({ answerStats, item }: { answerStats: ItemAnswerStats; i
         <ProvenanceLine provenance={item} />
       </TableCell>
       <TableCell className="text-muted-foreground">{formatDate(item.createdAt)}</TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }

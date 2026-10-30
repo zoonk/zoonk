@@ -1,15 +1,15 @@
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type ListedCourse } from "@/data/courses/list-courses";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import Link from "next/link";
+import { TableCell } from "@zoonk/ui/components/table";
 
 export function CourseRow({ course }: { course: ListedCourse }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>
-        <Link className="block" href={`/courses/${course.id}`} prefetch>
+        <AdminTableRowLink className="block" href={`/courses/${course.id}`} prefetch>
           <span className="font-medium">{course.title}</span>
           <span className="text-muted-foreground block text-xs">{course.slug}</span>
-        </Link>
+        </AdminTableRowLink>
       </TableCell>
       <TableCell>{course.organization?.name ?? "—"}</TableCell>
       <TableCell className="uppercase">{course.language}</TableCell>
@@ -31,6 +31,6 @@ export function CourseRow({ course }: { course: ListedCourse }) {
       <TableCell className="text-muted-foreground">
         {new Date(course.createdAt).toLocaleDateString()}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }

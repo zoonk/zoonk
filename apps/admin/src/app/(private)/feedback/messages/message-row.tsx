@@ -1,7 +1,7 @@
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type ListedFeedbackMessage } from "@/data/feedback/list-feedback-messages";
 import { formatDate } from "@/lib/format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import Link from "next/link";
+import { TableCell } from "@zoonk/ui/components/table";
 import { feedbackContentKindLabels } from "../_utils/feedback-labels";
 import { MessageSender } from "./message-sender";
 import { MessageStatusBadge } from "./message-status-badge";
@@ -11,11 +11,11 @@ export function MessageRow({ message }: { message: ListedFeedbackMessage }) {
   const { context } = message;
 
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>
-        <Link className="hover:underline" href={`/feedback/messages/${message.id}`} prefetch>
+        <AdminTableRowLink href={`/feedback/messages/${message.id}`} prefetch>
           {formatDate(message.createdAt)}
-        </Link>
+        </AdminTableRowLink>
       </TableCell>
       <TableCell>
         <MessageStatusBadge status={message.status} />
@@ -32,6 +32,6 @@ export function MessageRow({ message }: { message: ListedFeedbackMessage }) {
       <TableCell className="text-xs">
         {context.contentKind ? feedbackContentKindLabels[context.contentKind] : "—"}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }

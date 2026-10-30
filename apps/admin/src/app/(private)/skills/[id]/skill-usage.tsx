@@ -1,10 +1,10 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { getSkill } from "@/data/skills/get-skill";
 import { MAX_SKILL_USAGE_ROWS, getSkillUsage } from "@/data/skills/get-skill-usage";
 import { ITEM_FORMAT_LABELS, getItemLabel } from "@/lib/item-label";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import Link from "next/link";
 
 type SkillUsageRows = Awaited<ReturnType<typeof getSkillUsage>>;
 
@@ -72,16 +72,16 @@ function SkillLessonsTable({ lessons }: { lessons: SkillUsageRows["lessons"] }) 
       isEmpty={lessons.length === 0}
     >
       {lessons.map((lesson) => (
-        <TableRow key={lesson.id}>
+        <AdminTableRow key={lesson.id}>
           <TableCell className="max-w-96 min-w-56 whitespace-normal">
-            <Link className="hover:underline" href={`/lessons/${lesson.id}`} prefetch={false}>
+            <AdminTableRowLink href={`/lessons/${lesson.id}`} prefetch={false}>
               {lesson.title}
-            </Link>
+            </AdminTableRowLink>
           </TableCell>
           <TableCell className="capitalize">{lesson.level}</TableCell>
           <TableCell className="capitalize">{lesson.visibility}</TableCell>
           <TableCell className="capitalize">{lesson.contentStatus}</TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );
@@ -113,20 +113,16 @@ function SkillItemsTable({ items }: { items: SkillUsageRows["items"] }) {
       isEmpty={items.length === 0}
     >
       {items.map((item) => (
-        <TableRow key={item.id}>
+        <AdminTableRow key={item.id}>
           <TableCell className="max-w-96 min-w-56 whitespace-normal">
-            <Link
-              className="line-clamp-2 hover:underline"
-              href={`/items/${item.id}`}
-              prefetch={false}
-            >
-              {getItemLabel(item)}
-            </Link>
+            <AdminTableRowLink href={`/items/${item.id}`} prefetch={false}>
+              <span className="line-clamp-2">{getItemLabel(item)}</span>
+            </AdminTableRowLink>
           </TableCell>
           <TableCell>{ITEM_FORMAT_LABELS[item.format]}</TableCell>
           <TableCell className="uppercase">{item.language}</TableCell>
           <TableCell>{item.field ?? "—"}</TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );

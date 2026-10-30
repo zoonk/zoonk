@@ -1,9 +1,9 @@
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { ProvenanceLine } from "@/components/provenance";
 import { type AdminChangeNotice } from "@/data/sources/list-change-notices";
 import { formatDateTime } from "@/lib/format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import Link from "next/link";
+import { TableCell } from "@zoonk/ui/components/table";
 
 const NOTICE_COLUMNS: AdminTableColumn[] = [
   { label: "Date" },
@@ -30,7 +30,7 @@ export function ChangeNoticeTable({
       isEmpty={notices.length === 0}
     >
       {notices.map((notice) => (
-        <TableRow key={notice.id}>
+        <AdminTableRow key={notice.id}>
           <TableCell className="text-muted-foreground">
             {formatDateTime(notice.createdAt)}
           </TableCell>
@@ -44,19 +44,15 @@ export function ChangeNoticeTable({
           {showExam ? (
             <TableCell>
               {notice.examBlueprint ? (
-                <Link
-                  className="hover:underline"
-                  href={`/exams/${notice.examBlueprint.id}`}
-                  prefetch={false}
-                >
+                <AdminTableRowLink href={`/exams/${notice.examBlueprint.id}`} prefetch={false}>
                   {notice.examBlueprint.name}
-                </Link>
+                </AdminTableRowLink>
               ) : (
                 "—"
               )}
             </TableCell>
           ) : null}
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );

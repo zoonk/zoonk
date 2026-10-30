@@ -1,5 +1,6 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import {
   type GenerationFailure,
   STUCK_RUNNING_MINUTES,
@@ -9,7 +10,6 @@ import { formatDateTime } from "@/lib/format";
 import { Badge } from "@zoonk/ui/components/badge";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
-import Link from "next/link";
 import { generationWorkflowLabels, getGenerationFailureHref } from "./_utils/ai-labels";
 
 type FailureCount = Awaited<ReturnType<typeof getGenerationFailures>>["counts"][number];
@@ -54,15 +54,15 @@ function FailureLabel({ failure }: { failure: GenerationFailure }) {
   }
 
   return (
-    <Link className="line-clamp-1 hover:underline" href={href} prefetch>
-      {label}
-    </Link>
+    <AdminTableRowLink href={href} prefetch>
+      <span className="line-clamp-1">{label}</span>
+    </AdminTableRowLink>
   );
 }
 
 function LatestFailureRow({ failure }: { failure: GenerationFailure }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>{generationWorkflowLabels[failure.workflow]}</TableCell>
       <TableCell className="max-w-80 min-w-48 whitespace-normal">
         <FailureLabel failure={failure} />
@@ -75,7 +75,7 @@ function LatestFailureRow({ failure }: { failure: GenerationFailure }) {
       <TableCell className="text-muted-foreground text-xs">
         {formatDateTime(failure.updatedAt)}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

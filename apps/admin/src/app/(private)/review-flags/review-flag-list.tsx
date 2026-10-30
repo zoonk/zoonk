@@ -4,9 +4,10 @@ import {
   AdminTableColumns,
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type AdminReviewFlag, listOpenReviewFlags } from "@/data/review-flags/list-review-flags";
 import { formatDateTime } from "@/lib/format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 import Link from "next/link";
 import { ReviewFlagActions } from "./review-flag-actions";
 
@@ -15,17 +16,17 @@ const COLUMNS: AdminTableColumn[] = [{ label: "Flagged" }, { label: "" }];
 function FlaggedTarget({ flag }: { flag: AdminReviewFlag }) {
   if (flag.lesson) {
     return (
-      <Link className="hover:underline" href={`/lessons/${flag.lesson.id}`} prefetch={false}>
+      <AdminTableRowLink href={`/lessons/${flag.lesson.id}`} prefetch={false}>
         Lesson · {flag.lesson.title}
-      </Link>
+      </AdminTableRowLink>
     );
   }
 
   if (flag.item) {
     return (
-      <Link className="hover:underline" href={`/items/${flag.item.id}`} prefetch={false}>
+      <AdminTableRowLink href={`/items/${flag.item.id}`} prefetch={false}>
         Question · {flag.item.sourceCitation ?? flag.item.format}
-      </Link>
+      </AdminTableRowLink>
     );
   }
 
@@ -81,14 +82,14 @@ export async function ReviewFlagList() {
           >
             <AdminTableColumns columns={COLUMNS} emptyLabel="Nothing flagged" isEmpty={false}>
               {group.map((flag) => (
-                <TableRow key={flag.id}>
+                <AdminTableRow key={flag.id}>
                   <TableCell className="min-w-64 whitespace-normal">
                     <FlaggedTarget flag={flag} />
                   </TableCell>
                   <TableCell className="text-right">
                     <ReviewFlagActions flagId={flag.id} />
                   </TableCell>
-                </TableRow>
+                </AdminTableRow>
               ))}
             </AdminTableColumns>
           </AdminSection>

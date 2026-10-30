@@ -1,8 +1,8 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type AdminMediaAsset, MAX_MEDIA_USAGE_ROWS, getMedia } from "@/data/media/get-media";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import Link from "next/link";
+import { TableCell } from "@zoonk/ui/components/table";
 
 const STEP_COLUMNS: AdminTableColumn[] = [
   { label: "Lesson" },
@@ -41,15 +41,15 @@ function MediaStepsTable({ steps }: { steps: AdminMediaAsset["steps"] }) {
       isEmpty={steps.length === 0}
     >
       {steps.map((step) => (
-        <TableRow key={step.id}>
+        <AdminTableRow key={step.id}>
           <TableCell>
-            <Link className="hover:underline" href={`/lessons/${step.lesson.id}`} prefetch={false}>
+            <AdminTableRowLink href={`/lessons/${step.lesson.id}`} prefetch={false}>
               {step.lesson.title}
-            </Link>
+            </AdminTableRowLink>
           </TableCell>
           <TableCell className="text-right tabular-nums">{step.position}</TableCell>
           <TableCell>{step.kind}</TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );

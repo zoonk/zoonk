@@ -1,5 +1,6 @@
 import { AdminSection, AdminSectionEmpty, AdminSectionSkeleton } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import {
   type LiveCallConnectionRow,
   getLiveCallControls,
@@ -7,8 +8,7 @@ import {
 import { formatUsd } from "@/lib/ai-format";
 import { formatDateTime } from "@/lib/format";
 import { Badge } from "@zoonk/ui/components/badge";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import Link from "next/link";
+import { TableCell } from "@zoonk/ui/components/table";
 import { LiveCallAdmissionForm } from "./live-call-admission-form";
 
 const MICROS_PER_DOLLAR = 1_000_000;
@@ -42,11 +42,11 @@ const endReasonLabels: Record<NonNullable<LiveCallConnectionRow["endReason"]>, s
 
 function ConnectionRow({ connection }: { connection: LiveCallConnectionRow }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell className="font-mono text-xs">
-        <Link className="hover:underline" href={`/users/${connection.userId}`} prefetch>
+        <AdminTableRowLink href={`/users/${connection.userId}`} prefetch>
           {connection.userId.slice(0, SHORT_ID_LENGTH)}
-        </Link>
+        </AdminTableRowLink>
       </TableCell>
       <TableCell>
         <span className="flex items-center gap-1.5">
@@ -64,7 +64,7 @@ function ConnectionRow({ connection }: { connection: LiveCallConnectionRow }) {
       <TableCell className="max-w-72 text-xs whitespace-normal">
         {connection.endReason ? endReasonLabels[connection.endReason] : null}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

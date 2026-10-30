@@ -1,3 +1,4 @@
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { type LearnerMilestoneUser } from "@/data/stats/get-learner-milestones";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -10,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
-import Link from "next/link";
 
 export function LearnerMilestoneUsersTable({
   emptyMessage,
@@ -94,12 +94,12 @@ function LearnerMilestoneSkeletonRow() {
 
 function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>
-        <Link className="block" href={`/users/${user.id}`} prefetch>
+        <AdminTableRowLink className="block" href={`/users/${user.id}`} prefetch>
           <span className="font-medium">{user.name || "—"}</span>
           <span className="text-muted-foreground block text-xs">{user.email}</span>
-        </Link>
+        </AdminTableRowLink>
       </TableCell>
 
       <TableCell className="text-right tabular-nums">
@@ -115,7 +115,7 @@ function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
         {formatLearnerDate(user.lastLearningDate)}
       </TableCell>
       <TableCell className="text-muted-foreground">{formatDate(user.createdAt)}</TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

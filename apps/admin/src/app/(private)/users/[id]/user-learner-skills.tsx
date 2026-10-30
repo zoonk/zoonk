@@ -1,4 +1,5 @@
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { getUserLearnerSkills } from "@/data/users/get-user-learner-skills";
 import { formatDate } from "@/lib/format";
 import {
@@ -9,17 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
-import Link from "next/link";
 
 type RecentLearnerSkill = Awaited<ReturnType<typeof getUserLearnerSkills>>["recent"][number];
 
 function LearnerSkillRow({ learnerSkill }: { learnerSkill: RecentLearnerSkill }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>
-        <Link className="hover:underline" href={`/skills/${learnerSkill.skill.id}`}>
+        <AdminTableRowLink href={`/skills/${learnerSkill.skill.id}`}>
           {learnerSkill.skill.name}
-        </Link>
+        </AdminTableRowLink>
       </TableCell>
       <TableCell className="capitalize">{learnerSkill.state}</TableCell>
       <TableCell>{formatDate(learnerSkill.due)}</TableCell>
@@ -29,7 +29,7 @@ function LearnerSkillRow({ learnerSkill }: { learnerSkill: RecentLearnerSkill })
       <TableCell className="text-muted-foreground">
         {formatDate(learnerSkill.lastReviewedAt)}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

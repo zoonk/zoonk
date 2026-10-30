@@ -1,13 +1,13 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { getSource } from "@/data/sources/get-source";
 import {
   MAX_SOURCE_CITATION_ROWS,
   listSourceCitations,
 } from "@/data/sources/list-source-citations";
 import { ITEM_FORMAT_LABELS } from "@/lib/item-label";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import Link from "next/link";
+import { TableCell } from "@zoonk/ui/components/table";
 
 type SourceCitationRows = Awaited<ReturnType<typeof listSourceCitations>>;
 
@@ -64,15 +64,15 @@ function SourceExamsTable({ exams }: { exams: SourceCitationRows["examBlueprints
       isEmpty={exams.length === 0}
     >
       {exams.map((exam) => (
-        <TableRow key={exam.id}>
+        <AdminTableRow key={exam.id}>
           <TableCell>
-            <Link className="font-medium hover:underline" href={`/exams/${exam.id}`} prefetch>
+            <AdminTableRowLink className="font-medium" href={`/exams/${exam.id}`} prefetch>
               {exam.name}
-            </Link>
+            </AdminTableRowLink>
           </TableCell>
           <TableCell>{exam.country}</TableCell>
           <TableCell className="uppercase">{exam.language}</TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );
@@ -86,16 +86,16 @@ function SourceItemsTable({ items }: { items: SourceCitationRows["items"] }) {
       isEmpty={items.length === 0}
     >
       {items.map((item) => (
-        <TableRow key={item.id}>
+        <AdminTableRow key={item.id}>
           <TableCell className="max-w-96 min-w-56 whitespace-normal">
-            <Link className="hover:underline" href={`/items/${item.id}`} prefetch={false}>
+            <AdminTableRowLink href={`/items/${item.id}`} prefetch={false}>
               {item.sourceCitation ?? "No citation"}
-            </Link>
+            </AdminTableRowLink>
           </TableCell>
           <TableCell className="max-w-64 whitespace-normal">{item.skill.name}</TableCell>
           <TableCell>{ITEM_FORMAT_LABELS[item.format]}</TableCell>
           <TableCell className="uppercase">{item.language}</TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );

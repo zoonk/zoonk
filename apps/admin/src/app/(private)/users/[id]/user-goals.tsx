@@ -1,4 +1,5 @@
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
+import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { ProvenanceLine } from "@/components/provenance";
 import { type UserGoal, listUserGoals } from "@/data/users/list-user-goals";
 import { formatDate } from "@/lib/format";
@@ -11,11 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
-import Link from "next/link";
 
 function GoalRow({ goal }: { goal: UserGoal }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell className="min-w-56">
         <span className="font-medium">{goal.title}</span>
         <span className="text-muted-foreground block text-xs">
@@ -24,9 +24,9 @@ function GoalRow({ goal }: { goal: UserGoal }) {
           {goal.examBlueprint ? ` · ${goal.examBlueprint.name}` : ""}
         </span>
         {goal.primaryCourse ? (
-          <Link className="text-xs underline" href={`/courses/${goal.primaryCourse.id}`}>
+          <AdminTableRowLink className="text-xs" href={`/courses/${goal.primaryCourse.id}`}>
             {goal.primaryCourse.title}
-          </Link>
+          </AdminTableRowLink>
         ) : null}
       </TableCell>
       <TableCell>
@@ -44,7 +44,7 @@ function GoalRow({ goal }: { goal: UserGoal }) {
         {goal.plan?.estimateHours ? ` · ${Math.round(goal.plan.estimateHours)} h` : ""}
       </TableCell>
       <TableCell className="text-muted-foreground">{formatDate(goal.createdAt)}</TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 
