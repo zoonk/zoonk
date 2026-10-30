@@ -78,8 +78,10 @@ private struct CatalogLessonList: View {
             Label {
               ItemText(option.text)
             } icon: {
-              Image(systemName: "circle")
-                .foregroundStyle(.secondary)
+              Image(systemName: "circle.fill")
+                .imageScale(.small)
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
             }
           }
         } header: {
@@ -124,12 +126,22 @@ private struct CatalogLessonList: View {
       }
       .listRowBackground(Color.clear)
 
+      // Folded, as on main: an idea can answer the first question.
       if !value.summaryIdeas.isEmpty {
         Section {
-          ForEach(value.summaryIdeas, id: \.self) { CheckLine(text: $0) }
-        } header: {
-          Text(
-            "What you'll learn", tableName: "Courses", comment: "Header of what a lesson teaches")
+          DisclosureGroup {
+            ForEach(value.summaryIdeas, id: \.self) { CheckLine(text: $0) }
+          } label: {
+            LabeledContent {
+              Text(
+                "\(value.summaryIdeas.count) ideas", tableName: "Courses",
+                comment: "How many ideas a lesson teaches")
+            } label: {
+              Text(
+                "What you'll learn", tableName: "Courses",
+                comment: "Header of what a lesson teaches")
+            }
+          }
         }
       }
 
