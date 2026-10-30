@@ -24,10 +24,13 @@ function useGoalExamples(): GoalExample[] {
   return [
     {
       kind: t("Exam"),
-      label: t(
-        "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} pau {Pass the PAU} other {Pass the SAT}}",
-        { exam },
-      ),
+      label: t({
+        description:
+          "Each branch names its own exam: keep that exam in it, never another country's.",
+        message:
+          "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} pau {Pass the PAU} other {Pass the SAT}}",
+        values: { exam },
+      }),
     },
     { kind: t("Language"), label: t("Speak {language} for a job interview", { language }) },
     { kind: t("Learn a topic"), label: t("Understand quantum physics") },

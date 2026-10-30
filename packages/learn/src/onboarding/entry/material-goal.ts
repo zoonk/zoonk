@@ -13,7 +13,7 @@ function useMaterialGoal() {
     return intent === "exam"
       ? t({
           description:
-            "The learner's goal, in their words: preparing themselves for an exam. {titles} lists the titles of their study material.",
+            "The learner's goal, in their words: studying for an exam, not writing one. {titles} lists the titles of their study material.",
           message: "Prepare for an exam on my material: {titles}",
           values: { titles },
         })

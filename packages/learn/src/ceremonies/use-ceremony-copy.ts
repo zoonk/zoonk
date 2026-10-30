@@ -120,7 +120,11 @@ export function useCeremonyCopy({
       return {
         ...glasses,
         action: canWear
-          ? t({ description: "Puts the new glasses on the learner's buddy.", message: "Wear them" })
+          ? t({
+              description:
+                "Puts the new glasses on the learner's buddy. The buddy wears them, not the learner.",
+              message: "Wear them",
+            })
           : continueLabel,
       };
     case "badge":

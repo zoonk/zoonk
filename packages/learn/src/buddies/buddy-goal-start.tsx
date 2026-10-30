@@ -21,10 +21,12 @@ function useGoalExamples(): string[] {
   const { exam, language } = useLocalGoalExample();
 
   return [
-    t(
-      "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} pau {Pass the PAU} other {Pass the SAT}}",
-      { exam },
-    ),
+    t({
+      description: "Each branch names its own exam: keep that exam in it, never another country's.",
+      message:
+        "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} pau {Pass the PAU} other {Pass the SAT}}",
+      values: { exam },
+    }),
     t("Speak {language} for a job interview", { language }),
     t("Understand quantum physics"),
   ];

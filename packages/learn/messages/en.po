@@ -851,6 +851,7 @@ msgctxt "O7-3Od"
 msgid "Pick a pair you've earned to wear it."
 msgstr "Pick a pair you've earned to wear it."
 
+#. Each branch names its own exam: keep that exam in it, never another country's.
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "hKFuSO"
@@ -1210,7 +1211,7 @@ msgctxt "6Vl5-v"
 msgid "{buddy} grew up!"
 msgstr "{buddy} grew up!"
 
-#. Puts the new glasses on the learner's buddy.
+#. Puts the new glasses on the learner's buddy. The buddy wears them, not the learner.
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "d5UGw8"
 msgid "Wear them"
@@ -6740,6 +6741,7 @@ msgctxt "HJwk2o"
 msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
 msgstr "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
 
+#. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
 msgctxt "Bbb4bg"
 msgid "Content gap"
@@ -7968,6 +7970,7 @@ msgctxt "lnZvgd"
 msgid "I want to"
 msgstr "I want to"
 
+#. Each branch names its own exam: keep that exam in it, never another country's.
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "bHMLQT"
 msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}"
@@ -8113,7 +8116,7 @@ msgctxt "6dvkek"
 msgid "my notes"
 msgstr "my notes"
 
-#. The learner's goal, in their words: preparing themselves for an exam. {titles} lists the titles of their study material.
+#. The learner's goal, in their words: studying for an exam, not writing one. {titles} lists the titles of their study material.
 #: src/onboarding/entry/material-goal.ts
 msgctxt "eblSlT"
 msgid "Prepare for an exam on my material: {titles}"

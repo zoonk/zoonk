@@ -10,7 +10,11 @@ export function useCauseLabel() {
   return (cause: MistakeCauseKey | null): string => {
     switch (cause ?? "unsorted") {
       case "gap":
-        return t("Content gap");
+        return t({
+          description:
+            "Why the learner got a question wrong: they didn't know the content yet. Not missing course content.",
+          message: "Content gap",
+        });
       case "misread":
         return t("Misread");
       case "trap":
