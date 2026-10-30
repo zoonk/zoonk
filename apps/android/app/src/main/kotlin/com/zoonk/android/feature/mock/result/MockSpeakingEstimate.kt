@@ -20,6 +20,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.SpeakingPassRule

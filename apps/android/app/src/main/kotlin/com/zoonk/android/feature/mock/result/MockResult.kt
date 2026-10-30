@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.mock.result
 
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -27,11 +26,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.paneTitle
@@ -58,11 +55,13 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.LocalStepHeading
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
+import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
@@ -285,16 +284,6 @@ internal fun MockResult(
 
         if (reviewOpen) ReviewSheet(view, app, onDismiss = { reviewOpen = false })
     }
-}
-
-/** The heading a step takes TalkBack to when it opens. */
-private val LocalStepHeading = staticCompositionLocalOf<FocusRequester?> { null }
-
-/** Marks a step's heading, where TalkBack goes when the step opens; one to a step. */
-@Composable
-internal fun Modifier.stepHeading(): Modifier {
-    val heading = LocalStepHeading.current ?: return this
-    return focusRequester(heading).focusable()
 }
 
 /** Scrolls on the whole pane, margins included, with the step held to a readable column. */

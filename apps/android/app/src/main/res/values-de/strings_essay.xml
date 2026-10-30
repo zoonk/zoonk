@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "essay_criterion_addressing": "0756053ba566efbd8bcee7bebd50c286d92cdc4fd8c06e18b9206738feb3e3e6",
+  "essay_criterion_argument": "d63dca4f0ba5e0935156288b5b8f00924affc0cf63fd586c63e43df02a506eeb",
+  "essay_criterion_closing": "99b5578eb828fa725a24698acb38d96c491d68de5ec761f0408693ff0a93c281",
+  "essay_criterion_cohesion": "b8a7fe6f77faff963f4a86ff3f5d361d83a2fbca4c44e4a9c115f0b4b57ffce8",
+  "essay_criterion_facts": "805eea2b21407eb4ff34139328b63e6aa00e079643198e7574cf22b63c1b29ef",
+  "essay_criterion_formal_writing": "ae4f6ca9caaa201d0153b00f52ed7cde71900fa9f79c1e388e07ea6733030ab0",
+  "essay_criterion_intervention": "86718a4d9432bab0678f0312ff7164846bbd77a1f61601c25291bde57b13a4dc",
+  "essay_criterion_legal_basis": "d7144cb5c5e1af8a61b7630deee25d979f90e6c59b18533eefeea7ebcef02adb",
+  "essay_criterion_requests": "2f2d091e188c4fbce8e93ec0d1fe004ad6e56cd4116537231c4a15687204a8e9",
+  "essay_criterion_topic": "2cc9145c95cff6c1b54d2810ae7732853e6215d1914103e34b3caab46981f89e",
+  "essay_for_example": "0fb360513a3e3f174d79b93dbe085bd871327d314ceda050462c5e9ccf00297e",
+  "essay_full_marks": "3000b615c165a033a9dc849fdf93747efbfe479a3f26566672369d5ee479fafb",
+  "essay_next_step": "393843763bdf51473e8375e5970829844693fcc3b0a4e081c9df8ccbcd751958",
+  "essay_nothing_left": "09a19e6aaec4664e504aeb3ae0ea17e39265d2dcf3cf5fdd878758d58eae3ac4",
+  "essay_range": "4fae85b3e7efcb865a55cc99a165666ba864e84c697f2b1fcf3b405eddbe6571",
+  "essay_scale": "1544723263190abd590365b002259384381662e1440d7934c2977df520c63731",
+  "essay_score_of": "46bf4caf303dd8412adbf36c249e4fa54188b57b9ed1fb6b1f6dc231e0d8386c",
+  "essay_what_to_rewrite": "044a045d2ac0a7fe8e34bc7763ed3ef2e8f42fabcffa96f1dd611b2c68852d76",
+  "essay_your_answer": "0d34a9fab126fdc50dead1351bc425a4a9d2e653a7e8b4a8ff67897f6847918f",
+  "essay_your_essay": "b4f94e71986f0037866537595dfa32275f56f44e88cb75a05edd343a2844785f"
+}
+-->
+<resources>
+    <string name="essay_your_essay">Dein Aufsatz</string>
+    <string name="essay_your_answer">Deine Antwort</string>
+    <!-- A score's range, such as "610–680". -->
+    <string name="essay_range">%1$s–%2$s</string>
+    <!-- %1$s is the essay's highest possible score. -->
+    <string name="essay_scale">Geschätzter Score von 0 bis %1$s</string>
+    <!-- A criterion's score, such as "160 of 200". -->
+    <string name="essay_score_of">%1$s von %2$s</string>
+    <string name="essay_criterion_formal_writing">Formelles Schreiben</string>
+    <!-- Enem essay competence 2: addressing the set topic and drawing on outside knowledge. -->
+    <string name="essay_criterion_topic">Thema und Quellen</string>
+    <string name="essay_criterion_argument">Argumentation</string>
+    <string name="essay_criterion_cohesion">Textzusammenhang</string>
+    <string name="essay_criterion_intervention">Vorschlag für Maßnahmen</string>
+    <string name="essay_criterion_addressing">Adressat und Beteiligte</string>
+    <string name="essay_criterion_facts">Sachverhalt</string>
+    <string name="essay_criterion_legal_basis">Rechtsgrundlage</string>
+    <string name="essay_criterion_requests">Anträge</string>
+    <string name="essay_criterion_closing">Schluss und Form</string>
+    <string name="essay_next_step">Nächster Schritt</string>
+    <string name="essay_what_to_rewrite">Was du überarbeiten solltest</string>
+    <string name="essay_for_example">Zum Beispiel: %1$s</string>
+    <string name="essay_nothing_left">Nichts mehr zu bearbeiten</string>
+    <string name="essay_full_marks">Bei dieser Schätzung erhält jedes Kriterium die volle Punktzahl.</string>
+</resources>

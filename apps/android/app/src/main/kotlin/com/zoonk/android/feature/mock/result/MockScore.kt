@@ -33,6 +33,7 @@ import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.color
+import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures

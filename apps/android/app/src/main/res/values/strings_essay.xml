@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="essay_your_essay">Your essay</string>
+    <string name="essay_your_answer">Your answer</string>
+    <!-- A score's range, such as "610–680". -->
+    <string name="essay_range">%1$s–%2$s</string>
+    <!-- %1$s is the essay's highest possible score. -->
+    <string name="essay_scale">Estimated score, from 0 to %1$s</string>
+    <!-- A criterion's score, such as "160 of 200". -->
+    <string name="essay_score_of">%1$s of %2$s</string>
+    <string name="essay_criterion_formal_writing">Formal writing</string>
+    <!-- Enem essay competence 2: addressing the set topic and drawing on outside knowledge. -->
+    <string name="essay_criterion_topic">Topic and references</string>
+    <string name="essay_criterion_argument">Argument</string>
+    <string name="essay_criterion_cohesion">Cohesion</string>
+    <string name="essay_criterion_intervention">Intervention proposal</string>
+    <string name="essay_criterion_addressing">Addressing and parties</string>
+    <string name="essay_criterion_facts">Facts</string>
+    <string name="essay_criterion_legal_basis">Legal basis</string>
+    <string name="essay_criterion_requests">Requests</string>
+    <string name="essay_criterion_closing">Closing and form</string>
+    <string name="essay_next_step">Next step</string>
+    <string name="essay_what_to_rewrite">What to rewrite</string>
+    <string name="essay_for_example">For example: %1$s</string>
+    <string name="essay_nothing_left">Nothing left to work on</string>
+    <string name="essay_full_marks">Every criterion has full marks in this estimate.</string>
+</resources>

@@ -96,8 +96,6 @@
     <string name="mock_result_left_blank">You left it blank.</string>
     <string name="mock_result_partly_right_note">Partly right: it earned part of its points.</string>
     <string name="mock_result_written_part">Written part · %1$d of %2$d</string>
-    <string name="mock_result_your_essay">Your essay</string>
-    <string name="mock_result_your_answer">Your answer</string>
     <string name="mock_result_too_short">Too short to grade</string>
     <string name="mock_result_grading">Grading it with the exam\'s rubric. It can take up to 30 seconds.</string>
     <string name="mock_result_grading_slow">Still grading. This is taking longer than usual.</string>
@@ -105,25 +103,6 @@
     <string name="mock_result_not_graded">It hasn\'t been graded yet.</string>
     <string name="mock_result_grading_limit">You\'ve used today\'s essay grades. Try again tomorrow.</string>
     <string name="mock_result_grade_it">Grade it</string>
-    <!-- %1$s is the essay's highest possible score. -->
-    <string name="mock_result_essay_scale">Estimated score, from 0 to %1$s</string>
-    <!-- A criterion's score, such as "160 of 200". -->
-    <string name="mock_result_score_of">%1$s of %2$s</string>
-    <string name="mock_result_criterion_formal_writing">Formal writing</string>
-    <string name="mock_result_criterion_topic">Topic and references</string>
-    <string name="mock_result_criterion_argument">Argument</string>
-    <string name="mock_result_criterion_cohesion">Cohesion</string>
-    <string name="mock_result_criterion_intervention">Intervention proposal</string>
-    <string name="mock_result_criterion_addressing">Addressing and parties</string>
-    <string name="mock_result_criterion_facts">Facts</string>
-    <string name="mock_result_criterion_legal_basis">Legal basis</string>
-    <string name="mock_result_criterion_requests">Requests</string>
-    <string name="mock_result_criterion_closing">Closing and form</string>
-    <string name="mock_result_next_step">Next step</string>
-    <string name="mock_result_what_to_rewrite">What to rewrite</string>
-    <string name="mock_result_for_example">For example: %1$s</string>
-    <string name="mock_result_nothing_left">Nothing left to work on</string>
-    <string name="mock_result_full_marks">Every criterion has full marks in this estimate.</string>
     <string name="mock_result_no_estimate">No estimate</string>
     <!-- %1$s is the estimated points, %2$s the paper's total. -->
     <string name="mock_result_about_points">About %1$s of %2$s</string>

@@ -21,27 +21,14 @@
   "mock_result_consistency_detail": "50d6f82ed03ab5fe84733cc780f6868b7692391c393ec91cf9f3866b66647dbd",
   "mock_result_continue": "627c1cbf52d9cdb907e22bf318b0ab8fc856ff00252f81fb37a95b9dfa43b4c1",
   "mock_result_continue_session": "8dd6d57bc091faae4d917a3c3c09f4b48b208bfb0df8b634a3b139ed0ac87fb6",
-  "mock_result_criterion_addressing": "93eb307e1a3659430dfdf08cd40aeac8353324be5077635dbe7dcee144448900",
-  "mock_result_criterion_argument": "2a66f12147eb8d90a6f537b9dd627eb13c4d8e01de73155fe80dddf989e0af5e",
-  "mock_result_criterion_closing": "86b8d0fcc6141980544086220a808f11cde3accb1f74840b303fdc40d53ef8e1",
-  "mock_result_criterion_cohesion": "3b2fa864f18d291ca2792a52192222eb2ab8ca47f3534689eb91794f9d9ec616",
-  "mock_result_criterion_facts": "af51188af723fe9352420f67840b8dc916a6703c58f4ee7704269f4c3c213bcd",
-  "mock_result_criterion_formal_writing": "8878db2649c924db1bf9aab60225a5b6eac1484edc7f76632ee55214dea7a36e",
-  "mock_result_criterion_intervention": "331e6aa56cbe043513648f4663e57c5f1b04744ebbf21fa768c56aa8be18dc52",
-  "mock_result_criterion_legal_basis": "3ba65b907fbdcaccdb136a3b9eb0b51622cc142d0c15c61fdf4822b2e44cfc55",
-  "mock_result_criterion_requests": "c08b964452b2a67232ab8e1b48445325c5d213a4085a36dcb94a121181b92a23",
-  "mock_result_criterion_topic": "8f28c681f01cc8fb32fa0a1182923ef4b478c92ff9bd2ebca2ea2dd1fb93b769",
   "mock_result_done": "1be205311697db5de8ff1e7fb6d22c6d69fe2e43c85664a4a9ae958eba249e75",
   "mock_result_down": "ef92ce173b512b99620eed388a3eb71668dfae7be3ef5be4fd50e5568708ea0d",
   "mock_result_easy_wrong": "9a30f2d734310e78205680ac0f87d1715bca2d06026a18828d8166091ed3b985",
-  "mock_result_essay_scale": "697425bfc054d81a0b7f05be1d64fa8092403aaa337083315f2b380fbe99dcea",
   "mock_result_estimate_detail": "e6a203e66a65de02c149ab589fa6dba2b257b007dadd325bcc74ec2281551896",
   "mock_result_estimated_score": "4c8f15fe642d4e90ea377b727a6e8bb0fb79ccb1bd8f11a7e0036870db834a61",
   "mock_result_expanded": "4147b1cad44b131c2b5d155aa000cccb3fda0193220b82f8d3ccd160823c6834",
   "mock_result_focus_done": "5fcfd73800893271f0ee694c43617a78a0da95bb1e3fafb7728b0cef18005bcb",
   "mock_result_focus_title": "16f82e39e86d2b7a6878554730deb16d14eab885a2cfe539385d0f5cfee7d038",
-  "mock_result_for_example": "9c068e6ee7219e90de46838e818e1e0a65f83b1c41d4276615417e00b3cf53b0",
-  "mock_result_full_marks": "51647590cbc7d7c2c7b997522fcde1b4231fff5c4a4e8d412b9adaab309e9b11",
   "mock_result_grade_it": "7e44c8e4ed54359e90125b1f2d70d865e36359e7d8e46366ac041fb164321807",
   "mock_result_grading": "94ee38d6f879a924e3117754ec0ba5a70a6ee3a4d84d06cf9a00e515a56e3c46",
   "mock_result_grading_failed": "6a20eac80fe5876b958fe04ebcaf9b46c4c0b74ac755270ece442a9cc231a225",
@@ -60,13 +47,11 @@
   "mock_result_more_topics": "34a1d1b1157b20729df0c7b194f4c5488a6ff8f4793e37f64f78db1bc8cb1cff",
   "mock_result_net_score": "6b55912d320f905f2dfc35765b3dff4a92e92db06c4b875c2c9dc57015f73a51",
   "mock_result_new": "88afa0fa1622cc662cba547fe3661ee2e931c586f010b7735962447605b4f90f",
-  "mock_result_next_step": "7264d0e73adae68115e23187f33a87ab6b3c11de3b3f5e54cc38970144a903c4",
   "mock_result_no_estimate": "0b3197e86a51c1ee5c403aee36e3d5766e6e485f91c6700eab65d8f2bca4ba88",
   "mock_result_not_done": "d6cc481b7233793de6e1a2ee623d59077e2e14da809c859142132d4ca0fdce50",
   "mock_result_not_every_task": "ef3bdaf420ef9e2709d5954313769fab8d8d09b323bb2a1b690f45e02560072e",
   "mock_result_not_graded": "2d25238fcee58fd38d1c1699fa78baaa64ff2598de891b856014d90845cedc07",
   "mock_result_not_now": "39016ef4cc61623adb25a2f76e0734ea6387f74c57f531f9efc47e3be76e278e",
-  "mock_result_nothing_left": "38598fdf535f748b7ef55b72e40f2dbdd9a1c4c0a982ba2a4cabbc0cd14ceab6",
   "mock_result_notice_scoring": "70d4807a1a07f749aedd8fcc789a7aa4f701e52d2510ce8706f06954ea776767",
   "mock_result_now": "3f80a598bdd5565aa4a21b67ae4db1c9a164ed9549f7936048a3cda8a5255bc1",
   "mock_result_of": "4967ccc651ab692f40d85fa5d0c2c8d3d22d9226a05ed703db2750db05034d32",
@@ -96,7 +81,6 @@
   "mock_result_scale_named": "3f17608155bc6220788e0246d4f5b33e3ca9724cbea4cc812ec80c2b821ff0c1",
   "mock_result_scale_score": "0f5f455c9adc744cc3ea0c7c75f855d22787b81ec38a2dfc9d2cf30046e0b18f",
   "mock_result_scale_score_named": "3035719bb7a9f56f4d668fbacbd2ef508c3ad598ad0280c7092bd844868fb6f2",
-  "mock_result_score_of": "b50e7d1015ded203ec1194616643d3d6e3cf9b3e44259bc59e71211daf6d645d",
   "mock_result_see_feedback": "d79eafeb8e7fa5f0c0de7a1811a7d770b4b67a2a6feb00fe68339321ceba04d2",
   "mock_result_see_plan": "ea1256b2842881daa57c59c2d81cd9fde6db31f82dd3dbdf4029f72fa1f2404c",
   "mock_result_see_question": "435cd5c343f8cb314f2c46c5537af997f36d1519ff6ea6b0fabc59eaaccdbec7",
@@ -114,11 +98,8 @@
   "mock_result_typed_estimate": "8ab1aa2c02f6fcc21e7e44cf3591e0d3a80fc2a83ced24ddda67e9006de584cf",
   "mock_result_typed_no_estimate": "d60f345369a5c48801c1ee46374f01b59ccc6f9f2da31cda083aa2df1511566d",
   "mock_result_up": "91c890ffb20d188c166e81e5f3e388695211fcb16a252ea02dd78963e7a23741",
-  "mock_result_what_to_rewrite": "882bb551e6f2b3c62bf6e6fb9b85a97c55aa6716edcaf27524b64bd1459da953",
   "mock_result_written_part": "df78f773a7e7e9220adda13de97d2c9460c927da3d075d8de8cc49a0d1020679",
   "mock_result_wrong": "f1e545bcf2532f3b969867e67d70e680fe7e1fe35e5c400b6d1ef5c422933542",
-  "mock_result_your_answer": "c928f66943d6ab04f1d8d77903a9199dc5fce3b19c023fd14707dc3c919d13da",
-  "mock_result_your_essay": "2255807965eff55ebc31ce5ded3865471e8a9b831a0e3c1c38a40219b6ef02c9",
   "mock_result_your_plan": "cb752fba892207e5a8ce59cd2f8cf3aef65ced1a6ae5a4cb2d7d5d2bee796104",
   "mock_result_your_preparation": "49742edca489064bb402a6d638204701cca6f4d633e902dd607ee8242b4ce947"
 }
@@ -229,8 +210,6 @@
     <string name="mock_result_left_blank">Você deixou em branco.</string>
     <string name="mock_result_partly_right_note">Resposta parcialmente correta: você recebeu parte dos pontos.</string>
     <string name="mock_result_written_part">Parte escrita · %1$d de %2$d</string>
-    <string name="mock_result_your_essay">Sua redação</string>
-    <string name="mock_result_your_answer">Sua resposta</string>
     <string name="mock_result_too_short">Curta demais para corrigir</string>
     <string name="mock_result_grading">Corrigindo com os critérios da prova. Isso pode levar até 30 s.</string>
     <string name="mock_result_grading_slow">Ainda estamos corrigindo. Está demorando mais que o normal.</string>
@@ -238,25 +217,6 @@
     <string name="mock_result_not_graded">Ainda não foi corrigida.</string>
     <string name="mock_result_grading_limit">Você já usou as correções de redação de hoje. Tente de novo amanhã.</string>
     <string name="mock_result_grade_it">Corrigir</string>
-    <!-- %1$s is the essay's highest possible score. -->
-    <string name="mock_result_essay_scale">Pontuação estimada, de 0 a %1$s</string>
-    <!-- A criterion's score, such as "160 of 200". -->
-    <string name="mock_result_score_of">%1$s de %2$s</string>
-    <string name="mock_result_criterion_formal_writing">Escrita formal</string>
-    <string name="mock_result_criterion_topic">Tema e referências</string>
-    <string name="mock_result_criterion_argument">Argumentação</string>
-    <string name="mock_result_criterion_cohesion">Coesão</string>
-    <string name="mock_result_criterion_intervention">Proposta de intervenção</string>
-    <string name="mock_result_criterion_addressing">Endereçamento e partes</string>
-    <string name="mock_result_criterion_facts">Fatos</string>
-    <string name="mock_result_criterion_legal_basis">Fundamentos jurídicos</string>
-    <string name="mock_result_criterion_requests">Pedidos</string>
-    <string name="mock_result_criterion_closing">Fecho e forma</string>
-    <string name="mock_result_next_step">Próximo passo</string>
-    <string name="mock_result_what_to_rewrite">O que reescrever</string>
-    <string name="mock_result_for_example">Por exemplo: %1$s</string>
-    <string name="mock_result_nothing_left">Nada mais para corrigir</string>
-    <string name="mock_result_full_marks">Esta estimativa dá a pontuação máxima em todos os critérios.</string>
     <string name="mock_result_no_estimate">Sem estimativa</string>
     <!-- %1$s is the estimated points, %2$s the paper's total. -->
     <string name="mock_result_about_points">Cerca de %1$s de %2$s</string>
