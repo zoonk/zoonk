@@ -142,7 +142,7 @@ async function writeBand({ context, plan: needed }: { context: RunContext; plan:
   const { chapters, early, provenance } = await writeOutlineBandStep({ ...context, plan });
   const skills = [...plan.skills, ...plan.extensions.map((extension) => extension.skill)];
 
-  const saved = await Promise.all(
+  const results = await Promise.allSettled(
     chapters.map(async (chapter, index) => {
       const { chapterId } = await deliverCourseContent(
         saveOutlineChapterStep({
@@ -159,6 +159,7 @@ async function writeBand({ context, plan: needed }: { context: RunContext; plan:
     }),
   );
 
+  const saved = results.flatMap((result) => (result.status === "fulfilled" ? [result.value] : []));
   const waited = plan.skills.filter((skill) => skill.id === context.waitedSkillId);
 
   const written = early
@@ -170,10 +171,17 @@ async function writeBand({ context, plan: needed }: { context: RunContext; plan:
 
   const moves = toChapterMoves({ anchors, plan, written });
 
+  // Chapters already saved, the one learners already have included, keep their place if another fails.
   if (moves.length > 0) {
     await deliverCourseContent(
       placeChaptersAfterStep({ courseId: context.courseId, level: plan.level, moves }),
     );
+  }
+
+  const failed = results.find((result) => result.status === "rejected");
+
+  if (failed) {
+    throw failed.reason;
   }
 
   await replanWaitingGoals({

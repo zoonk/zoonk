@@ -438,6 +438,74 @@ describe(courseOutlineWorkflow, () => {
       expect(tags).toStrictEqual([{ chapterId: lodging?.chapter.id }]);
     });
 
+    it("keeps a saved chapter after its anchor when another chapter of the band fails to save", async () => {
+      const course = await courseFixture({
+        language: "pt",
+        outlineStatus: "completed",
+        targetLanguage: "it",
+        title: "Italiano",
+      });
+
+      const [, complain, checkout] = await Promise.all([
+        writtenBand({
+          chapters: [
+            { lessons: ["Disponibilidade de quartos"], title: "Reserva e hospedagem" },
+            { lessons: ["Partes do corpo"], title: "Sintomas e pedidos de ajuda" },
+          ],
+          courseId: course.id,
+        }),
+        italianSkill("Reclamar de um problema no quarto"),
+        italianSkill("Fazer o check-out"),
+      ]);
+
+      vi.mocked(findTeachingChapters).mockResolvedValue(
+        taskResult([
+          { after: 1, chapter: null, key: complain.id },
+          { after: 1, chapter: null, key: checkout.id },
+        ]),
+      );
+
+      vi.mocked(generateCourseOutline).mockResolvedValue(
+        outlineResult({
+          chapters: [
+            interviewChapter("Problemas na hospedagem", [complain.id]),
+            interviewChapter("Saída da hospedagem", [checkout.id]),
+          ],
+          uncoveredSkillKeys: [],
+        }),
+      );
+
+      vi.mocked(generateSearchTerms).mockImplementation(async ({ subjects }) => {
+        if (subjects.some((subject) => subject.item.title === "Saída da hospedagem")) {
+          throw new Error("The search terms provider is down");
+        }
+
+        return taskResult({
+          subjects: subjects.map(() => ({ terms: [`zq${crypto.randomUUID().slice(0, 8)}`] })),
+        }) as never;
+      });
+
+      await expect(
+        courseOutlineWorkflow({
+          bands: [{ level: "beginner", skills: [toSkillRef(complain), toSkillRef(checkout)] }],
+          courseId: course.id,
+          scope: ITALIAN_SCOPE,
+        }),
+      ).rejects.toThrow();
+
+      const placements = await prisma.courseChapter.findMany({
+        include: { chapter: { select: { title: true } } },
+        orderBy: { position: "asc" },
+        where: { courseId: course.id },
+      });
+
+      expect(placements.map((placement) => placement.chapter.title)).toStrictEqual([
+        "Reserva e hospedagem",
+        "Problemas na hospedagem",
+        "Sintomas e pedidos de ajuda",
+      ]);
+    });
+
     it("leaves an exam's band to the outline, which keeps each chapter to one subject", async () => {
       const course = await courseFixture({ language: "pt", outlineStatus: "completed" });
 
