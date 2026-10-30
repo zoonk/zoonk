@@ -54,6 +54,7 @@
   "plan_challenge_after_previous": "f74f1e655e8f59729d131bb95c217a63404812735919b7e771b86b9f96617b33",
   "plan_challenge_left_out": "b7e0911d53ea18b5d526a902aa12aa4fc0516c5c0c669d354bd1fbb7dbe55c9a",
   "plan_challenge_next_session": "52db1943e627b5a9dca06d92eed62366570fd00772e7fb0db47f0b2df4e146eb",
+  "plan_challenge_opens_after_lessons": "ea550065ad7b470b5b73ec5923866f2230fa1dc92d896cb316cac1d68bac5922",
   "plan_challenge_won": "ce8e7a9c9b1ef5599dab5c902d487bb648bf05880ec3d36eabd7b4441a37b377",
   "plan_change_about_more_fit": "96606ef501c1afbbcecfbc6088847c60a760d2e95ddf49fb2136f4b93c7c91a8",
   "plan_change_about_more_lessons": "730c4566a7d02a47c856732f906cf7dec21fe075dcd10b02e749a5f6a784d722",
@@ -689,6 +690,7 @@
     <string name="plan_challenge_won">Venceu</string>
     <string name="plan_challenge_next_session">Na sua próxima sessão</string>
     <string name="plan_challenge_after_previous">Depois do desafio anterior</string>
+    <string name="plan_challenge_opens_after_lessons">Disponível após as aulas desta fase</string>
     <string name="plan_mock_next_sitting">Simulado para a próxima aplicação da prova</string>
     <plurals name="plan_mock_exams_count">
         <item quantity="one">%d simulado</item>

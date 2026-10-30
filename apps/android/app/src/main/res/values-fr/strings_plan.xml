@@ -54,6 +54,7 @@
   "plan_challenge_after_previous": "00304acabd1472c2191026d0e9149cc0adb71fe046393b46bfca603dfc95bd16",
   "plan_challenge_left_out": "af8bdc7fcc768f965b331ad3b70ca91c2012469d1614965ac7d1c124481818ec",
   "plan_challenge_next_session": "5516144c09bad00e8d7728efa5c76bd493d4d5804abbd7bdb6f1640b6f560948",
+  "plan_challenge_opens_after_lessons": "2934d6ac22a6f322e291a30c7131234791fe322d30df078d470c0a0bd969bbfc",
   "plan_challenge_won": "bee46d637f06e1f55dcc7ab3cdb771b35a39d5fe9d23b45fcc36a675255374b4",
   "plan_change_about_more_fit": "e1c75f149ddeedc90b6d9e2dce7aeeb215a283548ba39eda20c1e9b5c5eaf05f",
   "plan_change_about_more_lessons": "c6d0fa4af2e2e9f95c5750e3dff4c4bdfa3087ac2acd4f333626fe0f156674ef",
@@ -689,6 +690,7 @@
     <string name="plan_challenge_won">Remporté</string>
     <string name="plan_challenge_next_session">À ta prochaine séance</string>
     <string name="plan_challenge_after_previous">Après le défi précédent</string>
+    <string name="plan_challenge_opens_after_lessons">Se débloque après les leçons de cette phase</string>
     <string name="plan_mock_next_sitting">Examen blanc pour la prochaine session</string>
     <plurals name="plan_mock_exams_count">
         <item quantity="one">%d examen blanc</item>
