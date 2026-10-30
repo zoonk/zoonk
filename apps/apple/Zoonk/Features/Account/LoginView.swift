@@ -14,14 +14,11 @@ struct LoginView: View {
             .foregroundStyle(.tint)
             .accessibilityHidden(true)
 
-          Text(
-            "Sign in or create an account",
-            tableName: "Account",
-            comment:
-              "Title above the native sign-in methods; new learners create an account here too"
-          )
-          .font(.title2.bold())
-          .multilineTextAlignment(.center)
+          Text(title)
+            .font(.title2.bold())
+            .multilineTextAlignment(.center)
+            .accessibilityAddTraits(.isHeader)
+            .heroTitle()
 
           Text(
             "Keep your plan and progress on all your devices.",
@@ -104,6 +101,14 @@ struct LoginView: View {
       .padding(24)
       .frame(maxWidth: .infinity)
     }
+    .navigationTitle(title)
+    .barTitleAfterHero(title)
+  }
+
+  private var title: String {
+    String(
+      localized: "Sign in or create an account", table: "Account",
+      comment: "Title above the native sign-in methods; new learners create an account here too")
   }
 
   private var termsLink: AttributedString {

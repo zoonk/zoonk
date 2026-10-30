@@ -104,21 +104,6 @@ struct EmailLoginView: View {
         }
       }
     }
-    .toolbar {
-      if hasSentCode {
-        ToolbarItemGroup(placement: .keyboard) {
-          Spacer()
-
-          Button(action: signIn) {
-            Text(
-              "Sign in",
-              tableName: "Account",
-              comment: "Button that verifies an email code")
-          }
-          .disabled(!isCodeValid || session.isWorking)
-        }
-      }
-    }
     .navigationTitle(
       Text("Email sign-in", tableName: "Account", comment: "Email login navigation title")
     )
