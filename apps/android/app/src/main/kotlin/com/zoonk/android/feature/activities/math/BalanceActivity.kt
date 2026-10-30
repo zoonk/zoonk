@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -360,7 +361,7 @@ private fun BalanceScale(
     val itemStyle = MaterialTheme.typography.labelLarge.withTabularFigures().copy(fontWeight = FontWeight.SemiBold)
     val heavier = stringResource(R.string.activities_math_balance_heavier)
 
-    Canvas(modifier.fillMaxWidth().widthIn(max = MAX_WIDTH).aspectRatio(VIEW_WIDTH / (VIEW_BOTTOM - top))) {
+    Canvas(modifier.fillMaxWidth().wrapContentWidth().widthIn(max = MAX_WIDTH).aspectRatio(VIEW_WIDTH / (VIEW_BOTTOM - top))) {
         val view = ScaleView(size.width / VIEW_WIDTH, top)
         drawStand(view, colors)
         rotate(angle, view.at(PIVOT_X, PIVOT_Y)) {
