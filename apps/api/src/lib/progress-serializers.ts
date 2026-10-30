@@ -8,6 +8,7 @@ import {
   type TimeScorePattern,
   type WeekdayScorePattern,
 } from "@zoonk/core/progress/get-score-patterns";
+import { MIN_PATTERN_ANSWERS, type PatternVerdict } from "@zoonk/core/progress/score-performance";
 import { getContributionCalendarDateKey } from "@zoonk/utils/contribution-calendar";
 
 const WEEKDAY_KEYS = [
@@ -57,13 +58,21 @@ function serializeTimePattern(pattern: TimeScorePattern) {
   return { ...pattern, period: serializeDaypart(pattern.period) };
 }
 
+function serializeVerdict<Pattern>(verdict: PatternVerdict<Pattern>) {
+  return { kind: verdict.kind, points: verdict.kind === "even" ? verdict.points : null };
+}
+
 export function serializeScorePatterns(patterns: ScorePatternsData) {
   return {
+    dayVerdict: serializeVerdict(patterns.dayVerdict),
+    minimumAnswers: MIN_PATTERN_ANSWERS,
     strongestTime: patterns.strongestTime ? serializeTimePattern(patterns.strongestTime) : null,
     strongestWeekday: patterns.strongestWeekday
       ? serializeWeekdayPattern(patterns.strongestWeekday)
       : null,
+    timeVerdict: serializeVerdict(patterns.timeVerdict),
     times: patterns.times.map(serializeTimePattern),
+    weekSpread: patterns.weekSpread,
     weekdays: patterns.weekdays.map(serializeWeekdayPattern),
   };
 }

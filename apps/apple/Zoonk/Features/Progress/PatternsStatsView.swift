@@ -7,54 +7,7 @@ protocol ScorePatternGroup: Equatable {
 extension WeekdayScorePattern: ScorePatternGroup {}
 extension DaypartScorePattern: ScorePatternGroup {}
 
-enum PatternVerdict<Pattern: ScorePatternGroup>: Equatable {
-  case best(Pattern)
-  case even(points: Int)
-  case notEnough
-
-  /// Core's: one lucky answer never makes a pattern.
-  static var minimumAnswers: Int { 10 }
-
-  /// Under this many points between the best and the worst group that counts, none stands out.
-  private static var evenSpread: Double { 5 }
-
-  /// A lone group has nothing to be better than, and a lead of a few points is noise. `strongest` is
-  /// core's, which already leaves out groups with too few answers.
-  init(groups: [Pattern], strongest: Pattern?) {
-    let scores = Self.counted(groups).map(\.performance.score)
-
-    guard let strongest, scores.count >= 2, let high = scores.max(), let low = scores.min() else {
-      self = .notEnough
-      return
-    }
-
-    self =
-      high - low < Self.evenSpread
-      ? .even(points: Int((high - low).rounded(.up))) : .best(strongest)
-  }
-
-  static func counted(_ groups: [Pattern]) -> [Pattern] {
-    groups.filter { $0.performance.totalAnswers >= minimumAnswers }
-  }
-
-  var best: Pattern? {
-    if case .best(let group) = self {
-      return group
-    }
-
-    return nil
-  }
-}
-
 extension ScorePatterns {
-  var dayVerdict: PatternVerdict<WeekdayScorePattern> {
-    PatternVerdict(groups: weekdays, strongest: strongestWeekday)
-  }
-
-  var timeVerdict: PatternVerdict<DaypartScorePattern> {
-    PatternVerdict(groups: dayparts, strongest: strongestDaypart)
-  }
-
   var bestDayName: String? {
     switch dayVerdict {
     case .best(let day):
@@ -81,14 +34,8 @@ extension ScorePatterns {
     }
   }
 
-  var weekSpread: String? {
-    let scores = PatternVerdict<WeekdayScorePattern>.counted(weekdays).map(\.performance.score)
-
-    guard scores.count >= 2, let low = scores.min(), let high = scores.max() else {
-      return nil
-    }
-
-    return "\(wholePercent(low))–\(wholePercent(high))"
+  var weekSpreadText: String? {
+    weekSpread.map { "\(wholePercent($0.low))–\(wholePercent($0.high))" }
   }
 }
 
@@ -180,13 +127,14 @@ private struct PatternRow: View {
   var hours: String?
   let performance: ScorePerformance
   let isBest: Bool
+  let minimumAnswers: Int
 
   @Environment(\.dynamicTypeSize) private var typeSize
   @ScaledMetric(relativeTo: .subheadline) private var nameWidth = 130.0
   @ScaledMetric(relativeTo: .subheadline) private var shareWidth = 44.0
 
   private var isCounted: Bool {
-    performance.totalAnswers >= PatternVerdict<WeekdayScorePattern>.minimumAnswers
+    performance.totalAnswers >= minimumAnswers
   }
 
   var body: some View {
@@ -282,7 +230,8 @@ private struct WeekPatterns: View {
         ForEach(patterns.weekdays) { day in
           PatternRow(
             name: day.weekday.localizedTitle(), performance: day.performance,
-            isBest: day.weekday == patterns.dayVerdict.best?.weekday)
+            isBest: day.weekday == patterns.dayVerdict.best?.weekday,
+            minimumAnswers: patterns.minimumAnswers)
 
           if day.id != patterns.weekdays.last?.id {
             Divider()
@@ -312,7 +261,8 @@ private struct DayPatterns: View {
             name: String(localized: time.daypart.localizedTitle),
             hours: time.daypart.localizedTimeRange(),
             performance: time.performance,
-            isBest: time.daypart == patterns.timeVerdict.best?.daypart)
+            isBest: time.daypart == patterns.timeVerdict.best?.daypart,
+            minimumAnswers: patterns.minimumAnswers)
 
           if time.id != patterns.dayparts.last?.id {
             Divider()
@@ -369,7 +319,7 @@ struct PatternsNote: View {
     sentences.append(
       String(
         localized:
-          "A day or a time of day needs \(PatternVerdict<WeekdayScorePattern>.minimumAnswers) answers to count, so one lucky answer never makes a pattern.",
+          "A day or a time of day needs \(patterns.minimumAnswers) answers to count, so one lucky answer never makes a pattern.",
         table: "Progress", comment: "Patterns note: how many answers a day or time needs to count"))
 
     return sentences

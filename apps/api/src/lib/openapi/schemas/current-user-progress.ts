@@ -150,11 +150,47 @@ export const currentUserScoreResponseSchema = z
   })
   .meta({ id: "CurrentUserScoreResponse" });
 
+const scorePatternVerdictSchema = z
+  .object({
+    kind: z
+      .enum(["best", "even", "notEnough"])
+      .meta({
+        description:
+          "best: the strongest group (strongestWeekday for dayVerdict, strongestTime for timeVerdict) stands out from the others that count; even: the groups that count score a few points apart, so any of them works; notEnough: fewer than two groups count",
+      }),
+    points: z
+      .number()
+      .int()
+      .min(0)
+      .nullable()
+      .meta({
+        description: "For even, how many points apart they score, rounded up; null otherwise",
+      }),
+  })
+  .meta({ id: "ScorePatternVerdict" });
+
 export const currentUserScorePatternsResponseSchema = z
   .object({
     patterns: strongestScorePatternsSchema
       .extend({
+        dayVerdict: scorePatternVerdictSchema,
+        minimumAnswers: z
+          .number()
+          .int()
+          .min(1)
+          .meta({
+            description:
+              "Answers a day or a time of day needs to count, so one lucky answer never makes a pattern; one with fewer shows but doesn't count",
+          }),
+        timeVerdict: scorePatternVerdictSchema,
         times: z.array(timeScorePatternSchema).length(SCORE_DAYPART_COUNT),
+        weekSpread: z
+          .object({ high: z.number().min(0).max(100), low: z.number().min(0).max(100) })
+          .nullable()
+          .meta({
+            description:
+              "The lowest and highest score of the days that count; null while fewer than two count",
+          }),
         weekdays: z.array(weekdayScorePatternSchema).length(SCORE_WEEKDAY_COUNT),
       })
       .nullable(),

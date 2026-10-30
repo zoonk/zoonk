@@ -78,34 +78,6 @@ final class ProgressPresentationTests: XCTestCase {
     XCTAssertEqual(CalendarSteps.index(from: 14, key: .rightArrow, count: 20), 14)
     XCTAssertEqual(CalendarSteps.index(from: 10, key: .rightArrow, count: 20), 17)
   }
-
-  func testPatternsNameABestOnlyWhenItStandsOut() {
-    let best = WeekdayScorePattern.fixture(.monday, score: 90, answers: 20)
-
-    XCTAssertEqual(
-      PatternVerdict(groups: [best, .fixture(.tuesday, score: 70, answers: 20)], strongest: best),
-      .best(best))
-    XCTAssertEqual(
-      PatternVerdict(
-        groups: [best, .fixture(.tuesday, score: 86.2, answers: 20)], strongest: best),
-      .even(points: 4))
-    XCTAssertEqual(
-      PatternVerdict(groups: [best, .fixture(.tuesday, score: 20, answers: 9)], strongest: best),
-      .notEnough)
-    XCTAssertEqual(
-      PatternVerdict<WeekdayScorePattern>(groups: [best, best], strongest: nil), .notEnough)
-  }
-
-  func testWeekSpreadCoversOnlyCountedDays() {
-    let patterns = ScorePatterns(
-      dayparts: [], strongestDaypart: nil, strongestWeekday: nil,
-      weekdays: [
-        .fixture(.monday, score: 69, answers: 10), .fixture(.tuesday, score: 73, answers: 12),
-        .fixture(.wednesday, score: 10, answers: 3),
-      ])
-
-    XCTAssertEqual(patterns.weekSpread?.replacingOccurrences(of: "\u{00A0}", with: " "), "69%–73%")
-  }
 }
 
 extension LevelProgress {
@@ -116,17 +88,5 @@ extension LevelProgress {
       belt: .green, bpPerLevel: 1_000, bpToNextLevel: 1_000 - progressInLevel,
       isMaxLevel: isMaxLevel,
       level: level, nextBelt: nil, progressInLevel: progressInLevel, totalBrainPower: 3_000)
-  }
-}
-
-extension WeekdayScorePattern {
-  fileprivate static func fixture(_ weekday: ProgressWeekday, score: Double, answers: Int)
-    -> WeekdayScorePattern
-  {
-    WeekdayScorePattern(
-      performance: ScorePerformance(
-        correctAnswers: Int(Double(answers) * score / 100), incorrectAnswers: 0, score: score,
-        totalAnswers: answers),
-      weekday: weekday)
   }
 }

@@ -90,9 +90,32 @@ struct ScoreProgressPoint: Codable, Equatable, Identifiable, Sendable {
 
 struct ScorePatterns: Codable, Equatable, Sendable {
   let dayparts: [DaypartScorePattern]
+  let dayVerdict: PatternVerdict<WeekdayScorePattern>
+  let minimumAnswers: Int
   let strongestDaypart: DaypartScorePattern?
   let strongestWeekday: WeekdayScorePattern?
+  let timeVerdict: PatternVerdict<DaypartScorePattern>
   let weekdays: [WeekdayScorePattern]
+  let weekSpread: ScoreSpread?
+}
+
+enum PatternVerdict<Pattern: Codable & Equatable & Sendable>: Codable, Equatable, Sendable {
+  case best(Pattern)
+  case even(points: Int)
+  case notEnough
+
+  var best: Pattern? {
+    if case .best(let group) = self {
+      return group
+    }
+
+    return nil
+  }
+}
+
+struct ScoreSpread: Codable, Equatable, Sendable {
+  let high: Double
+  let low: Double
 }
 
 struct DaypartScorePattern: Codable, Equatable, Identifiable, Sendable {

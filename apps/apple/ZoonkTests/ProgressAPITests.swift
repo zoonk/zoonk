@@ -213,6 +213,10 @@ final class ProgressAPITests: XCTestCase {
           #"""
           {
             "patterns": {
+              "dayVerdict": { "kind": "notEnough", "points": null },
+              "minimumAnswers": 10,
+              "timeVerdict": { "kind": "best", "points": null },
+              "weekSpread": null,
               "strongestTime": {
                 "correctAnswers": 9,
                 "incorrectAnswers": 1,
@@ -254,6 +258,9 @@ final class ProgressAPITests: XCTestCase {
     XCTAssertEqual(patterns.strongestDaypart?.daypart, .morning)
     XCTAssertEqual(patterns.strongestWeekday?.weekday, .tuesday)
     XCTAssertEqual(patterns.weekdays.first?.performance.totalAnswers, 0)
+    XCTAssertEqual(patterns.dayVerdict, .notEnough)
+    XCTAssertEqual(patterns.timeVerdict.best?.daypart, .morning, "the best is the strongest time")
+    XCTAssertEqual(patterns.minimumAnswers, 10)
   }
 
   func testUnauthorizedResponseMapsToUnauthorized() async {

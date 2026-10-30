@@ -206,11 +206,31 @@ private func makeScorePatterns(
     return nil
   }
 
+  let strongestDaypart = try patterns.strongestTime.map(makeStrongestDaypartScorePattern)
+  let strongestWeekday = try patterns.strongestWeekday.map(makeStrongestWeekdayScorePattern)
+
   return ScorePatterns(
     dayparts: try patterns.times.map(makeDaypartScorePattern),
-    strongestDaypart: try patterns.strongestTime.map(makeStrongestDaypartScorePattern),
-    strongestWeekday: try patterns.strongestWeekday.map(makeStrongestWeekdayScorePattern),
-    weekdays: try patterns.weekdays.map(makeWeekdayScorePattern))
+    dayVerdict: makePatternVerdict(patterns.dayVerdict, strongest: strongestWeekday),
+    minimumAnswers: patterns.minimumAnswers,
+    strongestDaypart: strongestDaypart,
+    strongestWeekday: strongestWeekday,
+    timeVerdict: makePatternVerdict(patterns.timeVerdict, strongest: strongestDaypart),
+    weekdays: try patterns.weekdays.map(makeWeekdayScorePattern),
+    weekSpread: patterns.weekSpread.map { ScoreSpread(high: $0.high, low: $0.low) })
+}
+
+private func makePatternVerdict<Pattern>(
+  _ verdict: Components.Schemas.ScorePatternVerdict, strongest: Pattern?
+) -> PatternVerdict<Pattern> {
+  switch (verdict.kind, strongest, verdict.points) {
+  case (.best, let strongest?, _):
+    .best(strongest)
+  case (.even, _, let points?):
+    .even(points: points)
+  default:
+    .notEnough
+  }
 }
 
 private typealias GeneratedScorePatterns =

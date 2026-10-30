@@ -9,8 +9,12 @@ import { getProgressSession } from "./_utils/progress-cache";
 import { getRequestProgressDateContext } from "./get-request-date-context";
 import { type ScoreDateRange, getScoreDateRange } from "./score-date-range";
 import {
+  type PatternVerdict,
   type ScorePerformance,
+  type ScoreSpread,
+  getPatternVerdict,
   getScorePerformance,
+  getScoreSpread,
   getStrongestScorePerformance,
 } from "./score-performance";
 
@@ -19,9 +23,12 @@ export type WeekdayScorePattern = ScorePerformance & { dayOfWeek: number };
 export type TimeScorePattern = ScorePerformance & { period: number };
 
 export type ScorePatternsData = {
+  dayVerdict: PatternVerdict<WeekdayScorePattern>;
   strongestTime: TimeScorePattern | null;
   strongestWeekday: WeekdayScorePattern | null;
+  timeVerdict: PatternVerdict<TimeScorePattern>;
   times: TimeScorePattern[];
+  weekSpread: ScoreSpread | null;
   weekdays: WeekdayScorePattern[];
 };
 
@@ -169,10 +176,16 @@ async function queryScorePatterns({
     return null;
   }
 
+  const strongestTime = getStrongestScorePerformance(times);
+  const strongestWeekday = getStrongestScorePerformance(weekdays);
+
   return {
-    strongestTime: getStrongestScorePerformance(times),
-    strongestWeekday: getStrongestScorePerformance(weekdays),
+    dayVerdict: getPatternVerdict({ patterns: weekdays, strongest: strongestWeekday }),
+    strongestTime,
+    strongestWeekday,
+    timeVerdict: getPatternVerdict({ patterns: times, strongest: strongestTime }),
     times,
+    weekSpread: getScoreSpread(weekdays),
     weekdays,
   };
 }

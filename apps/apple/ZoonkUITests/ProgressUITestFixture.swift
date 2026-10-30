@@ -104,6 +104,8 @@ let progressUITestSnapshotJSON =
           }
         }
       ],
+      "dayVerdict": { "notEnough": {} },
+      "minimumAnswers": 10,
       "strongestDaypart": {
         "daypart": "morning",
         "performance": {
@@ -122,6 +124,20 @@ let progressUITestSnapshotJSON =
         },
         "weekday": "tuesday"
       },
+      "timeVerdict": {
+        "best": {
+          "_0": {
+            "daypart": "morning",
+            "performance": {
+              "correctAnswers": 20,
+              "incorrectAnswers": 2,
+              "score": 90.9,
+              "totalAnswers": 22
+            }
+          }
+        }
+      },
+      "weekSpread": null,
       "weekdays": [
         {
           "performance": { "correctAnswers": 0, "incorrectAnswers": 0, "score": 0, "totalAnswers": 0 },

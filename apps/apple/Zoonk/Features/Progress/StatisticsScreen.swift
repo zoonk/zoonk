@@ -294,7 +294,7 @@ private struct PatternsOverview: View {
             comment: "The part of the day the learner answers best"),
           value: patterns?.bestTimeName, share: patterns?.timeVerdict.best?.performance.score)
 
-        if let spread = patterns?.weekSpread {
+        if let spread = patterns?.weekSpreadText {
           Divider()
           row(
             Text(

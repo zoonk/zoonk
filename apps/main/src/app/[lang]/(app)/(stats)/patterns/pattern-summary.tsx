@@ -1,21 +1,11 @@
 import { type ScorePatternsData } from "@zoonk/core/progress/get-score-patterns";
 import { MIN_PATTERN_ANSWERS } from "@zoonk/core/progress/score-performance";
 import { getExtracted, getLocale } from "next-intl/server";
-import { type PatternVerdict, getPatternVerdict } from "./_utils/pattern-verdict";
 import { getScoreWeekdayLabel } from "./_utils/weekday";
 import { getTimePeriodNames } from "./pattern-names";
 
-export function getPatternsSummary(patterns: ScorePatternsData) {
-  return {
-    days: getPatternVerdict({ patterns: patterns.weekdays, strongest: patterns.strongestWeekday }),
-    times: getPatternVerdict({ patterns: patterns.times, strongest: patterns.strongestTime }),
-  };
-}
-
-type PatternsSummary = ReturnType<typeof getPatternsSummary>;
-
 export async function getBestDayName(
-  verdict: PatternVerdict<ScorePatternsData["weekdays"][number]>,
+  verdict: ScorePatternsData["dayVerdict"],
 ): Promise<string | null> {
   const t = await getExtracted();
   const locale = await getLocale();
@@ -30,7 +20,7 @@ export async function getBestDayName(
 }
 
 export async function getBestTimeName(
-  verdict: PatternVerdict<ScorePatternsData["times"][number]>,
+  verdict: ScorePatternsData["timeVerdict"],
 ): Promise<string | null> {
   const t = await getExtracted();
   const names = await getTimePeriodNames();
@@ -42,9 +32,9 @@ export async function getBestTimeName(
   return verdict.kind === "best" ? (names.at(verdict.best.period) ?? null) : null;
 }
 
-export async function PatternsNote({ summary }: { summary: PatternsSummary }) {
+export async function PatternsNote({ patterns }: { patterns: ScorePatternsData }) {
   const t = await getExtracted();
-  const { days, times } = summary;
+  const { dayVerdict: days, timeVerdict: times } = patterns;
 
   const sentences = [
     days.kind === "even" &&

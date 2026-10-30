@@ -151,6 +151,9 @@ describe(getScorePatterns, () => {
 
     expect(result?.strongestWeekday).toStrictEqual(result?.weekdays[1]);
     expect(result?.strongestTime).toStrictEqual(result?.times[1]);
+    expect(result?.dayVerdict).toStrictEqual({ kind: "notEnough" });
+    expect(result?.timeVerdict).toStrictEqual({ kind: "notEnough" });
+    expect(result?.weekSpread).toBeNull();
   });
 
   it("uses the learner-local date range west of UTC", async () => {

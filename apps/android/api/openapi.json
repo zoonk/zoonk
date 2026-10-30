@@ -71866,6 +71866,18 @@
                 ],
                 "additionalProperties": false
               },
+              "dayVerdict": {
+                "$ref": "#/components/schemas/ScorePatternVerdict"
+              },
+              "minimumAnswers": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991,
+                "description": "Answers a day or a time of day needs to count, so one lucky answer never makes a pattern; one with fewer shows but doesn't count"
+              },
+              "timeVerdict": {
+                "$ref": "#/components/schemas/ScorePatternVerdict"
+              },
               "times": {
                 "minItems": 4,
                 "maxItems": 4,
@@ -71912,6 +71924,28 @@
                   ],
                   "additionalProperties": false
                 }
+              },
+              "weekSpread": {
+                "nullable": true,
+                "description": "The lowest and highest score of the days that count; null while fewer than two count",
+                "type": "object",
+                "properties": {
+                  "high": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "low": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                },
+                "required": [
+                  "high",
+                  "low"
+                ],
+                "additionalProperties": false
               },
               "weekdays": {
                 "minItems": 7,
@@ -71967,7 +72001,11 @@
             "required": [
               "strongestTime",
               "strongestWeekday",
+              "dayVerdict",
+              "minimumAnswers",
+              "timeVerdict",
               "times",
+              "weekSpread",
               "weekdays"
             ],
             "additionalProperties": false
@@ -71975,6 +72013,32 @@
         },
         "required": [
           "patterns"
+        ],
+        "additionalProperties": false
+      },
+      "ScorePatternVerdict": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "best",
+              "even",
+              "notEnough"
+            ],
+            "description": "best: the strongest group (strongestWeekday for dayVerdict, strongestTime for timeVerdict) stands out from the others that count; even: the groups that count score a few points apart, so any of them works; notEnough: fewer than two groups count"
+          },
+          "points": {
+            "nullable": true,
+            "description": "For even, how many points apart they score, rounded up; null otherwise",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "kind",
+          "points"
         ],
         "additionalProperties": false
       },

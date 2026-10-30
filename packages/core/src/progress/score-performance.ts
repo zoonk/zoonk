@@ -51,6 +51,45 @@ export function getCombinedScorePerformance(
 /** Require enough observations so a single lucky answer cannot become a named pattern. */
 export const MIN_PATTERN_ANSWERS = 10;
 
+const EVEN_SPREAD_POINTS = 5;
+
+export type PatternVerdict<Pattern> =
+  | { best: Pattern; kind: "best" }
+  | { kind: "even"; points: number }
+  | { kind: "notEnough" };
+
+export type ScoreSpread = { high: number; low: number };
+
+/** Null under two groups with enough answers to count. */
+export function getScoreSpread(rows: readonly ScorePerformance[]): ScoreSpread | null {
+  const scores = rows
+    .filter((row) => row.totalAnswers >= MIN_PATTERN_ANSWERS)
+    .map((row) => row.score);
+
+  return scores.length < 2 ? null : { high: Math.max(...scores), low: Math.min(...scores) };
+}
+
+/** A lone group has nothing to be better than, and a lead of a few points is noise, not a pattern. */
+export function getPatternVerdict<Pattern extends ScorePerformance>({
+  patterns,
+  strongest,
+}: {
+  patterns: readonly Pattern[];
+  strongest: Pattern | null;
+}): PatternVerdict<Pattern> {
+  const spread = getScoreSpread(patterns);
+
+  if (!strongest || !spread) {
+    return { kind: "notEnough" };
+  }
+
+  const points = spread.high - spread.low;
+
+  return points < EVEN_SPREAD_POINTS
+    ? { kind: "even", points: Math.ceil(points) }
+    : { best: strongest, kind: "best" };
+}
+
 /** Null without enough answers; accuracy ranks first, answer volume breaks ties. */
 export function getStrongestScorePerformance<T extends ScorePerformance>(
   rows: readonly T[],

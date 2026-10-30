@@ -74,7 +74,9 @@ internal class FakeStatsApi(
 
     override suspend fun patterns(session: AuthenticatedSession): CurrentUserScorePatternsResponsePatterns =
         ApiJson.decodeFromString(
-            """{"strongestWeekday":{"correctAnswers":18,"incorrectAnswers":2,"score":90,"totalAnswers":20,"dayOfWeek":"tuesday"},
+            """{"dayVerdict":{"kind":"best","points":null},"minimumAnswers":10,"timeVerdict":{"kind":"best","points":null},
+                "weekSpread":{"high":90,"low":60},
+                "strongestWeekday":{"correctAnswers":18,"incorrectAnswers":2,"score":90,"totalAnswers":20,"dayOfWeek":"tuesday"},
                 "weekdays":[{"correctAnswers":18,"incorrectAnswers":2,"score":90,"totalAnswers":20,"dayOfWeek":"tuesday"},
                 {"correctAnswers":12,"incorrectAnswers":8,"score":60,"totalAnswers":20,"dayOfWeek":"friday"}],
                 "strongestTime":{"correctAnswers":10,"incorrectAnswers":2,"score":83.3,"totalAnswers":12,"period":"morning"},

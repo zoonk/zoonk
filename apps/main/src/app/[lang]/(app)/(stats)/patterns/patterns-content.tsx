@@ -13,22 +13,14 @@ import { getExtracted, getFormatter } from "next-intl/server";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { STAT_PAGE_TILES_CLASS, StatTilesSkeleton } from "../_components/stats-tiles";
-import { type PatternVerdict } from "./_utils/pattern-verdict";
 import { DayPatterns, WeekPatterns } from "./pattern-rows";
-import {
-  PatternsNote,
-  getBestDayName,
-  getBestTimeName,
-  getPatternsSummary,
-} from "./pattern-summary";
+import { PatternsNote, getBestDayName, getBestTimeName } from "./pattern-summary";
 
 const DASH = "–";
 
 const PERCENT = 100;
 
-type Verdict = PatternVerdict<
-  ScorePatternsData["weekdays"][number] | ScorePatternsData["times"][number]
->;
+type Verdict = ScorePatternsData["dayVerdict"] | ScorePatternsData["timeVerdict"];
 
 async function getVerdictDetail(verdict: Verdict): Promise<string> {
   const t = await getExtracted();
@@ -60,13 +52,12 @@ function TileName({ children }: { children: string | null }) {
 async function PatternTiles({ patterns }: { patterns: ScorePatternsData }) {
   const t = await getExtracted();
   const format = await getFormatter();
-  const summary = getPatternsSummary(patterns);
   const answers = patterns.weekdays.reduce((total, day) => total + day.totalAnswers, 0);
 
-  const dayName = await getBestDayName(summary.days);
-  const timeName = await getBestTimeName(summary.times);
-  const dayDetail = await getVerdictDetail(summary.days);
-  const timeDetail = await getVerdictDetail(summary.times);
+  const dayName = await getBestDayName(patterns.dayVerdict);
+  const timeName = await getBestTimeName(patterns.timeVerdict);
+  const dayDetail = await getVerdictDetail(patterns.dayVerdict);
+  const timeDetail = await getVerdictDetail(patterns.timeVerdict);
 
   return (
     <StatTiles className={STAT_PAGE_TILES_CLASS}>
@@ -106,7 +97,7 @@ export async function PatternsContent() {
     return <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("patterns").url} />;
   }
 
-  const summary = getPatternsSummary(patterns);
+  const { dayVerdict, timeVerdict } = patterns;
 
   return (
     <ProgressContent>
@@ -114,16 +105,16 @@ export async function PatternsContent() {
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
         <WeekPatterns
-          best={summary.days.kind === "best" ? summary.days.best : null}
+          best={dayVerdict.kind === "best" ? dayVerdict.best : null}
           patterns={patterns.weekdays}
         />
         <DayPatterns
-          best={summary.times.kind === "best" ? summary.times.best : null}
+          best={timeVerdict.kind === "best" ? timeVerdict.best : null}
           patterns={patterns.times}
         />
       </div>
 
-      <PatternsNote summary={summary} />
+      <PatternsNote patterns={patterns} />
     </ProgressContent>
   );
 }
