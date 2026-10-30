@@ -128,7 +128,7 @@ function EmptyThread({
 
 function GuestThread() {
   const t = useExtracted();
-  const { linkComponent: Link, loginHref } = useLessonQuestionNavigation();
+  const { loginHref } = useLessonQuestionNavigation();
 
   return (
     <Empty className="min-h-full p-6">
@@ -139,9 +139,9 @@ function GuestThread() {
         <EmptyTitle className="text-base">{t("Create a free account to ask questions")}</EmptyTitle>
       </EmptyHeader>
       <EmptyContent>
-        <Link className={buttonVariants()} href={loginHref} prefetch={false}>
+        <a className={buttonVariants()} href={loginHref}>
           {t("Create a free account")}
-        </Link>
+        </a>
       </EmptyContent>
     </Empty>
   );

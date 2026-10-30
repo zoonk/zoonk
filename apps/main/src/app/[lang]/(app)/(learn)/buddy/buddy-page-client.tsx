@@ -3,7 +3,7 @@
 import { saveBuddyAction } from "@/app/[lang]/(app)/(settings)/settings/appearance/actions";
 import { useRouter } from "@/i18n/navigation";
 import { useReportTabMissions } from "@/lib/learn/tab-missions-provider";
-import { getTutorConfig } from "@/lib/learn/tutor-config";
+import { useTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorAppLinks } from "@/lib/learn/use-tutor-app-links";
 import { useTutorCardActions } from "@/lib/learn/use-tutor-cards";
 import { useMissionLinks } from "@/lib/session/use-study-navigation";
@@ -17,7 +17,6 @@ import {
 } from "@zoonk/learn/buddy";
 import { TutorConversation } from "@zoonk/player/tutor/conversation";
 import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
 
 const HREFS: BuddyScreenHrefs = {
   energy: "/energy",
@@ -46,10 +45,7 @@ function BuddyConversation({
   const router = useRouter();
   const appLinks = useTutorAppLinks(goalId);
 
-  const tutor = useMemo(
-    () => getTutorConfig({ appLinks, buddy: null, canAsk }),
-    [appLinks, canAsk],
-  );
+  const tutor = useTutorConfig({ appLinks, buddy: null, canAsk });
 
   const question = useSearchParams().get("ask") ?? undefined;
 

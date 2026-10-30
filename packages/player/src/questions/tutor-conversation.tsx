@@ -78,16 +78,16 @@ function LoadError() {
 
 function SignUpPrompt() {
   const t = useExtracted();
-  const { linkComponent: Link, loginHref } = useLessonQuestionNavigation();
+  const { loginHref } = useLessonQuestionNavigation();
 
   return (
     <div className={cn(TUTOR_COMPOSER_FRAME_CLASS, "flex items-center gap-3 py-2 pr-2 pl-3.5")}>
       <p className="text-muted-foreground flex-1 text-sm">
         {t("Create a free account to start the conversation.")}
       </p>
-      <Link className={buttonVariants({ size: "sm" })} href={loginHref} prefetch={false}>
+      <a className={buttonVariants({ size: "sm" })} href={loginHref}>
         {t("Create a free account")}
-      </Link>
+      </a>
     </div>
   );
 }

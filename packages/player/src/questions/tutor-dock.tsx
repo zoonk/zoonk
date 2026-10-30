@@ -81,13 +81,12 @@ function DockComposer({ buddy }: { buddy: TutorBuddy }) {
 
 function DockSignUp({ buddy }: { buddy: TutorBuddy }) {
   const t = useExtracted();
-  const { linkComponent: LinkComponent, loginHref } = buddy.navigation;
+  const { loginHref } = buddy.navigation;
 
   return (
-    <LinkComponent
+    <a
       className="bg-card ring-input rounded-option text-muted-foreground hover:text-foreground flex min-h-11 items-center gap-2.5 px-2.5 text-sm ring-1 transition-colors ring-inset"
       href={loginHref}
-      prefetch={false}
     >
       <span
         aria-hidden="true"
@@ -96,7 +95,7 @@ function DockSignUp({ buddy }: { buddy: TutorBuddy }) {
         {buddy.identity.avatar}
       </span>
       {t("Create a free account to ask questions")}
-    </LinkComponent>
+    </a>
   );
 }
 

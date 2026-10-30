@@ -99,13 +99,9 @@ export function QuestionErrorAction({
 
   if (error?.kind === "authentication") {
     return (
-      <Link
-        className={buttonVariants({ className, variant: "outline" })}
-        href={loginHref}
-        prefetch={false}
-      >
+      <a className={buttonVariants({ className, variant: "outline" })} href={loginHref}>
         {t("Sign in")}
-      </Link>
+      </a>
     );
   }
 

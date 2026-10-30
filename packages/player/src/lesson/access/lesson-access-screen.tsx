@@ -93,9 +93,9 @@ function LimitReached({
         icon={<UserRoundPlusIcon aria-hidden="true" />}
         title={t("Save your progress to keep going")}
       >
-        <LinkComponent className={PRIMARY_BUTTON} href={routes.signUp}>
+        <a className={PRIMARY_BUTTON} href={routes.signUp}>
           {t("Create a free account")}
-        </LinkComponent>
+        </a>
       </AccessLayout>
     );
   }
@@ -152,12 +152,15 @@ function Unavailable({
         refusal.reason === "unauthorized" ? t("Sign in to continue") : t("Lesson not available")
       }
     >
-      <LinkComponent
-        className={PRIMARY_BUTTON}
-        href={refusal.reason === "unauthorized" ? routes.signUp : routes.exit}
-      >
-        {refusal.reason === "unauthorized" ? t("Sign in") : t("Back")}
-      </LinkComponent>
+      {refusal.reason === "unauthorized" ? (
+        <a className={PRIMARY_BUTTON} href={routes.signUp}>
+          {t("Sign in")}
+        </a>
+      ) : (
+        <LinkComponent className={PRIMARY_BUTTON} href={routes.exit}>
+          {t("Back")}
+        </LinkComponent>
+      )}
     </AccessLayout>
   );
 }

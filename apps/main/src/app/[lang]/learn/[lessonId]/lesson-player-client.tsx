@@ -8,7 +8,7 @@ import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { useLessonSessionSlots } from "@/components/session/use-lesson-session-slots";
 import { redirect, useRouter } from "@/i18n/navigation";
-import { getTutorConfig } from "@/lib/learn/tutor-config";
+import { useTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorCards } from "@/lib/learn/use-tutor-cards";
 import {
   getExampleLine,
@@ -128,10 +128,7 @@ export function LessonPlayerClient({
   const { buddy, canAsk, goalId } = tutorViewer;
   const cards = useTutorCards(goalId);
 
-  const tutor = useMemo(
-    () => getTutorConfig({ buddy, canAsk, cards, suggestions: tutorSuggestions }),
-    [buddy, canAsk, cards, tutorSuggestions],
-  );
+  const tutor = useTutorConfig({ buddy, canAsk, cards, suggestions: tutorSuggestions });
 
   const sessionSlots = useLessonSessionSlots({ buddy, session: sessionContext });
 

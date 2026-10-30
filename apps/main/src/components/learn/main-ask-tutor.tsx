@@ -1,10 +1,9 @@
 "use client";
 
-import { getTutorConfig } from "@/lib/learn/tutor-config";
+import { useTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorCards } from "@/lib/learn/use-tutor-cards";
 import { type LessonTutorConfig } from "@zoonk/player/lesson/types";
 import { AskTutor } from "@zoonk/player/tutor";
-import { useMemo } from "react";
 
 export type TutorViewer = {
   buddy: LessonTutorConfig["buddy"];
@@ -20,6 +19,6 @@ export function MainAskTutor({
   ...props
 }: Omit<React.ComponentProps<typeof AskTutor>, "tutor"> & TutorViewer) {
   const cards = useTutorCards(goalId);
-  const tutor = useMemo(() => getTutorConfig({ buddy, canAsk, cards }), [buddy, canAsk, cards]);
+  const tutor = useTutorConfig({ buddy, canAsk, cards });
   return <AskTutor {...props} tutor={tutor} />;
 }
