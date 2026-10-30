@@ -26,6 +26,7 @@ import {
   targetSound,
   togglePitch,
 } from "./keyboard-fretboard-notes";
+import { SoundAsText, useCantListen } from "./sound-as-text";
 
 type KeyboardFretboardProps = ActivityRendererProps<"keyboardFretboard">;
 
@@ -38,6 +39,7 @@ function PianoBoard(props: KeyboardFretboardProps) {
   const { content, expected, labelId, onAnswerChange, phase } = props;
   const { check, fields } = content;
   const piano = useInstrument("piano");
+  const [cantListen, setCantListen] = useCantListen();
   const [pressed, setPressed] = useState(() => initialPitches(props));
   const isChecked = phase === "checked";
   const start = targetPitches(fields.start);
@@ -73,7 +75,7 @@ function PianoBoard(props: KeyboardFretboardProps) {
           fields.byEar
             ? {
                 isRevealed: phase !== "answering",
-                onPlay: () => void piano.play(targetSound(fields.target)),
+                onPlay: cantListen ? null : () => void piano.play(targetSound(fields.target)),
               }
             : null
         }
@@ -100,6 +102,16 @@ function PianoBoard(props: KeyboardFretboardProps) {
         spokenNameOf={(midi) => spoken(spell(midi))}
         to={KEYBOARD_TO}
       />
+
+      {fields.byEar && !isChecked && (
+        <SoundAsText
+          cantListen={cantListen}
+          isAnswering={phase === "answering"}
+          notes={target.map((pitch) => spell(pitch))}
+          onCantListenChange={setCantListen}
+          soundUnavailable={piano.status === "unavailable"}
+        />
+      )}
 
       {fields.instruments.includes("guitar") && (
         <GuitarMirror isChecked={showAnswer} pitches={shown} spell={spell} />

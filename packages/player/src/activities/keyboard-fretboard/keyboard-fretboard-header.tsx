@@ -5,7 +5,7 @@ import { ActivitySoundButton } from "../_components/activity-sound-button";
 import { useChordName, useNoteNames } from "../_utils/use-music-labels";
 import { type NoteTarget } from "./keyboard-fretboard-notes";
 
-type ByEar = { isRevealed: boolean; onPlay: () => void };
+type ByEar = { isRevealed: boolean; onPlay: (() => void) | null };
 
 export function KeyboardFretboardHeader({
   byEar,
@@ -50,7 +50,7 @@ export function KeyboardFretboardHeader({
       </div>
 
       <div className="flex shrink-0 flex-wrap justify-end gap-2">
-        {byEar && (
+        {byEar?.onPlay && (
           <ActivitySoundButton onPlay={byEar.onPlay}>{t("Play the sound")}</ActivitySoundButton>
         )}
 

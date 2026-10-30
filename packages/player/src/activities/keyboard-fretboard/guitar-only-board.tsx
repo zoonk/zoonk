@@ -27,6 +27,7 @@ import {
   voicingMidis,
   voicingPitches,
 } from "./keyboard-fretboard-notes";
+import { SoundAsText, useCantListen } from "./sound-as-text";
 
 const OCTAVE = 12;
 const STRUM_GAP = 0.04;
@@ -49,6 +50,7 @@ export function GuitarOnlyBoard({
   const { display, spoken } = useNoteNames();
   const labels = useFretboardLabels();
   const guitar = useInstrument("guitar");
+  const [cantListen, setCantListen] = useCantListen();
   const { check, fields } = content;
   const isChecked = phase === "checked";
   const spell = pitchSpelling([fields.target, fields.start]);
@@ -98,7 +100,7 @@ export function GuitarOnlyBoard({
           fields.byEar
             ? {
                 isRevealed: phase !== "answering",
-                onPlay: () => void guitar.play(targetSound(fields.target)),
+                onPlay: cantListen ? null : () => void guitar.play(targetSound(fields.target)),
               }
             : null
         }
@@ -116,6 +118,16 @@ export function GuitarOnlyBoard({
         onChange={isChecked ? undefined : handleChange}
         voicing={voicing}
       />
+
+      {fields.byEar && !isChecked && (
+        <SoundAsText
+          cantListen={cantListen}
+          isAnswering={phase === "answering"}
+          notes={targetPitches(fields.target).map((pitch) => spell(pitch))}
+          onCantListenChange={setCantListen}
+          soundUnavailable={guitar.status === "unavailable"}
+        />
+      )}
 
       {!isChecked && (
         <div className="flex items-center justify-between gap-2">

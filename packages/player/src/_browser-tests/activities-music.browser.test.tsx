@@ -16,6 +16,7 @@ import {
 } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { CANT_LISTEN_TODAY } from "../lesson/use-today-choice";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
 
@@ -85,6 +86,7 @@ async function tapRhythm() {
 describe("music activities", () => {
   beforeEach(() => {
     localStorage.removeItem(DEVICE_DELAY_KEY);
+    localStorage.removeItem(CANT_LISTEN_TODAY);
   });
 
   it("keyboard: changing one note turns C major into C minor", async () => {
@@ -168,6 +170,21 @@ describe("music activities", () => {
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("2 notes", { exact: true })).toBeVisible();
+  });
+
+  it("keyboard by ear: a learner who can't listen reads its notes for the rest of the day", async () => {
+    const first = openActivity({ content: byEar, template: "keyboardFretboard" });
+    await page.getByRole("button", { name: "I can't listen now" }).click();
+    await expect.element(page.getByText("The sound plays: C, G").first()).toBeVisible();
+    await expectCount(page.getByRole("button", { name: "Play the sound" }), 0);
+
+    first.unmount();
+    openActivity({ content: byEar, template: "keyboardFretboard" });
+    await expect.element(page.getByText("The sound plays: C, G").first()).toBeVisible();
+
+    await page.getByRole("button", { name: "I can listen now" }).click();
+    await expect.element(page.getByRole("button", { name: "Play the sound" })).toBeVisible();
+    await expectCount(page.getByText("The sound plays: C, G"), 0);
   });
 
   it("keyboard by ear: naming a chord wrong shows the chord that played", async () => {

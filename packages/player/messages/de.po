@@ -1452,6 +1452,21 @@ msgctxt "f6zKAc"
 msgid "Hear it"
 msgstr "Anhören"
 
+#: src/activities/keyboard-fretboard/sound-as-text.tsx
+msgctxt "b0QQkx"
+msgid "The sound plays: {notes}"
+msgstr "Der Ton spielt: {notes}"
+
+#: src/activities/keyboard-fretboard/sound-as-text.tsx
+msgctxt "xAzh1Y"
+msgid "I can listen now"
+msgstr "Ich kann wieder zuhören"
+
+#: src/activities/keyboard-fretboard/sound-as-text.tsx
+msgctxt "K8wsFm"
+msgid "I can't listen now"
+msgstr "Ich kann gerade nicht zuhören"
+
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "6KJB-Z"
 msgid "Spot {number}: empty"

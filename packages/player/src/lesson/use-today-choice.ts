@@ -3,6 +3,8 @@
 import { useCallback, useSyncExternalStore } from "react";
 import { keep, readKept, subscribeToKept } from "../_utils/kept-on-device";
 
+export const CANT_LISTEN_TODAY = "zoonk:cant-listen-on";
+
 export const CANT_TALK_TODAY = "zoonk:cant-talk-on";
 
 export const CANT_WRITE_TODAY = "zoonk:cant-write-on";
