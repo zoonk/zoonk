@@ -369,9 +369,19 @@ struct PlanNumbersSection: View {
       label: String(
         localized: "Progress", table: "Plan", comment: "Label of the goal's progress number"),
       value: share.formatted(.percent.precision(.fractionLength(0...2))),
-      detail: String(
-        localized: "\(lessons.done) of \(lessons.total) lessons",
-        table: "Plan", comment: "Lessons studied or known of the plan's lessons"))
+      detail: studiedText(lessons.done - lessons.known))
+  }
+
+  /// Only the lessons studied: a long plan never leads with its total, which stays in the sheet,
+  /// and what the learner already knew stays in the percent and the bars.
+  private func studiedText(_ studied: Int) -> String {
+    studied == 0
+      ? String(
+        localized: "No lessons studied yet", table: "Plan",
+        comment: "Under the plan's progress percent, in a small tile, before any lesson is studied")
+      : String(
+        localized: "\(studied) lessons studied", table: "Plan",
+        comment: "Under the plan's progress percent, in a small tile: the lessons studied")
   }
 
   /// A plan without a pace (a free exam plan past its first week) shows none.

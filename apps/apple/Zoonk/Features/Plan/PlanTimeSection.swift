@@ -76,9 +76,10 @@ struct PlanTimeSection: View {
     }
   }
 
-  /// A plan without a date says when it finishes.
+  /// A plan without a date says when it finishes. The end is the saved schedule's last day, laid
+  /// out again only by a change, so once it has passed it no longer says that.
   private var finish: Text? {
-    guard let end = plan.estimate.endDate else {
+    guard let end = plan.estimate.endDate, end >= plan.today, plan.end == nil else {
       return nil
     }
 
