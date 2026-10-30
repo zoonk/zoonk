@@ -117,6 +117,20 @@ struct PlanEffect: Decodable, Equatable, Sendable {
   let unwrittenLeftOut: [UnwrittenLeftOut]?
 }
 
+struct PlanChangePreview: Decodable, Equatable, Sendable {
+  struct Feasibility: Decodable, Equatable, Sendable {
+    let coveredShare: Double
+    let fits: Bool
+    /// `exam` or `goal`.
+    let measure: String
+  }
+
+  let effect: PlanEffect?
+  let feasibility: Feasibility?
+  let ready: Bool
+  let unchanged: Bool
+}
+
 struct AppliedPlanChange: Decodable, Equatable, Identifiable, Sendable {
   let canUndo: Bool
   let effect: PlanEffect?

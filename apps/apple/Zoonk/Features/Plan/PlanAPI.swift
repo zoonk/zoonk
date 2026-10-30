@@ -30,7 +30,8 @@ protocol PlanAPIClient: Sendable {
   func setStatus(token: String, goalId: String, status: GoalStatusChange) async throws
     -> GoalStatusOutcome
   func change(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangeOutcome
-  func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanEffect?
+  /// Nil when the plan can't take the change.
+  func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangePreview?
   func undo(token: String, goalId: String, changeId: String) async throws -> Bool
   func chooseExamOption(token: String, goalId: String, group: String, subject: String)
     async throws -> PlanChangeOutcome
@@ -65,10 +66,6 @@ struct PlanChangeResult: Decodable {
     // The latest change, undone: what it says it did is what the plan no longer does.
     return change.status == "undone" ? .undone : .applied(change)
   }
-}
-
-private struct PlanChangePreview: Decodable {
-  let effect: PlanEffect?
 }
 
 private struct PlanDecision: Encodable {
@@ -223,14 +220,14 @@ struct PlanAPI: PlanAPIClient {
   }
 
   /// Doesn't save the change.
-  func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanEffect? {
+  func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangePreview?
+  {
     let (body, json) = try changeBody(edits)
 
     return try await clients.perform(token: token, body: json) { client in
       switch try await client.previewPlanChange(path: .init(goalId: goalId), body: .json(body)) {
       case .ok(let response):
-        let preview: PlanChangePreview = try PracticeJSON.recode(try response.body.json)
-        return preview.effect
+        return try PracticeJSON.recode(try response.body.json)
       case .unprocessableContent: return nil
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound

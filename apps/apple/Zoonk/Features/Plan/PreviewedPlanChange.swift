@@ -77,7 +77,7 @@ struct PreviewedPlanChange<Control: View>: View {
     }
 
     switch result {
-    case .done(let effect): preview = Preview(effect: effect)
+    case .done(let previewed): preview = Preview(effect: previewed?.effect)
     case .failed: preview = Preview(effect: nil)
     case .obsolete: break
     }

@@ -5,8 +5,8 @@ struct PlanBasesView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(PlanStore.self) private var store
   @State private var choices: [String: BaseChoice]
-  @State private var effect: PlanEffect?
-  @State private var isChecking = false
+  @State private var preview: PlanPreviewState = .checking
+  @State private var previewAttempt = 0
   @State private var recommended: BaseChoice?
   @State private var advice: Advice = .none
 
@@ -15,9 +15,17 @@ struct PlanBasesView: View {
   let plan: GoalPlan
   let bases: GoalPlan.Bases
 
+  /// A preview answers for its choices against the plan it was asked on, as main's does.
+  private struct PreviewKey: Equatable {
+    let attempt: Int
+    let choices: [String]
+    let plan: GoalPlan
+  }
+
   private enum Advice: Equatable {
     case asking
     case building
+    case failed
     case none
     case shown
   }
@@ -77,12 +85,25 @@ struct PlanBasesView: View {
           }
         case .asking:
           ProgressView()
-        case .building:
-          Text(
-            "Your plan is still being built. Try again in a moment.", tableName: "Plan",
-            comment: "Advice asked while the plan was being built"
-          )
+        case .building, .failed:
+          Group {
+            if advice == .building {
+              Text(
+                "Your plan is still being built. Try again in a moment.", tableName: "Plan",
+                comment: "Advice asked while the plan was being built")
+            } else {
+              Text(
+                "We couldn't get a recommendation.", tableName: "Plan",
+                comment: "Asking for the app's recommendation failed")
+            }
+          }
           .foregroundStyle(.secondary)
+
+          Button {
+            Task { await advise() }
+          } label: {
+            Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
+          }
         case .shown:
           if let recommended {
             Text(adviceText(recommended))
@@ -131,18 +152,31 @@ struct PlanBasesView: View {
 
       if !changed.isEmpty {
         Section {
-          if isChecking {
+          switch preview {
+          case .checking:
             Label {
               Text(
                 "Checking what changes…", tableName: "Plan", comment: "A change's preview loading")
             } icon: {
               ProgressView()
             }
-          } else if let text = planEffectText(effect, plan: plan) {
-            Text(text)
-          } else {
+          case .failed:
+            Text(
+              "We couldn't check what changes.", tableName: "Plan",
+              comment: "A change's preview failed to load")
+
+            Button {
+              previewAttempt += 1
+            } label: {
+              Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
+            }
+          case .unchanged:
             Text(
               "Your plan stays as it is.", tableName: "Plan", comment: "A preview with no change")
+          case .changes(let previewed):
+            if let text = planEffectText(previewed.effect, plan: plan) {
+              Text(text)
+            }
           }
 
           Button {
@@ -150,7 +184,7 @@ struct PlanBasesView: View {
           } label: {
             Text("Save choices", tableName: "Plan", comment: "Saves the prerequisites' choices")
           }
-          .disabled(isChecking || editor.isSaving)
+          .disabled(!preview.canSave || editor.isSaving)
         }
       }
     }
@@ -158,8 +192,13 @@ struct PlanBasesView: View {
       Text("Prerequisites", tableName: "Plan", comment: "Title of the prerequisites")
     )
     .toolbarTitleDisplayMode(.inline)
-    .task(id: changed.map { "\($0.skillId):\(choices[$0.skillId]?.rawValue ?? "")" }) {
-      await preview(changed)
+    .task(
+      id: PreviewKey(
+        attempt: previewAttempt,
+        choices: changed.map { "\($0.skillId):\(choices[$0.skillId]?.rawValue ?? "")" },
+        plan: plan)
+    ) {
+      await check(changed)
     }
   }
 
@@ -201,13 +240,20 @@ struct PlanBasesView: View {
   private func advise() async {
     advice = .asking
     let goalId = goal.id
-    let answer = await store.write { api, token in
+    let result = await store.write { api, token in
       try await api.basesAdvice(token: token, goalId: goalId)
     } changed: { _ in
       false
     }
 
-    guard case .done(let answer) = answer else {
+    let answer: PlanBasesAdvice
+
+    switch result {
+    case .done(let value): answer = value
+    case .failed:
+      advice = .failed
+      return
+    case .obsolete:
       advice = .none
       return
     }
@@ -225,25 +271,25 @@ struct PlanBasesView: View {
     }
   }
 
-  private func preview(_ changed: [GoalPlan.Bases.Item]) async {
+  private func check(_ changed: [GoalPlan.Bases.Item]) async {
+    preview = .checking
+
     guard !changed.isEmpty else {
-      effect = nil
       return
     }
 
-    isChecking = true
-    defer { isChecking = false }
-
     let goalId = goal.id
     let edits = [edit(changed)]
-    let preview = await store.write { api, token in
+    let answer = await store.write { api, token in
       try await api.preview(token: token, goalId: goalId, edits: edits)
     } changed: { _ in
       false
     }
 
-    if case .done(let previewed) = preview {
-      effect = previewed
+    switch answer {
+    case .done(let previewed): preview = PlanPreviewState(previewed)
+    case .failed: preview = .failed
+    case .obsolete: break
     }
   }
 
