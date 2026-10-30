@@ -15,7 +15,6 @@ struct MindMapsScreen: View {
         .navigationTitle(
           Text("Mind maps", tableName: "MindMaps", comment: "Title of the mind maps page")
         )
-        .toolbarTitleDisplayMode(.inlineLarge)
         .loads(list)
     }
   }
