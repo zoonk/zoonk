@@ -49,7 +49,7 @@ function BoardGrid({
   return (
     <path
       aria-hidden="true"
-      className="stroke-border"
+      className="stroke-viz-grid"
       d={[
         ...columns.map((x) => `M${x.toFixed(2)} ${topLeft.y} V${bottomRight.y}`),
         ...rows.map((y) => `M${topLeft.x} ${y.toFixed(2)} H${bottomRight.x}`),

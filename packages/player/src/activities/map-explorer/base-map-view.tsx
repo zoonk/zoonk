@@ -40,7 +40,7 @@ function MapShapes({
     <>
       {drawing.sphere && <path className="fill-viz-secondary-soft" d={drawing.sphere} />}
 
-      <g className="stroke-border" strokeLinejoin="round">
+      <g className="stroke-viz-grid" strokeLinejoin="round">
         {drawing.regions.map((region) => (
           <path
             className={REGION_CLASS[region.tone]}
@@ -65,7 +65,7 @@ function MapShapes({
 
       {drawing.insets.map((inset) => (
         <rect
-          className="stroke-border fill-none"
+          className="stroke-viz-grid fill-none"
           height={inset.height}
           key={`${inset.x}-${inset.y}`}
           strokeWidth={1}

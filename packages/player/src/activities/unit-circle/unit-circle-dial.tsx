@@ -165,7 +165,7 @@ export function UnitCircleDial({
         viewBox={`0 0 ${width} ${size}`}
         width={width}
       >
-        <g aria-hidden="true" className="stroke-border" strokeWidth={1.5}>
+        <g aria-hidden="true" className="stroke-viz-grid" strokeWidth={1.5}>
           <path
             d={`M${center.x - radius - HIT_RADIUS} ${center.y} H${center.x + radius + HIT_RADIUS}`}
           />

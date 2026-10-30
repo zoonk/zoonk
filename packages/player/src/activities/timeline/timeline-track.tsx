@@ -57,7 +57,7 @@ function TrackDrawing({
       className="pointer-events-none absolute inset-0 size-full overflow-visible"
     >
       <path
-        className="stroke-border"
+        className="stroke-viz-grid"
         d={`M${AXIS_X} ${yearToY(axis.start, axis)} V${yearToY(axis.end, axis)}`}
         strokeWidth={2}
       />
@@ -97,7 +97,7 @@ function TrackDrawing({
               </>
             )}
             <path
-              className={isGuessing ? "stroke-viz-accent" : "stroke-border"}
+              className={isGuessing ? "stroke-viz-accent" : "stroke-viz-grid"}
               d={`M${AXIS_X + DOT_RADIUS} ${dotY} L${CARD_LEFT} ${cardYs[index] ?? dotY}`}
               strokeDasharray={isGuessing ? "4 3" : undefined}
               strokeWidth={1.5}

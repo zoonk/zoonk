@@ -194,7 +194,7 @@ export function ProgressLineChart({
           {ticks.map((tick) => (
             <span
               aria-hidden="true"
-              className="bg-border absolute inset-x-0 h-px"
+              className="bg-viz-grid absolute inset-x-0 h-px"
               key={tick}
               style={{ top: `${toY({ floor, value: tick })}%` }}
             />
@@ -249,8 +249,8 @@ export function Sparkline({ values }: { values: readonly number[] }) {
 export function SampleProgressChart({ values }: { values: readonly number[] }) {
   return (
     <div aria-hidden="true" className={cn("relative h-20", MOCK_MARK_CLASS)}>
-      <span className="bg-border absolute inset-x-0 top-0 h-px" />
-      <span className="bg-border absolute inset-x-0 bottom-0 h-px" />
+      <span className="bg-viz-grid absolute inset-x-0 top-0 h-px" />
+      <span className="bg-viz-grid absolute inset-x-0 bottom-0 h-px" />
       <ChartLine floor={0} values={values} wash />
     </div>
   );

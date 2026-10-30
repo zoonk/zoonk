@@ -79,8 +79,8 @@ function StringPicker({
             className={cn(
               "relative flex h-11 cursor-pointer items-center justify-center",
               column === 1 && firstFret === 1 && "border-foreground/70 border-r-4",
-              column === 1 && firstFret > 1 && "border-border border-r-2",
-              column > 1 && "border-border border-r-2",
+              column === 1 && firstFret > 1 && "border-viz-grid border-r-2",
+              column > 1 && "border-viz-grid border-r-2",
               "has-focus-visible:ring-ring/60 has-focus-visible:rounded-md has-focus-visible:ring-[3px] has-focus-visible:ring-inset",
             )}
             key={fret ?? "muted"}
@@ -154,7 +154,7 @@ function StringRow({
           className={cn(
             "relative flex h-8 items-center justify-center",
             index === 0 && firstFret === 1 && "border-foreground/70 border-l-4",
-            "border-border border-r-2",
+            "border-viz-grid border-r-2",
           )}
           key={fret}
         >

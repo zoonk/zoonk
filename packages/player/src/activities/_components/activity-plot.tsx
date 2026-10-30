@@ -86,7 +86,7 @@ export function ActivityPlotGridY({
       {ticks.map((tick) => (
         <g key={tick}>
           <path
-            className="stroke-border"
+            className="stroke-viz-grid"
             d={`M${left} ${y.toPixel(tick)} H${right}`}
             strokeDasharray={tick === baseline ? undefined : "3 4"}
           />

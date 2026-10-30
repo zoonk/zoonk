@@ -39,7 +39,7 @@ export function TurnaroundChart({ turnaround }: { turnaround: Turnaround }) {
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       >
         <line
-          className="stroke-border"
+          className="stroke-viz-grid"
           x1={PAD}
           x2={WIDTH - PAD}
           y1={HEIGHT - PAD}

@@ -80,7 +80,7 @@ function NumberLineAxis({ baseline, fields }: { baseline: number; fields: Fields
 
   return (
     <g aria-hidden="true">
-      <path className="stroke-border" d={`M${left} ${baseline} H${right}`} strokeWidth={2} />
+      <path className="stroke-viz-grid" d={`M${left} ${baseline} H${right}`} strokeWidth={2} />
       {numberLineTicks(fields).map(({ isLabelled, value }) => (
         <g key={value}>
           <path

@@ -74,7 +74,7 @@ function Grid({ layout, unit, width }: { layout: Layout; unit: string | null; wi
     return (
       <g key={tick}>
         <line
-          className="stroke-border"
+          className="stroke-viz-grid"
           x1={PADDING.left}
           x2={width - PADDING.right}
           y1={y}

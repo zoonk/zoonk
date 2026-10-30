@@ -52,7 +52,7 @@ function MapLegend({
         <li className="flex items-center gap-1.5" key={item.key}>
           <span
             className={cn(
-              "border-border size-3 rounded-sm border",
+              "border-viz-grid size-3 rounded-sm border",
               LEGEND_CLASS[item.tone] ?? "bg-background",
             )}
           />

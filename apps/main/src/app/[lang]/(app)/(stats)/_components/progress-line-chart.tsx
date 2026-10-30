@@ -49,7 +49,7 @@ export function ProgressLineChart(props: ProgressLineChartProps) {
 }
 
 export function ProgressChartGrid() {
-  return <CartesianGrid stroke="var(--border)" vertical={false} />;
+  return <CartesianGrid stroke="var(--viz-grid)" vertical={false} />;
 }
 
 export function ProgressChartXAxis() {
@@ -108,7 +108,7 @@ export function ProgressChartTooltip<DataPoint>({
 
         return children(payload[0].payload);
       }}
-      cursor={{ stroke: "var(--border)" }}
+      cursor={{ stroke: "var(--viz-grid)" }}
       isAnimationActive={false}
     />
   );

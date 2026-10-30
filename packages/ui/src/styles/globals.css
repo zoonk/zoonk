@@ -82,6 +82,7 @@
   --color-viz-accent-soft: var(--viz-accent-soft);
   --color-viz-highlight: var(--viz-highlight);
   --color-viz-highlight-soft: var(--viz-highlight-soft);
+  --color-viz-grid: var(--viz-grid);
   --color-viz-secondary: var(--viz-secondary);
   --color-viz-secondary-soft: var(--viz-secondary-soft);
   --color-belt-white: var(--belt-white);
@@ -221,6 +222,8 @@
   --viz-highlight-soft: var(--color-amber-100);
   --viz-secondary: oklch(0.56 0.19 325);
   --viz-secondary-soft: var(--color-fuchsia-100);
+  /* Grids, axes and construction lines: as faint as a border, but never as strong as the shapes on them. */
+  --viz-grid: var(--border);
   --belt-white: var(--color-white);
   --belt-yellow: var(--color-yellow-400);
   --belt-orange: var(--color-orange-400);
@@ -275,6 +278,7 @@
     --viz-accent: var(--color-teal-800);
     --viz-highlight: var(--color-amber-800);
     --viz-secondary: var(--color-fuchsia-800);
+    --viz-grid: var(--color-neutral-500);
   }
 }
 
@@ -373,6 +377,7 @@
       --viz-accent: var(--color-teal-200);
       --viz-highlight: var(--color-amber-200);
       --viz-secondary: var(--color-fuchsia-200);
+      --viz-grid: var(--color-neutral-400);
       --belt-black: var(--color-neutral-500);
     }
   }

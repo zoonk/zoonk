@@ -90,7 +90,7 @@ function AxisWithRange({
 
   return (
     <g aria-hidden="true">
-      <path className="stroke-border" d={`M${left} ${bottom} H${right}`} strokeWidth={1.5} />
+      <path className="stroke-viz-grid" d={`M${left} ${bottom} H${right}`} strokeWidth={1.5} />
 
       {ticks.map((tick) => (
         <text
