@@ -215,7 +215,7 @@ private fun GuitarOnlyBoard(
         enabled = !props.isLocked,
     )
 
-    if (!props.isChecked) FretWindow(firstFret) { firstFret = it }
+    if (!props.isChecked) FretWindow(firstFret, enabled = !props.isLocked) { firstFret = it }
 
     if (board.showsAnswer) {
         GuitarMirror(
@@ -231,6 +231,7 @@ private fun GuitarOnlyBoard(
 @Composable
 private fun FretWindow(
     firstFret: Int,
+    enabled: Boolean,
     onMove: (Int) -> Unit,
 ) {
     // The frets run left to right in every language, so the arrows do too.
@@ -239,7 +240,7 @@ private fun FretWindow(
             val lower = stringResource(R.string.activities_music_lower_frets)
             val higher = stringResource(R.string.activities_music_higher_frets)
 
-            OutlinedIconButton(onClick = { onMove(firstFret - 1) }, enabled = firstFret > 1) {
+            OutlinedIconButton(onClick = { onMove(firstFret - 1) }, enabled = enabled && firstFret > 1) {
                 Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = lower)
             }
             Text(
@@ -248,7 +249,7 @@ private fun FretWindow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
             )
-            OutlinedIconButton(onClick = { onMove(firstFret + 1) }, enabled = firstFret < Guitar.HIGHEST_WINDOW) {
+            OutlinedIconButton(onClick = { onMove(firstFret + 1) }, enabled = enabled && firstFret < Guitar.HIGHEST_WINDOW) {
                 Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = higher)
             }
         }

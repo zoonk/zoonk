@@ -5,11 +5,13 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -23,6 +25,7 @@ import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonStepAnswer
+import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -149,6 +152,18 @@ class KeyboardFretboardFlowTest {
 
         shows("Correct!")
         assertTrue(sentNotes(), """"notes":["G2","B2","D3","G3","B3","G4"]""" in sentNotes())
+    }
+
+    @Test
+    fun theFretsStayPutWhileTheAnswerIsChecked() {
+        val gate = CompletableDeferred<Unit>()
+        harness.play(listOf(guitarChord)) { this.gate = gate }
+
+        pickFret("Fret 1, F", string = "Low E string")
+        harness.tap("Check")
+
+        rule.onNodeWithContentDescription("Higher frets").assertIsNotEnabled()
+        gate.complete(Unit)
     }
 
     @OptIn(ExperimentalTestApi::class)
