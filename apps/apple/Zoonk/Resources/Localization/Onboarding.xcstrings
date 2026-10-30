@@ -1,6 +1,10 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ (suggested)" : {
+      "comment" : "The time a day the plan suggests, among the times to pick",
+      "localizations" : {}
+    },
     "%@ a day" : {
       "comment" : "How long the learner studies each day",
       "localizations" : {
@@ -26,140 +30,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ por dia"
-          }
-        }
-      }
-    },
-    "%@ a day covers everything in depth by %@." : {
-      "comment" : "The time a day found that covers the whole goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %1$@ pro Tag behandelst du bis %2$@ alles ausführlich."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ a day covers everything in depth by %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al día estudiarás todo en profundidad antes del %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec %1$@ par jour, tu étudieras tout en profondeur d’ici le %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com %1$@ por dia, você estuda tudo a fundo até %2$@."
-          }
-        }
-      }
-    },
-    "%@ a day studies every topic, some in less depth." : {
-      "comment" : "The time a day that studies every topic",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %@ pro Tag behandelst du jedes Thema, einige davon weniger ausführlich."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al día estudiarás todos los temas, algunos con menos profundidad."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec %@ par jour, tu étudies tous les sujets, certains moins en profondeur."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com %@ por dia, você estuda todos os tópicos, alguns com menos profundidade."
-          }
-        }
-      }
-    },
-    "%@ of the plan's exam topics in depth by %@." : {
-      "comment" : "What a time a day covers of an exam: all of it, by the date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ der Prüfungsthemen im Plan bis %2$@ ausführlich behandeln."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ of the plan's exam topics in depth by %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ de los temas del examen incluidos en el plan, en profundidad antes del %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ des sujets de l’examen prévus dans le plan étudiés en profondeur d’ici le %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ dos tópicos da prova no plano, estudados a fundo até %2$@."
-          }
-        }
-      }
-    },
-    "%@ of your goal in depth by %@." : {
-      "comment" : "What a time a day covers of a goal: all of it, by the date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ deines Ziels bis %2$@ ausführlich behandeln."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ of your goal in depth by %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ de tu objetivo en profundidad antes del %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ de ton objectif étudié en profondeur d’ici le %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ da sua meta, a fundo até %2$@."
           }
         }
       }
@@ -386,151 +256,6 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld dias"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "%lld days · %@ a week" : {
-      "comment" : "How many days the learner studies and their time a week",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@days@ · %2$@ pro Woche"
-          },
-          "substitutions" : {
-            "days" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg Tag"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg Tage"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%#@days@ · %2$@ a week"
-          },
-          "substitutions" : {
-            "days" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg day"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg days"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@days@ · %2$@ a la semana"
-          },
-          "substitutions" : {
-            "days" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg día"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg días"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@days@ · %2$@ par semaine"
-          },
-          "substitutions" : {
-            "days" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg jour"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg jours"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@days@ · %2$@ por semana"
-          },
-          "substitutions" : {
-            "days" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg dia"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg dias"
-                    }
-                  }
                 }
               }
             }
@@ -2031,76 +1756,6 @@
         }
       }
     },
-    "~%@ of the plan's exam topics in depth by %@, what comes up most first." : {
-      "comment" : "What a time a day covers of an exam by its date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "~%1$@ der Prüfungsthemen im Plan bis %2$@ ausführlich behandeln, die häufigsten zuerst."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "~%1$@ of the plan's exam topics in depth by %2$@, what comes up most first."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "~%1$@ de los temas del examen incluidos en el plan, en profundidad antes del %2$@, empezando por los que más aparecen."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Environ %1$@ des sujets de l’examen prévus dans le plan étudiés en profondeur d’ici le %2$@, en commençant par les plus fréquents."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "~%1$@ dos tópicos da prova no plano, estudados a fundo até %2$@, começando pelos que mais caem."
-          }
-        }
-      }
-    },
-    "~%@ of your goal in depth by %@, what matters most first." : {
-      "comment" : "What a time a day covers of a goal by its date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "~%1$@ deines Ziels bis %2$@ ausführlich behandeln, das Wichtigste zuerst."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "~%1$@ of your goal in depth by %2$@, what matters most first."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "~%1$@ de tu objetivo en profundidad antes del %2$@, empezando por lo más importante."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "~%1$@ de ton objectif étudié en profondeur d’ici le %2$@, en commençant par le plus important."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "~%1$@ da sua meta, a fundo até %2$@, começando pelo que mais importa."
-          }
-        }
-      }
-    },
     "A couple of details make your plan fit better." : {
       "comment" : "Under the follow-up questions",
       "localizations" : {
@@ -3088,35 +2743,6 @@
         }
       }
     },
-    "Building your plan…" : {
-      "comment" : "While the plan the time question asks about is built",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir erstellen deinen Plan…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparando tu plan…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Préparation de ton plan…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criando seu plano…"
-          }
-        }
-      }
-    },
     "Cancel" : {
       "comment" : "Closes the box for pasted material\nStops changing the typed words\nStops fixing an understood fact",
       "localizations" : {
@@ -3297,6 +2923,10 @@
         }
       }
     },
+    "Choose at least one study day." : {
+      "comment" : "No study day is picked",
+      "localizations" : {}
+    },
     "Choose your buddy" : {
       "comment" : "Onboarding step",
       "localizations" : {
@@ -3471,34 +3101,39 @@
         }
       }
     },
-    "Covers everything" : {
-      "comment" : "Marks the time that covers the whole goal",
+    "Cover everything with %@ a day" : {
+      "comment" : "Picks the time a day that covers the whole goal by its date",
+      "localizations" : {}
+    },
+    "Covers about %@ of your exam topics in depth by %@, what comes up most first." : {
+      "comment" : "The share of an exam the time a day covers by its date",
       "localizations" : {
-        "de" : {
+        "en" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deckt alles ab"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo cubre todo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tout est couvert"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cobre tudo"
+            "state" : "new",
+            "value" : "Covers about %1$@ of your exam topics in depth by %2$@, what comes up most first."
           }
         }
       }
+    },
+    "Covers about %@ of your goal in depth by %@, what matters most first." : {
+      "comment" : "The share of a goal the time a day covers by its date",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers about %1$@ of your goal in depth by %2$@, what matters most first."
+          }
+        }
+      }
+    },
+    "Covers all your exam topics by %@." : {
+      "comment" : "The time a day picked covers a whole exam",
+      "localizations" : {}
+    },
+    "Covers your whole goal by %@." : {
+      "comment" : "The time a day picked covers a whole goal",
+      "localizations" : {}
     },
     "Create a free account" : {
       "comment" : "Opens sign-up; a guest's plan and progress come with them",
@@ -3819,6 +3454,10 @@
         }
       }
     },
+    "Different time on weekends" : {
+      "comment" : "Switch giving Saturday and Sunday their own study time",
+      "localizations" : {}
+    },
     "Done" : {
       "comment" : "A finished step of a wait",
       "localizations" : {
@@ -4138,64 +3777,6 @@
         }
       }
     },
-    "Estimate" : {
-      "comment" : "Header over what a time a day covers",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Schätzung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estimación"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estimation"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estimativa"
-          }
-        }
-      }
-    },
-    "Every topic" : {
-      "comment" : "Marks the time that studies every topic",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle Themen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todos los temas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tous les sujets"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todos os tópicos"
-          }
-        }
-      }
-    },
     "Exam" : {
       "comment" : "The kind of an example goal",
       "localizations" : {
@@ -4337,64 +3918,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Explicar"
-          }
-        }
-      }
-    },
-    "Find the time that covers everything" : {
-      "comment" : "Works out the time a day that covers the whole goal by its date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lernzeit für alle Themen berechnen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calcular el tiempo necesario para cubrirlo todo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trouver le temps nécessaire pour tout étudier"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Encontrar o tempo para estudar tudo"
-          }
-        }
-      }
-    },
-    "Finding the time…" : {
-      "comment" : "While the time is found",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir berechnen die Lernzeit…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando el tiempo…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calcul du temps nécessaire…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando o tempo…"
           }
         }
       }
@@ -5356,35 +4879,6 @@
         }
       }
     },
-    "Last estimate, for %@ a day" : {
-      "comment" : "Over the estimate kept for another time a day",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Letzte Schätzung für %@ pro Tag"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Última estimación, para %@ al día"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dernière estimation, pour %@ par jour"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Última estimativa, para %@ por dia"
-          }
-        }
-      }
-    },
     "Learn a topic" : {
       "comment" : "The kind of an example goal",
       "localizations" : {
@@ -5700,64 +5194,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mapeando as habilidades necessárias"
-          }
-        }
-      }
-    },
-    "Minutes a day" : {
-      "comment" : "Label of the daily study time picker",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minuten pro Tag"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minutos al día"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minutes par jour"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minutos por dia"
-          }
-        }
-      }
-    },
-    "Minutes on weekends" : {
-      "comment" : "Picks the weekend's own time a day",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minuten pro Tag am Wochenende"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minutos los fines de semana"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minutes par jour le week-end"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minutos nos fins de semana"
           }
         }
       }
@@ -6087,35 +5523,6 @@
         }
       }
     },
-    "No amount of time a day covers everything in depth by %@." : {
-      "comment" : "No time a day covers the whole goal by its date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bis %@ lässt sich nicht alles gründlich lernen, egal wie viel Zeit du täglich investierst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No hay tiempo suficiente para estudiar todo en profundidad antes de %@, por mucho que estudies cada día."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Même en y consacrant plus de temps chaque jour, tu ne pourras pas tout étudier en profondeur d’ici le %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não há tempo diário suficiente para estudar tudo a fundo até %@."
-          }
-        }
-      }
-    },
     "No date, study everything" : {
       "comment" : "Skips the goal's date",
       "localizations" : {
@@ -6315,35 +5722,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abrindo sua explicação…"
-          }
-        }
-      }
-    },
-    "Other time a day" : {
-      "comment" : "Picks any time a day the presets don't have",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Andere tägliche Lernzeit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otro tiempo al día"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Autre durée quotidienne"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Outro tempo por dia"
           }
         }
       }
@@ -7073,6 +6451,18 @@
         }
       }
     },
+    "Reach every topic with %@ a day" : {
+      "comment" : "Picks the time a day that brings every topic in by the goal's date",
+      "localizations" : {}
+    },
+    "Reaches every exam topic by %@, some in less depth." : {
+      "comment" : "The time a day brings every exam topic in",
+      "localizations" : {}
+    },
+    "Reaches every part of your goal by %@, some in less depth." : {
+      "comment" : "The time a day brings every part of a goal in",
+      "localizations" : {}
+    },
     "Read it again" : {
       "comment" : "Reads the changed words again",
       "localizations" : {
@@ -7156,35 +6546,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lendo os documentos oficiais da prova"
-          }
-        }
-      }
-    },
-    "Reading the exam's official documents first…" : {
-      "comment" : "While an exam's plan waits for its official documents",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir lesen zuerst die offiziellen Prüfungsunterlagen…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Primero estamos leyendo los documentos oficiales del examen…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lecture des documents officiels de l’examen en premier…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lendo primeiro os documentos oficiais da prova…"
           }
         }
       }
@@ -8303,6 +7664,10 @@
         }
       }
     },
+    "Study days" : {
+      "comment" : "Header over the days the learner studies",
+      "localizations" : {}
+    },
     "Study everything, even after the exam" : {
       "comment" : "Switch for an exam plan that goes on after the exam",
       "localizations" : {
@@ -9231,6 +8596,14 @@
         }
       }
     },
+    "Time a day" : {
+      "comment" : "Label of the daily study time picker",
+      "localizations" : {}
+    },
+    "Time on weekends" : {
+      "comment" : "Picks the weekend's own time a day",
+      "localizations" : {}
+    },
     "To be confirmed" : {
       "comment" : "An exam date that isn't out yet",
       "localizations" : {
@@ -9256,35 +8629,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A confirmar"
-          }
-        }
-      }
-    },
-    "To cover everything at %@ a day, move your date on the next screen." : {
-      "comment" : "How a goal whose time leaves something out covers it all",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um bei %@ täglich alles zu schaffen, verschiebe dein Zieldatum auf der nächsten Seite."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para estudiar todo dedicando %@ al día, cambia la fecha en la siguiente pantalla."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pour tout étudier à raison de %@ par jour, reporte ta date sur l’écran suivant."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para estudar tudo em %@ por dia, altere a data na próxima tela."
           }
         }
       }
@@ -9724,6 +9068,10 @@
         }
       }
     },
+    "We can't estimate a finish date for this schedule. Try more time or more study days." : {
+      "comment" : "No finish date fits the time and days picked",
+      "localizations" : {}
+    },
     "We can't help with this goal" : {
       "comment" : "A goal the app declines",
       "localizations" : {
@@ -9985,34 +9333,9 @@
         }
       }
     },
-    "We couldn't work out the time needed." : {
-      "comment" : "Finding the time that covers everything failed",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir konnten nicht berechnen, wie viel Zeit du brauchst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No hemos podido calcular el tiempo necesario."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous n’avons pas pu calculer le temps nécessaire."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não conseguimos calcular o tempo necessário."
-          }
-        }
-      }
+    "We couldn't work out the time your goal needs." : {
+      "comment" : "The time a day a goal needs couldn't be worked out",
+      "localizations" : {}
     },
     "We couldn't work out what %@ a day covers." : {
       "comment" : "What a time a day covers couldn't be read",
@@ -10042,6 +9365,10 @@
           }
         }
       }
+    },
+    "We couldn't work out when you'd finish." : {
+      "comment" : "When a goal without a date finishes couldn't be worked out",
+      "localizations" : {}
     },
     "We stopped getting updates. It may still be working." : {
       "comment" : "Why a wait stopped getting updates",
@@ -10362,6 +9689,14 @@
         }
       }
     },
+    "What it takes to cover all your exam topics by %@." : {
+      "comment" : "Why the time a day the plan suggests for an exam",
+      "localizations" : {}
+    },
+    "What it takes to cover your whole goal by %@." : {
+      "comment" : "Why the time a day the plan suggests for a goal",
+      "localizations" : {}
+    },
     "What score do you need?" : {
       "comment" : "Onboarding question for an exam goal",
       "localizations" : {
@@ -10658,35 +9993,6 @@
         }
       }
     },
-    "Which days?" : {
-      "comment" : "Opens the days of the week the learner studies",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "An welchen Tagen?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Qué días?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quels jours ?"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quais dias?"
-          }
-        }
-      }
-    },
     "Which one will you take?" : {
       "comment" : "Asks which of an exam's optional subjects the learner takes",
       "localizations" : {
@@ -10977,34 +10283,17 @@
         }
       }
     },
-    "Working out what your time covers…" : {
+    "Working out the time your goal needs…" : {
+      "comment" : "While the plan works out the time a day a goal needs",
+      "localizations" : {}
+    },
+    "Working out what %@ a day covers…" : {
       "comment" : "While the plan works out what a time a day covers",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir berechnen, was du in deiner Zeit schaffst…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando qué puedes estudiar en ese tiempo…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calcul de ce que tu peux étudier avec le temps disponible…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando o que cabe no seu tempo…"
-          }
-        }
-      }
+      "localizations" : {}
+    },
+    "Working out when you'd finish…" : {
+      "comment" : "While the plan works out when a goal without a date finishes",
+      "localizations" : {}
     },
     "Write my goal again" : {
       "comment" : "Goes back to write the goal with more detail",
@@ -11151,34 +10440,9 @@
         }
       }
     },
-    "You can change this anytime." : {
-      "comment" : "Under the time a day of a goal without a date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du kannst das jederzeit ändern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes cambiarlo cuando quieras."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux modifier ça à tout moment."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você pode mudar isso quando quiser."
-          }
-        }
-      }
+    "You finish around %@." : {
+      "comment" : "When a goal without a date finishes at the time picked",
+      "localizations" : {}
     },
     "You got a voice message. Listen and answer." : {
       "comment" : "Next to a listening question's play button",
@@ -11818,6 +11082,10 @@
         }
       }
     },
+    "Your answers are saved." : {
+      "comment" : "Shown when a goal's plan stopped building, over the way to try again",
+      "localizations" : {}
+    },
     "Your answers for this goal are cleared, and you type a goal again." : {
       "comment" : "What starting over does",
       "localizations" : {
@@ -11875,6 +11143,18 @@
           }
         }
       }
+    },
+    "Your date is close: covering everything in depth takes %@ a day." : {
+      "comment" : "The time a day covering the whole goal by its date takes",
+      "localizations" : {}
+    },
+    "Your date is too close to cover everything in depth." : {
+      "comment" : "No time a day covers the whole goal by its date",
+      "localizations" : {}
+    },
+    "Your date, %@, has passed. You can choose a new one on the next screen." : {
+      "comment" : "The goal's date has passed",
+      "localizations" : {}
     },
     "Your exam is on %@" : {
       "comment" : "An exam's date",
@@ -12226,35 +11506,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu plano organiza seu preparo até essa data."
-          }
-        }
-      }
-    },
-    "Your plan is still being built. Try again in a moment." : {
-      "comment" : "The time can't be found before the plan is built",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Plan wird noch erstellt. Versuch es gleich noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún estamos preparando tu plan. Inténtalo de nuevo dentro de un momento."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton plan est encore en cours de préparation. Réessaie dans un instant."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano ainda está sendo criado. Tente de novo em instantes."
           }
         }
       }

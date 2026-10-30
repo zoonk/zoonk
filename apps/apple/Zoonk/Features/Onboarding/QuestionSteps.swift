@@ -11,20 +11,9 @@ struct QuestionStep: View {
   let onAnswer: ([String: Any]) -> Void
 
   var body: some View {
-    Form {
+    QuestionForm(isSaving: isSaving, failed: failed) {
       content
-
-      if failed {
-        Section {
-          Text(
-            "That didn't save. Try again.", tableName: "Onboarding",
-            comment: "A change couldn't be saved"
-          )
-          .foregroundStyle(.destructive)
-        }
-      }
     }
-    .disabled(isSaving)
   }
 
   @ViewBuilder
@@ -55,11 +44,9 @@ struct QuestionStep: View {
       } else {
         LevelQuestion(subject: subject, onAnswer: onAnswer)
       }
-    case .schedule:
-      ScheduleQuestion(view: view, onAnswer: onAnswer)
     case .buddy:
       BuddyQuestion(onAnswer: onAnswer)
-    case .placement, .plan:
+    case .schedule, .placement, .plan:
       EmptyView()
     }
   }
@@ -75,6 +62,35 @@ private struct OnboardingDetail: Decodable {
   init(from decoder: Decoder) throws {
     text = try? decoder.singleValueContainer().decode(String.self)
   }
+}
+
+/// While an answer saves, the question can't change and its Continue says so.
+struct QuestionForm<Content: View>: View {
+  let isSaving: Bool
+  let failed: Bool
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    Form {
+      content
+
+      if failed {
+        Section {
+          Text(
+            "That didn't save. Try again.", tableName: "Onboarding",
+            comment: "A change couldn't be saved"
+          )
+          .foregroundStyle(.destructive)
+        }
+      }
+    }
+    .disabled(isSaving)
+    .environment(\.isSavingAnswer, isSaving)
+  }
+}
+
+extension EnvironmentValues {
+  @Entry var isSavingAnswer = false
 }
 
 struct StepHeader: View {
@@ -114,13 +130,21 @@ struct StepButtons: View {
   let onContinue: () -> Void
   var onSkip: (() -> Void)?
 
+  @Environment(\.isSavingAnswer) private var isSaving
+
   var body: some View {
     Section {
       VStack(spacing: 12) {
         Button(action: onContinue) {
-          (continueLabel
-            ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer"))
-            .frame(maxWidth: .infinity)
+          HStack(spacing: 8) {
+            if isSaving {
+              ProgressView()
+            }
+
+            continueLabel
+              ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
+          }
+          .frame(maxWidth: .infinity)
         }
         .buttonStyle(.mainAction)
         .disabled(!canContinue)

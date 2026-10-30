@@ -94,26 +94,37 @@ private struct ScheduleWeekInput: Encodable {
   }
 }
 
-/// Not `ready` while the plan is still being built.
-struct TimeAdvice: Decodable, Equatable, Sendable {
-  /// Nil for a plan with nothing to cover by.
-  let coveredShare: Double?
-  /// For an exam studying everything: when everything ends at this time, once the plan holds it.
-  let fullCourseEndDate: String?
-  /// `exam` for a share of the plan's exam topics, `goal` for one of the goal.
-  let measure: String
-  /// The plan waits for research to read the exam's official documents.
-  let readingNotice: Bool
-  let ready: Bool
-  let targetDate: String?
-  let targetDateNamedMonth: Bool
+/// An answer about the plan, which isn't `ready` while the plan is still being built.
+protocol PlanAnswer: Equatable, Sendable {
+  var ready: Bool { get }
 }
 
-/// When no time covers everything, `coreMinutes` is the time that studies every topic.
-struct TimeToCover: Decodable, Equatable, Sendable {
-  let coreMinutes: Int?
+struct TimeAdvice: PlanAnswer, Decodable {
+  /// Nil for a plan with nothing to cover by.
+  let coveredShare: Double?
+  /// When a goal without a date finishes at this time; nil when the time can't hold it all.
+  let endDate: String?
+  /// For an exam studying everything: when everything ends at this time, once the plan holds it.
+  let fullCourseEndDate: String?
+  let ready: Bool
+}
+
+struct TimeToCover: PlanAnswer, Decodable {
+  struct Suggested: Equatable, Sendable, Decodable {
+    enum Kind: String, Sendable, Decodable {
+      case everything
+      case everyTopic
+    }
+
+    let kind: Kind
+    let minutes: Int
+  }
+
+  let pastDate: Bool
   let ready: Bool
   let recommendedMinutes: Int?
+  /// The time the question starts on: what covers everything, else what reaches every topic.
+  let suggested: Suggested?
   let targetDate: String?
   let targetDateNamedMonth: Bool
 }

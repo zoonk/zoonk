@@ -1,394 +1,423 @@
 import SwiftUI
 
-/// "Find the time that covers everything" plans the goal at each time only when the learner asks, and
-/// marks the time it finds without picking it.
+/// Asked once the plan is ready: a goal with a date opens on the time the plan works out it needs,
+/// which follows the days until the learner picks their own time.
 struct ScheduleQuestion: View {
   let view: GoalOnboarding
+  let isSaving: Bool
+  let failed: Bool
   let onAnswer: ([String: Any]) -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
-  @State private var minutes: Int
-  @State private var weekendMinutes: Int?
-  @State private var days: Set<Int>
+  @State private var found = PlanAsking<ScheduleWeek, TimeToCover>()
+  @State private var advised = PlanAsking<AdviceKey, TimeAdvice>()
+  @State private var picked: Int?
   @State private var fullCourse = false
-  @State private var answer: AdviceAnswer?
-  @State private var asking = Asking.asking
-  @State private var attempt = 0
-  @State private var finding = Finding.idle
+  @State private var days: [Int]
+  @State private var weekendOn = false
+  /// The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'.
+  @State private var weekendPicked: Int?
 
-  private struct AdviceAnswer: Equatable {
-    let advice: TimeAdvice
+  private struct AdviceKey: Hashable, Sendable {
     let week: ScheduleWeek
     let minutes: Int
   }
 
-  private enum Asking {
-    case asking
-    case answered
-    case stopped
+  private struct Asked<Key: Hashable>: Hashable {
+    let key: Key
+    let enabled: Bool
+    let round: Int
   }
 
-  private enum Finding: Equatable {
-    case idle
-    case pending(ScheduleWeek)
-    case answered(ScheduleWeek, TimeToCover)
-    case building(ScheduleWeek)
-    case failed(ScheduleWeek)
-
-    var week: ScheduleWeek? {
-      switch self {
-      case .idle: nil
-      case .pending(let week), .answered(let week, _), .building(let week), .failed(let week): week
-      }
-    }
+  /// What the screen shows, worked out once per render.
+  private struct Shown {
+    let dated: Bool
+    /// The plan's ready answer for the days shown.
+    let found: TimeToCover?
+    /// That answer, else the last ready one while the days shown are asked about.
+    let lastFound: TimeToCover?
+    let minutes: Int?
+    let advice: TimeAdvice?
+    let adviceKey: AdviceKey
+    let asksAdvice: Bool
+    let line: ScheduleTime.Line
   }
 
-  private struct AskKey: Hashable {
-    let week: ScheduleWeek
-    let minutes: Int
-    let attempt: Int
-  }
-
-  /// Main's times a day.
-  private static let presets = [15, 30, 45, 60, 90, 120, 180, 240]
-  private static let everyTime =
-    Array(stride(from: 15, through: 240, by: 15))
-    + Array(stride(from: 270, through: 1440, by: 30))
-  private static let weekdays: Set<Int> = [1, 2, 3, 4, 5]
-  private static let weekend: Set<Int> = [0, 6]
-
-  init(view: GoalOnboarding, onAnswer: @escaping ([String: Any]) -> Void) {
+  init(
+    view: GoalOnboarding,
+    isSaving: Bool,
+    failed: Bool,
+    onAnswer: @escaping ([String: Any]) -> Void
+  ) {
     self.view = view
+    self.isSaving = isSaving
+    self.failed = failed
     self.onAnswer = onAnswer
-    _minutes = State(initialValue: view.recommendedMinutes)
-    let goalDays = view.goal.studyDays
-    _days = State(
-      initialValue: !goalDays.isEmpty && goalDays.count < 7 ? Set(goalDays) : Self.weekdays)
+    _days = State(initialValue: ScheduleTime.startingDays(view.goal.studyDays))
   }
 
   var body: some View {
-    let share = pickedShare
+    let shown = self.shown
+    let findKey = self.findKey
+    let findsTime = datedGuess && !days.isEmpty
 
-    StepHeader(
-      subject: nil,
-      title: Text(
-        "How much time can you study each day?", tableName: "Onboarding",
-        comment: "Onboarding question"),
-      description: nil)
+    QuestionForm(isSaving: isSaving, failed: failed) {
+      StepHeader(
+        title: Text(
+          "How much time can you study each day?", tableName: "Onboarding",
+          comment: "Onboarding question"),
+        description: nil)
 
-    Section {
-      Picker(selection: $minutes) {
-        ForEach(choices, id: \.self) { value in
-          if let note = note(for: value) {
-            Text(duration(value)).badge(note)
-              .tag(value)
-          } else {
-            Text(duration(value))
-              .tag(value)
-          }
-        }
-      } label: {
-        Text(
-          "Minutes a day", tableName: "Onboarding", comment: "Label of the daily study time picker")
-      }
-      .pickerStyle(.inline)
-      .labelsHidden()
-
-      Picker(selection: $minutes) {
-        ForEach(Self.withShown(minutes), id: \.self) { value in
-          Text(duration(value)).tag(value)
-        }
-      } label: {
-        Text(
-          "Other time a day", tableName: "Onboarding",
-          comment: "Picks any time a day the presets don't have")
-      }
-      .pickerStyle(.menu)
-    }
-
-    if dated {
-      estimate(share)
-    }
-
-    coverEverything(share)
-
-    Section {
-      DisclosureGroup {
-        ForEach(orderedDays, id: \.self) { day in
-          Toggle(
-            isOn: Binding(
-              get: { days.contains(day) },
-              set: { isOn in
-                if isOn {
-                  days.insert(day)
-                } else {
-                  days.remove(day)
-                }
-              })
-          ) {
-            Text(Calendar.current.standaloneWeekdaySymbols[day])
-          }
-        }
-
-        if studiesOnWeekends {
-          Picker(selection: weekendBinding) {
-            ForEach(Self.withShown(weekendMinutes ?? minutes), id: \.self) { value in
-              Text(duration(value)).tag(value)
-            }
-          } label: {
-            Text(
-              "Minutes on weekends", tableName: "Onboarding",
-              comment: "Picks the weekend's own time a day")
-          }
-          .pickerStyle(.menu)
-        }
-      } label: {
-        LabeledContent {
-          Text(
-            "\(days.count) days · \(duration(weeklyMinutes)) a week",
-            tableName: "Onboarding",
-            comment: "How many days the learner studies and their time a week")
-        } label: {
-          Text(
-            "Which days?", tableName: "Onboarding",
-            comment: "Opens the days of the week the learner studies")
-        }
-      }
-    }
-    .task(id: AskKey(week: week, minutes: minutes, attempt: attempt)) {
-      await ask()
-    }
-
-    StepButtons(canContinue: !days.isEmpty) {
-      var input: [String: Any] = [
-        "dailyMinutes": minutes, "question": "schedule", "timeZone": TimeZone.current.identifier,
-      ]
-
-      if days.count < 7 {
-        input["studyDays"] = days.sorted()
-      }
-
-      if let weekend = week.weekendMinutes {
-        input["weekendMinutes"] = weekend
-      }
-
-      if isExam {
-        input["fullCourse"] = studiesEverything(share)
-      }
-
-      onAnswer(input)
-    }
-  }
-
-  @ViewBuilder
-  private func estimate(_ share: (known: Bool, value: Double?)) -> some View {
-    let stopped = !share.known && asking == .stopped
-    let shown = share.known ? share.value : lastAdvice?.coveredShare
-
-    if !(share.known && share.value == nil) {
       Section {
-        if stopped {
-          VStack(alignment: .leading, spacing: 8) {
-            Text(
-              "We couldn't work out what \(duration(minutes)) a day covers.",
-              tableName: "Onboarding", comment: "What a time a day covers couldn't be read")
-            Button {
-              attempt += 1
-            } label: {
-              Text("Try again", tableName: "Onboarding", comment: "Asks again what a time covers")
-            }
-          }
+        VStack(alignment: .leading, spacing: 12) {
+          timeMenu(shown)
+          timeLine(shown)
         }
+        .keepsBeforeFold()
+        .listRowBackground(Color.clear)
+      }
 
-        if let shown, let advice = lastAdvice {
-          VStack(alignment: .leading, spacing: 10) {
-            if stopped, let last = answer?.minutes {
-              Text(
-                "Last estimate, for \(duration(last)) a day", tableName: "Onboarding",
-                comment: "Over the estimate kept for another time a day"
-              )
-              .font(.caption)
-              .foregroundStyle(.secondary)
-            }
-
-            estimateWords(advice: advice, share: shown)
-            ProgressView(value: shown)
-              .tint(.success)
-              .accessibilityHidden(true)
-          }
-          .opacity(share.known ? 1 : 0.6)
-        } else if !stopped {
-          HStack(spacing: 8) {
-            ProgressView()
-            Text(
-              "Working out what your time covers…", tableName: "Onboarding",
-              comment: "While the plan works out what a time a day covers"
-            )
-            .foregroundStyle(.secondary)
-          }
+      if isExam, goalDate(shown) != nil, showsFullCourse(shown) {
+        Section {
+          fullCourseToggle(shown)
         }
-      } header: {
-        Text("Estimate", tableName: "Onboarding", comment: "Header over what a time a day covers")
+      }
+
+      weekSection(shown)
+
+      StepButtons(canContinue: !days.isEmpty && shown.minutes != nil) {
+        submit(shown)
+      }
+    }
+    .task(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
+      await found.ask(findKey, when: findsTime) {
+        try await onboarding.timeToCover(goalID: view.goal.id, week: findKey)
+      }
+    }
+    .task(id: Asked(key: shown.adviceKey, enabled: shown.asksAdvice, round: advised.round)) {
+      let key = shown.adviceKey
+
+      await advised.ask(key, when: shown.asksAdvice) {
+        try await onboarding.timeAdvice(
+          goalID: view.goal.id, week: key.week, dailyMinutes: key.minutes)
       }
     }
   }
 
-  private func estimateWords(advice: TimeAdvice, share: Double) -> Text {
-    let percent = share.formatted(.percent.precision(.fractionLength(0)))
-    let date =
-      advice.targetDate.map {
-        PlanDate.longText($0, month: advice.targetDateNamedMonth)
-      } ?? ""
+  private var isExam: Bool { view.goal.kind == .exam }
 
-    if share >= 1 {
-      return advice.measure == "exam"
-        ? Text(
-          "\(percent) of the plan's exam topics in depth by \(date).", tableName: "Onboarding",
-          comment: "What a time a day covers of an exam: all of it, by the date")
-        : Text(
-          "\(percent) of your goal in depth by \(date).", tableName: "Onboarding",
-          comment: "What a time a day covers of a goal: all of it, by the date")
-    }
+  /// An exam takes its notice's day when the learner gave none.
+  private var datedGuess: Bool { view.goal.targetDate != nil || isExam }
 
-    return advice.measure == "exam"
-      ? Text(
-        "~\(percent) of the plan's exam topics in depth by \(date), what comes up most first.",
-        tableName: "Onboarding", comment: "What a time a day covers of an exam by its date")
-      : Text(
-        "~\(percent) of your goal in depth by \(date), what matters most first.",
-        tableName: "Onboarding", comment: "What a time a day covers of a goal by its date")
+  private var studiesOnWeekends: Bool { days.contains(where: ScheduleTime.isWeekend) }
+
+  private var weekend: Int? { studiesOnWeekends && weekendOn ? weekendPicked : nil }
+
+  private var findKey: ScheduleWeek { ScheduleTime.findWeek(days: days, weekend: weekend) }
+
+  private var shown: Shown {
+    let findKey = self.findKey
+    let lastFound = found.last(for: findKey)
+    let current = found.answer(for: findKey)
+    let dated = lastFound.map { $0.targetDate != nil } ?? datedGuess
+    let findFailed = found.status == .failed
+
+    let minutes = ScheduleTime.shownMinutes(
+      fallback: view.recommendedMinutes, first: found.first, found: lastFound, picked: picked,
+      settled: !dated || findFailed)
+
+    let adviceKey = AdviceKey(
+      week: ScheduleTime.studyWeek(
+        days: days, minutes: minutes ?? view.recommendedMinutes, weekend: weekend,
+        fullCourse: isExam && fullCourse),
+      minutes: minutes ?? view.recommendedMinutes)
+
+    let advice = advised.answer(for: adviceKey)
+
+    return Shown(
+      dated: dated, found: current, lastFound: lastFound, minutes: minutes, advice: advice,
+      adviceKey: adviceKey,
+      asksAdvice: !days.isEmpty
+        && ScheduleTime.asksAboutTime(
+          dated: dated, found: current, fullCourse: isExam && fullCourse, minutes: minutes),
+      line: ScheduleTime.line(
+        advice: advice, askFailed: advised.status == .failed, dated: dated,
+        findFailed: findFailed, found: current, hasDays: !days.isEmpty, minutes: minutes))
   }
 
-  @ViewBuilder
-  private func coverEverything(_ share: (known: Bool, value: Double?)) -> some View {
-    let shown = share.known ? share.value : lastAdvice?.coveredShare
-    let short = shown.map { $0 < 1 } ?? false
+  private func goalDate(_ shown: Shown) -> (isoDate: String, namedMonth: Bool)? {
+    guard shown.dated, let time = shown.lastFound, let targetDate = time.targetDate else {
+      return nil
+    }
 
-    if !dated {
-      Section {
-      } footer: {
-        Text(
-          "You can change this anytime.", tableName: "Onboarding",
-          comment: "Under the time a day of a goal without a date")
-      }
-    } else if shown == nil || short || (isExam && studiesEverything(share)) {
-      Section {
-        if shown == nil || short {
-          findLine
-        }
+    return (targetDate, time.targetDateNamedMonth)
+  }
 
-        if isExam, short || studiesEverything(share) {
-          Toggle(isOn: $fullCourse) {
-            Text(
-              "Study everything, even after the exam", tableName: "Onboarding",
-              comment: "Switch for an exam plan that goes on after the exam")
-            Text(fullCourseText)
-          }
-        } else if short {
+  /// Shows its last time dimmed while the time the new days need is worked out.
+  private func isStale(_ shown: Shown) -> Bool {
+    picked == nil && shown.dated && shown.found == nil && found.status != .failed
+      && shown.lastFound != nil
+  }
+
+  private func timeMenu(_ shown: Shown) -> some View {
+    let minutes = shown.minutes ?? view.recommendedMinutes
+    let suggested = ScheduleTime.suggestedMinutes(shown.found)
+
+    return Menu {
+      Picker(
+        selection: Binding(
+          get: { minutes },
+          set: {
+            picked = ScheduleTime.pickedMinutes(
+              first: found.first, found: shown.lastFound, minutes: $0)
+          })
+      ) {
+        ForEach(ScheduleTime.dailyTimes(with: minutes, suggested), id: \.self) { time in
           Text(
-            "To cover everything at \(duration(minutes)) a day, move your date on the next screen.",
-            tableName: "Onboarding",
-            comment: "How a goal whose time leaves something out covers it all"
+            time == suggested
+              ? String(
+                localized: "\(duration(time)) (suggested)", table: "Onboarding",
+                comment: "The time a day the plan suggests, among the times to pick")
+              : duration(time)
           )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .tag(time)
         }
-      }
-    }
-  }
-
-  @ViewBuilder
-  private var findLine: some View {
-    if !planReady {
-      Text(
-        answer?.advice.readingNotice == true
-          ? String(
-            localized: "Reading the exam's official documents first…", table: "Onboarding",
-            comment: "While an exam's plan waits for its official documents")
-          : String(
-            localized: "Building your plan…", table: "Onboarding",
-            comment: "While the plan the time question asks about is built")
-      )
-      .foregroundStyle(.secondary)
-    } else {
-      switch currentFinding {
-      case .idle:
-        Button {
-          Task { await find() }
-        } label: {
-          Text(
-            "Find the time that covers everything", tableName: "Onboarding",
-            comment: "Works out the time a day that covers the whole goal by its date")
-        }
-      case .pending:
-        HStack(spacing: 8) {
-          ProgressView()
-          Text("Finding the time…", tableName: "Onboarding", comment: "While the time is found")
-            .foregroundStyle(.secondary)
-        }
-      case .answered(_, let found):
-        foundWords(found)
-      case .building:
-        retryLine(
-          Text(
-            "Your plan is still being built. Try again in a moment.", tableName: "Onboarding",
-            comment: "The time can't be found before the plan is built"))
-      case .failed:
-        retryLine(
-          Text(
-            "We couldn't work out the time needed.", tableName: "Onboarding",
-            comment: "Finding the time that covers everything failed"))
-      }
-    }
-  }
-
-  private func retryLine(_ message: Text) -> some View {
-    VStack(alignment: .leading, spacing: 8) {
-      message
-        .foregroundStyle(.secondary)
-      Button {
-        Task { await find() }
       } label: {
-        Text("Try again", tableName: "Onboarding", comment: "Asks again what a time covers")
+        Text("Time a day", tableName: "Onboarding", comment: "Label of the daily study time picker")
       }
+    } label: {
+      HStack(alignment: .firstTextBaseline, spacing: 8) {
+        bigQuantity(duration(minutes))
+          .font(.largeTitle.weight(.semibold))
+          .monospacedDigit()
+          .multilineTextAlignment(.leading)
+        Image(systemName: "chevron.down")
+          .font(.title3.weight(.semibold))
+          .foregroundStyle(.secondary)
+      }
+      .foregroundStyle(isStale(shown) ? .secondary : .primary)
     }
+    .disabled(shown.minutes == nil)
+    .redacted(reason: shown.minutes == nil ? .placeholder : [])
+    .accessibilityLabel(
+      Text("Time a day", tableName: "Onboarding", comment: "Label of the daily study time picker")
+    )
+    .accessibilityValue(duration(minutes))
   }
 
-  @ViewBuilder
-  private func foundWords(_ found: TimeToCover) -> some View {
-    if let targetDate = found.targetDate {
-      let date = PlanDate.longText(targetDate, month: found.targetDateNamedMonth)
+  /// What the time shown means, why, and the way back to the suggestion; VoiceOver hears it change.
+  private func timeLine(_ shown: Shown) -> some View {
+    let failedLine = shown.line == .askFailed || shown.line == .findFailed
+    let offer = ScheduleTime.offer(found: shown.found, line: shown.line, minutes: shown.minutes)
+    let words = lineWords(shown)
 
-      if let covering = found.recommendedMinutes {
-        Text(
-          "\(duration(covering)) a day covers everything in depth by \(date).",
-          tableName: "Onboarding", comment: "The time a day found that covers the whole goal"
-        )
-        .fontWeight(.medium)
-      } else {
-        VStack(alignment: .leading, spacing: 4) {
-          Text(
-            "No amount of time a day covers everything in depth by \(date).",
-            tableName: "Onboarding", comment: "No time a day covers the whole goal by its date")
-
-          if let core = found.coreMinutes {
-            Text(
-              "\(duration(core)) a day studies every topic, some in less depth.",
-              tableName: "Onboarding", comment: "The time a day that studies every topic")
-          }
-        }
+    return VStack(alignment: .leading, spacing: 8) {
+      words
+        .font(.subheadline)
         .foregroundStyle(.secondary)
+
+      if failedLine {
+        Button {
+          if shown.line == .findFailed {
+            found.restart()
+          } else {
+            advised.restart()
+          }
+        } label: {
+          Text("Try again", tableName: "Onboarding", comment: "Asks again what a time covers")
+        }
+      } else if let offer {
+        Button {
+          picked = ScheduleTime.pickedMinutes(
+            first: found.first, found: shown.found, minutes: offer.minutes)
+        } label: {
+          offerLabel(offer)
+        }
+      }
+    }
+    .buttonStyle(.borderless)
+    .font(.subheadline.weight(.semibold))
+    .onChange(of: isBusy(shown.line) ? nil : announcement(shown)) { _, line in
+      if let line {
+        AccessibilityNotification.Announcement(line).post()
       }
     }
   }
 
-  private var fullCourseText: String {
-    let until = String(
-      localized: "Until the exam, what comes up most comes first.", table: "Onboarding",
-      comment: "What an exam plan that studies everything does before the exam")
+  private func isBusy(_ line: ScheduleTime.Line) -> Bool {
+    line == .asking || line == .working
+  }
 
-    guard fullCourse, let advice = currentAdvice, answer?.minutes == minutes,
-      let end = advice.fullCourseEndDate, let targetDate = advice.targetDate
+  private func offerLabel(_ offer: TimeToCover.Suggested) -> Text {
+    switch offer.kind {
+    case .everything:
+      Text(
+        "Cover everything with \(duration(offer.minutes)) a day", tableName: "Onboarding",
+        comment: "Picks the time a day that covers the whole goal by its date")
+    case .everyTopic:
+      Text(
+        "Reach every topic with \(duration(offer.minutes)) a day", tableName: "Onboarding",
+        comment: "Picks the time a day that brings every topic in by the goal's date")
+    }
+  }
+
+  private func lineWords(_ shown: Shown) -> Text {
+    if case .finish(let endDate) = shown.line {
+      let month = PlanDate.longText(endDate, month: true)
+
+      return Text(
+        "You finish around \(Text(month).fontWeight(.medium).foregroundStyle(.primary)).",
+        tableName: "Onboarding", comment: "When a goal without a date finishes at the time picked")
+    }
+
+    return Text(verbatim: announcement(shown))
+  }
+
+  private func announcement(_ shown: Shown) -> String {
+    let tooClose = ScheduleTime.tooClose(found: shown.found, line: shown.line).map {
+      tooCloseWords($0)
+    }
+
+    return [tooClose, statusWords(shown)].compactMap { $0 }.joined(separator: " ")
+  }
+
+  private func tooCloseWords(_ tooClose: ScheduleTime.TooClose) -> String {
+    guard let minutes = tooClose.recommendedMinutes else {
+      return String(
+        localized: "Your date is too close to cover everything in depth.", table: "Onboarding",
+        comment: "No time a day covers the whole goal by its date")
+    }
+
+    return String(
+      localized:
+        "Your date is close: covering everything in depth takes \(duration(minutes)) a day.",
+      table: "Onboarding", comment: "The time a day covering the whole goal by its date takes")
+  }
+
+  private func statusWords(_ shown: Shown) -> String? {
+    let time = duration(shown.minutes ?? view.recommendedMinutes)
+    let date = goalDate(shown).map { PlanDate.longText($0.isoDate, month: $0.namedMonth) }
+
+    switch shown.line {
+    case .everything(let suggested):
+      return date.map { date in
+        switch (suggested, isExam) {
+        case (true, true):
+          String(
+            localized: "What it takes to cover all your exam topics by \(date).",
+            table: "Onboarding", comment: "Why the time a day the plan suggests for an exam")
+        case (true, false):
+          String(
+            localized: "What it takes to cover your whole goal by \(date).", table: "Onboarding",
+            comment: "Why the time a day the plan suggests for a goal")
+        case (false, true):
+          String(
+            localized: "Covers all your exam topics by \(date).", table: "Onboarding",
+            comment: "The time a day picked covers a whole exam")
+        case (false, false):
+          String(
+            localized: "Covers your whole goal by \(date).", table: "Onboarding",
+            comment: "The time a day picked covers a whole goal")
+        }
+      }
+    case .everyTopic:
+      return date.map { date in
+        isExam
+          ? String(
+            localized: "Reaches every exam topic by \(date), some in less depth.",
+            table: "Onboarding", comment: "The time a day brings every exam topic in")
+          : String(
+            localized: "Reaches every part of your goal by \(date), some in less depth.",
+            table: "Onboarding", comment: "The time a day brings every part of a goal in")
+      }
+    case .share(let share):
+      let percent = share.formatted(.percent.precision(.fractionLength(0)))
+
+      return date.map { date in
+        isExam
+          ? String(
+            localized:
+              "Covers about \(percent) of your exam topics in depth by \(date), what comes up most first.",
+            table: "Onboarding", comment: "The share of an exam the time a day covers by its date")
+          : String(
+            localized:
+              "Covers about \(percent) of your goal in depth by \(date), what matters most first.",
+            table: "Onboarding", comment: "The share of a goal the time a day covers by its date")
+      }
+    case .pastDate:
+      return date.map { date in
+        String(
+          localized:
+            "Your date, \(date), has passed. You can choose a new one on the next screen.",
+          table: "Onboarding", comment: "The goal's date has passed")
+      }
+    case .finish(let endDate):
+      return String(
+        localized: "You finish around \(PlanDate.longText(endDate, month: true)).",
+        table: "Onboarding", comment: "When a goal without a date finishes at the time picked")
+    case .noFinish:
+      return String(
+        localized:
+          "We can't estimate a finish date for this schedule. Try more time or more study days.",
+        table: "Onboarding", comment: "No finish date fits the time and days picked")
+    case .noDays:
+      return String(
+        localized: "Choose at least one study day.", table: "Onboarding",
+        comment: "No study day is picked")
+    case .working:
+      return String(
+        localized: "Working out the time your goal needs…", table: "Onboarding",
+        comment: "While the plan works out the time a day a goal needs")
+    case .findFailed:
+      return String(
+        localized: "We couldn't work out the time your goal needs.", table: "Onboarding",
+        comment: "The time a day a goal needs couldn't be worked out")
+    case .asking:
+      return date == nil
+        ? String(
+          localized: "Working out when you'd finish…", table: "Onboarding",
+          comment: "While the plan works out when a goal without a date finishes")
+        : String(
+          localized: "Working out what \(time) a day covers…", table: "Onboarding",
+          comment: "While the plan works out what a time a day covers")
+    case .askFailed:
+      return date == nil
+        ? String(
+          localized: "We couldn't work out when you'd finish.", table: "Onboarding",
+          comment: "When a goal without a date finishes couldn't be worked out")
+        : String(
+          localized: "We couldn't work out what \(time) a day covers.", table: "Onboarding",
+          comment: "What a time a day covers couldn't be read")
+    }
+  }
+
+  /// An exam's switch shows while the time falls short, and stays while it's on.
+  private func showsFullCourse(_ shown: Shown) -> Bool {
+    let short: Bool =
+      switch shown.line {
+      case .share, .everyTopic: true
+      default: false
+      }
+
+    return short || ScheduleTime.keepsFullCourse(checked: fullCourse, line: shown.line)
+  }
+
+  private func fullCourseToggle(_ shown: Shown) -> some View {
+    Toggle(isOn: $fullCourse) {
+      Text(
+        "Study everything, even after the exam", tableName: "Onboarding",
+        comment: "Switch for an exam plan that goes on after the exam")
+
+      if fullCourse {
+        Text(fullCourseText(shown))
+      }
+    }
+    .tint(.success)
+  }
+
+  private func fullCourseText(_ shown: Shown) -> String {
+    guard let end = shown.advice?.fullCourseEndDate, let minutes = shown.minutes,
+      let date = goalDate(shown)
     else {
       return String(
         localized:
@@ -398,184 +427,95 @@ struct ScheduleQuestion: View {
 
     let finish = String(
       localized:
-        "At \(duration(minutes)) a day, you finish in \(PlanDate.longText(end, month: true)), after the exam on \(PlanDate.longText(targetDate, month: advice.targetDateNamedMonth)).",
+        "At \(duration(minutes)) a day, you finish in \(PlanDate.longText(end, month: true)), after the exam on \(PlanDate.longText(date.isoDate, month: date.namedMonth)).",
       table: "Onboarding", comment: "When an exam plan that studies everything ends")
+
+    let until = String(
+      localized: "Until the exam, what comes up most comes first.", table: "Onboarding",
+      comment: "What an exam plan that studies everything does before the exam")
 
     return "\(finish) \(until)"
   }
 
-  private var isExam: Bool { view.goal.kind == .exam }
+  private func weekSection(_ shown: Shown) -> some View {
+    Section {
+      ForEach(orderedDays, id: \.self) { day in
+        Toggle(
+          Calendar.current.standaloneWeekdaySymbols[day],
+          isOn: Binding(
+            get: { days.contains(day) },
+            set: { on in
+              days = on ? (days + [day]).sorted() : days.filter { $0 != day }
+            }))
+      }
 
-  private var dated: Bool { view.goal.targetDate != nil || isExam }
+      if studiesOnWeekends {
+        Toggle(
+          isOn: Binding(
+            get: { weekendOn },
+            set: { on in
+              weekendOn = on
+              weekendPicked = nil
+            })
+        ) {
+          Text(
+            "Different time on weekends", tableName: "Onboarding",
+            comment: "Switch giving Saturday and Sunday their own study time")
+        }
 
-  private var studiesOnWeekends: Bool { !days.isDisjoint(with: Self.weekend) }
+        if weekendOn {
+          let current = weekendPicked ?? shown.minutes ?? view.recommendedMinutes
 
-  /// The weekend's own time counts only while it differs from the weekdays'.
-  private var week: ScheduleWeek {
-    let weekend = studiesOnWeekends ? weekendMinutes.flatMap { $0 == minutes ? nil : $0 } : nil
-    return ScheduleWeek(
-      studyDays: days.sorted(), weekendMinutes: weekend, fullCourse: isExam && fullCourse)
-  }
-
-  private var findWeek: ScheduleWeek {
-    ScheduleWeek(studyDays: days.sorted(), weekendMinutes: studiesOnWeekends ? weekendMinutes : nil)
-  }
-
-  private var weekendBinding: Binding<Int> {
-    Binding(get: { weekendMinutes ?? minutes }, set: { weekendMinutes = $0 })
-  }
-
-  private var weeklyMinutes: Int {
-    days.reduce(0) { total, day in
-      total + (Self.weekend.contains(day) ? (week.weekendMinutes ?? minutes) : minutes)
+          Picker(selection: Binding(get: { current }, set: { weekendPicked = $0 })) {
+            ForEach(ScheduleTime.dailyTimes(with: current), id: \.self) { time in
+              Text(duration(time))
+                .tag(time)
+            }
+          } label: {
+            Text(
+              "Time on weekends", tableName: "Onboarding",
+              comment: "Picks the weekend's own time a day")
+          }
+          .pickerStyle(.menu)
+        }
+      }
+    } header: {
+      Text(
+        "Study days", tableName: "Onboarding", comment: "Header over the days the learner studies")
     }
-  }
-
-  private var currentAdvice: TimeAdvice? {
-    guard let answer, answer.week == week, answer.advice.ready else {
-      return nil
-    }
-
-    return answer.advice
-  }
-
-  private var lastAdvice: TimeAdvice? {
-    answer?.advice.ready == true ? answer?.advice : nil
-  }
-
-  private var currentFinding: Finding {
-    finding.week == findWeek ? finding : .idle
-  }
-
-  private var found: TimeToCover? {
-    if case .answered(_, let found) = currentFinding {
-      return found
-    }
-
-    return nil
-  }
-
-  private var pickedShare: (known: Bool, value: Double?) {
-    guard let advice = currentAdvice else {
-      return (false, nil)
-    }
-
-    if answer?.minutes == minutes {
-      return (true, advice.coveredShare)
-    }
-
-    if let found, found.recommendedMinutes == minutes {
-      return (true, 1)
-    }
-
-    return (false, nil)
-  }
-
-  private var planReady: Bool {
-    answer?.advice.ready == true || asking == .stopped
-  }
-
-  /// An exam's choice to study everything stands until the time picked is known to cover everything.
-  private func studiesEverything(_ share: (known: Bool, value: Double?)) -> Bool {
-    fullCourse && !(share.known && (share.value ?? 0) >= 1)
-  }
-
-  private var choices: [Int] {
-    Set(Self.presets + [minutes, offeredMinutes].compactMap { $0 }).sorted()
-  }
-
-  private var offeredMinutes: Int? {
-    found.flatMap { $0.recommendedMinutes ?? $0.coreMinutes }
-  }
-
-  private func note(for value: Int) -> Text? {
-    guard let found, value == offeredMinutes else {
-      return nil
-    }
-
-    return found.recommendedMinutes == nil
-      ? Text(
-        "Every topic", tableName: "Onboarding", comment: "Marks the time that studies every topic")
-      : Text(
-        "Covers everything", tableName: "Onboarding",
-        comment: "Marks the time that covers the whole goal")
+    .tint(.success)
   }
 
   private var orderedDays: [Int] {
     let first = Calendar.current.firstWeekday - 1
-    return (0..<7).map { (first + $0) % 7 }
+    return ScheduleTime.everyDay.map { (first + $0) % 7 }
   }
 
-  private static func withShown(_ minutes: Int) -> [Int] {
-    everyTime.contains(minutes) ? everyTime : (everyTime + [minutes]).sorted()
+  private func submit(_ shown: Shown) {
+    guard let minutes = shown.minutes else {
+      return
+    }
+
+    var input: [String: Any] = [
+      "dailyMinutes": minutes, "question": "schedule", "timeZone": TimeZone.current.identifier,
+    ]
+
+    if days.count < ScheduleTime.everyDay.count {
+      input["studyDays"] = days
+    }
+
+    if let weekend {
+      input["weekendMinutes"] = weekend
+    }
+
+    if isExam {
+      input["fullCourse"] = ScheduleTime.keepsFullCourse(checked: fullCourse, line: shown.line)
+    }
+
+    onAnswer(input)
   }
 
   private func duration(_ minutes: Int) -> String {
-    Duration.seconds(minutes * 60).formatted(.units(allowed: [.hours, .minutes], width: .wide))
-  }
-
-  /// The plan may still be built, so it asks until it's ready, and says so when asking keeps failing
-  /// or runs too long.
-  private func ask() async {
-    guard dated, !pickedShare.known else {
-      return
-    }
-
-    let week = week
-    let minutes = minutes
-    asking = .asking
-    var failures = 0
-
-    // About two minutes, as long as any onboarding wait.
-    for _ in 0..<40 {
-      do {
-        let advice = try await onboarding.timeAdvice(
-          goalID: view.goal.id, week: week, dailyMinutes: minutes)
-        answer = AdviceAnswer(advice: advice, week: week, minutes: minutes)
-        failures = 0
-
-        if advice.ready {
-          asking = .answered
-          return
-        }
-      } catch is CancellationError {
-        return
-      } catch {
-        failures += 1
-
-        if failures == 3 {
-          break
-        }
-      }
-
-      do {
-        try await Task.sleep(for: .seconds(3))
-      } catch {
-        return
-      }
-    }
-
-    asking = .stopped
-  }
-
-  /// Only when the learner asks.
-  private func find() async {
-    let week = findWeek
-    finding = .pending(week)
-
-    let result = try? await onboarding.timeToCover(goalID: view.goal.id, week: week)
-
-    guard finding == .pending(week) else {
-      return
-    }
-
-    switch result {
-    case .some(let time) where time.ready:
-      finding = .answered(week, time)
-    case .some:
-      finding = .building(week)
-    case nil:
-      finding = .failed(week)
-    }
+    planDurationText(minutes: Double(minutes))
   }
 }

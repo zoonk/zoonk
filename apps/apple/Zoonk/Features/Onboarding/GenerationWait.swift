@@ -205,6 +205,8 @@ enum GenerationFailure: Equatable, Sendable {
 struct GenerationWaitView<Leading: View, Trailing: View>: View {
   let title: LocalizedStringResource
   let description: LocalizedStringResource
+  /// Replaces the description once the run failed or never started.
+  var stoppedDescription: LocalizedStringResource?
   let generationID: String?
   let kind: GenerationWait.Kind
   /// Asks for the run's id while the caller doesn't have it: a run saves it a few seconds after it starts.
@@ -234,7 +236,7 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
     let runID = followedID ?? generationID
 
     List {
-      StepHeader(title: Text(title), description: Text(description))
+      StepHeader(title: Text(title), description: Text(shownDescription))
 
       leading()
 
@@ -283,6 +285,13 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
 
   private var shown: GenerationWait {
     wait ?? GenerationWait(kind: kind).started
+  }
+
+  private var shownDescription: LocalizedStringResource {
+    switch failure {
+    case .generation?, .notStarted?: stoppedDescription ?? description
+    case .connection?, nil: description
+    }
   }
 
   private enum Ending {
@@ -435,6 +444,7 @@ extension GenerationWaitView where Leading == EmptyView, Trailing == EmptyView {
   init(
     title: LocalizedStringResource,
     description: LocalizedStringResource,
+    stoppedDescription: LocalizedStringResource? = nil,
     generationID: String?,
     kind: GenerationWait.Kind,
     readGenerationID: (() async -> String?)? = nil,
@@ -442,9 +452,10 @@ extension GenerationWaitView where Leading == EmptyView, Trailing == EmptyView {
     readResult: @escaping () async -> Bool
   ) {
     self.init(
-      title: title, description: description, generationID: generationID, kind: kind,
-      readGenerationID: readGenerationID, restart: restart, readResult: readResult,
-      leading: { EmptyView() }, trailing: { EmptyView() })
+      title: title, description: description, stoppedDescription: stoppedDescription,
+      generationID: generationID, kind: kind, readGenerationID: readGenerationID,
+      restart: restart, readResult: readResult, leading: { EmptyView() },
+      trailing: { EmptyView() })
   }
 }
 

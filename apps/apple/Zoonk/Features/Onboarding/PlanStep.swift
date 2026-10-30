@@ -1,16 +1,29 @@
 import SwiftUI
 
-/// An exam's plan first waits for research to read its official documents, so the learner sees the
-/// plan they follow.
 struct PlanStep: View {
   let view: GoalOnboarding
+
+  var body: some View {
+    PlanWait(view: view) { PlanReveal(view: view, plan: $0) }
+      .navigationTitle(Text("Your plan", tableName: "Onboarding", comment: "Title of a new plan"))
+      .toolbarTitleDisplayMode(.inline)
+      // The plan heads itself, as main does; the bar keeps the title for VoiceOver.
+      .toolbar(removing: .title)
+  }
+}
+
+/// The plan reveal and the time question both wait for the plan. An exam's plan first waits for
+/// research to read its official documents, so the learner sees the plan they follow.
+struct PlanWait<Content: View>: View {
+  let view: GoalOnboarding
+  @ViewBuilder let content: (GoalPlan) -> Content
 
   @Environment(OnboardingStore.self) private var onboarding
   @Environment(PlanStore.self) private var plans
   /// Once the wait shows, reading the plan again never swaps it for a spinner.
   @State private var isWaiting = false
 
-  private static let noticeCheck = Duration.seconds(3)
+  private static var noticeCheck: Duration { .seconds(3) }
 
   var body: some View {
     let plan = plans.plan(goalId: view.goal.id)
@@ -18,7 +31,7 @@ struct PlanStep: View {
     Group {
       switch plan.value?.plan {
       case let ready? where ready.ready && ready.notice != .reading:
-        PlanReveal(view: view, plan: ready)
+        content(ready)
       case let reading? where reading.ready:
         NoticeReadingView(plan: reading)
           .task {
@@ -38,10 +51,6 @@ struct PlanStep: View {
       }
     }
     .loads(plan, refreshable: false)
-    .navigationTitle(Text("Your plan", tableName: "Onboarding", comment: "Title of a new plan"))
-    .toolbarTitleDisplayMode(.inline)
-    // The plan heads itself, as main does; the bar keeps the title for VoiceOver.
-    .toolbar(removing: .title)
   }
 
   private func building(_ plan: Resource<PlanRead>) -> some View {
@@ -51,6 +60,9 @@ struct PlanStep: View {
       description: LocalizedStringResource(
         "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
         table: "Onboarding", comment: "Shown while a goal's plan is built"),
+      stoppedDescription: LocalizedStringResource(
+        "Your answers are saved.", table: "Onboarding",
+        comment: "Shown when a goal's plan stopped building, over the way to try again"),
       generationID: view.generationId,
       kind: .curriculum,
       readGenerationID: {
