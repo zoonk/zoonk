@@ -1,5 +1,5 @@
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { openActivity } from "../_test-utils/activity-player";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
@@ -79,7 +79,15 @@ describe("dragging activity items with a finger", () => {
     await expect.element(lastSpot).toBeVisible();
     await expect.element(lastSpot).not.toBeInViewport();
 
-    await swipeUpFrom(page.getByRole("button", { name: "Put Aorta on spot 1" }), SWIPE_PX);
+    // A busy machine can deliver the flick after the hold that starts a drag; paused, the page's hold timer can't run out mid-swipe.
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+
+    try {
+      await swipeUpFrom(page.getByRole("button", { name: "Put Aorta on spot 1" }), SWIPE_PX);
+      vi.runOnlyPendingTimers();
+    } finally {
+      vi.useRealTimers();
+    }
 
     await expect.element(lastSpot).toBeInViewport();
     await expect.element(page.getByRole("button", { name: "Put Aorta on spot 1" })).toBeVisible();
