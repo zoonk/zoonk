@@ -7891,6 +7891,35 @@
         }
       }
     },
+    "Skip this question" : {
+      "comment" : "Skips a level test listening question whose message can't play yet; it doesn't count toward the level",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Frage überspringen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saltar esta pregunta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauter cette question"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pular esta pergunta"
+          }
+        }
+      }
+    },
     "Something else" : {
       "comment" : "Purpose choice",
       "localizations" : {
@@ -8680,31 +8709,31 @@
         }
       }
     },
-    "The audio didn't play. Here's what it says:" : {
-      "comment" : "Over a listening question's text when its audio failed",
+    "The audio didn't play." : {
+      "comment" : "A level test listening question's message failed to play",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Audioaufnahme konnte nicht abgespielt werden. Das wird gesagt:"
+            "value" : "Die Aufnahme wurde nicht abgespielt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El audio no se ha reproducido. Esto es lo que dice:"
+            "value" : "El audio no se ha reproducido."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’audio ne s’est pas lancé. Voici ce qu’il dit :"
+            "value" : "Le message audio n’a pas pu être lu."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O áudio não tocou. Veja o que ele diz:"
+            "value" : "O áudio não tocou."
           }
         }
       }
@@ -9144,6 +9173,35 @@
         }
       }
     },
+    "The voice message is on its way…" : {
+      "comment" : "While a level test listening question's recording is still being made",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen die Sprachnachricht…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El mensaje de voz está en camino…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le message vocal arrive…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A mensagem de voz está chegando…"
+          }
+        }
+      }
+    },
     "These goals share your daily time. You can change all of this later." : {
       "comment" : "Under several understood goals",
       "localizations" : {
@@ -9534,7 +9592,7 @@
       }
     },
     "Try again" : {
-      "comment" : "Asks again what a time covers\nLoads the goal's onboarding again\nStarts a failed run again",
+      "comment" : "Asks again what a time covers\nLoads the goal's onboarding again\nPlays a level test listening question's message again after it failed\nStarts a failed run again",
       "localizations" : {
         "de" : {
           "stringUnit" : {

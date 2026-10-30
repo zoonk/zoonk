@@ -147,8 +147,6 @@ struct LessonPicturePlaceholder: View {
   /// Pictures are drawn at 1024 by 1280, as main's default.
   static let aspectRatio: CGFloat = 4 / 5
 
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
   let alt: String?
   var saysItIsDrawing = false
   /// A picture that's downloading, or didn't load, holds still.
@@ -164,7 +162,7 @@ struct LessonPicturePlaceholder: View {
     .foregroundStyle(.secondary)
     .multilineTextAlignment(.center)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background { fill }
+    .background { MediaPendingFill(pulses: isDrawing) }
     .accessibilityElement(children: .combine)
   }
 
@@ -184,21 +182,6 @@ struct LessonPicturePlaceholder: View {
       }
     }
     .padding(12)
-  }
-
-  @ViewBuilder
-  private var fill: some View {
-    let shape = Rectangle().fill(.fill.tertiary)
-
-    if isDrawing, !reduceMotion {
-      shape.phaseAnimator([false, true]) { content, isDim in
-        content.opacity(isDim ? 0.4 : 1)
-      } animation: { _ in
-        .easeInOut(duration: 1)
-      }
-    } else {
-      shape
-    }
   }
 }
 

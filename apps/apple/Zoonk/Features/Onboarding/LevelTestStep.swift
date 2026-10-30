@@ -10,7 +10,10 @@ struct LevelTestStep: View {
   let onDone: () -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(VoiceServices.self) private var voice
   @State private var phase = Phase.loading
+  /// The player is app-wide, and another window can show the same bank question.
+  @State private var audioOwner = UUID()
   @State private var levels: [LevelTest.Level] = []
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
@@ -41,6 +44,7 @@ struct LevelTestStep: View {
       case .question(let question, let number, let progress):
         questionScreen(question, number: number, progress: progress)
           .id(question.id)
+          .task(id: question.id) { await waitForAudio(question) }
       case .speaking(let sentence, let progress):
         LevelTestSpeaking(
           goalID: goalID, sentence: sentence, progress: progress, onTest: show,
@@ -101,6 +105,10 @@ struct LevelTestStep: View {
     -> some View
   {
     let isListening = question.skill == .listening
+    let owner = AnyHashable([audioOwner.uuidString, question.id])
+    let audioFailed = if case .failed = voice.player.state(for: owner) { true } else { false }
+    // A message the learner can't hear yet is skipped: answering it would move their level.
+    let skips = isListening && (question.audioPending || audioFailed)
     var shown = PracticeQuestion(
       itemId: question.id, format: .multipleChoice, question: question.question,
       options: question.options)
@@ -109,21 +117,40 @@ struct LevelTestStep: View {
 
     return PlacementQuestionScreen(
       number: number, progress: progress, question: shown,
-      dontKnowLabel: isListening
+      dontKnowLabel: skips
         ? LocalizedStringResource(
-          "I didn't understand the audio", table: "Onboarding",
-          comment: "Answers a listening question of the level test without guessing")
-        : LocalizedStringResource(
-          "I don't know yet", table: "Onboarding",
-          comment: "Answers a placement question without guessing"),
+          "Skip this question", table: "Onboarding",
+          comment:
+            "Skips a level test listening question whose message can't play yet; it doesn't count toward the level"
+        )
+        : isListening
+          ? LocalizedStringResource(
+            "I didn't understand the audio", table: "Onboarding",
+            comment: "Answers a listening question of the level test without guessing")
+          : LocalizedStringResource(
+            "I don't know yet", table: "Onboarding",
+            comment: "Answers a placement question without guessing"),
       isSaving: isSaving, failed: failed,
-      onAnswer: { answer(question, with: $0) },
+      onAnswer: { answer(question, with: $0, skips: skips) },
       onStop: { phase = .done },
       media: {
         if isListening {
-          ListeningMessage(text: question.passage, language: targetLanguage)
+          ListeningMessage(question: question, language: targetLanguage, owner: owner)
         }
       })
+  }
+
+  private func waitForAudio(_ question: LevelTest.Question) async {
+    guard question.audioPending,
+      let shown = try? await question.waitingForAudio(read: {
+        try await onboarding.levelTest(goalID: goalID)
+      }),
+      case .question(let current, let number, let progress) = phase, current.id == shown.id
+    else {
+      return
+    }
+
+    phase = .question(shown, number: number, progress: progress)
   }
 
   /// Without answers it starts from its intro, and only the learner's Start asks for questions.
@@ -188,7 +215,7 @@ struct LevelTestStep: View {
     }
   }
 
-  private func answer(_ question: LevelTest.Question, with answer: PracticeAnswer) {
+  private func answer(_ question: LevelTest.Question, with answer: PracticeAnswer, skips: Bool) {
     guard !isSaving else {
       return
     }
@@ -205,10 +232,11 @@ struct LevelTestStep: View {
           case .choice(let index): index
           default: nil
           }
+        let skipped = if skips, case .dontKnow = answer { true } else { false }
 
         show(
           try await onboarding.answerLevelTest(
-            goalID: goalID, questionID: question.id, answerIndex: index,
+            goalID: goalID, questionID: question.id, answerIndex: index, skipped: skipped,
             duration: shownAt.duration(to: .now)))
       } catch is CancellationError {
       } catch {
@@ -236,6 +264,46 @@ struct LevelTestStep: View {
         failed = true
       }
     }
+  }
+}
+
+extension LevelTest.Question {
+  /// Main's wait for a listening message the bank's run is still voicing: reads the test every few
+  /// seconds until the clip comes or can't (the run stopped making it, or three reads in a row failed
+  /// or showed another question). Without a clip, the play button asks for one.
+  @MainActor
+  func waitingForAudio(
+    every interval: Duration = .seconds(3), read: @MainActor () async throws -> LevelTest
+  ) async throws -> Self {
+    var failures = 0
+
+    while failures < 3 {
+      try await Task.sleep(for: interval)
+
+      do {
+        let shown = try await read().next?.question
+
+        // The API's first read after an answer can still show the question before it.
+        guard let shown, shown.id == id else {
+          failures += 1
+          continue
+        }
+
+        guard shown.audioPending else {
+          return shown
+        }
+
+        failures = 0
+      } catch is CancellationError {
+        throw CancellationError()
+      } catch {
+        failures += 1
+      }
+    }
+
+    var shown = self
+    shown.audioPending = false
+    return shown
   }
 }
 
@@ -331,95 +399,162 @@ private struct LevelTestIntro: View {
   }
 }
 
-/// Read a little slower than normal, so the test isn't one of catching fast speech.
+/// Read a little slower than normal, so the test isn't one of catching fast speech. A stored clip
+/// plays as it is; without one, the tap asks for it.
 private struct ListeningMessage: View {
-  let text: String
+  let question: LevelTest.Question
   let language: String
+  let owner: AnyHashable
 
   @Environment(VoiceServices.self) private var voice
-  @State private var owner = UUID()
   @State private var played = false
 
   var body: some View {
     let state = voice.player.state(for: owner)
+    let isWaiting = question.audioPending
 
     VStack(alignment: .leading, spacing: 12) {
-      HStack(spacing: 12) {
-        Button {
-          if state == .loading || state == .playing {
-            voice.player.stop(owner: owner)
-          } else {
-            played = true
-            Task {
-              await voice.player.play(.text(text, language: language), rate: 0.9, owner: owner)
-            }
-          }
-        } label: {
-          Label {
-            if state == .loading || state == .playing {
-              Text(
-                "Stop the message", tableName: "Onboarding",
-                comment: "Stops a listening question's message while it loads or plays")
-            } else if played {
-              Text(
-                "Play the message again", tableName: "Onboarding",
-                comment: "Plays a listening question's message again")
-            } else {
-              Text(
-                "Play the message", tableName: "Onboarding",
-                comment: "Plays a listening question's message")
-            }
-          } icon: {
-            switch state {
-            case .loading:
-              ProgressView()
-            case .playing:
-              Image(systemName: "stop.fill")
-            case .idle, .failed:
-              Image(systemName: "play.fill")
-            }
-          }
-          .labelStyle(.iconOnly)
-          .frame(width: 28, height: 28)
-        }
-        .buttonStyle(.mainAction)
-        .buttonBorderShape(.circle)
-        .controlSize(.large)
+      // Both stay laid out, so the panel keeps its size when the clip arrives.
+      ZStack {
+        playRow(state)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .opacity(isWaiting ? 0 : 1)
+          .allowsHitTesting(!isWaiting)
+          .accessibilityHidden(isWaiting)
 
-        Label {
-          state == .loading
-            ? Text(
-              "Getting the message ready. The first time can take a few seconds.",
-              tableName: "Onboarding", comment: "While a listening question's message loads")
-            : Text(
-              "You got a voice message. Listen and answer.", tableName: "Onboarding",
-              comment: "Next to a listening question's play button")
-        } icon: {
-          Image(systemName: "headphones")
-        }
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        waitingNote
+          .opacity(isWaiting ? 1 : 0)
+          .accessibilityHidden(!isWaiting)
       }
 
       if case .failed(let limit) = state {
-        if let limit {
-          HelpLimitNotice(limit: limit)
-        } else {
-          Text(
-            "The audio didn't play. Here's what it says:", tableName: "Onboarding",
-            comment: "Over a listening question's text when its audio failed"
-          )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-        }
-
-        Text(text)
+        failedNote(limit)
       }
     }
     .padding()
     .frame(maxWidth: .infinity, alignment: .leading)
+    .background {
+      if isWaiting {
+        MediaPendingFill()
+      }
+    }
     .background(.background, in: .rect(cornerRadius: 16))
+    .clipShape(.rect(cornerRadius: 16))
     .onDisappear { voice.player.stop(owner: owner) }
+  }
+
+  private func playRow(_ state: SpeechPlayer.State) -> some View {
+    HStack(spacing: 12) {
+      Button {
+        if state == .loading || state == .playing {
+          voice.player.stop(owner: owner)
+        } else {
+          play()
+        }
+      } label: {
+        Label {
+          if state == .loading || state == .playing {
+            Text(
+              "Stop the message", tableName: "Onboarding",
+              comment: "Stops a listening question's message while it loads or plays")
+          } else if played {
+            Text(
+              "Play the message again", tableName: "Onboarding",
+              comment: "Plays a listening question's message again")
+          } else {
+            Text(
+              "Play the message", tableName: "Onboarding",
+              comment: "Plays a listening question's message")
+          }
+        } icon: {
+          switch state {
+          case .loading:
+            ProgressView()
+          case .playing:
+            Image(systemName: "stop.fill")
+          case .idle, .failed:
+            Image(systemName: "play.fill")
+          }
+        }
+        .labelStyle(.iconOnly)
+        .frame(width: 28, height: 28)
+      }
+      .buttonStyle(.mainAction)
+      .buttonBorderShape(.circle)
+      .controlSize(.large)
+
+      Label {
+        state == .loading
+          ? Text(
+            "Getting the message ready. The first time can take a few seconds.",
+            tableName: "Onboarding", comment: "While a listening question's message loads")
+          : Text(
+            "You got a voice message. Listen and answer.", tableName: "Onboarding",
+            comment: "Next to a listening question's play button")
+      } icon: {
+        Image(systemName: "headphones")
+          .accessibilityHidden(true)
+      }
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+    }
+  }
+
+  private var waitingNote: some View {
+    VStack(spacing: 8) {
+      Image(systemName: "headphones")
+        .accessibilityHidden(true)
+
+      Text(
+        "The voice message is on its way…", tableName: "Onboarding",
+        comment: "While a level test listening question's recording is still being made")
+    }
+    .font(.subheadline)
+    .foregroundStyle(.secondary)
+    .multilineTextAlignment(.center)
+    .frame(maxWidth: .infinity)
+    .accessibilityElement(children: .combine)
+  }
+
+  private func failedNote(_ limit: HelpLimit?) -> some View {
+    let canRetry = if case .slowDown? = limit { true } else { limit == nil }
+
+    return VStack(alignment: .leading, spacing: 8) {
+      if let limit {
+        HelpLimitNotice(limit: limit)
+      } else {
+        Text(
+          "The audio didn't play.", tableName: "Onboarding",
+          comment: "A level test listening question's message failed to play"
+        )
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+      }
+
+      if canRetry {
+        Button(action: play) {
+          Label {
+            Text(
+              "Try again", tableName: "Onboarding",
+              comment: "Plays a level test listening question's message again after it failed")
+          } icon: {
+            Image(systemName: "arrow.counterclockwise")
+          }
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+      }
+    }
+  }
+
+  private func play() {
+    played = true
+
+    Task {
+      await voice.player.play(
+        .word(question.passage, recording: question.audio?.url, language: language), rate: 0.9,
+        owner: owner, fallback: (question.passage, language))
+    }
   }
 }
 

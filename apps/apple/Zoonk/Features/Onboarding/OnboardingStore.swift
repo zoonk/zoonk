@@ -355,11 +355,13 @@ final class OnboardingStore {
     goalID: String,
     questionID: String,
     answerIndex: Int?,
+    skipped: Bool,
     duration: Duration
   ) async throws -> LevelTest {
     let input = Components.Schemas.LanguageLevelTestAnswerInput(
       answerIndex: answerIndex,
-      durationMs: Int(duration.components.seconds * 1000), questionId: questionID)
+      durationMs: Int(duration.components.seconds * 1000), questionId: questionID,
+      skipped: skipped ? true : nil)
 
     return try await cache.onboardingWrite { [api] identity in
       try await api.answerLevelTest(input, goalID: goalID, token: identity.bearerToken)

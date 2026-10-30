@@ -232,12 +232,20 @@ struct LevelTest: Decodable, Equatable, Sendable {
   }
 
   struct Question: Decodable, Equatable, Sendable {
+    struct Audio: Decodable, Equatable, Sendable {
+      let url: URL
+    }
+
     let id: String
     let options: [String]
     /// The text a reading question shows, or the message a listening one plays.
     let passage: String
     let question: String
     let skill: Skill
+    /// A listening message's stored clip.
+    let audio: Audio?
+    /// The bank's run may still be voicing the message.
+    var audioPending: Bool
   }
 
   struct Sentence: Decodable, Equatable, Sendable {
