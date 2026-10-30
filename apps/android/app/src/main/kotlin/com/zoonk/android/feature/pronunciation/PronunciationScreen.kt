@@ -82,9 +82,7 @@ import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberRecordTap
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.withoutFailure
-import com.zoonk.android.feature.player.BarColumn
 import com.zoonk.android.feature.player.LessonColumn
-import com.zoonk.android.feature.player.TaskActions
 import com.zoonk.android.feature.player.segmentParts
 import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.navigation.AppNavigator
@@ -97,6 +95,8 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -233,7 +233,7 @@ private fun WordStep(
             }
         },
         bottomBar = {
-            BarColumn {
+            TaskActionBar {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     if (round.finishFailed) SaveFailed(onRetry = model::finish)
                     WordActions(round, step, model, status, tapRecord)
@@ -548,7 +548,7 @@ private fun RoundEnd(
         modifier = Modifier.taskKeys(onEnter = onDone, onEscape = onDone),
         title = { Text(stringResource(R.string.pronunciation_title)) },
         bottomBar = {
-            BarColumn {
+            TaskActionBar {
                 TaskActions { width -> Button(onClick = onDone, modifier = width) { Text(stringResource(R.string.pronunciation_done)) } }
             }
         },

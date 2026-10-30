@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -63,7 +61,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
@@ -101,6 +98,8 @@ import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.OutlinedIconButton
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.LearnerSummaryBuddy
@@ -133,14 +132,6 @@ internal fun LessonColumn(
 
 private val COLUMN_WIDTH = 640.dp
 private val COLUMN_PADDING = 20.dp
-
-/** The action bar's actions line up with the column above them. */
-@Composable
-internal fun BarColumn(content: @Composable () -> Unit) {
-    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        Box(Modifier.widthIn(max = COLUMN_WIDTH - COLUMN_PADDING * 2).fillMaxWidth()) { content() }
-    }
-}
 
 @Composable
 fun LessonPlayer(
@@ -238,16 +229,16 @@ fun LessonPlayer(
                 }
 
                 state.phase == LessonPhase.Completed && ownEnd != null -> {
-                    { BarColumn { DoneAction(ownEnd, saving = state.completion?.status == CompletionStatus.Saving) } }
+                    { TaskActionBar { DoneAction(ownEnd, saving = state.completion?.status == CompletionStatus.Saving) } }
                 }
 
                 state.phase == LessonPhase.Completed -> {
-                    { BarColumn { CompletionActions(lesson, state, ending, viewModel, exits) } }
+                    { TaskActionBar { CompletionActions(lesson, state, ending, viewModel, exits) } }
                 }
 
                 screen.primary != null -> {
                     {
-                        BarColumn {
+                        TaskActionBar {
                             ActionBar(screen, actions, language.prompt, onBack = { viewModel.dispatch(LessonAction.GoBack) }) {
                                 // A screen that already offers help keeps the ask quiet.
                                 ask?.invoke(state.tutorScope(screen), state.showsMiss(screen) && screen.struggleOffer == null)
@@ -563,21 +554,6 @@ private fun ActionBar(
         }
         ask()
     }
-}
-
-/**
- * Main's task actions: across the bar on narrower windows, at its end on wide ones. Each button
- * takes the content's `width`: a share of the bar, or as wide as its label.
- */
-@Composable
-internal fun TaskActions(content: @Composable RowScope.(width: Modifier) -> Unit) {
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp, if (wide) Alignment.End else Alignment.Start),
-        verticalAlignment = Alignment.CenterVertically,
-    ) { content(if (wide) Modifier.widthIn(min = 160.dp) else Modifier.weight(1f)) }
 }
 
 private fun PrimaryLabel.text(): Int =

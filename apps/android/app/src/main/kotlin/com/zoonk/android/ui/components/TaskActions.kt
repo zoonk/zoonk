@@ -50,5 +50,6 @@ fun TaskActions(content: @Composable FlowRowScope.(main: Modifier) -> Unit) {
 private fun isWideWindow() =
     currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
-private val TASK_COLUMN_WIDTH = 640.dp
+/** Main's 40rem task column less its 16dp sides, so the bar lines up with the task's content. */
+private val TASK_COLUMN_WIDTH = 608.dp
 private val MAIN_ACTION_WIDTH = 160.dp
