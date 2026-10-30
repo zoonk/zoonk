@@ -416,7 +416,6 @@ final class ZoonkUITests: XCTestCase {
           "Expected Study to open the mistakes notebook")
       }
 
-      // The sidebar lists them too, and one opens from another.
       if UIDevice.current.userInterfaceIdiom == .pad, orientation.isLandscape {
         for place in ["Statistics", "Mistakes notebook", "Statistics"] {
           app.primaryNavigationItem(place).tap()

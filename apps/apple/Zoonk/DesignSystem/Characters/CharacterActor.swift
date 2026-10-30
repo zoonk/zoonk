@@ -190,8 +190,7 @@ private struct PassingTap: UIGestureRecognizerRepresentable {
   }
 }
 
-/// Fails as its touch ends, so it never recognizes. A touch that moves is a scroll or a drag, not a
-/// click, so it lands nothing.
+/// A touch that moves is a scroll or a drag, not a click, so it lands nothing.
 private final class PassingTapRecognizer: UIGestureRecognizer {
   var action: () -> Void = {}
   private var start: CGPoint?
