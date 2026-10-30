@@ -20,6 +20,23 @@ export function getBandFill({ band, score }: { band: number; score: number }): n
   return Math.min(1, Math.max(0, getLevelShare(score) * BAND_COUNT - band));
 }
 
+/** "Even" needs two skills measured: one skill alone leads nothing. A tie at the top names no skill. */
+export function getLeadingSkill<TLevel extends { score: number; skill: string }>(
+  levels: readonly TLevel[],
+): { kind: "even" } | { kind: "leads"; skill: TLevel["skill"] } | null {
+  const [first, ...rest] = levels.toSorted((a, b) => b.score - a.score);
+
+  if (!first || rest.length === 0) {
+    return null;
+  }
+
+  if (rest.every((level) => level.score === first.score)) {
+    return { kind: "even" };
+  }
+
+  return rest[0]?.score === first.score ? null : { kind: "leads", skill: first.skill };
+}
+
 export function listRises<TLevel extends { score: number; startLabel: string; trend: string }>(
   levels: readonly TLevel[],
 ): TLevel[] {

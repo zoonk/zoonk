@@ -18,6 +18,7 @@ import { useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import { ListGroup } from "../_components/list-group";
 import { useFormatGoalProgress, useFormatShare } from "../_utils/percent";
+import { getLeadingSkill } from "../language/_utils/level-scale";
 import { useSkillName } from "../language/_utils/use-skill-name";
 import { SpeakingPracticeRow } from "../language/exam-speaking/speaking-practice-screen";
 import { CanDoList } from "../language/progress/can-do-list";
@@ -67,19 +68,15 @@ function useLeadingSkill() {
   const skillName = useSkillName();
 
   return function leadingSkill(levels: LanguageProgressView["levels"]): string | null {
-    const [first, ...rest] = levels.toSorted((a, b) => b.score - a.score);
+    const lead = getLeadingSkill(levels);
 
-    if (!first) {
+    if (!lead) {
       return null;
     }
 
-    if (rest.every((level) => level.score === first.score)) {
-      return t("Even across skills");
-    }
-
-    return rest[0]?.score === first.score
-      ? null
-      : t("{skill} leads", { skill: skillName(first.skill) });
+    return lead.kind === "even"
+      ? t("Even across skills")
+      : t("{skill} leads", { skill: skillName(lead.skill) });
   };
 }
 

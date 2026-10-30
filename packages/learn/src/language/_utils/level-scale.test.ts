@@ -1,6 +1,6 @@
 import { parseCefrScore } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
-import { getBandFill, getLevelShare, listRises } from "./level-scale";
+import { getBandFill, getLeadingSkill, getLevelShare, listRises } from "./level-scale";
 
 describe(getLevelShare, () => {
   it("puts a plain level in the middle of its band and a plus at its end", () => {
@@ -45,5 +45,33 @@ describe(listRises, () => {
 
   it("is empty when nothing rose", () => {
     expect(listRises([level("reading", 1, "A2"), level("writing", 0.5, "A2")])).toStrictEqual([]);
+  });
+});
+
+function measured(skill: string, score: number) {
+  return { score, skill };
+}
+
+describe(getLeadingSkill, () => {
+  it("names the skill ahead of the rest", () => {
+    expect(getLeadingSkill([measured("reading", 2), measured("listening", 3)])).toStrictEqual({
+      kind: "leads",
+      skill: "listening",
+    });
+  });
+
+  it("calls two or more skills at one level even", () => {
+    expect(getLeadingSkill([measured("reading", 2), measured("listening", 2)])).toStrictEqual({
+      kind: "even",
+    });
+  });
+
+  it("says nothing for a tie at the top or a single skill", () => {
+    expect(
+      getLeadingSkill([measured("reading", 3), measured("listening", 3), measured("writing", 1)]),
+    ).toBeNull();
+
+    expect(getLeadingSkill([measured("reading", 2)])).toBeNull();
+    expect(getLeadingSkill([])).toBeNull();
   });
 });

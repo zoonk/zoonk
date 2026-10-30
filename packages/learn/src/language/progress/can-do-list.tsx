@@ -21,12 +21,14 @@ export function CanDoMark({ done }: { done: boolean }) {
 
 export function CanDoList({ canDo: all }: { canDo: LanguageProgressView["canDo"] }) {
   const t = useExtracted();
+  const done = all.filter((item) => item.done);
   const next = all.find((item) => !item.done);
-  const canDo = [...all.filter((item) => item.done), ...(next ? [next] : [])];
 
-  if (canDo.length === 0) {
+  if (done.length === 0) {
     return null;
   }
+
+  const canDo = [...done, ...(next ? [next] : [])];
 
   return (
     <section aria-labelledby="language-can-do" className="flex flex-col gap-3">

@@ -114,6 +114,10 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
   const { levels, target } = progress;
   const targetShare = target ? getLevelShare(target.score) : null;
 
+  if (levels.length === 0) {
+    return <RiseLine levels={levels} />;
+  }
+
   return (
     <section aria-labelledby="language-levels-title" className="flex flex-col gap-3">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
