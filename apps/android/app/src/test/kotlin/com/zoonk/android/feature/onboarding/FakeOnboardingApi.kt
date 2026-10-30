@@ -108,7 +108,6 @@ internal fun uploadAskOf(
 
 internal const val EXAM_GOAL_ID = "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"
 
-/** An allowance with nothing to say, for screens whose caps a test doesn't exercise. */
 internal fun AppCache.noAllowance() = resource<AllowanceResponse>(Audience.SignedIn) { null }
 
 internal fun setupView(

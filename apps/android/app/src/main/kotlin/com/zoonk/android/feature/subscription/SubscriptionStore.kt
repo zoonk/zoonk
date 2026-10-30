@@ -111,7 +111,6 @@ class SubscriptionStore(
 
     val freePlan: Resource<FreePlan> = cache.resource(Audience.Everyone) { api.freePlan() }
 
-    /** What's left of the plan's caps, which goal screens read before a start as well. */
     val allowance: Resource<AllowanceResponse> =
         cache.resource(Audience.SignedIn, setOf(DataDomain.Allowance, DataDomain.Goals, DataDomain.UserSubscription)) { session ->
             session?.let { api.allowance(it) }
