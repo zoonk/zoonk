@@ -34,6 +34,15 @@ describe(niceDomain, () => {
     expect(niceDomain([317, 414], { includeZero: false })).toStrictEqual([300, 425]);
   });
 
+  it("stays drawable for values near the largest number, with round ticks where they fit", () => {
+    const domain = niceDomain([0, 1.7e308]);
+
+    expect(domain.every((bound) => Number.isFinite(bound))).toBe(true);
+    expect(domain[1]).toBeGreaterThanOrEqual(1.7e308);
+    expect(niceTicks(domain, 3).every((tick) => Number.isFinite(tick))).toBe(true);
+    expect(niceTicks(niceDomain([-1.7e308, 1.7e308]), 3)).toStrictEqual([]);
+  });
+
   it("ignores values that can't be drawn", () => {
     expect(niceDomain([Number.NaN, 4])).toStrictEqual([0, 4]);
     expect(niceDomain([])).toStrictEqual([0, 1]);

@@ -50,6 +50,11 @@ function cleanFloat(value: number): number {
 export function niceTicks(domain: NumericDomain, count = DEFAULT_TICK_COUNT): number[] {
   const [min, max] = domain;
   const step = niceStep(max - min, count);
+
+  if (!Number.isFinite(step)) {
+    return [];
+  }
+
   const first = Math.ceil(cleanFloat(min / step)) * step;
   const total = Math.floor(cleanFloat((max - first) / step));
 
@@ -84,8 +89,11 @@ export function niceDomain(
 
   const step = niceStep(high - low, count);
 
-  return [
+  const rounded: NumericDomain = [
     cleanFloat(Math.floor(cleanFloat(low / step)) * step),
     cleanFloat(Math.ceil(cleanFloat(high / step)) * step),
   ];
+
+  // Rounding out to a whole step can pass the largest number a double holds.
+  return rounded.every((bound) => Number.isFinite(bound)) ? rounded : [low, high];
 }
