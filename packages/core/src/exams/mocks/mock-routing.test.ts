@@ -3,6 +3,25 @@ import { type MockCandidate } from "./mock-plan";
 import { toRouting } from "./mock-routing";
 
 describe(toRouting, () => {
+  it("keeps each subject's share in both routes when difficulties tie", () => {
+    const pool: MockCandidate[] = ["Info", "Expression"].flatMap((area) =>
+      Array.from({ length: 12 }, (_, index) => ({
+        answered: false,
+        area,
+        difficulty: 0,
+        itemId: `${area}-${index}`,
+        skillId: area,
+      })),
+    );
+
+    const routes = toRouting({ pool, wanted: 10 });
+    expect(routes.easier.filter((id) => id.startsWith("Info"))).toHaveLength(5);
+    expect(routes.harder.filter((id) => id.startsWith("Info"))).toHaveLength(5);
+    expect(routes.easier.filter((id) => id.startsWith("Expression"))).toHaveLength(5);
+    expect(routes.harder.filter((id) => id.startsWith("Expression"))).toHaveLength(5);
+    expect(new Set([...routes.easier, ...routes.harder]).size).toBe(20);
+  });
+
   it.each([0, 1, 3, 6, 12])("keeps both routes disjoint with %i candidates", (size) => {
     const pool: MockCandidate[] = Array.from({ length: size }, (_, index) => ({
       answered: false,

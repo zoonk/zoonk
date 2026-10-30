@@ -1,3 +1,4 @@
+import { apportion } from "@zoonk/utils/apportion";
 import { namesMatch } from "../_utils/name-match";
 import { type MockCandidate } from "./mock-plan";
 
@@ -33,14 +34,27 @@ export function toRouting({
   pool: MockCandidate[];
   wanted: number;
 }): MockRouting {
-  const sorted = pool.toSorted(byDifficulty);
-  const share = Math.min(wanted, Math.ceil(sorted.length / 2));
+  const subjects = [...Map.groupBy(pool, (item) => item.area).values()];
+  const size = Math.min(wanted * 2, pool.length);
+  const quotas = apportion({ total: size, weights: subjects.map((items) => items.length) });
+  const easierQuotas = apportion({ total: Math.ceil(size / 2), weights: quotas });
+
+  const routes = subjects.map((items, index) => {
+    const sorted = items.toSorted(byDifficulty);
+    const easier = easierQuotas[index] ?? 0;
+    const harder = (quotas[index] ?? 0) - easier;
+
+    return {
+      easier: sorted.slice(0, easier).map((item) => item.itemId),
+      harder: sorted
+        .toReversed()
+        .slice(0, harder)
+        .map((item) => item.itemId),
+    };
+  });
 
   return {
-    easier: sorted.slice(0, share).map((item) => item.itemId),
-    harder: sorted
-      .toReversed()
-      .slice(0, Math.min(wanted, Math.floor(sorted.length / 2)))
-      .map((item) => item.itemId),
+    easier: routes.flatMap((route) => route.easier),
+    harder: routes.flatMap((route) => route.harder),
   };
 }
