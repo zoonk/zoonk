@@ -3,14 +3,57 @@ import SwiftUI
 
 // Each seam has a working default, so the player plays without the feature that owns it.
 
+/// A lesson screen gives its sounds its own owner (`owned(by:)`), so leaving it stops only them.
 struct LessonAudio: Sendable {
-  let play: @MainActor @Sendable (URL) async -> Void
-  /// Only on a tap. Without it, text without a recording has no sound button.
-  let speak: (@MainActor @Sendable (_ text: String, _ language: String) async -> Void)?
+  private var owner = "lesson"
+  private let playing: @MainActor @Sendable (URL, _ owner: String) async -> Void
+  private let speaking:
+    (@MainActor @Sendable (_ text: String, _ language: String, _ owner: String) async -> Void)?
+  private let stopping: @MainActor @Sendable (_ owner: String) -> Void
+
+  init(
+    play: @escaping @MainActor @Sendable (URL, _ owner: String) async -> Void,
+    speak: (
+      @MainActor @Sendable (_ text: String, _ language: String, _ owner: String) async -> Void
+    )?,
+    stop: @escaping @MainActor @Sendable (_ owner: String) -> Void
+  ) {
+    playing = play
+    speaking = speak
+    stopping = stop
+  }
 
   static let system = LessonAudio(
-    play: { url in SystemAudioPlayer.shared.play(url) },
-    speak: nil)
+    play: { url, _ in SystemAudioPlayer.shared.play(url) },
+    speak: nil,
+    stop: { _ in SystemAudioPlayer.shared.stop() })
+
+  /// Only on a tap. Without it, text without a recording has no sound button.
+  var speak: (@MainActor @Sendable (_ text: String, _ language: String) async -> Void)? {
+    guard let speaking else {
+      return nil
+    }
+
+    let owner = owner
+    return { text, language in await speaking(text, language, owner) }
+  }
+
+  @MainActor
+  func play(_ url: URL) async {
+    await playing(url, owner)
+  }
+
+  /// A sound still loading never starts.
+  @MainActor
+  func stop() {
+    stopping(owner)
+  }
+
+  func owned(by owner: String) -> LessonAudio {
+    var audio = self
+    audio.owner = owner
+    return audio
+  }
 }
 
 @MainActor
@@ -23,6 +66,11 @@ private final class SystemAudioPlayer {
     let player = AVPlayer(url: url)
     self.player = player
     player.play()
+  }
+
+  func stop() {
+    player?.pause()
+    player = nil
   }
 }
 

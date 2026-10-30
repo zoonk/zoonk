@@ -53,11 +53,13 @@ private struct LessonPlayerContent: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.activityRenderers) private var activityRenderers
   @Environment(\.lessonTutor) private var tutor
+  @Environment(\.lessonAudio) private var audio
   @Environment(SessionStore.self) private var session
   @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
   @State private var store: LessonPlayerStore
   @State private var isLeaving = false
   @State private var isShowingSummary = false
+  @State private var soundOwner = UUID().uuidString
 
   init(store: LessonPlayerStore) {
     _store = State(initialValue: store)
@@ -124,6 +126,12 @@ private struct LessonPlayerContent: View {
       await store.load()
       await store.followLatePictures()
     }
+    .environment(\.lessonAudio, sounds)
+    .onChange(of: store.state?.currentStep?.id) { sounds.stop() }
+  }
+
+  private var sounds: LessonAudio {
+    audio.owned(by: soundOwner)
   }
 
   @ViewBuilder
@@ -163,6 +171,7 @@ private struct LessonPlayerContent: View {
           }
         } else {
           LessonStageView(store: store, state: state)
+            .onDisappear { sounds.stop() }
         }
       }
     }

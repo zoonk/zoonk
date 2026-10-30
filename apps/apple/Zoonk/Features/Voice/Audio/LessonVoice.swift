@@ -4,10 +4,11 @@ import SwiftUI
 extension LessonAudio {
   static func voice(_ voice: VoiceServices) -> LessonAudio {
     LessonAudio(
-      play: { url in await voice.player.play(.recording(url), owner: lessonSound) },
-      speak: { text, language in
-        await voice.player.play(.text(text, language: language), owner: lessonSound)
-      })
+      play: { url, owner in await voice.player.play(.recording(url), owner: owner) },
+      speak: { text, language, owner in
+        await voice.player.play(.text(text, language: language), owner: owner)
+      },
+      stop: { owner in voice.player.stop(owner: owner) })
   }
 }
 
@@ -16,8 +17,6 @@ extension SpokenAnswerRecording {
     AnyView(SpokenStepRecorder(context: context))
   }
 }
-
-private let lessonSound = "lesson"
 
 private struct SpokenStepRecorder: View {
   let context: SpokenAnswerContext

@@ -42,7 +42,6 @@ final class MusicAudio {
   @ObservationIgnored private var renderer: MusicRenderer?
   @ObservationIgnored private var observers: [any NSObjectProtocol] = []
   @ObservationIgnored private var idleTask: Task<Void, Never>?
-  @ObservationIgnored private var didActivateSession = false
 
   /// A note's ring before it's let go, main's default.
   static let noteDuration = 1.2
@@ -118,11 +117,7 @@ final class MusicAudio {
 
     observers = []
     releaseEngine()
-
-    if didActivateSession {
-      didActivateSession = false
-      try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-    }
+    SharedAudioSession.release(for: self)
   }
 
   private func start() -> Bool {
@@ -138,8 +133,7 @@ final class MusicAudio {
       }
 
       try? session.setPreferredIOBufferDuration(0.005)
-      try session.setActive(true)
-      didActivateSession = true
+      try SharedAudioSession.activate(for: self)
 
       if engine == nil {
         try buildEngine()

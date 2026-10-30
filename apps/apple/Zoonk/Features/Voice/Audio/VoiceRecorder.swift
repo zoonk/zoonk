@@ -68,6 +68,7 @@ final class VoiceRecorder {
     }
 
     guard let recorder = makeRecorder() else {
+      SharedAudioSession.release(for: self)
       status = .idle
       return false
     }
@@ -78,6 +79,7 @@ final class VoiceRecorder {
 
     guard recorder.record(forDuration: Self.maxDuration) else {
       discard(recorder)
+      SharedAudioSession.release(for: self)
       status = .idle
       return false
     }
@@ -112,7 +114,7 @@ final class VoiceRecorder {
     do {
       try session.setCategory(
         .playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetoothHFP])
-      try session.setActive(true)
+      try SharedAudioSession.activate(for: self)
     } catch {
       return nil
     }
@@ -154,7 +156,7 @@ final class VoiceRecorder {
     level = 0
     status = .idle
     stopObservingInterruptions()
-    try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    SharedAudioSession.release(for: self)
 
     if let audio, !audio.isEmpty, let deliver {
       deliver(VoiceRecording(audio: audio, durationMs: durationMs))

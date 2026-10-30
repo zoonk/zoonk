@@ -71,10 +71,12 @@ final class SpeechPlayer {
 
       if run == mine {
         current = nil
+        releaseSession()
       }
     } catch is CancellationError {
       if run == mine {
         current = nil
+        releaseSession()
       }
     } catch {
       guard run == mine else {
@@ -88,6 +90,7 @@ final class SpeechPlayer {
       }
 
       current = (owner, .failed((error as? VoiceRefusal)?.limit))
+      releaseSession()
     }
   }
 
@@ -99,6 +102,11 @@ final class SpeechPlayer {
 
     stopCurrent()
     current = nil
+    releaseSession()
+  }
+
+  private func releaseSession() {
+    SharedAudioSession.release(for: self)
   }
 
   private func stopCurrent() {
@@ -161,7 +169,7 @@ final class SpeechPlayer {
 
   private func playFile(_ file: URL, rate: Float, run mine: Int) async throws {
     try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
-    try AVAudioSession.sharedInstance().setActive(true)
+    try SharedAudioSession.activate(for: self)
     let player = try AVAudioPlayer(contentsOf: file)
     player.enableRate = true
     player.rate = rate
