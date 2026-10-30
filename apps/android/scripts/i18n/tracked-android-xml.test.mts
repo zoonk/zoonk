@@ -182,6 +182,21 @@ test("non-translatable resources stay in the default locale, not in generated ta
   assert.doesNotMatch(translatedXml(), /name="brand"/u);
 });
 
+test("a non-translatable resource's comment stays with it in the default locale", () => {
+  const source = SOURCE.replace(
+    '  <string name="brand"',
+    '  <!-- The product\'s name, never translated. -->\n  <string name="brand"',
+  ).replace(
+    '  <string name="title">',
+    '  <!-- The home screen\'s title. -->\n  <string name="title">',
+  );
+
+  const xml = translatedXml({ source });
+
+  assert.doesNotMatch(xml, /never translated/u);
+  assert.match(xml, /The home screen's title/u);
+});
+
 test("source-template filtering preserves XML escaping, CDATA, XLIFF, and formatting attributes", () => {
   const source = `<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="literal" formatted="false">A &amp; B %s</string>
