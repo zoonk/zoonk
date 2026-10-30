@@ -455,7 +455,6 @@ class OnboardingStore(
         fromScratch: Boolean,
     ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel)) { api.finishPlacement(it, goalId, fromScratch) }
 
-    /** The learner model is what the goal's mock offer follows, so a stopped mock no longer shows as running. */
     suspend fun stopPlacementMock(mockId: String) = write(setOf(DataDomain.LearnerModel)) { api.finishMock(it, mockId) }
 
     /** A language goal's level test; each answer replies with its next step. */

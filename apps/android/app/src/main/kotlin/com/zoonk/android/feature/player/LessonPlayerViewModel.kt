@@ -517,7 +517,6 @@ class LessonPlayerViewModel(
 
     private fun unsentAnswers() = owner?.let { drafts.open(it, "player.unsent.$lessonId", ListSerializer(UnsentAnswer.serializer())) }
 
-    /** A lesson is started once one of its answers is recorded, which a check the server didn't make isn't. */
     private fun markStarted(recorded: Boolean) = listOfNotNull(lessonStarted?.takeIf { recorded }?.replacing(true))
 
     private suspend fun send(pending: PendingCheck): CheckOutcome {
