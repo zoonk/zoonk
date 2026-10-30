@@ -154,10 +154,7 @@ struct FocusTestScreen: View {
         }
       }
 
-      PracticeResultNumbers(
-        reached: PracticeReached(
-          energy: result.reached.energy,
-          level: result.reached.level.map { .init(color: $0.color.rawValue, level: $0.level) }))
+      PracticeResultNumbers(day: DayResult(result))
 
       if undoFailed {
         Text(

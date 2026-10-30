@@ -116,10 +116,7 @@ struct PatternScreen: View {
           } response: {
             PracticeResultNumbers(
               correct: result.correct, total: result.total, brainPower: result.brainPower,
-              reached: PracticeReached(
-                energy: result.reached.energy,
-                level: result.reached.level.map { .init(color: $0.color.rawValue, level: $0.level) }
-              ))
+              day: DayResult(result))
           } actions: {
             doneButton
           }

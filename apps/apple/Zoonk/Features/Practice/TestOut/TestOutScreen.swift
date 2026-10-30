@@ -15,6 +15,7 @@ struct TestOutScreen: View {
   @State private var isSubmitting = false
   @State private var submitFailed = false
   @State private var result: Components.Schemas.ChapterTestOutResult?
+  @State private var ceremonyClosed = false
   @State private var undo: UndoState = .idle
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
@@ -27,7 +28,13 @@ struct TestOutScreen: View {
     NavigationStack {
       Group {
         if let result {
-          resultView(result)
+          if let milestone = result.ceremony?.value1, !ceremonyClosed,
+            let ceremony = hooks.ceremony
+          {
+            ceremony(milestone) { ceremonyClosed = true }
+          } else {
+            resultView(result)
+          }
         } else {
           switch load {
           case .loading:
@@ -110,9 +117,7 @@ struct TestOutScreen: View {
             localized: "\(result.correct) of \(result.total) right", table: "Practice",
             comment: "A test-out's right answers out of its questions.")
         ],
-        reached: PracticeReached(
-          energy: result.reached.energy,
-          level: result.reached.level.map { .init(color: $0.color.rawValue, level: $0.level) }))
+        day: DayResult(result))
 
       if undo == .failed {
         Text(

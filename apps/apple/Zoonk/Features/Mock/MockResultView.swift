@@ -20,6 +20,8 @@ struct MockResultView: View {
         MockInsightsSection(result: result)
       }
 
+      DayMomentSections(result: view.day)
+
       ForEach(Array(view.essays.enumerated()), id: \.element.id) { index, essay in
         MockEssaySections(
           run: run, essay: essay, number: index + 1, total: view.essays.count,
@@ -40,6 +42,7 @@ struct MockResultView: View {
       MockNotesSection(view: view)
     }
     .navigationTitle(MockLabels.title(number: view.number))
+    .milestoneCeremony(view.day.ceremony)
     .toolbar {
       if view.purpose != .placement {
         ToolbarItem(placement: .primaryAction) {

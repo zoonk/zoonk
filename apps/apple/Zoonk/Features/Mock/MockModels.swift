@@ -365,6 +365,7 @@ struct MockView: Hashable, Decodable, Sendable {
   var adapt: MockAdapt?
   var blockId: String
   var breakUntil: Date?
+  var ceremony: Milestone?
   var current: MockCurrent?
   var essayRubric: EssayRubric?
   var essays: [MockEssay]
@@ -374,12 +375,14 @@ struct MockView: Hashable, Decodable, Sendable {
   var goalId: String?
   var leftOut: [MockLeftOut]
   var minutes: Int
+  var missionMoment: DayResult.MissionMoment?
   var mistakes: [Mistake]
   var number: Int
   var passMarks: PassMarks?
   var planItemId: String?
   var purpose: MockPurpose
   var questions: Int
+  var reached: DayResult.Reached?
   var result: MockResult?
   var review: [MockReviewItem]
   var scoreNotes: MockScoreNotes
@@ -394,6 +397,10 @@ struct MockView: Hashable, Decodable, Sendable {
 
   var currentSection: MockSection? {
     sections.first { $0.status == .current }
+  }
+
+  var day: DayResult {
+    DayResult(ceremony: ceremony, missionMoment: missionMoment, reached: reached)
   }
 
   var isLastSectionCurrent: Bool {

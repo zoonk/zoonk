@@ -109,7 +109,10 @@ struct QuestionBlockView: View {
 
     Group {
       if case .finished(let completion) = phase {
-        BlockFinishedView(kind: run.detail.block.kind, completion: completion) { dismiss() }
+        // In a session, the session's next stop shows the ceremony.
+        BlockFinishedView(
+          kind: run.detail.block.kind, completion: completion, hostsCeremony: onFinished == nil
+        ) { dismiss() }
       } else {
         PracticeTaskLayout(segments: run.state.segments, index: run.state.index) {
           stimulus(phase: phase)
@@ -485,20 +488,32 @@ private struct PauseSuggestionView: View {
 }
 
 private struct BlockFinishedView: View {
+  @Environment(\.practiceHooks) private var hooks
+  @State private var ceremonyClosed = false
+
   let kind: PracticeBlock.Kind
   let completion: Components.Schemas.StudyBlockCompletion
+  let hostsCeremony: Bool
   let close: () -> Void
 
   var body: some View {
+    if hostsCeremony, let milestone = completion.ceremony?.value1, !ceremonyClosed,
+      let ceremony = hooks.ceremony
+    {
+      ceremony(milestone) { ceremonyClosed = true }
+    } else {
+      result
+    }
+  }
+
+  private var result: some View {
     PracticeTaskLayout {
       PracticeResultTitle(title: title)
     } response: {
       PracticeResultNumbers(
         correct: completion.correct, total: completion.total,
         brainPower: completion.ownBrainPower,
-        reached: PracticeReached(
-          energy: completion.reached.energy,
-          level: completion.reached.level.map { .init(color: $0.color.rawValue, level: $0.level) }))
+        day: (try? StudyJSON.recode(completion, as: BlockMoment.self))?.day)
     } actions: {
       PracticeMainButton(
         title: LocalizedStringResource(

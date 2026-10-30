@@ -384,11 +384,7 @@ private struct CheckpointResultView: View {
                     comment: "Under a lost phase challenge's score: the right answers it needed.")
                 ]
               } ?? [],
-            reached: PracticeReached(
-              energy: state.completion?.reached.energy,
-              level: state.completion?.reached.level.map {
-                .init(color: $0.color.rawValue, level: $0.level)
-              }))
+            day: state.completion.flatMap { try? StudyJSON.recode($0, as: BlockMoment.self) }?.day)
 
           if won {
             CheckpointRewards(

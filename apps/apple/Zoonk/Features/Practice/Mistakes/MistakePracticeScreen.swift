@@ -386,13 +386,23 @@ private struct PracticeDoneView: View {
                 localized: "\(fixed) mistakes fixed", table: "Practice",
                 comment: "How many mistakes a run fixed.")
             ] : [],
-          reached: reached)
+          day: day)
       } actions: {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Back", table: "Practice", comment: "Leaves a finished run."), action: close)
       }
     }
+  }
+
+  /// The level and Energy reached are the run's own, counted as each answer came.
+  private var day: DayResult {
+    let completion = summary.flatMap { DayResult($0) }
+    return DayResult(
+      ceremony: completion?.ceremony, missionMoment: completion?.missionMoment,
+      reached: DayResult.Reached(
+        energy: reached.energy,
+        level: reached.level.map { DayResult.Reached.Level(color: $0.color, level: $0.level) }))
   }
 
   private var comesBack: Bool {

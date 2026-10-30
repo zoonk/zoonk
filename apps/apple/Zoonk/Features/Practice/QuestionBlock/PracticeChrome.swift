@@ -339,7 +339,7 @@ struct PracticeResultNumbers: View {
   var total: Int?
   var brainPower = 0
   var facts: [String] = []
-  var reached: PracticeReached = .nothing
+  var day: DayResult?
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
@@ -365,25 +365,8 @@ struct PracticeResultNumbers: View {
         Text(fact).font(.subheadline).foregroundStyle(.secondary)
       }
 
-      if let level = reached.level {
-        Label {
-          Text(
-            "You reached level \(level.level).", tableName: "Practice",
-            comment: "A run took the learner to a new level.")
-        } icon: {
-          Image(systemName: "circle.fill")
-        }
-        .foregroundStyle(.primary)
-      }
-
-      if let energy = reached.energy {
-        Label {
-          Text(
-            "Energy reached \(energy)%.", tableName: "Practice",
-            comment: "A run's answers raised Energy to a new tenth.")
-        } icon: {
-          Image(systemName: "bolt.fill")
-        }
+      if let day, !day.isEmpty {
+        DayMomentSections(result: day)
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)

@@ -28,6 +28,8 @@ private struct MockStage: View {
   @Environment(\.dismiss) private var dismiss
   @Bindable var run: MockRun
   let sessionId: String?
+  /// A result opened again shows its day moment still; one finished here celebrates.
+  @State private var finishedHere = false
 
   var body: some View {
     content
@@ -44,6 +46,11 @@ private struct MockStage: View {
       .onChange(of: run.view, initial: true) {
         if let view = run.view {
           run.adopt(view)
+        }
+      }
+      .onChange(of: run.view?.status) { previous, status in
+        if previous != nil, previous != .finished, status == .finished {
+          finishedHere = true
         }
       }
       .onDisappear { run.queue.stop() }
@@ -96,6 +103,7 @@ private struct MockStage: View {
       MockExpiredView(view: view)
     } else if view.status == .finished {
       MockResultView(run: run, view: view)
+        .environment(\.celebrates, finishedHere)
     } else if let until = view.breakUntil, view.current == nil {
       MockBreakView(run: run, view: view, until: until)
     } else if let current = view.current, run.timeUp {

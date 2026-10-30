@@ -2627,35 +2627,6 @@
         }
       }
     },
-    "Energy reached %lld%%." : {
-      "comment" : "A run's answers raised Energy to a new tenth.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energie hat %lld%% erreicht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La energía ha llegado al %lld%%."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’Énergie a atteint %lld %%."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A energia chegou a %lld%%."
-          }
-        }
-      }
-    },
     "Every question is answered" : {
       "comment" : "Title of a block opened again with every answer in.\nTitle of a test whose answers are all in, before they're graded.",
       "localizations" : {
@@ -8230,35 +8201,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você ouve duas vezes, como na prova. Leia as perguntas primeiro."
-          }
-        }
-      }
-    },
-    "You reached level %lld." : {
-      "comment" : "A run took the learner to a new level.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast Level %lld erreicht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Has llegado al nivel %lld."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint le niveau %lld."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você chegou ao nível %lld."
           }
         }
       }
