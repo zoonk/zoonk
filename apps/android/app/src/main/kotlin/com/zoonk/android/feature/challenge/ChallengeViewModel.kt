@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.challenge
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.GenerationFailure
@@ -11,6 +12,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChallengeGeneration
 import com.zoonk.api.models.ChallengeStart
 import com.zoonk.api.models.PlanEffect
@@ -24,6 +26,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
@@ -45,9 +49,10 @@ sealed interface MoveRefusal {
     ) : MoveRefusal
 }
 
+@Serializable
 data class Moved(
-    val changeId: UUID,
-    val date: LocalDate,
+    @Contextual val changeId: UUID,
+    @Contextual val date: LocalDate,
     val effect: PlanEffect?,
 )
 
@@ -72,8 +77,16 @@ class ChallengeViewModel(
     private val sessionId: String?,
     private val store: ChallengeStore,
     generations: GenerationSource,
+    private val saved: SavedStateHandle,
 ) : ViewModel() {
-    private val mutableUi = MutableStateFlow(ChallengeUi(planItemId))
+    // A move replaces the route's plan item, so the one it became and its Undo outlive the process.
+    private val mutableUi =
+        MutableStateFlow(
+            ChallengeUi(
+                planItemId = saved.get<String>(PLAN_ITEM)?.let(UUID::fromString) ?: planItemId,
+                moved = saved.get<String>(MOVED)?.let { ApiJson.decodeFromString(Moved.serializer(), it) },
+            ),
+        )
     val ui: StateFlow<ChallengeUi> = mutableUi.asStateFlow()
 
     val challenge get() = store.challenges[mutableUi.value.planItemId]
@@ -123,6 +136,7 @@ class ChallengeViewModel(
                             moved = move.changeId?.let { changeId -> Moved(changeId, move.date, move.effect) },
                         )
                     }
+                    keep()
                 }
 
                 is MutationResult.Failed -> {
@@ -144,6 +158,7 @@ class ChallengeViewModel(
             when (val result = store.undoMove(ui.planItemId, moved.changeId)) {
                 is MutationResult.Done -> {
                     mutableUi.update { it.copy(moving = false, moved = null, planItemId = result.value.planItemId ?: it.planItemId) }
+                    keep()
                 }
 
                 is MutationResult.Failed -> {
@@ -153,6 +168,12 @@ class ChallengeViewModel(
                 MutationResult.Obsolete -> {}
             }
         }
+    }
+
+    private fun keep() {
+        val ui = mutableUi.value
+        saved[PLAN_ITEM] = ui.planItemId.toString()
+        saved[MOVED] = ui.moved?.let { ApiJson.encodeToString(Moved.serializer(), it) }
     }
 
     private sealed interface Outcome {
@@ -180,7 +201,7 @@ class ChallengeViewModel(
         afterWriting: Boolean,
     ): Outcome =
         when {
-            failed.code in REREAD_CODES || (failed.code == null && failed.status == CONFLICT) -> {
+            failed.code in REREAD_CODES -> {
                 Outcome.Reread
             }
 
@@ -316,8 +337,11 @@ class ChallengeViewModel(
     private companion object {
         const val SLOW_MILLIS = 10_000L
         const val TIMEOUT_MILLIS = 45_000L
-        const val CONFLICT = 409
-        val REREAD_CODES = setOf("DAILY_LIMIT_REACHED", "EARLIER_FIRST")
+        const val PLAN_ITEM = "planItemId"
+        const val MOVED = "moved"
+
+        // The API says "not in today's session" as a plain conflict.
+        val REREAD_CODES = setOf("DAILY_LIMIT_REACHED", "EARLIER_FIRST", "CONFLICT")
     }
 }
 
@@ -334,7 +358,7 @@ private fun refusal(failed: MutationResult.Failed): MoveRefusal? {
             MoveRefusal.MockCollision
         }
 
-        "noRoom" -> {
+        "badMove" -> {
             MoveRefusal.NoRoom
         }
 

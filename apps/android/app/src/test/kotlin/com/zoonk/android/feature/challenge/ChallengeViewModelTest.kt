@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.challenge
 
+import androidx.lifecycle.SavedStateHandle
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -17,6 +18,7 @@ import com.zoonk.api.models.ChallengeMove
 import com.zoonk.api.models.ChallengeMoveUndo
 import com.zoonk.api.models.ChallengeStart
 import com.zoonk.api.models.Generation
+import com.zoonk.api.models.PlanEffect
 import com.zoonk.api.models.StudyBlockStart
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,7 +63,7 @@ class ChallengeViewModelTest {
 
     private val challenge: Challenge = decodeFixture("challenge")
 
-    private fun TestScope.viewModel(): ChallengeViewModel {
+    private fun TestScope.viewModel(saved: SavedStateHandle = SavedStateHandle()): ChallengeViewModel {
         val api =
             object : ChallengeApi {
                 override suspend fun challenge(
@@ -105,7 +107,7 @@ class ChallengeViewModelTest {
                 override suspend fun status(id: String) = Generation.Status.COMPLETED
             }
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        return ChallengeViewModel(challenge.planItemId, "session", ChallengeStore(api, cache) { "UTC" }, source)
+        return ChallengeViewModel(challenge.planItemId, "session", ChallengeStore(api, cache) { "UTC" }, source, saved)
     }
 
     @Test
@@ -166,6 +168,12 @@ class ChallengeViewModelTest {
             assertEquals(2, reads)
             assertNull(viewModel.ui.value.problem)
 
+            start = { throw ApiException(ApiError.Unavailable, "CONFLICT", status = 409) }
+            viewModel.start()
+            advanceUntilIdle()
+            assertEquals(3, reads)
+            assertNull(viewModel.ui.value.problem)
+
             start = { throw ApiException(ApiError.Unavailable, "PLUS_REQUIRED", status = 403) }
             viewModel.start()
             advanceUntilIdle()
@@ -188,6 +196,52 @@ class ChallengeViewModelTest {
             viewModel.undoMove()
             advanceUntilIdle()
             assertNull(viewModel.ui.value.moved)
+        }
+
+    @Test
+    fun aMoveOutlivesTheProcessWithWhatUndoNeeds() =
+        runTest(dispatcher) {
+            val saved = SavedStateHandle()
+            val movedItem = UUID.randomUUID()
+            val moved =
+                Moved(
+                    UUID.randomUUID(),
+                    LocalDate(2026, 11, 2),
+                    PlanEffect(
+                        endDateAfter = LocalDate(2026, 12, 4),
+                        endDateBefore = LocalDate(2026, 12, 4),
+                        lessonsAdded = 0,
+                        lessonsRemoved = 1,
+                        lessonsLeftOut = listOf("Photosynthesis"),
+                    ),
+                )
+            move = { ChallengeMove(moved.changeId, moved.date, moved.effect, movedItem) }
+            viewModel(saved).moveToMonday()
+            advanceUntilIdle()
+
+            val restored = viewModel(saved)
+
+            assertEquals(movedItem, restored.ui.value.planItemId)
+            assertEquals(moved, restored.ui.value.moved)
+        }
+
+    @Test
+    fun aDayWithNoRoomSaysSo() =
+        runTest(dispatcher) {
+            move = {
+                throw ApiException(
+                    ApiError.Unavailable,
+                    "PLAN_CHANGE_INVALID",
+                    status = 422,
+                    details = JsonObject(mapOf("reason" to JsonPrimitive("badMove"))),
+                )
+            }
+            val viewModel = viewModel()
+
+            viewModel.moveToMonday()
+            advanceUntilIdle()
+
+            assertEquals(MoveRefusal.NoRoom, viewModel.ui.value.refusal)
         }
 
     @Test
