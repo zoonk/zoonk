@@ -1065,3 +1065,17 @@ final class LessonPlayerSavingTests: XCTestCase {
       state.steps["plain"]?.imagePending, false, "a screen whose wait ended stops showing one")
   }
 }
+
+final class LessonVerdictTests: XCTestCase {
+  func testAnyPartialCreditIsAlmostThere() throws {
+    let step = try step(check(id: "check"))
+    var result = LessonStepResult(
+      isCorrect: false, answerText: "Lyon", correctAnswer: nil, feedback: nil)
+
+    result.score = 0.25
+    XCTAssertEqual(LessonVerdict.of(result, step: step).title.key, "Almost there")
+
+    result.score = 0
+    XCTAssertEqual(LessonVerdict.of(result, step: step).title.key, "Not quite")
+  }
+}

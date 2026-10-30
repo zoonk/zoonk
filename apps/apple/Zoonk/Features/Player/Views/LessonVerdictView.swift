@@ -303,7 +303,7 @@ extension LessonVerdict {
         symbol: "text.bubble", tint: .secondary)
     }
 
-    if let score = result.score, score >= 0.5 {
+    if let score = result.score, score > 0 {
       return LessonVerdict(
         title: LocalizedStringResource(
           "Almost there", table: "Player", comment: "A typed or spoken answer that was partly right"
