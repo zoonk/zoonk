@@ -107,7 +107,7 @@ fun TaskScaffold(
                     actions = actions,
                 )
             },
-            bottomBar = { if (bottomBar != null) TaskActionBar(bottomBar) },
+            bottomBar = { if (bottomBar != null) TaskBottomBar(bottomBar) },
             snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
             content = content,
         )
@@ -179,14 +179,14 @@ private fun TaskAsideRail(aside: TaskAside) {
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     content = aside.content,
                 )
-                aside.footer?.let { TaskActionBar(it) }
+                aside.footer?.let { TaskBottomBar(it) }
             }
         }
     }
 }
 
 @Composable
-private fun TaskActionBar(content: @Composable () -> Unit) {
+private fun TaskBottomBar(content: @Composable () -> Unit) {
     DockedActionBar {
         Box(
             modifier =
