@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.catalog
 
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CatalogLesson
@@ -103,6 +105,13 @@ internal class FakeCatalogApi(
     var nextPageGate: CompletableDeferred<Unit>? = null
     var course: CourseResource = course()
 
+    /** Whose private course [course] is; the API answers anyone else that it doesn't exist. */
+    var owner: String? = null
+
+    private fun readableBy(session: AuthenticatedSession?) {
+        if (owner != null && session?.accountId != owner) throw ApiException(ApiError.NotFound)
+    }
+
     override suspend fun categoryCounts(language: String): CourseCategoryCounts {
         reads += "counts:$language"
         return counts()
@@ -121,21 +130,31 @@ internal class FakeCatalogApi(
         return CoursePage(all.subList(start, end), end.takeIf { it < all.size }?.toString())
     }
 
-    override suspend fun course(courseId: String): CourseResource {
+    override suspend fun course(
+        session: AuthenticatedSession?,
+        courseId: String,
+    ): CourseResource {
         reads += "course:$courseId"
+        readableBy(session)
         return course
     }
 
-    override suspend fun chapters(courseId: String): List<CourseChapter> {
+    override suspend fun chapters(
+        session: AuthenticatedSession?,
+        courseId: String,
+    ): List<CourseChapter> {
         reads += "chapters:$courseId"
+        readableBy(session)
         return chapters()
     }
 
     override suspend fun chapter(
+        session: AuthenticatedSession?,
         chapterId: String,
         courseId: String,
     ): ChapterResource {
         reads += "chapter:$chapterId"
+        readableBy(session)
         return chapterResource(chapterId)
     }
 

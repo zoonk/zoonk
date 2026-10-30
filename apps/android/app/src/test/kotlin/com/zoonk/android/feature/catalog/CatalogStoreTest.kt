@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.catalog
 
+import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.value
@@ -28,6 +30,43 @@ class CatalogStoreTest {
     }
 
     private val all = CourseList("en", null)
+    private val chapterOne = ChapterInCourse(CHAPTER_ONE, COURSE)
+
+    @Test
+    fun anOwnersPrivateCourseOpensForThemAndStillNotForAnyoneElse() =
+        runTest {
+            val api = FakeCatalogApi().apply { owner = "ana" }
+            val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)))
+            val store = CatalogStore(api, cache)
+
+            store.course[COURSE].load()
+            store.chapter[chapterOne].load()
+            assertEquals("Atoms", store.course[COURSE].state.value.value?.course?.title)
+            assertTrue(store.chapter[chapterOne].state.value is LoadState.Loaded)
+
+            session.session = AuthenticatedSession("bia", "token-b", "local-b")
+            cache.followSession()
+            store.course[COURSE].load()
+            store.chapter[chapterOne].load()
+            assertEquals(LoadState.Failed(ApiError.NotFound), store.course[COURSE].state.value)
+            assertEquals(LoadState.Failed(ApiError.NotFound), store.chapter[chapterOne].state.value)
+        }
+
+    @Test
+    fun aVisitorsCourseAndChapterPagesReadOnceAndStayOnReturn() =
+        runTest {
+            val api = FakeCatalogApi()
+            val store = store(api)
+
+            repeat(2) {
+                store.course[COURSE].load()
+                store.chapter[chapterOne].load()
+            }
+
+            assertEquals(listOf("chapter:$CHAPTER_ONE", "chapters:$COURSE", "course:$COURSE"), api.reads.sorted())
+            assertTrue(store.chapter[chapterOne].state.value is LoadState.Loaded)
+        }
 
     @Test
     fun aCourseAndItsOutlineLoadOnceForItsCourseChapterAndLessonPages() =

@@ -35,11 +35,18 @@ interface CatalogApi {
         cursor: String?,
     ): CoursePage
 
-    suspend fun course(courseId: String): CourseResource
+    suspend fun course(
+        session: AuthenticatedSession?,
+        courseId: String,
+    ): CourseResource
 
-    suspend fun chapters(courseId: String): List<CourseChapter>
+    suspend fun chapters(
+        session: AuthenticatedSession?,
+        courseId: String,
+    ): List<CourseChapter>
 
     suspend fun chapter(
+        session: AuthenticatedSession?,
         chapterId: String,
         courseId: String,
     ): ChapterResource
@@ -92,8 +99,9 @@ data class LessonInCourse(
 )
 
 /**
- * The catalog is the same for everyone, so its reads send no session and outlive sign-outs. Main's
- * catalog pages are static; an hour keeps a return instant and pull to refresh reads sooner.
+ * The catalog is the same for everyone, so its reads outlive sign-outs, except a course and its
+ * chapters, which send the session since an owner reads their private course too. Main's catalog
+ * pages are static; an hour keeps a return instant and pull to refresh reads sooner.
  */
 class CatalogStore(
     private val api: CatalogApi,
@@ -108,16 +116,16 @@ class CatalogStore(
         }
 
     val course: KeyedResources<String, CourseDetail> =
-        cache.keyed(Audience.Everyone, maxAge = CATALOG_MAX_AGE) { _, courseId ->
+        cache.keyed(Audience.Viewer, maxAge = CATALOG_MAX_AGE) { session, courseId ->
             coroutineScope {
-                val chapters = async { api.chapters(courseId) }
-                CourseDetail(api.course(courseId), chapters.await())
+                val chapters = async { api.chapters(session, courseId) }
+                CourseDetail(api.course(session, courseId), chapters.await())
             }
         }
 
     /** Read only for the lesson the chapter's page offers to try; the rest of the page is its course's outline. */
     val chapter: KeyedResources<ChapterInCourse, ChapterResource> =
-        cache.keyed(Audience.Everyone, maxAge = CATALOG_MAX_AGE) { _, key -> api.chapter(key.chapterId, key.courseId) }
+        cache.keyed(Audience.Viewer, maxAge = CATALOG_MAX_AGE) { session, key -> api.chapter(session, key.chapterId, key.courseId) }
 
     val lesson: KeyedResources<LessonInCourse, CatalogLesson> =
         cache.keyed(Audience.Everyone, maxAge = CATALOG_MAX_AGE) { _, key -> api.lesson(key.lessonId, key.courseId) }
@@ -199,14 +207,21 @@ class LiveCatalogApi(
         return CoursePage(page.data, page.pagination.nextCursor?.takeIf { page.pagination.hasMore })
     }
 
-    override suspend fun course(courseId: String) = perform { courses.getCourse(courseId.toUuid()) }
+    override suspend fun course(
+        session: AuthenticatedSession?,
+        courseId: String,
+    ) = perform { api.clients(session).courses.getCourse(courseId.toUuid()) }
 
-    override suspend fun chapters(courseId: String) = perform { api.clients(null).chapters.listCourseChapters(courseId.toUuid()) }.data
+    override suspend fun chapters(
+        session: AuthenticatedSession?,
+        courseId: String,
+    ) = perform { api.clients(session).chapters.listCourseChapters(courseId.toUuid()) }.data
 
     override suspend fun chapter(
+        session: AuthenticatedSession?,
         chapterId: String,
         courseId: String,
-    ) = perform { api.clients(null).chapters.getChapter(chapterId.toUuid(), courseId.toUuid()) }
+    ) = perform { api.clients(session).chapters.getChapter(chapterId.toUuid(), courseId.toUuid()) }
 
     override suspend fun lesson(
         lessonId: String,
