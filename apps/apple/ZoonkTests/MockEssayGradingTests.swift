@@ -12,7 +12,8 @@ final class MockEssayGradingTests: XCTestCase {
 
     await run.gradeEssays()
     run.offerGradingOnANewDay()
-    XCTAssertEqual(run.essayGrading, .limitReached(on: at(day: 29, hour: 22)))
+    XCTAssertEqual(
+      run.essayGrading, .limitReached(on: DateComponents(year: 2026, month: 10, day: 29)))
 
     clock.now = at(day: 30, hour: 8)
     run.offerGradingOnANewDay()
@@ -35,6 +36,21 @@ final class MockEssayGradingTests: XCTestCase {
 
     clock.now = at(day: 30, hour: 8)
     run.offerGradingOnANewDay()
+    XCTAssertEqual(run.essayGrading, .idle)
+  }
+
+  func testALimitKeepsTheCalendarDayItWasAskedOnAcrossTimeZones() async {
+    let home = NSTimeZone.default
+    defer { NSTimeZone.default = home }
+    NSTimeZone.default = TimeZone(identifier: "America/Los_Angeles")!
+    let clock = TestClock(at(day: 29, hour: 22))
+    let run = makeRun(transport: GradesUsedUpTransport(holdsGrading: false), clock: clock)
+
+    await run.gradeEssays()
+    NSTimeZone.default = TimeZone(identifier: "America/New_York")!
+    clock.now = at(day: 30, hour: 6)
+    run.offerGradingOnANewDay()
+
     XCTAssertEqual(run.essayGrading, .idle)
   }
 

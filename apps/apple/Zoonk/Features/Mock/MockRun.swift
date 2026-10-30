@@ -17,7 +17,7 @@ final class MockRun {
     case idle
     case grading
     case failed
-    case limitReached(on: Date)
+    case limitReached(on: DateComponents)
   }
 
   private static let slowAfter = Duration.seconds(10)
@@ -323,7 +323,7 @@ final class MockRun {
 
   func gradeEssays() async {
     guard essayGrading != .grading else { return }
-    let askedOn = now()
+    let askedOn = today()
     essayGrading = .grading
 
     let result: MutationResult<Bool>? = await within(Self.gradingTimeout) { [store, blockId] in
@@ -345,11 +345,13 @@ final class MockRun {
 
   /// The day's essay grades come back at the learner's midnight.
   func offerGradingOnANewDay() {
-    if case .limitReached(let day) = essayGrading,
-      !Calendar.current.isDate(day, inSameDayAs: now())
-    {
+    if case .limitReached(let day) = essayGrading, day != today() {
       essayGrading = .idle
     }
+  }
+
+  private func today() -> DateComponents {
+    Calendar.current.dateComponents([.year, .month, .day], from: now())
   }
 
   /// Leaving waits a moment for answers still going out, so ✕ always leaves, even offline.
