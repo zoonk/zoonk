@@ -9,7 +9,7 @@ import { KindDot } from "../_components/kind-tile";
 import { getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
-import { AXIS_LABEL_CLASS } from "./roadmap-styles";
+import { AXIS_CLASS, AXIS_LABEL_CLASS } from "./roadmap-styles";
 import { useRoadmapFinish, useRoadmapOverrun } from "./use-roadmap";
 
 const PERCENT = 100;
@@ -196,7 +196,7 @@ export function PhaseAxis({
   const finishLabelled = isLast && overrunSide !== "right";
 
   return (
-    <span aria-hidden="true" className="relative block h-4">
+    <span aria-hidden="true" className={AXIS_CLASS}>
       {todayLabelled && <TodayLabel share={todayShare} />}
       {overrunShare !== null && <OverrunLabel share={overrunShare} />}
       {startLabelled && phase.startDate && (

@@ -14,7 +14,7 @@ import { usePhaseLabel } from "./path-phase-row";
 import { PhaseDetails } from "./phase-details";
 import { BandFace } from "./roadmap-band";
 import { PhaseAxis, PhaseLane } from "./roadmap-lane";
-import { BAND_CLASS, BAND_STATE_CLASS } from "./roadmap-styles";
+import { BAND_CLASS, BAND_COLUMN_CLASS, BAND_STATE_CLASS } from "./roadmap-styles";
 import { useRoadmapFinish, useRoadmapPhases, useRoadmapPosition } from "./use-roadmap";
 
 const PERCENT = 100;
@@ -43,14 +43,35 @@ function moveBetweenBands(event: React.KeyboardEvent<HTMLOListElement>) {
   }
 }
 
+function TodayTicks({ share }: { share: number }) {
+  const style = { left: `${share * PERCENT}%` };
+
+  return (
+    <>
+      <span
+        aria-hidden="true"
+        className="bg-foreground absolute -top-1.5 h-1.5 w-[1.5px]"
+        style={style}
+      />
+      <span
+        aria-hidden="true"
+        className="bg-foreground absolute top-full h-1.5 w-[1.5px]"
+        style={style}
+      />
+    </>
+  );
+}
+
 function PhaseBand({
   focusable,
   links,
   phase,
+  todayShare,
 }: {
   focusable: boolean;
   links: JourneyPathLinks;
   phase: PlanPhaseView;
+  todayShare: number | null;
 }) {
   const label = usePhaseLabel();
 
@@ -73,6 +94,7 @@ function PhaseBand({
         }
       >
         <BandFace phase={phase} />
+        {todayShare !== null && <TodayTicks share={todayShare} />}
       </PopoverTrigger>
 
       <PopoverContent
@@ -103,25 +125,13 @@ function PhaseColumn({
 }) {
   return (
     <li
-      className="@container/phase relative flex min-w-16 basis-0 flex-col transition-[flex-grow] duration-150 ease-out motion-reduce:transition-none"
+      className={cn(
+        BAND_COLUMN_CLASS,
+        "transition-[flex-grow] duration-150 ease-out motion-reduce:transition-none",
+      )}
       style={{ flexGrow: getPhaseWeight(phase) }}
     >
-      <PhaseBand focusable={focusable} links={links} phase={phase} />
-
-      {todayShare !== null && (
-        <>
-          <span
-            aria-hidden="true"
-            className="bg-foreground absolute -top-1.5 h-1.5 w-[1.5px]"
-            style={{ left: `${todayShare * PERCENT}%` }}
-          />
-          <span
-            aria-hidden="true"
-            className="bg-foreground absolute top-8 h-1.5 w-[1.5px]"
-            style={{ left: `${todayShare * PERCENT}%` }}
-          />
-        </>
-      )}
+      <PhaseBand focusable={focusable} links={links} phase={phase} todayShare={todayShare} />
 
       <PhaseLane isLast={isLast} phase={phase} />
       <PhaseAxis isLast={isLast} labelled={labelled} phase={phase} todayShare={todayShare} />

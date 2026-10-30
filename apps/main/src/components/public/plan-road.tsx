@@ -1,7 +1,14 @@
 import { DaySegment, type DaySegmentState } from "@zoonk/learn/day-segments";
 import { KindDot } from "@zoonk/learn/kind-tile";
 import { METER_PARTS_CLASS } from "@zoonk/learn/meter";
-import { AXIS_LABEL_CLASS, BAND_CLASS, BAND_STATE_CLASS } from "@zoonk/learn/roadmap-styles";
+import {
+  AXIS_CLASS,
+  AXIS_LABEL_CLASS,
+  BAND_CLASS,
+  BAND_COLUMN_CLASS,
+  BAND_NAME_CLASS,
+  BAND_STATE_CLASS,
+} from "@zoonk/learn/roadmap-styles";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, FlagIcon } from "lucide-react";
 
@@ -55,7 +62,7 @@ function TodayTicks({ share }: { share: number }) {
   return (
     <>
       <span className="bg-foreground absolute -top-1.5 h-1.5 w-[1.5px]" style={style} />
-      <span className="bg-foreground absolute top-8 h-1.5 w-[1.5px]" style={style} />
+      <span className="bg-foreground absolute top-full h-1.5 w-[1.5px]" style={style} />
     </>
   );
 }
@@ -67,7 +74,8 @@ function RoadBandFace({ band }: { band: RoadBand }) {
         <CheckIcon aria-hidden="true" className="size-3.5 shrink-0" strokeWidth={2.5} />
       )}
 
-      <span className="min-w-0 truncate">{band.name}</span>
+      <span className={BAND_NAME_CLASS}>{band.name}</span>
+      {band.todayShare !== undefined && <TodayTicks share={band.todayShare} />}
 
       {band.state === "current" && band.share !== undefined && band.share > 0 && (
         <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
@@ -112,7 +120,7 @@ function RoadAxis({
   todayLabel: string;
 }) {
   return (
-    <span className="relative block h-4">
+    <span className={AXIS_CLASS}>
       {band.todayShare !== undefined && (
         <span
           className={cn(AXIS_LABEL_CLASS, "text-foreground")}
@@ -186,13 +194,8 @@ export function PlanRoad({
           const isLast = index === bands.length - 1;
 
           return (
-            <li
-              className="@container/phase relative flex min-w-16 basis-0 flex-col"
-              key={band.id}
-              style={{ flexGrow: band.weight }}
-            >
+            <li className={BAND_COLUMN_CLASS} key={band.id} style={{ flexGrow: band.weight }}>
               <RoadBandFace band={band} />
-              {band.todayShare !== undefined && <TodayTicks share={band.todayShare} />}
               <RoadLane band={band} isLast={isLast} />
               <RoadAxis band={band} end={end} isLast={isLast} todayLabel={todayLabel} />
             </li>

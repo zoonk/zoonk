@@ -5,6 +5,7 @@ import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
+import { BAND_NAME_CLASS } from "./roadmap-styles";
 import { getLessonShare } from "./use-roadmap";
 
 const PERCENT = 100;
@@ -19,7 +20,7 @@ export function BandFace({ phase }: { phase: PlanPhaseView }) {
       {phase.state === "done" && (
         <CheckIcon aria-hidden="true" className="size-3.5 shrink-0" strokeWidth={2.5} />
       )}
-      <span className="min-w-0 truncate">
+      <span className={BAND_NAME_CLASS}>
         {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
       </span>
       {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}

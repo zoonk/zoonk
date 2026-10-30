@@ -13,7 +13,7 @@ import { type JourneyPathLinks } from "./journey-links";
 import { BandFace } from "./roadmap-band";
 import { RoadmapFull } from "./roadmap-full";
 import { PhaseAxis } from "./roadmap-lane";
-import { BAND_CLASS, BAND_STATE_CLASS } from "./roadmap-styles";
+import { BAND_CLASS, BAND_COLUMN_CLASS, BAND_STATE_CLASS } from "./roadmap-styles";
 import {
   getLessonShare,
   useRoadmapFinish,
@@ -121,37 +121,49 @@ const PHASE_MARK = {
   upcoming: "todo",
 } as const;
 
+/**
+ * What the axis says under a phase: "Today" under the current one and the start of each one after
+ * it. Earlier phases, done or settled by placement, say nothing, their check says it.
+ */
+function getPhaseWhen({ currentIndex, position }: { currentIndex: number; position: number }) {
+  if (position === currentIndex) {
+    return "today";
+  }
+
+  return currentIndex !== -1 && position > currentIndex ? "start" : null;
+}
+
 function RoadmapRevealList() {
   const t = useExtracted();
   const phaseName = usePhaseName();
   const { plan } = usePlanScreen();
-  const { phases } = useRoadmapPhases();
+  const { currentIndex, phases } = useRoadmapPhases();
 
   return (
     <div className="flex flex-col gap-2 sm:hidden" data-slot="plan-roadmap">
       <RoadmapCompact onOpen={null} />
 
       <ol className="flex flex-col [&>li+li]:border-t">
-        {phases.map((phase) => (
-          <li className="flex min-h-11 items-center gap-3 py-2 text-sm" key={phase.index}>
-            <StatusMark
-              label={phase.state === "current" ? t("You are here") : undefined}
-              status={PHASE_MARK[phase.state]}
-            />
-            <span className="min-w-0 flex-1 font-medium text-pretty">
-              {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
-            </span>
-            {phase.startDate && (
-              <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-                {phase.state === "current" ? (
-                  t("Today")
-                ) : (
-                  <PlanDateText isoDate={phase.startDate} />
-                )}
+        {phases.map((phase, position) => {
+          const when = getPhaseWhen({ currentIndex, position });
+
+          return (
+            <li className="flex min-h-11 items-center gap-3 py-2 text-sm" key={phase.index}>
+              <StatusMark
+                label={phase.state === "current" ? t("You are here") : undefined}
+                status={PHASE_MARK[phase.state]}
+              />
+              <span className="min-w-0 flex-1 font-medium text-pretty">
+                {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
               </span>
-            )}
-          </li>
-        ))}
+              {when && phase.startDate && (
+                <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
+                  {when === "today" ? t("Today") : <PlanDateText isoDate={phase.startDate} />}
+                </span>
+              )}
+            </li>
+          );
+        })}
       </ol>
     </div>
   );
@@ -166,39 +178,43 @@ function RoadmapReveal() {
   return (
     <div className="flex flex-col gap-1.5 max-sm:hidden" data-slot="plan-roadmap">
       <ol className="flex gap-[3px]">
-        {phases.map((phase, position) => (
-          <li
-            className="@container/phase flex min-w-10 basis-0 flex-col gap-1.5"
-            key={phase.index}
-            style={{ flexGrow: getPhaseWeight(phase) }}
-          >
-            <span
-              aria-current={phase.state === "current" ? "step" : undefined}
-              className={cn(BAND_CLASS, BAND_STATE_CLASS[phase.state])}
-            >
-              <BandFace phase={phase} />
-            </span>
+        {phases.map((phase, position) => {
+          const when = getPhaseWhen({ currentIndex, position });
 
-            {dated && phase.startDate && (
-              <>
-                <PhaseAxis
-                  flagOnPhone
-                  isLast={position === phases.length - 1}
-                  labelled={currentIndex !== -1 && position > currentIndex}
-                  phase={phase}
-                  todayShare={
-                    position === currentIndex
-                      ? getShareInPhase({ at: "start", date: today, phase })
-                      : null
-                  }
-                />
-                <span className="sr-only">
-                  {t("From")} <PlanDateText isoDate={phase.startDate} />
-                </span>
-              </>
-            )}
-          </li>
-        ))}
+          return (
+            <li
+              className={cn(BAND_COLUMN_CLASS, "gap-1.5")}
+              key={phase.index}
+              style={{ flexGrow: getPhaseWeight(phase) }}
+            >
+              <span
+                aria-current={phase.state === "current" ? "step" : undefined}
+                className={cn(BAND_CLASS, BAND_STATE_CLASS[phase.state])}
+              >
+                <BandFace phase={phase} />
+              </span>
+
+              {dated && phase.startDate && (
+                <>
+                  <PhaseAxis
+                    flagOnPhone
+                    isLast={position === phases.length - 1}
+                    labelled={when === "start"}
+                    phase={phase}
+                    todayShare={
+                      when === "today" ? getShareInPhase({ at: "start", date: today, phase }) : null
+                    }
+                  />
+                  {when === "start" && (
+                    <span className="sr-only">
+                      {t("From")} <PlanDateText isoDate={phase.startDate} />
+                    </span>
+                  )}
+                </>
+              )}
+            </li>
+          );
+        })}
       </ol>
 
       {dated && finish && (
