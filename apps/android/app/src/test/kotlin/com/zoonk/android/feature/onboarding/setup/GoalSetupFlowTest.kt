@@ -385,18 +385,22 @@ class GoalSetupFlowTest {
     }
 
     @Test
-    fun aFirstTimeThatLandsAfterTheDaysChangedStillStartsTheScreen() {
+    fun aFirstTimeThatLandsAfterTheDaysChangedAndTheScreenIsRebuiltStillStartsIt() {
         api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
         api.cover = { input -> coverOf(recommended = if (input.studyDays.orEmpty().size == 5) 45 else null) }
         api.coverGate = CompletableDeferred()
         api.coverGateAfter = 0
-        show()
+        val restoration = StateRestorationTester(rule)
+        show(restoration = restoration)
 
         rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+        restoration.emulateSavedInstanceStateRestore()
         rule.mainClock.advanceTimeBy(1_000)
         api.coverGate?.complete(Unit)
         rule.mainClock.advanceTimeBy(1_000)
 
+        assertEquals(1, api.coverMostAtOnce)
         assertEquals(listOf(5, 4), api.coverAsks.map { it.studyDays.orEmpty().size })
         rule.onNodeWithContentDescription("Time a day, 45\u00A0min").performScrollTo().assertIsDisplayed()
     }

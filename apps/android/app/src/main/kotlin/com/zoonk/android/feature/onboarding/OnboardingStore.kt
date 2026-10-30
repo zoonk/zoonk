@@ -49,8 +49,6 @@ import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonElement
@@ -263,19 +261,16 @@ class OnboardingStore(
             session?.let { api.goalGenerationRun(it, goalId) }
         }
 
-    private val adviceLane = Mutex()
-    private val coverLane = Mutex()
-
-    /** What a daily time and week would cover: the server plans the goal for it without saving anything, one ask at a time. */
+    /** What a daily time and week would cover: the server plans the goal for it without saving anything. */
     val timeAdvice =
         cache.keyed<AdviceQuery, PlanTimeAdvice>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearnerModel)) { session, query ->
-            session?.let { adviceLane.withLock { api.timeAdvice(it, query.goal.id.toString(), query.input) } }
+            session?.let { api.timeAdvice(it, query.goal.id.toString(), query.input) }
         }
 
-    /** The time a dated goal needs on the days asked about: the server plans the goal at each daily time, one ask at a time. */
+    /** The time a dated goal needs on the days asked about: the server plans the goal at each daily time. */
     val timesToCover =
         cache.keyed<CoverQuery, PlanTimeToCover>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearnerModel)) { session, query ->
-            session?.let { coverLane.withLock { api.timeToCover(it, query.goal.id.toString(), query.input) } }
+            session?.let { api.timeToCover(it, query.goal.id.toString(), query.input) }
         }
 
     suspend fun writeGoal(goalId: String) = write { api.writeGoal(it, goalId) }
@@ -540,11 +535,13 @@ private inline fun <reified T> JsonElement.decode(): T? =
     }
 
 /** Keyed by the whole [goal], so an answer that changed it (a new date, level or purpose) reads again. */
+@Serializable
 data class AdviceQuery(
     val goal: Goal,
     val input: PlanTimeAdviceInput,
 )
 
+@Serializable
 data class CoverQuery(
     val goal: Goal,
     val input: PlanTimeToCoverInput,

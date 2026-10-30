@@ -98,6 +98,7 @@ internal fun ColumnScope.ScheduleStep(
             CoverQuery(goal, findWeek(days, weekend).coverInput()),
             enabled = (goal.targetDate != null || exam) && hasDays,
             paused = paused,
+            querySerializer = CoverQuery.serializer(),
             serializer = PlanTimeToCover.serializer(),
             ready = { it.ready },
         )
@@ -117,6 +118,7 @@ internal fun ColumnScope.ScheduleStep(
             AdviceQuery(goal, asked.adviceInput(minutes ?: recommendedMinutes)),
             enabled = hasDays && asksAboutTime(dated, found, studiesEverything, minutes),
             paused = paused,
+            querySerializer = AdviceQuery.serializer(),
             serializer = PlanTimeAdvice.serializer(),
             ready = { it.ready },
         )

@@ -26,6 +26,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.nullable
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -102,11 +103,10 @@ internal class PlanAnswer<T>(
 /**
  * Asks every few seconds while the plan isn't [ready], then once for each new [query], keeping each
  * answer so going back to an earlier choice needs no new one. After the first answer, days tapped in
- * a row ask once; [paused] stops asking again a plan whose run stopped. The first and last answers
- * and a failed ask outlive the screen's recreation, as the choices they decide do. The latest enabled
- * [query] goes once the ask out comes back, whose answer still counts, so abandoned ones are never
- * sent; an ask unanswered for 45 seconds fails while it's still out. [resources] must send one ask at
- * a time themselves, since recreation forgets which one is out.
+ * a row ask once; [paused] stops asking again a plan whose run stopped. The first and last answers,
+ * the ask out and a failed ask outlive the screen's recreation, as the choices they decide do. The
+ * latest enabled [query] goes once the ask out comes back, whose answer still counts, so abandoned
+ * ones are never sent; an ask unanswered for 45 seconds fails while it's still out.
  */
 @Composable
 internal fun <Q : Any, T : Any> rememberPlanAnswer(
@@ -114,12 +114,13 @@ internal fun <Q : Any, T : Any> rememberPlanAnswer(
     query: Q,
     enabled: Boolean,
     paused: Boolean,
+    querySerializer: KSerializer<Q>,
     serializer: KSerializer<T>,
     ready: (T) -> Boolean,
 ): PlanAnswer<T> {
-    var first by rememberSaveable(stateSaver = jsonSaver(serializer)) { mutableStateOf<T?>(null) }
-    var last by rememberSaveable(stateSaver = jsonSaver(serializer)) { mutableStateOf<T?>(null) }
-    var settled by remember { mutableStateOf(query) }
+    var first by rememberSaveable(stateSaver = jsonSaver(serializer.nullable)) { mutableStateOf<T?>(null) }
+    var last by rememberSaveable(stateSaver = jsonSaver(serializer.nullable)) { mutableStateOf<T?>(null) }
+    var settled by rememberSaveable(stateSaver = jsonSaver(querySerializer)) { mutableStateOf(query) }
     var missed by rememberSaveable(query) { mutableStateOf(false) }
     val came = { value: T ->
         last = value
@@ -153,9 +154,9 @@ internal fun <Q : Any, T : Any> rememberPlanAnswer(
     return PlanAnswer(answer, first, answer ?: last, poll, status, restart)
 }
 
-private fun <T : Any> jsonSaver(serializer: KSerializer<T>) =
-    Saver<T?, String>(
-        save = { value -> value?.let { ApiJson.encodeToString(serializer, it) } },
+private fun <T> jsonSaver(serializer: KSerializer<T>) =
+    Saver<T, String>(
+        save = { ApiJson.encodeToString(serializer, it) },
         restore = { ApiJson.decodeFromString(serializer, it) },
     )
 
