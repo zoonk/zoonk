@@ -1088,6 +1088,35 @@
         }
       }
     },
+    "Try again" : {
+      "comment" : "Reads the learner's goals again",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versuch es noch einmal"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inténtalo de nuevo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessayer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentar de novo"
+          }
+        }
+      }
+    },
     "Unit" : {
       "comment" : "Title shown instead of a unit of a language plan until it can open",
       "localizations" : {
@@ -1200,6 +1229,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Suas metas"
+          }
+        }
+      }
+    },
+    "Your goals didn't load. Try again" : {
+      "comment" : "Spoken label of the toolbar button shown when the learner's goals didn't load",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Ziele konnten nicht geladen werden. Versuch es noch einmal"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus objetivos no se han cargado. Inténtalo de nuevo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger tes objectifs. Réessayer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suas metas não carregaram. Tente de novo"
           }
         }
       }

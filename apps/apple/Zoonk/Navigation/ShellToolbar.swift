@@ -51,6 +51,16 @@ struct ShellToolbar: ViewModifier {
 
           ToolbarSpacer(.fixed, placement: .topBarTrailing)
         }
+      } else {
+        ToolbarItem(placement: .topBarLeading) {
+          GoalSwitcherPlaceholder(isCompact: isSwitcherCompact)
+        }
+
+        ToolbarItem(placement: .topBarTrailing) {
+          LevelPlaceholder()
+        }
+
+        ToolbarSpacer(.fixed, placement: .topBarTrailing)
       }
 
       ToolbarItem(placement: .topBarTrailing) {
@@ -87,6 +97,71 @@ private struct LevelButton: View {
         comment:
           "Spoken label of the toolbar button with the learner's belt and level, which opens their statistics"
       ))
+  }
+}
+
+/// Holds the goal switcher's place while the learner's summary is read, so the bar keeps its shape
+/// when it arrives; a failed read says so instead of leaving the place empty.
+private struct GoalSwitcherPlaceholder: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+
+  let isCompact: Bool
+
+  var body: some View {
+    if case .failed = learner.summary.state {
+      Button {
+        Task { await learner.summary.refresh() }
+      } label: {
+        HStack(spacing: 4) {
+          Image(systemName: "arrow.clockwise")
+
+          if !isCompact {
+            Text("Try again", tableName: "Navigation", comment: "Reads the learner's goals again")
+              .lineLimit(1)
+          }
+        }
+        .fontWeight(.semibold)
+      }
+      .accessibilityLabel(
+        Text(
+          "Your goals didn't load. Try again", tableName: "Navigation",
+          comment: "Spoken label of the toolbar button shown when the learner's goals didn't load"
+        ))
+    } else {
+      Button {
+      } label: {
+        HStack(spacing: 4) {
+          if isCompact {
+            Image(systemName: "target")
+          } else {
+            startGoalTitle
+
+            Image(systemName: "chevron.down")
+              .imageScale(.small)
+          }
+        }
+        .fontWeight(.semibold)
+      }
+      .disabled(true)
+      .redacted(reason: .placeholder)
+      .accessibilityHidden(true)
+    }
+  }
+}
+
+private struct LevelPlaceholder: View {
+  var body: some View {
+    Button {
+    } label: {
+      HStack(spacing: 6) {
+        BeltDot(belt: .white)
+
+        Text(verbatim: "1")
+      }
+    }
+    .disabled(true)
+    .redacted(reason: .placeholder)
+    .accessibilityHidden(true)
   }
 }
 
@@ -208,12 +283,6 @@ private struct GoalSwitcher: View {
     }
   }
 
-  private var startGoalTitle: Text {
-    Text(
-      "Start a goal", tableName: "Navigation",
-      comment: "Opens Today, where the learner starts a goal")
-  }
-
   private var shownGoal: LearnerGoal? {
     summary.followedGoals.first { $0.id == pendingGoalId } ?? summary.shownGoal
   }
@@ -235,6 +304,12 @@ private struct GoalSwitcher: View {
         }
       })
   }
+}
+
+private var startGoalTitle: Text {
+  Text(
+    "Start a goal", tableName: "Navigation",
+    comment: "Opens Today, where the learner starts a goal")
 }
 
 private func goalLine(_ goal: LearnerGoal) -> String {
