@@ -101,7 +101,7 @@ struct MistakesScreen: View {
       }
     }
     .listStyle(.insetGrouped)
-    .readableColumn(PracticeLayout.readableWidth)
+    .readableColumn(PracticeLayout.readableWidth, alignment: .leading)
     .navigationTitle(
       Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
     )
