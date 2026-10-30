@@ -23,10 +23,10 @@ final class ScheduleTimeTests: XCTestCase {
 
   private func everyTopicAt(_ minutes: Int) -> TimeToCover {
     found(
-      suggested: .init(kind: .everyTopic, minutes: minutes, split: nil), recommendedMinutes: 300)
+      suggested: .init(kind: .everyTopic, minutes: minutes, split: nil), recommendedMinutes: nil)
   }
 
-  private var tooClose: TimeToCover { found(suggested: nil, recommendedMinutes: 900) }
+  private var tooClose: TimeToCover { found(suggested: nil, recommendedMinutes: nil) }
 
   private var passed: TimeToCover { found(suggested: nil, recommendedMinutes: nil, pastDate: true) }
 
@@ -146,7 +146,7 @@ final class ScheduleTimeTests: XCTestCase {
     XCTAssertFalse(asks(found: passed))
   }
 
-  func testSaysWhyOnlyWhenNoSensibleTimeCoversEverything() {
+  func testSaysWhyOnlyWhenNotEvenAWholeDayCoversEverything() {
     let short = Line.share(0.15)
 
     func why(_ found: TimeToCover, line: Line = short) -> ScheduleTime.TooClose? {
@@ -155,16 +155,27 @@ final class ScheduleTimeTests: XCTestCase {
 
     XCTAssertNil(why(found()))
     XCTAssertNil(why(passed))
-    XCTAssertEqual(why(tooClose), .init(cause: .date, recommendedMinutes: 900))
-    XCTAssertEqual(why(everyTopicAt(45)), .init(cause: .date, recommendedMinutes: 300))
+    XCTAssertEqual(why(tooClose), .date)
+    XCTAssertEqual(why(everyTopicAt(45)), .date)
     XCTAssertNil(why(tooClose, line: .everything(suggested: false)))
+  }
+
+  func testOpensOnTheTimeThatReachesEveryTopicWhenNoDayHoldsEverything() {
+    let longest = everyTopicAt(600)
+
+    XCTAssertEqual(
+      ScheduleTime.shownMinutes(
+        fallback: 30, first: longest, found: longest, picked: nil, settled: false),
+      600)
+    XCTAssertEqual(
+      ScheduleTime.tooClose(found: longest, line: .everyTopic, studiesEveryDay: false), .days)
   }
 
   func testBlamesTheDaysUntilEveryDayIsAStudyDay() {
     let fewerDays = ScheduleTime.tooClose(
       found: tooClose, line: .share(0.15), studiesEveryDay: false)
 
-    XCTAssertEqual(fewerDays, .init(cause: .days, recommendedMinutes: 900))
+    XCTAssertEqual(fewerDays, .days)
   }
 
   func testWaitsForTheNewDaysSuggestionUnlessTheLearnerPickedATime() {

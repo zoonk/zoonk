@@ -315,27 +315,16 @@ struct ScheduleQuestion: View {
 
   /// Until every day is a study day, more days bring the time down; only then is the date to blame.
   private func tooCloseWords(_ tooClose: ScheduleTime.TooClose) -> String {
-    switch (tooClose.cause, tooClose.recommendedMinutes) {
-    case (.days, nil):
+    switch tooClose {
+    case .days:
       String(
         localized:
           "The days you picked can't cover everything in depth by your date. More study days would help.",
         table: "Onboarding", comment: "No time a day covers the whole goal on the days picked")
-    case (.days, let minutes?):
-      String(
-        localized:
-          "Covering everything in depth by your date takes \(duration(minutes)) a day on the days you picked. More study days bring that down.",
-        table: "Onboarding",
-        comment: "The time a day covering the whole goal by its date on the days picked")
-    case (.date, nil):
+    case .date:
       String(
         localized: "Your date is too close to cover everything in depth.", table: "Onboarding",
         comment: "No time a day covers the whole goal by its date")
-    case (.date, let minutes?):
-      String(
-        localized:
-          "Your date is close: covering everything in depth takes \(duration(minutes)) a day.",
-        table: "Onboarding", comment: "The time a day covering the whole goal by its date takes")
     }
   }
 

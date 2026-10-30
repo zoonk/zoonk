@@ -3389,35 +3389,6 @@
         }
       }
     },
-    "Covering everything in depth by your date takes %@ a day on the days you picked. More study days bring that down." : {
-      "comment" : "The time a day covering the whole goal by its date on the days picked",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "An den gewählten Lerntagen brauchst du jeweils %@, um bis zu deinem Zieldatum alles gründlich zu lernen. Mit mehr Lerntagen sinkt die tägliche Lernzeit."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estudiarlo todo en profundidad para esa fecha requiere %@ al día los días que has elegido. Con más días de estudio, necesitarás menos tiempo al día."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pour tout étudier en profondeur d’ici la date prévue, il faut %@ par jour, les jours que tu as choisis. Ajouter des jours d’étude réduit cette durée."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para estudar tudo a fundo até a data definida, você precisa de %@ por dia nos dias que escolheu. Mais dias de estudo reduzem esse tempo."
-          }
-        }
-      }
-    },
     "Covers about %@ of your exam topics in depth by %@, what comes up most first." : {
       "comment" : "The share of an exam the time a day covers by its date; the second argument is a date like 'May 5, 2027'",
       "localizations" : {
@@ -12377,35 +12348,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu Parceiro cresce enquanto você aprende."
-          }
-        }
-      }
-    },
-    "Your date is close: covering everything in depth takes %@ a day." : {
-      "comment" : "The time a day covering the whole goal by its date takes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Zieldatum ist nah: Um alles gründlich abzudecken, brauchst du %@ pro Tag."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu fecha está cerca: abarcarlo todo en profundidad requiere %@ al día."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta date approche : il faut %@ par jour pour tout couvrir en profondeur."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua data está próxima: para estudar tudo a fundo, são necessários %@ por dia."
           }
         }
       }

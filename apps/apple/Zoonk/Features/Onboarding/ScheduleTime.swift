@@ -17,14 +17,9 @@ enum ScheduleTime {
     case working
   }
 
-  struct TooClose: Equatable {
-    enum Cause: Equatable {
-      case date
-      case days
-    }
-
-    let cause: Cause
-    let recommendedMinutes: Int?
+  enum TooClose: Equatable {
+    case date
+    case days
   }
 
   static let everyDay = Array(0..<7)
@@ -112,9 +107,9 @@ enum ScheduleTime {
     return answers.compactMap(\.suggested).first { $0.minutes == minutes }?.split
   }
 
-  /// Why no suggestion covers everything; nil when one does, the time shown does, or the date passed.
-  /// The date is to blame only once every day is a study day: until then, more days bring the time
-  /// down.
+  /// Why no suggestion covers everything, which happens only when not even a whole day does; nil when
+  /// one does, the time shown does, or the date passed. The date is to blame only once every day is a
+  /// study day: until then, more days bring the time down.
   static func tooClose(found: TimeToCover?, line: Line, studiesEveryDay: Bool) -> TooClose? {
     guard let found, !found.pastDate, !line.coversEverything,
       found.suggested?.kind != .everything
@@ -122,8 +117,7 @@ enum ScheduleTime {
       return nil
     }
 
-    return TooClose(
-      cause: studiesEveryDay ? .date : .days, recommendedMinutes: found.recommendedMinutes)
+    return studiesEveryDay ? .date : .days
   }
 
   /// The time shown is a suggestion it follows, still the one for the days before: Continue waits
