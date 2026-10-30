@@ -417,6 +417,11 @@ final class ZoonkUITests: XCTestCase {
       }
 
       if UIDevice.current.userInterfaceIdiom == .pad, orientation.isLandscape {
+        // The system brings the sidebar back as the last launch left it.
+        if !app.collectionViews.cells["Statistics"].exists {
+          app.buttons["Toggle sidebar"].firstMatch.tap()
+        }
+
         for place in ["Statistics", "Mistakes notebook", "Statistics"] {
           app.primaryNavigationItem(place).tap()
           XCTAssertTrue(
