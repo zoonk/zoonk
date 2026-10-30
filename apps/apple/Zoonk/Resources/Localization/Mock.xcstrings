@@ -3299,7 +3299,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toutes les tâches sont terminées. Rends cette section pour continuer."
+            "value" : "Toutes les tâches sont terminées. Rends cette partie pour continuer."
           }
         },
         "pt" : {
@@ -3676,7 +3676,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rendre cette section"
+            "value" : "Rendre cette partie"
           }
         },
         "pt" : {
@@ -3705,7 +3705,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rendre cette section ?"
+            "value" : "Rendre cette partie ?"
           }
         },
         "pt" : {
@@ -4636,7 +4636,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Section suivante"
+            "value" : "Partie suivante"
           }
         },
         "pt" : {
@@ -5625,7 +5625,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Section %lld"
+            "value" : "Partie %lld"
           }
         },
         "pt" : {
@@ -5654,7 +5654,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sections"
+            "value" : "Parties"
           }
         },
         "pt" : {
@@ -5828,7 +5828,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer la section suivante"
+            "value" : "Commencer la partie suivante"
           }
         },
         "pt" : {
@@ -6581,7 +6581,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La section suivante commence automatiquement à la fin de la pause."
+            "value" : "La partie suivante commence automatiquement à la fin de la pause."
           }
         },
         "pt" : {
@@ -7833,7 +7833,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Épreuve écrite"
+            "value" : "Partie écrite"
           }
         },
         "pt" : {
@@ -7862,7 +7862,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Épreuve écrite · %@"
+            "value" : "Partie écrite · %@"
           }
         },
         "pt" : {
@@ -7897,7 +7897,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Épreuve écrite · %1$lld sur %2$lld"
+            "value" : "Partie écrite · %1$lld sur %2$lld"
           }
         },
         "pt" : {
