@@ -390,22 +390,28 @@ describe(sessionPreparationWorkflow, () => {
       },
     });
 
-    const [later] = await Promise.all([
-      skillFixture(),
+    const [later, lesson] = await Promise.all([skillFixture(), libraryLessonFixture()]);
+
+    await Promise.all([
       planItemFixture({
+        lessonId: lesson.id,
         planId: plan.id,
         position: 0,
+        scheduledFor: new Date(today.getTime() + 86_400_000),
+      }),
+      planItemFixture({
+        planId: plan.id,
+        position: 1,
         scheduledFor: new Date(today.getTime() + 3 * 86_400_000),
         skillId: skill.id,
       }),
+      planItemFixture({
+        planId: plan.id,
+        position: 2,
+        scheduledFor: new Date(today.getTime() + 30 * 86_400_000),
+        skillId: later.id,
+      }),
     ]);
-
-    await planItemFixture({
-      planId: plan.id,
-      position: 1,
-      scheduledFor: new Date(today.getTime() + 30 * 86_400_000),
-      skillId: later.id,
-    });
 
     await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
 
@@ -458,11 +464,11 @@ describe(sessionPreparationWorkflow, () => {
   });
 
   it.each([
-    { background: true, days: 1, when: "tomorrow" },
-    { background: false, days: 0, when: "today" },
+    { background: true, days: 2, lessonDays: 1, when: "after tomorrow's lesson" },
+    { background: false, days: 0, lessonDays: 0, when: "today" },
   ])(
     "outlines the next chapter of a language skill whose stand-in is due $when",
-    async ({ background, days }) => {
+    async ({ background, days, lessonDays }) => {
       const user = await userFixture();
       const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
 
@@ -504,8 +510,15 @@ describe(sessionPreparationWorkflow, () => {
         prisma.chapterSkill.create({ data: { chapterId: chapter.id, skillId: skill.id } }),
         chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
         planItemFixture({
+          lessonId: lesson.id,
           planId: plan.id,
           position: 0,
+          scheduledFor: new Date(today.getTime() + lessonDays * 86_400_000),
+          skillId: skill.id,
+        }),
+        planItemFixture({
+          planId: plan.id,
+          position: 1,
           scheduledFor: new Date(today.getTime() + days * 86_400_000),
           skillId: skill.id,
         }),

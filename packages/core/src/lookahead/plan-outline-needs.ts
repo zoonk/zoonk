@@ -1,17 +1,15 @@
 import "server-only";
 import { type Course, type ExamBlueprint, type Goal, type Skill, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { findUntaughtSkills } from "../library/curriculum/course-outline-state";
 import { type CourseBandNeed, type CurriculumScope } from "../library/curriculum/curriculum-scope";
 import { toExamIdentity } from "../library/curriculum/shared-graph-prompt";
 import { type CandidateExam, toGoalCandidateExams } from "../library/exams/candidate-exams";
 import { goalUsesTools } from "../plans/_utils/plan-tools";
-import { addDays } from "../plans/planner/plan-calendar";
 import { isStandIn } from "../plans/planner/plan-item-rules";
 import { type ExistingPlanItem } from "../plans/planner/plan-items";
 import { parsePlanGraph } from "../plans/planner/plan-state";
+import { getOutlineHorizon } from "./outline-horizon";
 
 export type PlanOutlineNeed = { bands: CourseBandNeed[]; courseId: string; scope: CurriculumScope };
 
@@ -25,13 +23,6 @@ type PlanGoal = Pick<
 > & { examBlueprint: ExamBlueprint | null };
 
 const DEFAULT_LEVEL: CourseBandNeed["level"] = "beginner";
-
-export async function getOutlineHorizon({ days, goalId }: { days: number; goalId: string }) {
-  const goal = await prisma.goal.findUnique({ select: { timezone: true }, where: { id: goalId } });
-  const timeZone = getAnswerTimeZone({ goal });
-
-  return addDays(getDateInTimeZone({ date: new Date(), timeZone }), days);
-}
 
 async function loadStandIns({ goalId, until }: { goalId: string; until: Date | null }) {
   const plan = await prisma.plan.findUnique({

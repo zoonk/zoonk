@@ -1,6 +1,7 @@
 import "server-only";
 import { type CourseLevel, type Goal, type LibraryVisibility, prisma } from "@zoonk/db";
-import { getOutlineHorizon, toPlanCourseScope } from "../../lookahead/plan-outline-needs";
+import { getOutlineHorizon } from "../../lookahead/outline-horizon";
+import { toPlanCourseScope } from "../../lookahead/plan-outline-needs";
 import { goalUsesTools } from "../../plans/_utils/plan-tools";
 import { loadGoalPlannerLessons } from "../../plans/_utils/planner-lessons";
 import { type PlanGraphSkill, parsePlanGraph } from "../../plans/planner/plan-state";

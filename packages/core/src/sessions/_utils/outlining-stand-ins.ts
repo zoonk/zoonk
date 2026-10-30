@@ -1,15 +1,8 @@
-import {
-  type GenerationStatus,
-  type Goal,
-  type PlanItem,
-  type TransactionClient,
-  prisma,
-} from "@zoonk/db";
+import { type GenerationStatus, type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import "server-only";
 import { getOutlineStaleBefore } from "../../lookahead/outline-ahead";
+import { loadNextStandIn } from "../../lookahead/outline-horizon";
 import { readSkillCourses } from "../../lookahead/plan-outline-needs";
-import { isStandIn } from "../../plans/planner/plan-item-rules";
-import { isExamSchedule } from "../../plans/planner/plan-queue";
 
 const OUTLINING: GenerationStatus[] = ["pending", "running"];
 
@@ -21,38 +14,6 @@ const STAND_IN = {
   lessonId: null,
   skillId: { not: null },
 } as const;
-
-/** A long stand-in may start today while its due date is later; detect its consumed interval. */
-async function loadNextStandIn({
-  client,
-  goal,
-  localDate,
-}: {
-  client: TransactionClient;
-  goal: Pick<Goal, "id" | "kind" | "targetDate">;
-  localDate: Date;
-}): Promise<Pick<PlanItem, "skillId">[]> {
-  if (isExamSchedule(goal)) {
-    return [];
-  }
-
-  const plan = { goalId: goal.id };
-
-  const [last, next] = await Promise.all([
-    client.planItem.findFirst({
-      orderBy: [{ scheduledFor: "desc" }, { position: "desc" }],
-      select: { kind: true },
-      where: { plan, scheduledFor: { lte: localDate }, status: "todo" },
-    }),
-    client.planItem.findFirst({
-      orderBy: [{ scheduledFor: "asc" }, { position: "asc" }],
-      select: { chapterId: true, kind: true, lessonId: true, skillId: true },
-      where: { plan, scheduledFor: { gt: localDate }, status: "todo" },
-    }),
-  ]);
-
-  return next && isStandIn(next) && last?.kind !== "boss" ? [next] : [];
-}
 
 async function loadDayStandInSkills({
   client,

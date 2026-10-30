@@ -182,7 +182,14 @@ async function placedGuestFixture({
 type PlacedGuest = Awaited<ReturnType<typeof placedGuestFixture>>;
 
 /** The course wrote one lesson of the plan's topic and the learner studied it, so today holds only stand-ins of it. */
-async function partlyWrittenTopicFixture({ guest = true }: { guest?: boolean } = {}) {
+async function partlyWrittenTopicFixture({
+  guest = true,
+  standInDays = 0,
+}: {
+  guest?: boolean;
+  /** Days until the stand-in is due: a long one is due on the last day it spans. */
+  standInDays?: number;
+} = {}) {
   const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
   const yesterday = new Date(today.getTime() - 86_400_000);
 
@@ -240,7 +247,12 @@ async function partlyWrittenTopicFixture({ guest = true }: { guest?: boolean } =
       skillId: topic.id,
       status: "done",
     }),
-    planItemFixture({ planId: plan.id, position: 1, scheduledFor: today, skillId: topic.id }),
+    planItemFixture({
+      planId: plan.id,
+      position: 1,
+      scheduledFor: new Date(today.getTime() + standInDays * 86_400_000),
+      skillId: topic.id,
+    }),
   ]);
 
   if (guest) {
@@ -487,6 +499,31 @@ describe("preparing a guest's lessons", () => {
       ]);
     },
   );
+
+  it("writes a long partly written topic's next chapter in the foreground while the guest is on it", async () => {
+    const topic = await partlyWrittenTopicFixture({ standInDays: 10 });
+
+    await expect(readEmptyDay(topic)).resolves.toBe("lessonsToPrepare");
+
+    await startGoalPreparation({ goalId: topic.goal.id });
+    await settle();
+
+    expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
+      expect.objectContaining({
+        background: false,
+        bands: [
+          expect.objectContaining({
+            extend: [
+              expect.objectContaining({ skill: expect.objectContaining({ id: topic.topic.id }) }),
+            ],
+          }),
+        ],
+        courseId: topic.course.id,
+      }),
+    ]);
+
+    await expect(readEmptyDay(topic)).resolves.toBe("lessonsComing");
+  });
 
   it("keeps the day's lessons coming after a guest asks for a partly written topic's lessons", async () => {
     const topic = await partlyWrittenTopicFixture();
