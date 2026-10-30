@@ -78,8 +78,9 @@ Some models over-engineer, and a reviewer from another family catches the bugs, 
 
 ## Translations
 
-- Translations come only from Eloqnt: after changing English copy, run `pnpm --filter <app> i18n`, then its `i18n:lint`. Never write, edit or copy a translation by hand, including from another app's catalog.
-- When a translation is wrong or inconsistent, fix the English source, its translator comment, or the style guides, then re-translate it with Eloqnt (`--id <message id>`).
+- Translations come from Eloqnt: after changing English copy, run `pnpm --filter <app> i18n`, then its `i18n:lint`.
+- When a translation is wrong or inconsistent, fix it through Eloqnt first: a clearer English source, a translator comment, or a style-guide entry for a recurring term or expression. Then re-translate just that string (`--id <message id>`; on Apple, mark it `needs_review` and run `i18n`).
+- Edit a translation by hand only as a last resort, after that re-run still gets it wrong, and report every such case on [Eloqnt's Discord](https://discord.gg/xJ8BxdrHd5): what failed, why, and what you tried.
 - The shared [Eloqnt style guides](packages/i18n/.eloqnt/styleguide.md) hold recurring tone and terminology; locale-specific choices go in `styleguide.<locale>.md`. Eloqnt sends them with every request and supplies translation best practices itself, so add only terms and expressions used across apps (`goal → meta`, “Brain Power”, the verb for “say” in pronunciation practice), never individual strings, ordinary UI words like “Save”, or generic i18n rules.
 
 ## Task-specific guidance

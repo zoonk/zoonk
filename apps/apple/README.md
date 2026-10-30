@@ -89,7 +89,7 @@ LocalizedStringResource(
 
 Build the app after adding or changing copy so Xcode extracts the source strings into the matching `.xcstrings` catalog. Then run `pnpm --filter apple i18n` from the repository root to translate missing Apple strings and `pnpm --filter apple i18n:lint` to validate every catalog. The root `pnpm i18n` and `pnpm i18n:lint` commands include the Apple app when running the same workflows for the full repository.
 
-Keep catalogs together in `Zoonk/Resources/Localization`, named by feature or app surface, and use the generic `pt` locale. Xcode resolves each catalog from its table basename, while Eloqnt automatically discovers every catalog in this directory. Do not edit generated translations or add manual extraction state for ordinary source-driven strings.
+Keep catalogs together in `Zoonk/Resources/Localization`, named by feature or app surface, and use the generic `pt` locale. Xcode resolves each catalog from its table basename, while Eloqnt automatically discovers every catalog in this directory. Fix translations through the [translation rules](../../AGENTS.md#translations), and don't add manual extraction state for ordinary source-driven strings.
 
 ## Continuous Integration
 
