@@ -306,6 +306,8 @@ internal class FakeOnboardingApi : OnboardingApi {
     /** Holds every time search after the first [coverGateAfter] until it completes. */
     var coverGate: CompletableDeferred<Unit>? = null
     var coverGateAfter = 1
+    var coverMostAtOnce = 0
+    private var coverAtOnce = 0
 
     override suspend fun timeToCover(
         session: AuthenticatedSession,
@@ -313,8 +315,13 @@ internal class FakeOnboardingApi : OnboardingApi {
         input: PlanTimeToCoverInput,
     ): PlanTimeToCover {
         coverAsks += input
-        if (coverAsks.size > coverGateAfter) coverGate?.await()
-        return cover(input)
+        coverMostAtOnce = maxOf(coverMostAtOnce, ++coverAtOnce)
+        try {
+            if (coverAsks.size > coverGateAfter) coverGate?.await()
+            return cover(input)
+        } finally {
+            coverAtOnce--
+        }
     }
 
     override suspend fun uploadFile(

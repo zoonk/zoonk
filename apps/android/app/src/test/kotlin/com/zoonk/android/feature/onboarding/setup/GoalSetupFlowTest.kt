@@ -342,6 +342,7 @@ class GoalSetupFlowTest {
         rule.mainClock.advanceTimeBy(1_000)
 
         assertEquals(listOf(5, 4, 2), api.coverAsks.map { it.studyDays.orEmpty().size })
+        assertEquals(1, api.coverMostAtOnce)
     }
 
     @Test
@@ -360,6 +361,44 @@ class GoalSetupFlowTest {
         rule.mainClock.advanceTimeBy(1_000)
 
         assertEquals(listOf(5, 3), api.coverAsks.map { it.studyDays.orEmpty().size })
+        assertEquals(1, api.coverMostAtOnce)
+    }
+
+    @Test
+    fun daysChangedJustBeforeTheScreenIsRebuiltWaitForTheTimeSearchOut() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { coverOf(recommended = 45) }
+        api.coverGate = CompletableDeferred()
+        val restoration = StateRestorationTester(rule)
+        show(restoration = restoration)
+
+        rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.onNodeWithContentDescription("Thursday").performScrollTo().performClick()
+        restoration.emulateSavedInstanceStateRestore()
+        rule.mainClock.advanceTimeBy(1_000)
+        api.coverGate?.complete(Unit)
+        rule.mainClock.advanceTimeBy(1_000)
+
+        assertEquals(1, api.coverMostAtOnce)
+        assertEquals(listOf(5, 4, 3), api.coverAsks.map { it.studyDays.orEmpty().size })
+    }
+
+    @Test
+    fun aFirstTimeThatLandsAfterTheDaysChangedStillStartsTheScreen() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { input -> coverOf(recommended = if (input.studyDays.orEmpty().size == 5) 45 else null) }
+        api.coverGate = CompletableDeferred()
+        api.coverGateAfter = 0
+        show()
+
+        rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+        api.coverGate?.complete(Unit)
+        rule.mainClock.advanceTimeBy(1_000)
+
+        assertEquals(listOf(5, 4), api.coverAsks.map { it.studyDays.orEmpty().size })
+        rule.onNodeWithContentDescription("Time a day, 45\u00A0min").performScrollTo().assertIsDisplayed()
     }
 
     @Test

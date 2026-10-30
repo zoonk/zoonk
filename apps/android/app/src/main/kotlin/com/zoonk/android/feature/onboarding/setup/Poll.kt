@@ -20,6 +20,7 @@ import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.api.ApiJson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
@@ -102,9 +103,10 @@ internal class PlanAnswer<T>(
  * Asks every few seconds while the plan isn't [ready], then once for each new [query], keeping each
  * answer so going back to an earlier choice needs no new one. After the first answer, days tapped in
  * a row ask once; [paused] stops asking again a plan whose run stopped. The first and last answers
- * and a failed ask outlive the screen's recreation, as the choices they decide do. Each ask plans the
- * goal, so one is out at a time, the latest enabled [query] goes next and abandoned ones are never
- * sent; an ask unanswered for 45 seconds fails while it's still out.
+ * and a failed ask outlive the screen's recreation, as the choices they decide do. The latest enabled
+ * [query] goes once the ask out comes back, whose answer still counts, so abandoned ones are never
+ * sent; an ask unanswered for 45 seconds fails while it's still out. [resources] must send one ask at
+ * a time themselves, since recreation forgets which one is out.
  */
 @Composable
 internal fun <Q : Any, T : Any> rememberPlanAnswer(
@@ -119,21 +121,23 @@ internal fun <Q : Any, T : Any> rememberPlanAnswer(
     var last by rememberSaveable(stateSaver = jsonSaver(serializer)) { mutableStateOf<T?>(null) }
     var settled by remember { mutableStateOf(query) }
     var missed by rememberSaveable(query) { mutableStateOf(false) }
+    val came = { value: T ->
+        last = value
+        if (first == null && ready(value)) first = value
+    }
     val asking = enabled && settled == query
     LaunchedEffect(query, enabled) {
         if (!enabled || settled == query) return@LaunchedEffect
         if (last != null) delay(SETTLE)
         val out = resources[settled]
         combine(out.state, out.isRefreshing) { state, refreshing -> state == LoadState.Loading || refreshing }.first { !it }
+        out.state.value.value
+            ?.let(came)
         settled = query
     }
     val state = if (asking) resources[query].collectShown().value else null
     val answer = (state as? LoadState.Loaded)?.value
-    LaunchedEffect(answer) {
-        answer ?: return@LaunchedEffect
-        last = answer
-        if (first == null && ready(answer)) first = answer
-    }
+    LaunchedEffect(answer) { answer?.let(came) }
     val active = asking && answer?.let(ready) != true && !(paused && answer != null)
     val poll = rememberPoll(active, key = query) { resources[query].refreshed() }
     LaunchedEffect(query, enabled, answer == null, poll.round) {
