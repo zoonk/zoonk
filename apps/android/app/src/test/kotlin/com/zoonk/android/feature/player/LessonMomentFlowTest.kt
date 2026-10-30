@@ -9,6 +9,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.feature.ceremonies.MomentCeremony
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -24,7 +25,7 @@ class LessonMomentFlowTest {
 
     private val harness = LessonPlayerHarness(rule) { folder.newFolder() }
 
-    private val ceremony: LessonCeremony = { milestone, onClose ->
+    private val ceremony: MomentCeremony = { milestone, onClose ->
         Column {
             Text("New ${milestone.kind.value}")
             Button(onClick = onClose) { Text("Close ceremony") }

@@ -19,6 +19,7 @@ import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.activities.code.CodeSandbox
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
+import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
@@ -66,7 +67,7 @@ internal class LessonPlayerHarness(
     fun play(
         steps: List<LessonStep>,
         guest: Boolean = false,
-        ceremony: LessonCeremony? = null,
+        ceremony: MomentCeremony? = null,
         sessionId: String? = null,
         sessionSteps: SessionSteps? = null,
         restoration: StateRestorationTester? = null,

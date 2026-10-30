@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.feature.ceremonies.momentBuddy
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
@@ -44,9 +44,6 @@ import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.characters.BuddyLook
-import com.zoonk.android.ui.characters.buddyName
-import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
@@ -232,28 +229,8 @@ private fun SlowDown(
     )
 }
 
-/** Shows a milestone's full-screen ceremony and calls `onClose` when the learner leaves it. */
-typealias LessonCeremony = @Composable (milestone: Milestone, onClose: () -> Unit) -> Unit
-
-/** Main's `MomentAfterCeremony`: the lesson's end shows once the ceremony it earned closes. */
-@Composable
-internal fun AfterCeremony(
-    result: LibraryLessonCompletion?,
-    ceremony: LessonCeremony?,
-    content: @Composable () -> Unit,
-) {
-    val milestone = result?.ceremonyMilestone()
-    var closed by rememberSaveable(milestone?.id) { mutableStateOf(false) }
-
-    if (milestone == null || ceremony == null || closed) {
-        content()
-    } else {
-        ceremony(milestone) { closed = true }
-    }
-}
-
 /** Main's `getLessonCelebration`: a lesson played in a session carries its ceremony in its block. */
-private fun LibraryLessonCompletion.ceremonyMilestone(): Milestone? {
+internal fun LibraryLessonCompletion.ceremonyMilestone(): Milestone? {
     val block = studyBlock ?: return ceremony
     return block.ceremony
 }
@@ -299,8 +276,8 @@ fun LessonCompletionView(
 
         val result = completion.result
         if (completion.status == CompletionStatus.Saved && result != null) {
-            val look = buddy?.look() ?: BuddyLook()
-            DayMoment(result, look, buddyName(look.kind, buddy?.name))
+            val moment = buddy.momentBuddy()
+            DayMoment(result, moment.look, moment.name)
         }
 
         if (completion.status == CompletionStatus.Saved && ending.guest) {

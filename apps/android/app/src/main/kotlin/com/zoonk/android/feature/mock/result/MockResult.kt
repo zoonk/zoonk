@@ -42,7 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.feature.ceremonies.SessionCeremony
+import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.mock.runner.COLUMN_WIDTH
 import com.zoonk.android.feature.mock.runner.MockActionBar
 import com.zoonk.android.feature.mock.runner.MockRun
@@ -110,182 +110,181 @@ internal fun MockResult(
             if (!placement && mistakes > 0) add(MockResultPart.Next)
         }
     // A result opened again was celebrated then; one just finished shows its milestone's ceremony before its steps.
-    var ceremonyClosed by rememberSaveable(view.ceremony?.id) { mutableStateOf(false) }
-    val ceremony = view.ceremony?.takeUnless { ceremonyClosed || viewModel.openedFinished }
-    if (ceremony != null) {
-        SessionCeremony(app, ceremony) { ceremonyClosed = true }
-        return
-    }
-    var reviewOpen by rememberSaveable { mutableStateOf(false) }
-    val onContinue = { navigator.continueAfter(view, route) }
-    val apply = { offersViewModel.apply(offered) }
-    val keep = { offersViewModel.keep(offered) }
-    val hasAside = resultAsideParts(has).isNotEmpty()
+    MomentAfterCeremony(app, view.ceremony?.takeUnless { viewModel.openedFinished }) { buddy ->
+        var reviewOpen by rememberSaveable { mutableStateOf(false) }
+        val onContinue = { navigator.continueAfter(view, route) }
+        val apply = { offersViewModel.apply(offered) }
+        val keep = { offersViewModel.keep(offered) }
+        val hasAside = resultAsideParts(has).isNotEmpty()
 
-    BoxWithConstraints {
-        // Main's `lg`: the aside beside the steps, or a window as wide without one; the review then sits in the score step.
-        val wide = if (hasAside) supportingPaneBeside(maxWidth) else maxWidth >= WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND.dp
-        LaunchedEffect(wide) { if (wide) reviewOpen = false }
+        BoxWithConstraints {
+            // Main's `lg`: the aside beside the steps, or a window as wide without one; the review then sits in the score step.
+            val wide = if (hasAside) supportingPaneBeside(maxWidth) else maxWidth >= WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND.dp
+            LaunchedEffect(wide) { if (wide) reviewOpen = false }
 
-        val steps =
-            resultSteps(has).flatMap { part ->
-                when (part.part) {
-                    MockResultPart.Score -> {
-                        listOfNotNull(
-                            result?.let {
-                                ResultStep(SCORE, part.beside) {
-                                    ScoreStep(
-                                        view,
-                                        it,
-                                        dayMoment = { MockDayMoment(app, view) },
-                                        review = { if (wide) ReviewSection(view, app) },
-                                    )
-                                }
-                            },
-                        )
-                    }
-
-                    MockResultPart.Essays -> {
-                        essays.map { step ->
-                            ResultStep(step.id, part.beside) { EssayStepContent(step, view.essayRubric, grading, viewModel::gradeEssays) }
-                        }
-                    }
-
-                    MockResultPart.Speaking -> {
-                        listOfNotNull(
-                            speaking?.let { paper ->
-                                ResultStep(SPEAKING, part.beside) {
-                                    SpeakingEstimate(paper) { task ->
-                                        navigator.open(AppRoute.Conversation(task.conversationId.toString(), mock = blockId))
+            val steps =
+                resultSteps(has).flatMap { part ->
+                    when (part.part) {
+                        MockResultPart.Score -> {
+                            listOfNotNull(
+                                result?.let {
+                                    ResultStep(SCORE, part.beside) {
+                                        ScoreStep(
+                                            view,
+                                            it,
+                                            dayMoment = { MockDayMoment(view, buddy) },
+                                            review = { if (wide) ReviewSection(view, app) },
+                                        )
                                     }
-                                }
-                            },
-                        )
-                    }
+                                },
+                            )
+                        }
 
-                    MockResultPart.Plan -> {
-                        listOf(ResultStep(PLAN, part.beside) { PlanStep(view.adapt, preparation, offers, apply, keep) })
-                    }
-
-                    MockResultPart.Next -> {
-                        listOf(ResultStep(NEXT, part.beside) { NextStep(mistakes) })
-                    }
-                }
-            }
-
-        var reachedId by rememberSaveable { mutableStateOf<String?>(null) }
-        var left by rememberSaveable { mutableStateOf(listOf<String>()) }
-        val shown = if (wide) steps.filterNot { it.beside } else steps
-        val reached = steps.indexOfFirst { it.id == reachedId }.coerceAtLeast(0)
-        // Where the step reached is beside, the step before it shows with the aside.
-        val current = shown.lastOrNull { steps.indexOf(it) <= reached } ?: shown.firstOrNull()
-        val position = shown.indexOf(current).coerceAtLeast(0)
-        // Beside the main action on wide windows and under it on a phone, as main's `MockResultOptions`.
-        val secondary =
-            when {
-                placement || mistakes == 0 -> null
-                view.purpose == MockExam.Purpose.PLANNED -> stringResource(R.string.mock_result_continue_session)
-                else -> stringResource(R.string.mock_result_not_now)
-            }
-        val heading = remember { FocusRequester() }
-        var announced by rememberSaveable { mutableStateOf(current?.id) }
-
-        // Main's `focusStepTitle`: a new step takes TalkBack to its heading, never on the first one.
-        LaunchedEffect(current?.id) {
-            if (current?.id != announced) {
-                announced = current?.id
-                heading.requestFocus()
-            }
-        }
-
-        val actions: @Composable () -> Unit = {
-            MockActionBar {
-                StepPagerActions(
-                    count = shown.size,
-                    index = position,
-                    onIndexChange = { to ->
-                        current?.let { if (it.id !in left) left = left + it.id }
-                        reachedId = shown[to].id
-                    },
-                    dots = false,
-                ) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        if (wide && secondary != null) OutlinedButton(onClick = onContinue) { Text(secondary) }
-                        MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue)
-                    }
-                }
-                if (current?.id == SCORE && !wide && view.review.isNotEmpty()) {
-                    TextButton(onClick = { reviewOpen = true }, modifier = Modifier.fillMaxWidth()) {
-                        val questions = view.review.size
-                        Text(
-                            if (questions == 1) {
-                                stringResource(R.string.mock_result_see_question)
-                            } else {
-                                pluralStringResource(R.plurals.mock_result_see_questions, questions, questions)
-                            },
-                        )
-                    }
-                }
-                if (position == shown.lastIndex && !wide && secondary != null) {
-                    TextButton(onClick = onContinue, modifier = Modifier.fillMaxWidth()) { Text(secondary) }
-                }
-            }
-        }
-        val step: @Composable () -> Unit = {
-            current?.let {
-                CompositionLocalProvider(LocalStepHeading provides heading) {
-                    StepColumn(it.id) {
-                        CelebrationScope(play = it.id !in left) {
-                            it.content()
-                            if (MockResultPart.Score !in has && it == steps.first()) {
-                                MockDayMoment(app, view)
+                        MockResultPart.Essays -> {
+                            essays.map { step ->
+                                ResultStep(
+                                    step.id,
+                                    part.beside,
+                                ) { EssayStepContent(step, view.essayRubric, grading, viewModel::gradeEssays) }
                             }
+                        }
+
+                        MockResultPart.Speaking -> {
+                            listOfNotNull(
+                                speaking?.let { paper ->
+                                    ResultStep(SPEAKING, part.beside) {
+                                        SpeakingEstimate(paper) { task ->
+                                            navigator.open(AppRoute.Conversation(task.conversationId.toString(), mock = blockId))
+                                        }
+                                    }
+                                },
+                            )
+                        }
+
+                        MockResultPart.Plan -> {
+                            listOf(ResultStep(PLAN, part.beside) { PlanStep(view.adapt, preparation, offers, apply, keep) })
+                        }
+
+                        MockResultPart.Next -> {
+                            listOf(ResultStep(NEXT, part.beside) { NextStep(mistakes) })
                         }
                     }
                 }
-            }
-        }
-        // Beside the aside, the actions belong to the steps' pane, as main's task footer.
-        val actionsInPane = hasAside && wide
 
-        CelebrationScope(play = !viewModel.openedFinished) {
-            TaskScaffold(
-                onClose = if (placement) onContinue else navigator::closeTask,
-                title = { StepDots(shown.size, position) },
-                actions = { TutorAskButton(TutorScope.Mock(blockId), app, navigator, worded = false) },
-                bottomBar = if (actionsInPane) null else actions,
-            ) { padding ->
-                if (hasAside) {
-                    PageWithSupportingPane(
-                        modifier = Modifier.padding(padding),
-                        supportingPane = {
-                            ResultAside(preparation) {
-                                if (offered.isNotEmpty()) {
-                                    view.adapt?.let { adapt ->
-                                        AsideSection(
-                                            stringResource(R.string.mock_result_your_plan),
-                                        ) { PlanChange(adapt, offers, true, apply, keep) }
-                                    }
-                                }
-                                if (MockResultPart.Next in has) {
-                                    AsideSection(stringResource(R.string.mock_result_now)) { MistakesRow(mistakes) }
-                                }
-                            }
+            var reachedId by rememberSaveable { mutableStateOf<String?>(null) }
+            var left by rememberSaveable { mutableStateOf(listOf<String>()) }
+            val shown = if (wide) steps.filterNot { it.beside } else steps
+            val reached = steps.indexOfFirst { it.id == reachedId }.coerceAtLeast(0)
+            // Where the step reached is beside, the step before it shows with the aside.
+            val current = shown.lastOrNull { steps.indexOf(it) <= reached } ?: shown.firstOrNull()
+            val position = shown.indexOf(current).coerceAtLeast(0)
+            // Beside the main action on wide windows and under it on a phone, as main's `MockResultOptions`.
+            val secondary =
+                when {
+                    placement || mistakes == 0 -> null
+                    view.purpose == MockExam.Purpose.PLANNED -> stringResource(R.string.mock_result_continue_session)
+                    else -> stringResource(R.string.mock_result_not_now)
+                }
+            val heading = remember { FocusRequester() }
+            var announced by rememberSaveable { mutableStateOf(current?.id) }
+
+            // Main's `focusStepTitle`: a new step takes TalkBack to its heading, never on the first one.
+            LaunchedEffect(current?.id) {
+                if (current?.id != announced) {
+                    announced = current?.id
+                    heading.requestFocus()
+                }
+            }
+
+            val actions: @Composable () -> Unit = {
+                MockActionBar {
+                    StepPagerActions(
+                        count = shown.size,
+                        index = position,
+                        onIndexChange = { to ->
+                            current?.let { if (it.id !in left) left = left + it.id }
+                            reachedId = shown[to].id
                         },
+                        dots = false,
                     ) {
-                        Column(Modifier.fillMaxSize()) {
-                            Box(Modifier.weight(1f)) { step() }
-                            if (actionsInPane) PaneFooter(actions)
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            if (wide && secondary != null) OutlinedButton(onClick = onContinue) { Text(secondary) }
+                            MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue)
                         }
                     }
-                } else {
-                    Box(Modifier.padding(padding)) { step() }
+                    if (current?.id == SCORE && !wide && view.review.isNotEmpty()) {
+                        TextButton(onClick = { reviewOpen = true }, modifier = Modifier.fillMaxWidth()) {
+                            val questions = view.review.size
+                            Text(
+                                if (questions == 1) {
+                                    stringResource(R.string.mock_result_see_question)
+                                } else {
+                                    pluralStringResource(R.plurals.mock_result_see_questions, questions, questions)
+                                },
+                            )
+                        }
+                    }
+                    if (position == shown.lastIndex && !wide && secondary != null) {
+                        TextButton(onClick = onContinue, modifier = Modifier.fillMaxWidth()) { Text(secondary) }
+                    }
+                }
+            }
+            val step: @Composable () -> Unit = {
+                current?.let {
+                    CompositionLocalProvider(LocalStepHeading provides heading) {
+                        StepColumn(it.id) {
+                            CelebrationScope(play = it.id !in left) {
+                                it.content()
+                                if (MockResultPart.Score !in has && it == steps.first()) {
+                                    MockDayMoment(view, buddy)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // Beside the aside, the actions belong to the steps' pane, as main's task footer.
+            val actionsInPane = hasAside && wide
+
+            CelebrationScope(play = !viewModel.openedFinished) {
+                TaskScaffold(
+                    onClose = if (placement) onContinue else navigator::closeTask,
+                    title = { StepDots(shown.size, position) },
+                    actions = { TutorAskButton(TutorScope.Mock(blockId), app, navigator, worded = false) },
+                    bottomBar = if (actionsInPane) null else actions,
+                ) { padding ->
+                    if (hasAside) {
+                        PageWithSupportingPane(
+                            modifier = Modifier.padding(padding),
+                            supportingPane = {
+                                ResultAside(preparation) {
+                                    if (offered.isNotEmpty()) {
+                                        view.adapt?.let { adapt ->
+                                            AsideSection(
+                                                stringResource(R.string.mock_result_your_plan),
+                                            ) { PlanChange(adapt, offers, true, apply, keep) }
+                                        }
+                                    }
+                                    if (MockResultPart.Next in has) {
+                                        AsideSection(stringResource(R.string.mock_result_now)) { MistakesRow(mistakes) }
+                                    }
+                                }
+                            },
+                        ) {
+                            Column(Modifier.fillMaxSize()) {
+                                Box(Modifier.weight(1f)) { step() }
+                                if (actionsInPane) PaneFooter(actions)
+                            }
+                        }
+                    } else {
+                        Box(Modifier.padding(padding)) { step() }
+                    }
                 }
             }
         }
-    }
 
-    if (reviewOpen) ReviewSheet(view, app, onDismiss = { reviewOpen = false })
+        if (reviewOpen) ReviewSheet(view, app, onDismiss = { reviewOpen = false })
+    }
 }
 
 /** The heading a step takes TalkBack to when it opens. */

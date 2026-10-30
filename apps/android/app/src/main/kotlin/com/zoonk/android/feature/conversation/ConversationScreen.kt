@@ -33,7 +33,10 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.SpeechPlayer
+import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
+import com.zoonk.android.feature.ceremonies.momentBuddy
 import com.zoonk.android.feature.livecall.LiveCall
 import com.zoonk.android.feature.livecall.LiveCallFailure
 import com.zoonk.android.feature.livecall.LiveCallPhase
@@ -43,15 +46,12 @@ import com.zoonk.android.feature.session.ReachedFacts
 import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
-import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.api.models.CompletedLanguageConversation
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationIntro
-import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.launch
 import java.util.TimeZone
 import java.util.UUID
@@ -88,7 +88,7 @@ fun ConversationScreen(
 
 /** A saved call's milestone ceremony and the day's moment, drawn with the learner's buddy. */
 internal class CallMoments(
-    val ceremony: @Composable (milestone: Milestone, onClose: () -> Unit) -> Unit,
+    val ceremony: MomentCeremony,
     val dayMoment: @Composable (CompletedLanguageConversation) -> Unit,
 )
 
@@ -129,16 +129,14 @@ private fun CallDayMoment(
     app: AppContainer,
     completion: CompletedLanguageConversation,
 ) {
-    val summary by app.learnerSummary.summary.collectShown()
-    val learnerBuddy = summary.value?.buddy
-    val look = learnerBuddy?.look() ?: BuddyLook()
+    val buddy = momentBuddy(app)
 
     DayMoment(
         missions = completion.missionMoment?.missionMomentFacts(),
         reached = ReachedFacts(completion.reached.level, completion.reached.energy),
         ceremony = completion.ceremony?.kind,
-        buddy = look,
-        buddyName = buddyName(look.kind, learnerBuddy?.name),
+        buddy = buddy.look,
+        buddyName = buddy.name,
     )
 }
 
@@ -237,40 +235,35 @@ private fun Conversation(
                 },
         )
 
-    // A call opened after it ended was celebrated then; one just saved shows its milestone's ceremony before its result.
-    var ceremonyClosed by rememberSaveable(completed?.ceremony?.id) { mutableStateOf(false) }
-    val ceremony = completed?.ceremony?.takeUnless { ceremonyClosed }
-    if (result != null && ceremony != null && !fromMock) {
-        moments.ceremony(ceremony) { ceremonyClosed = true }
-        return
-    }
-    val dayMoment: @Composable () -> Unit = { completed?.let { moments.dayMoment(it) } }
+    if (result != null) {
+        // A call opened after it ended was celebrated then; one just saved shows its milestone's ceremony before its result.
+        MomentAfterCeremony(completed?.ceremony?.takeUnless { fromMock }, moments.ceremony) {
+            val dayMoment: @Composable () -> Unit = { completed?.let { moments.dayMoment(it) } }
+            when {
+                conversation.kind == LanguageConversation.Kind.SPEAKING_MOCK -> {
+                    SpeakingMockResult(conversation, resultActions, dayMoment)
+                }
 
-    when {
-        result != null && conversation.kind == LanguageConversation.Kind.SPEAKING_MOCK -> {
-            SpeakingMockResult(conversation, resultActions, dayMoment)
-            return
-        }
+                examTask != null -> {
+                    ExamSpeakingResult(conversation, examTask, resultActions, dayMoment)
+                }
 
-        result != null && examTask != null -> {
-            ExamSpeakingResult(conversation, examTask, resultActions, dayMoment)
-            return
-        }
-
-        result != null -> {
-            CelebrationScope(play = completed != null) {
-                ConversationResult(
-                    conversation = conversation,
-                    result = result,
-                    speech = speech,
-                    onContinue = exits::close,
-                    onClose = exits::close,
-                    onSeePlus = onSeePlus,
-                    dayMoment = dayMoment,
-                )
+                else -> {
+                    CelebrationScope(play = completed != null) {
+                        ConversationResult(
+                            conversation = conversation,
+                            result = result,
+                            speech = speech,
+                            onContinue = exits::close,
+                            onClose = exits::close,
+                            onSeePlus = onSeePlus,
+                            dayMoment = dayMoment,
+                        )
+                    }
+                }
             }
-            return
         }
+        return
     }
 
     val call = model.call

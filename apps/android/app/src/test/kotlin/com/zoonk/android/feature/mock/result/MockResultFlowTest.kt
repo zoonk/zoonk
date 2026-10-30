@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
@@ -18,6 +19,7 @@ import com.zoonk.android.feature.mock.runner.FakeMockRunApi
 import com.zoonk.android.feature.mock.runner.MockRunStore
 import com.zoonk.android.feature.mock.runner.MockScreen
 import com.zoonk.android.feature.mock.runner.RUN_BLOCK
+import com.zoonk.android.feature.mock.runner.runningMock
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -70,6 +72,31 @@ class MockResultFlowTest {
             }
         }
         return api
+    }
+
+    @Test
+    fun aMockJustHandedInShowsItsCeremonyThenItsResultWithTheDayMoment() {
+        val api = show(runningMock())
+        api.afterSubmit =
+            finishedMock(
+                extra =
+                    """"ceremony":{"beltStartBrainPower":null,"earnedAt":"2026-10-29T12:00:00Z","id":"00000000-0000-4000-8000-0000000000c1",
+                     "key":"yellow","kind":"belt","shownAt":null},"reached":{"energy":60,"level":null}""",
+            )
+
+        rule.onNodeWithText("Next").performClick()
+        rule.onNodeWithText("Hand in this section").performClick()
+        rule.onNodeWithText("Hand in").performClick()
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Yellow belt!").assertIsDisplayed()
+        rule.onNodeWithText("Mock exam 3 done").assertDoesNotExist()
+        // The ceremony ignores taps for its first half second, by the real clock.
+        Thread.sleep(600)
+        rule.onNodeWithText("Continue").performClick()
+
+        rule.onNodeWithText("Mock exam 3 done").assertIsDisplayed()
+        rule.onNodeWithText("Energy at", substring = true).performScrollTo().assertIsDisplayed()
     }
 
     @Test

@@ -10,9 +10,6 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.value
-import com.zoonk.android.ui.characters.BuddyLook
-import com.zoonk.android.ui.characters.buddyName
-import com.zoonk.android.ui.characters.look
 import com.zoonk.api.models.Buddy
 import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.launch
@@ -38,12 +35,12 @@ fun SessionCeremony(
 ) {
     val summary by app.learnerSummary.summary.collectShown()
     val learnerBuddy = summary.value?.buddy
-    val look = learnerBuddy?.look() ?: BuddyLook()
+    val moment = learnerBuddy.momentBuddy()
 
     MilestoneCeremony(
         milestone = milestone,
-        buddy = look,
-        buddyName = buddyName(look.kind, learnerBuddy?.name),
+        buddy = moment.look,
+        buddyName = moment.name,
         onShown = { id -> app.scope.launch { app.milestoneViews.markShown(id) } },
         onClose = onClose,
         onWearGlasses =

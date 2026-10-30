@@ -66,6 +66,8 @@ import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonNotice
@@ -150,7 +152,7 @@ fun LessonPlayer(
     navigator: AppNavigator,
     endSlot: LessonEndSlot? = null,
     buddy: LearnerSummaryBuddy? = null,
-    ceremony: LessonCeremony? = null,
+    ceremony: MomentCeremony? = null,
     ask: (@Composable (TutorScope, worded: Boolean) -> Unit)? = null,
 ) {
     val screen = remember(state) { state?.screen() }
@@ -384,7 +386,7 @@ private fun Content(
     ownEnd: LessonEndSlot?,
     language: LessonLanguage,
     buddy: LearnerSummaryBuddy?,
-    ceremony: LessonCeremony?,
+    ceremony: MomentCeremony?,
 ) {
     val run = state.run
 
@@ -396,7 +398,7 @@ private fun Content(
         }
 
         state.phase == LessonPhase.Completed -> {
-            AfterCeremony(state.completion?.result, ceremony) {
+            MomentAfterCeremony(state.completion?.result?.ceremonyMilestone(), ceremony) {
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
                     if (ownEnd == null) LessonCompletionView(state, ending, buddy) else ownEnd.body(state)
                 }
