@@ -58,7 +58,7 @@
   "onboarding_exam_ready_first_day": "97656c9e515140dab52f5d25cdf86a59a691a6f2bb5ec5f1d6d477d5b131b60d",
   "onboarding_explain_description": "4c708b877dd31a3f7ba4dc0bb0a717d4fd499a14bbd773bddff277f1a98f78c8",
   "onboarding_explain_it": "90289c275b5c9ccc74e4af1e4e04711bd83645bf07e29fe3f94297545089f444",
-  "onboarding_finish_around": "48d9a7b8ec392b7cfa42d5fb1b9e5e658ca2cdea72b4d752017dce7434237b42",
+  "onboarding_finish_around": "b05dcbfcef79ce5098cb13a093464afbc8c2d89e8e7b33acc07f5c18873acc21",
   "onboarding_finish_failed": "6c1054217f38d61ced5cfbb646924ec76205dcfb1ce17c97455cd38614f71e4b",
   "onboarding_finish_later": "29c3c98ec3dbddad69c421134adee36cbf355533f869b3a378d4b0f9a70372a0",
   "onboarding_finish_later_description": "a15e9908cb20e35cc37f2b9f0477d4407901a0b6ed038a4a41127e70ca7f2918",
@@ -970,7 +970,7 @@
     <string name="onboarding_schedule_title">Wie viel Zeit kannst du jeden Tag lernen?</string>
     <string name="onboarding_schedule_other_time_label">Andere Zeit pro Tag</string>
     <!-- %1$s is a month and year, like "March 2027". -->
-    <string name="onboarding_finish_around">Du wirst etwa am %1$s fertig.</string>
+    <string name="onboarding_finish_around">Du bist etwa im %1$s fertig.</string>
     <string name="onboarding_finish_unknown">Für diesen Zeitplan können wir kein Enddatum schätzen. Versuch es mit mehr Zeit oder mehr Lerntagen.</string>
     <string name="onboarding_finish_failed">Wir konnten nicht berechnen, wann du fertig wirst.</string>
     <string name="onboarding_finish_working">Wir berechnen, wann du fertig wirst…</string>

@@ -58,7 +58,7 @@
   "onboarding_exam_ready_first_day": "fc427db2ec8eb249f49092d5c598bd2cbcd6b1bd40b7f4f7cea6864f284974c1",
   "onboarding_explain_description": "bf1e8ad31dcf419fc347d5b905381c66507fdb72463c0bf1820e0e3cebd6c955",
   "onboarding_explain_it": "304c27852e2ef3a5bdf93ace1e2af5da469f92fb872142f13af76a088b60cb6c",
-  "onboarding_finish_around": "afbe37bf9732c373cda0d6c4ed86823538f746b5a81ba64343417ca37221aa12",
+  "onboarding_finish_around": "eb23c83eddb826a8616f6f9987530a78c0c3d887c1d0c17dd389ebae0b3e594e",
   "onboarding_finish_failed": "d6daa5769d5b78fe9414ce860fc02bd0989cfafdde13b76e9916a125bb687821",
   "onboarding_finish_later": "5595b910e9388c68c95218ff0a4ca7c7eaf4067e9f1e9dc304f916a12204a02c",
   "onboarding_finish_later_description": "02925a92f494d4904334f7e8e764b881bf4fe46fa339db9a6d5ec24c1a6b8ed6",
@@ -992,7 +992,7 @@
     <string name="onboarding_schedule_title">¿Cuánto tiempo puedes estudiar cada día?</string>
     <string name="onboarding_schedule_other_time_label">Otro tiempo diario</string>
     <!-- %1$s is a month and year, like "March 2027". -->
-    <string name="onboarding_finish_around">Terminarás sobre %1$s.</string>
+    <string name="onboarding_finish_around">Terminarás hacia %1$s.</string>
     <string name="onboarding_finish_unknown">No podemos calcular una fecha de finalización con este horario. Prueba con más tiempo o más días de estudio.</string>
     <string name="onboarding_finish_failed">No hemos podido calcular cuándo terminarías.</string>
     <string name="onboarding_finish_working">Calculando cuándo terminarías…</string>
