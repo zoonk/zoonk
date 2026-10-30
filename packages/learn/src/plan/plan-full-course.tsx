@@ -11,8 +11,9 @@ import { usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
 
 /**
- * `endDate` only when it's the plan's own end: working it out otherwise would plan the goal again,
- * which a page never does. Null when there's nothing to choose.
+ * `endDate` only when it's the plan's own end, for an exam already studying everything. A dated
+ * goal's plan practices until its date, so its end without one is previewed when asked. Null when
+ * there's nothing to choose.
  */
 export function useFullCourse() {
   const { goal, plan } = usePlanScreen();
@@ -24,8 +25,7 @@ export function useFullCourse() {
     return null;
   }
 
-  const goalEnd = fits ? plan.estimate.endDate : null;
-  const endDate = isExam ? plan.estimate.fullCourseEndDate : goalEnd;
+  const endDate = isExam ? plan.estimate.fullCourseEndDate : null;
 
   const operations = (on: boolean): LearnerPlanOperation[] =>
     isExam

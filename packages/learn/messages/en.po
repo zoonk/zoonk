@@ -9941,16 +9941,6 @@ msgctxt "MYtZfb"
 msgid "Change how you study them."
 msgstr "Change how you study them."
 
-#: src/plan/plan-choices.tsx
-msgctxt "sYz0WW"
-msgid "Study everything, no deadline"
-msgstr "Study everything, no deadline"
-
-#: src/plan/plan-choices.tsx
-msgctxt "GCtTDs"
-msgid "At your own pace, you finish around {month}."
-msgstr "At your own pace, you finish around {month}."
-
 #: src/plan/plan-coverage-suggestion.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "TJo5E6"
