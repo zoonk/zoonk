@@ -15,17 +15,18 @@ struct ConversationResultView: View {
         case .call(let feedback):
           CallFeedbackSections(conversation: conversation, feedback: feedback)
         case .examSpeaking(let feedback):
-          CriteriaSection(
-            criteria: feedback.criteria.map {
-              .init(
-                name: criterionName($0.criterion), officialName: officialName($0.criterion),
-                bandLow: $0.bandLow, bandHigh: $0.bandHigh, evidence: $0.evidence, tip: $0.tip)
-            },
-            focus: criterionName(feedback.focus))
-        case .speakingMock(let mock):
-          speakingMock(mock)
+          if let task = conversation.speakingTask {
+            ExamSpeakingSections(
+              task: task, feedback: feedback, language: conversation.targetLanguage)
+          }
+        case .speakingMock(let feedback):
+          SpeakingMockSections(feedback: feedback)
         case nil:
-          EmptyView()
+          if conversation.kind == .speakingMock {
+            SpeakingMockSections(feedback: nil)
+          } else if let task = conversation.speakingTask {
+            ExamSpeakingSections(task: task, feedback: nil, language: conversation.targetLanguage)
+          }
         }
       }
 
@@ -123,40 +124,6 @@ struct ConversationResultView: View {
       }
     }
   }
-
-  @ViewBuilder
-  private func speakingMock(_ mock: Components.Schemas.LanguageSpeakingMockFeedback) -> some View {
-    switch mock {
-    case .ielts(let feedback):
-      CriteriaSection(
-        overall: (feedback.overall.bandLow, feedback.overall.bandHigh),
-        criteria: feedback.criteria.map {
-          .init(
-            name: criterionName($0.criterion.rawValue), bandLow: $0.bandLow, bandHigh: $0.bandHigh,
-            evidence: $0.evidence, tip: $0.tip)
-        },
-        focus: criterionName(feedback.focus.rawValue))
-    case .toefl(let feedback):
-      CriteriaSection(
-        overall: (feedback.overall.bandLow, feedback.overall.bandHigh),
-        criteria: feedback.criteria.map {
-          .init(
-            name: criterionName($0.criterion.rawValue), bandLow: $0.bandLow, bandHigh: $0.bandHigh,
-            evidence: $0.evidence, tip: $0.tip)
-        },
-        focus: criterionName(feedback.focus.rawValue))
-    }
-  }
-
-  /// In the exam's language, shown beside what it rates in the learner's words.
-  private func officialName(_ key: String) -> String? {
-    conversation.speakingTask?.criteria.first { $0.key == key }?.name
-  }
-
-  private func criterionName(_ key: String) -> String {
-    speakingCriterionName(key, officialName: officialName(key))
-  }
-
 }
 
 private struct CallFeedbackSections: View {
@@ -248,72 +215,6 @@ private struct CallFeedbackSections: View {
         Text("To improve", tableName: "Voice", comment: "A call result's second part")
       }
     }
-  }
-}
-
-private struct CriteriaSection: View {
-  struct Criterion {
-    let name: String
-    /// The official name in the exam's language, when it differs from `name`.
-    var officialName: String?
-    let bandLow: Double
-    let bandHigh: Double
-    let evidence: String
-    let tip: String
-  }
-
-  var overall: (Double, Double)?
-  let criteria: [Criterion]
-  let focus: String
-
-  var body: some View {
-    if let overall {
-      Section {
-        LabeledContent {
-          Text(band(overall.0, overall.1))
-            .font(.title2.weight(.semibold).monospacedDigit())
-        } label: {
-          Text("Overall band", tableName: "Voice", comment: "A speaking mock's overall estimate")
-        }
-      }
-    }
-
-    Section {
-      ForEach(criteria, id: \.name) { criterion in
-        VStack(alignment: .leading, spacing: 4) {
-          LabeledContent {
-            Text(band(criterion.bandLow, criterion.bandHigh))
-              .monospacedDigit()
-          } label: {
-            Text(criterion.name)
-            if let official = criterion.officialName, official != criterion.name {
-              Text(official)
-            }
-          }
-          .font(.headline)
-
-          Text(criterion.evidence)
-            .font(.subheadline)
-          Label {
-            Text(criterion.tip)
-          } icon: {
-            Image(systemName: "lightbulb")
-          }
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-        }
-      }
-    } header: {
-      Text("How you did", tableName: "Voice", comment: "A speaking rating's criteria")
-    } footer: {
-      Text("Work on next: \(focus)", tableName: "Voice", comment: "The criterion to focus on")
-    }
-  }
-
-  private func band(_ low: Double, _ high: Double) -> String {
-    low == high
-      ? low.formatted(.number.precision(.fractionLength(0...1)))
-      : "\(low.formatted(.number.precision(.fractionLength(0...1))))–\(high.formatted(.number.precision(.fractionLength(0...1))))"
   }
 }
 
