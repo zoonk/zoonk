@@ -380,7 +380,6 @@
   "onboarding_schedule_no_days": "2beeb022cbdf1382dbd3d0b753da0941e3e0602188aa8619000b58eed63c2fee",
   "onboarding_schedule_offer_every_topic": "650f64873960bf8be2f589074d612f6c4b3e09037cd1ec5dbe6990080b7c4d04",
   "onboarding_schedule_offer_everything": "7ebf2e6318d2a74c34bd86768b12b4124a1742d7ac3b783ef39dbedb69f5fc80",
-  "onboarding_schedule_other_time_label": "90453249b8f3a3415a57dbe40a118d7cbdf05ae11b4471883bc83067968f7079",
   "onboarding_schedule_past_date": "7f6c1af06dfc2988283ca0dca4839c9bb5e719a9d29d8d2594af1054c278fa84",
   "onboarding_schedule_past_date_month": "067e06150ddc4a4b87566b3088dd85c00d194f565c139c0e40f33e8819f04f1c",
   "onboarding_schedule_reaches_exam": "854bb0160ab1181b86848c4bf322df61e3fe79c6a11602f8c7cfb5af8e7909dc",
@@ -1020,7 +1019,6 @@
         <item quantity="other">%d jours</item>
     </plurals>
     <string name="onboarding_schedule_title">Combien de temps peux-tu étudier chaque jour ?</string>
-    <string name="onboarding_schedule_other_time_label">Autre durée quotidienne</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="onboarding_finish_around">Tu termineras vers %1$s.</string>
     <string name="onboarding_finish_unknown">Nous ne pouvons pas estimer de date de fin avec ce rythme. Essaie d’étudier plus longtemps ou plus de jours.</string>

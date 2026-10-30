@@ -19,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,15 +34,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
-
-/** The time chips, with the learner's own times among them, so a time picked in [OtherTime] joins the chips. */
-fun timeChoices(vararg times: Int?): List<Int> = (MINUTE_OPTIONS + times.filterNotNull()).distinct().sorted()
 
 /** Core's daily [times], with the ones shown among them. */
 fun pickerTimes(
@@ -84,12 +81,14 @@ fun DailyTimePicker(
     minutes: Int?,
     label: String,
     onChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     suggested: Int? = null,
     stale: Boolean = false,
 ) {
     if (minutes == null) {
         Box(
-            Modifier
+            modifier
                 .size(width = 160.dp, height = 48.dp)
                 .background(MaterialTheme.colorScheme.surfaceContainerHighest, MaterialTheme.shapes.small),
         )
@@ -100,14 +99,17 @@ fun DailyTimePicker(
     val locale = currentLocale()
     val shown = formatMinutes(minutes, locale)
 
-    Box {
+    Box(modifier) {
         Row(
             modifier =
                 Modifier
                     .clip(MaterialTheme.shapes.small)
-                    .clickable(role = Role.DropdownList) { open = true }
-                    .semantics(mergeDescendants = true) { contentDescription = "$label, $shown" }
-                    .alpha(if (stale) STALE_ALPHA else 1f)
+                    // Disabled, it stays focusable, as main's is: focus waits on it while a time saves.
+                    .clickable(role = Role.DropdownList) { if (enabled) open = true }
+                    .semantics(mergeDescendants = true) {
+                        contentDescription = "$label, $shown"
+                        if (!enabled) disabled()
+                    }.alpha(if (stale || !enabled) STALE_ALPHA else 1f)
                     .padding(horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -129,25 +131,6 @@ fun DailyTimePicker(
                 }
             },
         )
-    }
-}
-
-/** Main's other-time menu under the time chips; [label] says what the time is for. */
-@Composable
-fun OtherTime(
-    shown: Int,
-    times: List<Long>,
-    label: String,
-    onPick: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var open by rememberSaveable { mutableStateOf(false) }
-
-    Box(modifier) {
-        TextButton(onClick = { open = true }, modifier = Modifier.semantics { contentDescription = label }) {
-            Text(stringResource(R.string.other_time))
-        }
-        TimeMenu(open, { open = false }, pickerTimes(times, shown), shown, onPick)
     }
 }
 
@@ -188,8 +171,6 @@ fun TimeSelect(
         }
     }
 }
-
-private val MINUTE_OPTIONS = listOf(15, 30, 45, 60, 90, 120, 180, 240)
 
 private val MENU_ITEM_HEIGHT = 48.dp
 

@@ -559,7 +559,6 @@
         <item quantity="other">%d days</item>
     </plurals>
     <string name="onboarding_schedule_title">How much time can you study each day?</string>
-    <string name="onboarding_schedule_other_time_label">Other time a day</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="onboarding_finish_around">You finish around %1$s.</string>
     <string name="onboarding_finish_unknown">We can\'t estimate a finish date for this schedule. Try more time or more study days.</string>

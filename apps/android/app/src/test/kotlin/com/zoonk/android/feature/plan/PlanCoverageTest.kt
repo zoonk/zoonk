@@ -7,9 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
-import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -87,19 +86,36 @@ class PlanCoverageTest {
     }
 
     @Test
-    fun theTimeFoundJoinsTheChipsWithItsNote() {
-        show(found = answered(time = timeToCover(recommended = 75)))
+    fun theTimeFoundIsUsedInOneTapAndTheKeyboardWaitsOnThePicker() {
+        show(found = answered(time = timeToCover(recommended = 45)))
 
-        compose.onNodeWithText("Covers everything").performClick()
+        compose.onNodeWithText("Use 45\u00A0min a day").performClick()
 
-        assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.DailyMinutes(75))), changes)
+        assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.DailyMinutes(45))), changes)
+        compose.onNodeWithContentDescription("Time a day, 20\u00A0min").assertIsFocused()
+    }
+
+    @Test
+    fun thePickerMarksTheTimeFound() {
+        show(found = answered(time = timeToCover(recommended = 45)))
+
+        compose.onNodeWithContentDescription("Time a day, 20\u00A0min").performClick()
+
+        compose.onNodeWithText("45\u00A0min (suggested)").assertIsDisplayed()
+    }
+
+    @Test
+    fun aTimeFoundThatIsAlreadyThePlansIsntOffered() {
+        show(found = answered(time = timeToCover(recommended = 20)))
+
+        compose.onNodeWithText("Use 20\u00A0min a day").assertDoesNotExist()
     }
 
     @Test
     fun anAnswerFoundForAnotherPlanIsntShown() {
-        show(found = answered(plan = coveragePlan(coreFits = false), time = timeToCover(recommended = 75)))
+        show(found = answered(plan = coveragePlan(coreFits = false), time = timeToCover(recommended = 45)))
 
-        compose.onNodeWithText("Covers everything").assertDoesNotExist()
+        compose.onNodeWithText("Use 45\u00A0min a day").assertDoesNotExist()
         compose.onNodeWithText("Find the time that covers everything").assertIsDisplayed()
     }
 
@@ -166,12 +182,12 @@ class PlanCoverageTest {
     }
 
     @Test
-    fun aTimeFoundOnTheLearnersTapTakesFocusToItsChip() {
-        show(finding = answered(time = timeToCover(recommended = 75)))
+    fun aTimeFoundOnTheLearnersTapTakesFocusToUseIt() {
+        show(finding = answered(time = timeToCover(recommended = 45)))
 
         compose.onNodeWithText("Find the time that covers everything").performClick()
 
-        compose.onNode(hasText("Covers everything", substring = true)).assertIsFocused()
+        compose.onNodeWithText("Use 45\u00A0min a day").assertIsFocused()
     }
 
     @Test
@@ -192,6 +208,6 @@ class PlanCoverageTest {
 
         compose.onNodeWithText("Move your date to March 15, 2027").performClick()
 
-        compose.onNode(isSelected() and hasText("20\u00A0min", substring = true)).assertIsFocused()
+        compose.onNodeWithContentDescription("Time a day, 20\u00A0min").assertIsFocused()
     }
 }

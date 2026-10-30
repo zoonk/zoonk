@@ -42,8 +42,6 @@
     <string name="load_failed_try_again">Try again</string>
     <string name="suggestion_view">View</string>
     <string name="suggestion_save_failed">That didn\'t save. Try again.</string>
-    <!-- Under the daily time chips; opens a menu of other amounts of daily study time, such as "45 min". Not a time of day. -->
-    <string name="other_time">Other time…</string>
     <string name="disclosure_expanded">Expanded</string>
     <string name="disclosure_collapsed">Collapsed</string>
     <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->

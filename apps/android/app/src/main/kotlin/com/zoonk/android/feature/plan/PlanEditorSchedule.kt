@@ -5,12 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -20,10 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -31,11 +31,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.OtherTime
+import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.TimeSelect
-import com.zoonk.android.ui.components.timeChoices
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlanWeekShape
 import java.time.DayOfWeek
@@ -76,7 +74,6 @@ private fun DailyMinutes(
     val pending = edits.isPending(PlanPart.Schedule)
     val weekdayDays = shape.weekdayDays.map(Long::toInt)
     val shown = askedMinutes(edits.asked(PlanPart.Schedule), weekdayDays) ?: shape.weekdays.toInt()
-    val locale = currentLocale()
     val answer = (edits.timeToCover.forPlan(page.plan) as? TimeToCoverState.Answered)?.time?.answer()
     val focus = remember { CoverageFocus() }
 
@@ -88,21 +85,18 @@ private fun DailyMinutes(
     }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionLabel(stringResource(R.string.plan_time_a_day_label))
-        FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            timeChoices(shape.weekdays.toInt(), shown, answer?.offeredMinutes).forEach { minutes ->
-                PlanChip(
-                    formatMinutes(minutes, locale),
-                    selected = minutes == shown,
-                    onClick = { setMinutes(minutes) },
-                    modifier = Modifier.coverageTimeChip(focus, minutes, offered = answer?.offeredMinutes, picked = shown),
-                    role = Role.RadioButton,
-                    description = answer?.let { timeNote(it, minutes) },
-                )
-            }
-        }
-        OtherTime(shown, page.plan.schedule.dailyTimes, stringResource(R.string.onboarding_schedule_other_time_label), ::setMinutes)
-        DailyCoverage(page, edits, focus)
+        // The picker carries the name for screen readers; this is its visible title.
+        SectionLabel(stringResource(R.string.plan_time_a_day_label), Modifier.clearAndSetSemantics {})
+        DailyTimePicker(
+            times = page.plan.schedule.dailyTimes,
+            minutes = shown,
+            label = stringResource(R.string.plan_time_a_day_label),
+            onChange = ::setMinutes,
+            modifier = Modifier.focusRequester(focus.pickedTime),
+            enabled = !pending,
+            suggested = answer?.offeredMinutes,
+        )
+        DailyCoverage(page, edits, focus, onUseTime = ::setMinutes)
         FullCourseSwitch(page, edits, focus.studyEverything)
     }
 }

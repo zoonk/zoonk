@@ -53,7 +53,6 @@
   "not_found_description": "68c0ae963e10fe3ebb8016e241287adeef1dffd36929979b7c191d67323fa4b4",
   "not_found_go_home": "15848291f200ce64248588b5e9bbb365050e83c8efc34ba5163b8a0af9879db0",
   "not_found_title": "7c76fad69ccfab206d1daeb348478509cf70c273825f8cbf08cf64ae85dcbe7c",
-  "other_time": "a20a3e8c150b804a77d235ad70d994e3fa4aa44e23b92d44593010a9cae6dbae",
   "suggestion_save_failed": "cf84bd9a1f3bf0c8c3071f7530f4c3ca9586046a179c7579ecabd845dad930c8",
   "suggestion_view": "50eb71cd92f6c182f3d8422d630b5e5aa95bd81c7df3484085786ed0dac5e0ff",
   "task_leave": "e1bb1d841def987889c30c7e783fa24211f01266bb638d633c974d7082d6f4cf",
@@ -104,8 +103,6 @@
     <string name="load_failed_try_again">Noch einmal versuchen</string>
     <string name="suggestion_view">Ansehen</string>
     <string name="suggestion_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
-    <!-- Under the daily time chips; opens a menu of other amounts of daily study time, such as "45 min". Not a time of day. -->
-    <string name="other_time">Andere Lernzeit…</string>
     <string name="disclosure_expanded">Aufgeklappt</string>
     <string name="disclosure_collapsed">Zugeklappt</string>
     <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->

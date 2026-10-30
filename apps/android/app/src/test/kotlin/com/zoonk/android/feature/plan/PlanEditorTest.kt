@@ -111,17 +111,26 @@ class PlanEditorTest {
     }
 
     @Test
-    fun aTimeChipSavesTheDailyTimeAndShowsTheTapAtOnce() {
+    fun aTimePickedSavesTheDailyTimeAndShowsItAtOnce() {
         show()
 
         compose
-            .onNodeWithText(
-                "45\u00A0min",
-            ).assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton))
+            .onNodeWithContentDescription("Time a day, 20\u00A0min")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.DropdownList))
             .performClick()
+        compose.onNodeWithText("5\u00A0hr").performClick()
 
-        assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.DailyMinutes(45))), changes)
-        compose.onNodeWithText("45\u00A0min").assertIsSelected()
+        assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.DailyMinutes(300))), changes)
+        compose.onNodeWithContentDescription("Time a day, 5\u00A0hr").assertIsDisplayed()
+    }
+
+    @Test
+    fun theTimePickerWaitsWhileTheScheduleSaves() {
+        show(pending = setOf(PlanPart.Schedule))
+
+        compose.onNodeWithContentDescription("Time a day, 20\u00A0min").assertIsNotEnabled().performClick()
+
+        compose.onNodeWithText("45\u00A0min").assertDoesNotExist()
     }
 
     @Test
@@ -165,17 +174,6 @@ class PlanEditorTest {
     }
 
     @Test
-    fun anotherTimeFromTheMenuJoinsThePresets() {
-        show()
-
-        compose.onNodeWithText("Other time…").performClick()
-        compose.onNodeWithText("5\u00A0hr").performClick()
-
-        assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.DailyMinutes(300))), changes)
-        compose.onNodeWithText("5\u00A0hr").assertIsSelected()
-    }
-
-    @Test
     fun theLastStudyDayCantBeTurnedOff() {
         show(
             """"schedule":{"dailyMinutes":20,"dailyTimes":[15,30,45],"fullCourse":false,"lightWeeks":[],"studyDays":1,""" +
@@ -200,6 +198,7 @@ class PlanEditorTest {
         )
 
         compose.onNode(hasText("Different time on weekends") and isToggleable()).assertIsOn()
+        compose.onNodeWithContentDescription("Time a day, 20\u00A0min").performClick()
         compose.onNodeWithText("30\u00A0min").performClick()
 
         assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.WeekdayMinutes(listOf(1, 2, 3), 30))), changes)

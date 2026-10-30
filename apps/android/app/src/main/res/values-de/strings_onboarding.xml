@@ -380,7 +380,6 @@
   "onboarding_schedule_no_days": "3549777c2338fa21fa6b510c1510f6258a08cd65100995233d33a48c48b410ef",
   "onboarding_schedule_offer_every_topic": "2221ae84d173c49293f177704b6b04009900b289864306b9f4711823aad20bbd",
   "onboarding_schedule_offer_everything": "d9f6c80aa992e82794de2398ef6829490f6459b126f1d8378c088953dbbafda3",
-  "onboarding_schedule_other_time_label": "8b9af87d9efc44ddc54d54918935101b03bb49cc6f4558632cb47994b0042f53",
   "onboarding_schedule_past_date": "f44ead8fec3e11a1da4f8b7324cb6c6aeb5786ac39d50701dde10381dfebd622",
   "onboarding_schedule_past_date_month": "7d97f274c51b0200f984e7373276a1b2775fe9fff67b2a4f58e1c541246afa89",
   "onboarding_schedule_reaches_exam": "fa4182db5218ed767f88b0f7682a48e2e36ea97954c8bf67939b28e95f255128",
@@ -998,7 +997,6 @@
         <item quantity="other">%d Tage</item>
     </plurals>
     <string name="onboarding_schedule_title">Wie viel Zeit kannst du jeden Tag lernen?</string>
-    <string name="onboarding_schedule_other_time_label">Andere tägliche Lernzeit</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="onboarding_finish_around">Du bist etwa im %1$s fertig.</string>
     <string name="onboarding_finish_unknown">Für diesen Zeitplan können wir kein Enddatum schätzen. Versuch es mit mehr Zeit oder mehr Lerntagen.</string>

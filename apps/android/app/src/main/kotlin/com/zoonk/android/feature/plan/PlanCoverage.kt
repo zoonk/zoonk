@@ -30,6 +30,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -117,16 +118,6 @@ internal fun fittingDateText(
         formatDate(fittingDate, currentLocale(), DateStyle.Long, today),
     )
 
-/** The note under the time chip the answer offers. */
-@Composable
-internal fun timeNote(
-    answer: TimeToCoverAnswer,
-    minutes: Int,
-): String? {
-    if (answer.offeredMinutes != minutes) return null
-    return stringResource(if (answer is TimeToCoverAnswer.Covers) R.string.plan_note_covers_everything else R.string.plan_note_every_topic)
-}
-
 /**
  * Main's `DailyCoverage`, under the time a day. While the schedule's change saves, its place says
  * the new coverage is being worked out: the old one would describe a time no longer picked.
@@ -136,6 +127,7 @@ internal fun DailyCoverage(
     page: PlanPageState,
     edits: PlanEdits,
     focus: CoverageFocus,
+    onUseTime: (Int) -> Unit,
 ) {
     val plan = page.plan
     val pending = edits.isPending(PlanPart.Schedule)
@@ -167,7 +159,7 @@ internal fun DailyCoverage(
                 style = MaterialTheme.typography.bodyMedium,
                 color = muted,
             )
-            FindLine(page, edits, canFind = !timeEnough(plan), focus)
+            FindLine(page, edits, canFind = !timeEnough(plan), focus, onUseTime)
             val canMove = canMoveDate(page)
             val canFocus = canChooseFocus(plan)
             if (canMove || canFocus) {
@@ -233,6 +225,7 @@ private fun FindLine(
     edits: PlanEdits,
     canFind: Boolean,
     focus: CoverageFocus,
+    onUseTime: (Int) -> Unit,
 ) {
     val search = edits.timeToCover.forPlan(page.plan)
     val time = (search as? TimeToCoverState.Answered)?.time
@@ -277,6 +270,18 @@ private fun FindLine(
                     ),
                     style = MaterialTheme.typography.bodyMedium,
                 )
+            }
+            answer?.offeredMinutes?.takeIf { it.toLong() != page.plan.schedule.shape.weekdays }?.let { offered ->
+                OutlinedButton(
+                    onClick = {
+                        onUseTime(offered)
+                        // The button goes once its time is the plan's, so the keyboard waits on the picker.
+                        focus.pickedTime.requestFocus()
+                    },
+                    modifier = Modifier.focusRequester(focus.useTime),
+                ) {
+                    Text(stringResource(R.string.plan_use_time, formatMinutes(offered, currentLocale())))
+                }
             }
         }
         if (retry) {
@@ -381,33 +386,22 @@ internal fun ChooseFocusAction(onChoose: () -> Unit) {
  */
 @Stable
 internal class CoverageFocus {
-    val offeredTime = FocusRequester()
+    val useTime = FocusRequester()
     val pickedTime = FocusRequester()
     val moveDate = FocusRequester()
     val studyEverything = FocusRequester()
 
-    /** The time offered, else Move date for a goal, else an exam's Study everything switch, else the time picked. */
+    /** Use the time found, else Move date for a goal, else an exam's Study everything switch, else the time picked. */
     fun afterFound(
         time: PlanTimeToCover,
         isExam: Boolean,
     ) {
-        val target =
-            when {
-                time.answer().offeredMinutes != null -> offeredTime
-                !isExam && time.fittingDate != null -> moveDate
-                isExam -> studyEverything
-                else -> null
-            }
-        if (target?.requestFocus(FocusDirection.Enter) != true) pickedTime.requestFocus(FocusDirection.Enter)
+        val targets =
+            listOfNotNull(
+                useTime.takeIf { time.answer().offeredMinutes != null },
+                moveDate.takeIf { !isExam && time.fittingDate != null },
+                studyEverything.takeIf { isExam },
+            )
+        if (targets.none { it.requestFocus(FocusDirection.Enter) }) pickedTime.requestFocus(FocusDirection.Enter)
     }
 }
-
-/** A daily time's chip, which [focus] can reach as the time offered or the time picked. */
-internal fun Modifier.coverageTimeChip(
-    focus: CoverageFocus,
-    minutes: Int,
-    offered: Int?,
-    picked: Int,
-): Modifier =
-    then(if (minutes == offered) Modifier.focusRequester(focus.offeredTime) else Modifier)
-        .then(if (minutes == picked) Modifier.focusRequester(focus.pickedTime) else Modifier)

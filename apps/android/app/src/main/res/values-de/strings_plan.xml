@@ -366,8 +366,6 @@
   "plan_not_in_your_plan": "20a7b6d4e1a63617536491b04cf18be32473e118703ae77c0d7ee51667211cff",
   "plan_not_now": "b36d5de4c61fcc76752cd6d144b952874e968b71e52e6760fc2c7fb3aa6c21b6",
   "plan_not_yet": "3f0ef141931fec72d2100faead4f88e470d379014ef9781061de8355659ada0b",
-  "plan_note_covers_everything": "7d6e23b9639c6c1d731ca1c90acc50d94c5698b9b1af95a013319ffcb48ce83c",
-  "plan_note_every_topic": "76e5f93ca679f93a4f6232f1aafc09dc73ba23d4ccdc60a9ee7aa6d9b666e611",
   "plan_nothing_planned": "e28902ac6b68d46f7ec013f492c5485ce0a0886bfb6972a4c85a0d02fd751415",
   "plan_nothing_planned_until_resume": "1ca5f3d536a6bdc418f3155fcdc27353c72736d12e193eb88c803a8e4917e6a4",
   "plan_options": "20ba5d8e946906cb0697a069be299a60fe73bb4768c5c7d59cf2738c1a2ec168",
@@ -543,6 +541,7 @@
   "plan_updated": "ec58b6273f79d8ded911d7095aa36511656459e73d367cb0f99f42170b72eb15",
   "plan_updated_sentence": "d0ef26715984f152c3423371a83f53eaff400ac238803c9867d1f0cd7df60a13",
   "plan_use_this_date": "496754ba70e688e624568d56fa796bbe3297c6cd961f5fa3e4558dc50fc80416",
+  "plan_use_time": "b6d843d52f6465fd9b01e5692fcd9c6a543b528c2ba1454ef59a21c42f7b0082",
   "plan_wednesdays": "229b05adbfe0216f11052f4d9189235e18fbf4ae60be89a71ddb6d56dabd6c8e",
   "plan_week_day": "43b4e08a0adb3c4c4ed011da6e5991a0b4d29d4d838deb977a4b0942e6332cc1",
   "plan_week_time": "d717c234196d1fe247d121b2fd036b20824f83f68f2fa473711b81e5d621c2c4",
@@ -1359,8 +1358,8 @@
     <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
     <string name="plan_find_fitting_date">Mit %1$s pro Tag deckt dein Plan bis zum %2$s alles ab.</string>
     <string name="plan_find_no_date">Wir konnten kein Datum finden, bis zu dem du alles schaffst.</string>
-    <string name="plan_note_covers_everything">Deckt alles ab</string>
-    <string name="plan_note_every_topic">Alle Themen</string>
+    <!-- A button that changes the plan's daily time to the one just found. %1$s is a daily study time, such as "45 min". -->
+    <string name="plan_use_time">Täglich %1$s einplanen</string>
     <string name="plan_move_date">Verschiebe dein Zieldatum, um alles abzudecken</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Verschieb dein Zieldatum auf den %1$s</string>

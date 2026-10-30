@@ -53,7 +53,6 @@
   "not_found_description": "cb36d5aafc1b8ea23cf1a615c07e0facc6e302c94816df48671f05524e349b51",
   "not_found_go_home": "8991f7934124c7dd48c8301ecb5bba9e6185dacc1a64c0d3e58429ef7f6e95d9",
   "not_found_title": "54cc56f3bf2ff7386221cd81bef2df110ff503679d91f76d56fa9529d6f45443",
-  "other_time": "3b22b38af84d47304be595f7f84a4a8f89cb96a4838984b06a42dd8946c1e276",
   "suggestion_save_failed": "6cc7e9104ccda4f7739cb892007a5c0a24504d50746bdc0b28b1d89d3725eee2",
   "suggestion_view": "87e0754a658b539b073255533eaad7665d04cf81e81cefabfde2ef18471f35a7",
   "task_leave": "35cab1a652e1aed3abba5390d6e524cfee544775b6c5e81e98651f5c04fac094",
@@ -104,8 +103,6 @@
     <string name="load_failed_try_again">Intentar de nuevo</string>
     <string name="suggestion_view">Ver</string>
     <string name="suggestion_save_failed">No se ha guardado. Inténtalo de nuevo.</string>
-    <!-- Under the daily time chips; opens a menu of other amounts of daily study time, such as "45 min". Not a time of day. -->
-    <string name="other_time">Otra duración…</string>
     <string name="disclosure_expanded">Desplegado</string>
     <string name="disclosure_collapsed">Contraído</string>
     <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->

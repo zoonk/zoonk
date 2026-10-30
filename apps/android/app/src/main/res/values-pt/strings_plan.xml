@@ -366,8 +366,6 @@
   "plan_not_in_your_plan": "0b30749e8760f031c5e2ed7904cf4b18a73f8259ce98cb1a63cc9d8eb0da8635",
   "plan_not_now": "8f2703f53d7b927f11a5ca4e89f8ff1282d071f25b3ee9dc6602c614c20d8c88",
   "plan_not_yet": "91d83b3abcdc65081054bf2d46b7d3bad22fdcabeffaff7f3410e892d06664cd",
-  "plan_note_covers_everything": "cc8885c1a8e47b56c5d02a780eeebefbeb7be49f478fc8be190c11fd8f17ca1d",
-  "plan_note_every_topic": "3d556437c1b64def01d9bb83b6dff8e07ca79c9b6a1f584edd23e44c7fdc4062",
   "plan_nothing_planned": "713774bc56350e1b5ac12ff8f7d97bcafa14d01a39dacac9bcf83ec94601d248",
   "plan_nothing_planned_until_resume": "3e6c46d40d2ddbdcb79beadb5baa875b0bb335f42cfd61afcfd44e71a0f03303",
   "plan_options": "f3cee82c74a292395099a5d18d2a09eade63ced448764e4e972d49c2e215faec",
@@ -543,6 +541,7 @@
   "plan_updated": "9bad26c9b90b6ae4e52c02b8e74af899f2b07fe3e9986d71a6909d92d5f4221b",
   "plan_updated_sentence": "79c18daa0354e3a75e8595ebaa8ea7fc1d8077507f81224266517614b1948724",
   "plan_use_this_date": "b5416d9d202014eb87c4cd426468415ca3f7d69e2d749e7a716d9876272ad9fe",
+  "plan_use_time": "05fa15a0b24f22e456fac21378d1c2e37b035cbab63b035433c1a9cd7a54566e",
   "plan_wednesdays": "70f613b2c174f3664087720defde67c1e98b72e0321f3abd167d87bf5d6cac9c",
   "plan_week_day": "3f3968a5727de4f383f3ed0949e91080172b93b8dbc330f79e8faea20c237135",
   "plan_week_time": "d2ad2db115ee30ec813103fbbf8b32c3249179a4246ae1ac487cc93a7d939d9a",
@@ -1440,8 +1439,8 @@
     <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
     <string name="plan_find_fitting_date">Com %1$s por dia, seu plano cobre tudo até %2$s.</string>
     <string name="plan_find_no_date">A gente não conseguiu encontrar uma data que permita estudar tudo.</string>
-    <string name="plan_note_covers_everything">Cobre tudo</string>
-    <string name="plan_note_every_topic">Todos os tópicos</string>
+    <!-- A button that changes the plan's daily time to the one just found. %1$s is a daily study time, such as "45 min". -->
+    <string name="plan_use_time">Estudar %1$s por dia</string>
     <string name="plan_move_date">Mudar a data para estudar tudo</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Mudar sua data para %1$s</string>

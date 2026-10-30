@@ -53,7 +53,6 @@
   "not_found_description": "f9a92ace3b35477b3397f0b09141177936313d20e52aa4379a4393bfd6009c02",
   "not_found_go_home": "1973394b75d6eca01015c246a88a7c58be5c412c98e676cf05ea66f8a61cd6e1",
   "not_found_title": "79b4e2b9274bae2f9608318598d2f4ccc43d0e326a2a52c497490cc6c0876b5d",
-  "other_time": "3be91cdfae8f803308ab97721502b31faa62eb1de68fb0f0760b819b16054905",
   "suggestion_save_failed": "3201328931b215cc862758f886986add42f378c955330e0da377b83466bd972d",
   "suggestion_view": "1dcbae3a8851c1faf1f89a935ef862acc0be17cc10baf7fc0590148e7a03cde7",
   "task_leave": "6db565c745931437e4b0783c99b62b93de0ebe9c62e972e0f5db499b0a9c51ad",
@@ -104,8 +103,6 @@
     <string name="load_failed_try_again">Réessayer</string>
     <string name="suggestion_view">Voir</string>
     <string name="suggestion_save_failed">L’enregistrement a échoué. Réessaie.</string>
-    <!-- Under the daily time chips; opens a menu of other amounts of daily study time, such as "45 min". Not a time of day. -->
-    <string name="other_time">Autre durée…</string>
     <string name="disclosure_expanded">Développé</string>
     <string name="disclosure_collapsed">Réduit</string>
     <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->
