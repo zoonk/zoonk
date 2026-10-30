@@ -133,7 +133,7 @@ extension View {
       }
       .navigationTitle(destination.title)
       .navigationBarTitleDisplayMode(.inline)
-      .toolbar(removing: .title)
+      .barTitleAfterHero(destination.title)
     }
   }
 }

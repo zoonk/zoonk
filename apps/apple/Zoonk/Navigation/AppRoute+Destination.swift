@@ -104,7 +104,7 @@ extension AppRoute {
       CourseView(course: CourseReference(id: courseId, title: title))
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar(removing: .title)
+        .barTitleAfterHero(title)
         .catalogDestinations()
     case .session:
       SessionScreen()

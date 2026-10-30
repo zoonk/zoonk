@@ -40,8 +40,7 @@ struct ChapterScreen: View {
       }
       .navigationTitle(chapter.value.map { Text($0.chapter.title) } ?? Text(verbatim: ""))
       .toolbarTitleDisplayMode(.inline)
-      // The page heads itself with its title, as main does; the bar keeps it for the back button.
-      .toolbar(removing: .title)
+      .barTitleAfterHero(chapter.value?.chapter.title ?? "")
       .toolbar {
         ToolbarItem(placement: .primaryAction) {
           TutorAskButton(scope: .chapter(chapterId: chapterId))
@@ -142,6 +141,7 @@ private struct ChapterContent: View {
 
         Text(chapter.chapter.title)
           .font(.title2.weight(.semibold))
+          .heroTitle()
 
         if !lessons.isEmpty {
           facts(done: done)

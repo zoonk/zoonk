@@ -103,6 +103,7 @@ private struct ChapterLandingList: View {
           .font(.largeTitle.bold())
           .fixedSize(horizontal: false, vertical: true)
           .accessibilityAddTraits(.isHeader)
+          .heroTitle()
 
         if let description = catalogText(detail.chapter?.description ?? chapter.description) {
           Text(description)
