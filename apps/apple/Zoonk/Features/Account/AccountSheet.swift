@@ -320,11 +320,14 @@ private struct SettingsHubView: View {
       Section {
         AccountSectionLink(destination: .preferences, sectionOpen: sectionOpen) {
           LabeledContent {
-            if let buddy = settings.preferences.value?.buddy {
-              Text(verbatim: "\(buddy.displayName) · \(appLanguageName)")
-            } else {
-              Text(appLanguageName)
+            Group {
+              if let buddy = settings.preferences.value?.buddy {
+                Text(verbatim: "\(buddy.displayName) · \(appLanguageName)")
+              } else {
+                Text(appLanguageName)
+              }
             }
+            .foregroundStyle(.secondary)
           } label: {
             Text("Preferences", tableName: "Account", comment: "Settings row for Preferences")
           }
@@ -335,6 +338,7 @@ private struct SettingsHubView: View {
             if let count = settings.memory.value?.facts.count {
               Text(count, format: .number)
                 .monospacedDigit()
+                .foregroundStyle(.secondary)
             }
           } label: {
             Text("Memory", tableName: "Account", comment: "Settings row for what Zoonk remembers")
