@@ -1,6 +1,5 @@
 "use client";
 
-import { type PlanNumbers } from "@zoonk/core/plans/numbers-contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
@@ -24,23 +23,13 @@ import { LearnLink } from "../../learn-link";
 import { PlanChoices } from "../../plan/plan-choices";
 import { usePlanScreen } from "../../plan/plan-context";
 import { PlanEditor } from "../../plan/plan-editor";
+import { useStudyDaysText } from "../../plan/use-study-days-text";
 import { OnboardingColumn, OnboardingTitle } from "../onboarding-frame";
 import { SavePlanNote } from "../save-plan-note";
 import { UsualStructureNote } from "./notice-reading";
 import { AreaWeights, PlanChapterList, PlanPhasesBar } from "./plan-shape";
 import { RevealCoverage } from "./reveal-coverage";
 import { RevealNoticeDay } from "./reveal-notice-day";
-
-const MINUTES_PER_HOUR = 60;
-
-const ROUND_TO_HOURS_FROM = 120;
-const MINUTES_STEP = 5;
-
-function roundStudyMinutes(minutes: number): number {
-  return minutes >= ROUND_TO_HOURS_FROM
-    ? Math.round(minutes / MINUTES_PER_HOUR) * MINUTES_PER_HOUR
-    : Math.round(minutes / MINUTES_STEP) * MINUTES_STEP;
-}
 
 /**
  * Today is prefetched only once the learner reaches for it, when the plan is final: opening it
@@ -68,26 +57,34 @@ function StartButton({ href }: { href: string }) {
   );
 }
 
-function getStudyMinutes(numbers: PlanNumbers | null): number | null {
-  if (!numbers) {
-    return null;
-  }
+/** The time a day and, unless it's every day, which days: what the Plan's settings say. */
+function useScheduleFacts(): string[] {
+  const t = useExtracted();
+  const formatDuration = useFormatDuration();
+  const studyDaysText = useStudyDaysText();
+  const { plan } = usePlanScreen();
+  const { shape, weekdayMinutes } = plan.schedule;
+  const everyDay = weekdayMinutes.every((minutes) => minutes > 0);
 
-  return numbers.context.targetDate === null
-    ? numbers.scheduledMinutes
-    : numbers.beforeDeadlineMinutes;
+  const time =
+    shape.weekend === null
+      ? t("{time} a day", { time: formatDuration(shape.weekdays) })
+      : t("{weekdays} a day, {weekend} on weekends", {
+          weekdays: formatDuration(shape.weekdays),
+          weekend: formatDuration(shape.weekend),
+        });
+
+  return everyDay ? [time] : [time, studyDaysText(weekdayMinutes)];
 }
 
 function RevealFacts() {
   const t = useExtracted();
   const today = useMountTime();
-  const formatDuration = useFormatDuration();
   const planEnd = usePlanEndText();
+  const scheduleFacts = useScheduleFacts();
   const { plan } = usePlanScreen();
-  const { dailyMinutes, targetDate, targetDateEstimated } = plan.schedule;
+  const { targetDate, targetDateEstimated } = plan.schedule;
   const days = targetDate ? daysUntilIsoDate({ isoDate: targetDate, today }) : null;
-  const studyMinutes = getStudyMinutes(plan.numbers);
-  const studyTime = studyMinutes === null ? 0 : roundStudyMinutes(studyMinutes);
 
   const facts = [
     days !== null &&
@@ -95,8 +92,7 @@ function RevealFacts() {
         ? t("{days, plural, one {About # day} other {About # days}}", { days })
         : t("{days, plural, one {# day} other {# days}}", { days })),
     days === null && planEnd,
-    t("{time} a day", { time: formatDuration(dailyMinutes) }),
-    studyTime > 0 && t("about {time} of study", { time: formatDuration(studyTime) }),
+    ...scheduleFacts,
   ].filter((fact): fact is string => typeof fact === "string" && fact !== "");
 
   return (

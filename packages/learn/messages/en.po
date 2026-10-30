@@ -9086,6 +9086,11 @@ msgid "A couple of details make your plan fit better."
 msgstr "A couple of details make your plan fit better."
 
 #: src/onboarding/steps/reveal-body.tsx
+msgctxt "La_2pe"
+msgid "{weekdays} a day, {weekend} on weekends"
+msgstr "{weekdays} a day, {weekend} on weekends"
+
+#: src/onboarding/steps/reveal-body.tsx
 msgctxt "4OjqDe"
 msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, one {About # day} other {About # days}}"
@@ -9094,11 +9099,6 @@ msgstr "{days, plural, one {About # day} other {About # days}}"
 msgctxt "UA5qaX"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, one {# day} other {# days}}"
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "-Qty6H"
-msgid "about {time} of study"
-msgstr "about {time} of study"
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "1-tKgx"
@@ -10218,16 +10218,6 @@ msgid "Move your date so your time covers what's left."
 msgstr "Move your date so your time covers what's left."
 
 #: src/plan/plan-properties.tsx
-msgctxt "1ooK0d"
-msgid "Every day"
-msgstr "Every day"
-
-#: src/plan/plan-properties.tsx
-msgctxt "aEYPJ2"
-msgid "{first} – {last}"
-msgstr "{first} – {last}"
-
-#: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
 msgid "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
 msgstr "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
@@ -11214,6 +11204,16 @@ msgstr "Day {day, number} of {days, number}"
 msgctxt "oqn6dA"
 msgid "Days {first, number} to {last, number} of {days, number}"
 msgstr "Days {first, number} to {last, number} of {days, number}"
+
+#: src/plan/use-study-days-text.ts
+msgctxt "1ooK0d"
+msgid "Every day"
+msgstr "Every day"
+
+#: src/plan/use-study-days-text.ts
+msgctxt "aEYPJ2"
+msgid "{first} – {last}"
+msgstr "{first} – {last}"
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "TPmKpi"

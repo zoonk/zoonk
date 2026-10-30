@@ -9086,6 +9086,11 @@ msgid "A couple of details make your plan fit better."
 msgstr "Un par de detalles nos ayudarán a ajustar mejor tu plan."
 
 #: src/onboarding/steps/reveal-body.tsx
+msgctxt "La_2pe"
+msgid "{weekdays} a day, {weekend} on weekends"
+msgstr "{weekdays} al día, {weekend} los fines de semana"
+
+#: src/onboarding/steps/reveal-body.tsx
 msgctxt "4OjqDe"
 msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, one {Aproximadamente # día} other {Aproximadamente # días}}"
@@ -9094,11 +9099,6 @@ msgstr "{days, plural, one {Aproximadamente # día} other {Aproximadamente # dí
 msgctxt "UA5qaX"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, one {# día} other {# días}}"
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "-Qty6H"
-msgid "about {time} of study"
-msgstr "aproximadamente {time} de estudio"
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "1-tKgx"
@@ -10218,16 +10218,6 @@ msgid "Move your date so your time covers what's left."
 msgstr "Cambia la fecha para tener tiempo de estudiar lo que queda."
 
 #: src/plan/plan-properties.tsx
-msgctxt "1ooK0d"
-msgid "Every day"
-msgstr "Todos los días"
-
-#: src/plan/plan-properties.tsx
-msgctxt "aEYPJ2"
-msgid "{first} – {last}"
-msgstr "{first} – {last}"
-
-#: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
 msgid "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
 msgstr "<mono>{weekdays}</mono> · <mono>{weekend}</mono> los fines de semana"
@@ -11214,6 +11204,16 @@ msgstr "Día {day, number} de {days, number}"
 msgctxt "oqn6dA"
 msgid "Days {first, number} to {last, number} of {days, number}"
 msgstr "Días {first, number} a {last, number} de {days, number}"
+
+#: src/plan/use-study-days-text.ts
+msgctxt "1ooK0d"
+msgid "Every day"
+msgstr "Todos los días"
+
+#: src/plan/use-study-days-text.ts
+msgctxt "aEYPJ2"
+msgid "{first} – {last}"
+msgstr "{first} – {last}"
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "TPmKpi"
