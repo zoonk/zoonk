@@ -1,44 +1,14 @@
 # Styleguide
 
-## Audience
+## Voice
 
-Zoonk helps anyone learn anything, especially people in small towns, under-resourced communities, and first-time learners. Write clear, welcoming text without jargon.
+Zoonk helps anyone learn anything, especially first-time learners in small towns and under-resourced communities. Write simple, everyday, welcoming text without jargon: friendly and encouraging, never condescending, and never scolding learners for mistakes, breaks, or missed days.
 
-## Voice and tone
-
-- Use simple, concise, everyday language.
-- Be practical, friendly, and encouraging without being condescending.
-- Praise effort and strategy, not talent. Never scold or guilt learners for mistakes, breaks, or missed days.
 - Use “…” for ellipses. Avoid em dashes.
 
-## Honest progress
+## Terms
 
-- Describe preparation without promising a pass, score, admission, certificate, or job. Use “Preparation”, not “Readiness”.
-- Estimated scores appear only as ranges after mock exams, labeled “Estimated”.
-
-## Product terminology
-
-- Learners “start” a goal, rather than add, set, or create one.
-- A “card” is a speaking exam's task card or a card the learner picks in an activity, such as match pairs. Zoonk has no flashcards.
-- Buddies are learning partners, not pets. Their localized names are proper names.
-- “Known” and “Known before” mean the learner knew something before studying it in Zoonk.
-- In Trickster duels, “broken” counts shield plates broken by right answers; “held” means the shield withstood this attempt.
-- Write a glossary term's abbreviation (such as “BP”) only where the source abbreviates it; “+10 Brain Power” keeps the full name.
-- An activity's chip (“Estimate first”, “Reply”, “Spot the pattern”) tells the learner what to do: write it as an instruction to them.
-- Mid-sentence, don't add a capital to a feature name the English writes in lowercase, beyond what the language's own grammar requires (German nouns keep theirs): “Energy”, “Library” and “Brain Power” keep their capital; “your buddy”, “phase challenge” and “weekly challenge” don't.
-- “Sure” and “unsure” say how confident the learner was in an answer (“the answers you were sure of”), not certainty or safety.
+- Mid-sentence, capitalize a feature name only where the English does or the language's grammar requires it: “Energy”, but “your buddy”.
+- “Sure” and “unsure” are the learner's confidence in an answer.
 - “q” abbreviates “questions” only in English: write the word.
-- Keep the brand name “Zoonk” unchanged. Use each locale's glossary consistently across web, lesson player, Apple, and Android catalogs, including inflected forms.
-
-## Plan language
-
-- “Finished” means the learner completed the plan. “Past date” means its date passed with lessons remaining; the plan stays available for adjustment.
-- “Left out” means the plan omitted content for lack of time. “Skipped” means a test showed prior knowledge; “Skip” is the learner's choice.
-- Describe proposed changes as proposals, and applied changes as completed actions.
-
-## Placeholder context
-
-- Learners can choose buddy names and goal titles. Their gender and number are unknown; use neutral wording around names and the word for “goal” when a title needs agreement.
-- The learner's gender is unknown too: prefer wording that doesn't mark it, such as “quand tu veux” over “quand tu es prêt”.
-- Duration placeholders such as “{time}” already include localized units; do not add units around them.
-- Write every plural form, “one” included, as the natural sentence for its number: keep the count's placeholder (“#” or “%d”) and make the nouns and verbs agree with that number, as in “one {Falta # aula} other {Faltam # aulas}”. Never drop a form, write a literal “1” or a spelled-out number, put the count in parentheses, rebuild the sentence as “Label: %d”, or add words to only one form.
+- Keep the count (“#” or “%d”) in every plural form, “one” included, never a literal “1” or a spelled-out number.

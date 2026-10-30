@@ -120,5 +120,5 @@ Every page is one of these, built from the kit in `packages/learn/src/_component
 
 ## Copy
 
-- English source strings, short and concrete; Brazilian Portuguese is the main market. No em dashes, no jargon, no promises of a pass, score or job. Follow the [copy styleguide](../../../../packages/i18n/.eloqnt/styleguide.md) and its translations' glossaries.
+- English source strings, short and concrete; Brazilian Portuguese is the main market. No em dashes, no jargon, no promises of a pass, score or job. Follow the [shared](../../../../packages/i18n/.eloqnt/styleguide.md) and [English](../../../../packages/i18n/.eloqnt/styleguide.en.md) style guides and the translations' glossaries.
 - "Plan", never "Journey", and "buddy", never "tutor", in everything learners see, aria labels included.

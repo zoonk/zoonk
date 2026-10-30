@@ -46,7 +46,7 @@ Choose the relevant areas below rather than running a fixed audit of every subsy
 - For component architecture, use [compound components](../zoonk-compound-components/SKILL.md); for visual or interaction judgment, use [design guidance](../zoonk-design/SKILL.md), which routes native platform work.
 - For effect or React performance questions, consult the relevant [React best practices](../vercel-react-best-practices/SKILL.md). Load [next-dev-loop](../next-dev-loop/SKILL.md) when runtime investigation is needed, not for every TSX diff.
 - For test design or fixture questions, use [testing guidance](../zoonk-testing/SKILL.md). Internal app exclusions and the prohibition on React component unit tests still apply.
-- For user-facing copy, consult the [copy styleguide](../../../packages/i18n/.eloqnt/styleguide.md). Check translations against the root [Translations](../../../AGENTS.md#translations) rules.
+- For user-facing copy, consult the [shared](../../../packages/i18n/.eloqnt/styleguide.md) and [English](../../../packages/i18n/.eloqnt/styleguide.en.md) style guides. Check translations against the root [Translations](../../../AGENTS.md#translations) rules.
 
 ## Checks and output
 
