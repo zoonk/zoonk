@@ -84,6 +84,7 @@ private struct UndatedHeadline: View {
         } icon: {
           Image(systemName: "flag")
             .foregroundStyle(.secondary)
+            .accessibilityHidden(true)
         }
         .padding(.top, 4)
       }

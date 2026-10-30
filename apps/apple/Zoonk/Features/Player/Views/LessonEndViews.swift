@@ -587,6 +587,7 @@ struct LessonGuestGateView: View {
         Text(outline.title)
       } icon: {
         Image(systemName: "book")
+          .accessibilityHidden(true)
       }
     } description: {
       Text(outline.description)

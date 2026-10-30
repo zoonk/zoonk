@@ -82,6 +82,7 @@ private struct CatalogLessonList: View {
                 .imageScale(.small)
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
+                .accessibilityHidden(true)
             }
           }
         } header: {
@@ -96,6 +97,7 @@ private struct CatalogLessonList: View {
             }
           } icon: {
             Image(systemName: "sparkles")
+              .accessibilityHidden(true)
           }
         } footer: {
           Text(

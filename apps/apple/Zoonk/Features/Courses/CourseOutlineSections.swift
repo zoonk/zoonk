@@ -119,6 +119,7 @@ struct CourseOutlineSections: View {
         } icon: {
           Image(systemName: "sparkles")
             .foregroundStyle(.secondary)
+            .accessibilityHidden(true)
         }
       }
     } header: {

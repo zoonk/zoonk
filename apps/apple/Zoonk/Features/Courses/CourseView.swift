@@ -258,6 +258,7 @@ struct PlanLine: View {
       }
     } icon: {
       Image(systemName: "map")
+        .accessibilityHidden(true)
     }
     .font(.subheadline)
     .foregroundStyle(.secondary)
@@ -301,6 +302,7 @@ struct CheckLine: View {
     } icon: {
       Image(systemName: "checkmark")
         .foregroundStyle(.success)
+        .accessibilityHidden(true)
     }
   }
 }
