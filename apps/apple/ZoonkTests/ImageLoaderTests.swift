@@ -71,8 +71,9 @@ final class ImageLoaderTests: XCTestCase {
     let loader = ImageLoader(
       apiBaseURL: URL(string: "https://api.zoonk.test")!, fetch: fetcher.fetch)
 
-    async let first = loader.image(for: privateURL, token: "session-a")
-    async let second = loader.image(for: privateURL, token: "session-a")
+    let url = privateURL
+    async let first = loader.image(for: url, token: "session-a")
+    async let second = loader.image(for: url, token: "session-a")
     let images = await [first, second]
 
     XCTAssertEqual(images.compactMap { $0 }.count, 2)
