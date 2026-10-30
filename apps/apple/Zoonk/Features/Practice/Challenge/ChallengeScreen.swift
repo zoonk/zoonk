@@ -17,10 +17,15 @@ struct ChallengeScreen: View {
   @State private var startProblem: LocalizedStringResource?
   @State private var isMoving = false
   @State private var moveProblem: LocalizedStringResource?
-  @State private var movedChangeId: String?
+  @State private var moved: Moved?
   /// The start, move or undo in flight: cancelled when the screen goes away, so a closed challenge
   /// never opens its checkpoint or starts the next request later.
   @State private var action: Task<Void, Never>?
+
+  private struct Moved: Equatable {
+    let changeId: String
+    let effect: PlanEffect?
+  }
 
   init(planItemId: String, sessionId: String? = nil) {
     self.planItemId = planItemId
@@ -203,16 +208,21 @@ struct ChallengeScreen: View {
         Text(moveProblem).font(.subheadline).foregroundStyle(.destructive)
       }
 
-      if let movedChangeId, let date = challenge.date {
-        HStack {
-          Text(
-            "Moved to \(Self.weekdayDay(date))", tableName: "Practice",
-            comment:
-              "A weekly challenge moved later, to the next Monday; the argument is that day, like 'Monday, May 5'."
-          )
+      if let moved, let date = challenge.date {
+        HStack(alignment: .firstTextBaseline) {
+          VStack(alignment: .leading, spacing: 4) {
+            Text(
+              "Moved to \(Self.weekdayDay(date))", tableName: "Practice",
+              comment:
+                "A weekly challenge moved later, to the next Monday; the argument is that day, like 'Monday, May 5'."
+            )
+            Text(movedDetail(moved.effect))
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
           Spacer()
           Button {
-            run { await undoMove(movedChangeId) }
+            run { await undoMove(moved.changeId) }
           } label: {
             Text("Undo", tableName: "Practice", comment: "Undoes moving a weekly challenge.")
           }
@@ -249,7 +259,7 @@ struct ChallengeScreen: View {
       }
     } else if challenge.status == .ready || challenge.status == .started {
       PracticeActionRow {
-        if challenge.canMove, movedChangeId == nil {
+        if challenge.canMove, moved == nil {
           PracticeSecondaryButton(
             title: LocalizedStringResource(
               "Move to Monday", table: "Practice",
@@ -267,7 +277,7 @@ struct ChallengeScreen: View {
           isDisabled: challenge.dailyLimitReached
         ) { run { await start(afterWriting: false) } }
       }
-    } else if challenge.canMove, movedChangeId == nil {
+    } else if challenge.canMove, moved == nil {
       PracticeSecondaryButton(
         title: LocalizedStringResource(
           "Move to Monday", table: "Practice", comment: "Moves the weekly challenge to next Monday."
@@ -637,7 +647,9 @@ struct ChallengeScreen: View {
     {
     case .done(let moved):
       currentPlanItemId = moved.planItemId ?? planItemId
-      movedChangeId = moved.changeId
+      self.moved = moved.changeId.map {
+        Moved(changeId: $0, effect: moved.effect.flatMap { try? PracticeJSON.recode($0) })
+      }
       await read()
     case .refused(.invalid(let reason)):
       moveProblem =
@@ -671,13 +683,26 @@ struct ChallengeScreen: View {
     {
     case .done(let undone):
       currentPlanItemId = undone.planItemId ?? planItemId
-      movedChangeId = nil
+      moved = nil
       await read()
     case .refused, .failed:
       moveProblem = Self.notDone
     case .obsolete:
       break
     }
+  }
+
+  private func movedDetail(_ effect: PlanEffect?) -> String {
+    let leftOut = effect.flatMap { $0.lessonsRemoved > 0 ? planLessonsEffectText($0) : nil }
+
+    return [
+      String(
+        localized: "Your plan moved later lessons to make room for it.", table: "Practice",
+        comment: "After moving a weekly challenge to another day"),
+      leftOut,
+    ]
+    .compactMap(\.self)
+    .joined(separator: " ")
   }
 
   private static let notDone = LocalizedStringResource(
