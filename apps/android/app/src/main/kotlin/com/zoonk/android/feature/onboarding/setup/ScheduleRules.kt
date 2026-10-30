@@ -156,7 +156,10 @@ private fun datedLine(
     minutes: Int,
 ): TimeLine {
     if (suggested?.minutes?.toInt() == minutes) {
-        return if (suggested.kind == PlanTimeToCoverSuggested.Kind.EVERYTHING) TimeLine.Everything(suggested = true) else TimeLine.EveryTopic
+        return when (suggested.kind) {
+            PlanTimeToCoverSuggested.Kind.EVERYTHING -> TimeLine.Everything(suggested = true)
+            PlanTimeToCoverSuggested.Kind.EVERY_TOPIC -> TimeLine.EveryTopic
+        }
     }
     val share = (advice ?: return asking).coveredShare ?: 0.0
     return if (share >= 1) TimeLine.Everything(suggested = false) else TimeLine.Share(share)
