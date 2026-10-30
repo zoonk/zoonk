@@ -207,6 +207,15 @@ final class GradedRunTests: XCTestCase {
     XCTAssertEqual(PracticeAnswerDraft.resumable(saved, questionIds: ["a", "b"]), [])
   }
 
+  func testTextAsTypedStaysOnTheDeviceAndOnlyItsAnswerIsSent() {
+    let unfinished = PracticeAnswer.typing("2/", reads: nil)
+    let typed = PracticeAnswer.typing("1.", reads: .number(1))
+
+    XCTAssertNil(unfinished.complete, "nothing to check yet")
+    XCTAssertEqual(typed.complete, .number(1))
+    XCTAssertThrowsError(try JSONEncoder().encode(typed))
+  }
+
   func testStages() {
     XCTAssertEqual(GradedRunStage(answered: 1, asked: 2, total: 2), .asking)
     XCTAssertEqual(GradedRunStage(answered: 2, asked: 2, total: 5), .waiting)

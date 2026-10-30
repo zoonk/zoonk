@@ -56,6 +56,9 @@ enum PracticeAnswer: Hashable, Sendable, Codable {
   /// Picks, pairs or steps short of what the question asks for. The screen keeps them, so a fold
   /// keeps them too; they aren't an answer, so they're never checked or sent.
   case partial([Int?])
+  /// An answer box's text as typed, kept so a fold keeps "2/" or "1."; only the answer it reads as
+  /// is checked or sent.
+  indirect case typing(String, reads: PracticeAnswer?)
 
   private enum CodingKeys: String, CodingKey {
     case dontKnow, isTrue, matches, number, order, selectedIndex, selectedIndexes, text
@@ -65,7 +68,11 @@ enum PracticeAnswer: Hashable, Sendable, Codable {
 
   /// Nil while the answer is only partial.
   var complete: PracticeAnswer? {
-    if case .partial = self { nil } else { self }
+    switch self {
+    case .partial: nil
+    case .typing(_, let answer): answer
+    default: self
+    }
   }
 
   var picks: [Int] {
@@ -110,9 +117,9 @@ enum PracticeAnswer: Hashable, Sendable, Codable {
     case .order(let order): try container.encode(order, forKey: .order)
     case .text(let text): try container.encode(text, forKey: .text)
     case .trueFalse(let isTrue): try container.encode(isTrue, forKey: .isTrue)
-    case .partial:
+    case .partial, .typing:
       throw EncodingError.invalidValue(
-        self, .init(codingPath: [], debugDescription: "A partial answer is never sent"))
+        self, .init(codingPath: [], debugDescription: "Only a complete answer is sent"))
     }
   }
 }

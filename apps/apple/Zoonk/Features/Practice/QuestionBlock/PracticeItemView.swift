@@ -457,7 +457,6 @@ struct OrderItemView: View {
   }
 }
 
-/// What the learner typed shows as typed; drawn again, the field shows the draft's number.
 struct NumericItemView: View {
   let entry: PracticeNumericEntry?
   let unit: PracticeNumericUnit?
@@ -465,7 +464,6 @@ struct NumericItemView: View {
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
   let onSubmit: (PracticeAnswer) -> Void
-  @State private var typed: String?
   @State private var isInvalid = false
   @FocusState private var isFocused: Bool
 
@@ -479,7 +477,7 @@ struct NumericItemView: View {
         TextField(
           String(
             localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field."),
-          text: Binding(get: { typed ?? NumericEntryParser.text(for: draft) }, set: type)
+          text: Binding(get: { typedText ?? NumericEntryParser.text(for: draft) }, set: type)
         )
         .font(.title3.monospacedDigit())
         .keyboardType(entry?.kind == .fraction ? .numbersAndPunctuation : .decimalPad)
@@ -513,14 +511,21 @@ struct NumericItemView: View {
     .onAppear { isFocused = !isLocked }
   }
 
+  private var typedText: String? {
+    if case .typing(let text, _) = draft { text } else { nil }
+  }
+
   private func type(_ text: String) {
-    typed = text
     isInvalid = false
-    draft = NumericEntryParser.parse(text, entry: entry).map(PracticeAnswer.number)
+    draft =
+      text.isEmpty
+      ? nil
+      : .typing(
+        text, reads: NumericEntryParser.parse(text, entry: entry).map(PracticeAnswer.number))
   }
 
   private func submit() {
-    guard case .number(let value) = draft else {
+    guard case .number(let value) = draft?.complete else {
       isInvalid = true
       return
     }
@@ -567,13 +572,11 @@ struct NumericItemView: View {
   }
 }
 
-/// What the learner typed shows as typed; drawn again, the field shows the draft's text.
 struct TypedItemView: View {
   let mark: AnswerOptionResult?
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
   let onSubmit: (PracticeAnswer) -> Void
-  @State private var typed: String?
   @FocusState private var isFocused: Bool
 
   var body: some View {
@@ -581,7 +584,7 @@ struct TypedItemView: View {
       TextField(
         String(
           localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field."),
-        text: Binding(get: { typed ?? shown }, set: type)
+        text: Binding(get: { shown }, set: type)
       )
       .font(.title3)
       .textInputAutocapitalization(.never)
@@ -590,7 +593,7 @@ struct TypedItemView: View {
       .focused($isFocused)
       .disabled(isLocked)
       .onSubmit {
-        if case .text(let text) = draft { onSubmit(.text(text)) }
+        if let answer = draft?.complete { onSubmit(answer) }
       }
 
       if let mark {
@@ -604,14 +607,15 @@ struct TypedItemView: View {
   }
 
   private var shown: String {
-    if case .text(let text) = draft { return text }
-    return ""
+    switch draft {
+    case .typing(let text, _), .text(let text): text
+    default: ""
+    }
   }
 
   private func type(_ text: String) {
-    typed = text
     let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-    draft = trimmed.isEmpty ? nil : .text(trimmed)
+    draft = text.isEmpty ? nil : .typing(text, reads: trimmed.isEmpty ? nil : .text(trimmed))
   }
 }
 

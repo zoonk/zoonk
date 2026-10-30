@@ -101,14 +101,14 @@ final class MockRun {
     sectionTimeUp = view.current.map { $0.deadline <= .now } ?? false
   }
 
-  /// A partial answer stays on the device; the mock saves no answer for it.
+  /// A partial answer, or text as typed, stays on the device; the mock saves only its answer.
   func answerBinding(for question: MockQuestion) -> Binding<PracticeAnswer?> {
     Binding(
       get: { [weak self] in
         self?.partials[question.itemId] ?? self?.drafts[question.itemId]?.answer
       },
       set: { [weak self] answer in
-        self?.partials[question.itemId] = answer?.complete == nil ? answer : nil
+        self?.partials[question.itemId] = answer?.complete == answer ? nil : answer
         let saved = answer?.complete
 
         switch question.format {
