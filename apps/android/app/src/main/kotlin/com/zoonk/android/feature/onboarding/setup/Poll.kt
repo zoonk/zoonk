@@ -19,6 +19,7 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.StepState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.api.ApiJson
@@ -103,7 +104,8 @@ internal class PlanAnswer<T>(
 /**
  * Asks every few seconds while the plan isn't [ready], then once for each new [query], keeping each
  * answer so going back to an earlier choice needs no new one. After the first answer, days tapped in
- * a row ask once; [paused] stops asking again a plan whose run stopped. The first and last answers,
+ * a row ask once; [paused] stops asking again a plan whose run stopped, and [planMade] asks again at
+ * once when the run says the plan exists. The first and last answers,
  * the ask out and a failed ask outlive the screen's recreation, as the choices they decide do. The
  * latest enabled [query] goes once the ask out comes back, whose answer still counts, so abandoned
  * ones are never sent; an ask unanswered for 45 seconds fails while it's still out. [resources] must
@@ -115,6 +117,7 @@ internal fun <Q : Any, T : Any> rememberPlanAnswer(
     query: Q,
     enabled: Boolean,
     paused: Boolean,
+    planMade: Boolean,
     querySerializer: KSerializer<Q>,
     serializer: KSerializer<T>,
     ready: (T) -> Boolean,
@@ -142,6 +145,7 @@ internal fun <Q : Any, T : Any> rememberPlanAnswer(
     LaunchedEffect(answer) { answer?.let(came) }
     val active = asking && answer?.let(ready) != true && !(paused && answer != null)
     val poll = rememberPoll(active, key = query) { resources[query].refreshed() }
+    LaunchedEffect(planMade) { if (planMade && active) poll.restart() }
     LaunchedEffect(query, enabled, answer == null, poll.round) {
         if (!enabled || answer != null) return@LaunchedEffect
         delay(ANSWER_TIMEOUT)
@@ -170,6 +174,9 @@ internal suspend fun Resource<*>.refreshed(): Boolean {
 
 /** A run that failed or never started waits for its Try again; a lost connection doesn't. */
 internal val GenerationRun.isStopped get() = status == GenerationRun.Status.Failed && failure != GenerationFailure.Connection
+
+/** The run's plan exists, so what waits on it asks now instead of at its next check. */
+internal val GenerationRun.planMade get() = steps["createPlan"] == StepState.Completed
 
 /** Polling that stopped reads as a lost connection, whose Try again polls again. */
 internal fun GenerationRun.withPoll(poll: Poll): GenerationRun =

@@ -51,6 +51,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
@@ -613,6 +614,25 @@ class GoalSetupFlowTest {
 
         rule.onNodeWithContentDescription("Time a day, 50\u00A0min").performScrollTo().assertIsDisplayed()
         rule.onNodeWithText("We couldn't work out the time your goal needs.").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun theTimeIsAskedAgainAsSoonAsTheRunSaysThePlanIsMade() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.generationId = { "run-1" }
+        val events = MutableSharedFlow<GenerationEvent>(replay = 1)
+        api.events = events
+        var ready = false
+        api.cover = { coverOf(recommended = 45, ready = ready) }
+        show()
+        rule.mainClock.advanceTimeBy(500)
+        rule.onNodeWithText("Building your plan").performScrollTo().assertIsDisplayed()
+
+        ready = true
+        events.tryEmit(GenerationEvent(status = "completed", step = "createPlan"))
+        rule.mainClock.advanceTimeBy(500)
+
+        rule.onNodeWithContentDescription("Time a day, 45\u00A0min").assertIsDisplayed()
     }
 
     @Test

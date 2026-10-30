@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -25,6 +28,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.SignInResult
+import com.zoonk.android.data.StepState
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.examGoal
@@ -68,7 +72,7 @@ class PlanRevealStepFlowTest {
 
     private fun show(
         isGuest: Boolean = false,
-        run: GenerationRun = GenerationRun(status = GenerationRun.Status.Following),
+        run: () -> GenerationRun = { GenerationRun(status = GenerationRun.Status.Following) },
         goal: Goal = examGoal(),
         libraryCourse: OnboardingLibraryCourse? = null,
         prepareToday: suspend () -> Unit = {},
@@ -86,7 +90,7 @@ class PlanRevealStepFlowTest {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    PlanRevealStep(goal, isGuest, libraryCourse, run, onRetryRun = null, store, navigator, prepareToday)
+                    PlanRevealStep(goal, isGuest, libraryCourse, run(), onRetryRun = null, store, navigator, prepareToday)
                 }
             }
         }
@@ -267,6 +271,20 @@ class PlanRevealStepFlowTest {
         rule.onNodeWithText("Statistics").performClick()
 
         assertEquals(AppRoute.CatalogCourse(LIBRARY_COURSE), navigator.currentRoute)
+    }
+
+    @Test
+    fun aPlanIsReadAsSoonAsItsRunSaysItIsMade() {
+        api.plan = planOf(ready = false)
+        var run by mutableStateOf(GenerationRun(status = GenerationRun.Status.Following))
+        show(run = { run })
+        rule.onNodeWithText("Building your plan").assertIsDisplayed()
+
+        api.plan = planOf()
+        run = GenerationRun(status = GenerationRun.Status.Ready, steps = mapOf("createPlan" to StepState.Completed))
+        rule.mainClock.advanceTimeBy(500)
+
+        rule.onNodeWithText("Plan created").assertIsDisplayed()
     }
 
     @Test

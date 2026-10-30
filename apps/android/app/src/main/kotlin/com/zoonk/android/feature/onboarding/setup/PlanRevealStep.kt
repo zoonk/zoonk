@@ -108,6 +108,7 @@ internal fun ColumnScope.PlanRevealStep(
     val readingNotice = plan?.notice == Plan.Notice.READING
     val polls = (plan?.ready != true && !run.isStopped) || readingNotice
     val poll = rememberPoll(active = polls) { resource.refreshed() }
+    LaunchedEffect(run.planMade) { if (run.planMade && polls) poll.restart() }
 
     when {
         plan == null && polls && !poll.stopped -> {
