@@ -1,6 +1,5 @@
 package com.zoonk.android.app.shell
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,6 +43,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.LetterMark
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -256,25 +256,30 @@ private fun GoalLine(goal: LearnerSummaryGoal) {
 
 /** The goal's first letter on a quiet tile (main's `GoalMark`). */
 @Composable
-private fun GoalMark(goal: LearnerSummaryGoal) {
+internal fun GoalMark(goal: LearnerSummaryGoal) {
     Surface(
         shape = MaterialTheme.shapes.extraSmall,
         color = MaterialTheme.colorScheme.surfaceContainerHighest,
-        modifier = Modifier.size(20.dp).clearAndSetSemantics {},
+        modifier = Modifier.size(MARK_SIZE).clearAndSetSemantics {},
     ) {
-        Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text =
-                    goal.title
-                        .firstOrNull()
-                        ?.uppercase()
-                        .orEmpty(),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-        }
+        LetterMark(
+            letter =
+                goal.title
+                    .firstOrNull()
+                    ?.uppercase()
+                    .orEmpty(),
+            size = MARK_SIZE,
+            share = MARK_LETTER_SHARE,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.labelSmall,
+        )
     }
 }
+
+private val MARK_SIZE = 20.dp
+
+/** Main's `text-[0.625rem]` on its `size-4.5` tile. */
+private const val MARK_LETTER_SHARE = 0.56f
 
 private val TITLE_WIDTH = 240.dp
 private val MENU_WIDTH = 320.dp
