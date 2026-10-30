@@ -4,7 +4,7 @@ struct PlanStep: View {
   let view: GoalOnboarding
 
   var body: some View {
-    PlanWait(view: view) { PlanReveal(view: view, plan: $0) }
+    PlanWait(view: view, offersLibraryCourse: true) { PlanReveal(view: view, plan: $0) }
       .navigationTitle(Text("Your plan", tableName: "Onboarding", comment: "Title of a new plan"))
       .toolbarTitleDisplayMode(.inline)
       // The plan heads itself, as main does; the bar keeps the title for VoiceOver.
@@ -16,6 +16,8 @@ struct PlanStep: View {
 /// research to read its official documents, so the learner sees the plan they follow.
 struct PlanWait<Content: View>: View {
   let view: GoalOnboarding
+  /// The reveal offers a Library course that fits the goal while its plan is built.
+  var offersLibraryCourse = false
   @ViewBuilder let content: (GoalPlan) -> Content
 
   @Environment(OnboardingStore.self) private var onboarding
@@ -71,7 +73,14 @@ struct PlanWait<Content: View>: View {
         return goal.value?.generationId
       },
       restart: { try await onboarding.writeGoal(goalID: view.goal.id) },
-      readResult: { await readUntilReady(plan) })
+      readResult: { await readUntilReady(plan) },
+      leading: { EmptyView() },
+      trailing: {
+        if offersLibraryCourse, let course = view.libraryCourse {
+          LibraryCourseOffer(
+            courseID: course.courseId, title: course.title, chapters: course.chapterCount)
+        }
+      })
   }
 
   private func readUntilReady(_ plan: Resource<PlanRead>) async -> Bool {
@@ -90,6 +99,49 @@ struct PlanWait<Content: View>: View {
     }
 
     return false
+  }
+}
+
+/// Main's `LibraryCourseOffer`: a published course that teaches the goal, open while the plan is
+/// built.
+private struct LibraryCourseOffer: View {
+  @Environment(AppRouter.self) private var router
+
+  let courseID: String
+  let title: String
+  let chapters: Int
+
+  var body: some View {
+    Section {
+      Button {
+        router.open(.course(courseId: courseID, title: title))
+      } label: {
+        Label {
+          VStack(alignment: .leading, spacing: 2) {
+            Text(
+              "A course in the Library fits your goal", tableName: "Onboarding",
+              comment: "Above a Library course that teaches the learner's goal"
+            )
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+
+            Text(title)
+
+            if chapters > 0 {
+              Text(
+                "\(chapters) chapters", tableName: "Courses",
+                comment: "How many chapters a course or an exam area has"
+              )
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+            }
+          }
+        } icon: {
+          Image(systemName: "book")
+        }
+      }
+      .tint(.primary)
+    }
   }
 }
 
