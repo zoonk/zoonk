@@ -318,7 +318,7 @@ private fun MoleculeBoard(
     onPress: (String) -> Unit,
 ) {
     val density = LocalDensity.current
-    val dots = MaterialTheme.colorScheme.outlineVariant
+    val dots = MaterialTheme.zoonk.vizGrid
     val board = MaterialTheme.colorScheme.surface.copy(alpha = BOARD_ALPHA)
 
     BoxWithConstraints(

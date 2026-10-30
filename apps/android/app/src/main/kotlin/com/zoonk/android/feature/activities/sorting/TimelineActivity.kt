@@ -421,7 +421,7 @@ private data class TrackColors(
 @Composable
 private fun trackColors() =
     TrackColors(
-        axis = MaterialTheme.colorScheme.outlineVariant,
+        axis = MaterialTheme.zoonk.vizGrid,
         ink = MaterialTheme.colorScheme.onSurface,
         background = MaterialTheme.colorScheme.surface,
         accent = MaterialTheme.zoonk.vizAccent,

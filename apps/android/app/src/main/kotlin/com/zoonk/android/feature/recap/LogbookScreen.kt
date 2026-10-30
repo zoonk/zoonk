@@ -69,6 +69,7 @@ import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.WeeklyRecap
 import com.zoonk.api.models.WeeklyRecapTurnaround
 import kotlinx.coroutines.launch
@@ -360,7 +361,7 @@ private fun TurnaroundChart(turnaround: WeeklyRecapTurnaround) {
     val locale = currentLocale()
     val description = stringResource(R.string.recap_turnaround_chart)
     val line = MaterialTheme.colorScheme.tertiary
-    val axis = MaterialTheme.colorScheme.outlineVariant
+    val axis = MaterialTheme.zoonk.vizGrid
     val points = turnaround.points
 
     Column(Modifier.fillMaxWidth().semantics { contentDescription = description }, verticalArrangement = Arrangement.spacedBy(8.dp)) {

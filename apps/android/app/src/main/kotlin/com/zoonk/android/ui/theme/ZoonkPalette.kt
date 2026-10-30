@@ -49,6 +49,7 @@ internal data class ZoonkPalette(
     val vizAccent: Color,
     val vizSecondary: Color,
     val vizHighlight: Color,
+    val vizGrid: Color,
     val destructiveTint: Color,
     val successTint: Color,
     /** Main's `[data-subject]` roles by subject key, `general` included. */
@@ -103,6 +104,7 @@ internal val LightPalette =
         vizAccent = Color(0xFF038A7F),
         vizSecondary = Color(0xFFA941B0),
         vizHighlight = Color(0xFFB66C18),
+        vizGrid = Color(0xFFEDEDED),
         destructiveTint = Color(0xFFFDEFF3),
         successTint = Color(0xFFEFF6FD),
         subjects =
@@ -167,6 +169,7 @@ internal val DarkPalette =
         vizAccent = Color(0xFF70E5D3),
         vizSecondary = Color(0xFFE8A0EC),
         vizHighlight = Color(0xFFF7C15F),
+        vizGrid = Color(0xFF1C1C1D),
         destructiveTint = Color(0xFF1F1418),
         successTint = Color(0xFF141A20),
         subjects =
@@ -231,6 +234,7 @@ internal val LightMoreContrastPalette =
         vizAccent = Color(0xFF005F5A),
         vizSecondary = Color(0xFF8A0194),
         vizHighlight = Color(0xFF973C00),
+        vizGrid = Color(0xFF737373),
         destructiveTint = Color(0xFFF7E8EF),
         successTint = Color(0xFFEAEDF9),
         subjects =
@@ -295,6 +299,7 @@ internal val DarkMoreContrastPalette =
         vizAccent = Color(0xFF96F7E4),
         vizSecondary = Color(0xFFF6CFFF),
         vizHighlight = Color(0xFFFEE685),
+        vizGrid = Color(0xFFA1A1A1),
         destructiveTint = Color(0xFF170F13),
         successTint = Color(0xFF111417),
         subjects =

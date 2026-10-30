@@ -171,7 +171,7 @@ private fun BoardDrawing(
             .copy(fontWeight = FontWeight.SemiBold)
     val ink = MaterialTheme.colorScheme.onSurface
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
-    val grid = MaterialTheme.colorScheme.outlineVariant
+    val grid = MaterialTheme.zoonk.vizGrid
     val halo = MaterialTheme.colorScheme.surface
     val tones = boardTones()
     val unit = if (measure == Measure.ANGLE_SUM) "°" else null

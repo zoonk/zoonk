@@ -43,6 +43,7 @@ export const PALETTE_TOKENS = [
   "viz-accent",
   "viz-secondary",
   "viz-highlight",
+  "viz-grid",
 ] as const;
 
 /** Main draws these with opacity (`bg-success/9`); Material's container roles need a color. */

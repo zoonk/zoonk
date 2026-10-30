@@ -205,7 +205,7 @@ private fun DistributionPlot(
     val peak = curve.maxOf { it.second } * HEADROOM
     val accent = MaterialTheme.zoonk.vizAccent
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
-    val border = MaterialTheme.colorScheme.outlineVariant
+    val axisColor = MaterialTheme.zoonk.vizGrid
     val canvas = activityCanvasColor()
     val right = MaterialTheme.colorScheme.tertiary
 
@@ -265,7 +265,7 @@ private fun DistributionPlot(
                 accent,
                 style = Stroke(CURVE_WIDTH.toPx()),
             )
-            drawLine(border, Offset(x.range.first, axis), Offset(x.range.second, axis), AXIS_WIDTH.toPx())
+            drawLine(axisColor, Offset(x.range.first, axis), Offset(x.range.second, axis), AXIS_WIDTH.toPx())
             val pillHalves = listOf(from, to).map { it to measurer.measure(format(it), pillStyle).size.width / 2f + PILL_PADDING.toPx() }
             val ticks = distributionTicks(distribution, domain).map { it to measurer.measure(format(it), labelStyle.copy(color = muted)) }
             val mean = (distribution as? NormalValue)?.value?.mean

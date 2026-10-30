@@ -161,7 +161,7 @@ private fun NumberLinePlot(
         LineColors(
             ink = MaterialTheme.colorScheme.onSurface,
             muted = MaterialTheme.colorScheme.onSurfaceVariant,
-            axis = MaterialTheme.colorScheme.outlineVariant,
+            axis = MaterialTheme.zoonk.vizGrid,
             ring = MaterialTheme.colorScheme.surface,
             start = MaterialTheme.zoonk.vizSecondary,
         )

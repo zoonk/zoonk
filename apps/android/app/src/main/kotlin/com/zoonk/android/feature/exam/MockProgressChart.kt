@@ -58,6 +58,7 @@ import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
@@ -88,7 +89,7 @@ internal fun ProgressLineChart(
     val shown = active ?: points.lastIndex
     val picked = points[shown]
     val color = LearnKind.Mock.color
-    val grid = MaterialTheme.colorScheme.outlineVariant
+    val grid = MaterialTheme.zoonk.vizGrid
     val ring = MaterialTheme.colorScheme.surface
     val guide = MaterialTheme.colorScheme.onSurface.copy(alpha = GUIDE_ALPHA)
     val axis = MaterialTheme.typography.labelSmall.withTabularFigures()
@@ -262,7 +263,7 @@ internal fun Sparkline(values: List<Int>) {
 @Composable
 internal fun SampleProgressChart(values: List<Int>) {
     val color = LearnKind.Mock.color
-    val grid = MaterialTheme.colorScheme.outlineVariant
+    val grid = MaterialTheme.zoonk.vizGrid
 
     Canvas(Modifier.fillMaxWidth().height(80.dp)) {
         drawLine(grid, Offset.Zero, Offset(size.width, 0f), strokeWidth = 1.dp.toPx())

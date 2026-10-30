@@ -227,6 +227,7 @@ private fun MapDrawing(
     modifier: Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
+    val guide = MaterialTheme.zoonk.vizGrid
     val accent = MaterialTheme.zoonk.vizAccent
     val tones = regionTones()
     val sea = tones.getValue(RegionTone.GroupC)
@@ -256,13 +257,13 @@ private fun MapDrawing(
             val hairline = Stroke(0.75.dp.toPx() / zoom, join = StrokeJoin.Round)
             map.regions.forEach { (path, tone) ->
                 drawPath(path, tones.getValue(tone))
-                drawPath(path, colors.outlineVariant, style = hairline)
+                drawPath(path, guide, style = hairline)
             }
             val street = Stroke(STREET_WIDTH.toPx() / zoom, cap = StrokeCap.Round, join = StrokeJoin.Round)
             map.streets.forEach { drawPath(it, colors.surface, style = street) }
             map.drawing.insets.forEach {
                 drawRect(
-                    colors.outlineVariant,
+                    guide,
                     topLeft = Offset(it.x.toFloat(), it.y.toFloat()),
                     size = Size(it.width.toFloat(), it.height.toFloat()),
                     style = Stroke(1.dp.toPx() / zoom),
@@ -400,7 +401,7 @@ private fun LegendItem(item: BaseMapLegendItem) {
                 .size(12.dp)
                 .clip(RoundedCornerShape(2.dp))
                 .background(tones.getValue(item.tone))
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(2.dp)),
+                .border(1.dp, MaterialTheme.zoonk.vizGrid, RoundedCornerShape(2.dp)),
         )
         ActivityCanvasLabel(baseMapLabel(item.key)?.let { stringResource(it) } ?: item.key)
     }

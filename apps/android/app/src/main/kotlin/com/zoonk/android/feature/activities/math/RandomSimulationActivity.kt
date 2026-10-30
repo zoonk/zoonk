@@ -472,7 +472,7 @@ private fun SamplingChart(
     val height = bracket + gap + labelHeight + with(density) { CHART_BOTTOM.toPx() }
     val ink = MaterialTheme.colorScheme.onSurface
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
-    val border = MaterialTheme.colorScheme.outlineVariant
+    val axisColor = MaterialTheme.zoonk.vizGrid
     val accent = MaterialTheme.zoonk.vizAccent
 
     BoxWithConstraints(Modifier.fillMaxWidth().height(with(density) { height.toDp() }).clearAndSetSemantics {}) {
@@ -522,7 +522,7 @@ private fun SamplingChart(
                     ),
             )
 
-            drawLine(border, Offset(x.range.first, axis), Offset(x.range.second, axis), LINE_WIDTH.toPx())
+            drawLine(axisColor, Offset(x.range.first, axis), Offset(x.range.second, axis), LINE_WIDTH.toPx())
             val (from, to) = x.toPixel(range.first) to x.toPixel(range.second)
             val middle = (from + to) / 2
             niceTicks(domain, AXIS_TICKS).filter { abs(x.toPixel(it) - middle) >= LABEL_CLEARANCE.toPx() }.forEach { tick ->

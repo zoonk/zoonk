@@ -186,7 +186,7 @@ private fun ChartCanvas(visual: LessonVisual.Chart) {
             .withTabularFigures()
             .copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
     val valueStyle = labelStyle.copy(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
-    val grid = MaterialTheme.colorScheme.outlineVariant
+    val grid = MaterialTheme.zoonk.vizGrid
     val tones = seriesTones()
     val summary = chartSummary(visual, locale)
 
@@ -434,7 +434,7 @@ private fun TimelineVisual(
     modifier: Modifier,
 ) {
     val accent = MaterialTheme.zoonk.vizAccent
-    val line = MaterialTheme.colorScheme.outlineVariant
+    val line = MaterialTheme.zoonk.vizGrid
     val dateStyle = MaterialTheme.typography.bodyMedium.withTabularFigures()
     val dotCenter = with(LocalDensity.current) { dateStyle.lineHeight.toPx() / 2 }
 

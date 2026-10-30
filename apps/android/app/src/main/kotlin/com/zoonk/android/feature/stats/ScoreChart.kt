@@ -24,6 +24,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.CurrentUserScoreResponseScore
 import kotlinx.datetime.toJavaLocalDate
 
@@ -79,7 +80,7 @@ internal fun ScoreChart(
         MaterialTheme.typography.labelSmall
             .withTabularFigures()
             .copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-    val grid = MaterialTheme.colorScheme.outlineVariant
+    val grid = MaterialTheme.zoonk.vizGrid
     val line = MaterialTheme.colorScheme.tertiary
     val ticks = remember(measurer, labelStyle, locale) { PERCENT_TICKS.map { measurer.measure(formatNumber(it, locale), labelStyle) } }
     val weekLabels = remember(measurer, labelStyle, weeks) { weeks.map { measurer.measure(it, labelStyle) } }

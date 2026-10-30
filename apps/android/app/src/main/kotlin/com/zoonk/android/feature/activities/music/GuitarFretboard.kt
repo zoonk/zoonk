@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 
 /**
  * Main's `GuitarFretboard`, high E on top and the nut on the left in every language. With [onChange] each string is a radio
@@ -209,7 +210,7 @@ private fun FretCell(
     content: @Composable () -> Unit,
 ) {
     val string = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = STRING_ALPHA)
-    val wire = MaterialTheme.colorScheme.outlineVariant
+    val wire = MaterialTheme.zoonk.vizGrid
     val nut = MaterialTheme.colorScheme.onSurface
 
     Box(

@@ -280,7 +280,7 @@ private class DialColors(
 @Composable
 private fun dialColors() =
     DialColors(
-        axis = MaterialTheme.colorScheme.outlineVariant,
+        axis = MaterialTheme.zoonk.vizGrid,
         circle = MaterialTheme.colorScheme.onSurfaceVariant,
         ink = MaterialTheme.colorScheme.onSurface,
         halo = MaterialTheme.colorScheme.surface,

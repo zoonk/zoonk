@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.LinearScale
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import kotlin.math.max
 
 /** Where a template draws in an [ActivityPlot], in data units. */
@@ -198,7 +199,7 @@ fun ActivityPlot(
     val measurer = rememberTextMeasurer()
     val style = MaterialTheme.typography.labelSmall.withTabularFigures()
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
-    val gridColor = MaterialTheme.colorScheme.outlineVariant
+    val gridColor = MaterialTheme.zoonk.vizGrid
     val labelHeight =
         with(LocalDensity.current) {
             measurer
