@@ -41,7 +41,10 @@ export function useEditorRun({ isChecked }: { isChecked: boolean }) {
 
   function finish(startedRevision: number): "cancelled" | "current" | "stale" {
     if (active.current !== startedRevision) {
-      setIsRunning(false);
+      if (active.current === null) {
+        setIsRunning(false);
+      }
+
       return "cancelled";
     }
 
