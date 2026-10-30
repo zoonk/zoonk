@@ -149,7 +149,7 @@ private struct NextStopView: View {
   let moment: BlockMoment?
 
   @State private var action: Task<Void, Never>?
-  /// Taps that left the step waiting here, so a retry the same run answers follows it again.
+  /// Taps that left a lesson waiting here, so a retry the same run answers follows it again.
   @State private var waits = 0
   @State private var isOpening = false
   @State private var isStopping = false
@@ -387,8 +387,11 @@ private struct NextStopView: View {
       isOpening = false
 
       switch result {
-      case .done(.session), .done(.lessonWait):
+      case .done(.lessonWait):
         waits += 1
+      case .done(.session):
+        // The session shows this step itself.
+        break
       case .done(let destination) where !Task.isCancelled:
         router.openStudy(destination)
       case .done:
