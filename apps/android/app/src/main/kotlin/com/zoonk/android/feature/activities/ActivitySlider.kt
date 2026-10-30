@@ -13,6 +13,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -64,10 +65,12 @@ fun ActivitySlider(
             enabled = !disabled,
             fill = MaterialTheme.zoonk.vizAccent,
             modifier =
-                Modifier.semantics {
-                    contentDescription = label
-                    stateDescription = valueText
-                },
+                Modifier
+                    .alpha(if (disabled) DISABLED_ALPHA else 1f)
+                    .semantics {
+                        contentDescription = label
+                        stateDescription = valueText
+                    },
             onPositionChange = { onValueChange(sliderValue(it, range)) },
         )
         Box(Modifier.clearAndSetSemantics {}) { scale() }
@@ -115,3 +118,5 @@ internal fun ActivitySliderTrack(
         },
     )
 }
+
+private const val DISABLED_ALPHA = 0.6f
