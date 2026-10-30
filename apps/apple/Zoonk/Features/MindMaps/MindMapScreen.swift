@@ -46,35 +46,38 @@ struct MindMapScreen: View {
   private func content(_ map: Resource<ChapterMindMap>) -> some View {
     switch map.state {
     case .loaded(let value):
-      if let image = value.image, let url = URL(string: image.url), !showsOutline {
-        ZoomableRemoteImage(url: url, title: value.title)
-          .ignoresSafeArea(edges: .bottom)
-          .toolbar {
-            if value.outline != nil {
-              ToolbarItem(placement: .primaryAction) {
-                Button {
-                  showsOutline = true
-                } label: {
-                  Label {
-                    Text(
-                      "As text", tableName: "MindMaps", comment: "Shows the map's outline in words")
-                  } icon: {
-                    Image(systemName: "text.alignleft")
-                  }
-                }
-              }
+      let url = value.image.flatMap { URL(string: $0.url) }
+
+      Group {
+        if let url, !showsOutline {
+          ZoomableRemoteImage(url: url, title: value.title)
+            .ignoresSafeArea(edges: .bottom)
+        } else if let outline = value.outline {
+          MindMapOutlineView(outline: outline)
+        } else {
+          ContentUnavailableView {
+            Label {
+              Text(
+                "The mind map couldn't be made this time.", tableName: "MindMaps",
+                comment: "Shown when a chapter has no map to show")
+            } icon: {
+              KindMark(kind: .mindMap)
             }
           }
-      } else if let outline = value.outline {
-        MindMapOutlineView(outline: outline)
-      } else {
-        ContentUnavailableView {
-          Label {
-            Text(
-              "The mind map couldn't be made this time.", tableName: "MindMaps",
-              comment: "Shown when a chapter has no map to show")
-          } icon: {
-            KindMark(kind: .mindMap)
+        }
+      }
+      .toolbar {
+        if url != nil, value.outline != nil {
+          ToolbarItem(placement: .primaryAction) {
+            Toggle(isOn: $showsOutline) {
+              Label {
+                Text(
+                  "As text", tableName: "MindMaps", comment: "Shows the map's outline in words")
+              } icon: {
+                Image(systemName: "text.alignleft")
+              }
+            }
+            .toggleStyle(.button)
           }
         }
       }
