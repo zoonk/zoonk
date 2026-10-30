@@ -112,6 +112,7 @@ function QuestionStepScreen({
           dateProblem={view.dateProblem}
           exam={view.examDays}
           initialDate={view.goal.targetDate}
+          timeZone={view.goal.timezone}
           subject={subject}
         />
       );

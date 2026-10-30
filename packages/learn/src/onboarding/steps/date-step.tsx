@@ -9,9 +9,10 @@ import {
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { toLocalIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
+import { useFormatIsoDate } from "../../_utils/iso-date";
 import { NoSittingWords } from "../../plan/notice-day";
 import { useKeptTyping } from "../../use-kept-typing";
 import { StepForm } from "./step-form";
@@ -65,20 +66,31 @@ function ExamDateStep({
   );
 }
 
+/** Core counts the goal's days in its zone, UTC without one, so the date screen does too. */
+function getGoalToday({ now, timeZone }: { now: Date; timeZone: string | null }): string {
+  const zone = timeZone && isValidTimeZone(timeZone) ? timeZone : "UTC";
+
+  return getDateInTimeZone({ date: now, timeZone: zone })
+    .toISOString()
+    .slice(0, "YYYY-MM-DD".length);
+}
+
 /** A date that has passed, or is today, is said so and never kept as the learner's answer. */
 export function DateStep({
   dateProblem,
   exam,
   initialDate,
+  timeZone,
   ...props
 }: StepProps & {
   dateProblem: OnboardingDateProblem | null;
   exam: { days: string[]; estimated: boolean } | null;
   initialDate: string | null;
+  timeZone: string | null;
 }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
-  const today = toLocalIsoDate(useMountTime());
+  const today = getGoalToday({ now: useMountTime(), timeZone });
   const gone = dateProblem?.kind === "passed" || dateProblem?.kind === "today";
   const kept = gone ? null : initialDate;
 

@@ -3,6 +3,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getGoalPreparation } from "../preparation/get-goal-preparation";
+import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { getPlanTabView } from "../view-models/plan/get-plan-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
@@ -277,5 +278,12 @@ describe("a plan made after its date", () => {
     await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
       onboarding: { steps: ["targetDate", "plan"] },
     });
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { question: "targetDate", targetDate: "2020-10-19" },
+      }),
+    ).resolves.toStrictEqual({ status: "invalid" });
   });
 });

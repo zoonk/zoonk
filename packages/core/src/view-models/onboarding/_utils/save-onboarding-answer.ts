@@ -268,6 +268,11 @@ export async function saveAnswerInputs({
           weekends,
         });
 
+        // Unlike a plan change, onboarding can't keep a date that is gone: no plan can be made for it.
+        if (schedule.targetDate && schedule.targetDate <= toIsoDate(today)) {
+          return unchanged("invalid");
+        }
+
         assertTargetDates({
           latestOnly: true,
           targets: [

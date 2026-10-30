@@ -86,7 +86,10 @@ async function findExamNotice({
   return {
     choices: stored ? listExamChoiceViews({ choices, structure: stored }) : [],
     examDate: blueprint?.examDate ? toIsoDate(blueprint.examDate) : null,
-    examDays: blueprint && !blueprint.ownerId ? getNextSittingDays(blueprint.edition) : null,
+    examDays:
+      blueprint && !blueprint.ownerId
+        ? getNextSittingDays({ edition: blueprint.edition, today })
+        : null,
     fromMaterial: Boolean(blueprint?.ownerId),
     noSitting: getNoSitting({ blueprint, details, goalDate, today }),
     subjects: subjects.map((subject) => ({
@@ -96,25 +99,36 @@ async function findExamNotice({
   };
 }
 
-function getNextSittingDays(edition: unknown): OnboardingView["examDays"] {
-  const { today } = getExamCalendarDay({ edition, now: new Date() });
-  const found = getPlanExamDays({ details: {}, edition, goalDate: null, today });
+/** After both the exam's day and the learner's, so the sitting offered can still be planned for. */
+function getNextSittingDays({
+  edition,
+  today,
+}: {
+  edition: unknown;
+  today: string;
+}): OnboardingView["examDays"] {
+  const examDay = getExamCalendarDay({ edition, now: new Date() }).today;
+  const from = examDay > today ? examDay : today;
+  const found = getPlanExamDays({ details: {}, edition, goalDate: null, today: from });
 
   return found.days.length > 0
     ? { days: found.days.map((day) => day.date), estimated: found.estimated }
     : null;
 }
 
-async function findCourseExamDays(goal: {
-  kind: string;
-  primaryCourseId: string | null;
+async function findCourseExamDays({
+  goal,
+  today,
+}: {
+  goal: { kind: string; primaryCourseId: string | null };
+  today: string;
 }): Promise<OnboardingView["examDays"]> {
   const exam =
     goal.kind === "exam" && goal.primaryCourseId
       ? await loadCourseExam(goal.primaryCourseId)
       : null;
 
-  return exam ? getNextSittingDays(exam.blueprint.edition) : null;
+  return exam ? getNextSittingDays({ edition: exam.blueprint.edition, today }) : null;
 }
 
 function getDateProblem({
@@ -198,7 +212,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     findActiveGoalId(userId),
     findOnboardingGoalIds(goal),
     findExamNotice({ details, examBlueprintId: goal.examBlueprintId, goalDate, goalId, today }),
-    findCourseExamDays(goal),
+    findCourseExamDays({ goal, today }),
   ]);
 
   const [earlierGoals, [view]] = await Promise.all([
@@ -240,8 +254,8 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
 
   return {
     onboarding: {
-      examChoices: notice.choices,
       dateProblem,
+      examChoices: notice.choices,
       examDays: courseExamDays ?? notice.examDays,
       examSubjects: notice.subjects,
       followUps: getFollowUpQuestions(details),

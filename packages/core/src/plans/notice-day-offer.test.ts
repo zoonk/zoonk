@@ -380,6 +380,21 @@ describe("the notice's day where the exam date shows", () => {
     });
   });
 
+  it("offers a passed date's next sitting only once it's after the learner's own today", async () => {
+    const goal = await plannedExam({
+      days: ["2020-09-29", "2020-11-14"],
+      details: { answered: ["targetDate", "level", "schedule", "buddy", "placement"] },
+      targetDate: "2020-09-20",
+    });
+
+    // UTC+14: the learner's today is already the exam's tomorrow.
+    await prisma.goal.update({ data: { timezone: "Pacific/Kiritimati" }, where: { id: goal.id } });
+
+    await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+      onboarding: { examDays: { days: ["2020-11-14"] } },
+    });
+  });
+
   it("says nothing about other sittings when the learner's month has one, or the exam has one sitting", async () => {
     const april = await plannedExam({
       days: ["2020-10-16", "2020-11-14", "2021-04-02"],
