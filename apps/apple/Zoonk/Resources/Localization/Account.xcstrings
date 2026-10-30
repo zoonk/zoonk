@@ -1,6 +1,64 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ is already taken" : {
+      "comment" : "Another account has the typed username; the argument is the username",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ist bereits vergeben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ya está en uso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ est déjà pris"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ já está em uso"
+          }
+        }
+      }
+    },
+    "%@ is available" : {
+      "comment" : "The typed username is free; the argument is the username",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ist verfügbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ está disponible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ est disponible"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ está disponível"
+          }
+        }
+      }
+    },
     "%@/%@ buddy messages used today" : {
       "comment" : "A free plan's buddy messages used today, as in “3/5 buddy messages used today”",
       "localizations" : {
@@ -32,6 +90,481 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@/%2$@ mensagens para o Parceiro usadas hoje"
+          }
+        }
+      }
+    },
+    "%lld goals" : {
+      "comment" : "How many goals the free plan has at a time",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Ziel"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Ziele"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld goal"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld goals"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld objetivo"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld objetivos"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld objectif"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld objectifs"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld meta"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld metas"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld goals at a time" : {
+      "comment" : "Free plan: goals at a time",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Ziel gleichzeitig"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Ziele gleichzeitig"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld goal at a time"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld goals at a time"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld objetivo a la vez"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld objetivos a la vez"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld objectif à la fois"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld objectifs à la fois"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld meta por vez"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld metas por vez"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons a month" : {
+      "comment" : "Free plan: lessons a month",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Lektion pro Monat"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Lektionen pro Monat"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson a month"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons a month"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lección al mes"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lecciones al mes"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçon par mois"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçons par mois"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula por mês"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas por mês"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld messages to your buddy a day" : {
+      "comment" : "Free plan: the study buddy's daily messages",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Nachricht an deinen Kumpel pro Tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Nachrichten an deinen Kumpel pro Tag"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld message to your buddy a day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld messages to your buddy a day"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mensaje a tu compañero al día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mensajes a tu compañero al día"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld message à ton compagnon par jour"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld messages à ton compagnon par jour"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mensagem para seu parceiro por dia"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mensagens para seu parceiro por dia"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld uploads a day" : {
+      "comment" : "Free plan: daily uploads",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Upload pro Tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Uploads pro Tag"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld upload a day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld uploads a day"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld subida al día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld subidas al día"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld envoi de fichier par jour"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld envois de fichiers par jour"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld envio por dia"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld envios por dia"
+                }
+              }
+            }
           }
         }
       }
@@ -96,6 +629,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Código de 6 dígitos"
+          }
+        }
+      }
+    },
+    "A plan for your goal and your date" : {
+      "comment" : "Free plan: a plan for the learner's goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Plan für dein Ziel und deinen Termin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un plan adaptado a tu objetivo y a tu fecha"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un plan adapté à ton objectif et à ton échéance"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um plano para sua meta e seu prazo"
           }
         }
       }
@@ -303,6 +865,35 @@
         }
       }
     },
+    "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan." : {
+      "comment" : "Answers whether Plus is unlimited, never in minutes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fast. Die Limits für Lektionen, Ziele und deinen Kumpel sollen nur Bots und automatisierte Programme stoppen, keine Menschen beim Lernen. Für Übungsgespräche gelten Tages- und Monatslimits, die höher liegen als im kostenlosen Tarif."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Casi. Las lecciones, los objetivos y tu compañero solo tienen límites para frenar a los bots y las herramientas automatizadas, no a quienes aprenden. Las llamadas de práctica oral tienen límites diarios y mensuales más altos que los del plan gratuito."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presque. Les limites des leçons, des objectifs et de ton compagnon servent uniquement à bloquer les robots et les outils automatisés, pas les personnes qui apprennent. Les appels d’entraînement à l’oral ont des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quase. Aulas, metas e seu parceiro só têm limites para barrar robôs e ferramentas automatizadas, não quem está aprendendo. As conversas para praticar têm limites diários e mensais, maiores que os do plano grátis."
+          }
+        }
+      }
+    },
     "An AI study buddy whenever you're stuck" : {
       "comment" : "Zoonk Plus benefit: the study buddy",
       "localizations" : {
@@ -328,6 +919,101 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Um Parceiro de estudos com IA para quando você precisar de ajuda"
+          }
+        }
+      }
+    },
+    "An AI study buddy: %lld messages a day" : {
+      "comment" : "Free plan: the study buddy's daily messages",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ein KI-Kumpel zum Lernen: %lld Nachricht pro Tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ein KI-Kumpel zum Lernen: %lld Nachrichten pro Tag"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "An AI study buddy: %lld message a day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "An AI study buddy: %lld messages a day"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Un compañero de estudio con IA: %lld mensaje al día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Un compañero de estudio con IA: %lld mensajes al día"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Un compagnon IA pour apprendre : %lld message par jour"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Un compagnon IA pour apprendre : %lld messages par jour"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Um parceiro de estudos com IA: %lld mensagem por dia"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Um parceiro de estudos com IA: %lld mensagens por dia"
+                }
+              }
+            }
           }
         }
       }
@@ -390,6 +1076,35 @@
         }
       }
     },
+    "Can I get a refund?" : {
+      "comment" : "A pricing question",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kann ich mein Geld zurückbekommen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Puedo obtener un reembolso?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puis-je obtenir un remboursement ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posso receber um reembolso?"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "comment" : "Cancels permanent account deletion",
       "localizations" : {
@@ -415,6 +1130,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cancelar"
+          }
+        }
+      }
+    },
+    "Cancel subscription" : {
+      "comment" : "Opens the page that cancels Plus bought on the web",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abo kündigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar suscripción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résilier l’abonnement"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar assinatura"
           }
         }
       }
@@ -601,6 +1345,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confira sua conexão e tente restaurar de novo."
+          }
+        }
+      }
+    },
+    "Checking…" : {
+      "comment" : "While a typed username is being checked",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir prüfen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobando…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérification…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verificando…"
+          }
+        }
+      }
+    },
+    "Common questions" : {
+      "comment" : "Title of the pricing questions",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Häufige Fragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntas frecuentes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questions fréquentes"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dúvidas frequentes"
           }
         }
       }
@@ -1226,6 +2028,130 @@
         }
       }
     },
+    "For an exam: the diagnostic, your plan and its first %lld days" : {
+      "comment" : "Free plan: how much of an exam plan it includes",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Für eine Prüfung: der Einstufungstest, dein Plan und %lld Tag Vorbereitung zum Einstieg"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Für eine Prüfung: der Einstufungstest, dein Plan und die ersten %lld Tage"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "For an exam: the diagnostic, your plan and its first %lld day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "For an exam: the diagnostic, your plan and its first %lld days"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Para un examen: la prueba de diagnóstico, tu plan y %lld día de preparación para empezar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Para un examen: la prueba de diagnóstico, tu plan y sus primeros %lld días"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pour un examen : le diagnostic, ton plan et %lld jour de préparation pour commencer"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pour un examen : le diagnostic, ton plan et ses %lld premiers jours"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Para uma prova: o diagnóstico, seu plano e %lld dia para começar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Para uma prova: o diagnóstico, seu plano e os primeiros %lld dias"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "For an exam: the diagnostic, your plan and its first week" : {
+      "comment" : "Free plan: how much of an exam plan it includes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für eine Prüfung: der Einstufungstest, dein Plan und die erste Woche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para un examen: la prueba de diagnóstico, tu plan y su primera semana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour un examen : le diagnostic, ton plan et sa première semaine"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para uma prova: o diagnóstico, seu plano e a primeira semana"
+          }
+        }
+      }
+    },
     "For your security, enter a new code sent to the email on this account." : {
       "comment" : "Explains the email reauthentication requirement for account deletion",
       "localizations" : {
@@ -1431,6 +2357,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Como o Zoonk e seu parceiro te chamam"
+          }
+        }
+      }
+    },
+    "Is Plus really unlimited?" : {
+      "comment" : "A pricing question",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ist Plus wirklich unbegrenzt?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Plus es realmente ilimitado?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus est-il vraiment illimité ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Plus é mesmo ilimitado?"
+          }
+        }
+      }
+    },
+    "Just contact us and tell us what happened. We'll do our best to get you a refund." : {
+      "comment" : "Answers whether Plus can be refunded",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meld dich einfach bei uns und erzähl uns, was passiert ist. Wir tun unser Bestes, damit du dein Geld zurückbekommst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo tienes que contactar con nosotros y contarnos qué ha pasado. Haremos todo lo posible para que recibas un reembolso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il te suffit de nous contacter et de nous expliquer ce qui s’est passé. Nous ferons de notre mieux pour te rembourser."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "É só entrar em contato e contar o que aconteceu. A gente vai fazer o possível para você receber um reembolso."
           }
         }
       }
@@ -1905,6 +2889,35 @@
         }
       }
     },
+    "Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)" : {
+      "comment" : "Free plan: practice calls, never a number",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übungsgespräche mit niedrigeren Limits als bei Plus (Sprechaufgaben für Prüfungen sind bei Plus enthalten)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llamadas de práctica, con límites inferiores a los de Plus (las tareas de expresión oral de los exámenes se incluyen en Plus)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appels d’entraînement, avec des limites plus basses qu’avec Plus (les tâches d’expression orale des examens sont incluses avec Plus)"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversas para praticar, com limites menores que os do Plus (as tarefas de conversação das provas vêm com o Plus)"
+          }
+        }
+      }
+    },
     "Preferences" : {
       "comment" : "Settings row for Preferences\nTitle of the Preferences page",
       "localizations" : {
@@ -2162,6 +3175,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Compras restauradas"
+          }
+        }
+      }
+    },
+    "Read our fair use policy" : {
+      "comment" : "Opens the fair use policy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unsere Richtlinie zur fairen Nutzung lesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lee nuestra política de uso razonable"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lire notre politique d’utilisation raisonnable"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leia nossa política de uso justo"
           }
         }
       }
@@ -2491,6 +3533,130 @@
         }
       }
     },
+    "Speaking practice calls, with lower limits than Plus" : {
+      "comment" : "Free plan: practice calls, never a number",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übungsgespräche mit niedrigeren Limits als bei Plus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llamadas para practicar la expresión oral, con límites inferiores a los de Plus"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appels d’entraînement à l’oral, avec des limites plus basses qu’avec Plus"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversas para praticar, com limites menores que os do Plus"
+          }
+        }
+      }
+    },
+    "Start free with %lld lessons, no account needed. With a free account, you get:" : {
+      "comment" : "Leads the free plan's list for someone without an account",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Leg kostenlos mit %lld Lektion los, ganz ohne Konto. Mit einem kostenlosen Konto bekommst du:"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Leg kostenlos mit %lld Lektionen los, ganz ohne Konto. Mit einem kostenlosen Konto bekommst du:"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Start free with %lld lesson, no account needed. With a free account, you get:"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Start free with %lld lessons, no account needed. With a free account, you get:"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Empieza gratis con %lld lección, sin necesidad de una cuenta. Con una cuenta gratuita, tienes:"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Empieza gratis con %lld lecciones, sin necesidad de una cuenta. Con una cuenta gratuita, tienes:"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Commence gratuitement avec %lld leçon, sans compte. Avec un compte gratuit, tu as droit à :"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Commence gratuitement avec %lld leçons, sans compte. Avec un compte gratuit, tu as droit à :"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Comece grátis com %lld aula, sem precisar de uma conta. Com uma conta grátis, você tem:"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Comece grátis com %lld aulas, sem precisar de uma conta. Com uma conta grátis, você tem:"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Subscribe to Zoonk Plus" : {
       "comment" : "Headline on the Zoonk Plus subscription screen",
       "localizations" : {
@@ -2758,6 +3924,130 @@
         }
       }
     },
+    "The first %lld days of exam prep" : {
+      "comment" : "Free plan: how much of an exam plan it includes",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Tag Prüfungsvorbereitung zum Einstieg"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Die ersten %lld Tage der Prüfungsvorbereitung"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "The first %lld day of exam prep"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "The first %lld days of exam prep"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Para empezar, %lld día de preparación para el examen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Los primeros %lld días de preparación para el examen"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jour pour commencer ta préparation à l’examen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Les %lld premiers jours de préparation à l’examen"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dia para começar o preparo para provas"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Os primeiros %lld dias de preparo para provas"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "The first week of exam prep" : {
+      "comment" : "Free plan: how much of an exam plan it includes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die erste Woche der Prüfungsvorbereitung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La primera semana de preparación para el examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La première semaine de préparation à l’examen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A primeira semana de preparo para provas"
+          }
+        }
+      }
+    },
     "This permanently deletes your profile, goals, plans, progress, memory, feedback and uploads. This can't be undone." : {
       "comment" : "Explains the consequences of confirming permanent account deletion",
       "localizations" : {
@@ -2876,6 +4166,130 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tentar de novo"
+          }
+        }
+      }
+    },
+    "Unable to manage your subscription. Contact us at hello@zoonk.com" : {
+      "comment" : "Opening the web subscription's cancellation failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Aboverwaltung lässt sich nicht öffnen. Schreib uns an hello@zoonk.com"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido gestionar tu suscripción. Escríbenos a contacto@zoonk.com"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de gérer ton abonnement. Contacte-nous à hello@zoonk.com"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível gerenciar sua assinatura. Entre em contato pelo e-mail contato@zoonk.com"
+          }
+        }
+      }
+    },
+    "Up to %lld lessons a day" : {
+      "comment" : "Free plan: lessons a day",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bis zu %lld Lektion pro Tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bis zu %lld Lektionen pro Tag"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Up to %lld lesson a day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Up to %lld lessons a day"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Hasta %lld lección al día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Hasta %lld lecciones al día"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Jusqu’à %lld leçon par jour"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Jusqu’à %lld leçons par jour"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Até %lld aula por dia"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Até %lld aulas por dia"
+                }
+              }
+            }
           }
         }
       }
@@ -3083,6 +4497,35 @@
         }
       }
     },
+    "We couldn't load what the free plan includes." : {
+      "comment" : "The free plan's limits failed to load on the Plus screen",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten die Leistungen des Free-Tarifs nicht laden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido cargar lo que incluye el plan gratuito."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger ce qui est inclus dans la formule gratuite."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conseguimos carregar o que está incluído no plano grátis."
+          }
+        }
+      }
+    },
     "We sent a sign-in code to your email. It expires in 5 minutes." : {
       "comment" : "Explains where the email code was sent and when it expires",
       "localizations" : {
@@ -3108,6 +4551,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviamos um código de acesso para seu e-mail. Ele expira em 5 minutos."
+          }
+        }
+      }
+    },
+    "What happens if I cancel?" : {
+      "comment" : "A pricing question",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was passiert, wenn ich kündige?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué pasa si cancelo?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que se passe-t-il si je résilie ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que acontece se eu cancelar?"
           }
         }
       }
@@ -3147,6 +4619,64 @@
         }
       }
     },
+    "What's in the free plan?" : {
+      "comment" : "A pricing question",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was ist im kostenlosen Tarif enthalten?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué incluye el plan gratuito?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que comprend la formule gratuite ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que vem no plano grátis?"
+          }
+        }
+      }
+    },
+    "With the free plan, you get:" : {
+      "comment" : "Leads the free plan's list",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit dem kostenlosen Tarif bekommst du:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con el plan gratuito, tienes:"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec la formule gratuite, tu as droit à :"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com o plano grátis, você tem:"
+          }
+        }
+      }
+    },
     "You can change it later in your profile." : {
       "comment" : "Explains that the setup's name and username can change later",
       "localizations" : {
@@ -3178,6 +4708,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você pode mudar isso depois no seu perfil."
+          }
+        }
+      }
+    },
+    "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you." : {
+      "comment" : "Answers what canceling Plus does",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du behältst Plus bis zum Ende des bezahlten Zeitraums. Danach nutzt du wieder den kostenlosen Tarif. Deine Ziele und Fortschritte bleiben erhalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguirás teniendo Plus hasta que termine el periodo que ya has pagado. Después volverás al plan gratuito y conservarás tus objetivos y tu progreso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu gardes Plus jusqu’à la fin de la période que tu as déjà payée. Tu repasses ensuite à la formule gratuite, en conservant tes objectifs et ta progression."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você continua com o Plus até o fim do período já pago. Depois, você volta para o plano grátis e mantém suas metas e seu progresso."
           }
         }
       }

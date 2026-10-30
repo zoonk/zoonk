@@ -862,6 +862,83 @@
         }
       }
     },
+    "%lld minutes" : {
+      "comment" : "How long a lesson takes",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Min."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld minute"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld minutes"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld min"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld minute"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld minutes"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld min"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld quick lessons" : {
       "comment" : "The quick lessons an exam area is studied through",
       "localizations" : {
@@ -2231,6 +2308,41 @@
         }
       }
     },
+    "Chapter %lld: %@" : {
+      "comment" : "The chapter a lesson is in, with its number",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapitel %1$lld: %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Chapter %1$lld: %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capítulo %1$lld: %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chapitre %1$lld : %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capítulo %1$lld: %2$@"
+          }
+        }
+      }
+    },
     "Chapter not found" : {
       "comment" : "Title when a chapter cannot be found.",
       "localizations" : {
@@ -3026,6 +3138,35 @@
         }
       }
     },
+    "Guess first. It doesn't count." : {
+      "comment" : "Over a lesson's first question that asks for a guess",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rat erst mal. Das zählt nicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero haz una suposición. No cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essaie d’abord de deviner. Ça ne compte pas."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dê um palpite primeiro. Essa resposta não conta."
+          }
+        }
+      }
+    },
     "Health" : {
       "comment" : "Course category for health.",
       "localizations" : {
@@ -3080,6 +3221,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "História"
+          }
+        }
+      }
+    },
+    "In this course" : {
+      "comment" : "Header of a lesson's place",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In diesem Kurs"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En este curso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans ce cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neste curso"
           }
         }
       }
@@ -3254,6 +3424,99 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aula"
+          }
+        }
+      }
+    },
+    "Lesson %lld of %lld" : {
+      "comment" : "A lesson's place in its chapter",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektion %1$lld von %2$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Lesson %1$lld of %2$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lección %1$lld de %2$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçon %1$lld sur %2$lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aula %1$lld de %2$lld"
+          }
+        }
+      }
+    },
+    "Lesson not found" : {
+      "comment" : "Title when a lesson cannot be found.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektion nicht gefunden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lección no encontrada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçon introuvable"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aula não encontrada"
+          }
+        }
+      }
+    },
+    "Lesson unavailable" : {
+      "comment" : "Title when a lesson cannot be loaded.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektion nicht verfügbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lección no disponible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçon indisponible"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aula indisponível"
           }
         }
       }
@@ -3780,6 +4043,35 @@
         }
       }
     },
+    "Quick question" : {
+      "comment" : "Over a lesson's first question",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurze Frage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pregunta rápida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Petite question"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pergunta rápida"
+          }
+        }
+      }
+    },
     "Reviews and practice" : {
       "comment" : "A part of an example plan's time",
       "localizations" : {
@@ -4190,6 +4482,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Comece aqui e o Zoonk cria as aulas para o seu nível."
+          }
+        }
+      }
+    },
+    "Start the lesson" : {
+      "comment" : "Starts the lesson",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektion starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar la lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer la leçon"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar a aula"
+          }
+        }
+      }
+    },
+    "Start this lesson" : {
+      "comment" : "Starts an unwritten lesson",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Lektion starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar esta lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer cette leçon"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar esta aula"
           }
         }
       }
@@ -4958,6 +5308,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Com o Zoonk, seu plano começa no seu nível e se encaixa na sua rotina."
+          }
+        }
+      }
+    },
+    "You answer it as the lesson starts." : {
+      "comment" : "Under a lesson's first question, shown before starting it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du beantwortest sie zu Beginn der Lektion."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La responderás al empezar la lección."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu y répondras au début de la leçon."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você responde no começo da aula."
           }
         }
       }
