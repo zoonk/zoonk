@@ -68,4 +68,24 @@ describe(createRequestLane, () => {
 
     expect(sent).toStrictEqual(["every weekday", "no Friday"]);
   });
+
+  it("tells a week queued behind a search that never settles it's too slow, 45 seconds after it asked", async () => {
+    vi.useFakeTimers();
+    const sent: string[] = [];
+    const ask = askAbout(createRequestLane<string>(), sent);
+
+    void ask("no Friday", new Promise<string>(() => {}));
+    await vi.advanceTimersByTimeAsync(10_000);
+
+    let heard = "nothing yet";
+
+    void ask("no Thursday or Friday", Promise.resolve("no Thursday or Friday")).then((answer) => {
+      heard = String(answer);
+    });
+
+    await vi.advanceTimersByTimeAsync(45_000);
+
+    expect(heard).toBe("null");
+    expect(sent).toStrictEqual(["no Friday"]);
+  });
 });

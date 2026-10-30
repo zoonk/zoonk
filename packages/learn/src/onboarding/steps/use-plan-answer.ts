@@ -32,6 +32,7 @@ export type PlanAnswer<Answer> = {
   /** The answer for what's asked about now, or else the last one that came. */
   last: Answer | null;
   restart: () => void;
+  /** "failed" as soon as an ask about what's shown goes unanswered too long, while it keeps asking. */
   status: PollStatus;
 };
 
@@ -64,6 +65,7 @@ export function usePlanAnswer<Answer extends { ready: boolean }>({
   });
 
   const lane = useRef(createRequestLane<Answer | null>());
+  const [missed, setMissed] = useState<string | null>(null);
   const answer = answered.byKey.get(key) ?? null;
 
   const poll = usePoll({
@@ -82,6 +84,7 @@ export function usePlanAnswer<Answer extends { ready: boolean }>({
           return;
         }
 
+        setMissed(key);
         throw new Error("The plan couldn't be asked about the schedule");
       }
 
@@ -97,7 +100,10 @@ export function usePlanAnswer<Answer extends { ready: boolean }>({
     answer,
     first: answered.first,
     last: answer ?? answered.last,
-    restart: poll.restart,
-    status: poll.status,
+    restart: () => {
+      setMissed(null);
+      poll.restart();
+    },
+    status: missed === key && !answer ? "failed" : poll.status,
   };
 }
