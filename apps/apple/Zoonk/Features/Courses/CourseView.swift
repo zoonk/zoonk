@@ -44,6 +44,7 @@ struct CourseView: View {
 private struct CourseLandingList: View {
   @Environment(CourseCatalogStore.self) private var catalog
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(SessionStore.self) private var session
 
   let detail: CourseDetail
 
@@ -91,7 +92,11 @@ private struct CourseLandingList: View {
 
     CourseOutlineSections(
       detail: detail, estimate: example?.pace?.estimate, exam: example?.exam,
-      lead: outlineLead, minutes: example?.pace?.minutes, disclosures: $outline)
+      lead: outlineLead, minutes: example?.pace?.minutes,
+      opening: OutlineOpening(
+        signedIn: session.authenticatedSession != nil, summary: learner.summary.state,
+        courseID: detail.course.id),
+      disclosures: $outline)
 
     CourseClosingSection(courseID: detail.course.id, follows: follows)
   }

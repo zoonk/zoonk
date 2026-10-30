@@ -29,12 +29,50 @@ extension Binding<CourseOutlineDisclosures> {
   }
 }
 
+/// The level a course's outline opens at: the learner's when their plan follows the course, else the
+/// first. While a signed-in learner's summary is on its way none opens, so theirs opens in place
+/// without the first closing above it.
+enum OutlineOpening: Equatable {
+  case waiting
+  case first
+  case level(CourseLevel)
+
+  init(signedIn: Bool, summary: LoadState<LearnerSummary>, courseID: String) {
+    guard signedIn else {
+      self = .first
+      return
+    }
+
+    switch summary {
+    case .idle, .loading:
+      self = .waiting
+    case .loaded(let summary):
+      self =
+        summary.goals.first { $0.courseID == courseID }?.courseLevel.map { .level($0) } ?? .first
+    case .empty, .failed:
+      self = .first
+    }
+  }
+
+  func opens(_ level: CourseLevel, isFirst: Bool) -> Bool {
+    switch self {
+    case .waiting:
+      false
+    case .first:
+      isFirst
+    case .level(let open):
+      open == level
+    }
+  }
+}
+
 struct CourseOutlineSections: View {
   let detail: CourseDetail
   let estimate: CoursePlanEstimate?
   let exam: CoursePlanExample.Exam?
   let lead: String?
   let minutes: Int?
+  let opening: OutlineOpening
   @Binding var disclosures: CourseOutlineDisclosures
 
   var body: some View {
@@ -81,8 +119,8 @@ struct CourseOutlineSections: View {
     } else {
       ForEach(Array(courseLevelBands(chapters).enumerated()), id: \.element.id) { index, band in
         CourseLevelOutline(
-          band: band, course: detail.course, isFirst: index == 0, places: places,
-          disclosures: $disclosures)
+          band: band, course: detail.course, isOpen: opening.opens(band.level, isFirst: index == 0),
+          places: places, disclosures: $disclosures)
       }
     }
   }
@@ -129,13 +167,13 @@ private struct CourseLevelOutline: View {
 
   let band: CourseLevelBand
   let course: Course
-  let isFirst: Bool
+  let isOpen: Bool
   let places: [String: CoursePlanEstimate.ChapterPlace]
   @Binding var disclosures: CourseOutlineDisclosures
 
   var body: some View {
     let key = "level:\(band.level)"
-    let isExpanded = $disclosures.isExpanded(key, otherwise: isFirst)
+    let isExpanded = $disclosures.isExpanded(key, otherwise: isOpen)
 
     Section {
       DisclosureGroup(isExpanded: isExpanded) {

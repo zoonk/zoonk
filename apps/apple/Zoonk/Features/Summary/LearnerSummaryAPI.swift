@@ -21,6 +21,8 @@ struct LearnerSummary: Equatable, Sendable {
 struct LearnerGoal: Equatable, Identifiable, Sendable {
   /// Set only while the goal follows its course, so that course's page offers to continue it.
   var courseID: String? = nil
+  /// The level of the goal's next lesson in that course, where its page opens the outline.
+  var courseLevel: CourseLevel? = nil
   let dailyMinutes: Int
   let id: String
   let kind: Kind
@@ -119,6 +121,7 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
     goals: summary.goals.map { goal in
       LearnerGoal(
         courseID: goal.courseId,
+        courseLevel: goal.courseLevel.flatMap { CourseLevel(rawValue: $0.rawValue) },
         dailyMinutes: goal.dailyMinutes,
         id: goal.id,
         kind: LearnerGoal.Kind(rawValue: goal.kind.rawValue) ?? .learn,
