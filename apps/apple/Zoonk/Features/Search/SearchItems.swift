@@ -325,9 +325,14 @@ private let helpGroup = SearchGroup(
       title: String(
         localized: "Send feedback", table: "Search", comment: "Search row that opens feedback"),
       systemImage: "bubble.left",
+      keywords: String(
+        localized: "bug, problem, report, idea, suggestion, feature request, contact",
+        table: "Search",
+        comment:
+          "Words people type to find Send feedback in the search, never shown. Keep “bug” and add the words people use in this language."
+      ),
       action: .feedback)
-  ],
-  isShownWithoutQuery: false)
+  ])
 
 private var visitorPages: SearchGroup {
   SearchGroup(

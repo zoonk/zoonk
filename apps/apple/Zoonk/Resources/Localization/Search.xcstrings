@@ -152,6 +152,35 @@
         }
       }
     },
+    "bug, problem, report, idea, suggestion, feature request, contact" : {
+      "comment" : "Words people type to find Send feedback in the search, never shown. Keep “bug” and add the words people use in this language.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bug, Fehler, Problem, melden, Idee, Vorschlag, Verbesserungsvorschlag, Funktionswunsch, Kontakt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bug, error, fallo, problema, informar, idea, sugerencia, solicitar una función, contacto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bug, problème, signalement, signaler, idée, suggestion, demande de fonctionnalité, contact"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bug, erro, problema, relatar, ideia, sugestão, nova função, contato, feedback"
+          }
+        }
+      }
+    },
     "Continue today's session" : {
       "comment" : "Search action that continues the day's session",
       "localizations" : {
@@ -663,7 +692,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer un avis"
+            "value" : "Donner ton avis"
           }
         },
         "pt" : {

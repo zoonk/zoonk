@@ -3,6 +3,7 @@ import SwiftUI
 
 enum AppSheet: Hashable, Identifiable {
   case account
+  case feedback(screen: String)
   case signIn
   case subscription
 

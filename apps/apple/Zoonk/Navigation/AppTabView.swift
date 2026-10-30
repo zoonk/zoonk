@@ -111,6 +111,19 @@ struct AppTabView: View {
       }
     }
     .tabViewStyle(.sidebarAdaptable)
+    .tabViewSidebarBottomBar {
+      Button {
+        router.present(.feedback(screen: "sidebar"))
+      } label: {
+        Label {
+          Text(
+            "Send feedback", tableName: "Navigation",
+            comment: "Sidebar button that opens the form to write to Zoonk")
+        } icon: {
+          Image(systemName: "bubble.left")
+        }
+      }
+    }
   }
 
   private var isStudyShown: Bool {
@@ -172,6 +185,8 @@ struct AppSheetView: View {
     switch sheet {
     case .account:
       AccountSheet()
+    case .feedback(let screen):
+      FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: screen))
     case .signIn:
       AccountSheet(signsIn: true)
     case .subscription:

@@ -117,35 +117,6 @@
         }
       }
     },
-    "Feedback" : {
-      "comment" : "Navigation title for the feedback form.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feedback"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comentarios"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avis"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comentários"
-          }
-        }
-      }
-    },
     "Feedback couldn't be sent. Try again later." : {
       "comment" : "Feedback form error when the service is temporarily unavailable.",
       "localizations" : {
@@ -171,6 +142,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível enviar sua mensagem. Tente de novo mais tarde."
+          }
+        }
+      }
+    },
+    "Found a problem or have an idea? Tell us below or email hello@zoonk.com." : {
+      "comment" : "Introduction shown above the feedback fields.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hast du ein Problem entdeckt oder eine Idee? Schreib uns hier oder per E-Mail an hello@zoonk.com."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Has encontrado un problema o tienes alguna idea? Cuéntanoslo aquí o escríbenos a contacto@zoonk.com."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as rencontré un problème ou tu as une idée ? Dis-le-nous ci-dessous ou écris-nous à hello@zoonk.com."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encontrou um problema ou tem uma ideia? Conte pra gente abaixo ou envie um e-mail para contato@zoonk.com."
           }
         }
       }
@@ -297,6 +297,35 @@
         }
       }
     },
+    "Send feedback" : {
+      "comment" : "Navigation title for the feedback form.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback senden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar comentarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donner ton avis"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar feedback"
+          }
+        }
+      }
+    },
     "Sending feedback" : {
       "comment" : "Accessibility status while feedback is being sent.",
       "localizations" : {
@@ -326,60 +355,31 @@
         }
       }
     },
-    "Share feedback, ask a question, or tell us what we could improve." : {
-      "comment" : "Introduction shown above the feedback fields.",
+    "Thanks! We got your message." : {
+      "comment" : "Confirmation after feedback is sent.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gib uns Feedback, stell eine Frage oder sag uns, was wir verbessern können."
+            "value" : "Danke! Deine Nachricht ist angekommen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparte tus comentarios, haz una pregunta o cuéntanos qué podríamos mejorar."
+            "value" : "¡Gracias! Hemos recibido tu mensaje."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Donne ton avis, pose une question ou dis-nous ce que nous pourrions améliorer."
+            "value" : "Merci ! Nous avons bien reçu ton message."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compartilhe sua opinião, faça uma pergunta ou conte o que a gente pode melhorar."
-          }
-        }
-      }
-    },
-    "Thanks for your feedback" : {
-      "comment" : "Confirmation title after feedback is sent.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Danke für dein Feedback"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gracias por tus comentarios"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Merci pour ton avis"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agradecemos seus comentários"
+            "value" : "Valeu! Recebemos sua mensagem."
           }
         }
       }
@@ -496,35 +496,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "voce@example.com"
-          }
-        }
-      }
-    },
-    "Your message was sent." : {
-      "comment" : "Confirmation message after feedback is sent.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Nachricht wurde gesendet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu mensaje se ha enviado."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton message a été envoyé."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua mensagem foi enviada."
           }
         }
       }

@@ -207,7 +207,7 @@ private struct SettingsHubView: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
-  @State private var isHelpPresented = false
+  @State private var isFeedbackPresented = false
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @ScaledMetric(relativeTo: .body) private var avatarSize = 40.0
 
@@ -273,10 +273,17 @@ private struct SettingsHubView: View {
           manageAppStoreSubscription: manageAppStoreSubscription,
           showGooglePlayManagement: showGooglePlayManagement)
 
+        Link(destination: AccountLinks.support) {
+          Text("Help", tableName: "Account", comment: "Settings row that opens Zoonk's help pages")
+        }
+        .foregroundStyle(.primary)
+
         Button {
-          isHelpPresented = true
+          isFeedbackPresented = true
         } label: {
-          Text("Help", tableName: "Account", comment: "Settings row to ask the team for help")
+          Text(
+            "Send feedback", tableName: "Account",
+            comment: "Settings row that opens the form to write to Zoonk")
         }
         .foregroundStyle(.primary)
       }
@@ -309,8 +316,8 @@ private struct SettingsHubView: View {
       }
     }
     .loads(settings.preferences, settings.memory, refreshable: false)
-    .sheet(isPresented: $isHelpPresented) {
-      FeedbackSheet(api: FeedbackAPI.live())
+    .sheet(isPresented: $isFeedbackPresented) {
+      FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "account-menu"))
     }
   }
 

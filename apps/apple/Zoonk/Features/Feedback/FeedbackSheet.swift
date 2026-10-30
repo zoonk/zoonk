@@ -59,7 +59,7 @@ private struct FeedbackForm: View {
             "Report a problem", tableName: "Feedback",
             comment: "Navigation title for the form reporting a problem with a page")
           : Text(
-            "Feedback",
+            "Send feedback",
             tableName: "Feedback",
             comment: "Navigation title for the feedback form.")
       )
@@ -115,7 +115,7 @@ private struct FeedbackForm: View {
       if !isReport {
         Section {
           Text(
-            "Share feedback, ask a question, or tell us what we could improve.",
+            "Found a problem or have an idea? Tell us below or email hello@zoonk.com.",
             tableName: "Feedback",
             comment: "Introduction shown above the feedback fields."
           )
@@ -219,18 +219,13 @@ private struct FeedbackForm: View {
     ContentUnavailableView {
       Label {
         Text(
-          "Thanks for your feedback",
+          "Thanks! We got your message.",
           tableName: "Feedback",
-          comment: "Confirmation title after feedback is sent.")
+          comment: "Confirmation after feedback is sent.")
       } icon: {
         Image(systemName: "checkmark.circle.fill")
           .foregroundStyle(.success)
       }
-    } description: {
-      Text(
-        "Your message was sent.",
-        tableName: "Feedback",
-        comment: "Confirmation message after feedback is sent.")
     }
   }
 

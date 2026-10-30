@@ -3359,6 +3359,35 @@
         }
       }
     },
+    "Send feedback" : {
+      "comment" : "Settings row that opens the form to write to Zoonk",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback senden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar comentarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donner ton avis"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar feedback"
+          }
+        }
+      }
+    },
     "Send verification code" : {
       "comment" : "Sends an email code for account deletion reauthorization",
       "localizations" : {
