@@ -82,18 +82,14 @@ private struct ExamList: View {
     } secondary: {
       List {
         ExamMocksSection(exam: exam, options: options)
-        whatsOnIt
-        ExamSpeakingSection(exam: exam, callStart: callStart)
-        ExamScoringSection(exam: exam)
+        about
       }
     } single: {
       List {
         moment
         ExamMocksSection(exam: exam, options: options)
         ExamProgressSection(exam: exam)
-        whatsOnIt
-        ExamSpeakingSection(exam: exam, callStart: callStart)
-        ExamScoringSection(exam: exam)
+        about
       }
     }
     .onDisappear {
@@ -139,13 +135,20 @@ private struct ExamList: View {
     }
   }
 
+  /// Main's order: the map with the mocks, then speaking, then its aside (the format and scoring).
   @ViewBuilder
-  private var whatsOnIt: some View {
-    if !exam.format.isEmpty {
-      ExamFormatSection(exam: exam)
-    } else if let map = exam.map, !map.subjects.isEmpty {
+  private var about: some View {
+    if exam.format.isEmpty, let map = exam.map, !map.subjects.isEmpty {
       ExamMapSection(map: map)
     }
+
+    ExamSpeakingSection(exam: exam, callStart: callStart)
+
+    if !exam.format.isEmpty {
+      ExamFormatSection(exam: exam)
+    }
+
+    ExamScoringSection(exam: exam)
   }
 }
 
@@ -795,27 +798,17 @@ private struct ExamFormatSection: View {
     Section {
       ForEach(exam.format, id: \.day) { day in
         VStack(alignment: .leading, spacing: 4) {
-          HStack {
-            if exam.format.count > 1 {
-              Text("Day \(day.day)", tableName: "Exam", comment: "An exam day").font(.headline)
+          LabeledContent {
+            if let minutes = day.minutes, minutes > 0 {
+              Text(MockLabels.duration(minutes: minutes)).monospacedDigit()
             }
-            Spacer()
-            if let minutes = day.minutes {
-              Text(MockLabels.duration(minutes: minutes))
-                .font(.subheadline.monospacedDigit())
-                .foregroundStyle(.secondary)
-            }
+          } label: {
+            title(day)
           }
-          ForEach(day.parts, id: \.name) { part in
-            LabeledContent {
-              if let questions = part.questions, !part.written {
-                Text("\(questions) questions", tableName: "Exam", comment: "A part's questions")
-                  .monospacedDigit()
-              }
-            } label: {
-              Text(part.name)
-            }
-          }
+
+          parts(day)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
         }
       }
     } header: {
@@ -826,6 +819,38 @@ private struct ExamFormatSection: View {
         Text("The \(exam.format.count) days", tableName: "Exam", comment: "An exam's days")
       }
     }
+  }
+
+  @ViewBuilder
+  private func title(_ day: ExamView.FormatDay) -> some View {
+    let date = day.date.flatMap(studyDate)
+
+    HStack(alignment: .firstTextBaseline) {
+      if exam.format.count > 1, date != nil {
+        Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
+          .foregroundStyle(.secondary)
+      }
+
+      if let date {
+        Text(date.formatted(.studyDay.weekday(.abbreviated).month(.abbreviated).day()))
+      } else {
+        Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
+      }
+    }
+  }
+
+  private func parts(_ day: ExamView.FormatDay) -> Text {
+    let names = day.parts.map(\.name).formatted(.list(type: .and))
+    let questions = day.parts.reduce(0) { $0 + ($1.written ? 0 : $1.questions ?? 0) }
+
+    guard questions > 0 else {
+      return Text(verbatim: names)
+    }
+
+    let count = Text("\(questions) questions", tableName: "Exam", comment: "A part's questions")
+    return Text(
+      "\(names) · \(count)", tableName: "Exam",
+      comment: "An exam day's parts, then how many questions they have")
   }
 }
 
