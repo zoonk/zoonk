@@ -9,11 +9,11 @@ const NBSP = " ";
  */
 const LONG_NUMBER = /(?<![\d.,\p{L}/-])[1-9]\d{4,}(?![\d\p{L}/-]|[.,]\d)/gu;
 
-/** A postal code's label right before it ("ZIP 94103", "PLZ 10115"), or a state's code ("CA 94103"). */
+/** A postal code's label right before it ("ZIP 94103", "PLZ 10115"), or a city's state code ("San Francisco, CA 94103"). */
 const POSTAL_LABEL =
   /\b(?:zip(?: code)?|postal code|postcode|plz|postleitzahl|cep|cp|code postal|código postal):?\s$/iu;
 
-const STATE_CODE = /(?<!\p{L})\p{Lu}{2},?\s$/u;
+const STATE_CODE = /,\s\p{Lu}{2},?\s$/u;
 
 function isPostalCode(before: string): boolean {
   return POSTAL_LABEL.test(before) || STATE_CODE.test(before);

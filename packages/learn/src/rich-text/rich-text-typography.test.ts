@@ -55,6 +55,10 @@ describe(typesetNumbers, () => {
     expect(typesetNumbers({ locale: "en", text: "CA has 39000 schools." })).toBe(
       "CA has 39,000 schools.",
     );
+
+    expect(typesetNumbers({ locale: "en", text: "The UK 12000 and NO 50000 counts." })).toBe(
+      "The UK 12,000 and NO 50,000 counts.",
+    );
   });
 
   it("leaves decimals, codes, years and numbers before longer words alone", () => {
