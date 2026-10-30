@@ -132,6 +132,7 @@
   "onboarding_limit_daily_explanations": "6a0e0d7ebe95b40d879aa3383de4bae7a4c1300343dbf1a6eee0db3423153187",
   "onboarding_limit_daily_goals": "a4aa13d88bfda35d03749c6fd78a1d0acda60df7fa0ed96de5ad5285c086d0a9",
   "onboarding_limit_guest": "3407e42e8c02cb0b3a2b891aaea5e30de1ad0d9ea6ca3fedb37a37e027e5064f",
+  "onboarding_limit_guest_blocked": "d42c0af562b4a980c1a8b3787902ec08d3f496a224016c05e80173af79285170",
   "onboarding_limit_monthly_explanations": "ffaa65386e52531d50f5ec7e07458f33f23b1e0328d4854c7cbc6f30418db436",
   "onboarding_limit_monthly_goals": "fc5485a83c5d3d53ee2382acbdd9fbd0fd4e8398f2f5e941774971f317e38dd1",
   "onboarding_limit_one_active_goal": "3f68096b493f13ef713d90453554b930bcd5259976e51df823eb69b16d7458cb",
@@ -473,6 +474,8 @@
     <string name="onboarding_limit_daily_explanations">Du hast heute so viele neue Fragen gestellt, wie der Free-Tarif erlaubt. Versuch es morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen.</string>
     <string name="onboarding_limit_daily_goals">Du hast heute so viele neue Ziele gestartet, wie dein Tarif erlaubt. Versuch es morgen noch einmal.</string>
     <string name="onboarding_limit_guest">Ohne Konto kannst du ein Ziel verfolgen. Erstelle ein kostenloses Konto, um weiterzumachen.</string>
+    <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
+    <string name="onboarding_limit_guest_blocked">Eine Sicherheitsprüfung hat den Start ohne Konto verhindert. Erstell ein kostenloses Konto, um weiterzumachen.</string>
     <string name="onboarding_limit_monthly_explanations">Du hast diesen Monat so viele neue Fragen gestellt, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen.</string>
     <string name="onboarding_limit_monthly_goals">Du hast diesen Monat so viele neue Ziele gestartet, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen.</string>
     <string name="onboarding_limit_one_active_goal">Mit dem Free-Tarif kannst du ein Ziel auf einmal verfolgen. Um dieses Ziel zu starten, pausiere dein aktuelles Ziel im Menü deines Plans oder hol dir Plus.</string>

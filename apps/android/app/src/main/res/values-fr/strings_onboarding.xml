@@ -132,6 +132,7 @@
   "onboarding_limit_daily_explanations": "ea2f5791107208a6ce94f1be3da09edff3fe8064e7ea030a12e140271d1b6e68",
   "onboarding_limit_daily_goals": "d99362d3b27904fa41733cd5680db0a754347a8cdf1e3c2ac7f9345ec18945ca",
   "onboarding_limit_guest": "4ac0933bc0e80ce45243e27673b4fdb7ab599ff2acee1b19f178e96c42e05dc5",
+  "onboarding_limit_guest_blocked": "99eb790f2989731ed8a5d25c33518f69854852cca69b0a8b10972d96c2eec72b",
   "onboarding_limit_monthly_explanations": "607221de8d6396c588732ada775a7d98e99bc8ee9abf598f6c324cf7f04ab159",
   "onboarding_limit_monthly_goals": "5811e0534274e8356d6b11a8c03c3aa1c65336408185a6e1ff44b2b71b714d4b",
   "onboarding_limit_one_active_goal": "b329779c51c2c1313970ebf804013cd38fdf47f55f726c61ced4732b71b71831",
@@ -473,6 +474,8 @@
     <string name="onboarding_limit_daily_explanations">Tu as atteint la limite de nouvelles questions pour aujourd’hui avec la formule gratuite. Réessaie demain ou passe à Plus pour continuer dès maintenant.</string>
     <string name="onboarding_limit_daily_goals">Tu as atteint la limite de nouveaux objectifs pour aujourd’hui avec ta formule. Réessaie demain.</string>
     <string name="onboarding_limit_guest">Sans compte, tu peux suivre un seul objectif. Crée un compte gratuit pour continuer.</string>
+    <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
+    <string name="onboarding_limit_guest_blocked">Un contrôle de sécurité t’empêche de commencer sans compte. Crée un compte gratuit pour continuer.</string>
     <string name="onboarding_limit_monthly_explanations">Tu as atteint la limite de nouvelles questions pour ce mois avec la formule gratuite. Réessaie le mois prochain ou passe à Plus pour continuer dès maintenant.</string>
     <string name="onboarding_limit_monthly_goals">Tu as atteint la limite de nouveaux objectifs pour ce mois avec la formule gratuite. Réessaie le mois prochain ou passe à Plus pour continuer dès maintenant.</string>
     <string name="onboarding_limit_one_active_goal">Avec la formule gratuite, tu peux suivre un seul objectif à la fois. Pour commencer celui-ci, mets ton objectif actuel en pause depuis le menu de ton plan, ou passe à Plus.</string>

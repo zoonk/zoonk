@@ -10,6 +10,9 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Replacement
 import com.zoonk.android.data.SessionSource
+import com.zoonk.android.data.SignInResult
+import com.zoonk.android.feature.account.AccountFailure
+import com.zoonk.android.feature.account.accountFailure
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.toGradeOutcome
@@ -76,6 +79,9 @@ sealed interface Refusal {
 
     data object Unsupported : Refusal
 
+    /** The security check refused to make this visitor a guest: only an account gets past it. */
+    data object GuestBlocked : Refusal
+
     /** The day the goals typed together share is shorter than [minutes], the least that gives each of the [goals] its share. */
     @Serializable
     data class DayTooShort(
@@ -110,7 +116,7 @@ class OnboardingStore(
     private val api: OnboardingApi,
     private val cache: AppCache,
     private val sessions: SessionSource,
-    private val startGuest: suspend () -> Boolean,
+    private val startGuest: suspend () -> SignInResult,
 ) {
     /** Each fix answers with the whole new draft; confirming it gives it a goal, so goal changes read it again. */
     val drafts =
@@ -153,7 +159,7 @@ class OnboardingStore(
         goal: String,
         language: String,
     ): WriteOutcome<OnboardingDraft> {
-        if (sessions.current == null && !startGuest()) return WriteOutcome.Failed
+        startAsGuest()?.let { return it }
         return write(setOf(DataDomain.Allowance), replacing = ::replacingDraft) { api.understand(it, goal, language) }
             .also { if (it is WriteOutcome.Done) sent += it.value.id.toString() }
     }
@@ -206,7 +212,7 @@ class OnboardingStore(
         dailyMinutes: Int?,
         level: LevelChoice?,
     ): WriteOutcome<CourseStarted> {
-        if (sessions.current == null && !startGuest()) return WriteOutcome.Failed
+        startAsGuest()?.let { return it }
         val body = courseStartBody(chapterId, dailyMinutes, level, TimeZone.getDefault().id)
         val started =
             write(setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.Allowance)) {
@@ -217,6 +223,25 @@ class OnboardingStore(
             is WriteOutcome.Refused -> started
             WriteOutcome.Failed -> WriteOutcome.Failed
             WriteOutcome.Obsolete -> WriteOutcome.Obsolete
+        }
+    }
+
+    /** A visitor's write starts a guest first; what it returns instead when none could start. */
+    private suspend fun startAsGuest(): WriteOutcome<Nothing>? {
+        if (sessions.current != null) return null
+        return when (val started = startGuest()) {
+            SignInResult.SignedIn -> {
+                null
+            }
+
+            is SignInResult.Failed -> {
+                val blocked = accountFailure(started.error, started.code) == AccountFailure.BotDetected
+                if (blocked) WriteOutcome.Refused(Refusal.GuestBlocked) else WriteOutcome.Failed
+            }
+
+            SignInResult.Obsolete -> {
+                WriteOutcome.Failed
+            }
         }
     }
 

@@ -132,6 +132,7 @@
   "onboarding_limit_daily_explanations": "e4e665fef32551fc747834355e1c8bb692175a790e1eb66cad3bdfc8cc2fcd86",
   "onboarding_limit_daily_goals": "df607747bfba2f314c3fc1805f852f78b2b52c5130f8920d6991e2c160bdb28b",
   "onboarding_limit_guest": "8304fe6577a49b46154cd8a7aea3e48031fbecf62e4edfc7ef3d9b42ac675850",
+  "onboarding_limit_guest_blocked": "fb7a321162b7425371435935acd19f9df6556643ef3a9dd15ef1e1acd358652e",
   "onboarding_limit_monthly_explanations": "ad8ac95d9a7ee0cc15e90a784c456a79e7cb9a1a083b6f08079f0c82f5300e9e",
   "onboarding_limit_monthly_goals": "e3e4c2ace339585f3f54889781f327c25e80e0de0ccf2bc8c779701e487cf140",
   "onboarding_limit_one_active_goal": "59241fa482bac9b274fc323f3cc0f83a5ad03f38786bf7fb7f9e929d83dd8619",
@@ -473,6 +474,8 @@
     <string name="onboarding_limit_daily_explanations">Has hecho todas las preguntas nuevas que permite el plan gratuito hoy. Vuelve a intentarlo mañana, o consigue Plus para seguir ahora.</string>
     <string name="onboarding_limit_daily_goals">Has empezado todos los objetivos nuevos que permite tu plan hoy. Vuelve a intentarlo mañana.</string>
     <string name="onboarding_limit_guest">Sin cuenta, puedes seguir un objetivo. Crea una cuenta gratis para seguir.</string>
+    <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
+    <string name="onboarding_limit_guest_blocked">Una comprobación de seguridad ha impedido que empieces sin una cuenta. Crea una cuenta gratis para seguir.</string>
     <string name="onboarding_limit_monthly_explanations">Has hecho todas las preguntas nuevas que permite el plan gratuito este mes. Vuelve a intentarlo el mes que viene, o consigue Plus para seguir ahora.</string>
     <string name="onboarding_limit_monthly_goals">Has iniciado todos los objetivos nuevos que permite el plan gratuito este mes. Vuelve a intentarlo el mes que viene, o consigue Plus para seguir ahora.</string>
     <string name="onboarding_limit_one_active_goal">Con el plan gratuito puedes seguir un objetivo a la vez. Para empezar este, pausa tu objetivo actual desde el menú de tu Plan o consigue Plus.</string>

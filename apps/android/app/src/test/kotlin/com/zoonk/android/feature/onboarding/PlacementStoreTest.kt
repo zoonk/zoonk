@@ -4,6 +4,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.value
 import com.zoonk.api.models.ChoiceAnswer
 import com.zoonk.api.models.ChoiceAnswerAnyOf3
@@ -26,7 +27,7 @@ class PlacementStoreTest {
             api,
             AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))),
             session,
-        ) { true }
+        ) { SignInResult.SignedIn }
     }
 
     @Test

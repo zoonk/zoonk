@@ -43,6 +43,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.StepState
 import com.zoonk.android.data.StepTimes
 import com.zoonk.android.feature.audio.AudioOutput
@@ -485,7 +486,7 @@ class OnboardingScreenshots {
             CourseStartScreen(
                 route = route,
                 catalog = remember { CatalogStore(FakeCatalogApi(), cache) },
-                store = remember { OnboardingStore(FakeOnboardingApi(), cache, session) { true } },
+                store = remember { OnboardingStore(FakeOnboardingApi(), cache, session) { SignInResult.SignedIn } },
                 signedIn = false,
                 existingGoalId = null,
                 navigator = rememberAppNavigator(),
@@ -497,7 +498,11 @@ class OnboardingScreenshots {
             val store =
                 remember {
                     val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-                    OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
+                    OnboardingStore(
+                        api,
+                        AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
+                        session,
+                    ) { SignInResult.SignedIn }
                 }
             GoalSetupScreen(AppRoute.GoalSetup(GOAL_ID), store, isGuest = false, rememberAppNavigator())
         }
@@ -510,7 +515,11 @@ class OnboardingScreenshots {
             val store =
                 remember {
                     val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-                    OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
+                    OnboardingStore(
+                        api,
+                        AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
+                        session,
+                    ) { SignInResult.SignedIn }
                 }
             StartGoalScreen(route, store, sessionKey = "local-a", canAttach = true, rememberAppNavigator())
         }
@@ -552,7 +561,11 @@ class OnboardingScreenshots {
         private fun rememberStore(api: FakeOnboardingApi) =
             remember {
                 val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-                OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
+                OnboardingStore(
+                    api,
+                    AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
+                    session,
+                ) { SignInResult.SignedIn }
             }
 
         /** The setup's column: at least the window's height, so actions sit at its bottom on phones. */

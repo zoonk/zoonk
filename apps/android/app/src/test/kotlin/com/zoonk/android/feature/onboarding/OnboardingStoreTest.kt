@@ -6,6 +6,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.SignInResult
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.GoalCreateInput
@@ -48,7 +49,7 @@ class OnboardingStoreTest {
             val store =
                 OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))), session) {
                     session.session = ana
-                    true
+                    SignInResult.SignedIn
                 }
 
             val outcome = store.sendGoal("pass the bar exam", "pt")
@@ -67,7 +68,7 @@ class OnboardingStoreTest {
             val api = FakeOnboardingApi()
             val store =
                 OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))), session) {
-                    true
+                    SignInResult.SignedIn
                 }
             val generations = store.generations
 
@@ -88,10 +89,33 @@ class OnboardingStoreTest {
                     api,
                     AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))),
                     session,
-                ) { false }
+                ) { SignInResult.Failed(ApiError.Network) }
 
             assertEquals(WriteOutcome.Failed, store.sendGoal("pass the bar exam", "en"))
             assertTrue(api.understandCalls.isEmpty())
+        }
+
+    @Test
+    fun aVisitorTheSecurityCheckWontLetInAsAGuestIsAskedForAnAccount() =
+        runTest {
+            val session = FakeSession(null)
+            val api = FakeOnboardingApi()
+            val store =
+                OnboardingStore(
+                    api,
+                    AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))),
+                    session,
+                ) { SignInResult.Failed(ApiError.Unavailable, "BOT_DETECTED") }
+
+            val goal = store.sendGoal("pass the bar exam", "en")
+            val course = store.startCourse("course-1", chapterId = null, dailyMinutes = null, level = null)
+
+            assertEquals(WriteOutcome.Refused(Refusal.GuestBlocked), goal)
+            assertEquals(WriteOutcome.Refused(Refusal.GuestBlocked), course)
+            assertEquals(GoalError.Limit(GoalLimitReason.GuestBlocked), goal.startError())
+            assertTrue(goal.startError().needsAccount)
+            assertTrue(api.understandCalls.isEmpty())
+            assertTrue(api.courseStarts.isEmpty())
         }
 
     @Test
@@ -104,7 +128,7 @@ class OnboardingStoreTest {
                     api,
                     AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))),
                     session,
-                ) { true }
+                ) { SignInResult.SignedIn }
 
             api.refusal =
                 ApiException(
@@ -193,7 +217,7 @@ class OnboardingStoreTest {
                     api,
                     AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))),
                     session,
-                ) { true }
+                ) { SignInResult.SignedIn }
             val input =
                 GoalCreateInput(
                     dailyMinutes = 20,

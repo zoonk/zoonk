@@ -132,6 +132,7 @@
   "onboarding_limit_daily_explanations": "aafe2d182e26be6389b588817d0231d38caa6ff424e7909ed905df3a7ec23572",
   "onboarding_limit_daily_goals": "e48d4867197211867e49ae8b8a9e565a1e7a4b65897008d35139d7ea0ff82b7f",
   "onboarding_limit_guest": "89598dadd7dca851b82f6bda88f0d6ddb1e05acb64b0ef4b363558e32078287f",
+  "onboarding_limit_guest_blocked": "b718617326937a591b67a191266713acafd3a658bfb991fe089719a8019d61e4",
   "onboarding_limit_monthly_explanations": "c54a924e425da07bf3d63c3b0796a4345e84adc6d291192f6e2de96cb8d9cc8f",
   "onboarding_limit_monthly_goals": "a8ffe88b251482a4da8dae3b02bf52bcec2f0c5be5f4ced0bbad3eae1a44baae",
   "onboarding_limit_one_active_goal": "3bbb8e5209894add942ebf22c7e87de6e157aa50c9b249859557b3aa3bd25b70",
@@ -473,6 +474,8 @@
     <string name="onboarding_limit_daily_explanations">Você já fez todas as perguntas novas que o plano grátis permite hoje. Tente de novo amanhã ou assine o Plus para continuar agora.</string>
     <string name="onboarding_limit_daily_goals">Você já começou todas as metas novas que seu plano permite hoje. Tente de novo amanhã.</string>
     <string name="onboarding_limit_guest">Sem uma conta, você pode seguir uma meta. Crie uma conta grátis para continuar.</string>
+    <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
+    <string name="onboarding_limit_guest_blocked">O sistema de segurança não deixou você começar sem uma conta. Crie uma conta grátis para continuar.</string>
     <string name="onboarding_limit_monthly_explanations">Você já fez todas as perguntas novas que o plano grátis permite este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora.</string>
     <string name="onboarding_limit_monthly_goals">Você já começou todas as metas novas que o plano grátis permite este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora.</string>
     <string name="onboarding_limit_one_active_goal">No plano Grátis, você pode seguir uma meta por vez. Para começar esta, pause sua meta atual pelo menu do seu Plano ou assine o Plus.</string>

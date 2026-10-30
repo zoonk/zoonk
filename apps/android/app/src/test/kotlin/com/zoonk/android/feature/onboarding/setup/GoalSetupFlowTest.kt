@@ -26,6 +26,7 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
+import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.EXAM_GOAL_ID
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
@@ -94,7 +95,12 @@ class GoalSetupFlowTest {
         restoration: StateRestorationTester? = null,
     ) {
         val session = FakeSession(ana)
-        val store = OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
+        val store =
+            OnboardingStore(
+                api,
+                AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
+                session,
+            ) { SignInResult.SignedIn }
         val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
         setContent {
             ZoonkTheme {

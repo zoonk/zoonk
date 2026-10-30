@@ -13,6 +13,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -44,7 +45,12 @@ class PlanLinkFlowTest {
 
     private fun show(signedIn: Boolean = true) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a").takeIf { signedIn })
-        val store = OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
+        val store =
+            OnboardingStore(
+                api,
+                AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
+                session,
+            ) { SignInResult.SignedIn }
         rule.setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()

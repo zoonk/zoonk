@@ -20,6 +20,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.catalog.CHAPTER_TWO
 import com.zoonk.android.feature.catalog.COURSE
 import com.zoonk.android.feature.catalog.CatalogStore
@@ -63,7 +64,7 @@ class CourseStartFlowTest {
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
-        val store = OnboardingStore(api, cache, session) { true }
+        val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
         setContent {
             ZoonkTheme {

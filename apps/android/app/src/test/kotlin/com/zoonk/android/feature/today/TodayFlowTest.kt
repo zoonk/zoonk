@@ -22,6 +22,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.goalcontent.examSyllabus
 import com.zoonk.android.feature.goalcontent.modulesSyllabus
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
@@ -153,7 +154,7 @@ class TodayFlowTest {
                 PlanStore(plans, cache),
             )
         val read = TodayRead.Day(today, today.session.toDayView())
-        val onboarding = OnboardingStore(FakeOnboardingApi(), cache, FakeSession(ana)) { true }
+        val onboarding = OnboardingStore(FakeOnboardingApi(), cache, FakeSession(ana)) { SignInResult.SignedIn }
 
         rule.setContent {
             ZoonkTheme {

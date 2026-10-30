@@ -23,6 +23,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.audio.AudioOutput
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.PlaybackEnd
@@ -71,7 +72,11 @@ class LevelTestStepFlowTest {
     private val api = FakeOnboardingApi()
     private val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
     private val store =
-        OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
+        OnboardingStore(
+            api,
+            AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
+            session,
+        ) { SignInResult.SignedIn }
     private var done = 0
     private var progress: Float? = null
 

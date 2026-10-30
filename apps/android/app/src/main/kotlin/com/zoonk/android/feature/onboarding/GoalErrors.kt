@@ -10,6 +10,7 @@ enum class GoalLimitReason {
     DailyExplanations,
     DailyGoals,
     Guest,
+    GuestBlocked,
     MonthlyExplanations,
     MonthlyGoals,
     OneActiveGoal,
@@ -20,7 +21,7 @@ enum class GoalLimitReason {
     /** Lifted by Plus, not by waiting. */
     val isPlusLimit get() = this == OneActiveGoal || this == MonthlyGoals
 
-    val needsAccount get() = this == Guest || this == SignUpRequired
+    val needsAccount get() = this == Guest || this == GuestBlocked || this == SignUpRequired
 }
 
 /** What a goal screen says went wrong; [needsAccount] shows Create a free account instead of a retry. */
@@ -55,6 +56,10 @@ fun Refusal.goalLimitReason(): GoalLimitReason =
             GoalLimitReason.SignUpRequired
         }
 
+        Refusal.GuestBlocked -> {
+            GoalLimitReason.GuestBlocked
+        }
+
         is Refusal.Limit -> {
             val monthly = limit.period == "month"
             when {
@@ -85,6 +90,10 @@ fun WriteOutcome<*>.startError(): GoalError =
 
                 Refusal.SignUpRequired -> {
                     GoalError.Limit(GoalLimitReason.SignUpRequired)
+                }
+
+                Refusal.GuestBlocked -> {
+                    GoalError.Limit(GoalLimitReason.GuestBlocked)
                 }
 
                 Refusal.SlowDown -> {
@@ -129,6 +138,7 @@ fun goalLimitMessage(reason: GoalLimitReason): String =
             GoalLimitReason.DailyExplanations -> R.string.onboarding_limit_daily_explanations
             GoalLimitReason.DailyGoals -> R.string.onboarding_limit_daily_goals
             GoalLimitReason.Guest -> R.string.onboarding_limit_guest
+            GoalLimitReason.GuestBlocked -> R.string.onboarding_limit_guest_blocked
             GoalLimitReason.MonthlyExplanations -> R.string.onboarding_limit_monthly_explanations
             GoalLimitReason.MonthlyGoals -> R.string.onboarding_limit_monthly_goals
             GoalLimitReason.OneActiveGoal -> R.string.onboarding_limit_one_active_goal

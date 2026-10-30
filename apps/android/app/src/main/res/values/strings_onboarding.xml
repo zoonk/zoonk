@@ -25,6 +25,8 @@
     <string name="onboarding_limit_daily_explanations">You\'ve asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now.</string>
     <string name="onboarding_limit_daily_goals">You\'ve started as many new goals as your plan allows today. Try again tomorrow.</string>
     <string name="onboarding_limit_guest">Without an account, you can follow one goal. Create a free account to keep going.</string>
+    <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
+    <string name="onboarding_limit_guest_blocked">A security check blocked starting without an account. Create a free account to keep going.</string>
     <string name="onboarding_limit_monthly_explanations">You\'ve asked as many new questions as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
     <string name="onboarding_limit_monthly_goals">You\'ve started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
     <string name="onboarding_limit_one_active_goal">The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus.</string>

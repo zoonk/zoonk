@@ -47,6 +47,8 @@ import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.account.accountFailure
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
 import com.zoonk.android.feature.ceremonies.SessionCeremony
+import com.zoonk.android.feature.onboarding.GoalLimitReason
+import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonOutline
@@ -245,24 +247,42 @@ private fun GuestGate(
 ) {
     var attempt by rememberSaveable { mutableStateOf(0) }
     var failure by rememberSaveable { mutableStateOf<AccountFailure?>(null) }
-    val failed = failure != null
 
     LaunchedEffect(attempt) {
         failure = null
         failure = (app.account.startAsGuest() as? SignInResult.Failed)?.let { accountFailure(it.error, it.code) }
     }
 
+    GuestGateView(outline, failure, onClose = exits::close, onLogIn = { navigator.open(AppRoute.Login) }, onRetry = { attempt++ })
+}
+
+@Composable
+internal fun GuestGateView(
+    outline: LessonOutline,
+    failure: AccountFailure?,
+    onClose: () -> Unit,
+    onLogIn: () -> Unit,
+    onRetry: () -> Unit,
+) {
+    val failed = failure != null
+    // No retry gets past the security check; an account does.
+    val blocked = failure == AccountFailure.BotDetected
+
     LessonFrame(
         title = outline.title,
-        onClose = exits::close,
+        onClose = onClose,
         bottomBar =
             if (failed) {
                 {
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        FilledTonalButton(onClick = { navigator.open(AppRoute.Login) }, modifier = Modifier.weight(1f)) {
-                            Text(stringResource(R.string.gate_log_in))
+                        if (blocked) {
+                            Button(onClick = onLogIn, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.gate_log_in)) }
+                        } else {
+                            FilledTonalButton(onClick = onLogIn, modifier = Modifier.weight(1f)) {
+                                Text(stringResource(R.string.gate_log_in))
+                            }
+                            Button(onClick = onRetry, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.player_try_again)) }
                         }
-                        Button(onClick = { attempt++ }, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.player_try_again)) }
                     }
                 }
             } else {
@@ -273,10 +293,7 @@ private fun GuestGate(
             Text(outline.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
             if (failed) {
                 Text(
-                    stringResource(
-                        // Without the app's proof, trying again can't help; Google sign-in needs none.
-                        if (failure == AccountFailure.BotDetected) R.string.account_failure_bot_detected else R.string.player_open_failed,
-                    ),
+                    if (blocked) goalLimitMessage(GoalLimitReason.GuestBlocked) else stringResource(R.string.player_open_failed),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
                 )

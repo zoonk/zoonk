@@ -18,7 +18,6 @@ import com.zoonk.android.data.PrivateImages
 import com.zoonk.android.data.SessionCredentials
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
-import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.StoredSession
 import com.zoonk.android.data.apiHttpClient
 import com.zoonk.android.data.clearCredentialState
@@ -266,7 +265,7 @@ class AppContainer private constructor(
             api = LiveOnboardingApi(api),
             cache = cache,
             sessions = sessions,
-            startGuest = { account.startAsGuest() == SignInResult.SignedIn },
+            startGuest = account::startAsGuest,
         )
 
     // Practice and checks (lane L6).
