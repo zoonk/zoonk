@@ -2,9 +2,9 @@ import { type GoalView } from "@zoonk/core/goals/contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { GoalKind } from "@zoonk/db";
 import { z } from "zod";
+import { weekdayNumberSchema } from "./weekday-number";
 
 const isoDateSchema = z.iso.date();
-const SATURDAY = 6;
 
 export const goalSchema = z
   .object({
@@ -41,7 +41,7 @@ export const goalSchema = z
     prompt: z.string().meta({ description: "What the learner typed" }),
     status: z.enum(["active", "archived", "completed", "paused"]),
     studyDays: z
-      .array(z.int().min(0).max(SATURDAY))
+      .array(weekdayNumberSchema)
       .meta({ description: "Weekdays with study time, Sunday is 0" }),
     studyTime: z.string().nullable(),
     targetDate: isoDateSchema.nullable(),

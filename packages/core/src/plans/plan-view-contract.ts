@@ -20,6 +20,7 @@ import {
   type PlanPhaseKind,
   type PracticeBias,
 } from "./planner/plan-state";
+import { type WeekShape } from "./planner/week-shape";
 import { type WrittenPractice } from "./written-practice-contract";
 
 export type NoticeDay = { date: string; estimated: boolean };
@@ -221,6 +222,7 @@ export type PlanView = {
     targetDateNamedMonth: boolean;
     /** Sunday first; 0 for rest days. */
     weekdayMinutes: number[];
+    shape: WeekShape;
   };
   status: PlanStatus | null;
   steering: {

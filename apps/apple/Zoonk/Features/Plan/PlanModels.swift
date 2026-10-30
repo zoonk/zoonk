@@ -150,40 +150,17 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let dailyMinutes: Int
     let fullCourse: Bool
     let noticeDay: NoticeDay?
+    let shape: WeekShape
     let studyDays: Int
     let targetDate: String?
     let targetDateEstimated: Bool
     let targetDateNamedMonth: Bool
     /// Minutes for each weekday, Sunday first; 0 is a rest day.
     let weekdayMinutes: [Int]
-
-    /// Mirrors core's `getWeekShape`: a study weekday's time is the most common, so one shorter day
-    /// doesn't count as the week's.
-    var shape: WeekShape {
-      let minutes = { (day: Int) in weekdayMinutes.indices.contains(day) ? weekdayMinutes[day] : 0 }
-      let weekdayDays = [1, 2, 3, 4, 5].filter { minutes($0) > 0 }
-      let weekendDays = [0, 6].filter { minutes($0) > 0 }
-      let weekdays = Self.common(weekdayDays.map(minutes)) ?? dailyMinutes
-      let weekend = Self.common(weekendDays.map(minutes))
-      let canDiffer = !weekdayDays.isEmpty && !weekendDays.isEmpty
-
-      return WeekShape(
-        canDiffer: canDiffer, weekdayDays: weekdayDays, weekdays: weekdays,
-        weekend: canDiffer && weekend != weekdays ? weekend : nil, weekendDays: weekendDays)
-    }
-
-    /// The longer one on a tie.
-    private static func common(_ minutes: [Int]) -> Int? {
-      minutes.max { first, second in
-        let firstCount = minutes.count { $0 == first }
-        let secondCount = minutes.count { $0 == second }
-        return firstCount == secondCount ? first < second : firstCount < secondCount
-      }
-    }
   }
 
   /// Sunday counted 0.
-  struct WeekShape: Equatable {
+  struct WeekShape: Decodable, Equatable, Sendable {
     let canDiffer: Bool
     let weekdayDays: [Int]
     let weekdays: Int

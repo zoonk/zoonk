@@ -9,6 +9,7 @@ import {
   toIsoDate,
 } from "../planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../planner/plan-state";
+import { getWeekShape } from "../planner/week-shape";
 import { getMockSchedule } from "./mock-schedule";
 import { type PlanReadContext } from "./plan-read-projection";
 
@@ -27,6 +28,10 @@ export function buildScheduleView({
 }): PlanView["schedule"] {
   const { goal, items, state, today } = context;
 
+  const weekdayMinutes = Array.from({ length: DAYS_PER_WEEK }, (_, weekday) =>
+    getWeekdayMinutes({ calendar, weekday }),
+  );
+
   return {
     dailyMinutes: goal.dailyMinutes,
     fullCourse,
@@ -35,12 +40,11 @@ export function buildScheduleView({
     nextSitting: fullCourse ? noticeDates.nextSitting : null,
     noSitting: noticeDates.noSitting,
     noticeDay: noticeDates.day,
+    shape: getWeekShape({ dailyMinutes: goal.dailyMinutes, weekdayMinutes }),
     studyDays: countStudyDays(calendar),
     targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
     targetDateEstimated: dateKind.estimated,
     targetDateNamedMonth: dateKind.namedMonth,
-    weekdayMinutes: Array.from({ length: DAYS_PER_WEEK }, (_, weekday) =>
-      getWeekdayMinutes({ calendar, weekday }),
-    ),
+    weekdayMinutes,
   };
 }

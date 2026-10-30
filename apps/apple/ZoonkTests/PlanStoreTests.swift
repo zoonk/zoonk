@@ -326,6 +326,10 @@ extension GoalPlan {
         "schedule": {
           "dailyMinutes": 30, "fullCourse": false, "studyDays": 7, "targetDate": null,
           "targetDateEstimated": false, "targetDateNamedMonth": false,
+          "shape": {
+            "canDiffer": true, "weekdayDays": [1, 2, 3, 4, 5], "weekdays": 30, "weekend": null,
+            "weekendDays": [0, 6]
+          },
           "weekdayMinutes": [30, 30, 30, 30, 30, 30, 30]
         },
         "status": { "kind": "onTrack" },

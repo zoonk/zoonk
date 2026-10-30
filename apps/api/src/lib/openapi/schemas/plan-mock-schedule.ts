@@ -1,7 +1,5 @@
 import { z } from "zod";
-
-const SUNDAY = 0;
-const SATURDAY = 6;
+import { weekdayNumberSchema } from "./weekday-number";
 
 export const planMockScheduleSchema = z
   .object({
@@ -15,10 +13,7 @@ export const planMockScheduleSchema = z
           "Weeks from each mock to the next, when every gap is the same; null when they differ or there is one",
       }),
     nextDate: z.iso.date(),
-    weekday: z
-      .int()
-      .min(SUNDAY)
-      .max(SATURDAY)
+    weekday: weekdayNumberSchema
       .nullable()
       .meta({
         description:

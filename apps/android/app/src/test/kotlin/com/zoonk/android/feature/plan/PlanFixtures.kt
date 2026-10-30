@@ -24,7 +24,7 @@ internal fun plan(extra: String = ""): Plan {
                  "estimate":{"remainingHours":10,"totalHours":12},"examChoices":[],"examDocument":"guide",
                  "fundedMocks":[],"goalId":"$GOAL","phases":[],"planId":"$PLAN_ID","ready":true,
                  "schedule":{"dailyMinutes":20,"fullCourse":false,"lightWeeks":[],"studyDays":5,
-                  "targetDateEstimated":false,"targetDateNamedMonth":false,"weekdayMinutes":[0,20,20,20,20,20,0]},
+                  "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]},
                  "steering":{"difficultyBias":"standard","lessonsStudied":0,"practiceBias":"balanced","skippedActivities":[]},
                  "tools":[],"week":{"days":[],"endDate":"2026-11-01","startDate":"2026-10-26"},
                  "weekTime":{"studiedMinutes":0,"targetMinutes":100}}
@@ -142,7 +142,7 @@ internal fun learnPlan(): Plan =
         ],
         "currentPhase":1,
         "schedule":{"dailyMinutes":20,"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDate":"2027-01-31",
-          "targetDateEstimated":false,"targetDateNamedMonth":false,"weekdayMinutes":[30,20,20,20,20,20,30]},
+          "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":true,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":30,"weekendDays":[0,6]},"weekdayMinutes":[30,20,20,20,20,20,30]},
         "status":{"kind":"behind","days":2,"extraMinutesPerDay":10,"lessons":null},
         "week":{"startDate":"2026-10-26","endDate":"2026-11-01","days":[
           {"date":"2026-10-26","items":[],"minutes":20,"state":"done"},
@@ -214,7 +214,7 @@ internal fun coveragePlan(
         "feasibility":{"coreFits":$coreFits,"coveredShare":0.6,"deadline":"2027-01-31","deepensMostAsked":false,"fits":false,
          "measure":"$kind","timeCovers":$timeCovers},
         "schedule":{"dailyMinutes":20,"fullCourse":$fullCourse,"lightWeeks":[],"studyDays":5,"targetDate":"2027-01-31",
-         "targetDateEstimated":false,"targetDateNamedMonth":false,"weekdayMinutes":[0,20,20,20,20,20,0]}
+         "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]}
         """.trimIndent(),
     )
 

@@ -76740,6 +76740,9 @@
                 ],
                 "additionalProperties": false
               },
+              "shape": {
+                "$ref": "#/components/schemas/PlanWeekShape"
+              },
               "studyDays": {
                 "type": "integer",
                 "minimum": 0,
@@ -76777,6 +76780,7 @@
               "nextSitting",
               "noSitting",
               "noticeDay",
+              "shape",
               "studyDays",
               "targetDate",
               "targetDateEstimated",
@@ -77453,6 +77457,55 @@
           "weekday"
         ],
         "additionalProperties": false
+      },
+      "PlanWeekShape": {
+        "type": "object",
+        "properties": {
+          "canDiffer": {
+            "type": "boolean",
+            "description": "The plan studies on weekdays and on weekends, so the weekend can take its own time"
+          },
+          "weekdayDays": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            },
+            "description": "The weekdays from Monday to Friday the plan studies on (Sunday counted 0)"
+          },
+          "weekdays": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "A study weekday's minutes: the most common among them, the longer on a tie, so one shorter day doesn't set the week's time"
+          },
+          "weekend": {
+            "nullable": true,
+            "description": "The weekend's own minutes; null when it takes the weekdays' time",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "weekendDays": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            },
+            "description": "The weekend days the plan studies on (Sunday counted 0)"
+          }
+        },
+        "required": [
+          "canDiffer",
+          "weekdayDays",
+          "weekdays",
+          "weekend",
+          "weekendDays"
+        ],
+        "additionalProperties": false,
+        "description": "How the week's study time reads in the plan editor, and which weekdays a change of the weekday or weekend time writes"
       },
       "PlanTool": {
         "type": "object",

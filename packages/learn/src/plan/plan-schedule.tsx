@@ -1,6 +1,6 @@
 "use client";
 
-import { getWeekShape, isWeekend } from "@zoonk/core/plans/week-shape";
+import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -120,7 +120,7 @@ type PlanChange = ReturnType<typeof usePlanChange>;
 
 function useWeekShape() {
   const { plan } = usePlanScreen();
-  return getWeekShape(plan.schedule);
+  return plan.schedule.shape;
 }
 
 function DailyMinutes({

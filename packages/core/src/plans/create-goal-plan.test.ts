@@ -615,7 +615,18 @@ describe(getGoalPlan, () => {
       currentPhase: 0,
       feasibility: { coveredShare: 1, deadline: null, fits: true },
       ready: true,
-      schedule: { dailyMinutes: 12, studyDays: 7, weekdayMinutes: [12, 12, 12, 12, 12, 12, 12] },
+      schedule: {
+        dailyMinutes: 12,
+        shape: {
+          canDiffer: true,
+          weekdayDays: [1, 2, 3, 4, 5],
+          weekdays: 12,
+          weekend: null,
+          weekendDays: [0, 6],
+        },
+        studyDays: 7,
+        weekdayMinutes: [12, 12, 12, 12, 12, 12, 12],
+      },
       status: { kind: "onTrack" },
     });
 

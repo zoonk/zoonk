@@ -20,6 +20,7 @@ import { planItemSchema } from "./plan-items";
 import { planMockScheduleSchema } from "./plan-mock-schedule";
 import { planFitOfferSchema } from "./plan-offers";
 import { phaseKindSchema, planPhaseSchema } from "./plan-phases";
+import { planWeekShapeSchema } from "./plan-week-shape";
 import { planStatusSchema } from "./preparation";
 import { shortPlanSchema } from "./short-exam-plans";
 import { weeklyStudyTimeSchema } from "./weekly-study-time";
@@ -165,6 +166,7 @@ export const planResponseSchema = z
         }),
       noSitting: noSittingSchema,
       noticeDay: noticeDaySchema,
+      shape: planWeekShapeSchema,
       studyDays: z.int().min(0).max(7),
       targetDate: isoDateSchema.nullable(),
       targetDateEstimated: z

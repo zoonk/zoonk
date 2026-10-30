@@ -43,7 +43,7 @@ class PlanPhasesTest {
             plan(
                 """
                 "schedule":{"dailyMinutes":20,"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDateEstimated":false,
-                  "targetDateNamedMonth":false,"weekdayMinutes":[0,20,20,20,20,20,0]},
+                  "targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]},
                 "estimate":{"endDate":"2027-03-01","remainingHours":10,"totalHours":12}
                 """.trimIndent(),
             )
@@ -61,7 +61,7 @@ class PlanPhasesTest {
                   ${phase(1, "Two", "upcoming", "2026-11-01", "2026-11-30", 0, 5)}
                 ],
                 "schedule":{"dailyMinutes":20,"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDate":"2026-11-15",
-                  "targetDateEstimated":false,"targetDateNamedMonth":false,"weekdayMinutes":[0,20,20,20,20,20,0]}
+                  "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]}
                 """.trimIndent(),
             )
 

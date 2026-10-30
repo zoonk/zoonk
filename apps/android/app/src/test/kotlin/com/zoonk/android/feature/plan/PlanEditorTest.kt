@@ -133,7 +133,7 @@ class PlanEditorTest {
     fun theLastStudyDayCantBeTurnedOff() {
         show(
             """"schedule":{"dailyMinutes":20,"fullCourse":false,"lightWeeks":[],"studyDays":1,"targetDateEstimated":false,""" +
-                """"targetDateNamedMonth":false,"weekdayMinutes":[0,0,0,20,0,0,0]}""",
+                """"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[3],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,0,0,20,0,0,0]}""",
         )
 
         compose.onNodeWithContentDescription("Wednesday").assertIsNotEnabled()

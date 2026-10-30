@@ -2,7 +2,6 @@
 
 import { LANGUAGE_ACTIVITY_TYPES } from "@zoonk/core/language/activities";
 import { type MockScheduleView } from "@zoonk/core/plans/view-contract";
-import { getWeekShape } from "@zoonk/core/plans/week-shape";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
@@ -70,7 +69,7 @@ function DailyTimeValue() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { plan } = usePlanScreen();
-  const shape = getWeekShape(plan.schedule);
+  const { shape } = plan.schedule;
 
   if (shape.weekend === null) {
     return mono(formatDuration(shape.weekdays));

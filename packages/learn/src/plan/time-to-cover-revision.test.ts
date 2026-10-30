@@ -24,6 +24,13 @@ function searchedPlan(planId: string) {
       nextSitting: null,
       noSitting: null,
       noticeDay: null,
+      shape: {
+        canDiffer: false,
+        weekdayDays: [1, 2, 3, 4, 5],
+        weekdays: 30,
+        weekend: null,
+        weekendDays: [],
+      },
       studyDays: 5,
       targetDate: "2026-11-30",
       targetDateEstimated: false,
