@@ -85,7 +85,10 @@ describe(linkGoalSkillPrerequisites, () => {
 
     const plans = await Promise.all(
       goals.map((goal, index) =>
-        planFixture({ goalId: goal.id, sourceSkillIds: [index === 0 ? first.id : second.id] }),
+        planFixture({
+          goalId: goal.id,
+          sourceSkillIds: index === 0 ? [first.id, second.id] : [second.id],
+        }),
       ),
     );
 
