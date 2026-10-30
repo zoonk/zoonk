@@ -111,6 +111,16 @@ data class AttachedSource(
     val title: String,
 )
 
+/** Questions are left before the plan (`plan` alone: it's being built), so no plan is coming yet. */
+val Onboarding.questionsLeft: Boolean get() = steps.any { it != OnboardingStep.PLAN }
+
+/**
+ * A course start's default plan reads as ready before its questions, so main shows setup for it
+ * while any are left, a buddy aside (core's `isCourseSetupLeft`).
+ */
+val Onboarding.courseSetupLeft: Boolean
+    get() = "courseStart" in goal.details && steps.any { it != OnboardingStep.PLAN && it != OnboardingStep.BUDDY }
+
 /** A visitor's first write starts a guest session, as an anonymous sign-in does. */
 class OnboardingStore(
     private val api: OnboardingApi,
@@ -254,7 +264,7 @@ class OnboardingStore(
         return (setup.state.value as? LoadState.Loaded)?.value
     }
 
-    private fun Onboarding?.inSetup() = this?.steps?.any { it != OnboardingStep.PLAN } != false
+    private fun Onboarding?.inSetup() = this?.questionsLeft != false
 
     /** A shared plan as its link shows it: its subject and phases, never its owner or their progress. */
     val planLinks =

@@ -16,7 +16,6 @@ import com.zoonk.android.data.value
 import com.zoonk.api.models.ExamChoiceInput
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.GoalUpdateInput
-import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
@@ -52,19 +51,6 @@ data class PlanRead(
 /** [Stale]: reading the plan again failed. [Dropped]: the plan isn't shown anymore, as when the session ended. */
 enum class PlanShown { Current, Stale, Dropped }
 
-/**
- * [steps] are the setup's questions the learner hasn't answered (`plan` alone: it's being built).
- * A course start's default plan reads as ready before them, so main shows setup for it while any
- * are left, a buddy aside (core's `isCourseSetupLeft`).
- */
-data class GoalSetup(
-    val steps: List<OnboardingStep>,
-    val courseStart: Boolean,
-) {
-    val questionsLeft: Boolean get() = steps.any { it != OnboardingStep.PLAN }
-    val courseSetupLeft: Boolean get() = courseStart && steps.any { it != OnboardingStep.PLAN && it != OnboardingStep.BUDDY }
-}
-
 interface PlanApi {
     suspend fun plan(
         session: AuthenticatedSession,
@@ -92,11 +78,6 @@ interface PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
     ): Boolean
-
-    suspend fun setup(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ): GoalSetup
 
     /** The run building the plan; null until it saves its id, a few seconds after it starts. */
     suspend fun buildingRunId(
@@ -216,11 +197,6 @@ class LivePlanApi(
         session: AuthenticatedSession,
         goalId: UUID,
     ) = perform { api.clients(session).plans.previewGoalResume(goalId) }
-
-    override suspend fun setup(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ) = perform { api.clients(session).onboarding.getOnboarding(goalId) }.let { GoalSetup(it.steps, "courseStart" in it.goal.details) }
 
     override suspend fun buildingRunId(
         session: AuthenticatedSession,
@@ -348,11 +324,6 @@ class PlanStore(
     /** Read only once the plan has ended (`plan.end`): before, there's nothing to study next. */
     val studyNext: KeyedResources<UUID, StudyNext> =
         cache.keyed(Audience.SignedIn, READ_DOMAINS) { session, goalId -> session?.let { api.studyNext(it, goalId) } }
-
-    val setup: KeyedResources<UUID, GoalSetup> =
-        cache.keyed(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearningProfile)) { session, goalId ->
-            session?.let { api.setup(it, goalId) }
-        }
 
     suspend fun buildingRunId(
         session: AuthenticatedSession,

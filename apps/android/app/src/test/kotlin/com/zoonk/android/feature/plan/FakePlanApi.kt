@@ -3,7 +3,6 @@ package com.zoonk.android.feature.plan
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.api.models.GoalUpdateInput
-import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
@@ -105,11 +104,6 @@ internal class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
     ) = false
-
-    override suspend fun setup(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ) = GoalSetup(listOf(OnboardingStep.PLAN), courseStart = false)
 
     override suspend fun buildingRunId(
         session: AuthenticatedSession,

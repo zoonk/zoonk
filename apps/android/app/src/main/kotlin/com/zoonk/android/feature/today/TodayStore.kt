@@ -91,12 +91,6 @@ interface TodayApi {
         goalId: UUID,
     ): Boolean
 
-    /** Whether onboarding has questions left before the plan, so no plan is coming yet. */
-    suspend fun onboardingLeft(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ): Boolean
-
     /** Throws `GOAL_LIMIT_REACHED` when the learner's plan follows no more goals. */
     suspend fun resume(
         session: AuthenticatedSession,
@@ -171,11 +165,6 @@ class TodayStore(
     val resumePreview =
         cache.keyed<UUID, Boolean>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId ->
             session?.let { api.resumePreview(it, goalId) }
-        }
-
-    val onboardingLeft =
-        cache.keyed<UUID, Boolean>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId ->
-            session?.let { api.onboardingLeft(it, goalId) }
         }
 
     /**

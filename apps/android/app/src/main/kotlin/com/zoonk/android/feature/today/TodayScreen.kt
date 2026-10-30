@@ -41,6 +41,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.VisitorWelcome
+import com.zoonk.android.feature.onboarding.questionsLeft
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.LearnerAccess
@@ -370,10 +371,10 @@ private fun Preparing(
     read: TodayRead.Preparing,
     padding: PaddingValues,
 ) {
-    val left by app.today.onboardingLeft[read.goalId].collectShown()
+    val setup by app.onboarding.onboardings[read.goalId.toString()].collectShown()
 
     // A goal left halfway through its questions has no plan coming until they're answered.
-    if (left.value == true) {
+    if (setup.value?.questionsLeft == true) {
         TodayAtRest(
             padding = padding,
             date = null,
@@ -391,15 +392,15 @@ private fun Preparing(
 
     val scope = rememberCoroutineScope()
 
-    if (left is LoadState.Failed) {
+    if (setup is LoadState.Failed) {
         LoadFailedMessage(
-            onRetry = { scope.launch { app.today.onboardingLeft[read.goalId].refresh() } },
+            onRetry = { scope.launch { app.onboarding.onboardings[read.goalId.toString()].refresh() } },
             modifier = Modifier.padding(padding),
         )
         return
     }
 
-    val poll = pollWhile(active = left.value == false, read = app.today.today, context = read.goalId)
+    val poll = pollWhile(active = setup.value?.questionsLeft == false, read = app.today.today, context = read.goalId)
 
     TodayPage(padding) {
         TodayPageHeader(date = stringResource(R.string.today_building_plan), state = null, title = stringResource(R.string.today_title))

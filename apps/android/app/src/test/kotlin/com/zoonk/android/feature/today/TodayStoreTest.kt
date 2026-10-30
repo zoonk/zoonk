@@ -59,11 +59,6 @@ class TodayStoreTest {
                 goalId: UUID,
             ) = false
 
-            override suspend fun onboardingLeft(
-                session: AuthenticatedSession,
-                goalId: UUID,
-            ) = false
-
             override suspend fun resume(
                 session: AuthenticatedSession,
                 goalId: UUID,

@@ -8,7 +8,6 @@ import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.MemoryInsightAnswer
 import com.zoonk.api.models.MistakeListAvailability
-import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.PlanWatch
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.SuggestedGoalAnswer
@@ -48,11 +47,6 @@ class LiveTodayApi(
         session: AuthenticatedSession,
         goalId: UUID,
     ): Boolean = perform { api.clients(session).plans.previewGoalResume(goalId) }
-
-    override suspend fun onboardingLeft(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ): Boolean = perform { api.clients(session).onboarding.getOnboarding(goalId) }.steps.any { it != OnboardingStep.PLAN }
 
     override suspend fun resume(
         session: AuthenticatedSession,

@@ -45,6 +45,9 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.courseSetupLeft
+import com.zoonk.android.feature.onboarding.questionsLeft
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.GenerationWait
@@ -56,6 +59,7 @@ import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -104,7 +108,7 @@ private fun GoalPlan(
     val state by resource.collectShown()
     val scope = rememberCoroutineScope()
     val read = state.value
-    val courseSetup = if (goal.courseId != null) setupLeft(app, goal, course = true) else SetupLeft.No
+    val courseSetup = if (goal.courseId != null) setupLeft(app.onboarding, goal.id, course = true) else SetupLeft.No
 
     when {
         courseSetup == SetupLeft.Unknown -> {
@@ -179,15 +183,15 @@ private fun ReadyPlan(
     }
 }
 
-private enum class SetupLeft { Yes, No, Unknown }
+internal enum class SetupLeft { Yes, No, Unknown }
 
 @Composable
-private fun setupLeft(
-    app: AppContainer,
-    goal: LearnerSummaryGoal,
+internal fun setupLeft(
+    onboarding: OnboardingStore,
+    goalId: UUID,
     course: Boolean = false,
 ): SetupLeft {
-    val setup by app.plans.setup[goal.id].collectShown()
+    val setup by onboarding.onboardings[goalId.toString()].collectShown()
     val loaded = setup.value ?: return if (setup is LoadState.Empty) SetupLeft.No else SetupLeft.Unknown
     val left = if (course) loaded.courseSetupLeft else loaded.questionsLeft
     return if (left) SetupLeft.Yes else SetupLeft.No
@@ -199,10 +203,10 @@ private fun SetupLoading(
     goal: LearnerSummaryGoal,
     padding: PaddingValues,
 ) {
-    val setup by app.plans.setup[goal.id].collectShown()
+    val setup by app.onboarding.onboardings[goal.id.toString()].collectShown()
     val scope = rememberCoroutineScope()
     if (setup is LoadState.Failed) {
-        PlanLoadFailed(padding) { scope.launch { app.plans.setup[goal.id].refresh() } }
+        PlanLoadFailed(padding) { scope.launch { app.onboarding.onboardings[goal.id.toString()].refresh() } }
     } else {
         PlanLoading(padding)
     }
@@ -216,7 +220,7 @@ private fun PlanWithoutPlan(
     padding: PaddingValues,
     onRefresh: suspend () -> Unit,
 ) {
-    when (setupLeft(app, goal)) {
+    when (setupLeft(app.onboarding, goal.id)) {
         SetupLeft.Yes -> PlanStateColumn(padding) { PlanSetupLeft(goal, navigator) }
         SetupLeft.No -> PlanStateColumn(padding) { PlanBuilding(goal, app, onRefresh) }
         SetupLeft.Unknown -> SetupLoading(app, goal, padding)
