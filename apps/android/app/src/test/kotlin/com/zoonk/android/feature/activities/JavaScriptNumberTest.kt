@@ -30,6 +30,14 @@ class JavaScriptNumberTest {
     }
 
     @Test
+    fun breaksATieBetweenTwoEquallyNearDigitsTowardTheEvenOne() {
+        assertEquals(
+            listOf("1000000000000000.8", "-1000000000000000.8", "1000000000000000.2", "1000000000000000.4"),
+            listOf(1000000000000000.75, -1000000000000000.75, 1000000000000000.25, 1000000000000000.375).map(::jsNumberText),
+        )
+    }
+
+    @Test
     fun writesTheShortestDigitsWhereOlderRuntimesWriteMore() {
         assertEquals(
             listOf("1152921504606847000", "-1152921504606847000", "9223372036854776000"),

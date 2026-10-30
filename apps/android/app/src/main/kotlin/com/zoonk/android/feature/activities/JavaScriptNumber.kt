@@ -23,8 +23,9 @@ internal fun jsNumberText(value: Double): String {
 }
 
 /**
- * The fewest significant digits that read back as [value], the nearest such, as JavaScript picks them.
- * Android's `Double.toString` can write more digits than that ("1.15292150460684698E18" for 2^60).
+ * The fewest significant digits that read back as [value], the nearest such and the even one on a
+ * tie, as JavaScript picks them. Android's `Double.toString` can write more digits than that
+ * ("1.15292150460684698E18" for 2^60).
  */
 private fun shortestDecimal(value: Double): BigDecimal {
     val exact = BigDecimal(value)
@@ -33,7 +34,7 @@ private fun shortestDecimal(value: Double): BigDecimal {
             listOf(RoundingMode.FLOOR, RoundingMode.CEILING)
                 .map { exact.round(MathContext(digits, it)) }
                 .filter { it.toString().toDouble() == value }
-                .minByOrNull { (it - exact).abs() }
+                .minWithOrNull(compareBy({ (it - exact).abs() }, { it.unscaledValue().testBit(0) }))
         }.stripTrailingZeros()
 }
 
