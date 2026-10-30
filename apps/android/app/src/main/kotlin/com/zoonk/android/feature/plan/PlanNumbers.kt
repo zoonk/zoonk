@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -39,6 +38,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -49,6 +49,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.language.CanDoList
@@ -688,15 +689,11 @@ private fun PreparationParts(
         )
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            maxItemsInEachRow = 2,
-        ) {
+        TwoColumnsWhenWordsFit {
             parts.forEach { part ->
                 val value = part.value?.let { formatPercent(it, locale) }
                 Row(
-                    modifier = Modifier.weight(1f).semantics(mergeDescendants = true) {},
+                    modifier = Modifier.semantics(mergeDescendants = true) {},
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -727,6 +724,28 @@ private fun PreparationParts(
         )
     }
 }
+
+/** Two parts a row only while each part's words fit its half unbroken; one a row otherwise. */
+@Composable
+private fun TwoColumnsWhenWordsFit(content: @Composable () -> Unit) {
+    Layout(content) { measurables, constraints ->
+        val gap = PART_GAP.roundToPx()
+        val half = (constraints.maxWidth - gap) / 2
+        val columns = if (measurables.all { it.minIntrinsicWidth(Constraints.Infinity) <= half }) 2 else 1
+        val width = if (columns == 2) half else constraints.maxWidth
+        val rows = measurables.map { it.measure(Constraints.fixedWidth(width)) }.chunked(columns)
+        val height = rows.sumOf { row -> row.maxOf { it.height } } + gap * (rows.size - 1).coerceAtLeast(0)
+        layout(constraints.maxWidth, height) {
+            var y = 0
+            rows.forEach { row ->
+                row.forEachIndexed { index, part -> part.placeRelative(index * (width + gap), y) }
+                y += row.maxOf { it.height } + gap
+            }
+        }
+    }
+}
+
+private val PART_GAP = 16.dp
 
 @Composable
 private fun PartRing(

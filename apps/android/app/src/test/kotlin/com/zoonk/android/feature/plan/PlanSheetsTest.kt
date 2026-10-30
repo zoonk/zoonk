@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -17,6 +18,8 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.height
 import androidx.compose.ui.unit.width
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -27,6 +30,7 @@ import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanEffect
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -183,6 +187,31 @@ class PlanSheetsTest {
 
         val label = compose.onNodeWithText("Long-term memory", useUnmergedTree = true).getBoundsInRoot()
         assertTrue(label.width > label.height)
+    }
+
+    @Test
+    @Config(qualifiers = "w328dp-h1600dp")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun theProgressRingsNeverBreakAWordOnANarrowPhone() {
+        val page = page(learnPlan())
+        compose.setContent {
+            val links = PlanLinks(rememberAppNavigator(), page)
+            ZoonkTheme {
+                Column(Modifier.padding(horizontal = SHEET_MARGIN)) {
+                    PreparationDetails(progress(), forExam = true, lessons = null, links = links)
+                }
+            }
+        }
+
+        val caption = compose.onNodeWithText("weighted by importance", substring = true, useUnmergedTree = true)
+        val layouts = mutableListOf<TextLayoutResult>()
+        caption.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+        val layout = layouts.single()
+        val text = layout.layoutInput.text.text
+        (0 until layout.lineCount - 1).forEach { line ->
+            val end = layout.getLineEnd(line)
+            assertFalse("broke \"$text\" at $end", text[end - 1].isLetter() && text[end].isLetter())
+        }
     }
 
     @Test
