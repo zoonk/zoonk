@@ -323,6 +323,22 @@ struct PracticeAPI: Sendable {
     }
   }
 
+  /// Nil for a test-out never sent: the chapter's test opens instead.
+  func recordedTestOut(token: String, goalId: String, chapterId: String, requestId: String)
+    async throws -> Components.Schemas.ChapterTestOutRecord?
+  {
+    try await perform(token) { client in
+      switch try await client.getChapterTestOutResult(
+        path: .init(goalId: goalId, chapterId: chapterId, requestId: requestId))
+      {
+      case .ok(let response): return try response.body.json
+      case .notFound, .badRequest: return nil
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
   func writeTestOut(token: String, goalId: String, chapterId: String) async throws
     -> PracticeGenerationStart
   {

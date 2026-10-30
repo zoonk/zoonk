@@ -118,8 +118,8 @@ extension AppRoute {
       MistakePracticeScreen(skillId: skillId)
     case .pattern(let patternId):
       PatternScreen(patternId: patternId)
-    case .testOut(let chapterId):
-      TestOutScreen(chapterId: chapterId)
+    case .testOut(let chapterId, let resultId):
+      TestOutScreen(chapterId: chapterId, resultId: resultId)
     case .focusTest(let goalId):
       FocusTestScreen(goalId: goalId)
     case .challenge(let planItemId, let sessionId):

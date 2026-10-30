@@ -24,6 +24,11 @@ final class AppNavigationTests: XCTestCase {
       ),
       ("https://www.zoonk.com/learn/l1?session=", .route(.lesson(lessonId: "l1"))),
       ("https://www.zoonk.com/mistakes/practice?skill=k1", .route(.mistakePractice(skillId: "k1"))),
+      ("https://www.zoonk.com/test-out/c1", .route(.testOut(chapterId: "c1"))),
+      (
+        "https://www.zoonk.com/test-out/c1?result=r1",
+        .route(.testOut(chapterId: "c1", resultId: "r1"))
+      ),
       ("https://www.zoonk.com/start/course/c1", .route(.courseStart(courseId: "c1"))),
       (
         "https://www.zoonk.com/start/course/c1?chapter=ch1",

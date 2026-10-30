@@ -20,7 +20,8 @@ enum AppRoute: Hashable, Identifiable {
   case questionBlock(sessionId: String, blockId: String)
   case mistakePractice(skillId: String? = nil)
   case pattern(patternId: String)
-  case testOut(chapterId: String)
+  /// `resultId` opens a test-out already sent, as it was recorded.
+  case testOut(chapterId: String, resultId: String? = nil)
   case focusTest(goalId: String)
   case challenge(planItemId: String, sessionId: String? = nil)
   case checkpoint(blockId: String, sessionId: String? = nil)

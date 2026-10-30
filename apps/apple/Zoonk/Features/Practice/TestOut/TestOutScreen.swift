@@ -1,8 +1,10 @@
 import SwiftUI
 
-/// Its questions are written on the learner's tap, never when the screen opens.
+/// Its questions are written on the learner's tap, never when the screen opens. Opened with the
+/// `resultId` of a test already sent, it shows that result as it was recorded, celebrating nothing.
 struct TestOutScreen: View {
   let chapterId: String
+  var resultId: String?
 
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
@@ -180,6 +182,19 @@ struct TestOutScreen: View {
     guard let identity = session.authenticatedSession, let goalId else { return }
 
     do {
+      if result == nil, let resultId,
+        let recorded = try await practice.api.recordedTestOut(
+          token: identity.bearerToken, goalId: goalId, chapterId: chapterId, requestId: resultId)
+      {
+        guard session.authenticatedSession == identity else { return }
+        result = .init(
+          ceremony: nil, reached: .init(energy: nil, level: nil),
+          changeId: recorded.canUndo ? recorded.changeId : nil, correct: recorded.correct,
+          lessonsSkipped: recorded.lessonsSkipped, passed: recorded.passed, total: recorded.total)
+        undo = recorded.undone ? .done : .idle
+        return
+      }
+
       let loaded = try await practice.api.testOut(
         token: identity.bearerToken, goalId: goalId, chapterId: chapterId)
       guard session.authenticatedSession == identity else { return }
