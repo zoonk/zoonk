@@ -16,7 +16,21 @@ import { ItemAnswers } from "./item-answers";
 import { ItemExplanations } from "./item-explanations";
 import { ItemOverview } from "./item-overview";
 
-export const metadata: Metadata = { title: "Item" };
+export async function generateMetadata({ params }: PageProps<"/items/[id]">): Promise<Metadata> {
+  const { id } = await params;
+
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  const record = await getItem(id);
+
+  if (!record) {
+    notFound();
+  }
+
+  return { title: getItemLabel(record) };
+}
 
 const ITEM_PARENTS = [{ href: "/items", label: "Items" }];
 

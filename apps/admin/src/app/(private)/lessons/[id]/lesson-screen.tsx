@@ -29,19 +29,28 @@ function AnswersLabel({ answers }: { answers?: StepAnswers }) {
 
 function StepLinks({ step }: { step: LibraryLessonStep }) {
   return (
-    <span className="text-muted-foreground flex flex-wrap gap-x-3 text-xs">
+    <span className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
       {step.skill ? (
-        <Link className="underline" href={`/skills/${step.skill.id}`}>
+        <Link
+          className="hit-area relative inline-flex min-h-11 items-center underline"
+          href={`/skills/${step.skill.id}`}
+        >
           Skill: {step.skill.name}
         </Link>
       ) : null}
       {step.item ? (
-        <Link className="underline" href={`/items/${step.item.id}`}>
+        <Link
+          className="hit-area relative inline-flex min-h-11 items-center underline"
+          href={`/items/${step.item.id}`}
+        >
           Item ({step.item.format})
         </Link>
       ) : null}
       {step.mediaAsset ? (
-        <Link className="underline" href={`/media/${step.mediaAsset.id}`}>
+        <Link
+          className="hit-area relative inline-flex min-h-11 items-center underline"
+          href={`/media/${step.mediaAsset.id}`}
+        >
           {step.mediaAsset.kind}
         </Link>
       ) : null}

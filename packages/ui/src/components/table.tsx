@@ -8,6 +8,8 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
     <div
       className="relative w-full overflow-x-auto overscroll-x-contain"
       data-slot="table-container"
+      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Overflowing tables need a keyboard scroll target.
+      tabIndex={0}
     >
       <table
         className={cn("w-full caption-bottom text-sm tabular-nums", className)}

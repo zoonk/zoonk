@@ -16,7 +16,21 @@ import { feedbackStatusLabels, getLearnerLabel } from "../../_utils/feedback-lab
 import { type FeedbackMessage, MessageDetail } from "./message-detail";
 import { MessageStatusForm } from "./message-status-form";
 
-export const metadata: Metadata = { title: "Feedback message" };
+export async function generateMetadata({ params }: PageProps<"/feedback/messages/[id]">): Promise<Metadata> {
+  const { id } = await params;
+
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  const record = await getFeedbackMessage(id);
+
+  if (!record) {
+    notFound();
+  }
+
+  return { title: getMessageTitle(record) };
+}
 
 const MESSAGE_PARENTS = [{ href: "/feedback/messages", label: "Feedback" }];
 

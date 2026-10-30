@@ -15,7 +15,21 @@ import { Suspense } from "react";
 import { MediaOverview } from "./media-overview";
 import { MediaUsage } from "./media-usage";
 
-export const metadata: Metadata = { title: "Media asset" };
+export async function generateMetadata({ params }: PageProps<"/media/[id]">): Promise<Metadata> {
+  const { id } = await params;
+
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  const record = await getMedia(id);
+
+  if (!record) {
+    notFound();
+  }
+
+  return { title: record.reuseKey };
+}
 
 const MEDIA_PARENTS = [{ href: "/media", label: "Media" }];
 

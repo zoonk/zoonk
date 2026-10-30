@@ -9,7 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button } from "@zoonk/ui/components/button";
+import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { revokeSessionsAction } from "./_actions/revoke-sessions";
 
 export function RevokeSessionsDialog({
@@ -43,9 +43,9 @@ export function RevokeSessionsDialog({
 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button type="submit" variant="destructive">
+            <SubmitButton className="w-auto" variant="destructive">
               Revoke sessions
-            </Button>
+            </SubmitButton>
           </AlertDialogFooter>
         </form>
       </AlertDialogContent>

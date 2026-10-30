@@ -40,16 +40,12 @@ async function AiSections({ searchParams }: { searchParams: PageProps<"/ai">["se
     <>
       <PeriodFilter days={days} />
 
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <AiSpendSection days={days} />
-      </Suspense>
-
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <AiTopSpendersSection days={days} />
-      </Suspense>
-
-      <Suspense fallback={<AdminSectionSkeleton />}>
-        <ProvenanceSection days={days} />
+      <AiSpendSection days={days} />
+      <AiTopSpendersSection days={days} />
+      <ProvenanceSection days={days} />
+      <GenerationFailuresSection />
+      <Suspense fallback={<AdminSectionSkeleton description rows={8} />}>
+        <AiPlusLearnersSection />
       </Suspense>
     </>
   );
@@ -72,14 +68,6 @@ export default function AiPage({ searchParams }: PageProps<"/ai">) {
       <ContainerBody className="gap-10">
         <Suspense fallback={<AdminSectionSkeleton />}>
           <AiSections searchParams={searchParams} />
-        </Suspense>
-
-        <Suspense fallback={<AdminSectionSkeleton />}>
-          <AiPlusLearnersSection />
-        </Suspense>
-
-        <Suspense fallback={<AdminSectionSkeleton />}>
-          <GenerationFailuresSection />
         </Suspense>
       </ContainerBody>
     </Container>

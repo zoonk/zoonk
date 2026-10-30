@@ -18,7 +18,21 @@ import { LessonScreens } from "./lesson-screens";
 import { LessonOutline, LessonSummary } from "./lesson-summary";
 import { LessonVersions } from "./lesson-versions";
 
-export const metadata: Metadata = { title: "Lesson" };
+export async function generateMetadata({ params }: PageProps<"/lessons/[id]">): Promise<Metadata> {
+  const { id } = await params;
+
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  const record = await getLibraryLesson(id);
+
+  if (!record) {
+    notFound();
+  }
+
+  return { title: record.lesson.title };
+}
 
 const LESSON_PARENTS = [{ href: "/lessons", label: "Lessons" }];
 

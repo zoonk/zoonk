@@ -12,7 +12,7 @@ export function SubmitButton({
   full,
   icon,
   ...props
-}: { icon?: React.ReactNode; full?: boolean } & React.ComponentProps<"button">) {
+}: { icon?: React.ReactNode; full?: boolean } & React.ComponentProps<typeof Button>) {
   const status = useFormStatus();
 
   return (

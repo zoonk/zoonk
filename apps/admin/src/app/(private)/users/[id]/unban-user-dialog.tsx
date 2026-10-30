@@ -9,7 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button } from "@zoonk/ui/components/button";
+import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { unbanUserAction } from "./_actions/unban-user";
 
 export function UnbanUserDialog({
@@ -43,7 +43,7 @@ export function UnbanUserDialog({
 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button type="submit">Unban user</Button>
+            <SubmitButton className="w-auto">Unban user</SubmitButton>
           </AlertDialogFooter>
         </form>
       </AlertDialogContent>

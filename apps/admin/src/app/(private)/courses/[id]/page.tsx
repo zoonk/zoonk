@@ -18,7 +18,21 @@ import { Suspense } from "react";
 import { CourseCurriculum } from "./course-curriculum";
 import { CourseForm } from "./course-form";
 
-export const metadata: Metadata = { title: "Course" };
+export async function generateMetadata({ params }: PageProps<"/courses/[id]">): Promise<Metadata> {
+  const { id } = await params;
+
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  const record = await getCourse(id);
+
+  if (!record) {
+    notFound();
+  }
+
+  return { title: record.title };
+}
 
 const COURSE_PARENTS = [{ href: "/courses", label: "Courses" }];
 

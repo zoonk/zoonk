@@ -45,9 +45,9 @@ function ChapterLessonList({ chapterId, lessons }: { chapterId: string; lessons:
         const isShared = lesson.homeChapterId !== chapterId || lesson._count.chapters > 1;
 
         return (
-          <li className="flex flex-wrap items-center gap-2" key={lesson.id}>
+          <li className="flex min-h-11 flex-wrap items-center gap-2" key={lesson.id}>
             <span className="text-muted-foreground w-6 tabular-nums">{position + 1}.</span>
-            <Link className="hover:underline" href={`/lessons/${lesson.id}`}>
+            <Link className="hit-area relative hover:underline" href={`/lessons/${lesson.id}`}>
               {lesson.title}
             </Link>
             {isShared ? <Badge variant="outline">Shared lesson</Badge> : null}

@@ -17,7 +17,21 @@ import { SkillLearners } from "./skill-learners";
 import { SkillOverview } from "./skill-overview";
 import { SkillUsage } from "./skill-usage";
 
-export const metadata: Metadata = { title: "Skill" };
+export async function generateMetadata({ params }: PageProps<"/skills/[id]">): Promise<Metadata> {
+  const { id } = await params;
+
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  const record = await getSkill(id);
+
+  if (!record) {
+    notFound();
+  }
+
+  return { title: record.name };
+}
 
 const SKILL_PARENTS = [{ href: "/skills", label: "Skills" }];
 

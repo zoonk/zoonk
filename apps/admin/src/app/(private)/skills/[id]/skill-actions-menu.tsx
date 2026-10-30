@@ -9,11 +9,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button } from "@zoonk/ui/components/button";
 import { DetailMenu } from "@zoonk/ui/components/detail";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
+import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { MergeIcon } from "lucide-react";
 import { useState } from "react";
 import { mergeSkillAction } from "./_actions/merge-skill";
@@ -57,9 +57,9 @@ export function SkillActionsMenu({ skillId }: { skillId: string }) {
 
             <AlertDialogFooter className="mt-6">
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <Button type="submit" variant="destructive">
+              <SubmitButton className="w-auto" variant="destructive">
                 Merge
-              </Button>
+              </SubmitButton>
             </AlertDialogFooter>
           </form>
         </AlertDialogContent>

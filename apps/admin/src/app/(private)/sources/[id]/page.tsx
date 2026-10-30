@@ -17,7 +17,21 @@ import { SourceCitations } from "./source-citations";
 import { SourcePrivateDetails } from "./source-private-details";
 import { SourcePublicDetails } from "./source-public-details";
 
-export const metadata: Metadata = { title: "Source" };
+export async function generateMetadata({ params }: PageProps<"/sources/[id]">): Promise<Metadata> {
+  const { id } = await params;
+
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  const record = await getSource(id);
+
+  if (!record) {
+    notFound();
+  }
+
+  return { title: record.visibility === "private" ? "Private upload" : record.title };
+}
 
 const SOURCE_PARENTS = [{ href: "/sources", label: "Sources" }];
 

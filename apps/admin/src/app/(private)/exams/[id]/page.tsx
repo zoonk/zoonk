@@ -14,7 +14,21 @@ import { FreshnessCommandForm } from "../../sources/freshness-command-form";
 import { ExamEditionHistory } from "./exam-edition-history";
 import { ExamOverview } from "./exam-overview";
 
-export const metadata: Metadata = { title: "Exam" };
+export async function generateMetadata({ params }: PageProps<"/exams/[id]">): Promise<Metadata> {
+  const { id } = await params;
+
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  const record = await getExam(id);
+
+  if (!record) {
+    notFound();
+  }
+
+  return { title: record.name };
+}
 
 const EXAM_PARENTS = [{ href: "/exams", label: "Exams" }];
 

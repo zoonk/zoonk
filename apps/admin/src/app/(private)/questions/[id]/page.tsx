@@ -15,7 +15,23 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { QuestionDetails } from "./question-details";
 
-export const metadata: Metadata = { title: "Question" };
+export async function generateMetadata({
+  params,
+}: PageProps<"/questions/[id]">): Promise<Metadata> {
+  const { id } = await params;
+
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  const record = await getLessonQuestion(id);
+
+  if (!record) {
+    notFound();
+  }
+
+  return { title: record.question };
+}
 
 const QUESTION_PARENTS = [{ href: "/questions", label: "Questions" }];
 

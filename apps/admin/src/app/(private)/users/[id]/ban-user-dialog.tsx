@@ -9,10 +9,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { Textarea } from "@zoonk/ui/components/textarea";
+import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { banUserAction } from "./_actions/ban-user";
 
 export function BanUserDialog({
@@ -58,9 +58,9 @@ export function BanUserDialog({
 
           <AlertDialogFooter className="mt-6">
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button type="submit" variant="destructive">
+            <SubmitButton className="w-auto" variant="destructive">
               Ban user
-            </Button>
+            </SubmitButton>
           </AlertDialogFooter>
         </form>
       </AlertDialogContent>

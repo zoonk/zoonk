@@ -8,6 +8,7 @@ import { AdminSectionSkeleton } from "@/components/admin-section";
 import { getUser } from "@/data/users/get-user";
 import { formatDate } from "@/lib/format";
 import { isUuid } from "@zoonk/utils/uuid";
+import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { UserAccount } from "./user-account";
@@ -20,6 +21,22 @@ import { UserLesson } from "./user-lesson";
 import { UserMemorySection } from "./user-memory";
 import { UserStudySessions } from "./user-study-sessions";
 import { UserSubscription } from "./user-subscription";
+
+export async function generateMetadata({ params }: PageProps<"/users/[id]">): Promise<Metadata> {
+  const { id } = await params;
+
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  const record = await getUser(id);
+
+  if (!record) {
+    notFound();
+  }
+
+  return { title: record.name || record.username || record.email };
+}
 
 const USER_PARENTS = [{ href: "/users", label: "Users" }];
 
