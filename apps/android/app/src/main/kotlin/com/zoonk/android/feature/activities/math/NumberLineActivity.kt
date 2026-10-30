@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
@@ -203,7 +204,7 @@ private fun NumberLinePlot(
             disabled = locked,
         ) {
             Canvas(Modifier.size(HALO * 2)) {
-                drawCircle(highlight.copy(alpha = SOFT))
+                drawCircle(highlight.copy(alpha = SOFT).compositeOver(colors.ring))
                 drawCircle(colors.ring, (DOT + DOT_RING).toPx())
                 drawCircle(highlight, (DOT - DOT_RING).toPx())
             }
