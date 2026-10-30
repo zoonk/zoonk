@@ -165,6 +165,11 @@ struct FormulaModelCanvas: View {
           .symbol(Circle().strokeBorder(lineWidth: 2.5))
           .symbolSize(260)
           .foregroundStyle(.success)
+          .annotation(position: .top, spacing: 4) {
+            Text(verbatim: expected.label)
+              .font(.caption.weight(.semibold).monospacedDigit())
+              .foregroundStyle(.success)
+          }
       }
     }
     .chartXScale(domain: view.axis.min...view.axis.max)
@@ -193,13 +198,18 @@ struct FormulaModelCanvas: View {
     .accessibilityHidden(true)
   }
 
-  private func expectedPoint(_ view: FormulaModelView) -> (x: Double, y: Double)? {
-    guard isChecked, case .numeric(_, let answer, _, _, _, let inputs, _) = context.check else {
+  /// Its label is written as the feedback writes it, with the digits the learner's answer needs.
+  private func expectedPoint(_ view: FormulaModelView) -> (x: Double, y: Double, label: String)? {
+    guard isChecked,
+      case .numeric(_, let answer, let tolerance, let unit, _, let inputs, _) = context.check
+    else {
       return nil
     }
 
     let x = inputs?.first { $0.name == view.axis.name }?.value ?? view.axis.initial
-    return (x, answer)
+    let digits = exactFractionDigitsFor(
+      expected: answer, tolerance: tolerance, value: context.answer?.number)
+    return (x, answer, ActivityNumberFormat.format(answer, unit: unit, digits: digits))
   }
 
   private func legend(_ kind: FormulaModelView.BaselineKind) -> some View {
