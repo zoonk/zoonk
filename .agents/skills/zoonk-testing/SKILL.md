@@ -46,6 +46,8 @@ Do not write React component unit tests or add tests for `admin`, `evals`, or `b
 
 Use the owning package's scripts and isolated database from the [development guide](../../guides/development.md). Vitest files in one run still share rows; a fresh run does not replace test-owned fixtures. Confirm setup/reset commands target the intended disposable database.
 
+A timed-out test's leftover work keeps running and can move its file's shared fake clock, so a wrong date right after a timeout in the same file means rerunning the file alone before investigating.
+
 Keep each E2E test well under 20 seconds locally: CI splits work by test, so one long test sets its shard's time. Test only what the assertion needs (a database simulation names its asserted `rules`; use fake timers, not real waits).
 
 E2E-specific launch and waiting rules are in the [E2E reference](references/e2e.md).
