@@ -215,15 +215,15 @@ function toSkillRef(skill: { description: string; id: string; name: string }) {
 async function goalWaitingOn({
   courseId,
   lessons = 2,
-  skillId,
+  skillIds,
 }: {
   courseId: string;
   lessons?: number;
-  skillId: string;
+  skillIds: string[];
 }) {
-  const [user, skill] = await Promise.all([
+  const [user, skills] = await Promise.all([
     userFixture(),
-    prisma.skill.findUniqueOrThrow({ where: { id: skillId } }),
+    prisma.skill.findMany({ where: { id: { in: skillIds } } }),
   ]);
 
   const goal = await goalFixture({
@@ -243,17 +243,15 @@ async function goalWaitingOn({
     goalId: goal.id,
     graph: {
       phases: [{ milestone: null, name: "Viagens" }],
-      skills: [
-        {
-          area: "Italiano",
-          courseIds: [courseId],
-          lessons,
-          name: skill.name,
-          phase: 0,
-          skillId,
-          weight: null,
-        },
-      ],
+      skills: skillIds.map((skillId) => ({
+        area: "Italiano",
+        courseIds: [courseId],
+        lessons,
+        name: skills.find((skill) => skill.id === skillId)?.name ?? "",
+        phase: 0,
+        skillId,
+        weight: null,
+      })),
     },
   });
 
@@ -281,8 +279,24 @@ async function addLesson(chapterId: string) {
   await chapterLessonFixture({ chapterId, lessonId: lesson.id, position: 0 });
 }
 
-function sortIds(ids: readonly (string | null)[]) {
-  return ids.toSorted((first, second) => (first ?? "").localeCompare(second ?? ""));
+async function readBand(courseId: string) {
+  const placements = await prisma.courseChapter.findMany({
+    include: {
+      chapter: {
+        select: {
+          lessons: { orderBy: { position: "asc" }, select: { lessonId: true } },
+          title: true,
+        },
+      },
+    },
+    orderBy: { position: "asc" },
+    where: { courseId },
+  });
+
+  return placements.map(({ chapter }) => ({
+    lessonIds: chapter.lessons.map((lesson) => lesson.lessonId),
+    title: chapter.title,
+  }));
 }
 
 function teachNothing(params: TeachingChaptersParams) {
@@ -389,7 +403,7 @@ describe(courseOutlineWorkflow, () => {
         italianSkill("Hospedar-se em um hotel"),
       ]);
 
-      const goal = await goalWaitingOn({ courseId: course.id, skillId: skill.id });
+      const goal = await goalWaitingOn({ courseId: course.id, skillIds: [skill.id] });
 
       vi.mocked(findTeachingChapters).mockResolvedValue(
         taskResult([{ after: 1, chapter: 1, key: skill.id }]),
@@ -464,7 +478,7 @@ describe(courseOutlineWorkflow, () => {
 
       const learners = await Promise.all(
         skills.map(async (skill) => ({
-          goal: await goalWaitingOn({ courseId: course.id, lessons: 20, skillId: skill.id }),
+          goal: await goalWaitingOn({ courseId: course.id, lessons: 20, skillIds: [skill.id] }),
           skill,
         })),
       );
@@ -511,20 +525,9 @@ describe(courseOutlineWorkflow, () => {
         await mapOnto(learner);
       }
 
-      const placements = await prisma.courseChapter.findMany({
-        include: {
-          chapter: {
-            select: {
-              lessons: { orderBy: { position: "asc" }, select: { lessonId: true } },
-              title: true,
-            },
-          },
-        },
-        orderBy: { position: "asc" },
-        where: { courseId: course.id },
-      });
+      const band = await readBand(course.id);
 
-      expect(placements.map((placement) => placement.chapter.title)).toStrictEqual([
+      expect(band.map((chapter) => chapter.title)).toStrictEqual([
         "Reserva e hospedagem",
         ...[1, 2, 3, 4].map((count) => `Mais ${skills[0]?.name} ${count}`),
       ]);
@@ -538,16 +541,124 @@ describe(courseOutlineWorkflow, () => {
         ),
       ]);
 
-      const bandLessons = placements.flatMap((placement) =>
-        placement.chapter.lessons.map((lesson) => lesson.lessonId),
+      expect(items.map((goalItems) => goalItems.map((item) => item.lessonId))).toStrictEqual(
+        learners.map(() => band.flatMap((chapter) => chapter.lessonIds)),
       );
-
-      expect(
-        items.map((goalItems) => sortIds(goalItems.map((item) => item.lessonId))),
-      ).toStrictEqual(learners.map(() => sortIds(bandLessons)));
 
       expect(asks).toStrictEqual([[], [], []]);
       expect(generateCourseOutline).toHaveBeenCalledTimes(4);
+    });
+
+    it("keeps each topic's chapters in order when next chapters of two topics land in the same week", async () => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(new Date("2026-10-30T12:00:00Z"));
+
+      onTestFinished(() => {
+        vi.useRealTimers();
+      });
+
+      const course = await courseFixture({
+        language: "pt",
+        outlineStatus: "completed",
+        targetLanguage: "it",
+        title: "Italiano",
+      });
+
+      const [, lodging, food] = await Promise.all([
+        writtenBand({
+          chapters: [
+            {
+              lessons: [
+                "Datas e hóspedes",
+                "Disponibilidade e reserva",
+                "Condições da hospedagem",
+                "Chegada e check-in",
+                "Pedidos durante a estadia",
+              ],
+              title: "Reserva e hospedagem",
+            },
+            {
+              lessons: [
+                "Mesa e cardápio",
+                "Pedir pratos",
+                "Restrições alimentares",
+                "Bebidas",
+                "Pedir a conta",
+              ],
+              title: "No restaurante",
+            },
+          ],
+          courseId: course.id,
+        }),
+        italianSkill("Hospedar-se em um hotel"),
+        italianSkill("Pedir comida em um restaurante"),
+      ]);
+
+      const topics = new Map([
+        [lodging.id, "Reserva e hospedagem"],
+        [food.id, "No restaurante"],
+      ]);
+
+      const goal = await goalWaitingOn({
+        courseId: course.id,
+        lessons: 20,
+        skillIds: [lodging.id, food.id],
+      });
+
+      vi.mocked(findTeachingChapters).mockImplementation(async (params) => {
+        const answer = ({ key, taughtIn = [] }: (typeof params.skills)[number]) => {
+          const topic = topics.get(key) ?? "";
+
+          const chapter =
+            params.chapters.findIndex(
+              (item, index) => item.title.startsWith(topic) && !taughtIn.includes(index + 1),
+            ) + 1 || null;
+
+          return { after: chapter ?? taughtIn.at(-1) ?? 0, chapter, key };
+        };
+
+        return taskResult(params.skills.map((skill) => answer(skill)));
+      });
+
+      vi.mocked(generateCourseOutline).mockImplementation(async (params) =>
+        outlineResult({
+          chapters: (params.extendSkills ?? []).map((skill) =>
+            interviewChapter(`${skill.chapters[0]?.title} ${skill.chapters.length + 1}`, [
+              skill.key,
+            ]),
+          ),
+          uncoveredSkillKeys: [],
+        }),
+      );
+
+      await courseOutlineWorkflow({
+        bands: [{ level: "beginner", skills: [toSkillRef(lodging), toSkillRef(food)] }],
+        courseId: course.id,
+        scope: ITALIAN_SCOPE,
+      });
+
+      await askForNextChapters(goal.id);
+
+      const [band, items] = await Promise.all([readBand(course.id), lessonItems(goal.id)]);
+
+      expect(band.map((chapter) => chapter.title)).toStrictEqual(
+        [...topics.values()].flatMap((topic) => [
+          topic,
+          ...[2, 3, 4, 5].map((count) => `${topic} ${count}`),
+        ]),
+      );
+
+      const queueOf = (skillId: string) =>
+        items.filter((item) => item.skillId === skillId).map((item) => item.lessonId);
+
+      const curriculumOf = (skillId: string) =>
+        band
+          .filter((chapter) => chapter.title.startsWith(topics.get(skillId) ?? ""))
+          .flatMap((chapter) => chapter.lessonIds);
+
+      expect([lodging.id, food.id].map((skillId) => queueOf(skillId))).toStrictEqual(
+        [lodging.id, food.id].map((skillId) => curriculumOf(skillId)),
+      );
     });
 
     it("offers the band check only chapters with lessons a goal can study", async () => {
@@ -873,8 +984,8 @@ describe(courseOutlineWorkflow, () => {
       ]);
 
       const [phoneGoal, callGoal] = await Promise.all([
-        goalWaitingOn({ courseId: course.id, skillId: phone.id }),
-        goalWaitingOn({ courseId: course.id, skillId: call.id }),
+        goalWaitingOn({ courseId: course.id, skillIds: [phone.id] }),
+        goalWaitingOn({ courseId: course.id, skillIds: [call.id] }),
       ]);
 
       const written = "Ligações do dia a dia";

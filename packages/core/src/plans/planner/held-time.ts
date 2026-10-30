@@ -18,12 +18,14 @@ export function sumMinutes(held: readonly Held[]): number {
 export function listHeldTime({
   claimed,
   days,
+  floor,
   free,
   laid,
   parts,
 }: {
   claimed: Map<number, number>;
   days: readonly PlanDay[];
+  floor?: Date;
   free: (date: Date) => number;
   laid: readonly ScheduledUnit[];
   parts: readonly number[];
@@ -35,8 +37,9 @@ export function listHeldTime({
       return [];
     }
 
-    const floor = laid[index - 1]?.date ?? days[0]?.date ?? part.date;
-    const back = days.filter((day) => day.date >= floor && day.date <= part.date).toReversed();
+    const previous = laid[index - 1]?.date ?? days[0]?.date ?? part.date;
+    const from = floor && floor > previous ? floor : previous;
+    const back = days.filter((day) => day.date >= from && day.date <= part.date).toReversed();
 
     const taken = back.reduce<{ held: Held[]; left: number }>(
       (state, day) => {

@@ -3,6 +3,7 @@ import { listBegunSkillIds } from "./carried-bases";
 import { type LandedUnits } from "./landed-lessons";
 import { isStandIn } from "./plan-item-rules";
 import { type ScheduledUnit } from "./schedule-units";
+import { listThisWeekItems } from "./this-week-items";
 
 export function getBaseDays({
   input,
@@ -39,6 +40,27 @@ export function getBaseDays({
 
       return days.length > 0 ? [[skillId, new Date(Math.max(...days))] as const] : [];
     }),
+  );
+}
+
+export function getLastKeptLessonDays({
+  input,
+  keeps,
+}: {
+  input: BuildPlanInput;
+  keeps: boolean;
+}): Map<string, Date> {
+  const kept = listThisWeekItems({ input, keepsRest: keeps }).flatMap((item) =>
+    item.lessonId && item.skillId && item.scheduledFor
+      ? [{ date: item.scheduledFor.getTime(), skillId: item.skillId }]
+      : [],
+  );
+
+  return new Map(
+    [...Map.groupBy(kept, (entry) => entry.skillId)].map(([skillId, entries]) => [
+      skillId,
+      new Date(Math.max(...entries.map((entry) => entry.date))),
+    ]),
   );
 }
 

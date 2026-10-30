@@ -1,7 +1,7 @@
 import { type BuildPlanInput } from "./build-plan";
 import { type Held, findHeld, listHeldFrom, listHeldTime, sumByDay, sumMinutes } from "./held-time";
 import { getOneDayStudy } from "./interval-study-minutes";
-import { getBaseDays, getStandInDays } from "./landed-days";
+import { getBaseDays, getLastKeptLessonDays, getStandInDays } from "./landed-days";
 import { type LandedUnits, withoutWrittenStandIns } from "./landed-lessons";
 import { isStandIn, isUnwrittenLesson } from "./plan-item-rules";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
@@ -245,6 +245,7 @@ export function putLandedLessons({
   const other = sumByDay(others);
   const otherOn = (date: Date) => other.get(date.getTime()) ?? 0;
   const claimed = new Map<number, number>();
+  const lastDays = getLastKeptLessonDays({ input, keeps: kept !== null });
 
   const heldBySkill = new Map(
     [...landed.keys()].map((skillId) => [
@@ -252,6 +253,7 @@ export function putLandedLessons({
       listHeldTime({
         claimed,
         days,
+        floor: lastDays.get(skillId),
         free: (date) => capacityOn(date) - otherOn(date),
         laid,
         parts: laid.flatMap((unit, index) =>
