@@ -98,6 +98,8 @@ import com.zoonk.android.feature.subscription.GooglePlayBilling
 import com.zoonk.android.feature.subscription.LiveSubscriptionApi
 import com.zoonk.android.feature.subscription.NoPlayBilling
 import com.zoonk.android.feature.subscription.SubscriptionStore
+import com.zoonk.android.feature.testout.LiveTestOutApi
+import com.zoonk.android.feature.testout.TestOutStore
 import com.zoonk.android.feature.today.LiveTodayApi
 import com.zoonk.android.feature.today.TodayStore
 import com.zoonk.android.feature.tutor.LiveTutorApi
@@ -264,6 +266,7 @@ class AppContainer private constructor(
     val mistakes = MistakesStore(LiveMistakesApi(api), cache, timeZone)
     val checkpoints = CheckpointStore(LiveCheckpointApi(api), cache, timeZone)
     val challenges = ChallengeStore(LiveChallengeApi(api), cache, timeZone)
+    val testOuts = TestOutStore(LiveTestOutApi(api), cache, drafts, timeZone)
 
     val buddy = BuddyStore(LiveBuddyApi(api), cache, timeZone, learnerSummary.summary, scope)
 

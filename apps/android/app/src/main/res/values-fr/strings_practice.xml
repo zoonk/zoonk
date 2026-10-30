@@ -5,6 +5,7 @@
   "practice_check": "f265d5e786dd2788516f70ee64d3c56eff5c075ac530793a0cbdc30c750064c1",
   "practice_close": "7f387ca519336a612ad0d7c69011de45440b6ef0855425b484e8a49a304d8a8b",
   "practice_continue": "eba33facb75d6f337aa804f2727e0de04f44ced7aec16f13aff415a53086cbb6",
+  "practice_count": "7b478e57fc27e593aa2cae52f55e8f4bdcb5a935adbafd620c675d8d8e8b689b",
   "practice_done_review": "c0ed4c305a02a183f4709657c03c947ba2a86c0e94c0722d2d8faa18ea5f2125",
   "practice_done_title": "48dc429c4408e302cbb06c4240e84313c9ffd2df5603b1cc89380bde44e62c3a",
   "practice_finish": "2a0892e4f4042c35a8ded465e06f28b1ed4a938c3ae1648448b446338137bb41",
@@ -15,6 +16,7 @@
   "practice_net_right": "e813ce58a66a6446aea5559704f3cd7829c4193ee096e9226bb7be6cc821e8dc",
   "practice_net_tally": "58cb3dc280800b6e8c9e7794660d2121a471b250d09b2fbc04596d8affaaad48",
   "practice_net_wrong": "54abbc1074fca4def04c4a57790d8458c7d3f9e1382917c7f166ef8387d044e6",
+  "practice_next": "86c39ce1950071426052c8e23dcba294c51126db148d6b742686e107729e4d11",
   "practice_not_found_description": "f8ce09d6044bbad84ac2f4fa00e2bc3a56789468ab4fb4076cdde1b499a11793",
   "practice_not_found_title": "0d06b01f3ae99ed84d59be4ecc8d1278d42863236f9f44a29d3d8a73570d168e",
   "practice_pause_failed": "7874ea85ac2ae2794f1cee7ac093ad9a6443f6286747acc7ee4eebeb409a9289",
@@ -35,6 +37,10 @@
     <string name="practice_check">Vérifier</string>
     <string name="practice_continue">Continuer</string>
     <string name="practice_finish">Terminer</string>
+    <!-- Goes to the next question of a test graded only at its end. -->
+    <string name="practice_next">Suivant</string>
+    <!-- Where the learner is in a test, such as "3 of 10". -->
+    <string name="practice_count">%1$d sur %2$d</string>
     <string name="practice_try_again">Réessayer</string>
     <string name="practice_finish_ready_title">Plus de questions à répondre</string>
     <string name="practice_finish_ready_detail">Termine pour voir ton résultat.</string>

@@ -4,6 +4,10 @@
     <string name="practice_check">Check</string>
     <string name="practice_continue">Continue</string>
     <string name="practice_finish">Finish</string>
+    <!-- Goes to the next question of a test graded only at its end. -->
+    <string name="practice_next">Next</string>
+    <!-- Where the learner is in a test, such as "3 of 10". -->
+    <string name="practice_count">%1$d of %2$d</string>
     <string name="practice_try_again">Try again</string>
     <string name="practice_finish_ready_title">Nothing left to answer</string>
     <string name="practice_finish_ready_detail">Finish to see how it went.</string>

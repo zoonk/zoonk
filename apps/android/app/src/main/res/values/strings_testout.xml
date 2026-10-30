@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A chapter test-out's title. %1$s is the chapter's name. -->
+    <string name="testout_title">Test out: %1$s</string>
+    <!-- Stands in for a chapter's name while it isn't known. -->
+    <string name="testout_this_chapter">This chapter</string>
+    <string name="testout_intro_title">Already know this?</string>
+    <string name="testout_intro_detail">A few questions on this chapter. Do well, and your plan skips what you already know.</string>
+    <string name="testout_start">Start the test</string>
+    <string name="testout_starting">Starting…</string>
+    <string name="testout_see_plus">See Plus</string>
+
+    <string name="testout_writing">Writing your questions</string>
+    <string name="testout_writing_questions">Writing questions on this chapter</string>
+    <string name="testout_writing_line">Picking the skills to ask about…</string>
+    <string name="testout_writing_title">Getting your test ready</string>
+    <string name="testout_writing_detail">We\'re writing a few questions on this chapter. The test opens here when they\'re ready.</string>
+
+    <!-- A chapter test-out's rule above each question. %1$d is the share of right answers that passes, such as 80. -->
+    <string name="testout_rule">%1$d%% right skips the chapter. No feedback until the end.</string>
+    <string name="testout_aside_title">What a pass skips</string>
+    <plurals name="testout_lessons_left">
+        <item quantity="one">%d lesson left</item>
+        <item quantity="other">%d lessons left</item>
+    </plurals>
+
+    <string name="testout_passed">You already know this</string>
+    <string name="testout_not_passed">Not yet, and that\'s fine</string>
+    <string name="testout_not_passed_detail">The chapter stays in your plan, and your answers help it start at the right level.</string>
+    <!-- The learner passed this chapter\'s test. "It" is the chapter. -->
+    <string name="testout_already_skipped">Your plan already skips it.</string>
+    <!-- The learner passed this chapter\'s test, so these lessons left the plan. -->
+    <plurals name="testout_lessons_off">
+        <item quantity="one">%d lesson is off your plan.</item>
+        <item quantity="other">%d lessons are off your plan.</item>
+    </plurals>
+    <string name="testout_lessons_back">The lessons are back in your plan.</string>
+    <string name="testout_continue">Continue</string>
+    <string name="testout_undo">Undo</string>
+    <string name="testout_undo_failed">That didn\'t save. Try again.</string>
+</resources>

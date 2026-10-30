@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "testout_already_skipped": "3c32cb7b2321b50410fbd6ff8557bfbf7f5f9396d32e6724268bfe8a510fd7a1",
+  "testout_aside_title": "f454566a075e8a72b576f63d280528d052c8173e80bd7c672bd7fa2296702bbb",
+  "testout_continue": "100b49ed6044b4460e0759324f8caad37d1282c0b41a129f63263f892f650950",
+  "testout_intro_detail": "b960bb9a2a07935b4888956be0b2067ac0bdf781f6a832dbdcb3769f558e49b4",
+  "testout_intro_title": "5aa8d14696cc085ec5904a5a135e0e4af249ba3aeb02349d9f2050cc6363459b",
+  "testout_lessons_back": "7d00c62e34e4c8d7c185c1d0aa82bf2064746326da83a66e715a0041afe39fe0",
+  "testout_lessons_left": "99de0a8d350fe0b974896b0b0ea14e7bf39424f164ddadf4a57ebd7f97fd25d3",
+  "testout_lessons_off": "b037e2180bd488b463520584d06a53749a8f7b098555927ae5dbfb10b4032bfb",
+  "testout_not_passed": "c4cf2d7260ac893511a9e476aa0e2b84c99b9bef6d7d0bb8e1a8d861ccd17e81",
+  "testout_not_passed_detail": "923db2c70e6d409a8f0b9d5872cb99df5bacd069c259e6fec2527ba13ac66091",
+  "testout_passed": "8c961aafc641fc0f543e919d7694322e2c56469f072d2e2199016aa34338d70d",
+  "testout_rule": "aa107aa479717526550bba6da1bba1594fdc3979b22b6b828eb2ac987ebba5ff",
+  "testout_see_plus": "a92c00b6c4a737f605bd693530582e0bb0b1a4580a1825b962190b74848d921b",
+  "testout_start": "615e705d2e98e312b9f5fc90d8950d1aab1b1d279374e03a8bef2d9bfc053513",
+  "testout_starting": "06f5a386e6e137208eed21182c922ad2511735e471c507882ebf7276b05496e8",
+  "testout_this_chapter": "6aa4d4806b742d267660eb3f51ce4162485b8e56a981e90033d7ed923f51c24d",
+  "testout_title": "0eeae5b4a56d5ebca6c4426102c91e3eb249c77cb1a933e37d1ea2b83a262c6d",
+  "testout_undo": "1afd9fa014203e006c10b8ec85da2a0f501a7dc49854e5cd057661bfff452766",
+  "testout_undo_failed": "121d7b936ac4dd4f067dc85164f80a1262b35ac19f2879cdc378948ce091888e",
+  "testout_writing": "4dba671eb4fb452150bb727a73b85a1a160cf17e6a777fe1a09fc4c4b2a2f462",
+  "testout_writing_detail": "82bb57d5624ad9572a20624cf522404e165686d287b725c9231dab708aba87d8",
+  "testout_writing_line": "1a920629abd85a10f708f13731626e1ec16c34526989632af995aaf911295d9d",
+  "testout_writing_questions": "7e67700fa38ed98979fbcc4d2a8e7a8efe5c411fc401c06eedaaca3d11c1f9d7",
+  "testout_writing_title": "e398000c8a8108e9965f627e25a2d39f2364cf993fe07edf4b5da6385fbb3708"
+}
+-->
+<resources>
+    <!-- A chapter test-out's title. %1$s is the chapter's name. -->
+    <string name="testout_title">Test de connaissances : %1$s</string>
+    <!-- Stands in for a chapter's name while it isn't known. -->
+    <string name="testout_this_chapter">Ce chapitre</string>
+    <string name="testout_intro_title">Tu connais déjà ce contenu ?</string>
+    <string name="testout_intro_detail">Quelques questions sur ce chapitre. Si tu réussis, ton plan passe ce que tu connais déjà.</string>
+    <string name="testout_start">Commencer le test</string>
+    <string name="testout_starting">Démarrage…</string>
+    <string name="testout_see_plus">Découvrir Plus</string>
+    <string name="testout_writing">Préparation de tes questions</string>
+    <string name="testout_writing_questions">Préparation de questions sur ce chapitre</string>
+    <string name="testout_writing_line">Choix des compétences évaluées…</string>
+    <string name="testout_writing_title">Préparation de ton test</string>
+    <string name="testout_writing_detail">Nous préparons quelques questions sur ce chapitre. Le test s’ouvrira ici dès qu’elles seront prêtes.</string>
+    <!-- A chapter test-out's rule above each question. %1$d is the share of right answers that passes, such as 80. -->
+    <string name="testout_rule">Avec %1$d %% de bonnes réponses, tu passes le chapitre. Pas de correction avant la fin.</string>
+    <string name="testout_aside_title">Ce que tu sautes si tu réussis</string>
+    <plurals name="testout_lessons_left">
+        <item quantity="one">%d leçon restante</item>
+        <item quantity="many">%d leçons restantes</item>
+        <item quantity="other">%d leçons restantes</item>
+    </plurals>
+    <string name="testout_passed">Tu connais déjà ce contenu</string>
+    <string name="testout_not_passed">Pas encore, et ce n’est pas grave</string>
+    <string name="testout_not_passed_detail">Le chapitre reste dans ton plan et tes réponses permettent de commencer au bon niveau.</string>
+    <!-- The learner passed this chapter\'s test. "It" is the chapter. -->
+    <string name="testout_already_skipped">Ton plan l’écarte déjà.</string>
+    <!-- The learner passed this chapter\'s test, so these lessons left the plan. -->
+    <plurals name="testout_lessons_off">
+        <item quantity="one">%d leçon a été retirée de ton plan.</item>
+        <item quantity="many">%d leçons ont été retirées de ton plan.</item>
+        <item quantity="other">%d leçons ont été retirées de ton plan.</item>
+    </plurals>
+    <string name="testout_lessons_back">Les leçons sont de retour dans ton plan.</string>
+    <string name="testout_continue">Continuer</string>
+    <string name="testout_undo">Annuler</string>
+    <string name="testout_undo_failed">L’enregistrement a échoué. Réessaie.</string>
+</resources>
