@@ -90,50 +90,42 @@ struct LoginView: View {
 
         AccountFailureMessage(failure: session.failure)
 
-        VStack(spacing: 8) {
-          Text(
-            "By continuing, you agree to the Zoonk Terms of Service and Privacy Policy.",
-            tableName: "Account",
-            comment: "Legal agreement shown below sign-in methods"
-          )
-          .font(.footnote)
-          .foregroundStyle(.secondary)
-          .multilineTextAlignment(.center)
-
-          HStack(spacing: 16) {
-            Link(
-              destination: AccountLinks.terms,
-              label: {
-                Text(
-                  "Terms of Service",
-                  tableName: "Account",
-                  comment: "Link to the terms of service"
-                )
-                .underline()
-              }
-            )
-            .frame(minHeight: 44)
-
-            Link(
-              destination: AccountLinks.privacy,
-              label: {
-                Text(
-                  "Privacy Policy",
-                  tableName: "Account",
-                  comment: "Link to the privacy policy"
-                )
-                .underline()
-              }
-            )
-            .frame(minHeight: 44)
-          }
-          .font(.footnote)
-        }
+        Text(
+          "By continuing, you agree to the Zoonk \(termsLink) and \(privacyLink).",
+          tableName: "Account",
+          comment:
+            "Legal agreement below the sign-in methods; the arguments are the links to the terms of service and the privacy policy"
+        )
+        .font(.footnote)
+        .foregroundStyle(.secondary)
+        .multilineTextAlignment(.center)
       }
       .frame(maxWidth: 480)
       .padding(24)
       .frame(maxWidth: .infinity)
     }
+  }
+
+  private var termsLink: AttributedString {
+    linked(
+      AttributedString(
+        localized: "Terms of Service", table: "Account", comment: "Link to the terms of service"),
+      to: AccountLinks.terms)
+  }
+
+  private var privacyLink: AttributedString {
+    linked(
+      AttributedString(
+        localized: "Privacy Policy", table: "Account", comment: "Link to the privacy policy"),
+      to: AccountLinks.privacy)
+  }
+
+  /// The tint is ink, so a link inside a sentence is told apart by its underline.
+  private func linked(_ title: AttributedString, to url: URL) -> AttributedString {
+    var link = title
+    link.link = url
+    link.underlineStyle = .single
+    return link
   }
 }
 
