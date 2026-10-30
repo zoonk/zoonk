@@ -4,6 +4,7 @@ import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { type Page, expect, test } from "./fixtures";
 import { stopRuns } from "./generation-run";
+import { expectHydrated } from "./hydration";
 
 type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
 
@@ -59,7 +60,10 @@ test.describe("Sending a goal from another page", () => {
     await goalUnderstandingFixture({ goal, result: QUANTUM, userId: await ensureGuest(page) });
 
     await page.goto("/courses");
-    await page.getByRole("textbox", { name: "I want to" }).fill(goal);
+    const box = page.getByRole("textbox", { name: "I want to" });
+    // Words typed before hydration become the box's text, which Next keeps in the hidden /courses.
+    await expectHydrated(box);
+    await box.fill(goal);
     await page.getByRole("button", { name: "Build my plan" }).click();
 
     await expect(page).toHaveURL(DRAFT_URL);
