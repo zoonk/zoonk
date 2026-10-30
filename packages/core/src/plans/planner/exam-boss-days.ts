@@ -14,14 +14,14 @@ export type ExamBossDays = ReadonlyMap<
 >;
 
 function getLastTeachingDay({
-  before,
   days,
+  through,
 }: {
-  before: string;
   days: ReadonlyMap<string, number> | undefined;
+  through: string;
 }): Date | undefined {
   const last = [...(days?.keys() ?? [])]
-    .filter((day) => day < before)
+    .filter((day) => day <= through)
     .toSorted()
     .at(-1);
 
@@ -80,9 +80,9 @@ export function placeExamBosses({
 
   const learn = plan.items.filter((item) => isBossTeachingItem(item) && item.scheduledFor);
 
-  const endOf = (item: PlannedItem, studyDays: readonly string[]) =>
+  const endOf = (item: PlannedItem, studyDays: readonly string[], phaseEnd: string) =>
     (exam && studyDays[0] && studyDays[0] < exam
-      ? getLastTeachingDay({ before: exam, days: built.lessonRawMinutes.get(item.key) })
+      ? getLastTeachingDay({ days: built.lessonRawMinutes.get(item.key), through: phaseEnd })
       : undefined) ??
     built.teachingEnds.get(item.key) ??
     item.scheduledFor;
@@ -116,9 +116,9 @@ export function placeExamBosses({
     return leading.length > 0 ? leading : listTested({ afterDay: true, day, key, phase });
   };
 
-  const lastEnd = (items: readonly PlannedItem[], studyDays: readonly string[]) =>
+  const lastEnd = (items: readonly PlannedItem[], studyDays: readonly string[], phaseEnd: string) =>
     items.reduce<string | null>((latest, item) => {
-      const end = endOf(item, studyDays);
+      const end = endOf(item, studyDays, phaseEnd);
       const day = end ? toIsoDate(end) : null;
       return day && (!latest || day > latest) ? day : latest;
     }, null);
@@ -136,7 +136,7 @@ export function placeExamBosses({
     const { phase } = candidate;
     const own = listOwnTeaching(phase);
     const studyDays = listStudyDays(candidate.key);
-    const lastTaught = lastEnd(own, studyDays);
+    const lastTaught = lastEnd(own, studyDays, candidate.date);
 
     if (!lastTaught) {
       return placeAfterWindow(candidate);
@@ -155,10 +155,10 @@ export function placeExamBosses({
     const { key, phase } = candidate;
     const anchor = candidate.date;
     const studyDays = listStudyDays(key);
-    const atAnchor = lastEnd(listOn({ date: anchor, key, phase }), studyDays);
+    const atAnchor = lastEnd(listOn({ date: anchor, key, phase }), studyDays, anchor);
 
     const ends = learn
-      .map((item) => endOf(item, studyDays))
+      .map((item) => endOf(item, studyDays, anchor))
       .filter((end): end is Date => end !== undefined && end !== null);
 
     const changeDays = [
@@ -181,7 +181,7 @@ export function placeExamBosses({
     for (let day: string | undefined = date; day;) {
       const on: string = day;
       const tested = listOn({ date: on, key, phase });
-      const end = lastEnd(tested, studyDays);
+      const end = lastEnd(tested, studyDays, anchor);
       const keys = tested.map((item) => item.key);
 
       if (tested.length > 0 && end !== null && end < on) {

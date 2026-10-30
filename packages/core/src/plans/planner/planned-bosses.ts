@@ -2,13 +2,7 @@ import { logError } from "@zoonk/utils/logger";
 import { type BossBankFacts } from "../../checkpoints/checkpoint-minutes";
 import { type ItemSkillRows } from "../../learner/_utils/goal-plan-projection";
 import { type BossMinutes } from "./boss-minutes";
-import {
-  type BossSizes,
-  readBossSizes,
-  sizeBosses,
-  toBossMinutes,
-  withBossSizes,
-} from "./boss-sizes";
+import { type BossSizes, readBossSizes, sizeBosses, toBossMinutes } from "./boss-sizes";
 import { type BuildPlanInput } from "./build-plan";
 import { listCheckpointOverflow } from "./checkpoint-overflow";
 import { placeExamBosses } from "./exam-boss-days";
@@ -56,20 +50,30 @@ export function settlePlannedBosses<T extends SettlingPlan>({
   const facts = input.bossFacts;
   const sizedBefore = input.bossMinutes ?? new Map();
 
-  if (input.goal.kind === "exam" && input.goal.targetDate !== null) {
+  const buildWithMinutes = (
+    minutes: BossMinutes,
+  ): T & { checkpointOverflow?: PlanSettings["checkpointOverflow"] } => {
+    const given = { ...input, bossMinutes: minutes };
+
+    if (given.goal.kind !== "exam" || given.goal.targetDate === null) {
+      return build(given);
+    }
+
     const place = (on: T) =>
-      placeExamBosses({ built: on, input, rows: facts?.rows, survivors: facts?.survivors });
+      placeExamBosses({ built: on, input: given, rows: facts?.rows, survivors: facts?.survivors });
 
     const size = (taught: T, items: readonly PlannedItem[]) =>
       facts
-        ? toBossMinutes(sizeBosses({ facts, input, items, skillLessons: taught.skillLessons }))
-        : sizedBefore;
+        ? toBossMinutes(
+            sizeBosses({ facts, input: given, items, skillLessons: taught.skillLessons }),
+          )
+        : minutes;
 
-    return withBossSizes({ built: settleExamBosses({ build, input, place, size }), facts, input });
-  }
+    return settleExamBosses({ build, input: given, place, size });
+  };
 
   let minutes: BossMinutes = sizedBefore;
-  let built = build({ ...input, bossMinutes: minutes });
+  let built = buildWithMinutes(minutes);
 
   for (let pass = 1; ; pass += 1) {
     const { minutes: sized, sizes } = readBossSizes({ built, facts, input, minutes });
@@ -87,12 +91,14 @@ export function settlePlannedBosses<T extends SettlingPlan>({
       return {
         bossSizes: sizes,
         ...built,
-        checkpointOverflow: listCheckpointOverflow({ bossMinutes: minutes, built, input }),
+        checkpointOverflow:
+          built.checkpointOverflow ??
+          listCheckpointOverflow({ bossMinutes: minutes, built, input }),
         ...(!settled && { bossFallback: { iterations: pass, reason: "unsettled" as const } }),
       };
     }
 
     minutes = sized;
-    built = build({ ...input, bossMinutes: minutes });
+    built = buildWithMinutes(minutes);
   }
 }

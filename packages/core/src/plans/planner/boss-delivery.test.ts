@@ -64,6 +64,7 @@ function listBossTeaching(input: BuildPlanInput, plan: ReturnType<typeof buildPl
     .filter((item) => item.kind === "boss")
     .map((boss) => {
       const asked = new Set(getBossSkillIds({ ...saved, boss }));
+      const phaseEnd = plan.phases[boss.phase]!.endDate!;
 
       const ends = saved.items
         .filter(
@@ -73,7 +74,7 @@ function listBossTeaching(input: BuildPlanInput, plan: ReturnType<typeof buildPl
             (saved.itemSkillIds.get(item.id) ?? []).some((skillId) => asked.has(skillId)),
         )
         .flatMap((item) => [...(plan.lessonRawMinutes.get(item.key)?.keys() ?? [])])
-        .filter((day) => day < toIsoDate(input.goal.targetDate!))
+        .filter((day) => day <= phaseEnd)
         .toSorted();
 
       return { boss, end: ends.at(-1) ?? null };
@@ -96,6 +97,12 @@ describe("a phase's challenge in a plan that goes on after its exam", () => {
     expect(bosses.every((boss) => boss.key === `boss:${boss.phase}`)).toBe(true);
     expect(bosses.some((boss) => boss.phase === afterExam)).toBe(false);
     expect(teaching.every(({ boss, end }) => end === null || end < dayOf(boss))).toBe(true);
+
+    for (const boss of bosses) {
+      const phaseEnd = plan.phases[boss.phase]!.endDate!;
+      const nextStudyDay = plan.studyDays.find((day) => day > phaseEnd) ?? phaseEnd;
+      expect(Date.parse(dayOf(boss))).toBeLessThanOrEqual(Date.parse(nextStudyDay));
+    }
   });
 
   it("keeps a challenge with no study day left before the exam beside its lessons", () => {

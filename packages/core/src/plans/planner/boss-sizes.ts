@@ -66,17 +66,3 @@ export function readBossSizes({
   const sizes = facts ? sizeBosses({ facts, input, ...built }) : new Map();
   return { minutes: facts ? toBossMinutes(sizes) : minutes, sizes };
 }
-
-export function withBossSizes<
-  T extends { items: readonly PlannedItem[]; skillLessons: ReadonlyMap<string, number> },
->({
-  built,
-  facts,
-  input,
-}: {
-  built: T;
-  facts: BossPlanFacts | undefined;
-  input: BuildPlanInput;
-}): T & { bossSizes: BossSizes } {
-  return { ...built, bossSizes: facts ? sizeBosses({ facts, input, ...built }) : new Map() };
-}

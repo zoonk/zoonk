@@ -408,10 +408,13 @@ describe(estimateCoursePlan, () => {
       throw new Error("Expected deadline estimates");
     }
 
-    expect(after.fittingLessons).toBeGreaterThanOrEqual(before.fittingLessons);
+    const beforeQuickLessons = before.areas.reduce((sum, area) => sum + area.quickLessons, 0);
+    const afterQuickLessons = after.areas.reduce((sum, area) => sum + area.quickLessons, 0);
+    expect(beforeQuickLessons).toBe(0);
+    expect(afterQuickLessons).toBe(1);
 
-    expect(after.areas.reduce((sum, area) => sum + area.quickLessons, 0)).toBeGreaterThan(
-      before.areas.reduce((sum, area) => sum + area.quickLessons, 0),
+    expect(after.fittingLessons + afterQuickLessons).toBeGreaterThanOrEqual(
+      before.fittingLessons + beforeQuickLessons,
     );
   });
 

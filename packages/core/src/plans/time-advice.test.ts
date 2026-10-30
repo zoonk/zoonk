@@ -224,15 +224,15 @@ describe(getPlanTimeAdvice, () => {
 
     const studyDays = [0];
     const advice = await readAdvice(goal.id, studyDays);
-    const preview50 = await readAdvice(goal.id, studyDays, { dailyMinutes: 50 });
+    const preview55 = await readAdvice(goal.id, studyDays, { dailyMinutes: 55 });
     const preview65 = await readAdvice(goal.id, studyDays, { dailyMinutes: 65 });
     const preview70 = await readAdvice(goal.id, studyDays, { dailyMinutes: 70 });
 
-    expect(preview50.coveredShare).toBe(1);
+    expect(preview55.coveredShare).toBe(1);
     expect(preview65.coveredShare).toBe(1);
     expect(preview70.coveredShare).toBe(0.91);
 
-    for (const dailyMinutes of Array.from({ length: 9 }, (_, index) => (index + 1) * 5)) {
+    for (const dailyMinutes of Array.from({ length: 10 }, (_, index) => (index + 1) * 5)) {
       // eslint-disable-next-line no-await-in-loop -- Each candidate reads the previous accepted state.
       const preview = await readAdvice(goal.id, studyDays, { dailyMinutes });
       expect(preview.coveredShare).toBeLessThan(1);
@@ -250,7 +250,7 @@ describe(getPlanTimeAdvice, () => {
       expect(roundShare(saved?.coveredShare ?? 0)).toBe(preview.coveredShare);
       // eslint-disable-next-line no-await-in-loop -- The time the Plan finds for the accepted week.
       const savedTime = await readPlanTime(goal.id);
-      expect([preview.recommendedMinutes, savedTime.recommendedMinutes]).toStrictEqual([50, 50]);
+      expect([preview.recommendedMinutes, savedTime.recommendedMinutes]).toStrictEqual([55, 55]);
     }
 
     await expect(
@@ -258,7 +258,7 @@ describe(getPlanTimeAdvice, () => {
     ).resolves.toMatchObject({ status: "updated" });
 
     await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1, fits: true });
-    await expect(readPlanTime(goal.id)).resolves.toMatchObject({ recommendedMinutes: 50 });
+    await expect(readPlanTime(goal.id)).resolves.toMatchObject({ recommendedMinutes: 55 });
 
     const at65 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
@@ -285,13 +285,13 @@ describe(getPlanTimeAdvice, () => {
 
     const accepted = await updateGoal({
       goalId: goal.id,
-      input: { dailyMinutes: 50, studyDays, timeZone: "UTC" },
+      input: { dailyMinutes: 55, studyDays, timeZone: "UTC" },
     });
 
     expect(accepted.status).toBe("updated");
-    const at50 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+    const at55 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
-    expect(parsePlanSettings(at50.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([
+    expect(parsePlanSettings(at55.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([
       "2020-10-11",
     ]);
 
@@ -300,7 +300,7 @@ describe(getPlanTimeAdvice, () => {
     expect(plan).toMatchObject({
       plan: {
         feasibility: { coveredShare: 1, fits: true },
-        schedule: { dailyMinutes: 50, weekdayMinutes: [50, 0, 0, 0, 0, 0, 0] },
+        schedule: { dailyMinutes: 55, weekdayMinutes: [55, 0, 0, 0, 0, 0, 0] },
       },
       status: "ready",
     });
@@ -309,12 +309,12 @@ describe(getPlanTimeAdvice, () => {
 
     expect([
       advice.recommendedMinutes,
-      preview50.recommendedMinutes,
+      preview55.recommendedMinutes,
       preview65.recommendedMinutes,
       preview70.recommendedMinutes,
       time70.recommendedMinutes,
       planTime.recommendedMinutes,
-    ]).toStrictEqual([50, 50, 50, 50, 50, 50]);
+    ]).toStrictEqual([55, 55, 55, 55, 55, 55]);
   });
 
   it("recommends the time the plan then shows, and that time covers the whole goal", async () => {

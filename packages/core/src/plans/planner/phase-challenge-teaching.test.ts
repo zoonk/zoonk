@@ -106,6 +106,82 @@ describe("a phase's challenge tests its own phase's teaching", () => {
 });
 
 describe("overlapping phase teaching", () => {
+  it.each([false, true])("closes each challenge's own phase (full course: %s)", (fullCourse) => {
+    const input: BuildPlanInput = {
+      ...examInput(),
+      goal: { dailyMinutes: 45, kind: "exam", targetDate: fromIsoDate("2027-11-14") },
+      graph: {
+        phases: [{ milestone: null, name: "Math" }],
+        skills: [
+          { area: "Math", lessons: 6000, name: "Math", phase: 0, skillId: "math", weight: 5 },
+        ],
+      },
+      lessons: [],
+      mockMinutes: 45,
+      prerequisites: new Map(),
+      settings: parsePlanSettings({
+        fullCourse,
+        startDate: "2026-10-16",
+        weekdayMinutes: [0, 45, 45, 45, 45, 45, 45],
+      }),
+      today: fromIsoDate("2026-10-16"),
+    };
+
+    const built = buildPlan(input);
+    const challenges = built.items.filter((item) => item.kind === "boss");
+
+    expect(built.phases[0]?.endDate).toBe("2027-02-06");
+
+    expect(challenges.map((challenge) => [challenge.phase, challenge.scheduledFor])).toStrictEqual([
+      [0, fromIsoDate("2027-02-08")],
+      [1, fromIsoDate("2027-07-09")],
+      [2, fromIsoDate("2027-11-01")],
+    ]);
+
+    expect(built.checkpointOverflow).toStrictEqual([]);
+  });
+
+  it("budgets measured challenge sizes even when the saved sizes are zero", () => {
+    const input: BuildPlanInput = {
+      ...examInput(),
+      bossFacts: {
+        bank: { recordingSets: [], textCounts: new Map() },
+        listeningSkillIds: new Set(),
+        rows: { chapterLessons: [], lessonSkills: [] },
+        survivors: new Map(),
+      },
+      goal: { dailyMinutes: 50, kind: "exam", targetDate: fromIsoDate("2020-10-16") },
+      graph: {
+        phases: [{ milestone: null, name: "Math" }],
+        skills: [{ area: "Math", lessons: 11, name: "Math", phase: 0, skillId: "math", weight: 1 }],
+      },
+      lessons: [],
+      mockMinutes: 69,
+      prerequisites: new Map(),
+      settings: parsePlanSettings({
+        startDate: "2020-09-28",
+        weekdayMinutes: [50, 0, 0, 0, 0, 0, 0],
+      }),
+      today: fromIsoDate("2020-09-28"),
+    };
+
+    const fresh = buildPlan(input);
+
+    const saved = buildPlan({
+      ...input,
+      bossMinutes: new Map([
+        ["boss:0", 0],
+        ["boss:1", 0],
+        ["boss:2", 0],
+      ]),
+    });
+
+    expect(saved.bossFallback).toBeUndefined();
+    expect(saved.items).toStrictEqual(fresh.items);
+    expect(saved.lessonRawMinutes).toStrictEqual(fresh.lessonRawMinutes);
+    expect(saved.checkpointOverflow).toStrictEqual(fresh.checkpointOverflow);
+  });
+
   it("keeps the after-exam teaching end of a stand-in begun in its own phase", () => {
     const input: BuildPlanInput = {
       ...examInput(),
@@ -150,17 +226,9 @@ describe("overlapping phase teaching", () => {
     expect(Date.parse(end)).toBeGreaterThan(Date.parse("2026-11-01"));
     expect(toIsoDate(built.teachingEnds.get(law.key)!)).toBe(end);
 
-    const beforeExam = portions
-      .map(([day]) => day)
-      .filter((day) => day < "2026-11-01")
-      .toSorted()
-      .at(-1)!;
-
-    const first = built.studyDays.find((day) => day > beforeExam);
     const challenge = built.items.find((item) => item.key === "boss:0");
 
-    expect(first).toBeDefined();
-    expect(toIsoDate(challenge!.scheduledFor!)).toBe(first);
+    expect(challenge?.scheduledFor).toStrictEqual(fromIsoDate("2026-10-07"));
     const dated = buildPlan({ ...input, settings: { ...input.settings, fullCourse: false } });
 
     expect(challenge?.scheduledFor).toStrictEqual(
@@ -216,7 +284,7 @@ describe("overlapping phase teaching", () => {
 });
 
 describe("a challenge near a mock", () => {
-  it("goes on the first study day after its teaching, its time inside that day", () => {
+  it("follows its teaching after an earlier challenge moves it, overrunning by one challenge", () => {
     const input: BuildPlanInput = {
       ...examInput(),
       goal: { dailyMinutes: 45, kind: "exam", targetDate: fromIsoDate("2026-11-20") },
@@ -257,13 +325,8 @@ describe("a challenge near a mock", () => {
     expect(built.mockFunding.map((mock) => mock.date)).toStrictEqual(["2026-11-06"]);
     expect(built.bossFallback).toBeUndefined();
     expect(day).toBe(built.studyDays.find((study) => study > end));
-    expect(built.checkpointOverflow.find((entry) => entry.date === day)).toBeUndefined();
-
-    const onDay = built.items.filter(
-      (item) => item.scheduledFor && toIsoDate(item.scheduledFor) === day,
-    );
-
-    expect(onDay.reduce((sum, item) => sum + item.minutes, 0)).toBeLessThanOrEqual(45 + 1e-6);
+    expect(day).toBe("2026-11-05");
+    expect(built.checkpointOverflow).toStrictEqual([{ date: day, minutes: 15 }]);
   });
 });
 
