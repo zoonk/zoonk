@@ -290,6 +290,62 @@ describe(getLearnerSummary, () => {
     expect(later?.goals[0]?.courseLevel).toBe("advanced");
   });
 
+  it("takes the level only from the course the goal follows, never from another course in its plan", async () => {
+    const [primary, other, otherChapter, primaryChapter, otherSkill, standInSkill] =
+      await Promise.all([
+        courseFixture({ isPublished: true }),
+        courseFixture({ isPublished: true }),
+        libraryChapterFixture({ level: "beginner" }),
+        libraryChapterFixture({ level: "intermediate" }),
+        skillFixture({ level: "beginner" }),
+        skillFixture({ level: "beginner" }),
+      ]);
+
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: otherChapter.id,
+        courseId: other.id,
+        level: "beginner",
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: primaryChapter.id,
+        courseId: primary.id,
+        level: "intermediate",
+        position: 0,
+      }),
+    ]);
+
+    const { goal } = await learnerWithGoal({ primaryCourseId: primary.id });
+
+    await planFixture({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Phase" }],
+        skills: [
+          {
+            area: null,
+            courseIds: [other.id],
+            lessons: 1,
+            name: standInSkill.name,
+            phase: 0,
+            skillId: standInSkill.id,
+            weight: null,
+          },
+        ],
+      },
+      items: [
+        { skillId: standInSkill.id },
+        { chapterId: otherChapter.id, skillId: otherSkill.id },
+        { chapterId: primaryChapter.id },
+      ],
+    });
+
+    const summary = await getLearnerSummary();
+
+    expect(summary?.goals[0]?.courseLevel).toBe("intermediate");
+  });
+
   it("names no course for a paused goal or an explanation, which a course's page starts again", async () => {
     const course = await courseFixture({ isPublished: true });
     const { user } = await learnerWithGoal({ primaryCourseId: course.id, status: "paused" });
