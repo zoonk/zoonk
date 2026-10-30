@@ -145,6 +145,84 @@ private struct LibraryCourseOffer: View {
   }
 }
 
+/// Main's `RevealNoticeDay`: research found the exam's day after the plan was built, or the month
+/// the learner named has no sitting; the plan keeps its date until the learner switches.
+private struct RevealNoticeDay: View {
+  @Environment(PlanStore.self) private var plans
+  @State private var isSaving = false
+  @State private var failed = false
+
+  let goalID: String
+  let plan: GoalPlan
+
+  var body: some View {
+    let schedule = plan.schedule
+
+    if plan.notice != .usual {
+      if let noticeDay = schedule.noticeDay {
+        Section {
+          planNoticeDayText(noticeDay, document: plan.examDocument)
+
+          Button {
+            use(noticeDay.date)
+          } label: {
+            Text("Use this date", tableName: "Plan", comment: "Takes the notice's day as the date")
+          }
+
+          failure
+        }
+        .disabled(isSaving)
+      } else if let noSitting = schedule.noSitting, let month = studyDate(noSitting.month) {
+        Section {
+          Text(
+            "No exam date in \(month.formatted(.studyDay.month(.wide)))", tableName: "Exam",
+            comment: "An exam with no sitting in the learner's month")
+
+          ForEach(noSitting.closest, id: \.self) { closest in
+            if let date = studyDate(closest) {
+              Button {
+                use(closest)
+              } label: {
+                Text(
+                  "Use \(date.formatted(.studyDay.month(.wide).day().year()))", tableName: "Exam",
+                  comment: "Moves the plan to one of the closest sittings")
+              }
+            }
+          }
+
+          failure
+        }
+        .disabled(isSaving)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var failure: some View {
+    if failed {
+      Text(
+        "That didn't go through. Try again in a moment.", tableName: "Exam",
+        comment: "Changing the date failed"
+      )
+      .foregroundStyle(.destructive)
+    }
+  }
+
+  private func use(_ date: String) {
+    isSaving = true
+    failed = false
+
+    Task {
+      switch await plans.change(goalId: goalID, edits: [.targetDate(date)]) {
+      case .done(.applied), .done(.undone), .done(.unchanged), .obsolete: break
+      case .done(.invalid), .failed: failed = true
+      }
+
+      isSaving = false
+    }
+  }
+}
+
 private struct NoticeReadingView: View {
   let plan: GoalPlan
 
@@ -247,6 +325,8 @@ private struct PlanReveal: View {
         }
         .listRowBackground(Color.clear)
       }
+
+      RevealNoticeDay(goalID: goal.id, plan: plan)
 
       Section {
         VStack(spacing: 12) {

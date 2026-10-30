@@ -149,6 +149,8 @@ struct GoalPlan: Decodable, Equatable, Sendable {
 
     let dailyMinutes: Int
     let fullCourse: Bool
+    /// The month the learner named has no sitting; the closest ones to switch to.
+    let noSitting: ExamView.NoSitting?
     let noticeDay: NoticeDay?
     let shape: WeekShape
     let studyDays: Int

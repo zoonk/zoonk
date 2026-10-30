@@ -64,7 +64,7 @@ struct PlanDateSection: View {
 
       if let noticeDay = schedule.noticeDay {
         VStack(alignment: .leading, spacing: 8) {
-          noticeDayText(noticeDay)
+          planNoticeDayText(noticeDay, document: plan.examDocument)
             .font(.subheadline)
             .foregroundStyle(.secondary)
 
@@ -107,30 +107,6 @@ struct PlanDateSection: View {
     goal.kind == .exam
       ? Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")
       : Text("Deadline", tableName: "Plan", comment: "Setting: the goal's deadline")
-  }
-
-  private func noticeDayText(_ noticeDay: GoalPlan.Schedule.NoticeDay) -> Text {
-    let date = PlanDate.date(noticeDay.date).map(Self.longDate) ?? noticeDay.date
-
-    if noticeDay.estimated {
-      return Text(
-        "The exam's likely date is now \(date).", tableName: "Plan",
-        comment:
-          "The exam's likely day while its notice isn't out; the argument is a date like 'May 5, 2027'"
-      )
-    }
-
-    if plan.examDocument == .notice {
-      return Text(
-        "The exam notice says \(date).", tableName: "Plan",
-        comment: "The exam's day its notice gives; the argument is a date like 'May 5, 2027'")
-    }
-
-    return Text(
-      "The exam's official calendar says \(date).", tableName: "Plan",
-      comment:
-        "A language certificate's day its official calendar gives; the argument is a date like 'May 5, 2027'"
-    )
   }
 
   /// True once saved.
@@ -203,4 +179,32 @@ struct PlanDateSection: View {
   private static func clamp(_ date: Date, to bounds: ClosedRange<Date>) -> Date {
     min(max(date, bounds.lowerBound), bounds.upperBound)
   }
+}
+
+/// The exam's day as its notice or official calendar gives it, or its likely day.
+func planNoticeDayText(_ noticeDay: GoalPlan.Schedule.NoticeDay, document: ExamDocument) -> Text {
+  let date =
+    PlanDate.date(noticeDay.date).map {
+      $0.formatted(Date.FormatStyle(date: .long, time: .omitted, timeZone: .gmt))
+    } ?? noticeDay.date
+
+  if noticeDay.estimated {
+    return Text(
+      "The exam's likely date is now \(date).", tableName: "Plan",
+      comment:
+        "The exam's likely day while its notice isn't out; the argument is a date like 'May 5, 2027'"
+    )
+  }
+
+  if document == .notice {
+    return Text(
+      "The exam notice says \(date).", tableName: "Plan",
+      comment: "The exam's day its notice gives; the argument is a date like 'May 5, 2027'")
+  }
+
+  return Text(
+    "The exam's official calendar says \(date).", tableName: "Plan",
+    comment:
+      "A language certificate's day its official calendar gives; the argument is a date like 'May 5, 2027'"
+  )
 }
