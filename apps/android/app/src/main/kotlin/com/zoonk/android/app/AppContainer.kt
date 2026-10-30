@@ -49,6 +49,8 @@ import com.zoonk.android.feature.explain.ExplainStore
 import com.zoonk.android.feature.explain.LiveExplainApi
 import com.zoonk.android.feature.feedback.FeedbackSender
 import com.zoonk.android.feature.feedback.LiveFeedbackApi
+import com.zoonk.android.feature.focustest.FocusTestStore
+import com.zoonk.android.feature.focustest.LiveFocusTestApi
 import com.zoonk.android.feature.goalcontent.GoalContentStore
 import com.zoonk.android.feature.goalcontent.LiveGoalContentApi
 import com.zoonk.android.feature.language.AlphabetStore
@@ -267,6 +269,7 @@ class AppContainer private constructor(
     val checkpoints = CheckpointStore(LiveCheckpointApi(api), cache, timeZone)
     val challenges = ChallengeStore(LiveChallengeApi(api), cache, timeZone)
     val testOuts = TestOutStore(LiveTestOutApi(api), cache, drafts, timeZone)
+    val focusTests = FocusTestStore(LiveFocusTestApi(api), cache, drafts, timeZone)
 
     val buddy = BuddyStore(LiveBuddyApi(api), cache, timeZone, learnerSummary.summary, scope)
 

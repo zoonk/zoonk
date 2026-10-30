@@ -18,8 +18,6 @@
   "testout_starting": "bcb9b4bf9c7393913bfb4c938c275a68fd32ca6d61dc5b8ea8c2f83018d952eb",
   "testout_this_chapter": "d59645865e336f44929124207bfb055de97f766160952e3ab3ca934df70f5166",
   "testout_title": "475f3a8f6e5008ac8ca8cee7d480a8f97df3129308213deea2a4aca32213319d",
-  "testout_undo": "8a4f58a4ec29aeea72e828e3f09824c8142a1c15ce9acbee5c6f3056918038ef",
-  "testout_undo_failed": "958a177fe6249a49136c863fc9913583a54dbc3dd517edb7521b9119f358e8bf",
   "testout_writing": "d203b06aa867181093df2cfc838fa8e0a4ce5f13d4cd0ac6c89b32c1afe9bdbe",
   "testout_writing_detail": "253a3981433b50610ec8af7972831b9c25b7de14ab008fcecc9294431e279c63",
   "testout_writing_line": "3886474d7d0a17fe76dff6ab7fd7f2559e294562c7afde90483d63624d5fe147",
@@ -63,6 +61,4 @@
     </plurals>
     <string name="testout_lessons_back">Las lecciones vuelven a estar en tu plan.</string>
     <string name="testout_continue">Continuar</string>
-    <string name="testout_undo">Deshacer</string>
-    <string name="testout_undo_failed">No se ha guardado. Inténtalo de nuevo.</string>
 </resources>

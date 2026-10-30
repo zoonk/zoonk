@@ -12,13 +12,13 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.practice.AnswersDraft
+import com.zoonk.android.feature.practice.input
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.api.models.ChapterTestOutInput
 import com.zoonk.api.models.ChapterTestOutRecord
 import com.zoonk.api.models.CreateChapterTestOutGeneration200Response
 import com.zoonk.api.models.GetChapterTestOut200Response
-import com.zoonk.api.models.ItemAnswerInput
 import com.zoonk.api.models.SubmitChapterTestOut200Response
 import java.util.UUID
 
@@ -143,8 +143,7 @@ class TestOutStore(
         draft: AnswersDraft,
     ): MutationResult<SubmitChapterTestOut200Response> =
         cache.mutate(invalidating = SUBMITTED) { session ->
-            val answers = draft.answers.map { ItemAnswerInput(it.answer.recode(), it.durationMs, UUID.fromString(it.itemId)) }
-            api.submit(session, key, ChapterTestOutInput(answers, UUID.fromString(draft.requestId), timeZone()))
+            api.submit(session, key, ChapterTestOutInput(draft.answers.map { it.input() }, UUID.fromString(draft.requestId), timeZone()))
         }
 
     private companion object {

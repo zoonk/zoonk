@@ -9,6 +9,7 @@
   "practice_done_review": "1a667b73f08c8a20da76ade9de3600de24d7f7136948d572ae79176ecaaa575c",
   "practice_done_title": "6d204805ed20e16b37680e2afc22a1fa5b854c79670396adb3a14929800d3d6e",
   "practice_finish": "a9a7474f9ca43ab12b386d40cd999c26dbb14247418f5434e733d0cd65c8c059",
+  "practice_finish_now": "3c9d2f2b4998c2cdd9c6c4f05025305ce092bab38e31c2011e763fdbb8c41853",
   "practice_finish_ready_detail": "fbb8f1fe1c1fc5adb928d0d8a68718e481a92d107ba03c0ade2f801af1660720",
   "practice_finish_ready_title": "6e4436920479b793485d94b2e33ef3c444b8d6e16d44859748020d41f130e1dc",
   "practice_net": "3702440fef55f2bce0295aeccf5905133e51346f2b999bbe3fd55a73944232ca",
@@ -29,7 +30,9 @@
   "practice_time_machine_right_before": "8c2db5c4e382fe601878121b85c4207bb0b9c2c4fca646de34f5c008214ba64a",
   "practice_time_machine_seen": "01678a2fbeb15646e78ad6822c57b96af66ee065c3ae661cc3061267f54aa778",
   "practice_time_machine_tripped": "2173da2487fa513d359861dd4412e3bb07ba6d76d2f49d7e00433bd525234d6e",
-  "practice_try_again": "7393399edc6c2425b66e3fd700a9204ec71cb484e79491e0c44c2d2971033b46"
+  "practice_try_again": "7393399edc6c2425b66e3fd700a9204ec71cb484e79491e0c44c2d2971033b46",
+  "practice_undo": "6a1a2fde6514771b8d9439007a68a4cee7d8f3601a1658a9554dc3006990e1ae",
+  "practice_undo_failed": "8d6eca47e497eaf1d098b514d85d8caf685f7da538064aca023f2df77c577774"
 }
 -->
 <resources>
@@ -39,6 +42,10 @@
     <string name="practice_finish">Concluir</string>
     <!-- Goes to the next question of a test graded only at its end. -->
     <string name="practice_next">Próxima</string>
+    <!-- Sends a test's answers when its last questions couldn't be written. -->
+    <string name="practice_finish_now">Concluir com essas respostas</string>
+    <string name="practice_undo">Desfazer</string>
+    <string name="practice_undo_failed">Não foi possível salvar. Tente de novo.</string>
     <!-- Where the learner is in a test, such as "3 of 10". -->
     <string name="practice_count">%1$d de %2$d</string>
     <string name="practice_try_again">Tentar de novo</string>

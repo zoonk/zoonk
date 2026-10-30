@@ -15,6 +15,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.practice.AnswersDraft
 import com.zoonk.android.feature.practice.GradedAnswer
+import com.zoonk.android.feature.practice.UndoState
 import com.zoonk.android.feature.practice.resumableAnswers
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
@@ -46,8 +47,6 @@ data class TestOutOutcome(
     val ceremony: Milestone? = null,
     val reached: ReachedFacts? = null,
 )
-
-enum class UndoState { Idle, Pending, Done, Failed }
 
 @Immutable
 data class TestOutUi(

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A test that sets which subjects of an exam the plan studies in more depth. -->
+    <string name="focustest_title">Focus test</string>
+    <string name="focustest_intro_title">Where should you focus?</string>
+    <string name="focustest_intro_detail">A few questions on each subject. The ones you need most come first and get more depth.</string>
+    <plurals name="focustest_subjects">
+        <item quantity="one">%d subject</item>
+        <item quantity="other">%d subjects</item>
+    </plurals>
+    <plurals name="focustest_questions">
+        <item quantity="one">%d question</item>
+        <item quantity="other">%d questions</item>
+    </plurals>
+    <!-- How long the test takes. %1$s is a duration, such as "5 min". -->
+    <string name="focustest_about">About %1$s</string>
+    <string name="focustest_start">Start the test</string>
+    <string name="focustest_starting">Starting…</string>
+
+    <string name="focustest_writing">Writing your questions</string>
+    <string name="focustest_writing_questions">Writing questions on each subject</string>
+    <string name="focustest_writing_line">Picking what to ask in each subject…</string>
+    <string name="focustest_writing_title">Getting your test ready</string>
+    <string name="focustest_writing_detail">We\'re writing a few questions on each subject. The test opens here when they\'re ready.</string>
+    <string name="focustest_waiting_title">Your next questions are on the way</string>
+    <string name="focustest_waiting_detail">We\'re writing the rest of the test. It goes on here when they\'re ready.</string>
+    <string name="focustest_ended_title">Some questions couldn\'t be written</string>
+    <string name="focustest_ended_detail">Finish with the answers you gave: they still choose where your plan goes deeper.</string>
+
+    <string name="focustest_how_you_did">How you did</string>
+    <!-- A subject's score, such as "2 of 3 right". %1$d is how many were right, %2$d how many were asked. -->
+    <plurals name="focustest_area_right">
+        <item quantity="one">%1$d of %2$d right</item>
+        <item quantity="other">%1$d of %2$d right</item>
+    </plurals>
+    <!-- Over the subjects the test chose to study in more depth. -->
+    <string name="focustest_new_focus">Your new focus</string>
+    <!-- Under the subjects the test chose. -->
+    <string name="focustest_focus_detail_one">This subject counts a lot, and it\'s where you missed most. Your plan now gives it more depth, and every other topic stays in it.</string>
+    <string name="focustest_focus_detail_several">These subjects count a lot, and they\'re where you missed most. Your plan now gives them more depth, and every other topic stays in it.</string>
+    <string name="focustest_undone">Your plan is back as it was</string>
+    <string name="focustest_see_plan">See your plan</string>
+</resources>

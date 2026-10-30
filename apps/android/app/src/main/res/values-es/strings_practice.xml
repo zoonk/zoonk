@@ -9,6 +9,7 @@
   "practice_done_review": "55fc48964238487a4c181033119ab8b7233ad44495159eb21383fd53cb947a3d",
   "practice_done_title": "32497b7285e00d6f811fefeda86433f50d38ed9116f286e14576f647f8edbe00",
   "practice_finish": "0358c780ea26852a101b0253773b60c0bb16436743295c40672d28a50ae524c3",
+  "practice_finish_now": "e86838ccd9a99978ee45085d00d975587a00fade67b0456390598a42d2dd78b3",
   "practice_finish_ready_detail": "1bb753151a53d13e9bd2a0e76f4e4d1beb8cd161d16da36250965f0ff6d45dc9",
   "practice_finish_ready_title": "03063aa2170481973a2e4b84e393ec57e8032b013910b30bec1378669f8b3079",
   "practice_net": "3a87d7e35a6f1aaa7edbd53292191c9f101e3af51d68cc3f9835d0b3a7be1b1c",
@@ -29,7 +30,9 @@
   "practice_time_machine_right_before": "90320b4252b4509ff3f8cae278413aebcdc51fc63fc02a20b2b75c74aa1d00fd",
   "practice_time_machine_seen": "e6c2be8d1be091c59bf56905fcdb867f0b155f4cb4fb078a6908b5e248df4264",
   "practice_time_machine_tripped": "d22f986b601d17196464d650d7d957a860ff78424c6632cfed9be81c6520d9de",
-  "practice_try_again": "0405777f92540c2cc89921b49f3985852be232fa031461c0ac18c8f829d6738e"
+  "practice_try_again": "0405777f92540c2cc89921b49f3985852be232fa031461c0ac18c8f829d6738e",
+  "practice_undo": "17752da3259f69e80490e32fd57c3b80163561f837b4b5de31d5a528daf42b50",
+  "practice_undo_failed": "ec95c401b8c2321054137890799abf8b83894692b9b3401fa9677fa9e8db39bd"
 }
 -->
 <resources>
@@ -39,6 +42,10 @@
     <string name="practice_finish">Finalizar</string>
     <!-- Goes to the next question of a test graded only at its end. -->
     <string name="practice_next">Siguiente</string>
+    <!-- Sends a test's answers when its last questions couldn't be written. -->
+    <string name="practice_finish_now">Terminar con estas respuestas</string>
+    <string name="practice_undo">Deshacer</string>
+    <string name="practice_undo_failed">No se ha guardado. Inténtalo de nuevo.</string>
     <!-- Where the learner is in a test, such as "3 of 10". -->
     <string name="practice_count">%1$d de %2$d</string>
     <string name="practice_try_again">Volver a intentarlo</string>

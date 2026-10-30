@@ -9,6 +9,7 @@
   "practice_done_review": "c0ed4c305a02a183f4709657c03c947ba2a86c0e94c0722d2d8faa18ea5f2125",
   "practice_done_title": "48dc429c4408e302cbb06c4240e84313c9ffd2df5603b1cc89380bde44e62c3a",
   "practice_finish": "2a0892e4f4042c35a8ded465e06f28b1ed4a938c3ae1648448b446338137bb41",
+  "practice_finish_now": "0455693431e5cf8fb94726c040ca32ff17f5d8f5363eefb968d496218dc35ffb",
   "practice_finish_ready_detail": "7026b28be992f295fa35005a1c38d8225fd08eae399bb42b3af86b5161b69c8e",
   "practice_finish_ready_title": "7ee0c7a526b5ea7c0003a0144f209046afd432f6adf924d3f2b5ea954ec3f422",
   "practice_net": "773e400b823978fdded4ac71e7ad4c2fcbc2ff93a11178bb6ed7c7fb25652b61",
@@ -29,7 +30,9 @@
   "practice_time_machine_right_before": "3acb1c54c39cbc4361a6fc1f1cef300eb3a0926243dd719c55c66bafad81329d",
   "practice_time_machine_seen": "3c6d60358b7ea4641cc974cfd62e4ac939698e216fc62c75578aa75cf1b5bd90",
   "practice_time_machine_tripped": "dcddb58375efd21f0694e5a8b072533e96ff2337050ba4fe3e885c95b033a12c",
-  "practice_try_again": "c29d521202cf605b08968464f1356d0c5259dc50866ece8ccced28a451967bca"
+  "practice_try_again": "c29d521202cf605b08968464f1356d0c5259dc50866ece8ccced28a451967bca",
+  "practice_undo": "c8e154628abccd213e9425fa9bda36b3fa26ed68ea87e79a2733fab449b5a6fb",
+  "practice_undo_failed": "30aa724c4dfcd2d601a4c7c5061dcbfcad53dbbf4c68336c2fa1c2a9c75e8b75"
 }
 -->
 <resources>
@@ -39,6 +42,10 @@
     <string name="practice_finish">Terminer</string>
     <!-- Goes to the next question of a test graded only at its end. -->
     <string name="practice_next">Suivant</string>
+    <!-- Sends a test's answers when its last questions couldn't be written. -->
+    <string name="practice_finish_now">Terminer avec ces réponses</string>
+    <string name="practice_undo">Annuler</string>
+    <string name="practice_undo_failed">L’enregistrement a échoué. Réessaie.</string>
     <!-- Where the learner is in a test, such as "3 of 10". -->
     <string name="practice_count">%1$d sur %2$d</string>
     <string name="practice_try_again">Réessayer</string>

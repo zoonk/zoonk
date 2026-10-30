@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "focustest_about": "6941e53d298c34b702007d730e40726ee443bf2aff2681406efae589f5830a65",
+  "focustest_area_right": "cbbbb528c62c7a05b1f54808be1e81b91e8ffcd11d71b2d2e0828d82748391b5",
+  "focustest_ended_detail": "9b6d3d988fdf0f94e84b116779bcfeb6467287d78523a03f5c61529958b37ff0",
+  "focustest_ended_title": "ae9c6e351f44fbd1ee99d08f80682c1992249be9f1afd8635c5eaf32661ea608",
+  "focustest_focus_detail_one": "979dee85a1a6cd4dc7a42eadfa6aec11b00655a68008006bd249a0d8dae4f841",
+  "focustest_focus_detail_several": "ee321808eb8290f7019a56157b60cdb2d3c25899a20c16114101cc31fe72efc9",
+  "focustest_how_you_did": "862fd0be295268c97364319b7761504209289b414dfc123b0a4e4c2043d865bb",
+  "focustest_intro_detail": "aee4686772f1b415557a7b97c42a30047f63cd32be27addc430f8d536e606190",
+  "focustest_intro_title": "ab5b30198d2692381db81eac4ec996f68756eb1fa3fba6d014bb33d102f03869",
+  "focustest_new_focus": "119e106b798e1c01412d90b25889405f3e2c0cb68ed3e84a3abd624305988d1a",
+  "focustest_questions": "1b8d325acb11717fafff13b68c6340fb47d401730b93049d9f812472e4f97c2a",
+  "focustest_see_plan": "e399c63a5fa47ef3cc6df74c7149e8e9ee046711d70eaf2cb6e961495dd27217",
+  "focustest_start": "e84f3f0f0e3aa83b74d45bd8b40d0ba7426c5c3c67c8e63e5339137c2c119b9c",
+  "focustest_starting": "9216e8946220bd3c7d0447e8cd0947af372bc89c5972c8af85f04693febf7c0e",
+  "focustest_subjects": "f3ef32834c447ff975928388ee9b9be87ff1f8e994cd4eac57e5ea3a25f79254",
+  "focustest_title": "773d409aa367417c2b824679b29f8c556eb57115d843ef18cfe4b413df7e5f6d",
+  "focustest_undone": "5f4816a1cd5ac5dd94ba85c14bb1a696e1d824cebcf1c6f6d52251928f82497b",
+  "focustest_waiting_detail": "11f7cc9fb43cb5fda1d79e1203ed8a9d936535b7b34f5306d432e0dc4d70e88b",
+  "focustest_waiting_title": "4006cbaba931a20ef31540e85ff89030b9091e26d7a69c21be5be054b2a7cb91",
+  "focustest_writing": "88b7c6e2293975ac3948a99bd10b372e219b8ad68ca0db71b5416ff1ce076ea5",
+  "focustest_writing_detail": "02414f0d6be74f70b790acee8732d86e2b2bca8d4f77ac623b9d91956cf8efe1",
+  "focustest_writing_line": "997766859b66cf41c24d99557e6822422ad0ea3af252c5b140f941d742b84234",
+  "focustest_writing_questions": "9b15b64b104ac177c2664f2524168be4746719c74499ae0fb1e9aa299e5cd000",
+  "focustest_writing_title": "4110bd0176c45621c3b92177a5b97d52ebcff94dbd2077c2f9710b5efa3f4d2d"
+}
+-->
+<resources>
+    <!-- A test that sets which subjects of an exam the plan studies in more depth. -->
+    <string name="focustest_title">Prueba de enfoque</string>
+    <string name="focustest_intro_title">¿En qué deberías centrarte?</string>
+    <string name="focustest_intro_detail">Unas preguntas sobre cada asignatura. Las que más necesitas van primero y se tratan con más profundidad.</string>
+    <plurals name="focustest_subjects">
+        <item quantity="one">%d asignatura</item>
+        <item quantity="many">%d asignaturas</item>
+        <item quantity="other">%d asignaturas</item>
+    </plurals>
+    <plurals name="focustest_questions">
+        <item quantity="one">%d pregunta</item>
+        <item quantity="many">%d preguntas</item>
+        <item quantity="other">%d preguntas</item>
+    </plurals>
+    <!-- How long the test takes. %1$s is a duration, such as "5 min". -->
+    <string name="focustest_about">Aproximadamente %1$s</string>
+    <string name="focustest_start">Empezar la prueba</string>
+    <string name="focustest_starting">Empezando…</string>
+    <string name="focustest_writing">Preparando tus preguntas</string>
+    <string name="focustest_writing_questions">Preparando preguntas de cada asignatura</string>
+    <string name="focustest_writing_line">Eligiendo qué preguntar en cada asignatura…</string>
+    <string name="focustest_writing_title">Preparando tu prueba</string>
+    <string name="focustest_writing_detail">Estamos preparando unas preguntas sobre cada asignatura. La prueba se abrirá aquí cuando estén listas.</string>
+    <string name="focustest_waiting_title">Tus siguientes preguntas están en camino</string>
+    <string name="focustest_waiting_detail">Estamos preparando el resto de la prueba. Podrás continuar aquí cuando las preguntas estén listas.</string>
+    <string name="focustest_ended_title">No se han podido preparar algunas preguntas</string>
+    <string name="focustest_ended_detail">Termina con las respuestas que has dado: servirán para decidir dónde profundiza tu plan.</string>
+    <string name="focustest_how_you_did">Tus resultados</string>
+    <!-- A subject's score, such as "2 of 3 right". %1$d is how many were right, %2$d how many were asked. -->
+    <plurals name="focustest_area_right">
+        <item quantity="one">%1$d acierto de %2$d</item>
+        <item quantity="many">%1$d aciertos de %2$d</item>
+        <item quantity="other">%1$d aciertos de %2$d</item>
+    </plurals>
+    <!-- Over the subjects the test chose to study in more depth. -->
+    <string name="focustest_new_focus">Tu nuevo enfoque</string>
+    <!-- Under the subjects the test chose. -->
+    <string name="focustest_focus_detail_one">Esta asignatura tiene mucho peso y es en la que más has fallado. Tu plan ahora la trata con más profundidad y mantiene todos los demás temas.</string>
+    <string name="focustest_focus_detail_several">Estas asignaturas tienen mucho peso y son en las que más has fallado. Tu plan ahora las trata con más profundidad y mantiene todos los demás temas.</string>
+    <string name="focustest_undone">Tu plan vuelve a estar como antes</string>
+    <string name="focustest_see_plan">Ver tu plan</string>
+</resources>

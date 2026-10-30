@@ -9,6 +9,7 @@
   "practice_done_review": "4763ea35e7d60ee1beb35c1b434502f5771c5cd14afd4c9ae21eb80d22705728",
   "practice_done_title": "b6e89208d8800a97cc08818fd2d6c56202c39bfe0e6a45dfc86ebe86ec5e14af",
   "practice_finish": "f301f6230c1f62a9e583d3b759042943d1b3038a0d9b2c2c9a96a864074a77f5",
+  "practice_finish_now": "313a8b31ff349ee6b7172e48596d45f3fbd5466204b0a3132a20098f599d7c8a",
   "practice_finish_ready_detail": "9fb35f3d9262308725ec52626ddf272e6f3f1bfceffc2680d87ad8c124c14bbd",
   "practice_finish_ready_title": "7049901b57ac2c9ab70dea3fa15660024a08b155ed070d7312876650959080c9",
   "practice_net": "9f90ee2a68b48a971b4e58ae3f869e31844056e04698fca06a8388dc8ce56c71",
@@ -29,7 +30,9 @@
   "practice_time_machine_right_before": "f11e191d799f2ddfdea3571e0ce2230c3bc98d77506876cb899568db877152d2",
   "practice_time_machine_seen": "e8d2f00c28cc981567cd360695c05f0e8f6e820f76e917c02fa221bcec1d8d3d",
   "practice_time_machine_tripped": "549be218e27ee95202092a6dc1b9e8fab5183ec732ce68640d8cb872e41c30e0",
-  "practice_try_again": "fc903144519d24a306f3c2b37321bcdad3cf52c3de46141c386a645a2153eddf"
+  "practice_try_again": "fc903144519d24a306f3c2b37321bcdad3cf52c3de46141c386a645a2153eddf",
+  "practice_undo": "d02a57b790ae5156c243866c1bca3b0e6d4a5a66172f910112549659950b287f",
+  "practice_undo_failed": "8eb85cb411faf58bdab2eeaa261eb5c73c46a5c0e0ed94d23fc467e8b281c9ca"
 }
 -->
 <resources>
@@ -39,6 +42,10 @@
     <string name="practice_finish">Abschließen</string>
     <!-- Goes to the next question of a test graded only at its end. -->
     <string name="practice_next">Weiter</string>
+    <!-- Sends a test's answers when its last questions couldn't be written. -->
+    <string name="practice_finish_now">Mit diesen Antworten abschließen</string>
+    <string name="practice_undo">Rückgängig</string>
+    <string name="practice_undo_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <!-- Where the learner is in a test, such as "3 of 10". -->
     <string name="practice_count">%1$d von %2$d</string>
     <string name="practice_try_again">Versuch es noch einmal</string>

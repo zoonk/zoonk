@@ -36,6 +36,4 @@
     </plurals>
     <string name="testout_lessons_back">The lessons are back in your plan.</string>
     <string name="testout_continue">Continue</string>
-    <string name="testout_undo">Undo</string>
-    <string name="testout_undo_failed">That didn\'t save. Try again.</string>
 </resources>

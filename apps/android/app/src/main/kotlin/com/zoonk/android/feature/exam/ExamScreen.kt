@@ -4,7 +4,6 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,6 +59,7 @@ import com.zoonk.android.feature.speaking.SpeakingMockCard
 import com.zoonk.android.feature.speaking.SpeakingPaperSection
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.scaffold.DetailPage
@@ -264,7 +264,7 @@ private fun ExamHero(
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             ExamEyebrow(exam)
             Text(exam.examName, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-            if (facts.isNotEmpty()) ExamFacts(facts)
+            if (facts.isNotEmpty()) Facts(facts)
         }
         options?.let {
             MockEntryButton(
@@ -277,18 +277,4 @@ private fun ExamHero(
     }
 }
 
-@Composable
-internal fun ExamFacts(facts: List<String>) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        facts.forEachIndexed { index, fact ->
-            Text(
-                text = if (index < facts.lastIndex) fact + NO_BREAK_DOT else fact,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
-}
-
 private const val FROM_EXAM = "exam"
-private const val NO_BREAK_DOT = "\u00A0·"

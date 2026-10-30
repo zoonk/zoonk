@@ -11,7 +11,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,9 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -50,9 +47,13 @@ import com.zoonk.android.feature.practice.ActionFlow
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ChoiceQuestionsRun
 import com.zoonk.android.feature.practice.RunFinished
+import com.zoonk.android.feature.practice.RunIntro
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunNotFound
+import com.zoonk.android.feature.practice.RunPage
+import com.zoonk.android.feature.practice.UndoAction
+import com.zoonk.android.feature.practice.UndoState
 import com.zoonk.android.feature.practice.runColumn
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.subscription.PlusNotice
@@ -245,28 +246,17 @@ internal fun TestOutPreparing(
                 { ActionBarWidth { StartActions(viewModel, ui, plusRequired || ui.plusRequired, navigator) } }
             },
     ) { padding ->
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                if (waiting) {
-                    GenerationWait(
-                        kind = GenerationKind.TestOutQuestions,
-                        run = if (ui.writing) run else GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted),
-                        onRetry = if (ui.writing) viewModel::retryWriting.takeIf { viewModel.canRestart } else viewModel::start,
-                    ) {
-                        Heading(stringResource(R.string.testout_writing_title))
-                        Detail(stringResource(R.string.testout_writing_detail))
-                    }
-                } else {
-                    Heading(stringResource(R.string.testout_intro_title))
-                    Detail(stringResource(R.string.testout_intro_detail))
+        RunPage(Modifier.padding(padding)) {
+            if (waiting) {
+                GenerationWait(
+                    kind = GenerationKind.TestOutQuestions,
+                    run = if (ui.writing) run else GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted),
+                    onRetry = if (ui.writing) viewModel::retryWriting.takeIf { viewModel.canRestart } else viewModel::start,
+                ) {
+                    RunIntro(stringResource(R.string.testout_writing_title), stringResource(R.string.testout_writing_detail))
                 }
+            } else {
+                RunIntro(stringResource(R.string.testout_intro_title), stringResource(R.string.testout_intro_detail))
             }
         }
     }
@@ -346,9 +336,9 @@ internal fun TestOutQuestions(
         pending = ui.sending,
         failed = ui.sendFailed,
         onAnswer = { question, answer -> viewModel.answer(test.questions, question, answer) },
-        onRetry = viewModel::retrySend,
+        onSend = viewModel::retrySend,
         onClose = onClose,
-        hint = rule,
+        hint = { rule },
         aside = { TestOutAside(page, rule) },
     )
 }
@@ -403,22 +393,8 @@ internal fun TestOutResult(
             detail = detail,
             actions = {
                 ActionColumn {
-                    if (ui.undo == UndoState.Failed) {
-                        Text(
-                            stringResource(R.string.testout_undo_failed),
-                            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                    ActionFlow { width ->
-                        if (canUndo) {
-                            TextButton(onClick = viewModel::undo, enabled = ui.undo != UndoState.Pending) {
-                                Text(stringResource(R.string.testout_undo))
-                            }
-                        }
-                        Button(onClick = onClose, modifier = width) { Text(stringResource(R.string.testout_continue)) }
-                    }
+                    ActionFlow { width -> Button(onClick = onClose, modifier = width) { Text(stringResource(R.string.testout_continue)) } }
+                    if (canUndo) UndoAction(ui.undo, viewModel::undo)
                 }
             },
         ) {
@@ -439,16 +415,6 @@ private fun scoreLine(outcome: TestOutOutcome): String {
         formatNumber(outcome.correct.toDouble(), locale),
         formatNumber(outcome.total.toDouble(), locale),
     )
-}
-
-@Composable
-private fun Heading(text: String) {
-    Text(text, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-}
-
-@Composable
-private fun Detail(text: String) {
-    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
 }
 
 private const val PERCENT = 100

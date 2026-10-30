@@ -304,6 +304,25 @@ enum class GenerationKind(
                 "writeTestOutQuestions" to StepPlace.Phase("questions"),
             ),
     ),
+    FocusTestQuestions(
+        label = R.string.focustest_writing,
+        phases =
+            listOf(
+                GenerationPhase(
+                    "questions",
+                    25,
+                    R.string.focustest_writing_questions,
+                    listOf(R.string.focustest_writing_line),
+                    numbered = NumberedLines(8, R.string.generation_question_line, R.string.generation_question_review),
+                ),
+            ),
+        steps =
+            mapOf(
+                "focusTestQuestionsReady" to StepPlace.Done,
+                "joinFocusTestQuestions" to StepPlace.Join,
+                "writeFocusTestQuestions" to StepPlace.Phase("questions"),
+            ),
+    ),
     SpeakingMock(
         label = R.string.speaking_writing_mock,
         phases =

@@ -18,8 +18,6 @@
   "testout_starting": "06f5a386e6e137208eed21182c922ad2511735e471c507882ebf7276b05496e8",
   "testout_this_chapter": "6aa4d4806b742d267660eb3f51ce4162485b8e56a981e90033d7ed923f51c24d",
   "testout_title": "0eeae5b4a56d5ebca6c4426102c91e3eb249c77cb1a933e37d1ea2b83a262c6d",
-  "testout_undo": "1afd9fa014203e006c10b8ec85da2a0f501a7dc49854e5cd057661bfff452766",
-  "testout_undo_failed": "121d7b936ac4dd4f067dc85164f80a1262b35ac19f2879cdc378948ce091888e",
   "testout_writing": "4dba671eb4fb452150bb727a73b85a1a160cf17e6a777fe1a09fc4c4b2a2f462",
   "testout_writing_detail": "82bb57d5624ad9572a20624cf522404e165686d287b725c9231dab708aba87d8",
   "testout_writing_line": "1a920629abd85a10f708f13731626e1ec16c34526989632af995aaf911295d9d",
@@ -63,6 +61,4 @@
     </plurals>
     <string name="testout_lessons_back">Les leçons sont de retour dans ton plan.</string>
     <string name="testout_continue">Continuer</string>
-    <string name="testout_undo">Annuler</string>
-    <string name="testout_undo_failed">L’enregistrement a échoué. Réessaie.</string>
 </resources>

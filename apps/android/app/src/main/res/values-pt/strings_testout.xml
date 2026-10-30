@@ -18,8 +18,6 @@
   "testout_starting": "6d26860bf2008d326e247259b48c12c7803aaf3518466609a6e6651d8331fb25",
   "testout_this_chapter": "0e51b58c8805ae5d65481a788775ccb64f4069d63cab415499e02f102b436adc",
   "testout_title": "7e5844d0d88d9a24b0bf88d0011d17d45085af6ac4081bd2f2d7c09976502502",
-  "testout_undo": "eacee158ac3c20e7394b73404ea856e213abf37116d842d0dd340ea6d6dfe803",
-  "testout_undo_failed": "205decde2eaf0234f47b0c1d4fe2f0af098330df6daace5c0845691b1489814f",
   "testout_writing": "098585c5c596695697eaf36b014448880fd4b95a02b1dbcd4aae1017a1224370",
   "testout_writing_detail": "5ccd0e854dfea61f1f950d44be07da8dbd5fca6218eac211366efdde952e70a4",
   "testout_writing_line": "9ed0e242d615ac77e84fff0c4133fee02846f8dab55dc5774012310947f80c50",
@@ -63,6 +61,4 @@
     </plurals>
     <string name="testout_lessons_back">As aulas estão de volta ao seu plano.</string>
     <string name="testout_continue">Continuar</string>
-    <string name="testout_undo">Desfazer</string>
-    <string name="testout_undo_failed">Não foi possível salvar. Tente de novo.</string>
 </resources>

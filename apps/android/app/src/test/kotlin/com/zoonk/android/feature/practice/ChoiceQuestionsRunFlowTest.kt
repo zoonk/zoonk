@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.practice
 
 import androidx.activity.ComponentActivity
+import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsEnabled
@@ -49,9 +50,9 @@ class ChoiceQuestionsRunFlowTest {
                         answered += answer
                         answers += answer
                     },
-                    onRetry = {},
+                    onSend = {},
                     onClose = {},
-                    hint = "80% right skips the chapter. No feedback until the end.",
+                    hint = { "80% right skips the chapter. No feedback until the end." },
                 )
             }
         }
@@ -74,6 +75,47 @@ class ChoiceQuestionsRunFlowTest {
         assertEquals(listOf(Answer.Choice(0), Answer.DontKnow), answers)
     }
 
+    private fun showWaiting(ended: Boolean) {
+        rule.setContent {
+            ZoonkTheme {
+                ChoiceQuestionsRun(
+                    title = "Focus test",
+                    questions = questions,
+                    answered = questions.size,
+                    words = TrueFalseWords.TrueFalse,
+                    app = AppContainer.preview(rule.activity),
+                    screen = "focus-test",
+                    pending = false,
+                    failed = false,
+                    onAnswer = { _, answer -> answers += answer },
+                    onSend = { sends++ },
+                    onClose = {},
+                    upcoming = UpcomingQuestions(total = 4, ended = ended),
+                    waiting = { Text("Your next questions are on the way") },
+                )
+            }
+        }
+    }
+
+    private var sends = 0
+
+    @Test
+    fun runningOutOfQuestionsWaitsForTheNextOnes() {
+        showWaiting(ended = false)
+
+        rule.onNodeWithText("Your next questions are on the way").assertExists()
+        rule.onNodeWithText("Finish with these answers").assertDoesNotExist()
+    }
+
+    @Test
+    fun theAnswersGivenCanBeSentOnceTheRestWontCome() {
+        showWaiting(ended = true)
+
+        rule.onNodeWithText("Finish with these answers").performClick()
+
+        assertEquals(1, sends)
+    }
+
     @Test
     fun aSendThatFailedKeepsTheLastQuestionWithTryAgain() {
         var retries = 0
@@ -89,7 +131,7 @@ class ChoiceQuestionsRunFlowTest {
                     pending = false,
                     failed = true,
                     onAnswer = { _, answer -> answers += answer },
-                    onRetry = { retries++ },
+                    onSend = { retries++ },
                     onClose = {},
                 )
             }

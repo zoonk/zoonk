@@ -118,7 +118,7 @@ internal fun RunFrame(
     mainAction: (() -> Unit)?,
     report: FeedbackTarget?,
     progress: @Composable () -> Unit,
-    actions: @Composable () -> Unit,
+    actions: (@Composable () -> Unit)?,
     closeLabel: String? = null,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     content: @Composable ColumnScope.(inlineSet: Boolean, asideShown: Boolean) -> Unit,
@@ -141,7 +141,7 @@ internal fun RunFrame(
         title = { LessonTitle(title) },
         actions = { report?.let { ReportProblemMenu(app, it) } },
         closeLabel = closeLabel,
-        bottomBar = { ActionBarWidth(actions) },
+        bottomBar = actions?.let { { ActionBarWidth(it) } },
     ) { padding ->
         RunLayout(question, Modifier.padding(padding), header = progress, aside = aside, content = content)
     }

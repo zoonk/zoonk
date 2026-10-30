@@ -18,8 +18,6 @@
   "testout_starting": "9b359880a404489f0e612f1568f014654b27dd413ce833cac13b175587cb6b23",
   "testout_this_chapter": "6c4ac83a9290f97f3f19aa0c484bc62449e3ee243f69b70196a8109a9c3feb06",
   "testout_title": "44dbc18fe6671b38f936fdec41db4aa1a5cd603ef0ebc82995146c50554835cd",
-  "testout_undo": "c2e08c980261a8d949434429f3c0bc8303fb3941bbd189c8e27f4c8976c03921",
-  "testout_undo_failed": "4e59baaaa76d382f5fbf63d4e84c49cd6485db90c7ae6f09c63adea7a7af1b09",
   "testout_writing": "0f552bbe99eb1a309242c9bcaf06bc9dc16b6dd5937d9f3b005541f7fed0c158",
   "testout_writing_detail": "f902ad69b26b3f33328d6e1cfca0a4e205893788b545608e9dd2fad264f48a31",
   "testout_writing_line": "c9bf49596703f96aa69a6e22e1beaa2e32447f165014906cdcd4a618dc8b39cc",
@@ -61,6 +59,4 @@
     </plurals>
     <string name="testout_lessons_back">Die Lektionen sind wieder in deinem Plan.</string>
     <string name="testout_continue">Weiter</string>
-    <string name="testout_undo">Rückgängig</string>
-    <string name="testout_undo_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
 </resources>

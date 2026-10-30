@@ -42,6 +42,7 @@ import com.zoonk.android.feature.questions.SetPlace
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.plainItemLine
 import com.zoonk.android.feature.questions.savedAnswerText
+import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PendingLabel
@@ -164,6 +165,37 @@ internal fun RunDone(
                 content()
             }
         }
+    }
+}
+
+@Composable
+internal fun RunPage(
+    modifier: Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
+    }
+}
+
+@Composable
+internal fun RunIntro(
+    title: String,
+    detail: String,
+    facts: List<String> = emptyList(),
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(text = title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+            Text(text = detail, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+        }
+        if (facts.isNotEmpty()) Facts(facts)
     }
 }
 
