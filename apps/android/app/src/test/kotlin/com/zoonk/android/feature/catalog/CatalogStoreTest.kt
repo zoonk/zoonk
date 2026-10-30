@@ -42,7 +42,10 @@ class CatalogStoreTest {
 
             store.course[COURSE].load()
             store.chapter[chapterOne].load()
-            assertEquals("Atoms", store.course[COURSE].state.value.value?.course?.title)
+            val detail =
+                store.course[COURSE]
+                    .state.value.value
+            assertEquals("Atoms", detail?.course?.title)
             assertTrue(store.chapter[chapterOne].state.value is LoadState.Loaded)
 
             session.session = AuthenticatedSession("bia", "token-b", "local-b")
