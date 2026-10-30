@@ -11670,7 +11670,7 @@ msgid "Stop for today"
 msgstr "Arrêter pour aujourd’hui"
 
 #: src/session/next-stop.tsx
-#: src/today/today-block-row.tsx
+#: src/today/use-row-label.ts
 msgctxt "d562ST"
 msgid "Often tested"
 msgstr "Souvent évalué"
@@ -12559,23 +12559,6 @@ msgctxt "WKZJxb"
 msgid "We couldn't open your next lessons. Try again."
 msgstr "Nous n’avons pas pu ouvrir tes prochaines leçons. Réessaie."
 
-#. A lesson left from an earlier day.
-#: src/today/today-block-row.tsx
-msgctxt "afsNpC"
-msgid "Catching up · {subject}"
-msgstr "Rattrapage · {subject}"
-
-#. A lesson left from an earlier day.
-#: src/today/today-block-row.tsx
-msgctxt "tj4pFE"
-msgid "Catching up"
-msgstr "Rattrapage"
-
-#: src/today/today-block-row.tsx
-msgctxt "4qsWr2"
-msgid "{label} · often tested"
-msgstr "{label} · souvent évalué"
-
 #: src/today/today-block-row.tsx
 msgctxt "hTNiZs"
 msgid "{phase} · after today's lessons"
@@ -13045,6 +13028,23 @@ msgstr "{studied} sur {planned} étudiées cette semaine"
 msgctxt "AmPZix"
 msgid "{done, number} of {total, plural, one {# day} other {# days}}"
 msgstr "{done, number} sur {total, plural, one {# jour} other {# jours}}"
+
+#. A lesson left from an earlier day.
+#: src/today/use-row-label.ts
+msgctxt "afsNpC"
+msgid "Catching up · {subject}"
+msgstr "Rattrapage · {subject}"
+
+#. A lesson left from an earlier day.
+#: src/today/use-row-label.ts
+msgctxt "tj4pFE"
+msgid "Catching up"
+msgstr "Rattrapage"
+
+#: src/today/use-row-label.ts
+msgctxt "4qsWr2"
+msgid "{label} · often tested"
+msgstr "{label} · souvent évalué"
 
 #: src/today/use-today-copy.ts
 msgctxt "QyI7sJ"

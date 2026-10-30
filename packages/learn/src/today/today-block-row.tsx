@@ -13,10 +13,10 @@ import { type MissionView } from "../missions/mission-links";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
 import { getChallengePhase, useBlockDetail, useBlockTitle } from "../session/use-block-copy";
-import { useIsCatchingUp } from "./today-catch-up";
 import { useTodayScreen } from "./today-context";
 import { NEXT_TITLE_ID } from "./today-ids";
 import { isFinished } from "./today-queue";
+import { useRowLabel } from "./use-row-label";
 import { useLessonBeingWritten } from "./use-today-copy";
 
 export type RowFold = { hidden: boolean; phone: boolean; wide: boolean };
@@ -28,39 +28,6 @@ export const NO_FOLD: RowFold = { hidden: false, phone: false, wide: false };
  */
 const ROW_OPEN_CLASS =
   "flex min-w-0 text-left outline-none after:absolute after:top-1/2 after:h-full after:min-h-11 after:-translate-y-1/2 after:rounded-[0.625rem] focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50 disabled:cursor-default";
-
-/** A challenge says what it is, since a learner meets one before they've ever taken one. */
-function useRowLabel() {
-  const t = useExtracted();
-  const detail = useBlockDetail();
-  const isCatchingUp = useIsCatchingUp();
-
-  const part = (block: DayStep): string | null => {
-    if (!isCatchingUp(block)) {
-      return block.checkpoint
-        ? [block.subject, detail(block)].filter(Boolean).join(" · ")
-        : block.subject;
-    }
-
-    return block.subject
-      ? t({
-          description: "A lesson left from an earlier day.",
-          message: "Catching up · {subject}",
-          values: { subject: block.subject },
-        })
-      : t({ description: "A lesson left from an earlier day.", message: "Catching up" });
-  };
-
-  return (block: DayStep): string | null => {
-    const label = part(block);
-
-    if (!block.oftenTested) {
-      return label;
-    }
-
-    return label ? t("{label} · often tested", { label }) : t("Often tested");
-  };
-}
 
 function useWaitLabel() {
   const t = useExtracted();
