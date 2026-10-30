@@ -149,6 +149,8 @@ private struct NextStopView: View {
   let moment: BlockMoment?
 
   @State private var action: Task<Void, Never>?
+  /// Taps that left the step waiting here, so a retry the same run answers follows it again.
+  @State private var waits = 0
   @State private var isOpening = false
   @State private var isStopping = false
   @State private var failed = false
@@ -173,7 +175,7 @@ private struct NextStopView: View {
         actions
       }
     }
-    .task(id: FollowedLesson(lessonID: next?.lessonId, writing: writing)) {
+    .task(id: FollowedLesson(lessonID: next?.lessonId, writing: writing, waits: waits)) {
       await followLesson()
     }
     .onDisappear {
@@ -386,8 +388,7 @@ private struct NextStopView: View {
 
       switch result {
       case .done(.session), .done(.lessonWait):
-        // The step waits here; its writing is followed from what the tap asked.
-        break
+        waits += 1
       case .done(let destination) where !Task.isCancelled:
         router.openStudy(destination)
       case .done:
@@ -466,6 +467,7 @@ private struct NextStopView: View {
 private struct FollowedLesson: Equatable {
   let lessonID: String?
   let writing: LessonWriting?
+  let waits: Int
 }
 
 private struct MomentSummary: View {
