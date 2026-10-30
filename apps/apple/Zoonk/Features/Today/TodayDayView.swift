@@ -16,6 +16,7 @@ struct TodayDayView: View {
   /// Main's `useShownNotice`: the notice Today opened with stays while the learner is here, so
   /// answering it shows what the answer did; the next waits for the next visit.
   @State private var shownNotice: TodayView.Notice?
+  @State private var examChecklist: Set<ExamView.ChecklistItem> = []
 
   enum Tap: Equatable {
     case block(Int)
@@ -129,7 +130,21 @@ struct TodayDayView: View {
       if let message = view.sourceChange {
         TodaySourceChangeSection(message: message)
       }
-    case .exam, .examAccess, .examChoice, .suggestedGoal, .uploadRequest, nil:
+    case .exam:
+      if let exam = view.exam {
+        ExamMomentSection(moment: exam, checked: $examChecklist) {
+          Button {
+            router.open(.exam)
+          } label: {
+            exam.stage == .afterExam
+              ? Text(
+                "Add your result", tableName: "Today",
+                comment: "Opens the exam to add the official result")
+              : Text("See your exam", tableName: "Today", comment: "Opens the exam")
+          }
+        }
+      }
+    case .examAccess, .examChoice, .suggestedGoal, .uploadRequest, nil:
       EmptyView()
     }
   }

@@ -28,6 +28,8 @@ extension ExamView {
 /// Calm, and never a promise.
 struct ExamMomentSection<Action: View>: View {
   let moment: ExamMoment
+  /// Main's checklist saves nothing: a calm reminder, kept above the panes while the learner stays.
+  @Binding var checked: Set<ExamView.ChecklistItem>
   @ViewBuilder var action: Action
 
   var body: some View {
@@ -37,8 +39,13 @@ struct ExamMomentSection<Action: View>: View {
           VStack(alignment: .leading, spacing: 4) {
             Text(copy.title).font(.headline)
             if moment.stage != .afterExam, let day = moment.day, let date = studyDate(day.date) {
-              Text(date.formatted(.studyDay.weekday(.wide).month(.wide).day().year()))
-                .font(.subheadline.monospacedDigit())
+              Text(
+                verbatim: [
+                  date.formatted(.studyDay.weekday(.wide).month(.wide).day().year()),
+                  day.startTime.flatMap(examTimeOfDay),
+                ].compactMap(\.self).joined(separator: " · ")
+              )
+              .font(.subheadline.monospacedDigit())
             }
             Text(copy.body)
               .foregroundStyle(.secondary)
@@ -47,12 +54,38 @@ struct ExamMomentSection<Action: View>: View {
           Image(systemName: icon)
         }
 
-        ForEach(moment.checklist, id: \.self) { item in
-          Label {
-            Text(checklistLabel(item))
-          } icon: {
-            Image(systemName: "checklist")
+        if !moment.checklist.isEmpty {
+          LabeledContent {
+            Text(
+              "\(checked.intersection(moment.checklist).count) of \(moment.checklist.count)",
+              tableName: "Exam", comment: "Checklist items ticked off of all of them"
+            )
+            .monospacedDigit()
+          } label: {
+            Text("For exam day", tableName: "Exam", comment: "Title of the exam day's checklist")
           }
+          .font(.subheadline)
+        }
+
+        ForEach(moment.checklist, id: \.self) { item in
+          let isDone = checked.contains(item)
+
+          Button {
+            if isDone {
+              checked.remove(item)
+            } else {
+              checked.insert(item)
+            }
+          } label: {
+            Label {
+              Text(checklistLabel(item))
+            } icon: {
+              Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
+                .foregroundStyle(isDone ? AnyShapeStyle(.success) : AnyShapeStyle(.secondary))
+            }
+          }
+          .tint(.primary)
+          .accessibilityAddTraits(isDone ? .isSelected : [])
         }
 
         action
@@ -95,6 +128,16 @@ struct ExamMomentSection<Action: View>: View {
       (
         String(localized: "\(moment.examName) is today", table: "Exam", comment: "Exam day"),
         work
+      )
+    case .afterExam where !moment.resultReported:
+      (
+        String(
+          localized: "How did it go?", table: "Exam",
+          comment: "Asks how the exam went, once it's over"),
+        String(
+          localized:
+            "When your official result comes out, add it here. It helps make estimates more accurate for everyone.",
+          table: "Exam", comment: "Asks for the official result once the exam is over")
       )
     case .preparing, .afterExam:
       nil
@@ -162,4 +205,20 @@ struct ExamMomentSection<Action: View>: View {
         comment: "Checklist")
     }
   }
+}
+
+/// An exam's start time, as its notice gives it.
+func examTimeOfDay(_ text: String) -> String? {
+  let parts = text.split(separator: ":").compactMap { Int($0) }
+  guard parts.count >= 2,
+    let date = Calendar(identifier: .gregorian).date(
+      from: DateComponents(
+        timeZone: .gmt, year: 2000, month: 1, day: 1, hour: parts[0], minute: parts[1]))
+  else {
+    return nil
+  }
+
+  var style = Date.FormatStyle(timeZone: .gmt).hour().minute()
+  style.calendar.timeZone = .gmt
+  return date.formatted(style)
 }

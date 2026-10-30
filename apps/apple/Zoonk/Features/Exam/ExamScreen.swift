@@ -70,6 +70,7 @@ private struct ExamList: View {
   /// mock's start are in one.
   @State private var result = ExamResultForm()
   @State private var callStart = CallStart()
+  @State private var checklist: Set<ExamView.ChecklistItem> = []
   @State private var isReporting = false
 
   var body: some View {
@@ -131,7 +132,7 @@ private struct ExamList: View {
   @ViewBuilder
   private var moment: some View {
     ExamHero(exam: exam, options: options)
-    ExamMomentSection(moment: exam.moment) {}
+    ExamMomentSection(moment: exam.moment, checked: $checklist) {}
 
     if exam.takesResult {
       ExamResultSection(exam: exam, form: $result)
@@ -324,13 +325,13 @@ private struct ExamHero: View {
       if dates.count == 1 { style = style.weekday(.abbreviated) }
       if date > farOff { style = style.year() }
       let text = date.formatted(style)
-      let time = shared == nil ? day.startTime.flatMap(timeOfDay) : nil
+      let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
       return time.map { "\(text) · \($0)" } ?? text
     }
 
     var facts = times.count > 1 ? days : (days.isEmpty ? [] : [days.formatted(.list(type: .and))])
 
-    if let shared, let time = timeOfDay(shared) {
+    if let shared, let time = examTimeOfDay(shared) {
       facts.append(time)
     }
 
@@ -368,21 +369,6 @@ private struct ExamHero: View {
       : String(
         localized: "Estimated from past editions. We'll tell you when the official dates are out.",
         table: "Exam", comment: "Estimated days, before the calendar")
-  }
-
-  private func timeOfDay(_ text: String) -> String? {
-    let parts = text.split(separator: ":").compactMap { Int($0) }
-    guard parts.count >= 2,
-      let date = Calendar(identifier: .gregorian).date(
-        from: DateComponents(
-          timeZone: .gmt, year: 2000, month: 1, day: 1, hour: parts[0], minute: parts[1]))
-    else {
-      return nil
-    }
-
-    var style = Date.FormatStyle(timeZone: .gmt).hour().minute()
-    style.calendar.timeZone = .gmt
-    return date.formatted(style)
   }
 
   private func useDate(_ date: String) async {
