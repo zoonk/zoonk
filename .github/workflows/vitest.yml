@@ -1,6 +1,6 @@
 name: Vitest
 
-# Every Vitest suite (`pnpm test`): unit tests, database integration tests against a fresh Postgres
+# Every Vitest suite: unit tests, database and workflow integration tests against a fresh Postgres
 # migrated from scratch, and the player's browser tests. On every PR, and again on `main` before
 # staging, where `ci.yml` calls this workflow.
 on:
@@ -91,6 +91,12 @@ jobs:
 
       - name: Run Vitest
         run: pnpm turbo run test ${{ matrix.filter }} --concurrency=2 ${{ matrix.args }}
+
+      - name: Run workflow integration tests
+        if: matrix.part == 'core and api 1 of 2'
+        run: |
+          mkdir -p apps/api/.workflow-data
+          pnpm --filter api test:workflow
 
   # The one check branch protection requires: it passes only when every part passed.
   vitest:
