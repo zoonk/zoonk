@@ -416,15 +416,10 @@ final class ZoonkUITests: XCTestCase {
           "Expected Study to open the mistakes notebook")
       }
 
-      // A sidebar lists them, and one opens from another.
-      let sidebarPlaces = app.collectionViews.cells
-      let firstPlace = sidebarPlaces.matching(
-        NSPredicate(format: "label BEGINSWITH %@", "Mistakes notebook")
-      ).firstMatch
-      if firstPlace.exists, firstPlace.isHittable {
-        for place in ["Mistakes notebook", "Statistics"] {
-          sidebarPlaces.matching(NSPredicate(format: "label BEGINSWITH %@", place)).firstMatch
-            .tap()
+      // The sidebar lists them too, and one opens from another.
+      if UIDevice.current.userInterfaceIdiom == .pad, orientation.isLandscape {
+        for place in ["Statistics", "Mistakes notebook", "Statistics"] {
+          app.primaryNavigationItem(place).tap()
           XCTAssertTrue(
             app.navigationBars[place].firstMatch.waitForExistence(timeout: 5),
             "Expected the sidebar to open \(place)")
@@ -831,8 +826,10 @@ final class ZoonkUITests: XCTestCase {
 extension XCUIApplication {
   @MainActor
   fileprivate func primaryNavigationItem(_ title: String) -> XCUIElement {
-    let sidebarItem = collectionViews.cells.matching(NSPredicate(format: "label == %@", title))
-      .firstMatch
+    // A sidebar item with a badge reads its count after its title.
+    let sidebarItem = collectionViews.cells.matching(
+      NSPredicate(format: "label == %@ OR label BEGINSWITH %@", title, "\(title), ")
+    ).firstMatch
     return sidebarItem.exists ? sidebarItem : buttons[title].firstMatch
   }
 }
