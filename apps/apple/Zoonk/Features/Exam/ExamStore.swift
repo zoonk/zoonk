@@ -115,7 +115,7 @@ final class ExamStore {
 
       switch writing {
       case .writing(let generationId):
-        await onWriting()
+        onWriting()
         try await api.waitForQuestions(token: token, generationId: generationId)
       case .refused(let limit):
         return .refused(limit)

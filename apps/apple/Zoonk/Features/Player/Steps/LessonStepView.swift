@@ -327,7 +327,7 @@ struct LessonAnswerField: View {
   let isLocked: Bool
   var isNumber = false
   var isFocused: FocusState<Bool>.Binding
-  let onChange: (String) -> Void
+  let onChange: @MainActor (String) -> Void
 
   var body: some View {
     TextField(
