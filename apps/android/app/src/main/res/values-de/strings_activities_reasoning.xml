@@ -8,6 +8,7 @@
   "activities_reasoning_badge_fill_square": "a8f13e639cdb3a6483cb026a22bd38cc16ce106c905d751d57ccaf1eafd555c4",
   "activities_reasoning_claim": "3eaf392dc0f782c761038ceef490bee762aa87b942e3359896bec9296a1277ab",
   "activities_reasoning_evidence": "ef3ad8d1a4467b17e143e6577d159dfcb095645dfcbd79430a65dfacac0779b1",
+  "activities_reasoning_evidence_chosen": "2e4f45a8d7055a937a275bc7d2b83870d06870bc45732fd920b12c1b44045fda",
   "activities_reasoning_evidence_hint": "c0e260ac667f60f1bc090e90c12968bd088af9de71c861ca8582cadef058e22f",
   "activities_reasoning_grid_all_filled": "949b0f638acbf5a0d1993d83150cf0f90bda93abb565bbe4f465eb0be54a6a2f",
   "activities_reasoning_grid_counted": "bad96997cc575e13d88794b6530080d93a3fb1d07f4676d2f82aaa83919b3621",
@@ -64,6 +65,7 @@
   "activities_reasoning_quote": "98f131034cbf3514855147e74f79a59b5c4b55b7b1891391601e98c27941e16d",
   "activities_reasoning_quotes": "4747c26ee6c27e9003fec23937f0bf22bd04649e30332791c1c57d64e83ecf52",
   "activities_reasoning_reasoning": "e1984f9d4643e3c29d3ca987283cd7f87effd260ba03d2a2ac4048c76edafe54",
+  "activities_reasoning_reasoning_chosen": "993c027a581173e07629d5b664a05f04d0e960789f30753946d7495042a5bfb4",
   "activities_reasoning_reasoning_hint": "3ddf53ade23c585d5dd91033b9f66b9f78375c415c79b01f85780d61b896c6fa",
   "activities_reasoning_reasoning_next": "a174cdbe5966933615c76468258e0b075f9c68ed72f3591ff738b3472e9e42f3",
   "activities_reasoning_source_mark": "899a2cea2f3e8518314b9ce1e64438ce058e04f582c40a5f9d1c1ba3af6361ac",
@@ -207,6 +209,10 @@
     <string name="activities_reasoning_evidence">Beleg</string>
     <!-- The part of an argument that explains how the quote proves the claim; also above the lines to pick for it. -->
     <string name="activities_reasoning_reasoning">Begründung</string>
+    <!-- For TalkBack, after the learner puts a quote in the argument, like "Evidence: “It is too rash.”". The quote comes with its quotation marks. -->
+    <string name="activities_reasoning_evidence_chosen">Beleg: %1$s</string>
+    <!-- For TalkBack, after the learner puts a line of reasoning in the argument, like "Reasoning: Juliet herself sees the rush." -->
+    <string name="activities_reasoning_reasoning_chosen">Begründung: %1$s</string>
     <string name="activities_reasoning_evidence_hint">Wähle das Zitat aus, das die Behauptung am besten stützt</string>
     <string name="activities_reasoning_reasoning_hint">Wähle aus, wie das Zitat die Behauptung belegt</string>
     <!-- The empty reasoning part while the evidence is still to pick. -->

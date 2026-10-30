@@ -125,6 +125,10 @@
     <string name="activities_reasoning_evidence">Evidence</string>
     <!-- The part of an argument that explains how the quote proves the claim; also above the lines to pick for it. -->
     <string name="activities_reasoning_reasoning">Reasoning</string>
+    <!-- For TalkBack, after the learner puts a quote in the argument, like "Evidence: “It is too rash.”". The quote comes with its quotation marks. -->
+    <string name="activities_reasoning_evidence_chosen">Evidence: %1$s</string>
+    <!-- For TalkBack, after the learner puts a line of reasoning in the argument, like "Reasoning: Juliet herself sees the rush." -->
+    <string name="activities_reasoning_reasoning_chosen">Reasoning: %1$s</string>
     <string name="activities_reasoning_evidence_hint">Pick the quote that best supports the claim</string>
     <string name="activities_reasoning_reasoning_hint">Pick how the quote proves the claim</string>
     <!-- The empty reasoning part while the evidence is still to pick. -->

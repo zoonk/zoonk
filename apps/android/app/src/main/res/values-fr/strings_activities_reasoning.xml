@@ -8,6 +8,7 @@
   "activities_reasoning_badge_fill_square": "6bff0f2b4d73928aad77a4b1965456e0aabbb9d6bbbdf5f24a6c0ad352960d25",
   "activities_reasoning_claim": "34d5127f8c9c0c16887ce20296f7531579a18eedec90cc545c5f6cd74b57f4a3",
   "activities_reasoning_evidence": "d75866c34f201cf39ed09cc5cdcc87362b5e19cab7628bc8868f998140543bd9",
+  "activities_reasoning_evidence_chosen": "7e36992aeaa3514f410a9a3a01c96e671add92beab2fc0441a4ae04b14b014ab",
   "activities_reasoning_evidence_hint": "6a1be36718aea95d798df8198ea323d5c615dc46524c4df9c679f765c91713ae",
   "activities_reasoning_grid_all_filled": "82bbc3688f480eac1255cc05b89d9965fe6355b96115ae36fd943486e90582f1",
   "activities_reasoning_grid_counted": "ff3d78c79ee46544a2a500a7c949af10ea098dc1fa8029abb39dd59b6e14fc59",
@@ -64,6 +65,7 @@
   "activities_reasoning_quote": "4c5f7f6cbaf68fe7037a56eda44a717012999f395a91be9c5a069a28b1931963",
   "activities_reasoning_quotes": "992326f86ed5c6eff96aff8f81f7b9b216dfeced55217d7ae8861a08276c9421",
   "activities_reasoning_reasoning": "e9e0b3e996d26eb09ccf21c5f016cb81a71232e0c30f7038012658683297fe1f",
+  "activities_reasoning_reasoning_chosen": "c5c78697a1bf31c89f8195aebf7479ea41a31cfeee96be0d9d74043b40c00118",
   "activities_reasoning_reasoning_hint": "156cd24321931e017168fb639fd9a554b0d05ee0fb54f9ad4b5d830b17aab120",
   "activities_reasoning_reasoning_next": "a6f0f63171eeafa10bb791763a6e80564a599cbf30c61a66816098dc6970ea62",
   "activities_reasoning_source_mark": "8f2069c9a7f6e37bc408288576204f92cbcecf3696f9d514638df3ca05da9ca0",
@@ -212,6 +214,10 @@
     <string name="activities_reasoning_evidence">Preuve</string>
     <!-- The part of an argument that explains how the quote proves the claim; also above the lines to pick for it. -->
     <string name="activities_reasoning_reasoning">Raisonnement</string>
+    <!-- For TalkBack, after the learner puts a quote in the argument, like "Evidence: “It is too rash.”". The quote comes with its quotation marks. -->
+    <string name="activities_reasoning_evidence_chosen">Preuve : %1$s</string>
+    <!-- For TalkBack, after the learner puts a line of reasoning in the argument, like "Reasoning: Juliet herself sees the rush." -->
+    <string name="activities_reasoning_reasoning_chosen">Raisonnement : %1$s</string>
     <string name="activities_reasoning_evidence_hint">Choisis la citation qui appuie le mieux l’affirmation</string>
     <string name="activities_reasoning_reasoning_hint">Choisis comment la citation prouve l’affirmation</string>
     <!-- The empty reasoning part while the evidence is still to pick. -->

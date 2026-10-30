@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,7 +20,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,21 +31,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityCanvasLabel
@@ -50,6 +59,7 @@ import com.zoonk.android.feature.activities.ActivityDragDrop
 import com.zoonk.android.feature.activities.ActivityDragDropState
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
+import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.feature.activities.activityDraggable
 import com.zoonk.android.feature.activities.activityDropTarget
 import com.zoonk.android.feature.activities.rememberActivityDragDrop
@@ -88,6 +98,12 @@ private fun ArgumentBuilderActivity(props: ActivityProps) {
             line == null -> ArgumentPart.Reasoning
             else -> null
         }
+    val resources = LocalResources.current
+    var announcement by remember { mutableStateOf("") }
+    val next = remember { FocusRequester() }
+    var moves by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(moves) { if (moves > 0) next.requestFocus() }
 
     fun update(
         evidence: String?,
@@ -96,13 +112,27 @@ private fun ArgumentBuilderActivity(props: ActivityProps) {
         evidenceId = evidence
         reasoningId = reasoning
         props.onAnswerChange(if (evidence != null && reasoning != null) selectionAnswer(listOf(evidence, reasoning)) else null)
+        moves++
     }
 
     fun choose(id: String) {
         when (openPart) {
-            ArgumentPart.Evidence -> if (fields.evidence.any { it.id == id }) update(id, reasoningId)
-            ArgumentPart.Reasoning -> if (fields.reasoning.any { it.id == id }) update(evidenceId, id)
-            null -> Unit
+            ArgumentPart.Evidence -> {
+                fields.evidence.find { it.id == id }?.let {
+                    update(it.id, reasoningId)
+                    val quoted = resources.getString(R.string.activities_reasoning_quote, it.quote)
+                    announcement = resources.getString(R.string.activities_reasoning_evidence_chosen, quoted)
+                }
+            }
+
+            ArgumentPart.Reasoning -> {
+                fields.reasoning.find { it.id == id }?.let {
+                    update(evidenceId, it.id)
+                    announcement = resources.getString(R.string.activities_reasoning_reasoning_chosen, it.text)
+                }
+            }
+
+            null -> {}
         }
     }
 
@@ -153,6 +183,7 @@ private fun ArgumentBuilderActivity(props: ActivityProps) {
                         result = resultOf(line?.id),
                         clearLabel = stringResource(R.string.activities_reasoning_take_reasoning_out),
                         onClear = if (editable && line != null) ({ update(evidenceId, null) }) else null,
+                        clearModifier = if (openPart == null) Modifier.focusRequester(next) else Modifier,
                     ) {
                         line?.let {
                             ReasoningText(it.text)
@@ -165,8 +196,16 @@ private fun ArgumentBuilderActivity(props: ActivityProps) {
                     ArgumentPart.Evidence -> {
                         Candidates(stringResource(R.string.activities_reasoning_quotes)) {
                             val action = stringResource(R.string.activities_reasoning_use_as_evidence)
-                            quotes.forEach { item ->
-                                Candidate(item.id, action, drag, enabled = editable, onClick = { choose(item.id) }) {
+                            quotes.forEachIndexed { index, item ->
+                                Candidate(
+                                    item.id,
+                                    action,
+                                    drag,
+                                    editable,
+                                    next.takeIf { index == 0 },
+                                    MaterialTheme.typography.bodyLarge,
+                                    onClick = { choose(item.id) },
+                                ) {
                                     QuoteText(item.quote, item.citation)
                                 }
                             }
@@ -176,8 +215,16 @@ private fun ArgumentBuilderActivity(props: ActivityProps) {
                     ArgumentPart.Reasoning -> {
                         Candidates(stringResource(R.string.activities_reasoning_reasoning)) {
                             val action = stringResource(R.string.activities_reasoning_use_as_reasoning)
-                            lines.forEach { item ->
-                                Candidate(item.id, action, drag, enabled = editable, onClick = { choose(item.id) }) {
+                            lines.forEachIndexed { index, item ->
+                                Candidate(
+                                    item.id,
+                                    action,
+                                    drag,
+                                    editable,
+                                    next.takeIf { index == 0 },
+                                    MaterialTheme.typography.bodyMedium,
+                                    onClick = { choose(item.id) },
+                                ) {
                                     ReasoningText(item.text)
                                 }
                             }
@@ -213,6 +260,7 @@ private fun ArgumentBuilderActivity(props: ActivityProps) {
                 }
             }
         }
+        ActivityAnnouncement(if (props.isChecked) "" else announcement)
     }
 }
 
@@ -252,6 +300,7 @@ private fun ArgumentSlot(
     result: AnswerResult?,
     clearLabel: String,
     onClear: (() -> Unit)?,
+    clearModifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -270,40 +319,42 @@ private fun ArgumentSlot(
         when {
             result == AnswerResult.Right -> colors.tertiary
             result == AnswerResult.Wrong -> colors.error
-            isOver -> accent
-            isOpen -> accent.copy(alpha = OPEN_BORDER_ALPHA)
+            isOpen -> accent
             else -> colors.outlineVariant
         }
 
-    Row(
+    Column(
         Modifier
             .fillMaxWidth()
             .activityDropTarget(drag, part.name, enabled = isOpen)
             .slotFrame(fill, border, dashed = !isFilled)
             .semantics(mergeDescendants = true) {}
-            .padding(start = 14.dp, top = 10.dp, bottom = 10.dp, end = if (onClear == null) 14.dp else 0.dp),
-        verticalAlignment = Alignment.Top,
+            // The clear button's 48dp row takes the top padding's place, so the label stays where it was.
+            .padding(start = 14.dp, end = 14.dp, top = if (onClear == null) 10.dp else 0.dp, bottom = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    label,
-                    Modifier.weight(1f),
-                    color = if (isOpen || isFilled) accent else colors.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                )
-                if (result != null) Verdict(strong = result == AnswerResult.Right)
-            }
-            if (isFilled) {
-                content()
-            } else {
-                Text(hint, color = colors.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        Row(
+            Modifier.heightIn(min = LABEL_ROW),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                label,
+                Modifier.weight(1f),
+                color = if (isOpen || isFilled) accent else colors.onSurfaceVariant,
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+            )
+            if (result != null) Verdict(strong = result == AnswerResult.Right)
+            if (onClear != null) {
+                IconButton(onClick = onClear, modifier = clearModifier.offset(x = CLEAR_OVERHANG)) {
+                    Icon(painterResource(R.drawable.ic_close), contentDescription = clearLabel, modifier = Modifier.size(18.dp))
+                }
             }
         }
-        if (onClear != null) {
-            IconButton(onClick = onClear) {
-                Icon(painterResource(R.drawable.ic_close), contentDescription = clearLabel, modifier = Modifier.size(18.dp))
-            }
+        if (isFilled) {
+            content()
+        } else {
+            Text(hint, color = colors.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
@@ -329,17 +380,18 @@ private fun Modifier.slotFrame(
 @Composable
 private fun Verdict(strong: Boolean) {
     val color = if (strong) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onErrorContainer
+    val style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         Icon(
             painterResource(if (strong) R.drawable.ic_check else R.drawable.ic_close),
             contentDescription = null,
-            modifier = Modifier.size(14.dp),
+            modifier = Modifier.size(14.dp * LocalDensity.current.fontScale),
             tint = color,
         )
         Text(
             stringResource(if (strong) R.string.activities_reasoning_strong else R.string.activities_reasoning_weak),
             color = color,
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+            style = style,
         )
     }
 }
@@ -383,12 +435,15 @@ private fun Candidate(
     action: String,
     drag: ActivityDragDropState,
     enabled: Boolean,
+    focus: FocusRequester?,
+    firstLine: TextStyle,
     onClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
     val shape = RoundedCornerShape(CORNER)
     Row(
         Modifier
+            .then(if (focus != null) Modifier.focusRequester(focus) else Modifier)
             .fillMaxWidth()
             .heightIn(min = 48.dp)
             .activityDraggable(drag, id, enabled = enabled, shape = shape)
@@ -399,12 +454,14 @@ private fun Candidate(
             .padding(horizontal = 14.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Icon(
-            painterResource(R.drawable.ic_drag_indicator),
-            contentDescription = null,
-            modifier = Modifier.padding(top = 2.dp).size(18.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        LineMarker(firstLine) {
+            Icon(
+                painterResource(R.drawable.ic_drag_indicator),
+                contentDescription = null,
+                modifier = Modifier.size(18.dp * LocalDensity.current.fontScale),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         content()
     }
 }
@@ -437,4 +494,5 @@ private val SLOT_BORDER: Dp = 2.dp
 private val DASH: Dp = 5.dp
 private const val SOFT = 0.16f
 private const val OPEN_ALPHA = 0.07f
-private const val OPEN_BORDER_ALPHA = 0.6f
+private val LABEL_ROW: Dp = 28.dp
+private val CLEAR_OVERHANG: Dp = 8.dp

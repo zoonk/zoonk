@@ -15,6 +15,7 @@ import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isFocused
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -266,13 +267,27 @@ class ReasoningFlowTest {
         play("argumentBuilder", isCorrect = false)
 
         candidate("O brawling love").performScrollTo().performClick()
-        rule.onNode(hasContentDescription("Take the quote out")).performClick()
+        rule.onNode(hasContentDescription("Take the quote out")).performScrollTo().performClick()
         candidate("O brawling love").performScrollTo().performClick()
         candidate("Juliet herself").performScrollTo().performClick()
         harness.tap("Check")
 
         shows("Stronger evidence")
         shows("It is about Rosaline.")
+    }
+
+    @Test
+    fun argumentBuilderSaysWhatWentInAndKeepsTheKeyboardOnTheNextPart() {
+        play("argumentBuilder", isCorrect = true)
+
+        candidate("It is too rash").performScrollTo().requestFocus()
+        rule.onRoot().performKeyInput { pressKey(Key.Enter) }
+
+        rule.onNode(hasContentDescription("Evidence: “It is too rash, too unadvised, too sudden.”")).assertExists()
+        rule.onNode(isFocused()).assert(hasText("Juliet herself", substring = true) or hasText("Love is common", substring = true))
+        rule.onRoot().performKeyInput { pressKey(Key.Enter) }
+
+        rule.onNode(hasContentDescription("Take the reasoning out")).assertIsFocused()
     }
 
     @Test
