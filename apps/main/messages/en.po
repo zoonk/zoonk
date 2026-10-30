@@ -149,6 +149,7 @@ msgctxt "MA35Hh"
 msgid "Start a goal: “{goal}”"
 msgstr "Start a goal: “{goal}”"
 
+#. Heading over the option to ask the buddy the typed question.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "ZT0z9z"
 msgid "Ask"
@@ -321,6 +322,7 @@ msgctxt "2GURQY"
 msgid "Appearance"
 msgstr "Appearance"
 
+#. A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
@@ -510,6 +512,7 @@ msgctxt "LxAk-r"
 msgid "Your plan from this chapter"
 msgstr "Your plan from this chapter"
 
+#. Heading over the ways to start a plan. “your level” is what the learner already knows.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "NCLSU6"
@@ -1979,6 +1982,7 @@ msgctxt "fnAN1H"
 msgid "Linear equations in context"
 msgstr "Linear equations in context"
 
+#. A writing lesson on linking words, such as “however” and “therefore”.
 #: src/app/[lang]/(home)/_components/exam-tomorrow.ts
 #: src/app/[lang]/(home)/_components/hero-days.ts
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
@@ -3365,6 +3369,7 @@ msgctxt "99__Yc"
 msgid "Your browser didn't open the Zoonk app. Close this page and sign in with Apple again in the app."
 msgstr "Your browser didn't open the Zoonk app. Close this page and sign in with Apple again in the app."
 
+#. Signing the learner in failed.
 #: src/app/auth/callback/route.ts
 msgctxt "1KzRxp"
 msgid "We couldn't sign you in."

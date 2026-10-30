@@ -149,6 +149,7 @@ msgctxt "MA35Hh"
 msgid "Start a goal: “{goal}”"
 msgstr "Empezar un objetivo: «{goal}»"
 
+#. Heading over the option to ask the buddy the typed question.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "ZT0z9z"
 msgid "Ask"
@@ -169,7 +170,7 @@ msgstr "Continuar la sesión de hoy"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
 msgid "full, half or one subject"
-msgstr "completo, medio o una asignatura"
+msgstr "examen completo, medio examen o una asignatura"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
@@ -321,6 +322,7 @@ msgctxt "2GURQY"
 msgid "Appearance"
 msgstr "Apariencia"
 
+#. A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
@@ -510,6 +512,7 @@ msgctxt "LxAk-r"
 msgid "Your plan from this chapter"
 msgstr "Tu plan a partir de este capítulo"
 
+#. Heading over the ways to start a plan. “your level” is what the learner already knows.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "NCLSU6"
@@ -578,7 +581,7 @@ msgstr "{count, plural, one {# capítulo} other {# capítulos}}"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "bdvt9X"
 msgid "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level."
-msgstr "Prepara tu plan y Zoonk preparará los capítulos y las lecciones de este curso para ti, a partir de tu nivel."
+msgstr "Cuando creas tu plan, Zoonk prepara los capítulos y las lecciones de este curso para ti, empezando por tu nivel."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "FwtWUq"
@@ -816,12 +819,12 @@ msgstr "Preguntas más antiguas"
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "FRwDt3"
 msgid "Your buddy"
-msgstr "Tu Compañero"
+msgstr "Tu compañero"
 
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
-msgstr "Tu Compañero responde a tus preguntas y ajusta tu plan."
+msgstr "Tu compañero responde a tus preguntas y ajusta tu plan."
 
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "BV0cQk"
@@ -1127,7 +1130,7 @@ msgstr "¿Eliminar tu cuenta?"
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "hL_UdI"
 msgid "Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can't be undone."
-msgstr "Tus objetivos, planes, progreso, recuerdos, comentarios y archivos subidos se eliminarán de forma permanente. Esta acción no se puede deshacer."
+msgstr "Tus objetivos, planes, progreso, memoria, comentarios y archivos subidos se eliminarán para siempre. Esta acción no se puede deshacer."
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1180,7 +1183,7 @@ msgstr "Tus datos"
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "O7G-L3"
 msgid "How Zoonk and your buddy call you"
-msgstr "Cómo te llaman Zoonk y tu Compañero"
+msgstr "Cómo te llaman Zoonk y tu compañero"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -1233,12 +1236,12 @@ msgstr "Guardado."
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "VnpW_P"
 msgid "Choose your buddy, sounds, a daily time limit and the app's language."
-msgstr "Elige tu Compañero, los sonidos, un límite de tiempo diario y el idioma de la aplicación."
+msgstr "Elige a tu compañero, los sonidos, un límite de tiempo diario y el idioma de la aplicación."
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "BbrYZc"
 msgid "Your buddy, lessons and language, the way you like them."
-msgstr "Tu Compañero, tus lecciones y el idioma, a tu gusto."
+msgstr "Tu compañero, tus lecciones y tu idioma, a tu gusto."
 
 #: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
 msgctxt "LCU3Qs"
@@ -1300,7 +1303,7 @@ msgstr "Gratis"
 #: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
 msgctxt "kkHvAa"
 msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
-msgstr "<mono>{used, number}/{limit, number}</mono> mensajes al Compañero usados hoy"
+msgstr "<mono>{used, number}/{limit, number}</mono> mensajes enviados hoy a tu compañero"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
@@ -1589,7 +1592,7 @@ msgstr "{belt} al llegar a <mono>{points}</mono> de Poder Mental"
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "dzpvr6"
 msgid "{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}"
-msgstr "{points, plural, one {Falta <mono>#</mono>} other {Faltan <mono>#</mono>}}"
+msgstr "{points, plural, one {Te falta <mono>#</mono>} other {Te faltan <mono>#</mono>}}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "3DtX17"
@@ -1979,6 +1982,7 @@ msgctxt "fnAN1H"
 msgid "Linear equations in context"
 msgstr "Ecuaciones lineales en contexto"
 
+#. A writing lesson on linking words, such as “however” and “therefore”.
 #: src/app/[lang]/(home)/_components/exam-tomorrow.ts
 #: src/app/[lang]/(home)/_components/hero-days.ts
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
@@ -2192,7 +2196,7 @@ msgstr "Lección + 6 preguntas"
 #: src/app/[lang]/(home)/_components/hero-days.ts
 msgctxt "PrA5f8"
 msgid "Calling about an apartment"
-msgstr "Llamar por un piso"
+msgstr "Llamar para preguntar por un piso"
 
 #: src/app/[lang]/(home)/_components/goal-tomorrows.ts
 #: src/app/[lang]/(home)/_components/hero-days.ts
@@ -2246,7 +2250,7 @@ msgstr "2 para practicar"
 #: src/app/[lang]/(home)/_components/goal-tomorrows.ts
 msgctxt "E6a1TF"
 msgid "Mistakes: calling about an apartment"
-msgstr "Errores: llamar por un piso"
+msgstr "Errores: llamar para preguntar por un piso"
 
 #: src/app/[lang]/(home)/_components/hero-days.ts
 #: src/app/[lang]/(home)/_components/tomorrow-steps.ts
@@ -2288,7 +2292,7 @@ msgstr "Nivel {level} → {target}"
 #: src/app/[lang]/(home)/_components/hero-window.tsx
 msgctxt "dPX7wH"
 msgid "On pace"
-msgstr "A buen ritmo"
+msgstr "Al día"
 
 #: src/app/[lang]/(home)/_components/hero-window.tsx
 msgctxt "I_pvBN"
@@ -2309,7 +2313,7 @@ msgstr "Planes de ejemplo. El tuyo se adapta a tu objetivo, tu tiempo y lo que y
 #: src/app/[lang]/opengraph-image.tsx
 msgctxt "hV7Lpg"
 msgid "Know what to study every day until the big day."
-msgstr "Sabe qué estudiar cada día hasta el gran día."
+msgstr "Ten claro qué estudiar cada día hasta el gran día."
 
 #: src/app/[lang]/(home)/_components/home-hero.tsx
 #: src/app/[lang]/opengraph-image.tsx
@@ -2453,7 +2457,7 @@ msgstr "{count, plural, one {# lección que ya conocías} other {# lecciones que
 #: src/app/[lang]/(home)/_components/placed-plans.tsx
 msgctxt "placedPlan.djZCU5"
 msgid "Skipped"
-msgstr "Ya conocido"
+msgstr "Saltado"
 
 #: src/app/[lang]/(home)/_components/placement-questions.tsx
 msgctxt "2F9-v0"
@@ -2741,7 +2745,7 @@ msgstr "¿Puedo ver el piso el sábado?"
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "wXawda"
 msgid "{move, select, london {Stress the first part: <b>SAT</b>-ur-day.} other {Stress the accent: <b>SÁ</b>-ba-do.}}"
-msgstr "{move, select, london {Acentúa la primera sílaba: <b>SÁ</b>-ba-do.} other {Marca el acento: <b>SÁ</b>-ba-do.}}"
+msgstr "{move, select, london {Acentúa la primera sílaba: <b>SAT</b>-ur-day.} other {Acentúa la sílaba con tilde: <b>SÁ</b>-ba-do.}}"
 
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "waQKY7"
@@ -2786,7 +2790,7 @@ msgstr "Simulacro 2 · Pregunta 4 · Ciencias Naturales"
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "80lZTQ"
 msgid "308 is what you get if you divide all of the $15.40 by 5 cents. But $12 of it is the monthly fee. Only the $3.40 left pays for texts, and $3.40 ÷ $0.05 = 68."
-msgstr "308 es el resultado de dividir los 15,40 $ entre 5 centavos. Pero 12 $ corresponden a la cuota mensual. Solo los 3,40 $ restantes sirven para pagar los mensajes, y 3,40 $ ÷ 0,05 $ = 68."
+msgstr "308 es lo que obtienes si divides los 15,40 $ entre 5 céntimos. Pero 12 $ son la cuota mensual. Solo los 3,40 $ restantes se destinan a los mensajes, y 3,40 $ ÷ 0,05 $ = 68."
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "HKbV8Z"
@@ -2826,19 +2830,19 @@ msgstr "¿Por qué «piso» y no «apartamento»?"
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "00sc5X"
 msgid "Lesson · Calling about an apartment"
-msgstr "Lección · Llamar por un piso"
+msgstr "Lección · Llamar para preguntar por un piso"
 
 #. The buddy answers a learner of English: “flat” and “apartment” are the English words being taught.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "4teyr4"
 msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
-msgstr "Las dos palabras sirven, pero en Londres se dice «piso». «Apartamento» es más común en Estados Unidos, así que «piso» suena más natural cuando buscas alquiler allí."
+msgstr "Las dos valen, pero en Londres se dice «flat». «Apartment» es más común en Estados Unidos, así que «flat» suena más natural si alquilas un piso en Londres."
 
 #. A learner of English asks about the English words “flat” and “apartment”.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "O0g0Ss"
 msgid "Why “flat” and not “apartment”?"
-msgstr "¿Por qué «piso» y no «apartamento»?"
+msgstr "¿Por qué «flat» y no «apartment»?"
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "buddyNames.vPjK_E"
@@ -2978,7 +2982,7 @@ msgstr "Tu plan ha cambiado"
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "bW7B87"
 msgid "New"
-msgstr "Ahora"
+msgstr "Nuevo"
 
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "K0Lp_g"
@@ -3024,7 +3028,7 @@ msgstr "Lo que has estudiado vuelve justo antes de que lo olvides."
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "OKDhTn"
 msgid "Back before you forget"
-msgstr "Vuelve antes de que lo olvides"
+msgstr "De vuelta antes de que lo olvides"
 
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "bjikyk"
@@ -3215,7 +3219,7 @@ msgstr "Sobre esta lección"
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "27L4n6"
 msgid "Ready to do instead"
-msgstr "Disponible como alternativa"
+msgstr "Otra opción para empezar ahora"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "aa5y6W"
@@ -3337,7 +3341,7 @@ msgstr "Sesión de hoy"
 #: src/app/[lang]/terms/page.tsx
 msgctxt "DaGtoz"
 msgid "Read Zoonk's terms of use to understand the rules and conditions for using our platform and services"
-msgstr "Lee las condiciones de uso de Zoonk para conocer las normas y condiciones de uso de nuestra plataforma y servicios"
+msgstr "Lee los términos de uso de Zoonk para conocer las normas y condiciones de nuestra plataforma y nuestros servicios"
 
 #: src/app/[lang]/terms/page.tsx
 msgctxt "UhkSyx"
@@ -3365,6 +3369,7 @@ msgctxt "99__Yc"
 msgid "Your browser didn't open the Zoonk app. Close this page and sign in with Apple again in the app."
 msgstr "Tu navegador no ha abierto la aplicación de Zoonk. Cierra esta página y vuelve a iniciar sesión con Apple en la aplicación."
 
+#. Signing the learner in failed.
 #: src/app/auth/callback/route.ts
 msgctxt "1KzRxp"
 msgid "We couldn't sign you in."
@@ -3776,7 +3781,7 @@ msgstr "Empieza gratis. <rest>Plus cuando quieras tenerlo todo.</rest>"
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "xrpz7X"
 msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "Gratis cubre un objetivo a la vez. Plus cubre todos tus objetivos, hasta el gran día."
+msgstr "El plan gratuito incluye un objetivo a la vez. Plus incluye todos tus objetivos hasta el gran día."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"
@@ -3807,7 +3812,7 @@ msgstr "{days, plural, =7 {La primera semana} one {El primer día} other {Los pr
 #: src/components/pricing/plus-questions.tsx
 msgctxt "FZOFIX"
 msgid "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day"
-msgstr "{tutor, plural, one {# mensaje a tu Compañero} other {# mensajes a tu Compañero}} y {uploads, plural, one {# archivo subido} other {# archivos subidos}} al día"
+msgstr "{tutor, plural, one {# mensaje a tu compañero} other {# mensajes a tu compañero}} y {uploads, plural, one {# archivo subido} other {# archivos subidos}} al día"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "QKrdr3"
@@ -3842,7 +3847,7 @@ msgstr "¿Es Plus realmente ilimitado?"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "flRDel"
 msgid "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>."
-msgstr "Casi. Las lecciones, los objetivos y tu Compañero tienen límites solo para frenar bots y herramientas automatizadas, no a quienes están aprendiendo. Las llamadas de expresión oral tienen límites diarios y mensuales, más altos que en el plan gratuito. <link>Lee nuestra política de uso razonable</link>."
+msgstr "Casi. Las lecciones, los objetivos y tu compañero solo tienen límites para frenar los bots y las herramientas automatizadas, no a las personas que aprenden. Las llamadas para practicar la expresión oral tienen límites diarios y mensuales, más altos que los del plan gratuito. <link>Lee nuestra política de uso razonable</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"

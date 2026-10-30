@@ -205,6 +205,11 @@ function useFallbackGroup({
   return {
     id: "fallback",
     items: ask ? [ask, startGoal] : [startGoal],
-    label: ask ? t("Ask") : t("New goal"),
+    label: ask
+      ? t({
+          description: "Heading over the option to ask the buddy the typed question.",
+          message: "Ask",
+        })
+      : t("New goal"),
   };
 }

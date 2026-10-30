@@ -751,7 +751,7 @@ msgstr "Conexión eliminada: {cause} llevó a {effect}."
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "jFy9ot"
 msgid "Linked: {cause} led to {effect}."
-msgstr "Conectados: {cause} llevó a {effect}."
+msgstr "Relación creada: {cause} ha dado lugar a {effect}."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "xCm5pu"
@@ -787,12 +787,12 @@ msgstr "Causas y efectos en orden cronológico: {nodes}."
 #: src/activities/cause-effect-chain/cause-effect-link-list.tsx
 msgctxt "ghG6a0"
 msgid "Not a link in this story"
-msgstr "No hay esta conexión en la historia"
+msgstr "Esta relación no aparece en la historia"
 
 #: src/activities/cause-effect-chain/cause-effect-link-list.tsx
 msgctxt "hqD1Uy"
 msgid "Missed link"
-msgstr "Conexión que falta"
+msgstr "Relación que faltaba"
 
 #: src/activities/cause-effect-chain/cause-effect-link-list.tsx
 msgctxt "4jfGCF"
@@ -868,7 +868,7 @@ msgstr "Línea {line}: {error}"
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "IY8DPN"
 msgid "Stopped after {seconds} seconds. Is there a loop that never ends?"
-msgstr "Se detuvo después de {seconds} segundos. ¿Hay algún bucle que no termina?"
+msgstr "Se ha detenido tras {seconds} segundos. ¿Hay algún bucle que no termina nunca?"
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "wzki3Y"
@@ -988,7 +988,7 @@ msgstr "Dijiste {guess} y acertaste."
 #: src/activities/code-tracer/tracer-parts.tsx
 msgctxt "lv9wls"
 msgid "You said {guess}; it was {traced}."
-msgstr "Dijiste {guess}; el resultado fue {traced}."
+msgstr "Has dicho {guess}; era {traced}."
 
 #: src/activities/combination-grid/combination-grid-activity.tsx
 msgctxt "j4PT7S"
@@ -1088,7 +1088,7 @@ msgstr "El recorrido para este caso"
 #: src/activities/decision-tree/decision-tree-review.tsx
 msgctxt "mJLCHX"
 msgid "You chose {branch}"
-msgstr "Elegiste {branch}"
+msgstr "Has elegido {branch}"
 
 #: src/activities/decision-tree/decision-tree-review.tsx
 msgctxt "eU5-OH"
@@ -1103,7 +1103,7 @@ msgstr "Dice:"
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "1F_ulL"
 msgid "You said:"
-msgstr "Dijiste:"
+msgstr "Has dicho:"
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "ZWpFH7"
@@ -1243,7 +1243,7 @@ msgstr "Para comparar, en {input} el valor es {value}."
 #: src/activities/formula-model/formula-model-events.tsx
 msgctxt "b42_4_"
 msgid "What-if events"
-msgstr "Posibles escenarios"
+msgstr "Sucesos hipotéticos"
 
 #: src/activities/formula-model/formula-model-events.tsx
 msgctxt "3eJe1c"
@@ -1612,13 +1612,13 @@ msgstr "No se puede mostrar este mapa. Continúa a la siguiente pantalla."
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "VH7A0a"
 msgid "Africa"
-msgstr "Africa"
+msgstr "África"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "1vXyK5"
 msgid "Antarctica"
-msgstr "Antarctica"
+msgstr "Antártida"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
@@ -1630,67 +1630,67 @@ msgstr "Asia"
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "h_3PM1"
 msgid "Austria-Hungary"
-msgstr "Austria-Hungary"
+msgstr "Austria-Hungría"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "X3AIiK"
 msgid "Europe"
-msgstr "Europe"
+msgstr "Europa"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "9KADbj"
 msgid "France"
-msgstr "France"
+msgstr "Francia"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "eE22iN"
 msgid "German Empire"
-msgstr "German Empire"
+msgstr "Imperio alemán"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "VzQxqn"
 msgid "Italy"
-msgstr "Italy"
+msgstr "Italia"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "rn1UqJ"
 msgid "North America"
-msgstr "North America"
+msgstr "América del Norte"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "UIzbXh"
 msgid "Oceania"
-msgstr "Oceania"
+msgstr "Oceanía"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "_vGZhi"
 msgid "Ottoman Empire"
-msgstr "Ottoman Empire"
+msgstr "Imperio otomano"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "cgoJNF"
 msgid "Parthian Empire"
-msgstr "Parthian Empire"
+msgstr "Imperio parto"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "QOSGzc"
 msgid "Roman Empire"
-msgstr "Roman Empire"
+msgstr "Imperio romano"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "hAZZWd"
 msgid "Russian Empire"
-msgstr "Russian Empire"
+msgstr "Imperio ruso"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
@@ -1702,19 +1702,19 @@ msgstr "Serbia"
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "1T84kB"
 msgid "South America"
-msgstr "South America"
+msgstr "América del Sur"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "GL9Msi"
 msgid "Spain"
-msgstr "Spain"
+msgstr "España"
 
 #. A historical alliance on a map of Europe in 1914: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "uwKSuF"
 msgid "Triple Alliance"
-msgstr "Triple Alliance"
+msgstr "Triple Alianza"
 
 #. A historical alliance on a map of Europe in 1914: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
@@ -1726,17 +1726,17 @@ msgstr "Triple Entente"
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "SKtwiU"
 msgid "United Kingdom"
-msgstr "United Kingdom"
+msgstr "Reino Unido"
 
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "SeZHKm"
 msgid "Map of Africa"
-msgstr "Mapa de Africa"
+msgstr "Mapa de África"
 
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "ERyZut"
 msgid "Map of the Americas"
-msgstr "Mapa de las Americas"
+msgstr "Mapa de América"
 
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "R0amhZ"
@@ -1746,33 +1746,33 @@ msgstr "Mapa de Asia"
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "Msgbym"
 msgid "Map of Brazil by state"
-msgstr "Mapa de Brazil por estados"
+msgstr "Mapa de Brasil por estados"
 
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "13JlRn"
 msgid "Map of Europe"
-msgstr "Mapa de Europe"
+msgstr "Mapa de Europa"
 
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "aq0_QB"
 msgid "Map of Europe in 1914"
-msgstr "Mapa de Europe en 1914"
+msgstr "Mapa de Europa en 1914"
 
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "3y01ec"
 msgid "Map of Soho, London, in 1854"
-msgstr "Mapa de Soho, London, en 1854"
+msgstr "Mapa de Soho, Londres, en 1854"
 
 #. A map's name: the Roman Empire in the year 117 AD.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "iHLnJo"
 msgid "Map of the Roman Empire in 117 CE"
-msgstr "Mapa del Roman Empire en el año 117 d. e. c."
+msgstr "Mapa del Imperio romano en el año 117 de nuestra era"
 
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "ccq12s"
 msgid "Map of the United States by state"
-msgstr "Mapa de United States por estados"
+msgstr "Mapa de Estados Unidos por estados"
 
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "mj02fK"
@@ -2554,37 +2554,37 @@ msgstr "Continuar"
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "WYzHAI"
 msgid "Skip for now"
-msgstr "Omitir por ahora"
+msgstr "Saltar por ahora"
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "T0p6Z6"
 msgid "Tap {tap} came {ms} ms early."
-msgstr "La pulsación {tap} se adelantó {ms} ms."
+msgstr "El toque {tap} ha llegado {ms} ms antes de tiempo."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "pGYXzO"
 msgid "Tap {tap} came {ms} ms late."
-msgstr "La pulsación {tap} se retrasó {ms} ms."
+msgstr "El toque {tap} ha llegado {ms} ms tarde."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "-w7n_f"
 msgid "Tap {tap} was missed."
-msgstr "No diste la pulsación {tap}."
+msgstr "Ha faltado el toque {tap}."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "DDydNj"
 msgid "{onTime} of {total, plural, =0 {# taps} one {# tap} other {# taps}} on time."
-msgstr "{onTime} de {total, plural, =0 {# pulsaciones} one {# pulsación} other {# pulsaciones}} a tiempo."
+msgstr "{onTime} de {total, plural, =0 {# toques} one {# toque} other {# toques}} a tiempo."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "73IJ_a"
 msgid "{count, plural, one {# extra tap.} other {# extra taps.}}"
-msgstr "{count, plural, one {# pulsación extra.} other {# pulsaciones extra.}}"
+msgstr "{count, plural, one {# toque de más.} other {# toques de más.}}"
 
 #: src/activities/rhythm-tapper/rhythm-grid.tsx
 msgctxt "1ozRqb"
@@ -2685,7 +2685,7 @@ msgstr "Tablas para consultar: {tables}. Escribe una consulta SQL, ejecútala y 
 #: src/activities/sql-playground/sql-result.tsx
 msgctxt "4Mvrfh"
 msgid "The query ran but didn't return a table. Use SELECT to get rows."
-msgstr "La consulta se ejecutó, pero no devolvió ninguna tabla. Usa SELECT para obtener filas."
+msgstr "La consulta se ha ejecutado, pero no ha devuelto una tabla. Usa SELECT para obtener filas."
 
 #: src/activities/sql-playground/sql-result.tsx
 msgctxt "XjrTx5"
@@ -2939,7 +2939,7 @@ msgstr "Hueco {position}: {item}. {result}."
 #: src/components/fill-blank-step.tsx
 msgctxt "wUEGVH"
 msgid "Blank {position}: {item}. Tap to remove."
-msgstr "Hueco {position}: {item}. Toca para quitar."
+msgstr "Hueco {position}: {item}. Pulsa para quitar la palabra."
 
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers.
 #: src/components/fill-blank-step.tsx
@@ -3024,7 +3024,7 @@ msgstr "¡Buena suposición!"
 #: src/components/verdict-label.tsx
 msgctxt "--l7ni"
 msgid "Not quite"
-msgstr "No del todo"
+msgstr "No es correcto"
 
 #: src/components/verdict-label.tsx
 msgctxt "pWC3pf"
@@ -3045,7 +3045,7 @@ msgstr "Esta vez no se ha comprobado"
 #: src/components/verdict-label.tsx
 msgctxt "Ilqo6R"
 msgid "Not quite:"
-msgstr "No del todo:"
+msgstr "No es correcto:"
 
 #: src/components/vocabulary-step.tsx
 msgctxt "lqtP-R"
@@ -3233,7 +3233,7 @@ msgstr "No, gracias"
 #: src/lesson/controls/explain-first-button.tsx
 msgctxt "cd_q95"
 msgid "Explain first"
-msgstr "Explicar primero"
+msgstr "Ver primero la explicación"
 
 #: src/lesson/controls/summary-sheet.tsx
 #: src/lesson/lesson-aside.tsx
@@ -3282,20 +3282,23 @@ msgctxt "MhHpHs"
 msgid "Missing:"
 msgstr "Falta:"
 
+#. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "lSkYzL"
 msgid "Saved to your mistakes · back at the end of this lesson"
 msgstr "Guardado en tu cuaderno de errores · volverá al final de esta lección"
 
+#. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
 msgstr "Guardado en tu cuaderno de errores"
 
+#. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "L33Kca"
 msgid "Saved to your mistakes · back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "Guardado en tu cuaderno de errores · volverá {when, select, today {en un repaso más tarde hoy} tomorrow {en el repaso de mañana} weekday {en el repaso del {day}} other {en un repaso el {day}}}"
+msgstr "Se ha guardado en tu cuaderno de errores · volverá {when, select, today {hoy en un repaso} tomorrow {en el repaso de mañana} weekday {en el repaso del {day}} other {en un repaso el {day}}}"
 
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "Tdwaid"
@@ -3305,7 +3308,7 @@ msgstr "Esta pregunta volverá al final de la lección"
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "r6_UUR"
 msgid "This idea comes back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "Esta idea volverá {when, select, today {en un repaso más tarde hoy} tomorrow {en el repaso de mañana} weekday {en el repaso del {day}} other {en un repaso el {day}}}"
+msgstr "Esta idea volverá {when, select, today {hoy en un repaso} tomorrow {en el repaso de mañana} weekday {en el repaso del {day}} other {en un repaso el {day}}}"
 
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GVY4V5"
@@ -3542,7 +3545,7 @@ msgstr "Para mejorar"
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "uaHswU"
 msgid "Scenario complete"
-msgstr "Situación completada"
+msgstr "Escenario completado"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "kFK6Dd"
@@ -3633,7 +3636,7 @@ msgstr "Tu ejemplo"
 #: src/lesson/steps/hook-step.tsx
 msgctxt "p6MDZm"
 msgid "Guess first"
-msgstr "Haz una suposición"
+msgstr "Haz primero una suposición"
 
 #: src/lesson/steps/hook-step.tsx
 msgctxt "CKdZQn"
@@ -3655,7 +3658,7 @@ msgstr "Aún estamos comprobando. Está tardando más de lo habitual."
 #: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "waVIZZ"
 msgid "Press Enter to check, Shift+Enter for a new line."
-msgstr "Pulsa Enter para comprobar y Shift+Enter para empezar una línea nueva."
+msgstr "Pulsa Intro para comprobar, Mayús+Intro para una nueva línea."
 
 #: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "YAXwBl"

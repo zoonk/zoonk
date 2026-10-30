@@ -35,7 +35,14 @@ function useSettingsPages({
 
   const yours = [
     showProfile && withProfile && toPage("profile", t("Profile")),
-    toPage("appearance", t("Preferences")),
+    toPage(
+      "appearance",
+      t({
+        description:
+          "A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.",
+        message: "Preferences",
+      }),
+    ),
     toPage("memory", t("Memory")),
   ].filter((item) => item !== false);
 

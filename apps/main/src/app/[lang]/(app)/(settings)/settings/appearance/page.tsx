@@ -14,7 +14,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     description: t("Choose your buddy, sounds, a daily time limit and the app's language."),
     robots: { follow: false, index: false },
-    title: t("Preferences"),
+    title: t({
+      description:
+        "A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.",
+      message: "Preferences",
+    }),
   };
 }
 
@@ -71,7 +75,11 @@ export default async function AppearancePage() {
     <Page>
       <SectionPageHeader
         description={t("Your buddy, lessons and language, the way you like them.")}
-        title={t("Preferences")}
+        title={t({
+          description:
+            "A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.",
+          message: "Preferences",
+        })}
       />
 
       <Suspense fallback={<AppearanceSkeleton />}>

@@ -38,7 +38,11 @@ export async function GET(request: NextRequest) {
   const next = getSafeAppRelativePath(request.nextUrl.searchParams.get("next"));
   const loginPath = getPathname({ href: "/login", locale });
   const href = next ? `${loginPath}?${new URLSearchParams({ next })}` : loginPath;
-  const title = escapeHtml(t("We couldn't sign you in."));
+
+  const title = escapeHtml(
+    t({ description: "Signing the learner in failed.", message: "We couldn't sign you in." }),
+  );
+
   const retry = escapeHtml(t("Try again"));
   const body = `<!doctype html><html lang="${escapeHtml(locale)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title}</title></head><body><main><h1>${title}</h1><a href="${escapeHtml(href)}">${retry}</a></main></body></html>`;
 

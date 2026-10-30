@@ -78,7 +78,10 @@ export async function getHeroDays(): Promise<Record<ExampleGoal, DayListStep[]>>
             kind: "lesson",
             minutes: 7,
             state: "ahead",
-            title: t("Transitions"),
+            title: t({
+              description: "A writing lesson on linking words, such as “however” and “therefore”.",
+              message: "Transitions",
+            }),
           },
         ];
 

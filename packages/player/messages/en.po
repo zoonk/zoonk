@@ -3282,16 +3282,19 @@ msgctxt "MhHpHs"
 msgid "Missing:"
 msgstr "Missing:"
 
+#. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "lSkYzL"
 msgid "Saved to your mistakes · back at the end of this lesson"
 msgstr "Saved to your mistakes · back at the end of this lesson"
 
+#. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
 msgstr "Saved to your mistakes"
 
+#. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "L33Kca"
 msgid "Saved to your mistakes · back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"

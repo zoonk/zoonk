@@ -149,6 +149,7 @@ msgctxt "MA35Hh"
 msgid "Start a goal: “{goal}”"
 msgstr "Commencer un objectif : « {goal} »"
 
+#. Heading over the option to ask the buddy the typed question.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "ZT0z9z"
 msgid "Ask"
@@ -169,7 +170,7 @@ msgstr "Continuer la séance du jour"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
 msgid "full, half or one subject"
-msgstr "complet, moitié ou une matière"
+msgstr "tout l’examen, la moitié ou une seule matière"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
@@ -321,6 +322,7 @@ msgctxt "2GURQY"
 msgid "Appearance"
 msgstr "Apparence"
 
+#. A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
@@ -510,6 +512,7 @@ msgctxt "LxAk-r"
 msgid "Your plan from this chapter"
 msgstr "Ton plan à partir de ce chapitre"
 
+#. Heading over the ways to start a plan. “your level” is what the learner already knows.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "NCLSU6"
@@ -578,7 +581,7 @@ msgstr "{count, plural, one {# chapitre} other {# chapitres}}"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "bdvt9X"
 msgid "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level."
-msgstr "Prépare ton plan et Zoonk prépare les chapitres et les leçons de ce cours pour toi, en partant de ton niveau."
+msgstr "Quand tu crées ton plan, Zoonk prépare pour toi les chapitres et les leçons de ce cours en partant de ton niveau."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "FwtWUq"
@@ -816,7 +819,7 @@ msgstr "Questions plus anciennes"
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "FRwDt3"
 msgid "Your buddy"
-msgstr "Ton Compagnon"
+msgstr "Ton compagnon"
 
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "6YPtag"
@@ -1502,7 +1505,7 @@ msgstr "Tes jours d’étude, tes leçons terminées et le temps passé à appre
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "jPmToJ"
 msgid "Energy intensity from low to high"
-msgstr "Niveau d’énergie de faible à élevé"
+msgstr "Intensité de l’Énergie, de faible à forte"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "477I0g"
@@ -1522,7 +1525,7 @@ msgstr "{date} · Aucune énergie enregistrée"
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "beOKv0"
 msgid "{date} · {percentage} Energy"
-msgstr "{date} · {percentage} d’énergie"
+msgstr "{date} · {percentage} d’Énergie"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "0i1UHO"
@@ -1583,13 +1586,13 @@ msgstr "Prochaine ceinture"
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "0ZGPb-"
 msgid "{belt} at <mono>{points}</mono> Brain Power"
-msgstr "{belt} à <mono>{points}</mono> de Puissance Mentale"
+msgstr "{belt} à <mono>{points}</mono> points de Puissance Mentale"
 
 #. The Brain Power the learner still needs to earn the next belt.
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "dzpvr6"
 msgid "{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}"
-msgstr "{points, plural, other {<mono>#</mono> à obtenir}}"
+msgstr "{points, plural, other {Encore <mono>#</mono> à gagner}}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "3DtX17"
@@ -1634,7 +1637,7 @@ msgstr "Ne diminue jamais"
 #: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
 msgctxt "wbDtI_"
 msgid "Every lesson adds {points} Brain Power, and it never goes down."
-msgstr "Chaque leçon t’apporte {points} de Puissance Mentale, qui ne diminue jamais."
+msgstr "Chaque leçon te rapporte {points} points de Puissance Mentale, et ton total ne baisse jamais."
 
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
 msgctxt "Wzw2i9"
@@ -1979,6 +1982,7 @@ msgctxt "fnAN1H"
 msgid "Linear equations in context"
 msgstr "Équations du premier degré en contexte"
 
+#. A writing lesson on linking words, such as “however” and “therefore”.
 #: src/app/[lang]/(home)/_components/exam-tomorrow.ts
 #: src/app/[lang]/(home)/_components/hero-days.ts
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
@@ -2453,7 +2457,7 @@ msgstr "{count, plural, one {# leçon sautée} other {# leçons sautées}}"
 #: src/app/[lang]/(home)/_components/placed-plans.tsx
 msgctxt "placedPlan.djZCU5"
 msgid "Skipped"
-msgstr "Sautée"
+msgstr "Sauté"
 
 #: src/app/[lang]/(home)/_components/placement-questions.tsx
 msgctxt "2F9-v0"
@@ -2741,7 +2745,7 @@ msgstr "Est-ce que je peux visiter l’appartement samedi ?"
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "wXawda"
 msgid "{move, select, london {Stress the first part: <b>SAT</b>-ur-day.} other {Stress the accent: <b>SÁ</b>-ba-do.}}"
-msgstr "{move, select, london {Accentue la première syllabe : <b>SAT</b>-ur-day.} other {Accentue la syllabe marquée : <b>SÁ</b>-ba-do.}}"
+msgstr "{move, select, london {Accentue la première syllabe : <b>SAT</b>-ur-day.} other {Accentue la syllabe qui porte l’accent : <b>SÁ</b>-ba-do.}}"
 
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "waQKY7"
@@ -2832,7 +2836,7 @@ msgstr "Leçon · Appeler pour un appartement"
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "4teyr4"
 msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
-msgstr "Les deux se disent, mais à Londres, on dit « flat ». « Apartment » est plus courant aux États-Unis. « Flat » sonne donc plus naturel quand tu cherches une location à Londres."
+msgstr "Les deux se disent, mais à London, on dit plutôt « flat ». « Apartment » est plus courant aux US, donc « flat » est plus naturel si tu loues un logement à London."
 
 #. A learner of English asks about the English words “flat” and “apartment”.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
@@ -2908,7 +2912,7 @@ msgstr "Seulement ce qui est nouveau ou difficile"
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "BY-vT3"
 msgid "I know it well"
-msgstr "Je connais bien"
+msgstr "Je m’y connais bien"
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "MLAAq8"
@@ -2933,7 +2937,7 @@ msgstr "Ton plan part de là où tu en es."
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "-3GuWe"
 msgid "A few quick questions find what you already know, and your plan skips it."
-msgstr "Quelques questions rapides permettent de repérer ce que tu connais déjà pour que ton plan le passe."
+msgstr "Quelques questions rapides permettent de repérer ce que tu sais déjà, et ton plan saute ces notions."
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "j9qNv7"
@@ -3177,7 +3181,7 @@ msgstr "Préparer un plan pour {course}"
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
 msgctxt "CJ4yhP"
 msgid "Build a plan for the whole subject"
-msgstr "Préparer un plan pour tout le sujet"
+msgstr "Créer un plan pour toute la matière"
 
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
 msgctxt "xuyfqZ"
@@ -3261,7 +3265,7 @@ msgstr "Examen blanc"
 #: src/app/[lang]/pattern/[patternId]/page.tsx
 msgctxt "KS_o38"
 msgid "Mistake pattern"
-msgstr "Erreurs récurrentes"
+msgstr "Erreur récurrente"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
 msgctxt "A-ZnsR"
@@ -3327,7 +3331,7 @@ msgstr "Politique de confidentialité"
 #: src/app/[lang]/pronunciation/page.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
-msgstr "Répète"
+msgstr "Redis-le"
 
 #: src/app/[lang]/session/page.tsx
 msgctxt "hnntJl"
@@ -3365,6 +3369,7 @@ msgctxt "99__Yc"
 msgid "Your browser didn't open the Zoonk app. Close this page and sign in with Apple again in the app."
 msgstr "Ton navigateur n’a pas ouvert l’application Zoonk. Ferme cette page et reconnecte-toi avec Apple dans l’application."
 
+#. Signing the learner in failed.
 #: src/app/auth/callback/route.ts
 msgctxt "1KzRxp"
 msgid "We couldn't sign you in."
@@ -3756,7 +3761,7 @@ msgstr "économise {amount}"
 #: src/components/pricing/plus-plan.tsx
 msgctxt "dyhF_4"
 msgid "Cancel anytime."
-msgstr "Résilie à tout moment."
+msgstr "Résiliation à tout moment."
 
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "jPlE1k"
@@ -3892,7 +3897,7 @@ msgstr "Un plan pour un examen"
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "2ZZIpk"
 msgid "{days, plural, =7 {Free: the diagnostic and week 1 · Plus: every week after it to exam day, with mock exams} one {Free: the diagnostic and day 1 · Plus: every day after it to exam day, with mock exams} other {Free: the diagnostic and the first # days · Plus: every day after them to exam day, with mock exams}}"
-msgstr "{days, plural, =7 {Gratuit : le diagnostic et la semaine 1 · Plus : toutes les semaines suivantes jusqu’au jour de l’examen, avec des examens blancs} one {Gratuit : le diagnostic et le jour 1 · Plus : tous les jours suivants jusqu’au jour de l’examen, avec des examens blancs} other {Gratuit : le diagnostic et les # premiers jours · Plus : tous les jours suivants jusqu’au jour de l’examen, avec des examens blancs}}"
+msgstr "{days, plural, =7 {Gratuite : le diagnostic et la première semaine · Plus : toutes les semaines suivantes jusqu’au jour de l’examen, avec des examens blancs} one {Gratuite : le diagnostic et le jour # · Plus : tous les jours suivants jusqu’au jour de l’examen, avec des examens blancs} other {Gratuite : le diagnostic et les # premiers jours · Plus : tous les jours suivants jusqu’au jour de l’examen, avec des examens blancs}}"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "Q-aTo1"

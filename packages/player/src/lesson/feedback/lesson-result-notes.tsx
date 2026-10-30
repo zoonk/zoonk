@@ -31,18 +31,29 @@ function ResultNextText({
   const t = useExtracted();
 
   if (savedMistake && willReturn) {
-    return t("Saved to your mistakes · back at the end of this lesson");
+    return t({
+      description:
+        "“your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.",
+      message: "Saved to your mistakes · back at the end of this lesson",
+    });
   }
 
   if (savedMistake && !review) {
-    return t("Saved to your mistakes");
+    return t({
+      description:
+        "“your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.",
+      message: "Saved to your mistakes",
+    });
   }
 
   if (savedMistake && review) {
-    return t(
-      "Saved to your mistakes · back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}",
-      { day: getDayLabel(review), when: review.kind },
-    );
+    return t({
+      description:
+        "“your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.",
+      message:
+        "Saved to your mistakes · back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}",
+      values: { day: getDayLabel(review), when: review.kind },
+    });
   }
 
   if (willReturn) {

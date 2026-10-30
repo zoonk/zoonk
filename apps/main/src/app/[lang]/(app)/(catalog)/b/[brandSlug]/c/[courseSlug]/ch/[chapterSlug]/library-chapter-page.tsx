@@ -116,7 +116,13 @@ async function ChapterClosing({
   return (
     <PageSection aria-labelledby={titleId} className="gap-1.5 border-t pt-12 sm:pt-16">
       <h2 className="text-section" id={titleId}>
-        {startChapterId ? t("Your plan from this chapter") : t("Start today, at your level")}
+        {startChapterId
+          ? t("Your plan from this chapter")
+          : t({
+              description:
+                "Heading over the ways to start a plan. “your level” is what the learner already knows.",
+              message: "Start today, at your level",
+            })}
       </h2>
 
       <p className="text-muted-foreground max-w-column text-[0.9375rem] leading-relaxed text-pretty">

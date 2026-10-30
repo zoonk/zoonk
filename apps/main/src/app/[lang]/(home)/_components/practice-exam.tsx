@@ -121,7 +121,15 @@ export async function ExamPractice() {
         { id: "linear", name: t("Linear equations"), right: 3, total: 4 },
         { id: "percentages", name: t("Percentages"), right: 3, total: 4 },
         { id: "words", name: t("Words in context"), right: 3, total: 4 },
-        { id: "transitions", name: t("Transitions"), right: 3, total: 3 },
+        {
+          id: "transitions",
+          name: t({
+            description: "A writing lesson on linking words, such as “however” and “therefore”.",
+            message: "Transitions",
+          }),
+          right: 3,
+          total: 3,
+        },
       ];
 
   const misses = topics.reduce((sum, topic) => sum + topic.total - topic.right, 0);

@@ -34,7 +34,7 @@ msgstr "Vergleiche Quellen"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "khPfjz"
 msgid "Drag a corner"
-msgstr "Ziehe an einer Ecke"
+msgstr "Zieh an einer Ecke"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "EXpTKi"
@@ -44,7 +44,7 @@ msgstr "Trainiere dein Gehör"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "h3UUQw"
 msgid "Estimate first"
-msgstr "Schätze zuerst"
+msgstr "Schätz zuerst"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "7JlauX"
@@ -120,17 +120,17 @@ msgstr "Spiel es"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "a2AaWv"
 msgid "Predict first"
-msgstr "Sage zuerst voraus"
+msgstr "Mach zuerst eine Vorhersage"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "OghajY"
 msgid "Put in order"
-msgstr "Bringe es in die richtige Reihenfolge"
+msgstr "Ordne alles richtig an"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "epbkrE"
 msgid "Query the data"
-msgstr "Frage die Daten ab"
+msgstr "Frag die Daten ab"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "eF6aGp"
@@ -175,7 +175,7 @@ msgstr "Erkenne das Muster"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "kUkIDR"
 msgid "Step by step"
-msgstr "Gehe Schritt für Schritt vor"
+msgstr "Geh Schritt für Schritt vor"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "S-w423"
@@ -185,7 +185,7 @@ msgstr "Gehe die Schritte durch"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "4M_1qG"
 msgid "Tap along"
-msgstr "Tippe mit"
+msgstr "Tipp im Takt mit"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "XUcSce"
@@ -200,7 +200,7 @@ msgstr "Probier es aus"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "82b3Fd"
 msgid "Turn it"
-msgstr "Drehe es"
+msgstr "Dreh es"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "Mpyk9t"
@@ -787,7 +787,7 @@ msgstr "Ursachen und Wirkungen in zeitlicher Reihenfolge: {nodes}."
 #: src/activities/cause-effect-chain/cause-effect-link-list.tsx
 msgctxt "ghG6a0"
 msgid "Not a link in this story"
-msgstr "Kein Zusammenhang in dieser Geschichte"
+msgstr "Dieser Zusammenhang gehört nicht zur Geschichte"
 
 #: src/activities/cause-effect-chain/cause-effect-link-list.tsx
 msgctxt "hqD1Uy"
@@ -1505,7 +1505,7 @@ msgstr "Jede Stelle hat eine Bezeichnung. Tippe auf eine Stelle, um sie zu ände
 #: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "ITUJOF"
 msgid "Tap a name for spot {number}, or drag it onto any spot."
-msgstr "Tippe auf eine Bezeichnung für Stelle {number} oder ziehe sie auf eine beliebige Stelle."
+msgstr "Tipp auf eine Bezeichnung für Stelle {number} oder zieh sie auf eine beliebige Stelle."
 
 #: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "vhw8-j"
@@ -1606,7 +1606,7 @@ msgstr "{map} mit {count} Orten zum Erkunden: {places}."
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "2p1LR9"
 msgid "This map can't be shown. Continue to the next screen."
-msgstr "Diese Karte kann nicht angezeigt werden. Fahre mit der nächsten Seite fort."
+msgstr "Diese Karte kann nicht angezeigt werden. Geh weiter zur nächsten Seite."
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
@@ -1648,7 +1648,7 @@ msgstr "Frankreich"
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "eE22iN"
 msgid "German Empire"
-msgstr "Deutsches Kaiserreich"
+msgstr "Deutsches Reich"
 
 #. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
@@ -1767,7 +1767,7 @@ msgstr "Karte von Soho, London, im Jahr 1854"
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "iHLnJo"
 msgid "Map of the Roman Empire in 117 CE"
-msgstr "Karte des Römischen Reiches im Jahr 117 n. Chr."
+msgstr "Karte des Römischen Reiches (117 n. Chr.)"
 
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "ccq12s"
@@ -1797,7 +1797,7 @@ msgstr "Vereinfachter Straßenplan nach John Snows Karte von 1854."
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "6DG-0D"
 msgid "Matched {left} with {right}. {matched} of {total} pairs matched."
-msgstr "{left} und {right} zugeordnet. {matched} von {total} Paaren zugeordnet."
+msgstr "{left} und {right} sind ein Paar. {matched} von {total} Paaren gefunden."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "95nYEN"
@@ -2058,7 +2058,7 @@ msgstr "Silicium"
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "gFJ4sU"
 msgid "Staff"
-msgstr "Noten"
+msgstr "Notenschrift"
 
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "1xqT9N"
@@ -2232,7 +2232,7 @@ msgstr "Eines dieser Zeichen"
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "8WlDyp"
 msgid "Repeat a number of times"
-msgstr "Mehrfach wiederholen"
+msgstr "Bestimmte Anzahl von Wiederholungen"
 
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "HpoDwk"
@@ -2560,31 +2560,31 @@ msgstr "Vorerst überspringen"
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "T0p6Z6"
 msgid "Tap {tap} came {ms} ms early."
-msgstr "Tipp {tap} war {ms} ms zu früh."
+msgstr "Schlag {tap} kam {ms} ms zu früh."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "pGYXzO"
 msgid "Tap {tap} came {ms} ms late."
-msgstr "Tipp {tap} war {ms} ms zu spät."
+msgstr "Schlag {tap} kam {ms} ms zu spät."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "-w7n_f"
 msgid "Tap {tap} was missed."
-msgstr "Tipp {tap} wurde verpasst."
+msgstr "Schlag {tap} hat gefehlt."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "DDydNj"
 msgid "{onTime} of {total, plural, =0 {# taps} one {# tap} other {# taps}} on time."
-msgstr "{onTime} von {total, plural, =0 {# Tipps} one {# Tipp} other {# Tipps}} im Takt."
+msgstr "{onTime} von {total, plural, =0 {# Schlägen} one {# Schlag} other {# Schlägen}} im Takt."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "73IJ_a"
 msgid "{count, plural, one {# extra tap.} other {# extra taps.}}"
-msgstr "{count, plural, one {# zusätzlicher Tipp.} other {# zusätzliche Tipps.}}"
+msgstr "{count, plural, one {# zusätzlicher Schlag.} other {# zusätzliche Schläge.}}"
 
 #: src/activities/rhythm-tapper/rhythm-grid.tsx
 msgctxt "1ozRqb"
@@ -2939,7 +2939,7 @@ msgstr "Lücke {position}: {item}. {result}."
 #: src/components/fill-blank-step.tsx
 msgctxt "wUEGVH"
 msgid "Blank {position}: {item}. Tap to remove."
-msgstr "Lücke {position}: {item}. Zum Entfernen tippen."
+msgstr "Lücke {position}: {item}. Tipp zum Entfernen darauf."
 
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers.
 #: src/components/fill-blank-step.tsx
@@ -3003,7 +3003,7 @@ msgstr "Welche Antwort hat diese Bedeutung?"
 #: src/components/verdict-label.tsx
 msgctxt "Bk6B6r"
 msgid "Almost there"
-msgstr "Fast geschafft"
+msgstr "Fast richtig"
 
 #: src/components/verdict-label.tsx
 msgctxt "xmF49T"
@@ -3024,7 +3024,7 @@ msgstr "Gut geraten!"
 #: src/components/verdict-label.tsx
 msgctxt "--l7ni"
 msgid "Not quite"
-msgstr "Nicht ganz"
+msgstr "Das stimmt so nicht"
 
 #: src/components/verdict-label.tsx
 msgctxt "pWC3pf"
@@ -3045,7 +3045,7 @@ msgstr "Diesmal nicht geprüft"
 #: src/components/verdict-label.tsx
 msgctxt "Ilqo6R"
 msgid "Not quite:"
-msgstr "Noch nicht ganz:"
+msgstr "Das stimmt so nicht:"
 
 #: src/components/vocabulary-step.tsx
 msgctxt "lqtP-R"
@@ -3233,7 +3233,7 @@ msgstr "Nein, danke"
 #: src/lesson/controls/explain-first-button.tsx
 msgctxt "cd_q95"
 msgid "Explain first"
-msgstr "Erst erklären"
+msgstr "Erst erklären lassen"
 
 #: src/lesson/controls/summary-sheet.tsx
 #: src/lesson/lesson-aside.tsx
@@ -3282,16 +3282,19 @@ msgctxt "MhHpHs"
 msgid "Missing:"
 msgstr "Fehlt:"
 
+#. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "lSkYzL"
 msgid "Saved to your mistakes · back at the end of this lesson"
 msgstr "Im Fehlerheft gespeichert · kommt am Ende dieser Lektion wieder"
 
+#. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
 msgstr "Im Fehlerheft gespeichert"
 
+#. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "L33Kca"
 msgid "Saved to your mistakes · back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
@@ -3676,7 +3679,7 @@ msgstr "Aufnehmen"
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "CzQFwa"
 msgid "Listening… Tap Stop to check."
-msgstr "Wir hören zu… Tippe zum Prüfen auf Stopp."
+msgstr "Wir hören zu… Tipp zum Prüfen auf Stopp."
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
@@ -3807,7 +3810,7 @@ msgstr "Stell eine Frage zu diesem Fach…"
 #: src/questions/lesson-question-composer.tsx
 msgctxt "TCh0B4"
 msgid "Ask about this question…"
-msgstr "Stell eine Frage zu dieser Frage…"
+msgstr "Frag etwas zu dieser Frage…"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "wBr6ON"
@@ -3912,7 +3915,7 @@ msgstr "Stell Fragen zu diesem Fach"
 #: src/questions/lesson-question-panel.tsx
 msgctxt "uF5ZgT"
 msgid "Ask about this question"
-msgstr "Stell eine Frage zu dieser Frage"
+msgstr "Frag etwas zu dieser Frage"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "J9Kkha"
@@ -4008,7 +4011,7 @@ msgstr "Zu diesem Abschnitt"
 #: src/questions/lesson-question-turn.tsx
 msgctxt "XHGiOR"
 msgid "About this subject"
-msgstr "Zu diesem Thema"
+msgstr "Zu diesem Fach"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "aEX9_r"
@@ -4168,7 +4171,7 @@ msgstr "Gib mir ein weiteres Beispiel"
 #: src/questions/tutor-suggestion-words.ts
 msgctxt "tutorSuggestions.AcKlQI"
 msgid "Explain it more simply"
-msgstr "Erkläre es einfacher"
+msgstr "Erklär es einfacher"
 
 #: src/questions/use-tutor-suggestions.ts
 msgctxt "DMPOmk"
