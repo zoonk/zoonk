@@ -1,7 +1,9 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import com.zoonk.android.feature.onboarding.suggestionFor
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
+import com.zoonk.api.models.PlanTimeToCoverSuggested
 import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -10,22 +12,21 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ScheduleRulesTest {
+    /** As the API answers: a passed date has no times, and the suggestion follows from the two times. */
     private fun found(
         recommended: Long? = 35,
         core: Long? = null,
-        pastDate: Boolean = false,
-    ) = FoundTime(
-        PlanTimeToCover(
-            coreMinutes = core,
-            fittingDate = null,
-            ready = true,
-            recommendedMinutes = recommended,
-            suggested = null,
-            targetDate = LocalDate(2028, 10, 29),
-            targetDateNamedMonth = false,
-        ),
-        pastDate = pastDate,
+    ) = PlanTimeToCover(
+        coreMinutes = core,
+        fittingDate = null,
+        ready = true,
+        recommendedMinutes = recommended,
+        suggested = suggestionFor(recommended, core),
+        targetDate = LocalDate(2028, 10, 29),
+        targetDateNamedMonth = false,
     )
+
+    private val pastDate = found(recommended = null).copy(pastDate = true)
 
     private fun advice(
         share: Double? = 0.48,
@@ -48,7 +49,7 @@ class ScheduleRulesTest {
         askFailed: Boolean = false,
         dated: Boolean = true,
         findFailed: Boolean = false,
-        found: FoundTime? = found(),
+        found: PlanTimeToCover? = found(),
         hasDays: Boolean = true,
         minutes: Int? = 35,
     ) = timeLine(advice, askFailed, dated, findFailed, found, hasDays, minutes)
@@ -68,19 +69,19 @@ class ScheduleRulesTest {
     }
 
     @Test
-    fun theSuggestionCoversEverythingUpToFourHoursOrElseReachesEveryTopic() {
-        assertEquals(240, suggestedMinutes(found(recommended = 240)))
-        assertEquals(45, suggestedMinutes(found(recommended = 300, core = 45)))
-        assertNull(suggestedMinutes(tooClose))
-        assertNull(suggestedMinutes(found(recommended = null)))
-        assertNull(suggestedMinutes(found(pastDate = true)))
+    fun theTimeStartsOnWhatTheApiSuggestsNotOnTheTimesItSends() {
+        val suggested = PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERY_TOPIC, 50)
+        val answer = found(recommended = 35).copy(suggested = suggested)
+
+        assertEquals(50, shownMinutes(60, answer, answer, picked = null, settled = false))
+        assertEquals(TimeLine.EveryTopic, line(found = answer, minutes = 50))
     }
 
     @Test
     fun theTimeShownStartsOnTheSuggestionFollowsItAndKeepsTheLearnersOwn() {
         fun shown(
-            first: FoundTime? = found(),
-            found: FoundTime? = found(),
+            first: PlanTimeToCover? = found(),
+            found: PlanTimeToCover? = found(),
             picked: Int? = null,
             settled: Boolean = false,
         ) = shownMinutes(60, first, found, picked, settled)
@@ -91,7 +92,7 @@ class ScheduleRulesTest {
         assertEquals(35, shown(found = tooClose))
         assertEquals(90, shown(picked = 90))
         assertEquals(60, shown(first = tooClose, found = found()))
-        assertEquals(60, shown(first = found(recommended = null, pastDate = true), found = null))
+        assertEquals(60, shown(first = pastDate, found = null))
         assertEquals(60, shown(first = null, found = null, settled = true))
     }
 
@@ -113,7 +114,7 @@ class ScheduleRulesTest {
         assertEquals(TimeLine.Working, line(found = null, minutes = null))
         assertEquals(TimeLine.FindFailed, line(findFailed = true, found = null, minutes = 15))
         assertEquals(TimeLine.AskFailed, line(askFailed = true, minutes = 15))
-        assertEquals(TimeLine.PastDate, line(found = found(recommended = null, pastDate = true)))
+        assertEquals(TimeLine.PastDate, line(found = pastDate))
     }
 
     @Test
@@ -134,14 +135,14 @@ class ScheduleRulesTest {
         assertTrue(asksAboutTime(dated = false, found = null, fullCourse = false, minutes = 35))
         assertFalse(asksAboutTime(dated = true, found = null, fullCourse = false, minutes = 35))
         assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = null))
-        assertFalse(asksAboutTime(dated = true, found = found(pastDate = true), fullCourse = false, minutes = 30))
+        assertFalse(asksAboutTime(dated = true, found = pastDate, fullCourse = false, minutes = 30))
     }
 
     @Test
     fun aTooCloseDateIsSaidOnlyWhenNoSensibleTimeCoversEverything() {
         val short = TimeLine.Share(0.15)
         assertNull(tooClose(found(), short))
-        assertNull(tooClose(found(pastDate = true), short))
+        assertNull(tooClose(pastDate, short))
         assertEquals(TooClose(900), tooClose(tooClose, short))
         assertNull(tooClose(tooClose, TimeLine.Everything(suggested = false)))
     }
@@ -150,7 +151,7 @@ class ScheduleRulesTest {
     fun theSuggestionIsOfferedBackOnlyWhileAnotherTimeFallsShort() {
         val short = TimeLine.Share(0.48)
         assertNull(offer(found(), short, 35))
-        assertEquals(SuggestedTime(coversEverything = true, minutes = 35), offer(found(), short, 15))
+        assertEquals(PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERYTHING, 35), offer(found(), short, 15))
         assertNull(offer(found(recommended = 900, core = 240), TimeLine.Everything(suggested = false), 900))
     }
 
@@ -159,12 +160,5 @@ class ScheduleRulesTest {
         assertTrue(keepsFullCourse(true, TimeLine.Asking))
         assertFalse(keepsFullCourse(true, TimeLine.Everything(suggested = false)))
         assertFalse(keepsFullCourse(false, TimeLine.Share(0.4)))
-    }
-
-    @Test
-    fun aDateBeforeTodayHasPassed() {
-        val time = found().time
-        assertTrue(foundTime(time, LocalDate(2028, 10, 30)).pastDate)
-        assertFalse(foundTime(time, LocalDate(2028, 10, 29)).pastDate)
     }
 }

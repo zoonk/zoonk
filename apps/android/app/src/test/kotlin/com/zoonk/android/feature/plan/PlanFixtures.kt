@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.plan
 
+import com.zoonk.android.feature.onboarding.suggestionFor
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.LearnerSummary
@@ -236,7 +237,7 @@ internal fun timeToCover(
         fittingDate = fittingDate?.let(kotlinx.datetime.LocalDate::parse),
         ready = ready,
         recommendedMinutes = recommended,
-        suggested = null,
+        suggested = suggestionFor(recommended, core).takeIf { ready },
         targetDate = kotlinx.datetime.LocalDate.parse("2027-01-31"),
         targetDateNamedMonth = false,
     )

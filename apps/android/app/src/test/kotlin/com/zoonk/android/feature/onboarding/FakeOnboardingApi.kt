@@ -37,6 +37,7 @@ import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
+import com.zoonk.api.models.PlanTimeToCoverSuggested
 import com.zoonk.api.models.Source
 import com.zoonk.api.models.SourceChangeNoticesNoticesInner
 import com.zoonk.api.models.Syllabus
@@ -489,6 +490,17 @@ internal class FakeOnboardingApi : OnboardingApi {
     }
 }
 
+/** The time the API starts a dated goal on for these answers: all of it up to four hours a day, else every topic. */
+internal fun suggestionFor(
+    recommended: Long?,
+    core: Long?,
+): PlanTimeToCoverSuggested? =
+    when {
+        recommended != null && recommended <= 240 -> PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended)
+        core != null && core <= 240 -> PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERY_TOPIC, core)
+        else -> null
+    }
+
 internal fun coverOf(
     recommended: Long?,
     targetDate: LocalDate = LocalDate(2030, 11, 8),
@@ -498,7 +510,7 @@ internal fun coverOf(
     fittingDate = null,
     ready = ready,
     recommendedMinutes = recommended,
-    suggested = null,
+    suggested = suggestionFor(recommended, core = null).takeIf { ready },
     targetDate = targetDate,
     targetDateNamedMonth = false,
 )

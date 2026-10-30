@@ -64,9 +64,9 @@ import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf8
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
+import com.zoonk.api.models.PlanTimeToCoverSuggested
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
-import kotlinx.datetime.toKotlinLocalDate
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.TimeZone
@@ -90,10 +90,6 @@ internal fun ColumnScope.ScheduleStep(
     val weekend = weekendPicked.takeIf { weekendOn && days.any(::isWeekend) }
     val hasDays = days.isNotEmpty()
     val paused = run.isStopped
-    val today =
-        java.time.LocalDate
-            .now()
-            .toKotlinLocalDate()
 
     val covering =
         rememberPlanAnswer(
@@ -104,10 +100,10 @@ internal fun ColumnScope.ScheduleStep(
             serializer = PlanTimeToCover.serializer(),
             ready = { it.ready },
         )
-    val found = covering.answer?.takeIf { it.ready }?.let { foundTime(it, today) }
-    val lastFound = covering.last?.takeIf { it.ready }?.let { foundTime(it, today) }
-    val first = covering.first?.let { foundTime(it, today) }
-    val dated = lastFound?.let { it.time.targetDate != null } ?: (goal.targetDate != null || exam)
+    val found = covering.answer?.takeIf { it.ready }
+    val lastFound = covering.last?.takeIf { it.ready }
+    val first = covering.first
+    val dated = lastFound?.let { it.targetDate != null } ?: (goal.targetDate != null || exam)
     val findFailed = covering.status == PollStatus.Failed
     val shownFound = found ?: lastFound
     val minutes = shownMinutes(recommendedMinutes, first, shownFound, picked, settled = !dated || findFailed)
@@ -146,10 +142,9 @@ internal fun ColumnScope.ScheduleStep(
 
     val date =
         shownFound
-            ?.time
             ?.targetDate
             ?.takeIf { dated }
-            ?.let { ShownDate(it, shownFound.time.targetDateNamedMonth) }
+            ?.let { ShownDate(it, shownFound.targetDateNamedMonth) }
     val pick = { next: Int -> picked = pickedMinutes(first, shownFound, next) }
 
     StepForm(
@@ -297,7 +292,7 @@ private fun ScheduleLine(
     exam: Boolean,
     line: TimeLine,
     minutes: Int?,
-    offer: SuggestedTime?,
+    offer: PlanTimeToCoverSuggested?,
     tooClose: TooClose?,
     onRetry: () -> Unit,
     onUseOffer: (Int) -> Unit,
@@ -323,12 +318,13 @@ private fun ScheduleLine(
 
             offer != null -> {
                 val words =
-                    when {
-                        offer.coversEverything -> R.string.onboarding_schedule_offer_everything
-                        else -> R.string.onboarding_schedule_offer_every_topic
+                    when (offer.kind) {
+                        PlanTimeToCoverSuggested.Kind.EVERYTHING -> R.string.onboarding_schedule_offer_everything
+                        PlanTimeToCoverSuggested.Kind.EVERY_TOPIC -> R.string.onboarding_schedule_offer_every_topic
                     }
-                TextButton(onClick = { onUseOffer(offer.minutes) }) {
-                    Text(stringResource(words, formatMinutes(offer.minutes, locale)))
+                val minutes = offer.minutes.toInt()
+                TextButton(onClick = { onUseOffer(minutes) }) {
+                    Text(stringResource(words, formatMinutes(minutes, locale)))
                 }
             }
         }

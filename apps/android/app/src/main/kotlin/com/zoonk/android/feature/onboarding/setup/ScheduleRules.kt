@@ -4,6 +4,7 @@ import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
+import com.zoonk.api.models.PlanTimeToCoverSuggested
 import kotlinx.datetime.LocalDate
 
 /** Sunday is 0, as the plan numbers weekdays. */
@@ -46,22 +47,6 @@ internal fun findWeek(
     weekend: Int?,
 ) = StudyWeek(days, weekend)
 
-/** The plan's answer for the days shown, with whether the goal's date has passed. */
-internal data class FoundTime(
-    val time: PlanTimeToCover,
-    val pastDate: Boolean,
-)
-
-internal fun foundTime(
-    time: PlanTimeToCover,
-    today: LocalDate,
-) = FoundTime(time, pastDate = time.targetDate?.let { it < today } == true)
-
-internal data class SuggestedTime(
-    val coversEverything: Boolean,
-    val minutes: Int,
-)
-
 /** What the time shown means, or why that isn't known yet. */
 internal sealed interface TimeLine {
     data object Asking : TimeLine
@@ -93,25 +78,7 @@ internal sealed interface TimeLine {
     data object Working : TimeLine
 }
 
-/** More time a day than this is never a learner's starting time, even when it's what covers it all. */
-private const val LONGEST_SUGGESTED_MINUTES = 240
-
-private fun PlanTimeToCover.suggestedTime(): SuggestedTime? {
-    val everything = recommendedMinutes?.toInt()?.takeIf { it <= LONGEST_SUGGESTED_MINUTES }
-    val everyTopic = coreMinutes?.toInt()?.takeIf { it <= LONGEST_SUGGESTED_MINUTES }
-    return when {
-        everything != null -> SuggestedTime(coversEverything = true, minutes = everything)
-        everyTopic != null -> SuggestedTime(coversEverything = false, minutes = everyTopic)
-        else -> null
-    }
-}
-
-internal fun suggestedMinutes(found: FoundTime?): Int? =
-    found
-        ?.takeUnless { it.pastDate }
-        ?.time
-        ?.suggestedTime()
-        ?.minutes
+internal fun suggestedMinutes(found: PlanTimeToCover?): Int? = found?.suggested?.minutes?.toInt()
 
 /**
  * Null while the first time is still being worked out: no other time is shown in its place. The time
@@ -120,8 +87,8 @@ internal fun suggestedMinutes(found: FoundTime?): Int? =
  */
 internal fun shownMinutes(
     fallback: Int,
-    first: FoundTime?,
-    found: FoundTime?,
+    first: PlanTimeToCover?,
+    found: PlanTimeToCover?,
     picked: Int?,
     settled: Boolean,
 ): Int? {
@@ -133,8 +100,8 @@ internal fun shownMinutes(
 
 /** Picking the suggested time again follows the suggestion as the days change, where it's followed. */
 internal fun pickedMinutes(
-    first: FoundTime?,
-    found: FoundTime?,
+    first: PlanTimeToCover?,
+    found: PlanTimeToCover?,
     minutes: Int,
 ): Int? = minutes.takeUnless { suggestedMinutes(first) != null && suggestedMinutes(found) == minutes }
 
@@ -144,26 +111,21 @@ internal data class TooClose(
 
 /** Why no suggestion covers everything; null when one does, the time shown does, or the date passed. */
 internal fun tooClose(
-    found: FoundTime?,
+    found: PlanTimeToCover?,
     line: TimeLine,
 ): TooClose? =
     when {
         found == null || found.pastDate || line is TimeLine.Everything -> null
-        found.time.suggestedTime()?.coversEverything == true -> null
-        else -> TooClose(found.time.recommendedMinutes?.toInt())
+        found.suggested?.kind == PlanTimeToCoverSuggested.Kind.EVERYTHING -> null
+        else -> TooClose(found.recommendedMinutes?.toInt())
     }
 
 /** Only while the time shown falls short of everything. */
 internal fun offer(
-    found: FoundTime?,
+    found: PlanTimeToCover?,
     line: TimeLine,
     minutes: Int?,
-): SuggestedTime? =
-    found
-        ?.takeUnless { it.pastDate }
-        ?.time
-        ?.suggestedTime()
-        ?.takeIf { it.minutes != minutes && line !is TimeLine.Everything }
+): PlanTimeToCoverSuggested? = found?.suggested?.takeIf { it.minutes.toInt() != minutes && line !is TimeLine.Everything }
 
 /** [found] is the plan's answer for the days shown, [advice] its answer for the time shown on them; either is null while it's asked for. */
 internal fun timeLine(
@@ -171,7 +133,7 @@ internal fun timeLine(
     askFailed: Boolean,
     dated: Boolean,
     findFailed: Boolean,
-    found: FoundTime?,
+    found: PlanTimeToCover?,
     hasDays: Boolean,
     minutes: Int?,
 ): TimeLine {
@@ -183,18 +145,18 @@ internal fun timeLine(
         !dated -> advice?.endDate?.let(TimeLine::Finish) ?: TimeLine.NoFinish
         found == null -> if (findFailed) TimeLine.FindFailed else TimeLine.Working
         found.pastDate -> TimeLine.PastDate
-        else -> datedLine(advice, asking, found.time.suggestedTime(), minutes)
+        else -> datedLine(advice, asking, found.suggested, minutes)
     }
 }
 
 private fun datedLine(
     advice: PlanTimeAdvice?,
     asking: TimeLine,
-    suggested: SuggestedTime?,
+    suggested: PlanTimeToCoverSuggested?,
     minutes: Int,
 ): TimeLine {
-    if (suggested?.minutes == minutes) {
-        return if (suggested.coversEverything) TimeLine.Everything(suggested = true) else TimeLine.EveryTopic
+    if (suggested?.minutes?.toInt() == minutes) {
+        return if (suggested.kind == PlanTimeToCoverSuggested.Kind.EVERYTHING) TimeLine.Everything(suggested = true) else TimeLine.EveryTopic
     }
     val share = (advice ?: return asking).coveredShare ?: 0.0
     return if (share >= 1) TimeLine.Everything(suggested = false) else TimeLine.Share(share)
@@ -203,7 +165,7 @@ private fun datedLine(
 /** The time picked needs the plan's own answer, except the one it suggested. */
 internal fun asksAboutTime(
     dated: Boolean,
-    found: FoundTime?,
+    found: PlanTimeToCover?,
     fullCourse: Boolean,
     minutes: Int?,
 ): Boolean =
@@ -211,7 +173,7 @@ internal fun asksAboutTime(
         minutes == null -> false
         !dated -> true
         found == null || found.pastDate -> false
-        else -> fullCourse || found.time.suggestedTime()?.minutes != minutes
+        else -> fullCourse || found.suggested?.minutes?.toInt() != minutes
     }
 
 /** An exam's choice to study everything holds until the time picked is known to cover it all. */
