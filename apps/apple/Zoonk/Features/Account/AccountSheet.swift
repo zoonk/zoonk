@@ -28,30 +28,38 @@ struct AccountSheet: View {
   @State private var isAppStoreSubscriptionManagementPresented = false
   @State private var isGooglePlayManagementPresented = false
   @State private var path = [AccountDestination]()
+  @State private var isBeside = false
 
   var body: some View {
-    Group {
-      if showsSections {
-        PaneSplit {
-          NavigationStack {
-            accountContent(
-              sectionOpen: AccountSectionOpen(shown: shownSection) { path = [$0] })
+    PaneBeside(isAvailable: isShowingHub) {
+      NavigationStack {
+        accountContent(sectionOpen: AccountSectionOpen(shown: path.first, open: show))
+      }
+    } content: { isBeside in
+      // One stack in both layouts, so a page keeps what the learner typed or opened on it when
+      // the list comes or goes; beside the list, a section is always open over its root.
+      NavigationStack(path: $path) {
+        Group {
+          if isBeside {
+            Color.clear
+          } else {
+            accountContent(sectionOpen: nil)
           }
-        } secondary: {
-          NavigationStack(path: sectionPath) {
-            destination(shownSection)
-              .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                  closeButton
-                }
-              }
-              .navigationDestination(for: AccountDestination.self, destination: destination)
-          }
-        } single: {
-          stack
         }
-      } else {
-        stack
+        .toolbar {
+          if !isBeside, !requiresProfileSetup {
+            ToolbarItem(placement: .topBarTrailing) {
+              closeButton
+            }
+          }
+        }
+        .navigationDestination(for: AccountDestination.self) { destination in
+          page(destination, isBeside: isBeside)
+        }
+      }
+      .onChange(of: isBeside, initial: true) {
+        self.isBeside = isBeside
+        openDefaultSectionBeside()
       }
     }
     .onChange(of: session.state) { _, state in
@@ -62,6 +70,8 @@ struct AccountSheet: View {
       if session.account == nil, !isShowingDeletion {
         path.removeAll()
       }
+
+      openDefaultSectionBeside()
     }
     .interactiveDismissDisabled(requiresProfileSetup)
     .presentationDetents([.large])
@@ -97,26 +107,6 @@ struct AccountSheet: View {
     }
   }
 
-  private var stack: some View {
-    NavigationStack(path: $path) {
-      accountContent(sectionOpen: nil)
-        .toolbar {
-          if !requiresProfileSetup {
-            ToolbarItem(placement: .topBarTrailing) {
-              closeButton
-            }
-          }
-        }
-        .navigationDestination(for: AccountDestination.self, destination: destination)
-    }
-  }
-
-  /// Also while a deletion's result shows, so signing out underneath doesn't rebuild the page
-  /// holding it.
-  private var showsSections: Bool {
-    isShowingHub || isShowingDeletion
-  }
-
   private var isShowingDeletion: Bool {
     path.contains { if case .deleteAccount = $0 { true } else { false } }
   }
@@ -129,17 +119,34 @@ struct AccountSheet: View {
     return isGuest ? !signsIn : !account.needsProfileSetup
   }
 
-  /// As main: the profile, or preferences for a guest, who has none.
-  private var shownSection: AccountDestination {
-    path.first ?? (isGuest ? .preferences : .profile)
+  /// Beside the list a section replaces the open one in place, as in a sidebar.
+  private func show(_ section: AccountDestination) {
+    withTransaction(\.disablesAnimations, true) {
+      path = [section]
+    }
   }
 
-  private var sectionPath: Binding<[AccountDestination]> {
-    Binding {
-      Array(path.dropFirst())
-    } set: {
-      path = [shownSection] + $0
+  /// As main: the profile, or preferences for a guest, who has none.
+  private func openDefaultSectionBeside() {
+    if isBeside, path.isEmpty {
+      show(isGuest ? .preferences : .profile)
     }
+  }
+
+  /// A section beside the list is the page itself: it closes the sheet, with no way back to the
+  /// stack's empty root.
+  private func page(_ destination: AccountDestination, isBeside: Bool) -> some View {
+    let isSection = if case .deleteAccount = destination { false } else { true }
+
+    return self.destination(destination)
+      .navigationBarBackButtonHidden(isBeside && isSection)
+      .toolbar {
+        if isBeside, isSection {
+          ToolbarItem(placement: .topBarTrailing) {
+            closeButton
+          }
+        }
+      }
   }
 
   @ViewBuilder
@@ -159,7 +166,7 @@ struct AccountSheet: View {
     case .profile:
       if let account = session.account {
         ProfileEditorView(account: account, isRequiredSetup: false) {
-          path = [.profile, .deleteAccount(makeDeletionDestination(account))]
+          path.append(.deleteAccount(makeDeletionDestination(account)))
         }
         .id(account.user.id)
       }
@@ -406,7 +413,7 @@ private struct SettingsHubView: View {
 }
 
 private struct AccountSectionOpen {
-  let shown: AccountDestination
+  let shown: AccountDestination?
   let open: (AccountDestination) -> Void
 }
 

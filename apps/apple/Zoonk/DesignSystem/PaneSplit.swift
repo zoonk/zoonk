@@ -56,6 +56,40 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
   }
 }
 
+/// A leading pane beside `content` wherever `PaneSplit` would split. Unlike `PaneSplit`'s
+/// builders, `content` keeps its identity as the pane comes and goes, so a navigation stack in it
+/// keeps its pages, and what the learner typed or opened on them, through a fold or a resize.
+struct PaneBeside<Pane: View, Content: View>: View {
+  var isAvailable = true
+  @ViewBuilder let pane: () -> Pane
+  @ViewBuilder let content: (_ isBeside: Bool) -> Content
+
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+  var body: some View {
+    GeometryReader { proxy in
+      let panes =
+        isAvailable && !dynamicTypeSize.isAccessibilitySize
+        ? PaneSpace(proxy).panes(primaryShare: 0.5) : nil
+
+      HStack(spacing: 0) {
+        if let panes {
+          pane()
+            .frame(width: panes.primary)
+            .frame(maxHeight: .infinity, alignment: .top)
+            // The pane comes back with a list kept off screen, as in `PaneSplit`.
+            .contentMargins(.top, 0, for: .scrollContent)
+        }
+
+        content(panes != nil)
+          .safeAreaPadding(.leading, panes?.gap ?? 0)
+          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+      }
+      .environment(\.isPaneSplit, panes != nil)
+    }
+  }
+}
+
 struct PaneSpace: Equatable {
   /// Every iPhone layout works at this width at standard text sizes, and accessibility sizes get one
   /// column, so it doesn't grow with the text.
