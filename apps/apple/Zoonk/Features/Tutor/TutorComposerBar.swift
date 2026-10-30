@@ -40,10 +40,10 @@ struct TutorComposerBar: View {
   private var composer: some View {
     HStack(alignment: .bottom, spacing: 8) {
       TextField(text: $conversation.draft, prompt: placeholder, axis: .vertical) {
-        Text(
-          "Message \(buddyName)", tableName: "Tutor",
-          comment: "The buddy's composer for VoiceOver; the argument is the buddy's name")
+        label
       }
+      // A vertical field doesn't pass its label to VoiceOver.
+      .accessibilityLabel(label)
       .lineLimit(1...6)
       .focused($isFocused)
       .onKeyPress(.return, phases: .down) { press in
@@ -73,6 +73,12 @@ struct TutorComposerBar: View {
       .padding(6)
     }
     .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 24, style: .continuous))
+  }
+
+  private var label: Text {
+    Text(
+      "Message \(buddyName)", tableName: "Tutor",
+      comment: "The buddy's composer for VoiceOver; the argument is the buddy's name")
   }
 
   private var suggestionChips: some View {
