@@ -165,7 +165,7 @@ export function StudyEverythingHost({
   );
 }
 
-export function useStudyEverything(): (course: FullCourse) => void {
+function useStudyEverything(): (course: FullCourse) => void {
   const open = use(StudyEverythingContext);
 
   if (!open) {
