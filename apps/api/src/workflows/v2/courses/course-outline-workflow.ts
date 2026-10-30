@@ -7,6 +7,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
+import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { claimRunToken, joinRun } from "../_shared/run-token";
@@ -130,21 +131,25 @@ async function writeBand({ context, plan }: { context: RunContext; plan: BandPla
 
   const saved = await Promise.all(
     chapters.map((chapter, index) =>
-      saveOutlineChapterStep({
-        ...context,
-        chapter,
-        goalSkills: skills,
-        level: plan.level,
-        position: toPosition({ early, index, plan }),
-        provenance,
-      }),
+      deliverCourseContent(
+        saveOutlineChapterStep({
+          ...context,
+          chapter,
+          goalSkills: skills,
+          level: plan.level,
+          position: toPosition({ early, index, plan }),
+          provenance,
+        }),
+      ),
     ),
   );
 
   const chapterIds = saved.map((chapter) => chapter.chapterId);
 
   if (plan.extensions.length > 0) {
-    await placeContinuationsStep({ chapterIds, chapters, courseId: context.courseId, plan });
+    await deliverCourseContent(
+      placeContinuationsStep({ chapterIds, chapters, courseId: context.courseId, plan }),
+    );
   }
 
   await replanWaitingGoals({
@@ -180,12 +185,15 @@ async function writeClaimedBands({
 
   try {
     const chapterIds = await writeBands({ bands, context });
-    await finishCourseOutlineStep({ courseId, status: "completed", workflowRunId });
+
+    await deliverCourseContent(
+      finishCourseOutlineStep({ courseId, status: "completed", workflowRunId }),
+    );
 
     return chapterIds;
   } catch (error) {
     await Promise.all([
-      finishCourseOutlineStep({ courseId, status: "failed", workflowRunId }),
+      deliverCourseContent(finishCourseOutlineStep({ courseId, status: "failed", workflowRunId })),
       trackGenerationFailedStep({ analytics, contentKind: "course", task: "course-outline" }),
     ]);
 

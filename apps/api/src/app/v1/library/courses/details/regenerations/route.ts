@@ -2,8 +2,10 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { courseDetailsRegenerationRequestSchema } from "@/lib/openapi/schemas/course-details-regenerations";
 import { readBody } from "@/lib/request-input";
+import { deliverCourseContent } from "@/workflows/v2/_shared/course-content-notification";
 import { listInFlightCourseDetails } from "@/workflows/v2/courses/course-details-runs";
 import { startCourseDetailsRun } from "@/workflows/v2/courses/start-course-details-run";
+import { collectCourseContentTags } from "@zoonk/core/cache/course-content";
 import {
   getCourseDetailsRegenerationPreview,
   regenerateCourseDetails,
@@ -13,11 +15,15 @@ import { type NextRequest, NextResponse } from "next/server";
 async function createCourseDetailsRegeneration(request: NextRequest) {
   const parsed = await readBody(request, courseDetailsRegenerationRequestSchema);
 
-  const result = await regenerateCourseDetails({
-    getInFlightCourseIds: listInFlightCourseDetails,
-    promptVersion: parsed.promptVersion,
-    startCourseDetails: (courseId) => startCourseDetailsRun({ copyOnly: true, courseId }),
-  });
+  const result = await deliverCourseContent(
+    collectCourseContentTags(() =>
+      regenerateCourseDetails({
+        getInFlightCourseIds: listInFlightCourseDetails,
+        promptVersion: parsed.promptVersion,
+        startCourseDetails: (courseId) => startCourseDetailsRun({ copyOnly: true, courseId }),
+      }),
+    ),
+  );
 
   if (result.status !== "started") {
     return result.status === "unauthorized" ? errors.unauthorized() : errors.forbidden();

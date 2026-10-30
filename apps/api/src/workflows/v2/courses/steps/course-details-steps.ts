@@ -1,3 +1,7 @@
+import {
+  type CourseContentWrite,
+  collectCourseContentTags,
+} from "@zoonk/core/cache/course-content";
 import { writeCourseDetails } from "@zoonk/core/library/courses/details";
 import { createCourseIcon } from "@zoonk/core/library/courses/icon";
 import { withAiRetry } from "../../_shared/ai-retry";
@@ -16,22 +20,28 @@ function toSharedAnalytics({ analytics, workflowRunId }: CourseDetailsContext) {
 
 export async function writeCourseDetailsStep(
   context: CourseDetailsContext,
-): Promise<"skipped" | "written"> {
+): Promise<CourseContentWrite<"skipped" | "written">> {
   "use step";
 
-  return withAiRetry(() =>
-    writeCourseDetails({
-      analytics: toSharedAnalytics(context),
-      copyOnly: context.copyOnly,
-      courseId: context.courseId,
-    }),
+  return collectCourseContentTags(() =>
+    withAiRetry(() =>
+      writeCourseDetails({
+        analytics: toSharedAnalytics(context),
+        copyOnly: context.copyOnly,
+        courseId: context.courseId,
+      }),
+    ),
   );
 }
 
-export async function createCourseIconStep(context: CourseDetailsContext): Promise<string | null> {
+export async function createCourseIconStep(
+  context: CourseDetailsContext,
+): Promise<CourseContentWrite<string | null>> {
   "use step";
 
-  return withAiRetry(() =>
-    createCourseIcon({ analytics: toSharedAnalytics(context), courseId: context.courseId }),
+  return collectCourseContentTags(() =>
+    withAiRetry(() =>
+      createCourseIcon({ analytics: toSharedAnalytics(context), courseId: context.courseId }),
+    ),
   );
 }

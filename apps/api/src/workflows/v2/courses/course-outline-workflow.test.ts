@@ -25,6 +25,7 @@ import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../../mocks/workflow-runtime";
+import { courseContentNotificationWorkflow } from "../_shared/course-content-notification-workflow";
 import {
   outlineResult,
   recordedOutput,
@@ -539,6 +540,27 @@ describe(courseOutlineWorkflow, () => {
   );
 
   describe(writeOutlineBandStep, { timeout: TIMEOUT }, () => {
+    it("queues the early chapter's invalidation without depending on Main's availability", async () => {
+      vi.stubEnv("ZOONK_APP", "api");
+      const fetch = vi.fn().mockRejectedValue(new Error("Main offline"));
+      vi.stubGlobal("fetch", fetch);
+
+      try {
+        const { band, course } = await writeAfterEarlyAttempt("failed");
+
+        expect(band.early?.chapterId).toBeTruthy();
+        expect(streamCourseOutline).toHaveBeenCalledOnce();
+        expect(fetch).not.toHaveBeenCalled();
+
+        expect(start).toHaveBeenCalledWith(courseContentNotificationWorkflow, [
+          [`course-curriculum:${course.id}`],
+        ]);
+      } finally {
+        vi.unstubAllEnvs();
+        vi.unstubAllGlobals();
+      }
+    });
+
     it("keeps the first chapter an earlier attempt finished, and writes the rest of the band after it", async () => {
       const { band, first } = await writeAfterEarlyAttempt("completed");
 
@@ -959,7 +981,7 @@ describe(courseOutlineWorkflow, () => {
 
       await expect(save()).rejects.toMatchObject({ name: "RetryableError", retryAfter: "1m" });
 
-      const saved = await save();
+      const { value: saved } = await save();
 
       const [placements, homeLessons, stored] = await Promise.all([
         prisma.courseChapter.findMany({ where: { courseId: course.id } }),

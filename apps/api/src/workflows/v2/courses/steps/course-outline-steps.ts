@@ -1,6 +1,10 @@
 import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateCourseOutline } from "@zoonk/ai/tasks/v2/curriculum/course-outline";
 import {
+  type CourseContentWrite,
+  collectCourseContentTags,
+} from "@zoonk/core/cache/course-content";
+import {
   claimCourseOutline,
   findUntaughtSkills,
   finishCourseOutline,
@@ -97,6 +101,10 @@ export async function planOutlineBandStep({
 export async function claimCourseOutlineStep(input: { courseId: string; workflowRunId: string }) {
   "use step";
 
+  return collectCourseContentTags(() => claimCourseOutlineWhenFree(input));
+}
+
+async function claimCourseOutlineWhenFree(input: { courseId: string; workflowRunId: string }) {
   const claim = await claimCourseOutline(input);
   const ownerId = claim === "running" ? await getCourseOutlineOwner(input.courseId) : null;
 
@@ -113,10 +121,10 @@ export async function finishCourseOutlineStep(input: {
   courseId: string;
   status: "completed" | "failed";
   workflowRunId: string;
-}): Promise<void> {
+}): Promise<CourseContentWrite<void>> {
   "use step";
 
-  await finishCourseOutline(input);
+  return collectCourseContentTags(() => finishCourseOutline(input));
 }
 
 function getBandWait({ background, waited }: { background?: boolean; waited: boolean }): CallWait {
@@ -170,21 +178,23 @@ export async function saveOutlineChapterStep({
   level: CourseBandNeed["level"];
   position: number;
   provenance: OutlineProvenance;
-}): Promise<SavedOutlineChapter> {
+}): Promise<CourseContentWrite<SavedOutlineChapter>> {
   "use step";
 
-  return withAiRetry(() =>
-    saveOutlineChapter({
-      analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-      chapter,
-      courseId,
-      goalSkills,
-      level,
-      position,
-      provenance,
-      scope,
-      workflowRunId,
-    }),
+  return collectCourseContentTags(() =>
+    withAiRetry(() =>
+      saveOutlineChapter({
+        analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+        chapter,
+        courseId,
+        goalSkills,
+        level,
+        position,
+        provenance,
+        scope,
+        workflowRunId,
+      }),
+    ),
   );
 }
 
@@ -198,7 +208,7 @@ export async function placeContinuationsStep({
   chapters: OutlineChapter[];
   courseId: string;
   plan: BandPlan;
-}): Promise<void> {
+}): Promise<CourseContentWrite<void>> {
   "use step";
 
   const moves = chapters.flatMap((chapter, index) => {
@@ -208,7 +218,7 @@ export async function placeContinuationsStep({
     return extension && chapterId ? [{ afterChapterId: extension.afterChapterId, chapterId }] : [];
   });
 
-  await placeContinuations({ courseId, level: plan.level, moves });
+  return collectCourseContentTags(() => placeContinuations({ courseId, level: plan.level, moves }));
 }
 
 export async function listWaitingGoalsStep(input: {

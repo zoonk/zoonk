@@ -1,3 +1,4 @@
+import { deliverCourseContent } from "../_shared/course-content-notification";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimCourseOutlineStep } from "./steps/course-outline-steps";
 
@@ -16,7 +17,7 @@ export async function claimCourseWhenFree({
   wait: () => Promise<unknown>;
   workflowRunId: string;
 }): Promise<{ claimed: boolean; waited: boolean }> {
-  const first = await claimCourseOutlineStep({ courseId, workflowRunId });
+  const first = await deliverCourseContent(claimCourseOutlineStep({ courseId, workflowRunId }));
 
   if (first === "claimed") {
     return { claimed: true, waited: false };
@@ -26,7 +27,7 @@ export async function claimCourseWhenFree({
     done: (result) => result === "claimed",
     run: async () => {
       await wait();
-      return claimCourseOutlineStep({ courseId, workflowRunId });
+      return deliverCourseContent(claimCourseOutlineStep({ courseId, workflowRunId }));
     },
     times: tries,
   });

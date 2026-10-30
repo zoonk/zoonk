@@ -3,6 +3,7 @@ import {
   generateCourseOutline,
   streamCourseOutline,
 } from "@zoonk/ai/tasks/v2/curriculum/course-outline";
+import { collectCourseContentTags } from "@zoonk/core/cache/course-content";
 import {
   type EarlyOutlineChapter,
   findEarlyOutlineChapter,
@@ -15,6 +16,7 @@ import {
 } from "@zoonk/core/library/curriculum/save-outline-chapter";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { toContentAnalytics } from "../../_shared/content-analytics";
+import { deliverCourseContent } from "../../_shared/course-content-notification";
 import {
   type BandInput,
   type OutlineProvenance,
@@ -58,18 +60,22 @@ async function streamWaitedBand({
       const kept = pickChapters({ outline: { chapters: before, uncoveredSkillKeys: [] }, plan });
       const position = plan.nextPosition + kept.length;
 
-      const saved = await withAiRetry(() =>
-        saveOutlineChapter({
-          analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-          chapter,
-          courseId,
-          goalSkills: plan.skills,
-          level: plan.level,
-          position,
-          provenance,
-          scope,
-          workflowRunId,
-        }),
+      const saved = await deliverCourseContent(
+        collectCourseContentTags(() =>
+          withAiRetry(() =>
+            saveOutlineChapter({
+              analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+              chapter,
+              courseId,
+              goalSkills: plan.skills,
+              level: plan.level,
+              position,
+              provenance,
+              scope,
+              workflowRunId,
+            }),
+          ),
+        ),
       );
 
       const replanned = await replanGoalsWaitingOnSkills({

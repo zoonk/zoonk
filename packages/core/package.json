@@ -36,6 +36,7 @@
     "./auth/purge-verifications": "./src/auth/purge-expired-verifications.ts",
     "./auth/subscription": "./src/auth/subscription.ts",
     "./cache/course-content-tags": "./src/cache/course-content-tags.ts",
+    "./cache/course-content": "./src/cache/revalidate-course-content.ts",
     "./cache-tags": "./src/cache/tags.ts",
     "./catalog/chapter": "./src/catalog/chapter.ts",
     "./catalog/chapter-lessons": "./src/catalog/chapter-lessons.ts",

@@ -6,6 +6,7 @@ import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { type Run, start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
+import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken, joinRun } from "../_shared/run-token";
@@ -89,7 +90,7 @@ function planWhenFree({
 }): Promise<LessonSpecOutcome> {
   return repeatUntil({
     done: (outcome) => outcome !== "waiting",
-    run: () => writeLessonSpecStep({ ...input, workflowRunId }),
+    run: () => deliverCourseContent(writeLessonSpecStep({ ...input, workflowRunId })),
     times: MAX_WAITS,
     wait: () => sleep(WAIT_INTERVAL),
   });

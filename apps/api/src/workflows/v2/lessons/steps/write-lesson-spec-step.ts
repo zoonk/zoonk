@@ -2,6 +2,10 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateLessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec";
 import { keepTeachingPictures } from "@zoonk/ai/tasks/v2/lesson-spec/picture-need";
+import {
+  type CourseContentWrite,
+  collectCourseContentTags,
+} from "@zoonk/core/cache/course-content";
 import { claimLibraryGeneration } from "@zoonk/core/library/claims/generation";
 import { loadLessonSpecInputs } from "@zoonk/core/library/curriculum/lesson-spec-inputs";
 import { saveLessonSpecs } from "@zoonk/core/library/curriculum/save-lesson-specs";
@@ -91,9 +95,15 @@ async function planLesson({
   return saved.status === "saved" ? "ready" : "missing";
 }
 
-export async function writeLessonSpecStep(input: SpecInput): Promise<LessonSpecOutcome> {
+export async function writeLessonSpecStep(
+  input: SpecInput,
+): Promise<CourseContentWrite<LessonSpecOutcome>> {
   "use step";
 
+  return collectCourseContentTags(() => writeLessonSpec(input));
+}
+
+async function writeLessonSpec(input: SpecInput): Promise<LessonSpecOutcome> {
   const claim = await claimSpec(input);
 
   if (claim === "completed") {
