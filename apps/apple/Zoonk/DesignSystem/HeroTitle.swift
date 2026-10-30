@@ -13,7 +13,7 @@ extension View {
 }
 
 extension EnvironmentValues {
-  @Entry fileprivate var heroTitleShown: (Bool) -> Void = { _ in }
+  @Entry fileprivate var isHeroTitleShown: Binding<Bool> = .constant(true)
 }
 
 private struct BarTitleAfterHero: ViewModifier {
@@ -33,14 +33,14 @@ private struct BarTitleAfterHero: ViewModifier {
             .accessibilityHidden(isHeroShown)
         }
       }
-      .environment(\.heroTitleShown) { isHeroShown = $0 }
+      .environment(\.isHeroTitleShown, $isHeroShown)
   }
 }
 
 private struct HeroTitleVisibility: ViewModifier {
-  @Environment(\.heroTitleShown) private var shown
+  @Environment(\.isHeroTitleShown) private var isShown
 
   func body(content: Content) -> some View {
-    content.onScrollVisibilityChange { shown($0) }
+    content.onScrollVisibilityChange { isShown.wrappedValue = $0 }
   }
 }
