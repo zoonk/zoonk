@@ -32,6 +32,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -135,10 +136,10 @@ private class FakeSubscriptionApi : SubscriptionApi {
     }
 
     val kept = mutableListOf<String>()
-    var keepFailure: ApiException? = null
+    var keepAnswer: suspend () -> Unit = {}
 
     override suspend fun keepWebPlus(session: AuthenticatedSession) {
-        keepFailure?.let { throw it }
+        keepAnswer()
         kept += session.bearerToken
     }
 }
@@ -445,7 +446,7 @@ class SubscriptionStoreTest {
                 }
             advanceUntilIdle()
 
-            api.keepFailure = ApiException(ApiError.Unavailable, "CONFLICT", 409)
+            api.keepAnswer = { throw ApiException(ApiError.Unavailable, "CONFLICT", 409) }
             api.accountRead = { subscribed(it.accountId, provider = "stripe") }
             api.cancellationRead = { choices() }
             val result = store.keepWebPlus()
@@ -468,6 +469,77 @@ class SubscriptionStoreTest {
         }
 
     @Test
+    fun keptPlusShowsThePlanRenewingEvenWhenThePlanCantBeReadAgain() =
+        runTest {
+            val (_, store) = store(ana)
+            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
+            val shown = launch { store.account.shown.collect {} }
+            advanceUntilIdle()
+
+            api.accountRead = { throw ApiException(ApiError.Network) }
+            val result = store.keepWebPlus()
+            advanceUntilIdle()
+
+            assertEquals(MutationResult.Done(Unit), result)
+            assertEquals(subscribed(ANA, provider = "stripe"), store.account.state.value.value)
+            shown.cancel()
+        }
+
+    @Test
+    fun keepingPlusThatCantBeKeptAnymoreKeepsThePlanEndingWhenItCantBeReadAgain() =
+        runTest {
+            val (_, store) = store(ana)
+            api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
+            val shown = launch { store.account.shown.collect {} }
+            advanceUntilIdle()
+
+            api.keepAnswer = { throw ApiException(ApiError.Unavailable, "CONFLICT", 409) }
+            api.accountRead = { throw ApiException(ApiError.Network) }
+            store.keepWebPlus()
+            advanceUntilIdle()
+
+            assertEquals(subscribed(ANA, provider = "stripe", cancelAt = ENDS), store.account.state.value.value)
+            shown.cancel()
+        }
+
+    @Test
+    fun keptPlusShowsThePlanRenewingEvenWhenTheSamePlanWasReadMeanwhile() =
+        runTest {
+            val shown = keepPlusWhileThePlanIsRead(subscribed(ANA, provider = "stripe", cancelAt = ENDS))
+
+            assertEquals(subscribed(ANA, provider = "stripe"), shown)
+        }
+
+    @Test
+    fun aCancellationReadWhileKeepingPlusWinsOverTheKeepsLateAnswer() =
+        runTest {
+            val endingSooner = subscribed(ANA, provider = "stripe", cancelAt = ENDS_SOONER)
+
+            assertEquals(endingSooner, keepPlusWhileThePlanIsRead(endingSooner))
+        }
+
+    private suspend fun TestScope.keepPlusWhileThePlanIsRead(meanwhile: MeResponse): MeResponse? {
+        val (_, store) = store(ana)
+        api.accountRead = { subscribed(it.accountId, provider = "stripe", cancelAt = ENDS) }
+        val shown = launch { store.account.shown.collect {} }
+        advanceUntilIdle()
+
+        val keepAnswer = CompletableDeferred<Unit>()
+        api.keepAnswer = { keepAnswer.await() }
+        val keep = async { store.keepWebPlus() }
+        advanceUntilIdle()
+        api.accountRead = { meanwhile }
+        store.account.refresh()
+        api.accountRead = { throw ApiException(ApiError.Network) }
+        keepAnswer.complete(Unit)
+        advanceUntilIdle()
+
+        assertEquals(MutationResult.Done(Unit), keep.await())
+        shown.cancel()
+        return store.account.state.value.value
+    }
+
+    @Test
     fun anotherAccountStartsWithoutTheLastOnesPurchaseState() =
         runTest {
             val (sessions, store) = store(ana)
@@ -482,6 +554,7 @@ class SubscriptionStoreTest {
 
     private companion object {
         val ENDS = Instant.parse("2026-12-01T00:00:00Z")
+        val ENDS_SOONER = Instant.parse("2026-11-15T00:00:00Z")
         val WITHDRAWAL =
             StripeSubscriptionCancellationWithdrawal(refund = Money(29.9, "BRL"), until = Instant.parse("2026-11-14T12:00:00Z"))
     }

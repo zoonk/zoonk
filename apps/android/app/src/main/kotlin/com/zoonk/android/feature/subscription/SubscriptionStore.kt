@@ -12,6 +12,7 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.perform
+import com.zoonk.android.data.value
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.GooglePlaySubscriptionRequest
@@ -192,11 +193,25 @@ class SubscriptionStore(
             .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.cancelWebPlus(it, choice) }
             .also { if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) readPlanAgain() }
 
-    /** Turns a stopped renewal back on. A 409 means only the renewal isn't stopped anymore, so the plan is read again. */
-    suspend fun keepWebPlus(): MutationResult<Unit> =
-        cache
+    /**
+     * Turns a stopped renewal back on. The answer carries no plan, so the plan shows renewing at once, unless
+     * a different one was read meanwhile, and is then read again. A 409 means only the renewal isn't stopped
+     * anymore, so the plan is read again.
+     */
+    suspend fun keepWebPlus(): MutationResult<Unit> {
+        val planToKeep = shownPlan()
+        return cache
             .mutate(invalidating = SUBSCRIPTION_DOMAINS) { api.keepWebPlus(it) }
-            .also { if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) readPlanAgain() }
+            .also {
+                if (it is MutationResult.Done && shownPlan() == planToKeep) account.update(MeResponse::renewing)
+                if (it is MutationResult.Failed && it.status == HTTP_CONFLICT) readPlanAgain()
+            }
+    }
+
+    private fun shownPlan() =
+        account.state.value.value
+            ?.account
+            ?.subscription
 
     private fun readPlanAgain() = cache.invalidate(SUBSCRIPTION_DOMAINS)
 
@@ -267,6 +282,9 @@ class SubscriptionStore(
         val SUBSCRIPTION_DOMAINS = setOf(DataDomain.UserSubscription, DataDomain.Allowance, DataDomain.UserSession)
     }
 }
+
+private fun MeResponse.renewing() =
+    copy(account = account.copy(subscription = account.subscription?.copy(cancelAt = null, cancelAtPeriodEnd = false)))
 
 fun PlusOffers.offerFor(period: BillingPeriod): PlusOffer? = if (period == BillingPeriod.Yearly) yearly else monthly
 
