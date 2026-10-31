@@ -10125,7 +10125,7 @@ msgstr "Escolher bases"
 #: src/plan/plan-choice-lines.tsx
 msgctxt "Su6-x7"
 msgid "Following the {option} syllabus"
-msgstr "Seguindo o conteúdo de {option}"
+msgstr "Seguindo o conteúdo programático de {option}"
 
 #: src/plan/plan-choices.tsx
 msgctxt "pNi2vP"

@@ -16,6 +16,7 @@
 - “subject”: “matéria”, not “disciplina”
 - “topic”: “tópico”, not “assunto” or “tema”
 - “notice” (official exam announcement): “edital”
+- “syllabus” (what an exam's notice or a class covers): “conteúdo programático”
 - “learning” (study days): “estudo”
 - “goal” (the learner's goal): “meta”; goal of a call, lesson, or activity: “objetivo”
 - “start a goal”: “começar uma meta”
