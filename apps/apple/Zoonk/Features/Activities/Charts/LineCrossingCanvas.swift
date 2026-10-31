@@ -63,6 +63,7 @@ struct LineCrossingCanvas: View {
           changeRow(fields.xLabel, change: xChange, isVertical: false)
         }
         .font(.subheadline.weight(.medium))
+        .accessibilityHidden(true)
       } else {
         Text(
           "Drag a line by its handle.", tableName: "ActivitiesCharts",
