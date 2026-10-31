@@ -8,7 +8,15 @@ import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 
 type Hint = { hint: string; mistake: string };
 
-export function PatternHints({ hints, isChecked }: { hints: readonly Hint[]; isChecked: boolean }) {
+export function PatternHints({
+  hints,
+  isChecked,
+  literalNumbers,
+}: {
+  hints: readonly Hint[];
+  isChecked: boolean;
+  literalNumbers: boolean;
+}) {
   const t = useExtracted();
   const [shown, setShown] = useState(0);
   const visible = isChecked ? hints : hints.slice(0, shown);
@@ -26,9 +34,9 @@ export function PatternHints({ hints, isChecked }: { hints: readonly Hint[]; isC
               <Lightbulb aria-hidden="true" className="text-viz-highlight mt-0.5 size-4 shrink-0" />
               <p>
                 <span className="font-semibold after:content-[':_']">
-                  <LessonRichText text={item.mistake} />
+                  <LessonRichText literalNumbers={literalNumbers} text={item.mistake} />
                 </span>
-                <LessonRichText text={item.hint} />
+                <LessonRichText literalNumbers={literalNumbers} text={item.hint} />
               </p>
             </li>
           ))}

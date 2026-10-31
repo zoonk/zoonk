@@ -17,10 +17,20 @@ function typeset({
   );
 }
 
-export function LessonRichText({ mark, text }: { mark?: string | null; text: string }) {
+export function LessonRichText({
+  literalNumbers = false,
+  mark,
+  text,
+}: {
+  literalNumbers?: boolean;
+  mark?: string | null;
+  text: string;
+}) {
   const locale = useAppLocale();
   const parsed = parseRichInline(toOneLine(text));
   const segments = mark ? markRichInline(parsed, mark) : parsed;
 
-  return <RichInlineSegments segments={typeset({ locale, segments })} />;
+  return (
+    <RichInlineSegments segments={literalNumbers ? segments : typeset({ locale, segments })} />
+  );
 }

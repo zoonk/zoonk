@@ -217,6 +217,28 @@ describe("computing activities", () => {
     await expect.element(page.getByText("A pattern that works")).toBeVisible();
   });
 
+  it("pattern tester: numbers in a regex task are text to match, so they aren't grouped", async () => {
+    const { patternTester } = activityContentFixtures;
+
+    openActivity({
+      content: {
+        ...patternTester,
+        fields: {
+          ...patternTester.fields,
+          hints: [{ hint: "941031 has six digits.", mistake: "Matches extra digits" }],
+        },
+      },
+      template: "patternTester",
+    });
+
+    await expect
+      .element(page.getByText("Match US ZIP codes, like 94103 or 94103-1234."))
+      .toBeVisible();
+
+    await page.getByRole("button", { name: "Show a hint" }).click();
+    await expect.element(page.getByText("941031 has six digits.")).toBeVisible();
+  });
+
   it("pattern tester: a formula is checked cell by cell", async () => {
     openActivity({ content: formulaTester, template: "patternTester" });
     await page.getByRole("button", { name: "Show a hint" }).click();

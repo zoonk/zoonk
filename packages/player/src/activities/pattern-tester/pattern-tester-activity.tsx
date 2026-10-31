@@ -131,7 +131,7 @@ export function PatternTesterActivity({
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <p className="text-base leading-snug font-medium">
-        <LessonRichText text={fields.task} />
+        <LessonRichText literalNumbers={isRegex} text={fields.task} />
       </p>
 
       <div className="flex flex-col gap-2">
@@ -191,7 +191,9 @@ export function PatternTesterActivity({
           )}
       </p>
 
-      {!isExploring && <PatternHints hints={fields.hints} isChecked={isChecked} />}
+      {!isExploring && (
+        <PatternHints hints={fields.hints} isChecked={isChecked} literalNumbers={isRegex} />
+      )}
 
       {isChecked && (
         <div className="flex flex-col gap-1">
