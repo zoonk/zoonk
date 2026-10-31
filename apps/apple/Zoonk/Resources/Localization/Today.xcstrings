@@ -3127,18 +3127,18 @@
       }
     },
     "Being written for you…" : {
-      "comment" : "A lesson being written right now",
+      "comment" : "Under a lesson, or under the day's next lessons, while they're written right now. It can be one lesson or several.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir erstellen deine Lektion…"
+            "value" : "Wir erstellen sie für dich…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando tu lección…"
+            "value" : "Preparando contenido para ti…"
           }
         },
         "fr" : {

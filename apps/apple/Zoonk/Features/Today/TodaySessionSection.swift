@@ -457,7 +457,9 @@ struct BlockRow: View {
       lines.append(
         String(
           localized: "Being written for you…", table: "Today",
-          comment: "A lesson being written right now"))
+          comment:
+            "Under a lesson, or under the day's next lessons, while they're written right now. It can be one lesson or several."
+        ))
     } else if let label = block.label(isCatchingUp: isCatchingUp) {
       lines.append(label)
     }
@@ -532,7 +534,9 @@ private struct ComingLessonsRow: View {
           case .beingWritten:
             Text(
               "Being written for you…", tableName: "Today",
-              comment: "A lesson being written right now")
+              comment:
+                "Under a lesson, or under the day's next lessons, while they're written right now. It can be one lesson or several."
+            )
           }
         }
         .font(.footnote)
