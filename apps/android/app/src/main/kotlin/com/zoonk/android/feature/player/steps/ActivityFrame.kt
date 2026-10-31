@@ -309,7 +309,10 @@ internal val NumericCheck.allowed: Double
 
 /** Main's `ActivityExplore`: an explanation's activity, its canvas to explore with nothing to answer. */
 @Composable
-internal fun ExploredActivityCanvas(explore: ExploredActivity) {
+internal fun ExploredActivityCanvas(
+    explore: ExploredActivity,
+    cantListen: Boolean,
+) {
     val renderer = activityRenderers[explore.frame.template] ?: return
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -322,6 +325,7 @@ internal fun ExploredActivityCanvas(explore: ExploredActivity) {
                 phase = ActivityPhase.Explore,
                 isLocked = false,
                 onAnswerChange = {},
+                cantListen = cantListen,
                 baseMap = explore.baseMap,
             ),
         )

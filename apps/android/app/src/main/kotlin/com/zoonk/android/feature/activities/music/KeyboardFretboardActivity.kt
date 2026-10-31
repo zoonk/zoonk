@@ -75,7 +75,7 @@ private class Board(
     /** A target found by ear shows once answered, even when the question only asked to name it. */
     val showsAnswer = props.isChecked && (isInteraction || byEar)
     val isRevealed = props.phase != ActivityPhase.Answering
-    val asksByEar = byEar && props.phase == ActivityPhase.Answering
+    val showsSoundAsText = byEar && !props.isChecked
     val spell = KeyboardFretboard.spelling(listOf(target, start))
     val expected = KeyboardFretboard.expectedPitches(props.expected, target.pitches)
     val initialPitches = KeyboardFretboard.initialPitches(props.answer, isInteraction, byEar, start, target, props.isExploring)
@@ -143,7 +143,7 @@ private fun PianoBoard(
         enabled = !props.isLocked,
     )
 
-    if (board.asksByEar) SoundAsText(board.target, props, audio.isUnavailable, labels)
+    if (board.showsSoundAsText) SoundAsText(board.target, props, audio.isUnavailable, labels)
     if (board.showsGuitar) GuitarMirror(shown, board.spell, isChecked = board.showsAnswer, labels = labels)
 }
 
@@ -224,7 +224,7 @@ private fun GuitarOnlyBoard(
     )
 
     if (!props.isChecked) FretWindow(firstFret, enabled = !props.isLocked) { firstFret = it }
-    if (board.asksByEar) SoundAsText(board.target, props, audio.isUnavailable, labels)
+    if (board.showsSoundAsText) SoundAsText(board.target, props, audio.isUnavailable, labels)
 
     if (board.showsAnswer) {
         GuitarMirror(
@@ -338,7 +338,7 @@ private fun SoundAsText(
         )
     }
 
-    if (props.isLocked) return
+    if (props.isLocked || props.phase != ActivityPhase.Answering) return
 
     if (props.cantListen || !isSoundUnavailable) {
         GhostAction(

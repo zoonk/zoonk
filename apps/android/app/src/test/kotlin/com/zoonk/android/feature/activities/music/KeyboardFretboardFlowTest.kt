@@ -159,6 +159,30 @@ class KeyboardFretboardFlowTest {
     }
 
     @Test
+    fun aLearnerWhoCantListenReadsAnExplainedSoundToo() {
+        harness.play(
+            listOf(
+                ActivityFixtures.step("keyboardFretboard.byEar", id = "byEar"),
+                ActivityFixtures.exploreStep("keyboardFretboard.byEar"),
+                summaryStep("end"),
+            ),
+        ) {
+            grade = { _, _ -> checkResult(true, expected = ActivityFixtures.expected("keyboardFretboard.byEar")) }
+        }
+
+        rule.onNodeWithText("I can't listen now").performScrollTo().performClick()
+        key("C").performScrollTo().performClick()
+        key("G").performScrollTo().performClick()
+        harness.tap("Check")
+        harness.tap("Continue")
+
+        shows("Explore keyboardFretboard.byEar.")
+        shows("The sound plays: C, G")
+        rule.onNodeWithText("Play the sound").assertDoesNotExist()
+        rule.onNodeWithText("I can listen now").assertDoesNotExist()
+    }
+
+    @Test
     fun byEarNamingAChordWrongShowsTheChordThatPlayed() {
         play("keyboardFretboard.byEarChoice", isCorrect = false)
 

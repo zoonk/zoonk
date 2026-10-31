@@ -185,7 +185,7 @@ internal fun ExplanationView(
             BodyText(explanation.text)
         }
         LessonStepVisual(explanation.visual)
-        content.explore?.takeUnless { step.isExploredPictureLost }?.let { ExploredActivityCanvas(it) }
+        content.explore?.takeUnless { step.isExploredPictureLost }?.let { ExploredActivityCanvas(it, actions.cantListen) }
         if (explanation.exampleLineSlot != null) actions.exampleLine(step.id)?.let { ExampleLine(it) }
     }
 }
