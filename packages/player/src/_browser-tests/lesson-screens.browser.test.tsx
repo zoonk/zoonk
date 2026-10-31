@@ -137,6 +137,49 @@ describe("lesson screens", () => {
     });
   });
 
+  it("offers to explain a written answer checked as wrong", async () => {
+    const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
+    const [step] = lesson.steps;
+
+    const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
+      Promise.resolve({
+        result: {
+          checked: true,
+          correctAnswer: "Because it maps chances.",
+          corrections: [],
+          expected: null,
+          feedback: null,
+          isCorrect: false,
+          keyPoints: null,
+          nextReviewAt: null,
+          savedMistake: false,
+          score: 0,
+          spelling: null,
+        },
+        status: "checked" as const,
+      }),
+    );
+
+    const explainAnswer = vi.fn<NonNullable<LessonPlayerAdapters["explainAnswer"]>>(() =>
+      Promise.resolve({ explanation: "A cloud maps chances, not a path.", status: "explained" }),
+    );
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep, explainAnswer }), lesson });
+
+    await page
+      .getByRole("textbox", { name: "In your own words: why is the electron drawn as a cloud?" })
+      .fill("It's the path it takes");
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await page.getByRole("button", { name: "Explain my answer" }).click();
+    await expect.element(page.getByText("A cloud maps chances, not a path.")).toBeVisible();
+
+    expect(explainAnswer).toHaveBeenCalledWith({
+      answer: "It's the path it takes",
+      stepId: step?.id,
+    });
+  });
+
   it("shows a written answer nothing checked next to the sample answer, without calling it wrong", async () => {
     const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
 

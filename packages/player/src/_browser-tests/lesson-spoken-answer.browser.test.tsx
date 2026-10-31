@@ -199,4 +199,52 @@ describe("spoken answers", () => {
 
     expect(gradeSpokenAnswer).not.toHaveBeenCalled();
   });
+
+  it("doesn't offer to explain a typed spoken answer, which has no question to explain it against", async () => {
+    vi.spyOn(navigator.mediaDevices, "getUserMedia").mockRejectedValue(
+      new DOMException("Permission denied", "NotAllowedError"),
+    );
+
+    const lesson = buildLesson([spokenSentenceStep(), teachingStep("summary")]);
+
+    const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
+      Promise.resolve({
+        result: {
+          checked: true,
+          correctAnswer: "How much is the rent?",
+          corrections: [],
+          expected: null,
+          feedback: null,
+          isCorrect: false,
+          keyPoints: null,
+          nextReviewAt: null,
+          savedMistake: false,
+          score: 0,
+          spelling: null,
+        },
+        status: "checked" as const,
+      }),
+    );
+
+    const adapters = buildAdapters(lesson, {
+      checkStep,
+      explainAnswer: vi.fn<NonNullable<LessonPlayerAdapters["explainAnswer"]>>(),
+      gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>(),
+    });
+
+    renderLessonPlayer({ adapters, lesson });
+    await page.getByRole("button", { name: "Record" }).click();
+
+    await page
+      .getByRole("textbox", { name: "Pergunte quanto é o aluguel." })
+      .fill("How much rent?");
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+
+    await expect.element(page.getByRole("status").filter({ hasText: "Not quite" })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "Explain my answer" }))
+      .not.toBeInTheDocument();
+  });
 });

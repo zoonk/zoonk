@@ -150,10 +150,7 @@ export function LessonStepResultView({
   const { answerText } = result;
   const wordHints = "wordHints" in step ? step.wordHints : null;
 
-  const canExplain =
-    !result.isCorrect &&
-    answerText &&
-    (step.kind === "typedAnswer" || (step.kind === "spokenAnswer" && !result.feedback));
+  const canExplain = step.kind === "typedAnswer" && !result.isCorrect && answerText;
 
   return (
     <FeedbackPanel aria-label={t("Answer feedback")}>
