@@ -166,12 +166,17 @@ internal fun tooClose(
         else -> TooClose.Days
     }
 
-/** Only while the time shown falls short of everything. */
+/** Only while the time shown falls short of everything, and only a suggestion its label is true of. */
 internal fun offer(
     found: PlanTimeToCover?,
     line: TimeLine,
     minutes: Int?,
-): PlanTimeToCoverSuggested? = found?.suggested?.takeIf { it.minutes.toInt() != minutes && line !is TimeLine.Everything }
+): PlanTimeToCoverSuggested? =
+    found?.suggested?.takeIf {
+        it.minutes.toInt() != minutes &&
+            line !is TimeLine.Everything &&
+            (it.kind == PlanTimeToCoverSuggested.Kind.EVERYTHING || it.everyTopic)
+    }
 
 /** [found] is the plan's answer for the days shown, [advice] its answer for the time shown on them; either is null while it's asked for. */
 internal fun timeLine(
@@ -204,7 +209,7 @@ private fun datedLine(
     if (suggested?.minutes?.toInt() == minutes) {
         return when (suggested.kind) {
             PlanTimeToCoverSuggested.Kind.EVERYTHING -> TimeLine.Everything(suggested = true)
-            PlanTimeToCoverSuggested.Kind.EVERY_TOPIC -> TimeLine.EveryTopic
+            PlanTimeToCoverSuggested.Kind.FOCUS -> if (suggested.everyTopic) TimeLine.EveryTopic else TimeLine.Share(suggested.coveredShare)
         }
     }
     val share = (advice ?: return asking).coveredShare ?: 0.0

@@ -229,16 +229,16 @@ internal fun area(
 
 internal fun timeToCover(
     recommended: Long? = 45,
-    core: Long? = null,
+    focus: Long? = null,
     fittingDate: String? = null,
     ready: Boolean = true,
 ): PlanTimeToCover =
     PlanTimeToCover(
-        coreMinutes = core,
         fittingDate = fittingDate?.let(kotlinx.datetime.LocalDate::parse),
+        most = null,
         ready = ready,
         recommendedMinutes = recommended,
-        suggested = suggestionFor(recommended, core).takeIf { ready },
+        suggested = suggestionFor(recommended, focus).takeIf { ready },
         targetDate = kotlinx.datetime.LocalDate.parse("2027-01-31"),
         targetDateNamedMonth = false,
     )

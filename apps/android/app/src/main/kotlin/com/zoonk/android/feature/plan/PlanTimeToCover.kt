@@ -61,24 +61,22 @@ sealed interface TimeToCoverOutcome {
     data object Stale : TimeToCoverOutcome
 }
 
-/** Main's `TimeToCoverAnswer`: a time that covers everything, or none (with the time every topic needs, when known). */
+/** Main's `TimeToCoverAnswer`: a time that covers everything, or none. */
 sealed interface TimeToCoverAnswer {
     data class Covers(
         val minutes: Int,
     ) : TimeToCoverAnswer
 
-    data class None(
-        val coreMinutes: Int?,
-    ) : TimeToCoverAnswer
+    data object None : TimeToCoverAnswer
 }
 
 internal fun PlanTimeToCover.answer(): TimeToCoverAnswer =
-    recommendedMinutes?.let { TimeToCoverAnswer.Covers(it.toInt()) } ?: TimeToCoverAnswer.None(coreMinutes?.toInt())
+    recommendedMinutes?.let { TimeToCoverAnswer.Covers(it.toInt()) } ?: TimeToCoverAnswer.None
 
 /** The time the answer offers among the time a day's chips. */
 internal val TimeToCoverAnswer.offeredMinutes: Int?
     get() =
         when (this) {
             is TimeToCoverAnswer.Covers -> minutes
-            is TimeToCoverAnswer.None -> coreMinutes
+            TimeToCoverAnswer.None -> null
         }

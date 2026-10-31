@@ -30,9 +30,8 @@ class PlanTimeToCoverTest {
     }
 
     @Test
-    fun theOfferedTimeIsTheOneThatCoversEverythingElseTheOneEveryTopicNeeds() {
+    fun theOfferedTimeIsTheOneThatCoversEverything() {
         assertEquals(45, timeToCover(recommended = 45).answer().offeredMinutes)
-        assertEquals(240, timeToCover(recommended = null, core = 240).answer().offeredMinutes)
-        assertEquals(null, timeToCover(recommended = null).answer().offeredMinutes)
+        assertEquals(null, timeToCover(recommended = null, focus = 240).answer().offeredMinutes)
     }
 }

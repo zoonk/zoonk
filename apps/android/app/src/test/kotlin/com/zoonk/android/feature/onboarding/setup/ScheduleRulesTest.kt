@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import com.zoonk.android.feature.onboarding.suggestion
 import com.zoonk.android.feature.onboarding.suggestionFor
 import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.OnboardingTimeChoicesInnerSplit
@@ -18,13 +19,13 @@ class ScheduleRulesTest {
     /** As the API answers: a passed date has no times, and the suggestion follows from the two times. */
     private fun found(
         recommended: Long? = 35,
-        core: Long? = null,
+        focus: Long? = null,
     ) = PlanTimeToCover(
-        coreMinutes = core,
         fittingDate = null,
+        most = null,
         ready = true,
         recommendedMinutes = recommended,
-        suggested = suggestionFor(recommended, core),
+        suggested = suggestionFor(recommended, focus),
         targetDate = LocalDate(2028, 10, 29),
         targetDateNamedMonth = false,
     )
@@ -45,9 +46,9 @@ class ScheduleRulesTest {
         targetDateNamedMonth = false,
     )
 
-    private val tooClose = found(recommended = 2_000, core = 300)
+    private val tooClose = found(recommended = 2_000, focus = 300)
 
-    private val noSuggestion = found(recommended = 2_000, core = 2_000)
+    private val noSuggestion = found(recommended = 2_000, focus = 2_000)
 
     private fun line(
         advice: PlanTimeAdvice? = null,
@@ -75,11 +76,20 @@ class ScheduleRulesTest {
 
     @Test
     fun theTimeStartsOnWhatTheApiSuggestsNotOnTheTimesItSends() {
-        val suggested = PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERY_TOPIC, 50, null)
+        val suggested = suggestion(PlanTimeToCoverSuggested.Kind.FOCUS, 50)
         val answer = found(recommended = 35).copy(suggested = suggested)
 
         assertEquals(50, shownMinutes(60, answer, answer, picked = null, settled = false))
         assertEquals(TimeLine.EveryTopic, line(found = answer, minutes = 50))
+    }
+
+    @Test
+    fun aFocusThatLeavesTopicsOutSaysOnlyWhatItCoversAndIsNotOfferedAsReachingEveryTopic() {
+        val leavesTopicsOut =
+            found(recommended = 2_000).copy(suggested = suggestion(PlanTimeToCoverSuggested.Kind.FOCUS, 240, everyTopic = false))
+
+        assertEquals(TimeLine.Share(0.6), line(found = leavesTopicsOut, minutes = 240))
+        assertNull(offer(leavesTopicsOut, TimeLine.Share(0.1), 30))
     }
 
     @Test
@@ -112,7 +122,7 @@ class ScheduleRulesTest {
     fun theLineSaysWhatTheTimeShownMeansOrWhyThatIsNotKnownYet() {
         assertEquals(TimeLine.NoDays, line(hasDays = false))
         assertEquals(TimeLine.Everything(suggested = true), line())
-        assertEquals(TimeLine.EveryTopic, line(found = found(recommended = 2_000, core = 45), minutes = 45))
+        assertEquals(TimeLine.EveryTopic, line(found = found(recommended = 2_000, focus = 45), minutes = 45))
         assertEquals(TimeLine.Asking, line(minutes = 15))
         assertEquals(TimeLine.Share(0.48), line(advice = advice(), minutes = 15))
         assertEquals(TimeLine.Everything(suggested = false), line(advice = advice(share = 1.0), minutes = 60))
@@ -157,8 +167,8 @@ class ScheduleRulesTest {
     fun theSuggestionIsOfferedBackOnlyWhileAnotherTimeFallsShort() {
         val short = TimeLine.Share(0.48)
         assertNull(offer(found(), short, 35))
-        assertEquals(PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERYTHING, 35, null), offer(found(), short, 15))
-        assertNull(offer(found(recommended = 2_000, core = 240), TimeLine.Everything(suggested = false), 900))
+        assertEquals(suggestion(PlanTimeToCoverSuggested.Kind.EVERYTHING, 35), offer(found(), short, 15))
+        assertNull(offer(found(recommended = 2_000, focus = 240), TimeLine.Everything(suggested = false), 900))
     }
 
     @Test
@@ -171,7 +181,7 @@ class ScheduleRulesTest {
         val suggested =
             found(recommended = 50).copy(
                 suggested =
-                    PlanTimeToCoverSuggested(
+                    suggestion(
                         PlanTimeToCoverSuggested.Kind.EVERYTHING,
                         50,
                         PlanTimeToCoverSuggestedSplit(mine = 35, others = 2, rest = 15),

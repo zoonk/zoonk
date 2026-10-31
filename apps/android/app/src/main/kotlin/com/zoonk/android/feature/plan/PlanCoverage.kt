@@ -104,9 +104,6 @@ internal fun noTimeCoversText(
     stringResource(if (namedMonth) R.string.plan_find_none_month else R.string.plan_find_none, goalDate(targetDate, namedMonth, today))
 
 @Composable
-internal fun everyTopicText(minutes: Int): String = stringResource(R.string.plan_find_every_topic, formatMinutes(minutes, currentLocale()))
-
-@Composable
 internal fun fittingDateText(
     dailyMinutes: Int,
     fittingDate: LocalDate,
@@ -256,9 +253,6 @@ private fun FindLine(
             }
             if (answer is TimeToCoverAnswer.None && target != null) {
                 Text(noTimeCoversText(target, time.targetDateNamedMonth, page.today), style = MaterialTheme.typography.bodyMedium)
-            }
-            if (answer is TimeToCoverAnswer.None && answer.coreMinutes != null) {
-                Text(everyTopicText(answer.coreMinutes), style = MaterialTheme.typography.bodyMedium)
             }
             fittingDate?.let {
                 Text(

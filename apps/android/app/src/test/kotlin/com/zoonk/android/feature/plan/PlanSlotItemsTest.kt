@@ -51,7 +51,7 @@ class PlanSlotItemsTest {
 
     @Test
     fun anExamsDateNeverMoves() {
-        val fitting = timeToCover(recommended = null, core = 240, fittingDate = "2027-04-18")
+        val fitting = timeToCover(recommended = null, focus = 240, fittingDate = "2027-04-18")
 
         assertNull(coverageChange(isExam = true, CoverageIntent.Time, fitting))
         assertEquals(CoverageChange.Time(45), coverageChange(isExam = true, CoverageIntent.Time, timeToCover(recommended = 45)))

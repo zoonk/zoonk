@@ -817,7 +817,6 @@
     <string name="plan_find_none">No amount of time a day covers everything in depth by %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_find_none_month">No amount of time a day covers everything in depth by %1$s.</string>
-    <string name="plan_find_every_topic">%1$s a day studies every topic, some in less depth.</string>
     <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
     <string name="plan_find_fitting_date">At %1$s a day, your plan covers everything by %2$s.</string>
     <string name="plan_find_no_date">We couldn\'t find a date that covers everything.</string>

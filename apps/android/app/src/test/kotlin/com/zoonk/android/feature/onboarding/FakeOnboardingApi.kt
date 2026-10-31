@@ -493,29 +493,42 @@ internal class FakeOnboardingApi : OnboardingApi {
     }
 }
 
-/** The time the API starts a dated goal on for these answers: all of it up to four hours a day, else every topic. */
+/** The time the API starts a dated goal on for these answers: all of it, else a focus that reaches every topic. */
 internal fun suggestionFor(
     recommended: Long?,
-    core: Long?,
+    focus: Long?,
 ): PlanTimeToCoverSuggested? =
     when {
-        recommended != null && recommended <= A_DAY -> PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended, null)
-        core != null && core <= A_DAY -> PlanTimeToCoverSuggested(PlanTimeToCoverSuggested.Kind.EVERY_TOPIC, core, null)
+        recommended != null && recommended <= A_DAY -> suggestion(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended)
+        focus != null && focus <= A_DAY -> suggestion(PlanTimeToCoverSuggested.Kind.FOCUS, focus)
         else -> null
     }
+
+internal fun suggestion(
+    kind: PlanTimeToCoverSuggested.Kind,
+    minutes: Long,
+    split: PlanTimeToCoverSuggestedSplit? = null,
+    everyTopic: Boolean = true,
+) = PlanTimeToCoverSuggested(
+    coveredShare = if (kind == PlanTimeToCoverSuggested.Kind.EVERYTHING) 1.0 else 0.6,
+    everyTopic = everyTopic,
+    kind = kind,
+    minutes = minutes,
+    split = split,
+)
 
 internal fun coverOf(
     recommended: Long?,
     targetDate: LocalDate = LocalDate(2030, 11, 8),
     ready: Boolean = true,
-    core: Long? = null,
+    focus: Long? = null,
     split: PlanTimeToCoverSuggestedSplit? = null,
 ) = PlanTimeToCover(
-    coreMinutes = core,
     fittingDate = null,
+    most = null,
     ready = ready,
     recommendedMinutes = recommended,
-    suggested = suggestionFor(recommended, core)?.copy(split = split).takeIf { ready },
+    suggested = suggestionFor(recommended, focus)?.copy(split = split).takeIf { ready },
     targetDate = targetDate,
     targetDateNamedMonth = false,
 )

@@ -292,7 +292,7 @@ private fun ScheduleLine(
                 val words =
                     when (offer.kind) {
                         PlanTimeToCoverSuggested.Kind.EVERYTHING -> R.string.onboarding_schedule_offer_everything
-                        PlanTimeToCoverSuggested.Kind.EVERY_TOPIC -> R.string.onboarding_schedule_offer_every_topic
+                        PlanTimeToCoverSuggested.Kind.FOCUS -> R.string.onboarding_schedule_offer_every_topic
                     }
                 val minutes = offer.minutes.toInt()
                 TextButton(onClick = { onUseOffer(minutes) }) {

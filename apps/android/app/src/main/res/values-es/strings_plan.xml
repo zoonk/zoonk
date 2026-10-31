@@ -276,7 +276,6 @@
   "plan_find_building": "15f700c1b08e4c06b7a91719213703fd2e22cd939f52414913cf6664467effe5",
   "plan_find_covers": "792e0c846b67692c45c34524965e5b5e72c9ecef11a4f5d8787eac9992ac4336",
   "plan_find_covers_month": "5f7a79c021a5d1c256224170c411d6c372dad46e1fed11cd258e7db4f315a634",
-  "plan_find_every_topic": "390ce4d29224da289c1d27dafbebe45087d71c50435d3b4c2d56e0f38aadc721",
   "plan_find_failed": "4f534db77f1950e1a717cc42af4a17d63b471d4b6ae49a6c8f8ca4f7cb8db783",
   "plan_find_fitting_date": "4fb41cd3834b7041d50eac6365665fcbf566ede7c0d157ef890373d0cebf353e",
   "plan_find_no_date": "416ec464ba5e71be258c7f282a8dd33d2cf0c58844c837af3a5ca3af3c28f4cc",
@@ -1449,7 +1448,6 @@
     <string name="plan_find_none">Por mucho tiempo que dediques al día, no podrás cubrirlo todo en profundidad para el %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_find_none_month">Por mucho tiempo que dediques al día, no podrás cubrirlo todo en profundidad para %1$s.</string>
-    <string name="plan_find_every_topic">Con %1$s al día estudiarás todos los temas, algunos con menos profundidad.</string>
     <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
     <string name="plan_find_fitting_date">Con %1$s al día, tu plan lo cubre todo para el %2$s.</string>
     <string name="plan_find_no_date">No hemos podido encontrar una fecha para abarcarlo todo.</string>
