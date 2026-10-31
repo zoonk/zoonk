@@ -175,7 +175,9 @@ describe("a chapter test-out sent and read back", () => {
 
     const other = await plannedGoal({ graph: library.graph, userId: user.id });
 
-    await expect(send({ goalId: other.id, requestId, wrong: 2 })).resolves.toMatchObject({
+    await expect(
+      send({ chapter: 1, goalId: other.id, requestId, wrong: 2 }),
+    ).resolves.toMatchObject({
       outcome: { changeId: null, correct: 2, passed: false },
       status: "ready",
     });

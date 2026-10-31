@@ -72,7 +72,7 @@ async function planWaitingGoal(
   const goal = await goalFixture({
     details: setupComplete
       ? { answered: ["purpose", "level", "targetDate", "buddy", "placement", "schedule"] }
-      : {},
+      : { answered: [] },
     userId: user.id,
   });
 

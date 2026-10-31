@@ -26,7 +26,9 @@ private struct GoalPlanView: View {
     let standing = store.standing(goalId: goal.id)
 
     Group {
-      if goal.kind == .language {
+      if goal.isSettingUp {
+        PlanSetupLeft(goalID: goal.id)
+      } else if goal.kind == .language {
         content(plan: plan)
           .loads(
             plan, syllabus, store.languageStanding(goalId: goal.id),
@@ -95,6 +97,38 @@ private struct GoalPlanView: View {
     return Text(
       "\(days) days left", tableName: "Plan",
       comment: "Plan subtitle: how many days are left until the goal's date")
+  }
+}
+
+/// A plan is built while the questions are still answered, on a time the learner hasn't chosen
+/// yet, so the Plan leads back to them as Today does.
+private struct PlanSetupLeft: View {
+  @Environment(AppRouter.self) private var router
+
+  let goalID: String
+
+  var body: some View {
+    ContentUnavailableView {
+      Label {
+        Text(
+          "Your plan comes after a few questions", tableName: "Plan",
+          comment: "The Plan of a goal whose setup questions are left")
+      } icon: {
+        Image(systemName: "list.bullet.clipboard")
+      }
+    } description: {
+      Text(
+        "Answer them and we'll plan every day until you reach your goal.", tableName: "Plan",
+        comment: "Why the Plan waits for the goal's setup questions")
+    } actions: {
+      Button {
+        router.open(.goalSetup(goalId: goalID))
+      } label: {
+        Text("Continue", tableName: "Plan", comment: "Opens the goal's setup questions")
+      }
+      .buttonStyle(.mainAction)
+      .controlSize(.large)
+    }
   }
 }
 

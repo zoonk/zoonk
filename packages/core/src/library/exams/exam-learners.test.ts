@@ -134,6 +134,7 @@ describe(linkGoalToExamBlueprint, () => {
       specialtyBlueprintFixture(),
       goalFixture({
         details: {
+          answered: [],
           positionFromReading: "Auditor Federal – Desenvolvimento de Sistemas",
           targetPosition: "Auditor Federal – Desenvolvimento de Sistemas",
         },
@@ -142,6 +143,7 @@ describe(linkGoalToExamBlueprint, () => {
         userId: user.id,
       }),
       goalFixture({
+        details: { answered: [] },
         kind: "exam",
         prompt: "Passar na CGU, mas não quero Desenvolvimento de Sistemas",
         userId: user.id,

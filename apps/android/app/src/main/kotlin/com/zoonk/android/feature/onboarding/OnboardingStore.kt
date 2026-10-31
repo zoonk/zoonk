@@ -111,13 +111,6 @@ data class AttachedSource(
 /** Questions are left before the plan (`plan` alone: it's being built), so no plan is coming yet. */
 val Onboarding.questionsLeft: Boolean get() = steps.any { it != OnboardingStep.PLAN }
 
-/**
- * A course start's default plan reads as ready before its questions, so main shows setup for it
- * while any are left, a buddy aside (core's `isCourseSetupLeft`).
- */
-val Onboarding.courseSetupLeft: Boolean
-    get() = "courseStart" in goal.details && steps.any { it != OnboardingStep.PLAN && it != OnboardingStep.BUDDY }
-
 /** A visitor's first write starts a guest session, as an anonymous sign-in does. */
 class OnboardingStore(
     private val api: OnboardingApi,
@@ -192,8 +185,8 @@ class OnboardingStore(
             } else {
                 val main = input.goals.first()
                 val start =
+                    // The draft's time is a default unless the learner said one; setup asks it.
                     PlanLinkStartInput(
-                        dailyMinutes = input.dailyMinutes,
                         studyDays = input.studyDays,
                         studyTime = input.studyTime,
                         timeZone = input.timeZone,

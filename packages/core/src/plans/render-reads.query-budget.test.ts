@@ -7,7 +7,7 @@ import { getPlanLink } from "./get-plan-link";
 
 describe("supporting plan render read budgets", () => {
   it.each(["plan", "link", "course start"] as const)("reads %s", async (name) => {
-    const { course, goal, plan } = await signedInCourseGoal();
+    const { course, goal, plan } = await signedInCourseGoal({ details: { answered: [] } });
 
     const readers = {
       "course start": () => findCourseGoalStart(course.id),

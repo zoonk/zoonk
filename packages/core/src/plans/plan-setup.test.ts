@@ -73,7 +73,12 @@ async function routineGoal({ notes = 0 }: { notes?: number } = {}) {
 
   const [library, unplanned] = await Promise.all([
     planLibraryFixture({ skills: [{ lessons: 4 }, { lessons: 3 }] }),
-    unplannedGoalFixture({ dailyMinutes: 20, settings: { startDate: TODAY }, userId: user.id }),
+    unplannedGoalFixture({
+      dailyMinutes: 20,
+      details: { answered: [] },
+      settings: { startDate: TODAY },
+      userId: user.id,
+    }),
     learningProfileFixture({ memoryEnabled: true, userId: user.id }),
     memoryFactFixture({
       category: "routine",
@@ -141,7 +146,7 @@ async function examInAnotherMonth() {
   ]);
 
   const unplanned = await unplannedGoalFixture({
-    details: { examMonth: 12, examName: "Test Exam", examYear: 2020 },
+    details: { answered: [], examMonth: 12, examName: "Test Exam", examYear: 2020 },
     examBlueprintId: blueprint.id,
     kind: "exam",
     settings: { startDate: TODAY },

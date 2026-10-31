@@ -48,6 +48,7 @@ async function setup({ settings = {} }: { settings?: object } = {}) {
     planLibraryFixture({ skills: [{ lessons: 4 }, { lessons: 3 }] }),
     unplannedGoalFixture({
       dailyMinutes: 20,
+      details: { answered: [] },
       settings: { startDate: "2020-09-28", ...settings },
       userId: user.id,
     }),
@@ -194,8 +195,16 @@ describe("plans read the learner's goals and routine", () => {
 
     const [library, first, second] = await Promise.all([
       planLibraryFixture({ skills: [{ lessons: 2 }] }),
-      unplannedGoalFixture({ settings: { startDate: "2020-09-28" }, userId: withoutRoutine.id }),
-      unplannedGoalFixture({ settings: { startDate: "2020-09-28" }, userId: memoryOff.id }),
+      unplannedGoalFixture({
+        details: { answered: [] },
+        settings: { startDate: "2020-09-28" },
+        userId: withoutRoutine.id,
+      }),
+      unplannedGoalFixture({
+        details: { answered: [] },
+        settings: { startDate: "2020-09-28" },
+        userId: memoryOff.id,
+      }),
       memoryFactFixture({
         category: "background",
         statement: "Lives in Recife",

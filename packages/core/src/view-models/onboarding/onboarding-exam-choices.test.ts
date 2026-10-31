@@ -28,6 +28,7 @@ async function setup() {
   const blueprint = await choiceBlueprintFixture();
 
   const { goal, plan } = await unplannedGoalFixture({
+    details: { answered: [] },
     examBlueprintId: blueprint.id,
     kind: "exam",
     userId: user.id,
@@ -42,7 +43,7 @@ async function specialtyGoal(prompt: string, details: object = {}) {
   const blueprint = await specialtyBlueprintFixture();
 
   const { goal, plan } = await unplannedGoalFixture({
-    details,
+    details: { answered: [], ...details },
     examBlueprintId: blueprint.id,
     kind: "exam",
     language: "pt",
@@ -252,6 +253,7 @@ describe("onboarding an exam with a choice", () => {
     const blueprint = await twoChoiceBlueprintFixture();
 
     const { goal, plan } = await unplannedGoalFixture({
+      details: { answered: [] },
       examBlueprintId: blueprint.id,
       kind: "exam",
       language: "es",

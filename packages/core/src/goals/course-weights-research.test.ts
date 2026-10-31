@@ -43,7 +43,7 @@ const FOUND = {
   weights: [2, 1, 2],
 };
 
-async function enemGoal(details: Record<string, string>, examBlueprintId?: string) {
+async function enemGoal(details: Record<string, unknown>, examBlueprintId?: string) {
   const [user, blueprint] = await Promise.all([
     userFixture(),
     examBlueprintId ? null : examBlueprintFixture({ name: "ENEM", structure }),
@@ -263,7 +263,7 @@ describe("background plan inputs", () => {
     { question: "targetDate", targetDate: "2027-04-29" },
     { dailyMinutes: 25, question: "schedule" },
   ])("keeps research landing while the learner answers $question", async (input) => {
-    const goal = await enemGoal({ institution: "UFMG", targetCourse: "Medicina" });
+    const goal = await enemGoal({ answered: [], institution: "UFMG", targetCourse: "Medicina" });
 
     const [library] = await Promise.all([
       planLibraryFixture({ skills: [{ lessons: 3 }] }),

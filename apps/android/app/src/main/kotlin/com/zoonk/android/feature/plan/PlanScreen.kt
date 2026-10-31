@@ -46,7 +46,6 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.courseSetupLeft
 import com.zoonk.android.feature.onboarding.questionsLeft
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -108,14 +107,10 @@ private fun GoalPlan(
     val state by resource.collectShown()
     val scope = rememberCoroutineScope()
     val read = state.value
-    val courseSetup = if (goal.courseId != null) setupLeft(app.onboarding, goal.id, course = true) else SetupLeft.No
 
     when {
-        courseSetup == SetupLeft.Unknown -> {
-            SetupLoading(app, goal, padding)
-        }
-
-        courseSetup == SetupLeft.Yes -> {
+        // A plan is built while the questions are still answered, on a time the learner hasn't chosen yet.
+        goal.isSettingUp -> {
             PlanStateColumn(padding) { PlanSetupLeft(goal, navigator) }
         }
 
@@ -189,12 +184,10 @@ internal enum class SetupLeft { Yes, No, Unknown }
 internal fun setupLeft(
     onboarding: OnboardingStore,
     goalId: UUID,
-    course: Boolean = false,
 ): SetupLeft {
     val setup by onboarding.onboardings[goalId.toString()].collectShown()
     val loaded = setup.value ?: return if (setup is LoadState.Empty) SetupLeft.No else SetupLeft.Unknown
-    val left = if (course) loaded.courseSetupLeft else loaded.questionsLeft
-    return if (left) SetupLeft.Yes else SetupLeft.No
+    return if (loaded.questionsLeft) SetupLeft.Yes else SetupLeft.No
 }
 
 @Composable

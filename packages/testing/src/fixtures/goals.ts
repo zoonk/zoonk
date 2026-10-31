@@ -14,10 +14,28 @@ import { skillFixture } from "./skills";
 
 const DEFAULT_DAILY_MINUTES = 20;
 
-export async function goalFixture(attrs: FixtureAttrs<Goal, "details"> & Pick<Goal, "userId">) {
+const SETUP_ANSWERED = [
+  "purpose",
+  "role",
+  "reason",
+  "target",
+  "targetDate",
+  "followUps",
+  "examChoice",
+  "level",
+  "placement",
+  "schedule",
+];
+
+/** A goal past its setup, as every goal on Today and the Plan is; pass `answered` in `details` for one mid-setup. */
+export async function goalFixture({
+  details,
+  ...attrs
+}: FixtureAttrs<Goal, "details"> & Pick<Goal, "userId">) {
   return prisma.goal.create({
     data: {
       dailyMinutes: DEFAULT_DAILY_MINUTES,
+      details: { answered: SETUP_ANSWERED, ...details },
       kind: "learn",
       language: "en",
       prompt: "I want to learn test subjects",

@@ -1,4 +1,5 @@
 import { request } from "@playwright/test";
+import { ONBOARDING_QUESTIONS } from "@zoonk/core/view-models/onboarding/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -257,7 +258,10 @@ test.describe("Today API", () => {
         titleSnapshot: "Full mock",
       }),
       prisma.goal.update({
-        data: { dailyMinutes: 45, details: { placementDeclined: true } },
+        data: {
+          dailyMinutes: 45,
+          details: { answered: [...ONBOARDING_QUESTIONS], placementDeclined: true },
+        },
         where: { id: goal.id },
       }),
       prisma.plan.update({

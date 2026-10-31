@@ -193,7 +193,7 @@ async function newGoal(attrs: Partial<Parameters<typeof goalFixture>[0]> = {}) {
   const user = await userFixture();
 
   const goal = await goalFixture({
-    details: { level: "basic", purpose: "overview" },
+    details: { answered: [], level: "basic", purpose: "overview" },
     prompt: "Understand how vaccines train the immune system",
     title: "How vaccines work",
     userId: user.id,
@@ -2579,7 +2579,10 @@ describe(goalContentWorkflow, () => {
     { timeout: TIMEOUT },
     async () => {
       const onboardingId = crypto.randomUUID();
-      const { goal } = await newGoal({ details: { onboardingId, subject: "Vaccines" } });
+
+      const { goal } = await newGoal({
+        details: { answered: [], onboardingId, subject: "Vaccines" },
+      });
 
       vi.mocked(sleep).mockImplementationOnce(async () => {
         expect(classifyGoalSpecificity).toHaveBeenCalledOnce();

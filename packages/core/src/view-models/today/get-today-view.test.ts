@@ -544,6 +544,21 @@ describe(getTodayView, () => {
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
 
+  it("leads back to the questions a learner left mid-placement, though their plan was built", async () => {
+    const { goal, user } = await setup();
+
+    await prisma.goal.update({
+      data: { details: { answered: ["target", "level"], level: "basic" } },
+      where: { id: goal.id },
+    });
+
+    await expect(getTodayView({})).resolves.toStrictEqual({
+      goal: { id: goal.id, kind: "exam", title: "ENEM 2026" },
+      status: "preparing",
+      userId: user.id,
+    });
+  });
+
   it("has no day to plan for a paused goal", async () => {
     const { goal, user } = await setup();
     await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });

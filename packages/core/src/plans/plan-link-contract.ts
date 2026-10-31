@@ -1,6 +1,6 @@
 import { type GoalKind } from "@zoonk/db";
 import { z } from "zod";
-import { goalCreateInputSchema } from "../goals/goal-contract";
+import { dailyMinutesSchema, goalCreateInputSchema } from "../goals/goal-contract";
 import { type PlanPhaseKind } from "./planner/plan-state";
 
 const MAX_TITLE_LENGTH = 120;
@@ -9,6 +9,12 @@ const MAX_TITLE_LENGTH = 120;
 export const planLinkStartInputSchema = goalCreateInputSchema
   .pick({ dailyMinutes: true, studyDays: true, studyTime: true, timeZone: true })
   .extend({
+    dailyMinutes: dailyMinutesSchema
+      .optional()
+      .meta({
+        description:
+          "The time a day the learner chose, which answers setup's time question. Without it the plan starts on 15 minutes a day and setup asks",
+      }),
     targetDate: z.iso
       .date()
       .optional()

@@ -20,18 +20,18 @@ export async function sessionGoalFixture({
   lessons = 3,
   userId,
 }: {
-  goal?: Partial<Omit<Goal, "details">>;
+  goal?: Partial<Omit<Goal, "details">> & { details?: object };
   itemsPerSkill?: number;
   lessons?: number;
   userId: string;
 }) {
   const created = await goalFixture({
     dailyMinutes: 45,
-    // Decline placement without aging the goal, which would also expire a free exam trial.
-    details: { placementDeclined: true },
     timezone: "UTC",
     userId,
     ...goal,
+    // Decline placement without aging the goal, which would also expire a free exam trial.
+    details: { placementDeclined: true, ...goal?.details },
   });
 
   return studySessionPlanFixture({ goal: created, itemsPerSkill, lessons });

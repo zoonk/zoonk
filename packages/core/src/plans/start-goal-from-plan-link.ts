@@ -7,6 +7,7 @@ import { type GoalView } from "../goals/goal-contract";
 import { getSession } from "../users/get-session";
 import { getLinkSubject, keepPublicGraph, loadLinkedPlan } from "./_utils/linked-plan";
 import { createGoalPlan } from "./create-goal-plan";
+import { DEFAULT_DAILY_MINUTES } from "./daily-minutes";
 import { type PlanLinkStartInput } from "./plan-link-contract";
 import { joinOptionSkills } from "./planner/option-skills";
 import { parsePlanGraph } from "./planner/plan-state";
@@ -24,6 +25,16 @@ async function getOwnGoalView({ goalId, userId }: { goalId: string; userId: stri
 
   const [view] = await loadGoalViews({ activeGoalId, goals: [goal] });
   return view;
+}
+
+/** A time the learner chose answers setup's time question; without one, setup asks it. */
+function readStartTime(dailyMinutes: number | undefined): {
+  dailyMinutes: number;
+  details: Record<string, string[]>;
+} {
+  return dailyMinutes === undefined
+    ? { dailyMinutes: DEFAULT_DAILY_MINUTES, details: {} }
+    : { dailyMinutes, details: { answered: ["schedule"] } };
 }
 
 /**
@@ -61,10 +72,13 @@ export async function startGoalFromPlanLink({
     return { status: "titleRequired" };
   }
 
+  const time = readStartTime(input.dailyMinutes);
+
   const created = await createGoals({
-    dailyMinutes: input.dailyMinutes,
+    dailyMinutes: time.dailyMinutes,
     goals: [
       {
+        details: time.details,
         examBlueprintId:
           source.goal.examBlueprint?.visibility === "public"
             ? source.goal.examBlueprint.id

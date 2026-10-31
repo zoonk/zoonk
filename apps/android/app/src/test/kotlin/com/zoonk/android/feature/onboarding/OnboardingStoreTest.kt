@@ -250,7 +250,7 @@ class OnboardingStoreTest {
 
             val (planId, start) = api.fromPlans.single()
             assertEquals("plan-1", planId)
-            assertEquals(PlanLinkStartInput(dailyMinutes = 20, studyTime = "07:00", title = "Pass the bar exam"), start)
+            assertEquals(PlanLinkStartInput(studyTime = "07:00", title = "Pass the bar exam"), start)
             assertTrue(api.created.isEmpty())
         }
 }

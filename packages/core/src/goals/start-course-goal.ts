@@ -6,6 +6,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { getExamCalendarDay, getPlanExamDays } from "../exams/_utils/plan-exam-days";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
+import { DEFAULT_DAILY_MINUTES } from "../plans/daily-minutes";
 import { fromIsoDate, toIsoDate } from "../plans/planner/plan-calendar";
 import { getTargetDateBounds } from "../plans/target-date-range";
 import { getSession } from "../users/get-session";
@@ -25,8 +26,6 @@ export type CourseGoalStartResult =
   | { goal: GoalView; inOnboarding: boolean; status: "existing" }
   | { refusals: GoalRefusal[]; status: "refused" }
   | { status: "notFound" | "unauthorized" };
-
-const DEFAULT_DAILY_MINUTES = 15;
 
 function findStartableCourse({ courseId, userId }: { courseId: string; userId: string }) {
   return prisma.course.findFirst({

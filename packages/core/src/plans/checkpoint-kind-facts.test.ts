@@ -445,7 +445,7 @@ describe("checkpoint kind facts share the actual planned and played duration", (
       const { goal, plan } = await unplannedGoalFixture({
         createdAt: NOW,
         dailyMinutes: 60,
-        details: { placementDeclined: true },
+        details: { answered: [], placementDeclined: true },
         examBlueprintId: blueprint.id,
         kind: "exam",
         settings: { startDate: START, weekdayMinutes: [0, 60, 60, 60, 60, 60, 0] },

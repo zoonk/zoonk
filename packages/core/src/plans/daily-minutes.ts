@@ -1,5 +1,8 @@
 export const MIN_DAILY_MINUTES = 5;
 
+/** A sustainable short habit until the learner chooses their daily time. */
+export const DEFAULT_DAILY_MINUTES = 15;
+
 export const MAX_DAILY_MINUTES = 1440;
 
 const SHORT_STEP = 5;

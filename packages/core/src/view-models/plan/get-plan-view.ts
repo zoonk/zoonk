@@ -3,7 +3,7 @@ import { type GoalKind } from "@zoonk/db";
 import { getGoalPlan } from "../../plans/get-goal-plan";
 import { type PlanView } from "../../plans/plan-view-contract";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
-import { isCourseSetupLeft } from "../onboarding/onboarding-steps";
+import { isGoalSetupLeft } from "../onboarding/onboarding-steps";
 
 type PlanTabView = { goal: { id: string; kind: GoalKind; title: string }; plan: PlanView };
 
@@ -11,7 +11,7 @@ export type PlanTabViewResult =
   | { status: "noGoal" | "notFound" | "preparing" | "unauthorized" }
   | { status: "ready"; view: PlanTabView };
 
-/** Requires goal ownership; unfinished course setup returns preparing because its default plan is not yet the learner's choice. */
+/** Requires goal ownership; unfinished setup returns preparing because its default plan is not yet the learner's choice. */
 export async function getPlanTabView(input: { goalId?: string } = {}): Promise<PlanTabViewResult> {
   "use cache: private";
 
@@ -23,7 +23,7 @@ export async function getPlanTabView(input: { goalId?: string } = {}): Promise<P
 
   const { goal } = resolved;
 
-  if (isCourseSetupLeft(goal)) {
+  if (isGoalSetupLeft(goal)) {
     return { status: "preparing" };
   }
 

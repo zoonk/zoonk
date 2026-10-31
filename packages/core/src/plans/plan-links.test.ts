@@ -5,6 +5,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { DAILY_TIME_CHOICES } from "./daily-minutes";
@@ -136,6 +137,25 @@ describe("plan links", () => {
 
     const own = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
     expect(own).toMatchObject({ prompt: "How the stock market works", userId: visitor.id });
+
+    const questions = await getOnboarding({ goalId });
+    expect(questions.status === "ready" && questions.onboarding.steps).not.toContain("schedule");
+  });
+
+  it("asks the time a day of a start that didn't choose one", async () => {
+    const { plan } = await setup();
+    const visitor = await userFixture();
+    mockSession(visitor.id);
+
+    const result = await startGoalFromPlanLink({ input: { timeZone: "UTC" }, planId: plan.id });
+
+    expect(result).toMatchObject({ goal: { dailyMinutes: 15 }, status: "created" });
+
+    const questions = await getOnboarding({
+      goalId: result.status === "created" ? result.goal.id : "",
+    });
+
+    expect(questions.status === "ready" && questions.onboarding.steps).toContain("schedule");
   });
 
   it("keeps an exam read from the owner's private material to the owner", async () => {

@@ -147,7 +147,10 @@ describe(loadGoalCurriculumInputs, () => {
     const onboardingId = crypto.randomUUID();
 
     const [asking, answered, skippedRole, notOnboarding] = await Promise.all([
-      goalFixture({ details: { onboardingId, subject: "Statistics" }, userId: user.id }),
+      goalFixture({
+        details: { answered: [], onboardingId, subject: "Statistics" },
+        userId: user.id,
+      }),
       goalFixture({
         details: {
           answered: ["purpose", "level"],
@@ -180,6 +183,7 @@ describe(loadGoalCurriculumInputs, () => {
 
     const goal = await goalFixture({
       details: {
+        answered: [],
         level: "none",
         onboardingId: crypto.randomUUID(),
         purpose: "careerChange",

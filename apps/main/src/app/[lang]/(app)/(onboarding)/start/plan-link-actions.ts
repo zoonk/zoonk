@@ -18,8 +18,8 @@ export async function createGoalsFromPlanLinkAction(
   }
 
   const result = await startPlanLinkGoal({
+    // The draft's time is a default unless the learner said one; setup asks it.
     input: {
-      dailyMinutes: parsed.data.dailyMinutes,
       studyDays: parsed.data.studyDays,
       studyTime: parsed.data.studyTime,
       targetDate: draft.targetDate,

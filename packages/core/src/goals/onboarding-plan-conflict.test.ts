@@ -59,7 +59,12 @@ describe.each([true, false])("content publication bursts (guest: %s)", (isAnonym
   it.each(ANSWERS)("saves the learner's $question answer", async (input) => {
     const user = await userFixture();
     await prisma.user.update({ data: { isAnonymous }, where: { id: user.id } });
-    const { goal, lessons } = await sessionGoalFixture({ userId: user.id });
+
+    const { goal, lessons } = await sessionGoalFixture({
+      goal: { details: { answered: [] } },
+      userId: user.id,
+    });
+
     mockAccountSession({ isAnonymous, user });
 
     if (!isAnonymous) {

@@ -11570,6 +11570,65 @@
         }
       }
     },
+    "Answer them and we'll plan every day until you reach your goal." : {
+      "comment" : "Why the Plan waits for the goal's setup questions",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beantworte sie und wir planen jeden Tag, bis du dein Ziel erreichst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Respóndelas y planearemos cada día hasta que alcances tu objetivo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réponds-y et nous planifierons tes journées jusqu’à ce que tu atteignes ton objectif."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rispondi alle domande e pianificheremo ogni giornata fino a quando raggiungerai il tuo obiettivo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "質問に答えると、目標達成までの毎日の学習計画を作成します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "질문에 답하면 목표를 이룰 때까지 매일의 학습 계획을 세워 드려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odpowiedz na nie, a zaplanujemy naukę na każdy dzień, aż osiągniesz cel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responda às perguntas e a gente planeja cada dia até você alcançar sua meta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soruları cevapla, hedefine ulaşana kadar her gününü planlayalım."
+          }
+        }
+      }
+    },
     "Appears a lot" : {
       "comment" : "A topic past exams ask often",
       "localizations" : {
@@ -13660,7 +13719,7 @@
       }
     },
     "Continue" : {
-      "comment" : "Opens the chapter's next lesson\nOpens the subject's next chapter\nOpens the unit's next lesson",
+      "comment" : "Opens the chapter's next lesson\nOpens the goal's setup questions\nOpens the subject's next chapter\nOpens the unit's next lesson",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -31882,6 +31941,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın bugünden itibaren değişir. Günlük çalışma süreni azaltmak derslerini daha fazla güne yayar."
+          }
+        }
+      }
+    },
+    "Your plan comes after a few questions" : {
+      "comment" : "The Plan of a goal whose setup questions are left",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach ein paar Fragen bekommst du deinen Plan"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan estará listo después de unas preguntas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan sera prêt après quelques questions"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano sarà pronto dopo qualche domanda"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いくつかの質問に答えると学習計画ができます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "몇 가지 질문에 답하면 계획을 세워 드려요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeszcze kilka pytań i twój plan będzie gotowy"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano vem depois de algumas perguntas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önce birkaç soru, sonra planın"
           }
         }
       }

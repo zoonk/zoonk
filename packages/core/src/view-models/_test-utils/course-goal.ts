@@ -26,7 +26,7 @@ export async function courseGoalFixture({
   statuses = ["todo", "todo", "todo", "todo"],
   userId,
 }: {
-  details?: Record<string, string>;
+  details?: Record<string, unknown>;
   statuses?: PlanItemStatus[];
   userId: string;
 }) {

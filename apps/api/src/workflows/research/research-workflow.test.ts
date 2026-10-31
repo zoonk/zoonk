@@ -1697,7 +1697,7 @@ describe("research for goals that aren't exams", () => {
 
   it("waits for the purpose onboarding is about to ask, and plans nothing for an overview", async () => {
     const onboardingId = randomUUID();
-    const goal = await learnGoal({ onboardingId });
+    const goal = await learnGoal({ answered: [], onboardingId });
     vi.mocked(detectChangingFacts).mockResolvedValue("none");
 
     vi.mocked(sleep).mockImplementationOnce(async () => {

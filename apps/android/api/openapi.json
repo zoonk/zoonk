@@ -23838,7 +23838,7 @@
             }
           },
           "409": {
-            "description": "The goal is paused, completed or archived (GOAL_NOT_ACTIVE), or its plan is still being built after onboarding (PLAN_NOT_READY, with the goal in `details`): show the wait and ask again.",
+            "description": "The goal is paused, completed or archived (GOAL_NOT_ACTIVE), or its plan isn't ready (PLAN_NOT_READY, with the goal in `details`): while the goal's onboarding has questions left, lead back to them (a plan built before they're answered isn't the learner's yet); otherwise show the wait and ask again.",
             "content": {
               "application/json": {
                 "schema": {
@@ -27150,10 +27150,10 @@
         "type": "object",
         "properties": {
           "dailyMinutes": {
+            "description": "The time a day the learner chose, which answers setup's time question. Without it the plan starts on 15 minutes a day and setup asks",
             "type": "integer",
             "minimum": 5,
-            "maximum": 1440,
-            "description": "The day's time, shared by the new goals"
+            "maximum": 1440
           },
           "studyDays": {
             "minItems": 1,
@@ -27187,9 +27187,6 @@
             "maxLength": 120
           }
         },
-        "required": [
-          "dailyMinutes"
-        ],
         "additionalProperties": false
       },
       "PlanTimeAdviceInput": {

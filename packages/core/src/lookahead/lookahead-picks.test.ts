@@ -172,7 +172,11 @@ describe(pickSpeculativeLessons, () => {
   });
 
   it("leaves the learner's own lessons for after placement, which may test them out", async () => {
-    const during = await planWithLessons({ personal: true, phases: [0, 0, 0] });
+    const during = await planWithLessons({
+      details: { answered: [] },
+      personal: true,
+      phases: [0, 0, 0],
+    });
 
     await expect(
       pickSpeculativeLessons({ count: 4, goalId: during.goalId, ownLevel: "basic" }),

@@ -225,14 +225,3 @@ export function isGoalSetupLeft(goal: Pick<Goal, "details" | "kind" | "targetDat
     }),
   );
 }
-
-/** A default course plan is not configured until learner questions finish; later buddy/notice choices must not reopen setup. */
-export function isCourseSetupLeft(goal: Pick<Goal, "details" | "kind" | "targetDate">): boolean {
-  const details = isJsonObject(goal.details) ? goal.details : {};
-
-  if (!readCourseStart(details)) {
-    return false;
-  }
-
-  return isGoalSetupLeft(goal);
-}

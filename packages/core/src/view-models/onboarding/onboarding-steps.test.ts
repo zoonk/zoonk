@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getOnboardingSteps, isCourseSetupLeft } from "./onboarding-steps";
+import { getOnboardingSteps, isGoalSetupLeft } from "./onboarding-steps";
 
 const NEW_PROFILE = { hasBuddy: false, hasEarlierGoals: false };
 
@@ -355,12 +355,24 @@ describe(getOnboardingSteps, () => {
   });
 });
 
-describe(isCourseSetupLeft, () => {
+describe(isGoalSetupLeft, () => {
   const courseStart = { chapterId: null };
 
-  it("holds a course start's default plan back while its questions are left", () => {
+  it("holds a default plan back while its questions are left, whether words or a course started it", () => {
     expect(
-      isCourseSetupLeft({
+      isGoalSetupLeft({
+        details: {
+          answered: ["purpose", "targetDate", "level"],
+          level: "basic",
+          purpose: "overview",
+        },
+        kind: "learn",
+        targetDate: null,
+      }),
+    ).toBe(true);
+
+    expect(
+      isGoalSetupLeft({
         details: { answered: ["level"], courseStart, level: "basic" },
         kind: "learn",
         targetDate: null,
@@ -370,7 +382,7 @@ describe(isCourseSetupLeft, () => {
 
   it("lets the plan go once its questions are answered, buddy or not", () => {
     expect(
-      isCourseSetupLeft({
+      isGoalSetupLeft({
         details: { answered: ["level", "targetDate", "placement", "schedule"], courseStart },
         kind: "learn",
         targetDate: null,
@@ -378,13 +390,9 @@ describe(isCourseSetupLeft, () => {
     ).toBe(false);
   });
 
-  it("never holds back a goal its words started, or the next level of a finished course", () => {
+  it("never holds back the next level of a finished course", () => {
     expect(
-      isCourseSetupLeft({ details: { purpose: "overview" }, kind: "learn", targetDate: null }),
-    ).toBe(false);
-
-    expect(
-      isCourseSetupLeft({
+      isGoalSetupLeft({
         details: { continuesFromGoalId: "finished-goal", courseStart },
         kind: "learn",
         targetDate: null,
