@@ -25,11 +25,11 @@ Write, in `LANGUAGE`, the title, one-line description, can-do line, estimated mi
 
 - `title`: the action, the tool and the device, in sentence case and up to 8 words, like "Set up Python on Windows". Name the device the way people say it in `LANGUAGE`.
 - `description`: one plain sentence on what the learner installs or opens and how they check it works. Don't start with "Introduces", "Explains" or "Covers".
-- `canDo`: what the learner can do afterwards, as a short action starting with a verb in its base form, up to 12 words: "Run a line of Python in the Windows terminal".
+- `canDo`: what the learner can do afterwards, as a short action worded in `VERB_FORM`, up to 12 words: "Run a line of Python in the Windows terminal".
 - `estimatedMinutes`: 3 to 5.
-- `skill`: the skill as an action starting with a verb in its base form, up to 8 words, naming the tool and the device: "Set up Python on Windows".
+- `skill`: the skill as an action worded in `VERB_FORM`, up to 8 words, naming the tool and the device: "Set up Python on Windows".
 
 # Writing
 
-- Write every field in `LANGUAGE`, keeping product names as they are (Windows, macOS, Google Sheets, Excel, Python).
+- Write every field in `LANGUAGE`, keeping product names as they are (Windows, macOS, Google Sheets, Excel, Python). `VERB_FORM` is how `LANGUAGE` words what the learner will be able to do; never word the can-do line or the skill as an order to the learner.
 - Warm, plain words. No em dashes and no promises about results.

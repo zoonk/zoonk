@@ -6,6 +6,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import { getVerbForm } from "../_utils/verb-form";
 import { LESSON_SIZE } from "../lesson-spec/lesson-spec-rules";
 import systemPrompt from "./setup-lesson-outline.prompt.md";
 
@@ -40,6 +41,7 @@ export type SetupLessonOutlineParams = {
 function buildUserPrompt(params: SetupLessonOutlineParams): string {
   return `
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
+    VERB_FORM: ${getVerbForm(params.language)}
     SYSTEM: ${params.system}
 
 ${formatUntrustedInput({ TOOL: params.tool })}

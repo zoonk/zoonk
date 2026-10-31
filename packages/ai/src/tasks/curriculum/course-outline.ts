@@ -10,6 +10,7 @@ import { formatLocalContext } from "../_utils/language-context";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
+import { getVerbForm } from "../_utils/verb-form";
 import { type CourseLevel } from "./_utils/course-levels";
 import { chapterSchema } from "./_utils/course-outline-schema";
 import { type CourseOutline, normalizeCourseOutline } from "./_utils/normalize-course-outline";
@@ -131,6 +132,7 @@ function formatBandInputs(params: CourseOutlineParams): string {
 
   return [
     `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
+    `VERB_FORM: ${getVerbForm(params.language)}`,
     `COURSE_TITLE: ${params.courseTitle}`,
     `LEVEL: ${params.level}`,
     `REQUIRED_SKILLS: ${formatRequiredSkills(params.requiredSkills ?? [])}`,

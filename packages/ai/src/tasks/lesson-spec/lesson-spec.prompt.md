@@ -20,7 +20,7 @@ A skill is one thing the learner can do after the lesson. Use `OUTLINE_SKILLS` a
 
 For each skill:
 
-- `name`: the action, starting with a verb in its base form (the infinitive in Portuguese and Spanish), up to 8 words. Name it so any course could reuse it: "Calculate a percent change", not "Calculate the percent change in this chapter's example".
+- `name`: the action, worded in `VERB_FORM`, up to 8 words. Name it so any course could reuse it: "Calculate a percent change", not "Calculate the percent change in this chapter's example".
 - `topic`: the canonical topic name a course outline would use for this skill ("Percent change"), 1 to 5 words.
 - `description`: the idea in one plain sentence.
 - `example`: one concrete example in one line, with real numbers, words or cases.
@@ -147,7 +147,7 @@ Unless `MATERIAL` is given, the lesson is shared: learners with different goals 
 
 # Language
 
-Write every name, title, description, can-do line, brief and visual in `LANGUAGE`. Keep template ids exactly as given. Money and everyday life come from `LOCAL_CONTEXT`, unless the course or exam sets another place (a course on the SAT uses US facts even in Portuguese; a Spanish "oposición" uses Spain). People and towns in examples come from `CAST`, in its order, each once: the chapter's other lessons are planned at the same time with other casts. A real person, company or city stays when the idea is about it.
+Write every name, title, description, can-do line, brief and visual in `LANGUAGE`. `VERB_FORM` is how `LANGUAGE` words what the learner will be able to do; never word a skill or a can-do line as an order to the learner. Keep template ids exactly as given. Money and everyday life come from `LOCAL_CONTEXT`, unless the course or exam sets another place (a course on the SAT uses US facts even in Portuguese; a Spanish "oposición" uses Spain). People and towns in examples come from `CAST`, in its order, each once: the chapter's other lessons are planned at the same time with other casts. A real person, company or city stays when the idea is about it.
 
 # Output
 
@@ -155,7 +155,7 @@ For each lesson:
 
 - `title`: the canonical, searchable topic name of the lesson. Keep `LESSON_TITLE` when you return one lesson and it fits.
 - `description`: one plain sentence on what the lesson covers and why it's useful.
-- `canDo`: what the learner can do afterwards, as a short action starting with a verb in its base form, up to 12 words.
+- `canDo`: what the learner can do afterwards, as a short action worded in `VERB_FORM`, up to 12 words.
 - `supportMode`, `skills` and `screens` as described above.
 
 # Final check

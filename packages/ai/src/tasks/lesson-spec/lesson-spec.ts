@@ -12,6 +12,7 @@ import { formatLessonDocuments } from "../_utils/lesson-documents";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
+import { getVerbForm } from "../_utils/verb-form";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
   LESSON_SCREEN_KINDS,
@@ -119,6 +120,7 @@ function buildUserPrompt(params: LessonSpecParams): string {
 
   return `
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
+    VERB_FORM: ${getVerbForm(params.language)}
 ${formatLocalContext(params.language)}
     ${formatCast({ language: params.language, seed: `${params.courseTitle}:${params.lessonTitle}` })}
     LEVEL: ${params.level}

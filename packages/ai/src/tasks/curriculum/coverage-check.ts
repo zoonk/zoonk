@@ -7,6 +7,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
+import { getVerbForm } from "../_utils/verb-form";
 import {
   type CoverageReference,
   type ExamWeightChange,
@@ -193,6 +194,7 @@ function buildUserPrompt(params: CoverageCheckParams): string {
 
   return `
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
+    VERB_FORM: ${getVerbForm(params.language)}
     GOAL_KIND: ${params.goalKind}
     SKILLS:
 ${params.skills.map((skill) => formatSkill({ outline, skill })).join("\n")}

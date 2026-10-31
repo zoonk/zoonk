@@ -9,6 +9,7 @@ import { combineTaskProvenance, sumLanguageModelUsage } from "../../provenance/t
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { draftAgainWhenFlawed } from "../_utils/draft-again";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import { getVerbForm } from "../_utils/verb-form";
 import { COURSE_LEVELS } from "./_utils/course-levels";
 import { findRedraftProblems, normalizeDraft, redraftFlawedSections } from "./_utils/graph-drafts";
 import { EmptySkillGraphError } from "./_utils/normalize-skill-graph";
@@ -154,6 +155,7 @@ function formatGoalInputs(params: SkillGraphParams): string {
 
   return [
     `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
+    `VERB_FORM: ${getVerbForm(params.language)}`,
     `GOAL_KIND: ${params.goalKind}`,
     params.goalKind === "learn" && `PURPOSE: ${params.purpose ?? "none"}`,
     `OWN_LEVEL: ${params.ownLevel ?? "none given"}`,

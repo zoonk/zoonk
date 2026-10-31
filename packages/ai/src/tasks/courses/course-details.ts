@@ -1,6 +1,5 @@
 import "server-only";
 import { COURSE_CATEGORIES, type CourseCategory } from "@zoonk/utils/categories";
-import { type SupportedLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { normalizeString } from "@zoonk/utils/string";
 import { Output, generateText } from "ai";
@@ -10,6 +9,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import { getVerbForm } from "../_utils/verb-form";
 import promptTemplate from "./course-details.prompt.md";
 
 /**
@@ -81,20 +81,6 @@ function formatChapters(chapters: readonly DetailsChapter[]): string {
         .join("");
 }
 
-/** An imperative reads as an instruction to the visitor, so each language takes its learning goals' form. */
-const OUTCOME_VERB_FORMS: Record<SupportedLocale, string> = {
-  de: "an infinitive phrase with the verb at the end, as German learning goals are written",
-  en: "the verb's base form at the start",
-  es: "the infinitive at the start",
-  fr: "the infinitive at the start",
-  it: "the infinitive at the start",
-  ja: "a phrase ending in the verb's plain potential form (直せる, 読める, ～できる), as Japanese course pages list what you'll be able to do",
-  ko: "a phrase ending in ~ㄹ 수 있어요 (고칠 수 있어요), as Korean learning apps say what you'll be able to do",
-  pl: 'the infinitive at the start, imperfective for a skill ("rozwiązywać równania") and perfective only for a one-time result ("napisać CV")',
-  pt: "the infinitive at the start",
-  tr: 'a verb-final phrase ending in the -mak/-mek infinitive ("grafikleri yorumlamak")',
-};
-
 function buildUserPrompt(params: CourseDetailsParams): string {
   const targetLanguage = params.targetLanguage
     ? getPromptLanguageName({ language: params.targetLanguage, userLanguage: params.language })
@@ -102,7 +88,7 @@ function buildUserPrompt(params: CourseDetailsParams): string {
 
   return `
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
-    VERB_FORM: ${OUTCOME_VERB_FORMS[getSupportedLocaleFromLanguage(params.language)]}
+    VERB_FORM: ${getVerbForm(params.language)}
     COURSE_TITLE: ${params.courseTitle}
     TARGET_LANGUAGE: ${targetLanguage}
     CHAPTERS: ${formatChapters(params.chapters)}

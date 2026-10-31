@@ -53,7 +53,7 @@ When `EXTEND_SKILLS` lists skills, this band already teaches each of them in the
 - Every chapter teaches a distinct part of the subject: a capability, a body of knowledge, a technique or a real workflow. Chapter count follows the subject: enough to cover the band well, without padding a narrow subject or squeezing a broad one.
 - Put practical work throughout, once the prerequisites allow: real cases, tools, techniques, artifacts and decisions.
 - Modern topics add coverage without replacing the foundations. Each important development of the last decade gets real depth of its own, never a catch-all "Recent developments" chapter.
-- `objectives`: 2 to 4 things the learner can do after the chapter, each a short action starting with a verb in its base form.
+- `objectives`: 2 to 4 things the learner can do after the chapter, each a short action worded in `VERB_FORM`.
 - `skillKeys`: when `REQUIRED_SKILLS` is given, the keys of the required skills this chapter teaches. Every required skill must be taught by at least one chapter, while the outline still covers the whole band for every learner. Use an empty list when there are no required skills.
 {{#areas}}
 - A skill whose key is followed by an area in brackets, such as `[Mathematics]`, belongs to that subject of the exam, and learners see each lesson under the subject of its chapter's skills. So a chapter teaches one area: never tag skills of two areas on one chapter, even when they share a theme (charts in mathematics and in texts, waves in physics and on maps), and every lesson of a chapter teaches that area. Skills of different areas get chapters of their own.
@@ -73,9 +73,9 @@ For each lesson:
 
 - `title`: the canonical, searchable name of the topic, the way a serious learner would search for it: "Function parameters and return values", not "Send data in and get an answer back". Close natural variants in `LANGUAGE` are fine.
 - `description`: one plain sentence on what the lesson covers and why it's useful, naming its actual scope. Don't start with "Introduces", "Presents", "Explains" or "Covers".
-- `canDo`: what the learner can do afterwards, as a short action starting with a verb in its base form, up to 12 words: "Calculate a 20% discount in your head".
+- `canDo`: what the learner can do afterwards, as a short action worded in `VERB_FORM`, up to 12 words: "Calculate a 20% discount in your head".
 - `estimatedMinutes`: 2 to 5. An advanced lesson whose one idea can't be split, such as a derivation, may take 6.
-- `skills`: the 1 to 3 skills the lesson teaches, each an action starting with a verb in its base form, up to 8 words. Skills are shared across courses, so name them generically: "Calculate a percentage" is the same skill wherever it's taught.
+- `skills`: the 1 to 3 skills the lesson teaches, each an action worded in `VERB_FORM`, up to 8 words. Skills are shared across courses, so name them generically: "Calculate a percentage" is the same skill wherever it's taught.
 
 # Skills for a world with AI
 
@@ -91,7 +91,7 @@ Favor what still matters when AI does routine work: understanding why, judgment,
 
 # Writing
 
-- Write titles, descriptions, objectives, can-do lines and skills in `LANGUAGE`.
+- Write titles, descriptions, objectives, can-do lines and skills in `LANGUAGE`. `VERB_FORM` is how `LANGUAGE` words what the learner will be able to do; never word an objective, a can-do line or a skill as an order to the learner.
 - Topics that depend on a country (money, taxes, laws, school, national exams) and the examples in descriptions and can-do lines follow `LOCAL_CONTEXT`, unless `COURSE_TITLE` names another place or exam (a course on the SAT stays in the US even in Portuguese).
 - Titles are concise and in sentence case, keeping the normal capitalization of names and acronyms. No "Part 1", "I" or "II".
 - Warm, plain words in descriptions. No "explore", "understand", "learn about", "introduction to" or "basics of".

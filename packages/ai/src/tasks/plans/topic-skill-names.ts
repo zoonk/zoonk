@@ -7,6 +7,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { decodeHtmlEntities } from "../_utils/html-entities";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import { getVerbForm } from "../_utils/verb-form";
 import systemPrompt from "./topic-skill-names.prompt.md";
 
 /** The plan edits' small model: the learner waits on the buddy's card. */
@@ -76,6 +77,7 @@ function formatTopics(topics: readonly TopicToName[]): string {
 function buildUserPrompt(input: TopicSkillNamesInput): string {
   return `
     LANGUAGE: ${getPromptLanguageName({ language: input.language })}
+    VERB_FORM: ${getVerbForm(input.language)}
 
 ${formatUntrustedInput({ TOPICS: formatTopics(input.topics) })}
   `;
