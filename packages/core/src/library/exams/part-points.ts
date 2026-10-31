@@ -1,3 +1,4 @@
+import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { type ExamStructure, type MarkingRow, type ScoredPart } from "./blueprint-contract";
 import { getPartQuestions } from "./subject-questions";
 
@@ -66,6 +67,14 @@ export function getPartPointsPerQuestion({
   name: string;
   structure: ExamStructure;
 }): number | null {
+  const subjects = structure.subjects.filter(
+    (subject) => subject.name === name || subject.group === name,
+  );
+
+  if (subjects.some((subject) => isWrittenSubject({ structure, subject }))) {
+    return null;
+  }
+
   const scoring = structure.mock?.scoring;
   const part = scoring?.parts?.find((item) => item.name === name);
   const questions = getPartQuestions({ name, structure });

@@ -51,14 +51,14 @@ export function getSubjectPoints({
   );
 
   if (part && isWrittenSubject({ structure, subject })) {
-    const written = structure.subjects.filter(
-      (item) =>
-        (item.name === part.name || item.group === part.name) &&
-        isWrittenSubject({ structure, subject: item }),
+    const subjects = structure.subjects.filter(
+      (item) => item.name === part.name || item.group === part.name,
     );
 
-    const max = getPartMaxPoints({ marking: scoring?.marking ?? [], part });
-    return max === null ? null : max / written.length;
+    if (subjects.every((item) => isWrittenSubject({ structure, subject: item }))) {
+      const max = getPartMaxPoints({ marking: scoring?.marking ?? [], part });
+      return max === null ? null : max / subjects.length;
+    }
   }
 
   const questions = getPlannedSubjectQuestions({ structure, subject });

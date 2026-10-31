@@ -742,3 +742,30 @@ describe("real percentage misses", () => {
     expect(result.short).toBeGreaterThanOrEqual(0.1);
   });
 });
+
+describe("mixed objective and written papers", () => {
+  it("does not give objective items the essay's share of the paper maximum", () => {
+    const structure = examStructure({
+      scoring: {
+        parts: [
+          part("Paper", { maxPoints: 100, minimum: { unit: "points", value: 60 }, questions: 50 }),
+        ],
+      },
+      subjects: [subject("Objective", "Paper", 50), subject("Essay", "Paper", null)],
+    });
+
+    const marking = mark({ planned: [{ area: "Objective", count: 50 }], structure });
+
+    const result = scoreMockPoints({
+      answers: Object.values(marking.items).map((item) => ({
+        credit: 1,
+        marking: item,
+        outcome: "right",
+      })),
+      marking,
+      scope: "full",
+    });
+
+    expect(result.parts[0]).toMatchObject({ asked: 50, earned: 50, max: 100, met: null });
+  });
+});

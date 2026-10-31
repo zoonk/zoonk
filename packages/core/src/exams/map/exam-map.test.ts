@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { getSubjectPoints } from "../../library/exams/subject-points";
 import { getSubjectShare } from "./exam-map";
 
 const citation = { passage: "…", sourceId: "notice" };
@@ -139,5 +140,17 @@ describe("written test weights", () => {
     });
 
     expect(shareOf(structure)).toStrictEqual([0.5, 0.25, 0.25]);
+  });
+});
+
+describe("mixed paper weights", () => {
+  it("does not give an essay the whole maximum of a paper that includes objective subjects", () => {
+    const structure = scored({
+      scoring: { parts: [{ ...part("Paper", 50), maxPoints: 100 }] },
+      subjects: [{ ...subject("Objective", 50), group: "Paper" }, ...grouped("Paper", ["Essay"])],
+    });
+
+    const essay = structure.subjects.find((item) => item.name === "Essay");
+    expect(essay && getSubjectPoints({ structure, subject: essay })).toBeNull();
   });
 });
