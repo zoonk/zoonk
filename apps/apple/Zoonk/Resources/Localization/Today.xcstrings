@@ -3445,6 +3445,35 @@
         }
       }
     },
+    "Change limit" : {
+      "comment" : "Opens the daily time limit setting",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeitlimit ändern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar el límite"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier la limite"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudar limite"
+          }
+        }
+      }
+    },
     "Check your connection and try again." : {
       "comment" : "Today failed to load",
       "localizations" : {
@@ -7492,35 +7521,6 @@
         }
       }
     },
-    "That's today's study time." : {
-      "comment" : "Daily limit reached",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das war deine Lernzeit für heute."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Has completado el tiempo de estudio de hoy."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint ton temps d’étude pour aujourd’hui."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esse é o tempo de estudo de hoje."
-          }
-        }
-      }
-    },
     "The day is here" : {
       "comment" : "The goal's date",
       "localizations" : {
@@ -7914,6 +7914,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível carregar o dia de hoje"
+          }
+        }
+      }
+    },
+    "Today stops at your daily time limit of %@." : {
+      "comment" : "The daily time limit is a setting that stops study for the day. It's shorter than the plan's time for today. The argument is a time, like '3 hr'.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute endet das Lernen, wenn du dein tägliches Zeitlimit von %@ erreichst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy el estudio termina al alcanzar tu límite de tiempo diario de %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aujourd’hui, ton temps d’étude est limité à %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoje, seu estudo vai até o limite diário de %@."
           }
         }
       }
@@ -9168,6 +9197,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você já fez todas as aulas do seu plano ou já sabia o conteúdo."
+          }
+        }
+      }
+    },
+    "You've reached your daily time limit of %@." : {
+      "comment" : "The daily time limit is a setting that stops study for the day. The argument is a time, like '3 hr'.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast dein tägliches Zeitlimit von %@ erreicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has alcanzado tu límite de tiempo diario de %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as atteint ta limite de temps quotidienne de %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você atingiu seu limite diário de %@."
           }
         }
       }

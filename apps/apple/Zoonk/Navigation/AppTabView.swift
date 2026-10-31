@@ -167,6 +167,8 @@ struct AppSheetView: View {
       AccountSheet()
     case .feedback(let screen):
       FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: screen))
+    case .preferences:
+      AccountSheet(opensPreferences: true)
     case .signIn:
       AccountSheet(signsIn: true)
     case .subscription:

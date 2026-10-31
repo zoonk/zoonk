@@ -33,6 +33,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   }
 
   struct DailyLimit: Decodable, Equatable, Sendable {
+    let limitMinutes: Int?
     let reached: Bool
   }
 
@@ -108,6 +109,23 @@ struct StudyDay: Decodable, Equatable, Sendable {
     return lessonsComing ? .beingWritten : nil
   }
 
+  /// Mirrors main's `TodayDayStatus`: the learner's daily time limit ended the day, ended it short
+  /// of its plan, or will cut it short.
+  var limitStatus: DailyLimitStatus? {
+    let dailyGoal = minutes.dailyGoal
+
+    switch state {
+    case .limit:
+      return .reached
+    case .done where dailyLimit?.reached == true && Double(minutes.planned) < dailyGoal:
+      return .reached
+    case .underway where dailyLimit?.limitMinutes.map { Double($0) < dailyGoal } == true:
+      return .cuts
+    default:
+      return nil
+    }
+  }
+
   /// The day as a block's completion says it now stands, before the session is read again: the
   /// block done and the server's next block up.
   func finishing(_ moment: BlockMoment) -> StudyDay {
@@ -178,6 +196,11 @@ struct StudyDay: Decodable, Equatable, Sendable {
 enum ComingLessons {
   case beingWritten
   case toPrepare
+}
+
+enum DailyLimitStatus {
+  case cuts
+  case reached
 }
 
 /// Core decides where the day stands.

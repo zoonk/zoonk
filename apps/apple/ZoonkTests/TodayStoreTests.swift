@@ -28,6 +28,36 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertNil(try day(blocks: [lesson], nextPosition: 0).comingLessons)
   }
 
+  func testTheDailyLimitCutsADayThatPlansMoreThanIt() throws {
+    let blocks = [try block(position: 0)]
+
+    XCTAssertEqual(
+      try day(blocks: blocks, nextPosition: 0, dailyGoal: 360, limitMinutes: 180).limitStatus,
+      .cuts)
+    XCTAssertNil(
+      try day(blocks: blocks, nextPosition: 0, dailyGoal: 60, limitMinutes: 180).limitStatus)
+    XCTAssertNil(
+      try day(blocks: blocks, nextPosition: 0, dailyGoal: 360, limitMinutes: nil).limitStatus)
+  }
+
+  func testTheDailyLimitEndsADayItStopsShortOfItsPlan() throws {
+    let done = [try block(position: 0, status: "completed")]
+
+    XCTAssertEqual(
+      try day(blocks: done, nextPosition: nil, limitReached: true, state: "limit").limitStatus,
+      .reached)
+    XCTAssertEqual(
+      try day(
+        blocks: done, nextPosition: nil, dailyGoal: 360, planned: 180, limitMinutes: 180,
+        limitReached: true, state: "done"
+      ).limitStatus, .reached)
+    XCTAssertNil(
+      try day(
+        blocks: done, nextPosition: nil, dailyGoal: 180, planned: 180, limitMinutes: 180,
+        limitReached: true, state: "done"
+      ).limitStatus, "a day done as planned is just done")
+  }
+
   func testStartOnADayNotOpenedYetOpensItWithTheShownStep() async throws {
     let view = try today(
       session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))

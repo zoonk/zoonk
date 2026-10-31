@@ -623,10 +623,13 @@ private struct FoldRow: View {
 }
 
 private struct TodayDayStatus: View {
+  @Environment(AppRouter.self) private var router
+
   let view: TodayView
   private let sentence: String
   private let clause: String?
   private let systemImage: String
+  private var changesLimit = false
 
   init?(view: TodayView, writingStalled: Bool) {
     self.view = view
@@ -640,6 +643,31 @@ private struct TodayDayStatus: View {
       clause = String(
         localized: "Adjust your plan to keep going.", table: "Today",
         comment: "The goal's date passed")
+      return
+    }
+
+    if let limit = session.limitStatus {
+      let time = studyDuration(minutes: session.dailyLimit?.limitMinutes ?? 0)
+      systemImage = "hourglass"
+      changesLimit = true
+
+      switch limit {
+      case .reached:
+        sentence = String(
+          localized: "You've reached your daily time limit of \(time).", table: "Today",
+          comment:
+            "The daily time limit is a setting that stops study for the day. The argument is a time, like '3 hr'."
+        )
+        clause = Self.seeYou(session.week)
+      case .cuts:
+        sentence = String(
+          localized: "Today stops at your daily time limit of \(time).", table: "Today",
+          comment:
+            "The daily time limit is a setting that stops study for the day. It's shorter than the plan's time for today. The argument is a time, like '3 hr'."
+        )
+        clause = nil
+      }
+
       return
     }
 
@@ -678,11 +706,6 @@ private struct TodayDayStatus: View {
         localized: "Today's lessons aren't written yet.", table: "Today",
         comment: "The day's lessons wait for the learner to ask for them")
       clause = nil
-    case .limit:
-      systemImage = "hourglass"
-      sentence = String(
-        localized: "That's today's study time.", table: "Today", comment: "Daily limit reached")
-      clause = Self.seeYou(session.week)
     case .rest:
       systemImage = "moon"
       sentence = String(
@@ -718,7 +741,7 @@ private struct TodayDayStatus: View {
           localized: "You've done every lesson in your plan, or already know it.", table: "Today",
           comment: "Nothing new")
       }
-    case .underway:
+    case .limit, .underway:
       return nil
     }
   }
@@ -731,6 +754,15 @@ private struct TodayDayStatus: View {
         if let clause {
           Text(clause)
             .foregroundStyle(.secondary)
+        }
+
+        if changesLimit {
+          Button {
+            router.present(.preferences)
+          } label: {
+            Text("Change limit", tableName: "Today", comment: "Opens the daily time limit setting")
+          }
+          .buttonStyle(.borderless)
         }
       }
     } icon: {
