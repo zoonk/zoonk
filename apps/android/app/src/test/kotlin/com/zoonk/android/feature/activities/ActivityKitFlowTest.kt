@@ -132,6 +132,15 @@ class ActivityKitFlowTest {
     }
 
     @Test
+    fun stepSolverTellsTalkBackWhichStepTheLearnerIsOn() {
+        play("stepSolver", isCorrect = true)
+
+        rule.onNode(hasContentDescription("Step 1 of 2.")).assertExists()
+        tap("Take 25% off")
+        rule.onNode(hasContentDescription("Step 2 of 2.")).assertExists()
+    }
+
+    @Test
     fun patternTableTakesAnEndingForEachBlank() {
         play("patternTable", isCorrect = true)
 

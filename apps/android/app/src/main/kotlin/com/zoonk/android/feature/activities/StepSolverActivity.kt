@@ -86,8 +86,9 @@ private fun StepSolverActivity(props: ActivityProps) {
     }
     val line = MaterialTheme.colorScheme.outlineVariant
     val stepsLabel = stringResource(R.string.activities_solver_steps)
+    val position = stringResource(R.string.activities_solver_step_of, minOf(current + 1, steps.size), steps.size)
 
-    ActivityCanvas(gap = 16.dp) {
+    ActivityCanvas(description = position, gap = 16.dp) {
         RichText(content.fields.problem, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
         Column(
             Modifier

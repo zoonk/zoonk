@@ -50,6 +50,7 @@
   "activities_solver_first_pick": "b7690705a6faa55870e2949b4e2ab3ef3f4b167ceeb9c398fcf3893d44bf29aa",
   "activities_solver_not_quite": "647c95b311c86d2b50900624735f26e7aeed511029e9001e670725ce35d984e5",
   "activities_solver_right": "f21b2d4063f354774cd1fa25c7ae5fdb4e4bf55c2bd48620f0536c29bc68b266",
+  "activities_solver_step_of": "a21f4d49b2396ecb158c55c455b437bb3f86cf5fec59affded7cfeda62dcc2a8",
   "activities_solver_steps": "460108ea9c63e837ace88692ae9154e30478e95db04454d566206c62b8d946a6",
   "activities_sortable_dropped": "ea5d82476ded198a2d8f443f628fa3c7c7a338ee21fe4489575ce28db442c4b2",
   "activities_sortable_move_down": "ecdbb4c9f7fb6eaf4012925b104d70f746ce64437de8ad8668fb5c4552660daa",
@@ -139,6 +140,8 @@
     <string name="activities_find_error_wrong_step">Błąd jest w kroku %1$d.</string>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Kroki</string>
+    <!-- Which step of a step-by-step solution the learner is on, for TalkBack, like "Step 1 of 2." -->
+    <string name="activities_solver_step_of">Krok %1$d z %2$d.</string>
     <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
     <string name="activities_solver_not_quite">Niezupełnie:</string>
     <!-- Before why the right pick is right. -->

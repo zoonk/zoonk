@@ -50,6 +50,7 @@
   "activities_solver_first_pick": "b5c4481c0d87ef77ecf675f51bb9fa00ccb5b684000032180f98249fa0652395",
   "activities_solver_not_quite": "51677ba2feb113b557a03df28351f2150890e45a284d609b7376f322e6ba416e",
   "activities_solver_right": "ec47080183e185fb671ff0be81fb396220b298be8667982a39e68e6863ec4c43",
+  "activities_solver_step_of": "ecf4bd257abf0f9b17a9f489fd308c4a4dbdef49ab4565f5813b398fc0b12fba",
   "activities_solver_steps": "ae3f4b0659f66492329fbd8a3a76d131a6a5822fb547ea0c7dfa55ce9c64e240",
   "activities_sortable_dropped": "a4c9b82faa99a1389965aa966dc866adc64f7d34e2e71ac62dfac7af2c5205e1",
   "activities_sortable_move_down": "4e968af1e3cbf8017bbeefd34933b03240e293cd431f10dce8cedc3265caf15a",
@@ -139,6 +140,8 @@
     <string name="activities_find_error_wrong_step">%1$d. adım yanlış.</string>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Adımlar</string>
+    <!-- Which step of a step-by-step solution the learner is on, for TalkBack, like "Step 1 of 2." -->
+    <string name="activities_solver_step_of">%1$d. adım, toplam %2$d adım.</string>
     <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
     <string name="activities_solver_not_quite">Tam doğru değil:</string>
     <!-- Before why the right pick is right. -->

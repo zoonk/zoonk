@@ -50,6 +50,7 @@
   "activities_solver_first_pick": "56b98eec853292f85560cca8f1789184a02ceebe54521f6691d65a809cca6083",
   "activities_solver_not_quite": "11d3c9940a75ac722513a3515634e822021ddbd1e67f4af4f0a38e4dc8d1c79f",
   "activities_solver_right": "fecade59cf6539dd8562c710eacad232a5623fe6f753d0e7a4e6b0d4f01d3dde",
+  "activities_solver_step_of": "23dfbb16979533e1f7523f654c5f142c61c32d77e7b99e70768cfe922660b53a",
   "activities_solver_steps": "9ef4698377d72eb898472fa4d9f3a8922048f2e09dcfae61aefce88336434e49",
   "activities_sortable_dropped": "edbfa3e96d303ec580357c92d2b599f44031fc4faece52e021bc4ddb262fbe4d",
   "activities_sortable_move_down": "8e3608e1701fd7f53b89ab15d626f05ca368d59b946a64298f94cd0ac12f61a0",
@@ -139,6 +140,8 @@
     <string name="activities_find_error_wrong_step">틀린 풀이 과정은 %1$d번째예요.</string>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">풀이 과정</string>
+    <!-- Which step of a step-by-step solution the learner is on, for TalkBack, like "Step 1 of 2." -->
+    <string name="activities_solver_step_of">풀이 과정 %1$d번째, 총 %2$d개.</string>
     <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
     <string name="activities_solver_not_quite">정확하지 않아요:</string>
     <!-- Before why the right pick is right. -->

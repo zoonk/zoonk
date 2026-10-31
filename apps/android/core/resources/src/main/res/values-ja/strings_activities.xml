@@ -50,6 +50,7 @@
   "activities_solver_first_pick": "d5d9b67d361b60f13b8be891e31d7d42110350b445876f197559f91d50f892c8",
   "activities_solver_not_quite": "f685cfdb837f786f4e06fa18c487ba0767e94039b97656544b6d005a49336f64",
   "activities_solver_right": "21676c8a4ff6a061670851cd1268e034ce9dbf9e8c6c40ae450d9656ae24f2aa",
+  "activities_solver_step_of": "58a6b55651aaed09fe717753d6e92edbd1592d206ef816f123e6cc6fb9d72adb",
   "activities_solver_steps": "e3249a9be19783a6c7d6d7bd7eead3f319c0b197faedb50f077cf756fa353e8f",
   "activities_sortable_dropped": "96ae345d21a0d2a0bef8c50d228e09271b5cfdeb3634a7aabd3908f5f7171725",
   "activities_sortable_move_down": "d243dfd112bb9946044f453d0371ccabbc55bb3021d597903eaaf5ff0261a900",
@@ -139,6 +140,8 @@
     <string name="activities_find_error_wrong_step">間違っているのはステップ%1$dです。</string>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">手順</string>
+    <!-- Which step of a step-by-step solution the learner is on, for TalkBack, like "Step 1 of 2." -->
+    <string name="activities_solver_step_of">%1$dステップ目です（全%2$dステップ）。</string>
     <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
     <string name="activities_solver_not_quite">少し違います：</string>
     <!-- Before why the right pick is right. -->

@@ -50,6 +50,7 @@
   "activities_solver_first_pick": "53945965ba6c3a9a8d1aa0567652795aeeb2b858ab0f28b1151b6e8fde5ab147",
   "activities_solver_not_quite": "c3913b282c937811b9492ebe86325a71bec1f311d6a1d5a5fa8d4eb0718ca98e",
   "activities_solver_right": "3d01da34bf6ce08fea97720457849d193e3bbfd5679ead2722f8a83726d18105",
+  "activities_solver_step_of": "13cba330bedc5f9897bd4a8da5f45e049cd2a18b0c9c70cc5b9481677b015eb0",
   "activities_solver_steps": "8a91a9ca9fbc7109f317b055600da075c76f3a4b07c2ad1e214a035d699f98f8",
   "activities_sortable_dropped": "4fb402dce5cb9c46f3c7eb7ee655a81c486cdfaece8551b3adfeb579b5697052",
   "activities_sortable_move_down": "b6cbe42caccca3bf2aa37dacd2b9ad1e4dcfae51869f41205da3fc7a922afe34",
@@ -139,6 +140,8 @@
     <string name="activities_find_error_wrong_step">Il passaggio sbagliato è il numero %1$d.</string>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Passaggi</string>
+    <!-- Which step of a step-by-step solution the learner is on, for TalkBack, like "Step 1 of 2." -->
+    <string name="activities_solver_step_of">Passaggio %1$d di %2$d.</string>
     <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
     <string name="activities_solver_not_quite">Non proprio:</string>
     <!-- Before why the right pick is right. -->

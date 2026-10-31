@@ -77,6 +77,8 @@
 
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Steps</string>
+    <!-- Which step of a step-by-step solution the learner is on, for TalkBack, like "Step 1 of 2." -->
+    <string name="activities_solver_step_of">Step %1$d of %2$d.</string>
     <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
     <string name="activities_solver_not_quite">Not quite:</string>
     <!-- Before why the right pick is right. -->

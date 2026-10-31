@@ -50,6 +50,7 @@
   "activities_solver_first_pick": "48d7ffec4d2730fd94505633e8caf1064a6da672284c21d07f68606d70c5c747",
   "activities_solver_not_quite": "0919614120e46af403ca72a903e2463f2e2a4649d52778557d14662e5a283175",
   "activities_solver_right": "4cdb9ab755d1c53a2136c25939fae4826fd1da978d859653c325b92e8efc69c3",
+  "activities_solver_step_of": "b4acac9eb245d816bde38d2dc8e74df6924930f1d31b9db0b01aade82ef26b67",
   "activities_solver_steps": "8fd3f79f4033c3b621d5874dc2cec70472232add0310e957972d33bd50dc3b42",
   "activities_sortable_dropped": "b3ac839fdcb7f4940364942b49f4cdc66051e071eaaad68543c2c30cabf98025",
   "activities_sortable_move_down": "7f7079035d97d2e5271d4e834771a3765c0ca36159278013c058b248683545d8",
@@ -139,6 +140,8 @@
     <string name="activities_find_error_wrong_step">O passo %1$d está errado.</string>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Passos</string>
+    <!-- Which step of a step-by-step solution the learner is on, for TalkBack, like "Step 1 of 2." -->
+    <string name="activities_solver_step_of">Passo %1$d de %2$d.</string>
     <!-- Lead-in to why a pick is wrong, like "Not quite: that adds the tax first." It means "that isn't right", not "better luck next time". -->
     <string name="activities_solver_not_quite">Não é bem isso:</string>
     <!-- Before why the right pick is right. -->
