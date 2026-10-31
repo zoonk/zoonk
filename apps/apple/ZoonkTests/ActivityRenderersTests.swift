@@ -145,6 +145,37 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertFalse(TimelineScale.ticks(start: -3000, end: 2000).contains(0))
   }
 
+  func testTimelineGradesACheckedTimelineFromItsAnswer() throws {
+    let fields = try content(
+      #"{"template":"timeline","prompt":"Place them.","check":{"kind":"interaction","explanation":"x"},"fields":{"anchors":[],"end":2000,"events":[{"id":"moon","label":"Moon landing","year":1969},{"id":"cleo","label":"Cleopatra rules Egypt","year":-51}],"start":-3000}}"#
+    ).fields(as: TimelineFields.self)
+    let moon = TimelineScale.Placement(id: "moon", year: 1500)
+    let cleo = TimelineScale.Placement(id: "cleo", year: -51)
+
+    let reopened = fields.trackEvents(
+      placements: [], answer: .order(["cleo", "moon"]), isChecked: true)
+    XCTAssertEqual(reopened.map(\.id), ["moon", "cleo"], "every event comes back")
+    XCTAssertEqual(reopened.map(\.isRight), [true, true])
+    XCTAssertEqual(reopened.map(\.showsGuess), [false, false], "no guess the learner never made")
+
+    let wrong = fields.trackEvents(
+      placements: [], answer: .order(["moon", "cleo"]), isChecked: true)
+    XCTAssertEqual(wrong.map(\.isRight), [false, false])
+
+    let inPlace = fields.trackEvents(
+      placements: [moon, cleo], answer: .order(["cleo", "moon"]), isChecked: true)
+    XCTAssertEqual(inPlace.map(\.isRight), [true, true])
+    XCTAssertEqual(
+      inPlace.map(\.showsGuess), [true, false], "a guess on the real year isn't shown")
+
+    let skipped = fields.trackEvents(placements: [moon], answer: nil, isChecked: true)
+    XCTAssertEqual(skipped.map(\.isRight), [nil, nil], "no order to grade")
+
+    let placing = fields.trackEvents(placements: [moon], answer: nil, isChecked: false)
+    XCTAssertEqual(placing.map(\.id), ["moon"])
+    XCTAssertEqual(placing.map(\.isRight), [nil])
+  }
+
   private let matchPairsJSON = #"""
     {"template":"matchPairs","prompt":"Match each word.","check":{"kind":"interaction","explanation":"x"},
      "fields":{"distractors":[{"side":"right","text":"embarrassed","why":"Embarrassed is avergonzada."},

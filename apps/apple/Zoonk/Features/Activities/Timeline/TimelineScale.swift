@@ -19,7 +19,45 @@ struct TimelineFields: Decodable, Hashable, Sendable {
 
   /// The events earliest first: the order an order check expects.
   var expected: ActivityExpectedAnswer {
-    .order(events.sorted { $0.year < $1.year }.map(\.id))
+    .order(chronological)
+  }
+
+  private var chronological: [String] {
+    events.sorted { $0.year < $1.year }.map(\.id)
+  }
+
+  struct TrackEvent: Identifiable {
+    let event: Event
+    let guess: Int
+    /// Nil until checked, and when the answer has no order to grade.
+    let isRight: Bool?
+
+    var id: String { event.id }
+    /// An event the learner never placed (or placed on its year) has no guess to compare.
+    var showsGuess: Bool { guess != event.year }
+  }
+
+  /// A checked timeline opened again has only its answer, which keeps the order and not the years,
+  /// so a checked event without a placement sits on its real year and is graded from the answer.
+  func trackEvents(
+    placements: [TimelineScale.Placement], answer: ActivityAnswer?, isChecked: Bool
+  ) -> [TrackEvent] {
+    let order = answer?.kind == "order" ? answer?.ids : nil
+
+    return events.compactMap { event in
+      guard
+        let guess = placements.first(where: { $0.id == event.id })?.year
+          ?? (isChecked ? event.year : nil)
+      else {
+        return nil
+      }
+
+      return TrackEvent(
+        event: event, guess: guess,
+        isRight: isChecked
+          ? order.map { $0.firstIndex(of: event.id) == chronological.firstIndex(of: event.id) }
+          : nil)
+    }
   }
 }
 

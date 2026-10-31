@@ -36,9 +36,8 @@ private struct TimelineCanvas: View {
 
       if !isExploring {
         VStack(spacing: 8) {
-          ForEach(fields.events.filter { event in placements.contains { $0.id == event.id } }) {
-            event in
-            eventRow(event)
+          ForEach(track) { item in
+            eventRow(item)
           }
         }
 
@@ -88,14 +87,14 @@ private struct TimelineCanvas: View {
     }
   }
 
-  private func eventRow(_ event: TimelineFields.Event) -> some View {
-    let year = placements.first { $0.id == event.id }?.year ?? event.year
-    let order = TimelineScale.placedOrder(placements)
-    let expected = fields.events.sorted { $0.year < $1.year }.map(\.id)
-    let mark: ActivityTileMark =
-      isChecked
-      ? (order.firstIndex(of: event.id) == expected.firstIndex(of: event.id) ? .right : .wrong)
-      : .plain
+  private var track: [TimelineFields.TrackEvent] {
+    fields.trackEvents(placements: placements, answer: context.answer, isChecked: isChecked)
+  }
+
+  private func eventRow(_ item: TimelineFields.TrackEvent) -> some View {
+    let event = item.event
+    let guess = item.guess
+    let mark: ActivityTileMark = item.isRight.map { $0 ? .right : .wrong } ?? .plain
 
     return VStack(alignment: .leading, spacing: 6) {
       HStack(alignment: .firstTextBaseline) {
@@ -110,16 +109,22 @@ private struct TimelineCanvas: View {
       }
 
       if showsTruth {
-        Text(
-          "\(formatYear(event.year)). Your guess: \(formatYear(year))", tableName: "Activities",
-          comment: "An event's real year, then where the learner placed it"
-        )
+        Group {
+          if item.showsGuess {
+            Text(
+              "\(formatYear(event.year)). Your guess: \(formatYear(guess))",
+              tableName: "Activities",
+              comment: "An event's real year, then where the learner placed it")
+          } else {
+            Text(verbatim: formatYear(event.year))
+          }
+        }
         .font(.subheadline.monospacedDigit())
         .foregroundStyle(.secondary)
       } else {
         Slider(
           value: Binding(
-            get: { Double(year) },
+            get: { Double(guess) },
             set: {
               move(event.id, to: TimelineScale.snapYear($0, start: fields.start, end: fields.end))
             }),
@@ -131,9 +136,9 @@ private struct TimelineCanvas: View {
         } maximumValueLabel: {
           Text(formatYear(fields.end)).font(.caption2.monospacedDigit())
         }
-        .accessibilityValue(Text(verbatim: formatYear(year)))
+        .accessibilityValue(Text(verbatim: formatYear(guess)))
 
-        Text(formatYear(year))
+        Text(formatYear(guess))
           .font(.subheadline.weight(.semibold).monospacedDigit())
           .accessibilityHidden(true)
       }
@@ -173,22 +178,17 @@ private struct TimelineCanvas: View {
     let anchors = fields.anchors.map {
       TimelineAxis.Mark(label: $0.label, year: $0.year, guess: nil, kind: .anchor)
     }
-    let events = fields.events.compactMap { event -> TimelineAxis.Mark? in
-      if isExploring {
-        return TimelineAxis.Mark(label: event.label, year: event.year, guess: nil, kind: .event)
+    let events =
+      isExploring
+      ? fields.events.map {
+        TimelineAxis.Mark(label: $0.label, year: $0.year, guess: nil, kind: .event)
       }
-
-      guard
-        let guess = placements.first(where: { $0.id == event.id })?.year
-          ?? (isChecked ? event.year : nil)
-      else {
-        return nil
+      : track.map { item in
+        showsTruth
+          ? TimelineAxis.Mark(
+            label: item.event.label, year: item.event.year, guess: item.guess, kind: .event)
+          : TimelineAxis.Mark(label: item.event.label, year: item.guess, guess: nil, kind: .guess)
       }
-
-      return showsTruth
-        ? TimelineAxis.Mark(label: event.label, year: event.year, guess: guess, kind: .event)
-        : TimelineAxis.Mark(label: event.label, year: guess, guess: nil, kind: .guess)
-    }
 
     return anchors + events
   }
