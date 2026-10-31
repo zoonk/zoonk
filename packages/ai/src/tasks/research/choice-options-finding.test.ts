@@ -5,6 +5,7 @@ const PAGE = "https://www.gov.br/inep/pt-br/enem/provas-e-gabaritos";
 const searched = (url: string) => url.startsWith("https://www.gov.br/");
 
 const raw = {
+  board: "INEP",
   edition: " Enem 2025 ",
   options: 5,
   sourceTitle: "Provas e gabaritos",
@@ -12,11 +13,12 @@ const raw = {
   status: "found" as const,
 };
 
-const UNKNOWN = { edition: null, options: null, source: null, status: "unknown" };
+const UNKNOWN = { board: null, edition: null, options: null, source: null, status: "unknown" };
 
 describe(toChoiceOptionsFinding, () => {
   it("keeps the number of options with its source", () => {
-    expect(toChoiceOptionsFinding({ isSearched: searched, raw })).toStrictEqual({
+    expect(toChoiceOptionsFinding({ board: "Inep", isSearched: searched, raw })).toStrictEqual({
+      board: "INEP",
       edition: "Enem 2025",
       options: 5,
       source: { title: "Provas e gabaritos", url: PAGE },
@@ -35,7 +37,17 @@ describe(toChoiceOptionsFinding, () => {
     ];
 
     expect(
-      answers.map((answer) => toChoiceOptionsFinding({ isSearched: searched, raw: answer })),
+      answers.map((answer) =>
+        toChoiceOptionsFinding({ board: "Inep", isSearched: searched, raw: answer }),
+      ),
     ).toStrictEqual(answers.map(() => UNKNOWN));
+  });
+
+  it("counts an edition another board ran only while the exam's board is unknown", () => {
+    expect(toChoiceOptionsFinding({ board: "Cebraspe", isSearched: searched, raw }).status).toBe(
+      "unknown",
+    );
+
+    expect(toChoiceOptionsFinding({ board: null, isSearched: searched, raw }).status).toBe("found");
   });
 });

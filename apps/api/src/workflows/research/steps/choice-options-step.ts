@@ -27,6 +27,7 @@ export async function lookUpChoiceOptionsStep({
   });
 
   await recordChoiceOptions({
+    board: data.board,
     edition: data.edition,
     examBlueprintId,
     options: data.options,

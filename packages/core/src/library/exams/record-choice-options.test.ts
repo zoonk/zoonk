@@ -44,6 +44,7 @@ describe(recordChoiceOptions, () => {
     );
 
     await recordChoiceOptions({
+      board: "Inep",
       edition: "Enem 2025",
       examBlueprintId: blueprint.id,
       options: 5,
@@ -78,6 +79,7 @@ describe(recordChoiceOptions, () => {
     const checkedAt = new Date("2026-10-01T12:00:00.000Z");
 
     await recordChoiceOptions({
+      board: null,
       edition: "ignored",
       examBlueprintId: blueprint.id,
       now: checkedAt,
@@ -105,6 +107,7 @@ describe(recordChoiceOptions, () => {
 
     await Promise.all([
       recordChoiceOptions({
+        board: "Inep",
         edition: "Enem 2025",
         examBlueprintId: blueprint.id,
         options: 5,

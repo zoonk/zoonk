@@ -221,7 +221,7 @@ describe(researchWorkflow, () => {
 
     vi.mocked(findChoiceOptions).mockResolvedValue({
       ...TASK_RESULT,
-      data: { edition: null, options: null, source: null, status: "unknown" },
+      data: { board: null, edition: null, options: null, source: null, status: "unknown" },
     });
 
     vi.mocked(findTopicFrequency).mockResolvedValue({ ...TASK_RESULT, data: { subjects: [] } });
@@ -977,6 +977,7 @@ describe(researchWorkflow, () => {
     vi.mocked(findChoiceOptions).mockResolvedValue({
       ...TASK_RESULT,
       data: {
+        board: "Cebraspe",
         edition: "2025",
         options: 5,
         source: { title: "Provas anteriores", url: "https://example.com/provas" },

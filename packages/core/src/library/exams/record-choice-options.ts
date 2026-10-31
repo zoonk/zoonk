@@ -48,12 +48,14 @@ export async function findChoiceOptionsLookup({
 
 /** Internal workflow bridge: the blueprint must come from the research run that requested the lookup. */
 export async function recordChoiceOptions({
+  board,
   edition,
   examBlueprintId,
   now = new Date(),
   options,
   source,
 }: {
+  board: string | null;
   edition: string | null;
   examBlueprintId: string;
   now?: Date;
@@ -61,6 +63,7 @@ export async function recordChoiceOptions({
   source: { title: string | null; url: string } | null;
 }): Promise<void> {
   const pastOptions: NonNullable<ExamStructure["pastOptions"]> = {
+    board: options === null ? null : board,
     checkedAt: now.toISOString(),
     edition: options === null ? null : edition,
     options,

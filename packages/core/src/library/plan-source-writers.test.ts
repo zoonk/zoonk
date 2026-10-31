@@ -1723,6 +1723,7 @@ describe(recordChoiceOptions, () => {
     const before = await getInputsKey();
 
     await recordChoiceOptions({
+      board: "Inep",
       edition: "2025",
       examBlueprintId: blueprint.id,
       now,

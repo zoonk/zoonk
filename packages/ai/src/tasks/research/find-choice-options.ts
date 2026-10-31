@@ -18,6 +18,7 @@ const defaultReasoning: Reasoning = "low";
 const MAX_STEPS = 4;
 
 const schema = z.object({
+  board: z.string().nullable(),
   edition: z.string().nullable(),
   options: z.number().int().nullable(),
   sourceTitle: z.string().nullable(),
@@ -65,7 +66,7 @@ export async function findChoiceOptions({
     userPrompt,
   });
 
-  const data = toChoiceOptionsFinding({ isSearched, raw: output });
+  const data = toChoiceOptionsFinding({ board: input.board, isSearched, raw: output });
 
   return { data, provenance, systemPrompt, usage, userPrompt };
 }
