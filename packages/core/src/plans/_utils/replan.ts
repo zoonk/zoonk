@@ -284,6 +284,8 @@ export async function computePlan({
     }),
   );
 
+  const selected = once(() => summarizeSelectedPlan({ built, examSubjects, input: builtInput }));
+
   const standInLessons = getChosenStandInLessons(builtInput);
 
   const saved = withPlannedLessons({ graph, skillLessons: built.skillLessons });
@@ -305,7 +307,9 @@ export async function computePlan({
     }),
     itemFacts: listSelectedItemFacts({ built, input: builtInput }),
     pace: settings.pace,
-    selected: summarizeSelectedPlan({ built, examSubjects, input: builtInput }),
+    get selected() {
+      return selected();
+    },
     standInLessons,
     state: { ...state, graph: saved, settings: savedSettings },
     summarizeRetained: () =>
