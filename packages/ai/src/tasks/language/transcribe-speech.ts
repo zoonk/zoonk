@@ -42,11 +42,15 @@ export type TranscribeSpeechParams = {
 
 export type SpeechTranscript = { text: string };
 
+/** Given the locale, MAI-Transcribe rejects a language it can't hear instead of guessing one. */
 function getProviderOptions(language: string) {
+  const code = getBaseLanguage(language);
+
   return {
+    azure: { locales: [code] },
     gateway: NO_PROMPT_TRAINING,
     openai: {
-      language: getBaseLanguage(language),
+      language: code,
       prompt: TRANSCRIPTION_PROMPT,
     } satisfies OpenAITranscriptionModelOptions,
   };

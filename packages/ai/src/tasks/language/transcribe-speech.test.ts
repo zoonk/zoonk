@@ -45,6 +45,7 @@ describe(transcribeSpeech, () => {
     expect(triedModels()).toStrictEqual(["gateway:openai/gpt-transcribe"]);
 
     expect(vi.mocked(transcribe).mock.calls[0]?.[0].providerOptions).toStrictEqual({
+      azure: { locales: ["pt"] },
       gateway: { disallowPromptTraining: true },
       openai: { language: "pt", prompt: expect.stringContaining("Never correct them") },
     });
