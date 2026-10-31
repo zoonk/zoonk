@@ -20,6 +20,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
+import { headers } from "next/headers";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   mockAccountSession,
@@ -156,7 +157,7 @@ describe(getLearnerSummary, () => {
     expect(summary).toMatchObject({
       account: { email: user.email, image: null, name: user.name },
       activeGoalId: null,
-      analytics: { disabled: false, goal: null, plan: "free" },
+      analytics: { adult: false, disabled: false, goal: null, plan: "free", shareUsageData: null },
       buddy: {
         beltColor: "white",
         energy: null,
@@ -175,6 +176,7 @@ describe(getLearnerSummary, () => {
       },
       level: null,
       missions: null,
+      needsBirthYear: true,
       nextChangeAt: new Date("2026-03-11T00:00:00.000Z").getTime(),
       places: { exam: false, mindMaps: false, speaking: false },
       readAt: NOW.getTime(),
@@ -182,6 +184,23 @@ describe(getLearnerSummary, () => {
       timeZone: null,
       today: null,
     });
+  });
+
+  it("treats a learner as an adult by the age where they are", async () => {
+    const user = await userFixture();
+    signIn(user);
+    await learningProfileFixture({ birthYear: 2007, shareUsageData: false, userId: user.id });
+
+    vi.mocked(headers).mockResolvedValue(new Headers({ "x-vercel-ip-country": "BR" }));
+
+    await expect(getLearnerSummary()).resolves.toMatchObject({
+      analytics: { adult: true, shareUsageData: false },
+      needsBirthYear: false,
+    });
+
+    vi.mocked(headers).mockResolvedValue(new Headers({ "x-vercel-ip-country": "KR" }));
+
+    await expect(getLearnerSummary()).resolves.toMatchObject({ analytics: { adult: false } });
   });
 
   it("names the learner from their row, not the session's older copy of it", async () => {

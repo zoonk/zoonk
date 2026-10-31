@@ -276,9 +276,11 @@ describe(updateLearningProfile, () => {
     await expect(getLearningProfile()).resolves.toStrictEqual({
       activeGoalId: null,
       availableGlasses: ["round"],
+      birthYear: null,
       buddy: { glasses: "round", kind: "zu", name: null, picked: false },
       dailyLimitMinutes: null,
       dailyTimes: DAILY_TIME_CHOICES,
+      shareUsageData: null,
       soundsEnabled: true,
     });
 
@@ -324,6 +326,20 @@ describe(updateLearningProfile, () => {
     await expect(getLearningProfile()).resolves.toMatchObject({ soundsEnabled: true });
   });
 
+  it("saves a guest's usage data choice without changing plan inputs", async () => {
+    const { user } = await plannedLearner(true);
+
+    await expect(updateLearningProfile({ shareUsageData: false })).resolves.toMatchObject({
+      profile: { shareUsageData: false },
+      status: "updated",
+    });
+
+    await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
+
+    await updateLearningProfile({ shareUsageData: true });
+    await expect(getLearningProfile()).resolves.toMatchObject({ shareUsageData: true });
+  });
+
   it("saves the buddy and the active goal the tabs show", async () => {
     const user = await useLearner();
     const goal = await goalFixture({ userId: user.id });
@@ -337,9 +353,11 @@ describe(updateLearningProfile, () => {
       profile: {
         activeGoalId: goal.id,
         availableGlasses: ["round"],
+        birthYear: null,
         buddy: { glasses: "round", kind: "noodle", name: "Nodo", picked: true },
         dailyLimitMinutes: null,
         dailyTimes: DAILY_TIME_CHOICES,
+        shareUsageData: null,
         soundsEnabled: true,
       },
       status: "updated",

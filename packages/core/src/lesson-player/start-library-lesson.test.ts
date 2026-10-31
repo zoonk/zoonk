@@ -393,6 +393,7 @@ describe(startLibraryLesson, () => {
 
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith({
       distinctId: user.id,
+      identified: false,
       name: "Lesson Started",
       properties: {
         goal_id: goal.id,

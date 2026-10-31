@@ -31,6 +31,7 @@ describe(trackServerEvent, () => {
   it("sends the event with the shared properties and flushes before returning", async () => {
     await trackServerEvent({
       distinctId: "user-id",
+      identified: true,
       name: "Sign Up Completed",
       properties: { from_guest: false },
       shared,
@@ -61,10 +62,30 @@ describe(trackServerEvent, () => {
     expect(posthogClient.shutdown).toHaveBeenCalledExactlyOnceWith(5000);
   });
 
+  it("keeps no person profile for a learner who isn't identified", async () => {
+    await trackServerEvent({
+      distinctId: "user-id",
+      identified: false,
+      name: "Sign In Completed",
+      shared,
+    });
+
+    expect(posthogClient.capture).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        properties: expect.objectContaining({ $process_person_profile: false }),
+      }),
+    );
+  });
+
   it("sends nothing when PostHog isn't configured", async () => {
     vi.stubEnv("NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN", "");
 
-    await trackServerEvent({ distinctId: "user-id", name: "Sign In Completed", shared });
+    await trackServerEvent({
+      distinctId: "user-id",
+      identified: true,
+      name: "Sign In Completed",
+      shared,
+    });
 
     expect(PostHog).not.toHaveBeenCalled();
   });
@@ -75,7 +96,12 @@ describe(trackServerEvent, () => {
     });
 
     await expect(
-      trackServerEvent({ distinctId: "user-id", name: "Sign In Completed", shared }),
+      trackServerEvent({
+        distinctId: "user-id",
+        identified: true,
+        name: "Sign In Completed",
+        shared,
+      }),
     ).resolves.toBeUndefined();
 
     expect(posthogClient.shutdown).toHaveBeenCalledOnce();

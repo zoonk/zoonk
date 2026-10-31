@@ -46,6 +46,7 @@ describe(trackLearnerEvents, () => {
     expect(trackServerEvent).toHaveBeenCalledWith({
       ...EVENT,
       distinctId: user.id,
+      identified: false,
       shared: { goal_kind: "exam", is_guest: false, locale: "pt", plan_phase: 1, platform: "ios" },
     });
   });
@@ -115,6 +116,59 @@ describe(trackLearnerEvents, () => {
 
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ shared: expect.objectContaining({ platform: null }) }),
+    );
+  });
+
+  it("sends nothing once the learner turned usage data off", async () => {
+    const { user } = await setup();
+
+    await prisma.userLearningProfile.update({
+      data: { shareUsageData: false },
+      where: { userId: user.id },
+    });
+
+    await trackLearnerEvents({ events: [EVENT], userId: user.id });
+
+    expect(trackServerEvent).not.toHaveBeenCalled();
+  });
+
+  it("identifies an adult where they are, and never a minor", async () => {
+    const { user } = await setup();
+    const year = new Date().getUTCFullYear();
+
+    vi.mocked(headers).mockResolvedValue(new Headers({ "x-vercel-ip-country": "BR" }));
+
+    await prisma.userLearningProfile.update({
+      data: { birthYear: year - 19 },
+      where: { userId: user.id },
+    });
+
+    await trackLearnerEvents({ events: [EVENT], userId: user.id });
+
+    await prisma.userLearningProfile.update({
+      data: { birthYear: year - 17 },
+      where: { userId: user.id },
+    });
+
+    await trackLearnerEvents({ events: [EVENT], userId: user.id });
+
+    expect(vi.mocked(trackServerEvent).mock.calls.map(([event]) => event.identified)).toStrictEqual(
+      [true, false],
+    );
+  });
+
+  it("takes Korea's adult age in a workflow step, which knows no country", async () => {
+    const { user } = await setup();
+
+    await prisma.userLearningProfile.update({
+      data: { birthYear: new Date().getUTCFullYear() - 19 },
+      where: { userId: user.id },
+    });
+
+    await trackLearnerEvents({ events: [EVENT], platform: null, userId: user.id });
+
+    expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ identified: false }),
     );
   });
 

@@ -2,7 +2,9 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { findActiveGoalId, loadCurrentPhases } from "../goals/_utils/goal-view";
+import { findRequestCountry } from "../users/request-country";
 import { type AnalyticsEvent } from "./events";
+import { getLearnerAnalyticsPolicy } from "./learner-analytics-policy";
 import { getRequestPlatform } from "./request-platform";
 import { trackServerEvent } from "./server";
 import {
@@ -39,7 +41,13 @@ async function loadEventGoal({ goalId, userId }: { goalId: string; userId: strin
 
 async function loadLearner({ goalId, userId }: Pick<LearnerEventsInput, "goalId" | "userId">) {
   const [user, eventGoalId] = await Promise.all([
-    prisma.user.findUnique({ select: { isAnonymous: true }, where: { id: userId } }),
+    prisma.user.findUnique({
+      select: {
+        isAnonymous: true,
+        learningProfile: { select: { birthYear: true, shareUsageData: true } },
+      },
+      where: { id: userId },
+    }),
     goalId ?? findActiveGoalId(userId),
   ]);
 
@@ -49,7 +57,12 @@ async function loadLearner({ goalId, userId }: Pick<LearnerEventsInput, "goalId"
 
   const goal = eventGoalId ? await loadEventGoal({ goalId: eventGoalId, userId }) : null;
 
-  return { ...user, goal };
+  return {
+    birthYear: user.learningProfile?.birthYear ?? null,
+    goal,
+    isAnonymous: user.isAnonymous,
+    shareUsageData: user.learningProfile?.shareUsageData ?? null,
+  };
 }
 
 function toSharedProperties({
@@ -71,7 +84,7 @@ function toSharedProperties({
   });
 }
 
-/** Lookup and analytics failures never fail the caller. */
+/** Follows the learner's analytics policy. Lookup and analytics failures never fail the caller. */
 export async function trackLearnerEvents({
   events,
   goalId,
@@ -84,19 +97,25 @@ export async function trackLearnerEvents({
   }
 
   await safeAsync(async () => {
-    const [learner, eventPlatform] = await Promise.all([
+    const fromRequest = platform === undefined;
+
+    const [learner, eventPlatform, country] = await Promise.all([
       loadLearner({ goalId, userId }),
-      platform === undefined ? getRequestPlatform() : platform,
+      fromRequest ? getRequestPlatform() : platform,
+      fromRequest ? findRequestCountry() : null,
     ]);
 
-    if (!learner) {
+    const policy = learner && getLearnerAnalyticsPolicy({ ...learner, country });
+
+    if (!learner || policy === "off") {
       return;
     }
 
     const shared = toSharedProperties({ learner, locale, platform: eventPlatform });
+    const identified = policy === "identified";
 
     await Promise.all(
-      events.map((event) => trackServerEvent({ ...event, distinctId: userId, shared })),
+      events.map((event) => trackServerEvent({ ...event, distinctId: userId, identified, shared })),
     );
   });
 }

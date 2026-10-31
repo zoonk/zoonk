@@ -17,7 +17,7 @@ function parseRegion(tag: string): string | null {
   }
 }
 
-export function getCountryFromAcceptLanguage(acceptLanguage: string | null): string {
+function getCountryFromAcceptLanguage(acceptLanguage: string | null): string {
   if (!acceptLanguage) {
     return DEFAULT_COUNTRY;
   }
@@ -28,6 +28,14 @@ export function getCountryFromAcceptLanguage(acceptLanguage: string | null): str
     .find(Boolean);
 
   return region ?? DEFAULT_COUNTRY;
+}
+
+/** Vercel's IP country, or the browser's language region where Vercel doesn't add it (local runs). */
+export function getRequestCountry(headers: Pick<Headers, "get">): string {
+  return (
+    headers.get("x-vercel-ip-country") ??
+    getCountryFromAcceptLanguage(headers.get("accept-language"))
+  );
 }
 
 function getManualLocale(value?: string | null): SupportedLocale | null {

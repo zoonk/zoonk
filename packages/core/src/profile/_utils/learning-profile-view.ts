@@ -29,9 +29,11 @@ function toLearningProfileView({
   return {
     activeGoalId: profile?.activeGoalId ?? null,
     availableGlasses,
+    birthYear: profile?.birthYear ?? null,
     buddy: resolveProfileBuddy(profile),
     dailyLimitMinutes: profile?.dailyLimitMinutes ?? null,
     dailyTimes: DAILY_TIME_CHOICES,
+    shareUsageData: profile?.shareUsageData ?? null,
     soundsEnabled: profile?.soundsEnabled ?? true,
   };
 }

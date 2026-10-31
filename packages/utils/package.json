@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./age": "./src/age.ts",
     "./aggregation": "./src/aggregation.ts",
     "./apportion": "./src/apportion.ts",
     "./belt-level": "./src/belt-level.ts",
@@ -63,6 +64,7 @@
     "./time-zone": "./src/time-zone.ts",
     "./timeout": "./src/timeout.ts",
     "./upload": "./src/upload.ts",
+    "./usage-data": "./src/usage-data.ts",
     "./uuid": "./src/uuid.ts",
     "./url": "./src/url.ts",
     "./user-blobs": "./src/user-blobs.ts"

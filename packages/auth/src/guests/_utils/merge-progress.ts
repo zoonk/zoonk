@@ -56,13 +56,17 @@ export async function mergeLearningProfile({ guestUserId, transaction, userId }:
     )
     INSERT INTO user_learning_profiles (
       id, user_id, interests, preferences, instructions, buddy_kind, buddy_name, buddy_glasses,
-      active_goal_id, memory_enabled, sounds_enabled, daily_limit_minutes, created_at, updated_at
+      active_goal_id, memory_enabled, sounds_enabled, daily_limit_minutes, birth_year,
+      share_usage_data, created_at, updated_at
     )
     SELECT id, ${userId}::uuid, interests, preferences, instructions, buddy_kind, buddy_name, buddy_glasses,
-      active_goal_id, memory_enabled, sounds_enabled, daily_limit_minutes, created_at, updated_at
+      active_goal_id, memory_enabled, sounds_enabled, daily_limit_minutes, birth_year,
+      share_usage_data, created_at, updated_at
     FROM guest_profile
     ON CONFLICT (user_id) DO UPDATE SET
       active_goal_id = COALESCE(EXCLUDED.active_goal_id, user_learning_profiles.active_goal_id),
+      birth_year = COALESCE(user_learning_profiles.birth_year, EXCLUDED.birth_year),
+      share_usage_data = COALESCE(user_learning_profiles.share_usage_data, EXCLUDED.share_usage_data),
       buddy_kind = COALESCE(user_learning_profiles.buddy_kind, EXCLUDED.buddy_kind),
       buddy_name = CASE WHEN user_learning_profiles.buddy_kind IS NOT NULL
         THEN user_learning_profiles.buddy_name ELSE EXCLUDED.buddy_name END,

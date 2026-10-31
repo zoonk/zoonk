@@ -35,6 +35,7 @@ function getProfileData(input: LearningProfileUpdateInput) {
   return {
     ...(input.activeGoalId !== undefined && { activeGoalId: input.activeGoalId }),
     ...(input.soundsEnabled !== undefined && { soundsEnabled: input.soundsEnabled }),
+    ...(input.shareUsageData !== undefined && { shareUsageData: input.shareUsageData }),
     ...(input.dailyLimitMinutes !== undefined && { dailyLimitMinutes: input.dailyLimitMinutes }),
     ...getBuddyData(input.buddy),
   };
@@ -49,8 +50,9 @@ const UNSAVED_PROFILE = {
   buddyKind: null,
   buddyName: null,
   dailyLimitMinutes: null,
+  shareUsageData: null,
   soundsEnabled: true,
-} satisfies Required<ProfileData>;
+} satisfies { [Field in keyof ProfileData]-?: ProfileData[Field] | null };
 
 async function writeProfile({ data, userId }: { data: ProfileData; userId: string }) {
   return writeLearnerChange({ userId }, async (tx) => {

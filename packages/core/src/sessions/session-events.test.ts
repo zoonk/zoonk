@@ -106,6 +106,7 @@ describe("session outcomes sent from the server", () => {
     expect(sentEvents("Session Started")).toStrictEqual([
       {
         distinctId: user.id,
+        identified: false,
         name: "Session Started",
         properties: { blocks: 3, planned_minutes: session.minutes.planned, session_id: session.id },
         shared,
@@ -131,6 +132,7 @@ describe("session outcomes sent from the server", () => {
     expect(sentEvents("Session Completed")).toStrictEqual([
       {
         distinctId: user.id,
+        identified: false,
         name: "Session Completed",
         properties: {
           blocks_completed: 3,
