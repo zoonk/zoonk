@@ -9,11 +9,11 @@ import { ActivityFormulaChart } from "../_components/activity-formula-chart";
 import { ActivityModelSliders } from "../_components/activity-model-sliders";
 import { ActivityOutputReadouts } from "../_components/activity-output-readouts";
 import { computeActivityValue } from "../_utils/compute-activity-value";
-import { type ModelValues, startingValues } from "../_utils/formula-model";
+import { type ModelValues } from "../_utils/formula-model";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { FormulaModelDescription } from "./formula-model-description";
 import { FormulaModelEvents, FormulaModelLegend } from "./formula-model-events";
-import { type Output, eventsOff, modelView, useModelReadouts } from "./formula-model-view";
+import { type Output, modelView, startingModel, useModelReadouts } from "./formula-model-view";
 
 type FormulaModelProps = ActivityRendererProps<"formulaModel">;
 type Content = FormulaModelProps["content"];
@@ -86,8 +86,8 @@ function FormulaModelBoard({
   const t = useExtracted();
   const format = useFormatNumber();
   const { check, fields } = content;
-  const [sliders, setSliders] = useState<ModelValues>(() => startingValues(fields.variables));
-  const [events, setEvents] = useState<ModelValues>(() => eventsOff(fields));
+  const [model, setModel] = useState(() => startingModel({ answer, content }));
+  const { events, sliders } = model;
   const isChecked = phase === "checked";
 
   const outputAt = (output: Output, at: ModelValues) =>
@@ -99,8 +99,7 @@ function FormulaModelBoard({
   const formatX = (value: number) => format(value, { unit: axis.unit });
 
   function update(nextSliders: ModelValues, nextEvents: ModelValues) {
-    setSliders(nextSliders);
-    setEvents(nextEvents);
+    setModel({ events: nextEvents, sliders: nextSliders });
 
     if (check.kind === "numeric") {
       const inputs = { ...nextSliders, ...nextEvents };

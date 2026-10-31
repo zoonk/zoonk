@@ -12,15 +12,38 @@ import {
 import { type PlotPoint } from "../_utils/sample-formula";
 import { type ActivityRendererProps } from "../activity-renderer";
 
-type Content = ActivityRendererProps<"formulaModel">["content"];
+type FormulaModelProps = ActivityRendererProps<"formulaModel">;
+type Content = FormulaModelProps["content"];
 type Fields = Content["fields"];
 type Variable = Fields["variables"][number];
 export type Output = Fields["outputs"][number];
 
 type Baseline = { kind: "start" | "whatIf"; values: ModelValues };
 
-export function eventsOff(fields: Fields): Record<string, number> {
+function eventsOff(fields: Fields): Record<string, number> {
   return Object.fromEntries((fields.events ?? []).map((event) => [event.name, 0]));
+}
+
+/**
+ * A numeric answer keeps only the number, so a model opened with one starts at the check's inputs:
+ * the state the expected point is worked out from, which puts that point on the drawn curve.
+ */
+export function startingModel({ answer, content }: Pick<FormulaModelProps, "answer" | "content">): {
+  events: ModelValues;
+  sliders: ModelValues;
+} {
+  const { check, fields } = content;
+  const inputs = answer?.kind === "numeric" && check.kind === "numeric" ? (check.inputs ?? []) : [];
+  const given: ModelValues = Object.fromEntries(inputs.map((input) => [input.name, input.value]));
+
+  return {
+    events: Object.fromEntries(
+      (fields.events ?? []).map((event) => [event.name, given[event.name] ?? 0]),
+    ),
+    sliders: Object.fromEntries(
+      fields.variables.map((variable) => [variable.name, given[variable.name] ?? variable.initial]),
+    ),
+  };
 }
 
 function baselineValues({

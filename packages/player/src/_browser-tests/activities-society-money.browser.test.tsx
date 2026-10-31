@@ -484,6 +484,25 @@ describe("money and society activities on a return to the checked screen", () =>
     await expect.element(page.getByText("Missed link")).not.toBeInTheDocument();
   });
 
+  it("formula model what-ifs: the checked inputs come back, so the right answer sits on the curve", async () => {
+    openBeforeAnotherScreen(scenario);
+    await page.getByRole("button", { name: "Rent goes up $500" }).click();
+    await pressOnSlider("Price per cup", "ArrowRight", 2);
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await leaveAndComeBack();
+
+    await expect
+      .element(page.getByRole("button", { name: "Rent goes up $500" }))
+      .toHaveAttribute("aria-pressed", "true");
+
+    await expect
+      .element(page.getByRole("slider", { name: "Price per cup" }))
+      .toHaveAttribute("aria-valuenow", "4");
+
+    await expect.element(page.getByText("$1,500 before", { exact: true })).toBeVisible();
+  });
+
   it("timeline: events placed in order are still right, with no made-up guesses", async () => {
     openBeforeAnotherScreen(fixtures.timeline);
     await page.getByRole("button", { name: "Place Moon landing on the timeline" }).click();
