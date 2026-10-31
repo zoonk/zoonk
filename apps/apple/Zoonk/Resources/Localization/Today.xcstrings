@@ -2433,6 +2433,9 @@
         }
       }
     },
+    "daily time met" : {
+      "comment" : "A day's status: the day's study time was met"
+    },
     "~%@" : {
       "comment" : "About how long a mission outside the day's blocks takes, as in ~5 min",
       "localizations" : {
@@ -4337,35 +4340,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Preparando as aulas de hoje…"
-          }
-        }
-      }
-    },
-    "goal reached" : {
-      "comment" : "A day's status",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ziel erreicht"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "objetivo alcanzado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "objectif atteint"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "meta alcançada"
           }
         }
       }

@@ -569,40 +569,8 @@
         }
       }
     },
-    "3-30 characters. Letters, numbers, and underscores only." : {
-      "comment" : "Username requirements below the profile field",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "3–30 Zeichen. Nur Buchstaben, Zahlen und Unterstriche."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "3-30 characters. Letters, numbers, and underscores only."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "De 3 a 30 caracteres. Solo letras, números y guiones bajos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "3 à 30 caractères. Lettres, chiffres et tirets bas uniquement."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "De 3 a 30 caracteres. Use apenas letras, números e sublinhados."
-          }
-        }
-      }
+    "3-30 characters. Letters a–z, numbers, and underscores only." : {
+      "comment" : "Username requirements below the profile field"
     },
     "6-digit code" : {
       "comment" : "Placeholder for the account deletion verification code\nPlaceholder for the email sign-in code",

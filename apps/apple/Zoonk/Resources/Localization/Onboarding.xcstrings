@@ -1642,6 +1642,42 @@
         }
       }
     },
+    "Do well on the Common Test" : {
+      "comment" : "An example goal: Japan's Common Test for University Admissions, 共通テスト"
+    },
+    "do well on the Common Test, speak %@…" : {
+      "comment" : "Example goal in the empty goal box: Japan's Common Test for University Admissions, 共通テスト; the language is one the learner could speak"
+    },
+    "Do well on the CSAT" : {
+      "comment" : "An example goal: South Korea's college entrance exam, 수능"
+    },
+    "do well on the CSAT, speak %@…" : {
+      "comment" : "Example goal in the empty goal box: South Korea's college entrance exam, 수능; the language is one the learner could speak"
+    },
+    "Do well on the YKS" : {
+      "comment" : "An example goal"
+    },
+    "do well on the YKS, speak %@…" : {
+      "comment" : "Example goal in the empty goal box; the language is one the learner could speak"
+    },
+    "Pass the matura" : {
+      "comment" : "An example goal"
+    },
+    "pass the matura, speak %@…" : {
+      "comment" : "Example goal in the empty goal box; the language is one the learner could speak"
+    },
+    "Pass the maturità" : {
+      "comment" : "An example goal"
+    },
+    "pass the maturità, speak %@…" : {
+      "comment" : "Example goal in the empty goal box; the language is one the learner could speak"
+    },
+    "Your plan paces your lessons to end by the first day." : {
+      "comment" : "Under an exam's dates over several days"
+    },
+    "Your plan paces your lessons to end by then." : {
+      "comment" : "Under the exam's date"
+    },
     "~ Estimated: the notice doesn't say how much these areas weigh." : {
       "comment" : "Under weights estimated because the exam notice doesn't give them",
       "localizations" : {
@@ -13156,64 +13192,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu plano cobre todas as partes da sua meta. Para terminar antes, aumente o tempo diário ou escolha uma data para ele incluir o que mais importa dentro desse prazo."
-          }
-        }
-      }
-    },
-    "Your plan gets you ready by the first day." : {
-      "comment" : "Under an exam's dates over several days",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Plan bereitet dich bis zum ersten Tag vor."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu plan te prepara para el primer día."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton plan t’aide à te préparer pour le premier jour."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano organiza seu preparo até o primeiro dia."
-          }
-        }
-      }
-    },
-    "Your plan gets you ready by then." : {
-      "comment" : "Under the exam's date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Plan bereitet dich bis dahin vor."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu plan te prepara para esa fecha."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton plan t’aide à te préparer d’ici là."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano organiza seu preparo até essa data."
           }
         }
       }

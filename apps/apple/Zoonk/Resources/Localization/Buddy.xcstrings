@@ -541,6 +541,15 @@
         }
       }
     },
+    "Do well on the Common Test" : {
+      "comment" : "An example goal: Japan's Common Test for University Admissions"
+    },
+    "Do well on the CSAT" : {
+      "comment" : "An example goal: South Korea's college entrance exam (수능)"
+    },
+    "Do well on the YKS" : {
+      "comment" : "An example goal: Turkey's university entrance exam"
+    },
     "Earlier questions" : {
       "comment" : "Opens questions asked before the courses were rewritten\nTitle of the earlier questions page",
       "localizations" : {
@@ -1619,6 +1628,12 @@
           }
         }
       }
+    },
+    "Pass the matura" : {
+      "comment" : "An example goal: Poland's school-leaving exam"
+    },
+    "Pass the maturità" : {
+      "comment" : "An example goal: Italy's school-leaving exam"
     },
     "Pass the SAT" : {
       "comment" : "An example goal: the US college entrance exam",
