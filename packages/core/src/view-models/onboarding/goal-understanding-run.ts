@@ -4,6 +4,7 @@ import { classifyCourseIntent } from "@zoonk/ai/tasks/courses/intent";
 import { type GoalUnderstanding, understandGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
+import { type AnalyticsPlatform } from "../../analytics/shared-properties";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
 import { type ExamLookup, type FoundExam, listExamLookups } from "./_utils/exam-facts";
@@ -165,12 +166,14 @@ export async function completeUnderstandingDraft({
   draft,
   exams,
   understanding: result,
+  platform,
 }: {
   draft: UnderstandingRunDraft;
   exams: (FoundExam | null)[];
   understanding: GoalUnderstanding;
+  platform?: AnalyticsPlatform | null;
 }): Promise<UnderstoodLanguagePair[]> {
-  const completed = await completeDraft({ draft, exams, understanding: result });
+  const completed = await completeDraft({ draft, exams, platform, understanding: result });
   const understanding = parseStoredUnderstanding(completed.understanding);
 
   if (understanding?.status !== "goals") {

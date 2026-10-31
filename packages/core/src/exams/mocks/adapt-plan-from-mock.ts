@@ -71,6 +71,7 @@ export async function adaptPlanFromMock({
       operations: [{ areas: [...offers.focusAreas, offers.view.focus.area], kind: "focusAreas" }],
       timeZone,
     },
+    trackAnalytics: false,
   });
 
   if (changed.status === "applied") {

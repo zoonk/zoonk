@@ -5,7 +5,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useRef, useState, useTransition } from "react";
 import { usePoll } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
-import { useLearnAnalytics } from "../../learn-context";
 import {
   type OnboardingActions,
   type PlacementAnswer,
@@ -153,20 +152,6 @@ function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; 
   return { countAnswer, mockOffer, phase, setPhase, showReady, start };
 }
 
-function getAnswerKind({
-  choice,
-  isCorrect,
-}: {
-  choice: PlacementAnswer;
-  isCorrect: boolean | null;
-}): "correct" | "dont_know" | "incorrect" {
-  if ("dontKnow" in choice) {
-    return "dont_know";
-  }
-
-  return isCorrect ? "correct" : "incorrect";
-}
-
 export function PlacementStep({
   actions,
   areaCount,
@@ -184,8 +169,6 @@ export function PlacementStep({
   run: GenerationRun | null;
   subject: string;
 }) {
-  const analytics = useLearnAnalytics();
-
   const { countAnswer, mockOffer, phase, setPhase, showReady, start } = useResumedPlacement({
     actions,
     goalId,
@@ -252,15 +235,6 @@ export function PlacementStep({
           setPhase({ kind: outcome.status === "unavailable" ? "unavailable" : "waiting" });
           return;
         }
-
-        analytics.track({
-          name: "Placement Answered",
-          properties: {
-            answer: getAnswerKind({ choice, isCorrect: outcome.isCorrect }),
-            question_number: answered + 1,
-            skill_id: question.skillId,
-          },
-        });
 
         showReady(outcome);
       });

@@ -1,4 +1,5 @@
 import "server-only";
+import { trackPlanEdited } from "../analytics/track-plan-edited";
 import { oweGoalLessons } from "../follow-ups/owe-goal-lessons";
 import {
   type UnchangedFocusReason,
@@ -59,10 +60,12 @@ export async function changeGoalPlan({
   goalId,
   input,
   saveFocusAnyway = false,
+  trackAnalytics = true,
 }: {
   goalId: string;
   input: PlanChangeInput;
   saveFocusAnyway?: boolean;
+  trackAnalytics?: boolean;
 }): Promise<PlanChangeResult> {
   return withPlanRetry(async () => {
     const owned = await findOwnedPlan({ goalId, timeZone: input.timeZone });
@@ -78,6 +81,14 @@ export async function changeGoalPlan({
 
     if (setBack) {
       await oweGoalLessons({ goalId: goal.id, userId: goal.userId });
+
+      trackPlanEdited({
+        changeKind: input.operations.map((operation) => operation.kind).join(","),
+        enabled: trackAnalytics,
+        goalId,
+        userId: goal.userId,
+      });
+
       return setBack;
     }
 
@@ -98,6 +109,13 @@ export async function changeGoalPlan({
 
     const change = result.status === "saved" ? null : await loadPlanChangeView(result.changeId);
     await oweGoalLessons({ goalId: goal.id, userId: goal.userId });
+
+    trackPlanEdited({
+      changeKind: input.operations.map((operation) => operation.kind).join(","),
+      enabled: trackAnalytics,
+      goalId,
+      userId: goal.userId,
+    });
 
     return { change, status: "applied" };
   });

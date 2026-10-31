@@ -1,4 +1,5 @@
 import { startLevelTestBank } from "@/lib/level-test-bank";
+import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
 import { GOAL_UNDERSTANDING_READY_STEP } from "@zoonk/core/library/generation/steps";
 import {
   type ExamLookup,
@@ -122,7 +123,10 @@ async function findExams({
   );
 }
 
-async function understandDraft(draft: UnderstandingRunDraft): Promise<UnderstoodLanguagePair[]> {
+async function understandDraft(
+  draft: UnderstandingRunDraft,
+  platform?: AnalyticsPlatform | null,
+): Promise<UnderstoodLanguagePair[]> {
   if (draft.status === "understood") {
     return [];
   }
@@ -131,7 +135,12 @@ async function understandDraft(draft: UnderstandingRunDraft): Promise<Understood
     const reading = await readGoal(draft);
     const exams = await findExams({ draft, reading });
 
-    return await completeUnderstandingStep({ draft, exams, understanding: reading.result });
+    return await completeUnderstandingStep({
+      draft,
+      exams,
+      platform: platform ?? null,
+      understanding: reading.result,
+    });
   } catch (error) {
     await Promise.all([
       failUnderstandingStep(draft.id),
@@ -157,8 +166,10 @@ export type GoalUnderstandingRunResult = {
 
 export async function goalUnderstandingWorkflow({
   draftId,
+  platform,
 }: {
   draftId: string;
+  platform?: AnalyticsPlatform | null;
 }): Promise<GoalUnderstandingRunResult> {
   "use workflow";
 
@@ -185,7 +196,7 @@ export async function goalUnderstandingWorkflow({
     return { draftId, status: "missing" };
   }
 
-  const pairs = await understandDraft(draft);
+  const pairs = await understandDraft(draft, platform);
 
   await understandingProgressStep(
     { entityId: draftId, status: "completed", step: GOAL_UNDERSTANDING_READY_STEP },

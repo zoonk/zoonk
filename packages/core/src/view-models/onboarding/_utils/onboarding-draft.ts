@@ -2,6 +2,11 @@ import "server-only";
 import { type GoalUnderstanding } from "@zoonk/ai/tasks/goals/understand-goal";
 import { type OnboardingDraft, type TransactionClient, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import {
+  type AnalyticsGoalKind,
+  type AnalyticsPlatform,
+} from "../../../analytics/shared-properties";
+import { trackLearnerEvents } from "../../../analytics/track-learner-event";
 import { readEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
 import { getActiveGoalLimit } from "../../../entitlements/limits";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
@@ -82,10 +87,12 @@ export async function completeDraft({
   draft,
   exams,
   understanding,
+  platform,
 }: {
   draft: Pick<OnboardingDraft, "id" | "language" | "prompt" | "timeZone" | "userId">;
   exams: readonly (FoundExam | null)[];
   understanding: GoalUnderstanding;
+  platform?: AnalyticsPlatform | null;
 }): Promise<OnboardingDraft> {
   const view = await toUnderstandingView({
     context: {
@@ -98,7 +105,7 @@ export async function completeDraft({
     understanding,
   });
 
-  return writeLearnerChange({ userId: draft.userId }, async (tx) => {
+  const saved = await writeLearnerChange({ userId: draft.userId }, async (tx) => {
     const { count } = await tx.onboardingDraft.updateMany({
       data: { status: "understood", understanding: view },
       where: {
@@ -109,6 +116,42 @@ export async function completeDraft({
     });
 
     const current = await tx.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
-    return count === 0 ? unchanged(current) : current;
+    const outcome = { changed: count > 0, draft: current };
+    return count === 0 ? unchanged(outcome) : outcome;
   });
+
+  if (saved.changed) {
+    await trackLearnerEvents({
+      events: [
+        {
+          name: "Goal Classified",
+          properties: {
+            duration_ms: Math.max(0, Date.now() - saved.draft.createdAt.getTime()),
+            result: getClassifiedKind(view),
+          },
+        },
+      ],
+      locale: draft.language,
+      platform,
+      userId: draft.userId,
+    });
+  }
+
+  return saved.draft;
+}
+
+function getClassifiedKind(understanding: GoalUnderstandingView): AnalyticsGoalKind | "declined" {
+  switch (understanding.status) {
+    case "goals":
+      return understanding.goals[0]?.draft.kind ?? "learn";
+    case "explain":
+      return "explain";
+    case "instrument":
+      return "learn";
+    case "unclear":
+    case "unsafe":
+      return "declined";
+    default:
+      return "declined";
+  }
 }

@@ -101,22 +101,6 @@ async function sendMessage({
     return "error";
   }
 
-  adapters.track({
-    name: "Feedback Sent",
-    properties: { content_kind: context.contentKind ?? null },
-  });
-
-  if (context.contentId && context.contentKind) {
-    adapters.track({
-      name: "Content Reported",
-      properties: {
-        content_id: context.contentId,
-        content_kind: context.contentKind,
-        reason: "problem",
-      },
-    });
-  }
-
   return "success";
 }
 

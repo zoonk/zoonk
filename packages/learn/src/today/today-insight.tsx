@@ -1,5 +1,6 @@
 "use client";
 
+import { INSIGHT_EVENT_KINDS } from "@zoonk/core/analytics/events";
 import { type MemoryInsightView } from "@zoonk/core/memory/contract";
 import { LightbulbIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -24,12 +25,6 @@ import { useTodayScreen } from "./today-context";
 
 type InsightAnswer = "accepted" | "dismissed";
 type InsightState = { answer: InsightAnswer } | { failed: true } | null;
-
-const ANALYTICS_KIND = {
-  planChange: "plan_change",
-  scheduleIdea: "schedule",
-  tip: "tip",
-} as const satisfies Record<MemoryInsightView["kind"], string>;
 
 function insightMark(insight: MemoryInsightView): React.ReactNode {
   if (insight.kind === "tip") {
@@ -106,7 +101,6 @@ function InsightPlanEffect({ planChange }: { planChange: MemoryInsightView["plan
 }
 
 function useInsightAnswer(insight: MemoryInsightView) {
-  const analytics = useLearnAnalytics();
   const { actions } = useTodayScreen();
   const [state, setState] = useState<InsightState>(null);
   const [isPending, startTransition] = useTransition();
@@ -115,13 +109,6 @@ function useInsightAnswer(insight: MemoryInsightView) {
     startTransition(async () => {
       const saved = await actions.answerInsight({ insightId: insight.id, status });
       setState(saved ? { answer: status } : { failed: true });
-
-      if (saved && status === "dismissed" && insight.planChange?.status === "applied") {
-        analytics.track({
-          name: "Insight Undone",
-          properties: { insight: ANALYTICS_KIND[insight.kind] },
-        });
-      }
     });
   };
 
@@ -231,7 +218,7 @@ export function TodayInsight() {
     if (insight) {
       analytics.track({
         name: "Insight Shown",
-        properties: { insight: ANALYTICS_KIND[insight.kind] },
+        properties: { insight: INSIGHT_EVENT_KINDS[insight.kind] },
       });
     }
   }, [analytics, insight]);

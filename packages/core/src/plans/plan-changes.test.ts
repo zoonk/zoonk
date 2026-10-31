@@ -1,8 +1,12 @@
 import { prisma } from "@zoonk/db";
+import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
+import { analytics } from "../_test-utils/test-boundaries";
+import { trackServerEvent } from "../analytics/server";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { changeGoalPlan } from "./change-goal-plan";
@@ -52,6 +56,39 @@ describe("plan changes", () => {
     vi.useRealTimers();
   });
 
+  it("keeps the falling-behind acknowledgement label and sends it once", async () => {
+    const { goal, plan } = await setup();
+    const flush = runDeferredWork();
+
+    const change = await planChangeFixture({
+      kind: "missedDays",
+      planId: plan.id,
+      status: "applied",
+    });
+
+    const request = {
+      changeId: change.id,
+      goalId: goal.id,
+      input: { status: "seen" as const, surface: "behind" as const },
+    };
+
+    await decidePlanChange(request);
+    await decidePlanChange(request);
+    await flush();
+
+    const edited = vi
+      .mocked(trackServerEvent)
+      .mock.calls.map(([event]) => event)
+      .filter((event) => event.name === "Plan Edited");
+
+    expect(edited).toHaveLength(1);
+
+    expect(edited[0]).toMatchObject({
+      name: "Plan Edited",
+      properties: { change_kind: "today:behind:keep" },
+    });
+  });
+
   it("saves no focus that would move nothing, and says why", async () => {
     const { goal, plan } = await setup();
 
@@ -75,41 +112,67 @@ describe("plan changes", () => {
     ).resolves.toMatchObject({ status: "applied" });
   });
 
-  it("applies the learner's change, re-plans from today and lets them undo it", async () => {
-    const { goal, plan } = await setup();
-    const before = await lastDate(plan.id);
+  it.each(["today", "tutor"] as const)(
+    "applies the learner's change and lets %s undo it",
+    async (surface) => {
+      const { goal, plan } = await setup();
+      const flush = runDeferredWork();
+      const before = await lastDate(plan.id);
 
-    const result = await changeGoalPlan({
-      goalId: goal.id,
-      input: { operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [1, 2] }] },
-    });
+      const result = await changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [1, 2] }] },
+      });
 
-    expect(result).toMatchObject({
-      change: { canUndo: true, kind: "edited", reason: null, source: "learner", status: "applied" },
-      status: "applied",
-    });
+      expect(result).toMatchObject({
+        change: {
+          canUndo: true,
+          kind: "edited",
+          reason: null,
+          source: "learner",
+          status: "applied",
+        },
+        status: "applied",
+      });
 
-    const moved = await lastDate(plan.id);
-    expect(moved && before && moved > before).toBe(true);
+      const moved = await lastDate(plan.id);
+      expect(moved && before && moved > before).toBe(true);
 
-    const change = result.status === "applied" ? result.change : null;
+      const change = result.status === "applied" ? result.change : null;
 
-    const undone = await decidePlanChange({
-      changeId: change?.id ?? "",
-      goalId: goal.id,
-      input: { status: "undone" },
-    });
+      const undone = await decidePlanChange({
+        changeId: change?.id ?? "",
+        goalId: goal.id,
+        input: { status: "undone", surface },
+      });
 
-    expect(undone).toMatchObject({
-      change: { canUndo: false, status: "undone" },
-      status: "updated",
-    });
+      expect(undone).toMatchObject({
+        change: { canUndo: false, status: "undone" },
+        status: "updated",
+      });
 
-    await expect(lastDate(plan.id)).resolves.toBe(before);
+      await flush();
 
-    const settings = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-    expect(settings.settings).toMatchObject({ weekdayMinutes: null });
-  });
+      expect(analytics.trackServerEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "Plan Edited",
+          properties: { change_kind: "setWeekdayMinutes" },
+        }),
+      );
+
+      expect(analytics.trackServerEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "Plan Edited",
+          properties: { change_kind: surface === "tutor" ? "tutor:undone" : "today:undo:edited" },
+        }),
+      );
+
+      await expect(lastDate(plan.id)).resolves.toBe(before);
+
+      const settings = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+      expect(settings.settings).toMatchObject({ weekdayMinutes: null });
+    },
+  );
 
   it("says when a focused area starts against the plan the learner sees", async () => {
     const { goal, library, plan } = await setup();

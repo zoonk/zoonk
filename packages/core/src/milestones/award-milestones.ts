@@ -1,5 +1,7 @@
 import "server-only";
 import { type Milestone, prisma } from "@zoonk/db";
+import { after } from "next/server";
+import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../cache/tags";
 import { CHECKPOINT_LEDGER_KINDS } from "../checkpoints/_utils/checkpoint-results";
@@ -99,16 +101,29 @@ export async function awardMilestones({
   const inserted = await prisma.$transaction(async (tx) => {
     await markLearnerChanged(tx, { userId });
 
-    const { count } = await tx.milestone.createMany({
+    const rows = await tx.milestone.createManyAndReturn({
       data: missing.map((award) => ({ ...award, userId })),
       skipDuplicates: true,
     });
 
-    return count;
+    return rows;
   });
 
-  if (inserted > 0) {
+  if (inserted.length > 0) {
     revalidateCacheTags([getUserProgressCacheTag(userId)]);
+
+    after(() =>
+      trackLearnerEvents({
+        events: inserted.map((milestone) => ({
+          name: "Milestone Earned" as const,
+          properties: {
+            key: milestone.key,
+            milestone: milestone.kind === "buddyStage" ? "buddy_stage" : milestone.kind,
+          },
+        })),
+        userId,
+      }),
+    );
   }
 
   return prisma.milestone.findMany({

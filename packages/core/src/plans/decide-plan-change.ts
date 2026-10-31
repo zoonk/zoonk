@@ -1,5 +1,6 @@
 import "server-only";
 import { type PlanChange, prisma } from "@zoonk/db";
+import { trackPlanEdited } from "../analytics/track-plan-edited";
 import { oweGoalLessons } from "../follow-ups/owe-goal-lessons";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { commitPlan } from "./_utils/commit-plan";
@@ -181,10 +182,12 @@ export async function decidePlanChange({
   changeId,
   goalId,
   input,
+  trackAnalytics = true,
 }: {
   changeId: string;
   goalId: string;
   input: PlanChangeDecisionInput;
+  trackAnalytics?: boolean;
 }): Promise<PlanChangeDecisionResult> {
   return withPlanRetry(async () => {
     const owned = await findOwnedPlan({ goalId, timeZone: input.timeZone });
@@ -211,6 +214,34 @@ export async function decidePlanChange({
     if (input.status === "applied" || input.status === "undone") {
       const { goal } = owned.context;
       await oweGoalLessons({ goalId: goal.id, userId: goal.userId });
+    }
+
+    const payload = parsePlanChangePayload(change.payload);
+    const defaultSurface = payload.source === "planEdit" ? "tutor" : "today";
+    const behind = change.kind === "missedDays" && payload.behind && input.status === "seen";
+    const surface = input.surface ?? (behind ? "behind" : defaultSurface);
+
+    const todayKind =
+      change.status === "proposed" && input.status !== "undone"
+        ? "today:proposal"
+        : `today:undo:${change.kind}`;
+
+    const changeKind = {
+      behind: "today:behind:keep",
+      today: todayKind,
+      tutor: `tutor:${input.status}`,
+    }[surface];
+
+    if (
+      input.status !== "seen" ||
+      (surface === "behind" && parsePlanChangePayload(change.payload).seenAt === null)
+    ) {
+      trackPlanEdited({
+        changeKind,
+        enabled: trackAnalytics,
+        goalId,
+        userId: owned.context.goal.userId,
+      });
     }
 
     return { change: await loadPlanChangeView(change.id), status: "updated" as const };

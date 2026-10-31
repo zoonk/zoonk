@@ -13,7 +13,6 @@ import { SessionFrame } from "../session-frame";
 import { type StudyBlockDetail, type StudySession } from "../session-types";
 import { StudyMoment } from "../study-moment";
 import { useBlockTitle } from "../use-block-copy";
-import { useMomentEvents } from "../use-moment-events";
 import { useBlockAside } from "./block-aside";
 import { BlockBody, showsQuestionActions } from "./block-body";
 import { FinishReadyActions, FinishReadyBody } from "./block-finish-ready";
@@ -34,7 +33,6 @@ import { QuestionFeedback } from "./question-feedback";
 import { isNetScoredQuestion } from "./question-view";
 import { SwipeScore } from "./swipe-score";
 import { TimeMachine, TimeMachineNote } from "./time-machine";
-import { useCapsuleEvents } from "./use-capsule-events";
 import { type QuestionBlockActions, useQuestionBlock } from "./use-question-block";
 
 function getQuestionSegments({
@@ -83,8 +81,6 @@ function FinishedBlock({
   renderCeremony?: MomentCeremony;
   session: SessionContext;
 }) {
-  useMomentEvents({ moment });
-
   return (
     <StudyMoment
       blocks={session.blocks}
@@ -171,8 +167,6 @@ export function QuestionBlock({
   const blockDrill = useBlockDrill({ detail, index: run.state.index });
   const draft = useDraftAnswer(run.state.index);
   const aside = useBlockAside({ detail, question, session });
-
-  useCapsuleEvents({ detail, finished: phase.kind === "finished" });
 
   if (phase.kind === "finished") {
     return (

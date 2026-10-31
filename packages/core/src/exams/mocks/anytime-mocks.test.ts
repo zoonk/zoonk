@@ -9,6 +9,7 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { analytics } from "../../_test-utils/test-boundaries";
 import { getUsageRule } from "../../entitlements/limits";
 import { SESSION_NOW, daysAgo } from "../../sessions/_test-utils/session-goal";
 import { adaptPlanFromMock } from "./adapt-plan-from-mock";
@@ -436,6 +437,13 @@ describe("mocks taken any time", () => {
     await expect(
       prisma.milestone.findMany({ select: { key: true, kind: true }, where: { userId: user.id } }),
     ).resolves.toStrictEqual([{ key: "yellow", kind: "belt" }]);
+
+    expect(analytics.trackServerEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "Big Challenge Finished",
+        properties: { correct: 8, questions: 8 },
+      }),
+    );
 
     const result = {
       ceremony: { key: "yellow", kind: "belt", shownAt: null },

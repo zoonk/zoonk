@@ -63,9 +63,19 @@ const learnerSummarySchema = z
           .boolean()
           .nullable()
           .meta({ description: "The learner's usage data choice, or null before one" }),
+        usageDataSharing: z
+          .boolean()
+          .nullable()
+          .meta({
+            description:
+              "Whether the native analytics SDK may run: true permits it, false prohibits it, and null requires an explicit choice in the request country.",
+          }),
         username: z.string().nullable(),
       })
-      .meta({ description: "What analytics attach to the learner's events" }),
+      .meta({
+        description: "What analytics attach to the learner's events",
+        id: "LearnerSummaryAnalytics",
+      }),
     buddy: z
       .object({
         beltColor: beltColorSchema,

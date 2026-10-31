@@ -23,7 +23,7 @@ export const session = { getSession: vi.fn() };
 
 export const dateContext = { getRequestProgressDateContext: vi.fn() };
 
-export const analytics = { trackServerEvent: vi.fn() };
+export const analytics = { trackServerEvent: vi.fn(), trackSystemEvent: vi.fn() };
 
 const { shuffle: realShuffle } = await vi.importActual<{ shuffle: typeof shuffle }>(
   "@zoonk/utils/shuffle",
@@ -132,6 +132,7 @@ export async function resetBoundaries(): Promise<void> {
     session.getSession,
     dateContext.getRequestProgressDateContext,
     analytics.trackServerEvent,
+    analytics.trackSystemEvent,
     ...Object.values(boundaries).flatMap((mocks) => Object.values(mocks)),
   ].forEach((fn) => {
     if (vi.isMockFunction(fn)) {

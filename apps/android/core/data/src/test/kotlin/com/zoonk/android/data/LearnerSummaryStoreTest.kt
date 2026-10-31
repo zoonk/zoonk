@@ -1,5 +1,7 @@
 package com.zoonk.android.data
 
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.LearnerSummaryResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -9,6 +11,10 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.time.Duration.Companion.minutes
@@ -16,6 +22,17 @@ import kotlin.time.Duration.Companion.minutes
 @OptIn(ExperimentalCoroutinesApi::class)
 class LearnerSummaryStoreTest {
     private val ana = AuthenticatedSession(ANA, "token-a", "local-a")
+
+    @Test
+    fun summaryConsentDecodesEveryDecision() {
+        for (choice in listOf(true, false, null)) {
+            val original = summary(readAt = 0, nextChangeAt = 0)
+            val resolved = original.copy(analytics = original.analytics.copy(usageDataSharing = choice))
+            val fixture = buildJsonObject { put("summary", ApiJson.encodeToJsonElement(resolved)) }
+            val response = ApiJson.decodeFromJsonElement<LearnerSummaryResponse>(fixture)
+            assertEquals(choice, response.summary.analytics.usageDataSharing)
+        }
+    }
 
     @Test
     fun theSummaryIsReadAgainAtItsNextChangeAndNotBefore() =

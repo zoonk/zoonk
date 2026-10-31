@@ -4,7 +4,6 @@ import { type CheckpointView } from "@zoonk/core/checkpoints/contract";
 import { type ListeningSetView } from "@zoonk/core/library/listening/view";
 import { type StudyBlockCompletionView } from "@zoonk/core/sessions/completion-contract";
 import { useEffect, useReducer, useRef } from "react";
-import { type LearnAnalytics, useLearnAnalytics } from "../learn-context";
 import {
   type CheckpointAnswer,
   type CheckpointDuelState,
@@ -28,42 +27,6 @@ export type CheckpointActions = {
   finish: () => Promise<StudyBlockCompletionView | null>;
 };
 
-const MILESTONE_EVENT_KINDS = {
-  badge: "badge",
-  belt: "belt",
-  buddyStage: "buddy_stage",
-  glasses: "glasses",
-} as const;
-
-function trackFinish({
-  analytics,
-  completion,
-}: {
-  analytics: LearnAnalytics;
-  completion: StudyBlockCompletionView;
-}) {
-  const result = completion.checkpoint;
-
-  if (result?.kind === "weekly") {
-    analytics.track({
-      name: "Big Challenge Finished",
-      properties: { correct: result.correct, questions: result.total },
-    });
-  } else if (result) {
-    analytics.track({
-      name: "Boss Finished",
-      properties: { boss: result.kind === "finalBoss" ? "final" : "phase", passed: result.passed },
-    });
-  }
-
-  for (const milestone of completion.milestones) {
-    analytics.track({
-      name: "Milestone Earned",
-      properties: { key: milestone.key, milestone: MILESTONE_EVENT_KINDS[milestone.kind] },
-    });
-  }
-}
-
 const MAX_ANSWER_MS = 3_600_000;
 
 export type CheckpointDuel = {
@@ -81,7 +44,6 @@ export function useCheckpointDuel({
   actions: CheckpointActions;
   checkpoint: CheckpointView;
 }): CheckpointDuel {
-  const analytics = useLearnAnalytics();
   const [state, dispatch] = useReducer(checkpointDuelReducer, checkpoint, createDuelState);
   const shownAt = useRef<number | null>(null);
 
@@ -99,7 +61,6 @@ export function useCheckpointDuel({
     }
 
     dispatch({ completion, type: "finished" });
-    trackFinish({ analytics, completion });
   }
 
   async function confirm() {

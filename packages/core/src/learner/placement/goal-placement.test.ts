@@ -13,8 +13,10 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
+import { analytics } from "../../_test-utils/test-boundaries";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
@@ -156,10 +158,25 @@ async function answerNext({
   goalId: string;
   placement: Placement;
 }): Promise<Placement> {
+  const flush = runDeferredWork();
+
   const result = await answerPlacementQuestion({
     goalId,
     input: { answer, durationMs: 5000, itemId: placement?.next?.itemId ?? "" },
   });
+
+  await flush();
+
+  expect(analytics.trackServerEvent).toHaveBeenCalledWith(
+    expect.objectContaining({
+      name: "Placement Answered",
+      properties: {
+        answer: "dontKnow" in answer ? "dont_know" : "correct",
+        question_number: (placement?.answered ?? 0) + 1,
+        skill_id: placement?.next?.skillId,
+      },
+    }),
+  );
 
   return result.status === "ready" ? result.placement : null;
 }

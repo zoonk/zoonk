@@ -16,6 +16,7 @@ import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../library/items/item-sets";
 import { citedSourceSelect, toItemCitation } from "../library/sources/source-citation";
 import { loadDrillLessons, toDrillView } from "../mistakes/drill-lessons";
+import { loadCapsuleHistory } from "./_utils/capsule-history";
 import { loadExamStructure } from "./_utils/exam-structure";
 import { isLeftBlank } from "./_utils/net-score";
 import {
@@ -59,16 +60,7 @@ async function loadTimeMachines({
 }): Promise<Map<string, TimeMachine>> {
   const capsuleItemIds = payload.capsules.flatMap((capsule) => capsule.itemIds);
 
-  const earlier = await prisma.attempt.findMany({
-    distinct: ["itemId"],
-    orderBy: [{ itemId: "asc" }, { answeredAt: "desc" }],
-    select: { answer: true, answeredAt: true, isCorrect: true, itemId: true },
-    where: {
-      OR: [{ studySessionId: null }, { studySessionId: { not: sessionId } }],
-      itemId: { in: capsuleItemIds },
-      userId,
-    },
-  });
+  const earlier = await loadCapsuleHistory({ itemIds: capsuleItemIds, sessionId, userId });
 
   return new Map(
     earlier.flatMap((attempt) => {

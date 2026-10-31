@@ -70,7 +70,7 @@ export async function recordStudyAnswer({
   }
 
   if (!claimed.created) {
-    return { recorded: claimed.recorded, status: "ready" as const };
+    return { created: false, recorded: claimed.recorded, status: "ready" as const };
   }
 
   const { recorded } = claimed;
@@ -105,7 +105,7 @@ export async function recordStudyAnswer({
     });
   }
 
-  return { recorded, status: "ready" as const };
+  return { created: true, recorded, status: "ready" as const };
 }
 
 function getAnswerMistake({

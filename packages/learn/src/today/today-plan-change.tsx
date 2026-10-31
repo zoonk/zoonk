@@ -20,7 +20,6 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { useLearnAnalytics } from "../learn-context";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import {
   useAppliedLine,
@@ -121,7 +120,6 @@ function ChangeActions({
 }
 
 function useAnswer(opened: Change, onHold: (held: boolean) => void) {
-  const analytics = useLearnAnalytics();
   const { actions } = useTodayScreen();
   const [answered, setAnswered] = useState<Answered | null>(null);
   const [restored, setRestored] = useState<Change | null>(null);
@@ -162,15 +160,6 @@ function useAnswer(opened: Change, onHold: (held: boolean) => void) {
       } else {
         setAnswered({ answer: status, answered: saved });
       }
-
-      if (status === "seen") {
-        return;
-      }
-
-      const kind =
-        change.status === "proposed" && status !== "undone" ? "proposal" : `undo:${change.kind}`;
-
-      analytics.track({ name: "Plan Edited", properties: { change_kind: `today:${kind}` } });
     });
   };
 

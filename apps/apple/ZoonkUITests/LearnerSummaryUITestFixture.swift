@@ -5,7 +5,7 @@ let learnerSummaryUITestJSON = """
     "account": { "email": "ui-test@zoonk.test", "image": null, "name": "UI Test User" },
     "activeGoalId": "0b6c4c1e-7a39-4c6e-9f43-2f8f1f0c5a11",
     "analytics": {
-      "disabled": true, "goal": null, "plan": "free", "shareUsageData": null,
+      "disabled": true, "goal": null, "plan": "free", "usageDataSharing": null, "shareUsageData": null,
       "username": "ui_test_user"
     },
     "buddy": {

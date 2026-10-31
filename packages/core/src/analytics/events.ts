@@ -191,3 +191,9 @@ export type AnalyticsEvent = {
 }[keyof AnalyticsEvents];
 
 export type TrackEvent = (event: AnalyticsEvent, options?: TrackOptions) => void;
+
+export const INSIGHT_EVENT_KINDS = {
+  planChange: "plan_change",
+  scheduleIdea: "schedule",
+  tip: "tip",
+} as const;

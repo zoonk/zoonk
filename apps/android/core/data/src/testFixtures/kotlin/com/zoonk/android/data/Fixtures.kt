@@ -2,6 +2,7 @@ package com.zoonk.android.data
 
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LearnerSummary
+import com.zoonk.api.models.LearnerSummaryResponse
 import com.zoonk.api.models.MeResponse
 
 const val ANA = "0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0a1"
@@ -22,15 +23,16 @@ fun summary(
     readAt: Long,
     nextChangeAt: Long,
 ): LearnerSummary =
-    ApiJson.decodeFromString(
-        """
-        {"account":{"email":"ana@zoonk.test","image":null,"name":"Ana"},"activeGoalId":null,
-         "analytics":{"disabled":false,"goal":null,"plan":"free","shareUsageData":null,"username":null},
-         "buddy":{"beltColor":"white","energy":null,"glasses":"round","kind":"zu","name":null,"studiedToday":false},
-         "day":null,"goals":[],
-         "identity":{"expiresAt":1793186000000,"isAnonymous":false,"signedInAt":1761650000000,"userId":"$ANA"},
-         "level":null,"missions":null,"nextChangeAt":$nextChangeAt,
-         "places":{"exam":false,"mindMaps":false,"readyMistakes":0,"speaking":false},
-         "readAt":$readAt,"tier":"free","timeZone":null,"today":null,"waitingGoals":[]}
-        """.trimIndent(),
-    )
+    ApiJson
+        .decodeFromString<LearnerSummaryResponse>(
+            """
+            {"summary":{"account":{"email":"ana@zoonk.test","image":null,"name":"Ana"},"activeGoalId":null,
+             "analytics":{"disabled":false,"goal":null,"plan":"free","usageDataSharing":null,"shareUsageData":null,"username":null},
+             "buddy":{"beltColor":"white","energy":null,"glasses":"round","kind":"zu","name":null,"studiedToday":false},
+             "day":null,"goals":[],
+             "identity":{"expiresAt":1793186000000,"isAnonymous":false,"signedInAt":1761650000000,"userId":"$ANA"},
+             "level":null,"missions":null,"nextChangeAt":$nextChangeAt,
+             "places":{"exam":false,"mindMaps":false,"readyMistakes":0,"speaking":false},
+             "readAt":$readAt,"tier":"free","timeZone":null,"today":null,"waitingGoals":[]}}
+            """.trimIndent(),
+        ).summary

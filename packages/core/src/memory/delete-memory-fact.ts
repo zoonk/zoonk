@@ -1,5 +1,7 @@
 import "server-only";
 import { isUuid } from "@zoonk/utils/uuid";
+import { after } from "next/server";
+import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
@@ -33,6 +35,22 @@ export async function deleteMemoryFact(factId: string): Promise<MemoryFactDelete
   revalidateCacheTags([getMemoryCacheTag(userId)]);
 
   const change = { action: "removed" as const, fact: null, previous: toMemoryFactView(removed) };
+
+  after(() =>
+    trackLearnerEvents({
+      events: [
+        {
+          name: "Memory Updated",
+          properties: {
+            category: change.previous.category,
+            change: "deleted",
+            origin: change.previous.origin,
+          },
+        },
+      ],
+      userId,
+    }),
+  );
 
   return { change, status: "deleted" };
 }

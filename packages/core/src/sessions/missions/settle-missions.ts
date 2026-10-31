@@ -307,12 +307,20 @@ export async function settleMissions({
 
   const settled = readSettlement(outcome);
 
-  if (source && settled.newlyDone.length > 0) {
+  if (settled.newlyDone.length > 0) {
     after(() =>
       trackLearnerEvents({
         events: settled.newlyDone.map((pick) => ({
           name: "Mission Completed" as const,
-          properties: { full_meal: isFullMeal(settled.missions), mission: pick.kind },
+          properties: {
+            full_meal: isFullMeal(settled.missions),
+            mission:
+              (
+                { fixMistake: "fix", somethingNew: "new" } as Partial<
+                  Record<MissionKind, "fix" | "new">
+                >
+              )[pick.kind] ?? pick.kind,
+          },
         })),
         goalId: settled.session.goalId,
         userId,

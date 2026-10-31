@@ -64,7 +64,6 @@ const FEEDBACK_ADAPTERS: ContentFeedbackAdapters = {
   getViewerEmail: () => Promise.resolve(null),
   platform: "web",
   sendMessage: () => Promise.resolve(true),
-  track: () => null,
 };
 
 const RIGHT_TYPED = "It shows where the electron is likely to be";

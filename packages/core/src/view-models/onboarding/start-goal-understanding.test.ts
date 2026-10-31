@@ -9,6 +9,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { analytics } from "../../_test-utils/test-boundaries";
 import { startGoalUnderstanding } from "./start-goal-understanding";
 
 function uniqueGoal(text: string) {
@@ -63,6 +64,13 @@ describe(startGoalUnderstanding, () => {
     expect(runUnderstandGoal).not.toHaveBeenCalled();
     await expect(countAssists(user.id)).resolves.toBe(0);
     expect(result.status).toBe("understood");
+
+    expect(analytics.trackServerEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "Goal Classified",
+        properties: { duration_ms: expect.any(Number), result: "learn" },
+      }),
+    );
 
     const draft = result.status === "understood" ? result.draft : null;
 

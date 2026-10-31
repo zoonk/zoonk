@@ -179,6 +179,7 @@ export async function submitFocusTest({
           goalId,
           input: { operations: [{ areas: focusAreas, kind: "focusAreas" }], timeZone },
           saveFocusAnyway: true,
+          trackAnalytics: false,
         })
       : null;
 

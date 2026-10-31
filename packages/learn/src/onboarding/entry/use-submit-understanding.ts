@@ -6,13 +6,7 @@ import { useAppLocale } from "../../_utils/locale";
 import { useLearnAnalytics } from "../../learn-context";
 import { type GoalError, useStartError } from "../goal-errors";
 import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
-import {
-  forgetSentGoal,
-  getClassifiedKind,
-  holdSentGoal,
-  sendGoal,
-  takeSentGoal,
-} from "./understanding-start";
+import { forgetSentGoal, holdSentGoal, sendGoal, takeSentGoal } from "./understanding-start";
 
 export function useSubmitUnderstanding({
   draftId,
@@ -117,14 +111,6 @@ export function useSubmitUnderstanding({
     if (!read || sentAt === null) {
       return;
     }
-
-    analytics.track({
-      name: "Goal Classified",
-      properties: {
-        duration_ms: Math.max(0, Date.now() - sentAt),
-        result: getClassifiedKind(read),
-      },
-    });
 
     if (read.status === "explain") {
       onExplanation({ draft, question: read.question });

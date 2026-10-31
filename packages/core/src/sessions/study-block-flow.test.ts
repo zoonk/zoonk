@@ -3,7 +3,9 @@ import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner"
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
+import { analytics } from "../_test-utils/test-boundaries";
 import { answerBlockInOrder } from "./_test-utils/answer-block";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import {
@@ -120,6 +122,7 @@ describe("study session blocks", () => {
   });
 
   it("pays a short day's review and lesson missions once, then finishes its mistake practice", async () => {
+    const flush = runDeferredWork();
     const { lessons, mistake, session, user } = await setup();
     const [review, learn, practice] = session.blocks.map((block) => block.id);
 
@@ -130,6 +133,15 @@ describe("study session blocks", () => {
     ]);
 
     await playReview({ blockId: review ?? "", sessionId: session.id });
+
+    await flush();
+
+    expect(analytics.trackServerEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "Capsule Opened",
+        properties: { days_since_sealed: 0, lesson_id: lessons[0]?.id },
+      }),
+    );
 
     await playLesson({
       blockId: learn ?? "",

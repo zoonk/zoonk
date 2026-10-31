@@ -24,7 +24,7 @@ import { getBlockElapsedMs, pausedBlockTiming } from "./block-timing";
 import { loadBlockSkillStates } from "./load-block-skill-states";
 import { completePlanItem, isPlanItemFinished, moveLostCheckpoint } from "./plan-items";
 import { type SessionAnswer, getBlockAnswers, loadSessionAnswers } from "./session-answers";
-import { trackBlockCompleted } from "./session-events";
+import { trackQuestionBlockCompleted } from "./session-events";
 import { type ProgressChange, applySessionProgress } from "./session-progress";
 import { getMasteryRewards, readSessionSnapshot, withPaidRewards } from "./session-snapshot";
 import { type StudySessionRow } from "./study-session-access";
@@ -346,7 +346,7 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
   }
 
   if (result.status === "ready") {
-    trackBlockCompleted({ block, seconds: result.settlement.seconds, session });
+    trackQuestionBlockCompleted({ block, payload, session, settlement: result.settlement });
   }
 
   return result;

@@ -7,7 +7,6 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { BUDDY_KINDS } from "../../buddies/buddy-labels";
 import { type BuddyChoice, BuddyPicker } from "../../buddies/buddy-picker";
-import { useLearnAnalytics } from "../../learn-context";
 import { StepForm } from "./step-form";
 
 const NEW_BUDDY_LOOK = { beltColor: "white" as const, energy: 50 };
@@ -20,7 +19,6 @@ export function BuddyStep({
   pending: boolean;
 }) {
   const t = useExtracted();
-  const analytics = useLearnAnalytics();
   const [choice, setChoice] = useState<BuddyChoice>({ ...DEFAULT_BUDDY, name: "" });
   const name = choice.name.trim();
 
@@ -39,11 +37,6 @@ export function BuddyStep({
     <StepForm
       description={t("Your buddy grows as you learn.")}
       onContinue={() => {
-        analytics.track({
-          name: "Buddy Chosen",
-          properties: { buddy: choice.kind, renamed: Boolean(name) },
-        });
-
         onAnswer({ buddy: { kind: choice.kind, name: name || null }, question: "buddy" });
       }}
       pending={pending}

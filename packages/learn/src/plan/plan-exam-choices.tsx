@@ -21,7 +21,6 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
-import { useLearnAnalytics } from "../learn-context";
 import { ExamChoicePicks } from "./exam-choice-picks";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
@@ -39,7 +38,6 @@ import { useTappedChoice } from "./use-tapped-choice";
 function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => void } = {}) {
   const { actions, keepFocus } = usePlanScreen();
   const editor = useReportEditorChange();
-  const analytics = useLearnAnalytics();
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
 
@@ -60,10 +58,6 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
           onChange?.(outcome.change);
         }
       });
-
-      if (outcome) {
-        analytics.track({ name: "Plan Edited", properties: { change_kind: "setExamChoice" } });
-      }
     });
   };
 

@@ -102,6 +102,7 @@ export async function undoChallengeMove({
     changeId,
     goalId: challenge.goal.id,
     input: { status: "undone", timeZone: input.timeZone },
+    trackAnalytics: false,
   });
 
   if (result.status !== "updated") {

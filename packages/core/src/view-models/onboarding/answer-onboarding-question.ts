@@ -1,4 +1,6 @@
 import "server-only";
+import { after } from "next/server";
+import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -100,6 +102,23 @@ export async function answerOnboardingQuestion({
 
   if (saved.status !== "saved") {
     return { status: saved.status };
+  }
+
+  if (input.question === "buddy" && input.buddy) {
+    const buddy = input.buddy;
+
+    after(() =>
+      trackLearnerEvents({
+        events: [
+          {
+            name: "Buddy Chosen",
+            properties: { buddy: buddy.kind, renamed: Boolean(buddy.name?.trim()) },
+          },
+        ],
+        goalId,
+        userId: goal.userId,
+      }),
+    );
   }
 
   revalidateCacheTags([

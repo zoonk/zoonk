@@ -239,7 +239,9 @@ class LivePlanApi(
         goalId: UUID,
         changeId: UUID,
         status: PlanChangeDecisionInput.Status,
-    ) = perform { api.clients(session).plans.decidePlanChange(goalId, changeId, PlanChangeDecisionInput(status, deviceTimeZone())) }
+    ) = perform {
+        api.clients(session).plans.decidePlanChange(goalId, changeId, PlanChangeDecisionInput(status = status, timeZone = deviceTimeZone()))
+    }
 
     override suspend fun timeToCover(
         session: AuthenticatedSession,

@@ -1,9 +1,25 @@
 import XCTest
+import ZoonkAPI
 
 @testable import Zoonk
 
 @MainActor
 final class LearnerSummaryStoreTests: XCTestCase {
+  func testSummaryConsentDecodesEveryDecision() throws {
+    let summary =
+      #"{"account":{"email":"ana@zoonk.test","image":null,"name":"Ana"},"activeGoalId":null,"analytics":{"disabled":false,"goal":null,"plan":"free","shareUsageData":null,"username":null},"buddy":{"beltColor":"white","energy":null,"glasses":"round","kind":"zu","name":null,"studiedToday":false},"day":null,"goals":[],"identity":{"expiresAt":1793186000000,"isAnonymous":false,"signedInAt":1761650000000,"userId":"0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0a1"},"level":null,"missions":null,"nextChangeAt":0,"places":{"exam":false,"mindMaps":false,"readyMistakes":0,"speaking":false},"readAt":0,"tier":"free","timeZone":null,"today":null}"#
+    for choice in ["true", "false", "null"] {
+      let resolved = summary.replacingOccurrences(
+        of: #""shareUsageData":null"#,
+        with: "\"shareUsageData\":null,\"usageDataSharing\":\(choice)")
+      let fixture = "{\"summary\":\(resolved)}"
+      let response = try JSONDecoder().decode(
+        Components.Schemas.LearnerSummaryResponse.self, from: Data(fixture.utf8))
+      XCTAssertEqual(
+        response.summary.analytics.usageDataSharing, choice == "null" ? nil : choice == "true")
+    }
+  }
+
   func testSummaryIsReadAgainWhenItSaysItChanges() async {
     let api = LearnerSummaryAPIStub(nextChanges: [.now.addingTimeInterval(-1), .distantFuture])
     let store = LearnerSummaryStore(

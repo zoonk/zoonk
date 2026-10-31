@@ -165,7 +165,7 @@ internal fun learnerSummary(
     ApiJson.decodeFromString(
         """
         {"account":{"email":"ana@zoonk.test","image":null,"name":"Ana"},"activeGoalId":"$GOAL",
-         "analytics":{"disabled":false,"goal":null,"plan":"free","shareUsageData":null,"username":null},
+         "analytics":{"disabled":false,"goal":null,"plan":"free","usageDataSharing":null,"shareUsageData":null,"username":null},
          "buddy":{"beltColor":"white","energy":null,"glasses":"round","kind":"zu","name":null,"studiedToday":false},
          "day":null,"goals":[{"courseChapterId":null,"courseId":null,"courseLevel":null,"dailyMinutes":20,"id":"$GOAL","isActive":true,"isSettingUp":false,"kind":"$kind","status":"$status",
           "targetDate":"2027-01-31","targetLanguage":null,"title":"$title"}],

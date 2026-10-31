@@ -1,9 +1,5 @@
-import { type AnalyticsGoalKind } from "@zoonk/core/analytics/shared-properties";
 import { type GoalCreateInput } from "@zoonk/core/goals/contract";
-import {
-  type GoalUnderstandingView,
-  type OnboardingDraftView,
-} from "@zoonk/core/view-models/onboarding/contract";
+import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
@@ -103,24 +99,6 @@ export function getExplanationGoalInput({
     ],
     timeZone: getLocalTimeZone(),
   };
-}
-
-export function getClassifiedKind(
-  understanding: GoalUnderstandingView,
-): AnalyticsGoalKind | "declined" {
-  switch (understanding.status) {
-    case "goals":
-      return understanding.goals[0]?.draft.kind ?? "learn";
-    case "explain":
-      return "explain";
-    case "instrument":
-      return "learn";
-    case "unclear":
-    case "unsafe":
-      return "declined";
-    default:
-      return "declined";
-  }
 }
 
 export async function sendGoal({

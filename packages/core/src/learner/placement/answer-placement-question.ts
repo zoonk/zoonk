@@ -1,6 +1,8 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { after } from "next/server";
+import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getItemAudienceFilter } from "../../library/items/item-field";
 import { gradeChoiceAnswer } from "../_utils/choice-items";
@@ -146,6 +148,25 @@ export async function answerPlacementQuestion({
     today: getDateInTimeZone({ date: new Date(), timeZone }),
     userId: owned.userId,
   });
+
+  const answer = isCorrect ? "correct" : "incorrect";
+
+  after(() =>
+    trackLearnerEvents({
+      events: [
+        {
+          name: "Placement Answered",
+          properties: {
+            answer: "dontKnow" in input.answer ? "dont_know" : answer,
+            question_number: placement.answered,
+            skill_id: item.skillId,
+          },
+        },
+      ],
+      goalId,
+      userId: owned.userId,
+    }),
+  );
 
   return { isCorrect, placement, status: "ready" };
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { trackEvent } from "@zoonk/core/analytics/client";
 import { type ContentFeedbackAdapters, ContentFeedbackProvider } from "@zoonk/learn/feedback";
 import { safeAsync } from "@zoonk/utils/error";
 import { sendFeedbackRequest } from "./feedback-request";
@@ -24,7 +23,6 @@ const MAIN_FEEDBACK_ADAPTERS: ContentFeedbackAdapters = {
   getViewerEmail,
   platform: "web",
   sendMessage: sendFeedbackRequest,
-  track: trackEvent,
 };
 
 export function MainFeedbackProvider({ children }: { children: React.ReactNode }) {

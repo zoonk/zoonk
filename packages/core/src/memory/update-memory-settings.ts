@@ -1,4 +1,6 @@
 import "server-only";
+import { after } from "next/server";
+import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
@@ -36,6 +38,10 @@ export async function updateMemorySettings(
 
     return true;
   });
+
+  if (changed && !input.enabled) {
+    after(() => trackLearnerEvents({ events: [{ name: "Memory Turned Off" }], userId }));
+  }
 
   if (changed) {
     revalidateCacheTags([getMemoryCacheTag(userId)]);

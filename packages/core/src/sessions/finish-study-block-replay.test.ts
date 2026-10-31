@@ -6,7 +6,9 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
+import { trackServerEvent } from "../analytics/server";
 import * as sessionState from "./_utils/capture-snapshot";
 import { answerStudyQuestion } from "./answer-study-question";
 import { type BlockPayload, toBlockPayload } from "./block-payload";
@@ -89,9 +91,24 @@ async function readPaid({ block, user }: Awaited<ReturnType<typeof setup>>) {
 
 describe("finishing a block that already finished", () => {
   it.each([
-    { checkpoint: null, name: "practice block" },
-    { checkpoint: BOSS, name: "boss duel" },
-  ])("returns the $name's moment again, paying nothing twice", async ({ checkpoint }) => {
+    { checkpoint: null, event: null, name: "practice block" },
+    {
+      checkpoint: BOSS,
+      event: { name: "Boss Finished", properties: { boss: "phase", passed: true } },
+      name: "boss duel",
+    },
+    {
+      checkpoint: { ...BOSS, kind: "finalBoss" as const },
+      event: { name: "Boss Finished", properties: { boss: "final", passed: true } },
+      name: "final boss duel",
+    },
+    {
+      checkpoint: { ...BOSS, kind: "weekly" as const },
+      event: { name: "Big Challenge Finished", properties: { correct: 1, questions: 1 } },
+      name: "weekly duel",
+    },
+  ])("returns the $name's moment again, paying nothing twice", async ({ checkpoint, event }) => {
+    const flush = runDeferredWork();
     const day = await setup(checkpoint);
     const first = await day.finish();
 
@@ -100,9 +117,19 @@ describe("finishing a block that already finished", () => {
       status: "ready",
     });
 
+    await flush();
+
+    expect(
+      vi
+        .mocked(trackServerEvent)
+        .mock.calls.map(([sent]) => ({ name: sent.name, properties: sent.properties }))
+        .filter((sent) => sent.name === "Boss Finished" || sent.name === "Big Challenge Finished"),
+    ).toStrictEqual(event ? [event] : []);
+
     const paid = await readPaid(day);
     expect(paid.blockBrainPower).toBeGreaterThan(0);
 
+    const sent = vi.mocked(trackServerEvent).mock.calls.length;
     const retried = await day.finish();
 
     expect(retried).toStrictEqual(
@@ -114,10 +141,13 @@ describe("finishing a block that already finished", () => {
         : first,
     );
 
+    await flush();
+    expect(vi.mocked(trackServerEvent)).toHaveBeenCalledTimes(sent);
     await expect(readPaid(day)).resolves.toStrictEqual(paid);
   });
 
   it("says again which missions it completed and that it paid the day's bonus", async () => {
+    const flush = runDeferredWork();
     const day = await setup(null, { missions: PRACTICE_MISSION });
     const first = await day.finish();
 
@@ -125,6 +155,15 @@ describe("finishing a block that already finished", () => {
       completion: { completedMissions: ["practice"], fullMeal: { bonus: 50, paid: true } },
       status: "ready",
     });
+
+    await flush();
+
+    expect(vi.mocked(trackServerEvent)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "Mission Completed",
+        properties: { full_meal: true, mission: "practice" },
+      }),
+    );
 
     const retried = await day.finish();
 

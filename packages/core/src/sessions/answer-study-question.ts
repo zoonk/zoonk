@@ -9,7 +9,8 @@ import { ITEM_SET_INCLUDE } from "../library/items/item-sets";
 import { applyDrillRules } from "../mistakes/drill-answer";
 import { isLeftBlank } from "./_utils/net-score";
 import { recordStudyAnswer } from "./_utils/record-study-answer";
-import { getBlockAnswers, loadSessionAnswers } from "./_utils/session-answers";
+import { getBlockAnswers } from "./_utils/session-answers";
+import { loadAnsweredSession } from "./_utils/session-events";
 import {
   type GradedSessionAnswer,
   type SessionItem,
@@ -205,7 +206,12 @@ export async function answerStudyQuestion({
   }
 
   const { recorded } = result;
-  const answers = await loadSessionAnswers({ blocks: session.blocks, sessionId, userId });
+
+  const answers = await loadAnsweredSession({
+    attemptId: recorded.attempt.id,
+    created: result.created,
+    session,
+  });
 
   const isCheckpoint = block.kind === "checkpoint";
 

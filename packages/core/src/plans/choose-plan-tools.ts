@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
+import { trackPlanEdited } from "../analytics/track-plan-edited";
 import { getToolKey } from "../library/chapters/chapter-tools";
 import { type SetupLesson, findSetupLesson } from "../library/tools/find-or-create-setup-lesson";
 import { type SetupLessonWriting } from "../library/tools/setup-lesson-contract";
@@ -174,6 +175,8 @@ export async function choosePlanTools({
     }
 
     const change = result.status === "saved" ? null : await loadPlanChangeView(result.changeId);
+
+    trackPlanEdited({ changeKind: "setTools", goalId, userId: goal.userId });
 
     return { change, status: "applied" as const };
   });

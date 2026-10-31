@@ -2,7 +2,9 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
+import { trackServerEvent } from "../../analytics/server";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
 import {
@@ -86,6 +88,7 @@ describe("mock exams", () => {
   });
 
   it("shows the conditions, runs without feedback and grades once handed in", async () => {
+    const flush = runDeferredWork();
     const { blockId, goal } = await scheduledMockSetup();
     const intro = await getMock(blockId);
 
@@ -164,6 +167,16 @@ describe("mock exams", () => {
       },
       status: "ready",
     });
+
+    await flush();
+
+    const sent = vi
+      .mocked(trackServerEvent)
+      .mock.calls.map(([event]) => event)
+      .filter((event) => event.name === "Big Challenge Finished");
+
+    expect(sent).toHaveLength(1);
+    expect(sent[0]).toMatchObject({ properties: { correct: 6, questions: 9 } });
 
     const review = finished.status === "ready" ? finished.mock.review : [];
 

@@ -1,6 +1,9 @@
 import "server-only";
 import { type MemoryInsight, type TransactionClient, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { after } from "next/server";
+import { INSIGHT_EVENT_KINDS } from "../../analytics/events";
+import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getMemoryCacheTag } from "../../cache/tags";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
@@ -68,7 +71,12 @@ async function applyAnswer({
   const decision = insight.kind === "planChange" ? getPlanDecision({ answer, payload }) : null;
 
   if (decision && payload.planChangeId) {
-    await decidePlanChange({ changeId: payload.planChangeId, goalId, input: { status: decision } });
+    await decidePlanChange({
+      changeId: payload.planChangeId,
+      goalId,
+      input: { status: decision },
+      trackAnalytics: false,
+    });
   }
 }
 
@@ -102,6 +110,8 @@ export async function respondToMemoryInsight({
   if (insight.status !== "pending") {
     return { status: "alreadyAnswered" };
   }
+
+  const before = await toMemoryInsightView(insight);
 
   if (insight.goalId) {
     await applyAnswer({ answer: input.status, goalId: insight.goalId, insight });
@@ -138,6 +148,18 @@ export async function respondToMemoryInsight({
 
   if (!updated) {
     return { status: "alreadyAnswered" };
+  }
+
+  if (input.status === "dismissed" && before?.planChange?.status === "applied") {
+    after(() =>
+      trackLearnerEvents({
+        events: [
+          { name: "Insight Undone", properties: { insight: INSIGHT_EVENT_KINDS[before.kind] } },
+        ],
+        goalId: insight.goalId,
+        userId,
+      }),
+    );
   }
 
   revalidateCacheTags([getMemoryCacheTag(userId)]);

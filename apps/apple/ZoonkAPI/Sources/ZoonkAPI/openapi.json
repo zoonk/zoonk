@@ -27058,6 +27058,15 @@
             ],
             "description": "Accept or decline a proposed change, undo an applied one (a proposal the learner applied then waits for their answer again, status proposed, as before Apply; replaced when a newer proposal asks about the same thing), or mark an applied one as seen (\"Got it\"), so the plan stops showing it"
           },
+          "surface": {
+            "description": "Where the learner answered the change, to preserve the analytics change_kind. Defaults to the proposal source when omitted.",
+            "type": "string",
+            "enum": [
+              "today",
+              "tutor",
+              "behind"
+            ]
+          },
           "timeZone": {
             "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
             "type": "string"
@@ -40481,62 +40490,7 @@
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "analytics": {
-            "type": "object",
-            "properties": {
-              "disabled": {
-                "type": "boolean",
-                "description": "Zoonk keeps the account out of its analytics"
-              },
-              "goal": {
-                "nullable": true,
-                "description": "The active goal's kind and the plan phase it's in",
-                "type": "object",
-                "properties": {
-                  "kind": {
-                    "type": "string",
-                    "enum": [
-                      "learn",
-                      "explain",
-                      "language",
-                      "exam"
-                    ]
-                  },
-                  "phase": {
-                    "nullable": true,
-                    "type": "integer",
-                    "minimum": -9007199254740991,
-                    "maximum": 9007199254740991
-                  }
-                },
-                "required": [
-                  "kind",
-                  "phase"
-                ],
-                "additionalProperties": false
-              },
-              "plan": {
-                "type": "string",
-                "description": "The subscription's plan, or \"free\""
-              },
-              "shareUsageData": {
-                "nullable": true,
-                "description": "The learner's usage data choice, or null before one",
-                "type": "boolean"
-              },
-              "username": {
-                "nullable": true,
-                "type": "string"
-              }
-            },
-            "required": [
-              "disabled",
-              "goal",
-              "plan",
-              "shareUsageData",
-              "username"
-            ],
-            "additionalProperties": false,
-            "description": "What analytics attach to the learner's events"
+            "$ref": "#/components/schemas/LearnerSummaryAnalytics"
           },
           "buddy": {
             "type": "object",
@@ -40837,6 +40791,70 @@
           "waitingGoals"
         ],
         "additionalProperties": false
+      },
+      "LearnerSummaryAnalytics": {
+        "type": "object",
+        "properties": {
+          "disabled": {
+            "type": "boolean",
+            "description": "Zoonk keeps the account out of its analytics"
+          },
+          "goal": {
+            "nullable": true,
+            "description": "The active goal's kind and the plan phase it's in",
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "learn",
+                  "explain",
+                  "language",
+                  "exam"
+                ]
+              },
+              "phase": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "kind",
+              "phase"
+            ],
+            "additionalProperties": false
+          },
+          "plan": {
+            "type": "string",
+            "description": "The subscription's plan, or \"free\""
+          },
+          "shareUsageData": {
+            "nullable": true,
+            "description": "The learner's usage data choice, or null before one",
+            "type": "boolean"
+          },
+          "usageDataSharing": {
+            "nullable": true,
+            "description": "Whether the native analytics SDK may run: true permits it, false prohibits it, and null requires an explicit choice in the request country.",
+            "type": "boolean"
+          },
+          "username": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "disabled",
+          "goal",
+          "plan",
+          "shareUsageData",
+          "usageDataSharing",
+          "username"
+        ],
+        "additionalProperties": false,
+        "description": "What analytics attach to the learner's events"
       },
       "LearnerSummaryGoal": {
         "type": "object",

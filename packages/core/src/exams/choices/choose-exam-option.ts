@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { trackPlanEdited } from "../../analytics/track-plan-edited";
 import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
@@ -111,6 +112,10 @@ export async function chooseExamOption({
 
     if (result.status === "applied" && result.change) {
       await oweGoalLessons({ goalId: owned.goal.id, userId: owned.userId });
+    }
+
+    if (result.status === "applied") {
+      trackPlanEdited({ changeKind: "setExamChoice", goalId, userId: owned.userId });
     }
 
     return result;

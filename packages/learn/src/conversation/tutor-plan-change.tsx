@@ -11,7 +11,6 @@ import { CHIP_CLASS } from "../_components/chip";
 import { ChangeSaveError } from "../_components/save-error";
 import { SURFACE_CLASS } from "../_components/surface";
 import { useSentenceSpace } from "../_utils/locale";
-import { useLearnAnalytics } from "../learn-context";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import {
   useAddedTopicsStartText,
@@ -119,7 +118,6 @@ function useAnswer({
   decide: DecideTutorPlanChange;
   onAnswered: (change: PlanChangeView) => void;
 }) {
-  const analytics = useLearnAnalytics();
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
 
@@ -137,7 +135,6 @@ function useAnswer({
       onAnswered(answered);
       // The buttons leave with the answer, so focus stays on the card that says how it went.
       cardRef.current?.focus();
-      analytics.track({ name: "Plan Edited", properties: { change_kind: `tutor:${status}` } });
     });
   };
 

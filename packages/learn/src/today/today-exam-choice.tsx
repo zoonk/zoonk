@@ -19,7 +19,6 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
-import { useLearnAnalytics } from "../learn-context";
 import { ExamChoicePicks } from "../plan/exam-choice-picks";
 import { useChangeSentence } from "../plan/use-change-sentence";
 import { useTodayScreen } from "./today-context";
@@ -144,7 +143,6 @@ function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: 
 export function TodayExamChoice() {
   const t = useExtracted();
   const { actions, today } = useTodayScreen();
-  const analytics = useLearnAnalytics();
   const [picked, setPicked] = useState<PlanChangeView | null>(null);
   const { failed, isPending, save } = useSave();
   const choice = today.examChoice;
@@ -158,7 +156,6 @@ export function TodayExamChoice() {
       () => actions.chooseExamOption(input),
       (change) => {
         setPicked(change);
-        analytics.track({ name: "Plan Edited", properties: { change_kind: "setExamChoice" } });
       },
     );
 

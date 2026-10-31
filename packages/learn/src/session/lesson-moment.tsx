@@ -15,7 +15,6 @@ import { PendingMoment } from "./pending-moment";
 import { SessionHeader } from "./session-header";
 import { type StudyMomentView, type StudySession } from "./session-types";
 import { StudyMoment } from "./study-moment";
-import { useMomentEvents } from "./use-moment-events";
 import { useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
@@ -52,8 +51,6 @@ function SavedMoment({
   session: LessonMomentSession;
   testedOut: boolean;
 }) {
-  useMomentEvents({ moment });
-
   return (
     <StudyMoment
       blocks={session.blocks}

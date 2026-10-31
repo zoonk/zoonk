@@ -2,7 +2,9 @@ import { prisma } from "@zoonk/db";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
+import { analytics } from "../_test-utils/test-boundaries";
 import {
   ENGLISH_II,
   FOREIGN_LANGUAGE,
@@ -137,8 +139,18 @@ describe("plans of an exam with choices of subject", () => {
   it("bring a picked option's lessons in, named, and swap them when the pick changes", async () => {
     const { areaOf, goal, plan } = await setup();
 
+    const flush = runDeferredWork();
     const french = await pick({ goalId: goal.id, subject: FRENCH });
     expect(namedAreas(french)).toStrictEqual({ added: [FRENCH], leftOut: [] });
+
+    await flush();
+
+    expect(analytics.trackServerEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "Plan Edited",
+        properties: { change_kind: "setExamChoice" },
+      }),
+    );
 
     const philosophy = await pick({ goalId: goal.id, subject: PHILOSOPHY });
     expect(namedAreas(philosophy)).toStrictEqual({ added: [PHILOSOPHY], leftOut: [] });

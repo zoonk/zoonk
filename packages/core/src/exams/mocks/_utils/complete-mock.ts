@@ -154,6 +154,10 @@ async function trackCompletion({
   await trackLearnerEvents({
     events: [
       {
+        name: "Big Challenge Finished",
+        properties: { correct: result.correct, questions: result.total },
+      },
+      {
         name: "Mock Exam Completed",
         properties: {
           correct: result.correct,

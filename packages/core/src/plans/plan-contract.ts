@@ -306,6 +306,13 @@ export const planChangeDecisionInputSchema = z
         description:
           'Accept or decline a proposed change, undo an applied one (a proposal the learner applied then waits for their answer again, status proposed, as before Apply; replaced when a newer proposal asks about the same thing), or mark an applied one as seen ("Got it"), so the plan stops showing it',
       }),
+    surface: z
+      .enum(["today", "tutor", "behind"])
+      .optional()
+      .meta({
+        description:
+          "Where the learner answered the change, to preserve the analytics change_kind. Defaults to the proposal source when omitted.",
+      }),
     timeZone: answerTimeZoneSchema,
   })
   .strict()

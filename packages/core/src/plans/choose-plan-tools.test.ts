@@ -6,7 +6,9 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
+import { analytics } from "../_test-utils/test-boundaries";
 import { writeSetupLesson } from "../library/tools/find-or-create-setup-lesson";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { choosePlanTools } from "./choose-plan-tools";
@@ -195,12 +197,19 @@ describe(choosePlanTools, () => {
     expect(generateSetupLessonOutline).not.toHaveBeenCalled();
     await expect(loadPlanItems(plan.id)).resolves.toStrictEqual(before);
 
+    const flush = runDeferredWork();
     const first = await chooseWritten({ goalId: goal.id, input });
 
     expect(first).toMatchObject({
       change: { canUndo: true, operations: [{ kind: "setTools" }, { kind: "addSkills" }] },
       status: "applied",
     });
+
+    await flush();
+
+    expect(analytics.trackServerEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "Plan Edited", properties: { change_kind: "setTools" } }),
+    );
 
     await choosePlanTools({ goalId: goal.id, input });
     expect(generateSetupLessonOutline).toHaveBeenCalledOnce();

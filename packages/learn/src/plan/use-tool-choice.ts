@@ -3,7 +3,6 @@
 import { safeAsync } from "@zoonk/utils/error";
 import { useState, useTransition } from "react";
 import { type ContentWriting } from "../generation/writing-wait";
-import { useLearnAnalytics } from "../learn-context";
 import { type PlanActions, usePlanScreen } from "./plan-context";
 
 type ToolChoiceInput = Parameters<PlanActions["chooseTools"]>[0];
@@ -16,7 +15,6 @@ type PendingChoice = { generationId: string; input: ToolChoiceInput; onDone?: ()
  */
 export function useToolChoice() {
   const { actions } = usePlanScreen();
-  const analytics = useLearnAnalytics();
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
   const [pending, setPending] = useState<PendingChoice | null>(null);
@@ -44,7 +42,6 @@ export function useToolChoice() {
       setFailed(data !== true);
 
       if (data === true) {
-        analytics.track({ name: "Plan Edited", properties: { change_kind: "setTools" } });
         onDone?.();
       }
     });

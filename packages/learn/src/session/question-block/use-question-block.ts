@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useEffectEvent, useReducer, useRef } from "react";
-import { useLearnAnalytics } from "../../learn-context";
 import {
   type StudyAnswerOutcome,
   type StudyBlockDetail,
@@ -9,8 +8,6 @@ import {
   type StudyQuestionAnswer,
 } from "../session-types";
 import { createQuestionBlockState, questionBlockReducer } from "./question-block-state";
-
-const FIRST_HYPERDRIVE_LEVEL = 2;
 
 const FAILED = { status: "failed" } as const;
 
@@ -31,7 +28,6 @@ export function useQuestionBlock({
   actions: QuestionBlockActions;
   detail: StudyBlockDetail;
 }) {
-  const analytics = useLearnAnalytics();
   const total = detail.questions.length;
 
   const [state, dispatch] = useReducer(
@@ -64,12 +60,6 @@ export function useQuestionBlock({
     }
   }, [state.phase.kind]);
 
-  const trackHyperdrive = (level: number) => {
-    if (level >= FIRST_HYPERDRIVE_LEVEL && level > state.hyperdrive) {
-      analytics.track({ name: "Hyperdrive Reached", properties: { multiplier: level } });
-    }
-  };
-
   /** `minDurationMs` is a timed drill's whole time box when it ran out, however the clock ticked. */
   const submit = async (
     answer: StudyQuestionAnswer,
@@ -90,7 +80,6 @@ export function useQuestionBlock({
       .catch(() => FAILED);
 
     if (outcome.status === "answered") {
-      trackHyperdrive(outcome.feedback.hyperdrive.level);
       dispatch({ answer, feedback: outcome.feedback, itemId: question.itemId, type: "answered" });
       return;
     }

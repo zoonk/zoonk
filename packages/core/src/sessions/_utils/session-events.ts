@@ -4,9 +4,15 @@ import { safeAsync } from "@zoonk/utils/error";
 import { after } from "next/server";
 import { type AnalyticsEvent } from "../../analytics/events";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
+import { type CheckpointOutcome } from "../../checkpoints/_utils/checkpoint-outcome";
+import { type BlockPayload } from "../block-payload";
+import { getHyperdriveLevel, scoreAnswers } from "../brain-power";
+import { trackCapsulesOpened } from "./capsule-events";
 import { getGoalDayMinutes } from "./day-minutes";
+import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
 import { sumSessionSeconds } from "./session-ledger";
 import { getSessionBar } from "./session-view";
+import { type QuestionBlockSettlement } from "./settle-question-block";
 import { type StudySessionRow } from "./study-session-access";
 
 const SECONDS_PER_MINUTE = 60;
@@ -108,4 +114,101 @@ export function trackSessionCompleted(session: StudySessionRow): void {
       await trackLearnerEvents({ events: [event], goalId: session.goalId, userId: session.userId });
     }),
   );
+}
+
+export function trackCheckpointCompleted({
+  checkpoint,
+  session,
+}: {
+  checkpoint: CheckpointOutcome | null;
+  session: SessionRef;
+}): void {
+  if (!checkpoint) {
+    return;
+  }
+
+  trackSessionEvent({
+    event:
+      checkpoint.kind === "weekly"
+        ? {
+            name: "Big Challenge Finished",
+            properties: { correct: checkpoint.correct, questions: checkpoint.total },
+          }
+        : {
+            name: "Boss Finished",
+            properties: {
+              boss: checkpoint.kind === "finalBoss" ? "final" : "phase",
+              passed: checkpoint.passed,
+            },
+          },
+    session,
+  });
+}
+
+function trackHyperdriveReached({
+  answers,
+  attemptId,
+  session,
+}: {
+  answers: readonly SessionAnswer[];
+  attemptId: string;
+  session: SessionRef;
+}): void {
+  const multiplier = getHyperdriveLevel(scoreAnswers({ answers }).streak);
+
+  const previous = getHyperdriveLevel(
+    scoreAnswers({ answers: answers.filter((answer) => answer.id !== attemptId) }).streak,
+  );
+
+  if (multiplier >= 2 && multiplier > previous) {
+    trackSessionEvent({
+      event: { name: "Hyperdrive Reached", properties: { multiplier } },
+      session,
+    });
+  }
+}
+
+export async function loadAnsweredSession({
+  session,
+  attemptId,
+  created,
+}: {
+  session: StudySessionRow;
+  attemptId: string;
+  created: boolean;
+}) {
+  const answers = await loadSessionAnswers({
+    blocks: session.blocks,
+    sessionId: session.id,
+    userId: session.userId,
+  });
+
+  if (created) {
+    trackHyperdriveReached({ answers, attemptId, session });
+  }
+
+  return answers;
+}
+
+export function trackQuestionBlockCompleted({
+  block,
+  payload,
+  session,
+  settlement,
+}: {
+  block: StudySessionBlock;
+  payload: BlockPayload;
+  session: StudySessionRow;
+  settlement: QuestionBlockSettlement;
+}): void {
+  trackBlockCompleted({ block, seconds: settlement.seconds, session });
+
+  trackCheckpointCompleted({
+    checkpoint: payload.checkpoint?.mock ? null : settlement.checkpoint,
+    session,
+  });
+
+  if (block.kind === "review") {
+    trackCapsulesOpened({ answers: settlement.answers, payload, session });
+  }
 }

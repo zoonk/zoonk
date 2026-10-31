@@ -1,6 +1,7 @@
 import { createStepStream, progressStep } from "@/workflows/_shared/stream-status";
 import { type GoalUnderstanding } from "@zoonk/ai/tasks/goals/understand-goal";
 import { type ExamDescription } from "@zoonk/ai/tasks/research/exam-identity-decision";
+import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
 import { type GoalUnderstandingStepName } from "@zoonk/core/library/generation/steps";
 import { type OnboardingExamDate } from "@zoonk/core/view-models/onboarding/contract";
 import {
@@ -117,6 +118,7 @@ export async function completeUnderstandingStep(input: {
   draft: UnderstandingRunDraft;
   exams: (FoundExam | null)[];
   understanding: GoalUnderstanding;
+  platform?: AnalyticsPlatform | null;
 }): Promise<UnderstoodLanguagePair[]> {
   "use step";
 

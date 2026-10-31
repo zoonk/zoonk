@@ -5,6 +5,7 @@ import { chooseExamOption } from "@zoonk/core/exams/choices/choose";
 import { examChoiceInputSchema } from "@zoonk/core/exams/choices/contract";
 import { changeGoalPlan } from "@zoonk/core/plans/change";
 import {
+  type PlanChangeDecisionInput,
   planChangeDecisionInputSchema,
   planChangeInputSchema,
   planToolChoiceInputSchema,
@@ -56,9 +57,13 @@ export async function previewPlanChangeAction(
 
 export async function answerPlanChangeAction(
   goalId: string,
-  { changeId, status }: { changeId: string; status: unknown },
+  {
+    changeId,
+    status,
+    surface,
+  }: { changeId: string; status: unknown; surface?: PlanChangeDecisionInput["surface"] },
 ): Promise<PlanChangeView | null> {
-  const input = planChangeDecisionInputSchema.safeParse({ status });
+  const input = planChangeDecisionInputSchema.safeParse({ status, surface });
 
   if (!input.success) {
     return null;

@@ -50,6 +50,7 @@ export type TodayActions = {
   decidePlanChange: (input: {
     changeId: NonNullable<TodayView["planChange"]>["id"];
     status: PlanChangeDecisionInput["status"];
+    surface?: PlanChangeDecisionInput["surface"];
   }) => Promise<PlanChangeView | "stale" | null>;
   missionLinks: MissionLinks;
   openBlock: (step: DayStep) => Promise<boolean>;

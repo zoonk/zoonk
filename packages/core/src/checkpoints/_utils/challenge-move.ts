@@ -145,6 +145,7 @@ export async function applyChallengeMove({
       operations: [{ from: toIsoDate(from), kind: "moveWeeklyEvent", to: toIsoDate(to) }],
       timeZone: input.timeZone,
     },
+    trackAnalytics: false,
   });
 
   if (result.status === "unchanged") {

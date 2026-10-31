@@ -5,7 +5,9 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { skillFixture, skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
+import { analytics } from "../../_test-utils/test-boundaries";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { runSessionFollowUps, writeSessionInsight } from "../_test-utils/session-follow-ups";
@@ -125,6 +127,8 @@ describe("plan-change insights", () => {
 
     mockSession(user.id);
 
+    const flush = runDeferredWork();
+
     const answer = await respondToMemoryInsight({
       input: { status: "dismissed" },
       insightId: insight.id,
@@ -134,6 +138,12 @@ describe("plan-change insights", () => {
       insight: { planChange: null, status: "dismissed" },
       status: "updated",
     });
+
+    await flush();
+
+    expect(analytics.trackServerEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "Insight Undone", properties: { insight: "plan_change" } }),
+    );
 
     await expect(planSkillIds(plan.id)).resolves.not.toContain(prerequisite.id);
   });

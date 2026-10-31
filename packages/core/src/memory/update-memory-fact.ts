@@ -1,6 +1,8 @@
 import "server-only";
 import { type MemoryFact } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { after } from "next/server";
+import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
@@ -61,7 +63,7 @@ export async function updateMemoryFact({
     }
 
     if (isSameCorrection({ fact: existing, input })) {
-      return unchanged({ changed: false, fact: existing });
+      return unchanged({ changed: false, fact: existing, previous: existing });
     }
 
     const updated = await tx.memoryFact.update({
@@ -86,7 +88,7 @@ export async function updateMemoryFact({
       });
     }
 
-    return { changed: true, fact: updated };
+    return { changed: true, fact: updated, previous: existing };
   });
 
   if (!saved) {
@@ -94,6 +96,20 @@ export async function updateMemoryFact({
   }
 
   if (saved.changed) {
+    const previous = toMemoryFactView(saved.previous);
+
+    after(() =>
+      trackLearnerEvents({
+        events: [
+          {
+            name: "Memory Updated",
+            properties: { category: previous.category, change: "updated", origin: previous.origin },
+          },
+        ],
+        userId,
+      }),
+    );
+
     revalidateCacheTags([getMemoryCacheTag(userId)]);
   }
 

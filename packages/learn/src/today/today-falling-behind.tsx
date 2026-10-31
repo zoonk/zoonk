@@ -21,7 +21,6 @@ import {
 } from "../_components/suggestion";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
-import { useLearnAnalytics } from "../learn-context";
 import { MovedTopicsLine } from "./moved-topics-line";
 import { useTodayScreen } from "./today-context";
 import { isWelcomeBackDay } from "./use-today-copy";
@@ -135,7 +134,7 @@ function useSeeChange({
     }
 
     const { data } = await safeAsync(() =>
-      actions.decidePlanChange({ changeId: change.id, status: "seen" }),
+      actions.decidePlanChange({ changeId: change.id, status: "seen", surface: "behind" }),
     );
 
     if (!data || data === "stale") {
@@ -162,7 +161,6 @@ export function FallingBehindNotice({
   onHold: (held: boolean) => void;
 }) {
   const t = useExtracted();
-  const analytics = useLearnAnalytics();
   const sentence = useBehindSentence();
   const [answer, setAnswer] = useState<Answer>(null);
   const [isPending, startTransition] = useTransition();
@@ -179,8 +177,6 @@ export function FallingBehindNotice({
       }
 
       setAnswer({ kept: true });
-
-      analytics.track({ name: "Plan Edited", properties: { change_kind: "today:behind:keep" } });
     });
   };
 

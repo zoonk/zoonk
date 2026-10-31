@@ -5,7 +5,6 @@ import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useEffect, useEffectEvent, useState } from "react";
-import { useLearnAnalytics } from "../learn-context";
 import { useIsSectionExpired } from "./mock-clock";
 import {
   type MockActions,
@@ -172,7 +171,6 @@ export function useMockRunner({
   actions: MockActions;
   initial: MockView;
 }): MockRunner {
-  const analytics = useLearnAnalytics();
   const [view, setView] = useState(initial);
   const [position, setPosition] = useState(initial.current?.resume ?? 0);
   const [reached, setReached] = useState(initial.current?.resume ?? 0);
@@ -233,13 +231,6 @@ export function useMockRunner({
     if (next === null || next === "writing") {
       setError(next === null);
       return;
-    }
-
-    if (next.status === "finished" && view.status !== "finished" && next.result) {
-      analytics.track({
-        name: "Big Challenge Finished",
-        properties: { correct: next.result.correct, questions: next.result.total },
-      });
     }
 
     drafts.reset(next);
