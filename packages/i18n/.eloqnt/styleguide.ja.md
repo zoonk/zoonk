@@ -44,6 +44,7 @@
 - “hand in” (a mock or one of its parts): “提出する”
 - “trap” (in a Trickster question): “ひっかけ”, as in “ひっかけ問題”, not “罠”
 - “flag” (a mock question to come back to): “見直し”, never “マーク”, which means filling in the answer sheet
+- “mark” (a passage in a source): “印を付ける”, never “マークする”
 - “pattern” (a mistake that recurs): “ミスの傾向”
 - “link” (between a cause and its effect): “つながり”, not “リンク”
 - “score”: “スコア”; an exam's “band”: “バンドスコア”

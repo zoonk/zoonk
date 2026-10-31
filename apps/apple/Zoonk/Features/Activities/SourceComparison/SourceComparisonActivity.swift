@@ -34,11 +34,25 @@ struct SourceComparisonFields: Decodable, Hashable, Sendable {
     let passages: [Passage]
   }
 
+  enum LegendEntry {
+    case whatToMark, missed, wrongMark
+  }
+
   let markPrompt: String
   let sources: [Source]
 
   var expected: ActivityExpectedAnswer {
     .selection(sources.flatMap { $0.passages.filter(\.isTarget).map(\.id) })
+  }
+
+  func legend(marked: [String]) -> [LegendEntry] {
+    let passages = sources.flatMap(\.passages)
+    let found = passages.contains { $0.isTarget && marked.contains($0.id) }
+    let missed = passages.contains { $0.isTarget && !marked.contains($0.id) }
+    let wrong = passages.contains { !$0.isTarget && marked.contains($0.id) }
+
+    return [found ? .whatToMark : nil, missed ? .missed : nil, wrong ? .wrongMark : nil]
+      .compactMap(\.self)
   }
 }
 
@@ -119,26 +133,7 @@ private struct SourceComparisonCanvas: View {
       }
 
       if isChecked {
-        HStack(spacing: 16) {
-          Label {
-            Text(
-              "What to mark", tableName: "Activities",
-              comment: "Legend: the passages the question was about")
-          } icon: {
-            RoundedRectangle(cornerRadius: 2).fill(Color.success.opacity(0.3)).frame(
-              width: 16, height: 10)
-          }
-          Label {
-            Text(
-              "Missed", tableName: "Activities",
-              comment: "Legend: a passage the learner should have marked")
-          } icon: {
-            Rectangle().fill(Color.success).frame(width: 16, height: 2)
-          }
-        }
-        .font(.caption)
-        .foregroundStyle(.secondary)
-        .accessibilityHidden(true)
+        legend(fields.legend(marked: marked))
       }
     }
     .environment(
@@ -151,6 +146,44 @@ private struct SourceComparisonCanvas: View {
         toggle(url.lastPathComponent)
         return .handled
       })
+  }
+
+  private func legend(_ entries: [SourceComparisonFields.LegendEntry]) -> some View {
+    FlowLayout(spacing: 12) {
+      ForEach(entries, id: \.self) { entry in
+        switch entry {
+        case .whatToMark:
+          Label {
+            Text(
+              "What to mark", tableName: "Activities",
+              comment: "Legend: the passages the question was about")
+          } icon: {
+            RoundedRectangle(cornerRadius: 2).fill(Color.success.opacity(0.3)).frame(
+              width: 16, height: 10)
+          }
+        case .missed:
+          Label {
+            Text(
+              "Missed", tableName: "Activities",
+              comment: "Legend: a passage the learner should have marked")
+          } icon: {
+            Rectangle().fill(Color.success).frame(width: 16, height: 2)
+          }
+        case .wrongMark:
+          Label {
+            Text(
+              "Wrong mark", tableName: "Activities",
+              comment: "Legend: a passage the learner marked by mistake")
+          } icon: {
+            RoundedRectangle(cornerRadius: 2).fill(Color.destructive.opacity(0.3)).frame(
+              width: 16, height: 10)
+          }
+        }
+      }
+    }
+    .font(.caption)
+    .foregroundStyle(.secondary)
+    .accessibilityHidden(true)
   }
 
   private func sourceCard(_ source: SourceComparisonFields.Source, symbol: String) -> some View {

@@ -256,9 +256,7 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertTrue(grade(.dialogueSimulator, dialogue, .selection(["polite"])))
     XCTAssertFalse(grade(.dialogueSimulator, dialogue, .selection(["blunt"])))
 
-    let sources = try content(
-      #"{"template":"sourceComparison","prompt":"Compare.","check":{"kind":"interaction","explanation":"x"},"fields":{"markPrompt":"Mark who fired first.","sources":[{"author":"A captain","citation":{"title":"Deposition","year":1775},"date":"April 1775","excerpt":"The regulars fired on us without any provocation.","id":"parker","passages":[{"id":"p1","isTarget":true,"text":"The regulars fired on us"}]},{"author":"An officer","citation":{"title":"Report","year":1775},"date":"April 1775","excerpt":"Some of the rebels fired first from behind a wall.","id":"pitcairn","passages":[{"id":"p2","isTarget":true,"text":"the rebels fired first"}]}]}}"#
-    )
+    let sources = try content(sourceComparisonJSON)
     XCTAssertTrue(grade(.sourceComparison, sources, .selection(["p2", "p1"])))
     XCTAssertFalse(grade(.sourceComparison, sources, .selection(["p1"])))
   }
@@ -282,6 +280,14 @@ final class ActivityRenderersTests: XCTestCase {
       ], "an overlapping passage is skipped")
   }
 
+  func testSourceComparisonLegendNamesOnlyTheMarksShown() throws {
+    let fields = try content(sourceComparisonJSON).fields(as: SourceComparisonFields.self)
+
+    XCTAssertEqual(fields.legend(marked: ["p1", "p2"]), [.whatToMark])
+    XCTAssertEqual(fields.legend(marked: []), [.missed], "nothing marked right")
+    XCTAssertEqual(fields.legend(marked: ["p1", "p3"]), [.whatToMark, .missed, .wrongMark])
+  }
+
   func testCauseEffectLinksAreASet() throws {
     let content = try content(
       #"{"template":"causeEffectChain","prompt":"Link them.","check":{"kind":"interaction","explanation":"x"},"fields":{"links":[{"from":"plow","to":"dust","why":"Bare soil."},{"from":"drought","to":"dust","why":"Dry soil."}],"nodes":[{"id":"dust","label":"Dust storms","year":1934},{"id":"plow","label":"Prairie plowed","year":1920},{"id":"drought","label":"Drought","year":1931}]}}"#
@@ -299,6 +305,15 @@ final class ActivityRenderersTests: XCTestCase {
         .causeEffectChain, content,
         .links([link("plow", "dust"), link("drought", "dust"), link("plow", "drought")])))
   }
+
+  private let sourceComparisonJSON = #"""
+    {"template":"sourceComparison","prompt":"Compare.","check":{"kind":"interaction","explanation":"x"},
+     "fields":{"markPrompt":"Mark who fired first.","sources":[
+       {"author":"A captain","citation":{"title":"Deposition","year":1775},"date":"April 1775","excerpt":"The regulars fired on us without any provocation.","id":"parker",
+        "passages":[{"id":"p1","isTarget":true,"text":"The regulars fired on us"},{"id":"p3","isTarget":false,"text":"without any provocation"}]},
+       {"author":"An officer","citation":{"title":"Report","year":1775},"date":"April 1775","excerpt":"Some of the rebels fired first from behind a wall.","id":"pitcairn",
+        "passages":[{"id":"p2","isTarget":true,"text":"the rebels fired first"}]}]}}
+    """#
 
   private let decisionTreeJSON = #"""
     {"template":"decisionTree","prompt":"Name the tree.","check":{"kind":"interaction","explanation":"x"},
