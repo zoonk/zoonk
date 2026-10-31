@@ -22,6 +22,9 @@ type ExpectedGoal = {
   hasTarget?: boolean;
   targetScore?: RegExp;
   targetCourse?: RegExp;
+  targetPosition?: RegExp;
+  /** The position must not name it: an area the learner rejects, doubts or names for another goal. */
+  targetPositionLeavesOut?: RegExp;
   institution?: RegExp;
   role?: RegExp;
   title?: RegExp;
@@ -120,6 +123,16 @@ function checkGoal({ expected, goal }: { expected: ExpectedGoal; goal: unknown }
     [
       matchesText({ pattern: expected.targetCourse, value: goal.targetCourse }),
       `course ${show(goal.targetCourse)}`,
+    ],
+    [
+      matchesText({ pattern: expected.targetPosition, value: goal.targetPosition }),
+      `position ${show(goal.targetPosition)}`,
+    ],
+    [
+      !expected.targetPositionLeavesOut ||
+        typeof goal.targetPosition !== "string" ||
+        !expected.targetPositionLeavesOut.test(goal.targetPosition),
+      `position ${show(goal.targetPosition)} names what it should leave out`,
     ],
     [
       matchesText({ pattern: expected.institution, value: goal.institution }),

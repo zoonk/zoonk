@@ -368,6 +368,34 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "quero passar no concurso da polícia federal para agente",
     language: "pt",
   }),
+  testCase("pt-exam-concurso-cgu-specialty", {
+    expected: {
+      goals: [
+        { examTarget: "position", kind: "exam", targetPosition: /desenvolvimento de sistemas/iu },
+      ],
+      route: "goals",
+    },
+    goal: "quero passar no concurso da CGU para auditor, na especialidade de desenvolvimento de sistemas",
+    language: "pt",
+  }),
+  testCase("pt-exam-concurso-cgu-rejected-area", {
+    expected: { goals: [{ kind: "exam", targetPositionLeavesOut: /auditoria/iu }], route: "goals" },
+    goal: "passar no concurso da CGU, mas não quero a área de auditoria",
+    language: "pt",
+  }),
+  testCase("pt-exam-concurso-cgu-doubted-area", {
+    expected: { goals: [{ kind: "exam", targetPositionLeavesOut: /auditoria/iu }], route: "goals" },
+    goal: "CGU, possivelmente Auditoria",
+    language: "pt",
+  }),
+  testCase("pt-exam-concurso-cgu-other-goal", {
+    expected: {
+      goals: [{ kind: "exam", targetPositionLeavesOut: /dados/iu }, { kind: "learn" }],
+      route: "goals",
+    },
+    goal: "Passar na CGU e aprender ciência de dados",
+    language: "pt",
+  }),
   testCase("en-learn-ear-training", {
     expected: { goals: [{ kind: "learn" }], route: "goals" },
     goal: "music theory and ear training",
