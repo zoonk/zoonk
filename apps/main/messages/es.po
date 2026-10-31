@@ -967,12 +967,12 @@ msgstr "Las lecciones, los repasos y la práctica de cada día para alcanzar tu 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "vr-vFm"
 msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "El plan Gratis permite seguir un objetivo a la vez. Pausa tu otro objetivo para retomar este u obtén Plus para seguir más objetivos."
+msgstr "El plan gratis permite seguir un objetivo a la vez. Pausa tu otro objetivo para reanudar este u obtén Plus para seguir más objetivos."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"
 msgid "Resume {goal}"
-msgstr "Retomar {goal}"
+msgstr "Reanudar {goal}"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "kL0PL2"
@@ -992,7 +992,7 @@ msgstr "Completado"
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
-msgstr "No se programa nada hasta que lo retomes."
+msgstr "No se planificará nada hasta que lo reanudes."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "CSgdxh"
@@ -2183,7 +2183,7 @@ msgstr "Llegada"
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "examplePhases.NMkS59"
 msgid "Renting a flat"
-msgstr "Alquilar un departamento"
+msgstr "Rentar un departamento"
 
 #: src/app/[lang]/(home)/_components/example-plans.ts
 msgctxt "examplePhases.JrZJR9"
@@ -2286,7 +2286,7 @@ msgstr "¿Cuál será tu gran día?"
 #: src/app/[lang]/(home)/_components/goal-measure.tsx
 msgctxt "s4s2qc"
 msgid "Next: renting, banking, the first week at work"
-msgstr "Después: alquiler, trámites bancarios y la primera semana en el trabajo"
+msgstr "Después: rentar un departamento, trámites bancarios y la primera semana de trabajo"
 
 #: src/app/[lang]/(home)/_components/goal-measure.tsx
 msgctxt "sIMS7i"
@@ -2595,7 +2595,7 @@ msgstr "Pedir en una cafetería"
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "NMkS59"
 msgid "Renting a flat"
-msgstr "Alquilar un departamento"
+msgstr "Rentar un departamento"
 
 #: src/app/[lang]/(home)/_components/placed-plans.tsx
 msgctxt "JrZJR9"
@@ -2987,11 +2987,11 @@ msgctxt "00sc5X"
 msgid "Lesson · Calling about an apartment"
 msgstr "Lección · Llamar para preguntar por un departamento"
 
-#. The buddy answers a learner of English. Keep only “flat” and “apartment” in English, the words being taught; translate the rest, London and the US included.
+#. The buddy answers a learner of English. Keep only “flat” and “apartment” in English, the words being taught; translate the rest, London and the US included. “there” is London.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "4teyr4"
 msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
-msgstr "Las dos sirven, pero en Londres se dice “flat”. “Apartment” es más común en Estados Unidos, así que “flat” suena más natural cuando rentas allí."
+msgstr "Las dos están bien, pero en Londres la gente dice “flat”. “Apartment” es más común en Estados Unidos, así que “flat” suena más natural cuando rentas un departamento en Londres."
 
 #. A learner of English asks about the English words “flat” and “apartment”.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
@@ -3376,7 +3376,7 @@ msgstr "Ir a la página de inicio"
 #: src/app/[lang]/essay/[blockId]/page.tsx
 msgctxt "Jo0iJd"
 msgid "Writing practice"
-msgstr "Práctica de expresión escrita"
+msgstr "Práctica de redacción"
 
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
 msgctxt "UOYMne"
@@ -4087,7 +4087,7 @@ msgstr "¿Plus es realmente ilimitado?"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "flRDel"
 msgid "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>."
-msgstr "Casi. Las lecciones, los objetivos y tu compañero solo tienen límites para frenar a los bots y las herramientas automatizadas, no a quienes estudian. Las llamadas de práctica oral tienen límites diarios y mensuales más altos que los del plan gratis. <link>Leer nuestra política de uso razonable</link>."
+msgstr "Casi. Las lecciones, los objetivos y tu compañero tienen límites solo para frenar a los bots y las herramientas automatizadas, no a quienes están aprendiendo. Las llamadas de práctica oral tienen límites diarios y mensuales más altos que los del plan gratis. <link>Leer nuestra política de uso justo</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"
