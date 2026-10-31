@@ -348,6 +348,17 @@ class LessonPlayerFlowTest {
     }
 
     @Test
+    fun aRightGuessIsTaggedAsTheLearnersGuess() {
+        play(listOf(hookGuessStep("hook"), summaryStep("end")))
+
+        rule.onNodeWithText("No").performScrollTo().performClick()
+        tap("See the answer")
+
+        rule.onNodeWithText("Your guess", useUnmergedTree = true).assertExists()
+        rule.onNodeWithText("Your answer", useUnmergedTree = true).assertDoesNotExist()
+    }
+
+    @Test
     fun aRunWaitsWhileAnAnswerTheAppNeverSentStillCantGetThrough() {
         play(listOf(checkStep("quiz"), summaryStep("end"))) { checkFailures = 2 }
 

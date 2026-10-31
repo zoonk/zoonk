@@ -26,16 +26,28 @@ export function AnswerOptionGroup({ className, ...props }: React.ComponentProps<
   );
 }
 
-/** A right pick says "Your answer", so it isn't called correct twice under its verdict. */
-function ResultTag({ picked, result }: { picked: boolean; result: AnswerOptionResult }) {
+/** A right pick says whose it is, so it isn't called correct twice under its verdict. */
+function ResultTag({
+  guessed,
+  picked,
+  result,
+}: {
+  guessed: boolean;
+  picked: boolean;
+  result: AnswerOptionResult;
+}) {
   const t = useExtracted();
 
+  const yourGuess = t({
+    description: "Tags the learner's pick when it counts as neither right nor wrong.",
+    message: "Your guess",
+  });
+
+  const yourPick = guessed ? yourGuess : t("Your answer");
+
   const labels: Record<AnswerOptionResult, string> = {
-    guess: t({
-      description: "Tags the learner's pick when it counts as neither right nor wrong.",
-      message: "Your guess",
-    }),
-    right: picked ? t("Your answer") : t("Correct"),
+    guess: yourGuess,
+    right: picked ? yourPick : t("Correct"),
     wrong: t("Your answer"),
   };
 
@@ -49,6 +61,7 @@ function ResultTag({ picked, result }: { picked: boolean; result: AnswerOptionRe
 export function AnswerOption({
   children,
   className,
+  guessed = false,
   layout = "row",
   marker,
   picked,
@@ -56,6 +69,7 @@ export function AnswerOption({
   tag,
   ...props
 }: React.ComponentProps<"button"> & {
+  guessed?: boolean;
   layout?: "row" | "stacked";
   marker: React.ReactNode;
   picked: boolean;
@@ -64,7 +78,11 @@ export function AnswerOption({
   tag?: React.ReactNode;
 }) {
   const shownTag =
-    tag === undefined && result ? <ResultTag picked={picked} result={result} /> : tag;
+    tag === undefined && result ? (
+      <ResultTag guessed={guessed} picked={picked} result={result} />
+    ) : (
+      tag
+    );
 
   return (
     <button

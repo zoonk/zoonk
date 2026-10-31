@@ -136,6 +136,7 @@ export function PlayerChoiceSceneOptions({
           <AnswerOption
             aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
             disabled={isDisabled}
+            guessed={isGuess}
             key={option.key}
             layout={layout === "grid" ? "stacked" : "row"}
             marker={index + 1}

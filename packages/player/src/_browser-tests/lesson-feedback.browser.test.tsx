@@ -148,6 +148,16 @@ describe("lesson feedback", () => {
     expect(document.querySelector<HTMLElement>("[data-segment]")?.dataset.segment).toBe("read");
   });
 
+  it("tags a right guess as the learner's guess too", async () => {
+    const lesson = buildLesson([teachingStep("hook"), teachingStep("explanation")]);
+    renderLessonPlayer({ lesson });
+
+    await answer("No", "Good guess!", /^See the answer/u);
+
+    await expect.element(page.getByRole("radio", { name: "No" })).toMatchTextContent(/Your guess/u);
+    await expect.element(page.getByText("Your answer")).not.toBeInTheDocument();
+  });
+
   it("has Previous on every screen after the first, back to an answered question's result", async () => {
     const lesson = buildLesson([
       teachingStep("hook"),

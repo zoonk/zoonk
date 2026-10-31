@@ -610,6 +610,7 @@ fun ChoiceOptions(
                         modifier = Modifier.weight(1f),
                         enabled = !locked && !isChecked,
                         keyAtTop = keysAtTop,
+                        guessed = isGuess,
                         onClick = { onSelect(if (item.picked) null else item.option.id) },
                     ) { optionContent(item.option) }
                 }

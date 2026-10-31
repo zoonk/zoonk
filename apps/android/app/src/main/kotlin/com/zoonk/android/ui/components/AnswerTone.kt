@@ -45,16 +45,17 @@ fun answerTone(
     return AnswerTone(border = border, container = container, contentColor = colors.onSurface)
 }
 
-/** A right pick says "Your answer", so it isn't called correct twice under its verdict. */
+/** A right pick says "Your answer", or "Your guess" when [guessed], so it isn't called correct twice under its verdict. */
 @Composable
 fun AnswerTag(
     picked: Boolean,
     result: AnswerResult,
     modifier: Modifier = Modifier,
+    guessed: Boolean = false,
 ) {
     val text =
         when {
-            result == AnswerResult.Guess -> stringResource(R.string.answer_tag_your_guess)
+            result == AnswerResult.Guess || (picked && guessed) -> stringResource(R.string.answer_tag_your_guess)
             picked -> stringResource(R.string.answer_tag_your_answer)
             else -> stringResource(R.string.answer_tag_correct)
         }

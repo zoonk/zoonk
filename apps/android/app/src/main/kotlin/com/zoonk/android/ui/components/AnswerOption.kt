@@ -61,6 +61,7 @@ fun AnswerOption(
     tag: (@Composable () -> Unit)? = null,
     glyph: Painter? = null,
     keyAtTop: Boolean = false,
+    guessed: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val tone = answerTone(picked, result)
@@ -86,7 +87,7 @@ fun AnswerOption(
         TagBesideOrUnder(
             modifier = Modifier.weight(1f).then(if (keyAtTop) Modifier else Modifier.alignByBaseline()),
             content = content,
-            tag = tag ?: { if (result != null) AnswerTag(picked, result) },
+            tag = tag ?: { if (result != null) AnswerTag(picked, result, guessed = guessed) },
         )
     }
 }
