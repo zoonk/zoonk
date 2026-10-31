@@ -78,6 +78,34 @@ function formatted(area: string, key: string): MockCandidate[] {
 }
 
 describe(planMock, () => {
+  it("keeps choice everywhere alongside numeric questions in Section B", () => {
+    const exam = {
+      ...structure({ sections: [sectioned("Section A", 6), sectioned("Section B", 6)] }),
+      formats: [
+        format({ sections: ["Section A", "Section B"] }),
+        format({ kind: "numeric", options: null, sections: ["Section B"] }),
+      ],
+      subjects: [],
+    };
+
+    const bank = [
+      ...formatted("Section A", "choice:5"),
+      ...formatted("Section B", "choice:5"),
+      ...formatted("Section B", "numeric:number:"),
+    ];
+
+    const plan = planMock({
+      adaptive: false,
+      candidates: bank,
+      fullLength: true,
+      mockNumber: 0,
+      structure: exam,
+    });
+
+    expect(plan.sections.map((section) => section.itemIds.length)).toStrictEqual([6, 6]);
+    expect(plan.formatsWanted).toStrictEqual({ "choice:5": 9, "numeric:number:": 3 });
+  });
+
   it("sits half of one exam day at the real pace, with only that day's areas", () => {
     const plan = planMock({
       adaptive: false,

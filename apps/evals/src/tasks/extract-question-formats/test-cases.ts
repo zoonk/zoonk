@@ -7,6 +7,26 @@ type FormatsCase = TestCase<FormatsExpected, FormatsEvalInput>;
 export const TEST_CASES: FormatsCase[] = [
   {
     expected: {
+      absent: [{ kind: "numeric", section: "Section A" }],
+      present: [
+        { kind: "multipleChoice", options: 4, section: "Section A", select: null },
+        { kind: "multipleChoice", options: 4, section: "Section B", select: null },
+        { kind: "numeric", section: "Section B" },
+      ],
+    },
+    id: "en-jee-choice-everywhere-numeric-section-b",
+    userInput: {
+      documents: [
+        {
+          text: "The JEE-style practice test has Section A and Section B. In both Section A and Section B, multiple-choice questions offer four options; select one answer. Section B also contains numerical-value questions: type an integer answer.",
+          title: "Practice test directions",
+        },
+      ],
+      exam: "JEE-style practice test",
+    },
+  },
+  {
+    expected: {
       absent: [
         { kind: "multipleChoice", passage: /column/iu, select: "all" },
         { description: /grid|circle/iu, kind: "numeric" },

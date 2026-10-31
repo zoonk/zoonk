@@ -50,6 +50,37 @@
           "exam": "GRE General Test"
         }
       }
+    },
+    {
+      "steps": [
+        { "conclusion": "Facts 4/4. passages found 2/2", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Facts 4/4. passages found 2/2", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Facts 4/4. passages found 2/2",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [{ "kind": "numeric", "section": "Section A" }],
+          "present": [
+            { "kind": "multipleChoice", "options": 4, "section": "Section A", "select": null },
+            { "kind": "multipleChoice", "options": 4, "section": "Section B", "select": null },
+            { "kind": "numeric", "section": "Section B" }
+          ]
+        },
+        "id": "en-jee-choice-everywhere-numeric-section-b-1",
+        "userInput": {
+          "documents": [
+            {
+              "text": "The JEE-style practice test has Section A and Section B. In both Section A and Section B, multiple-choice questions offer four options; select one answer. Section B also contains numerical-value questions: type an integer answer.",
+              "title": "Practice test directions"
+            }
+          ],
+          "exam": "JEE-style practice test"
+        }
+      }
     }
   ],
   "taskId": "extract-question-formats"
