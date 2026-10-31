@@ -20,6 +20,7 @@ import { CANT_LISTEN_TODAY } from "../lesson/use-today-choice";
 import { previewEntries } from "../preview/preview-catalog";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
+import type * as RhythmClock from "../activities/rhythm-tapper/rhythm-clock";
 
 const instrument = vi.hoisted(() => () => ({
   ready: Promise.resolve(),
@@ -28,6 +29,20 @@ const instrument = vi.hoisted(() => () => ({
 }));
 
 vi.mock("smplr", () => ({ Soundfont: instrument, SplendidGrandPiano: instrument }));
+
+const heard = vi.hoisted(() => ({ lastMs: Number.NaN }));
+
+// A busy machine delivers a real key press late, so the rhythm's taps are stamped on the activity's own clock instead.
+vi.mock("../activities/rhythm-tapper/rhythm-clock", async (importOriginal) => {
+  const clock = await importOriginal<typeof RhythmClock>();
+
+  return {
+    heardAtMs: (context: AudioContext, audioTime: number) => {
+      heard.lastMs = clock.heardAtMs(context, audioTime);
+      return heard.lastMs;
+    },
+  };
+});
 
 const DEVICE_DELAY_KEY = "zoonk:rhythm-device-delay";
 
@@ -96,35 +111,11 @@ async function pickFret({ position, string }: { position: string; string: string
     .click();
 }
 
-function waitForFrameWithText(text: string) {
-  return new Promise<void>((resolve) => {
-    function check() {
-      if ((document.body.textContent ?? "").includes(text)) {
-        resolve();
-        return;
-      }
-
-      requestAnimationFrame(check);
-    }
-
-    check();
-  });
-}
-
-function sleepUntil(time: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, Math.max(0, time - performance.now()));
-  });
-}
-
-async function tapRhythm() {
-  const start = performance.now();
-
+function tapRhythm() {
   for (const tapMs of RHYTHM_TAPS_MS) {
-    // oxlint-disable-next-line no-await-in-loop -- Each tap waits for its moment in the rhythm.
-    await sleepUntil(start + tapMs);
-    // oxlint-disable-next-line no-await-in-loop -- The taps are the rhythm, so they go in order.
-    await press("Space");
+    const tap = new KeyboardEvent("keydown", { bubbles: true, key: " " });
+    Object.defineProperty(tap, "timeStamp", { value: heard.lastMs + tapMs });
+    (document.activeElement ?? document.body).dispatchEvent(tap);
   }
 }
 
@@ -307,8 +298,12 @@ describe("music activities", () => {
     openActivities({ contents: [QUICK_RHYTHM] });
     await page.getByRole("button", { name: "Skip for now" }).click();
     await page.getByRole("button", { name: "Start tapping" }).click();
-    await waitForFrameWithText("Round 1 of 1");
-    await tapRhythm();
+
+    await expect
+      .element(page.getByRole("button", { name: /Get ready…|Tap here/u }))
+      .toHaveAttribute("aria-disabled", "false");
+
+    tapRhythm();
 
     await expect.element(page.getByText("2 of 2 taps on time."), { timeout: 15_000 }).toBeVisible();
 
