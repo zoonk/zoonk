@@ -14,7 +14,7 @@ import kotlin.math.roundToInt
  * Characters act with their parts, never the whole drawing at once (main's `_character`). A part
  * turns, stretches and moves around its own pivot, in the character's drawing units.
  */
-internal enum class CharacterPart {
+enum class CharacterPart {
     Antenna,
     AntennaLeft,
     AntennaRight,
@@ -44,7 +44,7 @@ internal enum class CharacterPart {
 }
 
 @Immutable
-internal data class PartPose(
+data class PartPose(
     val opacity: Float = 1f,
     val rotate: Float = 0f,
     val scale: ScaleFactor = ScaleFactor(1f, 1f),

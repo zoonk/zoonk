@@ -139,13 +139,13 @@ private const val CODE_SIZE = 0.85f
 private fun currentLocale(): Locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0] ?: Locale.ROOT
 
 @Composable
-internal fun rememberMathWords(): MathWords {
+fun rememberMathWords(): MathWords {
     val resources = LocalResources.current
     return remember(resources) { MathWords.from(resources) }
 }
 
 @Immutable
-internal data class SpokenText(
+data class SpokenText(
     val text: AnnotatedString,
     val spoken: String? = null,
 )
@@ -189,7 +189,7 @@ private fun typesetBlock(
 private const val MARK_ALPHA = 0.15f
 
 @Composable
-internal fun richText(segments: List<RichSegment>): SpokenText {
+fun richText(segments: List<RichSegment>): SpokenText {
     val words = rememberMathWords()
     val codeBackground = MaterialTheme.colorScheme.surfaceContainerHigh
     val mark = MaterialTheme.zoonk.warning.copy(alpha = MARK_ALPHA)
@@ -311,7 +311,7 @@ private fun splitAtDisplayMath(segments: List<RichSegment>): List<List<RichSegme
 }
 
 @Composable
-internal fun RichTextLine(
+fun RichTextLine(
     text: SpokenText,
     modifier: Modifier,
     style: TextStyle,

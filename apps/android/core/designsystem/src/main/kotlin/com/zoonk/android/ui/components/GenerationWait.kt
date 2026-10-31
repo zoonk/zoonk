@@ -397,7 +397,7 @@ private fun elapsed(
 }
 
 /** Main's `formatClock`: "0:08", "1:02:03". */
-internal fun formatClock(millis: Long): String {
+fun formatClock(millis: Long): String {
     val total = (millis + 999) / 1000
     val hours = total / 3600
     val minutes = total / 60 % 60

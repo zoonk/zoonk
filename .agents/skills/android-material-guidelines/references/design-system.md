@@ -1,6 +1,6 @@
 # Zoonk's design system on Android
 
-Main's design system (`apps/playground/src/design-system/`, values in `packages/ui/src/styles/globals.css`) says what each thing means. On Android each meaning takes the closest Material role, type style or component, so the platform handles font scale, dark theme, contrast and new windows. The theme lives in `apps/android/app/src/main/kotlin/com/zoonk/android/ui/theme/`, the shared pieces in `ui/components/` and `ui/format/`. Composables read roles, never values.
+Main's design system (`apps/playground/src/design-system/`, values in `packages/ui/src/styles/globals.css`) says what each thing means. On Android each meaning takes the closest Material role, type style or component, so the platform handles font scale, dark theme, contrast and new windows. The theme lives in `apps/android/core/designsystem/src/main/kotlin/com/zoonk/android/ui/theme/`, the shared pieces in `ui/components/` and `ui/format/` beside it. Composables read roles, never values.
 
 ## Ground rules
 

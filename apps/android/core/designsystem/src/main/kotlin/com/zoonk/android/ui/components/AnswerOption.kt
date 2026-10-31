@@ -125,7 +125,7 @@ private fun NumberKey(
 }
 
 @Composable
-internal fun TagBesideOrUnder(
+fun TagBesideOrUnder(
     modifier: Modifier,
     content: @Composable () -> Unit,
     tag: @Composable () -> Unit,

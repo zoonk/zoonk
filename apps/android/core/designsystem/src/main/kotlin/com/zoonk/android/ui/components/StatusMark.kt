@@ -105,7 +105,7 @@ fun DoneMark(modifier: Modifier = Modifier) {
 
 /** One line of body text, so marks grow with the font and rows' words start in one place. */
 @Composable
-internal fun markSize(): Dp =
+fun markSize(): Dp =
     with(LocalDensity.current) {
         MaterialTheme.typography.bodyLarge.lineHeight
             .toDp()
@@ -123,7 +123,7 @@ internal const val ICON_SHARE = 0.75f
 private const val SKIPPED_SHARE = 0.55f
 private const val RING_SHARE = 0.8f
 
-internal const val DOT_SHARE = 1 / 3f
+const val DOT_SHARE = 1 / 3f
 private const val HALO_SCALE = 1.75f
 private const val HALO_ALPHA = 0.25f
 

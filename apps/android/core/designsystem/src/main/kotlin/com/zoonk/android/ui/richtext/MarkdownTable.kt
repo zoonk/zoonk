@@ -2,7 +2,7 @@ package com.zoonk.android.ui.richtext
 
 enum class TableAlign { Start, Center, End }
 
-internal data class MarkdownTable(
+data class MarkdownTable(
     val align: List<TableAlign?>,
     val header: List<String>,
     val rows: List<List<String>>,
@@ -70,12 +70,12 @@ private fun toCells(
     return List(count) { cells.getOrElse(it) { "" } }
 }
 
-internal data class TableRead(
+data class TableRead(
     val table: MarkdownTable,
     val end: Int,
 )
 
-internal fun readMarkdownTable(
+fun readMarkdownTable(
     lines: List<String>,
     index: Int,
 ): TableRead? {

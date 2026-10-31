@@ -12,7 +12,7 @@ import androidx.compose.ui.layout.ScaleFactor
 enum class TricksterExpression { Sly, Smug, Defeated }
 
 /** Main's `@zoonk/ui` Trickster, path for path; artwork colors, the same in light and dark. */
-internal class TricksterDrawing(
+class TricksterDrawing(
     private val holdsSign: Boolean,
 ) : CharacterDrawing<TricksterExpression> {
     override val viewBox = Rect(0f, 0f, 160f, 160f)

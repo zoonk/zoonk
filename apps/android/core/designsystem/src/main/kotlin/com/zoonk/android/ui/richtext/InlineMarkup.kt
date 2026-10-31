@@ -4,9 +4,9 @@ package com.zoonk.android.ui.richtext
  * Words AI writers quote in angle quotes («caption» or <<caption>>) read as italics, without the
  * marks. Anything else stays text, so a stray marker never changes a screen's layout.
  */
-internal enum class MarkupKind { Bold, Code, Italic, Text }
+enum class MarkupKind { Bold, Code, Italic, Text }
 
-internal data class InlineMarkup(
+data class InlineMarkup(
     val kind: MarkupKind,
     val text: String,
 )
@@ -145,7 +145,7 @@ private fun parseEmphasis(text: String): List<InlineMarkup> {
 }
 
 /** Inline code first, so its punctuation stays literal. */
-internal fun parseInlineMarkup(text: String): List<InlineMarkup> {
+fun parseInlineMarkup(text: String): List<InlineMarkup> {
     val code = findCode(text)
     return if (code != null) around(text, MarkupKind.Code, code, ::parseInlineMarkup) else parseEmphasis(text)
 }

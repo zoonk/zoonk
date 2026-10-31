@@ -75,7 +75,7 @@ private fun arrowStep(
  * TalkBack reads it as a table, each cell with its row and column.
  */
 @Composable
-internal fun RichTable(
+fun RichTable(
     align: List<TableAlign?>,
     header: List<SpokenText>,
     rows: List<List<SpokenText>>,

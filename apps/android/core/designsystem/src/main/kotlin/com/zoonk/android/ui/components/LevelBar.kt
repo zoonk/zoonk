@@ -45,7 +45,7 @@ fun LevelBar(
 }
 
 /** A plain level fills half of its band and a plus all of it, so B1 is half of the B1 band and C2 the whole bar. */
-internal fun levelShare(score: Double): Double = if (score >= MAX_SCORE) 1.0 else ((score + HALF_BAND) / BAND_COUNT).coerceAtLeast(0.0)
+fun levelShare(score: Double): Double = if (score >= MAX_SCORE) 1.0 else ((score + HALF_BAND) / BAND_COUNT).coerceAtLeast(0.0)
 
 internal fun bandFill(
     band: Int,

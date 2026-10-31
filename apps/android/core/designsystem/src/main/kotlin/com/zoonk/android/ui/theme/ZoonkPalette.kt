@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
  * Composables read Material roles and `ZoonkColors`, never this.
  */
 @Immutable
-internal data class ZoonkPalette(
+data class ZoonkPalette(
     val background: Color,
     val foreground: Color,
     val card: Color,
@@ -64,7 +64,7 @@ data class SubjectColors(
     val tint: Color,
 )
 
-internal val LightPalette =
+val LightPalette =
     ZoonkPalette(
         background = Color(0xFFFFFFFF),
         foreground = Color(0xFF121214),
@@ -129,7 +129,7 @@ internal val LightPalette =
             ),
     )
 
-internal val DarkPalette =
+val DarkPalette =
     ZoonkPalette(
         background = Color(0xFF0A0A0B),
         foreground = Color(0xFFEBEBED),
@@ -194,7 +194,7 @@ internal val DarkPalette =
             ),
     )
 
-internal val LightMoreContrastPalette =
+val LightMoreContrastPalette =
     ZoonkPalette(
         background = Color(0xFFFFFFFF),
         foreground = Color(0xFF000000),
@@ -259,7 +259,7 @@ internal val LightMoreContrastPalette =
             ),
     )
 
-internal val DarkMoreContrastPalette =
+val DarkMoreContrastPalette =
     ZoonkPalette(
         background = Color(0xFF000000),
         foreground = Color(0xFFFFFFFF),

@@ -67,7 +67,7 @@ private fun niceStep(
 }
 
 /** JavaScript's `Number(value.toPrecision(12))`, which drops floating-point dust like 0.30000000000000004. */
-internal fun cleanFloat(value: Double): Double = BigDecimal(value).round(MathContext(PRECISION)).toDouble()
+fun cleanFloat(value: Double): Double = BigDecimal(value).round(MathContext(PRECISION)).toDouble()
 
 private val NICE_STEPS = listOf(1.0, 2.0, 2.5, 5.0, 10.0)
 private const val DEFAULT_TICK_COUNT = 4

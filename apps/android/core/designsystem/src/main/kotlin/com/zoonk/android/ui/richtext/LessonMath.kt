@@ -17,7 +17,7 @@ import com.zoonk.android.R
  * KaTeX draws MathML, which screen readers read as "x squared" or "a over b".
  */
 @Immutable
-internal data class MathWords(
+data class MathWords(
     val squared: String,
     val cubed: String,
     val power: (exponent: String) -> String,
@@ -38,7 +38,7 @@ internal data class MathWords(
     }
 }
 
-internal data class TypesetMath(
+data class TypesetMath(
     val text: AnnotatedString,
     val spoken: String,
 )
@@ -54,7 +54,7 @@ private val SPACES = Regex("\\s+")
  * Main draws LaTeX with KaTeX; this sets it as text, as Apple's `LessonMath` does, so it wraps and
  * scales with the font size, and TalkBack reads `spoken`.
  */
-internal fun typesetMath(
+fun typesetMath(
     latex: String,
     words: MathWords,
 ): TypesetMath {

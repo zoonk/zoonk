@@ -53,13 +53,13 @@ adb shell am broadcast -a com.zoonk.debug.SIGN_IN -n com.zoonk.debug/com.zoonk.a
 
 ## Structure
 
-The [app source](app/src/main/kotlin/com/zoonk/android) is organized into `app/` composition (application, shell), `feature/<feature>/`, and shared `ui/` packages. [`core/data/`](core/data) holds the container, `data/` (cache, session, drafts, API runtime), every store and the models they return; [`core/navigation/`](core/navigation) the routes and the navigator; [`core/resources/`](core/resources) every string, translation, drawable, font and asset. [`api/`](api) generates the Kotlin client from `api/openapi.json` on build. `lint-checks/` is build-time tooling, not part of the APK.
+The [app source](app/src/main/kotlin/com/zoonk/android) is organized into `app/` composition (application, shell) and `feature/<feature>/`. [`core/designsystem/`](core/designsystem) holds the theme and the shared `ui/` pieces; [`core/data/`](core/data) holds the container, `data/` (cache, session, drafts, API runtime), every store and the models they return; [`core/navigation/`](core/navigation) the routes and the navigator; [`core/resources/`](core/resources) every string, translation, drawable, font and asset. [`api/`](api) generates the Kotlin client from `api/openapi.json` on build. `lint-checks/` is build-time tooling, not part of the APK.
 
 Read [AGENTS.md](AGENTS.md) for architecture, platform, and contribution constraints.
 
 ## Design system
 
-The theme (`ui/theme`), shared pieces (`ui/components`), formatters (`ui/format`), icons and the debug gallery follow the [design-system reference](../../.agents/skills/android-material-guidelines/references/design-system.md): what each Zoonk meaning maps to, how to regenerate the palette from `globals.css` (`pnpm --filter android palette`), add a Material Symbol (`pnpm --filter android symbol <name>`) and capture the gallery's review screenshots.
+The theme (`ui/theme`), shared pieces (`ui/components`), formatters (`ui/format`), all in `:core:designsystem`, icons and the debug gallery follow the [design-system reference](../../.agents/skills/android-material-guidelines/references/design-system.md): what each Zoonk meaning maps to, how to regenerate the palette from `globals.css` (`pnpm --filter android palette`), add a Material Symbol (`pnpm --filter android symbol <name>`) and capture the gallery's review screenshots.
 
 ## Localization
 

@@ -161,7 +161,7 @@ internal fun <Expression : Enum<Expression>, Act> actorStateSaver(
  * (rotation, the way back), it's drawn still in the act's landing.
  */
 @Composable
-internal fun <Expression, Act> CharacterActor(
+fun <Expression, Act> CharacterActor(
     drawing: CharacterDrawing<Expression>,
     expression: Expression,
     reaction: ActReaction<Act>?,

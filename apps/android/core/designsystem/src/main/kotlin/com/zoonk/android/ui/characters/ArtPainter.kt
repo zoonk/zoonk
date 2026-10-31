@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.vector.PathParser
 import kotlin.math.min
 
 /** A character drawn in its own units (main's SVG `viewBox`), each expression's parts posed. */
-internal interface CharacterDrawing<Expression> {
+interface CharacterDrawing<Expression> {
     val viewBox: Rect
 
     /** Crops to the box; otherwise loose parts (a raised arm, a glow) draw past it, as main's SVG does. */
@@ -63,7 +63,7 @@ internal fun <Expression> DrawScope.drawCharacter(
     }
 }
 
-internal class ArtPainter(
+class ArtPainter(
     private val scope: DrawScope,
     private val posing: (CharacterPart) -> PartPose,
     private val alpha: Float = 1f,
