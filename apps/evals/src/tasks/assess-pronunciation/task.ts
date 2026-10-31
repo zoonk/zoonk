@@ -34,12 +34,7 @@ async function transcribeAndMatch({
   input: PronunciationClipInput;
   model: TranscriptionModelId;
 }) {
-  const { data } = await transcribeSpeech({
-    audio,
-    language: input.language,
-    model,
-    useFallback: false,
-  });
+  const { data } = await transcribeSpeech({ audio, language: input.language, model });
 
   const match = matchSpokenAnswer({
     expected: input.targetText,

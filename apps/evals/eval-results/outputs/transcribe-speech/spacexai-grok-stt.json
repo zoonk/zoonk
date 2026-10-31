@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-11T17:41:32.332Z",
+  "generatedAt": "2026-10-31T01:21:20.539Z",
   "modelId": "spacexai/grok-stt",
   "outputs": [
     {
@@ -118,6 +118,42 @@
       "systemPrompt": "",
       "testCaseId": "es-missing-el-1",
       "userPrompt": "Clip of \"Quiero ver piso mañana\" (expected \"Quiero ver el piso mañana\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 673.7533749999993,
+      "output": "{\n  \"text\": \"Cowell and Storshund Traunach.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "ga-station-correct-1",
+      "userPrompt": "Clip of \"Cá bhfuil an stáisiún traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 681.0688329999994,
+      "output": "{\n  \"text\": \"Kahwilun shopper trainer.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "ga-station-shop-1",
+      "userPrompt": "Clip of \"Cá bhfuil an siopa traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 640.1102090000004,
+      "output": "{\n  \"text\": \"Aiza Nigara as Afadi.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "mg-station-correct-1",
+      "userPrompt": "Clip of \"Aiza ny gara, azafady?\" (expected \"Aiza ny gara, azafady?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 563.1923749999996,
+      "output": "{\n  \"text\": \"I Zani Zena, as a fadi.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "mg-station-market-1",
+      "userPrompt": "Clip of \"Aiza ny tsena, azafady?\" (expected \"Aiza ny gara, azafady?\")"
     }
   ],
   "taskId": "transcribe-speech"

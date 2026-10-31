@@ -1,4 +1,5 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
+import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import { explainSpokenAnswer } from "@zoonk/ai/tasks/language/explain-spoken-answer";
 import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
 import { prisma } from "@zoonk/db";
@@ -165,6 +166,49 @@ describe(gradeSpokenAnswer, () => {
       targetLanguage: "en",
       userId: guest.id,
     });
+  });
+
+  it("checks word by word when the transcriber refuses the language", async () => {
+    const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
+    mockSession(user.id);
+
+    vi.mocked(transcribeSpeech).mockRejectedValueOnce(
+      new Error("Language code 'ga' is not recognized."),
+    );
+
+    vi.mocked(assessPronunciation).mockResolvedValueOnce({
+      data: {
+        transcript: TARGET_TEXT,
+        words: TARGET_TEXT.split(" ").map((text) => ({
+          heard: null,
+          issue: null,
+          status: "correct" as const,
+          text,
+        })),
+      },
+    } as Awaited<ReturnType<typeof assessPronunciation>>);
+
+    const result = await gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id });
+
+    expect(result).toMatchObject({ grade: { isCorrect: true }, status: "graded" });
+
+    expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ expectedText: TARGET_TEXT, mediaType: AUDIO.mediaType }),
+    );
+  });
+
+  it("fails instead of grading when neither check can hear the answer", async () => {
+    const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
+    mockSession(user.id);
+
+    vi.mocked(transcribeSpeech).mockRejectedValueOnce(new Error("OpenAI is down"));
+    vi.mocked(assessPronunciation).mockRejectedValueOnce(new Error("Gemini is down"));
+
+    await expect(
+      gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id }),
+    ).rejects.toThrow("Gemini is down");
+
+    await expect(prisma.attempt.count({ where: { stepId: step.id } })).resolves.toBe(0);
   });
 
   it("gives each word to practice its native audio, respelling and tip", async () => {

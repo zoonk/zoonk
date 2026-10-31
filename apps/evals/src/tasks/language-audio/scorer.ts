@@ -57,12 +57,7 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
   const audio = await readEvalAudio(audioPath);
 
   const [transcript, pronunciation, lookAlike] = await Promise.all([
-    transcribeSpeech({
-      audio,
-      language: input.language,
-      model: "openai/gpt-transcribe",
-      useFallback: false,
-    }),
+    transcribeSpeech({ audio, language: input.language, model: "openai/gpt-transcribe" }),
     assessPronunciation({
       audio,
       expectedText: input.text,

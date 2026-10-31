@@ -24,10 +24,8 @@ export type TranscriptionModelId = (typeof TRANSCRIPTION_MODELS)[number];
 /**
  * gpt-transcribe hears slips the way a listener would and matched 12 of 13 labeled clips at 1.0s
  * p50 (28 Sep 2026). It never gets the expected words: as `keywords` they hid three more mistakes.
- * Gemini 3.5 Transcribe, the fallback on another provider, matched 34 of 37 (11 Oct 2026).
  */
 const defaultModel: TranscriptionModelId = "openai/gpt-transcribe";
-const fallbackModels = ["google/gemini-3.5-transcribe"] as const;
 
 const DIRECT_MODEL = "openai/gpt-transcribe";
 
@@ -42,7 +40,6 @@ export type TranscribeSpeechParams = {
   audio: Uint8Array;
   language: string;
   model?: TranscriptionModelId;
-  useFallback?: boolean;
   analytics?: AiGenerationContext;
 };
 
@@ -93,12 +90,10 @@ function buildTranscriptionProvenance({
   audioSeconds,
   latencyMs,
   model,
-  requestedModel,
 }: {
   audioSeconds?: number;
   latencyMs: number;
   model: TranscriptionModelId;
-  requestedModel: TranscriptionModelId;
 }): TaskProvenance {
   const usage = { audioSeconds };
 
@@ -112,59 +107,30 @@ function buildTranscriptionProvenance({
       version: TRANSCRIPTION_VERSION,
     }),
     provider: model.split("/")[0] ?? model,
-    requestedModel,
+    requestedModel: model,
     runId: randomUUID(),
     usage,
   };
 }
 
-async function transcribeInOrder({
-  audio,
-  language,
-  models,
-}: {
-  audio: Uint8Array;
-  language: string;
-  models: readonly TranscriptionModelId[];
-}): Promise<{ audioSeconds?: number; model: TranscriptionModelId; text: string }> {
-  const [model, ...remaining] = models;
-
-  if (!model) {
-    throw new Error("No transcription model configured");
-  }
-
-  try {
-    return { model, ...(await transcribeWithModel({ audio, language, model })) };
-  } catch (error) {
-    if (remaining.length === 0) {
-      throw error;
-    }
-
-    return transcribeInOrder({ audio, language, models: remaining });
-  }
-}
-
-/** The audio is only sent to the model; nothing here stores it. */
+/**
+ * The audio is only sent to the model; nothing here stores it. The default model, gpt-transcribe,
+ * rejects a language it doesn't support, such as Irish or Malagasy; other models may return wrong
+ * text instead.
+ */
 export async function transcribeSpeech({
   analytics,
   audio,
   language,
   model = defaultModel,
-  useFallback = true,
 }: TranscribeSpeechParams) {
   const startedAt = performance.now();
-
-  const models = useFallback
-    ? [model, ...fallbackModels.filter((item) => item !== model)]
-    : [model];
-
-  const result = await transcribeInOrder({ audio, language, models });
+  const result = await transcribeWithModel({ audio, language, model });
 
   const provenance = buildTranscriptionProvenance({
     audioSeconds: result.audioSeconds,
     latencyMs: Math.round(performance.now() - startedAt),
-    model: result.model,
-    requestedModel: model,
+    model,
   });
 
   await captureAiGeneration({ context: analytics, provenance, task: "transcribe-speech" });

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-11T18:04:17.689Z",
+  "generatedAt": "2026-10-31T01:21:19.242Z",
   "modelId": "google/gemini-3.5-transcribe",
   "outputs": [
     {
@@ -136,6 +136,42 @@
       "systemPrompt": "",
       "testCaseId": "zh-library-station-1",
       "userPrompt": "Clip of \"请问，地铁站在哪里？\" (expected \"请问，图书馆在哪里？\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 2276.5455829999996,
+      "output": "{\n  \"text\": \"Kauwela and store shown Traunach\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "ga-station-correct-1",
+      "userPrompt": "Clip of \"Cá bhfuil an stáisiún traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 2169.0217079999998,
+      "output": "{\n  \"text\": \"Kauwela and Shopper Trainer\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "ga-station-shop-1",
+      "userPrompt": "Clip of \"Cá bhfuil an siopa traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 2299.021667,
+      "output": "{\n  \"text\": \"Aizani gara asafadi.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "mg-station-correct-1",
+      "userPrompt": "Clip of \"Aiza ny gara, azafady?\" (expected \"Aiza ny gara, azafady?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 2346.302833,
+      "output": "{\n  \"text\": \"Aiza nițena, azafady?\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "mg-station-market-1",
+      "userPrompt": "Clip of \"Aiza ny tsena, azafady?\" (expected \"Aiza ny gara, azafady?\")"
     }
   ],
   "taskId": "transcribe-speech"

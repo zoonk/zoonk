@@ -64,18 +64,23 @@ async function assessWordByWord(input: HearInput): Promise<HeardSentence> {
   };
 }
 
+/**
+ * Each check backs up the other, on another provider. It also covers a language the transcriber
+ * refuses, such as Irish or Malagasy, which the word-by-word check hears.
+ */
 export async function hearSpokenSentence({
   check = "fast",
   ...input
 }: HearInput & { check?: SentenceCheck }): Promise<HeardSentence> {
-  if (check === "fast") {
-    return transcribeAndCompare(input);
-  }
+  const [first, backup] =
+    check === "fast"
+      ? [transcribeAndCompare, assessWordByWord]
+      : [assessWordByWord, transcribeAndCompare];
 
   try {
-    return await assessWordByWord(input);
+    return await first(input);
   } catch (error) {
-    logError("Pronunciation check failed; transcribing instead", error);
-    return transcribeAndCompare(input);
+    logError(`The ${check} speech check failed; trying the other one`, error);
+    return backup(input);
   }
 }

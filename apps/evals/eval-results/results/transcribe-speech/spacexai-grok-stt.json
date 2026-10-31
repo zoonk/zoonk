@@ -377,6 +377,122 @@
           "targetText": "Quiero ver el piso mañana"
         }
       }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Cá bhfuil an stáisiún traenach?\" and we heard \"Cowell and Storshund Traunach.\". Expected flagged words []; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"Cá bhfuil an stáisiún traenach?\" and we heard \"Cowell and Storshund Traunach.\". Expected flagged words []; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"Cá bhfuil an stáisiún traenach?\" and we heard \"Cowell and Storshund Traunach.\". Expected flagged words []; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [] },
+        "id": "ga-station-correct-1",
+        "userInput": {
+          "language": "ga",
+          "spokenText": "Cá bhfuil an stáisiún traenach?",
+          "targetText": "Cá bhfuil an stáisiún traenach?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Cá bhfuil an siopa traenach?\" and we heard \"Kahwilun shopper trainer.\". Expected flagged words [\"stáisiún\"]; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The clip says \"Cá bhfuil an siopa traenach?\" and we heard \"Kahwilun shopper trainer.\". Expected flagged words [\"stáisiún\"]; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The clip says \"Cá bhfuil an siopa traenach?\" and we heard \"Kahwilun shopper trainer.\". Expected flagged words [\"stáisiún\"]; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["stáisiún"] },
+        "id": "ga-station-shop-1",
+        "userInput": {
+          "language": "ga",
+          "spokenText": "Cá bhfuil an siopa traenach?",
+          "targetText": "Cá bhfuil an stáisiún traenach?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Aiza ny gara, azafady?\" and we heard \"Aiza Nigara as Afadi.\". Expected flagged words []; flagged [\"ny\",\"gara,\",\"azafady?\"].",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"Aiza ny gara, azafady?\" and we heard \"Aiza Nigara as Afadi.\". Expected flagged words []; flagged [\"ny\",\"gara,\",\"azafady?\"].",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "The clip says \"Aiza ny gara, azafady?\" and we heard \"Aiza Nigara as Afadi.\". Expected flagged words []; flagged [\"ny\",\"gara,\",\"azafady?\"].",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [] },
+        "id": "mg-station-correct-1",
+        "userInput": {
+          "language": "mg",
+          "spokenText": "Aiza ny gara, azafady?",
+          "targetText": "Aiza ny gara, azafady?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Aiza ny tsena, azafady?\" and we heard \"I Zani Zena, as a fadi.\". Expected flagged words [\"gara,\"]; flagged [\"Aiza\",\"ny\",\"gara,\",\"azafady?\"].",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The clip says \"Aiza ny tsena, azafady?\" and we heard \"I Zani Zena, as a fadi.\". Expected flagged words [\"gara,\"]; flagged [\"Aiza\",\"ny\",\"gara,\",\"azafady?\"].",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The clip says \"Aiza ny tsena, azafady?\" and we heard \"I Zani Zena, as a fadi.\". Expected flagged words [\"gara,\"]; flagged [\"Aiza\",\"ny\",\"gara,\",\"azafady?\"].",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["gara,"] },
+        "id": "mg-station-market-1",
+        "userInput": {
+          "language": "mg",
+          "spokenText": "Aiza ny tsena, azafady?",
+          "targetText": "Aiza ny gara, azafady?"
+        }
+      }
     }
   ],
   "taskId": "transcribe-speech"

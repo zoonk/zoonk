@@ -720,6 +720,126 @@
           "targetText": "teléfono"
         }
       }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Cá bhfuil an stáisiún traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\") and we heard \"Cá bhfuil an stáisiún traenach?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Cá bhfuil an stáisiún traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\") and we heard \"Cá bhfuil an stáisiún traenach?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Cá bhfuil an stáisiún traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\") and we heard \"Cá bhfuil an stáisiún traenach?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "ga-station-correct-1",
+        "userInput": {
+          "language": "ga",
+          "spokenText": "Cá bhfuil an stáisiún traenach?",
+          "targetText": "Cá bhfuil an stáisiún traenach?",
+          "learnerLanguage": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Cá bhfuil an siopa traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\") and we heard \"Cá bhfuil an siopa traenach?\". Expected flagged words [\"stáisiún\"]; flagged [\"stáisiún\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Cá bhfuil an siopa traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\") and we heard \"Cá bhfuil an siopa traenach?\". Expected flagged words [\"stáisiún\"]; flagged [\"stáisiún\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Cá bhfuil an siopa traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\") and we heard \"Cá bhfuil an siopa traenach?\". Expected flagged words [\"stáisiún\"]; flagged [\"stáisiún\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["stáisiún"], "stressWords": [] },
+        "id": "ga-station-shop-1",
+        "userInput": {
+          "language": "ga",
+          "spokenText": "Cá bhfuil an siopa traenach?",
+          "targetText": "Cá bhfuil an stáisiún traenach?",
+          "learnerLanguage": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Aiza ny gara, azafady?\" (expected \"Aiza ny gara, azafady?\") and we heard \"Aiza ny gara, azafady?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Aiza ny gara, azafady?\" (expected \"Aiza ny gara, azafady?\") and we heard \"Aiza ny gara, azafady?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Aiza ny gara, azafady?\" (expected \"Aiza ny gara, azafady?\") and we heard \"Aiza ny gara, azafady?\". Expected flagged words []; flagged []. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [], "stressWords": [] },
+        "id": "mg-station-correct-1",
+        "userInput": {
+          "language": "mg",
+          "spokenText": "Aiza ny gara, azafady?",
+          "targetText": "Aiza ny gara, azafady?",
+          "learnerLanguage": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Aiza ny tsena, azafady?\" (expected \"Aiza ny gara, azafady?\") and we heard \"Aiza ny tsena, azafady?\". Expected flagged words [\"gara,\"]; flagged [\"gara,\"]. Stress errors []; named as stress [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Aiza ny tsena, azafady?\" (expected \"Aiza ny gara, azafady?\") and we heard \"Aiza ny tsena, azafady?\". Expected flagged words [\"gara,\"]; flagged [\"gara,\"]. Stress errors []; named as stress [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"Aiza ny tsena, azafady?\" (expected \"Aiza ny gara, azafady?\") and we heard \"Aiza ny tsena, azafady?\". Expected flagged words [\"gara,\"]; flagged [\"gara,\"]. Stress errors []; named as stress [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["gara,"], "stressWords": [] },
+        "id": "mg-station-market-1",
+        "userInput": {
+          "language": "mg",
+          "spokenText": "Aiza ny tsena, azafady?",
+          "targetText": "Aiza ny gara, azafady?",
+          "learnerLanguage": "en"
+        }
+      }
     }
   ],
   "taskId": "assess-pronunciation"

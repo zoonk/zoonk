@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-11T17:41:28.206Z",
+  "generatedAt": "2026-10-31T01:21:19.852Z",
   "modelId": "microsoft/mai-transcribe-2",
   "outputs": [
     {
@@ -118,6 +118,42 @@
       "systemPrompt": "",
       "testCaseId": "es-missing-el-1",
       "userPrompt": "Clip of \"Quiero ver piso mañana\" (expected \"Quiero ver el piso mañana\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 485.3224170000003,
+      "output": "{\n  \"text\": \"Cowellen stóð sjón trávnak.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "ga-station-correct-1",
+      "userPrompt": "Clip of \"Cá bhfuil an stáisiún traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 463.6437500000002,
+      "output": "{\n  \"text\": \"Wat wil een shopper trainen?\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "ga-station-shop-1",
+      "userPrompt": "Clip of \"Cá bhfuil an siopa traenach?\" (expected \"Cá bhfuil an stáisiún traenach?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 603.0451669999993,
+      "output": "{\n  \"text\": \"Ais a negara a za fadi.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "mg-station-correct-1",
+      "userPrompt": "Clip of \"Aiza ny gara, azafady?\" (expected \"Aiza ny gara, azafady?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 603.1320839999998,
+      "output": "{\n  \"text\": \"Ai za ni cijena, a za fadi?\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "mg-station-market-1",
+      "userPrompt": "Clip of \"Aiza ny tsena, azafady?\" (expected \"Aiza ny gara, azafady?\")"
     }
   ],
   "taskId": "transcribe-speech"

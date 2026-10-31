@@ -54,50 +54,30 @@ describe(transcribeSpeech, () => {
     });
   });
 
-  it("falls back to Gemini through the gateway, away from providers that train on it, when OpenAI fails", async () => {
-    vi.mocked(transcribe)
-      .mockRejectedValueOnce(new Error("OpenAI is down"))
-      .mockResolvedValueOnce(heard("Tengo un pero"));
+  it("sends a requested gateway model away from providers that train on it", async () => {
+    vi.mocked(transcribe).mockResolvedValueOnce(heard("Tengo un pero"));
 
-    const result = await transcribeSpeech({ audio: AUDIO, language: "es" });
+    const result = await transcribeSpeech({
+      audio: AUDIO,
+      language: "es",
+      model: "google/gemini-3.5-transcribe",
+    });
 
-    expect(triedModels()).toStrictEqual([
-      "openai.transcription:gpt-transcribe",
-      "gateway:google/gemini-3.5-transcribe",
-    ]);
+    expect(triedModels()).toStrictEqual(["gateway:google/gemini-3.5-transcribe"]);
 
-    // Gemini detects the language itself and takes no OpenAI options.
-    expect(vi.mocked(transcribe).mock.calls[1]?.[0].providerOptions).toStrictEqual({
+    expect(vi.mocked(transcribe).mock.calls[0]?.[0].providerOptions).toStrictEqual({
       gateway: { disallowPromptTraining: true },
     });
 
-    expect(result.data).toStrictEqual({ text: "Tengo un pero" });
-
-    expect(result.provenance).toMatchObject({
-      model: "google/gemini-3.5-transcribe",
-      requestedModel: "openai/gpt-transcribe",
-    });
-  });
-
-  it("keeps a requested gateway model and falls back only to Gemini", async () => {
-    vi.mocked(transcribe)
-      .mockRejectedValueOnce(new Error("Gateway is down"))
-      .mockResolvedValueOnce(heard("I sink it's cheap"));
-
-    await transcribeSpeech({ audio: AUDIO, language: "en", model: "microsoft/mai-transcribe-2" });
-
-    expect(triedModels()).toStrictEqual([
-      "gateway:microsoft/mai-transcribe-2",
-      "gateway:google/gemini-3.5-transcribe",
-    ]);
+    expect(result.provenance).toMatchObject({ model: "google/gemini-3.5-transcribe" });
   });
 
   it("never lets a direct OpenAI call leave the process during tests", async () => {
     const actual = await vi.importActual<typeof Ai>("ai");
     vi.mocked(transcribe).mockImplementationOnce(actual.transcribe);
 
-    await expect(
-      transcribeSpeech({ audio: AUDIO, language: "en", useFallback: false }),
-    ).rejects.toThrow("Direct provider calls are disabled during tests.");
+    await expect(transcribeSpeech({ audio: AUDIO, language: "en" })).rejects.toThrow(
+      "Direct provider calls are disabled during tests.",
+    );
   });
 });

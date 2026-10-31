@@ -51,7 +51,6 @@ async function transcribeClip(input: SpeechClipRun) {
     audio,
     language: input.language,
     model: toTranscriptionModel(input.model),
-    useFallback: false,
   });
 
   return {

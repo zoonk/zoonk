@@ -136,4 +136,40 @@ export const TEST_CASES: TestCase<SpeechClipExpected, SpeechClipInput>[] = [
       targetText: "请问，图书馆在哪里？",
     },
   },
+  {
+    expected: { flaggedWords: [] },
+    id: "ga-station-correct",
+    userInput: {
+      language: "ga",
+      spokenText: "Cá bhfuil an stáisiún traenach?",
+      targetText: "Cá bhfuil an stáisiún traenach?",
+    },
+  },
+  {
+    expected: { flaggedWords: ["stáisiún"] },
+    id: "ga-station-shop",
+    userInput: {
+      language: "ga",
+      spokenText: "Cá bhfuil an siopa traenach?",
+      targetText: "Cá bhfuil an stáisiún traenach?",
+    },
+  },
+  {
+    expected: { flaggedWords: [] },
+    id: "mg-station-correct",
+    userInput: {
+      language: "mg",
+      spokenText: "Aiza ny gara, azafady?",
+      targetText: "Aiza ny gara, azafady?",
+    },
+  },
+  {
+    expected: { flaggedWords: ["gara,"] },
+    id: "mg-station-market",
+    userInput: {
+      language: "mg",
+      spokenText: "Aiza ny tsena, azafady?",
+      targetText: "Aiza ny gara, azafady?",
+    },
+  },
 ];
