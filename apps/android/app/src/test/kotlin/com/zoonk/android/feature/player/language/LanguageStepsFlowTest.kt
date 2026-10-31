@@ -102,8 +102,9 @@ class LanguageStepsFlowTest {
     private fun play(
         steps: List<LessonStep>,
         learner: String = "en",
+        target: String? = "es",
     ) {
-        val lesson = playable(steps).copy(language = learner, targetLanguage = "es")
+        val lesson = playable(steps).copy(language = learner, targetLanguage = target)
         api = FakeLessonPlayerApi(LessonLoad.Ready(lesson))
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val cache = AppCache(session, scope)
@@ -246,6 +247,13 @@ class LanguageStepsFlowTest {
         play(listOf(multipleChoice("ask", image = """{"prompt":"A cat asleep on a bed"}"""), summaryStep("end")))
 
         rule.onNodeWithText("A cat asleep on a bed").assertIsDisplayed()
+    }
+
+    @Test
+    fun aTranslationInALessonWithNoLanguageOfItsOwnAsksToTranslate() {
+        play(listOf(translation("pick"), summaryStep("end")), target = null)
+
+        rule.onNodeWithText("Translate").assertIsDisplayed()
     }
 
     @Test

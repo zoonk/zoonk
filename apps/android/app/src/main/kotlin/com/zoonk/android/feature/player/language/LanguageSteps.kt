@@ -61,13 +61,18 @@ import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.richtext.RichInlineText
 
-/** A lesson's language: what the learner reads in ([learner]) and what they're learning ([target]). */
+/**
+ * A lesson's language: what the learner reads in ([learner]) and what they're learning ([target]); a lesson that
+ * isn't about a language reads its words in the learner's language.
+ */
 data class LessonLanguages(
     val learner: String,
-    val target: String,
+    private val lessonTarget: String?,
 ) {
+    val target: String get() = lessonTarget ?: learner
+
     /** A lesson in the learner's own language defines words instead of translating them. */
-    val definesWords: Boolean get() = learner.substringBefore('-') == target.substringBefore('-')
+    val definesWords: Boolean get() = lessonTarget != null && learner.substringBefore('-') == lessonTarget.substringBefore('-')
 }
 
 /**
@@ -81,14 +86,13 @@ class LessonLanguage internal constructor(
     val speech: SpeechPlayer?,
 )
 
-/** A lesson that isn't about a language reads its words in the learner's language. */
 @Composable
 fun rememberLessonLanguage(
     learner: String,
     target: String?,
 ): LessonLanguage {
     val speech = LocalLessonSpeech.current
-    val languages = remember(learner, target) { LessonLanguages(learner, target ?: learner) }
+    val languages = remember(learner, target) { LessonLanguages(learner, target) }
     val prompt = speech?.let { rememberPromptAudio(it, languages.target) }
     return remember(languages, prompt, speech) { LessonLanguage(languages, prompt, speech) }
 }
