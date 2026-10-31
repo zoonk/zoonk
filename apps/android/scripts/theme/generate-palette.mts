@@ -71,7 +71,10 @@ const instances = MODES.map(({ mode, name }) => {
 
   const subjectMap = `        subjects =\n            mapOf(\n${subjectEntries(mode)}\n            ),`;
 
-  return `val ${name} =\n    ZoonkPalette(\n${values.join("\n")}\n${subjectMap}\n    )`;
+  // Feature modules' tests compare drawn colors with the light palette; the others stay in the design system.
+  const visibility = name === "LightPalette" ? "" : "internal ";
+
+  return `${visibility}val ${name} =\n    ZoonkPalette(\n${values.join("\n")}\n${subjectMap}\n    )`;
 });
 
 writeFileSync(

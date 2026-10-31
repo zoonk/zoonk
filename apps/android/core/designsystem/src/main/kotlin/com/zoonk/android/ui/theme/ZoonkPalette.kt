@@ -129,7 +129,7 @@ val LightPalette =
             ),
     )
 
-val DarkPalette =
+internal val DarkPalette =
     ZoonkPalette(
         background = Color(0xFF0A0A0B),
         foreground = Color(0xFFEBEBED),
@@ -194,7 +194,7 @@ val DarkPalette =
             ),
     )
 
-val LightMoreContrastPalette =
+internal val LightMoreContrastPalette =
     ZoonkPalette(
         background = Color(0xFFFFFFFF),
         foreground = Color(0xFF000000),
@@ -259,7 +259,7 @@ val LightMoreContrastPalette =
             ),
     )
 
-val DarkMoreContrastPalette =
+internal val DarkMoreContrastPalette =
     ZoonkPalette(
         background = Color(0xFF000000),
         foreground = Color(0xFFFFFFFF),
