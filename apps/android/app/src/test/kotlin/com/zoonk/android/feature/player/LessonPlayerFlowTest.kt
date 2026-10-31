@@ -13,6 +13,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -494,6 +495,15 @@ class LessonPlayerFlowTest {
 
         rule.onNodeWithText("Question quiz?").assertIsDisplayed()
         rule.onNodeWithText("Check").assertIsNotEnabled()
+    }
+
+    @Test
+    fun aWrittenAnswerKeepsItsFieldNamed() {
+        play(listOf(typedAnswerStep("why")))
+
+        rule.onNode(hasSetTextAction()).performTextInput("Because")
+
+        rule.onNode(hasSetTextAction() and hasText("Your answer")).assertExists()
     }
 
     @Test

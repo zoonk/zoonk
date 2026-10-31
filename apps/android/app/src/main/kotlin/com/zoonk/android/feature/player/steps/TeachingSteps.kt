@@ -507,7 +507,8 @@ private fun AnswerField(
                         submits
                     },
             readOnly = state.phase != LessonPhase.Playing,
-            placeholder = { Text(stringResource(if (isNumber) R.string.player_your_answer else R.string.player_write_your_answer)) },
+            label = { Text(stringResource(R.string.player_your_answer)) },
+            placeholder = { if (!isNumber) Text(stringResource(R.string.player_write_your_answer)) },
             minLines = if (isNumber) 1 else 3,
             singleLine = isNumber,
             keyboardOptions = if (isNumber) KeyboardOptions(keyboardType = KeyboardType.Decimal) else KeyboardOptions.Default,
