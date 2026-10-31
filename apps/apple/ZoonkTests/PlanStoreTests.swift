@@ -322,7 +322,8 @@ private actor PlanAPIStub: PlanAPIClient {
     async throws -> PlanChangeOutcome
   { .unchanged }
   func chooseTools(
-    token: String, goalId: String, tools: [String], choice: ToolChoice, system: String?
+    token: String, goalId: String, tools: [String], choice: ToolChoice, system: String?,
+    whileWriting: @escaping @MainActor () -> Void
   ) async throws -> PlanChangeOutcome { .unchanged }
   func timeToCover(token: String, goalId: String) async throws -> TimeToCover {
     throw APIError.unavailable

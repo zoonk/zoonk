@@ -5,8 +5,10 @@ struct CheckpointCallIntro: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(AppRouter.self) private var router
   @State private var isStarting = false
+  @State private var isWriting = false
   @State private var didFail = false
   @State private var needsPlus = false
+  @State private var starting: Task<Void, Never>?
 
   let call: Resource<LanguageCheckpointCall>
   let blockId: String
@@ -18,6 +20,7 @@ struct CheckpointCallIntro: View {
       .navigationTitle(
         Text("Unit challenge", tableName: "Voice", comment: "A checkpoint call's title")
       )
+      .onDisappear { starting?.cancel() }
       .onChange(of: call.value, initial: true) { _, value in
         if case .earlierFirst? = value {
           router.showRoot(of: .today)
@@ -35,7 +38,7 @@ struct CheckpointCallIntro: View {
         } else if preview.dailyLimitReached {
           StudyTimeUsedUp()
         } else {
-          startButton
+          startButton(writesFirst: false)
         }
       }
     case .loaded(.preparing(let preparing)):
@@ -48,8 +51,16 @@ struct CheckpointCallIntro: View {
       } actions: {
         if needsPlus {
           CallStartFooter(isLocked: true) {}
+        } else if isWriting {
+          WritingWait(
+            title: Text(
+              "Getting your call ready", tableName: "Voice",
+              comment: "A checkpoint's call is being written"),
+            hint: Text(
+              "It opens here as soon as it's ready.", tableName: "Voice",
+              comment: "A checkpoint's call opens by itself once it's written"))
         } else {
-          startButton
+          startButton(writesFirst: true)
         }
       }
     case .loaded(.plusRequired):
@@ -70,7 +81,7 @@ struct CheckpointCallIntro: View {
     }
   }
 
-  private var startButton: some View {
+  private func startButton(writesFirst: Bool) -> some View {
     VStack(spacing: 8) {
       if didFail {
         Text(
@@ -82,11 +93,15 @@ struct CheckpointCallIntro: View {
       }
 
       Button {
-        Task { await start() }
+        starting = Task { await start(writesFirst: writesFirst) }
       } label: {
         Label {
           if isStarting {
             Text("Starting…", tableName: "Voice", comment: "A call is starting")
+          } else if writesFirst {
+            Text(
+              "Get the call ready", tableName: "Voice",
+              comment: "Writes a checkpoint's call, then opens it")
           } else {
             Text("Start the call", tableName: "Voice", comment: "Starts a live call")
           }
@@ -107,14 +122,22 @@ struct CheckpointCallIntro: View {
   }
 
   /// Mirrors main's `startCheckpointCallAction`: what changed since the intro was read (the daily
-  /// time limit, earlier work, the block finished elsewhere, the block gone) shows as the intro is
-  /// read again; only a failure is worth another try.
-  private func start() async {
+  /// time limit, earlier work, the block finished elsewhere, the block gone, a call no longer
+  /// written) shows as the intro is read again; only a failure is worth another try.
+  private func start(writesFirst: Bool) async {
     isStarting = true
     didFail = false
-    defer { isStarting = false }
+    defer {
+      isStarting = false
+      isWriting = false
+    }
 
-    switch await voice.startConversation(.case2(.init(blockId: blockId, kind: .checkpoint))) {
+    guard let started = await started(writesFirst: writesFirst) else {
+      await call.refresh()
+      return
+    }
+
+    switch started {
     case .done(.done(let conversationId)):
       onStarted(conversationId)
     case .done(.refused(let refusal)) where refusal.isPlusRequired:
@@ -127,6 +150,23 @@ struct CheckpointCallIntro: View {
       didFail = true
     case .obsolete:
       break
+    }
+  }
+
+  /// Nil when the intro's call isn't written any more.
+  private func started(writesFirst: Bool) async -> MutationResult<Refusable<String>>? {
+    let input = Components.Schemas.LanguageConversationStartInput.case2(
+      .init(blockId: blockId, kind: .checkpoint))
+
+    if writesFirst {
+      return await voice.startConversation(input) { isWriting = true }
+    }
+
+    switch await voice.startWrittenConversation(input) {
+    case .done(.done(let answer)): return .done(answer)
+    case .done(.writing): return nil
+    case .failed(let error): return .failed(error)
+    case .obsolete: return .obsolete
     }
   }
 

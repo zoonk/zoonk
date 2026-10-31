@@ -31,7 +31,9 @@ private struct SpeakingPaperView: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(AppRouter.self) private var router
   @State private var startingTask: String?
+  @State private var writingTask: String?
   @State private var startFailure: StartFailure?
+  @State private var start: Task<Void, Never>?
 
   let goalId: String
   let paper: Resource<Components.Schemas.SpeakingPaper>
@@ -44,6 +46,7 @@ private struct SpeakingPaperView: View {
   var body: some View {
     content
       .loads(paper)
+      .onDisappear { start?.cancel() }
   }
 
   @ViewBuilder
@@ -235,10 +238,20 @@ private struct SpeakingPaperView: View {
           .foregroundStyle(.secondary)
       }
 
+      if writingTask == task.key {
+        WritingWait(
+          title: Text(
+            "Writing your task", tableName: "Voice", comment: "An exam task's card is being written"
+          ),
+          hint: Text(
+            "Your task opens as soon as its card is ready.", tableName: "Voice",
+            comment: "An exam task opens by itself once its card is written"))
+      }
+
       HStack(spacing: 12) {
-        if !locked {
+        if !locked && writingTask != task.key {
           Button {
-            Task { await start(task.key) }
+            start = Task { await startTask(task.key) }
           } label: {
             if startingTask == task.key {
               Text("Starting…", tableName: "Voice", comment: "A task is starting")
@@ -343,14 +356,18 @@ private struct SpeakingPaperView: View {
         comment: "Every criterion below the exam's level on the last try")
   }
 
-  /// Only on the learner's tap: it writes the task's card.
-  private func start(_ task: String) async {
+  /// Only on the learner's tap.
+  private func startTask(_ task: String) async {
     startingTask = task
     startFailure = nil
-    defer { startingTask = nil }
+    defer {
+      startingTask = nil
+      writingTask = nil
+    }
 
     switch await voice.startConversation(
-      .case4(.init(goalId: goalId, kind: .examSpeaking, task: task)))
+      .case4(.init(goalId: goalId, kind: .examSpeaking, task: task)),
+      whileWriting: { writingTask = task })
     {
     case .done(.done(let id)):
       router.open(.conversation(conversationId: id))
@@ -369,10 +386,22 @@ private struct SpeakingPaperView: View {
 }
 
 extension VoiceServices {
-  /// Only on the learner's tap.
+  /// Only on the learner's tap. `whileWriting` runs when its call must be written first: it starts
+  /// once written.
   func startConversation(
-    _ input: Components.Schemas.LanguageConversationStartInput
+    _ input: Components.Schemas.LanguageConversationStartInput,
+    whileWriting: @escaping @MainActor () -> Void
   ) async -> MutationResult<Refusable<String>> {
+    await cache.mutate { [liveCalls] identity in
+      try await liveCalls.startOnceWritten(
+        input, token: identity.bearerToken, whileWriting: whileWriting)
+    }
+  }
+
+  /// Only on the learner's tap. Says so instead of waiting when the call isn't written.
+  func startWrittenConversation(
+    _ input: Components.Schemas.LanguageConversationStartInput
+  ) async -> MutationResult<Written<Refusable<String>>> {
     await cache.mutate { [liveCalls] identity in
       try await liveCalls.start(input, token: identity.bearerToken)
     }

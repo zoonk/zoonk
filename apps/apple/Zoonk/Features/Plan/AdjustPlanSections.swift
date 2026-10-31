@@ -485,6 +485,9 @@ private struct PlanToolChoiceSheet: View {
   @Environment(\.dismiss) private var dismiss
   @State private var choice: ToolChoice
   @State private var system: String
+  @State private var isWriting = false
+  @State private var failed = false
+  @State private var saving: Task<Void, Never>?
 
   let editor: PlanEditor
   let goal: LearnerGoal
@@ -501,41 +504,23 @@ private struct PlanToolChoiceSheet: View {
   var body: some View {
     NavigationStack {
       Form {
-        Section {
-          Picker(selection: $choice) {
-            option(
-              Text("I have it", tableName: "Plan", comment: "Tool choice"),
-              Text(
-                "You'll practice on your own device.", tableName: "Plan",
-                comment: "Tool choice detail")
-            ).tag(ToolChoice.have)
-            option(
-              Text("I'll set it up", tableName: "Plan", comment: "Tool choice"),
-              Text(
-                "A short lesson shows how, right before you need it.", tableName: "Plan",
-                comment: "Tool choice detail")
-            ).tag(ToolChoice.setup)
-            option(
-              Text("No install", tableName: "Plan", comment: "Tool choice"),
-              Text(
-                "Learn with examples. You won't practice on your own computer.", tableName: "Plan",
-                comment: "Tool choice detail")
-            ).tag(ToolChoice.none)
-          } label: {
-            Text(tool.name)
-          }
-          .pickerStyle(.inline)
-        }
+        if isWriting {
+          WritingWait(
+            title: Text(
+              "Adding a setup lesson", tableName: "Plan",
+              comment: "A tool's setup lesson is being written"),
+            hint: Text(
+              "Your plan updates as soon as it's ready.", tableName: "Plan",
+              comment: "The plan takes the setup lesson by itself once it's written"))
+        } else {
+          choices
 
-        if choice == .setup {
-          Section {
-            Picker(selection: $system) {
-              ForEach(["windows", "macos", "linux", "chromebook", "phone"], id: \.self) { system in
-                Text(planSystemName(system)).tag(system)
-              }
-            } label: {
-              Text("Your device", tableName: "Plan", comment: "The device a setup lesson is for")
-            }
+          if failed {
+            Text(
+              "That didn't save. Try again.", tableName: "Plan",
+              comment: "The tool choice didn't save; Save tries again"
+            )
+            .foregroundStyle(.destructive)
           }
         }
       }
@@ -554,9 +539,10 @@ private struct PlanToolChoiceSheet: View {
 
         ToolbarItem(placement: .confirmationAction) {
           Button(role: .confirm) {
-            Task {
-              await save()
-              dismiss()
+            saving = Task {
+              if await save() {
+                dismiss()
+              }
             }
           } label: {
             Text("Save", tableName: "Plan", comment: "Saves the tool choice")
@@ -566,6 +552,48 @@ private struct PlanToolChoiceSheet: View {
       }
     }
     .presentationDetents([.medium, .large])
+    .onDisappear { saving?.cancel() }
+  }
+
+  @ViewBuilder
+  private var choices: some View {
+    Section {
+      Picker(selection: $choice) {
+        option(
+          Text("I have it", tableName: "Plan", comment: "Tool choice"),
+          Text(
+            "You'll practice on your own device.", tableName: "Plan",
+            comment: "Tool choice detail")
+        ).tag(ToolChoice.have)
+        option(
+          Text("I'll set it up", tableName: "Plan", comment: "Tool choice"),
+          Text(
+            "A short lesson shows how, right before you need it.", tableName: "Plan",
+            comment: "Tool choice detail")
+        ).tag(ToolChoice.setup)
+        option(
+          Text("No install", tableName: "Plan", comment: "Tool choice"),
+          Text(
+            "Learn with examples. You won't practice on your own computer.", tableName: "Plan",
+            comment: "Tool choice detail")
+        ).tag(ToolChoice.none)
+      } label: {
+        Text(tool.name)
+      }
+      .pickerStyle(.inline)
+    }
+
+    if choice == .setup {
+      Section {
+        Picker(selection: $system) {
+          ForEach(["windows", "macos", "linux", "chromebook", "phone"], id: \.self) { system in
+            Text(planSystemName(system)).tag(system)
+          }
+        } label: {
+          Text("Your device", tableName: "Plan", comment: "The device a setup lesson is for")
+        }
+      }
+    }
   }
 
   private func option(_ title: Text, _ detail: Text) -> some View {
@@ -577,7 +605,9 @@ private struct PlanToolChoiceSheet: View {
     }
   }
 
-  private func save() async {
+  /// False when it didn't save: the sheet stays with the learner's choice for Save to try again.
+  private func save() async -> Bool {
+    failed = false
     let goalId = goal.id
     let tools = [tool.name]
     let choice = choice
@@ -603,8 +633,21 @@ private struct PlanToolChoiceSheet: View {
 
     await editor.apply(sentence: sentence) { api, token in
       try await api.chooseTools(
-        token: token, goalId: goalId, tools: tools, choice: choice, system: system)
+        token: token, goalId: goalId, tools: tools, choice: choice, system: system
+      ) {
+        isWriting = true
+      }
     }
+
+    isWriting = false
+
+    guard editor.failed else {
+      return true
+    }
+
+    editor.failed = false
+    failed = true
+    return false
   }
 }
 

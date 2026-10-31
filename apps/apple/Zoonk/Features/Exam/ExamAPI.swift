@@ -291,14 +291,20 @@ struct ExamAPI {
     }
   }
 
-  /// Only from a tap: its paper's task cards are written now.
-  func startSpeaking(token: String, blockId: String) async throws -> Bool {
-    try await clients.perform(token: token) { client in
-      switch try await client.startMockSpeaking(path: .init(blockId: blockId)) {
-      case .ok: return true
-      case .conflict, .code402, .serviceUnavailable: return false
-      case .unauthorized: throw APIError.unauthorized
-      default: throw APIError.unavailable
+  /// Only from a tap.
+  func startSpeaking(token: String, blockId: String, whileWriting: @MainActor () -> Void)
+    async throws -> Bool
+  {
+    try await clients.sendOnceWritten(token: token, whileWriting: whileWriting) {
+      try await clients.perform(token: token) { client in
+        switch try await client.startMockSpeaking(path: .init(blockId: blockId)) {
+        case .ok: return .done(true)
+        case .accepted(let response):
+          return .writing(generationID: try response.body.json.generationId)
+        case .conflict, .code402, .serviceUnavailable: return .done(false)
+        case .unauthorized: throw APIError.unauthorized
+        default: throw APIError.unavailable
+        }
       }
     }
   }

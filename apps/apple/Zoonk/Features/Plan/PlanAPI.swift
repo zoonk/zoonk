@@ -35,8 +35,10 @@ protocol PlanAPIClient: Sendable {
   func undo(token: String, goalId: String, changeId: String) async throws -> Bool
   func chooseExamOption(token: String, goalId: String, group: String, subject: String)
     async throws -> PlanChangeOutcome
+  /// A setup lesson not written yet is chosen again once its run writes it.
   func chooseTools(
-    token: String, goalId: String, tools: [String], choice: ToolChoice, system: String?
+    token: String, goalId: String, tools: [String], choice: ToolChoice, system: String?,
+    whileWriting: @escaping @MainActor () -> Void
   ) async throws -> PlanChangeOutcome
   func timeToCover(token: String, goalId: String) async throws -> TimeToCover
   func basesAdvice(token: String, goalId: String) async throws -> PlanBasesAdvice
@@ -272,19 +274,26 @@ struct PlanAPI: PlanAPIClient {
   }
 
   func chooseTools(
-    token: String, goalId: String, tools: [String], choice: ToolChoice, system: String?
+    token: String, goalId: String, tools: [String], choice: ToolChoice, system: String?,
+    whileWriting: @escaping @MainActor () -> Void
   ) async throws -> PlanChangeOutcome {
     let body: Components.Schemas.PlanToolChoiceInput = try PracticeJSON.recode(
       ToolChoiceRequest(choice: choice.rawValue, system: system, timeZone: timeZone, tools: tools))
 
-    return try await clients.perform(token: token) { client in
-      switch try await client.createPlanToolChoice(path: .init(goalId: goalId), body: .json(body)) {
-      case .ok(let response):
-        return try (PracticeJSON.recode(try response.body.json) as PlanChangeResult).outcome
-      case .unprocessableContent: return .invalid
-      case .unauthorized: throw APIError.unauthorized
-      case .notFound: throw APIError.notFound
-      default: throw APIError.unavailable
+    return try await clients.sendOnceWritten(token: token, whileWriting: whileWriting) {
+      try await clients.perform(token: token) { client in
+        switch try await client.createPlanToolChoice(path: .init(goalId: goalId), body: .json(body))
+        {
+        case .ok(let response):
+          return .done(
+            try (PracticeJSON.recode(try response.body.json) as PlanChangeResult).outcome)
+        case .accepted(let response):
+          return .writing(generationID: try response.body.json.generationId)
+        case .unprocessableContent: return .done(.invalid)
+        case .unauthorized: throw APIError.unauthorized
+        case .notFound: throw APIError.notFound
+        default: throw APIError.unavailable
+        }
       }
     }
   }

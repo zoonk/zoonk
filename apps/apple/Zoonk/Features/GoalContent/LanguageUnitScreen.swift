@@ -543,6 +543,13 @@ struct PracticeCallSection: View {
               "Longer calls come with Plus.", tableName: "Plan",
               comment: "Says longer practice calls need Plus"),
             isInset: true)
+        } else if start.isWriting {
+          WritingWait(
+            title: Text(
+              "Writing your call", tableName: "Plan", comment: "A practice call is being written"),
+            hint: Text(
+              "Your call opens as soon as it's ready.", tableName: "Plan",
+              comment: "A practice call opens by itself once it's written"))
         } else {
           Button {
             startCall(minutes: picked)

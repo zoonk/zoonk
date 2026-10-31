@@ -981,6 +981,13 @@ private struct SpeakingMockSection: View {
         } icon: {
           Image(systemName: "phone.down")
         }
+      } else if start.isWriting {
+        WritingWait(
+          title: Text(
+            "Writing your mock", tableName: "Exam", comment: "A speaking mock is being written"),
+          hint: Text(
+            "Your mock opens as soon as it's ready.", tableName: "Exam",
+            comment: "A speaking mock opens by itself once it's written"))
       } else {
         Button {
           start.start(.case3(.init(goalId: goalId, kind: .speakingMock)), voice: voice) {

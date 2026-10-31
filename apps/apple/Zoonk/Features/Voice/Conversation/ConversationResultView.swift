@@ -10,6 +10,8 @@ struct ConversationResultView: View {
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
   @State private var isStartingAgain = false
+  @State private var isWritingAgain = false
+  @State private var again: Task<Void, Never>?
   @State private var startFailure: StartFailure?
   let conversation: LanguageConversation
   /// Nil for a call opened later, which shows only its own result.
@@ -46,6 +48,7 @@ struct ConversationResultView: View {
       }
     }
     .milestoneCeremony(day?.ceremony)
+    .onDisappear { again?.cancel() }
     .safeAreaBar(edge: .bottom) {
       VStack(spacing: 8) {
         if let startFailure {
@@ -56,9 +59,11 @@ struct ConversationResultView: View {
 
         mainAction
 
-        if let again = againInput {
+        if isWritingAgain {
+          writingAgain
+        } else if let input = againInput {
           Button {
-            Task { await startAgain(again) }
+            again = Task { await startAgain(input) }
           } label: {
             if conversation.kind == .speakingMock {
               Text("Try another mock", tableName: "Voice", comment: "Starts a new speaking mock")
@@ -74,6 +79,25 @@ struct ConversationResultView: View {
       }
       .scenePadding()
       .keepsOffFold()
+    }
+  }
+
+  @ViewBuilder
+  private var writingAgain: some View {
+    if conversation.kind == .speakingMock {
+      WritingWait(
+        title: Text(
+          "Writing your mock", tableName: "Voice", comment: "A speaking mock is being written"),
+        hint: Text(
+          "Your mock opens as soon as it's ready.", tableName: "Voice",
+          comment: "A speaking mock opens by itself once it's written"))
+    } else {
+      WritingWait(
+        title: Text(
+          "Writing your task", tableName: "Voice", comment: "An exam task's card is being written"),
+        hint: Text(
+          "Your task opens as soon as its card is ready.", tableName: "Voice",
+          comment: "An exam task opens by itself once its card is written"))
     }
   }
 
@@ -167,13 +191,16 @@ struct ConversationResultView: View {
     }
   }
 
-  /// Only on the learner's tap: it writes a new card.
+  /// Only on the learner's tap.
   private func startAgain(_ input: Components.Schemas.LanguageConversationStartInput) async {
     isStartingAgain = true
     startFailure = nil
-    defer { isStartingAgain = false }
+    defer {
+      isStartingAgain = false
+      isWritingAgain = false
+    }
 
-    switch await voice.startConversation(input) {
+    switch await voice.startConversation(input, whileWriting: { isWritingAgain = true }) {
     case .done(.done(let id)):
       onStartedAgain(id)
     case .done(.refused(let refusal)):

@@ -79,27 +79,29 @@ struct LiveCallAPI: Sendable {
   func start(
     _ input: Components.Schemas.LanguageConversationStartInput,
     token: String
-  ) async throws -> Refusable<String> {
+  ) async throws -> Written<Refusable<String>> {
     try await clients.perform(token: token) { client in
       switch try await client.startLanguageConversation(body: .json(input)) {
       case .created(let response):
-        return .done(try response.body.json.conversationId)
+        return .done(.done(try response.body.json.conversationId))
+      case .accepted(let response):
+        return .writing(generationID: try response.body.json.generationId)
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:
         throw APIError.notFound
       case .code402(let response):
-        return .refused(voiceRefusal(status: 402, error: try? response.body.json))
+        return .done(.refused(voiceRefusal(status: 402, error: try? response.body.json)))
       case .forbidden(let response):
-        return .refused(voiceRefusal(status: 403, error: try? response.body.json))
+        return .done(.refused(voiceRefusal(status: 403, error: try? response.body.json)))
       case .conflict(let response):
-        return .refused(voiceRefusal(status: 409, error: try? response.body.json))
+        return .done(.refused(voiceRefusal(status: 409, error: try? response.body.json)))
       case .unprocessableContent(let response):
-        return .refused(voiceRefusal(status: 422, error: try? response.body.json))
+        return .done(.refused(voiceRefusal(status: 422, error: try? response.body.json)))
       case .tooManyRequests(let response):
-        return .refused(voiceRefusal(status: 429, error: try? response.body.json))
+        return .done(.refused(voiceRefusal(status: 429, error: try? response.body.json)))
       case .serviceUnavailable(let response):
-        return .refused(voiceRefusal(status: 503, error: try? response.body.json))
+        return .done(.refused(voiceRefusal(status: 503, error: try? response.body.json)))
       case .badRequest, .internalServerError, .undocumented:
         throw APIError.unavailable
       }
@@ -118,6 +120,16 @@ struct LiveCallAPI: Sendable {
       case .badRequest, .internalServerError, .undocumented:
         throw APIError.unavailable
       }
+    }
+  }
+
+  func startOnceWritten(
+    _ input: Components.Schemas.LanguageConversationStartInput,
+    token: String,
+    whileWriting: @MainActor () -> Void
+  ) async throws -> Refusable<String> {
+    try await clients.sendOnceWritten(token: token, whileWriting: whileWriting) {
+      try await start(input, token: token)
     }
   }
 

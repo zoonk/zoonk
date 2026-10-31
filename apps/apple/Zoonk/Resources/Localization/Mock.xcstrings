@@ -16517,61 +16517,61 @@
         }
       }
     },
-    "Writing your task cards…" : {
-      "comment" : "Zoonk is writing the speaking exam's task cards",
+    "Writing your speaking paper" : {
+      "comment" : "A mock's speaking paper is being written",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir erstellen deine Aufgabenkarten…"
+            "value" : "Wir erstellen deinen Prüfungsteil Sprechen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando tus tarjetas de actividades…"
+            "value" : "Preparando tu prueba de expresión oral"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Préparation de tes fiches de tâches…"
+            "value" : "Préparation de ta partie d’expression orale"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo preparando le schede dei compiti…"
+            "value" : "Stiamo preparando la tua prova orale"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "タスクカードを作成しています…"
+            "value" : "スピーキングの試験問題を作成しています"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "과제 카드를 만들고 있어요…"
+            "value" : "말하기 시험지를 만들고 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przygotowujemy twoje karty z zadaniami…"
+            "value" : "Przygotowujemy twój arkusz do części ustnej"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Criando seus cartões de tarefas…"
+            "value" : "Criando sua prova de conversação"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kartlarını hazırlıyoruz…"
+            "value" : "Konuşma oturumunu hazırlıyoruz"
           }
         }
       }
@@ -18458,6 +18458,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sonucunu sınav günündeki gibi ancak en sonda görebilirsin."
+          }
+        }
+      }
+    },
+    "Your speaking paper opens as soon as it's ready." : {
+      "comment" : "A mock's speaking part opens by itself once its paper is written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Prüfungsteil Sprechen öffnet sich, sobald er fertig ist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu prueba de expresión oral se abrirá en cuanto esté lista."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta partie d’expression orale s’ouvre dès qu’elle est prête."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua prova orale si aprirà appena sarà pronta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "準備ができ次第、スピーキングのパートが自動で開きます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "말하기 시험지가 준비되면 바로 열려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój arkusz do części ustnej otworzy się, gdy tylko będzie gotowy."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua prova de conversação abre assim que estiver pronta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konuşma oturumun hazır olur olmaz açılır."
           }
         }
       }

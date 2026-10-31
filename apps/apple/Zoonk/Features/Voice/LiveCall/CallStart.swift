@@ -6,10 +6,11 @@ import Observation
 @Observable
 final class CallStart {
   private(set) var isStarting = false
+  private(set) var isWriting = false
   private(set) var refusal: CallReservation?
   @ObservationIgnored private var task: Task<Void, Never>?
 
-  /// Only from the learner's tap: it writes the call's card. `onStarted` gets the new call's id.
+  /// Only from the learner's tap. `onStarted` gets the new call's id.
   func start(
     _ input: Components.Schemas.LanguageConversationStartInput, voice: VoiceServices,
     onStarted: @escaping (String) -> Void
@@ -22,8 +23,11 @@ final class CallStart {
     refusal = nil
 
     task = Task {
-      let result = await voice.startConversation(input)
+      let result = await voice.startConversation(input) { [weak self] in
+        self?.isWriting = true
+      }
       isStarting = false
+      isWriting = false
 
       switch result {
       case .done(.done(let id)):

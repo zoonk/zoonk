@@ -420,6 +420,14 @@ private struct MockSpeakingView: View {
           ForEach(Array(speaking.tasks.enumerated()), id: \.element.id) { index, task in
             taskRow(task, number: index + 1)
           }
+        } else if run.isWritingPaper {
+          WritingWait(
+            title: Text(
+              "Writing your speaking paper", tableName: "Mock",
+              comment: "A mock's speaking paper is being written"),
+            hint: Text(
+              "Your speaking paper opens as soon as it's ready.", tableName: "Mock",
+              comment: "A mock's speaking part opens by itself once its paper is written"))
         } else {
           Text(
             "The examiner gives you each task in turn, like on exam day.", tableName: "Mock",
@@ -455,20 +463,16 @@ private struct MockSpeakingView: View {
     .safeAreaBar(edge: .bottom) {
       MockActionBar(run: run) {
         if view.speaking == nil {
-          Button {
-            Task { await run.startSpeaking() }
-          } label: {
-            if run.busy == .startSpeaking {
-              Text(
-                "Writing your task cards…", tableName: "Mock",
-                comment: "Zoonk is writing the speaking exam's task cards")
-            } else {
+          if !run.isWritingPaper {
+            Button {
+              Task { await run.startSpeaking() }
+            } label: {
               Text("Start the speaking part", tableName: "Mock", comment: "Starts mock speaking")
             }
+            .buttonStyle(.mainAction)
+            .controlSize(.large)
+            .disabled(run.pending)
           }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .disabled(run.pending)
         } else {
           Button {
             confirmsHandIn = true

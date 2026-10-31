@@ -22,6 +22,8 @@ final class MockRun {
 
   private static let slowAfter = Duration.seconds(10)
   private static let stepTimeout = Duration.seconds(45)
+  /// A speaking paper not written yet takes about a minute.
+  private static let paperTimeout = Duration.seconds(300)
   /// Essays take 10 to 25 s each to grade, at once for a mock's few.
   private static let gradingTimeout = Duration.seconds(120)
   private static let textSaveDelay = Duration.milliseconds(1500)
@@ -36,6 +38,7 @@ final class MockRun {
   private(set) var busy: Step?
   private(set) var failed = false
   private(set) var slow = false
+  private(set) var isWritingPaper = false
   private(set) var essayGrading: EssayGrading = .idle
   var sectionTimeUp = false
 
@@ -231,10 +234,20 @@ final class MockRun {
   }
 
   func startSpeaking() async {
-    await step(.startSpeaking) { api, token, blockId in
-      _ = try await api.startSpeaking(token: token, blockId: blockId)
+    await step(.startSpeaking, timeout: Self.paperTimeout) { [weak self] api, token, blockId in
+      let started = try await api.startSpeaking(token: token, blockId: blockId) {
+        self?.slow = false
+        self?.isWritingPaper = true
+      }
+
+      guard started else {
+        throw APIError.unavailable
+      }
+
       return nil
     }
+
+    isWritingPaper = false
   }
 
   /// False when no plays were left (another device used the last one). A play the server couldn't
@@ -267,6 +280,7 @@ final class MockRun {
 
   private func step(
     _ kind: Step,
+    timeout: Duration = stepTimeout,
     _ request: @escaping (ExamAPI, String, String) async throws -> MockStepOutcome?
   ) async {
     guard busy == nil, let blockId = view?.blockId else { return }
@@ -281,11 +295,11 @@ final class MockRun {
     saveText()
     let slowTask = Task { [weak self] in
       try? await Task.sleep(for: Self.slowAfter)
-      if !Task.isCancelled { self?.slow = true }
+      if !Task.isCancelled, self?.isWritingPaper == false { self?.slow = true }
     }
 
     // Answers are saved first, then the step.
-    let result: MutationResult<MockStepOutcome?>? = await within(Self.stepTimeout) {
+    let result: MutationResult<MockStepOutcome?>? = await within(timeout) {
       [queue, store] in
       await queue.idle()
       return await store.write { api, token in try await request(api, token, blockId) }

@@ -46,19 +46,25 @@ private enum GenerationStatus: Sendable {
 /// The run reported an error, or reads failed or cancelled.
 struct GenerationStopped: Error {}
 
+/// A request whose content isn't written yet answers with the run writing it (`ContentWriting`).
+enum Written<Value: Sendable>: Sendable {
+  case done(Value)
+  case writing(generationID: String)
+}
+
 extension APIClientFactory {
   /// A run's stream ends with its last event: one of these when it's ready, an error, or a join
   /// naming the run already doing the same work.
   private static let readySteps: Set<String> = [
-    "challengeQuestionsReady", "explanationReady", "focusTestQuestionsReady", "goalReady",
-    "lessonReady", "levelTestBankReady", "mockQuestionsReady", "testOutQuestionsReady",
-    "understandingReady",
+    "callReady", "challengeQuestionsReady", "explanationReady", "focusTestQuestionsReady",
+    "goalReady", "lessonReady", "levelTestBankReady", "mockQuestionsReady", "setupLessonsReady",
+    "testOutQuestionsReady", "understandingReady",
   ]
 
   private static let joinSteps: Set<String> = [
     "joinChallengeQuestions", "joinFocusTestQuestions", "joinLevelTestBank", "joinMockQuestions",
-    "joinRunningExplanation", "joinRunningGoal", "joinRunningLesson", "joinRunningUnderstanding",
-    "joinTestOutQuestions",
+    "joinRunningCall", "joinRunningExplanation", "joinRunningGoal", "joinRunningLesson",
+    "joinRunningUnderstanding", "joinSetupLessons", "joinTestOutQuestions",
   ]
 
   private enum StreamEnd {
@@ -92,6 +98,29 @@ extension APIClientFactory {
       }
 
       continuation.onTermination = { _ in task.cancel() }
+    }
+  }
+
+  /// Sends the request again once the run writing what it needs ends. A run that fails, or a
+  /// second run right after it, fails the request: sending it again would only loop.
+  func sendOnceWritten<Value: Sendable>(
+    token: String?,
+    whileWriting: @MainActor () -> Void,
+    _ send: () async throws -> Written<Value>
+  ) async throws -> Value {
+    switch try await send() {
+    case .done(let value):
+      return value
+    case .writing(let run):
+      await whileWriting()
+
+      for try await _ in generationEvents(id: run, token: token) {}
+
+      guard case .done(let value) = try await send() else {
+        throw APIError.unavailable
+      }
+
+      return value
     }
   }
 
