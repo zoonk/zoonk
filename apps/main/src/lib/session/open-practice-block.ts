@@ -1,16 +1,16 @@
 import "server-only";
+import { openStudyBlock } from "@zoonk/core/sessions/open-block";
+import { type StudyBlockOpening } from "@zoonk/core/sessions/open-block-contract";
 import { type AreaPracticeOutcome } from "@zoonk/learn/chapter";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { openStudyBlock } from "./open-study-block";
-import { type StudyDestination } from "./study-destination";
 
 export type PracticeBlockResult =
-  | { destination: StudyDestination; outcome: "started" }
+  | { destination: StudyBlockOpening; outcome: "started" }
   | { outcome: Exclude<AreaPracticeOutcome, "started"> };
 
 type AddedPractice =
-  | { block: Parameters<typeof openStudyBlock>[0]["block"]; sessionId: string; status: "ready" }
+  | { block: { id: string }; status: "ready" }
   | { status: "goalNotActive" | "notFound" | "nothingToPractice" | "unauthorized" | "unavailable" };
 
 export async function openPracticeBlock({
@@ -29,13 +29,12 @@ export async function openPracticeBlock({
       return added;
     }
 
-    const destination = await openStudyBlock({
-      block: added.block,
-      sessionId: added.sessionId,
+    const opened = await openStudyBlock({
+      target: { blockId: added.block.id, kind: "block" },
       timeZone,
     });
 
-    return { destination, status: "opened" as const };
+    return { opened, status: "opened" as const };
   });
 
   if (error) {
@@ -44,8 +43,8 @@ export async function openPracticeBlock({
   }
 
   if (data.status === "opened") {
-    return data.destination
-      ? { destination: data.destination, outcome: "started" }
+    return data.opened.status === "ready"
+      ? { destination: data.opened.opening, outcome: "started" }
       : { outcome: "failed" };
   }
 

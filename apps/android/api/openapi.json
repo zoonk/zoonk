@@ -21905,7 +21905,7 @@
     },
     "/goals/{goalId}/study-sessions": {
       "post": {
-        "description": "Opens the goal and local day the learner saw, saving the selected plan and one real session atomically. Existing days retain their authoritative blocks and IDs. A logical target resolves only to that same work; changed or removed work is never substituted. No AI or question generation starts here.",
+        "description": "Opens the goal and local day the learner saw, saving the selected plan and one real session atomically. Existing days retain their authoritative blocks and IDs. A logical target resolves only to that same work; changed or removed work is never substituted. A startable target then opens as `POST /v1/study-block-openings` opens it (`opening`): follow `opening` and ask for nothing else. The day itself starts no AI work; a target that starts prepares the session's next lessons, as any block start does.",
         "operationId": "openStudyDay",
         "security": [
           {
@@ -22511,6 +22511,96 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/study-block-openings": {
+      "post": {
+        "description": "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson isn't picked yet is prepared (`preparingLesson`); review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; the daily time limit or earlier work goes back to Today; and Continue never begins a mock the learner didn't see (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
+        "operationId": "openStudyBlock",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Open a study block",
+        "tags": [
+          "Study sessions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudyBlockOpeningInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Where the block opens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudyBlockOpening"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The goal is paused or finished (GOAL_NOT_ACTIVE), or the plan changed while the day opened (STUDY_DAY_RETRYABLE): try once more in a request of its own.",
             "content": {
               "application/json": {
                 "schema": {
@@ -28329,6 +28419,116 @@
           "type"
         ],
         "description": "The body Vercel Blob's client `uploadPresigned()` sends to its `handleUploadUrl`"
+      },
+      "StudyBlockOpeningInput": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/components/schemas/StudyBlockOpeningTarget"
+          },
+          "timeZone": {
+            "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "additionalProperties": false
+      },
+      "StudyBlockOpeningTarget": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningNext"
+          },
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningBlock"
+          },
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningMission"
+          }
+        ],
+        "type": "object",
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "next": "#/components/schemas/StudyBlockOpeningNext",
+            "block": "#/components/schemas/StudyBlockOpeningBlock",
+            "mission": "#/components/schemas/StudyBlockOpeningMission"
+          }
+        }
+      },
+      "StudyBlockOpeningNext": {
+        "type": "object",
+        "properties": {
+          "expectedBlockId": {
+            "description": "The step the learner saw as next. When the session's next step changed to or from a mock, nothing opens (`changed`), so Continue never begins a mock the learner didn't see",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "next"
+            ]
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "required": [
+          "kind",
+          "sessionId"
+        ],
+        "additionalProperties": false,
+        "description": "Continue: the session's next step"
+      },
+      "StudyBlockOpeningBlock": {
+        "type": "object",
+        "properties": {
+          "blockId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "block"
+            ]
+          }
+        },
+        "required": [
+          "blockId",
+          "kind"
+        ],
+        "additionalProperties": false,
+        "description": "A tap on a block of a saved session, a block just added (extra time, practice), or a lesson whose writing just ended"
+      },
+      "StudyBlockOpeningMission": {
+        "type": "object",
+        "properties": {
+          "blockId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "mission"
+            ]
+          }
+        },
+        "required": [
+          "blockId",
+          "kind"
+        ],
+        "additionalProperties": false,
+        "description": "A mission card's block. It opens only while the block is still free to start; otherwise nothing opens (`changed`)"
       },
       "StudyAnswerInput": {
         "type": "object",
@@ -86985,6 +87185,15 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
             "description": "Learner-local calendar date"
           },
+          "opening": {
+            "nullable": true,
+            "description": "Where the target opens, as `POST /v1/study-block-openings` would open it, so a tap on a day not saved yet is one request. Null when no target was asked for or it can't start (`targetStatus`). `session` and `target` show the day as it opened, before this start",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StudyBlockOpening"
+              }
+            ]
+          },
           "session": {
             "$ref": "#/components/schemas/StudySession"
           },
@@ -87025,6 +87234,7 @@
           "created",
           "goalId",
           "localDate",
+          "opening",
           "session",
           "sessionId",
           "status",
@@ -87032,6 +87242,307 @@
           "targetStatus"
         ],
         "additionalProperties": false
+      },
+      "StudyBlockOpening": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningLesson"
+          },
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningUnwrittenLesson"
+          },
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningPreparingLesson"
+          },
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningEssay"
+          },
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningCheckpoint"
+          },
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningMock"
+          },
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningChallenge"
+          },
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningSession"
+          },
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningToday"
+          },
+          {
+            "$ref": "#/components/schemas/StudyBlockOpeningChanged"
+          }
+        ],
+        "type": "object",
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "lesson": "#/components/schemas/StudyBlockOpeningLesson",
+            "unwrittenLesson": "#/components/schemas/StudyBlockOpeningUnwrittenLesson",
+            "preparingLesson": "#/components/schemas/StudyBlockOpeningPreparingLesson",
+            "essay": "#/components/schemas/StudyBlockOpeningEssay",
+            "checkpoint": "#/components/schemas/StudyBlockOpeningCheckpoint",
+            "mock": "#/components/schemas/StudyBlockOpeningMock",
+            "challenge": "#/components/schemas/StudyBlockOpeningChallenge",
+            "session": "#/components/schemas/StudyBlockOpeningSession",
+            "today": "#/components/schemas/StudyBlockOpeningToday",
+            "changed": "#/components/schemas/StudyBlockOpeningChanged"
+          }
+        }
+      },
+      "StudyBlockOpeningLesson": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "lesson"
+            ]
+          },
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The study session the block belongs to"
+          }
+        },
+        "required": [
+          "kind",
+          "lessonId",
+          "sessionId"
+        ],
+        "additionalProperties": false,
+        "description": "The block started: open the lesson player"
+      },
+      "StudyBlockOpeningUnwrittenLesson": {
+        "type": "object",
+        "properties": {
+          "blockId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "unwrittenLesson"
+            ]
+          },
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The study session the block belongs to"
+          }
+        },
+        "required": [
+          "blockId",
+          "kind",
+          "lessonId",
+          "sessionId"
+        ],
+        "additionalProperties": false,
+        "description": "The lesson isn't written and the block isn't started, so nothing competes with the learner's request: ask for the lesson (`POST /v1/library/lessons/{lessonId}/generations`), follow its run, then open the block again (`target.kind` `block`)"
+      },
+      "StudyBlockOpeningPreparingLesson": {
+        "type": "object",
+        "properties": {
+          "blockId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "preparingLesson"
+            ]
+          }
+        },
+        "required": [
+          "blockId",
+          "kind"
+        ],
+        "additionalProperties": false,
+        "description": "The plan hasn't picked this step's lesson yet. The server is preparing it: show the session waiting on the block and read it again"
+      },
+      "StudyBlockOpeningEssay": {
+        "type": "object",
+        "properties": {
+          "blockId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "essay"
+            ]
+          }
+        },
+        "required": [
+          "blockId",
+          "kind"
+        ],
+        "additionalProperties": false,
+        "description": "The block started: open the essay"
+      },
+      "StudyBlockOpeningCheckpoint": {
+        "type": "object",
+        "properties": {
+          "blockId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "checkpoint"
+            ]
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The study session the block belongs to"
+          }
+        },
+        "required": [
+          "blockId",
+          "kind",
+          "sessionId"
+        ],
+        "additionalProperties": false,
+        "description": "Open the challenge's screen (a language goal's call opens on its intro), which starts it"
+      },
+      "StudyBlockOpeningMock": {
+        "type": "object",
+        "properties": {
+          "blockId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "mock"
+            ]
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The study session the block belongs to"
+          }
+        },
+        "required": [
+          "blockId",
+          "kind",
+          "sessionId"
+        ],
+        "additionalProperties": false,
+        "description": "Open the mock's screen, which starts it"
+      },
+      "StudyBlockOpeningChallenge": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "challenge"
+            ]
+          },
+          "planItemId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The study session the block belongs to"
+          }
+        },
+        "required": [
+          "kind",
+          "planItemId",
+          "sessionId"
+        ],
+        "additionalProperties": false,
+        "description": "Open the challenge's intro by its plan item (`GET /v1/challenges/{planItemId}`): it isn't a language call, or it needs Plus"
+      },
+      "StudyBlockOpeningSession": {
+        "type": "object",
+        "properties": {
+          "blockId": {
+            "nullable": true,
+            "description": "The review or practice block that started here; null when the step is already finished or the session has no next step",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "session"
+            ]
+          }
+        },
+        "required": [
+          "blockId",
+          "kind"
+        ],
+        "additionalProperties": false,
+        "description": "Open the session screen"
+      },
+      "StudyBlockOpeningToday": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "today"
+            ]
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "additionalProperties": false,
+        "description": "Back to Today: the day is over, today's time limit is reached, or earlier work comes first"
+      },
+      "StudyBlockOpeningChanged": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "changed"
+            ]
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "additionalProperties": false,
+        "description": "Nothing opened: what the learner saw changed (a mock they didn't see, a mission no longer free to start). Read the screen again so they see the change first"
       },
       "StudySession": {
         "type": "object",

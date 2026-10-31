@@ -1,7 +1,7 @@
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
+import { type StudyBlockOpening } from "@zoonk/core/sessions/open-block-contract";
 import { type NextStopTap } from "@zoonk/learn/session/next-stop";
 import { type StudyDay } from "@zoonk/learn/session/types";
-import { type StudyDestination } from "./study-destination";
 
 const ENTRY_TTL_MS = 60_000;
 
@@ -26,7 +26,7 @@ export type TapStep = {
 export type TapDay = { sessionId: string | null; shown: ShownDay };
 
 export type TapResult =
-  | { destination: StudyDestination; kind: "go" }
+  | { destination: StudyBlockOpening; kind: "go" }
   | { kind: "failed" }
   | { kind: "refresh" };
 

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type APIRequestContext, request } from "@playwright/test";
 import { studyBlockCompletionSchema } from "@zoonk/core/sessions/completion-contract";
+import { studyBlockOpeningSchema } from "@zoonk/core/sessions/open-block-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -16,6 +17,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { milestoneListResponseSchema } from "../src/lib/openapi/schemas/milestones";
+import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
 import { studySessionSummaryResponseSchema } from "../src/lib/openapi/schemas/study-session-results";
 import {
   startedStudyBlockResponseSchema,
@@ -224,6 +226,9 @@ test.describe("Study sessions API", () => {
       api.get(`/v1/study-sessions/${id}/blocks/${id}`),
       api.post(`/v1/study-sessions/${id}/blocks/${id}/starts`, { data: {} }),
       api.post(`/v1/study-sessions/${id}/blocks/${id}/completions`, { data: {} }),
+      api.post("/v1/study-block-openings", {
+        data: { target: { blockId: id, kind: "block" }, timeZone: "UTC" },
+      }),
       api.get(`/v1/goals/${id}/weekly-challenge`),
       api.get("/v1/me/milestones"),
       api.post(`/v1/me/milestones/${id}/views`),
@@ -298,6 +303,78 @@ test.describe("Study sessions API", () => {
     });
 
     expect(extra).toMatchObject({ extra: true, kind: "practice", status: "pending" });
+  });
+
+  test("opens the day's next step with the day, then each step where the server says", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-openings" });
+    const { goal } = await createGoal(userId);
+
+    const { session: shown } = await readBody({
+      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
+      schema: todayResponseSchema,
+    });
+
+    const opened = await readBody({
+      response: await api.post(`/v1/goals/${goal.id}/study-sessions`, {
+        data: {
+          shownDate: shown.localDate,
+          target: { kind: "next", shown: null },
+          timeZone: "UTC",
+        },
+      }),
+      schema: openedStudyDayResponseSchema,
+      status: 201,
+    });
+
+    const [review, learn] = opened.session.blocks;
+
+    expect(opened).toMatchObject({
+      opening: { blockId: review?.id, kind: "session" },
+      targetStatus: "next",
+    });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: review?.id } }),
+    ).resolves.toMatchObject({ status: "active" });
+
+    const open = (target: object) =>
+      api.post("/v1/study-block-openings", { data: { target, timeZone: "UTC" } });
+
+    await expect(
+      readBody({
+        response: await open({ blockId: learn?.id, kind: "block" }),
+        schema: studyBlockOpeningSchema,
+      }),
+    ).resolves.toStrictEqual({
+      blockId: learn?.id,
+      kind: "unwrittenLesson",
+      lessonId: learn?.lessonId,
+      sessionId: opened.sessionId,
+    });
+
+    await expect(
+      readBody({
+        response: await open({
+          expectedBlockId: review?.id,
+          kind: "next",
+          sessionId: opened.sessionId,
+        }),
+        schema: studyBlockOpeningSchema,
+      }),
+    ).resolves.toStrictEqual({ blockId: review?.id, kind: "session" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: learn?.id } }),
+    ).resolves.toMatchObject({ status: "pending" });
+
+    const stranger = await createBearerLearner({ baseURL, prefix: "study-openings-stranger" });
+
+    const hidden = await stranger.api.post("/v1/study-block-openings", {
+      data: { target: { blockId: learn?.id, kind: "mission" }, timeZone: "UTC" },
+    });
+
+    expect(hidden.status()).toBe(404);
+    await Promise.all([api.dispose(), stranger.api.dispose()]);
   });
 
   test("holds a phase challenge for unfinished lessons without opening it or the session", async () => {

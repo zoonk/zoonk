@@ -12,7 +12,6 @@ import { sendDayOpen, toDestinationResult, toTapResult } from "./day-tap";
 import {
   addExtraStudyBlockAction,
   catchUpTodayAction,
-  openNextStudyBlockAction,
   openStudyBlockAction,
   prepareTodayLessonsAction,
 } from "./study-session-actions";
@@ -67,11 +66,12 @@ function requestTap({
     );
   }
 
-  const timeZone = getLocalTimeZone();
-
-  const action = next
-    ? openNextStudyBlockAction({ expectedBlockId: step.blockId, sessionId, timeZone })
-    : openStudyBlockAction({ blockId: step.blockId, sessionId, timeZone });
+  const action = openStudyBlockAction({
+    target: next
+      ? { expectedBlockId: step.blockId, kind: "next", sessionId }
+      : { blockId: step.blockId, kind: "block" },
+    timeZone: getLocalTimeZone(),
+  });
 
   return noteAppWrite(action).then(toDestinationResult, (): TapResult => ({ kind: "failed" }));
 }

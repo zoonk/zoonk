@@ -3,18 +3,12 @@ import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getSession } from "../users/get-session";
-import { isCurrentSession } from "./_utils/current-session";
-import { persistEntitlementLapseRefill } from "./_utils/entitlement-lapse-refill";
 import { readLessonScreens } from "./_utils/lesson-screens";
-import { loadStudySessionView } from "./_utils/load-session-view";
 import { findOpenDayTarget } from "./_utils/open-day-target";
 import { loadOpenedDayView } from "./_utils/open-day-view";
 import { followOpenDayZone } from "./_utils/open-day-zone";
 import { openPlannedDay } from "./_utils/open-planned-day";
-import { followSavedDay } from "./_utils/refresh-study-day-selection";
-import { findOwnedStudySession } from "./_utils/study-session-access";
-import { type StudySessionTimeZoneInput } from "./contract";
-import { type StudySessionResult } from "./get-study-session";
+import { openSessionBlock } from "./_utils/open-session-block";
 import { type OpenStudyDayInput, type OpenStudyDayResult } from "./open-day-contract";
 
 /** The explicit learner POST owns persistence; renders and prefetches only select in memory. */
@@ -87,57 +81,34 @@ async function openDay(input: OpenStudyDayInput, attempt: number): Promise<OpenS
       : { ...binding, status: opened.status === "empty" ? "empty" : "retryable" };
   }
 
+  const { target, targetStatus } = findOpenDayTarget({
+    session,
+    shownDate: input.shownDate,
+    target: input.target,
+  });
+
+  const openedTarget = target
+    ? await openSessionBlock({
+        block: target,
+        sessionId: session.id,
+        timeZone: input.timeZone,
+        userId,
+      })
+    : null;
+
+  if (openedTarget && openedTarget.status !== "ready") {
+    return { ...binding, status: "retryable" };
+  }
+
   return {
     ...binding,
-    ...findOpenDayTarget({ session, shownDate: input.shownDate, target: input.target }),
     created: opened.created,
     localDate: session.localDate,
+    opening: openedTarget?.opening ?? null,
     session,
     sessionId: session.id,
     status: "opened",
-  };
-}
-
-/** The palette's Continue is an explicit POST too; read-only session lookup never fills a queue. */
-export async function openStudySession({
-  input,
-  sessionId,
-}: {
-  input: StudySessionTimeZoneInput;
-  sessionId: string;
-}): Promise<StudySessionResult | { status: "goalNotActive" | "retryable" }> {
-  const owned = await findOwnedStudySession(sessionId);
-
-  if (owned.status !== "ready") {
-    return owned;
-  }
-
-  const { session, userId } = owned;
-  const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: input.timeZone });
-
-  if (!isCurrentSession({ now: new Date(), session, timeZone }) || !session.goal) {
-    return {
-      session: await readLessonScreens(await loadStudySessionView({ session, timeZone, userId })),
-      status: "ready",
-    };
-  }
-
-  if (session.goal.status !== "active") {
-    return { status: "goalNotActive" };
-  }
-
-  const refilled = await persistEntitlementLapseRefill({ goal: session.goal, session, timeZone });
-
-  if (!refilled) {
-    return { status: "retryable" };
-  }
-
-  const current = await followSavedDay({ goal: session.goal, session: refilled, timeZone });
-
-  return {
-    session: await readLessonScreens(
-      await loadOpenedDayView({ session: current, timeZone, userId }),
-    ),
-    status: "ready",
+    target,
+    targetStatus,
   };
 }

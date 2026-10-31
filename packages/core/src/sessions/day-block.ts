@@ -66,7 +66,7 @@ export const dayBlockScreenSchema = z.enum(["session", "lesson", "challenge", "e
 export type DayBlockScreen = z.infer<typeof dayBlockScreenSchema>;
 
 /** Unknown readiness must go through the learner's action before navigating to a player. */
-export function getDayBlockScreen(
+function getDayBlockScreen(
   block: Pick<DayWork, "kind" | "lessonId">,
   { lessonReady }: { lessonReady: boolean | null },
 ): DayBlockScreen {

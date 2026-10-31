@@ -8,7 +8,8 @@ import { getTodayView } from "../view-models/today/get-today-view";
 import { lapsedDayFixture, readLapsedDayState } from "./_test-utils/entitlement-lapse";
 import { SESSION_NOW } from "./_test-utils/session-goal";
 import { toDayBlockRef } from "./day-block";
-import { openStudyDay, openStudySession } from "./open-study-day";
+import { openStudyBlock } from "./open-block";
+import { openStudyDay } from "./open-study-day";
 
 describe("an entitlement replacement is settled once", () => {
   beforeEach(() => {
@@ -80,18 +81,16 @@ describe("an entitlement replacement is settled once", () => {
 
     expect.soft(repeated.session.blocks).toStrictEqual(first.session.blocks);
 
-    const continued = await openStudySession({
-      input: { timeZone: "UTC" },
-      sessionId: day.sessionId,
+    const continued = await openStudyBlock({
+      target: { kind: "next", sessionId: day.sessionId },
+      timeZone: "UTC",
     });
 
-    expect(continued.status).toBe("ready");
+    expect(continued).toMatchObject({
+      opening: { blockId: first.session.blocks[0]?.id, kind: "unwrittenLesson" },
+      status: "ready",
+    });
 
-    if (continued.status !== "ready") {
-      throw new Error("Expected Continue to replay the replacement");
-    }
-
-    expect.soft(continued.session.blocks).toStrictEqual(first.session.blocks);
     await expect(readLapsedDayState(day.user.id)).resolves.toStrictEqual(saved);
   });
 });

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { answerTimeZoneSchema } from "../learner/contract";
 import { type StudyBlockView, type StudySessionView } from "./_utils/session-view";
 import { dayBlockRefSchema } from "./day-block";
+import { type StudyBlockOpening } from "./open-block-contract";
 
 export const openStudyDayInputSchema = z
   .object({
@@ -31,12 +32,17 @@ export const dayTargetStatusSchema = z.enum([
 ]);
 export type DayTargetStatus = z.infer<typeof dayTargetStatusSchema>;
 
-/** An opened result contains only real persisted IDs; logical refs are resolved after the write. */
+/**
+ * An opened result contains only real persisted IDs; logical refs are resolved after the write.
+ * `opening` is where a startable target opens, as `openStudyBlock` would open it; `session` and
+ * `target` show the day before that start.
+ */
 export type OpenStudyDayResult =
   | {
       created: boolean;
       goalId: string;
       localDate: Date;
+      opening: StudyBlockOpening | null;
       session: StudySessionView;
       sessionId: string;
       status: "opened";

@@ -17,6 +17,7 @@ export const studySessionErrorCodes = {
   nothingToPractice: "NOTHING_TO_PRACTICE",
   plusRequired: "PLUS_REQUIRED",
   questionsNeeded: "QUESTIONS_NEEDED",
+  retryable: "STUDY_DAY_RETRYABLE",
   unanswered: "UNANSWERED_QUESTIONS",
 } as const;
 
@@ -40,6 +41,7 @@ type StudySessionRefusal =
         | "nothingToPractice"
         | "plusRequired"
         | "questionsNeeded"
+        | "retryable"
         | "unanswered"
         | "unauthorized";
     };
@@ -73,6 +75,10 @@ const REFUSALS = {
   },
   questionsNeeded: {
     message: "Its questions aren't written yet: write them, then start it again",
+    status: httpStatus.conflict,
+  },
+  retryable: {
+    message: "The plan changed while the day opened. Try again.",
     status: httpStatus.conflict,
   },
   unanswered: {

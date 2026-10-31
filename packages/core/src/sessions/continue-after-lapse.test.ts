@@ -5,7 +5,8 @@ import { getAllowance } from "../entitlements/get-allowance";
 import { getLearnerSummary } from "../learner/summary/get-learner-summary";
 import { lapsedDayFixture, readLapsedDayState } from "./_test-utils/entitlement-lapse";
 import { SESSION_NOW } from "./_test-utils/session-goal";
-import { openStudySession } from "./open-study-day";
+import { getStudySession } from "./get-study-session";
+import { openStudyBlock } from "./open-block";
 import { startStudyBlock } from "./start-study-block";
 
 describe("the frame's explicit Continue after Plus lapses", () => {
@@ -27,30 +28,25 @@ describe("the frame's explicit Continue after Plus lapses", () => {
 
     const before = await readLapsedDayState(day.user.id);
 
-    const continued = await openStudySession({
-      input: { timeZone: "UTC" },
-      sessionId: day.sessionId,
+    const next = { target: { kind: "next", sessionId: day.sessionId }, timeZone: "UTC" } as const;
+    const continued = await openStudyBlock(next);
+
+    expect(continued).toMatchObject({
+      opening: { kind: "unwrittenLesson", lessonId: day.planItems.at(-1)?.lessonId },
+      status: "ready",
     });
 
-    expect(continued.status).toBe("ready");
+    const shown = await getStudySession({ input: { timeZone: "UTC" }, sessionId: day.sessionId });
 
-    if (continued.status !== "ready") {
-      throw new Error("Expected the actual continued day");
+    if (shown.status !== "ready") {
+      throw new Error("Expected the continued day");
     }
 
-    const target = continued.session.blocks.find(
-      (block) => block.id === continued.session.nextBlockId,
-    );
-
-    expect(target).toMatchObject({ kind: "learn", lessonId: day.planItems.at(-1)?.lessonId });
-
-    expect(continued.session.blocks.some((block) => block.kind === "checkpoint")).toBe(false);
+    expect(shown.session.blocks.some((block) => block.kind === "checkpoint")).toBe(false);
     const after = await readLapsedDayState(day.user.id);
     expect(after.plans[0]?.inputVersion).toBe(before.plans[0]!.inputVersion + 1);
-
-    const replay = await countDatabaseStatements(() =>
-      openStudySession({ input: { timeZone: "UTC" }, sessionId: day.sessionId }),
-    );
+    const target = shown.session.blocks.find((block) => block.id === shown.session.nextBlockId);
+    const replay = await countDatabaseStatements(() => openStudyBlock(next));
 
     expect(replay.writes).toBe(0);
     await expect(readLapsedDayState(day.user.id)).resolves.toStrictEqual(after);

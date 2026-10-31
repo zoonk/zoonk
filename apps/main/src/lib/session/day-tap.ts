@@ -1,9 +1,9 @@
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { getLearnerGeneration } from "@/lib/learner/learner-store";
+import { type StudyBlockOpening } from "@zoonk/core/sessions/open-block-contract";
 import { type OpenStudyDayInput } from "@zoonk/core/sessions/open-day-contract";
 import { type TapResult } from "./day-entry";
 import { type DayOpenOutcome, openStudyDayAction } from "./day-open-action";
-import { type StudyDestination } from "./study-destination";
 
 export function toTapResult(outcome: DayOpenOutcome): TapResult {
   if (outcome.status === "opened") {
@@ -18,7 +18,7 @@ export function toTapResult(outcome: DayOpenOutcome): TapResult {
 }
 
 /** `changed` opened nothing on purpose. */
-export function toDestinationResult(destination: StudyDestination | null): TapResult {
+export function toDestinationResult(destination: StudyBlockOpening | null): TapResult {
   if (!destination) {
     return { kind: "failed" };
   }

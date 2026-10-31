@@ -1,6 +1,6 @@
 import { type OpenStudyDayResult } from "@zoonk/core/sessions/open-day-contract";
 import { createErrorResponse, httpStatus } from "./api-errors";
-import { studySessionError } from "./study-session-errors";
+import { studySessionError, studySessionErrorCodes } from "./study-session-errors";
 import { todayErrorCodes } from "./today-errors";
 
 export function openStudyDayError(result: Exclude<OpenStudyDayResult, { status: "opened" }>) {
@@ -14,7 +14,7 @@ export function openStudyDayError(result: Exclude<OpenStudyDayResult, { status: 
 
   if (result.status === "empty" || result.status === "retryable") {
     return createErrorResponse({
-      code: result.status === "retryable" ? "STUDY_DAY_RETRYABLE" : "NOTHING_TO_OPEN",
+      code: result.status === "retryable" ? studySessionErrorCodes.retryable : "NOTHING_TO_OPEN",
       details: { goalId: result.goalId, localDate: result.localDate.toISOString().slice(0, 10) },
       message:
         result.status === "retryable"

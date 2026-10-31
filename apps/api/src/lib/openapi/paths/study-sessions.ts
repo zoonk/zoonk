@@ -4,6 +4,10 @@ import {
   studyBlockStartInputSchema,
   studySessionTimeZoneInputSchema,
 } from "@zoonk/core/sessions/contract";
+import {
+  openStudyBlockInputSchema,
+  studyBlockOpeningSchema,
+} from "@zoonk/core/sessions/open-block-contract";
 import { studySessionErrorCodes } from "../../study-session-errors";
 import { openStudyDayBodySchema, openedStudyDayResponseSchema } from "../schemas/open-study-day";
 import {
@@ -54,7 +58,7 @@ export const studySessionPaths = {
   "/goals/{goalId}/study-sessions": {
     post: {
       description:
-        "Opens the goal and local day the learner saw, saving the selected plan and one real session atomically. Existing days retain their authoritative blocks and IDs. A logical target resolves only to that same work; changed or removed work is never substituted. No AI or question generation starts here.",
+        "Opens the goal and local day the learner saw, saving the selected plan and one real session atomically. Existing days retain their authoritative blocks and IDs. A logical target resolves only to that same work; changed or removed work is never substituted. A startable target then opens as `POST /v1/study-block-openings` opens it (`opening`): follow `opening` and ask for nothing else. The day itself starts no AI work; a target that starts prepares the session's next lessons, as any block start does.",
       operationId: "openStudyDay",
       requestBody: {
         content: { "application/json": { schema: openStudyDayBodySchema } },
@@ -88,6 +92,28 @@ export const studySessionPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Get a goal's weekly challenge",
+      tags: TAGS,
+    },
+  },
+  "/study-block-openings": {
+    post: {
+      description:
+        "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson isn't picked yet is prepared (`preparingLesson`); review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; the daily time limit or earlier work goes back to Today; and Continue never begins a mock the learner didn't see (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
+      operationId: "openStudyBlock",
+      requestBody: {
+        content: { "application/json": { schema: openStudyBlockInputSchema } },
+        required: true,
+      },
+      responses: {
+        "200": jsonResponse(studyBlockOpeningSchema, "Where the block opens"),
+        ...readErrors,
+        "409": {
+          ...conflictResponse,
+          description: `The goal is paused or finished (${studySessionErrorCodes.goalNotActive}), or the plan changed while the day opened (${studySessionErrorCodes.retryable}): try once more in a request of its own.`,
+        },
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Open a study block",
       tags: TAGS,
     },
   },

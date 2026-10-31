@@ -7,7 +7,7 @@ import { mockAccountSession } from "../_test-utils/mock-session";
 import { seedPersonaCopy } from "../seed/seed";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { getStudySession } from "./get-study-session";
-import { openStudySession } from "./open-study-day";
+import { openStudyBlock } from "./open-block";
 import { startStudyBlock } from "./start-study-block";
 
 const NOW = new Date("2026-10-15T12:00:00Z");
@@ -50,27 +50,20 @@ describe("Continue on an already studied day while another device reads it", () 
     const [followed, opened] = await Promise.all([
       getTodayView({ goalId: goal.id, timeZone: DEVICE_ZONE }),
       countDatabaseStatements(() =>
-        openStudySession({ input: { timeZone: DEVICE_ZONE }, sessionId: saved.id }),
+        openStudyBlock({ target: { kind: "next", sessionId: saved.id }, timeZone: DEVICE_ZONE }),
       ),
     ]);
 
     expect(followed).toMatchObject({ status: "ready" });
-    expect(opened.result.status).toBe("ready");
+    const target = before.session.blocks.find((block) => block.id === before.session.nextBlockId);
+    expect(target).toMatchObject({ kind: "learn", lessonId: expect.any(String) });
 
-    if (opened.result.status !== "ready") {
-      throw new Error("Expected Continue to resolve");
-    }
-
-    expect(opened.result.session).toMatchObject({
-      current: true,
-      id: saved.id,
-      nextBlockId: before.session.nextBlockId,
+    expect(opened.result).toMatchObject({
+      opening: { lessonId: target?.lessonId, sessionId: saved.id },
+      status: "ready",
     });
 
     expect(revalidateTag).toHaveBeenCalledTimes(expirations);
-    const view = opened.result.session;
-    const target = view.blocks.find((block) => block.id === view.nextBlockId);
-    expect(target).toMatchObject({ kind: "learn", lessonId: expect.any(String) });
 
     await expect(
       startStudyBlock({

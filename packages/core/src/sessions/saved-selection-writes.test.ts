@@ -8,7 +8,8 @@ import * as replan from "../plans/_utils/replan";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import * as planner from "../plans/planner/build-plan";
 import { ensureStudySession } from "./ensure-study-session";
-import { openStudyDay, openStudySession } from "./open-study-day";
+import { openStudyBlock } from "./open-block";
+import { openStudyDay } from "./open-study-day";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 
@@ -70,7 +71,12 @@ describe("Start and Continue save a fresh selection", () => {
     });
 
     const build = vi.spyOn(planner, "buildPlan");
-    await openStudySession({ input: { timeZone: "UTC" }, sessionId: opened.sessionId });
+
+    await openStudyBlock({
+      target: { kind: "next", sessionId: opened.sessionId },
+      timeZone: "UTC",
+    });
+
     expect(build).toHaveBeenCalledTimes(0);
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
 
@@ -84,7 +90,7 @@ describe("Start and Continue save a fresh selection", () => {
     });
 
     await expect(
-      openStudySession({ input: { timeZone: "UTC" }, sessionId: opened.sessionId }),
+      openStudyBlock({ target: { kind: "next", sessionId: opened.sessionId }, timeZone: "UTC" }),
     ).resolves.toMatchObject({ status: "ready" });
 
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });

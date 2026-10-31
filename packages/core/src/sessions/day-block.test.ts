@@ -3,7 +3,6 @@ import {
   type DayWork,
   dayBlockRefSchema,
   getBlockScreen,
-  getDayBlockScreen,
   resolveDayBlock,
   toDayBlockRef,
 } from "./day-block";
@@ -41,15 +40,11 @@ function mock(identity: DayWork["checkpoint"]): DayWork {
 
 describe("day work selected before a session exists", () => {
   it("routes unknown lesson readiness through the entry action while known work keeps its destination", () => {
-    expect(getDayBlockScreen(lesson(), { lessonReady: null })).toBe("unknown");
-    expect(getDayBlockScreen(lesson(), { lessonReady: false })).toBe("session");
-    expect(getDayBlockScreen(lesson(), { lessonReady: true })).toBe("lesson");
-
-    expect(getDayBlockScreen(lesson({ kind: "checkpoint" }), { lessonReady: null })).toBe(
-      "challenge",
-    );
-
-    expect(getDayBlockScreen(lesson({ kind: "produce" }), { lessonReady: null })).toBe("essay");
+    expect(getBlockScreen(lesson())).toBe("unknown");
+    expect(getBlockScreen(lesson(), new Map([[LESSON, { status: "pending" }]]))).toBe("session");
+    expect(getBlockScreen(lesson(), new Map([[LESSON, { status: "ready" }]]))).toBe("lesson");
+    expect(getBlockScreen(lesson({ kind: "checkpoint" }))).toBe("challenge");
+    expect(getBlockScreen(lesson({ kind: "produce" }))).toBe("essay");
   });
 
   it("plays a lesson by the state a read has for it, and a lesson the plan hasn't picked on the session screen", () => {

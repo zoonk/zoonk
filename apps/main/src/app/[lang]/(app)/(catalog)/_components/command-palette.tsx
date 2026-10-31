@@ -2,7 +2,7 @@
 
 import { usePathname } from "@/i18n/navigation";
 import { logout } from "@/lib/logout";
-import { openNextStudyBlockAction } from "@/lib/session/study-session-actions";
+import { openStudyBlockAction } from "@/lib/session/study-session-actions";
 import { useGoToStudyDestination } from "@/lib/session/use-study-navigation";
 import { useContentFeedback } from "@zoonk/learn/feedback";
 import { useGoalSwitchTransition } from "@zoonk/learn/goal-switcher";
@@ -46,8 +46,8 @@ function useContinueFromPalette() {
 
   return (sessionId: string) => {
     startTransition(async () => {
-      const destination = await openNextStudyBlockAction({
-        sessionId,
+      const destination = await openStudyBlockAction({
+        target: { kind: "next", sessionId },
         timeZone: getLocalTimeZone(),
       });
 

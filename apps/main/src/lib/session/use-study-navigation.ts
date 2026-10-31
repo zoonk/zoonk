@@ -7,6 +7,7 @@ import { getLearnerGeneration } from "@/lib/learner/learner-store";
 import { LESSON_GENERATION_PARAM } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
+import { type StudyBlockOpening } from "@zoonk/core/sessions/open-block-contract";
 import { type MissionLinks } from "@zoonk/learn/buddy";
 import { type LessonLimit } from "@zoonk/learn/help-limit";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
@@ -16,12 +17,9 @@ import { SESSION_BLOCK_PARAM } from "./session-block-param";
 import { SESSION_GOAL_PARAM } from "./session-goal-param";
 import { SESSION_PREPARING_PARAM } from "./session-preparing-param";
 import { SESSION_STOPPED_HREF, SESSION_STOPPED_PARAM } from "./session-stopped-param";
-import { type StudyDestination } from "./study-destination";
 import {
   addExtraStudyBlockAction,
-  openMissionAction,
-  openNextStudyBlockAction,
-  openWrittenLessonAction,
+  openStudyBlockAction,
   saveMissionDayAction,
   stopStudySessionAction,
 } from "./study-session-actions";
@@ -128,7 +126,7 @@ function useOpenUnwrittenLesson() {
 
   return useCallback(
     async (
-      destination: Extract<StudyDestination, { kind: "unwrittenLesson" }>,
+      destination: Extract<StudyBlockOpening, { kind: "unwrittenLesson" }>,
       onSessionAddress?: (address: SessionAddress) => void,
     ): Promise<boolean> => {
       const openedFrom = getCurrentLocation();
@@ -144,9 +142,8 @@ function useOpenUnwrittenLesson() {
 
       if (answer.status === "ready") {
         const written = await noteAppWrite(
-          openWrittenLessonAction({
-            blockId: destination.blockId,
-            sessionId: destination.sessionId,
+          openStudyBlockAction({
+            target: { blockId: destination.blockId, kind: "block" },
             timeZone: getLocalTimeZone(),
           }),
         );
@@ -188,7 +185,7 @@ export function useGoToStudyDestination({ refresh }: { refresh?: () => void } = 
 
   return useCallback(
     async (
-      destination: StudyDestination | null,
+      destination: StudyBlockOpening | null,
       { onSessionAddress }: { onSessionAddress?: (address: SessionAddress) => void } = {},
     ): Promise<boolean> => {
       if (!destination) {
@@ -219,7 +216,7 @@ export function useGoToStudyDestination({ refresh }: { refresh?: () => void } = 
           onSessionAddress,
         );
       } else {
-        openSession({ blockId: destination.blockId, limit: null }, onSessionAddress);
+        openSession({ blockId: destination.blockId ?? undefined, limit: null }, onSessionAddress);
       }
 
       return true;
@@ -232,7 +229,7 @@ function useOpenDestination({ refresh }: { refresh?: () => void } = {}) {
   const go = useGoToStudyDestination({ refresh });
 
   return useCallback(
-    async (action: () => Promise<StudyDestination | null>): Promise<boolean> => {
+    async (action: () => Promise<StudyBlockOpening | null>): Promise<boolean> => {
       const openedFrom = getCurrentLocation();
       const destination = await action();
 
@@ -267,7 +264,12 @@ export function useMissionLinks(
         const openedFrom = getCurrentLocation();
 
         const opened = await navigate(() =>
-          noteAppWrite(openMissionAction({ blockId, timeZone: getLocalTimeZone() })),
+          noteAppWrite(
+            openStudyBlockAction({
+              target: { blockId, kind: "mission" },
+              timeZone: getLocalTimeZone(),
+            }),
+          ),
         );
 
         if (!opened && openedFrom === getCurrentLocation()) {
@@ -294,7 +296,10 @@ export function useStudyNavigation(sessionId: string) {
 
   return {
     addExtraTime: () => navigate(() => addExtraStudyBlockAction(input())),
-    continueSession: () => navigate(() => openNextStudyBlockAction(input())),
+    continueSession: () =>
+      navigate(() =>
+        openStudyBlockAction({ target: { kind: "next", sessionId }, timeZone: getLocalTimeZone() }),
+      ),
     stop: async () => {
       const stopped = await stopStudySessionAction(input());
 
