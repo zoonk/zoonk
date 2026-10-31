@@ -40,18 +40,18 @@
   "activities_geometry_element_sulfur": "c06bab867bfa687d1b2f3000bec777c06457c896864ceb049d500a4399696171",
   "activities_geometry_line_before": "22000a82dc7d8e4dd7d72436f03773c717091514160a4d1b2c321a04edd317e0",
   "activities_geometry_line_description": "9f762bb1824c39c5c3fffaa06bc1534533087bb019eda06adae02abdf7ec1d8c",
-  "activities_geometry_line_goes_down": "21a793ef536f110b7380dc424873c6b8ed0330e42bb6a4820cf0e314976f0bc0",
-  "activities_geometry_line_goes_up": "3851459d6850375fe55f606f2a81c66decc1ed7476a955c1ad30f92f1f6d5012",
+  "activities_geometry_line_goes_down": "3292a736b89d07e9ce843e38618178b87faf9e73a3d7cbf7782939e51c81794c",
+  "activities_geometry_line_goes_up": "f0ffa2bc4210ad83d64327f14b9d7d027ec7f105a3643e88779ce28e8db21285",
   "activities_geometry_line_hint": "3a30dc4e574c00b1d63066e00b44081badf3b1f251092b75a7021a66d71fdaa2",
   "activities_geometry_line_move": "cb9277c485e63c1a2b984b6a4abaa5c62231ca237a6d3fca644161633c3adea0",
-  "activities_geometry_line_moved_down": "bf5cb118800fc02e8b7194e03883cbc889a968d38437364eef7f23c83dcb485d",
-  "activities_geometry_line_moved_left": "53007a587b1a176a49db95f9f8ab8249727a0c54560e202eb2427a0963c9bc20",
-  "activities_geometry_line_moved_right": "f22c5dfb7271d7243a97631094e55e091f003c0819248681a851685b15277b68",
-  "activities_geometry_line_moved_up": "a38e461916f7bcdfd108ffee62027d9f61357cf755c2f76cb8723e0929545969",
+  "activities_geometry_line_moved_down": "17c68a2787243498d2eb8407b8ca5d18e9abed20cd4c651e866d498fabf0f54e",
+  "activities_geometry_line_moved_left": "7646a787e154533c211b3aa6226318b9cf9501dacd9224fb529cdefee1ce540d",
+  "activities_geometry_line_moved_right": "5d1ca019722bcf133904437bd1ba7ed777963070f192554decb46ca8e53482f3",
+  "activities_geometry_line_moved_up": "9f0cf387801dcacb7b0c2f8529c091c5cec99ab06f0e7353f03f215bb559ae36",
   "activities_geometry_line_new_crossing": "a7189640aed78e1f5d1e5397f1428b2790a283308f69c17338d9b1589fd439cb",
-  "activities_geometry_line_stays": "56df3cfbde501bb57f037f173d13bb52f5962d3d415fa101eb4366b958e0f3e8",
+  "activities_geometry_line_stays": "63947abc0b0db0f5488a3826a4909c523c84e02731a35b7981f6f203bf0bccdd",
   "activities_geometry_line_unmoved": "8298c2dd1e51fc934688abdd4b223c53efc6a7535515a9cfb95990b8f8246c59",
-  "activities_geometry_line_unmoved_line": "9c43db7dce967f6e4d0790dad2b6f50d9d9e88739a185b4a0f630c53318b34e4",
+  "activities_geometry_line_unmoved_line": "76b86b5bc764d32ae1f08bf4b00607afa28360739d6e0ee469d8f32af028000b",
   "activities_geometry_line_what_happened": "0f93b95495ee370d0b0b955bb016bdfb7d4d69a1a92d855fb27a9036e79df21b",
   "activities_geometry_molecule_add": "f70966883856a297d9a4f74fbc3af657dbe77e4a7cd4a2627ec4eae88dc28182",
   "activities_geometry_molecule_add_bonded": "78923d7df6c0a58aedbe12db85083ea61995ca216b0c5371d3a0a4ba7bcbfab8",
@@ -239,22 +239,22 @@
     <string name="activities_geometry_badge_move_curve">Sposta una curva</string>
     <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
     <string name="activities_geometry_line_move">Sposta la linea %1$s</string>
-    <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved". -->
-    <string name="activities_geometry_line_unmoved_line">%1$s: nessuno spostamento</string>
-    <!-- A line on a chart dragged to the right, like "Supply moved right". -->
-    <string name="activities_geometry_line_moved_right">%1$s: spostamento a destra</string>
-    <!-- A line on a chart dragged to the left, like "Supply moved left". -->
-    <string name="activities_geometry_line_moved_left">%1$s: spostamento a sinistra</string>
-    <!-- A line on a chart dragged up, like "Cost moved up". -->
-    <string name="activities_geometry_line_moved_up">%1$s: spostamento verso l’alto</string>
-    <!-- A line on a chart dragged down, like "Cost moved down". -->
-    <string name="activities_geometry_line_moved_down">%1$s: spostamento verso il basso</string>
-    <!-- How a chart axis's value where two lines cross changed, like "Price per dozen goes up". -->
-    <string name="activities_geometry_line_goes_up">%1$s: in aumento</string>
-    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold goes down". -->
-    <string name="activities_geometry_line_goes_down">%1$s: in diminuzione</string>
-    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold stays the same". -->
-    <string name="activities_geometry_line_stays">%1$s: nessuna variazione</string>
+    <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved." -->
+    <string name="activities_geometry_line_unmoved_line">%1$s: nessuno spostamento.</string>
+    <!-- A line on a chart dragged to the right, like "Supply moved right." -->
+    <string name="activities_geometry_line_moved_right">%1$s: spostamento verso destra.</string>
+    <!-- A line on a chart dragged to the left, like "Supply moved left." -->
+    <string name="activities_geometry_line_moved_left">%1$s: spostamento verso sinistra.</string>
+    <!-- A line on a chart dragged up, like "Cost moved up." -->
+    <string name="activities_geometry_line_moved_up">%1$s: spostamento verso l’alto.</string>
+    <!-- A line on a chart dragged down, like "Cost moved down." -->
+    <string name="activities_geometry_line_moved_down">%1$s: spostamento verso il basso.</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Price per dozen goes up." -->
+    <string name="activities_geometry_line_goes_up">%1$s: in aumento.</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold goes down." -->
+    <string name="activities_geometry_line_goes_down">%1$s: in diminuzione.</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold stays the same." -->
+    <string name="activities_geometry_line_stays">%1$s: nessuna variazione.</string>
     <!-- A hint under a chart of two lines, before the learner moves either. -->
     <string name="activities_geometry_line_hint">Trascina una linea usando la maniglia.</string>
     <!-- Beside the dashed line showing where a line was before the learner moved it. -->

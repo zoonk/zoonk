@@ -379,120 +379,120 @@
         }
       }
     },
-    "%@ goes down" : {
+    "%@ goes down." : {
       "comment" : "What a line's move did to an axis, like Price goes down",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ sinkt"
+            "value" : "%@ sinkt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ baja"
+            "value" : "%@ baja."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ diminue"
+            "value" : "%@ diminue."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ diminuisce"
+            "value" : "%@ diminuisce."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@が下がります"
+            "value" : "%@が下がります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@(이)가 낮아져요"
+            "value" : "%@(이)가 내려가요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: spadek"
+            "value" : "%@ spada."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ diminui"
+            "value" : "%@ diminui."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ azalır"
+            "value" : "%@ azalır."
           }
         }
       }
     },
-    "%@ goes up" : {
+    "%@ goes up." : {
       "comment" : "What a line's move did to an axis, like Price goes up",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ steigt"
+            "value" : "%@ steigt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ sube"
+            "value" : "%@ sube."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ augmente"
+            "value" : "%@ augmente."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ aumenta"
+            "value" : "%@ aumenta."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@が上がります"
+            "value" : "%@が上がります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@(이)가 높아져요"
+            "value" : "%@(이)가 올라가요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: wzrost"
+            "value" : "%@ rośnie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ aumenta"
+            "value" : "%@ aumenta."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ artar"
+            "value" : "%@ artar."
           }
         }
       }
@@ -615,61 +615,61 @@
         }
       }
     },
-    "%@ hasn't moved" : {
+    "%@ hasn't moved." : {
       "comment" : "A line on a two-line chart that wasn't moved",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ wurde nicht verschoben"
+            "value" : "%@ wurde nicht verschoben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ no se movió"
+            "value" : "%@ no se movió."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ n’a pas bougé"
+            "value" : "%@ n’a pas bougé."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ non ha cambiato posizione"
+            "value" : "La linea %@ non si è spostata."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@は移動していません"
+            "value" : "%@は移動していません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@의 위치는 그대로예요"
+            "value" : "%@(이)가 움직이지 않았어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: bez przesunięcia"
+            "value" : "Linia „%@” nie zmieniła położenia."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ não se moveu"
+            "value" : "%@ não se moveu."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ yer değiştirmedi"
+            "value" : "%@ yer değiştirmedi."
           }
         }
       }
@@ -863,238 +863,238 @@
         }
       }
     },
-    "%@ moved down" : {
+    "%@ moved down." : {
       "comment" : "A line moved down on a chart",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ wurde nach unten verschoben"
+            "value" : "%@ wurde nach unten verschoben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se movió hacia abajo"
+            "value" : "%@ se movió hacia abajo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a été déplacé vers le bas"
+            "value" : "%@ a bougé vers le bas."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ora è più in basso"
+            "value" : "La linea %@ si è spostata verso il basso."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@が下に移動しました"
+            "value" : "%@が下に移動しました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@(이)가 아래로 이동했어요"
+            "value" : "%@(이)가 아래로 이동했어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: przesunięcie w dół"
+            "value" : "Linia „%@” przesunęła się w dół."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se moveu para baixo"
+            "value" : "%@ desceu."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ aşağı kaydırıldı"
+            "value" : "%@ aşağı kaydı."
           }
         }
       }
     },
-    "%@ moved left" : {
+    "%@ moved left." : {
       "comment" : "A line moved left on a chart",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ wurde nach links verschoben"
+            "value" : "%@ wurde nach links verschoben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se movió a la izquierda"
+            "value" : "%@ se movió hacia la izquierda."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a été déplacé vers la gauche"
+            "value" : "%@ a bougé vers la gauche."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ora è più a sinistra"
+            "value" : "La linea %@ si è spostata a sinistra."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@が左に移動しました"
+            "value" : "%@が左に移動しました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@(이)가 왼쪽으로 이동했어요"
+            "value" : "%@(이)가 왼쪽으로 이동했어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: przesunięcie w lewo"
+            "value" : "Linia „%@” przesunęła się w lewo."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se moveu para a esquerda"
+            "value" : "%@ se moveu para a esquerda."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ sola kaydırıldı"
+            "value" : "%@ sola kaydı."
           }
         }
       }
     },
-    "%@ moved right" : {
+    "%@ moved right." : {
       "comment" : "A line moved right on a chart",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ wurde nach rechts verschoben"
+            "value" : "%@ wurde nach rechts verschoben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se movió a la derecha"
+            "value" : "%@ se movió hacia la derecha."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a été déplacé vers la droite"
+            "value" : "%@ a bougé vers la droite."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ora è più a destra"
+            "value" : "La linea %@ si è spostata a destra."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@が右に移動しました"
+            "value" : "%@が右に移動しました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@(이)가 오른쪽으로 이동했어요"
+            "value" : "%@(이)가 오른쪽으로 이동했어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: przesunięcie w prawo"
+            "value" : "Linia „%@” przesunęła się w prawo."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se moveu para a direita"
+            "value" : "%@ se moveu para a direita."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ sağa kaydırıldı"
+            "value" : "%@ sağa kaydı."
           }
         }
       }
     },
-    "%@ moved up" : {
+    "%@ moved up." : {
       "comment" : "A line moved up on a chart",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ wurde nach oben verschoben"
+            "value" : "%@ wurde nach oben verschoben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se movió hacia arriba"
+            "value" : "%@ se movió hacia arriba."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a été déplacé vers le haut"
+            "value" : "%@ a bougé vers le haut."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ora è più in alto"
+            "value" : "La linea %@ si è spostata verso l’alto."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@が上に移動しました"
+            "value" : "%@が上に移動しました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@(이)가 위로 이동했어요"
+            "value" : "%@(이)가 위로 이동했어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: przesunięcie w górę"
+            "value" : "Linia „%@” przesunęła się w górę."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se moveu para cima"
+            "value" : "%@ subiu."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ yukarı kaydırıldı"
+            "value" : "%@ yukarı kaydı."
           }
         }
       }
@@ -1542,61 +1542,61 @@
         }
       }
     },
-    "%@ stays the same" : {
+    "%@ stays the same." : {
       "comment" : "What a line's move did to an axis, like Price stays the same",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ bleibt gleich"
+            "value" : "%@ bleibt gleich."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ no cambia"
+            "value" : "%@ se mantiene igual."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ reste stable"
+            "value" : "%@ ne change pas."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ non cambia"
+            "value" : "%@ non cambia."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@は変わりません"
+            "value" : "%@は変わりません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@에는 변화가 없어요"
+            "value" : "%@(이)가 그대로예요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: bez zmian"
+            "value" : "%@ pozostaje bez zmian."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ continua igual"
+            "value" : "%@ continua igual."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ aynı kalır"
+            "value" : "%@ aynı kalır."
           }
         }
       }

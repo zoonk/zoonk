@@ -20,9 +20,9 @@ export function useChangeWords() {
   const t = useExtracted();
 
   return (axis: string) => ({
-    down: t("{axis} goes down", { axis }),
-    same: t("{axis} stays the same", { axis }),
-    up: t("{axis} goes up", { axis }),
+    down: t("{axis} goes down.", { axis }),
+    same: t("{axis} stays the same.", { axis }),
+    up: t("{axis} goes up.", { axis }),
   });
 }
 
@@ -33,18 +33,18 @@ export function useLineWords() {
     move: (line: FieldLine) => t("Move the line {line}", { line: line.label }),
     moved: (line: FieldLine, offset: number, axis: ShiftAxis) => {
       if (offset === 0) {
-        return t("{line} hasn't moved", { line: line.label });
+        return t("{line} hasn't moved.", { line: line.label });
       }
 
       if (axis === "horizontal") {
         return offset > 0
-          ? t("{line} moved right", { line: line.label })
-          : t("{line} moved left", { line: line.label });
+          ? t("{line} moved right.", { line: line.label })
+          : t("{line} moved left.", { line: line.label });
       }
 
       return offset > 0
-        ? t("{line} moved up", { line: line.label })
-        : t("{line} moved down", { line: line.label });
+        ? t("{line} moved up.", { line: line.label })
+        : t("{line} moved down.", { line: line.label });
     },
   };
 }
@@ -119,6 +119,7 @@ export function LineCrossingAnswer({
   realOffset: number;
 }) {
   const lineWords = useLineWords();
+  const space = useSentenceSpace();
   const shifted = fields.lines.find((line) => line.id === fields.shift.line);
   const feedback = isInteraction ? wrongMoveFeedback(fields, offsets, axis) : null;
 
@@ -129,23 +130,22 @@ export function LineCrossingAnswer({
   return (
     <p className="text-sm leading-relaxed">
       <span className="text-success-text font-medium">
-        {lineWords.moved(shifted, realOffset, axis)}.
-      </span>{" "}
+        {lineWords.moved(shifted, realOffset, axis)}
+      </span>
+      {feedback && space}
       {feedback && <LessonRichText text={feedback} />}
     </p>
   );
 }
 
 export function LineCrossingDescription({
-  changes,
   computed,
   fields,
-  movedText,
+  moves,
 }: {
-  changes: string;
   computed: number | null;
   fields: Fields;
-  movedText: string | null;
+  moves: string | null;
 }) {
   const t = useExtracted();
   const format = useFormatNumber();
@@ -154,15 +154,18 @@ export function LineCrossingDescription({
 
   return (
     <ActivityTextAlternative>
-      {t("A chart of two lines, {first} and {second}, with {y} against {x}.", {
-        first: first?.label ?? "",
-        second: second?.label ?? "",
-        x: fields.xLabel,
-        y: fields.yLabel,
-      })}
-      {space}
-      {movedText ? `${movedText} ${changes}` : t("Neither line has moved yet.")}{" "}
-      {computed !== null && t("The new crossing is at {value}.", { value: format(computed) })}
+      {[
+        t("A chart of two lines, {first} and {second}, with {y} against {x}.", {
+          first: first?.label ?? "",
+          second: second?.label ?? "",
+          x: fields.xLabel,
+          y: fields.yLabel,
+        }),
+        moves ?? t("Neither line has moved yet."),
+        computed !== null && t("The new crossing is at {value}.", { value: format(computed) }),
+      ]
+        .filter(Boolean)
+        .join(space)}
     </ActivityTextAlternative>
   );
 }

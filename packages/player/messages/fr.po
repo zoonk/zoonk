@@ -1535,19 +1535,19 @@ msgid "What happened"
 msgstr "Ce qui s’est passé"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "tMdNPI"
-msgid "{axis} goes down"
-msgstr "{axis} diminue"
+msgctxt "HSYVGq"
+msgid "{axis} goes down."
+msgstr "{axis} diminue."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "4Cd_mH"
-msgid "{axis} stays the same"
-msgstr "{axis} reste stable"
+msgctxt "AMYIvl"
+msgid "{axis} stays the same."
+msgstr "{axis} ne change pas."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "sCCYcO"
-msgid "{axis} goes up"
-msgstr "{axis} augmente"
+msgctxt "K23AEK"
+msgid "{axis} goes up."
+msgstr "{axis} augmente."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "m3ASYj"
@@ -1555,29 +1555,29 @@ msgid "Move the line {line}"
 msgstr "Déplace la ligne {line}"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "4Xe-ib"
-msgid "{line} hasn't moved"
-msgstr "La ligne {line} n’a pas bougé"
+msgctxt "vomz5L"
+msgid "{line} hasn't moved."
+msgstr "{line} n’a pas bougé."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "B36SVg"
-msgid "{line} moved right"
-msgstr "La ligne {line} s’est déplacée vers la droite"
+msgctxt "uEOFW8"
+msgid "{line} moved right."
+msgstr "{line} a bougé vers la droite."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "cToHM6"
-msgid "{line} moved left"
-msgstr "La ligne {line} s’est déplacée vers la gauche"
+msgctxt "48N5WA"
+msgid "{line} moved left."
+msgstr "{line} a bougé vers la gauche."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "8OY5Eu"
-msgid "{line} moved up"
-msgstr "La ligne {line} s’est déplacée vers le haut"
+msgctxt "y7wEbI"
+msgid "{line} moved up."
+msgstr "{line} a bougé vers le haut."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "PXTpay"
-msgid "{line} moved down"
-msgstr "La ligne {line} s’est déplacée vers le bas"
+msgctxt "Vw4Ib6"
+msgid "{line} moved down."
+msgstr "{line} a bougé vers le bas."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "PHEAQb"
@@ -2793,19 +2793,9 @@ msgid "{year} CE"
 msgstr "{year} apr. J.-C."
 
 #: src/activities/timeline/timeline-activity.tsx
-msgctxt "sCg6O3"
-msgid "A timeline from {start} to {end}."
-msgstr "Une frise chronologique de {start} à {end}."
-
-#: src/activities/timeline/timeline-activity.tsx
-msgctxt "6JCoGQ"
-msgid "{label}: {year}."
-msgstr "{label} : {year}."
-
-#: src/activities/timeline/timeline-activity.tsx
-msgctxt "nq2tGo"
-msgid "Show the real dates"
-msgstr "Afficher les dates exactes"
+msgctxt "sH-RCa"
+msgid "{label}: placed at {year}."
+msgstr "{label} : placé en {year}."
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "ZVA9gF"
@@ -2813,9 +2803,19 @@ msgid "{label}: {year}, your guess was {guess}."
 msgstr "{label} : {year}, tu avais proposé {guess}."
 
 #: src/activities/timeline/timeline-activity.tsx
-msgctxt "sH-RCa"
-msgid "{label}: placed at {year}."
-msgstr "{label} : placé en {year}."
+msgctxt "6JCoGQ"
+msgid "{label}: {year}."
+msgstr "{label} : {year}."
+
+#: src/activities/timeline/timeline-activity.tsx
+msgctxt "sCg6O3"
+msgid "A timeline from {start} to {end}."
+msgstr "Une frise chronologique de {start} à {end}."
+
+#: src/activities/timeline/timeline-activity.tsx
+msgctxt "nq2tGo"
+msgid "Show the real dates"
+msgstr "Afficher les dates exactes"
 
 #: src/activities/timeline/timeline-event-card.tsx
 msgctxt "-k74Lp"

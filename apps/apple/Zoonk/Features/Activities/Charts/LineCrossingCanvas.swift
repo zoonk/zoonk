@@ -74,7 +74,7 @@ struct LineCrossingCanvas: View {
 
       if showsAnswer, let shifted = fields.lines.first(where: { $0.id == fields.shift.line }) {
         VStack(alignment: .leading, spacing: 4) {
-          Text(verbatim: movedText(shifted, offset: realOffset) + ".")
+          Text(verbatim: movedText(shifted, offset: realOffset))
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(.orange)
 
@@ -188,7 +188,7 @@ struct LineCrossingCanvas: View {
         label: Text(
           "Move the line \(field.label)", tableName: "ActivitiesCharts",
           comment: "A line's handle on a two-line chart"),
-        value: "\(movedText(field, offset: offset)). \(changes)", isEnabled: !isChecked
+        value: [movedText(field, offset: offset), changes].joinedSentences(), isEnabled: !isChecked
       ) { steps in
         move(field.id, to: offset + Double(steps) * range.step)
       }
@@ -262,26 +262,26 @@ struct LineCrossingCanvas: View {
   private func movedText(_ line: LineCrossingFields.Line, offset: Double) -> String {
     guard offset != 0 else {
       return String(
-        localized: "\(line.label) hasn't moved", table: "ActivitiesCharts",
+        localized: "\(line.label) hasn't moved.", table: "ActivitiesCharts",
         comment: "A line on a two-line chart that wasn't moved")
     }
 
     switch LineCrossingModel.direction(of: offset, axis: axis) {
     case .right:
       return String(
-        localized: "\(line.label) moved right", table: "ActivitiesCharts",
+        localized: "\(line.label) moved right.", table: "ActivitiesCharts",
         comment: "A line moved right on a chart")
     case .left:
       return String(
-        localized: "\(line.label) moved left", table: "ActivitiesCharts",
+        localized: "\(line.label) moved left.", table: "ActivitiesCharts",
         comment: "A line moved left on a chart")
     case .up:
       return String(
-        localized: "\(line.label) moved up", table: "ActivitiesCharts",
+        localized: "\(line.label) moved up.", table: "ActivitiesCharts",
         comment: "A line moved up on a chart")
     case .down:
       return String(
-        localized: "\(line.label) moved down", table: "ActivitiesCharts",
+        localized: "\(line.label) moved down.", table: "ActivitiesCharts",
         comment: "A line moved down on a chart")
     }
   }
@@ -290,15 +290,15 @@ struct LineCrossingCanvas: View {
     switch change {
     case .up:
       String(
-        localized: "\(axisLabel) goes up", table: "ActivitiesCharts",
+        localized: "\(axisLabel) goes up.", table: "ActivitiesCharts",
         comment: "What a line's move did to an axis, like Price goes up")
     case .down:
       String(
-        localized: "\(axisLabel) goes down", table: "ActivitiesCharts",
+        localized: "\(axisLabel) goes down.", table: "ActivitiesCharts",
         comment: "What a line's move did to an axis, like Price goes down")
     case .same:
       String(
-        localized: "\(axisLabel) stays the same", table: "ActivitiesCharts",
+        localized: "\(axisLabel) stays the same.", table: "ActivitiesCharts",
         comment: "What a line's move did to an axis, like Price stays the same")
     }
   }
@@ -306,7 +306,7 @@ struct LineCrossingCanvas: View {
   private func changeText(yChange: LineCrossingModel.Change, xChange: LineCrossingModel.Change)
     -> String
   {
-    "\(changeWords(fields.yLabel, yChange)). \(changeWords(fields.xLabel, xChange))."
+    [changeWords(fields.yLabel, yChange), changeWords(fields.xLabel, xChange)].joinedSentences()
   }
 
   private func changeRow(_ label: String, change: LineCrossingModel.Change, isVertical: Bool)
@@ -330,11 +330,13 @@ struct LineCrossingCanvas: View {
 
     let state =
       isMoved
-      ? "\(fields.lines.map { movedText($0, offset: offsets[$0.id] ?? 0) }.joined(separator: ". ")). \(changes)"
-      : String(
-        localized: "Neither line has moved yet.", table: "ActivitiesCharts",
-        comment: "A two-line chart before a move, for VoiceOver")
+      ? fields.lines.map { movedText($0, offset: offsets[$0.id] ?? 0) } + [changes]
+      : [
+        String(
+          localized: "Neither line has moved yet.", table: "ActivitiesCharts",
+          comment: "A two-line chart before a move, for VoiceOver")
+      ]
 
-    return [lines, state].joinedSentences()
+    return ([lines] + state).joinedSentences()
   }
 }

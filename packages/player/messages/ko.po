@@ -1535,19 +1535,19 @@ msgid "What happened"
 msgstr "결과"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "tMdNPI"
-msgid "{axis} goes down"
-msgstr "{axis}(이)가 내려가요"
+msgctxt "HSYVGq"
+msgid "{axis} goes down."
+msgstr "{axis} 값이 작아져요."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "4Cd_mH"
-msgid "{axis} stays the same"
-msgstr "{axis}(이)가 그대로예요"
+msgctxt "AMYIvl"
+msgid "{axis} stays the same."
+msgstr "{axis} 값은 그대로예요."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "sCCYcO"
-msgid "{axis} goes up"
-msgstr "{axis}(이)가 올라가요"
+msgctxt "K23AEK"
+msgid "{axis} goes up."
+msgstr "{axis} 값이 커져요."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "m3ASYj"
@@ -1555,29 +1555,29 @@ msgid "Move the line {line}"
 msgstr "{line} 선 이동하기"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "4Xe-ib"
-msgid "{line} hasn't moved"
-msgstr "{line}(이)가 움직이지 않았어요"
+msgctxt "vomz5L"
+msgid "{line} hasn't moved."
+msgstr "{line}은(는) 이동하지 않았어요."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "B36SVg"
-msgid "{line} moved right"
-msgstr "{line}(이)가 오른쪽으로 이동했어요"
+msgctxt "uEOFW8"
+msgid "{line} moved right."
+msgstr "{line}은(는) 오른쪽으로 이동했어요."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "cToHM6"
-msgid "{line} moved left"
-msgstr "{line}(이)가 왼쪽으로 이동했어요"
+msgctxt "48N5WA"
+msgid "{line} moved left."
+msgstr "{line}은(는) 왼쪽으로 이동했어요."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "8OY5Eu"
-msgid "{line} moved up"
-msgstr "{line}(이)가 위로 이동했어요"
+msgctxt "y7wEbI"
+msgid "{line} moved up."
+msgstr "{line}은(는) 위로 이동했어요."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "PXTpay"
-msgid "{line} moved down"
-msgstr "{line}(이)가 아래로 이동했어요"
+msgctxt "Vw4Ib6"
+msgid "{line} moved down."
+msgstr "{line}은(는) 아래로 이동했어요."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "PHEAQb"
@@ -2793,19 +2793,9 @@ msgid "{year} CE"
 msgstr "서기 {year}"
 
 #: src/activities/timeline/timeline-activity.tsx
-msgctxt "sCg6O3"
-msgid "A timeline from {start} to {end}."
-msgstr "{start}부터 {end}까지의 연대표예요."
-
-#: src/activities/timeline/timeline-activity.tsx
-msgctxt "6JCoGQ"
-msgid "{label}: {year}."
-msgstr "{label}: {year}."
-
-#: src/activities/timeline/timeline-activity.tsx
-msgctxt "nq2tGo"
-msgid "Show the real dates"
-msgstr "실제 연도 보기"
+msgctxt "sH-RCa"
+msgid "{label}: placed at {year}."
+msgstr "{label}: {year} 지점에 놓았어요."
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "ZVA9gF"
@@ -2813,9 +2803,19 @@ msgid "{label}: {year}, your guess was {guess}."
 msgstr "{label}: {year}, 예상한 연도: {guess}."
 
 #: src/activities/timeline/timeline-activity.tsx
-msgctxt "sH-RCa"
-msgid "{label}: placed at {year}."
-msgstr "{label}: {year} 지점에 놓았어요."
+msgctxt "6JCoGQ"
+msgid "{label}: {year}."
+msgstr "{label}: {year}."
+
+#: src/activities/timeline/timeline-activity.tsx
+msgctxt "sCg6O3"
+msgid "A timeline from {start} to {end}."
+msgstr "{start}부터 {end}까지의 연대표예요."
+
+#: src/activities/timeline/timeline-activity.tsx
+msgctxt "nq2tGo"
+msgid "Show the real dates"
+msgstr "실제 연도 보기"
 
 #: src/activities/timeline/timeline-event-card.tsx
 msgctxt "-k74Lp"

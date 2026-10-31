@@ -1535,19 +1535,19 @@ msgid "What happened"
 msgstr "Ne oldu"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "tMdNPI"
-msgid "{axis} goes down"
-msgstr "{axis} azalıyor"
+msgctxt "HSYVGq"
+msgid "{axis} goes down."
+msgstr "{axis} azalır."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "4Cd_mH"
-msgid "{axis} stays the same"
-msgstr "{axis} aynı kalıyor"
+msgctxt "AMYIvl"
+msgid "{axis} stays the same."
+msgstr "{axis} aynı kalır."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "sCCYcO"
-msgid "{axis} goes up"
-msgstr "{axis} artıyor"
+msgctxt "K23AEK"
+msgid "{axis} goes up."
+msgstr "{axis} artar."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "m3ASYj"
@@ -1555,29 +1555,29 @@ msgid "Move the line {line}"
 msgstr "{line} çizgisini kaydır"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "4Xe-ib"
-msgid "{line} hasn't moved"
-msgstr "{line} çizgisi yer değiştirmedi"
+msgctxt "vomz5L"
+msgid "{line} hasn't moved."
+msgstr "{line} yer değiştirmedi."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "B36SVg"
-msgid "{line} moved right"
-msgstr "{line} çizgisi sağa kaydı"
+msgctxt "uEOFW8"
+msgid "{line} moved right."
+msgstr "{line} sağa kaydı."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "cToHM6"
-msgid "{line} moved left"
-msgstr "{line} çizgisi sola kaydı"
+msgctxt "48N5WA"
+msgid "{line} moved left."
+msgstr "{line} sola kaydı."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "8OY5Eu"
-msgid "{line} moved up"
-msgstr "{line} çizgisi yukarı kaydı"
+msgctxt "y7wEbI"
+msgid "{line} moved up."
+msgstr "{line} yukarı kaydı."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "PXTpay"
-msgid "{line} moved down"
-msgstr "{line} çizgisi aşağı kaydı"
+msgctxt "Vw4Ib6"
+msgid "{line} moved down."
+msgstr "{line} aşağı kaydı."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "PHEAQb"
@@ -2793,19 +2793,9 @@ msgid "{year} CE"
 msgstr "MS {year}"
 
 #: src/activities/timeline/timeline-activity.tsx
-msgctxt "sCg6O3"
-msgid "A timeline from {start} to {end}."
-msgstr "{start} ile {end} arasındaki zaman çizelgesi."
-
-#: src/activities/timeline/timeline-activity.tsx
-msgctxt "6JCoGQ"
-msgid "{label}: {year}."
-msgstr "{label}: {year}."
-
-#: src/activities/timeline/timeline-activity.tsx
-msgctxt "nq2tGo"
-msgid "Show the real dates"
-msgstr "Gerçek tarihleri göster"
+msgctxt "sH-RCa"
+msgid "{label}: placed at {year}."
+msgstr "{label}: {year} tarihine yerleştirildi."
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "ZVA9gF"
@@ -2813,9 +2803,19 @@ msgid "{label}: {year}, your guess was {guess}."
 msgstr "{label}: {year}, tahminin {guess} idi."
 
 #: src/activities/timeline/timeline-activity.tsx
-msgctxt "sH-RCa"
-msgid "{label}: placed at {year}."
-msgstr "{label}: {year} tarihine yerleştirildi."
+msgctxt "6JCoGQ"
+msgid "{label}: {year}."
+msgstr "{label}: {year}."
+
+#: src/activities/timeline/timeline-activity.tsx
+msgctxt "sCg6O3"
+msgid "A timeline from {start} to {end}."
+msgstr "{start} ile {end} arasındaki zaman çizelgesi."
+
+#: src/activities/timeline/timeline-activity.tsx
+msgctxt "nq2tGo"
+msgid "Show the real dates"
+msgstr "Gerçek tarihleri göster"
 
 #: src/activities/timeline/timeline-event-card.tsx
 msgctxt "-k74Lp"

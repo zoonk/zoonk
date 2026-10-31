@@ -133,8 +133,8 @@ describe("money and society activities", () => {
   it("line crossing: moving supply left explains the spike", async () => {
     openActivity({ template: "lineCrossing" });
     await pressOnSlider("Move the line Supply", "ArrowLeft", 1);
-    await expect.element(page.getByText("Price per dozen goes up", { exact: true })).toBeVisible();
-    await expect.element(page.getByText("Eggs sold goes down", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Price per dozen goes up.", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Eggs sold goes down.", { exact: true })).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
   });
@@ -151,7 +151,7 @@ describe("money and society activities", () => {
   it("line crossing: moving the cost line up gives the new break-even", async () => {
     openActivity({ content: breakEven, template: "lineCrossing" });
     await pressOnSlider("Move the line Cost", "ArrowUp", 4);
-    await expect.element(page.getByText("Lamps sold goes up", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Lamps sold goes up.", { exact: true })).toBeVisible();
     await expect.element(valueInput()).toHaveValue("250");
     await checkActivity();
     await expectVerdict("Correct!");
@@ -345,7 +345,7 @@ describe("money and society activities by dragging", () => {
     openActivity({ template: "lineCrossing" });
     await dragBy(page.getByRole("slider", { name: "Move the line Supply" }), { x: -60, y: 0 });
 
-    await expect.element(page.getByText("Price per dozen goes up", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Price per dozen goes up.", { exact: true })).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
   });
@@ -354,7 +354,7 @@ describe("money and society activities by dragging", () => {
     openActivity({ content: breakEven, template: "lineCrossing" });
     await dragBy(page.getByRole("slider", { name: "Move the line Cost" }), { x: 0, y: -40 });
 
-    await expect.element(page.getByText("Lamps sold goes up", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Lamps sold goes up.", { exact: true })).toBeVisible();
   });
 });
 

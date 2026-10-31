@@ -126,7 +126,7 @@ private fun LineCrossingActivity(props: ActivityProps) {
     val showsAnswer = props.isChecked && fields.lines.any { offsetOf(it) != realOffsetOf(it) }
     val numeric = content.check as? NumericCheckValue
     val readsX = numeric?.value?.output == "x"
-    val changes = "${changeText(fields.yLabel, yChange)}. ${changeText(fields.xLabel, xChange)}."
+    val changes = joinSentences(changeText(fields.yLabel, yChange), changeText(fields.xLabel, xChange))
     val locale = currentLocale()
 
     fun move(
@@ -153,7 +153,7 @@ private fun LineCrossingActivity(props: ActivityProps) {
         listOfNotNull(
             stringResource(R.string.activities_geometry_line_description, first.label, second.label, fields.yLabel, fields.xLabel),
             if (moved) {
-                "${movedText(first, offsetOf(first), axis)}. ${movedText(second, offsetOf(second), axis)}. $changes"
+                joinSentences(movedText(first, offsetOf(first), axis), movedText(second, offsetOf(second), axis), changes)
             } else {
                 stringResource(R.string.activities_geometry_line_unmoved)
             },
@@ -172,7 +172,7 @@ private fun LineCrossingActivity(props: ActivityProps) {
             offsetOf = offsetOf,
             answerLine = shifted?.takeIf { showsAnswer }?.let { LineCrossingModel.moved(it.line(), realOffset, axis) },
             enabled = !props.isLocked,
-            valueText = { line -> "${movedText(line, offsetOf(line), axis)}. $changes" },
+            valueText = { line -> joinSentences(movedText(line, offsetOf(line), axis), changes) },
             onMove = ::move,
         )
 
@@ -195,7 +195,7 @@ private fun LineCrossingActivity(props: ActivityProps) {
                 }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    "${movedText(shifted, realOffset, axis)}.",
+                    movedText(shifted, realOffset, axis),
                     color = MaterialTheme.colorScheme.onTertiaryContainer,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                 )

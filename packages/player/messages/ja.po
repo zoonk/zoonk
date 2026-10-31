@@ -1535,19 +1535,19 @@ msgid "What happened"
 msgstr "結果"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "tMdNPI"
-msgid "{axis} goes down"
-msgstr "{axis}が下がります"
+msgctxt "HSYVGq"
+msgid "{axis} goes down."
+msgstr "{axis}が小さくなります。"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "4Cd_mH"
-msgid "{axis} stays the same"
-msgstr "{axis}は変わりません"
+msgctxt "AMYIvl"
+msgid "{axis} stays the same."
+msgstr "{axis}は変わりません。"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "sCCYcO"
-msgid "{axis} goes up"
-msgstr "{axis}が上がります"
+msgctxt "K23AEK"
+msgid "{axis} goes up."
+msgstr "{axis}が大きくなります。"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "m3ASYj"
@@ -1555,29 +1555,29 @@ msgid "Move the line {line}"
 msgstr "{line}の線を動かす"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "4Xe-ib"
-msgid "{line} hasn't moved"
-msgstr "{line}は動いていません"
+msgctxt "vomz5L"
+msgid "{line} hasn't moved."
+msgstr "{line}は移動していません。"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "B36SVg"
-msgid "{line} moved right"
-msgstr "{line}が右に動きました"
+msgctxt "uEOFW8"
+msgid "{line} moved right."
+msgstr "{line}は右に移動しました。"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "cToHM6"
-msgid "{line} moved left"
-msgstr "{line}が左に動きました"
+msgctxt "48N5WA"
+msgid "{line} moved left."
+msgstr "{line}は左に移動しました。"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "8OY5Eu"
-msgid "{line} moved up"
-msgstr "{line}が上に動きました"
+msgctxt "y7wEbI"
+msgid "{line} moved up."
+msgstr "{line}は上に移動しました。"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "PXTpay"
-msgid "{line} moved down"
-msgstr "{line}が下に動きました"
+msgctxt "Vw4Ib6"
+msgid "{line} moved down."
+msgstr "{line}は下に移動しました。"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "PHEAQb"
@@ -2793,19 +2793,9 @@ msgid "{year} CE"
 msgstr "西暦{year}"
 
 #: src/activities/timeline/timeline-activity.tsx
-msgctxt "sCg6O3"
-msgid "A timeline from {start} to {end}."
-msgstr "{start}から{end}までの年表です。"
-
-#: src/activities/timeline/timeline-activity.tsx
-msgctxt "6JCoGQ"
-msgid "{label}: {year}."
-msgstr "{label}：{year}。"
-
-#: src/activities/timeline/timeline-activity.tsx
-msgctxt "nq2tGo"
-msgid "Show the real dates"
-msgstr "実際の年代を表示する"
+msgctxt "sH-RCa"
+msgid "{label}: placed at {year}."
+msgstr "{label}：{year}に置きました。"
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "ZVA9gF"
@@ -2813,9 +2803,19 @@ msgid "{label}: {year}, your guess was {guess}."
 msgstr "{label}：{year}、予想は{guess}でした。"
 
 #: src/activities/timeline/timeline-activity.tsx
-msgctxt "sH-RCa"
-msgid "{label}: placed at {year}."
-msgstr "{label}：{year}に置きました。"
+msgctxt "6JCoGQ"
+msgid "{label}: {year}."
+msgstr "{label}：{year}。"
+
+#: src/activities/timeline/timeline-activity.tsx
+msgctxt "sCg6O3"
+msgid "A timeline from {start} to {end}."
+msgstr "{start}から{end}までの年表です。"
+
+#: src/activities/timeline/timeline-activity.tsx
+msgctxt "nq2tGo"
+msgid "Show the real dates"
+msgstr "実際の年代を表示する"
 
 #: src/activities/timeline/timeline-event-card.tsx
 msgctxt "-k74Lp"

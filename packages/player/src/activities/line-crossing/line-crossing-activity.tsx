@@ -1,5 +1,6 @@
 "use client";
 
+import { useSentenceSpace } from "@zoonk/learn/locale";
 import { useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas } from "../_components/activity-canvas";
@@ -84,6 +85,7 @@ export function LineCrossingActivity({
 }: LineCrossingProps) {
   const changeWords = useChangeWords();
   const lineWords = useLineWords();
+  const space = useSentenceSpace();
   const { check, fields } = content;
   const [offsets, setOffsets] = useState(() => restoredOffsets(fields, answer));
   const isChecked = phase === "checked";
@@ -103,7 +105,7 @@ export function LineCrossingActivity({
   const readsX = check.kind === "numeric" && check.output === "x";
   const showsAnswer = isChecked && !sameOffsets(offsets, real);
   const shifted = fields.lines.find((line) => line.id === fields.shift.line);
-  const changes = `${changeWords(fields.yLabel)[yChange]}. ${changeWords(fields.xLabel)[xChange]}.`;
+  const changes = [changeWords(fields.yLabel)[yChange], changeWords(fields.xLabel)[xChange]];
   const movedText = (line: FieldLine) => lineWords.moved(line, offsets[line.id] ?? 0, axis);
 
   function handleMove(id: string, offset: number) {
@@ -133,7 +135,7 @@ export function LineCrossingActivity({
         axis={axis}
         handleText={(line) => ({
           label: lineWords.move(line),
-          valueText: `${movedText(line)}. ${changes}`,
+          valueText: [movedText(line), ...changes].join(space),
         })}
         isChecked={isChecked}
         lines={[first, second]}
@@ -163,14 +165,13 @@ export function LineCrossingActivity({
       )}
 
       <LineCrossingDescription
-        changes={changes}
         computed={
           isChecked && check.kind === "numeric"
             ? computeActivityValue(content, { output: readsX ? "x" : "y" })
             : null
         }
         fields={fields}
-        movedText={moved ? `${movedText(first)}. ${movedText(second)}.` : null}
+        moves={moved ? [movedText(first), movedText(second), ...changes].join(space) : null}
       />
     </ActivityCanvas>
   );

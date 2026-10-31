@@ -36,6 +36,7 @@ import androidx.compose.ui.test.swipe
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.activities.sorting.choiceCheck
 import com.zoonk.android.feature.player.LessonPlayerHarness
@@ -50,11 +51,13 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import kotlin.math.abs
@@ -350,6 +353,24 @@ class GeometryFlowTest {
 
         shows("Supply moved left.")
         shows("People didn't want more eggs.")
+    }
+
+    @Test
+    @Config(qualifiers = "ja")
+    fun lineCrossingEndsEachJapaneseSentenceWithItsOwnStop() {
+        play("lineCrossing", isCorrect = false)
+        val text = { id: Int, label: String -> RuntimeEnvironment.getApplication().getString(id, label) }
+        val demand = rule.onNodeWithContentDescription(text(R.string.activities_geometry_line_move, "Demand")).performScrollTo()
+
+        demand.press(Key.DirectionRight, times = 2)
+        val state = checkNotNull(demand.state())
+        harness.tap(RuntimeEnvironment.getApplication().getString(R.string.player_action_check))
+
+        val answer = text(R.string.activities_geometry_line_moved_left, "Supply")
+        rule.onNodeWithText(answer).performScrollTo().assertIsDisplayed()
+        assertTrue(answer, answer.endsWith("。"))
+        assertTrue(state, state.endsWith("。"))
+        assertFalse(state, state.contains(".") || state.contains("。 "))
     }
 
     @Test

@@ -40,18 +40,18 @@
   "activities_geometry_element_sulfur": "02c91ac210e1492a58900c2ce86444310669cc0f9e8d339fbbffa2e6140feecc",
   "activities_geometry_line_before": "5fce03df3e82528371b3da9b99d340941093b94617997f3442e9a502a44bb80d",
   "activities_geometry_line_description": "91feea512a74bb8e11ff1388a5c0ddaf97148ac8fdff6cc865310b40e3f47253",
-  "activities_geometry_line_goes_down": "3e119851ee714fdcaa13eee5c82012278aed0691c4bb20c48505c6b13302f5bd",
-  "activities_geometry_line_goes_up": "f21dcdc5e7836ea610140bdf729b17070e9aaaa57678434eb4adda8809e5fa0d",
+  "activities_geometry_line_goes_down": "d7a64cfda6bdee9ebba43e8950695a9380c72ce65c8377034af393841f635dd8",
+  "activities_geometry_line_goes_up": "b96be3f6d13bdf0130be5eea5185d60313b4665083c7c1a6dc39ac5611e1b1a0",
   "activities_geometry_line_hint": "cfc7b606905f3a15e738e4d9c62d4547f2411e487f487d709a4e4f8c1f9cbe45",
   "activities_geometry_line_move": "4be8a3b918167d64408234b66ed2b15249f48d59ee789a994f163e887dde14df",
-  "activities_geometry_line_moved_down": "1f5b167759a3eb17ce1cce43eda027462717b8a72d2794591e07050d50684d2b",
-  "activities_geometry_line_moved_left": "b83eec4b4c0f16a96f869f94769c703c301074b3e2a11bb11fe659536fea7c6a",
-  "activities_geometry_line_moved_right": "71342a63ea00202e5f59975a3a597e1b5ba0ff3c30c51f828604b4f583deafab",
-  "activities_geometry_line_moved_up": "c975dabed9c4b0d970b9c93dbd48b51461032419c1c9d9c221fabba139b2ecfb",
+  "activities_geometry_line_moved_down": "7c548427b0d8dcda54e7531feca02367a89d7fbe04aea6d326fdd54fe3400525",
+  "activities_geometry_line_moved_left": "ab8d7c7b4234c60de0832d821ac30745fa96027fd2af62461522736c75a7e5fb",
+  "activities_geometry_line_moved_right": "c9a363c9d44935a874e09764e6e6dd97b07a8d752fad36ca0ea32eb2852936c8",
+  "activities_geometry_line_moved_up": "9cb86680adc3bf840007574ea41e0580cd3e9e8b1a474ab9bf57afeeb35685c2",
   "activities_geometry_line_new_crossing": "32899013a11eff21551de73534d54efcc25350448ab9612944612692f720a07c",
-  "activities_geometry_line_stays": "292c841639ead65e17ed07ce48b567578a799d040cbdf22f2ee252d8ae4b6b05",
+  "activities_geometry_line_stays": "12ff3fff9f02c7b8311a576dd64a73920bfad952da523bcbfc90299250f48acf",
   "activities_geometry_line_unmoved": "16502c9742490601da2f9ce7228c34db88bfb7d8786f5a2d3bddc6f19211ce75",
-  "activities_geometry_line_unmoved_line": "5091581a931e09beb4a1f4384405b738690e55ddaf744c1ba71656a0bc51702d",
+  "activities_geometry_line_unmoved_line": "b5ee332defb174274b67e0fa7c5134f096975bb6d2d7b446d6c85693d24849a2",
   "activities_geometry_line_what_happened": "66d6ac6875279128dc5788d53efb2c6d91e48896753b3eda39647126db9bff89",
   "activities_geometry_molecule_add": "8f2a8b9f4a3cc2ddbacebcffbe5855c1c2a810e7db15b7bc8b6ac8aa743b4e06",
   "activities_geometry_molecule_add_bonded": "708e7c4643063107eb5d523fff8d0ec95807ad5b470ece04981dbb7c3801acb4",
@@ -245,22 +245,22 @@
     <string name="activities_geometry_badge_move_curve">Przesuń krzywą</string>
     <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
     <string name="activities_geometry_line_move">Przesuń linię: %1$s</string>
-    <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved". -->
-    <string name="activities_geometry_line_unmoved_line">%1$s: bez przesunięcia</string>
-    <!-- A line on a chart dragged to the right, like "Supply moved right". -->
-    <string name="activities_geometry_line_moved_right">%1$s: przesunięto w prawo</string>
-    <!-- A line on a chart dragged to the left, like "Supply moved left". -->
-    <string name="activities_geometry_line_moved_left">%1$s: przesunięto w lewo</string>
-    <!-- A line on a chart dragged up, like "Cost moved up". -->
-    <string name="activities_geometry_line_moved_up">%1$s: przesunięto w górę</string>
-    <!-- A line on a chart dragged down, like "Cost moved down". -->
-    <string name="activities_geometry_line_moved_down">%1$s: przesunięto w dół</string>
-    <!-- How a chart axis's value where two lines cross changed, like "Price per dozen goes up". -->
-    <string name="activities_geometry_line_goes_up">%1$s: wzrost</string>
-    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold goes down". -->
-    <string name="activities_geometry_line_goes_down">%1$s: spadek</string>
-    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold stays the same". -->
-    <string name="activities_geometry_line_stays">%1$s: bez zmian</string>
+    <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved." -->
+    <string name="activities_geometry_line_unmoved_line">%1$s: bez przesunięcia.</string>
+    <!-- A line on a chart dragged to the right, like "Supply moved right." -->
+    <string name="activities_geometry_line_moved_right">%1$s: przesunięto w prawo.</string>
+    <!-- A line on a chart dragged to the left, like "Supply moved left." -->
+    <string name="activities_geometry_line_moved_left">%1$s: przesunięto w lewo.</string>
+    <!-- A line on a chart dragged up, like "Cost moved up." -->
+    <string name="activities_geometry_line_moved_up">%1$s: przesunięto w górę.</string>
+    <!-- A line on a chart dragged down, like "Cost moved down." -->
+    <string name="activities_geometry_line_moved_down">%1$s: przesunięto w dół.</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Price per dozen goes up." -->
+    <string name="activities_geometry_line_goes_up">%1$s: wzrost.</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold goes down." -->
+    <string name="activities_geometry_line_goes_down">%1$s: spadek.</string>
+    <!-- How a chart axis's value where two lines cross changed, like "Eggs sold stays the same." -->
+    <string name="activities_geometry_line_stays">%1$s: bez zmian.</string>
     <!-- A hint under a chart of two lines, before the learner moves either. -->
     <string name="activities_geometry_line_hint">Przeciągnij linię za uchwyt.</string>
     <!-- Beside the dashed line showing where a line was before the learner moved it. -->
