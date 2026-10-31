@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { getLearnerSummary } from "@zoonk/core/learner/summary";
 import { getSession } from "@zoonk/core/users/session";
 import { prisma } from "@zoonk/db";
-import { writeSeed } from "@zoonk/db/seed";
+import { writeSeed, writeSeedPersonaCopy } from "@zoonk/db/seed";
 import { listSeedPersonas } from "@zoonk/db/seed/personas";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -86,7 +86,14 @@ function getGoal(persona: Awaited<ReturnType<typeof loadPersona>>) {
 }
 
 async function createSource() {
-  const { email, userId } = await createPersona({ name: "pedro" });
+  const copyKey = randomUUID().slice(0, 6);
+
+  const { email, userId } = await writeSeedPersonaCopy(prisma, {
+    copyKey,
+    email: `persona-pedro-${copyKey}@zoonk.test`,
+    persona: "stocks",
+  });
+
   const key = `own-lesson-${randomUUID()}`;
 
   const lesson = await libraryLessonFixture({
@@ -374,6 +381,22 @@ describe("persona command", () => {
 
       expect(sourceLesson.ownerId).toBe(source.userId);
       expect(accounts).toBe(0);
+
+      const [sourceHistory, copiedHistory] = await Promise.all([
+        loadPersona(source.userId),
+        loadPersona(clone.userId),
+      ]);
+
+      for (const key of [
+        "attempts",
+        "learnerSkills",
+        "learningEvents",
+        "mistakes",
+        "studySessions",
+      ] as const) {
+        expect(sourceHistory[key].length).toBeGreaterThan(0);
+        expect(copiedHistory[key]).toHaveLength(sourceHistory[key].length);
+      }
 
       const sourceIds = [
         original.goal.id,

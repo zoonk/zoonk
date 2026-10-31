@@ -15,6 +15,7 @@ import { start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { taskResult } from "../_test-utils/recorded-outputs";
+import { getWorkflowWriteMock } from "../_test-utils/workflow-mock";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { explainQuestionWorkflow } from "./explain-question-workflow";
@@ -91,23 +92,6 @@ async function explainGoal(question: string) {
   });
 
   return { goal, user };
-}
-
-const SIDE_BY_SIDE = { timeout: 4000 };
-
-async function waitUntilReadable(goalId: string): Promise<void> {
-  await vi.waitFor(async () => {
-    const items = await prisma.planItem.count({
-      where: { lessonId: { not: null }, plan: { goalId } },
-    });
-
-    expect({ events: getStreamedEvents(), items }).toMatchObject({
-      events: expect.arrayContaining([
-        expect.objectContaining({ status: "completed", step: "writeExplanation" }),
-      ]),
-      items: 1,
-    });
-  }, SIDE_BY_SIDE);
 }
 
 function mockGenerality(isGeneral: boolean) {
@@ -232,6 +216,19 @@ describe(explainQuestionWorkflow, () => {
   it("lets the learner read the explanation before its course to go further is found", async () => {
     const { goal } = await explainGoal(`why is the sea salty? ${crypto.randomUUID()}`);
     const courseTitle = `Oceanography ${crypto.randomUUID().slice(0, 8)}`;
+    const readable = Promise.withResolvers<null>();
+    const courseSearch = Promise.withResolvers<null>();
+    const releaseCourse = Promise.withResolvers<null>();
+
+    getWorkflowWriteMock().mockImplementation(async () => {
+      const event = getStreamedEvents().at(-1);
+
+      if (event?.step === "writeExplanation" && event.status === "completed") {
+        readable.resolve(null);
+      }
+
+      return null;
+    });
 
     mockGenerality(true);
 
@@ -240,18 +237,39 @@ describe(explainQuestionWorkflow, () => {
     );
 
     vi.mocked(generateSearchTerms).mockImplementation(async ({ subjects }) => {
-      await (subjects.some((subject) => subject.kind === "course")
-        ? waitUntilReadable(goal.id)
-        : null);
+      if (subjects.some((subject) => subject.kind === "course")) {
+        courseSearch.resolve(null);
+        await releaseCourse.promise;
+      }
 
       return taskResult({
         subjects: subjects.map(() => ({ terms: [`zq${crypto.randomUUID().slice(0, 8)}`] })),
       }) as never;
     });
 
-    await expect(explainQuestionWorkflow({ goalId: goal.id })).resolves.toMatchObject({
-      status: "ready",
-    });
+    const workflow = explainQuestionWorkflow({ goalId: goal.id });
+
+    try {
+      await Promise.race([
+        Promise.all([readable.promise, courseSearch.promise]),
+        workflow.then(() => {
+          throw new Error("The workflow ended before publishing the explanation");
+        }),
+      ]);
+
+      await expect(
+        prisma.planItem.count({ where: { lessonId: { not: null }, plan: { goalId: goal.id } } }),
+      ).resolves.toBe(1);
+
+      await expect(
+        prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+      ).resolves.toMatchObject({ primaryCourseId: null });
+    } finally {
+      releaseCourse.resolve(null);
+      await workflow;
+    }
+
+    await expect(workflow).resolves.toMatchObject({ status: "ready" });
 
     await expect(
       prisma.goal.findUniqueOrThrow({ include: { primaryCourse: true }, where: { id: goal.id } }),

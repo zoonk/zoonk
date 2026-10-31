@@ -1,15 +1,12 @@
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { mockSession } from "../../../../../../../../packages/core/src/_test-utils/mock-session";
-import {
-  planLibraryFixture,
-  unplannedGoalFixture,
-} from "../../../../../../../../packages/core/src/plans/_test-utils/plan-library";
-import { createGoalPlan } from "../../../../../../../../packages/core/src/plans/create-goal-plan";
 import { sessionPreparationWorkflow } from "../../../../../workflows/sessions/session-preparation-workflow";
 import { GET as readToday } from "../../../today/route";
 import { POST as prepareLessons } from "./route";
@@ -36,23 +33,33 @@ describe("POST /v1/goals/{goalId}/lesson-preparations", () => {
   afterEach(() => vi.useRealTimers());
 
   it("prepares a day's lessons nobody is outlining, and the next read says they're coming", async () => {
-    const [user, course] = await Promise.all([
+    const [user, course, skill] = await Promise.all([
       userFixture(),
       courseFixture({ outlineStatus: "completed" }),
+      skillFixture(),
     ]);
 
-    const library = await planLibraryFixture({ skills: [{ lessons: 0, size: 4 }] });
-
-    const { goal } = await unplannedGoalFixture({
+    const goal = await goalFixture({
       dailyMinutes: 45,
       primaryCourseId: course.id,
-      settings: { startDate: "2026-09-30" },
       timezone: "UTC",
       userId: user.id,
     });
 
+    const plan = await planFixture({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Basics" }],
+        skills: [
+          { area: null, lessons: 4, name: skill.name, phase: 0, skillId: skill.id, weight: null },
+        ],
+      },
+      phases: [{ name: "Basics", startDate: "2026-09-30" }],
+      settings: { startDate: "2026-09-30" },
+    });
+
     await Promise.all([
-      createGoalPlan({ goalId: goal.id, graph: library.graph }),
+      planItemFixture({ planId: plan.id, position: 0, scheduledFor: NOW, skillId: skill.id }),
       learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
     ]);
 

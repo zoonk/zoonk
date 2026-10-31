@@ -1,7 +1,9 @@
+import { LIVE_CONVERSATION_MODEL } from "@zoonk/ai/tasks/language/live-conversation-models";
 import { auth } from "@zoonk/auth";
-import { startLanguageConversation } from "@zoonk/core/language/conversations/start";
 import { prisma } from "@zoonk/db";
-import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { headers } from "next/headers";
 import { onTestFinished, vi } from "vitest";
@@ -14,7 +16,27 @@ function cleanupConnections(userId: string) {
 
 export async function authenticatedCallFixture(role: "user" | "admin" = "user") {
   const user = await userFixture({ role });
-  const fixture = await languageGoalFixture({ userId: user.id });
+
+  const [chapter, goal] = await Promise.all([
+    libraryChapterFixture({ language: "pt", targetLanguage: "en" }),
+    goalFixture({ kind: "language", language: "pt", targetLanguage: "en", userId: user.id }),
+  ]);
+
+  const conversation = await prisma.languageConversation.create({
+    data: {
+      chapterId: chapter.id,
+      goalId: goal.id,
+      kind: "practice",
+      language: "pt",
+      level: "A2",
+      liveModel: LIVE_CONVERSATION_MODEL,
+      minutes: 1,
+      scenario: RENTING_SCENARIO,
+      targetLanguage: "en",
+      titleSnapshot: RENTING_SCENARIO.title,
+      userId: user.id,
+    },
+  });
 
   const signIn = await auth.api.signInEmail({
     body: { email: user.email, password: user.password },
@@ -28,16 +50,6 @@ export async function authenticatedCallFixture(role: "user" | "admin" = "user") 
 
   vi.mocked(headers).mockResolvedValue(new Headers({ cookie }));
 
-  const started = await startLanguageConversation({
-    chapterId: fixture.renting.id,
-    kind: "practice",
-    minutes: 1,
-  });
-
-  if (started.status !== "ready") {
-    throw new Error(`Call fixture could not start: ${started.status}`);
-  }
-
   cleanupConnections(user.id);
-  return { ...fixture, conversationId: started.conversationId, user };
+  return { conversationId: conversation.id, user };
 }

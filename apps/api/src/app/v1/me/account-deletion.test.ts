@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { del, list } from "@vercel/blob";
-import { type QuickExplanation } from "@zoonk/ai/tasks/explain/quick-explanation";
 import { auth } from "@zoonk/auth";
 import { deleteUserDependenciesBeforeAuthDelete } from "@zoonk/auth/account-deletion";
 import { registerEvaluationRunLog } from "@zoonk/core/evaluation-runs/log";
@@ -15,13 +14,7 @@ import {
   saveExamSkillGraph,
 } from "@zoonk/core/library/curriculum/reusable-curriculum";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
-import { toExplanationSteps } from "@zoonk/core/library/explanations/explanation-steps";
-import {
-  findExplanationGoFurther,
-  linkExplanationToGoal,
-  linkGoFurtherCourse,
-  saveExplanationLesson,
-} from "@zoonk/core/library/explanations/save";
+import { findExplanationGoFurther } from "@zoonk/core/library/explanations/save";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { feedbackFixture } from "@zoonk/testing/fixtures/feedback";
@@ -126,65 +119,34 @@ async function deleteOwnAccount(learner: Learner) {
   expect(response.status).toBe(200);
 }
 
-function explanation(): QuickExplanation {
-  return {
-    check: {
-      options: [
-        { feedback: "Yes: it's a basket.", isCorrect: true, text: "The basket is worth more" },
-        { feedback: "No: some fall.", isCorrect: false, text: "Every stock rose" },
-        { feedback: "No: points are a unit.", isCorrect: false, text: "It gained 2 points" },
-      ],
-      question: "The market is up 2% today. What happened?",
-    },
-    goFurther: {
-      overviewCourse: "How the stock market works",
-      relatedQuestions: ["What is an index fund?", "Why do stocks fall?"],
-    },
-    recap: ["The market is an index.", "Big companies weigh more.", "Up 2% is since yesterday."],
-    screens: [
-      { imagePrompt: null, text: "“The market” is an **index**.", title: "Not one price" },
-      { imagePrompt: null, text: "Each company counts by size.", title: "Bigger weighs more" },
-      { imagePrompt: null, text: "It compares with yesterday.", title: "Up since when?" },
-      { imagePrompt: null, text: "An index fund follows it.", title: "Why it matters" },
-    ],
-    title: "What “the market is up 2%” means",
-  };
-}
-
 async function askGeneralQuestion(userId: string) {
-  const [goal, skill, organization] = await Promise.all([
-    goalFixture({ details: { question: "what is the market?" }, kind: "explain", userId }),
-    skillFixture(),
-    aiOrganizationFixture(),
+  const [skill, organization] = await Promise.all([skillFixture(), aiOrganizationFixture()]);
+  const course = await courseFixture({ organizationId: organization.id, visibility: "public" });
+  const relatedQuestions = ["What is an index fund?", "Why do stocks fall?"];
+
+  const [goal, lesson] = await Promise.all([
+    goalFixture({
+      details: { relatedQuestions },
+      kind: "explain",
+      primaryCourseId: course.id,
+      userId,
+    }),
+    libraryLessonFixture({
+      contentStatus: "completed",
+      goFurtherCourseId: course.id,
+      level: "overview",
+      relatedQuestions,
+    }),
   ]);
 
-  const [course] = await Promise.all([
-    courseFixture({ organizationId: organization.id, visibility: "public" }),
-    planFixture({ goalId: goal.id }),
+  const plan = await planFixture({ goalId: goal.id });
+
+  await Promise.all([
+    lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+    planItemFixture({ lessonId: lesson.id, planId: plan.id, position: 0, skillId: skill.id }),
   ]);
 
-  const written = explanation();
-
-  const saved = await saveExplanationLesson({
-    explanation: written,
-    provenance: { ...provenance, runId: randomUUID() },
-    scope: { language: "en", ownerId: null },
-    skillId: skill.id,
-    steps: toExplanationSteps(written).steps,
-    workflowRunId: randomUUID(),
-  });
-
-  await linkExplanationToGoal({
-    courseId: null,
-    goalId: goal.id,
-    relatedQuestions: written.goFurther.relatedQuestions,
-    skill: { id: skill.id, name: skill.name },
-    title: written.title,
-  });
-
-  await linkGoFurtherCourse({ courseId: course.id, goalId: goal.id, lessonId: saved.lessonId });
-
-  return { course, lessonId: saved.lessonId, skill };
+  return { course, lessonId: lesson.id, skill };
 }
 
 async function studyLaw({ chapterId, userId }: { chapterId: string; userId: string }) {

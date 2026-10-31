@@ -24,6 +24,7 @@ import {
   mockSession,
 } from "../../../../packages/core/src/_test-utils/mock-session";
 import { finishCourseOutline } from "../../../../packages/core/src/library/curriculum/course-outline-state";
+import { isDayAwaitingOutlines } from "../../../../packages/core/src/sessions/_utils/outlining-stand-ins";
 import { getTodayView } from "../../../../packages/core/src/view-models/today/get-today-view";
 import { mockHookConflict } from "../../mocks/workflow";
 import { getStartMock } from "../workflows/_test-utils/start-mock";
@@ -46,7 +47,7 @@ vi.mock("next/server", async (importOriginal) => ({
 
 const TIME_ZONE = "UTC";
 const ONBOARDED = ["reason", "level", "targetDate", "buddy", "placement", "schedule"];
-const pending: Promise<unknown>[] = [];
+const pending: (() => Promise<unknown>)[] = [];
 
 type StartFailure = (workflow: unknown, args: unknown[]) => boolean;
 
@@ -57,7 +58,7 @@ function runStartedWorkflowsInline(fails: StartFailure = () => false) {
     }
 
     if (typeof workflow === "function" && workflow !== courseOutlineWorkflow) {
-      pending.push(workflow(...args));
+      pending.push(async () => workflow(...args));
     }
 
     return { runId: "started-run" } as Awaited<ReturnType<typeof start>>;
@@ -79,7 +80,7 @@ function holdNextStart(): () => Promise<unknown> {
 async function settle() {
   while (pending.length > 0) {
     // oxlint-disable-next-line no-await-in-loop -- Work started by awaited work joins the queue.
-    await Promise.all(pending.splice(0));
+    await Promise.all(pending.splice(0).map((run) => run()));
   }
 }
 
@@ -293,14 +294,10 @@ async function readCourse({ course }: PlacedGuest) {
 }
 
 async function isDayComing({ goal }: PlacedGuest): Promise<boolean> {
-  const view = await getTodayView({ goalId: goal.id, timeZone: TIME_ZONE });
-
-  if (view.status !== "ready" || !view.today.session) {
-    throw new Error(`Today did not read for goal ${goal.id}`);
-  }
-
-  const { session } = view.today;
-  return session.lessonsComing || session.emptyDay === "lessonsComing";
+  return isDayAwaitingOutlines({
+    goal,
+    localDate: getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE }),
+  });
 }
 
 type GoalOwner = { goal: { id: string }; user: { id: string } };
@@ -321,7 +318,7 @@ describe("preparing a guest's lessons", () => {
     runStartedWorkflowsInline();
 
     vi.mocked(after).mockImplementation((task) => {
-      pending.push(Promise.resolve(typeof task === "function" ? task() : task));
+      pending.push(async () => (typeof task === "function" ? task() : task));
     });
   });
 
@@ -340,6 +337,7 @@ describe("preparing a guest's lessons", () => {
 
       await expect(isDayComing(guest)).resolves.toBe(true);
       await expect(readCourse(guest)).resolves.toStrictEqual(course);
+      expect(start).not.toHaveBeenCalled();
 
       await settle();
 
