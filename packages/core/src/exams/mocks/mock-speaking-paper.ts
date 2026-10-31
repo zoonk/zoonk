@@ -13,7 +13,7 @@ import { mockConditionsSchema } from "./mock-contract";
 
 type SittingPaper = { mockId: string; userId: string };
 
-export type SpeakingPaperTask = { continues: string | null; key: string };
+type SpeakingPaperTask = { continues: string | null; key: string };
 
 /** The paper the cards were written for: its exam, level and every task. */
 export type SpeakingPaperPlan = {
