@@ -69,7 +69,6 @@ function isDoubtWord({ language, word }: { language: string; word: string }): bo
   return DOUBT_WORDS.has(word) || (word === "no" && language !== "pt");
 }
 
-/** "não quero Auditoria" or "talvez Auditoria" doesn't say the learner takes Auditoria. */
 function isDoubtful({ language, text }: { language: string; text: string }): boolean {
   const normalized = normalizeString(text);
 
