@@ -18,6 +18,7 @@ import { loadExamStructure } from "./exam-structure";
 import { loadPlanLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
 import { loadExamPrepAccess } from "./plus-only-lessons";
+import { getPlanTopics, getPracticeLabels } from "./practice-blocks";
 import { lockSessionQueue } from "./session-queue-lock";
 import { type StudyBlockView, toStudyBlockView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
@@ -105,6 +106,7 @@ export async function buildExtraPractice({
       refresh,
       skillIds: [...new Set(items.map((item) => item.skillId))],
       title,
+      ...getPracticeLabels({ items, topics: getPlanTopics(graph) }),
     }),
   };
 }

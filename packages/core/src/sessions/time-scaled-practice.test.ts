@@ -89,6 +89,8 @@ describe("practice once the plan's lessons are done", () => {
 
     expect(blocks.length).toBeGreaterThan(4);
     expect(blocks.every((block) => block.estimatedMinutes <= 15)).toBe(true);
+    expect(blocks.every((block) => block.topics.length > 0)).toBe(true);
+    expect(new Set(blocks.map((block) => block.topics[0])).size).toBeGreaterThan(1);
   });
 
   it("fills a long day only up to the learner's daily limit", async () => {
@@ -111,7 +113,13 @@ describe("practice once the plan's lessons are done", () => {
     await finishAll();
 
     await expect(addExtraStudyBlock({ sessionId })).resolves.toMatchObject({
-      block: { estimatedMinutes: 9, extra: true, kind: "practice", questions: 6 },
+      block: {
+        estimatedMinutes: 9,
+        extra: true,
+        kind: "practice",
+        questions: 6,
+        topics: expect.arrayContaining([expect.stringMatching(/^Skill \d$/u)]),
+      },
       status: "ready",
     });
   });

@@ -110,7 +110,7 @@ function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
   return (
     <span
       className={cn(
-        "truncate text-sm leading-5 font-medium",
+        "line-clamp-2 text-sm leading-5 font-medium",
         isFinished(block) && "text-muted-foreground",
       )}
       id={isNext ? NEXT_TITLE_ID : undefined}

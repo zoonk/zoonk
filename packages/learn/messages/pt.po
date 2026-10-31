@@ -12214,6 +12214,18 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Nova aula"
 
+#. Extra practice the learner added. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
+#: src/session/use-block-copy.ts
+msgctxt "7zIxxl"
+msgid "Bonus practice: {areas}"
+msgstr "Prática extra: {areas}"
+
+#. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
+#: src/session/use-block-copy.ts
+msgctxt "I85zr9"
+msgid "Practice: {areas}"
+msgstr "Prática: {areas}"
+
 #: src/session/use-block-copy.ts
 msgctxt "JfeRyY"
 msgid "Bonus practice"

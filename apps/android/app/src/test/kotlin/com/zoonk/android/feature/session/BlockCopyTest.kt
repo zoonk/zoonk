@@ -34,6 +34,21 @@ class BlockCopyTest {
             ),
     )
 
+    private val practice =
+        step(1, kind = StudyBlock.Kind.PRACTICE, lessonId = null).copy(
+            title = null,
+            questions = 10,
+            areas = listOf("Math", "Languages"),
+            topics = listOf("Functions", "Percentages") + (1..8).map { "Topic $it" },
+        )
+
+    private fun title(step: DayStep): String {
+        var title = ""
+        compose.setContent { title = blockTitle(step) }
+        compose.waitForIdle()
+        return title
+    }
+
     private fun detail(step: DayStep): String? {
         var detail: String? = null
         compose.setContent { detail = blockDetail(step) }
@@ -49,5 +64,17 @@ class BlockCopyTest {
     @Test
     fun aPhaseChallengeCountsItsQuestions() {
         assertEquals("Ordering food\u00A0· 8 questions, no hints", detail(challenge(questions = 8)))
+    }
+
+    @Test
+    fun aPracticeBlockIsNamedAfterTheAreasMostOfItAsksAbout() {
+        assertEquals("Practice: Math and Languages", title(practice))
+        assertEquals("Bonus practice: Math and Languages", title(practice.copy(extra = true)))
+        assertEquals("Mixed practice", title(practice.copy(areas = emptyList())))
+    }
+
+    @Test
+    fun aPracticeBlocksDetailNamesItsFirstTopics() {
+        assertEquals("10 questions\u00A0· Functions, Percentages and 8 more topics", detail(practice))
     }
 }

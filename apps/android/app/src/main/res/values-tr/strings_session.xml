@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "session_block_bonus_practice": "06916cc5bcde1dbef1b34b5340b3ec248bb83955fd11b4a9ded5a4ea7d4c5066",
+  "session_block_bonus_practice_areas": "6a51967c50c26d52deeaf8d0cad38c7f5a55dbc74aa70139f1c5d8bccab2f045",
   "session_block_challenge_questions": "23ef0af3b1567331b3e9a4c52162bd9caef596e31f4e36836da6f308dfb437e4",
   "session_block_challenge_rematch": "8a6af81ea8f847ac60793dbb1e9cf1c5652458527a124d80bfe80dd4ad5e45d1",
   "session_block_final_challenge": "28fbe446b4cfdbdc4b8d7315e8b3addf959c7099e6079685932bcc186283d14e",
@@ -14,6 +15,7 @@
   "session_block_phase_challenge": "4ab7adb1fe5383e294c215453155de3dc6d57c00f987bbb395752a824ee328e6",
   "session_block_phase_live_call": "ea7f34b85a1cf4c8d6216e56b7ac7554d8c6748b544a2700a5edb617444d7249",
   "session_block_phase_questions": "9270cc0a0b51d187c69af8df822c26e3a4f73bbfaf0389a70b32e806a8a5dc2a",
+  "session_block_practice_areas": "b215ac12082ee9d235a1c685ae859623bc1b1a498b932481723e297a073c1d2d",
   "session_block_practice_mistakes": "6524d90127d8cada2fb7c902691a7d971884b4552e52f746181f5103d2878bb7",
   "session_block_questions": "5e6e40a7b318dbddd4629890da4baa6ecfdbe565509edb62acd2a5ab711a3169",
   "session_block_quick_review": "6db4ef1d8073e735d4fde033df126537ece355fee19d695c1f8719b88c593ede",
@@ -88,6 +90,10 @@
     <string name="session_block_practice_mistakes">Yanlışlarına çalış</string>
     <string name="session_block_bonus_practice">Ek alıştırma</string>
     <string name="session_block_mixed_practice">Karma alıştırma</string>
+    <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
+    <string name="session_block_practice_areas">Alıştırma: %1$s</string>
+    <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
+    <string name="session_block_bonus_practice_areas">Ek alıştırma: %1$s</string>
     <string name="session_block_rematch_lesson">Tekrar denemeden önce kısa bir ders</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d soru</item>

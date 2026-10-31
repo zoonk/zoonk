@@ -9,6 +9,23 @@ extension StudyBlock {
     kind == .review && !capsules.isEmpty
   }
 
+  /// A full review and a mistakes drill say what they are instead.
+  private var hasTopics: Bool {
+    kind == .practice && !topics.isEmpty && !fullReview && !mistakesOnly
+  }
+
+  private func shortList(_ names: [String], named: Int) -> String {
+    guard names.count > named else {
+      return names.formatted(.list(type: .and))
+    }
+
+    let shown = names.prefix(named).joined(separator: ", ")
+
+    return String(
+      localized: "\(shown) and \(names.count - named) more", table: "Today",
+      comment: "A short list of topics and how many more")
+  }
+
   var challengePhase: String? {
     guard let checkpoint, !checkpoint.isWeekly else {
       return nil
@@ -64,6 +81,22 @@ extension StudyBlock {
           localized: "Practice mistakes", table: "Today", comment: "A block fixing mistakes")
       }
 
+      if !areas.isEmpty {
+        let areas = areas.formatted(.list(type: .and))
+
+        return extra
+          ? String(
+            localized: "Bonus practice: \(areas)", table: "Today",
+            comment:
+              "Extra practice the learner added, and the one or two subjects most of its questions are on, like \"Math and Languages\""
+          )
+          : String(
+            localized: "Practice: \(areas)", table: "Today",
+            comment:
+              "A block of the day's practice, and the one or two subjects most of its questions are on, like \"Math and Languages\""
+          )
+      }
+
       return extra
         ? String(localized: "Bonus practice", table: "Today", comment: "An extra practice block")
         : String(localized: "Mixed practice", table: "Today", comment: "A practice block")
@@ -78,15 +111,8 @@ extension StudyBlock {
     }
 
     if hasCapsules {
-      let titles = capsules.compactMap(\.title)
-      let shown = titles.prefix(2).formatted(.list(type: .and))
       let reviewed = capsules.reduce(0) { $0 + $1.questions }
-      let topics =
-        titles.count > 2
-        ? String(
-          localized: "\(shown) and \(titles.count - 2) more", table: "Today",
-          comment: "A short list of topics and how many more")
-        : shown
+      let topics = shortList(capsules.compactMap(\.title), named: 2)
 
       return questions > reviewed
         ? String(
@@ -138,6 +164,12 @@ extension StudyBlock {
         comment: "A full review's questions")
     }
 
+    if hasTopics {
+      return String(
+        localized: "\(questions) questions · \(shortList(topics, named: 2))", table: "Today",
+        comment: "A review's questions and its topics")
+    }
+
     return String(
       localized: "\(questions) questions", table: "Today", comment: "A practice block's questions")
   }
@@ -168,7 +200,9 @@ extension StudyBlock {
 
     let part: String?
 
-    if isCatchingUp {
+    if hasTopics {
+      part = shortList(topics, named: 1)
+    } else if isCatchingUp {
       part =
         subject.map {
           String(

@@ -259,6 +259,8 @@ struct StudyBlock: Decodable, Equatable, Sendable {
   /// The saved block's id; nil on a day not opened yet.
   let id: String?
   let areaId: String?
+  /// The one or two areas most of a practice block asks about.
+  let areas: [String]
   let brainPower: Int
   let canDo: String?
   let canTestOut: Bool
@@ -281,6 +283,8 @@ struct StudyBlock: Decodable, Equatable, Sendable {
   var status: Status
   let subject: String?
   let title: String?
+  /// A practice block's topics, most asked first.
+  let topics: [String]
   let waitReason: WaitReason?
   let weakest: Bool
 

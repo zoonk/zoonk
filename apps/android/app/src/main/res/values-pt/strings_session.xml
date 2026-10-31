@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "session_block_bonus_practice": "bbae26ab084161b18d5097804f8e643aedcafd527b12809fc3ac48bc5945fca4",
+  "session_block_bonus_practice_areas": "c641150aa46b9197fdb5c7b8ae18f09b6dc67a63998ed81849f836f0fab6c5b2",
   "session_block_challenge_questions": "85c2fa11ba6ed4382663eaeb16bc561575e2127b472debe9ae49e63f84cc1adb",
   "session_block_challenge_rematch": "6f52f0bec2f6cd04b21cc196d3b1891c4efb6572bb5ce55b1a6e5452b625fedf",
   "session_block_final_challenge": "9f7aba94eb2848aa2807c771fc391f23461e7ed3e1ad76d9a5564a1b7f2c902d",
@@ -14,6 +15,7 @@
   "session_block_phase_challenge": "c7cf21fd415425c861f078ac1eeed499f74c4ededc4b72a47f3e7edb571ba4e0",
   "session_block_phase_live_call": "12876ff31f1287fee51ffd99cb24482a85744add8b5784ec026c0a8b67dfb0f4",
   "session_block_phase_questions": "41d14c2df1167447dcfd1e6cc1d7c6603484ff24fd1c6b54715f4fe4f6b5b740",
+  "session_block_practice_areas": "26bf87c9da5641e5939a59eccaa62356ac28a81a201304d481fb5f3fac967956",
   "session_block_practice_mistakes": "99487058712064fb8842bcf05904ecf9a95168a18097587f977038653aa3fa1e",
   "session_block_questions": "3f9311b3bb4890371f6ccc0a425eb35f5db727cc4cf56478bed78d16883c92b1",
   "session_block_quick_review": "a57b114a09f81c71aaca8adecc6e0392f4b46b620403c55068d0b2381b146579",
@@ -88,6 +90,10 @@
     <string name="session_block_practice_mistakes">Praticar o que você errou</string>
     <string name="session_block_bonus_practice">Prática extra</string>
     <string name="session_block_mixed_practice">Prática variada</string>
+    <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
+    <string name="session_block_practice_areas">Prática: %1$s</string>
+    <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
+    <string name="session_block_bonus_practice_areas">Prática extra: %1$s</string>
     <string name="session_block_rematch_lesson">Aula rápida antes da revanche</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d pergunta</item>

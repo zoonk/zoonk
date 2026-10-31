@@ -65,7 +65,9 @@ import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.challengePhase
+import com.zoonk.android.feature.session.hasTopics
 import com.zoonk.android.feature.session.learnKind
+import com.zoonk.android.feature.session.shortTopicList
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.DoneMark
@@ -559,6 +561,7 @@ private fun rowLabel(
             ?.contains(step.position) == true
     val label =
         when {
+            step.hasTopics -> shortTopicList(step.topics, named = 1)
             !catchingUp && step.checkpoint != null -> listOfNotNull(step.subject, blockDetail(step)).factsLine()
             !catchingUp -> step.subject
             step.subject != null -> stringResource(R.string.today_step_catching_up_subject, step.subject)

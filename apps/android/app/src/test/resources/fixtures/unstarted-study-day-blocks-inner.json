@@ -3,7 +3,7 @@
   "areaId": null,
   "brainPower": 0,
   "canDo": null,
-  "canTestOut": false,
+  "areas": [], "topics": [], "canTestOut": false,
   "capsules": [],
   "chapterId": null,
   "checkpoint": null,

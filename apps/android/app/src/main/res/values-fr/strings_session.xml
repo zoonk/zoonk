@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "session_block_bonus_practice": "d74a2870569347398af4de57f43de9381f3d7b8679bc3bfda6bac8d17326c357",
+  "session_block_bonus_practice_areas": "1fea59f323d3c1689d61cbe78f8c297620df8bcbc2fcf123b6aef5187a968296",
   "session_block_challenge_questions": "feb096e3cf8ef6e2031db5d72663d76fffe732ce843859b15a777b56bcf5213c",
   "session_block_challenge_rematch": "03266af1f2ea54c0d7ae4d5730ef62116632332d89230c045928ac2d54dc3e9b",
   "session_block_final_challenge": "c9c3b779d669b1f92aef6254fa6210e9f073c8cb14d6d828a7844ff66b3cbbc8",
@@ -14,6 +15,7 @@
   "session_block_phase_challenge": "cf5c6f21c36fe2a7093fb7693d66c41afd868856fe017eb888bf8f68eab9d815",
   "session_block_phase_live_call": "bc0288a7eb25c874700441ce03c13b86265a335b43d05a85c05469680b1c16a1",
   "session_block_phase_questions": "8cd1f3266687d8b55e7719c96b8ebe6db81548419d9c5cb7dd6b639d7116bbc9",
+  "session_block_practice_areas": "20cedfd6560b32093de0825c862cf7c3adb858a9e7f9e26b16c599fbf48d6c8b",
   "session_block_practice_mistakes": "d96a73a126c6512b46d469f650d8369bc7fdd5e98901fc0bff9f916bf4cd346b",
   "session_block_questions": "fc51249ac76a3ab09ec7680f68facf9f50fc68117d61e8189912ea3638079bba",
   "session_block_quick_review": "63659ea572b6d793d72f5e197b1e69315c0faa0dbce454aeb0bb83b750442085",
@@ -88,6 +90,10 @@
     <string name="session_block_practice_mistakes">Réviser tes erreurs</string>
     <string name="session_block_bonus_practice">Entraînement bonus</string>
     <string name="session_block_mixed_practice">Entraînement varié</string>
+    <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
+    <string name="session_block_practice_areas">Entraînement : %1$s</string>
+    <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
+    <string name="session_block_bonus_practice_areas">Entraînement bonus : %1$s</string>
     <string name="session_block_rematch_lesson">Courte leçon avant le deuxième essai</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d question</item>

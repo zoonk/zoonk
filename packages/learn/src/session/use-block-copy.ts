@@ -1,12 +1,13 @@
 "use client";
 
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useShortList } from "../plan/use-short-list";
 import { type StudyBlock } from "./session-types";
 import { useReviewTitle } from "./use-review-title";
 
 type BlockCopyInput = Pick<
   StudyBlock,
+  | "areas"
   | "capsules"
   | "checkpoint"
   | "estimatedMinutes"
@@ -17,6 +18,7 @@ type BlockCopyInput = Pick<
   | "questions"
   | "reinforcement"
   | "title"
+  | "topics"
   | "weakest"
 >;
 
@@ -52,8 +54,18 @@ function hasCapsules(block: Pick<StudyBlock, "capsules" | "kind">): boolean {
   return block.kind === "review" && block.capsules.length > 0;
 }
 
+/** A full review and a mistakes drill say what they are instead. */
+export function hasTopics(
+  block: Pick<BlockCopyInput, "fullReview" | "kind" | "mistakesOnly" | "topics">,
+): boolean {
+  return (
+    block.kind === "practice" && block.topics.length > 0 && !block.fullReview && !block.mistakesOnly
+  );
+}
+
 export function useBlockTitle() {
   const t = useExtracted();
+  const format = useFormatter();
   const checkpointTitle = useCheckpointTitle();
   const reviewTitle = useReviewTitle();
 
@@ -85,6 +97,24 @@ export function useBlockTitle() {
 
     if (block.mistakesOnly) {
       return t("Practice mistakes");
+    }
+
+    if (block.areas.length > 0) {
+      const areas = format.list(block.areas, { type: "conjunction" });
+
+      return block.extra
+        ? t({
+            description:
+              'Extra practice the learner added. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".',
+            message: "Bonus practice: {areas}",
+            values: { areas },
+          })
+        : t({
+            description:
+              'A block of the day\'s practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".',
+            message: "Practice: {areas}",
+            values: { areas },
+          });
     }
 
     return block.extra ? t("Bonus practice") : t("Mixed practice");
@@ -156,6 +186,13 @@ export function useBlockDetail() {
         "{count, plural, one {# question} other {# questions}} on every topic, your weakest first",
         { count: block.questions },
       );
+    }
+
+    if (hasTopics(block)) {
+      return t("{count, plural, one {# question} other {# questions}} · {titles}", {
+        count: block.questions,
+        titles: shortList(block.topics, "topics", { named: 2 }),
+      });
     }
 
     return t("{count, plural, one {# question} other {# questions}}", { count: block.questions });

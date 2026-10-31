@@ -28,6 +28,8 @@ export type StudyBlockView = Pick<
 > & {
   answered: number;
   areaId: string | null;
+  /** The areas most of a practice block asks about, at most two. */
+  areas: string[];
   /** Whether this lesson's chapter test can be offered after today's test and study history. */
   canTestOut: boolean;
   capsules: CapsuleView[];
@@ -55,6 +57,8 @@ export type StudyBlockView = Pick<
   /** Short subject name; null for mixed blocks and goals with fewer than two subjects. */
   subject: string | null;
   title: string | null;
+  /** A practice block's topics, most asked first. */
+  topics: string[];
   /** Why this phase challenge must wait for earlier work in this session. */
   waitReason: "challenge" | "lessons" | null;
   /** No topics are due; uses the weakest studied topics to avoid an empty day. */

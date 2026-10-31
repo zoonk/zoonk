@@ -188,7 +188,7 @@ internal fun practiceBlock(
 ): AreaPractice =
     ApiJson.decodeFromString(
         """
-        {"sessionId":"$SESSION","block":{"answered":0,"brainPower":0,"canTestOut":false,"capsules":[],"estimatedBrainPower":10,
+        {"sessionId":"$SESSION","block":{"answered":0,"brainPower":0,"areas": [], "topics": [], "canTestOut":false,"capsules":[],"estimatedBrainPower":10,
           "estimatedMinutes":5,"extra":true,"fullReview":false,"id":"$BLOCK","kind":"$kind","lessonId":${lessonId?.let {
             "\"$it\""
         } ?: "null"},

@@ -36,6 +36,7 @@ function question(itemId: string, answered: { blank: boolean; isCorrect: boolean
 const BLOCK: StudyBlockDetail["block"] = {
   answered: 0,
   areaId: null,
+  areas: [],
   brainPower: 0,
   canDo: null,
   canTestOut: false,
@@ -62,6 +63,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   status: "active",
   subject: null,
   title: null,
+  topics: [],
   waitReason: null,
   weakest: false,
 };

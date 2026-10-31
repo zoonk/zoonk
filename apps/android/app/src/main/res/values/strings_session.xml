@@ -15,6 +15,10 @@
     <string name="session_block_practice_mistakes">Practice mistakes</string>
     <string name="session_block_bonus_practice">Bonus practice</string>
     <string name="session_block_mixed_practice">Mixed practice</string>
+    <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
+    <string name="session_block_practice_areas">Practice: %1$s</string>
+    <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
+    <string name="session_block_bonus_practice_areas">Bonus practice: %1$s</string>
     <string name="session_block_rematch_lesson">Short lesson before the rematch</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d question</item>

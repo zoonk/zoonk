@@ -79,6 +79,11 @@ const baseInput: SessionBuildInput = {
   reinforcement: [],
   remainingLimitMinutes: null,
   reviewPlanItemId: null,
+  topics: new Map([
+    ["s0", { area: "Math", name: "Functions" }],
+    ["s1", { area: "Math", name: "Percentages" }],
+    ["s2", { area: "Science", name: "Ecology" }],
+  ]),
 };
 
 function getFullReview(input: SessionBuildInput) {
@@ -461,6 +466,60 @@ describe(buildSessionBlocks, () => {
         );
       }),
     ).toBe(true);
+  });
+
+  it("names each practice block's main areas and its topics, the ones it asks most first", () => {
+    const { blocks } = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      dailyMinutes: 30,
+      drills: [],
+      lessons: [],
+      practice: [
+        "s1",
+        "s0",
+        "s1",
+        "s0",
+        "s1",
+        "s0",
+        "s1",
+        "s2",
+        "s2",
+        "s1",
+        "s2",
+        "s2",
+        "s2",
+        "s2",
+        "s2",
+        "s2",
+        "s2",
+        "s2",
+        "s1",
+        "s1",
+      ].map((skillId, index) => ({ itemId: `q${index}`, skillId })),
+      practiceShare: 0.6,
+    });
+
+    expect(blocks.map(({ payload }) => [payload.areas, payload.topics])).toStrictEqual([
+      [["Math"], ["Percentages", "Functions", "Ecology"]],
+      [["Science"], ["Ecology", "Percentages"]],
+    ]);
+  });
+
+  it("names a block after a second area only when it asks at least half as much there", () => {
+    const { blocks } = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      dailyMinutes: 15,
+      drills: [],
+      lessons: [],
+      practice: ["s0", "s0", "s0", "s1", "s2", "s2", "s2", "s2", "s1", "s1"].map(
+        (skillId, index) => ({ itemId: `q${index}`, skillId }),
+      ),
+      practiceShare: 0.6,
+    });
+
+    expect(blocks.map(({ payload }) => payload.areas)).toStrictEqual([["Math", "Science"]]);
   });
 
   it("asks a question set whole or leaves it for another day, never cut", () => {

@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "session_block_bonus_practice": "7acb70ec455d62ddaec46c1d6d4c244e607873441e1b0081b4c228de0c053c39",
+  "session_block_bonus_practice_areas": "1d549e095bf03946375537146a044660e7e5e7599e1dc1468151aeba4ed7e8ce",
   "session_block_challenge_questions": "b1842dc3cfcdf7d140d7eb37a9337ca22eb671bae6ae936d63f5f12d34962833",
   "session_block_challenge_rematch": "d798fb6ae4a41d40d700fd53d7671fe581cdf115f48000cd8cc3b1787a960eea",
   "session_block_final_challenge": "1eab071edc1dd0d6fa7b29555759019d623d15cb3193af70e676894e12ee29e2",
@@ -14,6 +15,7 @@
   "session_block_phase_challenge": "6f157f39edc4baa3397a7eb1afd03f745f9fe51f18f658026bede3f9229ac262",
   "session_block_phase_live_call": "9651e472217ac216f416cbe114863a0b5579d3c4f7f60e39c289c30ebdc2b50e",
   "session_block_phase_questions": "3a510acc8171cbd28c54424c5e3a8d1bbc76248e18cfb0c7c792fccc5ad2d02b",
+  "session_block_practice_areas": "9dbf0c6084a5cca5f639779d63245459ceb22a9da77be200691d8c6dbfc24681",
   "session_block_practice_mistakes": "754c728302275e2acf7cacd2b0eedda0a435f85744e09674b43cf5e223646d98",
   "session_block_questions": "cc4a08a3b4ea318fd88af2095e1b260c6aec625ab9943331a2249d300af470f2",
   "session_block_quick_review": "7a71440adea91607633ed8ec8d294a1c9239ee6046c7b7058345c55ce259755b",
@@ -88,6 +90,10 @@
     <string name="session_block_practice_mistakes">間違えたところの練習</string>
     <string name="session_block_bonus_practice">追加の練習</string>
     <string name="session_block_mixed_practice">総合練習</string>
+    <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
+    <string name="session_block_practice_areas">練習：%1$s</string>
+    <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
+    <string name="session_block_bonus_practice_areas">追加練習：%1$s</string>
     <string name="session_block_rematch_lesson">再挑戦前の短いレッスン</string>
     <plurals name="session_block_questions">
         <item quantity="other">%d問</item>

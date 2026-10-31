@@ -26,6 +26,7 @@ import { loadUpcomingLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
 import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
 import { isDayAwaitingOutlines } from "./outlining-stand-ins";
+import { getPlanTopics } from "./practice-blocks";
 import { loadReviewsAndClaims } from "./practice-claims";
 import { getPracticeDifficulty } from "./practice-difficulty";
 import { getPracticeWeights, getTestSkillIds } from "./review-skills";
@@ -327,6 +328,7 @@ export async function loadSessionBuildInput(
     remainingLimitMinutes: plan.limit.remainingMinutes,
     reviewPlanItemId: reviewDay?.id ?? null,
     reviewPlanItemKey: reviewDay?.key ?? null,
+    topics: getPlanTopics(plan.graph),
   };
 
   return keepsBlocks ? input : withWeakestReview({ input, review });

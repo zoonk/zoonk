@@ -78,6 +78,7 @@ export function toDayBlockView({
   return {
     answered: itemIds.filter((id) => answeredItemIds.has(id)).length,
     areaId: payload.areaId,
+    areas: payload.areas,
     brainPower: block.brainPower,
     canDo: block.canDo,
     canTestOut:
@@ -114,6 +115,7 @@ export function toDayBlockView({
     status: block.status,
     subject,
     title: payload.title ?? payload.capsules[0]?.title ?? null,
+    topics: payload.topics,
     waitReason: getStoredBlockWait({ block, blocks }),
     weakest: payload.weakest,
   };

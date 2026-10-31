@@ -732,7 +732,7 @@ private func blockJSON(
   planItemID: String?, checkpoint: String?
 ) -> String {
   """
-  {"answered":0,"areaId":null,"brainPower":0,"canDo":null,"canTestOut":false,"capsules":[],
+  {"answered":0,"areaId":null,"brainPower":0,"canDo":null,"areas": [], "topics": [], "canTestOut":false,"capsules":[],
   "chapterId":null,"checkpoint":\(checkpoint ?? "null"),"estimatedBrainPower":5,
   "estimatedMinutes":5,"extra":false,"fullReview":false,"kind":"\(kind)",
   "lessonId":\(json(lessonID)),"mistakesOnly":false,"netScored":false,"oftenTested":false,

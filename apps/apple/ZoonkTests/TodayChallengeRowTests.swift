@@ -8,7 +8,7 @@ final class TodayChallengeRowTests: XCTestCase {
     mock: Bool = false
   ) throws -> StudyBlock {
     let json = """
-      {"id": null, "areaId": null, "brainPower": 0, "canDo": null, "canTestOut": false,
+      {"id": null, "areaId": null, "brainPower": 0, "canDo": null, "areas": [], "topics": [], "canTestOut": false,
        "capsules": [], "chapterId": null,
        "checkpoint": {"kind": "\(kind)", "mock": \(mock), "mockIdentity": null, "phase": 1,
                       "rematch": false},

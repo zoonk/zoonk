@@ -54,6 +54,10 @@ val DayStep.challengePhase: String?
 private val DayStep.hasCapsules: Boolean
     get() = kind == StudyBlock.Kind.REVIEW && capsules.isNotEmpty()
 
+/** A full review and a mistakes drill say what they are instead. */
+internal val DayStep.hasTopics: Boolean
+    get() = kind == StudyBlock.Kind.PRACTICE && topics.isNotEmpty() && !fullReview && !mistakesOnly
+
 @Composable
 fun blockTitle(step: DayStep): String {
     val checkpoint = step.checkpointFacts
@@ -100,6 +104,13 @@ fun blockTitle(step: DayStep): String {
 
         step.mistakesOnly -> {
             stringResource(R.string.session_block_practice_mistakes)
+        }
+
+        step.areas.isNotEmpty() -> {
+            stringResource(
+                if (step.extra) R.string.session_block_bonus_practice_areas else R.string.session_block_practice_areas,
+                formatList(step.areas, currentLocale()),
+            )
         }
 
         else -> {
@@ -162,6 +173,10 @@ fun blockDetail(step: DayStep): String? {
             pluralStringResource(R.plurals.session_block_full_review_questions, count, count)
         }
 
+        step.hasTopics -> {
+            pluralStringResource(R.plurals.session_block_review_topics, count, count, shortTopicList(step.topics, named = 2))
+        }
+
         else -> {
             pluralStringResource(R.plurals.session_block_questions, count, count)
         }
@@ -173,16 +188,19 @@ fun blockDetail(step: DayStep): String? {
  * named.
  */
 @Composable
-fun shortTopicList(topics: List<String>): String {
+fun shortTopicList(
+    topics: List<String>,
+    named: Int = NAMED,
+): String {
     val names = topics.map(::topicWords)
-    val named = names.take(NAMED)
-    val rest = names.size - named.size
+    val shown = names.take(named)
+    val rest = names.size - shown.size
     val locale = currentLocale()
 
     return if (rest == 0) {
-        formatList(named, locale)
+        formatList(shown, locale)
     } else {
-        pluralStringResource(R.plurals.session_topics_and_more, rest, named.joinToString(", "), rest)
+        pluralStringResource(R.plurals.session_topics_and_more, rest, shown.joinToString(", "), rest)
     }
 }
 

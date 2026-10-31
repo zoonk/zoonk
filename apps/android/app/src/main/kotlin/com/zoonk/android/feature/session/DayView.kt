@@ -76,6 +76,10 @@ data class DayStep(
     val title: String?,
     val canDo: String?,
     val subject: String?,
+    /** The one or two areas most of a practice block asks about. */
+    val areas: List<String>,
+    /** A practice block's topics, most asked first. */
+    val topics: List<String>,
     val oftenTested: Boolean,
     val estimatedMinutes: Long,
     val questions: Long,
@@ -269,6 +273,8 @@ fun StudyBlock.toDayStep(): DayStep =
         title = title,
         canDo = canDo,
         subject = subject,
+        areas = areas,
+        topics = topics,
         oftenTested = oftenTested,
         estimatedMinutes = estimatedMinutes,
         questions = questions,
@@ -300,6 +306,8 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         title = title,
         canDo = canDo,
         subject = subject,
+        areas = areas,
+        topics = topics,
         oftenTested = oftenTested,
         estimatedMinutes = estimatedMinutes,
         questions = questions,

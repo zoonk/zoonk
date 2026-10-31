@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "session_block_bonus_practice": "8e383e8c1bf854e22fb0e4349c2c4c29555355105675ab8ebec1c6b86e38e96b",
+  "session_block_bonus_practice_areas": "dd7d39d98d9ec0c0e81e6f81fd716131e8f4b52441e1b54fbcf8bbdcfbd3a589",
   "session_block_challenge_questions": "4ee5d92f08f27bb9ddc4f489834b48ce5ebd185c6eebd71260da3179eb578756",
   "session_block_challenge_rematch": "6661357a065e5ec918f3461cdb4d3f8bac401bdaa58636bfd42d5765dc6e7947",
   "session_block_final_challenge": "66b6b5f3fd839f57d7da7125e8dd805d0ef23de1ad2d8cc661b2e03baaa7f4f7",
@@ -14,6 +15,7 @@
   "session_block_phase_challenge": "d8ead1669d83fbfa6262565b6b58ed263e3262da2362595e64401568c3bda919",
   "session_block_phase_live_call": "547b4ed872da33f4320ed10f748de39895aa3c947a17ac5cede689f1485cb073",
   "session_block_phase_questions": "bab7a74d0f566fa8bd16e2fd4bf21f758e48d99aca47c7f74bc259b3fceb5ea4",
+  "session_block_practice_areas": "cacb3d3f817713d3559abce36554daddb74d8a09595fd6fadc7776c341d08805",
   "session_block_practice_mistakes": "39fb8deac9f6d72514ca750630c57498c745c4196e28844245e9495a1c76de58",
   "session_block_questions": "19a794b7faf89c0a67ea3d017cea54e88034da483af3d7094e6b714b872e9340",
   "session_block_quick_review": "c344a58a911784d41b4ec95b891c91c1d5a2bc31c04c4a68a94826c213cf3df9",
@@ -88,6 +90,10 @@
     <string name="session_block_practice_mistakes">틀린 문제 연습</string>
     <string name="session_block_bonus_practice">추가 연습</string>
     <string name="session_block_mixed_practice">섞어서 연습하기</string>
+    <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
+    <string name="session_block_practice_areas">연습: %1$s</string>
+    <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
+    <string name="session_block_bonus_practice_areas">추가 연습: %1$s</string>
     <string name="session_block_rematch_lesson">재도전 전 짧은 레슨</string>
     <plurals name="session_block_questions">
         <item quantity="other">%d문제</item>

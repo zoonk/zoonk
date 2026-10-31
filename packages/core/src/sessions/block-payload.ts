@@ -42,6 +42,8 @@ const checkpointSchema = z.object({
 const blockPayloadSchema = z.object({
   /** A chapter's "Practice now": the area it practices, so a second tap finds it. */
   areaId: z.string().nullable().default(null),
+  /** The areas most of a practice block asks about, at most two: what its row is named after. */
+  areas: z.array(z.string()).default([]),
   capsules: z.array(capsuleSchema).default([]),
   /** A chapter whose next lesson isn't written yet: it's generated just in time. */
   chapterId: z.string().nullable().default(null),
@@ -92,6 +94,8 @@ const blockPayloadSchema = z.object({
     .nullable()
     .default(null),
   title: z.string().nullable().default(null),
+  /** A practice block's topics as its plan names them, most asked first: what its row says it practises. */
+  topics: z.array(z.string()).default([]),
   /** Nothing is due; use weak studied topics rather than leaving the day empty. */
   weakest: z.boolean().default(false),
 });

@@ -3,7 +3,7 @@ import { type PlannedProduce, toProduceBlock } from "../exams/essays/produce-blo
 import { MINUTES_PER_REVIEW, REVIEW_SHARE_OF_DAY } from "../learner/review-load";
 import { type DuelMarks, keepDuelLessons, splitAtDuel } from "./_utils/lessons-before-challenges";
 import { buildCheckpointBlock } from "./_utils/planned-checkpoint-block";
-import { buildPracticeBlocks, countDrilled } from "./_utils/practice-blocks";
+import { type PracticeTopic, buildPracticeBlocks, countDrilled } from "./_utils/practice-blocks";
 import { MIN_BLOCK_MINUTES, PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "./block-minutes";
 import {
   type BlockCapsule,
@@ -76,6 +76,8 @@ export type SessionBuildInput = {
   weakestReview?: boolean;
   /** Minutes left under the learner's daily limit, or null without one. */
   remainingLimitMinutes: number | null;
+  /** Each practice topic's name and area as the plan shows them (`getPlanTopics`). */
+  topics: ReadonlyMap<string, PracticeTopic>;
   /** Minutes held by preserved blocks; rebuilding fills only the remaining time. */
   usedMinutes?: number;
   /** Preserve practice's share of the original whole day, rather than its share of the remaining time. */
@@ -300,6 +302,7 @@ export function buildSessionBlocks(input: SessionBuildInput): {
       planItemKey: input.reviewPlanItemKey,
       practice: input.examTrialEnded ? [] : input.practice,
       reviewedSkillIds: review?.payload.skillIds ?? [],
+      topics: input.topics,
     }),
     produce,
     ...checkpoints.map((checkpoint) => buildCheckpointBlock(checkpoint)),

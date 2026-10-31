@@ -74458,6 +74458,13 @@
             "minLength": 1,
             "maxLength": 100
           },
+          "areas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The areas most of a practice block asks about, at most two, as the plan names them: name its row after them (\"Practice: Math and Languages\"). Empty for other blocks"
+          },
           "brainPower": {
             "type": "integer",
             "minimum": 0,
@@ -74643,6 +74650,13 @@
             "nullable": true,
             "type": "string"
           },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A practice block's topics as the plan names them, most asked first: under its row, name the first and how many more (\"Calculating discounts and 9 more topics\"). Empty for other blocks"
+          },
           "waitReason": {
             "nullable": true,
             "description": "Why a phase challenge waits: earlier lessons or an earlier phase challenge in this session are still pending or active. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
@@ -74660,6 +74674,7 @@
         "required": [
           "answered",
           "areaId",
+          "areas",
           "brainPower",
           "canDo",
           "canTestOut",
@@ -74686,6 +74701,7 @@
           "status",
           "subject",
           "title",
+          "topics",
           "waitReason",
           "weakest"
         ],
@@ -90240,6 +90256,13 @@
                   "minLength": 1,
                   "maxLength": 100
                 },
+                "areas": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The areas most of a practice block asks about, at most two, as the plan names them: name its row after them (\"Practice: Math and Languages\"). Empty for other blocks"
+                },
                 "brainPower": {
                   "type": "integer",
                   "minimum": 0,
@@ -90420,6 +90443,13 @@
                   "nullable": true,
                   "type": "string"
                 },
+                "topics": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "A practice block's topics as the plan names them, most asked first: under its row, name the first and how many more (\"Calculating discounts and 9 more topics\"). Empty for other blocks"
+                },
                 "waitReason": {
                   "nullable": true,
                   "description": "Why a phase challenge waits: earlier lessons or an earlier phase challenge in this session are still pending or active. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
@@ -90437,6 +90467,7 @@
               "required": [
                 "answered",
                 "areaId",
+                "areas",
                 "brainPower",
                 "canDo",
                 "canTestOut",
@@ -90462,6 +90493,7 @@
                 "status",
                 "subject",
                 "title",
+                "topics",
                 "waitReason",
                 "weakest"
               ],

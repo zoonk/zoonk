@@ -1864,10 +1864,11 @@ msgctxt "EwFu5D"
 msgid "Practice this chapter"
 msgstr "この章を練習する"
 
+#. The daily time limit is a setting that stops study for the day.
 #: src/chapter/chapter-mistakes.tsx
-msgctxt "ICjbKS"
-msgid "That's all the bonus practice for today. Tomorrow's session picks this chapter up."
-msgstr "今日の追加練習はここまでです。この章の練習は明日の学習で続けます。"
+msgctxt "bpvVQy"
+msgid "You've reached your daily time limit. Tomorrow's session picks this chapter up."
+msgstr "1日の学習時間の上限に達しました。明日の学習では、この章の続きから始めます。"
 
 #: src/chapter/chapter-mistakes.tsx
 msgctxt "AH7TuQ"
@@ -12212,6 +12213,18 @@ msgstr "すでに知っていること"
 msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "新しいレッスン"
+
+#. Extra practice the learner added. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
+#: src/session/use-block-copy.ts
+msgctxt "7zIxxl"
+msgid "Bonus practice: {areas}"
+msgstr "追加練習：{areas}"
+
+#. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
+#: src/session/use-block-copy.ts
+msgctxt "I85zr9"
+msgid "Practice: {areas}"
+msgstr "練習：{areas}"
 
 #: src/session/use-block-copy.ts
 msgctxt "JfeRyY"
