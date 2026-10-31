@@ -11,7 +11,7 @@ import {
   countActiveSourceGoals,
   countNextEditionGoals,
 } from "./exam-learners";
-import { readBlueprintContent } from "./save-exam-blueprint";
+import { getReadNoticeHash, readBlueprintContent } from "./save-exam-blueprint";
 
 export type FreshnessTarget =
   | { examBlueprintId: string; kind: "exam" }
@@ -178,7 +178,7 @@ async function checkExam({
 
   await prisma.examBlueprint.update({ data: { nextCheckAt }, where: { id: blueprint.id } });
 
-  const isBehind = sourceHash !== content.edition.sourceHash;
+  const isBehind = sourceHash !== getReadNoticeHash(content.edition);
 
   return {
     blueprintUpdate: isBehind ? { examBlueprintId: blueprint.id } : null,

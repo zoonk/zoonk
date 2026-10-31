@@ -522,6 +522,66 @@ describe(saveExamBlueprint, () => {
     ]);
   });
 
+  it("keeps the last reading when a re-read's check finds a subject it missed, and records the check", async () => {
+    const notice = await sourceFixture({ language: "pt" });
+    const examIdentity = identity({ board: "FGV" });
+
+    const first = withSyllabus({
+      base: content({ questions: 80, sourceHash: notice.contentHash, sourceId: notice.id }),
+      examDate: "2026-12-13",
+      names: ["Direito Civil", "Ética Profissional"],
+      year: 2026,
+    });
+
+    const saved = await saveExamBlueprint({
+      board: "FGV",
+      content: first,
+      identity: examIdentity,
+      provenance: PROVENANCE,
+      sourceId: notice.id,
+    });
+
+    const changedHash = `${notice.contentHash}-changed`;
+
+    await prisma.source.update({ data: { contentHash: changedHash }, where: { id: notice.id } });
+
+    const missed = {
+      citation: { passage: "Ética Profissional: 8 questões", sourceId: notice.id },
+      kind: "missingSubject" as const,
+      name: "Ética Profissional",
+    };
+
+    const reread = withSyllabus({
+      base: content({ questions: 80, sourceHash: changedHash, sourceId: notice.id }),
+      examDate: "2026-12-20",
+      names: ["Direito Civil"],
+      year: 2026,
+    });
+
+    const check = { checkedAt: new Date().toISOString(), problems: [missed] };
+
+    await expect(
+      previewExamBlueprintChanges({
+        content: { ...reread, edition: { ...reread.edition, check } },
+        identity: examIdentity,
+      }),
+    ).resolves.toStrictEqual([]);
+
+    const kept = await saveExamBlueprint({
+      content: { ...reread, edition: { ...reread.edition, check } },
+      identity: examIdentity,
+      provenance: PROVENANCE,
+      sourceId: notice.id,
+    });
+
+    expect(subjectNames(kept.blueprint)).toStrictEqual(["Direito Civil", "Ética Profissional"]);
+    expect(kept.blueprint.examDate).toStrictEqual(saved.blueprint.examDate);
+
+    await expect(
+      findNoticeReading({ identity: examIdentity, sourceId: notice.id }),
+    ).resolves.toStrictEqual({ problems: [missed], read: true });
+  });
+
   it("tells learners nothing when the same document is read again", async () => {
     const source = await sourceFixture({ language: "pt" });
     const examIdentity = identity();

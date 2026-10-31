@@ -200,9 +200,11 @@ const readingProblemSchema = z.discriminatedUnion("kind", [
   }),
 ]);
 
+/** `sourceHash` is the notice content of a reading set aside for what it missed. */
 const readingCheckSchema = z.object({
   checkedAt: z.iso.datetime(),
   problems: z.array(readingProblemSchema),
+  sourceHash: z.string().nullable().optional(),
 });
 
 export type ReadingProblem = z.infer<typeof readingProblemSchema>;

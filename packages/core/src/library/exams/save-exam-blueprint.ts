@@ -16,6 +16,7 @@ import { createSourceChangeNotice } from "../sources/content-review-flags";
 import {
   type BlueprintContent,
   type ExamDate,
+  type ExamEdition,
   type ReadingProblem,
   examEditionSchema,
   examStructureSchema,
@@ -102,6 +103,18 @@ export function isPastEdition({ content }: { content: BlueprintContent }): boole
   return examDate !== null && examDate.getTime() + MS_PER_DAY <= Date.now();
 }
 
+/** Its check found a subject or a count it missed, so it can't stand in for a stored reading. */
+function missesFacts(content: BlueprintContent): boolean {
+  return (content.edition.check?.problems ?? []).some(
+    (problem) => problem.kind === "missingSubject" || problem.kind === "missingCount",
+  );
+}
+
+/** The notice content last read: the stored reading's, or a later one's that was set aside. */
+export function getReadNoticeHash(edition: ExamEdition): string | null {
+  return edition.check?.sourceHash ?? edition.sourceHash;
+}
+
 export async function previewExamBlueprintChanges({
   content,
   identity,
@@ -125,7 +138,9 @@ export async function previewExamBlueprintChanges({
     return null;
   }
 
-  return mergeBlueprintContent({ current: stored, next: content }).changes;
+  return missesFacts(content)
+    ? []
+    : mergeBlueprintContent({ current: stored, next: content }).changes;
 }
 
 /**
@@ -161,6 +176,29 @@ function forgetOtherBoardsPapers({
   };
 }
 
+/** Records what the reading missed, for the next re-read to correct, and leaves the rest as it was. */
+async function keepLastReading({
+  current,
+  input,
+}: {
+  current: ExamBlueprint;
+  input: SaveExamBlueprintInput;
+}): Promise<SavedExamBlueprint> {
+  const { edition } = readBlueprintContent(current);
+
+  const check = input.content.edition.check && {
+    ...input.content.edition.check,
+    sourceHash: input.content.edition.sourceHash,
+  };
+
+  const blueprint = await prisma.examBlueprint.update({
+    data: { edition: { ...edition, check } },
+    where: { id: current.id },
+  });
+
+  return { blueprint, changes: [], created: false, movesExamDays: false, noticeId: null };
+}
+
 async function updateBlueprint({
   current,
   input,
@@ -168,6 +206,10 @@ async function updateBlueprint({
   current: ExamBlueprint;
   input: SaveExamBlueprintInput;
 }): Promise<SavedExamBlueprint> {
+  if (missesFacts(input.content)) {
+    return keepLastReading({ current, input });
+  }
+
   const board = input.board ?? current.board;
   const stored = forgetOtherBoardsPapers({ board, stored: readBlueprintContent(current) });
   const { changes, content } = mergeBlueprintContent({ current: stored, next: input.content });
@@ -241,7 +283,7 @@ export async function findNoticeReading({
 
   const edition = blueprint ? examEditionSchema.safeParse(blueprint.edition).data : undefined;
 
-  if (!edition || !source || edition.sourceHash !== source.contentHash) {
+  if (!edition || !source || getReadNoticeHash(edition) !== source.contentHash) {
     return UNREAD;
   }
 
