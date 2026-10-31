@@ -4,9 +4,7 @@ import { type CallReuse } from "../../provider-options";
 /**
  * Catching every real error matters most on a lesson many learners read: Sonnet 5.5 blocked all 20
  * planted mistakes on the lesson-quality-check eval (9 Oct 2026). Gemini 3.8 Flash let an
- * over-broad summary through, and Haiku blocked clean lessons, which costs fix passes. On four
- * sampled lessons GPT-6.1 Sol matched Sonnet: both caught each planted mistake and blocked one
- * clean lesson (31 Oct 2026).
+ * over-broad summary through, and Haiku blocked clean lessons, which costs fix passes.
  */
 const REUSED_LESSON_REVIEWERS = [
   "anthropic/claude-sonnet-5.5",

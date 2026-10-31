@@ -9,9 +9,7 @@ import systemPrompt from "./alphabet-lesson.prompt.md";
 
 /**
  * Written once per script and learner language and shared: Luna scored 9.21 on the alphabet-lesson
- * eval, ahead of Sol at a fraction of the cost (27 Sep 2026). Gemini 3.8 Flash backs it up outside
- * OpenAI: on the same three cases it scored 8.40 to Luna's 8.86, Terra's 8.68 and Haiku 5.5's 7.56
- * (31 Oct 2026).
+ * eval, ahead of Sol at a fraction of the cost (27 Sep 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["openai/gpt-6.1-terra", "google/gemini-3.8-flash"] as const;

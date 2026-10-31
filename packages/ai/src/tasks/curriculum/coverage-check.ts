@@ -28,7 +28,7 @@ import {
 /**
  * Sonnet 5.5 found every planted gap on the coverage-check eval at 5.1s p50 (7 Oct 2026). Flash's
  * reasoning ran away on real goals while the learner waited; Opus matched Sonnet at twice the
- * price. GPT-6.1 Sol scored 10.00 to GPT-6 Sol's 9.80 (31 Oct 2026).
+ * price.
  */
 const defaultModel = "anthropic/claude-sonnet-5.5";
 const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6.1-sol"] as const;

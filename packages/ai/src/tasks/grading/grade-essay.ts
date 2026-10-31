@@ -19,7 +19,7 @@ import promptTemplate from "./grade-essay.prompt.md";
 /**
  * On the grade-essay eval, Flash, Sonnet and Opus put every total in its band while Luna and Sol
  * scored an error-filled essay a level too high; Flash was the fastest and cheapest (Sep 2026).
- * GPT-6.1 Sol put three of five totals above their band where GPT-6 Sol put one (31 Oct 2026).
+ * GPT-6 Sol stays a fallback because GPT-6.1 Sol put more totals above their band.
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["anthropic/claude-opus-5.5", "openai/gpt-6-sol"] as const;

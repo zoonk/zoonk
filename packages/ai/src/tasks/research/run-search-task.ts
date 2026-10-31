@@ -11,10 +11,6 @@ import {
   isOnSearchedHost,
 } from "./research-search-tools";
 
-/**
- * With Parallel, Terra scored as high as Flash on six of the seven search evals; on
- * find-target-cutoff it, Sol and Sonnet each left one more cut-off unknown, 9.0 to 9.33 (31 Oct 2026).
- */
 const fallbackModels = ["openai/gpt-6.1-terra"] as const;
 
 /**

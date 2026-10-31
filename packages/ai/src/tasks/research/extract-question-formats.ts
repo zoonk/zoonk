@@ -12,11 +12,7 @@ import { isSameFormat } from "./format-words";
 import { partialCreditSchema } from "./partial-credit";
 import { type ResearchDocument, toDocumentParts } from "./research-documents";
 
-/**
- * Low reasoning: it reads after the blueprint reading, whose parts it ties formats to, so it adds
- * to the wait. GPT-6.1 Sol scored 10.00 on the extract-question-formats eval to Flash's 9.13 (31
- * Oct 2026).
- */
+/** Low reasoning: it reads after the blueprint reading, whose parts it ties formats to, so it adds to the wait. */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6.1-sol"] as const;
 const defaultReasoning: Reasoning = "low";

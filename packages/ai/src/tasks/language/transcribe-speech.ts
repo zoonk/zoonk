@@ -26,11 +26,6 @@ export type TranscriptionModelId = (typeof TRANSCRIPTION_MODELS)[number];
  */
 const defaultModel: TranscriptionModelId = "openai/gpt-transcribe";
 
-/**
- * Served by Azure, not OpenAI. Given the language, it scored 10 to gpt-transcribe's 9.47 on
- * transcribe-speech and 9.38 to 9.33 on assess-pronunciation (31 Oct 2026); Gemini 3.5 Transcribe
- * scored 8.42 and 9.33.
- */
 const FALLBACK_MODELS: readonly TranscriptionModelId[] = ["microsoft/mai-transcribe-2"];
 
 /** Never includes the expected answer, which would bias the model toward "hearing" it. */
@@ -51,9 +46,8 @@ export type TranscribeSpeechParams = {
 export type SpeechTranscript = { text: string };
 
 /**
- * Each provider reads only its own options. Without the language, MAI-Transcribe writes speech in
- * a language it doesn't support, such as Irish, as another language's words; with it, it rejects
- * the call, as gpt-transcribe does.
+ * Each provider reads only its own options. Given the locale, MAI-Transcribe rejects a language it
+ * can't hear, such as Irish, instead of writing it as another language's words.
  */
 function getProviderOptions({ language, useFallback }: { language: string; useFallback: boolean }) {
   const code = getBaseLanguage(language);
