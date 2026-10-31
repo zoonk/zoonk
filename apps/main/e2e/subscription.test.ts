@@ -5,9 +5,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expect, test } from "./fixtures";
 
-type StripeSubscriptionActionPath =
-  | "/api/auth/subscription/cancel"
-  | "/api/auth/subscription/upgrade";
+type StripeSubscriptionActionPath = "/api/auth/subscription/upgrade";
 
 function getStripeSubscriptionFields() {
   const uniqueId = randomUUID().slice(0, 8);
@@ -24,6 +22,8 @@ async function openWithSubscription(browser: Browser) {
   await prisma.subscription.create({
     data: {
       id: randomUUID(),
+      periodEnd: new Date(Date.now() + 86_400_000),
+      periodStart: new Date(Date.now() - 30 * 86_400_000),
       plan: "plus",
       provider: "stripe",
       referenceId: user.id,
@@ -77,22 +77,29 @@ test.describe("Subscription Page - Checkout", () => {
 });
 
 test.describe("Subscription Page - With Plus Subscription", () => {
-  test("shows a subscriber their plan instead of the offer, and cancels it through Stripe", async ({
+  test("shows a subscriber their plan instead of the offer, and cancels it in the app", async ({
     browser,
   }) => {
-    const { browserContext, page } = await openWithSubscription(browser);
+    const { browserContext, page, user } = await openWithSubscription(browser);
 
-    await page.goto("/subscription?stripe_checkout=complete&ref=email");
+    await page.goto("/settings");
+
+    await page
+      .getByRole("navigation", { name: "Settings" })
+      .getByRole("link", { name: /^Subscription/u })
+      .click();
 
     await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
 
-    const requestBody = captureStripeActionRequest({ page, path: "/api/auth/subscription/cancel" });
+    await page.getByRole("link", { exact: true, name: "Cancel subscription" }).click();
+    await expect(page).toHaveURL(/\/subscription\/cancel$/u);
+    await page.getByRole("button", { exact: true, name: "Cancel now" }).click();
+    await expect(page.getByRole("status")).toContainText("You keep Plus until");
 
-    const cancelButton = page.getByRole("button", { name: /cancel subscription/iu });
-    await cancelButton.click();
-    await expect(cancelButton).toBeDisabled();
-    await expect(requestBody).resolves.toMatchObject({ returnUrl: "/subscription" });
+    await expect
+      .poll(async () => prisma.subscription.findFirst({ where: { referenceId: user.id } }))
+      .toMatchObject({ cancelAtPeriodEnd: true, status: "active" });
 
     await browserContext.close();
   });
