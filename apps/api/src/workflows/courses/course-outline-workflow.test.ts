@@ -33,7 +33,7 @@ import * as logger from "@zoonk/utils/logger";
 import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
-import { mockHookConflict } from "../../../mocks/workflow";
+import { mockHookConflict, workflowWriteMock } from "../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../mocks/workflow-runtime";
 import { courseContentNotificationWorkflow } from "../_shared/course-content-notification-workflow";
 import {
@@ -2364,6 +2364,12 @@ describe(courseOutlineWorkflow, () => {
     });
 
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [{ ...input, attempt: 1 }]);
+
+    expect(workflowWriteMock).toHaveBeenLastCalledWith(
+      expect.stringContaining(
+        '"entityId":"started-run","status":"started","step":"joinCourseOutline"',
+      ),
+    );
   });
 
   it("keeps its turn while its bands are still missing, however many runs held the course before it", async () => {
