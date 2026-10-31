@@ -92,6 +92,7 @@ export const mockConditionsSchema = z.object({
   startTime: z.string().nullable(),
   timeZone: z.string().nullable(),
   timedOutSections: z.array(z.int()),
+  unpicked: z.array(z.string()).optional(),
   wrongPenalty: z.number().min(0).max(1),
 });
 

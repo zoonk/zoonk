@@ -170,4 +170,25 @@ describe("mocks of an exam with a choice of subject", () => {
 
     expect(mock?.status === "ready" ? mock.mock.leftOut : null).toContainEqual(choice);
   });
+
+  it("keep saying a mock left out the choice after the learner picks one", async () => {
+    const { goal } = await setup([]);
+
+    const started = await startAnytimeMock({
+      goalId: goal.id,
+      input: { shape: { area: null, day: 1, kind: "full" } },
+    });
+
+    await prisma.plan.update({
+      data: { settings: { examChoices: [{ group: GROUP, subject: "Spanish" }] } },
+      where: { goalId: goal.id },
+    });
+
+    const mock = started.status === "started" ? await getMock(started.id) : null;
+
+    expect(mock?.status === "ready" ? mock.mock.leftOut : null).toContainEqual({
+      name: GROUP,
+      part: "choice",
+    });
+  });
 });

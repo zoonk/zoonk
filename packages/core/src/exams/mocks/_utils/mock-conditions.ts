@@ -23,9 +23,12 @@ export function getExamStartTime({
 }
 
 export async function buildMockConditions(
-  owned: Pick<OwnedMock, "blueprint" | "goal" | "payload" | "sessionDate" | "structure" | "userId">,
+  owned: Pick<
+    OwnedMock,
+    "blueprint" | "goal" | "payload" | "sessionDate" | "structure" | "unpicked" | "userId"
+  >,
 ): Promise<MockConditions> {
-  const { blueprint, goal, payload, sessionDate, structure, userId } = owned;
+  const { blueprint, goal, payload, sessionDate, structure, unpicked, userId } = owned;
   const edition = blueprint ? readBlueprintContent(blueprint).edition : null;
 
   const identity = payload.checkpoint?.mockIdentity;
@@ -62,6 +65,7 @@ export async function buildMockConditions(
     startTime: getExamStartTime({ day: plan.day, edition }),
     timeZone: edition?.timeZone ?? null,
     timedOutSections: [],
+    unpicked,
     wrongPenalty: getWrongPenalty(structure),
   };
 }

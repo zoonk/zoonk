@@ -140,6 +140,10 @@ function toConditions({
     startTime: getExamStartTime({ day: plan.day, edition }),
     timeZone: edition?.timeZone ?? null,
     timedOutSections: [],
+    unpicked:
+      "leftOut" in option
+        ? option.leftOut.flatMap((part) => (part.part === "choice" && part.name ? [part.name] : []))
+        : [],
     wrongPenalty: getWrongPenalty(setup.structure),
   };
 }

@@ -96,12 +96,13 @@ export function listSatMockLeftOut({
   conditions,
   structure,
   typed,
-  unpicked,
 }: {
-  conditions: Pick<MockConditions, "day" | "fullLength" | "purpose" | "sections" | "shape">;
+  conditions: Pick<
+    MockConditions,
+    "day" | "fullLength" | "purpose" | "sections" | "shape" | "unpicked"
+  >;
   structure: ExamStructure | null;
   typed: readonly MockTypedPart[];
-  unpicked: readonly string[];
 }): MockLeftOut[] {
   const running = new Set(
     conditions.sections.flatMap((section) => (section.kind && section.name ? [section.name] : [])),
@@ -123,7 +124,15 @@ export function listSatMockLeftOut({
     .filter((part) => part.asked)
     .map((part) => part.name);
 
-  return listMockLeftOut({ asked, day: conditions.day, kind, running, structure, typed, unpicked });
+  return listMockLeftOut({
+    asked,
+    day: conditions.day,
+    kind,
+    running,
+    structure,
+    typed,
+    unpicked: conditions.unpicked,
+  });
 }
 
 export function listCoveredSections({

@@ -237,12 +237,7 @@ function describeOwner({
     examDocument: owned.goal ? getExamDocument(owned.goal) : "notice",
     examName: owned.blueprint?.name ?? owned.goal?.title ?? null,
     goalId: owned.goal?.id ?? null,
-    leftOut: listSatMockLeftOut({
-      conditions,
-      structure: owned.structure,
-      typed,
-      unpicked: owned.unpicked,
-    }),
+    leftOut: listSatMockLeftOut({ conditions, structure: owned.structure, typed }),
     passMarks: getMockPassMarks({ conditions, owned }),
     scoreNotes: getScoreNotes({
       blueprint: owned.blueprint,
