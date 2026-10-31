@@ -29,7 +29,7 @@ export async function getLondonExample(): Promise<HeroExample> {
     name: t({ description: "Use your language's name for London.", message: "English for London" }),
     search: t({
       description:
-        "What someone types into a search engine: casual, lowercase, no final punctuation.",
+        "What someone types into a search engine: casual, lowercase, no final punctuation, about as long as the English.",
       message: "how to learn english fast to move abroad",
     }),
     steps: toSteps([
@@ -115,7 +115,7 @@ export async function getMexicoCityExample(): Promise<HeroExample> {
     }),
     search: t({
       description:
-        "What someone types into a search engine: casual, lowercase, no final punctuation.",
+        "What someone types into a search engine: casual, lowercase, no final punctuation, about as long as the English.",
       message: "how to learn spanish fast to move abroad",
     }),
     steps: toSteps([

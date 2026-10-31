@@ -23,7 +23,7 @@ function SearchArtifact({ example }: { example: HeroExample }) {
     <div
       className={cn(
         ARTIFACT_CLASS,
-        "top-1 right-[2%] left-[4%] translate-x-3 translate-y-[150px] sm:top-7 sm:right-0 sm:left-auto sm:w-95",
+        "inset-x-0 top-1 translate-x-3 translate-y-[150px] sm:top-7 sm:left-auto sm:w-95",
         "without-zoonk:-rotate-[1.8deg]",
       )}
     >
@@ -71,7 +71,7 @@ function TabsArtifact({ example }: { example: HeroExample }) {
           )}
           key={tab}
         >
-          <span className="bg-surface-3 grid size-3.75 shrink-0 place-items-center rounded-sm">
+          <span className="bg-surface-3 hidden size-3.75 shrink-0 place-items-center rounded-sm sm:grid">
             <PlayIcon aria-hidden="true" className="fill-muted-foreground size-1.75 stroke-none" />
           </span>
           <span className="truncate">{tab}</span>
@@ -123,7 +123,7 @@ async function SheetArtifact({ example }: { example: HeroExample }) {
     <div
       className={cn(
         ARTIFACT_CLASS,
-        "top-[228px] right-[3%] w-[80%] sm:top-[286px] sm:right-7 sm:w-82.5",
+        "top-[228px] right-[3%] w-[92%] sm:top-[286px] sm:right-7 sm:w-82.5",
         "without-zoonk:-rotate-[2.2deg] without-zoonk:delay-100 -translate-x-2 -translate-y-1.5",
       )}
     >

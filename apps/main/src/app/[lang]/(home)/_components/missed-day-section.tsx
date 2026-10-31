@@ -189,7 +189,7 @@ export async function MissedDaySection() {
 
       <VariantSwitch
         aria-labelledby={YESTERDAY_LABEL_ID}
-        className="mt-11 flex items-center justify-center gap-3"
+        className="mt-11 flex flex-wrap items-center justify-center gap-3"
         defaultValue={DEFAULT_DAY}
         name={DAY_SWITCH}
         values={DAY_STATES}

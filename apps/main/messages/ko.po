@@ -2794,7 +2794,7 @@ msgctxt "PnbhyK"
 msgid "English for London"
 msgstr "런던 생활 영어"
 
-#. What someone types into a search engine: casual, lowercase, no final punctuation.
+#. What someone types into a search engine: casual, lowercase, no final punctuation, about as long as the English.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "c2G3Hh"
 msgid "how to learn english fast to move abroad"
@@ -2881,7 +2881,7 @@ msgctxt "3parBE"
 msgid "Spanish for Mexico City"
 msgstr "멕시코시티 생활을 위한 스페인어"
 
-#. What someone types into a search engine: casual, lowercase, no final punctuation.
+#. What someone types into a search engine: casual, lowercase, no final punctuation, about as long as the English.
 #: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "zzQULs"
 msgid "how to learn spanish fast to move abroad"
@@ -4860,10 +4860,11 @@ msgctxt "IWESF6"
 msgid "get ready for the ENEM in November"
 msgstr "11월 수능 준비하기"
 
+#. An example goal a learner might type, short enough to fit on one line beside a button. In Brazilian Portuguese: “virar analista de dados até junho”.
 #: src/components/public/goal-example.ts
-msgctxt "lXNtAo"
-msgid "get promoted to data analyst by June"
-msgstr "6월까지 데이터 분석가로 승진하기"
+msgctxt "y6HOW4"
+msgid "become a data analyst by June"
+msgstr "6월까지 데이터 분석가 되기"
 
 #: src/components/public/goal-form.tsx
 msgctxt "47CC_y"

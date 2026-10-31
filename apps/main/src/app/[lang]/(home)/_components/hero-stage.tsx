@@ -36,7 +36,6 @@ function getPicks(example: HeroExample): string[] {
   return example.topics.filter((topic) => isPicked({ example, topic }));
 }
 
-/** The wall carries the most topics on the page, so each one is a single span with a single text. */
 function Wall({ example }: { example: HeroExample }) {
   const last = example.topics.length - 1;
 

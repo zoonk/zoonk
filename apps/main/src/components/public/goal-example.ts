@@ -7,5 +7,9 @@ export async function getGoalExample(): Promise<string> {
 
   return language === "pt"
     ? t("get ready for the ENEM in November")
-    : t("get promoted to data analyst by June");
+    : t({
+        description:
+          "An example goal a learner might type, short enough to fit on one line beside a button. In Brazilian Portuguese: “virar analista de dados até junho”.",
+        message: "become a data analyst by June",
+      });
 }

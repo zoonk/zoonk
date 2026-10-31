@@ -34,7 +34,7 @@
   "catalog_example_plan": "c8fcca6e6e42d001bc2c7817f1d766d63cb91a4986ef8eb1f708bb83369fab5c",
   "catalog_expand": "cdfa49f3d9c0fe66acd8564a309782a297fff3662551da373f4d97cff6064bf2",
   "catalog_go_to_chapter": "62a8f4a5eab6a9df1cf65fab2a578bb63de8a8723a529f629a9b425fb0cb2694",
-  "catalog_goal_example": "fc4c76562140b1331da1c2d6ec0e9030df9a97d74b5653dd3351d06cc80b084d",
+  "catalog_goal_example": "534a28afb1887ce722374ad1617233ad2d63eabd78f51a44ec653ff97ee03b13",
   "catalog_guess_first": "50a8bd7ba2e6e542bb276ca580da19fd7ba9e67eb8dc0be0c50ba80c99e81238",
   "catalog_guess_note": "ad9ee157c1fc4374a3cd62d9185617ba8ed2dac1037a2e5c97b1c4a9ae6d13a9",
   "catalog_ideas": "1bfc8de1f5a1995010064ea2118bede31adbb542ca49c37e06286f128d2e4c43",
@@ -150,7 +150,7 @@
     <string name="catalog_title">Przeglądaj kursy</string>
     <string name="catalog_category_title">Kursy w kategorii „%1$s”</string>
     <!-- The goal box's example after "I want to", so it starts in lowercase. "Data analyst" is the job the learner wants. -->
-    <string name="catalog_goal_example">awansować na stanowisko analityka danych do czerwca</string>
+    <string name="catalog_goal_example">zostać analitykiem danych do czerwca</string>
     <string name="catalog_subtitle">Zacznij od kursu albo powiedz Zoonkowi, do czego się przygotowujesz.</string>
     <string name="catalog_all">Wszystkie</string>
     <string name="catalog_categories">Kategorie kursów</string>

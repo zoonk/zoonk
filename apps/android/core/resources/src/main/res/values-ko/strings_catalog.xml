@@ -34,7 +34,7 @@
   "catalog_example_plan": "c370149b73a8a835aa8be3b2fc298083f1b381931d7db573dabc745951bef055",
   "catalog_expand": "5a379811e2914ad5372d8a6f1bd55824059f1f486b1345aa9a4131de258138c9",
   "catalog_go_to_chapter": "804433c186e8a610bf5cb35d21dab2df3222b29062b688834e8a2c6ddd338693",
-  "catalog_goal_example": "09762cbe85d02a2bf4f6f59105cd6f5bf51c770d2515a56df90b420f18942ce2",
+  "catalog_goal_example": "f76b56bdbddf894834ccb771c7df9f68c5227e599d6f9a318b8a4f43d93ac212",
   "catalog_guess_first": "03212970e956f5a8254785b482b86bfe2449a0d81e3055dbd7c30839688df824",
   "catalog_guess_note": "c7131a8617bad35b7a1f717ec35e14aac147b2a4307215c6ccad30084d4a4784",
   "catalog_ideas": "037f90d72ae88b96ef2d971ea3cca0c81d59579eac2764a15991a8adc79c417a",
@@ -150,7 +150,7 @@
     <string name="catalog_title">코스 둘러보기</string>
     <string name="catalog_category_title">%1$s 분야 코스</string>
     <!-- The goal box's example after "I want to", so it starts in lowercase. "Data analyst" is the job the learner wants. -->
-    <string name="catalog_goal_example">6월까지 데이터 분석가로 승진하기</string>
+    <string name="catalog_goal_example">6월까지 데이터 분석가 되기</string>
     <string name="catalog_subtitle">코스를 골라 시작하거나, 무엇을 준비하고 있는지 Zoonk에게 알려 주세요.</string>
     <string name="catalog_all">전체</string>
     <string name="catalog_categories">코스 카테고리</string>
