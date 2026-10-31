@@ -1,5 +1,5 @@
 import { type StudyBlockKind, type StudyBlockStatus } from "@zoonk/db";
-import { MIN_BLOCK_MINUTES } from "./session-builder";
+import { MIN_BLOCK_MINUTES } from "./block-minutes";
 
 /** Bound extra study to short chunks rather than an endless feed. */
 const EXTRA_BLOCK_MINUTES = 10;

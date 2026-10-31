@@ -154,12 +154,13 @@ describe(buildSessionBlocks, () => {
       ["learn", "r1"],
       ["learn", "r2"],
       ["practice", null],
+      ["practice", null],
       ["checkpoint", null],
     ]);
 
     expect(blocks[1]?.payload.reinforcement).toBe(true);
 
-    expect(blocks[4]?.payload.checkpoint).toStrictEqual({
+    expect(blocks[5]?.payload.checkpoint).toStrictEqual({
       kind: "boss",
       mock: false,
       passMark: 7,
@@ -179,6 +180,7 @@ describe(buildSessionBlocks, () => {
     expect(blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
       ["review", null],
       ["learn", "l1"],
+      ["practice", null],
       ["practice", null],
       ["checkpoint", null],
     ]);
@@ -230,9 +232,11 @@ describe(buildSessionBlocks, () => {
   it("gives a planned review day to reviews and practice, without new lessons", () => {
     const { blocks } = buildSessionBlocks({ ...baseInput, reviewPlanItemId: "plan-review" });
 
-    expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "practice"]);
-    expect(blocks[1]?.payload).toMatchObject({ planItemId: "plan-review" });
-    expect(blocks[1]?.payload.itemIds).toHaveLength(12);
+    const practiced = blocks.filter((block) => block.kind === "practice");
+
+    expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "practice", "practice"]);
+    expect(practiced.every((block) => block.payload.planItemId === "plan-review")).toBe(true);
+    expect(practiced.flatMap((block) => block.payload.itemIds)).toHaveLength(12);
   });
 
   it("gives a day whose mock the learner's plan doesn't include to a full review of every skill", () => {
@@ -277,8 +281,8 @@ describe(buildSessionBlocks, () => {
       fullReviewSkillIds: ["s0", "s1", "s2", "s9"],
     });
 
-    expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "practice"]);
-    expect(blocks[1]?.payload.fullReview).toBe(false);
+    expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "practice", "practice"]);
+    expect(blocks.some((block) => block.payload.fullReview)).toBe(false);
   });
 
   describe("a full review on a day with little time", () => {
@@ -326,12 +330,14 @@ describe(buildSessionBlocks, () => {
     expect(getScoring({ ...baseInput, reviewPlanItemId: "plan-review" })).toStrictEqual([
       ["review", false],
       ["practice", false],
+      ["practice", false],
     ]);
 
     expect(
       getScoring({ ...baseInput, netScored: true, reviewPlanItemId: "plan-review" }),
     ).toStrictEqual([
       ["review", false],
+      ["practice", true],
       ["practice", true],
     ]);
   });
@@ -399,8 +405,62 @@ describe(buildSessionBlocks, () => {
       practiceShare: 0.6,
     });
 
-    expect(blocks.map((block) => block.kind)).toStrictEqual(["practice"]);
+    expect(blocks.map((block) => [block.kind, block.estimatedMinutes])).toStrictEqual([
+      ["practice", 15],
+      ["practice", 15],
+    ]);
+
     expect(plannedMinutes).toBe(30);
+  });
+
+  it("splits a long day's practice into short blocks, mistakes first, and never a set", () => {
+    const sets = Array.from({ length: 4 }, (_set, set) =>
+      Array.from({ length: 3 }, (_item, index) => ({
+        itemId: `set${set}-q${index}`,
+        setId: `set${set}`,
+        skillId: `s${set}`,
+      })),
+    ).flat();
+
+    const { blocks, plannedMinutes } = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      dailyMinutes: 120,
+      lessons: [],
+      practice: [
+        ...sets,
+        ...Array.from({ length: 80 }, (_, index) => ({
+          itemId: `p${index}`,
+          skillId: `s${index % 3}`,
+        })),
+      ],
+      practiceShare: 0.6,
+    });
+
+    const sizes = blocks.map((block) => getBlockItemIds(block.payload).length);
+
+    expect(blocks.every((block) => block.kind === "practice")).toBe(true);
+    expect(blocks.every((block) => block.estimatedMinutes <= 15)).toBe(true);
+    expect(blocks[0]?.payload.drills).toHaveLength(1);
+    expect(blocks.slice(1).every((block) => block.payload.drills.length === 0)).toBe(true);
+    expect(sizes.reduce((sum, size) => sum + size, 0)).toBe(80);
+    expect(plannedMinutes).toBe(120);
+
+    expect(
+      blocks.every((block) => {
+        const setIds = new Set(
+          sets
+            .filter((item) => block.payload.itemIds.includes(item.itemId))
+            .map((item) => item.setId),
+        );
+
+        return [...setIds].every((setId) =>
+          sets
+            .filter((item) => item.setId === setId)
+            .every((item) => block.payload.itemIds.includes(item.itemId)),
+        );
+      }),
+    ).toBe(true);
   });
 
   it("asks a question set whole or leaves it for another day, never cut", () => {

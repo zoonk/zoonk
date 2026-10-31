@@ -4,7 +4,7 @@ import { type PlannedBlock } from "../session-builder";
 
 export const ONE_PER_DAY: ReadonlySet<StudySessionBlock["kind"]> = new Set<
   StudySessionBlock["kind"]
->(["practice", "produce", "review"]);
+>(["produce", "review"]);
 
 function getContent({
   anyOrder,

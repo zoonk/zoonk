@@ -8,7 +8,7 @@ import {
 } from "@zoonk/db";
 import { z } from "zod";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
-import { readBlockPayload } from "../block-payload";
+import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { ONE_PER_DAY } from "./day-block-content";
 import { loadDayPlanVersion } from "./day-plan-version";
 import { lockSessionQueue } from "./session-queue-lock";
@@ -82,6 +82,17 @@ function getChallengeItemId(block: Pick<StudySessionBlock, "id" | "payload">): s
   return readBlockPayload(block).planItemId;
 }
 
+function sharesQuestion({
+  block,
+  started,
+}: {
+  block: SnapshotBlock;
+  started: StudySessionBlock;
+}): boolean {
+  const asked = new Set(getBlockItemIds(readBlockPayload(started)));
+  return getBlockItemIds(readBlockPayload(block)).some((itemId) => asked.has(itemId));
+}
+
 function isHeldBy({
   block,
   since,
@@ -93,6 +104,7 @@ function isHeldBy({
     (started) =>
       (block.lessonId !== null && started.lessonId === block.lessonId) ||
       (ONE_PER_DAY.has(block.kind) && started.kind === block.kind) ||
+      (block.kind === "practice" && sharesQuestion({ block, started })) ||
       (block.kind === "checkpoint" &&
         started.kind === "checkpoint" &&
         getChallengeItemId(started) === getChallengeItemId(block)),

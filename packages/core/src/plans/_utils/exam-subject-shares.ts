@@ -43,6 +43,31 @@ export function getAreaShares({
   );
 }
 
+export type AreaShare = { area: string; share: number };
+
+export function getSkillAreaShares({
+  graph,
+  structure,
+}: {
+  graph: PlanGraph;
+  structure: ExamStructure | null;
+}): Map<string, AreaShare> | null {
+  const shares = structure ? getAreaShares({ graph, structure }) : null;
+
+  if (!shares) {
+    return null;
+  }
+
+  return new Map(
+    graph.skills.flatMap((skill) => {
+      const area = getSkillArea({ graph, skill });
+      const share = shares.get(area);
+
+      return share === undefined ? [] : [[skill.skillId, { area, share }] as const];
+    }),
+  );
+}
+
 function matchSubjectShares({
   graph,
   structure,

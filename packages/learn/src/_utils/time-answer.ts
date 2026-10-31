@@ -28,8 +28,8 @@ export function getSuggestedMinutes(found: PlanTimeToCover | null): number | nul
 export type FullTime = { coveredShare: number; everything: boolean; minutes: number };
 
 /**
- * The longest time worth studying: what covers everything, or as much as any time does when part
- * never fits.
+ * The time that covers the most: what covers everything, or as much as any time does when part
+ * never fits. More time than this buys more practice, not more coverage.
  */
 export function getFullTime(found: PlanTimeToCover | null): FullTime | null {
   const minutes = found?.recommendedMinutes ?? null;

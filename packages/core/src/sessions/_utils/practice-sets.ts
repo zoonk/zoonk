@@ -31,6 +31,33 @@ export function takePracticeQuestions<T extends { setId?: string | null }>({
   }, []);
 }
 
+/** Never splits a stimulus set; `first` questions already in the first part count toward its size. */
+export function splitPracticeQuestions<T extends { setId?: string | null }>({
+  first,
+  practice,
+  size,
+}: {
+  first: number;
+  practice: readonly T[];
+  size: number;
+}): T[][] {
+  return groupPracticeUnits(practice).reduce<T[][]>(
+    (parts, unit) => {
+      const last = parts.at(-1) ?? [];
+      const used = last.length + (parts.length === 1 ? first : 0);
+
+      if (used === 0 || used + unit.length <= size) {
+        last.push(...unit);
+      } else {
+        parts.push([...unit]);
+      }
+
+      return parts;
+    },
+    [[]],
+  );
+}
+
 /** A set spanning skills belongs to its first ordered skill only, preventing duplicate playback. */
 export function toSetUnits({
   isOne,

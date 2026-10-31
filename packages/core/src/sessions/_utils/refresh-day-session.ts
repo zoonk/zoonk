@@ -42,15 +42,17 @@ function getOpenedPractice({
   kept: readonly StudySessionBlock[];
   session: StudySessionRow;
 }): SessionBuildInput["openedPractice"] {
-  const practice = session.blocks.find(
-    (block) => block.kind === "practice" && block.status === "pending",
+  const keptIds = new Set(kept.map((block) => block.id));
+
+  const minutes = getKeptMinutes(
+    session.blocks.filter((block) => block.kind === "practice" && !keptIds.has(block.id)),
   );
 
-  if (kept.length === 0 || !practice?.estimatedMinutes || session.plannedMinutes <= 0) {
+  if (kept.length === 0 || minutes <= 0 || session.plannedMinutes <= 0) {
     return undefined;
   }
 
-  return { dayMinutes: session.plannedMinutes, minutes: practice.estimatedMinutes };
+  return { dayMinutes: session.plannedMinutes, minutes };
 }
 
 function withoutKept({

@@ -1,18 +1,23 @@
 import "server-only";
 import { type Item, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { interleave } from "@zoonk/utils/interleave";
+import { interleaveByWeight } from "@zoonk/utils/interleave";
 import { getSkillRetrievability } from "../../learner/fsrs-scheduler";
 import { getFieldRank, getItemAudienceFilter } from "../../library/items/item-field";
 import { listItemSetsForSkills } from "../../library/items/item-sets";
+import { type AreaShare } from "../../plans/_utils/exam-subject-shares";
 import { type DifficultyBias } from "../../plans/planner/plan-state";
+import { PRACTICE_MINUTES_PER_QUESTION } from "../block-minutes";
 import { type PracticeItem } from "../session-builder";
 import { loadLastAnswers, loadRightAnswers } from "./load-review-capsules";
 import { NO_PRACTICE_CLAIMS, type PracticeClaims } from "./practice-claims";
 import { listAskedSets, takePracticeQuestions, toSetUnits } from "./practice-sets";
 import { getPracticeItemFilter } from "./session-items";
 
-const PRACTICE_POOL = 30;
+/** A full review stands in for a mock, so it may run past a short day to reach every topic, up to this many questions. */
+const FULL_REVIEW_QUESTIONS = 30;
+
+const FOCUS_TURNS = 2;
 
 /** Recent answers test short-term recognition, so wait a full day before repeating them in practice. */
 const RECENTLY_ANSWERED_MS = MS_PER_DAY;
@@ -90,20 +95,41 @@ function compareDayPractice({
   return unseenFirst || comparePractice({ a, b, ...rules });
 }
 
-function withFocusTurns<T>({
-  focusSkillIds,
-  items,
-  skillId,
+/** What a question on the topic is worth: its share of the exam times the chance it's missed now; an unfixed mistake counts as not knowing it. */
+function getPracticeWeight({
+  focused,
+  missed,
+  recall,
+  share,
 }: {
-  focusSkillIds: ReadonlySet<string>;
-  items: T[];
-  skillId: string;
-}): T[][] {
-  if (!focusSkillIds.has(skillId)) {
-    return [items];
-  }
+  focused: boolean;
+  missed: boolean;
+  recall: number;
+  share: number;
+}): number {
+  const gap = missed ? 1 : 1 - recall;
+  return share * gap * (focused ? FOCUS_TURNS : 1);
+}
 
-  return [items.filter((_, index) => index % 2 === 0), items.filter((_, index) => index % 2 === 1)];
+/** An area's share goes to the topics it can practice now, so a sparse bank doesn't shrink it; topics without one get the average. */
+function getShareOf({
+  askable,
+  skillAreaShares,
+}: {
+  askable: readonly string[];
+  skillAreaShares: ReadonlyMap<string, AreaShare> | null;
+}) {
+  const known = askable.flatMap((skillId) => skillAreaShares?.get(skillId) ?? []);
+  const sizes = Map.groupBy(known, (entry) => entry.area);
+  const shareOf = (entry: AreaShare) => entry.share / (sizes.get(entry.area)?.length ?? 1);
+
+  const fallback =
+    known.length > 0 ? known.reduce((sum, entry) => sum + shareOf(entry), 0) / known.length : 1;
+
+  return (skillId: string) => {
+    const entry = skillAreaShares?.get(skillId);
+    return entry ? shareOf(entry) : fallback;
+  };
 }
 
 function orderPracticeSkills({
@@ -115,12 +141,12 @@ function orderPracticeSkills({
   claims: PracticeClaims;
   firstSkillIds: ReadonlySet<string>;
   focusSkillIds: ReadonlySet<string>;
-  skills: readonly { recall: number; skillId: string }[];
+  skills: readonly { skillId: string; weight: number }[];
 }): string[] {
   const isFirst = (skillId: string) => Number(firstSkillIds.has(skillId));
   const isFocused = (skillId: string) => Number(focusSkillIds.has(skillId));
 
-  // Rotate claims awaiting confirmation; studied skills must remain ordered by recall risk.
+  // Rotate claims awaiting confirmation; studied skills must remain ordered by what a question earns.
   const getLastAsked = (skillId: string) =>
     claims.first.has(skillId) || claims.last.has(skillId)
       ? (claims.lastAsked.get(skillId) ?? 0)
@@ -141,7 +167,7 @@ function orderPracticeSkills({
         isFocused(b.skillId) - isFocused(a.skillId) ||
         getTurn(a.skillId) - getTurn(b.skillId) ||
         getLastAsked(a.skillId) - getLastAsked(b.skillId) ||
-        a.recall - b.recall,
+        b.weight - a.weight,
     )
     .map((row) => row.skillId);
 }
@@ -192,9 +218,11 @@ export async function loadPracticeItems({
   excludeItemIds,
   field,
   listeningSkillIds = new Set(),
+  maxMinutes,
   now,
   repeatOnlyMissed = false,
   skillIds,
+  skillAreaShares = null,
   typed,
   userId,
 }: {
@@ -205,7 +233,7 @@ export async function loadPracticeItems({
   everySkill?: boolean;
   /** Reserve priority practice for subjects whose written lessons are not ready. */
   firstSkillIds?: ReadonlySet<string>;
-  /** Focused topics get two questions per other topic's one on review days. */
+  /** Focused topics get two turns for every other topic's one on review days. */
   focusSkillIds?: ReadonlySet<string>;
   examBlueprintId: string | null;
   excludeItemIds: ReadonlySet<string>;
@@ -213,42 +241,38 @@ export async function loadPracticeItems({
   field: string | null;
   /** Text passages cannot substitute for listening; use voiced recordings or wait. */
   listeningSkillIds?: ReadonlySet<string>;
+  maxMinutes: number;
   now: Date;
   /** Prefer unseen questions and repeat only previously missed ones. */
   repeatOnlyMissed?: boolean;
   skillIds: readonly string[];
+  /** Each topic's area share of the exam (`getSkillAreaShares`); null weighs every area the same. */
+  skillAreaShares?: ReadonlyMap<string, AreaShare> | null;
   typed: boolean;
   userId: string;
 }): Promise<PracticeItem[]> {
   const claimed = new Set([...claims.first, ...claims.last]);
   const pool = [...new Set([...skillIds, ...claimed, ...firstSkillIds])];
 
-  const studied = await prisma.learnerSkill.findMany({
-    where: { reps: { gt: 0 }, skillId: { in: pool }, userId },
-  });
+  const [studied, mistakes] = await Promise.all([
+    prisma.learnerSkill.findMany({ where: { reps: { gt: 0 }, skillId: { in: pool }, userId } }),
+    prisma.mistake.findMany({
+      distinct: ["skillId"],
+      select: { skillId: true },
+      where: { skillId: { in: pool }, status: "open", userId },
+    }),
+  ]);
 
   const studiedBySkill = new Map(studied.map((row) => [row.skillId, row]));
+  const missed = new Set(mistakes.map((mistake) => mistake.skillId));
 
-  const recalls = pool.flatMap((skillId) => {
-    const memory = studiedBySkill.get(skillId);
+  const unstudied = pool.filter(
+    (skillId) =>
+      (everySkill || claimed.has(skillId) || firstSkillIds.has(skillId)) &&
+      !studiedBySkill.has(skillId),
+  );
 
-    return memory ? [{ recall: getSkillRetrievability({ memory, now }) ?? 0, skillId }] : [];
-  });
-
-  const unstudied = pool
-    .filter(
-      (skillId) =>
-        (everySkill || claimed.has(skillId) || firstSkillIds.has(skillId)) &&
-        !studiedBySkill.has(skillId),
-    )
-    .map((skillId) => ({ recall: 0, skillId }));
-
-  const ordered = orderPracticeSkills({
-    claims,
-    firstSkillIds,
-    focusSkillIds,
-    skills: [...unstudied, ...recalls],
-  });
+  const candidates = [...unstudied, ...pool.filter((skillId) => studiedBySkill.has(skillId))];
 
   const [items, sets] = await Promise.all([
     prisma.item.findMany({
@@ -256,11 +280,11 @@ export async function loadPracticeItems({
       select: { difficulty: true, examBlueprintId: true, field: true, id: true, skillId: true },
       where: {
         ...getPracticeItemFilter({ typed }),
-        skillId: { in: ordered.filter((skillId) => !listeningSkillIds.has(skillId)) },
+        skillId: { in: candidates.filter((skillId) => !listeningSkillIds.has(skillId)) },
         ...getItemAudienceFilter({ examBlueprintId, field }),
       },
     }),
-    listItemSetsForSkills({ examBlueprintId, skillIds: ordered, userId }),
+    listItemSetsForSkills({ examBlueprintId, skillIds: candidates, userId }),
   ]);
 
   const itemIds = [...items, ...sets.flatMap((set) => set.items)].map((item) => item.id);
@@ -275,9 +299,32 @@ export async function loadPracticeItems({
     !answeredRight.has(itemId) &&
     (lastAnswers.get(itemId)?.getTime() ?? 0) <= now.getTime() - RECENTLY_ANSWERED_MS;
 
-  const rules = { difficultyBias, examBlueprintId, field, repeatOnlyMissed };
-
   const askedSets = listAskedSets({ isAsked, listeningSkillIds, sets });
+
+  const askable = candidates.filter(
+    (skillId) =>
+      items.some((item) => item.skillId === skillId && isAsked(item.id)) ||
+      askedSets.some((set) => set.skillIds.includes(skillId)),
+  );
+
+  const shareOf = getShareOf({ askable, skillAreaShares });
+
+  const weighed = candidates.map((skillId) => {
+    const memory = studiedBySkill.get(skillId);
+
+    const weight = getPracticeWeight({
+      focused: focusSkillIds.has(skillId),
+      missed: missed.has(skillId),
+      recall: memory ? (getSkillRetrievability({ memory, now }) ?? 0) : 0,
+      share: shareOf(skillId),
+    });
+
+    return { skillId, weight };
+  });
+
+  const ordered = orderPracticeSkills({ claims, firstSkillIds, focusSkillIds, skills: weighed });
+  const weightOf = new Map(weighed.map((skill) => [skill.skillId, skill.weight]));
+  const rules = { difficultyBias, examBlueprintId, field, repeatOnlyMissed };
 
   // Unconfirmed claims need one question, not a whole set; listening recordings are indivisible.
   const perSkill = ordered.map((skillId) => {
@@ -297,14 +344,18 @@ export async function loadPracticeItems({
       .slice(0, isOne ? 1 : undefined);
   });
 
-  const units = interleave(
-    perSkill.flatMap((skillUnits, index) =>
-      withFocusTurns({ focusSkillIds, items: skillUnits, skillId: ordered[index] ?? "" }),
-    ),
+  const units = interleaveByWeight(
+    perSkill.map((skillUnits, index) => ({
+      items: skillUnits,
+      weight: weightOf.get(ordered[index] ?? "") ?? 0,
+    })),
   );
 
   return takePracticeQuestions({
     practice: units.flatMap((unit) => unit.questions),
-    room: PRACTICE_POOL,
+    room: Math.max(
+      Math.floor(maxMinutes / PRACTICE_MINUTES_PER_QUESTION),
+      everySkill ? FULL_REVIEW_QUESTIONS : 0,
+    ),
   });
 }

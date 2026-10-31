@@ -6,17 +6,18 @@ import { loadGoalSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { practicesShortAnswers } from "../../library/exams/short-answers";
 import { getGoalField } from "../../library/items/item-field";
+import { getSkillAreaShares } from "../../plans/_utils/exam-subject-shares";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
-import { type DifficultyBias, parsePlanSettings } from "../../plans/planner/plan-state";
+import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
+import { PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "../block-minutes";
 import { getBlockItemIds, readBlockPayload, toBlockPayload } from "../block-payload";
 import { type ExtraTime, hasExtraPracticeLeft } from "../extra-time";
-import { PRACTICE_MINUTES_PER_QUESTION, type PlannedBlock } from "../session-builder";
+import { type PlannedBlock } from "../session-builder";
 import { type DayBlockInput } from "./day-block-view";
 import { loadExamStructure } from "./exam-structure";
 import { loadPlanLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
 import { loadExamPrepAccess } from "./plus-only-lessons";
-import { takePracticeQuestions } from "./practice-sets";
 import { lockSessionQueue } from "./session-queue-lock";
 import { type StudyBlockView, toStudyBlockView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
@@ -25,12 +26,15 @@ type ExtraDay = Pick<StudySessionRow, "goal" | "goalId" | "localDate"> & {
   blocks: readonly DayBlockInput[];
 };
 
-async function loadDifficultyBias(goalId: string | null): Promise<DifficultyBias> {
+async function loadPracticePlan(goalId: string | null) {
   const plan = goalId
-    ? await prisma.plan.findUnique({ select: { settings: true }, where: { goalId } })
+    ? await prisma.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId } })
     : null;
 
-  return parsePlanSettings(plan?.settings).difficultyBias;
+  return {
+    difficultyBias: parsePlanSettings(plan?.settings).difficultyBias,
+    graph: parsePlanGraph(plan?.graph),
+  };
 }
 
 /** Uses the session's saved local day, not the request's later date. */
@@ -64,27 +68,24 @@ export async function buildExtraPractice({
 }): Promise<PlannedBlock | null> {
   const used = new Set(session.blocks.flatMap((block) => getBlockItemIds(readBlockPayload(block))));
 
-  const [difficultyBias, structure, listeningSkillIds] = await Promise.all([
-    loadDifficultyBias(session.goalId),
+  const [{ difficultyBias, graph }, structure, listeningSkillIds] = await Promise.all([
+    loadPracticePlan(session.goalId),
     session.goal ? loadExamStructure(session.goal) : null,
     session.goalId ? loadListeningSkillIds(session.goalId) : new Set<string>(),
   ]);
 
-  const practice = await loadPracticeItems({
+  const items = await loadPracticeItems({
     difficultyBias,
     examBlueprintId: session.goal?.examBlueprintId ?? null,
     excludeItemIds: used,
     field: getGoalField(session.goal?.details),
     listeningSkillIds,
+    maxMinutes: minutes,
     now: new Date(),
+    skillAreaShares: getSkillAreaShares({ graph, structure }),
     skillIds,
     typed: session.goal ? practicesShortAnswers({ goal: session.goal, structure }) : false,
     userId,
-  });
-
-  const items = takePracticeQuestions({
-    practice,
-    room: Math.max(1, Math.floor(minutes / PRACTICE_MINUTES_PER_QUESTION)),
   });
 
   if (items.length === 0) {
@@ -93,7 +94,7 @@ export async function buildExtraPractice({
 
   return {
     canDo: null,
-    estimatedMinutes: Math.max(1, Math.round(items.length * PRACTICE_MINUTES_PER_QUESTION)),
+    estimatedMinutes: toMinutes(items.length * PRACTICE_MINUTES_PER_QUESTION),
     kind: "practice",
     lessonId: null,
     payload: toBlockPayload({

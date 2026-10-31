@@ -8,7 +8,7 @@ import { addDays, daysBetween, fromIsoDate, getPlanCalendar } from "../plans/pla
 import { getExamDayRules, getPlannedMinutes } from "../plans/planner/plan-days";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 import { isShortExam } from "../plans/planner/short-exam-plan";
-import { PRACTICE_MINUTES_PER_QUESTION } from "../sessions/session-builder";
+import { PRACTICE_MINUTES_PER_QUESTION } from "../sessions/block-minutes";
 
 const MIN_QUESTIONS_PER_SKILL = 4;
 const MAX_QUESTIONS_PER_SKILL = 8;

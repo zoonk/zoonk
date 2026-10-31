@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type PlanGraph } from "../planner/plan-state";
-import { getAreaShares, getExamSubjectShares } from "./exam-subject-shares";
+import { getAreaShares, getExamSubjectShares, getSkillAreaShares } from "./exam-subject-shares";
 
 const citation = { passage: "passage", sourceId: "source" };
 
@@ -225,5 +225,23 @@ describe("a qualifying test in the plan", () => {
 
     expect(shares?.map((item) => item.areas)).toStrictEqual([["General Studies"], ["CSAT"]]);
     expect(shares?.[1]?.share).toBeCloseTo(0.165);
+  });
+});
+
+describe(getSkillAreaShares, () => {
+  it("gives each topic its area and that area's share", () => {
+    const graph = graphOf(["Linguagens", "Matemática", "Matemática", "Estratégia de prova"]);
+
+    expect(getSkillAreaShares({ graph, structure: enem })).toStrictEqual(
+      new Map([
+        ["skill-0", { area: "Linguagens", share: 0.25 }],
+        ["skill-1", { area: "Matemática", share: 0.25 }],
+        ["skill-2", { area: "Matemática", share: 0.25 }],
+      ]),
+    );
+  });
+
+  it("has none without an exam whose notice states its subjects' shares", () => {
+    expect(getSkillAreaShares({ graph: graphOf(["Matemática"]), structure: null })).toBeNull();
   });
 });

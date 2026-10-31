@@ -3,7 +3,8 @@ import { type PlannedProduce, toProduceBlock } from "../exams/essays/produce-blo
 import { MINUTES_PER_REVIEW, REVIEW_SHARE_OF_DAY } from "../learner/review-load";
 import { type DuelMarks, keepDuelLessons, splitAtDuel } from "./_utils/lessons-before-challenges";
 import { buildCheckpointBlock } from "./_utils/planned-checkpoint-block";
-import { takePracticeQuestions } from "./_utils/practice-sets";
+import { buildPracticeBlocks, countDrilled } from "./_utils/practice-blocks";
+import { MIN_BLOCK_MINUTES, PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "./block-minutes";
 import {
   type BlockCapsule,
   type BlockCheckpoint,
@@ -13,13 +14,7 @@ import {
 } from "./block-payload";
 import { takeReviewCapsules } from "./capsules";
 import { getSessionDayMinutes } from "./fresh-start";
-import { countFullReviewQuestions, isFullReview, isFullReviewDay } from "./full-review";
-
-/** Exam-format reading and working takes longer than quick reviews. */
-export const PRACTICE_MINUTES_PER_QUESTION = 1.5;
-
-/** Shorter than this, a block isn't worth a stop of its own. */
-export const MIN_BLOCK_MINUTES = 3;
+import { countFullReviewQuestions, isFullReviewDay } from "./full-review";
 
 /** Fresh starts reduce review backlog rather than carrying missed reviews into the new day. */
 const FRESH_START_REVIEW_FACTOR = 0.5;
@@ -92,14 +87,6 @@ export type PlannedBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"
   payload: BlockPayload;
 };
 
-function toMinutes(value: number): number {
-  return Math.max(1, Math.round(value));
-}
-
-function countDrilled(drills: readonly BlockDrill[]): number {
-  return drills.reduce((sum, drill) => sum + drill.itemIds.length, 0);
-}
-
 /** Full reviews stay whole on returns so the exam-eve session still reaches every topic. */
 function getSessionBudget(input: SessionBuildInput): number {
   const minutes = Math.max(0, getSessionDayMinutes(input) - (input.usedMinutes ?? 0));
@@ -148,57 +135,6 @@ function takeLessons({
 
 function getLessonMinutes(lessons: readonly PlannedLesson[]): number {
   return lessons.reduce((sum, lesson) => sum + toMinutes(lesson.minutes), 0);
-}
-
-function buildPracticeBlock({
-  drills,
-  fullReviewSkillIds,
-  minutes,
-  netScored,
-  planItemId,
-  planItemKey,
-  practice,
-  reviewedSkillIds,
-}: {
-  drills: readonly BlockDrill[];
-  fullReviewSkillIds: readonly string[] | null | undefined;
-  minutes: number;
-  netScored: boolean;
-  planItemId: string | null;
-  planItemKey: string | null | undefined;
-  practice: readonly PracticeItem[];
-  /** Count quick-review skills toward full coverage, including skills whose last unseen questions they used. */
-  reviewedSkillIds: readonly string[];
-}): PlannedBlock | null {
-  const drillItems = countDrilled(drills);
-  const room = Math.floor(minutes / PRACTICE_MINUTES_PER_QUESTION) - drillItems;
-  const items = takePracticeQuestions({ practice, room: Math.max(0, room) });
-  const questions = drillItems + items.length;
-  const practiceMinutes = questions * PRACTICE_MINUTES_PER_QUESTION;
-  const skillIds = [...new Set(items.map((item) => item.skillId))];
-
-  if (questions === 0 || (drills.length === 0 && practiceMinutes < MIN_BLOCK_MINUTES)) {
-    return null;
-  }
-
-  return {
-    canDo: null,
-    estimatedMinutes: toMinutes(practiceMinutes),
-    kind: "practice",
-    lessonId: null,
-    payload: toBlockPayload({
-      drills: [...drills],
-      fullReview: isFullReview({
-        fullReviewSkillIds,
-        skillIds: [...skillIds, ...reviewedSkillIds],
-      }),
-      itemIds: items.map((item) => item.itemId),
-      netScored,
-      planItemId,
-      planItemKey: planItemKey ?? null,
-      skillIds,
-    }),
-  };
 }
 
 function buildReviewBlock({
@@ -355,7 +291,7 @@ export function buildSessionBlocks(input: SessionBuildInput): {
     review,
     ...reinforcement.map((lesson) => toLessonBlock(lesson, true)),
     ...before.map((lesson) => toLessonBlock(lesson, false)),
-    buildPracticeBlock({
+    ...buildPracticeBlocks({
       drills: input.drills,
       fullReviewSkillIds: input.fullReviewSkillIds,
       minutes: Math.max(0, remaining - learnMinutes),

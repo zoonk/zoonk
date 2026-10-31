@@ -1,8 +1,10 @@
+import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { getSkillAreaShares } from "../../plans/_utils/exam-subject-shares";
 import { getFocusTargets } from "../../plans/planner/focus-targets";
 import { getSkillArea } from "../../plans/planner/graph-areas";
 import { type PlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 
-export function getFocusedSkillIds({
+function getFocusedSkillIds({
   graph,
   settings,
 }: {
@@ -50,4 +52,21 @@ export function getTestSkillIds({
   return [...new Set([...planSkillIds, ...graphSkillIds])].filter(
     (skillId) => !skipped.has(skillId),
   );
+}
+
+export function getPracticeWeights({
+  graph,
+  isReviewDay,
+  settings,
+  structure,
+}: {
+  graph: PlanGraph;
+  isReviewDay: boolean;
+  settings: unknown;
+  structure: ExamStructure | null;
+}) {
+  return {
+    focusSkillIds: isReviewDay ? getFocusedSkillIds({ graph, settings }) : undefined,
+    skillAreaShares: getSkillAreaShares({ graph, structure }),
+  };
 }

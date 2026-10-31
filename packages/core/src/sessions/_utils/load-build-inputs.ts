@@ -28,7 +28,7 @@ import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
 import { isDayAwaitingOutlines } from "./outlining-stand-ins";
 import { loadReviewsAndClaims } from "./practice-claims";
 import { getPracticeDifficulty } from "./practice-difficulty";
-import { getFocusedSkillIds, getTestSkillIds } from "./review-skills";
+import { getPracticeWeights, getTestSkillIds } from "./review-skills";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext, loadSessionPlacement } from "./session-placement";
 import { type SessionPlanItem } from "./session-plan-item";
@@ -296,10 +296,9 @@ export async function loadSessionBuildInput(
     excludeItemIds: new Set([...used, ...placementItemIds]),
     field,
     firstSkillIds: heldSkillIds,
-    focusSkillIds: isReviewDay
-      ? getFocusedSkillIds({ graph: plan.graph, settings: plan.settings })
-      : undefined,
+    ...getPracticeWeights({ ...plan, isReviewDay }),
     listeningSkillIds,
+    maxMinutes: dayMinutes,
     now,
     repeatOnlyMissed: isReviewDay,
     skillIds: fullReview ? testSkillIds : skillIds,
