@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { API_URL } from "@zoonk/utils/url";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { listOwed } from "../_test-utils/follow-ups";
 import { FOLLOW_UP_SECRET_HEADER, type FollowUp } from "./follow-up-contract";
@@ -11,6 +11,7 @@ import {
   listFollowUps,
   listLearnersWithOldFollowUps,
 } from "./follow-up-rows";
+import { registerFollowUpStarter } from "./follow-up-starter";
 import { oweFollowUps } from "./owe-follow-ups";
 
 const LESSON_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190b";
@@ -81,6 +82,26 @@ describe(oweFollowUps, () => {
     await flush();
 
     await expect(countFollowUps(user.id)).resolves.toBe(1);
+  });
+
+  it("starts the learner's work itself in an app that registered a starter, without a request", async () => {
+    const user = await userFixture();
+    const flush = runDeferredWork();
+    const fetch = vi.fn<typeof globalThis.fetch>(async () => new Response(null, { status: 202 }));
+    const starter = vi.fn(async (_userId: string) => null);
+
+    vi.stubGlobal("fetch", fetch);
+    registerFollowUpStarter(starter);
+
+    onTestFinished(() => {
+      globalThis.zoonkFollowUpStarter = undefined;
+    });
+
+    await oweFollowUps({ followUps: [writeLesson()], userId: user.id });
+    await flush();
+
+    expect(starter).toHaveBeenCalledExactlyOnceWith(user.id);
+    expect(fetch).not.toHaveBeenCalled();
   });
 });
 

@@ -123,6 +123,7 @@
     "./follow-ups/contract": "./src/follow-ups/follow-up-contract.ts",
     "./follow-ups/rows": "./src/follow-ups/follow-up-rows.ts",
     "./follow-ups/session-preparation": "./src/follow-ups/ask-for-session-preparation.ts",
+    "./follow-ups/starter": "./src/follow-ups/follow-up-starter.ts",
     "./goals/active-goal": "./src/goals/get-active-goal-id.ts",
     "./goals/continue-next-level": "./src/goals/continue-goal-at-next-level.ts",
     "./goals/contract": "./src/goals/goal-contract.ts",

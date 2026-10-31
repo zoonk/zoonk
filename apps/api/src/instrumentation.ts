@@ -15,6 +15,7 @@ export async function register() {
       { registerEvaluationRunLog },
       // Imported here only: `workflow/api` is Node-only, and this file also compiles for the edge.
       { registerFailedRunReports },
+      { registerFollowUpRuns },
     ] = await Promise.all([
       import("@zoonk/core/analytics/ai-generations"),
       import("@zoonk/core/ai-calls/log"),
@@ -22,6 +23,7 @@ export async function register() {
       import("@zoonk/core/analytics/subscription-events"),
       import("@zoonk/core/evaluation-runs/log"),
       import("@/workflows/_shared/report-failed-runs"),
+      import("@/workflows/follow-ups/register-follow-up-runs"),
     ]);
 
     registerAiGenerationAnalytics();
@@ -30,6 +32,7 @@ export async function register() {
     registerSubscriptionAnalytics();
     registerEvaluationRunLog();
     registerFailedRunReports();
+    registerFollowUpRuns();
   }
 
   if (process.env.NEXT_RUNTIME === "edge") {

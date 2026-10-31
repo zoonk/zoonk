@@ -14,6 +14,11 @@ type SessionPreparationStart =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
+/** The contract names no run for a guest's ask: theirs writes only their next lesson, not their sessions'. */
+function toStarted({ guest, runId }: { guest: boolean; runId: string }): SessionPreparationStart {
+  return { preparationId: guest ? null : runId, status: "started" };
+}
+
 /** A learner's explicit ask; their writes already owe their session's preparation as follow-ups. */
 export async function startSessionPreparation({
   sessionId,
@@ -37,7 +42,7 @@ export async function startSessionPreparation({
     { platform, sessionId, userId: access.userId },
   ]);
 
-  return { preparationId: run.runId, status: "started" };
+  return toStarted({ guest: access.status === "guest", runId: run.runId });
 }
 
 /** "Prepare lessons": the day reads as getting them from the ask on, until the preparation ends it. */
@@ -76,5 +81,5 @@ export async function startGoalPreparation({
     throw error;
   }
 
-  return { preparationId: run.runId, status: "started" };
+  return toStarted({ guest: access.status === "guest", runId: run.runId });
 }

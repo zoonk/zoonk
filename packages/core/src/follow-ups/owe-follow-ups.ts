@@ -1,12 +1,9 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import { type TransactionClient, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
-import { API_URL } from "@zoonk/utils/url";
 import { after } from "next/server";
-import { getApiDeploymentHeaders } from "../security/api-deployment";
-import { FOLLOW_UP_SECRET_HEADER, type FollowUp } from "./follow-up-contract";
+import { type FollowUp } from "./follow-up-contract";
+import { startFollowUps } from "./follow-up-starter";
 
 function getFollowUpKey(followUp: FollowUp): string {
   switch (followUp.kind) {
@@ -55,35 +52,6 @@ function askFor({
     update: { input, requestedAt, revision: { increment: 1 } },
     where: { userKindKey: { key, kind, userId } },
   });
-}
-
-/** A failed start leaves the rows for the learner's next write or the daily sweep. */
-async function startFollowUps(userId: string): Promise<void> {
-  const secret = process.env.APP_FOLLOW_UP_SECRET;
-
-  if (!secret) {
-    logError("APP_FOLLOW_UP_SECRET is missing, so follow-ups wait for the daily sweep.");
-    return;
-  }
-
-  const { data: response, error } = await safeAsync(async () =>
-    fetch(`${API_URL}/internal/follow-ups`, {
-      body: JSON.stringify({ userId }),
-      cache: "no-store",
-      headers: {
-        ...(await getApiDeploymentHeaders()),
-        "Content-Type": "application/json",
-        [FOLLOW_UP_SECRET_HEADER]: secret,
-      },
-      method: "POST",
-    }),
-  );
-
-  await response?.body?.cancel();
-
-  if (error || !response.ok) {
-    logError(`Could not start learner ${userId}'s follow-ups.`, error ?? response.status);
-  }
 }
 
 /**
