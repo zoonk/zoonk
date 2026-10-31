@@ -57,9 +57,10 @@ enum class PlaceOrientation { Horizontal, Vertical }
 
 /**
  * Main's `ActivityPlaceHandle`: something the learner places along one axis of a plot, centered on
- * [center] in the plot's pixels, where [scale] turns that axis's pixels into values. Lay it over the
- * plot in a box of the same size. It owns a 48dp target that takes a drag, the arrow, Page and
- * Home/End keys and TalkBack's adjust actions, snapping to [range]; the caller draws the [knob].
+ * [center] in the plot's pixels, where [scale] turns that axis's pixels into values, or [valueAt] turns a
+ * point of the plot into one for a handle whose path bends. Lay it over the plot in a box of the same
+ * size. It owns a 48dp target that takes a drag, the arrow, Page and Home/End keys and TalkBack's adjust
+ * actions, snapping to [range]; the caller draws the [knob].
  */
 @Composable
 fun ActivityPlaceHandle(
@@ -73,11 +74,12 @@ fun ActivityPlaceHandle(
     modifier: Modifier = Modifier,
     orientation: PlaceOrientation = PlaceOrientation.Horizontal,
     disabled: Boolean = false,
+    valueAt: ((Offset) -> Double)? = null,
     knob: @Composable () -> Unit,
 ) {
     val half = with(LocalDensity.current) { HIT.toPx() / 2 }
     val bounds = Rect(center - Offset(half, half), Size(half * 2, half * 2))
-    val place by rememberUpdatedState { at: Offset -> onChange(snapToStep(scale.toValue((bounds.topLeft + at).along(orientation)), range)) }
+    val place by rememberUpdatedState { at: Offset -> onChange(placedValue(bounds.topLeft + at, scale, range, orientation, valueAt)) }
     var focused by remember { mutableStateOf(false) }
     val ring = MaterialTheme.colorScheme.primary
 
@@ -144,9 +146,10 @@ fun ActivityPlaceTrack(
     onChange: (Double) -> Unit,
     orientation: PlaceOrientation = PlaceOrientation.Horizontal,
     disabled: Boolean = false,
+    valueAt: ((Offset) -> Double)? = null,
 ) {
     if (disabled) return
-    val place by rememberUpdatedState { at: Offset -> onChange(snapToStep(scale.toValue((area.topLeft + at).along(orientation)), range)) }
+    val place by rememberUpdatedState { at: Offset -> onChange(placedValue(area.topLeft + at, scale, range, orientation, valueAt)) }
 
     Box(
         Modifier
@@ -188,6 +191,14 @@ private fun Modifier.inPlot(bounds: Rect) =
     }
 
 private fun Offset.along(orientation: PlaceOrientation): Float = if (orientation == PlaceOrientation.Horizontal) x else y
+
+private fun placedValue(
+    point: Offset,
+    scale: LinearScale,
+    range: SnapRange,
+    orientation: PlaceOrientation,
+    valueAt: ((Offset) -> Double)?,
+) = snapToStep(valueAt?.invoke(point) ?: scale.toValue(point.along(orientation)), range)
 
 /** Main's focus ring: around the knob in its own shape, a round dot or a pill. */
 private fun DrawScope.drawFocusRing(color: Color) {

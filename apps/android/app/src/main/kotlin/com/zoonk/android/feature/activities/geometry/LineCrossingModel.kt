@@ -2,11 +2,14 @@ package com.zoonk.android.feature.activities.geometry
 
 import com.zoonk.android.feature.activities.PlaceOrientation
 import com.zoonk.android.feature.activities.SnapRange
+import com.zoonk.android.feature.activities.clamp
+import com.zoonk.android.feature.activities.snapToStep
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf15FieldsShift.Direction
 import kotlin.math.abs
-import kotlin.math.floor
+import kotlin.math.hypot
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 internal data class Line(
     val intercept: Double,
@@ -16,6 +19,13 @@ internal data class Line(
 }
 
 internal enum class Change { Down, Same, Up }
+
+/** Main's `LineSlide`: the shifts a line's handle can take, as [offsets] and as a [range], and where the handle sits [at] each. */
+internal class LineSlide(
+    val offsets: List<Double>,
+    val range: SnapRange,
+    val at: (Double) -> Vec,
+)
 
 /** Main's `line-crossing-model.ts` with core's `shiftLine` and `crossing`. Offsets are right or up when positive. */
 internal object LineCrossingModel {
@@ -80,51 +90,56 @@ internal object LineCrossingModel {
         line: Line,
         domain: Vec,
     ): Pair<Vec, Vec> {
-        if (line.slope == 0.0) return Vec(0.0, line.intercept) to Vec(domain.x, line.intercept)
-        val atBottom = -line.intercept / line.slope
-        val atTop = (domain.y - line.intercept) / line.slope
-        val from = max(0.0, min(atBottom, atTop))
-        val to = min(domain.x, max(atBottom, atTop))
-        val (start, end) = if (from <= to) from to to else 0.0 to 0.0
+        val (start, end) = spanInside(line, Vec(0.0, 0.0), domain) ?: (0.0 to 0.0)
         return Vec(start, line.yAt(start)) to Vec(end, line.yAt(end))
     }
 
-    fun along(
-        line: Line,
-        domain: Vec,
-        share: Double,
-    ): Vec {
-        val (from, to) = segment(line, domain)
-        val x = from.x + (to.x - from.x) * share
-        return Vec(x, line.yAt(x))
-    }
-
     /**
-     * Main's `slideRange`: how far a line's handle slides from rest, twice the real shift each way, cut
-     * where the handle would pass [lowest] or [highest], but never short of this line's [real] move.
+     * Main's `lineSlide`: twice the real shift each way, as far as the line still passes through the chart
+     * inset by a handle's margin. At each shift the handle rides its moved line, at the point nearest its
+     * resting spot inside that inset. It rests 82% along the line, or at the nearest point to that clear of
+     * the resting [crossing], kept inside the inset.
      */
-    fun slideRange(
+    fun slide(
         amount: Double,
-        home: Double,
-        lowest: Double,
-        highest: Double,
-        real: Double,
-    ): SnapRange {
-        val full = range(amount)
-        val steps = { room: Double -> floor(max(room, 0.0) / full.step + SNAP_SLACK) * full.step }
-        return SnapRange(
-            min = min(max(full.min, -steps(home - lowest)), real),
-            max = max(min(full.max, steps(highest - home)), real),
-            step = full.step,
-        )
-    }
-
-    /** Main's resting spot: 82% along the line, past the crossings, or the nearest point to that [isClear] of the crossing. */
-    fun restingSpot(
+        axis: PlaceOrientation,
         line: Line,
         domain: Vec,
-        isClear: (Vec) -> Boolean,
-    ): Vec = along(line, domain, HANDLE_SHARES.firstOrNull { isClear(along(line, domain, it)) } ?: HANDLE_SHARE)
+        crossing: Vec,
+    ): LineSlide {
+        val low = Vec(domain.x * HANDLE_MARGIN, domain.y * HANDLE_MARGIN)
+        val high = Vec(domain.x - low.x, domain.y - low.y)
+        val full = range(amount)
+        val count = ((full.max - full.min) / full.step).roundToInt() + 1
+        val offsets =
+            (0 until count)
+                .map { snapToStep(full.min + it * full.step, full) }
+                .filter { spanInside(moved(line, it, axis), low, high) != null }
+        val visible = spanInside(line, Vec(0.0, 0.0), domain) ?: (0.0 to 0.0)
+        val (from, to) = spanInside(line, low, high) ?: visible
+        val along = { share: Double -> clamp(visible.first + (visible.second - visible.first) * share, from, to) }
+        val isClear = { x: Double -> hypot((x - crossing.x) / domain.x, (line.yAt(x) - crossing.y) / domain.y) >= CROSSING_GAP }
+        val homeX = along(HANDLE_SHARES.firstOrNull { isClear(along(it)) } ?: HANDLE_SHARE)
+        return LineSlide(offsets, SnapRange(offsets.min(), offsets.max(), full.step)) { offset ->
+            val shifted = moved(line, offset, axis)
+            val preferred = if (axis == PlaceOrientation.Horizontal) homeX + offset else homeX
+            val x = spanInside(shifted, low, high)?.let { (start, end) -> clamp(preferred, start, end) } ?: preferred
+            Vec(x, shifted.yAt(x))
+        }
+    }
+
+    private fun spanInside(
+        line: Line,
+        low: Vec,
+        high: Vec,
+    ): Pair<Double, Double>? {
+        if (line.slope == 0.0) return (low.x to high.x).takeIf { line.intercept in low.y..high.y }
+        val atLow = (low.y - line.intercept) / line.slope
+        val atHigh = (high.y - line.intercept) / line.slope
+        val from = max(low.x, min(atLow, atHigh))
+        val to = min(high.x, max(atLow, atHigh))
+        return (from to to).takeIf { from <= to }
+    }
 
     fun change(
         before: Double,
@@ -141,7 +156,11 @@ internal object LineCrossingModel {
     private const val HEADROOM = 1.25
     private const val HANDLE_SHARE = 0.82
     private const val HANDLE_SHARE_STEPS = 100
-    private const val SNAP_SLACK = 1e-9
+
+    // Main's shares of the chart that fit a whole handle, and its gap from a crossing dot, on the smallest plot
+    // (192dp), so a slide never depends on the screen's size.
+    private const val HANDLE_MARGIN = 0.08
+    private const val CROSSING_GAP = 0.135
     private val HANDLE_SHARES =
         (0..HANDLE_SHARE_STEPS).map { it.toDouble() / HANDLE_SHARE_STEPS }.sortedBy { abs(it - HANDLE_SHARE) }
     private const val MIN_SPAN = 1.0

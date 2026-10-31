@@ -11,7 +11,7 @@ import org.junit.Test
 class LineLabelsTest {
     private val area = Rect(22f, 26f, 311f, 222f)
     private val size = Size(50f, 12f)
-    private val noMarks = LabelMarks(emptyList(), emptyList(), emptyList())
+    private val noMarks = LabelMarks(arrows = emptyList(), circles = emptyList(), lines = emptyList())
 
     private fun gap(
         box: Rect,
@@ -49,7 +49,11 @@ class LineLabelsTest {
     fun movesANameOffADragHandleInItsWay() {
         val segment = LabelSegment(Offset(22f, 160f), Offset(293f, 100f))
         val handle = LabelCircle(Offset(262f, 80f), radius = 15f)
-        val box = place(LineLabel(isUpper = true, segment, size), marks = LabelMarks(listOf(handle), emptyList(), emptyList())).single()
+        val box =
+            place(
+                LineLabel(isUpper = true, segment, size),
+                marks = LabelMarks(arrows = emptyList(), circles = listOf(handle), lines = emptyList()),
+            ).single()
         val nearest = Offset(handle.center.x.coerceIn(box.left, box.right), handle.center.y.coerceIn(box.top, box.bottom))
 
         assertTrue("box $box", (nearest - handle.center).getDistance() > handle.radius)
@@ -70,7 +74,11 @@ class LineLabelsTest {
     fun keepsANameInsideTheChartAndOffItsLineWhenNoSpotNearbyIsFree() {
         val segment = LabelSegment(Offset(22f, 222f), Offset(293f, 26f))
         val everywhere = LabelCircle(Offset(166f, 124f), radius = 400f)
-        val box = place(LineLabel(isUpper = true, segment, size), marks = LabelMarks(listOf(everywhere), emptyList(), emptyList())).single()
+        val box =
+            place(
+                LineLabel(isUpper = true, segment, size),
+                marks = LabelMarks(arrows = emptyList(), circles = listOf(everywhere), lines = emptyList()),
+            ).single()
 
         assertTrue("box $box", box.top >= area.top)
         assertTrue("gap ${gap(box, segment)}", gap(box, segment) >= 3f)
@@ -90,6 +98,26 @@ class LineLabelsTest {
         val segment = LabelSegment(Offset(22f, 218f), Offset(293f, 26f))
         val box = place(LineLabel(isUpper = true, segment, Size(320f, 24f))).single()
 
+        assertTrue("gap ${gap(box, segment)}", gap(box, segment) >= 3f)
+    }
+
+    @Test
+    fun keepsANameClearOfAnArrowHeadIncludedEvenWhenNoSpotNearbyIsFree() {
+        val segment = LabelSegment(Offset(22f, 222f), Offset(293f, 26f))
+        val everywhere = LabelCircle(Offset(166f, 124f), radius = 400f)
+        val arrow = Rect(230f, 26f, 244f, 87f)
+        val box =
+            place(
+                LineLabel(isUpper = true, segment, size),
+                marks = LabelMarks(arrows = listOf(arrow), circles = listOf(everywhere), lines = emptyList()),
+            ).single()
+        val gap =
+            Offset(
+                maxOf(arrow.left - box.right, 0f, box.left - arrow.right),
+                maxOf(arrow.top - box.bottom, 0f, box.top - arrow.bottom),
+            ).getDistance()
+
+        assertTrue("box $box", gap >= 3f)
         assertTrue("gap ${gap(box, segment)}", gap(box, segment) >= 3f)
     }
 }

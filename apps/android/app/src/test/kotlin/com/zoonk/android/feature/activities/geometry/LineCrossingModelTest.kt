@@ -1,12 +1,13 @@
 package com.zoonk.android.feature.activities.geometry
 
+import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.activities.PlaceOrientation
 import com.zoonk.android.feature.activities.SnapRange
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf15FieldsShift.Direction
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.math.hypot
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf15Value as LineCrossingContent
 
 /** Expected values are what main's `line-crossing-model.ts` and core's `shiftLine` and `crossing` return for the same input. */
 class LineCrossingModelTest {
@@ -16,6 +17,61 @@ class LineCrossingModelTest {
     private val revenue = Line(intercept = 0.0, slope = 15.0)
     private val sideways = PlaceOrientation.Horizontal
     private val upright = PlaceOrientation.Vertical
+
+    private data class Chart(
+        val name: String,
+        val lines: List<Pair<String, Line>>,
+        val moves: String,
+        val direction: Direction,
+        val amount: Double,
+    )
+
+    private fun chart(
+        name: String,
+        fixture: String,
+    ): Chart {
+        val fields = (ActivityFixtures.content(fixture) as LineCrossingContent).value.fields
+        return Chart(
+            name,
+            fields.lines.map {
+                it.id to Line(it.intercept, it.slope)
+            },
+            fields.shift.line,
+            fields.shift.direction,
+            fields.shift.amount,
+        )
+    }
+
+    private val supplyDemand by lazy { chart("supply and demand", "lineCrossing") }
+    private val breakEven by lazy { chart("break-even", "lineCrossing.breakEven") }
+    private val charts by lazy {
+        listOf(
+            supplyDemand,
+            breakEven,
+            breakEven.copy(name = "flat cost", lines = listOf("cost" to Line(500.0, 0.0), breakEven.lines[1])),
+            supplyDemand.copy(name = "supply moved down", direction = Direction.DOWN),
+            supplyDemand.copy(name = "demand moved down", moves = "demand", direction = Direction.DOWN),
+        )
+    }
+
+    private fun onTheSmallestPlot(
+        point: Vec,
+        domain: Vec,
+    ) = Vec(point.x / domain.x * SMALLEST_PLOT, point.y / domain.y * SMALLEST_PLOT)
+
+    private fun isOnTheSmallestPlot(
+        point: Vec,
+        domain: Vec,
+    ) = onTheSmallestPlot(point, domain).let { listOf(it.x, it.y) }.all { it >= HANDLE_REACH && it <= SMALLEST_PLOT - HANDLE_REACH }
+
+    private fun gapOnTheSmallestPlot(
+        point: Vec,
+        other: Vec,
+        domain: Vec,
+    ): Double {
+        val (first, second) = onTheSmallestPlot(point, domain) to onTheSmallestPlot(other, domain)
+        return hypot(first.x - second.x, first.y - second.y)
+    }
 
     @Test
     fun movesALineSidewaysOrUpright() {
@@ -61,10 +117,6 @@ class LineCrossingModelTest {
             ),
             listOf(supply, demand, Line(3.0, 0.0), Line(-50.0, 1.0)).map { LineCrossingModel.segment(it, eggs) },
         )
-        assertEquals(
-            listOf(Vec(8.883333333333331, 5.4416666666666655), Vec(8.2, 1.8000000000000007)),
-            listOf(supply, demand).map { LineCrossingModel.along(it, eggs, 0.82) },
-        )
     }
 
     @Test
@@ -96,32 +148,37 @@ class LineCrossingModelTest {
     }
 
     @Test
-    fun slidesTwiceTheShiftEachWayWhenTheChartHasRoom() {
-        assertEquals(SnapRange(-4.0, 4.0, 0.5), LineCrossingModel.slideRange(2.0, 5.0, 0.0, 10.83, 0.0))
+    fun keepsEveryHandleOnTheChartOffTheCrossingAtRestAndTheRightMoveInReach() {
+        val problems =
+            charts.flatMap { chart ->
+                val axis = LineCrossingModel.axis(chart.direction)
+                val (first, second) = chart.lines.map { it.second }
+                val domain = LineCrossingModel.domain(chart.amount, axis, first, second)
+                val crossing = LineCrossingModel.crossing(first, second)
+                val real = LineCrossingModel.offset(chart.direction, chart.amount)
+                chart.lines.flatMap { (id, line) ->
+                    val moves = id == chart.moves
+                    val slide = LineCrossingModel.slide(chart.amount, axis, line, domain, crossing)
+                    val where = { offset: Double -> "${chart.name}: $id at $offset" }
+                    slide.offsets
+                        .filterNot { isOnTheSmallestPlot(slide.at(it), domain) }
+                        .map { "${where(it)} leaves the chart at ${slide.at(it)}" } +
+                        listOfNotNull(
+                            where(0.0)
+                                .takeIf {
+                                    gapOnTheSmallestPlot(slide.at(0.0), crossing, domain) < HANDLE_REACH + CROSSING_REACH
+                                }?.let { "$it covers the crossing" },
+                            where(real).takeIf { moves && real !in slide.offsets }?.let { "$it is out of reach" },
+                        )
+                }
+            }
+
+        assertEquals(emptyList<String>(), problems)
     }
 
-    @Test
-    fun stopsWhereTheHandleWouldLeaveTheChart() {
-        val flatCost = Line(intercept = 500.0, slope = 0.0)
-        val extent = LineCrossingModel.domain(500.0, upright, flatCost, revenue).y
-        val range = LineCrossingModel.slideRange(500.0, 500.0, 0.0, extent, 500.0)
-
-        assertEquals(-500.0, range.min, 1e-9)
-        assertTrue("range $range, extent $extent", 500.0 + range.max <= extent)
-    }
-
-    @Test
-    fun neverStopsShortOfTheLinesRealMove() {
-        assertEquals(500.0, LineCrossingModel.slideRange(500.0, 900.0, 0.0, 1000.0, 500.0).max, 1e-9)
-    }
-
-    @Test
-    fun restsAHandleClearOfTheCrossing() {
-        val domain = LineCrossingModel.domain(2.0, upright, supply, demand)
-        val crossing = LineCrossingModel.crossing(supply, demand)
-        val gap = { point: Vec -> hypot(point.x - crossing.x, point.y - crossing.y) }
-        val home = LineCrossingModel.restingSpot(demand, domain) { gap(it) >= 1.0 }
-
-        assertTrue("home $home, crossing $crossing", gap(home) >= 1.0)
+    private companion object {
+        const val SMALLEST_PLOT = 192.0
+        const val HANDLE_REACH = 14 + 2.5 / 2
+        const val CROSSING_REACH = 7.0
     }
 }

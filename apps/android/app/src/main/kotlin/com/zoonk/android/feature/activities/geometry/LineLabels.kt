@@ -24,18 +24,18 @@ internal data class LineLabel(
 )
 
 internal class LabelMarks(
+    val arrows: List<Rect>,
     val circles: List<LabelCircle>,
     val lines: List<LabelSegment>,
-    val segments: List<LabelSegment>,
 )
 
 /**
  * Main's `line-crossing-labels.ts`. Where each line's name sits, in order: by its end of the line on the
- * open side, or at the nearest spot that clears the lines, the marks (drag handles, crossings, arrows) and
- * the names placed before it. When no spot close by clears every line, it keeps off its own line and the
- * marks, then just off its own line, searching the whole chart when nothing near is free. Its halo never
- * cuts the line it names: with no free spot anywhere it stays by its end, on the line's open side. [unit]
- * is pixels per dp.
+ * open side, or at the nearest spot that clears the lines, the marks (drag handles, crossings) and the names
+ * placed before it. When no spot close by clears every line, it keeps off its own line and the marks, then
+ * just off its own line, searching the whole chart when nothing near is free. Every spot it searches keeps
+ * clear of the arrows, heads included. Its halo never cuts the line it names: with no free spot anywhere it
+ * stays by its end, on the line's open side. [unit] is pixels per dp.
  */
 internal fun placeLineLabels(
     area: Rect,
@@ -60,11 +60,11 @@ private fun placeLineLabel(
 
     fun Rect.fits(lines: List<LabelSegment>) =
         left >= area.left && right <= area.right && top >= area.top && bottom <= area.bottom &&
-            (listOf(label.segment) + lines).none { touches(it, clearance) }
+            (listOf(label.segment) + lines).none { touches(it, clearance) } &&
+            marks.arrows.none { touches(it, clearance) }
 
     fun Rect.clearsMarks() =
-        marks.segments.none { touches(it, clearance) } &&
-            marks.circles.none { touches(it, clearance) } &&
+        marks.circles.none { touches(it, clearance) } &&
             placed.none { touches(it, clearance) }
 
     val isClear = { box: Rect -> box.fits(emptyList()) && box.clearsMarks() }
