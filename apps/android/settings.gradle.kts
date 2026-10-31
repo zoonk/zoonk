@@ -27,6 +27,7 @@ include(
     ":feature:exam",
     ":feature:onboarding",
     ":feature:plan",
+    ":feature:practice",
     ":feature:player",
     ":feature:today",
 )

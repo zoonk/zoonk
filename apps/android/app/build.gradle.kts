@@ -94,6 +94,7 @@ dependencies {
     implementation(project(":feature:exam"))
     implementation(project(":feature:onboarding"))
     implementation(project(":feature:plan"))
+    implementation(project(":feature:practice"))
     implementation(project(":feature:player"))
     implementation(project(":feature:today"))
     implementation(libs.androidx.activity.compose)
