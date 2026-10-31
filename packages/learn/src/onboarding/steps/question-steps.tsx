@@ -139,7 +139,7 @@ function useTextQuestionCopy(question: TextQuestion) {
 
   const copy: Record<
     TextQuestion,
-    Record<"description" | "label" | "placeholder" | "title", string>
+    Record<"description" | "label" | "title", string> & { placeholder?: string }
   > = {
     admission: {
       description: t("It helps your plan focus on what counts most."),
@@ -150,7 +150,6 @@ function useTextQuestionCopy(question: TextQuestion) {
     position: {
       description: t("The notice can have a different exam for each position."),
       label: t("Position"),
-      placeholder: t("E.g., agente, analista"),
       title: t("Which position are you applying for?"),
     },
     reason: {

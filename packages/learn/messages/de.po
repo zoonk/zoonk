@@ -9118,11 +9118,6 @@ msgid "Position"
 msgstr "Stelle"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "a89uM8"
-msgid "E.g., agente, analista"
-msgstr "Z. B. Sachbearbeiter, Analyst"
-
-#: src/onboarding/steps/question-steps.tsx
 msgctxt "y2y8ZK"
 msgid "Which position are you applying for?"
 msgstr "Für welche Stelle bewirbst du dich?"

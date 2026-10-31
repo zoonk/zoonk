@@ -20,7 +20,7 @@ export function TextField({
   autoFocus?: boolean;
   label: string;
   onChange: (value: string) => void;
-  placeholder: string;
+  placeholder?: string;
   value: string;
 }) {
   const inputId = useId();
