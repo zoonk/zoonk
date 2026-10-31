@@ -59,7 +59,7 @@ function getScrollDelta(scroller: HTMLElement): number {
   const keepsQuestion = question.top - visible.top - MARGIN;
   const showsVerdict = verdict.bottom - visible.bottom + MARGIN;
 
-  return whole > keepsQuestion && keepsQuestion > 0 && showsVerdict <= keepsQuestion
+  return whole > keepsQuestion && keepsQuestion >= 0 && showsVerdict <= keepsQuestion
     ? keepsQuestion
     : whole;
 }
