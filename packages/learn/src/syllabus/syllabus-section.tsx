@@ -154,9 +154,11 @@ function GroupHeading({
 }
 
 export function SyllabusSection({
+  children,
   subjectHref,
   syllabus,
 }: {
+  children?: React.ReactNode;
   subjectHref: (key: string) => string;
   syllabus: SyllabusSectionView;
 }) {
@@ -174,6 +176,8 @@ export function SyllabusSection({
         <PageSectionTitle id={SECTION_TITLE_ID}>{title}</PageSectionTitle>
         <BarsMeaning syllabus={syllabus} />
       </PageSectionHeader>
+
+      {children}
 
       <div className={LIST_GROUP_CLASS}>
         {groups.map((group, index) => (

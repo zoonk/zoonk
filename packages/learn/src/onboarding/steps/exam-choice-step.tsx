@@ -43,11 +43,25 @@ export function ExamChoiceStep({
     });
 
   const { cancel, pick, submit } = useAdvanceOnPick({ answer: answerWith, pending });
+  const [only] = choices;
 
   return (
     <StepForm
       canContinue={isComplete}
-      description={t("The plan and the mocks follow your pick. You can change it in your plan.")}
+      description={
+        choices.length === 1 && only
+          ? t({
+              description:
+                "{group} is the notice's name for one of the exam's choices, such as a specialty or the foreign language, which comes from the notice in its own language",
+              message:
+                "The exam offers {count, plural, one {# option} other {# options}} for {group}. Your plan and mocks follow the one you pick, and you can change it in your plan.",
+              values: { count: only.options.length, group: only.group },
+            })
+          : t(
+              "The exam has {count, plural, one {# choice} other {# choices}} to make. Your plan and mocks follow your picks, and you can change them in your plan.",
+              { count: choices.length },
+            )
+      }
       onContinue={() => submit(picks)}
       onSkip={() => {
         cancel();

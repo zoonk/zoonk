@@ -17,9 +17,11 @@ import { daysUntilIsoDate } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
 import { usePlanEndText } from "../../journey/use-phase-when";
 import { LearnLink } from "../../learn-link";
+import { PlanChoiceLines } from "../../plan/plan-choice-lines";
 import { PlanChoices } from "../../plan/plan-choices";
 import { usePlanScreen } from "../../plan/plan-context";
 import { PlanEditor } from "../../plan/plan-editor";
+import { type PlanEditorSection } from "../../plan/plan-editor-sections";
 import { useStudyDaysText } from "../../plan/use-study-days-text";
 import { OnboardingColumn, OnboardingTitle } from "../onboarding-frame";
 import { SavePlanNote } from "../save-plan-note";
@@ -157,8 +159,12 @@ export function RevealBody({
   todayHref: string;
 }) {
   const t = useExtracted();
-  const [editing, setEditing] = useState(false);
   const { goal, plan } = usePlanScreen();
+
+  const [editor, setEditor] = useState<{ open: boolean; section: PlanEditorSection | null }>({
+    open: false,
+    section: null,
+  });
 
   return (
     <OnboardingColumn
@@ -181,6 +187,10 @@ export function RevealBody({
           <SuccessEyebrow>{t("Plan created")}</SuccessEyebrow>
           <OnboardingTitle className="text-balance">{goal.title}</OnboardingTitle>
           <RevealFacts />
+          <PlanChoiceLines
+            choices={plan.examChoices}
+            onChange={() => setEditor({ open: true, section: "choices" })}
+          />
           <RevealPace />
           <RevealNoticeDay />
         </DetailHeroText>
@@ -188,7 +198,11 @@ export function RevealBody({
         <div className="flex flex-col gap-2 md:max-w-xs">
           <DetailActions>
             <StartButton href={todayHref} />
-            <Button onClick={() => setEditing(true)} size="lg" variant="outline">
+            <Button
+              onClick={() => setEditor({ open: true, section: null })}
+              size="lg"
+              variant="outline"
+            >
               {t("Adjust")}
             </Button>
           </DetailActions>
@@ -204,7 +218,11 @@ export function RevealBody({
 
       <AreaWeights syllabus={syllabus} />
 
-      <PlanEditor onOpenChange={setEditing} open={editing} />
+      <PlanEditor
+        onOpenChange={(open) => setEditor({ ...editor, open })}
+        open={editor.open}
+        section={editor.section}
+      />
     </OnboardingColumn>
   );
 }

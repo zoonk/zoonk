@@ -952,6 +952,7 @@ msgid "Save"
 msgstr "Salvar"
 
 #: src/appearance/buddy-settings.tsx
+#: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-tools.tsx
 msgctxt "BY343C"
 msgid "Change"
@@ -2403,6 +2404,7 @@ msgid "Choose where to focus"
 msgstr "Escolha onde focar"
 
 #: src/conversation/tutor-tool-offer.tsx
+#: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-exam-choices.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/plan-tools.tsx
@@ -8941,10 +8943,16 @@ msgctxt "R8HSEX"
 msgid "Pick a date after today."
 msgstr "Escolha uma data depois de hoje."
 
+#. {group} is the notice's name for one of the exam's choices, such as a specialty or the foreign language, which comes from the notice in its own language
 #: src/onboarding/steps/exam-choice-step.tsx
-msgctxt "oolIep"
-msgid "The plan and the mocks follow your pick. You can change it in your plan."
-msgstr "O plano e os simulados seguem sua escolha. Você pode mudar isso no seu plano."
+msgctxt "AdAHjB"
+msgid "The exam offers {count, plural, one {# option} other {# options}} for {group}. Your plan and mocks follow the one you pick, and you can change it in your plan."
+msgstr "A prova oferece {count, plural, one {# opção} other {# opções}} para {group}. Seu plano e seus simulados seguem sua escolha, que você pode mudar no plano."
+
+#: src/onboarding/steps/exam-choice-step.tsx
+msgctxt "_7GRXH"
+msgid "The exam has {count, plural, one {# choice} other {# choices}} to make. Your plan and mocks follow your picks, and you can change them in your plan."
+msgstr "A prova tem {count, plural, one {# escolha} other {# escolhas}} para você fazer. Seu plano e seus simulados seguem suas escolhas, que você pode mudar no plano."
 
 #: src/onboarding/steps/exam-choice-step.tsx
 msgctxt "K8LmJV"
@@ -10112,6 +10120,12 @@ msgstr "Bases"
 msgctxt "dkcNQw"
 msgid "Choose prerequisites"
 msgstr "Escolher bases"
+
+#. {option} is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it
+#: src/plan/plan-choice-lines.tsx
+msgctxt "Su6-x7"
+msgid "Following the {option} syllabus"
+msgstr "Seguindo o conteúdo de {option}"
 
 #: src/plan/plan-choices.tsx
 msgctxt "pNi2vP"

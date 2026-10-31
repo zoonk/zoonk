@@ -11,6 +11,7 @@ import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
 import { type AlphabetLink } from "../language/units/alphabet-row";
+import { PlanChoiceLines } from "../plan/plan-choice-lines";
 import {
   type PlanActions,
   type PlanGoal,
@@ -229,7 +230,14 @@ function JourneyBody({
           <PlanSuggestionSlot className={IN_COLUMN_CLASS} />
 
           {structure ? (
-            <SyllabusSection subjectHref={links.subject} syllabus={structure} />
+            <SyllabusSection subjectHref={links.subject} syllabus={structure}>
+              {/* Unpicked choices are the suggestion's; from 72rem the aside's properties name the pick. */}
+              <PlanChoiceLines
+                choices={plan.examChoices.filter((choice) => choice.subject)}
+                className={IN_COLUMN_CLASS}
+                onChange={() => editor.open("choices")}
+              />
+            </SyllabusSection>
           ) : (
             <PathSection alphabet={alphabet} courseHref={courseHref} links={links} />
           )}
