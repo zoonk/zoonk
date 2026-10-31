@@ -7639,62 +7639,6 @@
         }
       }
     },
-    "/age-checks": {
-      "post": {
-        "description": "Before a visitor's first write starts a guest, so nobody below the minimum age where the request comes from gets an account. Saves nothing; save the year with `PUT /v1/me/birth-year` once the guest exists.",
-        "operationId": "checkBirthYear",
-        "security": [],
-        "summary": "Check a birth year before starting",
-        "tags": [
-          "Account"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BirthYearInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Old enough to start"
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Below the minimum age (`BELOW_MINIMUM_AGE` with `details.minimumAge`, and `details.accountClosed` when the account was deleted), or a year in the future or older than anyone alive (`INVALID_BIRTH_YEAR`).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/me/allowance": {
       "get": {
         "description": "Guests and learners see their plan's allowance. New lessons started count, reused or generated; quick explanations and reviews don't.",
@@ -7724,86 +7668,6 @@
           },
           "401": {
             "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/me/birth-year": {
-      "put": {
-        "description": "Asked once, before a guest or learner keeps learning; a saved year stays. Below the minimum age where the request comes from, nothing is saved and the client ends the session. A year certainly below it closes the account: it's deleted, with its website Plus refunded in full (`details.accountClosed`). A visitor's year goes through `POST /v1/age-checks` first.",
-        "operationId": "saveCurrentUserBirthYear",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Save current user's birth year",
-        "tags": [
-          "Account"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BirthYearInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "The learning profile with the saved birth year",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LearningProfileResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Below the minimum age (`BELOW_MINIMUM_AGE` with `details.minimumAge`, and `details.accountClosed` when the account was deleted), or a year in the future or older than anyone alive (`INVALID_BIRTH_YEAR`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -24827,21 +24691,6 @@
           "text"
         ]
       },
-      "BirthYearInput": {
-        "type": "object",
-        "properties": {
-          "birthYear": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991,
-            "description": "The year the learner was born"
-          }
-        },
-        "required": [
-          "birthYear"
-        ],
-        "additionalProperties": false
-      },
       "LearningProfileUpdate": {
         "type": "object",
         "properties": {
@@ -29415,13 +29264,6 @@
             },
             "description": "Glasses the buddy can wear: round plus the earned ones"
           },
-          "birthYear": {
-            "nullable": true,
-            "description": "The year the learner was born, or null until they answer. Ask before they keep learning",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
           "buddy": {
             "$ref": "#/components/schemas/Buddy"
           },
@@ -29443,28 +29285,22 @@
           },
           "shareUsageData": {
             "nullable": true,
-            "description": "Whether Zoonk may record how the learner uses it, or null before they choose. Their events are recorded unless it's false or `usageDataLockedOff`",
+            "description": "Whether Zoonk may record how the learner uses it, or null before they choose. Their events are recorded unless it's false",
             "type": "boolean"
           },
           "soundsEnabled": {
             "type": "boolean",
             "description": "Sounds for a right answer and for finishing; on by default"
-          },
-          "usageDataLockedOff": {
-            "type": "boolean",
-            "description": "A known minor where the law needs a yes they can't give: nothing is recorded whatever `shareUsageData` says, and the setting can't be turned on"
           }
         },
         "required": [
           "activeGoalId",
           "availableGlasses",
-          "birthYear",
           "buddy",
           "dailyLimitMinutes",
           "dailyTimes",
           "shareUsageData",
-          "soundsEnabled",
-          "usageDataLockedOff"
+          "soundsEnabled"
         ],
         "additionalProperties": false
       },
@@ -40263,18 +40099,6 @@
         ],
         "additionalProperties": false
       },
-      "LearningProfileResponse": {
-        "type": "object",
-        "properties": {
-          "profile": {
-            "$ref": "#/components/schemas/LearningProfile"
-          }
-        },
-        "required": [
-          "profile"
-        ],
-        "additionalProperties": false
-      },
       "DailyTimeLimitResponse": {
         "type": "object",
         "properties": {
@@ -40306,6 +40130,18 @@
           "reached",
           "remainingMinutes",
           "usedMinutes"
+        ],
+        "additionalProperties": false
+      },
+      "LearningProfileResponse": {
+        "type": "object",
+        "properties": {
+          "profile": {
+            "$ref": "#/components/schemas/LearningProfile"
+          }
+        },
+        "required": [
+          "profile"
         ],
         "additionalProperties": false
       },
@@ -40355,10 +40191,6 @@
           "analytics": {
             "type": "object",
             "properties": {
-              "adult": {
-                "type": "boolean",
-                "description": "Known to be an adult where the learner is: only adults are identified and recorded"
-              },
               "disabled": {
                 "type": "boolean",
                 "description": "Zoonk keeps the account out of its analytics"
@@ -40405,7 +40237,6 @@
               }
             },
             "required": [
-              "adult",
               "disabled",
               "goal",
               "plan",
@@ -40593,10 +40424,6 @@
             ],
             "additionalProperties": false
           },
-          "needsBirthYear": {
-            "type": "boolean",
-            "description": "True until the learner saves their birth year (`PUT /v1/me/birth-year`); ask before they keep learning"
-          },
           "nextChangeAt": {
             "type": "integer",
             "minimum": -9007199254740991,
@@ -40702,7 +40529,6 @@
           "identity",
           "level",
           "missions",
-          "needsBirthYear",
           "nextChangeAt",
           "places",
           "readAt",

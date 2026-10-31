@@ -495,6 +495,7 @@ describe(explainQuestionWorkflow, () => {
 
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
+        distinctId: goal.userId,
         name: "Generation Failed",
         properties: { content_kind: "explanation", model: null, task: "explain-question" },
         shared: expect.objectContaining({ platform: "android" }),
