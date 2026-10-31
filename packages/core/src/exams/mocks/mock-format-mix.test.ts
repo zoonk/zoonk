@@ -228,6 +228,19 @@ describe(getMockFormatMix, () => {
     expect(keysIn({ section: "Parte A", structure: notice })).toStrictEqual(["choice:5"]);
     expect(keysIn({ section: "Parte B", structure: notice })).toStrictEqual(["choice:tf"]);
   });
+
+  it("places a subject in the section of its exact name before any looser match", () => {
+    const parts = structureOf(
+      [
+        { options: 5, sections: ["Parte A"] },
+        { kind: "trueFalse", options: null, sections: ["Parte B"] },
+      ],
+      { sections: [{ name: "Parte A" }, { name: "Parte B" }], subjects: ["Parte A", "Parte B"] },
+    );
+
+    expect(keysIn({ section: "Parte A", structure: parts })).toStrictEqual(["choice:5"]);
+    expect(keysIn({ section: "Parte B", structure: parts })).toStrictEqual(["choice:tf"]);
+  });
 });
 
 function greFormat(key: string) {

@@ -1,3 +1,4 @@
+import { normalizeString } from "@zoonk/utils/string";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { findNamingSections } from "../_utils/name-match";
@@ -5,6 +6,18 @@ import { isObjectiveSection } from "./written-subject";
 
 type Subject = ExamStructure["subjects"][number];
 
+function findExactSections({
+  names,
+  sections,
+}: {
+  names: readonly (string | null | undefined)[];
+  sections: readonly string[];
+}): string[] {
+  const keys = new Set(names.flatMap((name) => (name ? [normalizeString(name)] : [])));
+  return sections.filter((section) => keys.has(normalizeString(section)));
+}
+
+/** A looser name match only when no section has the subject's exact name. */
 export function findSubjectSections({
   sections,
   subject,
@@ -12,6 +25,12 @@ export function findSubjectSections({
   sections: readonly string[];
   subject: Subject;
 }): string[] {
+  const exact = findExactSections({ names: [subject.shortName, subject.name], sections });
+
+  if (exact.length > 0) {
+    return exact;
+  }
+
   const byShortName = subject.shortName
     ? findNamingSections({ name: subject.shortName, sections })
     : [];
