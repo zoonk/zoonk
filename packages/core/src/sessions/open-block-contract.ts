@@ -68,7 +68,7 @@ export const studyBlockOpeningSchema = z
         id: "StudyBlockOpeningUnwrittenLesson",
       }),
     z
-      .object({ blockId: z.uuid(), kind: z.literal("preparingLesson") })
+      .object({ blockId: z.uuid(), kind: z.literal("preparingLesson"), sessionId: sessionIdSchema })
       .strict()
       .meta({
         description:
@@ -76,7 +76,7 @@ export const studyBlockOpeningSchema = z
         id: "StudyBlockOpeningPreparingLesson",
       }),
     z
-      .object({ blockId: z.uuid(), kind: z.literal("essay") })
+      .object({ blockId: z.uuid(), kind: z.literal("essay"), sessionId: sessionIdSchema })
       .strict()
       .meta({ description: "The block started: open the essay", id: "StudyBlockOpeningEssay" }),
     z
@@ -112,6 +112,7 @@ export const studyBlockOpeningSchema = z
               "The review or practice block that started here; null when the step is already finished or the session has no next step",
           }),
         kind: z.literal("session"),
+        sessionId: sessionIdSchema,
       })
       .strict()
       .meta({ description: "Open the session screen", id: "StudyBlockOpeningSession" }),

@@ -11,7 +11,7 @@ const INPUT = {
 };
 
 const OPENED: DayOpenOutcome = {
-  destination: { blockId: "block", kind: "session" },
+  destination: { blockId: "block", kind: "session", sessionId: "session" },
   sessionId: "session",
   status: "opened",
   targetStatus: "next",
@@ -57,7 +57,7 @@ describe(sendDayOpen, () => {
 describe(toTapResult, () => {
   it("goes where the started step plays", () => {
     expect(toTapResult(OPENED)).toStrictEqual({
-      destination: { blockId: "block", kind: "session" },
+      destination: { blockId: "block", kind: "session", sessionId: "session" },
       kind: "go",
     });
   });

@@ -21,17 +21,22 @@ export function openingResult(opening: StudyBlockOpening): OpenStudyBlockResult 
 }
 
 /** A refusal only a challenge's start gives (Plus, unwritten questions) is explained by its own screen. */
-function afterStart(
-  started: StartStudyBlockResult,
-  opening: StudyBlockOpening,
-): OpenStudyBlockResult {
+function afterStart({
+  opening,
+  sessionId,
+  started,
+}: {
+  opening: StudyBlockOpening;
+  sessionId: string;
+  started: StartStudyBlockResult;
+}): OpenStudyBlockResult {
   switch (started.status) {
     case "ready":
     case "plusRequired":
     case "questionsNeeded":
       return openingResult(opening);
     case "blockFinished":
-      return openingResult({ blockId: null, kind: "session" });
+      return openingResult({ blockId: null, kind: "session", sessionId });
     case "dailyLimitReached":
     case "earlierFirst":
       return openingResult({ kind: "today" });
@@ -65,7 +70,12 @@ async function openChallenge({
 
   if (block.status === "active") {
     const resumed = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });
-    return afterStart(resumed, resumed.status === "plusRequired" && intro ? intro : screen);
+
+    return afterStart({
+      opening: resumed.status === "plusRequired" && intro ? intro : screen,
+      sessionId,
+      started: resumed,
+    });
   }
 
   if ((block.status === "pending" || block.status === "skipped") && intro) {
@@ -85,12 +95,12 @@ async function openChallenge({
 
 function toStartedOpening({ block, sessionId }: BlockToOpen): StudyBlockOpening {
   if (block.kind === "produce") {
-    return { blockId: block.id, kind: "essay" };
+    return { blockId: block.id, kind: "essay", sessionId };
   }
 
   return block.kind === "learn" && block.lessonId
     ? { kind: "lesson", lessonId: block.lessonId, sessionId }
-    : { blockId: block.id, kind: "session" };
+    : { blockId: block.id, kind: "session", sessionId };
 }
 
 /**
@@ -104,7 +114,7 @@ export async function openSessionBlock(toOpen: BlockToOpen): Promise<OpenStudyBl
   if (block.kind === "learn" && block.screen !== "lesson") {
     if (!block.lessonId) {
       await prepareSession(toOpen);
-      return openingResult({ blockId: block.id, kind: "preparingLesson" });
+      return openingResult({ blockId: block.id, kind: "preparingLesson", sessionId });
     }
 
     return openingResult({
@@ -121,5 +131,5 @@ export async function openSessionBlock(toOpen: BlockToOpen): Promise<OpenStudyBl
   }
 
   const started = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });
-  return afterStart(started, toStartedOpening(toOpen));
+  return afterStart({ opening: toStartedOpening(toOpen), sessionId, started });
 }

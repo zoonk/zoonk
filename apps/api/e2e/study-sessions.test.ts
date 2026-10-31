@@ -329,7 +329,7 @@ test.describe("Study sessions API", () => {
     const [review, learn] = opened.session.blocks;
 
     expect(opened).toMatchObject({
-      opening: { blockId: review?.id, kind: "session" },
+      opening: { blockId: review?.id, kind: "session", sessionId: opened.sessionId },
       targetStatus: "next",
     });
 
@@ -361,7 +361,7 @@ test.describe("Study sessions API", () => {
         }),
         schema: studyBlockOpeningSchema,
       }),
-    ).resolves.toStrictEqual({ blockId: review?.id, kind: "session" });
+    ).resolves.toStrictEqual({ blockId: review?.id, kind: "session", sessionId: opened.sessionId });
 
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: learn?.id } }),

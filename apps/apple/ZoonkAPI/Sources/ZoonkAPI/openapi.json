@@ -87487,11 +87487,18 @@
             "enum": [
               "preparingLesson"
             ]
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The study session the block belongs to"
           }
         },
         "required": [
           "blockId",
-          "kind"
+          "kind",
+          "sessionId"
         ],
         "additionalProperties": false,
         "description": "The plan hasn't picked this step's lesson yet. The server is preparing it: show the session waiting on the block and read it again"
@@ -87509,11 +87516,18 @@
             "enum": [
               "essay"
             ]
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The study session the block belongs to"
           }
         },
         "required": [
           "blockId",
-          "kind"
+          "kind",
+          "sessionId"
         ],
         "additionalProperties": false,
         "description": "The block started: open the essay"
@@ -87620,11 +87634,18 @@
             "enum": [
               "session"
             ]
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The study session the block belongs to"
           }
         },
         "required": [
           "blockId",
-          "kind"
+          "kind",
+          "sessionId"
         ],
         "additionalProperties": false,
         "description": "Open the session screen"

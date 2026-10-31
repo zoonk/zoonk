@@ -106,7 +106,7 @@ describe("the learner opens a study block", () => {
     const block = await studySessionBlockFixture({ lessonId: null, sessionId: session.id });
 
     await expect(tap(block)).resolves.toStrictEqual({
-      opening: { blockId: block.id, kind: "preparingLesson" },
+      opening: { blockId: block.id, kind: "preparingLesson", sessionId: session.id },
       status: "ready",
     });
 
@@ -123,12 +123,12 @@ describe("the learner opens a study block", () => {
     ]);
 
     await expect(tap(review)).resolves.toStrictEqual({
-      opening: { blockId: review.id, kind: "session" },
+      opening: { blockId: review.id, kind: "session", sessionId: session.id },
       status: "ready",
     });
 
     await expect(tap(essay)).resolves.toStrictEqual({
-      opening: { blockId: essay.id, kind: "essay" },
+      opening: { blockId: essay.id, kind: "essay", sessionId: session.id },
       status: "ready",
     });
 
@@ -160,7 +160,7 @@ describe("the learner opens a study block", () => {
     ]);
 
     await expect(tap(done)).resolves.toStrictEqual({
-      opening: { blockId: null, kind: "session" },
+      opening: { blockId: null, kind: "session", sessionId: session.id },
       status: "ready",
     });
 
@@ -316,7 +316,7 @@ describe("the learner opens a study block", () => {
     });
 
     await expect(mission(review)).resolves.toStrictEqual({
-      opening: { blockId: review.id, kind: "session" },
+      opening: { blockId: review.id, kind: "session", sessionId: session.id },
       status: "ready",
     });
   });

@@ -115,7 +115,7 @@ async function openNext({
 
   return next
     ? openSessionBlock({ block: next, sessionId: session.id, timeZone, userId })
-    : openingResult({ blockId: null, kind: "session" });
+    : openingResult({ blockId: null, kind: "session", sessionId: session.id });
 }
 
 async function openTappedBlock({
