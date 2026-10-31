@@ -260,6 +260,30 @@ describe(mergeBlueprintContent, () => {
     });
   });
 
+  it("keeps a subject's past-paper research when a new reading lists the same topics in another order", () => {
+    const current = content({
+      structure: {
+        ...content().structure,
+        pastTopicFrequency: {
+          checkedAt: "2026-10-01T00:00:00.000Z",
+          subjects: [ranked("Direito", "Leis")],
+        },
+        subjects: [withTopics("Direito", ["1 Leis", "2 Controle"])],
+      },
+    });
+
+    const next = content({
+      structure: {
+        ...content().structure,
+        subjects: [withTopics("Direito", ["1 Controle", "2 Leis", "3 Leis"])],
+      },
+    });
+
+    expect(
+      mergeBlueprintContent({ current, next }).content.structure.pastTopicFrequency,
+    ).toStrictEqual(current.structure.pastTopicFrequency);
+  });
+
   it("keeps a subject's stated counts, group and name when a new reading of it leaves them out", () => {
     const essay = {
       citation: OLD_CITATION,

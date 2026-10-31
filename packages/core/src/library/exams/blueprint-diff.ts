@@ -172,7 +172,7 @@ function keepPastQuestions({
 type Subject = ExamStructure["subjects"][number];
 
 function toSyllabusKey(subject: Subject): string {
-  return subject.topics.map((topic) => toTopicKey(topic)).join("\n");
+  return [...new Set(subject.topics.map((topic) => toTopicKey(topic)))].toSorted().join("\n");
 }
 
 /** Past papers ranked and counted a subject's topics as they stood, so new topics need them again. */
