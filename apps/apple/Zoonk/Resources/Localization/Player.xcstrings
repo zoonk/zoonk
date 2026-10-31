@@ -1412,7 +1412,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llena el cuadrado"
+            "value" : "Completa el cuadrado"
           }
         },
         "fr" : {
@@ -2230,7 +2230,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Relacionar causas"
+            "value" : "Relaciona causas"
           }
         },
         "fr" : {
@@ -2317,7 +2317,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formar pares"
+            "value" : "Forma parejas"
           }
         },
         "fr" : {
@@ -2404,7 +2404,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mover una curva"
+            "value" : "Mueve una curva"
           }
         },
         "fr" : {
@@ -2781,7 +2781,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ubicar en el tiempo"
+            "value" : "Ubica en el tiempo"
           }
         },
         "fr" : {
@@ -2810,7 +2810,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ubicarlo"
+            "value" : "Colócalo"
           }
         },
         "fr" : {
@@ -2839,7 +2839,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tocarlo"
+            "value" : "Tócalo"
           }
         },
         "fr" : {
@@ -2897,7 +2897,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Predecir primero"
+            "value" : "Predice primero"
           }
         },
         "fr" : {
@@ -2984,7 +2984,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ordenar"
+            "value" : "Ordena"
           }
         },
         "fr" : {
@@ -3013,7 +3013,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consultar los datos"
+            "value" : "Consulta los datos"
           }
         },
         "fr" : {
@@ -3077,7 +3077,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leer y escuchar"
+            "value" : "Lee y escucha"
           }
         },
         "fr" : {
@@ -3106,7 +3106,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leer la gráfica"
+            "value" : "Lee la gráfica"
           }
         },
         "fr" : {
@@ -3135,7 +3135,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Responder"
+            "value" : "Responde"
           }
         },
         "fr" : {
@@ -3280,7 +3280,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ejecutar el código"
+            "value" : "Ejecuta el código"
           }
         },
         "fr" : {
@@ -3628,7 +3628,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simular"
+            "value" : "Simula"
           }
         },
         "fr" : {
@@ -3715,7 +3715,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Clasificar en grupos"
+            "value" : "Clasifica en grupos"
           }
         },
         "fr" : {
@@ -3831,7 +3831,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dividir"
+            "value" : "Divídelo"
           }
         },
         "fr" : {
@@ -3860,7 +3860,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encontrar el patrón"
+            "value" : "Encuentra el patrón"
           }
         },
         "fr" : {
@@ -4005,7 +4005,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avanzar paso a paso"
+            "value" : "Avanza paso a paso"
           }
         },
         "fr" : {
@@ -4150,7 +4150,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tocar siguiendo el ritmo"
+            "value" : "Toca siguiendo el ritmo"
           }
         },
         "fr" : {
@@ -4208,7 +4208,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Probar un patrón"
+            "value" : "Prueba un patrón"
           }
         },
         "fr" : {
@@ -4701,7 +4701,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Probar"
+            "value" : "Pruébalo"
           }
         },
         "fr" : {
@@ -4730,7 +4730,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Girar"
+            "value" : "Gíralo"
           }
         },
         "fr" : {

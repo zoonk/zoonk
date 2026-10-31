@@ -3341,7 +3341,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ponerse al día hoy · +%@"
+            "value" : "Ponerte al día hoy · +%@"
           }
         },
         "fr" : {
@@ -3486,7 +3486,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elegir en qué enfocarse"
+            "value" : "Elegir en qué enfocarte"
           }
         },
         "fr" : {
@@ -5662,7 +5662,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu fecha ya pasó"
+            "value" : "Fecha pasada"
           }
         },
         "fr" : {
@@ -6053,7 +6053,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Corregir errores"
+            "value" : "Practicar con tus errores"
           }
         },
         "fr" : {
@@ -6111,7 +6111,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Practica la expresión escrita"
+            "value" : "Practica la redacción"
           }
         },
         "fr" : {
@@ -9422,7 +9422,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan se retoma a partir de hoy, empezando por las lecciones previstas para los días en que estuvo en pausa."
+            "value" : "Tu plan se reanuda a partir de hoy, empezando por las lecciones programadas para los días en que estuvo en pausa."
           }
         },
         "fr" : {

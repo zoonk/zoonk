@@ -147,7 +147,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ antes de la era común"
+            "value" : "%@ a. C."
           }
         },
         "fr" : {
@@ -211,7 +211,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ de la era común"
+            "value" : "%@ d. C."
           }
         },
         "fr" : {
@@ -2149,7 +2149,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Africa"
+            "value" : "África"
           }
         },
         "fr" : {
@@ -2207,7 +2207,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Antarctica"
+            "value" : "Antártida"
           }
         },
         "fr" : {
@@ -2265,7 +2265,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Austria-Hungary"
+            "value" : "Austria-Hungría"
           }
         },
         "fr" : {
@@ -2410,7 +2410,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Europe"
+            "value" : "Europa"
           }
         },
         "fr" : {
@@ -2526,7 +2526,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "France"
+            "value" : "Francia"
           }
         },
         "fr" : {
@@ -2555,7 +2555,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "German Empire"
+            "value" : "Imperio alemán"
           }
         },
         "fr" : {
@@ -2671,7 +2671,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Italy"
+            "value" : "Italia"
           }
         },
         "fr" : {
@@ -2822,7 +2822,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapa de Africa"
+            "value" : "Mapa de África"
           }
         },
         "fr" : {
@@ -2880,7 +2880,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapa de Brazil por estado"
+            "value" : "Mapa de Brasil por estado"
           }
         },
         "fr" : {
@@ -2909,7 +2909,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapa de Europe"
+            "value" : "Mapa de Europa"
           }
         },
         "fr" : {
@@ -2938,7 +2938,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapa de Europe en 1914"
+            "value" : "Mapa de Europa en 1914"
           }
         },
         "fr" : {
@@ -2967,7 +2967,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapa de Soho, London, en 1854"
+            "value" : "Mapa de Soho, Londres, en 1854"
           }
         },
         "fr" : {
@@ -2996,7 +2996,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapa de las Americas"
+            "value" : "Mapa de América"
           }
         },
         "fr" : {
@@ -3025,7 +3025,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapa del Roman Empire en el año 117 e. c."
+            "value" : "Mapa del Imperio romano en 117 d. C."
           }
         },
         "fr" : {
@@ -3054,7 +3054,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapa de los United States por estado"
+            "value" : "Mapa de Estados Unidos por estado"
           }
         },
         "fr" : {
@@ -3379,7 +3379,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "North America"
+            "value" : "América del Norte"
           }
         },
         "fr" : {
@@ -3553,7 +3553,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oceania"
+            "value" : "Oceanía"
           }
         },
         "fr" : {
@@ -3582,7 +3582,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ottoman Empire"
+            "value" : "Imperio otomano"
           }
         },
         "fr" : {
@@ -3611,7 +3611,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parthian Empire"
+            "value" : "Imperio parto"
           }
         },
         "fr" : {
@@ -4186,7 +4186,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Roman Empire"
+            "value" : "Imperio romano"
           }
         },
         "fr" : {
@@ -4215,7 +4215,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Russian Empire"
+            "value" : "Imperio ruso"
           }
         },
         "fr" : {
@@ -4389,7 +4389,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "South America"
+            "value" : "América del Sur"
           }
         },
         "fr" : {
@@ -4418,7 +4418,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spain"
+            "value" : "España"
           }
         },
         "fr" : {
@@ -5272,7 +5272,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Triple Alliance"
+            "value" : "Triple Alianza"
           }
         },
         "fr" : {
@@ -5359,7 +5359,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "United Kingdom"
+            "value" : "Reino Unido"
           }
         },
         "fr" : {

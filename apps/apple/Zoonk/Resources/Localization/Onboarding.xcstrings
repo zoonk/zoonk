@@ -3349,7 +3349,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Curso"
+            "value" : "Carrera"
           }
         },
         "fr" : {
@@ -6105,7 +6105,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No lo sé, prefiero una prueba rápida"
+            "value" : "No sé, quiero una prueba rápida"
           }
         },
         "fr" : {
@@ -11402,7 +11402,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin una fecha, estudias todo a tu ritmo y te mostramos cuándo alcanzarás cada meta."
+            "value" : "Sin una fecha, estudias todo a tu ritmo y te mostramos cuándo alcanzas cada hito."
           }
         },
         "fr" : {

@@ -8453,7 +8453,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enfocarse en estas"
+            "value" : "Enfocarte en estas"
           }
         },
         "fr" : {
@@ -11868,7 +11868,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu fecha ya pasó"
+            "value" : "Fecha pasada"
           }
         },
         "fr" : {
@@ -16509,7 +16509,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan se retoma a partir de hoy, empezando por las lecciones programadas para los días de la pausa."
+            "value" : "Tu plan se reanuda a partir de hoy, empezando por las lecciones programadas para los días de la pausa."
           }
         },
         "fr" : {

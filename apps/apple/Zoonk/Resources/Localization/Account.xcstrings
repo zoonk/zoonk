@@ -519,13 +519,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Subir %lld archivo al día"
+                  "value" : "%lld archivo subido al día"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Subir %lld archivos al día"
+                  "value" : "%lld archivos subidos al día"
                 }
               }
             }
@@ -1396,7 +1396,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revisa tu historial de compras de App Store y luego contacta a soporte para recibir ayuda."
+            "value" : "Revisa tu historial de compras en el App Store y luego contacta a soporte para recibir ayuda."
           }
         },
         "fr" : {
@@ -1425,7 +1425,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revisa tu historial de compras de App Store y luego contacta a soporte si necesitas ayuda."
+            "value" : "Revisa tu historial de compras en el App Store y luego contacta a soporte si necesitas ayuda."
           }
         },
         "fr" : {
@@ -1872,7 +1872,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elimina tu cuenta y todo su contenido para siempre. Si compraste Plus en la web, se cancela la suscripción; las compras de App Store se administran en el App Store."
+            "value" : "Elimina tu cuenta y todo su contenido para siempre. Plus se cancela si lo compraste en la web; las compras del App Store se administran en el App Store."
           }
         },
         "fr" : {
@@ -1901,7 +1901,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar tu cuenta de Zoonk no detiene los cobros de App Store. Cancela primero la suscripción si no quieres que se renueve."
+            "value" : "Eliminar tu cuenta de Zoonk no cancela los cobros del App Store. Cancela la suscripción primero si no quieres que se renueve."
           }
         },
         "fr" : {
@@ -1959,7 +1959,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Finalizar"
+            "value" : "Cerrar"
           }
         },
         "fr" : {
@@ -2466,7 +2466,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más tiempo en las llamadas de práctica oral"
+            "value" : "Más tiempo en llamadas de práctica oral"
           }
         },
         "fr" : {
@@ -2704,7 +2704,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Administrar la suscripción en App Store"
+            "value" : "Administrar la suscripción del App Store"
           }
         },
         "fr" : {
@@ -3731,7 +3731,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inicia sesión en la cuenta de Zoonk a la que pertenece esta compra de App Store o contacta a soporte para obtener ayuda."
+            "value" : "Inicia sesión en la cuenta de Zoonk asociada a esta compra del App Store o contacta a soporte para recibir ayuda."
           }
         },
         "fr" : {
@@ -5247,7 +5247,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus compras de App Store ya están disponibles en esta cuenta de Zoonk."
+            "value" : "Tus compras del App Store ya están disponibles en esta cuenta de Zoonk."
           }
         },
         "fr" : {

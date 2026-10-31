@@ -2328,7 +2328,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ganar el desafío final"
+            "value" : "Gana el desafío final"
           }
         },
         "fr" : {
@@ -2357,7 +2357,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ganar tu primer desafío de la fase"
+            "value" : "Gana tu primer desafío de la fase"
           }
         },
         "fr" : {
