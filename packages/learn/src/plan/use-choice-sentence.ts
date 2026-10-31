@@ -71,8 +71,8 @@ export function useChoiceSentence() {
         return operation.targetDate
           ? t({
               description:
-                'The goal\'s date moved, earlier or later. {date} is a day, like "May 5".',
-              message: "Date moved to {date}.",
+                'The goal\'s date moves, earlier or later. {date} is a day, like "May 5".',
+              message: "The date moves to {date}.",
               values: { date: formatDate(operation.targetDate, "long") },
             })
           : t("No deadline: you study everything at your own pace.");

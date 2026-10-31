@@ -82,7 +82,7 @@ function useOperationSentence() {
 
     switch (operation.kind) {
       case "setDailyMinutes":
-        return t("Daily time changed to {time}.", { time: formatDuration(operation.minutes) });
+        return t("Daily time becomes {time}.", { time: formatDuration(operation.minutes) });
       case "setWeekdayMinutes":
         return weekdaySentence(operation);
       case "addLightWeek":
@@ -90,7 +90,7 @@ function useOperationSentence() {
           date: formatDate(operation.startDate, "long"),
         });
       case "moveWeeklyEvent":
-        return t("The weekly challenge moved to {date}.", {
+        return t("The weekly challenge moves to {date}.", {
           date: formatDate(operation.to, "long"),
         });
       case "skipActivities":
@@ -124,14 +124,14 @@ function useOperationSentence() {
         return followsNotice(document);
       case "setNoticeDate":
         return t({
-          description: 'The goal\'s date moved, earlier or later. {date} is a day, like "May 5".',
-          message: "Date moved to {date}.",
+          description: 'The goal\'s date moves, earlier or later. {date} is a day, like "May 5".',
+          message: "The date moves to {date}.",
           values: { date: formatDate(operation.targetDate, "long") },
         });
       case "setTools":
         return toolSentence(operation.tools);
       case "fitPhaseDates":
-        return t("Your phase dates moved, so more lessons fit before your goal's date.");
+        return t("Your phase dates move, so more lessons fit before your goal's date.");
       case "fitLessons":
         return t("The lessons your time fits come into your plan.");
       case "setExamChoice":
@@ -140,7 +140,7 @@ function useOperationSentence() {
           subject: operation.subject,
         });
       default:
-        return t("Your plan changed.");
+        return t("Your plan changes.");
     }
   };
 }

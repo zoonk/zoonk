@@ -609,7 +609,7 @@ private fun Suggestions() {
         }
         Suggestion(
             "Plan suggestion",
-            "Daily time changed to 1 hr.",
+            "Daily time becomes 1 hr.",
             SuggestionLayout.Line,
             mark = SuggestionMark.Done,
             answered = true,

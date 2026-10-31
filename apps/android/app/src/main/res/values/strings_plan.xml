@@ -374,7 +374,7 @@
     <string name="plan_change_today_changed">It\'s in your plan, and today\'s session follows it.</string>
     <string name="plan_change_today_unchanged">It\'s in your plan from your next study day. Today\'s session stays as it is.</string>
     <string name="plan_change_from_now_on">Your plan follows it from now on.</string>
-    <string name="plan_change_changed">Your plan changed.</string>
+    <string name="plan_change_changed">Your plan changes.</string>
     <string name="plan_change_own_level_first">For your new level, these come first: %1$s.</string>
     <string name="plan_change_rebalance">More time for %1$s, where it\'s needed most.</string>
     <string name="plan_change_follows_notice">Your plan follows the exam notice.</string>
@@ -408,11 +408,11 @@
     <string name="plan_change_suggest_harder">Harder material.</string>
     <string name="plan_change_suggest_easier">Easier material.</string>
     <string name="plan_change_suggest_usual_difficulty">Lessons at the usual difficulty.</string>
-    <string name="plan_change_daily_time_changed">Daily time changed to %1$s.</string>
+    <string name="plan_change_daily_time_changed">Daily time becomes %1$s.</string>
     <string name="plan_change_rest_day">%1$s: rest day.</string>
     <string name="plan_change_days_time">%1$s: %2$s a day.</string>
     <string name="plan_change_light_week">A light week from %1$s, at half the time.</string>
-    <string name="plan_change_weekly_challenge_moved">The weekly challenge moved to %1$s.</string>
+    <string name="plan_change_weekly_challenge_moved">The weekly challenge moves to %1$s.</string>
     <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
     <string name="plan_change_activities_left_out">%1$s left out of your lessons.</string>
     <!-- %1$s is one or more activities joined as a list, such as "Listening" or "New words and Writing". -->
@@ -430,8 +430,8 @@
         <item quantity="one">%1$s comes into your plan.</item>
         <item quantity="other">%1$s come into your plan.</item>
     </plurals>
-    <string name="plan_change_date_moved">Date moved to %1$s.</string>
-    <string name="plan_change_phase_dates_moved">Your phase dates moved, so more lessons fit before your goal\'s date.</string>
+    <string name="plan_change_date_moved">The date moves to %1$s.</string>
+    <string name="plan_change_phase_dates_moved">Your phase dates move, so more lessons fit before your goal\'s date.</string>
     <string name="plan_change_fit_lessons">The lessons your time fits come into your plan.</string>
     <string name="plan_change_exam_choice">Your plan studies %1$s for %2$s.</string>
     <string name="plan_change_no_deadline">No deadline: you study everything at your own pace.</string>
