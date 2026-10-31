@@ -138,6 +138,13 @@ class MusicScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun marksExpandedDark() = marks("marks-expanded-dark", dark = true)
 
+    @Test
+    @Config(qualifiers = "w1280dp-h1600dp-xhdpi")
+    fun marksExpandedAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        marks("marks-expanded-font200")
+    }
+
     private fun rhythmResults(
         name: String,
         dark: Boolean = false,

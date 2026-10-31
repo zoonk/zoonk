@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
@@ -39,9 +40,9 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 
@@ -83,14 +84,17 @@ internal fun PianoKeyboard(
     val keys = layoutKeys(from, to)
     val whiteCount = keys.count { !it.isBlack }
     val openingMarks = remember { marks.keys }
-    val height = with(LocalDensity.current) { KEYBOARD_HEIGHT.toDp() }
+    val density = LocalDensity.current
+    val height = with(density) { KEYBOARD_HEIGHT.toDp() }
+    // As on main, a pressable black key is never narrower than its mark, however large the text.
+    val narrowest = max(MIN_TARGET, with(density) { NOTE_MARK_SIZE.toDp() } / BLACK_KEY_SHARE)
     val roving = rememberRovingFocus(keys.size)
     val colors = pianoColors(MaterialTheme.colorScheme)
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         BoxWithConstraints(modifier.fillMaxWidth()) {
             val fitted = maxWidth / whiteCount
-            val whiteWidth = onPress?.let { max(fitted, pressableWhiteKey(maxWidth, keys, openingMarks)) } ?: fitted
+            val whiteWidth = onPress?.let { max(fitted, pressableWhiteKey(maxWidth, keys, openingMarks, narrowest)) } ?: fitted
             val width = whiteWidth * whiteCount
             val board =
                 if (onPress == null) {
@@ -181,21 +185,27 @@ private fun Key(
             )
 
     Box(modifier.fillMaxHeight(if (key.isBlack) BLACK_KEY_HEIGHT else 1f).then(press), contentAlignment = Alignment.TopCenter) {
-        Box(surface.padding(bottom = if (key.isBlack) 6.dp else 8.dp), contentAlignment = Alignment.BottomCenter) {
-            Box(Modifier.clearAndSetSemantics {}) {
-                when {
-                    mark != null -> {
-                        val ring = colors.markRing
-                        NoteMark(mark, name, Modifier.drawBehind { drawCircle(ring, size.minDimension / 2 + MARK_RING.toPx()) })
-                    }
+        Box(surface)
+        // Outside the key's clip, so a mark wider than a picture's narrow key spills over its neighbors whole, as main's does.
+        Box(Modifier.align(Alignment.BottomCenter).padding(bottom = if (key.isBlack) 6.dp else 8.dp).clearAndSetSemantics {}) {
+            when {
+                mark != null -> {
+                    val ring = colors.markRing
+                    NoteMark(
+                        mark,
+                        name,
+                        Modifier
+                            .wrapContentWidth(unbounded = true)
+                            .drawBehind { drawCircle(ring, size.minDimension / 2 + MARK_RING.toPx()) },
+                    )
+                }
 
-                    key.midi % MusicNotes.OCTAVE == 0 -> {
-                        Text(
-                            name,
-                            color = colors.label,
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
-                        )
-                    }
+                key.midi % MusicNotes.OCTAVE == 0 -> {
+                    Text(
+                        name,
+                        color = colors.label,
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
+                    )
                 }
             }
         }
@@ -244,8 +254,9 @@ private fun pressableWhiteKey(
     window: Dp,
     keys: List<PianoKey>,
     marked: Set<Int>,
+    narrowest: Dp,
 ): Dp {
     val centers = keys.filter { it.midi in marked }.map { it.center(1.dp).value }
-    if (centers.isEmpty()) return PRESSABLE_WHITE_KEY
-    return (window / (centers.max() - centers.min() + 1)).coerceIn(MIN_TARGET, PRESSABLE_WHITE_KEY)
+    val fitted = if (centers.isEmpty()) PRESSABLE_WHITE_KEY else window / (centers.max() - centers.min() + 1)
+    return max(narrowest, min(fitted, PRESSABLE_WHITE_KEY))
 }

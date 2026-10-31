@@ -63,7 +63,7 @@ internal fun NoteMark(
             NoteMarkKind.Wrong -> Triple(colors.surface, colors.error, colors.error)
         }
     val isDashed = kind == NoteMarkKind.Missed || kind == NoteMarkKind.Removed
-    val size = with(LocalDensity.current) { MARK_SIZE.toDp() }
+    val size = with(LocalDensity.current) { NOTE_MARK_SIZE.toDp() }
 
     Box(
         modifier.size(size).drawBehind {
@@ -179,4 +179,4 @@ internal fun rememberRovingFocus(
     initial: Int = 0,
 ): RovingFocus = remember(count) { RovingFocus(count, initial.coerceIn(0, count - 1)) }
 
-private val MARK_SIZE = 28.sp
+internal val NOTE_MARK_SIZE = 28.sp

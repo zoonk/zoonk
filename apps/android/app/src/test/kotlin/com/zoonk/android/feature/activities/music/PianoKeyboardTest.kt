@@ -7,7 +7,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertWidthIsEqualTo
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
@@ -18,10 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 @RunWith(AndroidJUnit4::class)
 class PianoKeyboardTest {
@@ -56,6 +62,34 @@ class PianoKeyboardTest {
 
         rule.waitForIdle()
         assertEquals(emptyList<String>(), cutOffKeys(G_MAJOR_NAMES))
+    }
+
+    @Test
+    @Config(qualifiers = "w360dp-h800dp")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun aBlackKeysMarkStaysRoundWithinItsKeyAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        val octave = mapOf(60 to NoteMarkKind.Kept, 63 to NoteMarkKind.Kept, 70 to NoteMarkKind.New, 71 to NoteMarkKind.Kept)
+        rule.setContent {
+            ZoonkTheme {
+                PianoKeyboard(
+                    label = "Piano keys",
+                    marks = octave,
+                    nameOf = { NAMES[it % MusicNotes.OCTAVE] },
+                    spokenNameOf = { NAMES[it % MusicNotes.OCTAVE] },
+                    isPressed = { it in octave },
+                    onPress = {},
+                )
+            }
+        }
+
+        listOf("E flat", "B flat").forEach { name ->
+            val inKey = hasAnyAncestor(hasContentDescription(name) and hasAnyAncestor(hasContentDescription("Piano keys")))
+            val drawn = rule.onNode(inKey and IS_DRAWN_KEY, useUnmergedTree = true).getBoundsInRoot()
+            val mark = rule.onNode(inKey and IS_MARK, useUnmergedTree = true).getBoundsInRoot()
+            assertEquals("$name's mark is squeezed", (mark.bottom - mark.top).value, (mark.right - mark.left).value, SUBPIXEL.value)
+            assertTrue("$name's mark leaves its key", mark.left >= drawn.left - SUBPIXEL && mark.right <= drawn.right + SUBPIXEL)
+        }
     }
 
     /** Turning or unfolding the phone recreates the activity, whose saved state is from the old width. */
@@ -97,3 +131,8 @@ private val PORTRAIT = 311.dp
 
 private val NAMES = listOf("C", "C sharp", "D", "E flat", "E", "F", "F sharp", "G", "A flat", "A", "B flat", "B")
 private val SUBPIXEL = 1.dp
+
+private val IS_DRAWN_KEY = SemanticsMatcher.keyIsDefined(SemanticsProperties.Shape)
+
+/** A key's note mark is drawn, not read: TalkBack hears the key instead. */
+private val IS_MARK = SemanticsMatcher("is a key's note mark") { it.config.isClearingSemantics }
