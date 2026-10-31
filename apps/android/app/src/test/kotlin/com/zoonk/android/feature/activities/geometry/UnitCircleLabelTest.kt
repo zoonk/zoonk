@@ -80,6 +80,16 @@ class UnitCircleLabelTest {
         assertTrue("label $label, point $point", (nearest - point).getDistance() > FOCUS_RING)
     }
 
+    @Test
+    fun keepsAWideNegativeSineValueInsideTheDial() {
+        val point = onCircle(345.0)
+        val wide = Size(176f, 40f)
+        val (at, anchor) = sinLabelPlacement(point, center, null, wide, canvasWidth = 311f, unit = 1f)
+        val label = box(at, anchor, wide)
+
+        assertTrue("label $label", label.left >= 0f && label.right <= 311f)
+    }
+
     private companion object {
         const val FOCUS_RING = 17f
     }
