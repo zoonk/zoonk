@@ -167,6 +167,7 @@ function toDayOption({
   subjects,
   structure,
   typed,
+  unpicked,
 }: {
   day: number | null;
   essays: readonly MockEssayCandidate[];
@@ -176,6 +177,7 @@ function toDayOption({
   subjects: readonly Subject[];
   structure: ExamStructure | null;
   typed: readonly MockTypedPart[];
+  unpicked: readonly string[];
 }): MockOption {
   const outline = outlineMock({
     day,
@@ -192,7 +194,7 @@ function toDayOption({
 
   const parts = getDayWrittenParts({ day, structure });
   const asked = outline.written.filter((part) => part.asked).map((part) => part.name);
-  const leftOut = listMockLeftOut({ asked, day, kind, running, structure, typed });
+  const leftOut = listMockLeftOut({ asked, day, kind, running, structure, typed, unpicked });
 
   return {
     area: null,
@@ -273,6 +275,7 @@ export function listMockOptions({
   speaking = false,
   structure,
   typed = [],
+  unpicked = [],
 }: {
   dayInTurn: number | null;
   essays?: readonly MockEssayCandidate[];
@@ -282,25 +285,15 @@ export function listMockOptions({
   speaking?: boolean;
   structure: ExamStructure | null;
   typed?: readonly MockTypedPart[];
+  unpicked?: readonly string[];
 }): MockOption[] {
   const subjects = structure ? getObjectiveSubjects({ goalAreas, structure }) : [];
   const days = getMockDays(structure);
   const halfDay = days.includes(dayInTurn) ? dayInTurn : (days[0] ?? null);
 
-  const full = days.map((day) =>
-    toDayOption({ day, essays, kind: "full", listening, speaking, structure, subjects, typed }),
-  );
-
-  const half = toDayOption({
-    day: halfDay,
-    essays,
-    kind: "half",
-    listening,
-    speaking,
-    structure,
-    subjects,
-    typed,
-  });
+  const shared = { essays, listening, speaking, structure, subjects, typed, unpicked };
+  const full = days.map((day) => toDayOption({ ...shared, day, kind: "full" }));
+  const half = toDayOption({ ...shared, day: halfDay, kind: "half" });
 
   const wholes = subjects.filter((subject) => !isPartOfAnother({ subject, subjects }));
 

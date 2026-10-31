@@ -5,6 +5,7 @@ import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/c
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { useChoiceLeftOutLine } from "../../_utils/use-choice-left-out";
 import { ChoiceList } from "../choice-list";
 import { StepForm } from "./step-form";
 import { useAdvanceOnPick } from "./use-advance-on-pick";
@@ -21,6 +22,7 @@ export function ExamChoiceStep({
   subject: string;
 }) {
   const t = useExtracted();
+  const leftOutLine = useChoiceLeftOutLine();
 
   const [picks, setPicks] = useState<Record<string, string>>(() =>
     Object.fromEntries(
@@ -81,6 +83,8 @@ export function ExamChoiceStep({
             readOnly={pending}
             value={picks[choice.group] ?? null}
           />
+
+          <p className="text-muted-foreground text-sm">{leftOutLine(choice)}</p>
         </section>
       ))}
     </StepForm>

@@ -27,7 +27,7 @@ import {
 } from "../mock-contract";
 import { readMockAnswer } from "./mock-answers";
 import { getAskedItemIds } from "./mock-sections";
-import { readMockStructure } from "./read-mock-structure";
+import { readMockStructure, readUnpickedLeftOut } from "./read-mock-structure";
 
 type MockSittingStatus = MockExam["status"] | "expired";
 
@@ -45,6 +45,7 @@ export type OwnedMock = {
   payload: BlockPayload;
   sessionDate: Date;
   structure: ExamStructure | null;
+  unpicked: string[];
   userId: string;
 };
 
@@ -101,6 +102,7 @@ async function findScheduledMock({
 
   const { mockExam, session: studySession, ...row } = block;
   const blueprint = studySession.goal?.examBlueprint ?? null;
+  const choices = readExamChoices(studySession.goal?.plan?.settings);
 
   return {
     block: row,
@@ -109,12 +111,8 @@ async function findScheduledMock({
     mock: toSitting(mockExam),
     payload,
     sessionDate: studySession.localDate,
-    structure: blueprint
-      ? readMockStructure({
-          blueprint,
-          choices: readExamChoices(studySession.goal?.plan?.settings),
-        })
-      : null,
+    structure: blueprint ? readMockStructure({ blueprint, choices }) : null,
+    unpicked: readUnpickedLeftOut({ blueprint, choices }),
     userId,
   };
 }
@@ -148,6 +146,7 @@ async function findAnytimeMock({
 
   const itemIds = getAskedItemIds(mock.conditions).map((entry) => entry.itemId);
   const timeZone = getAnswerTimeZone({ goal });
+  const choices = readExamChoices(goal?.plan?.settings);
 
   return {
     block: null,
@@ -156,12 +155,8 @@ async function findAnytimeMock({
     mock,
     payload: toBlockPayload({ itemIds }),
     sessionDate: getDateInTimeZone({ date: mock.startedAt, timeZone }),
-    structure: examBlueprint
-      ? readMockStructure({
-          blueprint: examBlueprint,
-          choices: readExamChoices(goal?.plan?.settings),
-        })
-      : null,
+    structure: examBlueprint ? readMockStructure({ blueprint: examBlueprint, choices }) : null,
+    unpicked: readUnpickedLeftOut({ blueprint: examBlueprint, choices }),
     userId,
   };
 }

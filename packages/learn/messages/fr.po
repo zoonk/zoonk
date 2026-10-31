@@ -603,6 +603,24 @@ msgctxt "belts.E1okmE"
 msgid "White belt"
 msgstr "Ceinture blanche"
 
+#. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
+#: src/_utils/use-choice-left-out.ts
+msgctxt "Rpl5Yb"
+msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} questions."
+msgstr "Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent de côté {name} : {count, number} des {total, number} questions de l’examen."
+
+#. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
+#: src/_utils/use-choice-left-out.ts
+msgctxt "T-mUNO"
+msgid "Until you pick, your plan and mocks leave out {name}: {count, plural, one {# question} other {# questions}}."
+msgstr "Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent de côté {name} : {count, plural, one {# question} other {# questions}}."
+
+#. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
+#: src/_utils/use-choice-left-out.ts
+msgctxt "8-nW5Q"
+msgid "Until you pick, your plan and mocks leave out {name}."
+msgstr "Tant que tu n’as pas fait ton choix, ton plan et tes examens blancs laissent de côté {name}."
+
 #: src/_utils/use-citation-label.ts
 msgctxt "VjK2d_"
 msgid "{title}, slide {page}"
@@ -7218,6 +7236,12 @@ msgctxt "b7H9qh"
 msgid "Time left for this question"
 msgstr "Temps restant pour cette question"
 
+#. {name} is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet.
+#: src/mock/mock-notes.tsx
+msgctxt "ojUkTG"
+msgid "{name} is left out until you pick which one you take, in your plan."
+msgstr "On laisse de côté {name} tant que tu n’as pas choisi dans ton plan l’option que tu passeras."
+
 #: src/mock/mock-notes.tsx
 msgctxt "rpHBhB"
 msgid "{name} isn't in mocks yet."
@@ -7302,6 +7326,16 @@ msgstr "Ton résultat à l’examen officiel dépend des résultats de tous les 
 msgctxt "wWPWJY"
 msgid "This mock shows how many you got right."
 msgstr "Cet examen blanc indique le nombre de bonnes réponses."
+
+#: src/mock/mock-option-labels.ts
+msgctxt "LB2EVt"
+msgid "Exam day {day} without {names}"
+msgstr "Jour {day} de l’examen sans {names}"
+
+#: src/mock/mock-option-labels.ts
+msgctxt "24Y1kW"
+msgid "An exam day without {names}"
+msgstr "Une journée d’examen sans {names}"
 
 #. The mock leaves out the exam's written part and has only its questions with set answers.
 #: src/mock/mock-option-labels.ts
@@ -10085,21 +10119,10 @@ msgid "Adjust your plan"
 msgstr "Ajuster ton plan"
 
 #: src/plan/plan-exam-choices.tsx
-msgctxt "K4z5Ve"
-msgid "Pick the one you'll take. Until you do, your plan leaves {group} out."
-msgstr "Choisis l’épreuve que tu passeras. En attendant, ton plan laisse {group} de côté."
-
-#: src/plan/plan-exam-choices.tsx
 #: src/today/today-exam-choice.tsx
 msgctxt "gDpw0U"
 msgid "{group}: which one will you take?"
 msgstr "{group} : quelle épreuve passeras-tu ?"
-
-#: src/plan/plan-exam-choices.tsx
-#: src/today/today-exam-choice.tsx
-msgctxt "dsWMOn"
-msgid "Until you pick, your plan leaves {group} out."
-msgstr "En attendant ton choix, ton plan laisse {group} de côté."
 
 #: src/plan/plan-finish.tsx
 #: src/plan/use-effect-text.ts

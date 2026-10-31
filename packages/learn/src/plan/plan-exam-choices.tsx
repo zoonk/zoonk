@@ -20,6 +20,7 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
+import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { useLearnAnalytics } from "../learn-context";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
@@ -69,7 +70,7 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
 }
 
 function ExamChoice({ choice }: { choice: ExamChoiceView }) {
-  const t = useExtracted();
+  const leftOutLine = useChoiceLeftOutLine();
   const { choose, failed, isPending } = useExamChoice();
   const tapped = useTappedChoice(choice.subject ?? "");
 
@@ -95,13 +96,7 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
         ))}
       </RadioGroup>
 
-      {!choice.subject && (
-        <p className="text-muted-foreground text-sm">
-          {t("Pick the one you'll take. Until you do, your plan leaves {group} out.", {
-            group: choice.group,
-          })}
-        </p>
-      )}
+      {!choice.subject && <p className="text-muted-foreground text-sm">{leftOutLine(choice)}</p>}
 
       {failed && <ChangeSaveError />}
     </fieldset>
@@ -117,6 +112,7 @@ export function PlanExamChoices() {
 export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind: "choice" }> }) {
   const t = useExtracted();
   const sentence = useChangeSentence();
+  const leftOutLine = useChoiceLeftOutLine();
   const { setResult } = usePlanSuggestionSlot();
   const answer = useSlotAnswer(item);
   const { choice } = item;
@@ -154,9 +150,7 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
           </>
         ) : (
           <>
-            <SuggestionDescription>
-              {t("Until you pick, your plan leaves {group} out.", { group: choice.group })}
-            </SuggestionDescription>
+            <SuggestionDescription>{leftOutLine(choice)}</SuggestionDescription>
             <SuggestionActions>
               {choice.options.map((option) => (
                 <SuggestionAction

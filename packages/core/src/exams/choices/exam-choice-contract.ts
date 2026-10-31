@@ -31,6 +31,16 @@ export type ExamChoiceInput = z.infer<typeof examChoiceInputSchema>;
 export const examChoiceViewSchema = z
   .object({
     group: z.string(),
+    leftOut: z
+      .object({
+        examQuestions: z.number().int().nullable(),
+        name: z.string(),
+        questions: z.number().int().nullable(),
+      })
+      .meta({
+        description:
+          "What the plan and mocks leave out while nothing is picked: `name` is the test the options make up (a specialty's own test), or the choice itself; `questions` is how many questions an option has and `examQuestions` the exam's, each null when the notice doesn't say",
+      }),
     options: z.array(z.object({ name: z.string(), shortName: z.string().nullable() })),
     subject: z.string().nullable(),
   })

@@ -12,11 +12,24 @@ import { useMockDaySizeLabel } from "./mock-labels";
 
 export function useMockOptionName() {
   const t = useExtracted();
+  const format = useFormatter();
   const daySize = useMockDaySizeLabel();
 
   return ({ option, severalDays }: { option: MockOptionView; severalDays: boolean }): string => {
     if (option.kind === "area") {
       return option.areas[0] ?? option.area ?? t("One subject");
+    }
+
+    const unpicked = option.leftOut.flatMap((part) =>
+      part.part === "choice" && part.name ? [part.name] : [],
+    );
+
+    if (option.kind === "full" && unpicked.length > 0) {
+      const names = format.list(unpicked, { type: "conjunction" });
+
+      return severalDays
+        ? t("Exam day {day} without {names}", { day: String(option.day ?? 1), names })
+        : t("An exam day without {names}", { names });
     }
 
     return daySize({

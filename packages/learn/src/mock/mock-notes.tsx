@@ -9,6 +9,13 @@ function useLeftOutLine() {
 
   return ({ name, part }: MockLeftOut): string => {
     switch (part) {
+      case "choice":
+        return t({
+          description:
+            "{name} is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet.",
+          message: "{name} is left out until you pick which one you take, in your plan.",
+          values: { name: name ?? "" },
+        });
       case "listening":
         return name
           ? t("{name} isn't in mocks yet.", { name })

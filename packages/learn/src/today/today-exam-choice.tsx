@@ -18,6 +18,7 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
+import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { useLearnAnalytics } from "../learn-context";
 import { useChangeSentence } from "../plan/use-change-sentence";
 import { useTodayScreen } from "./today-context";
@@ -61,6 +62,7 @@ function ChoiceQuestion({
   onPick: (input: { group: string; subject: string }) => void;
 }) {
   const t = useExtracted();
+  const leftOutLine = useChoiceLeftOutLine();
   const question = t("{group}: which one will you take?", { group: choice.group });
 
   return (
@@ -72,9 +74,7 @@ function ChoiceQuestion({
 
       <SuggestionContent>
         <SuggestionHeader>{question}</SuggestionHeader>
-        <SuggestionDescription>
-          {t("Until you pick, your plan leaves {group} out.", { group: choice.group })}
-        </SuggestionDescription>
+        <SuggestionDescription>{leftOutLine(choice)}</SuggestionDescription>
 
         {/* Equal options, so one under the other in their order, never one as the main answer. */}
         <SuggestionActions className="flex-col items-stretch">

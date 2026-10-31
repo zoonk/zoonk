@@ -62,6 +62,7 @@ describe("onboarding an exam with a choice", () => {
     expect(onboarding.examChoices).toStrictEqual([
       {
         group: FOREIGN,
+        leftOut: { examQuestions: null, name: FOREIGN, questions: 5 },
         options: [
           { name: ENGLISH, shortName: "Inglês" },
           { name: SPANISH, shortName: "Espanhol" },

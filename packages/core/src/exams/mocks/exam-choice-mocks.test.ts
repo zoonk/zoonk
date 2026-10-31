@@ -6,6 +6,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getMock } from "./get-mock";
+import { getMockOptions } from "./get-mock-options";
 import { startAnytimeMock } from "./start-anytime-mock";
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };
@@ -54,64 +55,70 @@ const AREAS = [
   { name: "Humanities", skills: 4 },
 ] as const;
 
+async function setup(examChoices: readonly { group: string; subject: string }[]) {
+  const [user, blueprint] = await Promise.all([
+    userFixture(),
+    examBlueprintFixture({ structure: STRUCTURE }),
+  ]);
+
+  const skills = await Promise.all(
+    AREAS.flatMap((area) =>
+      Array.from({ length: area.skills }, async (_, index) => ({
+        area: area.name,
+        skill: await skillFixture({ name: `${area.name} ${index} ${crypto.randomUUID()}` }),
+      })),
+    ),
+  );
+
+  const goal = await goalFixture({
+    examBlueprintId: blueprint.id,
+    kind: "exam",
+    timezone: "UTC",
+    userId: user.id,
+  });
+
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [{ milestone: null, name: "Basics" }],
+      skills: skills.map(({ area, skill }) => ({
+        area,
+        lessons: 1,
+        name: skill.name,
+        phase: 0,
+        skillId: skill.id,
+        weight: null,
+      })),
+    },
+    settings: { examChoices },
+  });
+
+  await Promise.all([
+    ...skills.map(({ skill }, position) =>
+      planItemFixture({ kind: "lesson", planId: plan.id, position, skillId: skill.id }),
+    ),
+    ...skills.flatMap(({ skill }) =>
+      Array.from({ length: 3 }, () =>
+        itemFixture({
+          content: choiceItemContent(),
+          examBlueprintId: blueprint.id,
+          skillId: skill.id,
+        }),
+      ),
+    ),
+    prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+    }),
+  ]);
+
+  mockSession(user.id);
+
+  return { goal, skills };
+}
+
 describe("mocks of an exam with a choice of subject", () => {
   it("ask the foreign language the learner picked, out of the share of the subject it's part of", async () => {
-    const [user, blueprint] = await Promise.all([
-      userFixture(),
-      examBlueprintFixture({ structure: STRUCTURE }),
-    ]);
-
-    const skills = await Promise.all(
-      AREAS.flatMap((area) =>
-        Array.from({ length: area.skills }, async (_, index) => ({
-          area: area.name,
-          skill: await skillFixture({ name: `${area.name} ${index} ${crypto.randomUUID()}` }),
-        })),
-      ),
-    );
-
-    const goal = await goalFixture({
-      examBlueprintId: blueprint.id,
-      kind: "exam",
-      timezone: "UTC",
-      userId: user.id,
-    });
-
-    const plan = await planFixture({
-      goalId: goal.id,
-      graph: {
-        phases: [{ milestone: null, name: "Basics" }],
-        skills: skills.map(({ area, skill }) => ({
-          area,
-          lessons: 1,
-          name: skill.name,
-          phase: 0,
-          skillId: skill.id,
-          weight: null,
-        })),
-      },
-      settings: { examChoices: [{ group: GROUP, subject: "Spanish" }] },
-    });
-
-    await Promise.all([
-      ...skills.map(({ skill }, position) =>
-        planItemFixture({ kind: "lesson", planId: plan.id, position, skillId: skill.id }),
-      ),
-      ...skills.flatMap(({ skill }) =>
-        Array.from({ length: 3 }, () =>
-          itemFixture({
-            content: choiceItemContent(),
-            examBlueprintId: blueprint.id,
-            skillId: skill.id,
-          }),
-        ),
-      ),
-      prisma.subscription.create({
-        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-      }),
-    ]);
-
-    mockSession(user.id);
+    const { goal, skills } = await setup([{ group: GROUP, subject: "Spanish" }]);
 
     const started = await startAnytimeMock({
       goalId: goal.id,
@@ -139,5 +146,28 @@ describe("mocks of an exam with a choice of subject", () => {
       languages: count(LANGUAGES),
       spanish: count("Spanish"),
     }).toStrictEqual({ humanities: 5, languages: 4, spanish: 1 });
+  });
+
+  it("say a day mock leaves out the choice until the learner picks", async () => {
+    const { goal } = await setup([]);
+    const choice = { name: GROUP, part: "choice" };
+
+    const options = await getMockOptions({ goalId: goal.id });
+
+    const full =
+      options.status === "ready"
+        ? options.view.options.find((option) => option.kind === "full")
+        : null;
+
+    expect(full?.leftOut).toContainEqual(choice);
+
+    const started = await startAnytimeMock({
+      goalId: goal.id,
+      input: { shape: { area: null, day: 1, kind: "full" } },
+    });
+
+    const mock = started.status === "started" ? await getMock(started.id) : null;
+
+    expect(mock?.status === "ready" ? mock.mock.leftOut : null).toContainEqual(choice);
   });
 });

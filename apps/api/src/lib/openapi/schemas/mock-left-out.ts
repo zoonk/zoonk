@@ -12,6 +12,7 @@ export const mockLeftOutSchema = z
           }),
         part: z
           .enum([
+            "choice",
             "listening",
             "numeric",
             "practical",
@@ -22,7 +23,7 @@ export const mockLeftOutSchema = z
           ])
           .meta({
             description:
-              "`listening`, `speaking`, `practical`: a section a mock can't run yet. `written`: a written part with no essay in the bank yet, practiced in essay sessions. `writtenInFull`: a written part only full mocks ask (half of a day leaves it out). `numeric`, `shortAnswer`: questions answered with a number or a few words, which mocks ask as multiple choice",
+              "`choice`: a test the learner hasn't picked an option for yet, so mocks leave it out until they pick. `listening`, `speaking`, `practical`: a section a mock can't run yet. `written`: a written part with no essay in the bank yet, practiced in essay sessions. `writtenInFull`: a written part only full mocks ask (half of a day leaves it out). `numeric`, `shortAnswer`: questions answered with a number or a few words, which mocks ask as multiple choice",
           }),
       })
       .meta({ id: "MockLeftOut" }),

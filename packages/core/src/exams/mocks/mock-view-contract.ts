@@ -98,6 +98,7 @@ export type MockAdaptView = {
 export type MockLeftOut = {
   name: string | null;
   part:
+    | "choice"
     | "listening"
     | "numeric"
     | "practical"

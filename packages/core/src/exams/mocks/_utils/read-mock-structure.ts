@@ -2,7 +2,11 @@ import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
-import { type ExamChoice, toChosenStructure } from "../../choices/exam-choices";
+import {
+  type ExamChoice,
+  listUnpickedLeftOut,
+  toChosenStructure,
+} from "../../choices/exam-choices";
 import { getMockSizeSource } from "../mock-size-source";
 import { toMockStructure } from "../mock-structure";
 import { type MockSizeSource } from "../mock-view-contract";
@@ -33,6 +37,18 @@ export function readMockStructure({
     ownerId: blueprint.ownerId,
     structure: toChosenStructure({ choices, structure }),
   });
+}
+
+export function readUnpickedLeftOut({
+  blueprint,
+  choices,
+}: {
+  blueprint: ExamBlueprint | null;
+  choices: readonly ExamChoice[];
+}): string[] {
+  return blueprint
+    ? listUnpickedLeftOut({ choices, structure: readBlueprintContent(blueprint).structure })
+    : [];
 }
 
 export function readMockSizeSource(blueprint: ExamBlueprint | null): MockSizeSource {

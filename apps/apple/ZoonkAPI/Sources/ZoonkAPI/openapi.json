@@ -31301,6 +31301,7 @@
           "part": {
             "type": "string",
             "enum": [
+              "choice",
               "listening",
               "numeric",
               "practical",
@@ -31309,7 +31310,7 @@
               "written",
               "writtenInFull"
             ],
-            "description": "`listening`, `speaking`, `practical`: a section a mock can't run yet. `written`: a written part with no essay in the bank yet, practiced in essay sessions. `writtenInFull`: a written part only full mocks ask (half of a day leaves it out). `numeric`, `shortAnswer`: questions answered with a number or a few words, which mocks ask as multiple choice"
+            "description": "`choice`: a test the learner hasn't picked an option for yet, so mocks leave it out until they pick. `listening`, `speaking`, `practical`: a section a mock can't run yet. `written`: a written part with no essay in the bank yet, practiced in essay sessions. `writtenInFull`: a written part only full mocks ask (half of a day leaves it out). `numeric`, `shortAnswer`: questions answered with a number or a few words, which mocks ask as multiple choice"
           }
         },
         "required": [
@@ -77786,6 +77787,33 @@
           "group": {
             "type": "string"
           },
+          "leftOut": {
+            "type": "object",
+            "properties": {
+              "examQuestions": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "name": {
+                "type": "string"
+              },
+              "questions": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "examQuestions",
+              "name",
+              "questions"
+            ],
+            "additionalProperties": false,
+            "description": "What the plan and mocks leave out while nothing is picked: `name` is the test the options make up (a specialty's own test), or the choice itself; `questions` is how many questions an option has and `examQuestions` the exam's, each null when the notice doesn't say"
+          },
           "options": {
             "type": "array",
             "items": {
@@ -77813,6 +77841,7 @@
         },
         "required": [
           "group",
+          "leftOut",
           "options",
           "subject"
         ],

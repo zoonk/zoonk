@@ -8,6 +8,7 @@ import {
   listCountedSubjects,
   listExamChoiceViews,
   listUnchosenSubjects,
+  listUnpickedLeftOut,
   readExamChoices,
   toChosenStructure,
 } from "./exam-choices";
@@ -187,6 +188,7 @@ describe(listExamChoiceViews, () => {
     expect(listExamChoiceViews({ choices: spanish, structure: enem })).toStrictEqual([
       {
         group: FOREIGN,
+        leftOut: { examQuestions: null, name: FOREIGN, questions: 5 },
         options: [
           { name: "Língua Inglesa", shortName: "Inglês" },
           { name: "Língua Espanhola", shortName: null },
@@ -196,6 +198,39 @@ describe(listExamChoiceViews, () => {
     ]);
 
     expect(listExamChoiceViews({ choices: [], structure: enem })[0]?.subject).toBeNull();
+  });
+
+  it("names the test a choice's options make up as what an unpicked choice leaves out", () => {
+    const specialty = (name: string) =>
+      subject(name, 90, { choiceGroup: "Especialidade", group: "Conhecimentos específicos (P3)" });
+
+    const cgu: ExamStructure = {
+      ...enem,
+      mock: {
+        adaptive: false,
+        citations: [],
+        order: null,
+        scoring: { description: "", method: "wrongCancelsRight" },
+        sections: [],
+        timeLimitMinutes: null,
+        totalQuestions: 170,
+      },
+      subjects: [
+        subject("Ética Pública", null, { group: "Conhecimentos básicos (P1)" }),
+        specialty("Auditoria"),
+        specialty("Tecnologia da Informação – Desenvolvimento de Sistemas"),
+      ],
+    };
+
+    expect(listExamChoiceViews({ choices: [], structure: cgu })[0]?.leftOut).toStrictEqual({
+      examQuestions: 170,
+      name: "Conhecimentos específicos (P3)",
+      questions: 90,
+    });
+
+    expect(listUnpickedLeftOut({ choices: [], structure: cgu })).toStrictEqual([
+      "Conhecimentos específicos (P3)",
+    ]);
   });
 });
 
