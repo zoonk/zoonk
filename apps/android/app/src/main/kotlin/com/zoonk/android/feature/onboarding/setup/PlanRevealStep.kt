@@ -87,6 +87,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import java.util.Locale
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 /** Reading the plan starts no work; only Start and Adjust leave. */
@@ -107,7 +108,7 @@ internal fun ColumnScope.PlanRevealStep(
     val plan = state.value?.plan
     val readingNotice = plan?.notice == Plan.Notice.READING
     val polls = (plan?.ready != true && !run.isStopped) || readingNotice
-    val poll = rememberPoll(active = polls) { resource.refreshed() }
+    val poll = rememberPoll(active = polls, timeout = Duration.INFINITE) { resource.refreshed() }
     LaunchedEffect(run.planMade) { if (run.planMade && polls) poll.restart() }
     var opening by rememberSaveable { mutableStateOf(false) }
     var starting by remember { mutableStateOf(false) }
@@ -142,6 +143,10 @@ internal fun ColumnScope.PlanRevealStep(
                     LibraryCourseOffer(course) { navigator.open(AppRoute.CatalogCourse(course.courseId.toString())) }
                 }
             }
+        }
+
+        readingNotice && (poll.stopped || run.isStopped) -> {
+            PlanBuilding(run.withPoll(poll), onRetry = if (poll.stopped) poll::restart else onRetryRun)
         }
 
         readingNotice -> {

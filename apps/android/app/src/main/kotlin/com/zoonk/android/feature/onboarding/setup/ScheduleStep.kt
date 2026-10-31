@@ -136,7 +136,7 @@ internal fun ColumnScope.ScheduleStep(
         }
     val gatePoll = if (dated) covering.poll else timeAdvice.poll
     if (gate?.waits(run) == true) {
-        if (gate.readingNotice) {
+        if (gate.readingNotice && !gatePoll.stopped && !run.isStopped) {
             val document = if (exam && goal.targetLanguage != null) ExamDocument.GUIDE else ExamDocument.NOTICE
             NoticeReading(document, lastEdition = false)
         } else {

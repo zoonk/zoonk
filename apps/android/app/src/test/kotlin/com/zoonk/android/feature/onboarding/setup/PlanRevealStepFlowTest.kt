@@ -23,6 +23,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -316,10 +318,40 @@ class PlanRevealStepFlowTest {
         rule.onNodeWithContentDescription("Reading the official documents").assertIsDisplayed()
     }
 
+    @Test
+    fun anExamsDocumentsKeepBeingWaitedForPastTenMinutes() {
+        planApi.shownPlan = planOf(notice = "reading")
+        show()
+        rule.mainClock.advanceTimeBy(ELEVEN_MINUTES)
+
+        planApi.shownPlan = planOf()
+        rule.mainClock.advanceTimeBy(POLL_MILLIS)
+
+        rule.onNodeWithText("Plan created").assertIsDisplayed()
+    }
+
+    @Test
+    fun readsThatKeepFailingWhileTheDocumentsAreReadOfferToReconnect() {
+        planApi.shownPlan = planOf(notice = "reading")
+        show()
+        rule.onNodeWithText("Reading the exam's official documents").assertIsDisplayed()
+
+        planApi.planFailure = ApiException(ApiError.Network)
+        rule.mainClock.advanceTimeBy(POLL_MILLIS * 3)
+        rule.onNodeWithText("Connection lost").assertIsDisplayed()
+        planApi.planFailure = null
+        planApi.shownPlan = planOf()
+        rule.onNodeWithText("Reconnect").performScrollTo().performClick()
+        rule.mainClock.advanceTimeByFrame()
+
+        rule.onNodeWithText("Plan created").assertIsDisplayed()
+    }
+
     private fun learnGoalWithoutDate() = examGoal().copy(kind = Goal.Kind.LEARN, targetDate = null)
 
     private companion object {
         const val POLL_MILLIS = 3_500L
+        const val ELEVEN_MINUTES = 11 * 60_000L
         val SETUP = AppRoute.GoalSetup(GOAL_ID)
         const val LIBRARY_COURSE = "44444444-4444-4444-8444-444444444444"
     }

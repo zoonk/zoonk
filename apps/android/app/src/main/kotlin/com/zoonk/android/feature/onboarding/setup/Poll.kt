@@ -26,12 +26,13 @@ import com.zoonk.api.ApiJson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.nullable
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.TimeSource
 
 @Stable
 internal class Poll {
@@ -54,31 +55,33 @@ internal enum class PollStatus { Idle, Polling, Failed }
 
 /**
  * [read] every few seconds after the screen's own load while [active] and the screen is on, until
- * three reads in a row fail or ten minutes pass, which stops it until a new [key] or [Poll.restart],
+ * three reads in a row fail or [timeout] passes, which stops it until a new [key] or [Poll.restart],
  * whose Try again reads at once.
  */
 @Composable
 internal fun rememberPoll(
     active: Boolean,
     key: Any? = null,
+    timeout: Duration = POLL_TIMEOUT,
     read: suspend () -> Boolean,
 ): Poll {
     val poll = remember { Poll() }
     val currentRead by rememberUpdatedState(read)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    LaunchedEffect(active, key, poll.round, lifecycle) {
+    LaunchedEffect(active, key, poll.round, lifecycle, timeout) {
         poll.stopped = false
         if (!active) return@LaunchedEffect
-        val startedAt = TimeSource.Monotonic.markNow()
         var failures = 0
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            while (!poll.stopped) {
-                if (poll.readsAtOnce) poll.readsAtOnce = false else delay(POLL_INTERVAL)
-                failures = if (currentRead()) 0 else failures + 1
-                if (failures >= MAX_FAILURES || startedAt.elapsedNow() >= POLL_TIMEOUT) poll.stopped = true
+        withTimeoutOrNull(timeout) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (!poll.stopped) {
+                    if (poll.readsAtOnce) poll.readsAtOnce = false else delay(POLL_INTERVAL)
+                    failures = if (currentRead()) 0 else failures + 1
+                    if (failures >= MAX_FAILURES) poll.stopped = true
+                }
             }
-        }
+        } ?: run { poll.stopped = true }
     }
 
     return poll
@@ -144,7 +147,7 @@ internal fun <Q : Any, T : Any> rememberPlanAnswer(
     val answer = (state as? LoadState.Loaded)?.value
     LaunchedEffect(answer) { answer?.let(came) }
     val active = asking && answer?.let(ready) != true && !(paused && answer != null)
-    val poll = rememberPoll(active, key = query) { resources[query].refreshed() }
+    val poll = rememberPoll(active, key = query, timeout = Duration.INFINITE) { resources[query].refreshed() }
     LaunchedEffect(planMade) { if (planMade && active) poll.restart() }
     LaunchedEffect(query, enabled, answer == null, poll.round) {
         if (!enabled || answer != null) return@LaunchedEffect
