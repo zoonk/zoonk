@@ -43,6 +43,20 @@ struct FormulaModelFields: Decodable, Hashable, Sendable {
     Dictionary(uniqueKeysWithValues: (events ?? []).map { ($0.name, 0) })
   }
 
+  /// A check's inputs are where its expected answer was worked out, the last value of a repeated
+  /// name winning, as in core. A model opened with its numeric answer starts there, so the expected
+  /// point sits on the drawn curve.
+  func start(at inputs: [ActivityCheck.Input]) -> (
+    sliders: [String: Double], events: [String: Double]
+  ) {
+    let given = Dictionary(inputs.map { ($0.name, $0.value) }) { _, last in last }
+
+    return (
+      Dictionary(uniqueKeysWithValues: variables.map { ($0.name, given[$0.name] ?? $0.initial) }),
+      Dictionary(uniqueKeysWithValues: (events ?? []).map { ($0.name, given[$0.name] ?? 0) })
+    )
+  }
+
   /// The slider the chart sweeps: the plot's x, or the first slider.
   var axis: Variable? {
     variables.first { $0.name == plot?.x } ?? variables.first

@@ -206,6 +206,24 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(view.baseline?.kind, .whatIf)
   }
 
+  func testFormulaModelStartsAtTheCheckInputsTheLastOfANameWinning() throws {
+    let fields: FormulaModelFields = try decode(
+      """
+      {"events":[{"label":"Rent goes up $500","name":"rentUp"}],
+       "outputs":[{"formula":"price * 1000 - cups - rentUp * 500","id":"profit","label":"Profit"}],
+       "variables":[{"initial":3,"label":"Price","max":6,"min":2,"name":"price","step":0.5},
+                    {"initial":2000,"label":"Cups","max":4000,"min":0,"name":"cups","step":100}]}
+      """)
+    let inputs: [ActivityCheck.Input] = try decode(
+      #"[{"name":"price","value":3.5},{"name":"rentUp","value":1},{"name":"price","value":4}]"#)
+
+    let start = fields.start(at: inputs)
+    XCTAssertEqual(start.sliders, ["price": 4, "cups": 2000])
+    XCTAssertEqual(start.events, ["rentUp": 1])
+    XCTAssertEqual(fields.start(at: []).sliders, fields.startingValues)
+    XCTAssertEqual(fields.start(at: []).events, fields.eventsOff)
+  }
+
   func testPatternTableEndingsAndGrading() throws {
     let fields: PatternTableFields = try decode(
       """

@@ -12,8 +12,17 @@ struct FormulaModelCanvas: View {
   init(context: ActivityCanvasContext, fields: FormulaModelFields) {
     self.context = context
     self.fields = fields
-    _sliders = State(initialValue: fields.startingValues)
-    _events = State(initialValue: fields.eventsOff)
+    let answeredInputs: [ActivityCheck.Input] =
+      if context.answer?.number != nil,
+        case .numeric(_, _, _, _, _, let inputs?, _) = context.check
+      {
+        inputs
+      } else {
+        []
+      }
+    let start = fields.start(at: answeredInputs)
+    _sliders = State(initialValue: start.sliders)
+    _events = State(initialValue: start.events)
   }
 
   private var isChecked: Bool {
@@ -206,7 +215,7 @@ struct FormulaModelCanvas: View {
       return nil
     }
 
-    let x = inputs?.first { $0.name == view.axis.name }?.value ?? view.axis.initial
+    let x = fields.start(at: inputs ?? []).sliders[view.axis.name] ?? view.axis.initial
     let digits = exactFractionDigitsFor(
       expected: answer, tolerance: tolerance, value: context.answer?.number)
     return (x, answer, ActivityNumberFormat.format(answer, unit: unit, digits: digits))
