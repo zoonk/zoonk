@@ -83,8 +83,12 @@ async function writeSpeakingPaper(sitting: { mockId: string; userId: string }): 
   };
 
   const cards = await Promise.all(paper.tasks.map((task) => write(task.key)));
+  const whole = cards.filter((card) => card !== null);
 
-  await saveSpeakingPaperStep({ ...sitting, cards: cards.filter((card) => card !== null) });
+  // A goal whose paper changed meanwhile binds nothing; the next start writes its current one.
+  if (whole.length === cards.length) {
+    await saveSpeakingPaperStep({ ...sitting, cards: whole });
+  }
 }
 
 async function writeCall(writing: CallWriting): Promise<"written"> {
