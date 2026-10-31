@@ -55,6 +55,8 @@
         <item quantity="one">%1$s point short of the %2$s it needs</item>
         <item quantity="other">%1$s points short of the %2$s it needs</item>
     </plurals>
+    <!-- Under a test that missed its minimum, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is how many points it's short, with decimals; %2$s is the points it needs. -->
+    <string name="mock_result_short_points_decimal">%1$s points short of the %2$s it needs</string>
     <!-- Under a test that reached its minimum. %1$s is the percent of its points it needs, such as "40%". -->
     <string name="mock_result_reached_percent">Reached the %1$s it needs</string>
     <!-- Under a test that reached its minimum. %1$s is the points it needs, possibly a decimal. -->
@@ -62,6 +64,8 @@
         <item quantity="one">Reached the %1$s point it needs</item>
         <item quantity="other">Reached the %1$s points it needs</item>
     </plurals>
+    <!-- Under a test that reached its minimum, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the points it needs, with decimals. -->
+    <string name="mock_result_reached_points_decimal">Reached the %1$s points it needs</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the percent of its points it needs, such as "40%". -->
     <string name="mock_result_needs_percent">Needs %1$s of its points</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the points it needs, possibly a decimal. -->
@@ -69,6 +73,8 @@
         <item quantity="one">Needs %1$s point</item>
         <item quantity="other">Needs %1$s points</item>
     </plurals>
+    <!-- Under a test whose minimum this mock can't judge, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the points it needs, with decimals. -->
+    <string name="mock_result_needs_points_decimal">Needs %1$s points</string>
     <!-- A full mock's verdict when the objective tests together missed their minimum. %1$s is their score as a percent of their points; %2$s is the percent they need. -->
     <string name="mock_result_eliminated_together_percent">You\'d be eliminated: the objective tests together reach %1$s, below the %2$s they need.</string>
     <!-- A full mock's verdict when the objective tests together missed their minimum. %1$s is how many points they're short, possibly a decimal; %2$s is the points they need. -->
@@ -76,6 +82,8 @@
         <item quantity="one">You\'d be eliminated: the objective tests together are %1$s point short of %2$s.</item>
         <item quantity="other">You\'d be eliminated: the objective tests together are %1$s points short of %2$s.</item>
     </plurals>
+    <!-- A full mock's verdict when the objective tests together missed their minimum, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is how many points they're short, with decimals; %2$s is the points they need. -->
+    <string name="mock_result_eliminated_together_points_decimal">You\'d be eliminated: the objective tests together are %1$s points short of %2$s.</string>
     <!-- A full mock's verdict when one test missed its minimum. %1$s is the test, such as "P1"; %2$s is its score as a percent of its points; %3$s is the percent it needs. -->
     <string name="mock_result_eliminated_percent">You\'d be eliminated: %1$s is at %2$s, below the %3$s it needs.</string>
     <!-- A full mock's verdict when one test missed its minimum. %1$s is the test, such as "P1"; %2$s is how many points it's short, possibly a decimal; %3$s is the points it needs. -->
@@ -83,6 +91,8 @@
         <item quantity="one">You\'d be eliminated: %1$s is %2$s point short of %3$s.</item>
         <item quantity="other">You\'d be eliminated: %1$s is %2$s points short of %3$s.</item>
     </plurals>
+    <!-- A full mock's verdict when one test missed its minimum, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the test, such as "P1"; %2$s is how many points it's short, with decimals; %3$s is the points it needs. -->
+    <string name="mock_result_eliminated_points_decimal">You\'d be eliminated: %1$s is %2$s points short of %3$s.</string>
     <string name="mock_result_meets_minimums">Meets the objective minimums checked here.</string>
     <!-- A part of the exam's mock, projected onto the whole exam. %1$s is the projected points; %2$s the exam's most points. -->
     <string name="mock_result_projected_total">About %1$s of %2$s points on the whole exam, projected from this mock. Only a full mock says whether you\'d reach the minimums.</string>
@@ -94,6 +104,8 @@
         <item quantity="one">The objective tests together need %1$s point, and this mock doesn\'t have them all.</item>
         <item quantity="other">The objective tests together need %1$s points, and this mock doesn\'t have them all.</item>
     </plurals>
+    <!-- A minimum this mock couldn't check, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the points the objective tests need together, with decimals. -->
+    <string name="mock_result_unjudged_together_points_decimal">The objective tests together need %1$s points, and this mock doesn\'t have them all.</string>
     <!-- A minimum this mock couldn't check. %1$s is the test, such as "Essay"; %2$s is the percent of its points it needs, such as "50%". -->
     <string name="mock_result_unjudged_percent">%1$s needs %2$s of its points and isn\'t in this mock.</string>
     <!-- A minimum this mock couldn't check. %1$s is the test, such as "Essay"; %2$s is the points it needs, possibly a decimal. -->
@@ -101,6 +113,8 @@
         <item quantity="one">%1$s needs %2$s point and isn\'t in this mock.</item>
         <item quantity="other">%1$s needs %2$s points and isn\'t in this mock.</item>
     </plurals>
+    <!-- A minimum this mock couldn't check, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the test, such as "Essay"; %2$s is the points it needs, with decimals. -->
+    <string name="mock_result_unjudged_points_decimal">%1$s needs %2$s points and isn\'t in this mock.</string>
     <string name="mock_result_by_topic">By topic</string>
     <string name="mock_result_by_area">By area</string>
     <plurals name="mock_result_more_topics">

@@ -27,8 +27,10 @@
   "mock_result_easy_wrong": "3c4e6c58baa734a327f57da77b4673e9987825b30efe7c08cf98a0d5e028df43",
   "mock_result_eliminated_percent": "c2e746dd62a4392d2ae0e5dda80696dd84f5997ef207b45c7449d31c678146ae",
   "mock_result_eliminated_points": "626282ba807e603ab1a876e9731a6416abf8f5e610abd6bd2a1e8fa396eee5b3",
+  "mock_result_eliminated_points_decimal": "a16e756df7819b4272052f936cdef019acb5dfa7cb553c43d183a1725742e100",
   "mock_result_eliminated_together_percent": "34c38638566480a46762d7bb29e8d11ad0751e6cdf0cd3086c25b0667cee0dc3",
   "mock_result_eliminated_together_points": "79d08093ecc285cef20df7d3712b1f4121df6114ad42ddcbc9fdfe1995b9bf4a",
+  "mock_result_eliminated_together_points_decimal": "d75bf4c050159564f8af70f7a5cf6a3b3ff428c03759380c6c9180a863fedfe7",
   "mock_result_estimate_detail": "679d7592c1a199f7fdf7a607958d4e0d5d94b33ee991e7b7730ce7020329d8f5",
   "mock_result_estimated_score": "9797dff2deb20c41f6dde7c782e5415de61adfe40efbb2db45ae57b2ca585843",
   "mock_result_focus_done": "6154c723d65093857391fc0a21fc0e968fab3fc7bb24e4ff5ea143e8e74f6d17",
@@ -52,6 +54,7 @@
   "mock_result_more_topics": "d3aa80ad99a0bdb0e4c5ea897bc34a6a3a24d7dc8603c9de384e0d323f6bb572",
   "mock_result_needs_percent": "bdce29b047de2030c15192dd37933e664767fff0cff7df1b85773cc6f513eead",
   "mock_result_needs_points": "a5efe8dea45bd9d7dccd16ee9695842c1e7b7f65345e43f5ccb0f60744bb85d5",
+  "mock_result_needs_points_decimal": "90503ebaf804169d5e4ba3eef37651ec58e5273045b2bbcd1351b586686e274f",
   "mock_result_net_score": "6b734447ccb600bf6e4d45c06753b03340253a41882b5fb0f7378adb538c533e",
   "mock_result_new": "69e7a5b6a210ac5e82f6dda707bcbcd35780313dbf1b9ff3d6dff6f201cde2fd",
   "mock_result_no_estimate": "22153a053fe0f45f30afadbf63f0308f4eb1c000b7511c67cc37c5100738886f",
@@ -84,6 +87,7 @@
   "mock_result_range": "8f36ee05597f0fa726cd0d40f04d04d2db81a51e5beef083613d08e57cfb7c0e",
   "mock_result_reached_percent": "a64173e389a7fc2a852c9b7249186359333665c474eba12f4f9ffa16f32e20a5",
   "mock_result_reached_points": "d68a717bf4d4bb834ca60b5c1ab77b5997cd04c5fc5cc3374053176e13970282",
+  "mock_result_reached_points_decimal": "c1a37bb371b38a71724d5655abd18d55a9af0502069c201f5a067cbe1b862640",
   "mock_result_relative": "ce7781c34078bb6d5082512d924d2baccf418a1bd850f10aec3ce6a3f3a50296",
   "mock_result_review": "3cf1715025f3ef563733ae65c0051750ae50e1afd45d5e5384eeefbeeaca312a",
   "mock_result_review_mistake": "f82e68a4611e8f8a323caec37d0b8d71b84d2b0e78d359d3a5f187ccbb60bf36",
@@ -100,6 +104,7 @@
   "mock_result_see_question": "eaf42e0870252cc27f0989409911f820b464d2f43d261c1e5883e2b5a94d6554",
   "mock_result_see_questions": "50d875cb1c691ebbdd077a61dc6de02269b8986f8429eb3883b813577d86ae6d",
   "mock_result_short_points": "c95a0630a9eaa912d9341d1114b85e756f69de80f850949409689430467c5f20",
+  "mock_result_short_points_decimal": "2f0d986f48bd80e19d133b5965d7aa8c4492d79340dc70e1af1e9c05b4fe34c4",
   "mock_result_shows_right": "dc13e816be4fb83ce25d3ee1c24f346d77cc4185578462e04fb11716425b79de",
   "mock_result_skip_done": "bc00982b788fd5cd1a9d14938315a4e607549fa61b7b5684c7c7630e18ae5871",
   "mock_result_skip_title": "882a2cf3517e788ad2f0b8d5afc0d06f00866f0808c3a8ca51406e476b2949aa",
@@ -115,8 +120,10 @@
   "mock_result_typed_no_estimate": "1ed2d48fd3bda68d2e3be194b11899042237dded85591ac636f80b1e58f7e122",
   "mock_result_unjudged_percent": "fd727dca81634a6b4631ce50d89e1c30b18a578a60253f60dd7de0566e556e44",
   "mock_result_unjudged_points": "5e4381ccc0b4b329fb45dede95e54e8987a0283125c2d8216999b7ea11ad91f2",
+  "mock_result_unjudged_points_decimal": "12ed3dacc58a3cda395b63f956ea77ad4f7f211670a7389f2b6c80d28647cfae",
   "mock_result_unjudged_together_percent": "85809f260fcd3f382d49b9bbf6f421a6fadb95b9c71c99d3b282885c01c3b4fd",
   "mock_result_unjudged_together_points": "7c85a8dedbb09e5e327f68ad68e1c9dc703641c13b1c428e8c68e7a4243a3f18",
+  "mock_result_unjudged_together_points_decimal": "4b46ce0879ee4a322cad42a7d703d20a2ff4f05bf7ab7baf9260166d5fa9343f",
   "mock_result_up": "a225152442f7fbec8ae038a2e1af4473046d79de799fd2058280433f508c73be",
   "mock_result_written_part": "ebbd49d88c3dee28362c3136d54b3b4a770c62fa7c0d28734058490b3728ed27",
   "mock_result_wrong": "2affdb1d6f109f4fd27463247028f42de068e3507efa12bbdccbaa7783e04c8e",
@@ -180,6 +187,8 @@
         <item quantity="one">Es fehlt %1$s Punkt zur Mindestpunktzahl von %2$s</item>
         <item quantity="other">Es fehlen %1$s Punkte zur Mindestpunktzahl von %2$s</item>
     </plurals>
+    <!-- Under a test that missed its minimum, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is how many points it's short, with decimals; %2$s is the points it needs. -->
+    <string name="mock_result_short_points_decimal">Es fehlen %1$s Punkte bis zum Minimum von %2$s</string>
     <!-- Under a test that reached its minimum. %1$s is the percent of its points it needs, such as "40%". -->
     <string name="mock_result_reached_percent">Die nötigen %1$s erreicht</string>
     <!-- Under a test that reached its minimum. %1$s is the points it needs, possibly a decimal. -->
@@ -187,6 +196,8 @@
         <item quantity="one">Den nötigen %1$s Punkt erreicht</item>
         <item quantity="other">Die nötigen %1$s Punkte erreicht</item>
     </plurals>
+    <!-- Under a test that reached its minimum, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the points it needs, with decimals. -->
+    <string name="mock_result_reached_points_decimal">Minimum von %1$s Punkten erreicht</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the percent of its points it needs, such as "40%". -->
     <string name="mock_result_needs_percent">Braucht %1$s der möglichen Punkte</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the points it needs, possibly a decimal. -->
@@ -194,6 +205,8 @@
         <item quantity="one">Braucht %1$s Punkt</item>
         <item quantity="other">Braucht %1$s Punkte</item>
     </plurals>
+    <!-- Under a test whose minimum this mock can't judge, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the points it needs, with decimals. -->
+    <string name="mock_result_needs_points_decimal">Mindestens %1$s Punkte nötig</string>
     <!-- A full mock's verdict when the objective tests together missed their minimum. %1$s is their score as a percent of their points; %2$s is the percent they need. -->
     <string name="mock_result_eliminated_together_percent">Du würdest ausscheiden: In den objektiven Tests erreichst du zusammen %1$s, weniger als die nötigen %2$s.</string>
     <!-- A full mock's verdict when the objective tests together missed their minimum. %1$s is how many points they're short, possibly a decimal; %2$s is the points they need. -->
@@ -201,6 +214,8 @@
         <item quantity="one">Du würdest ausscheiden: In den objektiven Tests fehlt dir insgesamt %1$s Punkt zur Mindestpunktzahl von %2$s.</item>
         <item quantity="other">Du würdest ausscheiden: In den objektiven Tests fehlen dir insgesamt %1$s Punkte zur Mindestpunktzahl von %2$s.</item>
     </plurals>
+    <!-- A full mock's verdict when the objective tests together missed their minimum, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is how many points they're short, with decimals; %2$s is the points they need. -->
+    <string name="mock_result_eliminated_together_points_decimal">Du würdest ausscheiden: Den objektiven Tests fehlen zusammen %1$s Punkte bis zum Minimum von %2$s.</string>
     <!-- A full mock's verdict when one test missed its minimum. %1$s is the test, such as "P1"; %2$s is its score as a percent of its points; %3$s is the percent it needs. -->
     <string name="mock_result_eliminated_percent">Du würdest ausscheiden: %1$s liegt mit %2$s unter den nötigen %3$s.</string>
     <!-- A full mock's verdict when one test missed its minimum. %1$s is the test, such as "P1"; %2$s is how many points it's short, possibly a decimal; %3$s is the points it needs. -->
@@ -208,6 +223,8 @@
         <item quantity="one">Du würdest ausscheiden: Bei %1$s fehlt dir %2$s Punkt zur Mindestpunktzahl von %3$s.</item>
         <item quantity="other">Du würdest ausscheiden: Bei %1$s fehlen dir %2$s Punkte zur Mindestpunktzahl von %3$s.</item>
     </plurals>
+    <!-- A full mock's verdict when one test missed its minimum, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the test, such as "P1"; %2$s is how many points it's short, with decimals; %3$s is the points it needs. -->
+    <string name="mock_result_eliminated_points_decimal">Du würdest ausscheiden: Bei %1$s fehlen %2$s Punkte bis zum Minimum von %3$s.</string>
     <string name="mock_result_meets_minimums">Erreicht die hier geprüften Mindestwerte für die objektiven Tests.</string>
     <!-- A part of the exam's mock, projected onto the whole exam. %1$s is the projected points; %2$s the exam's most points. -->
     <string name="mock_result_projected_total">Auf die gesamte Prüfung hochgerechnet sind das etwa %1$s von %2$s Punkten. Nur eine vollständige Probeprüfung zeigt, ob du die Mindestwerte erreichen würdest.</string>
@@ -219,6 +236,8 @@
         <item quantity="one">In den objektiven Tests ist insgesamt %1$s Punkt nötig, doch diese Probeprüfung enthält nicht alle Tests.</item>
         <item quantity="other">In den objektiven Tests sind insgesamt %1$s Punkte nötig, doch diese Probeprüfung enthält nicht alle Tests.</item>
     </plurals>
+    <!-- A minimum this mock couldn't check, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the points the objective tests need together, with decimals. -->
+    <string name="mock_result_unjudged_together_points_decimal">Für die objektiven Tests sind zusammen %1$s Punkte nötig, aber diese Probeprüfung enthält nicht alle davon.</string>
     <!-- A minimum this mock couldn't check. %1$s is the test, such as "Essay"; %2$s is the percent of its points it needs, such as "50%". -->
     <string name="mock_result_unjudged_percent">Für %1$s sind %2$s der möglichen Punkte nötig, doch dieser Teil fehlt in der Probeprüfung.</string>
     <!-- A minimum this mock couldn't check. %1$s is the test, such as "Essay"; %2$s is the points it needs, possibly a decimal. -->
@@ -226,6 +245,8 @@
         <item quantity="one">Für %1$s ist %2$s Punkt nötig, doch dieser Teil fehlt in der Probeprüfung.</item>
         <item quantity="other">Für %1$s sind %2$s Punkte nötig, doch dieser Teil fehlt in der Probeprüfung.</item>
     </plurals>
+    <!-- A minimum this mock couldn't check, in the form a language gives decimal numbers (Polish "1,5 punktu"). %1$s is the test, such as "Essay"; %2$s is the points it needs, with decimals. -->
+    <string name="mock_result_unjudged_points_decimal">%1$s erfordert %2$s Punkte und ist nicht Teil dieser Probeprüfung.</string>
     <string name="mock_result_by_topic">Nach Thema</string>
     <string name="mock_result_by_area">Nach Bereich</string>
     <plurals name="mock_result_more_topics">

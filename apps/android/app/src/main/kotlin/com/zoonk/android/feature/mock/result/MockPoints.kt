@@ -175,7 +175,7 @@ private fun requirementLine(
             if (inPercent) {
                 stringResource(R.string.mock_result_below_percent, percent(scorePercent(row)), needed)
             } else {
-                pluralPoints(R.plurals.mock_result_short_points, row.short ?: 0.0, needed)
+                pluralPoints(R.plurals.mock_result_short_points, R.string.mock_result_short_points_decimal, row.short ?: 0.0, needed)
             }
         }
 
@@ -183,7 +183,7 @@ private fun requirementLine(
             if (inPercent) {
                 stringResource(R.string.mock_result_reached_percent, needed)
             } else {
-                pluralPoints(R.plurals.mock_result_reached_points, minimum.value)
+                pluralPoints(R.plurals.mock_result_reached_points, R.string.mock_result_reached_points_decimal, minimum.value)
             }
         }
 
@@ -191,7 +191,7 @@ private fun requirementLine(
             if (inPercent) {
                 stringResource(R.string.mock_result_needs_percent, needed)
             } else {
-                pluralPoints(R.plurals.mock_result_needs_points, minimum.value)
+                pluralPoints(R.plurals.mock_result_needs_points, R.string.mock_result_needs_points_decimal, minimum.value)
             }
         }
     }
@@ -213,7 +213,12 @@ private fun missSentence(
         }
 
         name == null -> {
-            pluralPoints(R.plurals.mock_result_eliminated_together_points, short, needed)
+            pluralPoints(
+                R.plurals.mock_result_eliminated_together_points,
+                R.string.mock_result_eliminated_together_points_decimal,
+                short,
+                needed,
+            )
         }
 
         inPercent -> {
@@ -221,7 +226,14 @@ private fun missSentence(
         }
 
         else -> {
-            pluralStringResource(R.plurals.mock_result_eliminated_points, quantity(short), name, points(short), needed)
+            pointsText(
+                R.plurals.mock_result_eliminated_points,
+                R.string.mock_result_eliminated_points_decimal,
+                short,
+                name,
+                points(short),
+                needed,
+            )
         }
     }
 }
@@ -250,7 +262,11 @@ private fun unjudgedLine(entry: MockPointsUnjudgedInner): String {
         }
 
         name == null -> {
-            pluralPoints(R.plurals.mock_result_unjudged_together_points, minimum.value)
+            pluralPoints(
+                R.plurals.mock_result_unjudged_together_points,
+                R.string.mock_result_unjudged_together_points_decimal,
+                minimum.value,
+            )
         }
 
         inPercent -> {
@@ -258,22 +274,37 @@ private fun unjudgedLine(entry: MockPointsUnjudgedInner): String {
         }
 
         else -> {
-            pluralStringResource(R.plurals.mock_result_unjudged_points, quantity(minimum.value), name, points(minimum.value))
+            pointsText(
+                R.plurals.mock_result_unjudged_points,
+                R.string.mock_result_unjudged_points_decimal,
+                minimum.value,
+                name,
+                points(minimum.value),
+            )
         }
     }
 }
 
 @Composable
 private fun pluralPoints(
-    id: Int,
+    plural: Int,
+    decimal: Int,
     value: Double,
     vararg rest: String,
-): String = pluralStringResource(id, quantity(value), points(value), *rest)
+): String = pointsText(plural, decimal, value, points(value), *rest)
 
+/** Polish gives decimals a form no whole number takes ("1,5 punktu"), which Android plurals can't pick. */
 @Composable
-private fun quantity(value: Double): Int {
-    val rounded = (value * HUNDREDTHS).roundToLong() / HUNDREDTHS
-    return pluralQuantity(rounded, currentLocale()) ?: rounded.toInt()
+internal fun pointsText(
+    plural: Int,
+    decimal: Int,
+    value: Double,
+    vararg arguments: String,
+): String {
+    val quantity =
+        pluralQuantity((value * HUNDREDTHS).roundToLong() / HUNDREDTHS, currentLocale())
+            ?: return stringResource(decimal, *arguments)
+    return pluralStringResource(plural, quantity, *arguments)
 }
 
 @Composable
