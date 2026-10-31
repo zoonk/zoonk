@@ -67,6 +67,54 @@ async function jeeGoal() {
 }
 
 describe(pickExamFormatSkills, () => {
+  it("filters formats before taking the highest-weight skills", async () => {
+    const { blueprint, goal, skills } = await jeeGoal();
+
+    await Promise.all([
+      prisma.examBlueprint.update({
+        data: {
+          structure: {
+            formats: [
+              { ...JEE_FORMATS[1], sections: [] },
+              { ...JEE_FORMATS[1], sections: ["Verbal"] },
+              { ...JEE_FORMATS[2], sections: ["Quantitative"] },
+            ],
+            mock: null,
+            rules: [],
+            subjects: [],
+          },
+        },
+        where: { id: blueprint.id },
+      }),
+      prisma.plan.update({
+        data: {
+          graph: {
+            phases: [{ milestone: null, name: "Basics" }],
+            skills: skills
+              .slice(0, 4)
+              .map((skill, index) => ({
+                area: index < 3 ? "Quantitative" : "Verbal",
+                lessons: 1,
+                name: skill.name,
+                phase: 0,
+                skillId: skill.id,
+                weight: 10 - index,
+              })),
+          },
+        },
+        where: { goalId: goal.id },
+      }),
+    ]);
+
+    const picks = await pickExamFormatSkills({ goalId: goal.id });
+
+    expect(
+      picks
+        .filter((pick) => pick.answerFormat.format === "multipleChoice")
+        .map((pick) => pick.skill.id),
+    ).toStrictEqual([skills[3]?.id]);
+  });
+
   it("picks first-phase skills by weight, skipping written ones", async () => {
     const { blueprint, goal, skills } = await jeeGoal();
     const [first, second, third, fourth] = skills;

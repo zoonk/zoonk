@@ -106,8 +106,10 @@ export async function pickExamFormatSkills({
 
   const blueprint = goal?.kind === "exam" ? goal.examBlueprint : null;
 
+  const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
+
   const formats = blueprint
-    ? getMockFormatMix(readBlueprintContent(blueprint).structure).flatMap((format) =>
+    ? getMockFormatMix(structure).flatMap((format) =>
         format.writer.kind === "item"
           ? [{ ...format, answerFormat: format.writer.answerFormat }]
           : [],
@@ -157,28 +159,31 @@ export async function pickExamFormatSkills({
 
   const exam = toItemExam(blueprint);
 
-  const structure = readBlueprintContent(blueprint).structure;
-
   const picks = formats.flatMap((format) =>
     listAskedSkills({ format, skills, structure })
-      .filter((skill) =>
-        needsAnswerFormat({ answerFormat: format.answerFormat, blueprintId: blueprint.id, skill }),
-      )
-      .toSorted(
-        (a, b) =>
-          Number(isKnownInFormat({ answerFormat: format.answerFormat, skill: b })) -
-          Number(isKnownInFormat({ answerFormat: format.answerFormat, skill: a })),
-      )
-      .slice(0, EXAM_FORMAT_SKILLS)
-      .flatMap(({ area, items: _items, ...skill }) => {
+      .flatMap((skill) => {
         const own = getMockWritingFormat({
           format,
-          names: area ? listSubjectNames({ area, structure }) : [],
+          names: skill.area ? listSubjectNames({ area: skill.area, structure }) : [],
           structure,
         });
 
-        return own ? [{ answerFormat: format.answerFormat, skill, style: own.style }] : [];
-      }),
+        return own !== null &&
+          needsAnswerFormat({ answerFormat: format.answerFormat, blueprintId: blueprint.id, skill })
+          ? [{ own, skill }]
+          : [];
+      })
+      .toSorted(
+        (a, b) =>
+          Number(isKnownInFormat({ answerFormat: format.answerFormat, skill: b.skill })) -
+          Number(isKnownInFormat({ answerFormat: format.answerFormat, skill: a.skill })),
+      )
+      .slice(0, EXAM_FORMAT_SKILLS)
+      .map(({ own, skill: { area: _area, items: _items, ...skill } }) => ({
+        answerFormat: format.answerFormat,
+        skill,
+        style: own.style,
+      })),
   );
 
   return Promise.all(
