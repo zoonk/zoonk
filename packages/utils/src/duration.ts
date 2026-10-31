@@ -1,7 +1,13 @@
+import { getContentLocale } from "./locale";
 import { getNumberFormatter } from "./localized-number";
 
 const SECONDS_PER_MINUTE = 60;
 const MINUTES_PER_HOUR = 60;
+
+/** CLDR spaces Japanese units ("1 時間 30 分"), but Japanese writes them together ("1時間30分"). */
+function isUnspaced(locale: string): boolean {
+  return getContentLocale(locale) === "ja";
+}
 
 /** A no-break space keeps each number with its unit, so "1 h 30 min" wraps only between units. */
 function formatUnit({
@@ -20,7 +26,7 @@ function formatUnit({
     useGrouping: false,
   })
     .format(value)
-    .replaceAll(" ", "\u00A0");
+    .replaceAll(" ", isUnspaced(locale) ? "" : "\u00A0");
 }
 
 export function formatDuration({
@@ -50,7 +56,10 @@ export function formatDuration({
   const minutes = totalMinutes % MINUTES_PER_HOUR;
   const formattedHours = formatUnit({ locale, unit: "hour", value: hours });
 
-  return minutes === 0
-    ? formattedHours
-    : `${formattedHours} ${formatUnit({ locale, unit: "minute", value: minutes })}`;
+  if (minutes === 0) {
+    return formattedHours;
+  }
+
+  const separator = isUnspaced(locale) ? "" : " ";
+  return `${formattedHours}${separator}${formatUnit({ locale, unit: "minute", value: minutes })}`;
 }

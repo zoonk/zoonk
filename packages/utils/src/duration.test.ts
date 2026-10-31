@@ -32,6 +32,7 @@ describe(formatDuration, () => {
     { expected: "2\u00A0h 30\u00A0min", locale: "es" },
     { expected: "2\u202Fh 30\u00A0min", locale: "fr" },
     { expected: "2\u00A0Std. 30\u00A0Min.", locale: "de" },
+    { expected: "2時間30分", locale: "ja" },
   ])("uses compact units and native spacing for $locale", ({ locale, expected }) => {
     expect(formatDuration({ locale, totalSeconds: 9000 })).toBe(expected);
   });
