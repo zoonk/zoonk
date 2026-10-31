@@ -2,7 +2,10 @@
 
 ## Voice and locale
 
-- Use Korean for South Korea and 해요체 in sentences. Instructions in sentences use “-세요”: “다시 시도해 보세요”.
+- Use Korean for South Korea and 해요체 in sentences. Instructions in sentences use “-세요”: “다시 시도해 보세요”. Retry and wait instructions soften it: “다시 시도해 보세요”, “1분 후에 다시 요청해 보세요”, never bare “다시 시도하세요”.
+- Stat tiles, legends and count chips stay short labels, not sentences: “정답 #개”, not “#개를 맞혔어요”.
+- Write foreign cities and people in Hangul: “런던”, “마드리드”, “존 스노”.
+- “~” before a number or a date reads as a range: write “약 #일” or “{date}쯤”.
 - Never use “당신”. Drop the subject, or use “내” for the learner's own things in labels: “내 계획”.
 - Buttons, links, menu actions and mission names use a noun or the “-기” form: “다시 시도”, “새 목표 시작하기”, “첫 레슨 끝내기”. Never “-하세요” or “-해요” on them. Choices the learner says in their own voice use 해요체: “잘 모르겠어요”.
 - Lines saying what Zoonk is doing while it works use “-고 있어요” without a subject: “3페이지를 만들고 있어요…”.
@@ -19,6 +22,14 @@
 ## Glossary
 
 - “lesson”: “레슨”, not “수업” or “강의”
+- “chapter” (of a course): “챕터”, never “단원” or “장”; “unit” (of a language plan): “단원”; “module”: “모듈”
+- “course” (in Zoonk): “코스”; the university “course” or program a learner applies to: “학과”
+- “essay” (graded writing practice): “에세이”; an exam's written part: “서술형”
+- “pause” (a goal): “일시 중지”; paused: “일시 중지됨”
+- “progress” (how far the learner is in the plan): “진도”
+- “daily time limit” (the cap in Settings): “하루 학습 시간 제한”, not “오늘 학습 시간”, which is the plan's time for today
+- “cancel” a subscription: “해지”
+- “real-world problem”: “실무 문제”
 - “goal” (the learner's goal): “목표”
 - “plan” (study plan): “계획”; subscription plan: “요금제”
 - “Free” (subscription name): “무료”
