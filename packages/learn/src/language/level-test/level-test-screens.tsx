@@ -19,6 +19,7 @@ import {
   OnboardingTitle,
 } from "../../onboarding/onboarding-frame";
 import { StepIcon } from "../../onboarding/steps/step-parts";
+import { PendingLabel } from "../../plan/plan-coverage";
 import { LevelBars } from "./level-test-parts";
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
@@ -52,6 +53,7 @@ export function TestIntro({
   onSwitch,
   pending,
   showAlphabetNote,
+  starting,
 }: {
   goal: { language: string; targetLanguage: string };
   onScratch: () => void;
@@ -59,6 +61,7 @@ export function TestIntro({
   onSwitch: (language: string) => void;
   pending: boolean;
   showAlphabetNote: boolean;
+  starting: boolean;
 }) {
   const t = useExtracted();
   const locale = useAppLocale();
@@ -88,10 +91,18 @@ export function TestIntro({
       )}
 
       <OnboardingFooter>
-        <OnboardingPrimaryButton disabled={pending} onClick={onStart}>
-          {t("Start")}
+        <OnboardingPrimaryButton
+          aria-busy={starting || undefined}
+          disabled={pending || starting}
+          onClick={onStart}
+        >
+          <PendingLabel pending={starting}>{t("Start")}</PendingLabel>
         </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton disabled={pending} onClick={onScratch} variant="ghost">
+        <OnboardingSecondaryButton
+          disabled={pending || starting}
+          onClick={onScratch}
+          variant="ghost"
+        >
           {t("Skip the test")}
         </OnboardingSecondaryButton>
         <InterfaceOffer language={goal.language} onSwitch={onSwitch} />

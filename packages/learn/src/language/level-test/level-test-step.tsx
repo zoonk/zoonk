@@ -107,6 +107,7 @@ export function LanguageLevelTestStep({
   const [levels, setLevels] = useState<ReadyTest["levels"]>([]);
   const [bank, setBank] = useState<BankWait>(INITIAL_BANK_WAIT);
   const [isPending, startTransition] = useTransition();
+  const [isStarting, startStarting] = useTransition();
 
   const show = (view: LanguageLevelTestView) => {
     if (view.status === "preparing") {
@@ -166,24 +167,28 @@ export function LanguageLevelTestStep({
     startNow: false,
   });
 
-  const begin = async () => {
-    rememberStepStart({ goalId, step: "levelTest" });
-    setBank(INITIAL_BANK_WAIT);
-    setPhase({ kind: "waiting" });
+  const begin = () =>
+    startStarting(async () => {
+      rememberStepStart({ goalId, step: "levelTest" });
+      setBank(INITIAL_BANK_WAIT);
 
-    const { data: view } = await safeAsync(actions.get);
+      const { data: view } = await safeAsync(actions.get);
 
-    if (view?.status !== "preparing" || view.startedAt) {
-      if (view) {
+      if (view && (view.status === "ready" || view.startedAt)) {
         show(view);
+        return;
       }
 
-      return;
-    }
+      setPhase({ kind: "waiting" });
 
-    const { data: started } = await safeAsync(actions.prepare);
-    setBank(askedBankWait({ preparing: view, started: Boolean(started) }));
-  };
+      if (!view) {
+        setBank({ ...INITIAL_BANK_WAIT, startFailed: true });
+        return;
+      }
+
+      const { data: started } = await safeAsync(actions.prepare);
+      setBank(askedBankWait({ preparing: view, started: Boolean(started) }));
+    });
 
   const finish = () =>
     startTransition(async () => {
@@ -199,10 +204,11 @@ export function LanguageLevelTestStep({
         <TestIntro
           goal={goal}
           onScratch={finish}
-          onStart={() => void begin()}
+          onStart={begin}
           onSwitch={actions.switchLanguage}
           pending={isPending}
           showAlphabetNote={phase.showAlphabetNote}
+          starting={isStarting}
         />
       );
     case "waiting":
@@ -210,12 +216,7 @@ export function LanguageLevelTestStep({
         <LevelTestPreparing
           language={getLanguageName(goal)}
           onSkip={finish}
-          run={toBankRun({
-            poll: poll.status,
-            recheck: poll.restart,
-            retry: () => void begin(),
-            wait: bank,
-          })}
+          run={toBankRun({ poll: poll.status, recheck: poll.restart, retry: begin, wait: bank })}
           skipping={isPending}
         />
       );

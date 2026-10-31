@@ -17,6 +17,7 @@ import { PlusMark } from "../../_components/plus-lock";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import { useFormatDuration } from "../../_utils/time-format";
 import { LearnLink } from "../../learn-link";
+import { PendingLabel } from "../../plan/plan-coverage";
 import { type PlacementMockOutcome } from "../onboarding-actions";
 import {
   OnboardingColumn,
@@ -80,6 +81,7 @@ export function PlacementIntro({
   onScratch,
   onStart,
   pending,
+  starting,
   subject,
 }: {
   areaCount: number;
@@ -87,6 +89,7 @@ export function PlacementIntro({
   onScratch: () => void;
   onStart: () => void;
   pending: boolean;
+  starting: boolean;
   subject: string;
 }) {
   const t = useExtracted();
@@ -111,10 +114,18 @@ export function PlacementIntro({
       {mock && <PlacementMockRow mock={mock} />}
 
       <OnboardingFooter>
-        <OnboardingPrimaryButton disabled={pending} onClick={onStart}>
-          {t("Start")}
+        <OnboardingPrimaryButton
+          aria-busy={starting || undefined}
+          disabled={pending || starting}
+          onClick={onStart}
+        >
+          <PendingLabel pending={starting}>{t("Start")}</PendingLabel>
         </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton disabled={pending} onClick={onScratch} variant="ghost">
+        <OnboardingSecondaryButton
+          disabled={pending || starting}
+          onClick={onScratch}
+          variant="ghost"
+        >
           {t("Skip and start from the basics")}
         </OnboardingSecondaryButton>
       </OnboardingFooter>

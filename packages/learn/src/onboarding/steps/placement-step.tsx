@@ -1,6 +1,7 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
+import { safeAsync } from "@zoonk/utils/error";
 import { useRef, useState, useTransition } from "react";
 import { usePoll } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
@@ -137,7 +138,19 @@ function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; 
     },
   });
 
-  return { countAnswer, mockOffer, phase, setPhase, showReady };
+  const start = async () => {
+    rememberStepStart({ goalId, step: "placement" });
+    const { data: outcome } = await safeAsync(() => actions.getPlacement(goalId));
+
+    if (outcome?.status === "ready") {
+      showReady(outcome);
+      return;
+    }
+
+    setPhase({ kind: outcome?.status === "unavailable" ? "unavailable" : "waiting" });
+  };
+
+  return { countAnswer, mockOffer, phase, setPhase, showReady, start };
 }
 
 function getAnswerKind({
@@ -173,7 +186,7 @@ export function PlacementStep({
 }) {
   const analytics = useLearnAnalytics();
 
-  const { countAnswer, mockOffer, phase, setPhase, showReady } = useResumedPlacement({
+  const { countAnswer, mockOffer, phase, setPhase, showReady, start } = useResumedPlacement({
     actions,
     goalId,
   });
@@ -181,6 +194,7 @@ export function PlacementStep({
   const [buildFailed, setBuildFailed] = useState(false);
   const [answerFailed, setAnswerFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isStarting, startStarting] = useTransition();
 
   const finish = (fromScratch: boolean, stopMockId: string | null = null) =>
     startTransition(async () => {
@@ -214,11 +228,6 @@ export function PlacementStep({
     intervalMs: POLL_MS,
     onPoll: async () => show(await actions.getPlacement(goalId)),
   });
-
-  const start = () => {
-    rememberStepStart({ goalId, step: "placement" });
-    setPhase({ kind: "waiting" });
-  };
 
   const answer =
     (question: PlacementQuestion, answered: number) =>
@@ -265,8 +274,9 @@ export function PlacementStep({
           areaCount={areaCount}
           mock={mockOffer && { ...mockOffer, href: mockHrefs.start }}
           onScratch={() => finish(true)}
-          onStart={start}
+          onStart={() => startStarting(start)}
           pending={isPending}
+          starting={isStarting}
           subject={subject}
         />
       );
