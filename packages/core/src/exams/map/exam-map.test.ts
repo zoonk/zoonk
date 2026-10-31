@@ -121,3 +121,14 @@ describe("a subject's share of the exam's points", () => {
     expect(shareOf(structure)[0]).toBe(0.25);
   });
 });
+
+describe("written test weights", () => {
+  it("weighs a whole written test by its stated maximum without a question count", () => {
+    const structure = scored({
+      scoring: { parts: [{ ...part("P4", 1), maxPoints: 100, questions: null }] },
+      subjects: [subject("Objective", 100), ...grouped("P4", ["Prova discursiva"])],
+    });
+
+    expect(shareOf(structure)).toStrictEqual([0.5, 0.5]);
+  });
+});

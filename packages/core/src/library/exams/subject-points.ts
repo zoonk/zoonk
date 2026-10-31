@@ -1,3 +1,4 @@
+import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { type ExamStructure } from "./blueprint-contract";
 import { getPartMaxPoints, getPointsPerQuestion, pickPartRows } from "./part-points";
 import { getPartQuestions, getPlannedSubjectQuestions } from "./subject-questions";
@@ -53,6 +54,21 @@ export function getSubjectPoints({
   structure: ExamStructure;
   subject: Subject;
 }): number | null {
+  const scoring = structure.mock?.scoring;
+
+  const part = scoring?.parts?.find(
+    (item) => item.name === subject.name || item.name === subject.group,
+  );
+
+  if (
+    part &&
+    isWrittenSubject({ structure, subject }) &&
+    structure.subjects.filter((item) => item.name === part.name || item.group === part.name)
+      .length === 1
+  ) {
+    return getPartMaxPoints({ marking: scoring?.marking ?? [], part });
+  }
+
   const questions = getPlannedSubjectQuestions({ structure, subject });
 
   return questions === null
