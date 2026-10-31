@@ -3,8 +3,9 @@
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
+import { useFormatter } from "../_utils/formatter";
 import { ResultSection } from "./mock-result-section";
 
 type MockPoints = NonNullable<MockResult["points"]>;
