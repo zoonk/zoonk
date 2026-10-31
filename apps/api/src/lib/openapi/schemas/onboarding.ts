@@ -42,7 +42,7 @@ export const onboardingResponseSchema = z
       .array(examChoiceViewSchema)
       .meta({
         description:
-          "The exam's choices (ENEM's foreign language: English or Spanish), each with its options and the learner's pick, for the `examChoice` screen. Until the learner picks, the pick is the option their own words name (their goal, its reading or an onboarding answer), which the server takes without asking, so `steps` has no `examChoice` screen for it; null when nothing names one. The plan studies only the picked options. Empty for other goals",
+          "The exam's choices (ENEM's foreign language: English or Spanish), each with its options and the learner's pick, for the `examChoice` screen. Until the learner picks, the pick is the option they stated as theirs, by its whole name (the position their goal's reading records, or a target or follow-up answer), which the server takes without asking, so `steps` has no `examChoice` screen for it; null when nothing names one. The plan studies only the picked options. Empty for other goals",
       }),
     examDays: z
       .object({

@@ -67,7 +67,7 @@ async function saveNamedChoices(
   return true;
 }
 
-/** Also takes the options of the notice's choices that the learner's own words name. */
+/** Also takes the options of the notice's choices that the learner's stated position or answers name. */
 export async function linkGoalToExamBlueprint({
   examBlueprintId,
   goalId,

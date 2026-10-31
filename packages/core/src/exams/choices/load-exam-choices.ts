@@ -43,7 +43,7 @@ export async function loadExamChoiceViews({
   return structure ? listExamChoiceViews({ choices, structure }) : [];
 }
 
-/** Onboarding asks a choice only when the learner's own words name none of its options. */
+/** Onboarding asks a choice only when nothing the learner stated as theirs names one of its options. */
 export async function hasUnpickedChoice(
   goal: Pick<Goal, "details" | "examBlueprintId" | "id">,
 ): Promise<boolean> {

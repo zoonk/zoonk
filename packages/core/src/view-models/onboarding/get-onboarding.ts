@@ -42,7 +42,7 @@ export type OnboardingResult =
   | { onboarding: OnboardingView; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/** Before a POST saves it, an option the learner's own words name already counts as picked, so only a choice nothing names is asked. */
+/** Before a POST saves it, an option the learner's stated position or answers name already counts as picked, so only a choice nothing names is asked. */
 async function findExamNotice({
   details,
   goal,
