@@ -65,4 +65,14 @@ class LineLabelsTest {
 
         assertFalse("$one and $two", one.overlaps(two))
     }
+
+    @Test
+    fun keepsANameInsideTheChartAndOffItsLineWhenNoSpotNearbyIsFree() {
+        val segment = LabelSegment(Offset(22f, 222f), Offset(293f, 26f))
+        val everywhere = LabelCircle(Offset(166f, 124f), radius = 400f)
+        val box = place(LineLabel(isUpper = true, segment, size), marks = LabelMarks(listOf(everywhere), emptyList(), emptyList())).single()
+
+        assertTrue("box $box", box.top >= area.top)
+        assertTrue("gap ${gap(box, segment)}", gap(box, segment) >= 3f)
+    }
 }

@@ -31,8 +31,9 @@ internal class LabelMarks(
 /**
  * Main's `line-crossing-labels.ts`. Where each line's name sits, in order: by its end of the line on the
  * open side, or at the nearest spot that clears the lines, the marks (drag handles, crossings, arrows) and
- * the names placed before it. When no spot close by clears every line, it keeps off just its own line, so
- * its halo never cuts the line it names. [unit] is pixels per dp.
+ * the names placed before it. When no spot close by clears every line, it keeps off its own line and the
+ * marks, and when large text leaves no room for that, off its own line, so its halo never cuts the line
+ * it names. [unit] is pixels per dp.
  */
 internal fun placeLineLabels(
     area: Rect,
@@ -53,24 +54,35 @@ private fun placeLineLabel(
 ): Rect {
     val clearance = CLEARANCE * unit
     val start = besideEnd(label, area, unit)
+    val step = label.size.height / STEPS_PER_LABEL_HEIGHT
 
-    fun isFree(
-        box: Rect,
-        lines: List<LabelSegment>,
-    ) = box.left >= area.left &&
-        box.right <= area.right &&
-        box.top >= area.top &&
-        box.bottom <= area.bottom &&
-        (listOf(label.segment) + lines + marks.segments).none { box.touches(it, clearance) } &&
-        marks.circles.none { box.touches(it, clearance) } &&
-        placed.none { box.touches(it, clearance) }
+    fun Rect.fits(lines: List<LabelSegment>) =
+        left >= area.left && right <= area.right && top >= area.top && bottom <= area.bottom &&
+            (listOf(label.segment) + lines).none { touches(it, clearance) }
 
-    val shift =
-        NEAREST_SHIFTS.firstOrNull { it.getDistance() <= CLEAR_OF_ALL_REACH && isFree(start.translate(it * unit), marks.lines) }
-            ?: NEAREST_SHIFTS.firstOrNull { isFree(start.translate(it * unit), emptyList()) }
+    fun Rect.clearsMarks() =
+        marks.segments.none { touches(it, clearance) } &&
+            marks.circles.none { touches(it, clearance) } &&
+            placed.none { touches(it, clearance) }
 
-    return shift?.let { start.translate(it * unit) } ?: start
+    val passes =
+        listOf<(Rect, Offset) -> Boolean>(
+            { box, shift -> shift.getDistance() <= CLEAR_OF_ALL_STEPS && box.fits(marks.lines) && box.clearsMarks() },
+            { box, _ -> box.fits(emptyList()) && box.clearsMarks() },
+            { box, _ -> box.fits(emptyList()) },
+        )
+    val shift = passes.firstNotNullOfOrNull { pass -> NEAREST_SHIFTS.firstOrNull { pass(start.translate(it * step), it) } }
+
+    return shift?.let { start.translate(it * step) } ?: start.clampedInto(area)
 }
+
+private fun Rect.clampedInto(area: Rect): Rect =
+    translate(
+        Offset(
+            left.coerceIn(area.left, max(area.left, area.right - width)) - left,
+            top.coerceIn(area.top, max(area.top, area.bottom - height)) - top,
+        ),
+    )
 
 private fun besideEnd(
     label: LineLabel,
@@ -115,11 +127,11 @@ private fun Rect.touches(
 
 private const val LABEL_GAP = 8f
 private const val CLEARANCE = 3f
-private const val SEARCH_STEP = 2f
+private const val STEPS_PER_LABEL_HEIGHT = 6f
 private const val SEARCH_STEPS = 30
-private const val CLEAR_OF_ALL_REACH = 24f
+private const val CLEAR_OF_ALL_STEPS = 12f
 
 private val NEAREST_SHIFTS =
     (-SEARCH_STEPS..SEARCH_STEPS)
-        .flatMap { row -> (-SEARCH_STEPS..SEARCH_STEPS).map { column -> Offset(column * SEARCH_STEP, row * SEARCH_STEP) } }
+        .flatMap { row -> (-SEARCH_STEPS..SEARCH_STEPS).map { column -> Offset(column.toFloat(), row.toFloat()) } }
         .sortedBy { it.getDistance() }

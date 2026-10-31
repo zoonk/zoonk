@@ -34,7 +34,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -546,7 +545,6 @@ private val CHEVRON = 4.dp
 private val CHEVRON_GAP = 2.dp
 private val LINE_DASH = 5.dp
 private val GUIDE_DASH = 3.dp
-private val LABEL_GAP = 8.dp
 private val DOT_RADIUS = 6.dp
 private val DOT_STROKE = 2.dp
 private val ARROW_OFFSET = 10.dp
