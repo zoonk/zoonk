@@ -130,6 +130,7 @@ test("waits for the time new study days need before saving the suggestion", asyn
 
     const json: PlanTimeToCover = {
       fittingDate: null,
+      most: null,
       pastDate: false,
       readingNotice: false,
       ready: true,

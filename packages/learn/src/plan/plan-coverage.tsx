@@ -5,6 +5,7 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ChangeSaveError } from "../_components/save-error";
+import { useTimeAnswerTexts } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
@@ -39,60 +40,26 @@ export function useTimeEnough(): boolean {
 
 type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
 
-type CoveredProps = Pick<Coverage, "coreFits" | "coveredShare" | "deepensMostAsked" | "measure">;
-
 export function useCoveredText() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
+  const texts = useTimeAnswerTexts();
   const { plan } = usePlanScreen();
-  const time = formatDuration(plan.schedule.dailyMinutes);
-  const { fullCourse } = plan.schedule;
+  const { dailyMinutes, targetDate, targetDateNamedMonth } = plan.schedule;
 
-  return ({ coreFits, coveredShare, deepensMostAsked, measure }: CoveredProps): string => {
-    if (coveredShare < MIN_SHOWN_SHARE) {
-      return t("{time} a day isn't enough time to cover your goal.", { time });
+  return ({ coveredShare, measure }: Pick<Coverage, "coveredShare" | "measure">): string => {
+    if (coveredShare < MIN_SHOWN_SHARE || !targetDate) {
+      return t("{time} a day isn't enough time to cover your goal.", {
+        time: formatDuration(dailyMinutes),
+      });
     }
 
-    if (coreFits && measure === "exam") {
-      return deepensMostAsked
-        ? t({
-            description:
-              "Every exam topic gets studied, and the ones asked most often get extra depth.",
-            message:
-              "{time} a day studies every topic of the exam, the ones that come up most in more depth.",
-            values: { time },
-          })
-        : t("{time} a day studies every topic of the exam, some of them in less depth.", { time });
-    }
-
-    if (coreFits) {
-      return t(
-        "{time} a day studies every part of your goal, the ones that matter most in more depth.",
-        { time },
-      );
-    }
-
-    if (measure === "exam" && fullCourse) {
-      return t(
-        "{time} a day doesn't reach every topic by the exam: the ones that come up least come after it.",
-        { time },
-      );
-    }
-
-    return measure === "exam"
-      ? t("{time} a day doesn't reach every topic: the ones that come up least are left out.", {
-          time,
-        })
-      : t(
-          "{time} a day doesn't reach every part of your goal: what comes last in your path is left out.",
-          { time },
-        );
+    return texts.share({
+      date: { isoDate: targetDate, namedMonth: targetDateNamedMonth },
+      exam: measure === "exam",
+      value: coveredShare,
+    });
   };
-}
-
-export function CoveredSentence(props: CoveredProps) {
-  const coveredText = useCoveredText();
-  return <p>{coveredText(props)}</p>;
 }
 
 export function useCanMoveDate(): boolean {
@@ -258,62 +225,3 @@ export function MoveDateSwitch({
 }
 
 export type FindStatus = "answered" | "building" | "failed" | "idle" | "pending";
-
-/**
- * A polite live region of its own (`live`) unless it sits in one already; Try again takes the
- * button's own element, so focus stays on it.
- */
-export function FindTimeLine({
-  answer,
-  canFind,
-  id,
-  live = true,
-  onFind,
-  status,
-  waiting,
-}: {
-  answer: React.ReactNode;
-  canFind: boolean;
-  id: string;
-  live?: boolean;
-  onFind: () => void;
-  status: FindStatus;
-  waiting?: React.ReactNode;
-}) {
-  const texts = useTimeToCoverTexts();
-  const pending = status === "pending";
-  const retry = status === "failed" || status === "building";
-
-  return (
-    <div
-      aria-atomic={live ? false : undefined}
-      aria-live={live ? "polite" : undefined}
-      className="flex flex-col gap-2 empty:hidden focus-visible:outline-none"
-      id={id}
-      tabIndex={-1}
-    >
-      {waiting && <p>{waiting}</p>}
-
-      {!waiting && status === "answered" && answer}
-
-      {!waiting && retry && <p>{status === "building" ? texts.building : texts.failed}</p>}
-
-      {!waiting && status !== "answered" && (canFind || retry) && (
-        <Button
-          aria-busy={pending || undefined}
-          className="self-start"
-          disabled={pending}
-          focusableWhenDisabled
-          key="find"
-          onClick={onFind}
-          size="sm"
-          variant="outline"
-        >
-          <PendingLabel pending={pending}>{retry ? texts.tryAgain : texts.find}</PendingLabel>
-        </Button>
-      )}
-
-      {pending && <span className="sr-only">{texts.finding}</span>}
-    </div>
-  );
-}

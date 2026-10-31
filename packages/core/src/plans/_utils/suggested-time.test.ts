@@ -5,12 +5,9 @@ const AT_FOUR_HOURS = { coreFits: false, coveredShare: 0.3214 };
 
 describe(getSuggestedTime, () => {
   it("suggests the time that covers everything, up to four hours a day", () => {
-    expect(getSuggestedTime({ coverageAt: () => AT_FOUR_HOURS, everything: 240 })).toStrictEqual({
-      coveredShare: 1,
-      everyTopic: true,
-      kind: "everything",
-      minutes: 240,
-    });
+    expect(
+      getSuggestedTime({ coverageAt: () => AT_FOUR_HOURS, everything: 240, most: null }),
+    ).toStrictEqual({ coveredShare: 1, everyTopic: true, kind: "everything", minutes: 240 });
   });
 
   it.each([805, null])(
@@ -24,6 +21,7 @@ describe(getSuggestedTime, () => {
           return AT_FOUR_HOURS;
         },
         everything,
+        most: null,
       });
 
       expect(suggested).toStrictEqual({
@@ -36,4 +34,29 @@ describe(getSuggestedTime, () => {
       expect(asked).toStrictEqual([240]);
     },
   );
+
+  it("suggests the least time that covers as much as any does when part never fits", () => {
+    const suggested = getSuggestedTime({
+      coverageAt: () => ({ coreFits: true, coveredShare: 0.99 }),
+      everything: null,
+      most: { coveredShare: 0.99, minutes: 180 },
+    });
+
+    expect(suggested).toStrictEqual({
+      coveredShare: 0.99,
+      everyTopic: true,
+      kind: "focus",
+      minutes: 180,
+    });
+  });
+
+  it("keeps to four hours when covering the most possible takes longer", () => {
+    expect(
+      getSuggestedTime({
+        coverageAt: () => AT_FOUR_HOURS,
+        everything: null,
+        most: { coveredShare: 0.99, minutes: 480 },
+      }),
+    ).toMatchObject({ kind: "focus", minutes: 240 });
+  });
 });

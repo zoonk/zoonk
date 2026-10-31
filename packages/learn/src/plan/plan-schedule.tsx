@@ -3,114 +3,143 @@
 import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { DailyTimePicker, TimeSelect } from "../_components/daily-time-picker";
 import { ChangeSaveError } from "../_components/save-error";
+import { TimeAnswer } from "../_components/time-answer";
 import { WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime } from "../_components/weekend-time";
 import { useGoalDateValues } from "../_utils/iso-date";
+import { getFullTimeNote, getMarkedTimes, getOffer, getTimeLine } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
-import {
-  CoveredSentence,
-  MoveDateSwitch,
-  useCanMoveDate,
-  usePlanCoverage,
-  useTimeEnough,
-} from "./plan-coverage";
+import { type FindStatus, MoveDateSwitch, useCanMoveDate } from "./plan-coverage";
 import { getEditorSectionId } from "./plan-editor-sections";
-import {
-  FIND_ACTIONS_ID,
-  FindLine,
-  MOVE_DATE_ID,
-  useFindAnswer,
-  useFocusFindAnswer,
-} from "./plan-find-line";
 import { PlanFinish } from "./plan-finish";
 import { ChooseFocus, useCanChooseFocus } from "./plan-focus";
 import { FullCourseSwitch } from "./plan-full-course";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
-import { getFullMinutes, getOfferedMinutes } from "./use-time-to-cover";
+import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
 const DAYS_PER_WEEK = 7;
+
+function toNoteStatus(status: FindStatus): "failed" | "finding" | null {
+  if (status === "answered") {
+    return null;
+  }
+
+  return status === "failed" || status === "building" ? "failed" : "finding";
+}
+
+/** Asked when the editor opens, never on loading the page: it plans the goal at many times. */
+function useTimeAnswer(dated: boolean) {
+  const { answered, find, state } = useTimeToCover();
+  const ask = useEffectEvent(() => void find());
+
+  useEffect(() => {
+    if (dated && state.status === "idle") {
+      ask();
+    }
+  }, [dated, state.status]);
+
+  return { answered, noteStatus: toNoteStatus(state.status), retry: () => void find() };
+}
 
 /**
  * While the schedule's change saves, its place says the new coverage is being worked out: the old
  * one would describe a time no longer picked.
  */
 function DailyCoverage({
-  canFind,
-  onAsk,
+  answer,
+  minutes,
   onMoving,
   onUseTime,
   planChange,
 }: {
-  canFind: boolean;
-  onAsk: () => void;
+  answer: ReturnType<typeof useTimeAnswer>;
+  minutes: number;
   onMoving: (moving: boolean) => void;
   onUseTime: (minutes: number) => void;
   planChange: PlanChange;
 }) {
   const t = useExtracted();
   const goalDate = useGoalDateValues();
-  const { plan } = usePlanScreen();
+  const texts = useTimeToCoverTexts();
+  const { goal, plan } = usePlanScreen();
   const pending = planChange.isPending;
-  const coverage = usePlanCoverage();
   const canChooseFocus = useCanChooseFocus();
   const canMoveDate = useCanMoveDate();
+  const { feasibility, schedule } = plan;
 
-  if (!plan.feasibility?.deadline) {
+  if (!feasibility?.deadline || !schedule.targetDate) {
     return <PlanFinish pending={pending} />;
   }
 
+  const date = { isoDate: schedule.targetDate, namedMonth: schedule.targetDateNamedMonth };
+  const found = answer.answered;
+
+  const line = getTimeLine({
+    advice: { coveredShare: feasibility.fits ? 1 : feasibility.coveredShare, endDate: null },
+    askFailed: false,
+    dated: true,
+    findFailed: false,
+    found,
+    hasDays: true,
+    minutes,
+  });
+
+  const studiesEveryDay =
+    schedule.weekdayMinutes.filter((daily) => daily > 0).length === DAYS_PER_WEEK;
+
+  const fittingDate =
+    goal.kind !== "exam" && line.kind !== "everything" ? found?.fittingDate : null;
+
   return (
-    <div aria-busy={pending} aria-live="polite" className="grid text-sm">
+    <div aria-busy={pending} className="grid text-sm">
       {pending && (
-        <p className="text-muted-foreground col-start-1 row-start-1">
+        <p aria-live="polite" className="text-muted-foreground col-start-1 row-start-1">
           {t("Working out what your time covers…")}
         </p>
       )}
 
       <div className={cn("col-start-1 row-start-1 flex flex-col gap-2", pending && "invisible")}>
-        {coverage ? (
-          <>
-            <div className="text-muted-foreground">
-              {/* Planned again, the learner's own time covers it all (set-aside lessons come
-                  back), so it says so. */}
-              {plan.fitOffer?.fits && plan.schedule.targetDate ? (
-                <p>
-                  {t({
-                    description:
-                      'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-                    message:
-                      "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
-                    values: goalDate({
-                      isoDate: plan.schedule.targetDate,
-                      namedMonth: plan.schedule.targetDateNamedMonth,
-                      style: "long",
-                    }),
-                  })}
-                </p>
-              ) : (
-                <CoveredSentence
-                  coreFits={coverage.coreFits}
-                  coveredShare={coverage.coveredShare}
-                  deepensMostAsked={coverage.deepensMostAsked}
-                  measure={coverage.measure}
-                />
-              )}
-            </div>
-            <FindLine canFind={canFind} onAsk={onAsk} onUseTime={onUseTime} pending={pending} />
-            <div className="flex flex-wrap items-center gap-2 empty:hidden" id={FIND_ACTIONS_ID}>
-              {canMoveDate && (
-                <MoveDateSwitch id={MOVE_DATE_ID} onMoving={onMoving} planChange={planChange} />
-              )}
-              {canChooseFocus && <ChooseFocus />}
-            </div>
-          </>
+        {/* Planned again, the learner's own time covers it all (set-aside lessons come back), so it
+            says so. */}
+        {plan.fitOffer?.fits ? (
+          <p className="text-muted-foreground">
+            {t({
+              description:
+                'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+              message:
+                "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
+              values: goalDate({ ...date, style: "long" }),
+            })}
+          </p>
         ) : (
-          <p className="text-muted-foreground">{t("Covers your whole goal.")}</p>
+          <TimeAnswer
+            date={date}
+            exam={goal.kind === "exam"}
+            line={line}
+            minutes={minutes}
+            note={getFullTimeNote({ found, line, studiesEveryDay })}
+            noteStatus={answer.noteStatus}
+            offer={getOffer({ found, line, minutes })}
+            offerAs="button"
+            onRetry={answer.retry}
+            onUseOffer={onUseTime}
+          />
         )}
+
+        {fittingDate && (
+          <p className="text-muted-foreground">
+            {texts.fittingDate({ dailyMinutes: schedule.dailyMinutes, fittingDate })}
+          </p>
+        )}
+
+        <div className="flex flex-wrap items-center gap-2 empty:hidden">
+          {canMoveDate && <MoveDateSwitch onMoving={onMoving} planChange={planChange} />}
+          {canChooseFocus && <ChooseFocus />}
+        </div>
       </div>
     </div>
   );
@@ -137,12 +166,12 @@ function DailyMinutes({
   const { change } = planChange;
   const isPending = planChange.isPending || moving;
   const t = useExtracted();
+  const { plan } = usePlanScreen();
   const shape = useWeekShape();
-  const timeEnough = useTimeEnough();
-  const answer = useFindAnswer();
   const current = shape.weekdays;
   const time = useTappedChoice(current);
-  const onAsk = useFocusFindAnswer();
+  const answer = useTimeAnswer(plan.schedule.targetDate !== null);
+  const marked = getMarkedTimes(answer.answered);
 
   const setMinutes = (minutes: number) => {
     if (isPending || minutes === current) {
@@ -163,18 +192,18 @@ function DailyMinutes({
     <div className="flex flex-col gap-3" id={getEditorSectionId("time")}>
       <DailyTimePicker
         disabled={isPending}
-        full={getFullMinutes(answer)}
+        full={marked.full}
         label={t("Time a day")}
         minutes={time.shown}
         onChange={setMinutes}
         saves
-        suggested={getOfferedMinutes(answer)}
+        suggested={marked.suggested}
         titled
       />
 
       <DailyCoverage
-        canFind={!timeEnough}
-        onAsk={onAsk}
+        answer={answer}
+        minutes={current}
         onMoving={onMoving}
         onUseTime={setMinutes}
         planChange={planChange}

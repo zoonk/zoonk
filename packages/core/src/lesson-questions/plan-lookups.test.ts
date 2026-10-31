@@ -665,10 +665,11 @@ describe("the plan the buddy looks up", () => {
         throw new Error(`Expected the time that covers everything, got ${time.status}`);
       }
 
-      const { fittingDate, recommendedMinutes, suggested } = time.time;
+      const { fittingDate, most, recommendedMinutes, suggested } = time.time;
 
       expect(found).toStrictEqual({
         fittingDate,
+        most,
         recommendedMinutes,
         status: "found",
         suggested: suggested && {

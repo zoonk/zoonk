@@ -5,13 +5,14 @@ import { getDaySplit } from "@zoonk/core/goals/daily-budget";
 import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { useState } from "react";
+import { getTimeLine } from "../../_utils/time-answer";
 import { type PollStatus } from "../../_utils/use-poll";
 import {
   type GoalsTogether,
   type StudyWeek,
   asksAboutTime,
+  getShownAnswer,
   getShownMinutes,
-  getTimeLine,
   toFindWeek,
   toStudyWeek,
   waitsForSuggestion,
@@ -155,15 +156,22 @@ export function useSchedule({
 
   const advice = readyAnswer(timeAdvice.answer);
 
-  const line = getTimeLine({
-    advice,
-    askFailed: hasStopped(timeAdvice.status),
-    dated,
-    findFailed: found.failed,
-    found: found.found,
-    hasDays,
-    minutes,
-  });
+  const lineAt = (answers: { advice: PlanTimeAdvice | null; found: PlanTimeToCover | null }) =>
+    getTimeLine({
+      ...answers,
+      askFailed: hasStopped(timeAdvice.status),
+      dated,
+      findFailed: found.failed,
+      hasDays,
+      minutes,
+    });
+
+  const line = lineAt({ advice, found: found.found });
+
+  const lastAnswers = {
+    advice: advice ?? readyAnswer(timeAdvice.last),
+    found: found.found ?? found.last,
+  };
 
   return {
     advice,
@@ -176,6 +184,10 @@ export function useSchedule({
     picked,
     setFullCourse,
     setPicked,
+    shown: getShownAnswer({
+      last: { found: lastAnswers.found, line: lineAt(lastAnswers) },
+      now: { found: found.found, line },
+    }),
     split: hasDays && minutes !== null ? getDaySplit({ budget: minutes, ...together }) : null,
     stale:
       hasDays &&

@@ -58,7 +58,7 @@ const suggestedTimeSchema = z
       .enum(["everything", "focus"])
       .meta({
         description:
-          "everything: the minutes cover the whole goal in depth by its date (recommendedMinutes); focus: covering everything takes more than most people keep up, so they're 4 hours a day, what's worth most first, and never to be described as covering everything",
+          "everything: the minutes cover the whole goal in depth by its date (recommendedMinutes); focus: what's worth most first, never to be described as covering everything: 4 hours a day when covering everything takes more than most people keep up, or most's minutes when no time covers everything",
       }),
     minutes: z.int(),
     split: daySplitSchema.meta({
@@ -70,7 +70,7 @@ const suggestedTimeSchema = z
   .default(null)
   .meta({
     description:
-      "The daily time to recommend and start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else 4 hours. Show recommendedMinutes beside a focus time, so the learner sees what everything takes and can pick it. Null without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
+      "The daily time to recommend and start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else most's minutes when they are, else 4 hours. Show recommendedMinutes (or most) beside a focus time, so the learner sees what everything takes and can pick it. Null without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
   });
 
 const targetDateNamedMonthSchema = z
@@ -127,12 +127,20 @@ export const planTimeToCoverSchema = z
         description:
           "For a goal that isn't an exam and doesn't cover everything by its date in its own week, or whose date passed (no studyDays or weekendMinutes asked about): the earliest date the learner's own time covers everything by, measured as the plan measures what it covers (once moved there, the plan says it covers everything), to send as it is with `setTargetDate`. Null otherwise, and when no date within a week of the plan's end without a date does",
       }),
+    most: z
+      .object({ coveredShare: z.number().min(0).max(1), minutes: z.int() })
+      .nullable()
+      .default(null)
+      .meta({
+        description:
+          "When no daily time covers everything because part of it never fits, whatever the time (a whole day covers no more than half a day): the fewest daily minutes that cover as much as any time does, and that share. Say what those minutes cover rather than everything. Null when a time covers everything, when more time still helps (the date is too close), without a date and while not ready. With studyDays, the day the goals typed together share",
+      }),
     pastDate: z
       .boolean()
       .default(false)
       .meta({
         description:
-          "The goal's date has passed in the learner's time zone: no daily time covers it, so recommendedMinutes and suggested are null",
+          "The goal's date has passed in the learner's time zone: no daily time covers it, so recommendedMinutes, most and suggested are null",
       }),
     readingNotice: readingNoticeSchema,
     ready: readySchema,

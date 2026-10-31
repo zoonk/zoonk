@@ -65,7 +65,53 @@ function plannedLesson(lessonId: string, skillId: string): ExistingPlanItem {
   };
 }
 
+const WHOLE_DAY = 1440;
+
+const toPercent = (share: number) => Math.round(share * 100);
+
 describe(getPlanFeasibility, () => {
+  it("says the least time that covers as much as any does when a tested-out lesson never comes back", () => {
+    const input = planInput({
+      graph: {
+        phases: [{ milestone: null, name: "Everything" }],
+        skills: [skill("known", { lessons: 1 }), skill("open", { lessons: 4 })],
+      },
+      items: [{ ...plannedLesson("shared", "known"), completedAt: TODAY, status: "testedOut" }],
+      lessons: [
+        { ...lessonsFor("shared", 1)[0]!, lessonId: "shared", skillIds: ["known", "open"] },
+        ...lessonsFor("open", 3),
+      ],
+    });
+
+    const feasibility = getPlanFeasibility({ input });
+    const wholeDay = toPercent(feasibility.coverageAt(WHOLE_DAY).coveredShare);
+
+    expect(feasibility.recommendedMinutes).toBeNull();
+    expect(wholeDay).toBeLessThan(100);
+    expect(feasibility.most).toStrictEqual({ coveredShare: wholeDay / 100, minutes: 5 });
+  });
+
+  it("finds no such time while more time still covers more: the date is too close", () => {
+    const input = planInput({
+      goal: { dailyMinutes: 60, kind: "learn", targetDate: fromIsoDate("2026-09-30") },
+      graph: {
+        phases: [{ milestone: null, name: "Everything" }],
+        skills: [skill("big", { lessons: 300 })],
+      },
+      lessons: lessonsFor("big", 300, 15),
+    });
+
+    const feasibility = getPlanFeasibility({ input });
+
+    expect(feasibility.recommendedMinutes).toBeNull();
+
+    expect(feasibility.coverageAt(WHOLE_DAY / 2).coveredShare).toBeLessThan(
+      feasibility.coverageAt(WHOLE_DAY).coveredShare,
+    );
+
+    expect(feasibility.most).toBeNull();
+  });
+
   it("counts a topic in only when it gets lesson time before the deadline", () => {
     const ids = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
 

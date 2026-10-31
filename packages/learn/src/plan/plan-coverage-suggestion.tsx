@@ -8,6 +8,8 @@ import {
   SuggestionActions,
   SuggestionDescription,
 } from "../_components/suggestion";
+import { useTimeAnswerTexts } from "../_components/time-answer";
+import { getLongerTime } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
 import { type FindStatus, PendingLabel, useCoveredText, usePlanCoverage } from "./plan-coverage";
 import { useFullCourse } from "./plan-full-course";
@@ -89,18 +91,18 @@ function useCardLines({
 }) {
   const t = useExtracted();
   const texts = useTimeToCoverTexts();
+  const answerTexts = useTimeAnswerTexts();
   const { state } = useTimeToCover();
   const failed = intent === "date" ? t("We couldn't check what changes.") : texts.failed;
   const retryText = state.status === "building" ? texts.building : failed;
 
-  const answer = found && readTimeToCover(found);
+  const longer = getLongerTime(found);
 
   const none =
-    found?.targetDate && answer?.kind === "focus" && !offer && !flags.noDate
-      ? texts.everythingTakes({
-          minutes: answer.full,
-          targetDate: found.targetDate,
-          targetDateNamedMonth: found.targetDateNamedMonth,
+    found?.targetDate && longer !== undefined && !offer && !flags.noDate
+      ? answerTexts.everythingTakes({
+          date: { isoDate: found.targetDate, namedMonth: found.targetDateNamedMonth },
+          full: longer,
         })
       : null;
 

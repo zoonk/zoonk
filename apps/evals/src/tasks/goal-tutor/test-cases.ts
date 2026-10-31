@@ -355,6 +355,7 @@ const INTERVIEW_PLAN = {
 const ENEM_TIME_TO_COVER: GoalTutorLookUpStandIn = {
   timeToCover: {
     fittingDate: null,
+    most: null,
     recommendedMinutes: 95,
     status: "found",
     suggested: { coveredShare: 1, everyTopic: true, kind: "everything", minutes: 95 },
@@ -1191,6 +1192,7 @@ export const TEST_CASES: GoalTutorCase[] = [
     lookUps: {
       timeToCover: {
         fittingDate: null,
+        most: null,
         recommendedMinutes: 805,
         status: "found",
         suggested: { coveredShare: 0.6, everyTopic: true, kind: "focus", minutes: 240 },

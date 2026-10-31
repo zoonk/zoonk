@@ -1,10 +1,12 @@
 import { once } from "@zoonk/utils/once";
+import { roundShare } from "../_utils/plan-feasibility-view";
 import { type SelectedCoverage } from "../_utils/selected-summary-contract";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../daily-minutes";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
 import {
   type StudyScheduleAt,
   findFittingMinutes,
+  narrowFit,
   planAtMinutes,
   withDailyMinutes,
 } from "./daily-time-plans";
@@ -16,6 +18,8 @@ import { type ExamSubjectShare, getSkillValue } from "./selected-coverage";
 import { getSelectedCoverage } from "./selected-plan-summary";
 
 export type TimeCoverage = { coreFits: boolean; coveredShare: number };
+
+export type MostCoverage = { coveredShare: number; minutes: number };
 
 export type PlanFeasibility = {
   alternative: { dailyMinutes: number; endDate: Date | null } | null;
@@ -29,6 +33,11 @@ export type PlanFeasibility = {
   fittingDate: Date | null;
   fullCourseEndDate: Date | null;
   measure: "exam" | "goal";
+  /**
+   * When part of the goal never fits, whatever the time (a whole day covers no more than half a day
+   * does): the fewest minutes that cover as much as a whole day.
+   */
+  most: MostCoverage | null;
   recommendedMinutes: number | null;
   skillFits: ReadonlyMap<string, number>;
   /**
@@ -140,6 +149,29 @@ export function getPlanFeasibility({
       : null,
   );
 
+  const shownAt = (minutes: number) => roundShare(coverageAt(minutes).coveredShare);
+
+  const most = once((): MostCoverage | null => {
+    if (!deadline || recommendedMinutes() !== null) {
+      return null;
+    }
+
+    const wholeDay = shownAt(MAX_DAILY_MINUTES);
+
+    if (shownAt(MAX_DAILY_MINUTES / 2) < wholeDay) {
+      return null;
+    }
+
+    return {
+      coveredShare: wholeDay,
+      minutes: narrowFit({
+        fits: (minutes) => shownAt(minutes) >= wholeDay,
+        fitting: MAX_DAILY_MINUTES,
+        short: 0,
+      }),
+    };
+  });
+
   const alternative = once(() => (deadline ? null : getAlternative({ built: planned, input })));
 
   const fittingDate = once(() =>
@@ -170,6 +202,9 @@ export function getPlanFeasibility({
       return fullCourseEndDate();
     },
     measure: coverage?.measure ?? "goal",
+    get most() {
+      return most();
+    },
     get recommendedMinutes() {
       return recommendedMinutes();
     },

@@ -1,15 +1,8 @@
-"use client";
-
-import { type DaySplit } from "@zoonk/core/goals/daily-budget";
-import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { useFormatIsoDate, useGoalDateValues } from "../../_utils/iso-date";
-import { useFormatShare } from "../../_utils/percent";
-import { useFormatDuration } from "../../_utils/time-format";
-import { useTimeToCoverTexts } from "../../plan/use-time-to-cover";
-import { type FullTimeNote, type TimeLine, type TimeOffer, isBusyLine } from "./schedule-time";
-
-export type GoalDate = { isoDate: string; namedMonth: boolean };
+import { useFormatIsoDate, useGoalDateValues } from "../_utils/iso-date";
+import { type TimeLine } from "../_utils/time-answer";
+import { useFormatDuration } from "../_utils/time-format";
+import { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
 
 type DatedLine = Extract<TimeLine, { kind: "everything" | "focus" | "pastDate" | "share" }>;
 
@@ -17,7 +10,6 @@ type FinishLine = Extract<TimeLine, { kind: "finish" | "noFinish" }>;
 
 const DATED_KINDS = new Set<TimeLine["kind"]>(["everything", "focus", "pastDate", "share"]);
 const FINISH_KINDS = new Set<TimeLine["kind"]>(["finish", "noFinish"]);
-const FAILED_KINDS = new Set<TimeLine["kind"]>(["askFailed", "findFailed"]);
 
 function isDatedLine(line: TimeLine): line is DatedLine {
   return DATED_KINDS.has(line.kind);
@@ -29,27 +21,6 @@ function isFinishLine(line: TimeLine): line is FinishLine {
 
 function FinishMonth(chunks: React.ReactNode) {
   return <span className="text-foreground font-medium">{chunks}</span>;
-}
-
-function EverythingTakesWords({
-  date,
-  note,
-}: {
-  date: GoalDate;
-  note: Extract<FullTimeNote, { kind: "takes" }>;
-}) {
-  const texts = useTimeToCoverTexts();
-
-  return (
-    <p>
-      {texts.everythingTakes({
-        minutes: note.minutes,
-        targetDate: date.isoDate,
-        targetDateNamedMonth: date.namedMonth,
-      })}
-      {note.moreDays && <> {texts.moreDays}</>}
-    </p>
-  );
 }
 
 function DatedWords({
@@ -64,9 +35,8 @@ function DatedWords({
   minutes: number;
 }) {
   const t = useExtracted();
-  const texts = useTimeToCoverTexts();
+  const texts = useTimeAnswerTexts();
   const goalDate = useGoalDateValues();
-  const formatShare = useFormatShare();
   const shown = goalDate({ ...date, style: "long" });
 
   switch (line.kind) {
@@ -112,21 +82,7 @@ function DatedWords({
         </>
       );
     case "share":
-      return exam
-        ? t({
-            description:
-              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-            message:
-              "{dateKind, select, month {Covers about {share} of your exam topics in depth by {date}, what comes up most first.} other {Covers about {share} of your exam topics in depth by {date}, what comes up most first.}}",
-            values: { ...shown, share: formatShare(line.share) },
-          })
-        : t({
-            description:
-              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-            message:
-              "{dateKind, select, month {Covers about {share} of your goal in depth by {date}, what matters most first.} other {Covers about {share} of your goal in depth by {date}, what matters most first.}}",
-            values: { ...shown, share: formatShare(line.share) },
-          });
+      return texts.share({ date, exam, value: line.share });
     case "pastDate":
       return t({
         description:
@@ -192,7 +148,7 @@ function StatusWords({
   }
 }
 
-function LineWords({
+export function LineWords({
   date,
   exam,
   line,
@@ -215,93 +171,4 @@ function LineWords({
   }
 
   return <StatusWords dated={date !== null} line={line} minutes={minutes} />;
-}
-
-function DaySplitWords({ split }: { split: DaySplit }) {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const main = formatDuration(split.mine);
-  const other = formatDuration(split.rest);
-
-  return split.others === 1
-    ? t("This goal gets {main} a day and your other goal {other}.", { main, other })
-    : t("This goal gets {main} a day and your other goals {other} together.", { main, other });
-}
-
-function OfferLabel({ offer }: { offer: TimeOffer }) {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const time = formatDuration(offer.minutes);
-
-  return offer.kind === "focus"
-    ? t("Use the suggested {time} a day", { time })
-    : t("Cover everything with {time} a day", { time });
-}
-
-/** One polite live region for the time shown: what everything takes, what this time covers, and the other time to pick. */
-export function ScheduleLine({
-  date,
-  exam,
-  line,
-  minutes,
-  note,
-  offer,
-  onRetry,
-  onUseOffer,
-  split,
-}: {
-  date: GoalDate | null;
-  exam: boolean;
-  line: TimeLine;
-  minutes: number | null;
-  note: FullTimeNote | null;
-  offer: TimeOffer | null;
-  onRetry: () => void;
-  onUseOffer: (minutes: number) => void;
-  split: DaySplit | null;
-}) {
-  const t = useExtracted();
-  const texts = useTimeToCoverTexts();
-  const failed = FAILED_KINDS.has(line.kind);
-
-  return (
-    <div
-      aria-busy={isBusyLine(line)}
-      aria-live="polite"
-      className="text-muted-foreground flex min-h-12 flex-col gap-2 text-sm leading-6 text-pretty sm:min-h-0"
-    >
-      {date && note?.kind === "takes" && <EverythingTakesWords date={date} note={note} />}
-
-      <p>
-        <LineWords date={date} exam={exam} line={line} minutes={minutes} />
-
-        {note?.kind === "tooLong" && <> {texts.tooLong}</>}
-
-        {split && (
-          <>
-            {" "}
-            <DaySplitWords split={split} />
-          </>
-        )}
-
-        {failed && (
-          <>
-            {" "}
-            <Button onClick={onRetry} variant="link">
-              {t("Try again")}
-            </Button>
-          </>
-        )}
-
-        {offer && !failed && (
-          <>
-            {" "}
-            <Button onClick={() => onUseOffer(offer.minutes)} variant="link">
-              <OfferLabel offer={offer} />
-            </Button>
-          </>
-        )}
-      </p>
-    </div>
-  );
 }

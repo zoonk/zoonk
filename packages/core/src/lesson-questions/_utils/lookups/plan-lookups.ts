@@ -245,10 +245,11 @@ async function lookUpTimeToCover(goal: Goal): Promise<GoalTutorLookUpResult> {
     return { status: "notFound", what };
   }
 
-  const { fittingDate, recommendedMinutes, suggested, targetDate } = result.time;
+  const { fittingDate, most, recommendedMinutes, suggested, targetDate } = result.time;
 
   return {
     fittingDate,
+    most,
     recommendedMinutes,
     status: "found",
     suggested: suggested && {

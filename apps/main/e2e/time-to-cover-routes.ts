@@ -10,6 +10,7 @@ export async function routeTimeToCover(
   await page.route(`**/v1/goals/${goalId}/plan/time-to-cover`, async (route) => {
     const json: PlanTimeToCover = {
       fittingDate: null,
+      most: null,
       pastDate: false,
       readingNotice: false,
       ready: true,

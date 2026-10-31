@@ -18,6 +18,7 @@ import { type LearnerPlanOperation } from "./plan-contract";
 import { getFullCourseEnd } from "./planner/after-exam";
 import { FITTING_DATE_TRIES } from "./planner/fitting-date";
 import { addDays, toIsoDate } from "./planner/plan-calendar";
+import { type MostCoverage } from "./planner/plan-feasibility";
 import { applyPlanOperations } from "./planner/plan-operations";
 import { type PlanState } from "./planner/plan-state";
 import { getScheduleOperations } from "./planner/schedule-operations";
@@ -74,6 +75,11 @@ function toGoalWeek<Week extends PlanTimeToCoverInput>({
 
 function toDayMinutes({ day, minutes }: { day: SharedDay; minutes: number | null }) {
   return minutes === null ? null : getBudgetForGoal({ ...day, minutes });
+}
+
+function toMostDay({ day, most }: { day: SharedDay; most: MostCoverage | null }) {
+  const minutes = toDayMinutes({ day, minutes: most?.minutes ?? null });
+  return most && minutes !== null ? { coveredShare: most.coveredShare, minutes } : null;
 }
 
 function getSearchWeekdayMinutes({
@@ -273,6 +279,7 @@ export async function findPlanTimeToCover({
       status: "ready",
       time: {
         fittingDate: null,
+        most: null,
         pastDate: false,
         readingNotice: asked.readingNotice,
         ready: false,
@@ -322,18 +329,22 @@ export async function findPlanTimeToCover({
     ? null
     : toDayMinutes({ day, minutes: feasibility.recommendedMinutes });
 
+  const most = toMostDay({ day, most: pastDate ? null : feasibility.most });
+
   const suggested =
     pastDate || !context.goal.targetDate
       ? null
       : getSuggestedTime({
           coverageAt: (budget) => feasibility.coverageAt(getGoalShare({ ...day, budget })),
           everything: recommendedMinutes,
+          most,
         });
 
   return {
     status: "ready",
     time: {
       fittingDate: movesDate && context.goal.targetDate ? await findCoveringDate(context) : null,
+      most,
       pastDate,
       readingNotice: false,
       ready: true,

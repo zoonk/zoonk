@@ -15,7 +15,9 @@ import {
   SuggestionActions,
   SuggestionDescription,
 } from "../_components/suggestion";
+import { useTimeAnswerTexts } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { getLongerTime } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { usePlanScreen } from "./plan-context";
@@ -25,7 +27,7 @@ import { type SlotItem, type SlotPreview, usePlanSuggestionSlot } from "./plan-s
 import { useStudyEverythingFromSuggestion } from "./study-everything";
 import { useChangeSentence } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
-import { readTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
+import { readTimeToCover } from "./use-time-to-cover";
 
 type GoalDateMove = { after: string; before: string | null };
 
@@ -191,7 +193,7 @@ export function useAnswerOffer() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const formatDate = useFormatIsoDate();
-  const texts = useTimeToCoverTexts();
+  const answerTexts = useTimeAnswerTexts();
   const { goal, plan } = usePlanScreen();
 
   return function answerOffer({
@@ -205,10 +207,14 @@ export function useAnswerOffer() {
   }): CoverageOffer | null {
     const answer = readTimeToCover(time);
     const { fittingDate, targetDate, targetDateNamedMonth } = time;
+    const longer = getLongerTime(time);
 
     const takes =
-      answer.kind === "focus" && targetDate
-        ? texts.everythingTakes({ minutes: answer.full, targetDate, targetDateNamedMonth })
+      longer !== undefined && targetDate
+        ? answerTexts.everythingTakes({
+            date: { isoDate: targetDate, namedMonth: targetDateNamedMonth },
+            full: longer,
+          })
         : null;
 
     if (goal.kind !== "exam" && fittingDate && (intent === "date" || answer.kind !== "covers")) {
@@ -235,14 +241,14 @@ export function useAnswerOffer() {
         ? {
             description: [
               ...(takes ? [takes] : []),
-              texts.focus({
+              answerTexts.focus({
                 coveredShare: answer.coveredShare,
                 everyTopic: answer.everyTopic,
                 exam: goal.kind === "exam",
               }),
             ],
             operations: [{ kind: "setDailyMinutes", minutes: answer.minutes }],
-            title: texts.suggestTitle(answer.minutes),
+            title: answerTexts.suggestTitle(answer.minutes),
           }
         : null;
     }

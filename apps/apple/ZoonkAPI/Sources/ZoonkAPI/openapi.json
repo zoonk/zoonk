@@ -79479,9 +79479,32 @@
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
+          "most": {
+            "default": null,
+            "description": "When no daily time covers everything because part of it never fits, whatever the time (a whole day covers no more than half a day): the fewest daily minutes that cover as much as any time does, and that share. Say what those minutes cover rather than everything. Null when a time covers everything, when more time still helps (the date is too close), without a date and while not ready. With studyDays, the day the goals typed together share",
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "coveredShare": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "minutes": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "coveredShare",
+              "minutes"
+            ],
+            "additionalProperties": false
+          },
           "pastDate": {
             "default": false,
-            "description": "The goal's date has passed in the learner's time zone: no daily time covers it, so recommendedMinutes and suggested are null",
+            "description": "The goal's date has passed in the learner's time zone: no daily time covers it, so recommendedMinutes, most and suggested are null",
             "type": "boolean"
           },
           "readingNotice": {
@@ -79502,7 +79525,7 @@
           },
           "suggested": {
             "default": null,
-            "description": "The daily time to recommend and start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else 4 hours. Show recommendedMinutes beside a focus time, so the learner sees what everything takes and can pick it. Null without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
+            "description": "The daily time to recommend and start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else most's minutes when they are, else 4 hours. Show recommendedMinutes (or most) beside a focus time, so the learner sees what everything takes and can pick it. Null without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
             "nullable": true,
             "type": "object",
             "properties": {
@@ -79522,7 +79545,7 @@
                   "everything",
                   "focus"
                 ],
-                "description": "everything: the minutes cover the whole goal in depth by its date (recommendedMinutes); focus: covering everything takes more than most people keep up, so they're 4 hours a day, what's worth most first, and never to be described as covering everything"
+                "description": "everything: the minutes cover the whole goal in depth by its date (recommendedMinutes); focus: what's worth most first, never to be described as covering everything: 4 hours a day when covering everything takes more than most people keep up, or most's minutes when no time covers everything"
               },
               "minutes": {
                 "type": "integer",
@@ -79585,6 +79608,7 @@
         },
         "required": [
           "fittingDate",
+          "most",
           "pastDate",
           "readingNotice",
           "ready",

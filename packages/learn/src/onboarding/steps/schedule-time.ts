@@ -1,29 +1,10 @@
 import {
-  type PlanTimeAdvice,
   type PlanTimeAdviceInput,
   type PlanTimeToCover,
 } from "@zoonk/core/plans/time-advice-contract";
+import { type TimeLine, getSuggestedMinutes, isBusyLine } from "../../_utils/time-answer";
 
 export type StudyWeek = Omit<PlanTimeAdviceInput, "dailyMinutes"> & { studyDays: number[] };
-
-export type TimeLine =
-  | { kind: "asking" }
-  | { kind: "askFailed" }
-  | { kind: "everything"; suggested: boolean }
-  | { kind: "findFailed" }
-  | { kind: "finish"; endDate: string }
-  | { coveredShare: number; everyTopic: boolean; kind: "focus" }
-  | { kind: "noDays" }
-  | { kind: "noFinish" }
-  | { kind: "pastDate" }
-  | { kind: "share"; share: number }
-  | { kind: "working" };
-
-const BUSY_LINES = new Set<TimeLine["kind"]>(["asking", "working"]);
-
-export function isBusyLine(line: TimeLine): boolean {
-  return BUSY_LINES.has(line.kind);
-}
 
 /** The goals typed together share the day's time; `place` is the shown goal's among them, the main one 0. */
 export type GoalsTogether = { count: number; place: number };
@@ -56,10 +37,6 @@ export function toFindWeek({
   weekend: number | null;
 }): StudyWeek {
   return weekend === null ? { studyDays: days } : { studyDays: days, weekendMinutes: weekend };
-}
-
-export function getSuggestedMinutes(found: PlanTimeToCover | null): number | null {
-  return found?.suggested?.minutes ?? null;
 }
 
 /**
@@ -117,6 +94,20 @@ export function waitsToSave({ line, picked }: { line: TimeLine; picked: number |
   return picked === null && isBusyLine(line);
 }
 
+type Answer = { found: PlanTimeToCover | null; line: TimeLine };
+
+/** While the time shown is worked out again, the last answer stays in place, marked as updating. */
+export function getShownAnswer({
+  last,
+  now,
+}: {
+  last: Answer;
+  now: Answer;
+}): Answer & { updating: boolean } {
+  const updating = isBusyLine(now.line) && !isBusyLine(last.line);
+  return { ...(updating ? last : now), updating };
+}
+
 /** Picking the suggested time again follows the suggestion as the days change, where it's followed. */
 export function toPickedMinutes({
   first,
@@ -129,148 +120,6 @@ export function toPickedMinutes({
 }): number | null {
   const follows = getSuggestedMinutes(first) !== null;
   return follows && getSuggestedMinutes(found) === minutes ? null : minutes;
-}
-
-export type FullTimeNote =
-  | { kind: "takes"; minutes: number | null; moreDays: boolean }
-  | { kind: "tooLong" };
-
-/**
- * When the suggestion is a focus: what covering everything takes while the time shown falls short
- * of it, or that the time shown, which covers it all, is more than most people keep up. More days
- * bring the time down until every day is a study day.
- */
-export function getFullTimeNote({
-  found,
-  line,
-  studiesEveryDay,
-}: {
-  found: PlanTimeToCover | null;
-  line: TimeLine;
-  studiesEveryDay: boolean;
-}): FullTimeNote | null {
-  if (!found || found.suggested?.kind !== "focus") {
-    return null;
-  }
-
-  return line.kind === "everything"
-    ? { kind: "tooLong" }
-    : { kind: "takes", minutes: found.recommendedMinutes, moreDays: !studiesEveryDay };
-}
-
-export type TimeOffer = { kind: "everything" | "focus" | "full"; minutes: number };
-
-/**
- * The suggestion while another time is shown, unless that time covers everything anyway; on a
- * focus suggestion, the time that covers everything.
- */
-export function getOffer({
-  found,
-  line,
-  minutes,
-}: {
-  found: PlanTimeToCover | null;
-  line: TimeLine;
-  minutes: number | null;
-}): TimeOffer | null {
-  const suggested = found?.suggested ?? null;
-
-  if (!suggested) {
-    return null;
-  }
-
-  if (suggested.minutes !== minutes) {
-    const covered = suggested.kind === "everything" && line.kind === "everything";
-    return covered ? null : { kind: suggested.kind, minutes: suggested.minutes };
-  }
-
-  const full = found?.recommendedMinutes ?? null;
-  return suggested.kind === "focus" && full !== null ? { kind: "full", minutes: full } : null;
-}
-
-function getDatedLine({
-  advice,
-  askFailed,
-  findFailed,
-  found,
-  minutes,
-}: {
-  advice: PlanTimeAdvice | null;
-  askFailed: boolean;
-  findFailed: boolean;
-  found: PlanTimeToCover | null;
-  minutes: number;
-}): TimeLine {
-  if (!found) {
-    return { kind: findFailed ? "findFailed" : "working" };
-  }
-
-  if (found.pastDate) {
-    return { kind: "pastDate" };
-  }
-
-  const { suggested } = found;
-
-  if (suggested?.minutes === minutes) {
-    return suggested.kind === "everything"
-      ? { kind: "everything", suggested: true }
-      : { coveredShare: suggested.coveredShare, everyTopic: suggested.everyTopic, kind: "focus" };
-  }
-
-  if (!advice) {
-    return { kind: askFailed ? "askFailed" : "asking" };
-  }
-
-  const share = advice.coveredShare ?? 0;
-  return share >= 1 ? { kind: "everything", suggested: false } : { kind: "share", share };
-}
-
-function getFinishLine({
-  advice,
-  askFailed,
-}: {
-  advice: PlanTimeAdvice | null;
-  askFailed: boolean;
-}): TimeLine {
-  if (!advice) {
-    return { kind: askFailed ? "askFailed" : "asking" };
-  }
-
-  return advice.endDate ? { endDate: advice.endDate, kind: "finish" } : { kind: "noFinish" };
-}
-
-/**
- * `found` is the plan's answer for the days shown, `advice` its answer for the time shown on them;
- * either is null while it's being asked for.
- */
-export function getTimeLine({
-  advice,
-  askFailed,
-  dated,
-  findFailed,
-  found,
-  hasDays,
-  minutes,
-}: {
-  advice: PlanTimeAdvice | null;
-  askFailed: boolean;
-  dated: boolean;
-  findFailed: boolean;
-  found: PlanTimeToCover | null;
-  hasDays: boolean;
-  minutes: number | null;
-}): TimeLine {
-  if (!hasDays) {
-    return { kind: "noDays" };
-  }
-
-  if (minutes === null) {
-    return { kind: "working" };
-  }
-
-  return dated
-    ? getDatedLine({ advice, askFailed, findFailed, found, minutes })
-    : getFinishLine({ advice, askFailed });
 }
 
 /** The time picked needs the plan's own answer, except the one it suggested. */

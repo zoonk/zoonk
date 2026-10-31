@@ -6,22 +6,14 @@ import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/c
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { DailyTimePicker } from "../../_components/daily-time-picker";
+import { type GoalDate, TimeAnswer } from "../../_components/time-answer";
+import { getFullTimeNote, getMarkedTimes, getOffer } from "../../_utils/time-answer";
 import { type GenerationRun } from "../../generation/generation-run";
-import { getFullMinutes, readTimeToCover } from "../../plan/use-time-to-cover";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { FullCourseToggle } from "./full-course-toggle";
 import { NoticeReading } from "./notice-reading";
 import { PlanBuilding } from "./plan-building";
-import { type GoalDate, ScheduleLine } from "./schedule-line";
-import {
-  type GoalsTogether,
-  getFullTimeNote,
-  getOffer,
-  getSuggestedMinutes,
-  keepsFullCourse,
-  toPickedMinutes,
-  waitsToSave,
-} from "./schedule-time";
+import { type GoalsTogether, keepsFullCourse, toPickedMinutes, waitsToSave } from "./schedule-time";
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
 import { type Schedule, type ScheduleActions, useSchedule } from "./use-schedule";
@@ -86,12 +78,13 @@ function PlanWait({
 
 function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule }) {
   const t = useExtracted();
-  const { found, line, minutes, setPicked } = schedule;
+  const { found, minutes, setPicked, shown } = schedule;
+  const marked = getMarkedTimes(found.found);
 
   return (
     <div className="flex flex-col gap-2">
       <DailyTimePicker
-        full={found.found && getFullMinutes(readTimeToCover(found.found))}
+        full={marked.full}
         label={t("Time a day")}
         minutes={minutes}
         titled
@@ -105,32 +98,34 @@ function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule })
           )
         }
         stale={schedule.stale}
-        suggested={getSuggestedMinutes(found.found)}
+        suggested={marked.suggested}
       />
 
-      <ScheduleLine
+      <TimeAnswer
         date={getGoalDate(schedule)}
         exam={exam}
-        line={line}
+        line={shown.line}
         minutes={minutes}
         note={getFullTimeNote({
-          found: found.found,
-          line,
+          found: shown.found,
+          line: shown.line,
           studiesEveryDay: schedule.week.days.length === EVERY_DAY.length,
         })}
-        offer={getOffer({ found: found.found, line, minutes })}
+        offer={getOffer({ found: shown.found, line: shown.line, minutes })}
         onRetry={found.failed ? found.covering.restart : schedule.timeAdvice.restart}
         onUseOffer={(offer) =>
           setPicked(toPickedMinutes({ first: found.first, found: found.found, minutes: offer }))
         }
         split={schedule.split}
+        updating={shown.updating}
       />
     </div>
   );
 }
 
 function ExamFullCourse({ schedule }: { schedule: Schedule }) {
-  const { advice, fullCourse, line, minutes } = schedule;
+  const { advice, fullCourse, minutes } = schedule;
+  const { line } = schedule.shown;
   const date = getGoalDate(schedule);
   const short = line.kind === "share" || line.kind === "focus";
 

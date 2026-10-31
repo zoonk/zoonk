@@ -64,7 +64,7 @@ export function planAtMinutes(
   };
 }
 
-function narrowFit({
+export function narrowFit({
   fits,
   fitting,
   short,

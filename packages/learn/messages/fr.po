@@ -376,6 +376,7 @@ msgstr "{done, number} sur {total, number}"
 
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx
+#: src/_components/time-answer.tsx
 #: src/explain/explain-waiting.tsx
 #: src/generation/generation-wait.tsx
 #: src/language/conversation/call-problem.tsx
@@ -383,7 +384,6 @@ msgstr "{done, number} sur {total, number}"
 #: src/mind-maps/mind-map-card.tsx
 #: src/mind-maps/mind-map-tiles.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
-#: src/onboarding/steps/schedule-line.tsx
 #: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -553,6 +553,186 @@ msgstr "Passer le test et sauter le chapitre"
 msgctxt "vnQGJG"
 msgid "Take the test and skip the unit"
 msgstr "Passer le test et sauter l’unité"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
+msgctxt "JDCgAn"
+msgid "{dateKind, select, month {What it takes to cover all your exam topics by {date}.} other {What it takes to cover all your exam topics by {date}.}}"
+msgstr "{dateKind, select, month {Le temps nécessaire pour étudier tous les sujets de ton examen d’ici {date}.} other {Le temps nécessaire pour étudier tous les sujets de ton examen d’ici le {date}.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
+msgctxt "jecJ21"
+msgid "{dateKind, select, month {What it takes to cover your whole goal by {date}.} other {What it takes to cover your whole goal by {date}.}}"
+msgstr "{dateKind, select, month {Ce qu’il faut pour étudier tout le contenu de ton objectif d’ici {date}.} other {Ce qu’il faut pour étudier tout le contenu de ton objectif d’ici le {date}.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
+msgctxt "wtnatU"
+msgid "{dateKind, select, month {Covers all your exam topics by {date}.} other {Covers all your exam topics by {date}.}}"
+msgstr "{dateKind, select, month {Couvre tous les sujets de ton examen d’ici {date}.} other {Couvre tous les sujets de ton examen d’ici le {date}.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
+msgctxt "foaBe9"
+msgid "{dateKind, select, month {Covers your whole goal by {date}.} other {Covers your whole goal by {date}.}}"
+msgstr "{dateKind, select, month {Couvre l’ensemble de ton objectif d’ici {date}.} other {Couvre l’ensemble de ton objectif d’ici le {date}.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
+msgctxt "Nmkk7T"
+msgid "{dateKind, select, month {Your date, {date}, has passed. You can choose a new one on the next screen.} other {Your date, {date}, has passed. You can choose a new one on the next screen.}}"
+msgstr "{dateKind, select, month {Ton échéance de {date} est passée. Tu peux en choisir une nouvelle à l’écran suivant.} other {Ton échéance du {date} est passée. Tu peux en choisir une nouvelle à l’écran suivant.}}"
+
+#: src/_components/time-answer-lines.tsx
+msgctxt "lzWfsi"
+msgid "You finish around <date>{month}</date>."
+msgstr "Tu finiras vers <date>{month}</date>."
+
+#: src/_components/time-answer-lines.tsx
+msgctxt "Kz6oc0"
+msgid "We can't estimate a finish date for this schedule. Try more time or more study days."
+msgstr "Nous ne pouvons pas estimer de date de fin avec ce rythme. Essaie d’étudier plus longtemps ou plus de jours."
+
+#: src/_components/time-answer-lines.tsx
+msgctxt "Hy8sTO"
+msgid "Choose at least one study day."
+msgstr "Choisis au moins un jour d’étude."
+
+#: src/_components/time-answer-lines.tsx
+#: src/_components/time-answer.tsx
+msgctxt "53o9vK"
+msgid "Working out the time your goal needs…"
+msgstr "Calcul du temps nécessaire pour ton objectif…"
+
+#: src/_components/time-answer-lines.tsx
+#: src/_components/time-answer.tsx
+msgctxt "fiywvR"
+msgid "We couldn't work out the time your goal needs."
+msgstr "Nous n’avons pas pu calculer le temps nécessaire pour ton objectif."
+
+#: src/_components/time-answer-lines.tsx
+msgctxt "jQp-oV"
+msgid "Working out what {time} a day covers…"
+msgstr "Calcul de ce que tu peux étudier avec {time} par jour…"
+
+#: src/_components/time-answer-lines.tsx
+#: src/plan/plan-finish.tsx
+msgctxt "OGpEA-"
+msgid "Working out when you'd finish…"
+msgstr "Calcul de ta date de fin…"
+
+#: src/_components/time-answer-lines.tsx
+msgctxt "2885Jq"
+msgid "We couldn't work out what {time} a day covers."
+msgstr "Nous n’avons pas pu calculer ce que tu peux étudier avec {time} par jour."
+
+#: src/_components/time-answer-lines.tsx
+msgctxt "-TVG-n"
+msgid "We couldn't work out when you'd finish."
+msgstr "Nous n’avons pas pu calculer ta date de fin."
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "zUbsmj"
+msgid "{dateKind, select, month {Not even a whole day covers everything in depth by {date}.} other {Not even a whole day covers everything in depth by {date}.}}"
+msgstr "{dateKind, select, month {Même en étudiant toute la journée, tu ne pourrais pas tout approfondir d’ici {date}.} other {Même en étudiant toute la journée, tu ne pourrais pas tout approfondir d’ici le {date}.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "13 h 30 min".
+#: src/_components/time-answer-texts.ts
+msgctxt "I9fMB3"
+msgid "{dateKind, select, month {Covering everything in depth by {date} takes about {time} a day, more than most people can keep up.} other {Covering everything in depth by {date} takes about {time} a day, more than most people can keep up.}}"
+msgstr "{dateKind, select, month {Tout étudier en profondeur d’ici {date} demande environ {time} par jour, un rythme trop soutenu pour la plupart des gens.} other {Tout étudier en profondeur d’ici le {date} demande environ {time} par jour, un rythme trop soutenu pour la plupart des gens.}}"
+
+#. Part of the goal never fits, whatever the time, so this is the most any daily time covers. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "8 h"; {share} a percentage, like "99%".
+#: src/_components/time-answer-texts.ts
+msgctxt "MTkVRt"
+msgid "{dateKind, select, month {Covering as much as any daily time can by {date}, about {share} in depth, takes about {time} a day, more than most people can keep up.} other {Covering as much as any daily time can by {date}, about {share} in depth, takes about {time} a day, more than most people can keep up.}}"
+msgstr "{dateKind, select, month {Couvrir le maximum possible d’ici {date}, soit environ {share} en profondeur, demande environ {time} par jour, un rythme que la plupart des gens ne peuvent pas tenir.} other {Couvrir le maximum possible d’ici le {date}, soit environ {share} en profondeur, demande environ {time} par jour, un rythme que la plupart des gens ne peuvent pas tenir.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "AVgtRb"
+msgid "{dateKind, select, month {Covers about {share} of your exam topics in depth by {date}, starting with what comes up most.} other {Covers about {share} of your exam topics in depth by {date}, starting with what comes up most.}}"
+msgstr "{dateKind, select, month {Couvre environ {share} des sujets de ton examen en profondeur d’ici {date}, en commençant par ceux qui reviennent le plus souvent.} other {Couvre environ {share} des sujets de ton examen en profondeur d’ici le {date}, en commençant par ceux qui reviennent le plus souvent.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "Tampv1"
+msgid "{dateKind, select, month {Covers about {share} of your goal in depth by {date}, starting with what matters most.} other {Covers about {share} of your goal in depth by {date}, starting with what matters most.}}"
+msgstr "{dateKind, select, month {Couvre environ {share} de ton objectif en profondeur d’ici {date}, en commençant par l’essentiel.} other {Couvre environ {share} de ton objectif en profondeur d’ici le {date}, en commençant par l’essentiel.}}"
+
+#. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
+#: src/_components/time-answer-texts.ts
+msgctxt "llz5RA"
+msgid "Your plan then covers every exam topic, the ones asked most in more depth. That's about {share} of the exam studied in depth."
+msgstr "Ton plan couvre alors tous les sujets de l’examen, en approfondissant ceux qui reviennent le plus souvent. Environ {share} du contenu de l’examen est ainsi étudié en profondeur."
+
+#. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
+#: src/_components/time-answer-texts.ts
+msgctxt "lKM-91"
+msgid "Your plan then starts with what the exam asks most, about {share} of it studied in depth. Topics it asks least may not fit."
+msgstr "Ton plan commence alors par ce qui revient le plus souvent à l’examen, avec environ {share} du contenu de l’examen étudié en profondeur. Les sujets les moins fréquents risquent d’être laissés de côté."
+
+#. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
+#: src/_components/time-answer-texts.ts
+msgctxt "xjYmua"
+msgid "Your plan then covers every part of your goal, what matters most in more depth. That's about {share} of it studied in depth."
+msgstr "Ton plan couvre alors tous les aspects de ton objectif, en approfondissant ce qui compte le plus. Environ {share} du contenu est ainsi étudié en profondeur."
+
+#. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
+#: src/_components/time-answer-texts.ts
+msgctxt "NaIXds"
+msgid "Your plan then starts with what matters most, about {share} of your goal studied in depth. The rest may not fit."
+msgstr "Ton plan commence alors par ce qui compte le plus, avec environ {share} du contenu de ton objectif étudié en profondeur. Le reste risque d’être laissé de côté."
+
+#: src/_components/time-answer-texts.ts
+msgctxt "QrYTpK"
+msgid "More study days would help."
+msgstr "Prévoir plus de jours d’étude aiderait."
+
+#. A sentence before what that time covers. {time} is a daily study time, like "4 h".
+#: src/_components/time-answer-texts.ts
+msgctxt "IaAonA"
+msgid "We suggest {time} a day."
+msgstr "On te propose {time} par jour."
+
+#. The title of a suggestion to change the daily study time. {time} is like "4 h".
+#: src/_components/time-answer-texts.ts
+msgctxt "UE-bQq"
+msgid "We suggest {time} a day"
+msgstr "On te propose {time} par jour"
+
+#: src/_components/time-answer-texts.ts
+msgctxt "0CZ1fn"
+msgid "That's more than most people can keep up."
+msgstr "C’est un rythme trop soutenu pour la plupart des gens."
+
+#: src/_components/time-answer.tsx
+msgctxt "AHugH9"
+msgid "This goal gets {main} a day and your other goal {other}."
+msgstr "Tu consacres {main} par jour à cet objectif et {other} à ton autre objectif."
+
+#: src/_components/time-answer.tsx
+msgctxt "L1otxC"
+msgid "This goal gets {main} a day and your other goals {other} together."
+msgstr "Tu consacres {main} par jour à cet objectif et {other} au total à tes autres objectifs."
+
+#: src/_components/time-answer.tsx
+msgctxt "PNv_qq"
+msgid "Use {time} a day to cover everything"
+msgstr "Choisir {time} par jour pour tout couvrir"
+
+#: src/_components/time-answer.tsx
+msgctxt "7NHdvs"
+msgid "Use the suggested {time} a day"
+msgstr "Choisir la durée suggérée de {time} par jour"
+
+#. A button that changes the plan's daily time to the one just found.
+#: src/_components/time-answer.tsx
+msgctxt "Nm3oG2"
+msgid "Use {time} a day"
+msgstr "Choisir {time} par jour"
 
 #. A switch to study a different amount of time a day on weekends.
 #: src/_components/weekend-time.tsx
@@ -9344,114 +9524,6 @@ msgctxt "LHVFe7"
 msgid "E.g., reports, A/B tests"
 msgstr "Ex. : rapports, tests A/B"
 
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "JDCgAn"
-msgid "{dateKind, select, month {What it takes to cover all your exam topics by {date}.} other {What it takes to cover all your exam topics by {date}.}}"
-msgstr "{dateKind, select, month {Le temps nécessaire pour étudier tous les sujets de ton examen d’ici {date}.} other {Le temps nécessaire pour étudier tous les sujets de ton examen d’ici le {date}.}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "jecJ21"
-msgid "{dateKind, select, month {What it takes to cover your whole goal by {date}.} other {What it takes to cover your whole goal by {date}.}}"
-msgstr "{dateKind, select, month {Ce qu’il faut pour étudier tout le contenu de ton objectif d’ici {date}.} other {Ce qu’il faut pour étudier tout le contenu de ton objectif d’ici le {date}.}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "wtnatU"
-msgid "{dateKind, select, month {Covers all your exam topics by {date}.} other {Covers all your exam topics by {date}.}}"
-msgstr "{dateKind, select, month {Couvre tous les sujets de ton examen d’ici {date}.} other {Couvre tous les sujets de ton examen d’ici le {date}.}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "foaBe9"
-msgid "{dateKind, select, month {Covers your whole goal by {date}.} other {Covers your whole goal by {date}.}}"
-msgstr "{dateKind, select, month {Couvre l’ensemble de ton objectif d’ici {date}.} other {Couvre l’ensemble de ton objectif d’ici le {date}.}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "SDrPkr"
-msgid "{dateKind, select, month {Covers about {share} of your exam topics in depth by {date}, what comes up most first.} other {Covers about {share} of your exam topics in depth by {date}, what comes up most first.}}"
-msgstr "{dateKind, select, month {Couvre environ {share} des sujets de ton examen en profondeur d’ici {date}, en commençant par ceux qui reviennent le plus souvent.} other {Couvre environ {share} des sujets de ton examen en profondeur d’ici le {date}, en commençant par ceux qui reviennent le plus souvent.}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "TJwHEP"
-msgid "{dateKind, select, month {Covers about {share} of your goal in depth by {date}, what matters most first.} other {Covers about {share} of your goal in depth by {date}, what matters most first.}}"
-msgstr "{dateKind, select, month {Couvre environ {share} de ton objectif en profondeur d’ici {date}, en commençant par l’essentiel.} other {Couvre environ {share} de ton objectif en profondeur d’ici le {date}, en commençant par l’essentiel.}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "Nmkk7T"
-msgid "{dateKind, select, month {Your date, {date}, has passed. You can choose a new one on the next screen.} other {Your date, {date}, has passed. You can choose a new one on the next screen.}}"
-msgstr "{dateKind, select, month {Ton échéance de {date} est passée. Tu peux en choisir une nouvelle à l’écran suivant.} other {Ton échéance du {date} est passée. Tu peux en choisir une nouvelle à l’écran suivant.}}"
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "lzWfsi"
-msgid "You finish around <date>{month}</date>."
-msgstr "Tu finiras vers <date>{month}</date>."
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "Kz6oc0"
-msgid "We can't estimate a finish date for this schedule. Try more time or more study days."
-msgstr "Nous ne pouvons pas estimer de date de fin avec ce rythme. Essaie d’étudier plus longtemps ou plus de jours."
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "Hy8sTO"
-msgid "Choose at least one study day."
-msgstr "Choisis au moins un jour d’étude."
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "53o9vK"
-msgid "Working out the time your goal needs…"
-msgstr "Calcul du temps nécessaire pour ton objectif…"
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "fiywvR"
-msgid "We couldn't work out the time your goal needs."
-msgstr "Nous n’avons pas pu calculer le temps nécessaire pour ton objectif."
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "jQp-oV"
-msgid "Working out what {time} a day covers…"
-msgstr "Calcul de ce que tu peux étudier avec {time} par jour…"
-
-#: src/onboarding/steps/schedule-line.tsx
-#: src/plan/plan-finish.tsx
-msgctxt "OGpEA-"
-msgid "Working out when you'd finish…"
-msgstr "Calcul de ta date de fin…"
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "2885Jq"
-msgid "We couldn't work out what {time} a day covers."
-msgstr "Nous n’avons pas pu calculer ce que tu peux étudier avec {time} par jour."
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "-TVG-n"
-msgid "We couldn't work out when you'd finish."
-msgstr "Nous n’avons pas pu calculer ta date de fin."
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "AHugH9"
-msgid "This goal gets {main} a day and your other goal {other}."
-msgstr "Tu consacres {main} par jour à cet objectif et {other} à ton autre objectif."
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "L1otxC"
-msgid "This goal gets {main} a day and your other goals {other} together."
-msgstr "Tu consacres {main} par jour à cet objectif et {other} au total à tes autres objectifs."
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "7NHdvs"
-msgid "Use the suggested {time} a day"
-msgstr "Choisir la durée suggérée de {time} par jour"
-
-#: src/onboarding/steps/schedule-line.tsx
-msgctxt "lOJOQa"
-msgid "Cover everything with {time} a day"
-msgstr "Tout étudier avec {time} par jour"
-
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "h2ifto"
 msgid "How much time can you study each day?"
@@ -10052,37 +10124,6 @@ msgctxt "qCWuYX"
 msgid "{time} a day isn't enough time to cover your goal."
 msgstr "{time} par jour ne suffit pas pour couvrir tout ton objectif."
 
-#. Every exam topic gets studied, and the ones asked most often get extra depth.
-#: src/plan/plan-coverage.tsx
-msgctxt "sifA0D"
-msgid "{time} a day studies every topic of the exam, the ones that come up most in more depth."
-msgstr "Avec {time} par jour, tu étudies tous les sujets de l’examen et approfondis ceux qui reviennent le plus souvent."
-
-#: src/plan/plan-coverage.tsx
-msgctxt "x14ioD"
-msgid "{time} a day studies every topic of the exam, some of them in less depth."
-msgstr "Avec {time} par jour, tu étudies tous les sujets de l’examen, certains moins en profondeur."
-
-#: src/plan/plan-coverage.tsx
-msgctxt "U8753Z"
-msgid "{time} a day studies every part of your goal, the ones that matter most in more depth."
-msgstr "Avec {time} par jour, tu étudies toutes les parties de ton objectif, et plus en détail celles qui comptent le plus."
-
-#: src/plan/plan-coverage.tsx
-msgctxt "wzOAQq"
-msgid "{time} a day doesn't reach every topic by the exam: the ones that come up least come after it."
-msgstr "Avec {time} par jour, tu ne peux pas aborder tous les sujets avant l’examen : les moins fréquents viennent après."
-
-#: src/plan/plan-coverage.tsx
-msgctxt "nIFMp8"
-msgid "{time} a day doesn't reach every topic: the ones that come up least are left out."
-msgstr "Avec {time} par jour, tu ne peux pas aborder tous les sujets : les moins fréquents sont laissés de côté."
-
-#: src/plan/plan-coverage.tsx
-msgctxt "iMuwYA"
-msgid "{time} a day doesn't reach every part of your goal: what comes last in your path is left out."
-msgstr "Avec {time} par jour, tu ne peux pas étudier toutes les parties de ton objectif : celles qui viennent en dernier dans ton parcours sont laissées de côté."
-
 #: src/plan/plan-coverage.tsx
 msgctxt "0YytO3"
 msgid "Move your date to {date}"
@@ -10243,9 +10284,9 @@ msgid "{dateKind, select, month {Your deadline of {date} comes off your plan. Yo
 msgstr "{dateKind, select, month {Ton échéance de {date} sera retirée de ton plan. Tu pourras en fixer une nouvelle à tout moment.} other {Ton échéance du {date} sera retirée de ton plan. Tu pourras en fixer une nouvelle à tout moment.}}"
 
 #: src/plan/plan-full-course.tsx
-msgctxt "9N2W7h"
-msgid "What doesn't fit by the exam is left out of your plan."
-msgstr "Ce qui ne tient pas avant l’examen est laissé de côté dans ton plan."
+msgctxt "_KzTI7"
+msgid "When off, your plan ends at the exam."
+msgstr "Si l’option est désactivée, ton plan s’arrête à l’examen."
 
 #: src/plan/plan-notice.tsx
 msgctxt "3qUBgl"
@@ -10337,11 +10378,6 @@ msgstr "Tout"
 msgctxt "b9QpDx"
 msgid "Working out what your time covers…"
 msgstr "Calcul de ce que tu peux étudier dans le temps prévu…"
-
-#: src/plan/plan-schedule.tsx
-msgctxt "J6l2xe"
-msgid "Covers your whole goal."
-msgstr "Couvre tout ton objectif."
 
 #: src/plan/plan-status-label.tsx
 msgctxt "FvyQR4"
@@ -11336,48 +11372,6 @@ msgctxt "XnimdQ"
 msgid "Windows"
 msgstr "Windows"
 
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/plan/use-time-to-cover.ts
-msgctxt "zUbsmj"
-msgid "{dateKind, select, month {Not even a whole day covers everything in depth by {date}.} other {Not even a whole day covers everything in depth by {date}.}}"
-msgstr "{dateKind, select, month {Même en étudiant toute la journée, tu ne pourrais pas tout approfondir d’ici {date}.} other {Même en étudiant toute la journée, tu ne pourrais pas tout approfondir d’ici le {date}.}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "13 h 30 min".
-#: src/plan/use-time-to-cover.ts
-msgctxt "I9fMB3"
-msgid "{dateKind, select, month {Covering everything in depth by {date} takes about {time} a day, more than most people can keep up.} other {Covering everything in depth by {date} takes about {time} a day, more than most people can keep up.}}"
-msgstr "{dateKind, select, month {Tout étudier en profondeur d’ici {date} demande environ {time} par jour, un rythme trop soutenu pour la plupart des gens.} other {Tout étudier en profondeur d’ici le {date} demande environ {time} par jour, un rythme trop soutenu pour la plupart des gens.}}"
-
-#. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
-#: src/plan/use-time-to-cover.ts
-msgctxt "llz5RA"
-msgid "Your plan then covers every exam topic, the ones asked most in more depth. That's about {share} of the exam studied in depth."
-msgstr "Ton plan couvre alors tous les sujets de l’examen, en approfondissant ceux qui reviennent le plus souvent. Environ {share} du contenu de l’examen est ainsi étudié en profondeur."
-
-#. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
-#: src/plan/use-time-to-cover.ts
-msgctxt "lKM-91"
-msgid "Your plan then starts with what the exam asks most, about {share} of it studied in depth. Topics it asks least may not fit."
-msgstr "Ton plan commence alors par ce qui revient le plus souvent à l’examen, avec environ {share} du contenu de l’examen étudié en profondeur. Les sujets les moins fréquents risquent d’être laissés de côté."
-
-#. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
-#: src/plan/use-time-to-cover.ts
-msgctxt "xjYmua"
-msgid "Your plan then covers every part of your goal, what matters most in more depth. That's about {share} of it studied in depth."
-msgstr "Ton plan couvre alors tous les aspects de ton objectif, en approfondissant ce qui compte le plus. Environ {share} du contenu est ainsi étudié en profondeur."
-
-#. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
-#: src/plan/use-time-to-cover.ts
-msgctxt "NaIXds"
-msgid "Your plan then starts with what matters most, about {share} of your goal studied in depth. The rest may not fit."
-msgstr "Ton plan commence alors par ce qui compte le plus, avec environ {share} du contenu de ton objectif étudié en profondeur. Le reste risque d’être laissé de côté."
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/plan/use-time-to-cover.ts
-msgctxt "UvdTWC"
-msgid "{dateKind, select, month {{time} a day covers everything in depth by {date}.} other {{time} a day covers everything in depth by {date}.}}"
-msgstr "{dateKind, select, month {Avec {time} par jour, ton plan couvre tout en profondeur d’ici {date}.} other {Avec {time} par jour, ton plan couvre tout en profondeur d’ici le {date}.}}"
-
 #: src/plan/use-time-to-cover.ts
 msgctxt "g7wBHi"
 msgid "We couldn't work out the time needed."
@@ -11400,37 +11394,9 @@ msgid "At {time} a day, your plan covers everything by {date}."
 msgstr "Avec {time} par jour, ton plan couvre tout d’ici le {date}."
 
 #: src/plan/use-time-to-cover.ts
-msgctxt "QrYTpK"
-msgid "More study days would help."
-msgstr "Prévoir plus de jours d’étude aiderait."
-
-#: src/plan/use-time-to-cover.ts
 msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "Nous n’avons pas pu trouver de date pour tout couvrir."
-
-#. A sentence before what that time covers. {time} is a daily study time, like "4 h".
-#: src/plan/use-time-to-cover.ts
-msgctxt "IaAonA"
-msgid "We suggest {time} a day."
-msgstr "On te propose {time} par jour."
-
-#. The title of a suggestion to change the daily study time. {time} is like "4 h".
-#: src/plan/use-time-to-cover.ts
-msgctxt "UE-bQq"
-msgid "We suggest {time} a day"
-msgstr "On te propose {time} par jour"
-
-#: src/plan/use-time-to-cover.ts
-msgctxt "0CZ1fn"
-msgid "That's more than most people can keep up."
-msgstr "C’est un rythme trop soutenu pour la plupart des gens."
-
-#. A button that changes the plan's daily time to the one just found.
-#: src/plan/use-time-to-cover.ts
-msgctxt "Nm3oG2"
-msgid "Use {time} a day"
-msgstr "Choisir {time} par jour"
 
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"

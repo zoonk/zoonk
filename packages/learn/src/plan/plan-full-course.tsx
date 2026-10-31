@@ -169,9 +169,7 @@ export function FullCourseSwitch() {
       </div>
 
       <p className="text-muted-foreground text-sm text-pretty" id={descriptionId}>
-        {course.on
-          ? text.onExam(course)
-          : t("What doesn't fit by the exam is left out of your plan.")}
+        {course.on ? text.onExam(course) : t("When off, your plan ends at the exam.")}
       </p>
 
       {failed && <ChangeSaveError />}

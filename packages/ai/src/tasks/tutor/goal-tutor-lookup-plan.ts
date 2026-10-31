@@ -80,6 +80,8 @@ export type PlanLookUpFound =
        * For a non-exam goal whose time falls short: the earliest date that time covers it all by.
        */
       fittingDate: string | null;
+      /** When part of the goal never fits whatever the time: the least time that covers as much as any does. */
+      most: { coveredShare: number; minutes: number } | null;
       /** The fewest minutes a day that study the whole goal in depth by its date; null when no daily time does. */
       recommendedMinutes: number | null;
       /** The time a day to recommend; `focus` when everything takes more than most people keep up. */
