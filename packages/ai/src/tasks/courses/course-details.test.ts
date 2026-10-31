@@ -70,7 +70,7 @@ describe(generateCourseDetails, () => {
     expect(systemPrompt).toContain("health");
     expect(systemPrompt).not.toContain("languages");
     expect(systemPrompt).not.toContain("exams");
-    expect(userPrompt).toContain("TARGET_LANGUAGE: Español de España");
+    expect(userPrompt).toContain("TARGET_LANGUAGE: Español de México");
     expect(userPrompt).toContain("- [overview] Antibodies: How antibodies find germs");
   });
 

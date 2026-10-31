@@ -8,7 +8,7 @@ Here the learner reads the app in `TARGET_LANGUAGE` itself, the language they're
 
 # Inputs
 
-- `TARGET_LANGUAGE`: the language being learned, with its variant (for example US English, Brazilian Portuguese or Spain Spanish). Use that variant's words, spelling and usage everywhere.
+- `TARGET_LANGUAGE`: the language being learned, with its variant (for example US English, Brazilian Portuguese or Mexican Spanish). Use that variant's words, spelling and usage everywhere.
 - `LEARNER_LANGUAGE`: the learner's language. Translations, explanations, tips and prompts are written in it.
 - `NEEDS_ROMANIZATION`: `yes` when `TARGET_LANGUAGE` is written in a non-Latin script.
 - `LOCAL_CONTEXT`: the everyday world of the place whose variant `TARGET_LANGUAGE` is, or `none`. The situations happen there, so sentences use its names, money, places and habits (a rent in dollars in Chicago for US English), never the learner's country. When it's `none`, use a country where `TARGET_LANGUAGE` is spoken. Its register is how people there talk in the target sentences; it never changes the language of the explanations.

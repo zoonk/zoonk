@@ -39,6 +39,7 @@ const WORDS = [
   "cutoff passing official requirements format section",
   "ley leyes artículo artículos decreto reforma derogación derogado vigente actual sentencia",
   "tribunal supremo constitucional jurisprudencia contrato examen convocatoria oposiciones temario",
+  "suprema corte nación amparo admisión ingreso aciertos reactivos guía",
   "fecha plazo requisitos",
 ] as const;
 
@@ -59,6 +60,7 @@ const ACRONYMS = [
   "enem sisu fies prouni inep mec fgv cebraspe cespe fcc vunesp ibfc quadrix iades",
   "inss fgts icms ipi iss iptu ipva irpf irpj pis cofins csll",
   "us usa uk eu un sat gre gmat lsat mcat ielts toefl dele delf dalf",
+  "unam ipn ceneval exani egel enarm scjn",
 ] as const;
 
 /** A law's subdivisions are numbered in Roman numerals ("inciso IV"). */

@@ -48,21 +48,21 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
     register: 'address the reader as "you", friendly and direct',
   },
   es: {
-    place: "Spain",
-    money: "euro, written 1.234,56 € (the symbol after the number)",
+    place: "Mexico",
+    money: "Mexican peso, written $1,234.56 (MXN where dollars could be meant)",
     formats:
-      "1.234,56 (inside LaTeX math, 1.234{,}56); dates as 27/09/2026; 24-hour clock (14:30); metric units and °C",
-    names: "Lucía, Hugo, Martina, Pablo, Sofía, Daniel, Carmen, Javier, Paula, Álvaro",
+      "1,234.56 (inside LaTeX math, 1{,}234.56); dates as 27/09/2026; 12-hour clock in everyday use (2:30 p.m.); metric units and °C",
+    names: "Sofía, Santiago, Valentina, Mateo, Ximena, Diego, Regina, Emiliano, Camila, Luis",
     places:
-      "Madrid, Barcelona, Valencia, Sevilla, Zaragoza, Málaga, Bilbao, Valladolid, Palma, Las Palmas; the bar de la esquina, the mercado, the metro, Renfe and the AVE",
+      "Ciudad de México (CDMX), Guadalajara, Monterrey, Puebla, Mérida, Querétaro, Tijuana, León, Oaxaca, Veracruz; the tiendita on the corner, the mercado and the tianguis, the Metro and the Metrobús, OXXO",
     everydayLife:
-      "Bizum, IVA (21% general rate), the nómina, IRPF and the yearly declaración de la renta, Seguridad Social, DNI and NIE, empadronamiento, pagas extra, Mercadona",
+      'bank transfers (SPEI), cash at OXXO, buying in "meses sin intereses", IVA (16%), CURP and RFC, the INE voter card as ID, IMSS and ISSSTE, salaries paid every quincena, the aguinaldo (at least 15 days\' pay, by December 20), the yearly declaración anual with the SAT, Afore, Infonavit, Mercado Libre',
     school:
-      "educación infantil; primaria (6 years, ages 6 to 12); ESO (4 years, ages 12 to 16); bachillerato (2 years) or formación profesional (FP); then universidad (grado); grades from 0 to 10, where 5 passes",
+      "preescolar; primaria (6 years, ages 6 to 12); secundaria (3 years, ages 12 to 15); preparatoria or bachillerato (ages 15 to 18); then universidad (licenciatura); grades usually from 5 to 10, where 6 passes",
     exams:
-      "the PAU for university entrance (still called selectividad), oposiciones (teachers, Guardia Civil, the state administration and more), MIR for doctors, the DGT driving theory test, DELE",
+      "university admission exams: the EXANI-II (Ceneval), the UNAM's and the IPN's own (counted in aciertos, correct answers); the EGEL (Ceneval) to graduate, the ENARM for medical residencies, TOEFL and Cambridge exams for English",
     register:
-      'address the reader as "tú" (and "vosotros" for a group), informal and warm, with Spain\'s vocabulary (ordenador, móvil, coche, zumo)',
+      'address the reader as "tú" (and "ustedes" for a group, never "vosotros" or "vos"), informal and warm, in Latin American Spanish with Mexico\'s vocabulary (computadora, celular, carro, jugo) and no regional slang',
   },
   fr: {
     place: "France",
