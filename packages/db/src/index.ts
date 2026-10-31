@@ -33,6 +33,7 @@ export type {
   EvaluationRun,
   ExamBlueprint,
   Feedback,
+  FollowUp,
   FreeCallSpendDay,
   GenerationStatus,
   Goal,

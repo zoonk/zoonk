@@ -1,0 +1,29 @@
+enum FollowUpKind {
+  prepareSession       @map("prepare_session")
+  prepareGoalLessons   @map("prepare_goal_lessons")
+  writeLesson          @map("write_lesson")
+  classifyMistakeCause @map("classify_mistake_cause")
+  findMistakePattern   @map("find_mistake_pattern")
+  rememberOnboarding   @map("remember_onboarding")
+  rememberSession      @map("remember_session")
+  checkDailyInsight    @map("check_daily_insight")
+  checkFactSensitivity @map("check_fact_sensitivity")
+  voiceWord            @map("voice_word")
+}
+
+/// Work owed after a learner's write; ended by the run that started it unless asked again since,
+/// which `revision` counts.
+model FollowUp {
+  id          String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId      String       @map("user_id") @db.Uuid
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind        FollowUpKind
+  key         String
+  input       Json
+  revision    Int          @default(0)
+  requestedAt DateTime     @default(now()) @map("requested_at")
+
+  @@unique([userId, kind, key], name: "userKindKey")
+  @@index([requestedAt])
+  @@map("follow_ups")
+}

@@ -62,6 +62,7 @@ model User {
   suggestedGoals        SuggestedGoal[]
   onboardingDrafts      OnboardingDraft[]
   goalUnderstandings    GoalUnderstanding[]
+  followUps             FollowUp[]
 
   @@unique([email])
   @@unique([username])
