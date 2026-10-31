@@ -507,8 +507,6 @@
     <string name="onboarding_position_title">Which position are you applying for?</string>
     <string name="onboarding_position_description">The notice can have a different exam for each position.</string>
     <string name="onboarding_position_label">Position</string>
-    <!-- Example positions in a public service exam; use the kind of positions such exams list in the language's country. -->
-    <string name="onboarding_position_placeholder">E.g., agente, analista</string>
     <string name="onboarding_reason_title">Why are you learning it?</string>
     <string name="onboarding_reason_description">The situations you care about shape every lesson.</string>
     <string name="onboarding_reason_label">Why</string>

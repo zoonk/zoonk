@@ -207,7 +207,6 @@
   "onboarding_plus_more_goals_up_front": "4c62139674974b0dc1d2b6afc3305364998e680ac1184d84c397d22e7a321739",
   "onboarding_position_description": "cec72f286e8c5c647797d2e0380159e50fd9737fe5c34a8f333f849efff37840",
   "onboarding_position_label": "4c0d05fe494c58f7dd0e61c218568be876e06df088746c12d26b57cfc94e84a6",
-  "onboarding_position_placeholder": "faa26023765bc2f1d6f5ddc0003654efaccfb6afe8c1a2b3d9bc7a17f06a0af4",
   "onboarding_position_title": "fa912d3998431735782b86e458136f24fcf10fc0a02c01f0171ead88dea05264",
   "onboarding_purpose_career_change": "c387982641071b93cf6d4063de92fece79d887f27faf423f99b92c80cde6e771",
   "onboarding_purpose_career_change_description": "3a5607e43ed1e8216d9890cb4d88b5fee51f101165f2f5fe5b6781fcaabfa2e2",
@@ -970,8 +969,6 @@
     <string name="onboarding_position_title">¿A qué puesto te presentas?</string>
     <string name="onboarding_position_description">La convocatoria puede incluir un examen distinto para cada puesto.</string>
     <string name="onboarding_position_label">Puesto</string>
-    <!-- Example positions in a public service exam; use the kind of positions such exams list in the language's country. -->
-    <string name="onboarding_position_placeholder">P. ej., agente, analista</string>
     <string name="onboarding_reason_title">¿Por qué quieres aprenderlo?</string>
     <string name="onboarding_reason_description">Las situaciones que te interesan dan forma a cada lección.</string>
     <string name="onboarding_reason_label">Por qué</string>

@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
@@ -376,6 +377,13 @@ internal fun ColumnScope.SubjectsLevelStep(
 
 internal enum class TextQuestion { Reason, Admission, Position, Score }
 
+private data class TextQuestionCopy(
+    @StringRes val title: Int,
+    @StringRes val description: Int,
+    @StringRes val label: Int,
+    @StringRes val placeholder: Int?,
+)
+
 @Composable
 internal fun ColumnScope.TextStep(
     question: TextQuestion,
@@ -401,7 +409,7 @@ internal fun ColumnScope.TextStep(
     val (title, description, label, placeholder) =
         when (question) {
             TextQuestion.Reason -> {
-                listOf(
+                TextQuestionCopy(
                     R.string.onboarding_reason_title,
                     R.string.onboarding_reason_description,
                     R.string.onboarding_reason_label,
@@ -410,7 +418,7 @@ internal fun ColumnScope.TextStep(
             }
 
             TextQuestion.Admission -> {
-                listOf(
+                TextQuestionCopy(
                     R.string.onboarding_admission_title,
                     R.string.onboarding_target_description,
                     R.string.onboarding_target_label,
@@ -419,16 +427,16 @@ internal fun ColumnScope.TextStep(
             }
 
             TextQuestion.Position -> {
-                listOf(
+                TextQuestionCopy(
                     R.string.onboarding_position_title,
                     R.string.onboarding_position_description,
                     R.string.onboarding_position_label,
-                    R.string.onboarding_position_placeholder,
+                    placeholder = null,
                 )
             }
 
             TextQuestion.Score -> {
-                listOf(
+                TextQuestionCopy(
                     R.string.onboarding_score_title,
                     R.string.onboarding_target_description,
                     R.string.onboarding_target_label,
@@ -448,7 +456,7 @@ internal fun ColumnScope.TextStep(
     ) {
         AnswerField(
             stringResource(label),
-            stringResource(placeholder),
+            placeholder?.let { stringResource(it) },
             value,
             onValueChange = { value = it },
             onDone = { if (value.isNotBlank() && !pending) answer(value.trim()) },
@@ -867,7 +875,7 @@ internal fun ColumnScope.BuddyStep(
 @Composable
 private fun AnswerField(
     label: String,
-    placeholder: String,
+    placeholder: String?,
     value: String,
     onValueChange: (String) -> Unit,
     focusFirst: Boolean = true,
@@ -879,7 +887,7 @@ private fun AnswerField(
         onValueChange = { onValueChange(it.take(MAX_ANSWER_LENGTH)) },
         modifier = Modifier.fillMaxWidth().focusRequester(focus),
         label = { Text(label) },
-        placeholder = { Text(placeholder) },
+        placeholder = placeholder?.let { { Text(it) } },
         singleLine = true,
         keyboardOptions =
             KeyboardOptions(

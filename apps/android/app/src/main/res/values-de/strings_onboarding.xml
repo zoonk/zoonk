@@ -207,7 +207,6 @@
   "onboarding_plus_more_goals_up_front": "9ac4519a6566e397d98d7359c2d23ba7db001f10c4e02f5b7a033ca9ddf756ac",
   "onboarding_position_description": "cf75567c8e39b1dbb3ea35c7252775db5ef547b8694377643a29a82a91f0ad7a",
   "onboarding_position_label": "1187117b9eec43d721781dcc8a3cca832dd9b295e6ea5d4695eba438b8393002",
-  "onboarding_position_placeholder": "a9f86aaf48e2c41cf67067e0246d02944c789302e4edf75730ee6021c0d0926f",
   "onboarding_position_title": "d47d5a5034195ffc5f8723bddd3c10189b5e15417c902271091aa485acf9cba7",
   "onboarding_purpose_career_change": "f03324a0229939124cf833317e6cfd010a3c8200a35e6593978a2c1d7431214e",
   "onboarding_purpose_career_change_description": "9b77ae2e26b2d9a3b4101d5720c891b442db34ea7d7222d231c4f4fe880806b9",
@@ -949,8 +948,6 @@
     <string name="onboarding_position_title">Für welche Stelle bewirbst du dich?</string>
     <string name="onboarding_position_description">Laut Ausschreibung kann es für jede Stelle eine andere Prüfung geben.</string>
     <string name="onboarding_position_label">Stelle</string>
-    <!-- Example positions in a public service exam; use the kind of positions such exams list in the language's country. -->
-    <string name="onboarding_position_placeholder">Z. B. Sachbearbeiter, Analyst</string>
     <string name="onboarding_reason_title">Warum lernst du das?</string>
     <string name="onboarding_reason_description">Die Situationen, die dir wichtig sind, prägen jede Lektion.</string>
     <string name="onboarding_reason_label">Warum</string>

@@ -207,7 +207,6 @@
   "onboarding_plus_more_goals_up_front": "b6d41e36210e88f8e20ff72d957e7ccb6c62c7848a2319b87b4914659272f441",
   "onboarding_position_description": "b2812f0450013c546c12d5e435040e4215c06acb1bae1c3f8b38fd5ca241d762",
   "onboarding_position_label": "92342a01caaa650b75221f578d63feb0addabd265afcec523b3bfeb735077a0e",
-  "onboarding_position_placeholder": "89de8f895b21c2a29dbf658b69a207359fe5c91424d1eb5a7afdf93c16fb10b6",
   "onboarding_position_title": "ebeca67cca2c0444571d2e35057300b9ff1747f941b5ff42a20f74dd18358db5",
   "onboarding_purpose_career_change": "7e56bc51e0d4518bcc410edf2755419d30d4c119ed1f78c5adde619ce4b1d36b",
   "onboarding_purpose_career_change_description": "080ec1a22f16f567a23def6cd297fb2d07343959d95e7976e27b8fd394fcccc3",
@@ -970,8 +969,6 @@
     <string name="onboarding_position_title">Para qual cargo você vai prestar concurso?</string>
     <string name="onboarding_position_description">O edital pode ter uma prova diferente para cada cargo.</string>
     <string name="onboarding_position_label">Cargo</string>
-    <!-- Example positions in a public service exam; use the kind of positions such exams list in the language's country. -->
-    <string name="onboarding_position_placeholder">Ex.: agente, analista</string>
     <string name="onboarding_reason_title">Por que você quer aprender isso?</string>
     <string name="onboarding_reason_description">As situações que importam para você dão forma a cada aula.</string>
     <string name="onboarding_reason_label">Por quê</string>
