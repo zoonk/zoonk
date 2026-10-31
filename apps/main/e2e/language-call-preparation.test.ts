@@ -1,3 +1,4 @@
+import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import {
@@ -5,6 +6,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
+import { type StreamEvent } from "./generation-run";
 import { createLanguageLearner } from "./language-learner";
 import { openAs } from "./study-day";
 
@@ -64,29 +66,77 @@ async function writeB1Call(chapterId: string) {
   });
 }
 
+const RUN_EVENTS = "**/v1/generations/*/events**";
+const RUN_STATUS = /\/v1\/generations\/[^/]+$/u;
+
+function stream(events: StreamEvent[]) {
+  return {
+    body: events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join(""),
+    contentType: "text/event-stream",
+    status: 200,
+  };
+}
+
+/** E2E runs wait on a model that never answers, so the test plays the run's end. */
+async function playCallRuns(page: Page) {
+  const run = { failing: true, written: Promise.withResolvers<null>() };
+
+  await page.route(RUN_EVENTS, async (route) => {
+    if (run.failing) {
+      await route.fulfill(
+        stream([{ reason: "aiGenerationFailed", status: "error", step: "workflowError" }]),
+      );
+
+      return;
+    }
+
+    await run.written.promise;
+
+    await route.fulfill(
+      stream([
+        { status: "started", step: "writeCall" },
+        { status: "completed", step: "callReady" },
+      ]),
+    );
+  });
+
+  await page.route(RUN_STATUS, (route) =>
+    route.fulfill({ json: { status: run.failing ? "failed" : "completed" }, status: 200 }),
+  );
+
+  return run;
+}
+
 test.describe("Language calls written ahead", () => {
-  test("a checkpoint whose call isn't written yet writes it when the learner asks, then opens it at once", async ({
+  test("a checkpoint whose call isn't written yet waits for it, can try again, then opens", async ({
     browser,
   }) => {
     const { block, renting, user } = await createUnwrittenCheckpoint();
     const page = await openAs(browser, user);
+    const run = await playCallRuns(page);
 
     await page.goto(`/checkpoint/${block.id}`);
-
-    await expect(
-      prisma.languageConversation.count({ where: { studyBlockId: block.id } }),
-    ).resolves.toBe(0);
-
     await page.getByRole("button", { name: "Get the call ready" }).click();
 
-    // E2E blocks the writing model, so this call can't be written.
-    await expect(page.getByText("This didn't start")).toBeVisible();
+    await expect(page.getByText("This didn't finish")).toBeVisible();
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ startedAt: null, status: "pending" });
+
+    run.failing = false;
+    await page.getByRole("button", { name: "Try again" }).click();
+    await expect(page.getByText("Getting your call ready")).toBeVisible();
 
     await writeB1Call(renting.id);
-    await page.getByRole("button", { name: "Try again" }).click();
+    run.written.resolve(null);
 
     await expect(page).toHaveURL(/\/conversation\//u);
     await expect(page.getByText(/^Linda · /u)).toBeVisible();
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ status: "active" });
 
     await page.context().close();
   });
