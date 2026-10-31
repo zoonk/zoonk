@@ -1,85 +1,96 @@
 import { type ExampleSet } from "../example-set";
 
-const italian = { id: "italian", name: "Italiano", share: 0.38 };
-const math = { id: "math", name: "Matematica", share: 0.35 };
-const physics = { id: "physics", name: "Fisica", share: 0.29 };
-const history = { id: "history", name: "Storia", share: 0.33 };
-
-const crisis = { id: "crisis", minutes: 4, subject: history, title: "La crisi del 1929" };
-
 export const it: ExampleSet = {
   exam: {
+    day: [
+      { detail: "Ripasso", kind: "review", minutes: 6, title: "Derivate", topic: "Derivate" },
+      {
+        detail: "Matematica",
+        kind: "practice",
+        minutes: 7,
+        title: "Esercizi sui limiti",
+        topic: "Limiti",
+      },
+      {
+        detail: "Italiano",
+        kind: "lesson",
+        minutes: 8,
+        title: "Analisi del testo",
+        topic: "Analisi del testo",
+      },
+      {
+        detail: "Ripasso",
+        kind: "review",
+        minutes: 4,
+        title: "Prima guerra mondiale",
+        topic: "Prima guerra mondiale",
+      },
+    ],
     goal: (month) => `prepararmi alla maturità di ${month}`,
-    mock: {
-      score: "14–16/20",
-      scoreOf: "Seconda prova",
+    missedDay: {
+      file: "piano_studio_maturita_FINALE_v3.xlsx",
+      goal: "maturità",
       topics: [
-        { id: "derivatives", name: "Derivate", right: 2, total: 4 },
-        { id: "limits", name: "Limiti", right: 3, total: 4 },
-        { id: "integrals", name: "Integrali", right: 3, total: 3 },
-        { id: "probability", name: "Probabilità", right: 3, total: 3 },
+        { subject: "Matematica", title: "Integrali" },
+        { subject: "Italiano", title: "Leopardi" },
+        { subject: "Matematica", title: "Studio di funzione" },
+        { subject: "Fisica", title: "Elettromagnetismo" },
+        { subject: "Matematica", title: "Probabilità" },
       ],
+    },
+    mock: {
+      details: "6 h",
+      firm: ["Integrali", "Probabilità"],
+      mistakes: 3,
+      name: "Seconda prova",
+      review: ["Derivate", "Limiti"],
+      scores: [{ label: "Seconda prova", range: "14–16/20" }],
     },
     name: "Maturità",
-    placed: {
-      rows: [
-        { id: "percentages", state: "skipped", title: "Percentuali" },
-        { id: "changes", state: "skipped", title: "Aumenti e sconti successivi" },
-        { id: "limits", lessons: 6, state: "next", title: "Limiti" },
-        { id: "derivatives", lessons: 8, state: "todo", title: "Derivate" },
-        { id: "integrals", lessons: 7, state: "todo", title: "Integrali" },
-      ],
-      subject: math,
-    },
-    planName: (month) => `Maturità a ${month}`,
-    practice: {
-      answer:
-        "eˣ sarebbe la derivata del solo eˣ. Qui hai un prodotto, x per eˣ, quindi derivi un fattore alla volta: 1 · eˣ + x · eˣ. Raccogliendo eˣ, ottieni (x + 1) · eˣ.",
-      ask: "Perché non è eˣ?",
-      explanation:
-        "Non proprio: è un prodotto, quindi serve la regola del prodotto: f′(x) = eˣ + x · eˣ = (x + 1) · eˣ.",
-      options: [
-        { result: "wrong", text: "eˣ" },
-        { text: "x · eˣ" },
-        { result: "right", text: "(x + 1) · eˣ" },
-        { text: "(x − 1) · eˣ" },
-      ],
-      question: "Qual è la derivata di f(x) = x · eˣ?",
-      subject: math,
-    },
-    // The prima prova, which opens the exam.
     sittings: ["2027-06-16"],
-    subjects: [italian, math, physics, history],
     timeZone: "Europe/Rome",
-    today: [
-      crisis,
-      { id: "limits", minutes: 6, subject: math, title: "Limiti e asintoti" },
-      { essay: true, id: "essay", minutes: 10, subject: italian, title: "Tipologia B: la tesi" },
+    topics: [
+      "Derivate",
+      "Limiti",
+      "Analisi del testo",
+      "Integrali",
+      "Prima guerra mondiale",
+      "Studio di funzione",
+      "Leopardi",
+      "Probabilità",
+      "Elettromagnetismo",
+      "Geometria analitica",
+      "Equazioni differenziali",
+      "Calcolo combinatorio",
+      "Pirandello",
+      "Verga",
+      "Ungaretti",
+      "Montale",
+      "Tema argomentativo",
+      "Fascismo",
+      "Guerra fredda",
+      "Resistenza",
+      "Costituzione",
+      "Relatività ristretta",
+      "Induzione elettromagnetica",
+      "Circuiti elettrici",
+      "Onde",
+      "Fisica quantistica",
+      "Il Paradiso di Dante",
+      "Seconda guerra mondiale",
+      "Decadentismo",
+      "Svevo",
+      "Successioni",
+      "Geometria solida",
+      "Asintoti",
+      "Teorema di Rolle",
+      "Foscolo",
+      "Manzoni",
+      "Unità d’Italia",
+      "Età giolittiana",
+      "Magnetismo",
+      "Termodinamica",
     ],
-    tomorrow: {
-      lessons: [
-        { id: "induction", minutes: 5, subject: physics, title: "Induzione elettromagnetica" },
-        { id: "study", minutes: 6, subject: math, title: "Studio di funzione" },
-        {
-          essay: true,
-          id: "essay",
-          minutes: 8,
-          subject: italian,
-          title: "Tipologia A: analisi del testo",
-        },
-      ],
-      review: { ...crisis, id: "review", title: "Ripasso: la crisi del 1929" },
-    },
-  },
-  job: {
-    formulas: ["=SOMMA(B2:B9)", "=SOMMARE(B2:B9)", "=SOMMA(B2;B9)"],
-    regions: [
-      { amount: 42_180, id: "north", name: "Nord" },
-      { amount: 37_920, id: "center", name: "Centro" },
-      { amount: 29_400, id: "south", name: "Sud" },
-    ],
-    result: "Funziona. Il Nord ha venduto di più.",
-    sql: { orders: "ordini", region: "regione", sales: "vendite" },
   },
   move: "london",
 };

@@ -1,7 +1,3 @@
-import { MS_PER_DAY } from "@zoonk/utils/date";
+export const DAY_SWITCH = "landing-day";
 
-export function getMissedDayChange({ date, end }: { date: Date; end: Date }) {
-  const movedEnd = new Date(end.getTime() + MS_PER_DAY);
-
-  return movedEnd > date ? { kind: "leftOut" as const } : { kind: "moved" as const, movedEnd };
-}
+export const CAPTION_CLASS = "text-muted-foreground mb-2.5 text-sm font-medium";

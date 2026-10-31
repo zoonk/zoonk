@@ -1,69 +1,53 @@
-type ExamSubject = { id: string; name: string; share: number };
-
-export type ExamLesson = {
-  essay?: boolean;
-  id: string;
+type ExamDayRow = {
+  detail: string;
+  kind: "essay" | "lesson" | "practice" | "review";
   minutes: number;
-  subject: ExamSubject;
   title: string;
+  /** One of the exam's `topics`, so the wall can show which ones today picked. */
+  topic: string;
 };
 
-export type PlacedRow = {
-  id: string;
-  lessons?: number;
-  state: "next" | "skipped" | "todo";
-  title: string;
-};
+type MissedDayTopic = { subject: string; title: string };
 
-type ExamOption = { result?: "right" | "wrong"; text: string };
+type MockScore = { label: string; range: string };
 
 /** One country's exam, written in the page's language, since only that page shows it. */
 export type ExamExample = {
   /** Its researched exam days come first while the Library course is published. */
   course?: { brandSlug: string; courseSlug: string };
-  /** Published sittings in order; after the last one, later years keep its weekday until the list is updated. */
-  sittings: readonly [string, ...string[]];
-  /** Like `planName`, gets the exam month's name; a language that inflects it ("w maju") writes the month itself. */
+  day: readonly [ExamDayRow, ExamDayRow, ExamDayRow, ExamDayRow];
+  /** Gets the exam month's name; a language that inflects it ("w maju") writes the month itself. */
   goal: (month: string) => string;
+  /** A study plan kept in a spreadsheet, two days before today to two after. */
+  missedDay: {
+    file: string;
+    goal: string;
+    topics: readonly [
+      MissedDayTopic,
+      MissedDayTopic,
+      MissedDayTopic,
+      MissedDayTopic,
+      MissedDayTopic,
+    ];
+  };
   mock: {
-    score: string;
-    scoreOf: string;
-    topics: readonly { id: string; name: string; right: number; total: number }[];
+    firm: readonly string[];
+    details?: string;
+    mistakes: number;
+    name: string;
+    review: readonly string[];
+    scores: readonly [MockScore, ...MockScore[]];
   };
   name: string;
-  /** The placement question's subject and its topics, from easiest. */
-  placed: { rows: readonly PlacedRow[]; subject: ExamSubject };
-  planName: (month: string) => string;
-  practice: {
-    answer: string;
-    ask: string;
-    context?: string;
-    explanation: string;
-    options: readonly ExamOption[];
-    question: string;
-    subject: ExamSubject;
-  };
-  subjects: readonly ExamSubject[];
+  /** Published sittings in order; after the last one, later years keep its weekday until the list is updated. */
+  sittings: readonly [string, ...string[]];
   /** An IANA zone; the example counts days from today there. */
   timeZone: string;
-  /** Today's lessons, which also come back tomorrow after a day without studying. */
-  today: readonly [ExamLesson, ExamLesson, ExamLesson];
-  tomorrow: { lessons: readonly [ExamLesson, ExamLesson, ...ExamLesson[]]; review: ExamLesson };
+  topics: readonly string[];
 };
-
-/** A spreadsheet's functions are named in its language, and countries with a decimal comma split with ";". */
-type JobExample = {
-  formulas: readonly [string, string, string];
-  regions: readonly [ExampleRegion, ExampleRegion, ExampleRegion];
-  result: string;
-  sql: { orders: string; region: string; sales: string };
-};
-
-type ExampleRegion = { amount: number; id: string; name: string };
 
 export type ExampleSet = {
   exam: ExamExample;
-  job: JobExample;
   /** A page never suggests learning the language it's written in, so English pages move to Mexico City to speak Spanish. */
   move: "london" | "mexico-city";
 };

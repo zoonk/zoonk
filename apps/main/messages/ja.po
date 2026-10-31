@@ -105,7 +105,7 @@ msgstr "ヘルプ"
 #: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 #: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
+#: src/app/[lang]/(home)/_components/start-section.tsx
 msgctxt "ChuNUI"
 msgid "Your plan"
 msgstr "学習計画"
@@ -180,9 +180,7 @@ msgid "Take a mock exam"
 msgstr "模試を受ける"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/forget-section.tsx
 msgctxt "AFQMLq"
 msgid "Practice your mistakes"
 msgstr "間違えた問題を練習する"
@@ -203,7 +201,8 @@ msgstr "新しい目標を始める"
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-#: src/app/[lang]/(home)/_components/hero-window.tsx
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
 #: src/components/catalog/course-plan-window.tsx
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "zWgbGg"
@@ -230,7 +229,7 @@ msgstr "相棒"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(learn)/mistakes/page.tsx
-#: src/app/[lang]/(home)/_components/practice-job.tsx
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
 msgctxt "g3GlDw"
 msgid "Mistakes notebook"
 msgstr "間違いノート"
@@ -391,7 +390,7 @@ msgstr "ユーザーメニュー"
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
+#: src/app/[lang]/(home)/_components/ready-section.tsx
 #: src/components/pricing/plus-plan.tsx
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "lOdoIb"
@@ -421,7 +420,7 @@ msgstr "レッスン"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
+#: src/app/[lang]/(home)/_components/start-section.tsx
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "n7xPkB"
 msgid "{count, plural, one {# lesson} other {# lessons}}"
@@ -497,7 +496,8 @@ msgstr "これは一例です。学習計画は回答に合わせて変わるの
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start.tsx
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
-#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+#: src/app/[lang]/(home)/_components/final-call.tsx
+#: src/app/[lang]/(home)/_components/home-hero.tsx
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "npIkqE"
 msgid "Start free, no account needed."
@@ -626,7 +626,6 @@ msgid "Left out"
 msgstr "入りきらない"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
 msgctxt "ArogzQ"
 msgid "{count, plural, =0 {# of {total, number} lessons} one {# of {total, number} lessons} other {# of {total, number} lessons}}"
 msgstr "{count, plural, =0 {#レッスン（全{total, number}レッスン中）} other {#レッスン／全{total, number}レッスン}}"
@@ -1050,7 +1049,6 @@ msgid "Your plan starts at this chapter and follows the course from there, in th
 msgstr "この章からコースに沿って、毎日使える時間に合わせて学習を進める計画です。"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "8s-b4U"
 msgid "How much do you already know?"
 msgstr "どのくらい知っていますか？"
@@ -1701,7 +1699,6 @@ msgstr "概要"
 #: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
 msgctxt "y1Qr81"
 msgid "Level"
 msgstr "レベル"
@@ -2144,7 +2141,6 @@ msgstr "すべて見る"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-#: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "まだありません"
@@ -2179,312 +2175,950 @@ msgctxt "Y_aK5B"
 msgid "Right answers in the last 90 days"
 msgstr "過去90日間の正解率"
 
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/final-call.tsx
+msgctxt "X91zpJ"
+msgid "Start with what matters today."
+msgstr "今日、大切なことから始めましょう。"
+
+#. In Brazilian Portuguese: “Conte sua meta e responda umas perguntas rápidas. Depois, é só seguir o plano de cada dia.”
+#: src/app/[lang]/(home)/_components/final-call.tsx
+msgctxt "LTU3wD"
+msgid "Tell us your goal and answer a few quick questions. Then just follow each day's plan."
+msgstr "目標を教えて、簡単な質問にいくつか答えてください。あとは毎日の学習計画に沿って進めるだけです。"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "8AqUKr"
+msgid "Asking for directions"
+msgstr "道を尋ねる"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "wY_wqj"
+msgid "Phrasal verbs for travel"
+msgstr "旅行で使うphrasal verbs"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "6Zbcf1"
+msgid "Illustration. Without reviews, you forget almost everything in a few days. With reviews on {dates} and today, it comes back each time, and the gaps between reviews grow."
+msgstr "図の説明。復習しないと、数日でほとんど忘れてしまいます。{dates}と今日、復習するたびに記憶が戻り、復習の間隔も長くなります。"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "XGOJGX"
+msgid "With reviews"
+msgstr "復習あり"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "vK_EIg"
+msgid "Without reviewing"
+msgstr "復習なし"
+
+#. Marks today on a timeline; lowercase.
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "kkpP2k"
+msgid "today"
+msgstr "今日"
+
+#. A learner's own worry, in their casual words, shown as a big quote. In Brazilian Portuguese: “Estudo e esqueço.”
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "BxUa_d"
+msgid "I study and forget."
+msgstr "勉強しても忘れてしまいます。"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "yFQn5A"
+msgid "<b>Zoonk brings back what you studied right before you'd forget it.</b> And every mistake comes back for you to practice until you get it right."
+msgstr "<b>Zoonkは、学んだ内容を忘れる直前にもう一度出題します。</b>間違えた問題も繰り返し出てくるので、正解できるまで練習できます。"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "xrCRnH"
+msgid "Example"
+msgstr "例"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "さっと復習"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "planPhases.6RRX7X"
-msgid "Foundations"
-msgstr "基礎"
+#. {item} is a word or phrase in the language being learned. Use your language's quote marks.
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "uzaDyb"
+msgid "“{item}” and {count, number} more"
+msgstr "「{item}」ほか{count, number}件"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "planPhases.PFt14a"
-msgid "Fill the gaps"
-msgstr "知識の穴を埋める"
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "5czPwn"
+msgid "An illustration of the forgetting curve. Review dates change with your answers."
+msgstr "忘却曲線を表した図です。復習日は答えに応じて変わります。"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "planPhases.KV-O0y"
-msgid "Practice"
-msgstr "演習"
+#. A messy spreadsheet's file name. Translate “schedule” with one short word and keep the underscores, “FINAL_v3” and “.xlsx”. {exam} is the exam's name in lowercase. In Brazilian Portuguese: “cronograma_{exam}_FINAL_v3.xlsx”.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "A2PGPU"
+msgid "schedule_{exam}_FINAL_v3.xlsx"
+msgstr "日程_{exam}_FINAL_v3.xlsx"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "planPhases.QyaAtA"
-msgid "Final stretch"
-msgstr "仕上げ"
+#. {exam} is a national exam's short name, such as Enem or SAT.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "JssoB6"
+msgid "Everything that can come up on the {exam}"
+msgstr "{exam}の出題範囲すべて"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.urVD1a"
-msgid "Arriving"
-msgstr "現地に到着"
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "udtNZk"
+msgid "{exam} on {date}"
+msgstr "{exam}（{date}）"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.NMkS59"
-msgid "Renting a flat"
-msgstr "部屋を借りる"
+#. What a worried student types into a search engine: casual, lowercase, no final punctuation. {exam} is the exam's name in lowercase.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "--iDsA"
+msgid "where to start studying for the {exam}"
+msgstr "{exam}の勉強 何から始める"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.JrZJR9"
-msgid "Bank and phone"
-msgstr "銀行と携帯電話"
+#. A search engine's suggestion: casual, lowercase. {exam} is lowercase.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "JqUc1j"
+msgid "studying for the {exam} from scratch"
+msgstr "{exam} ゼロからの勉強法"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.c2wcVC"
-msgid "First week at work"
-msgstr "職場での最初の1週間"
+#. A search engine's suggestion: casual, lowercase. {exam} is lowercase.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "a26eAp"
+msgid "what comes up most on the {exam}"
+msgstr "{exam} よく出る問題"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.kvlt4O"
-msgid "Doctor"
-msgstr "病院に行く"
+#. A browser tab's title for a video lesson. {topic} is a school topic.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "p6_5IZ"
+msgid "{topic}: lesson 1"
+msgstr "{topic}：レッスン1"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.O8qego"
-msgid "Social life"
-msgstr "人付き合い"
+#. A browser tab's title for a cram video, shown in capitals. {topic} is a school topic. In Brazilian Portuguese: “Resumão {topic}”.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "bqJd3p"
+msgid "{topic} crash course"
+msgstr "{topic}の総まとめ"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.fd_DO3"
-msgid "Spreadsheets"
-msgstr "表計算"
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "9YszG4"
+msgid "Choosing the right chart"
+msgstr "適切なグラフの選び方"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.c0Ycwn"
-msgid "SQL"
-msgstr "SQL"
+#. An SQL clause; keep it as is.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "u5IbOk"
+msgid "GROUP BY"
+msgstr "GROUP BY"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.H3eDAS"
-msgid "Statistics"
-msgstr "統計学"
+#. SQL joins; keep “JOIN” as is.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "leiqEZ"
+msgid "JOINs in SQL"
+msgstr "SQLのJOIN"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.nwqt7T"
-msgid "Dashboards"
-msgstr "ダッシュボード"
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "o4Yiw3"
+msgid "Mean and median"
+msgstr "平均値と中央値"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.uNOJ2Q"
-msgid "Portfolio"
-msgstr "ポートフォリオ"
+#. A spreadsheet's file name. Translate the words and keep the underscores and “.xlsx”.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "XhAkIy"
+msgid "data_career_plan_2027.xlsx"
+msgstr "データ分析_キャリア_プラン_2027.xlsx"
 
-#. An example goal's name. Use your language's name for Mexico City.
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "3parBE"
-msgid "Spanish for Mexico City"
-msgstr "メキシコシティで使うスペイン語"
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "IQ4iqI"
+msgid "Everything that shows up in data analyst job posts"
+msgstr "データアナリストの求人で求められることすべて"
 
-#. Use your language's name for London.
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "PnbhyK"
-msgid "English for London"
-msgstr "ロンドンで使う英語"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
+#: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "AeiByK"
 msgid "Data analyst by {month}"
 msgstr "{month}までにデータアナリストになる"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "EV-GCl"
-msgid "Data analyst"
-msgstr "データアナリスト"
+#. What someone types into a search engine: casual, lowercase, no final punctuation.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "NJCHOb"
+msgid "what to study to become a data analyst"
+msgstr "データアナリストになるには 何を勉強する"
 
-#: src/app/[lang]/(home)/_components/final-call.tsx
-msgctxt "PYDioW"
-msgid "The big day"
-msgstr "目標の日"
-
-#: src/app/[lang]/(home)/_components/final-call.tsx
-msgctxt "g39LXe"
-msgid "What's your big day?"
-msgstr "目標の日はいつですか？"
-
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "s4s2qc"
-msgid "Next: renting, banking, the first week at work"
-msgstr "次の学習：賃貸契約、銀行の手続き、働き始めの1週間"
-
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "sIMS7i"
-msgid "Progress"
-msgstr "進み具合"
-
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "Kus9gk"
-msgid "Preparation"
-msgstr "準備状況"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "c0Ycwn"
 msgid "SQL"
 msgstr "SQL"
 
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "Hph5oB"
-msgid "GROUP BY with two columns"
-msgstr "2つの列でGROUP BYを使う"
+#. The subject, as a field of study.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "examplePhases.H3eDAS"
+msgid "Statistics"
+msgstr "統計学"
 
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "-rCMUK"
-msgid "Review: joins"
-msgstr "復習：結合"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "ERPrTb"
-msgid "HAVING: filtering groups"
-msgstr "HAVING：グループを絞り込む"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "pCbjPa"
-msgid "Review: GROUP BY"
-msgstr "復習：GROUP BY"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "LLHRRm"
-msgid "SQL · from real work"
-msgstr "SQL · 実務の事例"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "saf8j1"
-msgid "Real problem: top customers"
-msgstr "実務の課題：上位顧客"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "XfDXBj"
-msgid "Lesson + 6 questions"
-msgstr "レッスン + 6問"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "PrA5f8"
-msgid "Calling about an apartment"
-msgstr "アパートについて電話で問い合わせる"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "xjeKSS"
-msgid "Review: airport and metro"
-msgstr "復習：空港と地下鉄"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "bRvUh5"
-msgid "Lesson + 5 questions"
-msgstr "レッスン + 5問"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "_tlTcq"
-msgid "Visiting a flat"
-msgstr "アパートを内見する"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "l2uAYh"
-msgid "3 to practice"
-msgstr "3問を練習"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "qUe0cG"
-msgid "Mistakes: getting around the city"
-msgstr "間違えた問題：街での移動"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "SyGbgm"
-msgid "Review: calling about an apartment"
-msgstr "復習：アパートについて電話で問い合わせる"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "JNotbo"
-msgid "Pronunciation tips"
-msgstr "発音のコツ"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "Eio4j-"
-msgid "Speaking: booking a visit"
-msgstr "スピーキング：内見を予約する"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "taVtve"
-msgid "2 to practice"
-msgstr "2問を練習"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "E6a1TF"
-msgid "Mistakes: calling about an apartment"
-msgstr "間違えた問題：アパートについて電話で問い合わせる"
-
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/tomorrow-steps.ts
-msgctxt "QEqlcn"
-msgid "{count, plural, one {# mistake} other {# mistakes}}"
-msgstr "{count, plural, other {#件の間違い}}"
-
-#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "D6C3cx"
 msgid "Real problem: sales by region"
 msgstr "実務の課題：地域別の売上"
 
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "wCgkXs"
-msgid "Speaking: asking about the rent"
-msgstr "スピーキング：家賃について尋ねる"
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "dcA_Pq"
+msgid "Data visualization"
+msgstr "データの可視化"
 
-#: src/app/[lang]/(home)/_components/hero-window.tsx
+#. A search engine's suggestion: casual, lowercase.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "tFhP5f"
+msgid "data analyst without a degree"
+msgstr "大卒じゃなくてもデータアナリスト"
+
+#. A search engine's suggestion: casual, lowercase. Keep “sql” and “python”.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "fbK3Am"
+msgid "sql or python first"
+msgstr "sqlとpython どっちが先"
+
+#. A browser tab's title for a video course.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "YBtIhI"
+msgid "SQL from scratch"
+msgstr "ゼロから学ぶSQL"
+
+#. A browser tab's title for a video course.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "_OhIrM"
+msgid "Power BI in 2 hours"
+msgstr "2時間で学ぶPower BI"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "uv4tw_"
+msgid "Basic SQL"
+msgstr "SQLの基礎"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "jg1oe7"
+msgid "Pivot tables"
+msgstr "ピボットテーブル"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "wgNfiX"
+msgid "Window functions"
+msgstr "ウィンドウ関数"
+
+#. An Excel function: use its name in your language's Excel.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "UC--Se"
+msgid "XLOOKUP"
+msgstr "XLOOKUP"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "l5zKvT"
+msgid "Cleaning data"
+msgstr "データクレンジング"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "z5eDEP"
+msgid "Hypothesis tests"
+msgstr "仮説検定"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "EDaTf-"
+msgid "Linear regression"
+msgstr "線形回帰"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "dEvP4t"
+msgid "Sampling"
+msgstr "サンプリング"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "nwqt7T"
+msgid "Dashboards"
+msgstr "ダッシュボード"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "ggbhiR"
+msgid "Business metrics"
+msgstr "ビジネス指標"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "j7WWaK"
+msgid "Telling stories with data"
+msgstr "データでストーリーを伝える"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "-QNBMa"
+msgid "Data modeling"
+msgstr "データモデリング"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "uNOJ2Q"
+msgid "Portfolio"
+msgstr "ポートフォリオ"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "6pFhsv"
+msgid "Technical interviews"
+msgstr "技術面接"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "x7zrQq"
+msgid "Standard deviation"
+msgstr "標準偏差"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "Dc4Vu-"
+msgid "Correlation"
+msgstr "相関"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "eIw6xr"
+msgid "Outliers"
+msgstr "外れ値"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "ZmRyDX"
+msgid "Subqueries"
+msgstr "サブクエリ"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "tEPO8C"
+msgid "A/B tests"
+msgstr "A/Bテスト"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "1hS7Sm"
+msgid "Cohort analysis"
+msgstr "コホート分析"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "vPII9V"
+msgid "Conversion funnels"
+msgstr "コンバージョンファネル"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "588kpe"
+msgid "Data types"
+msgstr "データ型"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "P4R1Bq"
+msgid "Aggregations"
+msgstr "集計"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "IcBJoJ"
+msgid "Excel charts"
+msgstr "Excelのグラフ"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "ARJh9q"
+msgid "Python basics"
+msgstr "Pythonの基礎"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "wgVL5w"
+msgid "Dates and times"
+msgstr "日付と時刻"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "3zH6CJ"
+msgid "Missing values"
+msgstr "欠損値"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "zC81BZ"
+msgid "Exploratory analysis"
+msgstr "探索的データ分析"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "tMbwGE"
+msgid "Presenting results"
+msgstr "分析結果の発表"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "0quLKn"
+msgid "Data ethics"
+msgstr "データ倫理"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "bbGAq-"
+msgid "Spreadsheet formulas"
+msgstr "表計算の数式"
+
+#. A spreadsheet's row label, short for “Week”.
+#: src/app/[lang]/(home)/_components/hero-mess.tsx
+msgctxt "QZQeY7"
+msgid "Wk {number, number}"
+msgstr "第{number, number}週"
+
+#. A topic for learning English before moving to London.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "NMkS59"
+msgid "Renting a flat"
+msgstr "部屋を借りる"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "0Cj-0J"
+msgid "Phrasal verbs"
+msgstr "Phrasal verbs"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "hYEb-b"
+msgid "Present perfect"
+msgstr "Present perfect"
+
+#. A pronunciation topic for learners of English.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "8piu9j"
+msgid "Pronouncing “th”"
+msgstr "「th」の発音"
+
+#. A spreadsheet's file name. Translate the words and keep the underscores and “.xlsx”.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "4sbMCg"
+msgid "english_routine.xlsx"
+msgstr "英語_学習スケジュール.xlsx"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "x2ZQ14"
+msgid "Everything there is to study in English"
+msgstr "英語の学習内容すべて"
+
+#. Use your language's name for London.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "PnbhyK"
+msgid "English for London"
+msgstr "ロンドンで使う英語"
+
+#. What someone types into a search engine: casual, lowercase, no final punctuation.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "c2G3Hh"
+msgid "how to learn english fast to move abroad"
+msgstr "海外移住のために英語を早く身につける方法"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/conversation/[conversationId]/page.tsx
+msgctxt "gegfoA"
+msgid "Conversation"
+msgstr "会話"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "QzTY8x"
+msgid "Grammar"
+msgstr "文法"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "vuwclE"
+msgid "Pronunciation"
+msgstr "発音"
+
+#. A search engine's suggestion: casual, lowercase.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "UFr3n3"
+msgid "english from zero in 5 months, is it possible"
+msgstr "英語はゼロから5か月で身につくのか"
+
+#. A search engine's suggestion: casual, lowercase.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "RKdJNp"
+msgid "english for moving abroad"
+msgstr "海外移住のための英語"
+
+#. A browser tab's title for an English video.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "ixOmJ_"
+msgid "50 phrasal verbs"
+msgstr "phrasal verbs 50選"
+
+#. A browser tab's title for an English video.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "wJv88b"
+msgid "British accent"
+msgstr "イギリス英語の発音"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "cCtXxl"
+msgid "Small talk"
+msgstr "ちょっとした雑談"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "oqFdQv"
+msgid "Opening a bank account"
+msgstr "銀行口座を開く"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "8bsSu8"
+msgid "Job interviews"
+msgstr "就職の面接"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "Jp5b0b"
+msgid "Phone calls"
+msgstr "電話で話す"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "Qjokqs"
+msgid "In, on and at"
+msgstr "in・on・atの使い分け"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "YczFm6"
+msgid "Used to"
+msgstr "used toの使い方"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "nzmFRM"
+msgid "Conditionals"
+msgstr "条件文"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "mQdkOM"
+msgid "Seeing a doctor"
+msgstr "診察を受ける"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "jMB7fa"
+msgid "Irregular verbs"
+msgstr "不規則動詞"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "syvaMe"
+msgid "Will and going to"
+msgstr "willとgoing toの使い分け"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "DW4q3M"
+msgid "Modal verbs"
+msgstr "助動詞"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "-9OpIk"
+msgid "Reported speech"
+msgstr "間接話法"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "oGUw1v"
+msgid "British slang"
+msgstr "イギリス英語のスラング"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "fJHZbj"
+msgid "Writing emails"
+msgstr "メールを書く"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "MafdkP"
+msgid "Passive voice"
+msgstr "受動態"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "0YG5_J"
+msgid "Numbers and prices"
+msgstr "数字と値段"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "zzHAso"
+msgid "Complaining politely"
+msgstr "丁寧に苦情を伝える"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "GjhjEM"
+msgid "Making friends"
+msgstr "友達を作る"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "xJnXn-"
+msgid "A CV in English"
+msgstr "英文履歴書"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "_FwuCM"
+msgid "False friends"
+msgstr "似ていて意味が違う単語"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "1PSu6I"
+msgid "Idioms"
+msgstr "慣用表現"
+
+#. The London Underground.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "mYTaWG"
+msgid "Taking the Tube"
+msgstr "ロンドンの地下鉄に乗る"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "Umc5eX"
+msgid "Talking about the weather"
+msgstr "天気の話をする"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "z0C-fI"
+msgid "Past continuous"
+msgstr "Past continuous"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "zhQDK_"
+msgid "Ordering food"
+msgstr "料理を注文する"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "HN_h17"
+msgid "Present simple"
+msgstr "Present simple"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "9NKtlI"
+msgid "Prepositions of time"
+msgstr "Prepositions of time"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "QIQMhT"
+msgid "At the airport"
+msgstr "空港でのやり取り"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "P0cSVK"
+msgid "Booking a hotel"
+msgstr "ホテルの予約"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "0CR3bM"
+msgid "Shopping for clothes"
+msgstr "服の買い物"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "1042Oh"
+msgid "Paying bills"
+msgstr "料金の支払い"
+
+#. Signing up with a family doctor in the UK.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "GOdURb"
+msgid "Registering with a GP"
+msgstr "かかりつけ医への登録"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "5dMt7r"
+msgid "Weekend plans"
+msgstr "週末の予定"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "4no0Ie"
+msgid "Formal and informal English"
+msgstr "フォーマルな英語とカジュアルな英語"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "bi371t"
+msgid "Linking words"
+msgstr "つなぎ言葉"
+
+#. A topic for learning Spanish before moving to Mexico City.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "Yj0irn"
+msgid "Renting an apartment"
+msgstr "アパートを借りる"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "bSmvQe"
+msgid "The preterite"
+msgstr "点過去"
+
+#. A pronunciation topic for learners of Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "O9dZ0A"
+msgid "Rolling the “rr”"
+msgstr "「rr」を巻き舌で発音する"
+
+#. A Spanish grammar topic: keep “ser” and “estar” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "vcjevI"
+msgid "Ser and estar"
+msgstr "serとestarの使い分け"
+
+#. A spreadsheet's file name. Translate the words and keep the underscores and “.xlsx”.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "BT_r75"
+msgid "spanish_routine.xlsx"
+msgstr "スペイン語_学習スケジュール.xlsx"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "TTXJCR"
+msgid "Everything there is to study in Spanish"
+msgstr "スペイン語の学習内容すべて"
+
+#. An example goal's name. Use your language's name for Mexico City.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "3parBE"
+msgid "Spanish for Mexico City"
+msgstr "メキシコシティで使うスペイン語"
+
+#. What someone types into a search engine: casual, lowercase, no final punctuation.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "zzQULs"
+msgid "how to learn spanish fast to move abroad"
+msgstr "海外移住のためにスペイン語を早く身につける方法"
+
+#. A search engine's suggestion: casual, lowercase.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "qVW5zK"
+msgid "spanish from zero in 5 months, is it possible"
+msgstr "スペイン語はゼロから5か月で身につくのか"
+
+#. A search engine's suggestion: casual, lowercase.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "sbyJjP"
+msgid "spanish for moving abroad"
+msgstr "海外移住のためのスペイン語"
+
+#. A browser tab's title for a Spanish video.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "zfHKg5"
+msgid "Verb conjugation"
+msgstr "動詞の活用"
+
+#. A browser tab's title for a Spanish video.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "iMmFvT"
+msgid "Mexican slang"
+msgstr "メキシコのスラング"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "o5dcRe"
+msgid "The subjunctive"
+msgstr "接続法"
+
+#. A Spanish grammar topic: keep “por” and “para” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "T-SlZH"
+msgid "Por and para"
+msgstr "porとparaの使い分け"
+
+#. A Spanish grammar topic: keep “gustar” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "-T6zu8"
+msgid "Verbs like gustar"
+msgstr "gustarのような動詞"
+
+#. A Spanish grammar topic: keep “tú” and “usted” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "JafIDQ"
+msgid "Tú and usted"
+msgstr "túとustedの使い分け"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "HgeEzh"
+msgid "A CV in Spanish"
+msgstr "スペイン語の履歴書"
+
+#. Mexico City's subway.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "_lyMF3"
+msgid "Taking the metro"
+msgstr "地下鉄に乗る"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "8HP4KD"
+msgid "Reflexive verbs"
+msgstr "再帰動詞"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "sdWSVm"
+msgid "At the market"
+msgstr "市場での会話"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "sc__2J"
+msgid "The imperfect"
+msgstr "線過去"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "RA4Y2E"
+msgid "Telling a story"
+msgstr "物語を語る"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "We9l88"
+msgid "Present tense"
+msgstr "現在形"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "MJlEHy"
+msgid "Ordering tacos"
+msgstr "タコスの注文"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "OyVECT"
+msgid "Getting around the city"
+msgstr "街での移動"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "EKcm9W"
+msgid "Formal and informal Spanish"
+msgstr "フォーマルなスペイン語とカジュアルなスペイン語"
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "493J7R"
+msgid "Compare"
+msgstr "比較"
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "umqEzo"
+msgid "Without Zoonk"
+msgstr "Zoonkなし"
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "t6BnyS"
+msgid "With Zoonk"
+msgstr "Zoonkあり"
+
+#. {everything} names everything a learner could study, such as “Everything that can come up on the SAT”; {topics} lists a few topics.
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "mWDXW8"
+msgid "{everything}. Today Zoonk picked {topics}."
+msgstr "{everything}。今日はZoonkが{topics}を選びました。"
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "uP8SkY"
+msgid "Without Zoonk: a search for where to start, a pile of open tabs and a study schedule abandoned in week two."
+msgstr "Zoonkなし：何から始めるかを検索し、タブがいくつも開きっぱなしになり、2週目には学習計画も続かなくなります。"
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "eOHX5x"
+msgid "Stuck? Ask Zu."
+msgstr "行き詰まりましたか？ズーに聞いてみましょう。"
+
+#. Zoonk's support address; your language may have its own.
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+#: src/components/pricing/plus-questions.tsx
+msgctxt "ieflON"
+msgid "hello@zoonk.com"
+msgstr "hello@zoonk.com"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "60PJVp"
+msgid "You start free, no account needed. With a free account, you follow {goals, plural, one {one goal} other {# goals}} at a time, with a limit on lessons and on messages to Zu. For an exam, the diagnostic, the plan and {days, plural, =7 {the first week} one {the first day} other {the first # days}} of study are free. No card needed."
+msgstr "アカウントなしで無料で始められます。無料アカウントでは、同時に{goals, plural, other {#個の目標}}に取り組めますが、レッスン数とズーへのメッセージ数には上限があります。試験対策では、診断と学習計画、{days, plural, =7 {最初の1週間} other {最初の#日分}}の学習が無料です。クレジットカードは不要です。"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "NNtrw6"
+msgid "Is Zoonk free?"
+msgstr "Zoonkは無料ですか？"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "vD4YoD"
+msgid "Plus is a subscription. It unlocks every goal and every lesson, the full plan up to exam day, mock exams timed like the real exam, Zu whenever you need it and higher limits on practice conversations. You see your whole plan before you pay, and you can cancel anytime."
+msgstr "Plusはサブスクリプションです。すべての目標に取り組めて、すべてのレッスン、試験当日までの学習計画、本番と同じ制限時間の模試を利用できます。必要なときはいつでもズーに相談でき、会話練習の利用上限も増えます。支払う前に計画全体を確認でき、いつでも解約できます。"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "iES0bT"
+msgid "See prices"
+msgstr "料金を見る"
+
+#. In Brazilian Portuguese: “O que o Plus tem a mais?”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "-VOkdd"
+msgid "What does Plus add?"
+msgstr "Plusで何が使えるようになりますか？"
+
+#. “Report a problem” is the app's menu item for reporting a lesson: use the exact words your language's app uses for it (in Korean “문제 신고하기”). In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Toque em “Relatar um problema”.”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "NlHQkl"
+msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tap “Report a problem”."
+msgstr "レッスンは最新のAIモデルで作成し、届ける前に確認しています。いくつかの方法で品質を評価し、ほかのAIモデルでも内容を確認しています。試験の科目やトピックに沿った内容です。まれに間違いが含まれることもあります。間違いを見つけましたか？「問題を報告する」をタップしてください。"
+
+#. In Brazilian Portuguese: “Dá para confiar em aulas criadas por IA?”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "kf3mxX"
+msgid "Can you trust lessons made by AI?"
+msgstr "AIで作成したレッスンは信頼できますか？"
+
+#. In Brazilian Portuguese: “Os apps para iPhone e Android estão chegando. Por enquanto, o Zoonk funciona no navegador do celular e do computador, sem instalar nada.”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "LCjwHc"
+msgid "The iPhone and Android apps are coming soon. For now, Zoonk works in your phone's or computer's browser, with nothing to install."
+msgstr "iPhone版とAndroid版のアプリは近日公開予定です。今はスマートフォンやパソコンのブラウザでZoonkを使えます。インストールは不要です。"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "xHun-9"
+msgid "Is there an app?"
+msgstr "アプリはありますか？"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "Prj5qS"
+msgid "What's left comes first the next day. If a date changes, your plan tells you. You can also change your daily time whenever you want."
+msgstr "残った分は翌日の学習の最初に入ります。日程に変更があれば、学習計画でお知らせします。1日の学習時間もいつでも変更できます。"
+
+#. In Brazilian Portuguese: “E se eu faltar um dia?”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "Jd18jf"
+msgid "What if I miss a day?"
+msgstr "1日休んだらどうなりますか？"
+
+#. {exam} is the country's national exam, such as the Enem or the SAT. In Brazilian Portuguese: “Praticamente qualquer coisa. Provas como o {exam}, vestibulares, concursos públicos e a prova da OAB, idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva sua meta do seu jeito.”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "qxT1fv"
+msgid "Pretty much anything. Exams like the {exam}, university entrance exams, civil service exams and the bar exam, languages, a new career or any topic you want to learn. Write your goal in your own words."
+msgstr "ほとんど何でも学べます。{exam}や大学入試、公務員試験、司法試験の対策から、語学や新しい仕事に必要な知識まで、学びたいことを選べます。目標を自分の言葉で書いてください。"
+
+#. In Brazilian Portuguese: “Quais provas e metas dá para estudar?”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "iJ_ZyQ"
+msgid "Which exams and goals can I study for?"
+msgstr "どんな試験や目標に向けて学べますか？"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "7Rm1x6"
+msgid "Frequently asked questions"
+msgstr "よくある質問"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "kxCNVz"
+msgid "Still have questions? Write to <email></email>."
+msgstr "ほかにも質問がありますか？<email></email>までお問い合わせください。"
+
+#. A chip naming a career change as an example goal: one short word.
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "bci5at"
+msgid "Career"
+msgstr "転職"
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "8WtyrD"
+msgid "Spanish"
+msgstr "スペイン語"
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "WkrNSk"
+msgid "English"
+msgstr "英語"
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
 msgctxt "-suPrU"
 msgid "Example goals"
 msgstr "目標の例"
 
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-msgctxt "goalSwitcher.aefUZL"
-msgid "{time} a day"
-msgstr "1日{time}"
-
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "goalSwitcher.8PP61v"
-msgid "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
-msgstr "{days, plural, =0 {いよいよ当日} other {あと#日}}"
-
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-msgctxt "Ecf4N6"
-msgid "Level {level} → {target}"
-msgstr "レベル{level} → {target}"
-
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-msgctxt "dPX7wH"
-msgid "On pace"
-msgstr "順調"
-
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-msgctxt "I_pvBN"
-msgid "Phase {number, number} of {total, number} · {name}"
-msgstr "フェーズ{number, number}/{total, number} · {name}"
-
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-msgctxt "dVwB3J"
-msgid "{done, number} of {total, number}"
-msgstr "{done, number}/{total, number}"
-
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-msgctxt "jpMuGb"
-msgid "Example plans. Yours follows your goal, your time and what you already know. Pick one: the rest of the page follows it."
-msgstr "学習計画の例です。実際の計画は、目標や学習時間、すでに知っていることに合わせて作成します。1つ選ぶと、この下の内容もその例に切り替わります。"
-
+#. The landing's headline: two short sentences, each shown as its own line. Keep it short and punchy. In Brazilian Portuguese: “Pare de decidir o que estudar. Só estude.”
 #: src/app/[lang]/(home)/_components/home-hero.tsx
 #: src/app/[lang]/opengraph-image.tsx
-msgctxt "hV7Lpg"
-msgid "Know what to study every day until the big day."
-msgstr "目標の日まで、毎日何を学ぶかがわかります。"
+msgctxt "PLtdfK"
+msgid "<line>Stop deciding what to study.</line> <line>Just study.</line>"
+msgstr "<line>何を学ぶか、もう迷いません。</line> <line>あとは学ぶだけです。</line>"
 
+#. The landing's subhead. In Brazilian Portuguese: “Conte sua meta e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo.”
 #: src/app/[lang]/(home)/_components/home-hero.tsx
 #: src/app/[lang]/opengraph-image.tsx
-msgctxt "6kw-3N"
-msgid "Tell Zoonk your goal and date. Your plan fits your schedule and adjusts if you miss a day."
-msgstr "Zoonkに目標と日付を教えてください。予定に合わせて学習計画を作り、学習できない日があっても調整します。"
+msgctxt "WtT1Bl"
+msgid "Tell us your goal and the date. Zoonk splits it all into a daily plan sized to your time."
+msgstr "目標と達成したい日を教えてください。Zoonkが学習に使える時間に合わせて、毎日の学習計画を立てます。"
 
+#. An example goal a learner might type; {month} is a month name. In Brazilian Portuguese: “virar analista de dados até {month}”.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "XmrixE"
-msgid "get promoted to data analyst by {month}"
-msgstr "{month}までにデータアナリストに昇進する"
+msgctxt "xlsEx0"
+msgid "become a data analyst by {month}"
+msgstr "{month}までにデータアナリストになる"
 
 #. An example goal a learner might type; {month} is a month name. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
@@ -2492,616 +3126,374 @@ msgctxt "vF1uwi"
 msgid "speak Spanish for my move to Mexico City in {month}"
 msgstr "{month}にメキシコシティへ引っ越すので、スペイン語を話せるようになりたいです"
 
-#. An example goal a learner might type; {month} is a month name. Use your language's name for London.
+#. An example goal a learner might type; {month} is a month name. Use your language's name for London. In Brazilian Portuguese: “falar inglês para me mudar para Londres em {month}”.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "FWZush"
 msgid "speak English for my move to London in {month}"
 msgstr "{month}にロンドンへ引っ越すので、英語を話せるようになる"
 
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "Q2mxTI"
-msgid "Spreadsheet basics"
-msgstr "表計算の基礎"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "higY8h"
-msgid "Formulas"
-msgstr "数式"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "1b-_GC"
-msgid "SQL: SELECT and WHERE"
-msgstr "SQL：SELECTとWHERE"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "y5g1z8"
-msgid "Joins"
-msgstr "結合"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "u5IbOk"
-msgid "GROUP BY"
-msgstr "GROUP BY"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "_FeNoU"
-msgid "Greetings and introductions"
-msgstr "あいさつと自己紹介"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "0YG5_J"
-msgid "Numbers and prices"
-msgstr "数字と値段"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "ApbYuU"
-msgid "Ordering at a café"
-msgstr "カフェでの注文"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "NMkS59"
-msgid "Renting a flat"
-msgstr "部屋を借りる"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "JrZJR9"
-msgid "Bank and phone"
-msgstr "銀行と携帯電話"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "Wfs1md"
-msgid "{count, plural, one {# lesson skipped} other {# lessons skipped}}"
-msgstr "{count, plural, other {#レッスンをスキップ}}"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "placedPlan.djZCU5"
-msgid "Skipped"
-msgstr "スキップ"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "2F9-v0"
-msgid "A price goes up 20%, then down 20%. What percent of the original price is it now?"
-msgstr "価格が20%上がった後、20%下がりました。現在の価格は元の価格の何%ですか？"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "LkDjkt"
-msgid "Question {number, number} · {subject}"
-msgstr "第{number, number}問 · {subject}"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "fd_DO3"
-msgid "Spreadsheets"
-msgstr "表計算"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "Vz-obi"
-msgid "Which formula adds up the values in B2 through B9?"
-msgstr "B2からB9までの値を合計する数式はどれですか？"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "8WtyrD"
-msgid "Spanish"
-msgstr "スペイン語"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "nuIDZ0"
-msgid "Which one means “I'd like a coffee, please”?"
-msgstr "「コーヒーをお願いします」という意味になるのはどれですか？"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "WkrNSk"
-msgid "English"
-msgstr "英語"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "STdub8"
-msgid "Which sentence asks for a coffee politely?"
-msgstr "丁寧にコーヒーを注文する文はどれですか？"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "正解"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "1nJY2_"
-msgid "Your answer"
-msgstr "選んだ答え"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "YicAn8"
-msgid "A question and a mock exam"
-msgstr "問題と模試"
-
-#. {explanation} says why the learner's answer was wrong. Follow it the way your language joins two sentences.
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "43HclA"
-msgid "{explanation} It goes to your Mistakes notebook, and your plan brings it back."
-msgstr "{explanation}間違いノートに保存され、学習計画に沿ってまた出題されます。"
-
-#. {exam} is a national exam's short name (SAT, bac, 수능); {subject} is a subject.
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "idUS16"
-msgid "{exam} style · {subject}"
-msgstr "{exam}形式 · {subject}"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "TxWEcZ"
-msgid "Mock exam {number, number} finished"
-msgstr "模試{number, number}が完了しました"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "fi0FtL"
-msgid "Available with Plus"
-msgstr "Plusで利用できます"
-
-#. {part} is the exam (SAT) or the part of it (Mathematics) the result is for. Exams report a score, a grade or a band (13–15/20, 2–3등급): use a word that fits each.
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "XgYQIA"
-msgid "Estimated score · {part}"
-msgstr "推定スコア · {part}"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "AIeIsk"
-msgid "By topic"
-msgstr "トピック別"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "K1BpxO"
-msgid "{right, number} of {total, number}"
-msgstr "{right, number}問正解／{total, number}問"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "tgvES0"
-msgid "Now"
-msgstr "現在"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "3TEtUT"
-msgid "{count, plural, one {# mistake to review} other {# mistakes to review}}"
-msgstr "{count, plural, other {復習が必要な間違いが#件あります}}"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "X8SGOJ"
-msgid "A real problem and the Mistakes notebook"
-msgstr "実践課題と間違いノート"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "8rf-6Z"
-msgid "Real problem · SQL"
-msgstr "実践課題 · SQL"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "xY0kqD"
-msgid "Which region sold the most?"
-msgstr "売上が最も高い地域はどこですか？"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "yod7QT"
-msgid "{count, number} to fix"
-msgstr "{count, number}件が未克服"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "x95Is1"
-msgid "Grouped by customer, not region"
-msgstr "地域別ではなく顧客別に集計"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "jvmShc"
-msgid "SUM added each customer's sales, so the regions never showed."
-msgstr "SUMで顧客ごとの売上を合計したため、地域別の売上が表示されませんでした。"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "8Gu0rE"
-msgid "Practice this skill"
-msgstr "このスキルを練習する"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "jX9yWL"
-msgid "Ask about the rent"
-msgstr "家賃について聞く"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "XWcqJ_"
-msgid "Book a visit"
-msgstr "内見を予約する"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "Eerjf7"
-msgid "Ask what the bills include"
-msgstr "諸費用の内訳を聞く"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "QBCsqh"
-msgid "Speaking practice and a practice call"
-msgstr "スピーキング練習と会話練習"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "9Da2rt"
-msgid "Say it out loud"
-msgstr "声に出して言う"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "-ImamJ"
-msgid "Can I see the apartment on Saturday?"
-msgstr "土曜日に部屋を見せてもらえますか？"
-
-#. Pronunciation tips: “SAT-ur-day” is the English word “Saturday” and “SÁ-ba-do” the Spanish word “sábado”. Keep each word as written.
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "wXawda"
-msgid "{move, select, london {Stress the first part: <b>SAT</b>-ur-day.} other {Stress the accent: <b>SÁ</b>-ba-do.}}"
-msgstr "{move, select, london {最初の部分を強く発音します：<b>SAT</b>-ur-day。} other {アクセント記号のある部分を強く発音します：<b>SÁ</b>-ba-do。}}"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "waQKY7"
-msgid "Practice call"
-msgstr "会話練習"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "53_ATX"
-msgid "Goals of the call"
-msgstr "会話の目標"
-
-#. Read by screen readers: the learner reached this goal of the call.
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "JXdbo8"
-msgid "Done"
-msgstr "達成済み"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "D5YAeG"
-msgid "{done, number} of {total, number} goals"
-msgstr "{done, number}件達成（全{total, number}件）"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "CEUYFA"
-msgid "Next time:"
-msgstr "次回："
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "iX1JrZ"
-msgid "Mock exam {mock, number} · Question {question, number} · {subject}"
-msgstr "第{mock, number}回模試 · 第{question, number}問 · {subject}"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "0M1dOe"
-msgid "Without it, SUM adds every row into one total. GROUP BY {column} makes one total per region, so you can compare them, and ORDER BY puts the biggest first."
-msgstr "これがないと、SUMはすべての行をまとめて合計します。GROUP BY {column}を使うと地域ごとの合計が出せるので、地域間の比較ができます。ORDER BYで合計が大きい順に並べます。"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "7KLvWs"
-msgid "Why do I need GROUP BY here?"
-msgstr "ここでGROUP BYが必要なのはなぜですか？"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "TCZIsQ"
-msgid "Real problem · Sales by region"
-msgstr "実践課題 · 地域別の売上"
-
-#. The buddy answers a learner of Spanish. Keep only “departamento” and “apartamento” in Spanish, the words being taught; translate the rest, Mexico and Mexico City included.
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "720M2K"
-msgid "Both work. In Mexico people usually say “departamento” for a flat in a building, so it sounds more natural when you're renting in Mexico City."
-msgstr "どちらも使えます。メキシコでは、マンションやアパートの部屋を「departamento」と呼ぶことが多いので、メキシコシティで部屋を借りるときはこちらのほうが自然です。"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "L7mfuM"
-msgid "Why “departamento” and not “apartamento”?"
-msgstr "なぜ「apartamento」ではなく「departamento」なのですか？"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "00sc5X"
-msgid "Lesson · Calling about an apartment"
-msgstr "レッスン · 部屋の問い合わせ"
-
-#. The buddy answers a learner of English. Keep only “flat” and “apartment” in English, the words being taught; translate the rest, London and the US included. “there” is London.
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "4teyr4"
-msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
-msgstr "どちらも使えますが、ロンドンでは「flat」と言います。「apartment」はアメリカでよく使われるので、ロンドンで部屋を借りるときは「flat」のほうが自然です。"
-
-#. A learner of English asks about the English words “flat” and “apartment”.
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "O0g0Ss"
-msgid "Why “flat” and not “apartment”?"
-msgstr "「apartment」ではなく「flat」を使うのはなぜですか？"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "buddyNames.vPjK_E"
-msgid "Zu"
-msgstr "ズー"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "AcKlQI"
-msgid "Explain it more simply"
-msgstr "もっとわかりやすく説明する"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "s6QqT3"
-msgid "I want to go deeper"
-msgstr "もっと深く学ぶ"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "AmRISg"
-msgid "11 pm · one question"
-msgstr "午後11時 · 1つの質問"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "eOHX5x"
-msgid "Stuck? Ask Zu."
-msgstr "行き詰まりましたか？ズーに聞いてみましょう。"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "HRHTTM"
-msgid "Your AI study buddy explains any question as simply as you need, right where you got stuck."
-msgstr "学習の相棒となるAIが、つまずいたその場で、どんな質問にもわかるまでやさしく答えます。"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "HGiiLi"
-msgid "From scratch, with everyday examples"
-msgstr "身近な例を使って、一から学びます"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "pIPmbB"
-msgid "Nothing, I'm just starting"
-msgstr "初めてで、まだ何も知らない"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "uzFoxW"
-msgid "I know a few things"
-msgstr "少し知っています"
-
-#. An answer to how much the learner already knows about the topic.
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "wouTdw"
-msgid "The basics"
-msgstr "基礎は知っている"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "h9kQ0S"
-msgid "We'll skip what you already know"
-msgstr "すでに知っていることはスキップします"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "koLFLL"
-msgid "I studied it before"
-msgstr "以前に学んだことがある"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "47D0tB"
-msgid "Only what's new or hard"
-msgstr "知らないことや難しいことだけを学びます"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "BY-vT3"
-msgid "I know it well"
-msgstr "よく知っている"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "MLAAq8"
-msgid "Adapts to your answers, about {time}"
-msgstr "答えに合わせて問題が変わります（約{time}）"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "PAwSdR"
-msgid "Not sure, give me a quick test"
-msgstr "よくわからないので、短いテストを受ける"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "ZATSm-"
-msgid "Day 1 · 2 minutes"
-msgstr "1日目 · 2 分"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "CMlDLt"
-msgid "Your plan starts where you are."
-msgstr "今の理解度に合った学習計画で始められます。"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "-3GuWe"
-msgid "A few quick questions find what you already know, and your plan skips it."
-msgstr "いくつかの短い問題で知っていることを確かめ、学習計画ではその内容をスキップします。"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "j9qNv7"
-msgid "Day 1, in three steps"
-msgstr "1日目の3つのステップ"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "FI0QGz"
-msgid "Say how much you know"
-msgstr "どのくらい知っているか伝える"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "ctiEvk"
-msgid "Answer a few questions"
-msgstr "いくつかの問題に答える"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "v-y-wJ"
-msgid "Your plan skips what you know"
-msgstr "学習計画では知っていることをスキップします"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "udtNZk"
-msgid "{exam} on {date}"
-msgstr "{exam}（{date}）"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "-FjPjU"
-msgid "Goal date {date}"
-msgstr "目標日 {date}"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "a5fAnr"
-msgid "Moving day {date}"
-msgstr "引っ越し日 {date}"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "DQ8KR2"
-msgid "Your plan changed"
-msgstr "学習計画が変わりました"
-
-#. Marks a plan's value after a change, beside its old one.
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "planDiff.bW7B87"
-msgid "New"
-msgstr "変更後"
-
-#. Marks a plan's value before a change, beside its new one.
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "planDiff.K0Lp_g"
-msgid "Was"
-msgstr "変更前"
-
-#. {phase} is a plan phase's name, such as “Fill the gaps”.
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "3WnP-W"
-msgid "{phase} until {date}"
-msgstr "{phase}（{date}まで）"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "Rec1Kn"
-msgid "One lesson of {phase}"
-msgstr "{phase}のレッスン1つ"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "MtrTNy"
-msgid "Tomorrow"
-msgstr "明日"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "AleVJo"
-msgid "On pace. Nothing moves."
-msgstr "順調です。予定はそのままです。"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "ACteAu"
-msgid "Short lessons Zoonk writes for your goal."
-msgstr "Zoonkが目標に合わせて作成する、短いレッスンです。"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "eXs5Be"
-msgid "Written for your goal"
-msgstr "目標に合わせて作成"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-#: src/components/catalog/plan-workload.tsx
-msgctxt "RYqUsZ"
-msgid "What you studied comes back right before you'd forget it."
-msgstr "忘れる直前に、学んだことが復習に出てきます。"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "OKDhTn"
-msgid "Back before you forget"
-msgstr "忘れる直前にもう一度"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "bjikyk"
-msgid "Every mistake comes back until you get it right."
-msgstr "間違えた問題は、正解できるまで繰り返し出てきます。"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "4DoPlf"
-msgid "Mistakes, practiced"
-msgstr "間違えたところを練習"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "TcjVgp"
-msgid "What you missed comes first, and the rest of your plan moves to fit."
-msgstr "できなかった分を最初に学び、残りの学習計画はそれに合わせて調整されます。"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-#: src/app/[lang]/(home)/_components/tomorrow-steps.ts
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "planPhases.6RRX7X"
+msgid "Foundations"
+msgstr "基礎"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
 msgctxt "i4CkTc"
 msgid "From yesterday"
 msgstr "昨日の分"
 
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "1ooK0d"
-msgid "Every day"
-msgstr "毎日"
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "UIUcbm"
+msgid "{count, plural, one {# question} other {# questions}}"
+msgstr "{count, plural, other {#問}}"
 
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "ZuAnCp"
-msgid "Your day is ready when you open Zoonk."
-msgstr "Zoonkを開くと、今日の学習が用意されています。"
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "o3vNiB"
+msgid "In Zoonk"
+msgstr "Zoonkでは"
 
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "QkIlUm"
-msgid "Short lessons written for your goal, reviews right before you'd forget, and your mistakes to practice. Missed yesterday? It comes first."
-msgstr "目標に合わせた短いレッスン、忘れる直前の復習、間違えた問題の練習がそろっています。昨日は学習できませんでしたか？まずはその分から始めます。"
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "2625DB"
+msgid "{count, plural, one {And # more lesson} other {And # more lessons}}"
+msgstr "{count, plural, other {ほかに#レッスン}}"
 
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+#. {phase} is a plan phase's name, such as “Foundations”; quote it if your language needs that to read naturally.
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "dVwY9T"
+msgid "<b>On pace.</b> You finish the {phase} phase on {date}."
+msgstr "<b>順調です。</b>「{phase}」フェーズは{date}に完了します。"
+
+#. {phase} is a plan phase's name, such as “Foundations”; quote it if your language needs that to read naturally.
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "VmWpK7"
+msgid "<b>Your plan changed:</b> you finish the {phase} phase on {date}."
+msgstr "<b>学習計画が変わりました：</b>「{phase}」フェーズは{date}に完了します。"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "0JAP24"
+msgid "Before, it was {date}."
+msgstr "変更前は{date}でした。"
+
+#. A learner's own worry, in their casual words, shown as a big quote. In Brazilian Portuguese: “Perdi um dia e desandou tudo.”
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "a1ec1o"
+msgid "I missed a day and it all fell apart."
+msgstr "1日休んだら、計画が全部崩れてしまいました。"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "qRIKt4"
+msgid "<b>It happens.</b> What's left from yesterday comes first today. If a date changes, your plan tells you."
+msgstr "<b>そんな日もあります。</b>昨日終わらなかった分は、今日の学習の最初に入ります。日程に変更があれば、学習計画でお知らせします。"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
 msgctxt "6dIxDP"
 msgid "Yesterday"
 msgstr "昨日"
 
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
 msgctxt "yesterdaySwitch.cMaydB"
 msgid "Studied"
 msgstr "学習済み"
 
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
 msgctxt "yesterdaySwitch.1Gku3Z"
 msgid "No time"
 msgstr "時間がなかった"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "6_YTk8"
-msgid "Week {week, number} · mock exam"
-msgstr "{week, number}週目・模試"
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "wvKJOA"
+msgid "Example: {goal}, {time} a day."
+msgstr "例：{goal}、1日{time}。"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "D32g2O"
-msgid "Questions in your exam's format, and mock exams timed like the real one, with an estimated score."
-msgstr "試験と同じ形式の問題や、本番と同じ制限時間の模試で練習できます。推定スコアもわかります。"
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "JXdbo8"
+msgid "Done"
+msgstr "達成済み"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "_xKXo7"
-msgid "Practice like the real exam."
-msgstr "本番と同じように練習できます。"
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "zqV6aP"
+msgid "Not done"
+msgstr "未完了"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "mB5Vfh"
-msgid "Week {week, number} · real work"
-msgstr "{week, number}週目・実務"
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "tMZXzv"
+msgid "In a spreadsheet"
+msgstr "スプレッドシートでは"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "9zZGUO"
-msgid "Problems from the job you want, checked as you go, and every mistake kept for later."
-msgstr "目指す仕事の課題を解くたびに答え合わせができ、間違いはすべて後で見直せるように保存されます。"
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "xM1yHi"
+msgid "So far, so good."
+msgstr "ここまでは順調です。"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "XFjhzO"
-msgid "Practice on real work."
-msgstr "実務の課題で練習できます。"
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "iFHGDa"
+msgid "The spreadsheet doesn't change by itself. Now you redo the whole week by hand."
+msgstr "スプレッドシートは自動では変わりません。1週間分の予定をすべて手作業で組み直すことになります。"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "ebyq2G"
-msgid "Week {week, number} · speaking"
-msgstr "{week, number}週目・スピーキング"
+#. A learner's own worry, in their casual words, shown as a big quote. In Brazilian Portuguese: “Será que já sei o suficiente?”
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "hlr-77"
+msgid "Do I know enough yet?"
+msgstr "今の実力で大丈夫ですか？"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "PzTp8t"
-msgid "Say real sentences out loud, get tips on how you sound, and practice calls for the moments that matter."
-msgstr "実際に使う文を声に出して言うと、話し方のアドバイスがもらえます。大切な場面での会話も練習できます。"
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "hRjp9H"
+msgid "<b>Take mock exams in the real exam's format and time.</b> At the end, you see an estimate of your score and what's still missing."
+msgstr "<b>本番と同じ形式・制限時間で模試を受けられます。</b>終わると、推定スコアとまだ身についていない内容がわかります。"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "hyh1lt"
-msgid "Practice the conversations you'll have."
-msgstr "実際の場面を想定して会話を練習できます。"
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "cpAOYg"
+msgid "Mock exam {number, number} · {name}"
+msgstr "第{number, number}回模試 · {name}"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "fi0FtL"
+msgid "Available with Plus"
+msgstr "Plusで利用できます"
+
+#. Exams report a score, a grade or a band (13–15/20, 2–3등급): use the word that fits your country's exam.
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "Psgvhk"
+msgid "Estimated score"
+msgstr "推定スコア"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "RIwxqi"
+msgid "<b>Solid:</b> {topics}"
+msgstr "<b>定着：</b>{topics}"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "28PXed"
+msgid "<b>To review:</b> {topics}"
+msgstr "<b>要復習：</b>{topics}"
+
+#. In Brazilian Portuguese: “<b>7 erros</b> foram para o seu caderno de erros”.
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "Qfdzfp"
+msgid "<b>{count, plural, one {# mistake} other {# mistakes}}</b> went to your mistakes notebook"
+msgstr "<b>{count, plural, other {#件の間違い}}</b>を間違いノートに保存しました"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "mM0WGu"
+msgid "The score is only an estimate, made from your answers. Mock exams are available with Plus."
+msgstr "スコアは回答をもとにした推定値です。模試はPlusで利用できます。"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "placedPlan.djZCU5"
+msgid "Skipped"
+msgstr "スキップ"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "uWZ77n"
+msgid "Percentages"
+msgstr "百分率"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "YsbwW7"
+msgid "Lessons skipped: <b>{count, number}</b>"
+msgstr "スキップ：<b>{count, number}</b>レッスン"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "ZGEwEX"
+msgid "Answer the question and watch your plan change."
+msgstr "問題に答えて、学習計画の変化を見てみましょう。"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "VXuhxV"
+msgid "<b>You already know this.</b> Your plan skipped {count, plural, one {# lesson} other {# lessons}} on percentages."
+msgstr "<b>すでに知っている内容です。</b>学習計画では、百分率の{count, plural, other {#レッスン}}をスキップしました。"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "C1Q1g9"
+msgid "<b>Noted.</b> Percentages stay in your plan."
+msgstr "<b>わかりました。</b>百分率は学習計画に残ります。"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "3tHxl3"
+msgid "<b>That's fine.</b> Your plan teaches percentages from the basics."
+msgstr "<b>大丈夫です。</b>学習計画では、百分率を基礎から学びます。"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "3PZM1V"
+msgid "Ratio and proportion"
+msgstr "比と比例"
+
+#. A math topic. In Brazilian Portuguese “Regra de três”.
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "WBm69y"
+msgid "Cross-multiplication"
+msgstr "比例式の解き方"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "mg-aO7"
+msgid "Compound interest"
+msgstr "複利"
+
+#. A math topic. In Brazilian Portuguese “Funções do 1º grau”.
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "FYV21J"
+msgid "Linear functions"
+msgstr "一次関数"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "LkDjkt"
+msgid "Question {number, number} · {subject}"
+msgstr "第{number, number}問 · {subject}"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+#: src/lib/categories/category.ts
+msgctxt "dPgwrL"
+msgid "Math"
+msgstr "数学"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "2F9-v0"
+msgid "A price goes up 20%, then down 20%. What percent of the original price is it now?"
+msgstr "価格が20%上がった後、20%下がりました。現在の価格は元の価格の何%ですか？"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "akd-cv"
+msgid "Answer options"
+msgstr "回答の選択肢"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "まだわからない"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "yFLiQM"
+msgid "It's not scored."
+msgstr "点数はつきません。"
+
+#. A learner's own worry, in their casual words, shown as a big quote. In Brazilian Portuguese: “Não sei por onde começar.”
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "JAnSgb"
+msgid "I don't know where to start."
+msgstr "どこから始めればいいかわかりません。"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "PZYp7C"
+msgid "<b>Start with a few quick questions.</b> In about 2 minutes, Zoonk sees what you already know, and your plan skips that part."
+msgstr "<b>まずはいくつかの短い問題から始めましょう。</b>Zoonkが約2分で理解度を確認し、すでに知っている内容は学習計画でスキップします。"
+
+#. A school subject area. In Brazilian Portuguese “Ciências da Natureza”.
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "H0lYkC"
+msgid "Natural sciences"
+msgstr "理科"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "72N7d0"
+msgid "In a pasture, grass is eaten by grasshoppers, grasshoppers by frogs and frogs by snakes."
+msgstr "牧草地では、バッタが草を食べ、カエルがバッタを食べ、ヘビがカエルを食べます。"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "weP8DM"
+msgid "The energy available shrinks at each level of this chain. What's the main reason?"
+msgstr "この食物連鎖では、段階が上がるごとに利用できるエネルギーが減ります。主な理由は何ですか？"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "1nJY2_"
+msgid "Your answer"
+msgstr "選んだ答え"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "XSkW9E"
+msgid "Predators eat less than their prey"
+msgstr "捕食者は獲物より食べる量が少ない"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "正解"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "PALJLs"
+msgid "Part of the energy turns into heat as each living thing breathes"
+msgstr "生物が呼吸するときに、エネルギーの一部が熱に変わる"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "bJBtpz"
+msgid "Plants photosynthesize less at night"
+msgstr "夜は植物があまり光合成をしない"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "_XE_0X"
+msgid "Saved to your mistakes notebook"
+msgstr "間違いノートに保存しました"
+
+#. The study buddy's casual joke: you don't gain the weight of the plate of food you ate.
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "43yP-p"
+msgid "You eat lunch and don't gain the weight of the plate, right? Almost all of it becomes energy for your day. It's the same with the frog: only a small part of the grasshopper becomes frog."
+msgstr "昼ごはんを食べても、その重さの分だけ体重が増えるわけではありませんよね？ほとんどは、その日を過ごすためのエネルギーになります。カエルも同じで、食べたバッタのうちカエルの体になるのはほんの一部です。"
+
+#. A learner's casual message to their study buddy. In Brazilian Portuguese: “Me dá um exemplo”.
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "Bv5nVy"
+msgid "Give me an example"
+msgstr "例を聞く"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "77DoST"
+msgid "Each animal uses almost all the energy it eats just to stay alive. Very little is left to become body. That little bit is what passes on to whoever eats it."
+msgstr "どの動物も、食べ物から得たエネルギーのほとんどを、生きるために使います。体をつくるために残るのは、ほんの少しです。その少しだけが、その動物を食べる生き物に伝わります。"
+
+#. A learner's casual message to their study buddy. In Brazilian Portuguese: “Explica mais simples”.
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "AcKlQI"
+msgid "Explain it more simply"
+msgstr "もっとわかりやすく説明する"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "BQcZJ-"
+msgid "Because it's not about how much they eat. Every animal spends almost all the energy from its food just staying alive. Breathing releases that energy as heat. Only about 10% passes to the next level."
+msgstr "食べる量の問題ではないからです。どの動物も、食べ物から得たエネルギーのほとんどを、生きるために使います。呼吸をすると、そのエネルギーが熱として外に出ていきます。次の段階に伝わるのは、約10%だけです。"
+
+#. A learner's casual message asking why their pick, option A, was wrong. In Brazilian Portuguese: “Por que não é a A?”
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "DU0e9Q"
+msgid "Why isn't it A?"
+msgstr "Aではない理由は？"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "buddyNames.vPjK_E"
+msgid "Zu"
+msgstr "ズー"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "Dh-vx4"
+msgid "Your study buddy"
+msgstr "学習の相棒"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "sJ9v9R"
+msgid "Questions for Zu"
+msgstr "ズーへの質問"
+
+#. A learner's own worry, in their casual words, shown as a big quote. It's an exam question. In Brazilian Portuguese: “Travei numa questão.”
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "TnQe8p"
+msgid "I got stuck on a question."
+msgstr "問題でつまずきました。"
+
+#. In Brazilian Portuguese: “<b>Pergunte ali mesmo na questão.</b> Zu explica do jeito mais simples que você precisar.”
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "PhcYdR"
+msgid "<b>Ask right there in the question.</b> Zu explains it as simply as you need."
+msgstr "<b>問題の画面から、そのまま質問できます。</b>ズーが、わかるまでかみ砕いて説明します。"
 
 #: src/app/[lang]/(home)/page.tsx
-msgctxt "M3puYF"
-msgid "Tell Zoonk your goal and date, like an exam or a move abroad. Get a study plan for every day that fits your schedule. Start free, no account needed."
-msgstr "試験や海外への引っ越しなど、目標とその予定日をZoonkに教えてください。予定に合わせて毎日の学習計画を作成します。アカウントなしで無料で始められます。"
+msgctxt "5imFxC"
+msgid "Tell Zoonk your goal and the date. It breaks everything into a daily plan that fits your time and starts from what you already know. Start free, no account needed."
+msgstr "目標と達成したい日をZoonkに教えてください。すでに知っていることを踏まえて、使える時間に合った毎日の学習計画を立てます。アカウントなしで、無料で始められます。"
 
+#. The landing's title. In Brazilian Portuguese: “Zoonk: Pare de decidir o que estudar. Só estude.”
 #: src/app/[lang]/(home)/page.tsx
-msgctxt "201rSY"
-msgid "Zoonk: A study plan for every day until the big day"
-msgstr "Zoonk：目標の日まで、毎日の学習計画"
+msgctxt "loiLth"
+msgid "Zoonk: Stop deciding what to study. Just study."
+msgstr "Zoonk：何を学ぶか、もう迷いません。あとは学ぶだけです。"
 
 #: src/app/[lang]/(home)/page.tsx
 #: src/components/auth-gate.tsx
@@ -3122,11 +3514,6 @@ msgstr "アカウントを削除しました。"
 msgctxt "9MidH4"
 msgid "Challenge"
 msgstr "チャレンジ"
-
-#: src/app/[lang]/conversation/[conversationId]/page.tsx
-msgctxt "gegfoA"
-msgid "Conversation"
-msgstr "会話"
 
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx
@@ -3584,6 +3971,11 @@ msgid "{time} in all"
 msgstr "合計{time}"
 
 #: src/components/catalog/plan-workload.tsx
+msgctxt "RYqUsZ"
+msgid "What you studied comes back right before you'd forget it."
+msgstr "忘れる直前に、学んだことが復習に出てきます。"
+
+#: src/components/catalog/plan-workload.tsx
 msgctxt "GDUlmD"
 msgid "Of this, {time} comes after the exam."
 msgstr "このうち{time}は、試験後の学習時間です。"
@@ -3816,11 +4208,6 @@ msgstr "1日あたり{tutor, plural, other {相棒へのメッセージ#件}}と
 msgctxt "QKrdr3"
 msgid "Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)"
 msgstr "会話練習（利用上限はPlusより低く、試験のスピーキングタスクはPlusで利用できます）"
-
-#: src/components/pricing/plus-questions.tsx
-msgctxt "ieflON"
-msgid "hello@zoonk.com"
-msgstr "hello@zoonk.com"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "uUjwhB"
@@ -4100,11 +4487,6 @@ msgstr "語学"
 msgctxt "u3ovjm"
 msgid "Law"
 msgstr "法律"
-
-#: src/lib/categories/category.ts
-msgctxt "dPgwrL"
-msgid "Math"
-msgstr "数学"
 
 #: src/lib/categories/category.ts
 msgctxt "qydxOd"

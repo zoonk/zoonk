@@ -5,6 +5,7 @@ import { getOpenGraphWordBreak } from "@/lib/metadata/open-graph-word-break";
 import { DEFAULT_LOCALE, isValidLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { ImageResponse } from "next/og";
+import { type ReactNode } from "react";
 
 const LOGO_PATH = join(process.cwd(), "src/app/icon.svg");
 
@@ -23,6 +24,10 @@ async function getLogoDataUrl(): Promise<string> {
     .replace('fill="#fff"', 'fill="#0d1117"');
 
   return `data:image/svg+xml;base64,${Buffer.from(logo).toString("base64")}`;
+}
+
+function renderLine(chunks: ReactNode) {
+  return <div style={{ display: "flex", textWrap: "balance" }}>{chunks}</div>;
 }
 
 export function generateStaticParams() {
@@ -66,14 +71,21 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
       >
         <div
           style={{
+            alignItems: "center",
             display: "flex",
+            flexDirection: "column",
             fontSize: 64,
             fontWeight: 400,
             letterSpacing: "-0.035em",
             lineHeight: 1.05,
           }}
         >
-          {t("Know what to study every day until the big day.")}
+          {t.rich({
+            description:
+              "The landing's headline: two short sentences, each shown as its own line. Keep it short and punchy. In Brazilian Portuguese: “Pare de decidir o que estudar. Só estude.”",
+            message: "<line>Stop deciding what to study.</line> <line>Just study.</line>",
+            values: { line: renderLine },
+          })}
         </div>
 
         <div
@@ -83,11 +95,15 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
             fontSize: 30,
             fontWeight: 400,
             lineHeight: 1.25,
+            textWrap: "balance",
           }}
         >
-          {t(
-            "Tell Zoonk your goal and date. Your plan fits your schedule and adjusts if you miss a day.",
-          )}
+          {t({
+            description:
+              "The landing's subhead. In Brazilian Portuguese: “Conte sua meta e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo.”",
+            message:
+              "Tell us your goal and the date. Zoonk splits it all into a daily plan sized to your time.",
+          })}
         </div>
       </div>
     </div>,

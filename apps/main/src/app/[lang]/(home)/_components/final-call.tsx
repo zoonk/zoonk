@@ -1,30 +1,44 @@
-import { Stop, StopEyebrow, StopHeader, StopMark, StopTitle } from "@/components/public/stop";
-import { FlagIcon } from "lucide-react";
+import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
+import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { FINAL_GOAL_ID } from "./home-ids";
 import { LandingGoalBox } from "./landing-goal-box";
 
-const CLOSE_TITLE_ID = "landing-close-title";
+const TITLE_ID = "final-call-title";
 
 export async function FinalCall({ startPath }: { startPath: string }) {
   const t = await getExtracted();
 
   return (
-    <Stop aria-labelledby={CLOSE_TITLE_ID} className="pb-20 sm:pb-28 lg:pb-32" rail>
-      <StopHeader>
-        <StopEyebrow>
-          <StopMark>
-            <FlagIcon className="size-3.5" />
-          </StopMark>
-          {t("The big day")}
-        </StopEyebrow>
+    <section
+      aria-labelledby={TITLE_ID}
+      className="bg-background text-foreground dark:border-y"
+      data-slot="ink-band"
+    >
+      <div className={cn(PUBLIC_CONTAINER_CLASS, "flex flex-col items-center py-26 text-center")}>
+        <h2
+          className="text-[clamp(2.5rem,6.6vw,5.5rem)] leading-[0.98] font-[680] tracking-[-0.052em] text-balance"
+          id={TITLE_ID}
+        >
+          {t("Start with what matters today.")}
+        </h2>
+        <p className="text-muted-foreground mt-4.5 max-w-[30em] text-[1.0625rem] leading-normal text-pretty lg:text-xl">
+          {t({
+            description:
+              "In Brazilian Portuguese: “Conte sua meta e responda umas perguntas rápidas. Depois, é só seguir o plano de cada dia.”",
+            message:
+              "Tell us your goal and answer a few quick questions. Then just follow each day's plan.",
+          })}
+        </p>
 
-        <StopTitle id={CLOSE_TITLE_ID}>{t("What's your big day?")}</StopTitle>
-      </StopHeader>
-
-      <div className="max-w-column mt-7 w-full lg:mt-8">
-        <LandingGoalBox action={startPath} id={FINAL_GOAL_ID} />
+        <div className="max-w-column mt-8 w-full text-left">
+          <LandingGoalBox
+            action={startPath}
+            id={FINAL_GOAL_ID}
+            note={t("Start free, no account needed.")}
+          />
+        </div>
       </div>
-    </Stop>
+    </section>
   );
 }

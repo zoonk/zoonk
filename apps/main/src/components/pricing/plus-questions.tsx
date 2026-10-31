@@ -1,5 +1,9 @@
 import { CommercialDisclosureLink } from "@/components/public/commercial-disclosure-link";
-import { PublicDisclosure } from "@/components/public/public-disclosure";
+import {
+  DISCLOSURE_ANSWER_CLASS,
+  DISCLOSURE_LINK_CLASS,
+  PublicDisclosure,
+} from "@/components/public/public-disclosure";
 import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
@@ -12,8 +16,6 @@ import { ForViewer } from "./for-viewer";
 import { type PlusViewerState } from "./plus-plan";
 
 const PLUS_QUESTIONS_ID = "plus-questions";
-const ANSWER_CLASS = "text-muted-foreground text-[15px] leading-relaxed text-pretty sm:text-base";
-const ANSWER_LINK_CLASS = "text-foreground font-medium underline underline-offset-4";
 
 const LEGAL_LINK_CLASS =
   "hover:text-foreground hit-area relative underline-offset-4 hover:underline";
@@ -24,7 +26,7 @@ function keepNumbersWithWords(text: string) {
 
 function renderFairUseLink(chunks: ReactNode) {
   return (
-    <Link className={ANSWER_LINK_CLASS} href="/terms#fair-use">
+    <Link className={DISCLOSURE_LINK_CLASS} href="/terms#fair-use">
       {chunks}
     </Link>
   );
@@ -32,7 +34,7 @@ function renderFairUseLink(chunks: ReactNode) {
 
 function renderCancelLink(chunks: ReactNode) {
   return (
-    <Link className={ANSWER_LINK_CLASS} href="/subscription/cancel">
+    <Link className={DISCLOSURE_LINK_CLASS} href="/subscription/cancel">
       {chunks}
     </Link>
   );
@@ -47,7 +49,7 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
   const limits = getFreePlanLimits();
 
   const renderLead = (reader: PlusViewerState) => (
-    <p className={ANSWER_CLASS}>
+    <p className={DISCLOSURE_ANSWER_CLASS}>
       {hasNoAccount(reader) && limits.guestLessons !== null
         ? t(
             "Start free with {count, plural, one {# lesson} other {# lessons}}, no account needed. With a free account, you get:",
@@ -82,7 +84,7 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
 
       <ul className="flex flex-col gap-2">
         {items.map((item) => (
-          <li className={cn(ANSWER_CLASS, "flex gap-3")} key={item}>
+          <li className={cn(DISCLOSURE_ANSWER_CLASS, "flex gap-3")} key={item}>
             <LineMarker>
               <span aria-hidden="true" className="bg-foreground/35 size-1.5 rounded-full" />
             </LineMarker>
@@ -134,7 +136,7 @@ export async function PlusQuestions({
         </PublicDisclosure>
 
         <PublicDisclosure summary={t("Is Plus really unlimited?")}>
-          <p className={ANSWER_CLASS}>
+          <p className={DISCLOSURE_ANSWER_CLASS}>
             {t.rich(
               "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>.",
               { link: renderFairUseLink },
@@ -143,7 +145,7 @@ export async function PlusQuestions({
         </PublicDisclosure>
 
         <PublicDisclosure summary={t("What happens if I cancel?")}>
-          <p className={ANSWER_CLASS}>
+          <p className={DISCLOSURE_ANSWER_CLASS}>
             {t(
               "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you.",
             )}
@@ -151,7 +153,7 @@ export async function PlusQuestions({
         </PublicDisclosure>
 
         <PublicDisclosure summary={t("Can I get a refund?")}>
-          <p className={ANSWER_CLASS}>
+          <p className={DISCLOSURE_ANSWER_CLASS}>
             {t.rich(
               "If you subscribed on our website, <link>cancel</link> within 14 days for a full refund. After a yearly renewal, canceling refunds the months that haven't started. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
               { link: renderCancelLink },

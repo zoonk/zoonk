@@ -105,7 +105,7 @@ msgstr "도움말"
 #: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 #: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
+#: src/app/[lang]/(home)/_components/start-section.tsx
 msgctxt "ChuNUI"
 msgid "Your plan"
 msgstr "내 계획"
@@ -180,9 +180,7 @@ msgid "Take a mock exam"
 msgstr "모의고사 보기"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/forget-section.tsx
 msgctxt "AFQMLq"
 msgid "Practice your mistakes"
 msgstr "틀린 문제 다시 풀기"
@@ -203,7 +201,8 @@ msgstr "새 목표 시작하기"
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-#: src/app/[lang]/(home)/_components/hero-window.tsx
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
 #: src/components/catalog/course-plan-window.tsx
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "zWgbGg"
@@ -230,7 +229,7 @@ msgstr "짝꿍"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(learn)/mistakes/page.tsx
-#: src/app/[lang]/(home)/_components/practice-job.tsx
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
 msgctxt "g3GlDw"
 msgid "Mistakes notebook"
 msgstr "오답 노트"
@@ -391,7 +390,7 @@ msgstr "사용자 메뉴"
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
+#: src/app/[lang]/(home)/_components/ready-section.tsx
 #: src/components/pricing/plus-plan.tsx
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "lOdoIb"
@@ -421,7 +420,7 @@ msgstr "레슨"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
+#: src/app/[lang]/(home)/_components/start-section.tsx
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "n7xPkB"
 msgid "{count, plural, one {# lesson} other {# lessons}}"
@@ -497,7 +496,8 @@ msgstr "예시예요. 실제 계획은 답변에 따라 달라져서 뒷부분�
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start.tsx
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
-#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+#: src/app/[lang]/(home)/_components/final-call.tsx
+#: src/app/[lang]/(home)/_components/home-hero.tsx
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "npIkqE"
 msgid "Start free, no account needed."
@@ -626,7 +626,6 @@ msgid "Left out"
 msgstr "제외"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
 msgctxt "ArogzQ"
 msgid "{count, plural, =0 {# of {total, number} lessons} one {# of {total, number} lessons} other {# of {total, number} lessons}}"
 msgstr "{count, plural, =0 {레슨 #개(전체 {total, number}개 중)} other {레슨 #개 / 전체 {total, number}개}}"
@@ -1050,7 +1049,6 @@ msgid "Your plan starts at this chapter and follows the course from there, in th
 msgstr "계획은 이 챕터부터 시작해 매일 공부할 수 있는 시간에 맞춰 코스를 따라 진행돼요."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "8s-b4U"
 msgid "How much do you already know?"
 msgstr "이미 어느 정도 알고 있나요?"
@@ -1701,7 +1699,6 @@ msgstr "개요"
 #: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
 msgctxt "y1Qr81"
 msgid "Level"
 msgstr "레벨"
@@ -2144,7 +2141,6 @@ msgstr "전체 보기"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-#: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "아직 없음"
@@ -2179,312 +2175,950 @@ msgctxt "Y_aK5B"
 msgid "Right answers in the last 90 days"
 msgstr "최근 90일간의 정답"
 
-#: src/app/[lang]/(home)/_components/exam-tomorrow.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/final-call.tsx
+msgctxt "X91zpJ"
+msgid "Start with what matters today."
+msgstr "오늘 중요한 것부터 시작하세요."
+
+#. In Brazilian Portuguese: “Conte sua meta e responda umas perguntas rápidas. Depois, é só seguir o plano de cada dia.”
+#: src/app/[lang]/(home)/_components/final-call.tsx
+msgctxt "LTU3wD"
+msgid "Tell us your goal and answer a few quick questions. Then just follow each day's plan."
+msgstr "목표를 알려 주고 간단한 질문 몇 가지에 답해 주세요. 그다음엔 매일 계획을 따르기만 하면 돼요."
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "8AqUKr"
+msgid "Asking for directions"
+msgstr "길 묻기"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "wY_wqj"
+msgid "Phrasal verbs for travel"
+msgstr "여행에 쓰는 phrasal verbs"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "6Zbcf1"
+msgid "Illustration. Without reviews, you forget almost everything in a few days. With reviews on {dates} and today, it comes back each time, and the gaps between reviews grow."
+msgstr "설명 그림이에요. 복습하지 않으면 며칠 만에 거의 다 잊어버려요. {dates}, 그리고 오늘 복습하면 그때마다 기억이 되살아나고 복습 간격도 점점 길어져요."
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "XGOJGX"
+msgid "With reviews"
+msgstr "복습할 때"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "vK_EIg"
+msgid "Without reviewing"
+msgstr "복습하지 않을 때"
+
+#. Marks today on a timeline; lowercase.
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "kkpP2k"
+msgid "today"
+msgstr "오늘"
+
+#. A learner's own worry, in their casual words, shown as a big quote. In Brazilian Portuguese: “Estudo e esqueço.”
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "BxUa_d"
+msgid "I study and forget."
+msgstr "공부해도 잊어버려요."
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "yFQn5A"
+msgid "<b>Zoonk brings back what you studied right before you'd forget it.</b> And every mistake comes back for you to practice until you get it right."
+msgstr "<b>Zoonk가 배운 내용을 잊어버리기 직전에 다시 보여 줘요.</b> 틀린 문제도 모두 다시 나와서 맞힐 때까지 연습할 수 있어요."
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "xrCRnH"
+msgid "Example"
+msgstr "예시"
+
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "간단 복습"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "planPhases.6RRX7X"
-msgid "Foundations"
-msgstr "기초 다지기"
+#. {item} is a word or phrase in the language being learned. Use your language's quote marks.
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "uzaDyb"
+msgid "“{item}” and {count, number} more"
+msgstr "“{item}” 외 {count, number}개"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "planPhases.PFt14a"
-msgid "Fill the gaps"
-msgstr "부족한 부분 채우기"
+#: src/app/[lang]/(home)/_components/forget-section.tsx
+msgctxt "5czPwn"
+msgid "An illustration of the forgetting curve. Review dates change with your answers."
+msgstr "망각 곡선을 보여 주는 그림이에요. 답에 따라 복습 날짜가 달라져요."
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "planPhases.KV-O0y"
-msgid "Practice"
-msgstr "연습"
+#. A messy spreadsheet's file name. Translate “schedule” with one short word and keep the underscores, “FINAL_v3” and “.xlsx”. {exam} is the exam's name in lowercase. In Brazilian Portuguese: “cronograma_{exam}_FINAL_v3.xlsx”.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "A2PGPU"
+msgid "schedule_{exam}_FINAL_v3.xlsx"
+msgstr "일정_{exam}_FINAL_v3.xlsx"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "planPhases.QyaAtA"
-msgid "Final stretch"
-msgstr "마무리"
+#. {exam} is a national exam's short name, such as Enem or SAT.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "JssoB6"
+msgid "Everything that can come up on the {exam}"
+msgstr "{exam}에 나올 수 있는 모든 내용"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.urVD1a"
-msgid "Arriving"
-msgstr "도착"
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "udtNZk"
+msgid "{exam} on {date}"
+msgstr "{exam} 시험일 {date}"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.NMkS59"
-msgid "Renting a flat"
-msgstr "집 구하기"
+#. What a worried student types into a search engine: casual, lowercase, no final punctuation. {exam} is the exam's name in lowercase.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "--iDsA"
+msgid "where to start studying for the {exam}"
+msgstr "{exam} 공부 어디서부터 시작해야 하나요"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.JrZJR9"
-msgid "Bank and phone"
-msgstr "은행과 휴대폰"
+#. A search engine's suggestion: casual, lowercase. {exam} is lowercase.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "JqUc1j"
+msgid "studying for the {exam} from scratch"
+msgstr "{exam} 처음부터 공부하기"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.c2wcVC"
-msgid "First week at work"
-msgstr "직장 생활 첫 주"
+#. A search engine's suggestion: casual, lowercase. {exam} is lowercase.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "a26eAp"
+msgid "what comes up most on the {exam}"
+msgstr "{exam}에 가장 자주 나오는 내용"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.kvlt4O"
-msgid "Doctor"
-msgstr "병원 가기"
+#. A browser tab's title for a video lesson. {topic} is a school topic.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "p6_5IZ"
+msgid "{topic}: lesson 1"
+msgstr "{topic}: 레슨 1"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.O8qego"
-msgid "Social life"
-msgstr "사람들과 어울리기"
+#. A browser tab's title for a cram video, shown in capitals. {topic} is a school topic. In Brazilian Portuguese: “Resumão {topic}”.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "bqJd3p"
+msgid "{topic} crash course"
+msgstr "{topic} 핵심 요약"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.fd_DO3"
-msgid "Spreadsheets"
-msgstr "스프레드시트"
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "9YszG4"
+msgid "Choosing the right chart"
+msgstr "알맞은 차트 고르기"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.c0Ycwn"
-msgid "SQL"
-msgstr "SQL"
+#. An SQL clause; keep it as is.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "u5IbOk"
+msgid "GROUP BY"
+msgstr "GROUP BY"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.H3eDAS"
-msgid "Statistics"
-msgstr "통계"
+#. SQL joins; keep “JOIN” as is.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "leiqEZ"
+msgid "JOINs in SQL"
+msgstr "SQL의 JOIN"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.nwqt7T"
-msgid "Dashboards"
-msgstr "대시보드"
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "o4Yiw3"
+msgid "Mean and median"
+msgstr "평균과 중앙값"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "examplePhases.uNOJ2Q"
-msgid "Portfolio"
-msgstr "포트폴리오"
+#. A spreadsheet's file name. Translate the words and keep the underscores and “.xlsx”.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "XhAkIy"
+msgid "data_career_plan_2027.xlsx"
+msgstr "데이터_진로_계획_2027.xlsx"
 
-#. An example goal's name. Use your language's name for Mexico City.
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "3parBE"
-msgid "Spanish for Mexico City"
-msgstr "멕시코시티 생활을 위한 스페인어"
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "IQ4iqI"
+msgid "Everything that shows up in data analyst job posts"
+msgstr "데이터 분석가 채용 공고에 나오는 모든 내용"
 
-#. Use your language's name for London.
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "PnbhyK"
-msgid "English for London"
-msgstr "런던 생활 영어"
-
-#: src/app/[lang]/(home)/_components/example-plans.ts
+#: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "AeiByK"
 msgid "Data analyst by {month}"
 msgstr "{month}까지 데이터 분석가 되기"
 
-#: src/app/[lang]/(home)/_components/example-plans.ts
-msgctxt "EV-GCl"
-msgid "Data analyst"
-msgstr "데이터 분석가"
+#. What someone types into a search engine: casual, lowercase, no final punctuation.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "NJCHOb"
+msgid "what to study to become a data analyst"
+msgstr "데이터 분석가가 되려면 뭘 공부해야 하나요"
 
-#: src/app/[lang]/(home)/_components/final-call.tsx
-msgctxt "PYDioW"
-msgid "The big day"
-msgstr "중요한 날"
-
-#: src/app/[lang]/(home)/_components/final-call.tsx
-msgctxt "g39LXe"
-msgid "What's your big day?"
-msgstr "어떤 날을 준비하고 있나요?"
-
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "s4s2qc"
-msgid "Next: renting, banking, the first week at work"
-msgstr "다음: 집 구하기, 은행 이용하기, 직장 생활 첫 주"
-
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "sIMS7i"
-msgid "Progress"
-msgstr "진도"
-
-#: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "Kus9gk"
-msgid "Preparation"
-msgstr "준비도"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "c0Ycwn"
 msgid "SQL"
 msgstr "SQL"
 
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "Hph5oB"
-msgid "GROUP BY with two columns"
-msgstr "열 두 개로 GROUP BY 사용하기"
+#. The subject, as a field of study.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "examplePhases.H3eDAS"
+msgid "Statistics"
+msgstr "통계학"
 
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "-rCMUK"
-msgid "Review: joins"
-msgstr "복습: 조인"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "ERPrTb"
-msgid "HAVING: filtering groups"
-msgstr "HAVING: 그룹 걸러내기"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "pCbjPa"
-msgid "Review: GROUP BY"
-msgstr "복습: GROUP BY"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "LLHRRm"
-msgid "SQL · from real work"
-msgstr "SQL · 실무 사례"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "saf8j1"
-msgid "Real problem: top customers"
-msgstr "실무 문제: 우수 고객"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "XfDXBj"
-msgid "Lesson + 6 questions"
-msgstr "레슨 + 문제 6개"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "PrA5f8"
-msgid "Calling about an apartment"
-msgstr "전화로 아파트 문의하기"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "xjeKSS"
-msgid "Review: airport and metro"
-msgstr "복습: 공항과 지하철"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "bRvUh5"
-msgid "Lesson + 5 questions"
-msgstr "레슨 + 문제 5개"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "_tlTcq"
-msgid "Visiting a flat"
-msgstr "아파트 보러 가기"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "l2uAYh"
-msgid "3 to practice"
-msgstr "연습할 문제 3개"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "qUe0cG"
-msgid "Mistakes: getting around the city"
-msgstr "오답: 시내에서 이동하기"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "SyGbgm"
-msgid "Review: calling about an apartment"
-msgstr "복습: 전화로 아파트 문의하기"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "JNotbo"
-msgid "Pronunciation tips"
-msgstr "발음 팁"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "Eio4j-"
-msgid "Speaking: booking a visit"
-msgstr "말하기: 방문 예약하기"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "taVtve"
-msgid "2 to practice"
-msgstr "연습할 문제 2개"
-
-#: src/app/[lang]/(home)/_components/goal-tomorrows.ts
-msgctxt "E6a1TF"
-msgid "Mistakes: calling about an apartment"
-msgstr "오답: 전화로 아파트 문의하기"
-
-#: src/app/[lang]/(home)/_components/hero-days.ts
-#: src/app/[lang]/(home)/_components/tomorrow-steps.ts
-msgctxt "QEqlcn"
-msgid "{count, plural, one {# mistake} other {# mistakes}}"
-msgstr "{count, plural, other {오답 #개}}"
-
-#: src/app/[lang]/(home)/_components/hero-days.ts
+#: src/app/[lang]/(home)/_components/hero-examples.ts
 msgctxt "D6C3cx"
 msgid "Real problem: sales by region"
 msgstr "실무 문제: 지역별 매출"
 
-#: src/app/[lang]/(home)/_components/hero-days.ts
-msgctxt "wCgkXs"
-msgid "Speaking: asking about the rent"
-msgstr "말하기: 월세 문의하기"
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "dcA_Pq"
+msgid "Data visualization"
+msgstr "데이터 시각화"
 
-#: src/app/[lang]/(home)/_components/hero-window.tsx
+#. A search engine's suggestion: casual, lowercase.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "tFhP5f"
+msgid "data analyst without a degree"
+msgstr "학위 없이 데이터 분석가 되기"
+
+#. A search engine's suggestion: casual, lowercase. Keep “sql” and “python”.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "fbK3Am"
+msgid "sql or python first"
+msgstr "sql과 python 중 뭐부터"
+
+#. A browser tab's title for a video course.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "YBtIhI"
+msgid "SQL from scratch"
+msgstr "처음부터 배우는 SQL"
+
+#. A browser tab's title for a video course.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "_OhIrM"
+msgid "Power BI in 2 hours"
+msgstr "2시간 만에 배우는 Power BI"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "uv4tw_"
+msgid "Basic SQL"
+msgstr "SQL 기초"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "jg1oe7"
+msgid "Pivot tables"
+msgstr "피벗 테이블"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "wgNfiX"
+msgid "Window functions"
+msgstr "윈도우 함수"
+
+#. An Excel function: use its name in your language's Excel.
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "UC--Se"
+msgid "XLOOKUP"
+msgstr "XLOOKUP"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "l5zKvT"
+msgid "Cleaning data"
+msgstr "데이터 정제"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "z5eDEP"
+msgid "Hypothesis tests"
+msgstr "가설 검정"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "EDaTf-"
+msgid "Linear regression"
+msgstr "선형 회귀"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "dEvP4t"
+msgid "Sampling"
+msgstr "표본 추출"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "nwqt7T"
+msgid "Dashboards"
+msgstr "대시보드"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "ggbhiR"
+msgid "Business metrics"
+msgstr "비즈니스 지표"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "j7WWaK"
+msgid "Telling stories with data"
+msgstr "데이터로 이야기하기"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "-QNBMa"
+msgid "Data modeling"
+msgstr "데이터 모델링"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "uNOJ2Q"
+msgid "Portfolio"
+msgstr "포트폴리오"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "6pFhsv"
+msgid "Technical interviews"
+msgstr "기술 면접"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "x7zrQq"
+msgid "Standard deviation"
+msgstr "표준편차"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "Dc4Vu-"
+msgid "Correlation"
+msgstr "상관관계"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "eIw6xr"
+msgid "Outliers"
+msgstr "이상치"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "ZmRyDX"
+msgid "Subqueries"
+msgstr "서브쿼리"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "tEPO8C"
+msgid "A/B tests"
+msgstr "A/B 테스트"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "1hS7Sm"
+msgid "Cohort analysis"
+msgstr "코호트 분석"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "vPII9V"
+msgid "Conversion funnels"
+msgstr "전환 퍼널"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "588kpe"
+msgid "Data types"
+msgstr "데이터 유형"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "P4R1Bq"
+msgid "Aggregations"
+msgstr "집계"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "IcBJoJ"
+msgid "Excel charts"
+msgstr "Excel 차트"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "ARJh9q"
+msgid "Python basics"
+msgstr "Python 기초"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "wgVL5w"
+msgid "Dates and times"
+msgstr "날짜와 시간"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "3zH6CJ"
+msgid "Missing values"
+msgstr "결측값"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "zC81BZ"
+msgid "Exploratory analysis"
+msgstr "탐색적 분석"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "tMbwGE"
+msgid "Presenting results"
+msgstr "결과 발표하기"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "0quLKn"
+msgid "Data ethics"
+msgstr "데이터 윤리"
+
+#: src/app/[lang]/(home)/_components/hero-examples.ts
+msgctxt "bbGAq-"
+msgid "Spreadsheet formulas"
+msgstr "스프레드시트 수식"
+
+#. A spreadsheet's row label, short for “Week”.
+#: src/app/[lang]/(home)/_components/hero-mess.tsx
+msgctxt "QZQeY7"
+msgid "Wk {number, number}"
+msgstr "{number, number}주차"
+
+#. A topic for learning English before moving to London.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "NMkS59"
+msgid "Renting a flat"
+msgstr "집 구하기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "0Cj-0J"
+msgid "Phrasal verbs"
+msgstr "Phrasal verbs"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "hYEb-b"
+msgid "Present perfect"
+msgstr "Present perfect"
+
+#. A pronunciation topic for learners of English.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "8piu9j"
+msgid "Pronouncing “th”"
+msgstr "“th” 발음하기"
+
+#. A spreadsheet's file name. Translate the words and keep the underscores and “.xlsx”.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "4sbMCg"
+msgid "english_routine.xlsx"
+msgstr "영어_학습루틴.xlsx"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "x2ZQ14"
+msgid "Everything there is to study in English"
+msgstr "영어 공부의 모든 것"
+
+#. Use your language's name for London.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "PnbhyK"
+msgid "English for London"
+msgstr "런던 생활 영어"
+
+#. What someone types into a search engine: casual, lowercase, no final punctuation.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "c2G3Hh"
+msgid "how to learn english fast to move abroad"
+msgstr "해외 이주 영어 빨리 배우는 법"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+#: src/app/[lang]/conversation/[conversationId]/page.tsx
+msgctxt "gegfoA"
+msgid "Conversation"
+msgstr "대화"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "QzTY8x"
+msgid "Grammar"
+msgstr "문법"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "vuwclE"
+msgid "Pronunciation"
+msgstr "발음"
+
+#. A search engine's suggestion: casual, lowercase.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "UFr3n3"
+msgid "english from zero in 5 months, is it possible"
+msgstr "영어 처음부터 배워도 5개월이면 가능할까"
+
+#. A search engine's suggestion: casual, lowercase.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "RKdJNp"
+msgid "english for moving abroad"
+msgstr "해외 이주를 위한 영어"
+
+#. A browser tab's title for an English video.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "ixOmJ_"
+msgid "50 phrasal verbs"
+msgstr "phrasal verbs 50개"
+
+#. A browser tab's title for an English video.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "wJv88b"
+msgid "British accent"
+msgstr "영국식 발음"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "cCtXxl"
+msgid "Small talk"
+msgstr "가벼운 대화"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "oqFdQv"
+msgid "Opening a bank account"
+msgstr "은행 계좌 만들기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "8bsSu8"
+msgid "Job interviews"
+msgstr "취업 면접"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "Jp5b0b"
+msgid "Phone calls"
+msgstr "전화 통화"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "Qjokqs"
+msgid "In, on and at"
+msgstr "전치사 in, on, at"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "YczFm6"
+msgid "Used to"
+msgstr "used to 용법"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "nzmFRM"
+msgid "Conditionals"
+msgstr "조건문"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "mQdkOM"
+msgid "Seeing a doctor"
+msgstr "병원에서 진료받기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "jMB7fa"
+msgid "Irregular verbs"
+msgstr "불규칙 동사"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "syvaMe"
+msgid "Will and going to"
+msgstr "will과 going to"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "DW4q3M"
+msgid "Modal verbs"
+msgstr "조동사"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "-9OpIk"
+msgid "Reported speech"
+msgstr "간접 화법"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "oGUw1v"
+msgid "British slang"
+msgstr "영국 속어"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "fJHZbj"
+msgid "Writing emails"
+msgstr "이메일 쓰기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "MafdkP"
+msgid "Passive voice"
+msgstr "수동태"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "0YG5_J"
+msgid "Numbers and prices"
+msgstr "숫자와 가격"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "zzHAso"
+msgid "Complaining politely"
+msgstr "정중하게 불만 전하기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "GjhjEM"
+msgid "Making friends"
+msgstr "친구 사귀기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "xJnXn-"
+msgid "A CV in English"
+msgstr "영문 이력서"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "_FwuCM"
+msgid "False friends"
+msgstr "비슷해 보여도 뜻이 다른 단어"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "1PSu6I"
+msgid "Idioms"
+msgstr "관용 표현"
+
+#. The London Underground.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "mYTaWG"
+msgid "Taking the Tube"
+msgstr "런던 지하철 타기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "Umc5eX"
+msgid "Talking about the weather"
+msgstr "날씨 이야기하기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "z0C-fI"
+msgid "Past continuous"
+msgstr "Past continuous"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "zhQDK_"
+msgid "Ordering food"
+msgstr "음식 주문하기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "HN_h17"
+msgid "Present simple"
+msgstr "Present simple"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "9NKtlI"
+msgid "Prepositions of time"
+msgstr "Prepositions of time"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "QIQMhT"
+msgid "At the airport"
+msgstr "공항에서"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "P0cSVK"
+msgid "Booking a hotel"
+msgstr "호텔 예약하기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "0CR3bM"
+msgid "Shopping for clothes"
+msgstr "옷 사기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "1042Oh"
+msgid "Paying bills"
+msgstr "요금 납부하기"
+
+#. Signing up with a family doctor in the UK.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "GOdURb"
+msgid "Registering with a GP"
+msgstr "주치의 등록하기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "5dMt7r"
+msgid "Weekend plans"
+msgstr "주말 계획"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "4no0Ie"
+msgid "Formal and informal English"
+msgstr "격식 있는 영어와 일상 영어"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "bi371t"
+msgid "Linking words"
+msgstr "연결어"
+
+#. A topic for learning Spanish before moving to Mexico City.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "Yj0irn"
+msgid "Renting an apartment"
+msgstr "아파트 구하기"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "bSmvQe"
+msgid "The preterite"
+msgstr "단순과거"
+
+#. A pronunciation topic for learners of Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "O9dZ0A"
+msgid "Rolling the “rr”"
+msgstr "혀를 굴려 “rr” 발음하기"
+
+#. A Spanish grammar topic: keep “ser” and “estar” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "vcjevI"
+msgid "Ser and estar"
+msgstr "ser와 estar"
+
+#. A spreadsheet's file name. Translate the words and keep the underscores and “.xlsx”.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "BT_r75"
+msgid "spanish_routine.xlsx"
+msgstr "스페인어_학습루틴.xlsx"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "TTXJCR"
+msgid "Everything there is to study in Spanish"
+msgstr "스페인어 공부의 모든 것"
+
+#. An example goal's name. Use your language's name for Mexico City.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "3parBE"
+msgid "Spanish for Mexico City"
+msgstr "멕시코시티 생활을 위한 스페인어"
+
+#. What someone types into a search engine: casual, lowercase, no final punctuation.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "zzQULs"
+msgid "how to learn spanish fast to move abroad"
+msgstr "해외 이주 스페인어 빨리 배우는 법"
+
+#. A search engine's suggestion: casual, lowercase.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "qVW5zK"
+msgid "spanish from zero in 5 months, is it possible"
+msgstr "스페인어 처음부터 배워도 5개월이면 가능할까"
+
+#. A search engine's suggestion: casual, lowercase.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "sbyJjP"
+msgid "spanish for moving abroad"
+msgstr "해외 이주를 위한 스페인어"
+
+#. A browser tab's title for a Spanish video.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "zfHKg5"
+msgid "Verb conjugation"
+msgstr "동사 활용"
+
+#. A browser tab's title for a Spanish video.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "iMmFvT"
+msgid "Mexican slang"
+msgstr "멕시코 속어"
+
+#. A Spanish grammar topic.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "o5dcRe"
+msgid "The subjunctive"
+msgstr "접속법"
+
+#. A Spanish grammar topic: keep “por” and “para” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "T-SlZH"
+msgid "Por and para"
+msgstr "por와 para"
+
+#. A Spanish grammar topic: keep “gustar” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "-T6zu8"
+msgid "Verbs like gustar"
+msgstr "gustar 같은 동사"
+
+#. A Spanish grammar topic: keep “tú” and “usted” in Spanish.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "JafIDQ"
+msgid "Tú and usted"
+msgstr "tú와 usted"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "HgeEzh"
+msgid "A CV in Spanish"
+msgstr "스페인어 이력서"
+
+#. Mexico City's subway.
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "_lyMF3"
+msgid "Taking the metro"
+msgstr "지하철 타기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "8HP4KD"
+msgid "Reflexive verbs"
+msgstr "재귀 동사"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "sdWSVm"
+msgid "At the market"
+msgstr "시장에서"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "sc__2J"
+msgid "The imperfect"
+msgstr "불완료 과거"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "RA4Y2E"
+msgid "Telling a story"
+msgstr "이야기 들려주기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "We9l88"
+msgid "Present tense"
+msgstr "현재 시제"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "MJlEHy"
+msgid "Ordering tacos"
+msgstr "타코 주문하기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "OyVECT"
+msgid "Getting around the city"
+msgstr "시내 이동하기"
+
+#: src/app/[lang]/(home)/_components/hero-move-examples.ts
+msgctxt "EKcm9W"
+msgid "Formal and informal Spanish"
+msgstr "격식 있는 스페인어와 일상 스페인어"
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "493J7R"
+msgid "Compare"
+msgstr "비교"
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "umqEzo"
+msgid "Without Zoonk"
+msgstr "Zoonk 없이"
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "t6BnyS"
+msgid "With Zoonk"
+msgstr "Zoonk와 함께"
+
+#. {everything} names everything a learner could study, such as “Everything that can come up on the SAT”; {topics} lists a few topics.
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "mWDXW8"
+msgid "{everything}. Today Zoonk picked {topics}."
+msgstr "{everything}. 오늘은 Zoonk가 {topics}을(를) 골랐어요."
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "uP8SkY"
+msgid "Without Zoonk: a search for where to start, a pile of open tabs and a study schedule abandoned in week two."
+msgstr "Zoonk 없이: 어디서 시작할지 검색하고, 탭은 잔뜩 열어 두고, 학습 계획은 2주 차에 흐지부지돼요."
+
+#: src/app/[lang]/(home)/_components/hero-stage.tsx
+msgctxt "eOHX5x"
+msgid "Stuck? Ask Zu."
+msgstr "막혔나요? Zu에게 물어보세요."
+
+#. Zoonk's support address; your language may have its own.
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+#: src/components/pricing/plus-questions.tsx
+msgctxt "ieflON"
+msgid "hello@zoonk.com"
+msgstr "hello@zoonk.com"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "60PJVp"
+msgid "You start free, no account needed. With a free account, you follow {goals, plural, one {one goal} other {# goals}} at a time, with a limit on lessons and on messages to Zu. For an exam, the diagnostic, the plan and {days, plural, =7 {the first week} one {the first day} other {the first # days}} of study are free. No card needed."
+msgstr "계정 없이 무료로 시작할 수 있어요. 무료 계정으로는 한 번에 {goals, plural, other {#개의 목표}}에 맞춰 공부할 수 있고, 레슨 수와 Zu에게 보내는 메시지 수에는 제한이 있어요. 시험 준비는 진단과 계획, {days, plural, =7 {첫 일주일} other {처음 #일}} 동안의 학습이 무료예요. 카드도 필요 없어요."
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "NNtrw6"
+msgid "Is Zoonk free?"
+msgstr "Zoonk는 무료인가요?"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "vD4YoD"
+msgid "Plus is a subscription. It unlocks every goal and every lesson, the full plan up to exam day, mock exams timed like the real exam, Zu whenever you need it and higher limits on practice conversations. You see your whole plan before you pay, and you can cancel anytime."
+msgstr "Plus는 구독 서비스예요. 모든 목표와 레슨, 시험일까지의 전체 계획을 이용하고, 실제 시험과 같은 제한 시간으로 모의고사를 볼 수 있어요. 필요할 때 언제든 Zu의 도움을 받을 수 있고, 대화 연습도 더 많이 할 수 있어요. 결제 전에 전체 계획을 볼 수 있고, 언제든 해지할 수 있어요."
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "iES0bT"
+msgid "See prices"
+msgstr "요금 보기"
+
+#. In Brazilian Portuguese: “O que o Plus tem a mais?”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "-VOkdd"
+msgid "What does Plus add?"
+msgstr "Plus에는 어떤 혜택이 있나요?"
+
+#. “Report a problem” is the app's menu item for reporting a lesson: use the exact words your language's app uses for it (in Korean “문제 신고하기”). In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Toque em “Relatar um problema”.”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "NlHQkl"
+msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tap “Report a problem”."
+msgstr "레슨은 최신 AI 모델로 만들고, 제공하기 전에 내용을 확인해요. 여러 평가를 통해 품질을 점검하고, 다른 AI 모델이 내용을 검토해요. 시험 과목과 주제에 맞춰 구성해요. 오류는 드물지만 생길 수 있어요. 잘못된 내용을 발견했나요? “문제 신고하기”를 눌러 주세요."
+
+#. In Brazilian Portuguese: “Dá para confiar em aulas criadas por IA?”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "kf3mxX"
+msgid "Can you trust lessons made by AI?"
+msgstr "AI가 만든 레슨을 믿어도 되나요?"
+
+#. In Brazilian Portuguese: “Os apps para iPhone e Android estão chegando. Por enquanto, o Zoonk funciona no navegador do celular e do computador, sem instalar nada.”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "LCjwHc"
+msgid "The iPhone and Android apps are coming soon. For now, Zoonk works in your phone's or computer's browser, with nothing to install."
+msgstr "iPhone과 Android 앱은 곧 출시될 예정이에요. 지금은 따로 설치할 필요 없이 휴대폰이나 컴퓨터의 브라우저에서 Zoonk를 이용할 수 있어요."
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "xHun-9"
+msgid "Is there an app?"
+msgstr "앱이 있나요?"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "Prj5qS"
+msgid "What's left comes first the next day. If a date changes, your plan tells you. You can also change your daily time whenever you want."
+msgstr "남은 학습은 다음 날 맨 앞으로 옮겨져요. 예정된 날짜가 바뀌면 계획에서 알려 줘요. 하루 학습 시간도 언제든 바꿀 수 있어요."
+
+#. In Brazilian Portuguese: “E se eu faltar um dia?”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "Jd18jf"
+msgid "What if I miss a day?"
+msgstr "하루 공부를 못 하면 어떻게 되나요?"
+
+#. {exam} is the country's national exam, such as the Enem or the SAT. In Brazilian Portuguese: “Praticamente qualquer coisa. Provas como o {exam}, vestibulares, concursos públicos e a prova da OAB, idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva sua meta do seu jeito.”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "qxT1fv"
+msgid "Pretty much anything. Exams like the {exam}, university entrance exams, civil service exams and the bar exam, languages, a new career or any topic you want to learn. Write your goal in your own words."
+msgstr "거의 무엇이든 배울 수 있어요. {exam} 같은 시험, 대학 입시, 공무원 시험과 변호사 시험 준비부터 외국어, 새로운 직업에 필요한 공부, 배우고 싶은 주제까지 모두 가능해요. 목표를 나만의 말로 자유롭게 적어 보세요."
+
+#. In Brazilian Portuguese: “Quais provas e metas dá para estudar?”
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "iJ_ZyQ"
+msgid "Which exams and goals can I study for?"
+msgstr "어떤 시험이나 목표에 맞춰 공부할 수 있나요?"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "7Rm1x6"
+msgid "Frequently asked questions"
+msgstr "자주 묻는 질문"
+
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+msgctxt "kxCNVz"
+msgid "Still have questions? Write to <email></email>."
+msgstr "더 궁금한 점이 있나요? <email></email>로 문의해 주세요."
+
+#. A chip naming a career change as an example goal: one short word.
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "bci5at"
+msgid "Career"
+msgstr "이직"
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "8WtyrD"
+msgid "Spanish"
+msgstr "스페인어"
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
+msgctxt "WkrNSk"
+msgid "English"
+msgstr "영어"
+
+#: src/app/[lang]/(home)/_components/home-hero.tsx
 msgctxt "-suPrU"
 msgid "Example goals"
 msgstr "목표 예시"
 
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-msgctxt "goalSwitcher.aefUZL"
-msgid "{time} a day"
-msgstr "하루 {time}"
-
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "goalSwitcher.8PP61v"
-msgid "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
-msgstr "{days, plural, =0 {오늘이 목표일} other {#일 남음}}"
-
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-msgctxt "Ecf4N6"
-msgid "Level {level} → {target}"
-msgstr "레벨 {level} → {target}"
-
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-msgctxt "dPX7wH"
-msgid "On pace"
-msgstr "계획대로"
-
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-msgctxt "I_pvBN"
-msgid "Phase {number, number} of {total, number} · {name}"
-msgstr "{number, number}단계(총 {total, number}단계) · {name}"
-
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-msgctxt "dVwB3J"
-msgid "{done, number} of {total, number}"
-msgstr "{done, number}/{total, number}"
-
-#: src/app/[lang]/(home)/_components/hero-window.tsx
-msgctxt "jpMuGb"
-msgid "Example plans. Yours follows your goal, your time and what you already know. Pick one: the rest of the page follows it."
-msgstr "계획 예시예요. 실제 계획은 목표와 학습 시간, 이미 아는 내용에 맞춰져요. 하나를 골라 보세요. 페이지의 나머지 내용도 그 예시에 맞춰 바뀌어요."
-
+#. The landing's headline: two short sentences, each shown as its own line. Keep it short and punchy. In Brazilian Portuguese: “Pare de decidir o que estudar. Só estude.”
 #: src/app/[lang]/(home)/_components/home-hero.tsx
 #: src/app/[lang]/opengraph-image.tsx
-msgctxt "hV7Lpg"
-msgid "Know what to study every day until the big day."
-msgstr "목표한 날까지 매일 무엇을 공부할지 알려 드려요."
+msgctxt "PLtdfK"
+msgid "<line>Stop deciding what to study.</line> <line>Just study.</line>"
+msgstr "<line>뭘 공부할지 고민하지 마세요.</line> <line>공부에만 집중하세요.</line>"
 
+#. The landing's subhead. In Brazilian Portuguese: “Conte sua meta e a data. O Zoonk divide tudo em um plano diário do tamanho do seu tempo.”
 #: src/app/[lang]/(home)/_components/home-hero.tsx
 #: src/app/[lang]/opengraph-image.tsx
-msgctxt "6kw-3N"
-msgid "Tell Zoonk your goal and date. Your plan fits your schedule and adjusts if you miss a day."
-msgstr "Zoonk에 목표와 날짜를 알려 주세요. 일정에 맞춰 계획을 세우고, 하루 공부를 못 하면 조정해 줘요."
+msgctxt "WtT1Bl"
+msgid "Tell us your goal and the date. Zoonk splits it all into a daily plan sized to your time."
+msgstr "목표와 날짜를 알려 주세요. Zoonk가 공부할 수 있는 시간에 맞춰 하루 단위로 학습 계획을 짜 줘요."
 
+#. An example goal a learner might type; {month} is a month name. In Brazilian Portuguese: “virar analista de dados até {month}”.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-msgctxt "XmrixE"
-msgid "get promoted to data analyst by {month}"
-msgstr "{month}까지 데이터 분석가로 승진하기"
+msgctxt "xlsEx0"
+msgid "become a data analyst by {month}"
+msgstr "{month}까지 데이터 분석가 되기"
 
 #. An example goal a learner might type; {month} is a month name. Use your language's name for Mexico City.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
@@ -2492,616 +3126,374 @@ msgctxt "vF1uwi"
 msgid "speak Spanish for my move to Mexico City in {month}"
 msgstr "{month}에 멕시코시티로 이사 갈 때 스페인어로 말하고 싶어요"
 
-#. An example goal a learner might type; {month} is a month name. Use your language's name for London.
+#. An example goal a learner might type; {month} is a month name. Use your language's name for London. In Brazilian Portuguese: “falar inglês para me mudar para Londres em {month}”.
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "FWZush"
 msgid "speak English for my move to London in {month}"
 msgstr "{month} 런던 이사에 대비해 영어로 대화하기"
 
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "Q2mxTI"
-msgid "Spreadsheet basics"
-msgstr "스프레드시트 기초"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "higY8h"
-msgid "Formulas"
-msgstr "수식"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "1b-_GC"
-msgid "SQL: SELECT and WHERE"
-msgstr "SQL: SELECT와 WHERE"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "y5g1z8"
-msgid "Joins"
-msgstr "조인"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "u5IbOk"
-msgid "GROUP BY"
-msgstr "GROUP BY"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "_FeNoU"
-msgid "Greetings and introductions"
-msgstr "인사와 자기소개"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "0YG5_J"
-msgid "Numbers and prices"
-msgstr "숫자와 가격"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "ApbYuU"
-msgid "Ordering at a café"
-msgstr "카페에서 주문하기"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "NMkS59"
-msgid "Renting a flat"
-msgstr "집 구하기"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "JrZJR9"
-msgid "Bank and phone"
-msgstr "은행과 휴대폰"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "Wfs1md"
-msgid "{count, plural, one {# lesson skipped} other {# lessons skipped}}"
-msgstr "{count, plural, other {레슨 #개 건너뜀}}"
-
-#: src/app/[lang]/(home)/_components/placed-plans.tsx
-msgctxt "placedPlan.djZCU5"
-msgid "Skipped"
-msgstr "건너뜀"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "2F9-v0"
-msgid "A price goes up 20%, then down 20%. What percent of the original price is it now?"
-msgstr "가격이 20% 오른 뒤 20% 내렸어요. 지금 가격은 원래 가격의 몇 퍼센트인가요?"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "LkDjkt"
-msgid "Question {number, number} · {subject}"
-msgstr "문제 {number, number} · {subject}"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "fd_DO3"
-msgid "Spreadsheets"
-msgstr "스프레드시트"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "Vz-obi"
-msgid "Which formula adds up the values in B2 through B9?"
-msgstr "B2부터 B9까지의 값을 더하는 수식은 무엇인가요?"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "8WtyrD"
-msgid "Spanish"
-msgstr "스페인어"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "nuIDZ0"
-msgid "Which one means “I'd like a coffee, please”?"
-msgstr "“커피 한 잔 주세요”라는 뜻의 표현은 무엇인가요?"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "WkrNSk"
-msgid "English"
-msgstr "영어"
-
-#: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "STdub8"
-msgid "Which sentence asks for a coffee politely?"
-msgstr "커피를 정중하게 주문하는 문장은 무엇인가요?"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "정답"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "1nJY2_"
-msgid "Your answer"
-msgstr "내 답"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "YicAn8"
-msgid "A question and a mock exam"
-msgstr "문제와 모의고사"
-
-#. {explanation} says why the learner's answer was wrong. Follow it the way your language joins two sentences.
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "43HclA"
-msgid "{explanation} It goes to your Mistakes notebook, and your plan brings it back."
-msgstr "{explanation} 이 문제는 오답 노트에 저장되고, 계획에 따라 다시 나와요."
-
-#. {exam} is a national exam's short name (SAT, bac, 수능); {subject} is a subject.
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "idUS16"
-msgid "{exam} style · {subject}"
-msgstr "{exam} 유형 · {subject}"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "TxWEcZ"
-msgid "Mock exam {number, number} finished"
-msgstr "{number, number}회 모의고사 완료"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "fi0FtL"
-msgid "Available with Plus"
-msgstr "Plus에서 이용 가능"
-
-#. {part} is the exam (SAT) or the part of it (Mathematics) the result is for. Exams report a score, a grade or a band (13–15/20, 2–3등급): use a word that fits each.
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "XgYQIA"
-msgid "Estimated score · {part}"
-msgstr "예상 성적 · {part}"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "AIeIsk"
-msgid "By topic"
-msgstr "주제별"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "K1BpxO"
-msgid "{right, number} of {total, number}"
-msgstr "{right, number} / {total, number}"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "tgvES0"
-msgid "Now"
-msgstr "지금"
-
-#: src/app/[lang]/(home)/_components/practice-exam.tsx
-msgctxt "3TEtUT"
-msgid "{count, plural, one {# mistake to review} other {# mistakes to review}}"
-msgstr "{count, plural, other {복습할 오답 #개}}"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "X8SGOJ"
-msgid "A real problem and the Mistakes notebook"
-msgstr "실무 문제와 오답 노트"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "8rf-6Z"
-msgid "Real problem · SQL"
-msgstr "실무 문제 · SQL"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "xY0kqD"
-msgid "Which region sold the most?"
-msgstr "어느 지역의 매출이 가장 높았나요?"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "yod7QT"
-msgid "{count, number} to fix"
-msgstr "고칠 문제 {count, number}개"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "x95Is1"
-msgid "Grouped by customer, not region"
-msgstr "지역 대신 고객별로 묶음"
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "jvmShc"
-msgid "SUM added each customer's sales, so the regions never showed."
-msgstr "SUM이 고객별 매출을 더해서 지역별 결과는 나오지 않았어요."
-
-#: src/app/[lang]/(home)/_components/practice-job.tsx
-msgctxt "8Gu0rE"
-msgid "Practice this skill"
-msgstr "이 스킬 연습하기"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "jX9yWL"
-msgid "Ask about the rent"
-msgstr "월세 물어보기"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "XWcqJ_"
-msgid "Book a visit"
-msgstr "방문 예약하기"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "Eerjf7"
-msgid "Ask what the bills include"
-msgstr "공과금에 포함되는 항목 물어보기"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "QBCsqh"
-msgid "Speaking practice and a practice call"
-msgstr "말하기 연습과 대화 연습"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "9Da2rt"
-msgid "Say it out loud"
-msgstr "소리 내어 말해 보세요"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "-ImamJ"
-msgid "Can I see the apartment on Saturday?"
-msgstr "토요일에 집을 보러 가도 될까요?"
-
-#. Pronunciation tips: “SAT-ur-day” is the English word “Saturday” and “SÁ-ba-do” the Spanish word “sábado”. Keep each word as written.
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "wXawda"
-msgid "{move, select, london {Stress the first part: <b>SAT</b>-ur-day.} other {Stress the accent: <b>SÁ</b>-ba-do.}}"
-msgstr "{move, select, london {첫 음절에 강세를 주세요: <b>SAT</b>-ur-day.} other {강세 표시가 있는 음절을 강조하세요: <b>SÁ</b>-ba-do.}}"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "waQKY7"
-msgid "Practice call"
-msgstr "대화 연습"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "53_ATX"
-msgid "Goals of the call"
-msgstr "대화 목표"
-
-#. Read by screen readers: the learner reached this goal of the call.
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "JXdbo8"
-msgid "Done"
-msgstr "달성"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "D5YAeG"
-msgid "{done, number} of {total, number} goals"
-msgstr "목표 {done, number}개 달성 / 총 {total, number}개"
-
-#: src/app/[lang]/(home)/_components/practice-move.tsx
-msgctxt "CEUYFA"
-msgid "Next time:"
-msgstr "다음에는:"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "iX1JrZ"
-msgid "Mock exam {mock, number} · Question {question, number} · {subject}"
-msgstr "{mock, number}회 모의고사 · {question, number}번 문제 · {subject}"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "0M1dOe"
-msgid "Without it, SUM adds every row into one total. GROUP BY {column} makes one total per region, so you can compare them, and ORDER BY puts the biggest first."
-msgstr "없으면 SUM이 모든 행의 값을 하나로 합산해요. GROUP BY {column} 구문은 지역별 합계를 내서 서로 비교할 수 있게 해 주고, ORDER BY는 가장 큰 값부터 정렬해요."
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "7KLvWs"
-msgid "Why do I need GROUP BY here?"
-msgstr "여기서는 왜 GROUP BY가 필요해요?"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "TCZIsQ"
-msgid "Real problem · Sales by region"
-msgstr "실무 문제 · 지역별 매출"
-
-#. The buddy answers a learner of Spanish. Keep only “departamento” and “apartamento” in Spanish, the words being taught; translate the rest, Mexico and Mexico City included.
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "720M2K"
-msgid "Both work. In Mexico people usually say “departamento” for a flat in a building, so it sounds more natural when you're renting in Mexico City."
-msgstr "둘 다 쓸 수 있어요. 멕시코에서는 아파트를 보통 “departamento”라고 해서, 멕시코시티에서 집을 빌릴 때는 이 표현이 더 자연스러워요."
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "L7mfuM"
-msgid "Why “departamento” and not “apartamento”?"
-msgstr "왜 “apartamento”가 아니라 “departamento”예요?"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "00sc5X"
-msgid "Lesson · Calling about an apartment"
-msgstr "레슨 · 아파트 문의 대화"
-
-#. The buddy answers a learner of English. Keep only “flat” and “apartment” in English, the words being taught; translate the rest, London and the US included. “there” is London.
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "4teyr4"
-msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
-msgstr "둘 다 쓸 수 있지만 런던에서는 “flat”이라고 해요. “apartment”는 미국에서 더 많이 쓰는 말이라 런던에서 집을 빌릴 때는 “flat”이 더 자연스러워요."
-
-#. A learner of English asks about the English words “flat” and “apartment”.
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "O0g0Ss"
-msgid "Why “flat” and not “apartment”?"
-msgstr "왜 “apartment”가 아니라 “flat”이라고 해요?"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "buddyNames.vPjK_E"
-msgid "Zu"
-msgstr "Zu"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "AcKlQI"
-msgid "Explain it more simply"
-msgstr "더 쉽게 설명해 주세요"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "s6QqT3"
-msgid "I want to go deeper"
-msgstr "더 깊이 알고 싶어요"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "AmRISg"
-msgid "11 pm · one question"
-msgstr "밤 11시 · 질문 하나"
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "eOHX5x"
-msgid "Stuck? Ask Zu."
-msgstr "막혔나요? Zu에게 물어보세요."
-
-#: src/app/[lang]/(home)/_components/stop-buddy.tsx
-msgctxt "HRHTTM"
-msgid "Your AI study buddy explains any question as simply as you need, right where you got stuck."
-msgstr "막히면 그 자리에서 AI 공부 짝꿍이 어떤 문제든 이해할 수 있게 쉽게 설명해 줘요."
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "HGiiLi"
-msgid "From scratch, with everyday examples"
-msgstr "일상 속 예시로 기초부터"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "pIPmbB"
-msgid "Nothing, I'm just starting"
-msgstr "이제 막 시작해서 아는 게 없어요"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "uzFoxW"
-msgid "I know a few things"
-msgstr "조금은 알아요"
-
-#. An answer to how much the learner already knows about the topic.
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "wouTdw"
-msgid "The basics"
-msgstr "기초는 알아요"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "h9kQ0S"
-msgid "We'll skip what you already know"
-msgstr "이미 아는 내용은 건너뛰어요"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "koLFLL"
-msgid "I studied it before"
-msgstr "전에 공부한 적 있어요"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "47D0tB"
-msgid "Only what's new or hard"
-msgstr "새롭거나 어려운 내용만"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "BY-vT3"
-msgid "I know it well"
-msgstr "잘 알아요"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "MLAAq8"
-msgid "Adapts to your answers, about {time}"
-msgstr "답변에 맞춰 진행하고 약 {time} 걸려요"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "PAwSdR"
-msgid "Not sure, give me a quick test"
-msgstr "잘 모르겠어요, 짧은 테스트를 볼래요"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "ZATSm-"
-msgid "Day 1 · 2 minutes"
-msgstr "1일 차 · 2분"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "CMlDLt"
-msgid "Your plan starts where you are."
-msgstr "지금 실력에 맞는 계획으로 시작해요."
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "-3GuWe"
-msgid "A few quick questions find what you already know, and your plan skips it."
-msgstr "간단한 문제 몇 개로 이미 아는 내용을 확인해 계획에서 건너뛰어요."
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "j9qNv7"
-msgid "Day 1, in three steps"
-msgstr "세 단계로 보는 1일 차"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "FI0QGz"
-msgid "Say how much you know"
-msgstr "얼마나 아는지 알려 주기"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "ctiEvk"
-msgid "Answer a few questions"
-msgstr "문제 몇 개 풀기"
-
-#: src/app/[lang]/(home)/_components/stop-day-one.tsx
-msgctxt "v-y-wJ"
-msgid "Your plan skips what you know"
-msgstr "이미 아는 내용은 계획에서 건너뛰어요"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "udtNZk"
-msgid "{exam} on {date}"
-msgstr "{exam} 시험일 {date}"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "-FjPjU"
-msgid "Goal date {date}"
-msgstr "목표일 {date}"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "a5fAnr"
-msgid "Moving day {date}"
-msgstr "이사 날짜 {date}"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "DQ8KR2"
-msgid "Your plan changed"
-msgstr "계획이 바뀌었어요"
-
-#. Marks a plan's value after a change, beside its old one.
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "planDiff.bW7B87"
-msgid "New"
-msgstr "변경 후"
-
-#. Marks a plan's value before a change, beside its new one.
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "planDiff.K0Lp_g"
-msgid "Was"
-msgstr "변경 전"
-
-#. {phase} is a plan phase's name, such as “Fill the gaps”.
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "3WnP-W"
-msgid "{phase} until {date}"
-msgstr "{phase} · {date}까지"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "Rec1Kn"
-msgid "One lesson of {phase}"
-msgstr "{phase} 레슨 1개"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "MtrTNy"
-msgid "Tomorrow"
-msgstr "내일"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "AleVJo"
-msgid "On pace. Nothing moves."
-msgstr "계획대로 진행 중이에요. 일정은 그대로예요."
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "ACteAu"
-msgid "Short lessons Zoonk writes for your goal."
-msgstr "Zoonk가 목표에 맞춰 만드는 짧은 레슨이에요."
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "eXs5Be"
-msgid "Written for your goal"
-msgstr "목표에 맞춰 만든 레슨"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-#: src/components/catalog/plan-workload.tsx
-msgctxt "RYqUsZ"
-msgid "What you studied comes back right before you'd forget it."
-msgstr "배운 내용은 잊기 직전에 다시 나와요."
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "OKDhTn"
-msgid "Back before you forget"
-msgstr "잊기 전 복습"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "bjikyk"
-msgid "Every mistake comes back until you get it right."
-msgstr "틀린 문제는 맞힐 때까지 다시 나와요."
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "4DoPlf"
-msgid "Mistakes, practiced"
-msgstr "틀린 문제 연습"
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "TcjVgp"
-msgid "What you missed comes first, and the rest of your plan moves to fit."
-msgstr "못 한 학습을 먼저 하고, 나머지 계획은 그에 맞춰 조정돼요."
-
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-#: src/app/[lang]/(home)/_components/tomorrow-steps.ts
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "planPhases.6RRX7X"
+msgid "Foundations"
+msgstr "기초 다지기"
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
 msgctxt "i4CkTc"
 msgid "From yesterday"
 msgstr "어제 남은 학습"
 
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "1ooK0d"
-msgid "Every day"
-msgstr "매일"
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "UIUcbm"
+msgid "{count, plural, one {# question} other {# questions}}"
+msgstr "{count, plural, other {#문제}}"
 
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "ZuAnCp"
-msgid "Your day is ready when you open Zoonk."
-msgstr "Zoonk를 열면 오늘의 학습이 준비돼 있어요."
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "o3vNiB"
+msgid "In Zoonk"
+msgstr "Zoonk에서는"
 
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
-msgctxt "QkIlUm"
-msgid "Short lessons written for your goal, reviews right before you'd forget, and your mistakes to practice. Missed yesterday? It comes first."
-msgstr "목표에 맞춘 짧은 레슨, 잊기 직전 복습, 틀린 문제 연습까지 준비돼 있어요. 어제 못 한 학습이 있나요? 그것부터 시작해요."
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "2625DB"
+msgid "{count, plural, one {And # more lesson} other {And # more lessons}}"
+msgstr "{count, plural, other {레슨 #개 더}}"
 
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+#. {phase} is a plan phase's name, such as “Foundations”; quote it if your language needs that to read naturally.
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "dVwY9T"
+msgid "<b>On pace.</b> You finish the {phase} phase on {date}."
+msgstr "<b>계획대로 진행 중이에요.</b> {phase} 단계는 {date}에 마쳐요."
+
+#. {phase} is a plan phase's name, such as “Foundations”; quote it if your language needs that to read naturally.
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "VmWpK7"
+msgid "<b>Your plan changed:</b> you finish the {phase} phase on {date}."
+msgstr "<b>계획이 바뀌었어요:</b> {phase} 단계는 {date}에 마쳐요."
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "0JAP24"
+msgid "Before, it was {date}."
+msgstr "원래는 {date}에 마칠 예정이었어요."
+
+#. A learner's own worry, in their casual words, shown as a big quote. In Brazilian Portuguese: “Perdi um dia e desandou tudo.”
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "a1ec1o"
+msgid "I missed a day and it all fell apart."
+msgstr "하루 공부를 못 했더니 계획이 다 꼬였어요."
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "qRIKt4"
+msgid "<b>It happens.</b> What's left from yesterday comes first today. If a date changes, your plan tells you."
+msgstr "<b>그럴 수 있어요.</b> 어제 남은 학습은 오늘 맨 앞으로 옮겨져요. 예정된 날짜가 바뀌면 계획에서 알려 줘요."
+
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
 msgctxt "6dIxDP"
 msgid "Yesterday"
 msgstr "어제"
 
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
 msgctxt "yesterdaySwitch.cMaydB"
 msgid "Studied"
 msgstr "공부했어요"
 
-#: src/app/[lang]/(home)/_components/stop-every-day.tsx
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
 msgctxt "yesterdaySwitch.1Gku3Z"
 msgid "No time"
 msgstr "시간이 없었어요"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "6_YTk8"
-msgid "Week {week, number} · mock exam"
-msgstr "{week, number}주 차 · 모의고사"
+#: src/app/[lang]/(home)/_components/missed-day-section.tsx
+msgctxt "wvKJOA"
+msgid "Example: {goal}, {time} a day."
+msgstr "예: {goal}, 하루 {time}."
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "D32g2O"
-msgid "Questions in your exam's format, and mock exams timed like the real one, with an estimated score."
-msgstr "실제 시험과 같은 형식의 문제를 풀고, 같은 제한 시간으로 모의고사를 보며 예상 점수도 확인해요."
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "JXdbo8"
+msgid "Done"
+msgstr "달성"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "_xKXo7"
-msgid "Practice like the real exam."
-msgstr "실제 시험처럼 연습하세요."
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "zqV6aP"
+msgid "Not done"
+msgstr "미완료"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "mB5Vfh"
-msgid "Week {week, number} · real work"
-msgstr "{week, number}주 차 · 실무"
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "tMZXzv"
+msgid "In a spreadsheet"
+msgstr "스프레드시트에서는"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "9zZGUO"
-msgid "Problems from the job you want, checked as you go, and every mistake kept for later."
-msgstr "원하는 직업의 실무 문제를 풀며 바로 결과를 확인해요. 틀린 부분은 모두 저장돼 나중에 다시 볼 수 있어요."
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "xM1yHi"
+msgid "So far, so good."
+msgstr "여기까지는 순조로워요."
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "XFjhzO"
-msgid "Practice on real work."
-msgstr "실무 문제로 연습하세요."
+#: src/app/[lang]/(home)/_components/missed-day-sheet.tsx
+msgctxt "iFHGDa"
+msgid "The spreadsheet doesn't change by itself. Now you redo the whole week by hand."
+msgstr "스프레드시트는 저절로 바뀌지 않아요. 이제 일주일 치 계획을 전부 직접 다시 짜야 해요."
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "ebyq2G"
-msgid "Week {week, number} · speaking"
-msgstr "{week, number}주 차 · 말하기"
+#. A learner's own worry, in their casual words, shown as a big quote. In Brazilian Portuguese: “Será que já sei o suficiente?”
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "hlr-77"
+msgid "Do I know enough yet?"
+msgstr "이제 충분히 알고 있을까요?"
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "PzTp8t"
-msgid "Say real sentences out loud, get tips on how you sound, and practice calls for the moments that matter."
-msgstr "실생활에서 쓰는 문장을 소리 내어 말하고, 발음에 대한 조언을 받으며 중요한 순간에 필요한 대화를 연습하세요."
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "hRjp9H"
+msgid "<b>Take mock exams in the real exam's format and time.</b> At the end, you see an estimate of your score and what's still missing."
+msgstr "<b>실제 시험의 형식과 제한 시간에 맞춰 모의고사를 풀어 보세요.</b> 끝나면 예상 점수와 아직 부족한 부분을 확인할 수 있어요."
 
-#: src/app/[lang]/(home)/_components/stop-practice.tsx
-msgctxt "hyh1lt"
-msgid "Practice the conversations you'll have."
-msgstr "앞으로 나눌 대화를 연습하세요."
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "cpAOYg"
+msgid "Mock exam {number, number} · {name}"
+msgstr "모의고사 {number, number}회 · {name}"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "fi0FtL"
+msgid "Available with Plus"
+msgstr "Plus에서 이용 가능"
+
+#. Exams report a score, a grade or a band (13–15/20, 2–3등급): use the word that fits your country's exam.
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "Psgvhk"
+msgid "Estimated score"
+msgstr "예상 등급"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "RIwxqi"
+msgid "<b>Solid:</b> {topics}"
+msgstr "<b>안정:</b> {topics}"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "28PXed"
+msgid "<b>To review:</b> {topics}"
+msgstr "<b>복습 필요:</b> {topics}"
+
+#. In Brazilian Portuguese: “<b>7 erros</b> foram para o seu caderno de erros”.
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "Qfdzfp"
+msgid "<b>{count, plural, one {# mistake} other {# mistakes}}</b> went to your mistakes notebook"
+msgstr "<b>{count, plural, other {오답 #개}}</b>를 오답 노트에 저장했어요"
+
+#: src/app/[lang]/(home)/_components/ready-section.tsx
+msgctxt "mM0WGu"
+msgid "The score is only an estimate, made from your answers. Mock exams are available with Plus."
+msgstr "점수는 답변을 바탕으로 한 예상치일 뿐이에요. 모의고사는 Plus에서 이용할 수 있어요."
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "placedPlan.djZCU5"
+msgid "Skipped"
+msgstr "건너뜀"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "uWZ77n"
+msgid "Percentages"
+msgstr "백분율"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "YsbwW7"
+msgid "Lessons skipped: <b>{count, number}</b>"
+msgstr "건너뛴 레슨: <b>{count, number}</b>"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "ZGEwEX"
+msgid "Answer the question and watch your plan change."
+msgstr "문제에 답하고 계획이 어떻게 바뀌는지 확인해 보세요."
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "VXuhxV"
+msgid "<b>You already know this.</b> Your plan skipped {count, plural, one {# lesson} other {# lessons}} on percentages."
+msgstr "<b>이미 아는 내용이에요.</b> 계획에서 백분율 레슨 {count, plural, other {#개}}를 건너뛰었어요."
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "C1Q1g9"
+msgid "<b>Noted.</b> Percentages stay in your plan."
+msgstr "<b>알겠어요.</b> 백분율은 계획에 그대로 남아 있어요."
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "3tHxl3"
+msgid "<b>That's fine.</b> Your plan teaches percentages from the basics."
+msgstr "<b>괜찮아요.</b> 계획에 따라 백분율을 기초부터 배워요."
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "3PZM1V"
+msgid "Ratio and proportion"
+msgstr "비와 비례식"
+
+#. A math topic. In Brazilian Portuguese “Regra de três”.
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "WBm69y"
+msgid "Cross-multiplication"
+msgstr "비례식 풀기"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "mg-aO7"
+msgid "Compound interest"
+msgstr "복리"
+
+#. A math topic. In Brazilian Portuguese “Funções do 1º grau”.
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "FYV21J"
+msgid "Linear functions"
+msgstr "일차함수"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "LkDjkt"
+msgid "Question {number, number} · {subject}"
+msgstr "문제 {number, number} · {subject}"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+#: src/lib/categories/category.ts
+msgctxt "dPgwrL"
+msgid "Math"
+msgstr "수학"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "2F9-v0"
+msgid "A price goes up 20%, then down 20%. What percent of the original price is it now?"
+msgstr "가격이 20% 오른 뒤 20% 내렸어요. 지금 가격은 원래 가격의 몇 퍼센트인가요?"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "akd-cv"
+msgid "Answer options"
+msgstr "선택지"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "아직 모르겠어요"
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "yFLiQM"
+msgid "It's not scored."
+msgstr "점수를 매기지 않아요."
+
+#. A learner's own worry, in their casual words, shown as a big quote. In Brazilian Portuguese: “Não sei por onde começar.”
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "JAnSgb"
+msgid "I don't know where to start."
+msgstr "어디서부터 시작해야 할지 모르겠어요."
+
+#: src/app/[lang]/(home)/_components/start-section.tsx
+msgctxt "PZYp7C"
+msgid "<b>Start with a few quick questions.</b> In about 2 minutes, Zoonk sees what you already know, and your plan skips that part."
+msgstr "<b>간단한 문제 몇 개로 시작해 보세요.</b> 약 2분이면 Zoonk가 이미 아는 내용을 파악하고, 그 부분은 계획에서 건너뛰어요."
+
+#. A school subject area. In Brazilian Portuguese “Ciências da Natureza”.
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "H0lYkC"
+msgid "Natural sciences"
+msgstr "과학"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "72N7d0"
+msgid "In a pasture, grass is eaten by grasshoppers, grasshoppers by frogs and frogs by snakes."
+msgstr "풀밭에서 메뚜기는 풀을 먹고, 개구리는 메뚜기를, 뱀은 개구리를 먹어요."
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "weP8DM"
+msgid "The energy available shrinks at each level of this chain. What's the main reason?"
+msgstr "이 먹이 사슬에서는 단계가 올라갈수록 이용할 수 있는 에너지가 줄어들어요. 가장 큰 이유는 뭘까요?"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "1nJY2_"
+msgid "Your answer"
+msgstr "내 답"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "XSkW9E"
+msgid "Predators eat less than their prey"
+msgstr "포식자는 먹잇감보다 적게 먹어요"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "정답"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "PALJLs"
+msgid "Part of the energy turns into heat as each living thing breathes"
+msgstr "생물이 호흡하면서 에너지 일부가 열로 바뀌어요"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "bJBtpz"
+msgid "Plants photosynthesize less at night"
+msgstr "식물은 밤에 광합성을 덜 해요"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "_XE_0X"
+msgid "Saved to your mistakes notebook"
+msgstr "오답 노트에 저장했어요"
+
+#. The study buddy's casual joke: you don't gain the weight of the plate of food you ate.
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "43yP-p"
+msgid "You eat lunch and don't gain the weight of the plate, right? Almost all of it becomes energy for your day. It's the same with the frog: only a small part of the grasshopper becomes frog."
+msgstr "점심을 먹는다고 음식 무게만큼 몸무게가 늘지는 않죠? 거의 다 하루를 보내는 데 필요한 에너지로 쓰여요. 개구리도 마찬가지예요. 먹은 메뚜기의 아주 일부만 개구리의 몸을 만드는 데 쓰여요."
+
+#. A learner's casual message to their study buddy. In Brazilian Portuguese: “Me dá um exemplo”.
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "Bv5nVy"
+msgid "Give me an example"
+msgstr "예를 들어 주세요"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "77DoST"
+msgid "Each animal uses almost all the energy it eats just to stay alive. Very little is left to become body. That little bit is what passes on to whoever eats it."
+msgstr "동물은 먹이에서 얻은 에너지를 거의 다 살아가는 데 써요. 몸을 만드는 데 쓸 에너지는 아주 조금만 남아요. 남은 에너지만 그 동물을 먹는 다음 동물에게 전달돼요."
+
+#. A learner's casual message to their study buddy. In Brazilian Portuguese: “Explica mais simples”.
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "AcKlQI"
+msgid "Explain it more simply"
+msgstr "더 쉽게 설명해 주세요"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "BQcZJ-"
+msgid "Because it's not about how much they eat. Every animal spends almost all the energy from its food just staying alive. Breathing releases that energy as heat. Only about 10% passes to the next level."
+msgstr "먹는 양 때문이 아니에요. 동물은 먹이에서 얻은 에너지를 거의 다 살아가는 데 써요. 호흡하면서 그 에너지가 열로 빠져나가요. 다음 단계로 전달되는 건 약 10%뿐이에요."
+
+#. A learner's casual message asking why their pick, option A, was wrong. In Brazilian Portuguese: “Por que não é a A?”
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "DU0e9Q"
+msgid "Why isn't it A?"
+msgstr "왜 A는 정답이 아닌가요?"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "buddyNames.vPjK_E"
+msgid "Zu"
+msgstr "Zu"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "Dh-vx4"
+msgid "Your study buddy"
+msgstr "내 공부 짝꿍"
+
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "sJ9v9R"
+msgid "Questions for Zu"
+msgstr "Zu에게 할 질문"
+
+#. A learner's own worry, in their casual words, shown as a big quote. It's an exam question. In Brazilian Portuguese: “Travei numa questão.”
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "TnQe8p"
+msgid "I got stuck on a question."
+msgstr "문제를 풀다가 막혔어요."
+
+#. In Brazilian Portuguese: “<b>Pergunte ali mesmo na questão.</b> Zu explica do jeito mais simples que você precisar.”
+#: src/app/[lang]/(home)/_components/stuck-section.tsx
+msgctxt "PhcYdR"
+msgid "<b>Ask right there in the question.</b> Zu explains it as simply as you need."
+msgstr "<b>문제 화면에서 바로 물어보세요.</b> 이해가 될 때까지 Zu가 쉽게 설명해 줘요."
 
 #: src/app/[lang]/(home)/page.tsx
-msgctxt "M3puYF"
-msgid "Tell Zoonk your goal and date, like an exam or a move abroad. Get a study plan for every day that fits your schedule. Start free, no account needed."
-msgstr "시험이나 해외 이주 같은 목표와 날짜를 Zoonk에 알려 주세요. 일정에 맞는 매일의 학습 계획을 받아 보세요. 계정 없이 무료로 시작하세요."
+msgctxt "5imFxC"
+msgid "Tell Zoonk your goal and the date. It breaks everything into a daily plan that fits your time and starts from what you already know. Start free, no account needed."
+msgstr "Zoonk에 목표와 날짜를 알려 주세요. 이미 아는 내용을 바탕으로 학습할 수 있는 시간에 맞춰 하루하루 계획을 짜요. 가입 없이 무료로 시작해 보세요."
 
+#. The landing's title. In Brazilian Portuguese: “Zoonk: Pare de decidir o que estudar. Só estude.”
 #: src/app/[lang]/(home)/page.tsx
-msgctxt "201rSY"
-msgid "Zoonk: A study plan for every day until the big day"
-msgstr "Zoonk: 중요한 날까지, 하루하루의 학습 계획"
+msgctxt "loiLth"
+msgid "Zoonk: Stop deciding what to study. Just study."
+msgstr "Zoonk: 뭘 공부할지 고민은 그만. 공부에만 집중하세요."
 
 #: src/app/[lang]/(home)/page.tsx
 #: src/components/auth-gate.tsx
@@ -3122,11 +3514,6 @@ msgstr "계정이 삭제됐어요."
 msgctxt "9MidH4"
 msgid "Challenge"
 msgstr "챌린지"
-
-#: src/app/[lang]/conversation/[conversationId]/page.tsx
-msgctxt "gegfoA"
-msgid "Conversation"
-msgstr "대화"
 
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx
@@ -3584,6 +3971,11 @@ msgid "{time} in all"
 msgstr "총 {time}"
 
 #: src/components/catalog/plan-workload.tsx
+msgctxt "RYqUsZ"
+msgid "What you studied comes back right before you'd forget it."
+msgstr "배운 내용은 잊기 직전에 다시 나와요."
+
+#: src/components/catalog/plan-workload.tsx
 msgctxt "GDUlmD"
 msgid "Of this, {time} comes after the exam."
 msgstr "이 중 {time} 분량은 시험 이후에 진행돼요."
@@ -3816,11 +4208,6 @@ msgstr "하루 {tutor, plural, other {짝꿍에게 보내는 메시지 #개}}와
 msgctxt "QKrdr3"
 msgid "Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)"
 msgstr "Plus보다 이용 한도가 낮은 대화 연습(시험 말하기 과제는 Plus에 포함)"
-
-#: src/components/pricing/plus-questions.tsx
-msgctxt "ieflON"
-msgid "hello@zoonk.com"
-msgstr "hello@zoonk.com"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "uUjwhB"
@@ -4100,11 +4487,6 @@ msgstr "언어"
 msgctxt "u3ovjm"
 msgid "Law"
 msgstr "법률"
-
-#: src/lib/categories/category.ts
-msgctxt "dPgwrL"
-msgid "Math"
-msgstr "수학"
 
 #: src/lib/categories/category.ts
 msgctxt "qydxOd"

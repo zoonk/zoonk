@@ -20,7 +20,7 @@ export function AnswerPicture({
 }: {
   children: ReactNode;
   lang?: string;
-  marker: number;
+  marker: number | string;
   picked?: boolean;
   result?: AnswerOptionResult;
   tag?: string;
@@ -34,7 +34,7 @@ export function AnswerPicture({
         result && ANSWER_TONE[result],
       )}
     >
-      <LineMarker aria-hidden="true">
+      <LineMarker>
         <Kbd>{marker}</Kbd>
       </LineMarker>
 

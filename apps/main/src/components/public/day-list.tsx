@@ -13,11 +13,9 @@ import { METER_PARTS_CLASS } from "@zoonk/learn/meter";
 import { DoneMark } from "@zoonk/learn/status-mark";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
-import { type ReactNode } from "react";
 
 export type DayListStep = {
   detail?: string;
-  annotation?: ReactNode;
   id: string;
   kind: LearnKind;
   minutes: number;
@@ -41,10 +39,7 @@ function DayRow({ minutesText, step }: { minutesText: string; step: DayListStep 
       </ListRowLeading>
 
       <ListRowContent>
-        <span className="flex items-center gap-2">
-          <ListRowTitle className={cn(done && "text-muted-foreground")}>{step.title}</ListRowTitle>
-          {step.annotation}
-        </span>
+        <ListRowTitle className={cn(done && "text-muted-foreground")}>{step.title}</ListRowTitle>
         {!done && step.detail && <ListRowDescription>{step.detail}</ListRowDescription>}
       </ListRowContent>
 

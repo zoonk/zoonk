@@ -15,6 +15,7 @@ Zoonk helps anyone learn anything, especially first-time learners in small towns
 - In Trickster duels, “broken” counts shield plates broken by right answers; “held” means the shield withstood the attempt.
 - “Sure” and “unsure” are the learner's confidence in an answer.
 - “q” abbreviates “questions” only in English: write the word.
+- English grammar topics keep the English names their learners use, such as “phrasal verbs”, “present perfect” and “past continuous”.
 
 ## Plan language
 

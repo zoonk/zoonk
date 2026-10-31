@@ -79,12 +79,7 @@ async function getExampleDays({ course, timeZone }: ExamExample): Promise<Exampl
   }
 }
 
-export type ExampleCalendar = {
-  examDay: Date;
-  shift: (isoDate: string) => Date;
-  today: Date;
-  tomorrow: Date;
-};
+type ExampleCalendar = { examDay: Date; shift: (isoDate: string) => Date; today: Date };
 
 export const getExampleCalendar = cache(async (): Promise<ExampleCalendar> => {
   const { exam } = await getExampleSet();
@@ -95,14 +90,13 @@ export const getExampleCalendar = cache(async (): Promise<ExampleCalendar> => {
     examDay: exampleDay(examDay ?? getNextSitting({ sittings: exam.sittings, today })),
     shift: (isoDate) => exampleDay(addIsoDays({ day: isoDate, days: offset })),
     today: exampleDay(today),
-    tomorrow: exampleDay(addIsoDays({ day: today, days: 1 })),
   };
 });
 
 const EXAMPLE_GOAL_DATES = { job: "2027-06-10", move: "2027-03-01" } as const;
 
-export function daysBetween({ from, to }: { from: Date; to: Date }): number {
-  return Math.round((to.getTime() - from.getTime()) / MS_PER_DAY);
+export function addDays(date: Date, days: number): Date {
+  return new Date(date.getTime() + days * MS_PER_DAY);
 }
 
 export function getGoalDate({

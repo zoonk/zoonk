@@ -1,85 +1,90 @@
 import { type ExampleSet } from "../example-set";
 
-const turkish = { id: "turkish", name: "Türkçe", share: 0.44 };
-const basicMath = { id: "basic-math", name: "Temel Matematik", share: 0.38 };
-const math = { id: "math", name: "AYT Matematik", share: 0.29 };
-const physics = { id: "physics", name: "Fizik", share: 0.31 };
-
-const mainIdea = { id: "main-idea", minutes: 5, subject: turkish, title: "Paragrafta ana düşünce" };
-
 export const tr: ExampleSet = {
   exam: {
+    day: [
+      { detail: "Tekrar", kind: "review", minutes: 6, title: "Problemler", topic: "Problemler" },
+      {
+        detail: "Türkçe",
+        kind: "practice",
+        minutes: 7,
+        title: "Paragraf soruları",
+        topic: "Paragraf",
+      },
+      { detail: "AYT Matematik", kind: "lesson", minutes: 8, title: "Türev", topic: "Türev" },
+      {
+        detail: "Tekrar",
+        kind: "review",
+        minutes: 4,
+        title: "Kuvvet ve hareket",
+        topic: "Kuvvet ve hareket",
+      },
+    ],
     goal: () => "Haziran’daki YKS’ye hazırlanmak",
-    mock: {
-      score: "395–420",
-      scoreOf: "TYT",
+    missedDay: {
+      file: "yks_calisma_programi_SON_v3.xlsx",
+      goal: "YKS",
       topics: [
-        { id: "problems", name: "Problemler", right: 2, total: 4 },
-        { id: "ratio", name: "Oran ve orantı", right: 3, total: 4 },
-        { id: "paragraph", name: "Paragraf", right: 3, total: 3 },
-        { id: "force", name: "Kuvvet ve hareket", right: 3, total: 3 },
+        { subject: "Temel Matematik", title: "Oran ve orantı" },
+        { subject: "Türkçe", title: "Sözcükte anlam" },
+        { subject: "AYT Matematik", title: "Fonksiyonlar" },
+        { subject: "Fizik", title: "Elektrik" },
+        { subject: "AYT Matematik", title: "Logaritma" },
       ],
+    },
+    mock: {
+      details: "120 soru · 165 dk",
+      firm: ["Paragraf", "Kuvvet ve hareket"],
+      mistakes: 3,
+      name: "TYT",
+      review: ["Problemler", "Oran ve orantı"],
+      scores: [{ label: "TYT", range: "395–420" }],
     },
     name: "YKS",
-    placed: {
-      rows: [
-        { id: "percentages", state: "skipped", title: "Yüzdeler" },
-        { id: "changes", state: "skipped", title: "Art arda zam ve indirim" },
-        { id: "ratio", lessons: 6, state: "next", title: "Oran ve orantı" },
-        { id: "problems", lessons: 8, state: "todo", title: "Problemler" },
-        { id: "functions", lessons: 7, state: "todo", title: "Fonksiyonlar" },
-      ],
-      subject: basicMath,
-    },
-    planName: () => "Haziran’daki YKS",
-    practice: {
-      answer:
-        "60, gelen 6 kızı sınıfın %10’u sayınca çıkıyor. Ama 6 kız gelince sınıf da 6 kişi büyüyor. Başta n öğrenci varsa 0,4n kız vardır ve (0,4n + 6) ÷ (n + 6) = 0,5 olur. Buradan n = 30 çıkar: kızlar 12’den 18’e, sınıf 36’ya çıkınca oran %50 olur.",
-      ask: "Neden 60 değil?",
-      explanation:
-        "Tam olmadı: 6 kız gelince sınıf da büyür. 30 öğrencinin 12’si kız; 6 kız gelince 36 öğrencinin 18’i kız olur, yani %50.",
-      options: [
-        { text: "24" },
-        { result: "right", text: "30" },
-        { text: "36" },
-        { text: "40" },
-        { result: "wrong", text: "60" },
-      ],
-      question:
-        "Bir sınıftaki öğrencilerin %40’ı kızdır. Sınıfa 6 kız öğrenci daha katılınca kızların oranı %50 oluyor. Başlangıçta sınıfta kaç öğrenci vardır?",
-      subject: basicMath,
-    },
-    // The TYT, its first session.
     sittings: ["2026-06-20"],
-    subjects: [turkish, basicMath, math, physics],
     timeZone: "Europe/Istanbul",
-    today: [
-      mainIdea,
-      { id: "problems", minutes: 6, subject: basicMath, title: "Yüzde ve kâr-zarar problemleri" },
-      { id: "newton", minutes: 6, subject: physics, title: "Newton’un hareket yasaları" },
+    topics: [
+      "Problemler",
+      "Paragraf",
+      "Türev",
+      "Oran ve orantı",
+      "Kuvvet ve hareket",
+      "Sözcükte anlam",
+      "Fonksiyonlar",
+      "Elektrik",
+      "Logaritma",
+      "İntegral",
+      "Limit",
+      "Trigonometri",
+      "Olasılık",
+      "Permütasyon ve kombinasyon",
+      "Polinomlar",
+      "Diziler",
+      "Cümlede anlam",
+      "Yazım kuralları",
+      "Noktalama",
+      "Dil bilgisi",
+      "Optik",
+      "Dalgalar",
+      "Enerji",
+      "Basınç",
+      "Isı ve sıcaklık",
+      "Manyetizma",
+      "Sayı basamakları",
+      "Bölünebilme",
+      "Üslü sayılar",
+      "Köklü sayılar",
+      "Mantık",
+      "Kümeler",
+      "Rasyonel sayılar",
+      "Mutlak değer",
+      "Eşitsizlikler",
+      "Anlatım bozuklukları",
+      "Hücre",
+      "Osmanlı Devleti",
+      "İklim bilgisi",
+      "Atom ve periyodik sistem",
     ],
-    tomorrow: {
-      lessons: [
-        {
-          id: "derivative",
-          minutes: 6,
-          subject: math,
-          title: "Türev: artan ve azalan fonksiyonlar",
-        },
-        { id: "ratio", minutes: 5, subject: basicMath, title: "Oran ve orantı" },
-      ],
-      review: { ...mainIdea, id: "review", minutes: 4, title: "Tekrar: paragrafta ana düşünce" },
-    },
-  },
-  job: {
-    formulas: ["=TOPLA(B2:B9)", "=TOPLAM(B2:B9)", "=TOPLA(B2;B9)"],
-    regions: [
-      { amount: 42_180, id: "marmara", name: "Marmara" },
-      { amount: 37_920, id: "central", name: "İç Anadolu" },
-      { amount: 29_400, id: "aegean", name: "Ege" },
-    ],
-    result: "Çalıştı. En çok satış Marmara’da.",
-    sql: { orders: "siparisler", region: "bolge", sales: "satis" },
   },
   move: "london",
 };

@@ -15,14 +15,15 @@ import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
 import { FinalCall } from "./_components/final-call";
-import { HomeExample } from "./_components/hero-window";
+import { ForgetSection } from "./_components/forget-section";
+import { HomeFaq } from "./_components/home-faq";
 import { HomeHeader } from "./_components/home-header";
 import { HomeHero } from "./_components/home-hero";
 import { FINAL_GOAL_ID, HERO_GOAL_ID } from "./_components/home-ids";
-import { StopBuddy } from "./_components/stop-buddy";
-import { StopDayOne } from "./_components/stop-day-one";
-import { StopEveryDay } from "./_components/stop-every-day";
-import { StopPractice } from "./_components/stop-practice";
+import { MissedDaySection } from "./_components/missed-day-section";
+import { ReadySection } from "./_components/ready-section";
+import { StartSection } from "./_components/start-section";
+import { StuckSection } from "./_components/stuck-section";
 
 export const ensureStatic = "navigation";
 
@@ -33,9 +34,15 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     alternates: getLocalizedAlternates({ href: "/", language }),
     description: t(
-      "Tell Zoonk your goal and date, like an exam or a move abroad. Get a study plan for every day that fits your schedule. Start free, no account needed.",
+      "Tell Zoonk your goal and the date. It breaks everything into a daily plan that fits your time and starts from what you already know. Start free, no account needed.",
     ),
-    title: { absolute: t("Zoonk: A study plan for every day until the big day") },
+    title: {
+      absolute: t({
+        description:
+          "The landing's title. In Brazilian Portuguese: “Zoonk: Pare de decidir o que estudar. Só estude.”",
+        message: "Zoonk: Stop deciding what to study. Just study.",
+      }),
+    },
   };
 }
 
@@ -58,15 +65,13 @@ export default async function HomePage() {
 
       <main className="flex-1">
         <HomeHero startPath={startPath} />
-        <HomeExample />
-
-        <div>
-          <StopDayOne />
-          <StopEveryDay />
-          <StopPractice />
-          <StopBuddy />
-          <FinalCall startPath={startPath} />
-        </div>
+        <StartSection />
+        <MissedDaySection />
+        <ForgetSection />
+        <StuckSection />
+        <ReadySection />
+        <HomeFaq />
+        <FinalCall startPath={startPath} />
       </main>
 
       <PublicFooter pathname="/" />
