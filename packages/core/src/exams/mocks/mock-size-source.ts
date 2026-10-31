@@ -1,5 +1,9 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { getPastQuestionsSource, getSubjectQuestions } from "../../library/exams/subject-questions";
+import {
+  getPastQuestionsSource,
+  getSubjectQuestions,
+  isCountedByNotice,
+} from "../../library/exams/subject-questions";
 import { getFormatMixSource } from "./mock-format-mix";
 import { findExamQuestions } from "./mock-structure";
 import { type MockSizeSource } from "./mock-view-contract";
@@ -14,7 +18,7 @@ function getSubjectsSource(structure: ExamStructure): MockSizeSource["subjects"]
     return null;
   }
 
-  if (objective.some((subject) => subject.questions !== null)) {
+  if (objective.some((subject) => isCountedByNotice({ structure, subject }))) {
     return "notice";
   }
 

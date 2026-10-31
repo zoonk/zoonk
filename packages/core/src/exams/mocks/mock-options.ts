@@ -1,5 +1,5 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { getSubjectQuestions } from "../../library/exams/subject-questions";
+import { getPlannedSubjectQuestions } from "../../library/exams/subject-questions";
 import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { namesMatch } from "../_utils/name-match";
 import { type MockOptionView, type MockShape } from "./mock-contract";
@@ -73,7 +73,7 @@ export function getSubjectShares(structure: ExamStructure | null): SubjectShare[
     return {
       name: subject.name,
       partOf: whole ? whole.name : null,
-      questions: structure ? getSubjectQuestions({ structure, subject }) || null : null,
+      questions: structure ? getPlannedSubjectQuestions({ structure, subject }) || null : null,
     };
   });
 
@@ -225,14 +225,16 @@ function toSubjectOption({
   typed: readonly MockTypedPart[];
 }): MockOption {
   const partQuestions = parts.reduce(
-    (sum, part) => sum + (getSubjectQuestions({ structure, subject: part }) ?? 0),
+    (sum, part) => sum + (getPlannedSubjectQuestions({ structure, subject: part }) ?? 0),
     0,
   );
 
   const questions = Math.max(
-    (getSubjectQuestions({ structure, subject }) ??
-      getEvenSubjectQuestions(structure) ??
-      DEFAULT_SUBJECT_QUESTIONS) + partQuestions,
+    Math.round(
+      (getPlannedSubjectQuestions({ structure, subject }) ??
+        getEvenSubjectQuestions(structure) ??
+        DEFAULT_SUBJECT_QUESTIONS) + partQuestions,
+    ),
     MIN_SUBJECT_QUESTIONS,
   );
 

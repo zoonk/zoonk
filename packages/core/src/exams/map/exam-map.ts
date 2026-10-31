@@ -1,5 +1,6 @@
 import { type MasteryState } from "@zoonk/db";
 import { type ExamStructure, type TopicFrequency } from "../../library/exams/blueprint-contract";
+import { getSubjectPoints } from "../../library/exams/subject-points";
 import {
   getPastQuestionsSource,
   getSubjectQuestions,
@@ -51,14 +52,14 @@ export function getSubjectShare({
     return subject.weight;
   }
 
-  const questions = getSubjectQuestions({ structure, subject });
+  const points = getSubjectPoints({ structure, subject });
 
   const total = listCountedSubjects(structure.subjects).reduce(
-    (sum, item) => sum + (getSubjectQuestions({ structure, subject: item }) ?? 0),
+    (sum, item) => sum + (getSubjectPoints({ structure, subject: item }) ?? 0),
     0,
   );
 
-  return questions !== null && total > 0 ? questions / total : null;
+  return points !== null && total > 0 ? points / total : null;
 }
 
 function toTopics({

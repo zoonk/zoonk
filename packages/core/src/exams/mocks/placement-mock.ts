@@ -1,6 +1,6 @@
 import { MIN_CHECKPOINT_QUESTIONS } from "../../checkpoints/checkpoint-rules";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { getSubjectQuestions } from "../../library/exams/subject-questions";
+import { getPlannedSubjectQuestions } from "../../library/exams/subject-questions";
 import { spreadAreaQuestions } from "../../plans/focus-test/focus-test-rules";
 import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import {
@@ -54,7 +54,7 @@ function getAreas({
       name: subject.name,
       pace: getSubjectPace({ structure, subject }),
       shortName: subject.shortName ?? null,
-      worth: getSubjectQuestions({ structure, subject }) ?? 1,
+      worth: getPlannedSubjectQuestions({ structure, subject }) ?? 1,
     }));
   }
 

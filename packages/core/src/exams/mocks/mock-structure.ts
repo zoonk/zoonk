@@ -1,5 +1,8 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { getSubjectQuestions } from "../../library/exams/subject-questions";
+import {
+  getPlannedSubjectQuestions,
+  isCountedByNotice,
+} from "../../library/exams/subject-questions";
 import { withClassTestMock } from "./class-test-mock";
 import { isQuestionSubject } from "./written-subject";
 
@@ -17,15 +20,15 @@ function sumSubjectQuestions(structure: ExamStructure) {
     isQuestionSubject({ structure, subject }),
   );
 
-  const counts = objective.map((subject) => getSubjectQuestions({ structure, subject }));
+  const counts = objective.map((subject) => getPlannedSubjectQuestions({ structure, subject }));
 
   if (objective.length === 0 || counts.some((count) => count === null)) {
     return null;
   }
 
   return {
-    fromPast: objective.some((subject) => subject.questions === null),
-    questions: counts.reduce<number>((sum, count) => sum + (count ?? 0), 0),
+    fromPast: objective.some((subject) => !isCountedByNotice({ structure, subject })),
+    questions: Math.round(counts.reduce<number>((sum, count) => sum + (count ?? 0), 0)),
   };
 }
 
