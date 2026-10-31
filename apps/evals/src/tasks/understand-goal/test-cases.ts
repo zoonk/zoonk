@@ -146,6 +146,7 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     expected: {
       goals: [
         {
+          examDay: "booked",
           examName: /ielts/iu,
           examTarget: "score",
           hasTarget: true,
@@ -157,6 +158,23 @@ export const TEST_CASES: UnderstandGoalCase[] = [
       route: "goals",
     },
     goal: "get band 7 on the IELTS by March",
+    language: "en",
+  }),
+  testCase("en-exam-gre-high-score", {
+    expected: {
+      goals: [
+        {
+          examDay: "booked",
+          examName: /\bgre\b/iu,
+          examTarget: "score",
+          hasTargetDate: false,
+          kind: "exam",
+          title: /^(?!.*\bpass).*\bgre\b/iu,
+        },
+      ],
+      route: "goals",
+    },
+    goal: "get a high score on the GRE General Test",
     language: "en",
   }),
   testCase("pt-exam-dele-b2-language", {
@@ -279,6 +297,7 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     expected: {
       goals: [
         {
+          examDay: "official",
           examMonth: 1,
           examYear: 2027,
           hasTarget: true,

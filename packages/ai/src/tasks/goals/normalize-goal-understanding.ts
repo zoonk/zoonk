@@ -17,8 +17,12 @@ type UnderstoodPurpose = "careerChange" | "deep" | "other" | "overview" | "refre
 /** Exams that are only passed or failed have none. */
 type UnderstoodExamTarget = "admission" | "position" | "score";
 
+/** `booked`: each candidate books their own day, so no notice ever sets it. */
+type UnderstoodExamDay = "booked" | "official";
+
 /** Every field present, null when the text didn't say. */
 type RawUnderstoodGoal = {
+  examDay: UnderstoodExamDay | null;
   examMonth: number | null;
   examName: string | null;
   examTarget: UnderstoodExamTarget | null;
@@ -54,6 +58,7 @@ export type RawGoalUnderstanding = {
 
 /** Fields the text didn't give are undefined, never null. */
 export type UnderstoodGoal = {
+  examDay?: UnderstoodExamDay;
   /** 1 to 12, for an exam named without its day ("in March"). */
   examMonth?: number;
   examName?: string;
@@ -169,6 +174,7 @@ function normalizeGoal({
   }
 
   return {
+    examDay: goal.kind === "exam" ? (goal.examDay ?? undefined) : undefined,
     examMonth: goal.kind === "exam" ? cleanMonth(goal.examMonth) : undefined,
     examName: goal.kind === "exam" ? cleanText(goal.examName) : undefined,
     examTarget: goal.kind === "exam" ? (goal.examTarget ?? undefined) : undefined,

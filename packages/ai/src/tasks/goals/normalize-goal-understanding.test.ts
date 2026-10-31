@@ -12,6 +12,7 @@ const TODAY = "2026-09-26";
 
 function rawGoal(overrides: Partial<RawUnderstoodGoal> = {}): RawUnderstoodGoal {
   return {
+    examDay: null,
     examMonth: null,
     examName: null,
     examTarget: null,
@@ -149,22 +150,28 @@ describe(normalizeGoalUnderstanding, () => {
     ).toStrictEqual([3, undefined, undefined]);
   });
 
-  it("keeps what an exam's learner aims for beyond passing, only for exams", () => {
+  it("keeps what an exam's learner aims for beyond passing and how its day is set, only for exams", () => {
     const result = normalizeGoalUnderstanding({
       dailyMinutesLimits: DAILY_MINUTES_LIMITS,
       raw: raw({
         goals: [
-          rawGoal({ examName: "ENEM", examTarget: "admission", kind: "exam" }),
+          rawGoal({ examDay: "booked", examName: "GMAT", examTarget: "score", kind: "exam" }),
           rawGoal({ examName: "OAB", examTarget: null, kind: "exam" }),
-          rawGoal({ examTarget: "score" }),
+          rawGoal({ examDay: "booked", examTarget: "score" }),
         ],
       }),
       today: TODAY,
     });
 
     expect(
-      result.route === "goals" ? result.goals.map((goal) => goal.examTarget) : null,
-    ).toStrictEqual(["admission", undefined, undefined]);
+      result.route === "goals"
+        ? result.goals.map(({ examDay, examTarget }) => ({ examDay, examTarget }))
+        : null,
+    ).toStrictEqual([
+      { examDay: "booked", examTarget: "score" },
+      { examDay: undefined, examTarget: undefined },
+      { examDay: undefined, examTarget: undefined },
+    ]);
   });
 
   it("drops past or invalid dates, invalid times and out-of-range weekdays", () => {

@@ -32,11 +32,12 @@ describe(findCachedUnderstanding, () => {
     });
   });
 
-  it("keeps what an exam's learner aims for", async () => {
+  it("keeps what an exam's learner aims for and how its day is set", async () => {
     const user = await userFixture();
     const goal = `a high score on the gmat ${randomUUID()}`;
 
     const exam = {
+      examDay: "booked",
       examTarget: "score",
       kind: "exam",
       subject: "GMAT",
@@ -46,7 +47,7 @@ describe(findCachedUnderstanding, () => {
     await goalUnderstandingFixture({ goal, result: { ...RESULT, goals: [exam] }, userId: user.id });
 
     await expect(readCached({ goal, userId: user.id })).resolves.toMatchObject({
-      goals: [{ examTarget: "score" }],
+      goals: [{ examDay: "booked", examTarget: "score" }],
     });
   });
 

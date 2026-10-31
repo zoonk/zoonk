@@ -7,6 +7,7 @@ const MIN_SCORE = 1;
 const MISS_PENALTY = 2;
 
 type ExpectedGoal = {
+  examDay?: "booked" | "official" | null;
   examMonth?: number;
   examName?: RegExp;
   examTarget?: "admission" | "position" | "score" | null;
@@ -76,6 +77,10 @@ function getExamChecks({
     [
       expected.examTarget === undefined || (goal.examTarget ?? null) === expected.examTarget,
       `exam target ${show(goal.examTarget)}`,
+    ],
+    [
+      expected.examDay === undefined || (goal.examDay ?? null) === expected.examDay,
+      `exam day ${show(goal.examDay)}`,
     ],
   ];
 }

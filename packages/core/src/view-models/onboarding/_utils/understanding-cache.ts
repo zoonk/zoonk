@@ -7,6 +7,7 @@ import { ownLevelSchema } from "../../../learner/placement/placement-contract";
 import { ONBOARDING_PURPOSES } from "../onboarding-contract";
 
 const understoodGoalSchema = z.object({
+  examDay: z.enum(["booked", "official"]).optional(),
   examMonth: z.number().optional(),
   examName: z.string().optional(),
   examTarget: z.enum(["admission", "position", "score"]).optional(),

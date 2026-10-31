@@ -95,13 +95,14 @@ async function toGoalView({
           words: context.goal,
         },
         language,
-        lookUpDate: !goal.targetDate,
+        lookUpDate: !goal.targetDate && goal.examDay !== "booked",
         today,
       })
     : null;
 
   const details = compactDetails({
     answered,
+    examDay: goal.examDay,
     examMonth: goal.examMonth,
     examName: goal.examName,
     examTarget: goal.examTarget,

@@ -896,6 +896,35 @@
           "today": "2026-09-26"
         }
       }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "booked",
+              "examName": {},
+              "examTarget": "score",
+              "hasTargetDate": false,
+              "kind": "exam",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-exam-gre-high-score-1",
+        "userInput": {
+          "goal": "get a high score on the GRE General Test",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
     }
   ],
   "taskId": "understand-goal"

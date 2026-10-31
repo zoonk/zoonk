@@ -9488,6 +9488,11 @@ msgid "Deadline"
 msgstr "Deadline"
 
 #: src/onboarding/understood/understood-date-row.ts
+msgctxt "oxqgs5"
+msgid "You pick this test's day when you book it. Booked already? Set it here."
+msgstr "You pick this test's day when you book it. Booked already? Set it here."
+
+#: src/onboarding/understood/understood-date-row.ts
 msgctxt "dnMNKB"
 msgid "{document, select, notice {The official date comes out in the exam's notice. Know it already? Set it here.} other {The official date comes out on the exam's official calendar. Know it already? Set it here.}}"
 msgstr "{document, select, notice {The official date comes out in the exam's notice. Know it already? Set it here.} other {The official date comes out on the exam's official calendar. Know it already? Set it here.}}"

@@ -298,10 +298,13 @@ export function useDateRow() {
         editable: { key: "targetDate", kind: "date" },
         id: "targetDate",
         label: t("Exam date"),
-        note: t(
-          "{document, select, notice {The official date comes out in the exam's notice. Know it already? Set it here.} other {The official date comes out on the exam's official calendar. Know it already? Set it here.}}",
-          { document: getExamDocument(draft) },
-        ),
+        note:
+          draft.details?.examDay === "booked"
+            ? t("You pick this test's day when you book it. Booked already? Set it here.")
+            : t(
+                "{document, select, notice {The official date comes out in the exam's notice. Know it already? Set it here.} other {The official date comes out on the exam's official calendar. Know it already? Set it here.}}",
+                { document: getExamDocument(draft) },
+              ),
         value: toBeConfirmed({
           month: readExamMonth(draft),
           year: readExamYear({ dates: examDates, draft }),
