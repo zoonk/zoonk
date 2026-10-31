@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type NetAnswer, getNetCalibration, getNetScore, sumCalibration } from "./net-score";
+import { type NetAnswer, getCalibrationAdvice, getNetCalibration, getNetScore } from "./net-score";
 
 function answers(
   entries: [NetAnswer["outcome"], boolean, number][],
@@ -73,7 +73,7 @@ const UNSURE_TWO_OF_SIX: [NetAnswer["outcome"], boolean, number][] = [
 
 describe(getNetCalibration, () => {
   it("advises leaving unsure statements blank when they lose points", () => {
-    const calibration = getNetCalibration({ answers: answers(UNSURE_TWO_OF_SIX), penalty: 1 });
+    const calibration = getNetCalibration({ answers: answers(UNSURE_TWO_OF_SIX) });
 
     expect(calibration).toStrictEqual({
       advice: "blankUnsure",
@@ -84,10 +84,7 @@ describe(getNetCalibration, () => {
   });
 
   it("sets the break-even from the penalty: a fifth of answers right pays where a wrong costs a quarter", () => {
-    const calibration = getNetCalibration({
-      answers: answers(UNSURE_TWO_OF_SIX, 0.25),
-      penalty: 0.25,
-    });
+    const calibration = getNetCalibration({ answers: answers(UNSURE_TWO_OF_SIX, 0.25) });
 
     expect(calibration).toMatchObject({ advice: "keepAnswering", blankingGain: -1 });
   });
@@ -98,7 +95,6 @@ describe(getNetCalibration, () => {
         ["right", true, 4],
         ["wrong", true, 1],
       ]),
-      penalty: 1,
     });
 
     expect(calibration.advice).toBe("keepAnswering");
@@ -106,9 +102,7 @@ describe(getNetCalibration, () => {
   });
 
   it("gives no advice on too few unsure answers", () => {
-    expect(
-      getNetCalibration({ answers: answers([["wrong", true, 2]]), penalty: 1 }).advice,
-    ).toBeNull();
+    expect(getNetCalibration({ answers: answers([["wrong", true, 2]]) }).advice).toBeNull();
   });
 });
 
@@ -121,24 +115,60 @@ describe("per-question penalties", () => {
     ];
 
     expect(getNetScore({ answers: mixed, penalty: 0.25 }).net).toBe(0.75);
-    expect(getNetCalibration({ answers: mixed, penalty: 0.25 }).blankingGain).toBe(-0.75);
+    expect(getNetCalibration({ answers: mixed }).blankingGain).toBe(-0.75);
   });
 });
 
-describe(sumCalibration, () => {
-  it("adds calibration up across mocks", () => {
-    expect(
-      sumCalibration({
-        calibrations: [
-          { sure: { answered: 10, right: 9 }, unsure: { answered: 2, right: 0 } },
-          { sure: { answered: 8, right: 7 }, unsure: { answered: 3, right: 1 } },
-        ],
-        penalty: 1,
-      }),
-    ).toStrictEqual({
+describe(getCalibrationAdvice, () => {
+  it("uses the accumulated blanking gain", () => {
+    expect(getCalibrationAdvice({ blankingGain: 2, unsure: { answered: 5, right: 1 } })).toBe(
+      "blankUnsure",
+    );
+  });
+});
+
+describe("calibration by actual earnings", () => {
+  it("uses the flagged answers' own deductions for advice", () => {
+    const flagged: NetAnswer[] = [
+      { flagged: true, outcome: "right", wrongPenalty: 0 },
+      ...Array.from({ length: 3 }, (): NetAnswer => ({
+        flagged: true,
+        outcome: "wrong",
+        wrongPenalty: 0,
+      })),
+    ];
+
+    expect(getNetCalibration({ answers: flagged })).toMatchObject({
+      advice: "keepAnswering",
+      blankingGain: -1,
+    });
+  });
+
+  it("weighs flagged earnings and deductions in each item's points", () => {
+    const flagged: NetAnswer[] = [
+      { flagged: true, outcome: "right", points: 1, wrongPenalty: 0.25 },
+      { flagged: true, outcome: "right", points: 1, wrongPenalty: 0.25 },
+      { flagged: true, outcome: "wrong", points: 4, wrongPenalty: 0.5 },
+      { flagged: true, outcome: "wrong", points: 4, wrongPenalty: 0.5 },
+    ];
+
+    expect(getNetCalibration({ answers: flagged })).toMatchObject({
       advice: "blankUnsure",
-      sure: { answered: 18, right: 16 },
-      unsure: { answered: 5, right: 1 },
+      blankingGain: 2,
+    });
+  });
+
+  it("counts partial earnings as earnings when considering blanking", () => {
+    const flagged: NetAnswer[] = Array.from({ length: 4 }, () => ({
+      credit: 0.5,
+      flagged: true,
+      outcome: "partial",
+      wrongPenalty: 1,
+    }));
+
+    expect(getNetCalibration({ answers: flagged })).toMatchObject({
+      advice: "keepAnswering",
+      blankingGain: -2,
     });
   });
 });

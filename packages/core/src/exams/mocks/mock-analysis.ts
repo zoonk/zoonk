@@ -158,16 +158,14 @@ export function analyzeMock({
 
   const netAnswers = answers.map((answer) => ({
     ...answer,
+    points: answer.marking.points,
     wrongPenalty: answer.marking.wrongPenalty,
   }));
 
   return {
     areas: groups.map((group) => toAreaResult({ conditions, group, scoring })),
     blank: answers.filter((answer) => answer.outcome === "blank").length,
-    calibration:
-      scoring === "net"
-        ? getNetCalibration({ answers: netAnswers, penalty: conditions.wrongPenalty })
-        : null,
+    calibration: scoring === "net" ? getNetCalibration({ answers: netAnswers }) : null,
     coherence: scoring === "irt" ? getIrtCoherence(toResponses(answers)) : null,
     correct,
     irt: scoring === "irt" ? getOverallIrt(groups) : null,

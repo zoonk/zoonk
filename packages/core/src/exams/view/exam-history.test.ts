@@ -288,7 +288,7 @@ describe("exam screen history", () => {
     });
   });
 
-  it("uses the latest penalty for advice on the lifetime calibration", async () => {
+  it("uses actual lifetime blanking gains despite a different latest penalty", async () => {
     const { goal } = await historySetup(32);
 
     const result = {
@@ -333,7 +333,7 @@ describe("exam screen history", () => {
     const history = await loadExamHistory({ goalId: goal.id, today: SESSION_NOW });
 
     expect(history.calibration).toStrictEqual({
-      advice: "keepAnswering",
+      advice: "blankUnsure",
       blankingGain: 30.5,
       sure: { answered: 64, right: 64 },
       unsure: { answered: 96, right: 32 },

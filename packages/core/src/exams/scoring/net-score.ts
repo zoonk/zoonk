@@ -1,9 +1,12 @@
+import { getAnswerPoints } from "./mock-points";
+
 export type NetOutcome = "blank" | "partial" | "right" | "wrong";
 
 export type NetAnswer = {
   credit?: number;
   flagged: boolean;
   outcome: NetOutcome;
+  points?: number;
   wrongPenalty: number;
 };
 
@@ -71,58 +74,42 @@ function toGroup(answers: readonly NetAnswer[]): CalibrationGroup {
   return { answered: answered.length, right: count(answered, "right") };
 }
 
-function getAdvice({
-  penalty,
+export function getCalibrationAdvice({
+  blankingGain,
   unsure,
 }: {
-  penalty: number;
+  blankingGain: number;
   unsure: CalibrationGroup;
 }): NetCalibration["advice"] {
   if (unsure.answered < MIN_UNSURE_ANSWERS) {
     return null;
   }
 
-  return unsure.right / unsure.answered < getBreakEven(penalty) ? "blankUnsure" : "keepAnswering";
+  return blankingGain > 0 ? "blankUnsure" : "keepAnswering";
 }
 
-export function getNetCalibration({
-  answers,
-  penalty,
-}: {
-  answers: readonly NetAnswer[];
-  penalty: number;
-}): NetCalibration {
+export function getNetCalibration({ answers }: { answers: readonly NetAnswer[] }): NetCalibration {
   const flagged = answers.filter((answer) => answer.flagged);
   const sure = toGroup(answers.filter((answer) => !answer.flagged));
   const unsure = toGroup(flagged);
 
-  const missed = flagged.filter(
-    (answer) => answer.outcome !== "blank" && answer.outcome !== "right",
+  const gain = flagged.reduce(
+    (sum, answer) =>
+      sum -
+      getAnswerPoints({
+        credit: answer.outcome === "right" ? 1 : (answer.credit ?? 0),
+        marking: { part: null, points: answer.points ?? 1, wrongPenalty: answer.wrongPenalty },
+        outcome: answer.outcome,
+      }),
+    0,
   );
 
-  const blankingGain = Math.round((sumPenalties(missed) - unsure.right) * NET_DECIMALS);
+  const blankingGain = Math.round(gain * NET_DECIMALS);
 
   return {
-    advice: getAdvice({ penalty, unsure }),
+    advice: getCalibrationAdvice({ blankingGain, unsure }),
     blankingGain: blankingGain / NET_DECIMALS,
     sure,
     unsure,
   };
-}
-
-export function sumCalibration({
-  calibrations,
-  penalty,
-}: {
-  calibrations: readonly Pick<NetCalibration, "sure" | "unsure">[];
-  penalty: number;
-}): Pick<NetCalibration, "advice" | "sure" | "unsure"> {
-  const add = (key: "sure" | "unsure"): CalibrationGroup => ({
-    answered: calibrations.reduce((sum, calibration) => sum + calibration[key].answered, 0),
-    right: calibrations.reduce((sum, calibration) => sum + calibration[key].right, 0),
-  });
-
-  const unsure = add("unsure");
-
-  return { advice: getAdvice({ penalty, unsure }), sure: add("sure"), unsure };
 }

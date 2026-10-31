@@ -6,7 +6,7 @@ import {
   toMockSummary,
 } from "../../mocks/_utils/finished-mocks";
 import { type MockResult } from "../../mocks/mock-contract";
-import { sumCalibration } from "../../scoring/net-score";
+import { getCalibrationAdvice } from "../../scoring/net-score";
 import { type ExamMockProgress, type ExamMockSummary } from "../exam-view-contract";
 import { loadExamCalibration } from "./exam-calibration";
 import { loadExamWork } from "./exam-work";
@@ -57,12 +57,8 @@ export async function loadExamHistory({
     .toReversed()
     .slice(0, HISTORY_SIZE);
 
-  const penalty = finished.at(-1)?.result.net?.penalty ?? 1;
-
   return {
-    calibration: calibration
-      ? { ...calibration, ...sumCalibration({ calibrations: [calibration], penalty }) }
-      : null,
+    calibration: calibration ? { ...calibration, advice: getCalibrationAdvice(calibration) } : null,
     mocks,
     progress: getMockProgress(finished),
     ...work,
