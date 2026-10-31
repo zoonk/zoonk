@@ -676,6 +676,7 @@ class GoalSetupFlowTest {
     fun aGoalThatIsGoneOrNotTheLearnersSaysSoAndLeadsHome() {
         api.setup = { throw ApiException(ApiError.NotFound) }
         show()
+        navigator.open(AppRoute.GoalSetup(GOAL_ID))
 
         rule.onNodeWithText("We couldn't find this page").assertIsDisplayed()
         rule.onNodeWithText("Try again").assertDoesNotExist()
