@@ -9,7 +9,7 @@
   "mock_break_time_left": "37c4adf6f41cc8b6762d53515415f239765e7982a697c2a26b97e7aeb437f12b",
   "mock_cell_answered": "cc64f077487484589ba1200b9d81c35a1514bb13f8353678d92a5b47d95984f5",
   "mock_cell_flagged": "f25bfab6c5973fdd5b692186a58d7673937e3ec7561640bffa66e14b79a583dc",
-  "mock_continue": "1a101d30fc48248e2f93b6ff7bf166405e354e64c58dc2bf7eca11c3c803fefb",
+  "mock_continue": "7f489ee62cf7be19aa1f65254ddcf213a3559eb0a7c211f0a19bbd91b3139375",
   "mock_continue_section": "93c7b30b6aba3f902322f5b9d4c6bee2033e66908d0162d59768667951c95d34",
   "mock_essay_blank": "e244166fe30fa485574cfc1053bb84d28abbe7df1450c56858bae83aaa152d06",
   "mock_essays_blank": "0d3cfd781d88d04886f154683c732d7a917703112b7545cc8e0f9a62743ef154",
@@ -129,7 +129,7 @@
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
     <string name="mock_take">Hacer un simulacro</string>
-    <string name="mock_continue">Retomar tu simulacro</string>
+    <string name="mock_continue">Continuar tu simulacro</string>
     <string name="mock_label">Simulacro de examen</string>
     <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
     <string name="mock_label_shape">Simulacro · %1$s</string>

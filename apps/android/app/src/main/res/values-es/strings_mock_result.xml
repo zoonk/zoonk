@@ -53,7 +53,7 @@
   "mock_result_needs_percent": "c2c3be39d802e95020c36cb7b8b4048300a65d350920f3c53b6377e1186bbeed",
   "mock_result_needs_points": "6ec9bd826fd8af119fd16e6d146a7065b42a4f2ac618069d5cef15fecd2f1f61",
   "mock_result_net_score": "227f230891ee564f489c8ea7118bb0fbe18c8aa679edd61eb847d10f2ed8e39e",
-  "mock_result_new": "49da60023dcb745934649d2b21a498291ce4190f754cf6bb61a66c7f8dbcaa25",
+  "mock_result_new": "b3cbcec31e990352dc1a1051735a3c69185d15b8010f265af0bfbfd80b168443",
   "mock_result_no_estimate": "4a3e83e670ab71ee70616c58a5423752fbc39f01f74f46a77a0a56853034d9bb",
   "mock_result_not_done": "58966514abc957e8f81986bdd89694e2d180156c5f28237375c17ce82d56b06f",
   "mock_result_not_every_task": "5b0526472ac648b0b9b475e8dd25875ab06c724f92cbc30d8a551227d3079bd6",
@@ -337,7 +337,7 @@
     </plurals>
     <!-- %1$s is a subject, %2$s how it went, such as "4 of 10 right". -->
     <string name="mock_result_more_time">Más tiempo para %1$s (%2$s)</string>
-    <string name="mock_result_new">Ahora</string>
+    <string name="mock_result_new">Nuevo</string>
     <string name="mock_result_off_plan">Fuera de tu plan</string>
     <string name="mock_result_apply">Aplicar</string>
     <string name="mock_result_keep_plan">Mantener mi plan</string>

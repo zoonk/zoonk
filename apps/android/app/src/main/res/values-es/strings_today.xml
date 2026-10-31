@@ -11,7 +11,7 @@
   "today_building_plan_goal": "05419c0cd3601c342f2a35a965020f126f365f5f212ea73b842fb8d62b56cb6e",
   "today_catch_up_before_exam": "aa08f67dabe40c9680cf8077402fd9af648e4caaf043e9aaae0b6a4fc550100e",
   "today_catch_up_next_days": "9968f73950992eacc8e0eda55825ddab915e8fc0a5098e880a14e82ed4bf4015",
-  "today_catch_up_today": "d2e94709d3df88023b1bf405efee900434d5e930da5f25d1dedd2ac97c267b5b",
+  "today_catch_up_today": "e298441dcd228281e5737854d69c2c57b0a88831bbebabda8e36e565192ca5f8",
   "today_catch_up_tomorrow": "9ff3cc2c33b4d18d3c71b44d66a30a2d9a556b845771e0445584ab5cac208213",
   "today_change_limit": "32093ce30855e101bd3b3ea614e33c27a48b121e773aff9257fdecd5c16fd9de",
   "today_choose_focus": "4e8e8a0ead3da50a9121504da409f4e8ad69a79c76ddd4e53b990a60c9727bf2",
@@ -22,7 +22,7 @@
   "today_connection_lost": "e6f0f994a3db5a4829855c7bbd18c88ea7575407e361fbbddf97b6a28267d296",
   "today_connection_lost_detail": "74fc6ed7ed2a4c4ec5b2d2e1cb2c33d94fb73ae3d1acd874b9af4d27514a6013",
   "today_continue_explanation": "6ba568e18228f3fa421b85c12f7d2a567b7f797e4ff1a23072754602d13ecf30",
-  "today_continue_mock": "9d88ca04a64ba52864df53ccfb3932bfd41af085771c99ff4c3e2d42a2afe5dc",
+  "today_continue_mock": "06ea3d1c29301880a9d8869a105e9bd6dcc49d2a79336f5c81467615aebbbf1f",
   "today_continue_mock_detail": "d9237b9182734de69c211c8a9b0d67314db21b33824cead8b821e5092cb90641",
   "today_continue_session": "bf8207de65e4dd5a7c12353989c3b27bf5a003dac47336381c390b630f27d43c",
   "today_continue_setting_up": "8b61cebc7694dd89eb9cc31384d11d058ffaacdee5b0f0ca3e4312aa8b237591",
@@ -403,7 +403,7 @@
         <item quantity="other">Mañana empiezas con %d lecciones más para ponerte al día.</item>
     </plurals>
     <!-- %1$s is a duration, such as "25 min". -->
-    <string name="today_catch_up_today">Ponerse al día hoy · +%1$s</string>
+    <string name="today_catch_up_today">Ponerte al día hoy · +%1$s</string>
     <!-- %1$s is a weekday, such as "Saturday". -->
     <string name="today_see_day_challenge">Ver el desafío del %1$s</string>
     <string name="today_see_day_mock">Ver el simulacro del %1$s</string>
@@ -436,7 +436,7 @@
     <string name="today_take_mock_detail">Cuando quieras: un día completo de examen o medio día</string>
     <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
     <string name="today_take_mock_detail_by_subject">Cuando quieras: un día completo de examen, medio día o una materia</string>
-    <string name="today_continue_mock">Retomar tu simulacro</string>
+    <string name="today_continue_mock">Continuar tu simulacro</string>
     <string name="today_continue_mock_detail">Está donde lo dejaste</string>
     <string name="today_exam_speaking">Expresión oral tipo examen</string>
     <!-- %1$s is the exam's name, such as IELTS. -->

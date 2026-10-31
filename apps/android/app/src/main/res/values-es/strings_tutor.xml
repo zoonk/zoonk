@@ -22,7 +22,7 @@
   "tutor_close": "82c7a586aac5330be66b587dc9ae69ecf22464ffad9625701581980ceb015374",
   "tutor_description_answer": "252590d5a2dbcd0120d2e545b1430108b1d4e236e21cc2c6564317f944eb6a7e",
   "tutor_description_chapter": "61e2758ae8cc40f6983b31e17798bb66a346ac9f6ff634d4762ceda826144709",
-  "tutor_description_item": "faf0d8406be934ef01bcaa299bd1645ee313fbda8d415fcc877e6baabf0cc525",
+  "tutor_description_item": "2260cd3912f63eec2ad9bb0f74f33e8ee90d2bf855d06810638465d4ed43bf0f",
   "tutor_description_lesson": "2100e3d6c0d01c78788c9f783809ef3e181db6a5e75da722a8501da0446dcffc",
   "tutor_description_mock": "20fcb74ba7975faaffed111097aef7b7e49d71767187acfc220108ae8a377072",
   "tutor_description_plan": "2d96efea4ba09bbd1694ee0bcf8aafce96fa2516bccfb349c5a7377587420297",
@@ -89,7 +89,7 @@
   "tutor_page_sign_up": "349a8b2de9f39977b0cd54eebcff21a3a4643f4deec83e02a949af825eb65ab3",
   "tutor_placeholder_answer": "104c0b18cb6c7b307b9a3def09f3dc47be2e04de023fcac4a99d2ad8b9e06754",
   "tutor_placeholder_chapter": "cdfae927d4934de7ba2f07cf7d56ad35a51785c9b8812b1cee88c769c154b23f",
-  "tutor_placeholder_item": "5bfc84dd6d5c05098d5b3c02358c30c39cc5c6ff89b744dd8c1ccbbaa38e4734",
+  "tutor_placeholder_item": "675b2ddb063bf99396a720729810655532ad90dcdae0ef787fd41ecb1eec7d39",
   "tutor_placeholder_lesson": "3db1751e6b1a0760d5c03e9199ccf4abfc4266ce77ef4d28f3c4f359630ccaca",
   "tutor_placeholder_mock": "0db2111a93862b16489a9c109c5c4e69bdf2381c3a53a63841c505dba4b6e8ae",
   "tutor_placeholder_plan": "b2f8202aa4df30b24612a5f92780094daa61268ae88c1a5d24eb1d834123aea6",
@@ -142,7 +142,7 @@
     <string name="tutor_description_mock">Haz preguntas sobre este simulacro</string>
     <string name="tutor_description_plan">Haz preguntas sobre tu plan</string>
     <string name="tutor_description_subject">Haz preguntas sobre esta materia</string>
-    <string name="tutor_description_item">Pregunta sobre esta pregunta</string>
+    <string name="tutor_description_item">Consultar sobre esta pregunta</string>
     <string name="tutor_close">Cerrar preguntas</string>
     <string name="tutor_about_answer">Sobre tu respuesta</string>
     <string name="tutor_about_chapter">Sobre este capítulo</string>
@@ -180,7 +180,7 @@
     <string name="tutor_placeholder_mock">Pregunta sobre este simulacro…</string>
     <string name="tutor_placeholder_plan">Pregunta sobre tu plan…</string>
     <string name="tutor_placeholder_subject">Pregunta sobre esta materia…</string>
-    <string name="tutor_placeholder_item">Pregunta sobre esta pregunta…</string>
+    <string name="tutor_placeholder_item">Consulta sobre esta pregunta…</string>
     <string name="tutor_placeholder_answer">Pregunta sobre tu respuesta…</string>
     <string name="tutor_placeholder_lesson">Pregunta sobre el contenido de la lección…</string>
     <string name="tutor_send">Enviar</string>

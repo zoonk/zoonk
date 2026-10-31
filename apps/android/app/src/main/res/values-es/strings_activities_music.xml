@@ -4,8 +4,8 @@
   "activities_music_answer_on_guitar": "659325e91ad2b39cc332adca54e70df4a0f9a983219b97efb71e3a7af16c0f5c",
   "activities_music_badge_ear_training": "52a28fe673b4f13f6e4acf3527a8fb269af15bbf0ef9ffe65d0a346c994a9167",
   "activities_music_badge_play_it": "3aafa3c6631d97ccf69a761d1ce93870b81886592a662063655eddfec7af3ad6",
-  "activities_music_badge_read_listen": "039ef64641da271bbe8fc0a0b3861f30746e128ce6b4747f3e7f02437508a508",
-  "activities_music_badge_tap_along": "0510fc581b34a15d3e88c6d8702529ec7029c0b182a96ace52c1478d90d1e4d2",
+  "activities_music_badge_read_listen": "20dc8be2fddf05695887a074d16a27477ac3a1347a970359372d7e9ea5a303a1",
+  "activities_music_badge_tap_along": "d48de8fbd9952dced6174d48e095576b418364d6a276e1d3d7fdcf419a4275b6",
   "activities_music_bar_notes": "98f04064635b1d6c41ccb78caac307ae421b213d89c2a1d7e056b65c162653b6",
   "activities_music_bar_of": "6205a404fe4bb549fa173b70c8d11f7707613e4fcc0a30f216082105495722a6",
   "activities_music_bars": "7d389acd6cf7cefc3919ddc57cd786888d174c7e6b0373f799f4e3b59b74b16b",
@@ -88,9 +88,9 @@
     <!-- Training the ear to recognize notes and chords by their sound. -->
     <string name="activities_music_badge_ear_training">Entrenamiento auditivo</string>
     <!-- Reading music while it plays. -->
-    <string name="activities_music_badge_read_listen">Leer y escuchar</string>
+    <string name="activities_music_badge_read_listen">Lee y escucha</string>
     <!-- Tapping a rhythm in time with the beat. -->
-    <string name="activities_music_badge_tap_along">Marcar el ritmo</string>
+    <string name="activities_music_badge_tap_along">Marca el ritmo</string>
     <!-- A note name read aloud, like "F sharp". -->
     <string name="activities_music_note_sharp">%1$s sostenido</string>
     <!-- A note name read aloud, like "E flat". -->

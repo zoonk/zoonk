@@ -23,7 +23,7 @@
   "plan_base_quick_description": "bbaa933e8a8a250838c7b024fd9e1aab105de8f355867be26791fb81f37b0256",
   "plan_base_skip": "90ee83bf8f83bd66c583d970dd69478d6a3457cce23f9d13675f3a18661b9a37",
   "plan_base_skip_description": "0b4a50711bc9de0bbb45d36616277ae7dbcc28933da29c9f1a05f27d05f6a8e8",
-  "plan_base_studied": "3770d9bd11bc9099fad89723c419fc56b11c20796d8e8709d28438094edc5aed",
+  "plan_base_studied": "3301bf5bb27b09195fd4c04839d7cfd1352c2a2b92c62a77a34faa348eee55cb",
   "plan_base_studied_name": "9e0dc427c6e1dfc621526fe399fd7a55fd4296deaeb71e243e27d8d62c63c519",
   "plan_bases_deep": "7231bd4176cfd133a88dbec282526eb2872cdb5432257048eea75815ca45cfd1",
   "plan_bases_differ": "7ae76fa05804008937d0ee05166f0066fbd839c99194885c1c0ae499691bd5cc",
@@ -213,7 +213,7 @@
   "plan_continue": "e24e4816dfd093d1320edccbd889b1d7ce46d631836c025e13ef67c073738314",
   "plan_continue_at": "8ce66bd33b4960d973278ffb38d121c288a677c7491d9114fc2c2e22e301fca2",
   "plan_continues_on": "352362246807d69c0fce81991f88c3394f6d824036d3d2a1787fff54f63f4fc4",
-  "plan_continues_today": "bcc3e2ef9b0ede22b4fe5b71bb4124d6e0d9aced9869672a2f4defe0dcc60c1a",
+  "plan_continues_today": "e48237c532de0054d34e6a79287c4465d6e7e7e5ec1a81c2bbb97954baf2ab7e",
   "plan_couldnt_check_changes": "4e4c3b875bdab350f1af60aa9254025347e8ea7ac2d435ebac191b1594b92b36",
   "plan_coverage": "c597d029e4aea7fe0c57ae678219d0cd85dcd6308af5f82002b57bab7709aba7",
   "plan_coverage_caption": "f3d0a58e10039ac1528779f55fabf3dcb44ef18185c4dc071b0e2a2ab52e8223",
@@ -528,7 +528,7 @@
   "plan_tool_setup_first": "8872014d24587cf074861cd9cef271c38e799e97f75e6cd9eb75385050e0fb47",
   "plan_tool_setup_for": "e9b1eac17a7d6a852342c8fe8dfc284ca49072c46fd04ab9a2c0ba219df9cde2",
   "plan_tools_later": "8da95c1198e483caa12d0cd71e92adaa16d2e7b750e72637d40ae58abd200cec",
-  "plan_tools_none": "b1afae11a23b4a6d8e8a249538fee7131a56d87b9a958b6cfb2a8bd4e1ce5112",
+  "plan_tools_none": "cb09514e730349dc37208d5303c06cb99a3396245f0a96127d4fe84556e845e7",
   "plan_tools_title": "1efaf981d7a4fad83b4b5196c4762bf182cb7cbd72a111079004820bb50df129",
   "plan_tools_without": "54ac3714c08c36f1083a99fa0983d8b0d486b5b73ae24bce60626644c43de7c7",
   "plan_try_again": "d5cea2cd15b70d427c2f5699382ecc4744b281c4579917e162e456330d5dbe45",
@@ -669,7 +669,7 @@
     <string name="plan_challenge_left_out">Desafío omitido</string>
     <!-- On a phase of the learner's plan: the plan has no room for its challenge before their goal's date. -->
     <string name="plan_challenge_no_time">No hay tiempo para el desafío de esta fase antes de la fecha de tu objetivo</string>
-    <string name="plan_continues_today">Se retoma hoy</string>
+    <string name="plan_continues_today">Continúa hoy</string>
     <!-- %1$s is the day the plan resumes, such as "Nov 3". -->
     <string name="plan_continues_on">Continúa el %1$s</string>
     <string name="plan_more_lessons_challenge_on">Más lecciones en camino · desafío el %1$s</string>
@@ -1344,7 +1344,7 @@
     <string name="plan_base_studied_name">%1$s (ya se estudió)</string>
     <string name="plan_base_names_time">%1$s · %2$s</string>
     <string name="plan_different_choices">Opciones distintas</string>
-    <string name="plan_base_studied">Estudié</string>
+    <string name="plan_base_studied">Estudiado</string>
     <string name="plan_get_recommendation">Obtener una recomendación</string>
     <string name="plan_getting_recommendation">Buscando una recomendación…</string>
     <string name="plan_recommendation_failed">No pudimos obtener una recomendación.</string>
@@ -1392,7 +1392,7 @@
     <string name="plan_tool_change">Cambiar</string>
     <string name="plan_tool_change_how">Cambiar cómo usarás %1$s</string>
     <string name="plan_tool_choose_how">Elegir cómo usarás %1$s</string>
-    <string name="plan_tools_none">¿No tienes herramientas? Hacerlo todo con ejemplos.</string>
+    <string name="plan_tools_none">¿No tienes herramientas? Puedes hacerlo todo con ejemplos.</string>
     <string name="plan_tools_without">No practicarás en tu propia computadora. Las lecciones usan ejemplos y simulaciones.</string>
     <string name="plan_tools_later">Más adelante: %1$s</string>
     <string name="plan_tool_how">¿Cómo lo usarás?</string>

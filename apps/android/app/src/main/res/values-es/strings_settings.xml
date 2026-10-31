@@ -7,7 +7,7 @@
   "settings_apple_not_revoked": "5de9f90a1cea0cfc2ff268a7f9cc26ecde42f97e1202ed5fac44cd135abf1a48",
   "settings_cancel": "7dc7f12440b82bbe4b15160b0804d0f458650adae3367c3f3ef25d6a225947a1",
   "settings_delete_account": "328dc8b4732d24ad44cfb0eba6336f9a620ede3116d9094e3f5f2ff23690c3ca",
-  "settings_delete_account_description": "d802a343d091305cf84c4098b6c922b01875c76507c8bb75d4d0655f260f87e2",
+  "settings_delete_account_description": "04c30c100a2c35e933dc5ba39f64ea43bac2e9cfd04ad3becb9897e06d795442",
   "settings_delete_code_description": "0e26c98922f24484fcdac42081098fe6a93a90bad4713c1f724c343a115caf5b",
   "settings_delete_code_title": "4228c6081cd6d637b1e3487dc0350b4c636a08bd54623553a437d981ccdc2b4b",
   "settings_delete_confirm_description": "e09f1b9a2109fc04eb60a66910bb2ec32e4926358763cce59fced9f34765a023",
@@ -73,7 +73,7 @@
     <string name="settings_download_failed">No pudimos preparar la descarga. Inténtalo de nuevo.</string>
     <string name="settings_delete_account">Eliminar cuenta</string>
     <string name="settings_delete_my_account">Eliminar mi cuenta</string>
-    <string name="settings_delete_account_description">Elimina tu cuenta y todo su contenido para siempre. Plus se cancela si lo compraste en la web; las compras en Google Play y App Store se administran donde las hiciste.</string>
+    <string name="settings_delete_account_description">Elimina tu cuenta y todo su contenido para siempre. Si compraste Plus en la web, se cancela la suscripción; las compras en Google Play y el App Store se administran donde las hiciste.</string>
     <string name="settings_delete_ellipsis">Eliminar…</string>
     <string name="settings_delete_confirm_title">¿Eliminar tu cuenta?</string>
     <string name="settings_delete_confirm_description">Tus objetivos, planes, progreso, memoria y archivos subidos se eliminan para siempre. Esto no se puede deshacer.</string>

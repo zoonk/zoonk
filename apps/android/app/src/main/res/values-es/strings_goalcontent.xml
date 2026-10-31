@@ -45,7 +45,7 @@
   "goalcontent_module_count": "7a2133ffe5b7c2e2ebe63a3f5a6d4428aa49722c2511fda5bf651d36593c86f9",
   "goalcontent_modules": "32d106d2def2828c689d63a0f431c40cb26c60966354e07b6d67948d748baec1",
   "goalcontent_more_chapters": "52471e25776680bbcbfa7e144dc9fee93d39e15161ce13a3161ecfd84dac6ba7",
-  "goalcontent_new": "872a593e5b33db95d8c9e3edb3b9d04a9af10ae44edf644107062472bf58d1cf",
+  "goalcontent_new": "6310642d9784f4de27976fb7a2397e10b7e92546ad62ae038695113f0b7e3693",
   "goalcontent_next_date": "2c0ad1c81966adfcc4dbe8f1ad06f2204a873df7d08a97a4a3ff0f13dec83edd",
   "goalcontent_not_in_plan": "682f3e7da2a962d75a2ab207dcf75a904d2c52779463e7684d0aa325e87dc5b9",
   "goalcontent_percent_done": "b68fdc6da17534e40884d2c21239c5bff0353654b69c524124e4fc24507939c4",
@@ -163,7 +163,7 @@
     <!-- Legend of a progress bar's parts. -->
     <string name="goalcontent_studied">Estudiado</string>
     <string name="goalcontent_known">Ya lo sabías</string>
-    <string name="goalcontent_new">Ahora</string>
+    <string name="goalcontent_new">Nuevo</string>
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">Preparación</string>
     <string name="goalcontent_coverage">Cobertura</string>

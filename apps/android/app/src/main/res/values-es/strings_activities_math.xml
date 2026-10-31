@@ -8,8 +8,8 @@
   "activities_math_badge_explore": "0e2b0af70fa53b238ab5d2a85fef605f91a9da1319e7cabfe16097d8005663d2",
   "activities_math_badge_hands_on": "8ddb6b86effca3fd0887fbb76bd3071e6dd6add6e386b6efe42c6ad19436ebc0",
   "activities_math_badge_place_it": "f573774b156a3f1b0dd45c9a842decc5daa221517fe0ac04469dd3f92ad1d67c",
-  "activities_math_badge_predict_first": "ef7cf4b64410be30b558430f7cabeb0496bbf8a06ae95c49a65f4c890e2cb0fe",
-  "activities_math_badge_simulate": "bab2302f070dc1b591ca7815558271fa7a23eaa66885ac61a268ce70e86c6509",
+  "activities_math_badge_predict_first": "7c78ccbd8b88ef88669d7e268645ab1dbc5d60a3dd0db43a3ea2f84a45e4d5ff",
+  "activities_math_badge_simulate": "1e4ebf9e0befea2ac819a3273d12b5ed9ca5c2cdc35266bee4ad9a50c4d0a33f",
   "activities_math_badge_split_it": "93165c75922b227e436d5f18347e539f327caf8d20a6e525d9fc471c96afc02b",
   "activities_math_badge_try_it": "70ba697fcc8d2b601d08b1232d73827fceb9bd535e5e6c3b585d026e9a104c56",
   "activities_math_balance_description": "3a9000c34f124b9083a540edfbb9a99e8ce2102a83d6b12ae5ab2adbe51b8899",
@@ -90,9 +90,9 @@
     <!-- A badge on an activity where the learner splits a rectangle or a bar into easy parts. -->
     <string name="activities_math_badge_split_it">Divide en partes</string>
     <!-- A short badge on an activity where the learner guesses how often something random happens before a simulation runs it. -->
-    <string name="activities_math_badge_predict_first">Predecir primero</string>
+    <string name="activities_math_badge_predict_first">Predice primero</string>
     <!-- A short badge on an activity that runs many random polls or samples; a verb, one word where the language allows. -->
-    <string name="activities_math_badge_simulate">Simular</string>
+    <string name="activities_math_badge_simulate">Simula</string>
     <!-- A number line's name, then the unit its values are measured in, like "Temperature in °C" or "Distance in km". -->
     <string name="activities_math_number_line_label">%1$s en %2$s</string>
     <!-- The dot the learner drags along the number line, for TalkBack. -->

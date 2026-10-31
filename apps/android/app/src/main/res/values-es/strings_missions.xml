@@ -15,7 +15,7 @@
   "missions_done": "9d3adec88b8d59bc508a1a90038925551e188a7253f56da76071f46ade3393cd",
   "missions_due_today": "212a989ef25201bbacc1e10263416cdcf51d8e83d7b97a8a26572589f0848ae4",
   "missions_earned": "4ffd0dae151211faa78a7ecf715d11af08fbac03f9d4ca2ab8be741bf523ce6a",
-  "missions_essay": "7efbcb60b93f43276f7c53eadca4f9a41519c2f1a6e919c149fb80c842f6b26c",
+  "missions_essay": "c2f68d9ca71e3b357df8c0a506c3474bca7f208a80f1d0a0ee00c8d78c1d07a8",
   "missions_estimate": "f2ede02561dc11f4994521333f9e3b8557419637195a1b05756b3e6dc689d16c",
   "missions_finish_chapter": "7f77bed01caa3d5255c88a5c639fa54012404a4771a94b7e50e4388baf83dca2",
   "missions_finish_chapter_named": "a41e36113eb21cf0f8b5d5911277097e5ac4db91960f9e2c47d8ce34f288b006",
@@ -108,7 +108,7 @@
     <string name="missions_challenge">Enfréntate al Tramposo</string>
     <string name="missions_weekly_challenge">Desafío semanal</string>
     <string name="missions_mock">Haz el simulacro</string>
-    <string name="missions_essay">Practica la expresión escrita</string>
+    <string name="missions_essay">Practica la redacción</string>
     <!-- A verb: a mission to practice. -->
     <string name="missions_practice">Practica</string>
     <string name="missions_fix_a_mistake">Corrige un error</string>

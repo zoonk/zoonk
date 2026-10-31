@@ -422,12 +422,12 @@
   "onboarding_study_days": "026e7b8db10836437112ab77820218656c615e83ce1795004d9f1e635e953b05",
   "onboarding_study_material": "fff6f3e1bbcc831315ca5d60ee14f9154569f97f165a60d947d0f14560ca5a5b",
   "onboarding_subjects_description": "69a6ee41a17b48e82b3c33757df4a1bfa833519f88715c42165547a66efa7208",
-  "onboarding_subjects_from_scratch": "d5faabe444723b0de352d715724c0237bb50a0034c56e1c903e9132da7035efe",
+  "onboarding_subjects_from_scratch": "acdcd53258adba26ea10948b5098d89281723db72734a46175b10dc34e7428e3",
   "onboarding_subjects_label": "c75d66640adaba93ae0fdc1044a6f39aa0e36cc806d52cf8e0fc4a79df475a4d",
   "onboarding_subjects_none": "0869db247e5b028910466e54292262996f1ca73068e47ea018e99a7b89b4a7e5",
   "onboarding_subjects_title": "664d38a4f8e5d4688af7bf6baea5ac527e5f530b05b4d9fce7b02087f198d2bd",
   "onboarding_target_description": "bf95b0bb2e540f2da7b5a493d5b17d761aef40678864ae71250d12875f569f8a",
-  "onboarding_target_label": "63622fec18c510daa7985babf0ab461c58651e25c20ba97ab5b3a237e4465312",
+  "onboarding_target_label": "3443005e32ec7e183f854d10b00083093d83cd053c7966d471f04bae6e37c2ff",
   "onboarding_time_a_day": "42261d68142c9abd92611d6fbf6d634231e9ba7bab374fdbbf43aef66779d381",
   "onboarding_try_again": "e0c882f4c1d163cc45353369455dc551cf59d32c022f73a74f81bed7f4fee282",
   "onboarding_try_another_goal": "7c078ddeaffed2ae61d56dcb31ab021b8fd21d9a0c00faa78e449c8360ed7a64",
@@ -961,10 +961,10 @@
     <string name="onboarding_subjects_description">Tu plan se salta lo básico de esas materias. Una prueba rápida determina tu nivel en las demás.</string>
     <string name="onboarding_subjects_label">Materias que conoces bien</string>
     <string name="onboarding_subjects_none">Aún ninguna</string>
-    <string name="onboarding_subjects_from_scratch">Empezar desde cero</string>
+    <string name="onboarding_subjects_from_scratch">Empiezo desde cero</string>
     <string name="onboarding_admission_title">¿Qué carrera y qué puntaje buscas?</string>
     <string name="onboarding_target_description">Ayuda a que tu plan se enfoque en lo más importante.</string>
-    <string name="onboarding_target_label">Tu objetivo</string>
+    <string name="onboarding_target_label">Tu meta</string>
     <string name="onboarding_admission_placeholder">P. ej., medicina, 750 puntos</string>
     <string name="onboarding_position_title">¿A qué puesto te postulas?</string>
     <string name="onboarding_position_description">La convocatoria puede incluir un examen distinto para cada puesto.</string>

@@ -27,7 +27,7 @@
   "session_block_writing_practice": "e069057b377dd7ace51a82f44ffd835551dcced145ba859d73124c1c775bf5d2",
   "session_energy_at": "63c1a2a4b9ef4df6f9ee53768e9bec15509cff62fa6213afbd9c422db7277046",
   "session_energy_detail": "1343a00934e84c49edbf0bcddf13ecbab1c06e6ff06f5a9a337f7508a6a94a1c",
-  "session_energy_glowing": "887d1dd3707beff961176df063eff69ec8b9393837b8602ad854bfc533a46219",
+  "session_energy_glowing": "dceff1ee6b70674433345bcf551b64deb8c32f95318b64dc5d995d9ea03814ce",
   "session_energy_glowing_brightest": "0f7dda432d1d1c3b050d26ece6109c0dec475fa75f5995687a08b90f8e17f7a1",
   "session_energy_max": "86ce469e1d4a1c34948658f5a4e00864c2e88969cd501775d6fd0f53c680d994",
   "session_level_up": "8132f6a958bc4d3b50d1aeaf27a17ef93d0c382556eb24e35048a4f9e208b7d7",
@@ -41,7 +41,7 @@
   "session_next_writing_note": "6876276335b4caeb62bce650beeba8a3f903419d7403a3d5c266bd5024512f66",
   "session_opening_slow": "c811d1d79512bddbfcb9454a09369afd262ba7c2e2035cce66902bc5e7c1e4df",
   "session_opening_very_slow": "7233b3958b298253de9f0be30b5be9d201e7c658c4d13b2eac03e2bbb8b1f98c",
-  "session_summary_back_on": "038648feef518e23a77f94d6c6e23b64fd35eaf214a2d76bb845e37e3b0dc20c",
+  "session_summary_back_on": "e13e08a35c61dfd04c2c65b90492bcd0834c1d11ff712655e32cfcdc32c15464",
   "session_summary_brain_power": "d6888ae922b57b4bf759e8b52e80129f70a81761141106a41573c81661d2cb19",
   "session_summary_buddy_happy": "b007627753b20b70f8b15e046f2c3d0c7335fdee8e0d4c674993b5d11921f09f",
   "session_summary_create_account": "c5d500f052b6ec950d8cef694b6ec7e7be0d098278fa77c1ec06c6f31d952665",
@@ -146,7 +146,7 @@
     <!-- %1$s is the buddy's name. -->
     <string name="session_energy_glowing_brightest">El brillo de %1$s está al máximo.</string>
     <!-- %1$s is the buddy's name. -->
-    <string name="session_energy_glowing">Ahora se nota el brillo de %1$s.</string>
+    <string name="session_energy_glowing">Ahora %1$s brilla.</string>
     <string name="session_energy_detail">Las respuestas correctas la aumentan. Un día sin estudiar la reduce un poco.</string>
     <string name="session_summary_eyebrow">Sesión de hoy</string>
     <string name="session_summary_done_for_now">Eso es todo por ahora</string>
@@ -165,7 +165,7 @@
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">Por repasar</string>
     <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">De nuevo el %1$s</string>
+    <string name="session_summary_back_on">Vuelven el %1$s</string>
     <string name="session_summary_brain_power">Poder Mental</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
