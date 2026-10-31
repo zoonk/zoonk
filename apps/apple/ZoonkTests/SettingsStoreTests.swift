@@ -504,7 +504,8 @@ extension LearningPreferences {
     dailyLimitMinutes: nil,
     dailyTimes: [15, 30, 45],
     shareUsageData: true,
-    soundsEnabled: true)
+    soundsEnabled: true,
+    usageDataLockedOff: false)
 }
 
 extension WebPlusCancellation {

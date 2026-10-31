@@ -42,6 +42,18 @@ final class SettingsAPITests: XCTestCase {
     XCTAssertTrue(preferences.shareUsageData)
   }
 
+  func testUsageDataIsOffWhereItsLockedForAMinor() async throws {
+    let api = SettingsAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: ProfileUpdateTransport(usageDataLockedOff: true)))
+
+    let preferences = try await api.updatePreferences(token: "token", .soundsEnabled(true))
+
+    XCTAssertFalse(preferences.shareUsageData)
+    XCTAssertTrue(preferences.usageDataLockedOff)
+  }
+
   func testTheLimitOffersCoresTimesWithASavedOneTheyLack() async throws {
     let transport = ProfileUpdateTransport(limit: 370)
     let api = SettingsAPI(
@@ -121,6 +133,7 @@ private struct WebPlusChoicesTransport: ClientTransport {
 
 private struct ProfileUpdateTransport: ClientTransport {
   var limit: Int?
+  var usageDataLockedOff = false
   let sentBodies = SentBodies()
 
   func send(
@@ -150,7 +163,8 @@ private struct ProfileUpdateTransport: ClientTransport {
             "dailyLimitMinutes": \(limit.map(String.init) ?? "null"),
             "dailyTimes": [5, 360, 390],
             "shareUsageData": null,
-            "soundsEnabled": true
+            "soundsEnabled": true,
+            "usageDataLockedOff": \(usageDataLockedOff)
           }
         }
         """)

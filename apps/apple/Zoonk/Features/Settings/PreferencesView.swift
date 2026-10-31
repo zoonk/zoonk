@@ -84,6 +84,15 @@ struct PreferencesView: View {
               comment: "What sharing usage data does")
           }
           .tint(.success)
+          .disabled(preferences.usageDataLockedOff)
+        } footer: {
+          if preferences.usageDataLockedOff {
+            Text(
+              "Off for learners under 18 in your country", tableName: "Settings",
+              comment:
+                "Why the usage data switch is off and can't be turned on: the law doesn't let minors agree to it"
+            )
+          }
         }
       }
 
