@@ -3,7 +3,6 @@ import { type StudySessionBlock, isPrismaUniqueConstraintError } from "@zoonk/db
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { buildMockConditions } from "./_utils/mock-conditions";
-import { oweSpeakingPaper } from "./_utils/mock-speaking";
 import { findOwnedMock } from "./_utils/owned-mock";
 import { type MockTimeZoneInput } from "./mock-contract";
 
@@ -93,7 +92,7 @@ export async function startMock({
         return unchanged(null);
       }
 
-      const created = await tx.mockExam.create({
+      await tx.mockExam.create({
         data: {
           blockId,
           conditions,
@@ -105,7 +104,6 @@ export async function startMock({
         },
       });
 
-      await oweSpeakingPaper({ conditions, mockId: created.id, tx, userId: owned.userId });
       return null;
     });
   } catch (error) {

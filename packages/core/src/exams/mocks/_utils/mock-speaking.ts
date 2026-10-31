@@ -1,31 +1,7 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
-import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { getSpeakingSection } from "../../../language/exam-speaking/get-speaking-section";
 import { type SpeakingSectionView } from "../../../language/exam-speaking/speaking-contract";
-import { type MockConditions } from "../mock-contract";
 import { type MockSitting } from "./owned-mock";
-
-/** The speaking paper is written while the learner sits the papers before it. */
-export async function oweSpeakingPaper({
-  conditions,
-  mockId,
-  tx,
-  userId,
-}: {
-  conditions: Pick<MockConditions, "sections">;
-  mockId: string;
-  tx: TransactionClient;
-  userId: string;
-}): Promise<void> {
-  if (conditions.sections.some((section) => section.kind === "speaking")) {
-    await oweFollowUps({
-      db: tx,
-      followUps: [{ input: { mockId }, kind: "writeSpeakingPaper" }],
-      userId,
-    });
-  }
-}
 
 /** A paper written ahead shows once the learner reaches its section, not while they sit earlier ones. */
 export async function loadMockSpeaking(

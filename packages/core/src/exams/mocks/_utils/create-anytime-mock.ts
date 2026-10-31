@@ -2,6 +2,7 @@ import "server-only";
 import { type Goal } from "@zoonk/db";
 import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
 import { type UsagePeriod } from "../../../entitlements/contract";
+import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
@@ -22,7 +23,6 @@ import {
 } from "./anytime-mock-setup";
 import { loadMockCandidates } from "./mock-candidates";
 import { getExamStartTime } from "./mock-conditions";
-import { oweSpeakingPaper } from "./mock-speaking";
 
 export type CreateAnytimeMockResult =
   | { id: string; status: "running" | "started" }
@@ -218,7 +218,15 @@ export async function createAnytimeMock({
       },
     });
 
-    await oweSpeakingPaper({ conditions, mockId: created.id, tx, userId });
+    // The speaking paper is written while the learner sits the papers before it.
+    if (conditions.sections.some((section) => section.kind === "speaking")) {
+      await oweFollowUps({
+        db: tx,
+        followUps: [{ input: { mockId: created.id }, kind: "writeSpeakingPaper" }],
+        userId,
+      });
+    }
+
     return { id: created.id, status: "started" };
   });
 }
