@@ -1,9 +1,11 @@
+import io.sentry.android.gradle.extensions.InstrumentationFeature
 import java.util.Properties
 
 plugins {
     id("zoonk.android.application")
     alias(libs.plugins.aboutlibraries.android)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.sentry.android)
 }
 
 // Written by `pnpm dev`; without it, `pnpm dev:direct`'s port.
@@ -39,6 +41,7 @@ android {
             buildConfigField("String", "API_BASE_URL", "\"${localApiBaseUrl.get()}\"")
             // The API refuses tokens for `com.zoonk.debug`, so a debug build sends none rather than spend Google decodes.
             buildConfigField("String", "PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER", "\"\"")
+            buildConfigField("String", "SENTRY_DSN", "\"\"")
         }
 
         release {
@@ -48,6 +51,7 @@ android {
                 "PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER",
                 "\"${providers.environmentVariable("PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER").getOrElse("")}\"",
             )
+            buildConfigField("String", "SENTRY_DSN", "\"${providers.gradleProperty("sentryDsn").getOrElse("")}\"")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -71,6 +75,22 @@ android {
             file("../core/resources/src/main/res").list().orEmpty().mapNotNull {
                 Regex("values-([a-z]{2,3})").matchEntire(it)?.groupValues?.get(1)
             }
+    }
+}
+
+sentry {
+    ignoredBuildTypes = setOf("debug")
+    org = "zoonk"
+    projectName = "zoonk-android"
+    // Without the token (CI, other Macs) the build still embeds the mapping's id and skips the upload.
+    authToken = providers.environmentVariable("SENTRY_AUTH_TOKEN")
+    autoUploadProguardMapping = authToken.map { it.isNotBlank() }.orElse(false)
+    telemetry = false
+    autoInstallation.enabled = false
+    tracingInstrumentation {
+        // File paths can name a learner's files, and logcat lines from libraries can carry signed URLs.
+        features = setOf(InstrumentationFeature.OKHTTP)
+        logcat.enabled = false
     }
 }
 
@@ -137,6 +157,10 @@ dependencies {
 
     // Code sandbox.
     implementation(libs.androidx.webkit)
+
+    // Crash and error reports.
+    implementation(libs.sentry.android)
+    implementation(libs.sentry.okhttp)
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)

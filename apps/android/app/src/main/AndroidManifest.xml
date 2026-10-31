@@ -19,6 +19,11 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.Zoonk">
+        <!-- ZoonkApplication starts Sentry only when the build names a DSN; auto-init would throw without one. -->
+        <meta-data
+            android:name="io.sentry.auto-init"
+            android:value="false" />
+
         <activity
             android:name="com.zoonk.android.MainActivity"
             android:exported="true"

@@ -56,6 +56,10 @@ webrtc = "150.7871.04"
 # Code sandbox.
 androidxWebkit = "1.18.0"
 
+# Crash and error reports.
+sentry = "8.62.0"
+sentryGradlePlugin = "6.25.0"
+
 [libraries]
 # Build logic.
 android-gradle-api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
@@ -136,6 +140,10 @@ webrtc = { module = "io.github.webrtc-sdk:android-prefixed-stripped", version.re
 # Code sandbox.
 androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "androidxWebkit" }
 
+# Crash and error reports.
+sentry-android = { module = "io.sentry:sentry-android", version.ref = "sentry" }
+sentry-okhttp = { module = "io.sentry:sentry-okhttp", version.ref = "sentry" }
+
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -147,3 +155,6 @@ aboutlibraries-android = { id = "com.mikepenz.aboutlibraries.plugin.android", ve
 
 # Data layer, API client and session.
 openapi-generator = { id = "org.openapi.generator", version.ref = "openapiGenerator" }
+
+# Crash and error reports.
+sentry-android = { id = "io.sentry.android.gradle", version.ref = "sentryGradlePlugin" }

@@ -15,6 +15,7 @@ class ZoonkApplication :
 
     override fun onCreate() {
         super.onCreate()
+        startErrorReporting(this)
         container = AppContainer(this)
     }
 
