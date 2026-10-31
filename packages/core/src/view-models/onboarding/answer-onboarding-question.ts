@@ -9,9 +9,9 @@ import {
   type MoveLanguageGoalResult,
   moveLanguageGoalToExam,
 } from "../../exams/move-language-goal";
+import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { type GoalView } from "../../goals/goal-contract";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
-import { scheduleMemoryUpdate } from "../../memory/update-memory-from-activity";
 import { followPlanToday } from "../../plans/_utils/follow-plan-today";
 import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { settleNewPlan } from "../../plans/_utils/recommended-bases";
@@ -120,13 +120,6 @@ export async function answerOnboardingQuestion({
           await followSavedPlan(id);
         }),
     );
-
-    scheduleMemoryUpdate({
-      goalId,
-      source: { goalId, kind: "onboarding" },
-      timeZone: input.timeZone,
-      userId: goal.userId,
-    });
   } else {
     await refreshGoalPlan({
       goalId,
@@ -137,6 +130,15 @@ export async function answerOnboardingQuestion({
 
   if (input.question === "schedule" || input.question === "targetDate") {
     await followSavedPlan(goalId);
+  }
+
+  // The time a day re-plans the first days, so their lessons start being written before Today needs them.
+  if (input.question === "schedule") {
+    await oweGoalLessons({
+      also: [{ input: { goalId }, kind: "rememberOnboarding" }],
+      goalId,
+      userId: goal.userId,
+    });
   }
 
   // "Pass an exam" inside a language goal: a reason naming a certificate moves it to an exam goal.

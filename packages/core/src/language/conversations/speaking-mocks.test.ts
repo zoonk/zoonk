@@ -11,13 +11,12 @@ import {
   setupTestCalls,
   testCallCompletionInput,
 } from "../../_test-utils/connect-test-call";
-import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { reviewRunsInline } from "../../_test-utils/review-runs";
 import { completeLanguageConversation } from "./complete-language-conversation";
 import { getLanguageConversation } from "./get-language-conversation";
-import { prepareSpeakingMock } from "./prepare-language-calls";
+import { findNextSpeakingMockGoalId, prepareSpeakingMock } from "./prepare-language-calls";
 import { startLanguageConversation } from "./start-language-conversation";
 
 const PROVENANCE = {
@@ -308,8 +307,7 @@ describe("speaking mocks", () => {
   });
 
   it("writes no next mock for one that never connected, so ending unstarted mocks can't write mocks", async () => {
-    const waitForDeferredWork = runDeferredWork();
-    const { goal } = await examGoalFixture("Preciso do TOEFL para o mestrado");
+    const { goal, user } = await examGoalFixture("Preciso do TOEFL para o mestrado");
     const started = await startLanguageConversation({ goalId: goal.id, kind: "speakingMock" });
     const conversationId = started.status === "ready" ? started.conversationId : "";
 
@@ -321,15 +319,15 @@ describe("speaking mocks", () => {
       runs: reviewRunsInline,
     });
 
-    await waitForDeferredWork();
-
     expect(scoreSpeaking).not.toHaveBeenCalled();
-    expect(generateSpeakingMockScenario).toHaveBeenCalledOnce();
+
+    await expect(
+      findNextSpeakingMockGoalId({ conversationId, userId: user.id }),
+    ).resolves.toBeNull();
   });
 
   it("writes the next mock ahead once a mock ends, so another try starts at once", async () => {
-    const waitForDeferredWork = runDeferredWork();
-    const { goal } = await examGoalFixture("Preciso do TOEFL para o mestrado");
+    const { goal, user } = await examGoalFixture("Preciso do TOEFL para o mestrado");
     const first = await startMock(goal.id);
 
     vi.mocked(scoreSpeaking).mockResolvedValue(gradeOf(TOEFL_SCORE));
@@ -340,8 +338,10 @@ describe("speaking mocks", () => {
       runs: reviewRunsInline,
     });
 
-    await waitForDeferredWork();
+    const nextGoalId = await findNextSpeakingMockGoalId({ conversationId: first, userId: user.id });
 
+    expect(nextGoalId).toBe(goal.id);
+    await prepareSpeakingMock({ goalId: goal.id, userId: user.id });
     expect(generateSpeakingMockScenario).toHaveBeenCalledTimes(2);
 
     const next = await startMock(goal.id);

@@ -1,9 +1,7 @@
 import "server-only";
 import { findMistakePattern } from "@zoonk/ai/tasks/language/mistake-pattern";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { logError } from "@zoonk/utils/logger";
-import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
@@ -16,8 +14,14 @@ const MAX_MISTAKES = 20;
 const MISTAKES_PER_CHECK = 3;
 const RECENT_DAYS = 14;
 
-async function loadNewMistakes({ language, userId }: { language: string; userId: string }) {
-  const latest = await prisma.mistakePattern.findFirst({
+type LearnerLanguage = { language: string; userId: string };
+
+async function newMistakesWhere({
+  db = prisma,
+  language,
+  userId,
+}: LearnerLanguage & { db?: TransactionClient }) {
+  const latest = await db.mistakePattern.findFirst({
     orderBy: { createdAt: "desc" },
     select: { createdAt: true },
     where: { language, userId },
@@ -27,11 +31,19 @@ async function loadNewMistakes({ language, userId }: { language: string; userId:
     Math.max(Date.now() - RECENT_DAYS * MS_PER_DAY, latest?.createdAt.getTime() ?? 0),
   );
 
-  const where = {
-    createdAt: { gt: since },
-    step: { lesson: { targetLanguage: language } },
-    userId,
-  };
+  return { createdAt: { gt: since }, step: { lesson: { targetLanguage: language } }, userId };
+}
+
+/** Every third new mistake owes a look for a pattern, decided by the answer that makes it. */
+export async function isPatternCheckDue(
+  input: LearnerLanguage & { db: TransactionClient },
+): Promise<boolean> {
+  const count = await input.db.mistake.count({ where: await newMistakesWhere(input) });
+  return count >= MISTAKES_PER_CHECK && count % MISTAKES_PER_CHECK === 0;
+}
+
+async function loadNewMistakes(input: LearnerLanguage) {
+  const where = await newMistakesWhere(input);
 
   const [count, mistakes] = await Promise.all([
     prisma.mistake.count({ where }),
@@ -46,10 +58,14 @@ async function loadNewMistakes({ language, userId }: { language: string; userId:
   return { count, mistakes };
 }
 
-async function checkForPattern({ language, userId }: { language: string; userId: string }) {
+/**
+ * Internal, for the follow-up the third new mistake owes. It reads the mistakes as of when it runs,
+ * so asks that arrive before it run are one check. A model failure throws.
+ */
+export async function checkMistakePattern({ language, userId }: LearnerLanguage): Promise<void> {
   const { count, mistakes } = await loadNewMistakes({ language, userId });
 
-  if (count < MISTAKES_PER_CHECK || count % MISTAKES_PER_CHECK !== 0) {
+  if (count < MISTAKES_PER_CHECK) {
     return;
   }
 
@@ -111,21 +127,5 @@ async function checkForPattern({ language, userId }: { language: string; userId:
     ],
     goalId: goal?.id,
     userId,
-  });
-}
-
-export function scheduleMistakePatternCheck({
-  language,
-  userId,
-}: {
-  language: string;
-  userId: string;
-}): void {
-  after(async () => {
-    try {
-      await checkForPattern({ language, userId });
-    } catch (error) {
-      logError("Mistake pattern check failed", error);
-    }
   });
 }

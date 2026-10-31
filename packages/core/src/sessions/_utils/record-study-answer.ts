@@ -3,7 +3,6 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { applyPlacement } from "../../learner/placement/_utils/apply-placement";
 import { type LearnerAnswer } from "../../learner/record-learner-answer";
 import { type applyDrillRules } from "../../mistakes/drill-answer";
-import { scheduleMistakeCause } from "../../mistakes/resolve-mistake-cause";
 import { bringBackMissedLessons } from "../../plans/bring-back-missed-lessons";
 import { type BlockDrill } from "../block-payload";
 import { type StudyAnswerInput } from "../contract";
@@ -75,8 +74,6 @@ export async function recordStudyAnswer({
   }
 
   const { recorded } = claimed;
-
-  scheduleMistakeCause(recorded.causeRequest);
 
   if (placement && session.goalId) {
     const { changeId } = await applyPlacement({

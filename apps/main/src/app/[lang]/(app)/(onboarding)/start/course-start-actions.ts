@@ -2,7 +2,8 @@
 
 import { getAppLocale } from "@/i18n/locale";
 import { redirect } from "@/i18n/navigation";
-import { startGoalWork } from "@/lib/goals/start-goal-work";
+import { postAsLearner } from "@/lib/api/learner-api";
+import { toGoalStartFailure } from "@/lib/goals/goal-limit-reason";
 import {
   CHAPTER_PARAM,
   MINUTES_PARAM,
@@ -10,18 +11,36 @@ import {
   readDailyMinutes,
 } from "@/lib/public/public-hrefs";
 import { courseGoalStartInputSchema } from "@zoonk/core/goals/course-start-contract";
-import { isResearchedCourseStart } from "@zoonk/core/goals/research";
-import { startCourseGoal } from "@zoonk/core/goals/start-course";
+import { findCourseGoalStart } from "@zoonk/core/goals/start-course";
 import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
 import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
 import { isUuid } from "@zoonk/utils/uuid";
+import { z } from "zod";
 import { COURSE_START_ERROR_PARAM } from "./course/course-start-params";
-import { getGoalLimitReason } from "./goal-limit-reason";
+
+const CREATED = 201;
+const UNAUTHORIZED = 401;
+
+const goalSchema = z.object({ id: z.string() });
 
 export type CourseStartOutcome =
   | { goalId: string; next: "steps" | "today"; status: "started" }
   | { reason: GoalLimitReason; status: "limitReached" }
   | { status: "failed" | "signInRequired" };
+
+function toRefusedOutcome({
+  json,
+  status,
+}: {
+  json: unknown;
+  status: number | null;
+}): CourseStartOutcome {
+  if (status === UNAUTHORIZED) {
+    return { status: "signInRequired" };
+  }
+
+  return toGoalStartFailure(json);
+}
 
 export async function startCourseAction({
   chapterId,
@@ -47,27 +66,28 @@ export async function startCourseAction({
     return { status: "failed" };
   }
 
-  const result = await startCourseGoal({ courseId, input: input.data });
+  const response = await postAsLearner({
+    body: input.data,
+    path: `/v1/courses/${encodeURIComponent(courseId)}/goals`,
+  });
 
-  switch (result.status) {
-    case "created":
-      await startGoalWork([result.goal], { research: isResearchedCourseStart(result.goal) });
-      return { goalId: result.goal.id, next: "steps", status: "started" };
-    case "existing":
-      return {
-        goalId: result.goal.id,
-        next: result.inOnboarding ? "steps" : "today",
-        status: "started",
-      };
-    case "refused":
-      return { reason: getGoalLimitReason(result.refusals[0]?.decision), status: "limitReached" };
-    case "unauthorized":
-      return { status: "signInRequired" };
-    case "notFound":
-      return { status: "failed" };
-    default:
-      return result satisfies never;
+  if (!response.ok) {
+    return toRefusedOutcome(response);
   }
+
+  const goal = goalSchema.safeParse(response.json).data;
+
+  if (!goal) {
+    return { status: "failed" };
+  }
+
+  if (response.status === CREATED) {
+    return { goalId: goal.id, next: "steps", status: "started" };
+  }
+
+  const existing = await findCourseGoalStart(courseId);
+
+  return { goalId: goal.id, next: existing?.inOnboarding ? "steps" : "today", status: "started" };
 }
 
 function readField(formData: FormData, name: string): string | null {

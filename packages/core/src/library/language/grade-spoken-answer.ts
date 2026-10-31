@@ -7,7 +7,6 @@ import { recordLanguageStepEvidence } from "../../language/levels/record-languag
 import { schedulePronunciationReviews } from "../../language/pronunciation/schedule-pronunciation-reviews";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { recordLearnerAnswer } from "../../learner/record-learner-answer";
-import { scheduleMistakeCause } from "../../mistakes/resolve-mistake-cause";
 import { getSession } from "../../users/get-session";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { parseStepContent } from "../steps/contract/step-contract";
@@ -153,8 +152,6 @@ export async function gradeSpokenAnswer({
     timeZone,
     userId,
   });
-
-  scheduleMistakeCause(recorded.causeRequest);
 
   await schedulePronunciationReviews({
     targetLanguage: step.targetLanguage,

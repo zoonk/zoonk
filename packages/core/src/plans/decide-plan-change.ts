@@ -1,5 +1,6 @@
 import "server-only";
 import { type PlanChange, prisma } from "@zoonk/db";
+import { oweGoalLessons } from "../follow-ups/owe-goal-lessons";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { commitPlan } from "./_utils/commit-plan";
 import { computeChange } from "./_utils/compute-change";
@@ -202,6 +203,16 @@ export async function decidePlanChange({
 
     const refusal = await decide({ decision: { change, context: owned.context }, input });
 
-    return refusal ?? { change: await loadPlanChangeView(change.id), status: "updated" as const };
+    if (refusal) {
+      return refusal;
+    }
+
+    // An applied change or an undo can bring in topics whose lessons nobody started writing.
+    if (input.status === "applied" || input.status === "undone") {
+      const { goal } = owned.context;
+      await oweGoalLessons({ goalId: goal.id, userId: goal.userId });
+    }
+
+    return { change: await loadPlanChangeView(change.id), status: "updated" as const };
   });
 }

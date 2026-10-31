@@ -1,4 +1,4 @@
-import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
+import { startListeningSets } from "@/lib/listening-sets";
 import { OUTLINE_AHEAD_DAYS } from "@zoonk/core/lookahead/outline-ahead";
 import { type SessionPreparation } from "@zoonk/core/lookahead/session-preparation";
 import { getWorkflowMetadata, sleep } from "workflow";
@@ -7,6 +7,7 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { type PlanStepOutcome, retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken } from "../_shared/run-token";
+import { challengeQuestionsWorkflow } from "../goals/challenge-questions-workflow";
 import {
   listPlanOutlines,
   startAll,
@@ -19,6 +20,7 @@ import {
   prepareFieldItemsStep,
   readGoalField,
 } from "../goals/steps/field-items-steps";
+import { endLessonsAskStep, readGoalLookaheadStep } from "../goals/steps/goal-lookahead-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { prepareLanguageCallsStep } from "./steps/language-call-steps";
 import {
@@ -27,29 +29,28 @@ import {
   prepareToolVersionStep,
 } from "./steps/personal-versions-steps";
 import {
+  type ClaimQuestions,
+  type PreparationDecision,
+  type SessionPreparationRequest,
+  decidePreparationStep,
+} from "./steps/preparation-decision-step";
+import {
   countLessonsBeingWrittenStep,
   createSessionGenerationManifestStep,
   listSessionPreparationStep,
 } from "./steps/session-preparation-steps";
 
-export type ClaimQuestions = {
-  format: "multipleChoice" | "trueFalse";
-  questionsPerSkill: number;
-  skillIds: string[];
-};
-
-export type SessionPreparationInput = {
-  claimQuestions?: ClaimQuestions | null;
+type SessionPreparationInput = {
+  claimQuestions: ClaimQuestions | null;
   goalId: string;
-  lessonsAskedAt?: number | null;
-  platform?: AnalyticsPlatform | null;
+  lessonsAskedAt: number | null;
   timeZone: string;
   userId: string;
 };
 
 export type SessionPreparationResult =
   | { laterLessonIds: string[]; lessonIds: string[]; status: "prepared" }
-  | { status: "alreadyRunning" };
+  | { status: "alreadyRunning" | "guest" | "skipped" };
 
 const WRITING_POLL = "15s";
 const MAX_WRITING_POLLS = 40;
@@ -221,13 +222,13 @@ async function writePlacementWeekQuestions({
   });
 }
 
-export async function sessionPreparationWorkflow(
-  input: SessionPreparationInput,
-): Promise<SessionPreparationResult> {
-  "use workflow";
-
-  const analytics = { distinctId: input.userId, goalId: input.goalId, platform: input.platform };
-
+async function prepareLessons({
+  analytics,
+  input,
+}: {
+  analytics: ContentAnalytics;
+  input: SessionPreparationInput;
+}): Promise<SessionPreparationResult> {
   const preparation = await whileLessonsAsked({
     goalId: input.goalId,
     lessonsAskedAt: input.lessonsAskedAt,
@@ -250,4 +251,99 @@ export async function sessionPreparationWorkflow(
     lessonIds: preparation.lessonIds,
     status: "prepared",
   };
+}
+
+/** A placement or a plan edit can move a guest's plan past the bands its build outlined. */
+async function outlineGuestLessons({
+  analytics,
+  goalId,
+  lessonsAskedAt,
+}: {
+  analytics: ContentAnalytics;
+  goalId: string;
+  lessonsAskedAt: number | null;
+}) {
+  await whileLessonsAsked({
+    goalId,
+    lessonsAskedAt,
+    run: async (started) => {
+      const { outlineDays } = await readGoalLookaheadStep(goalId);
+      const outlines = await listPlanOutlines({ days: outlineDays, goalId });
+
+      await startAll(
+        outlines.map((outline) =>
+          startPlanOutline({ analytics, forGuest: true, outline, started }),
+        ),
+      );
+    },
+  });
+}
+
+function startChallengeQuestions(decision: Extract<PreparationDecision, { status: "ready" }>) {
+  const request = decision.challengeQuestions;
+
+  if (!request) {
+    return [];
+  }
+
+  const { analytics, challenges, quickFormat } = request;
+
+  return challenges.map(({ key, later, writes }) =>
+    start(challengeQuestionsWorkflow, [
+      { analytics, goalId: decision.goalId, key, later, quickFormat, writes },
+    ]),
+  );
+}
+
+export async function sessionPreparationWorkflow(
+  request: SessionPreparationRequest,
+): Promise<SessionPreparationResult> {
+  "use workflow";
+
+  const { platform, userId } = request;
+  const lessonsAskedAt = "goalId" in request ? request.lessonsAskedAt : null;
+  const decision = await decidePreparationStep(request);
+
+  if (decision.status === "skipped") {
+    if ("goalId" in request && lessonsAskedAt) {
+      await endLessonsAskStep({
+        askedAt: lessonsAskedAt,
+        goalId: request.goalId,
+        startedCourseIds: [],
+      });
+    }
+
+    return { status: "skipped" };
+  }
+
+  if (decision.status === "guest") {
+    const { goalId, lesson } = decision;
+    const analytics = { distinctId: userId, goalId: goalId ?? undefined, platform };
+
+    await Promise.all([
+      lesson ? start(lessonContentWorkflow, [lesson]) : null,
+      goalId ? outlineGuestLessons({ analytics, goalId, lessonsAskedAt }) : null,
+    ]);
+
+    return { status: "guest" };
+  }
+
+  const { goalId } = decision;
+  const analytics = { distinctId: userId, goalId, platform };
+
+  await Promise.allSettled([
+    decision.listening ? startListeningSets({ analytics, goalId, userId, wait: "later" }) : null,
+    ...startChallengeQuestions(decision),
+  ]);
+
+  return prepareLessons({
+    analytics,
+    input: {
+      claimQuestions: decision.claimQuestions,
+      goalId,
+      lessonsAskedAt,
+      timeZone: decision.timeZone,
+      userId,
+    },
+  });
 }

@@ -2,7 +2,6 @@ import "server-only";
 import { type StepKind, type TransactionClient, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import {
-  afterLanguageStepEvidence,
   loadLanguageStepEvidence,
   writeLanguageStepEvidence,
 } from "../language/levels/record-language-evidence";
@@ -13,7 +12,6 @@ import {
 } from "../learner/_utils/answer-once";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { canGradeWithModel } from "../learner/_utils/model-grading";
-import { scheduleMistakeCause } from "../mistakes/resolve-mistake-cause";
 import { getSession } from "../users/get-session";
 import {
   type ComesBackInput,
@@ -204,12 +202,6 @@ async function recordCheck({
   }
 
   const { recorded } = outcome;
-
-  scheduleMistakeCause(recorded.causeRequest);
-
-  if (evidence) {
-    afterLanguageStepEvidence(evidence);
-  }
 
   return {
     result: toCheckResult({

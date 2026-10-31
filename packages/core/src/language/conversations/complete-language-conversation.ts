@@ -17,7 +17,6 @@ import {
   type ConversationReviewOutcome,
 } from "./conversation-review";
 import { type OwnedConversation, findOwnedConversation } from "./get-language-conversation";
-import { prepareSpeakingMock } from "./prepare-language-calls";
 
 const OVERTIME_SECONDS = 60;
 const SECONDS_PER_MINUTE = 60;
@@ -53,38 +52,12 @@ function readCallRun({
   row: OwnedConversation["row"];
 }) {
   if (row.startedAt === null) {
-    return { connected: false, spokenSeconds: 0, turns: [] };
+    return { spokenSeconds: 0, turns: [] };
   }
 
   const maxSeconds = row.minutes * SECONDS_PER_MINUTE + OVERTIME_SECONDS;
 
-  return {
-    connected: true,
-    spokenSeconds: Math.min(input.spokenSeconds, maxSeconds),
-    turns: input.turns,
-  };
-}
-
-function startFollowUps({
-  connected,
-  owned,
-  userId,
-  won,
-}: {
-  connected: boolean;
-  owned: OwnedConversation;
-  userId: string;
-  won: boolean;
-}) {
-  const { chapterId, goalId, id, kind } = owned.row;
-
-  if (connected && goalId && kind === "speakingMock") {
-    after(() => prepareSpeakingMock({ goalId, userId }));
-  }
-
-  if (won && kind === "checkpoint") {
-    after(() => trackCallCanDos({ chapterId, conversationId: id, goalId, userId }));
-  }
+  return { spokenSeconds: Math.min(input.spokenSeconds, maxSeconds), turns: input.turns };
 }
 
 async function findReviewRun({
@@ -144,7 +117,7 @@ export async function completeLanguageConversation({
     return finishConversationDay({ conversationId, input, userId });
   }
 
-  const { connected, spokenSeconds, turns } = readCallRun({ input, row: owned.row });
+  const { spokenSeconds, turns } = readCallRun({ input, row: owned.row });
 
   const { runId, started } = await findReviewRun({
     input: {
@@ -176,8 +149,11 @@ export async function completeLanguageConversation({
     return { status: outcome.status };
   }
 
-  if (started && reviewed.data.runId === runId && outcome.progress) {
-    startFollowUps({ connected, owned, userId, won: outcome.won });
+  const settledHere = started && reviewed.data.runId === runId && outcome.progress;
+
+  if (settledHere && outcome.won && owned.row.kind === "checkpoint") {
+    const { chapterId, goalId } = owned.row;
+    after(() => trackCallCanDos({ chapterId, conversationId, goalId, userId }));
   }
 
   return finishConversationDay({ conversationId, input, progress: outcome.progress, userId });

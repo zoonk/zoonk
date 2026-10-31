@@ -1,11 +1,11 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { getRequestPlatform } from "../analytics/request-platform";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
-import { claimAssist } from "../entitlements/claim-usage";
+import { claimUsageFor } from "../entitlements/claim-usage";
 import { type RefusedUsage } from "../entitlements/contract";
 import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
-import { findOwnedGoal } from "../learner/_utils/owned-goal";
+import { findGoalFor } from "../learner/_utils/owned-goal";
 import { type PlacementQuickFormat } from "../learner/placement/placement-quick-format";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getTestSkillIds } from "../sessions/_utils/review-skills";
@@ -29,13 +29,15 @@ export type ClaimQuestionsRequest =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** Session POSTs only; claims AI help before writing questions needed to confirm unstudied claims. */
-export async function requestClaimQuestions({
+/** Internal, for a session's preparation: `userId` must come from the learner's own write. Claims AI help before writing questions needed to confirm unstudied claims. */
+export async function requestClaimQuestionsFor({
   goalId,
+  userId,
 }: {
   goalId: string;
+  userId: string;
 }): Promise<ClaimQuestionsRequest> {
-  const owned = await findOwnedGoal(goalId);
+  const owned = await findGoalFor({ goalId, userId });
 
   if (owned.status !== "ready") {
     return owned;
@@ -52,7 +54,7 @@ export async function requestClaimQuestions({
     settings: plan?.settings,
   });
 
-  const toConfirm = await loadSkillsToConfirm({ goalId, skillIds, userId: owned.userId });
+  const toConfirm = await loadSkillsToConfirm({ goalId, skillIds, userId });
 
   if (toConfirm.size === 0) {
     return { status: "ready" };
@@ -70,7 +72,7 @@ export async function requestClaimQuestions({
     return { status: "ready" };
   }
 
-  const decision = await claimAssist();
+  const decision = await claimUsageFor({ kind: "assist", targetId: randomUUID(), userId });
 
   if (decision.status === "unauthorized") {
     return decision;
@@ -81,7 +83,7 @@ export async function requestClaimQuestions({
   }
 
   return {
-    analytics: { distinctId: owned.userId, goalId, platform: await getRequestPlatform() },
+    analytics: { distinctId: userId, goalId, platform: null },
     format: quickFormat,
     questionsPerSkill: QUESTIONS_PER_TOPIC,
     skillIds: missing,

@@ -5,11 +5,11 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { skillFixture, skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../../plans/create-goal-plan";
-import { scheduleMemoryAfterSession } from "../after-session";
+import { runSessionFollowUps, writeSessionInsight } from "../_test-utils/session-follow-ups";
+import { saveDailyInsight } from "./daily-insight";
 import { respondToMemoryInsight } from "./respond-to-memory-insight";
 
 const DAY_MS = 86_400_000;
@@ -81,10 +81,8 @@ function planSkillIds(planId: string) {
     .then((items) => items.map((item) => item.skillId));
 }
 
-async function endSession({ goalId, userId }: { goalId: string; userId: string }) {
-  const settle = runDeferredWork();
-  scheduleMemoryAfterSession({ goalId, sessionId: null, timeZone: "UTC", userId });
-  await settle();
+function endSession({ goalId, userId }: { goalId: string; userId: string }) {
+  return runSessionFollowUps({ goalId, userId });
 }
 
 describe("plan-change insights", () => {
@@ -138,6 +136,27 @@ describe("plan-change insights", () => {
     });
 
     await expect(planSkillIds(plan.id)).resolves.not.toContain(prerequisite.id);
+  });
+
+  it("links a retried save to the plan change it already made, never proposing it twice", async () => {
+    const { goal, plan, user } = await setup();
+    const insight = await writeSessionInsight({ goalId: goal.id, userId: user.id });
+
+    if (!insight) {
+      throw new Error("Expected a claimed and written insight");
+    }
+
+    await saveDailyInsight({ ...insight, userId: user.id });
+    await saveDailyInsight({ ...insight, userId: user.id });
+
+    const changes = await prisma.planChange.findMany({
+      where: { planId: plan.id, reason: MESSAGE },
+    });
+
+    const saved = await prisma.memoryInsight.findFirstOrThrow({ where: { userId: user.id } });
+
+    expect(changes).toHaveLength(1);
+    expect(saved.payload).toMatchObject({ planChangeId: changes[0]?.id });
   });
 
   it("offers no plan change when the plan already teaches every prerequisite", async () => {

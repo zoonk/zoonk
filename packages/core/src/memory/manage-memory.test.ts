@@ -9,10 +9,12 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { listOwed } from "../_test-utils/follow-ups";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { getMemoryCacheTag } from "../cache/tags";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
+import { checkFactSensitivity } from "./check-fact-sensitivity";
 import { deleteMemoryFact } from "./delete-memory-fact";
 import { exportCurrentUserMemory } from "./export-current-user-memory";
 import { getCurrentUserMemory } from "./get-current-user-memory";
@@ -267,7 +269,7 @@ describe(updateMemoryFact, () => {
     });
   });
 
-  it("flags a correction that reveals something sensitive, after the response", async () => {
+  it("flags a correction that reveals something sensitive, through the check it owes", async () => {
     const user = await useLearner();
     const fact = await memoryFactFixture({ category: "background", userId: user.id });
 
@@ -277,8 +279,15 @@ describe(updateMemoryFact, () => {
 
     await updateMemoryFact({ factId: fact.id, input: { statement: "Has diabetes" } });
 
-    const [[check]] = vi.mocked(after).mock.calls as [[() => Promise<void>]];
-    await check();
+    await expect(listOwed(user.id)).resolves.toStrictEqual([
+      {
+        input: { factId: fact.id, statement: "Has diabetes" },
+        key: expect.stringMatching(new RegExp(`^${fact.id}:`, "u")),
+        kind: "checkFactSensitivity",
+      },
+    ]);
+
+    await checkFactSensitivity({ factId: fact.id, statement: "Has diabetes" });
 
     expect(gateMemoryFact).toHaveBeenCalledExactlyOnceWith({
       candidate: { category: "background", evidence: "Has diabetes", statement: "Has diabetes" },

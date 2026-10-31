@@ -1,7 +1,7 @@
 "use server";
 
-import { startGoalWork } from "@/lib/goals/start-goal-work";
-import { prepareGoalLessons, writeLessonAhead } from "@/lib/session/session-preparation";
+import { postAsLearner } from "@/lib/api/learner-api";
+import { toGoalStartFailure } from "@/lib/goals/goal-limit-reason";
 import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { finishMock } from "@zoonk/core/exams/mocks/finish";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
@@ -17,9 +17,7 @@ import {
 import { finishGoalPlacement } from "@zoonk/core/learner/placement/finish";
 import { getGoalPlacement } from "@zoonk/core/learner/placement/get";
 import { getGoalPlan } from "@zoonk/core/plans/get";
-import { answerOnboardingQuestion } from "@zoonk/core/view-models/onboarding/answer";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
-import { createOnboardingGoals } from "@zoonk/core/view-models/onboarding/create-goals";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import {
@@ -31,9 +29,25 @@ import {
   type WaitlistOutcome,
 } from "@zoonk/learn/onboarding/actions";
 import { isUuid } from "@zoonk/utils/uuid";
-import { getGoalLimitReason } from "./goal-limit-reason";
+import { z } from "zod";
 
 /** Failures become outcomes the screens can say, never thrown errors. */
+
+const createdGoalsSchema = z.object({
+  generations: z.array(z.object({ generationId: z.string(), goalId: z.string() })),
+  goals: z.array(z.object({ id: z.string() })),
+});
+
+const dayTooShortSchema = z.object({
+  error: z.object({
+    code: z.literal("DAY_TOO_SHORT"),
+    details: z.object({ goals: z.number(), minutes: z.number() }),
+  }),
+});
+
+const answeredSchema = z.object({ goal: z.object({ id: z.string() }) });
+
+const generationSchema = z.object({ generationId: z.string() });
 
 export async function createOnboardingGoalsAction(input: unknown): Promise<CreateGoalsOutcome> {
   const parsed = goalCreateInputSchema.safeParse(input);
@@ -42,22 +56,22 @@ export async function createOnboardingGoalsAction(input: unknown): Promise<Creat
     return { status: "failed" };
   }
 
-  const result = await createOnboardingGoals(parsed.data);
+  const response = await postAsLearner({ body: parsed.data, path: "/v1/goals" });
 
-  if (result.status === "refused") {
-    return { reason: getGoalLimitReason(result.refused[0]?.decision), status: "limitReached" };
+  if (!response.ok) {
+    return toGoalStartFailure(response.json);
   }
 
-  const [main] = result.status === "created" ? result.goals : [];
+  const created = createdGoalsSchema.safeParse(response.json).data;
+  const main = created?.goals[0];
 
-  if (!main || result.status !== "created") {
+  if (!main) {
     return { status: "failed" };
   }
 
-  const starts = await startGoalWork(result.goals);
-  const mainStart = starts.find((start) => start.goalId === main.id);
+  const generation = created.generations.find((start) => start.goalId === main.id);
 
-  return { generationId: mainStart?.generationId ?? null, goalId: main.id, status: "created" };
+  return { generationId: generation?.generationId ?? null, goalId: main.id, status: "created" };
 }
 
 export async function answerOnboardingAction(
@@ -70,29 +84,24 @@ export async function answerOnboardingAction(
     return { status: "failed" };
   }
 
-  const result = await answerOnboardingQuestion({ goalId, input: parsed.data });
+  const response = await postAsLearner({
+    body: parsed.data,
+    path: `/v1/goals/${encodeURIComponent(goalId)}/onboarding/answers`,
+  });
 
-  if (result.status === "dayTooShort") {
-    return result;
+  if (!response.ok) {
+    const dayTooShort = dayTooShortSchema.safeParse(response.json).data?.error.details;
+    return dayTooShort ? { ...dayTooShort, status: "dayTooShort" } : { status: "failed" };
   }
 
-  if (result.status !== "saved") {
+  // A language goal that moved to its exam goes on as that goal.
+  const answered = answeredSchema.safeParse(response.json).data;
+
+  if (!answered) {
     return { status: "failed" };
   }
 
-  // A language goal that moved to its exam goes on as that goal, whose curriculum starts now.
-  if (result.movedTo?.created) {
-    await startGoalWork([result.movedTo.goal]);
-  }
-
-  const currentGoalId = result.movedTo?.goal.id ?? goalId;
-
-  // The time a day re-plans the first days, so their lessons start being written before Today needs them.
-  if (parsed.data.question === "schedule") {
-    prepareGoalLessons(currentGoalId);
-  }
-
-  const onboarding = await getOnboarding({ goalId: currentGoalId });
+  const onboarding = await getOnboarding({ goalId: answered.goal.id });
 
   return onboarding.status === "ready"
     ? { onboarding: onboarding.onboarding, status: "saved" }
@@ -195,18 +204,7 @@ export async function finishPlacementAction({
 
   const result = await finishGoalPlacement({ goalId, input: parsed.data });
 
-  if (result.status !== "ready") {
-    return false;
-  }
-
-  // Day 1 opens the first lesson minutes from now, so it and the next ones start being written here.
-  if (result.firstLessonId) {
-    writeLessonAhead(result.firstLessonId);
-  }
-
-  prepareGoalLessons(goalId);
-
-  return true;
+  return result.status === "ready";
 }
 
 export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
@@ -256,14 +254,11 @@ export async function retryGenerationAction(goalId: string): Promise<string | nu
     return null;
   }
 
-  const result = await getOnboarding({ goalId });
+  const response = await postAsLearner({
+    path: `/v1/goals/${encodeURIComponent(goalId)}/generations`,
+  });
 
-  if (result.status !== "ready") {
-    return null;
-  }
-
-  const [start] = await startGoalWork([result.onboarding.goal]);
-  return start?.generationId ?? null;
+  return generationSchema.safeParse(response.json).data?.generationId ?? null;
 }
 
 export async function getPlacementMockAction(goalId: string): Promise<PlacementMockOutcome> {

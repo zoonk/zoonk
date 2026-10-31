@@ -8,12 +8,14 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { openStudyBlock } from "./open-study-block";
-import { prepareStudySession } from "./session-preparation";
 
-/** Identity, after-response analytics, and API preparation are platform/external boundaries. */
+/** Identity and the after-response call that starts follow-ups are platform/external boundaries. */
 vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
 vi.mock("next/server", () => ({ after: vi.fn() }));
-vi.mock("./session-preparation", () => ({ prepareStudySession: vi.fn() }));
+
+function countOwedPreparations(sessionId: string) {
+  return prisma.followUp.count({ where: { key: sessionId, kind: "prepareSession" } });
+}
 
 describe(openStudyBlock, () => {
   it("leaves a guest's unwritten lesson to the browser without a competing preparation", async () => {
@@ -40,7 +42,7 @@ describe(openStudyBlock, () => {
       sessionId: session.id,
     });
 
-    expect(prepareStudySession).not.toHaveBeenCalled();
+    await expect(countOwedPreparations(session.id)).resolves.toBe(0);
 
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
@@ -61,7 +63,7 @@ describe(openStudyBlock, () => {
       }),
     ).resolves.toStrictEqual({ blockId: block.id, kind: "preparingLesson" });
 
-    expect(prepareStudySession).toHaveBeenCalledExactlyOnceWith(session.id);
+    await expect(countOwedPreparations(session.id)).resolves.toBe(1);
   });
 
   it("still prepares ahead when the learner opens a written lesson", async () => {
@@ -82,6 +84,6 @@ describe(openStudyBlock, () => {
       }),
     ).resolves.toStrictEqual({ kind: "lesson", lessonId: lesson.id, sessionId: session.id });
 
-    expect(prepareStudySession).toHaveBeenCalledExactlyOnceWith(session.id);
+    await expect(countOwedPreparations(session.id)).resolves.toBe(1);
   });
 });

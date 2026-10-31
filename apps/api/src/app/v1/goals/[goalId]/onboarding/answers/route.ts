@@ -3,7 +3,6 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { startGoalWork } from "@/lib/goal-content";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
-import { scheduleGoalPreparation } from "@/lib/session-preparation";
 import { answerOnboardingQuestion } from "@zoonk/core/view-models/onboarding/answer";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
@@ -46,10 +45,6 @@ async function createOnboardingAnswer(
   }
 
   const goalId = result.movedTo?.goal.id ?? path.goalId;
-
-  if (body.question === "schedule") {
-    await scheduleGoalPreparation(goalId);
-  }
 
   const onboarding = await getOnboarding({ goalId });
 

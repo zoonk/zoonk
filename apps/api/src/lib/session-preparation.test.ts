@@ -29,13 +29,8 @@ import { getTodayView } from "../../../../packages/core/src/view-models/today/ge
 import { mockHookConflict } from "../../mocks/workflow";
 import { getStartMock } from "../workflows/_test-utils/start-mock";
 import { courseOutlineWorkflow } from "../workflows/courses/course-outline-workflow";
-import { guestOutlineWorkflow } from "../workflows/sessions/guest-outline-workflow";
-import {
-  scheduleGoalPreparation,
-  scheduleSessionPreparation,
-  startGoalPreparation,
-  startSessionPreparation,
-} from "./session-preparation";
+import { sessionPreparationWorkflow } from "../workflows/sessions/session-preparation-workflow";
+import { startGoalPreparation, startSessionPreparation } from "./session-preparation";
 import type * as NextServer from "next/server";
 
 vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
@@ -307,11 +302,6 @@ async function startSessionFor({ goal, user }: GoalOwner) {
   return startSessionPreparation({ sessionId: session.id });
 }
 
-async function scheduleSessionFor({ goal, user }: GoalOwner) {
-  const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
-  return scheduleSessionPreparation(session.id);
-}
-
 describe("preparing a guest's lessons", () => {
   beforeEach(() => {
     pending.length = 0;
@@ -322,34 +312,26 @@ describe("preparing a guest's lessons", () => {
     });
   });
 
-  it.each([
-    ["asked for the goal", (guest: PlacedGuest) => startGoalPreparation({ goalId: guest.goal.id })],
-    ["after a plan write", (guest: PlacedGuest) => scheduleGoalPreparation(guest.goal.id)],
-  ])(
-    "says the band's lessons are coming as soon as the learner asks, before any outline starts, %s",
-    async (_when, prepare: (guest: PlacedGuest) => Promise<unknown>) => {
-      const guest = await placedGuestFixture();
-      const course = await readCourse(guest);
+  it("says the band's lessons are coming as soon as the learner asks, before any outline starts", async () => {
+    const guest = await placedGuestFixture();
+    const course = await readCourse(guest);
 
-      await expect(isDayComing(guest)).resolves.toBe(false);
+    await expect(isDayComing(guest)).resolves.toBe(false);
 
-      await prepare(guest);
+    await startGoalPreparation({ goalId: guest.goal.id });
 
-      await expect(isDayComing(guest)).resolves.toBe(true);
-      await expect(readCourse(guest)).resolves.toStrictEqual(course);
-      expect(start).not.toHaveBeenCalled();
+    await expect(isDayComing(guest)).resolves.toBe(true);
+    await expect(readCourse(guest)).resolves.toStrictEqual(course);
+    expect(start).not.toHaveBeenCalledWith(courseOutlineWorkflow, expect.anything());
 
-      await settle();
+    await settle();
 
-      await expect(isDayComing(guest)).resolves.toBe(true);
-    },
-  );
+    await expect(isDayComing(guest)).resolves.toBe(true);
+  });
 
   it.each([
     ["asked for the goal", (guest: PlacedGuest) => startGoalPreparation({ goalId: guest.goal.id })],
-    ["after a plan write", (guest: PlacedGuest) => scheduleGoalPreparation(guest.goal.id)],
     ["asked for a session", startSessionFor],
-    ["after a session write", scheduleSessionFor],
   ])(
     "leaves the shared course to the outline it starts, %s",
     async (_when, prepare: (guest: PlacedGuest) => Promise<unknown>) => {
@@ -437,7 +419,7 @@ describe("preparing a guest's lessons", () => {
   });
 
   it.each([
-    ["its preparation can't start", (workflow: unknown) => workflow === guestOutlineWorkflow],
+    ["its preparation can't start", (workflow: unknown) => workflow === sessionPreparationWorkflow],
     ["its outlines can't start", (workflow: unknown) => workflow === courseOutlineWorkflow],
   ])(
     "stops saying lessons are coming when %s",
@@ -445,7 +427,7 @@ describe("preparing a guest's lessons", () => {
       const guest = await placedGuestFixture();
       runStartedWorkflowsInline(fails);
 
-      await startGoalPreparation({ goalId: guest.goal.id });
+      await startGoalPreparation({ goalId: guest.goal.id }).catch(() => null);
       await settle().catch(() => null);
 
       await expect(isDayComing(guest)).resolves.toBe(false);
@@ -454,9 +436,7 @@ describe("preparing a guest's lessons", () => {
 
   it.each([
     ["asked for the goal", (guest: PlacedGuest) => startGoalPreparation({ goalId: guest.goal.id })],
-    ["after a plan write", (guest: PlacedGuest) => scheduleGoalPreparation(guest.goal.id)],
     ["asked for a session", startSessionFor],
-    ["after a session write", scheduleSessionFor],
   ])(
     "outlines the band a placement moved the plan to, %s",
     async (_when, prepare: (guest: PlacedGuest) => Promise<unknown>) => {
@@ -486,9 +466,7 @@ describe("preparing a guest's lessons", () => {
       "asked for the goal",
       (topic: PartlyWrittenTopic) => startGoalPreparation({ goalId: topic.goal.id }),
     ],
-    ["after a plan write", (topic: PartlyWrittenTopic) => scheduleGoalPreparation(topic.goal.id)],
     ["asked for a session", startSessionFor],
-    ["after a session write", scheduleSessionFor],
   ])(
     "writes the next chapter of a topic the course wrote only part of, %s",
     async (_when, prepare: (topic: PartlyWrittenTopic) => Promise<unknown>) => {

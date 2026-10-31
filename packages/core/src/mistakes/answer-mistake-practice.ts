@@ -27,7 +27,6 @@ import { type MistakePracticeAnswerInput } from "./contract";
 import { applyDrillRules } from "./drill-answer";
 import { finishMistakePractice } from "./finish-mistake-practice";
 import { getDrillKind, getDrillTimeLimitSeconds } from "./mistake-drills";
-import { scheduleMistakeCause } from "./resolve-mistake-cause";
 
 type MistakePracticeFeedback = {
   answerId: string;
@@ -140,7 +139,6 @@ async function recordPracticeAnswer({
   }
 
   const { recorded } = outcome;
-  scheduleMistakeCause(recorded.causeRequest);
 
   return {
     answerId: recorded.attempt.id,

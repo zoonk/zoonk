@@ -1,10 +1,8 @@
 "use server";
 
-import { startGoalWork } from "@/lib/goals/start-goal-work";
-import { prepareGoalLessons } from "@/lib/session/session-preparation";
+import { postAsLearner } from "@/lib/api/learner-api";
 import { chooseExamOption } from "@zoonk/core/exams/choices/choose";
 import { examChoiceInputSchema } from "@zoonk/core/exams/choices/contract";
-import { continueGoalAtNextLevel } from "@zoonk/core/goals/continue-next-level";
 import { changeGoalPlan } from "@zoonk/core/plans/change";
 import { choosePlanTools } from "@zoonk/core/plans/choose-tools";
 import {
@@ -18,7 +16,6 @@ import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type PlanChangeOutcome } from "@zoonk/learn/journey";
 import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
 
 export async function changePlanAction(
   goalId: string,
@@ -40,7 +37,6 @@ export async function changePlanAction(
     return null;
   }
 
-  prepareGoalLessons(goalId);
   return { change: result.change, status: "applied" };
 }
 
@@ -73,11 +69,6 @@ export async function answerPlanChangeAction(
 
   if (result.status !== "updated") {
     return null;
-  }
-
-  // An applied change or an undo can bring in topics whose lessons nobody started writing.
-  if (input.data.status === "applied" || input.data.status === "undone") {
-    prepareGoalLessons(goalId);
   }
 
   return result.change;
@@ -117,29 +108,13 @@ export async function chooseExamOptionAction(
 
   const result = await chooseExamOption({ goalId, input: parsed.data });
 
-  if (result.status !== "applied") {
-    return null;
-  }
-
-  if (result.change) {
-    prepareGoalLessons(goalId);
-  }
-
-  return { change: result.change };
+  return result.status === "applied" ? { change: result.change } : null;
 }
 
 export async function continueNextLevelAction(goalId: string): Promise<boolean> {
-  const { data, error } = await safeAsync(() => continueGoalAtNextLevel(goalId));
+  const response = await postAsLearner({
+    path: `/v1/goals/${encodeURIComponent(goalId)}/next-level`,
+  });
 
-  if (error) {
-    logError("[continueNextLevelAction] Failed to continue at the next level:", error);
-    return false;
-  }
-
-  if (data.status !== "created") {
-    return false;
-  }
-
-  await startGoalWork([data.goal]);
-  return true;
+  return response.ok;
 }

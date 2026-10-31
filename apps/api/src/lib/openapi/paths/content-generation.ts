@@ -79,7 +79,7 @@ export const contentGenerationPaths = {
   "/goals/{goalId}/lesson-preparations": {
     post: {
       description:
-        "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion calls it itself; call it when placement ends another way, or from the learner's tap on a Today whose `emptyDay` is `lessonsToPrepare` (the next read says `lessonsComing`), never on a screen view. For a guest only the plan's first lesson is written, counted as its start like opening it.",
+        "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion, onboarding's schedule answer and plan changes prepare them on the server, so call it only from the learner's tap on a Today whose `emptyDay` is `lessonsToPrepare` (the next read says `lessonsComing`), never after those writes or on a screen view. For a guest only the plan's first lesson is written, counted as its start like opening it.",
       operationId: "createGoalLessonPreparation",
       requestParams: { path: goalPathParamsSchema },
       responses: {
@@ -170,7 +170,7 @@ export const contentGenerationPaths = {
   "/study-sessions/{sessionId}/preparations": {
     post: {
       description:
-        "Prepares content around one of the learner's study sessions: every lesson of this session and the next gets written in the background. Block starts, stops and the last block's completion call it themselves; call it when the learner moves a session along another way, never on a screen view. For a guest only the lesson they reach next is written, counted as its start like opening it.",
+        "Prepares content around one of the learner's study sessions: every lesson of this session and the next gets written in the background. Starting a block, the first stop and the session's end prepare it on the server, so call it only when the learner opens a block without starting it, such as a plan placeholder whose lesson isn't picked yet, never on a screen view. For a guest only the lesson they reach next is written, counted as its start like opening it.",
       operationId: "createStudySessionPreparation",
       requestParams: { path: studySessionPathParamsSchema },
       responses: {

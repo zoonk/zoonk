@@ -1,22 +1,17 @@
-import { generateMemoryInsight } from "@zoonk/ai/tasks/memory/insight";
-import { findSessionPatterns } from "@zoonk/ai/tasks/memory/session-patterns";
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
-  daysAgo,
   dueSkillFixture,
   sessionGoalFixture,
 } from "./_test-utils/session-goal";
@@ -210,7 +205,7 @@ describe("ending a session", () => {
     });
   });
 
-  it("keeps the summary as the session ended, and counts the day it was finished", async () => {
+  it("keeps the summary as the session ended, counts the day it was finished and owes what follows once", async () => {
     const user = await userFixture();
     const targetDate = new Date(SESSION_TODAY.getTime() + 3 * DAY_MS);
 
@@ -306,49 +301,77 @@ describe("ending a session", () => {
     expect(
       view.status === "ready" && view.session.week.days.find((day) => day.isToday),
     ).toMatchObject({ hitGoal: true, minutes: 2 });
+
+    const owed = await prisma.followUp.findMany({
+      orderBy: { kind: "asc" },
+      where: { userId: user.id },
+    });
+
+    expect(owed.map((row) => [row.kind, row.key])).toStrictEqual([
+      ["prepareSession", today.session.id],
+      ["rememberSession", today.session.id],
+      ["checkDailyInsight", "2026-09-30"],
+    ]);
+
+    vi.setSystemTime(SESSION_NOW.getTime() + 60_000);
+    await finishStudyBlock({ blockId: first?.id ?? "", input: {}, sessionId: today.session.id });
+
+    await expect(
+      prisma.followUp.findMany({ orderBy: { kind: "asc" }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual(owed);
   });
 
-  it("lets memory read the session once, however often the learner stops", async () => {
-    const { goal, session, skills, user } = await setup();
-    const flush = runDeferredWork();
+  it("owes the session's preparation when a block starts, and nothing again when it resumes", async () => {
+    const { session, user } = await setup();
+    const [first] = session.blocks;
+    const start = { blockId: first?.id ?? "", input: {}, sessionId: session.id };
 
-    await learningProfileFixture({ memoryEnabled: true, userId: user.id });
+    await startStudyBlock(start);
+    const owed = await prisma.followUp.findMany({ where: { userId: user.id } });
 
-    await Promise.all(
-      Array.from({ length: 14 }, (_, index) =>
-        attemptFixture({
-          answeredAt: daysAgo(1 + (index % 2)),
-          isCorrect: index % 3 !== 0,
-          skillId: skills[0]?.id,
-          userId: user.id,
-        }),
-      ),
+    expect(owed).toMatchObject([
+      { input: { sessionId: session.id }, key: session.id, kind: "prepareSession" },
+    ]);
+
+    vi.setSystemTime(SESSION_NOW.getTime() + 60_000);
+    await startStudyBlock(start);
+
+    await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toStrictEqual(
+      owed,
     );
+  });
 
-    vi.mocked(findSessionPatterns).mockResolvedValue({
-      data: { patterns: [] },
-      provenance: { generatedAt: "", model: "test", promptVersion: "test", runId: "test" },
-    } as unknown as Awaited<ReturnType<typeof findSessionPatterns>>);
+  it("owes memory's reading of the session once, however often the learner stops", async () => {
+    const { goal, session, user } = await setup();
 
     await Promise.all([
       stopStudySession({ input: {}, sessionId: session.id }),
       stopStudySession({ input: {}, sessionId: session.id }),
     ]);
 
+    const owed = await prisma.followUp.findMany({
+      orderBy: { kind: "asc" },
+      where: { userId: user.id },
+    });
+
+    vi.setSystemTime(SESSION_NOW.getTime() + 60_000);
     await stopStudySession({ input: {}, sessionId: session.id });
-    await flush();
 
     await expect(
       prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
     ).resolves.toMatchObject({ endedAt: null, stoppedAt: expect.any(Date) });
 
-    expect(findSessionPatterns).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ activity: expect.any(String) }),
-    );
+    const end = { endedAt: SESSION_NOW.toISOString(), goalId: goal.id, timeZone: "UTC" };
 
-    expect(generateMemoryInsight).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ goal: goal.title }),
-    );
+    expect(owed.map(({ input, key, kind }) => ({ input, key, kind }))).toStrictEqual([
+      { input: { sessionId: session.id }, key: session.id, kind: "prepareSession" },
+      { input: { ...end, sessionId: session.id }, key: session.id, kind: "rememberSession" },
+      { input: { ...end, date: "2026-09-30" }, key: "2026-09-30", kind: "checkDailyInsight" },
+    ]);
+
+    await expect(
+      prisma.followUp.findMany({ orderBy: { kind: "asc" }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual(owed);
   });
 
   it("keeps learning with the plan's next lessons after the day's session, as often as asked", async () => {

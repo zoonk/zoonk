@@ -1,8 +1,9 @@
 import "server-only";
 import { after } from "next/server";
+import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
-import { scheduleMemoryAfterSession } from "../memory/after-session";
+import { getSessionMemoryFollowUps } from "../memory/memory-follow-ups";
 import { rebalancePlanAfterSession } from "../preparation/rebalance-plan";
 import { refreshPlanAroundSession } from "./_utils/refresh-plan";
 import { settleQuestionBlock } from "./_utils/settle-question-block";
@@ -30,19 +31,39 @@ async function settleActiveBlocks({ session, timeZone, userId }: StopContext) {
   );
 }
 
-/** Returns true only to the request that records the first stop. */
-function markFirstStop({ sessionId, userId }: { sessionId: string; userId: string }) {
+/** Returns true only to the request that records the first stop, which owes what follows it. */
+async function markFirstStop({ session, timeZone, userId }: StopContext) {
+  const stoppedAt = new Date();
+
+  const followUps = await getSessionMemoryFollowUps({
+    endedAt: stoppedAt,
+    goalId: session.goalId,
+    sessionId: session.id,
+    timeZone,
+    userId,
+  });
+
   return writeLearnerChange({ userId }, async (tx) => {
     const { count } = await tx.studySession.updateMany({
-      data: { stoppedAt: new Date() },
-      where: { id: sessionId, stoppedAt: null },
+      data: { stoppedAt },
+      where: { id: session.id, stoppedAt: null },
     });
 
-    return count > 0 ? true : unchanged(false);
+    if (count === 0) {
+      return unchanged(false);
+    }
+
+    await oweFollowUps({
+      db: tx,
+      followUps: [{ input: { sessionId: session.id }, kind: "prepareSession" }, ...followUps],
+      userId,
+    });
+
+    return true;
   });
 }
 
-/** Requires ownership; preserves unfinished work for resumption and schedules memory/rebalance only on the first stop. */
+/** Requires ownership; preserves unfinished work for resumption and owes memory, preparation and a rebalance only on the first stop. */
 export async function stopStudySession({
   input,
   sessionId,
@@ -62,10 +83,8 @@ export async function stopStudySession({
   await settleActiveBlocks({ session, timeZone, userId });
   const settled = await settleSessionDay({ sessionId: session.id, timeZone, userId });
 
-  // Completion already schedules memory; repeated stops must not run another model.
-  if (!settled.sessionCompleted && (await markFirstStop({ sessionId: session.id, userId }))) {
-    scheduleMemoryAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
-
+  // Completion already owes memory; repeated stops must not run another model.
+  if (!settled.sessionCompleted && (await markFirstStop({ session, timeZone, userId }))) {
     const refreshed = await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
 
     if (refreshed) {

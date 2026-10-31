@@ -193,7 +193,7 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
         const undone = await readDay();
         expect(undone.blocks).toStrictEqual(original.blocks);
         expect(undone.missions).toStrictEqual(original.missions);
-        expect(measured.statements).toBeLessThanOrEqual(176);
+        expect(measured.statements).toBeLessThanOrEqual(180);
       }),
   );
 

@@ -3,9 +3,9 @@ import { type MemoryFact } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
+import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
-import { scheduleSensitivityCheck } from "./_utils/fact-sensitivity";
 import { forgetExampleLines } from "./_utils/forget-example-lines";
 import { toMemoryFactView } from "./_utils/memory-fact-view";
 import { type MemoryFactUpdateInput, type MemoryFactView } from "./memory-contract";
@@ -76,6 +76,14 @@ export async function updateMemoryFact({
 
     if (input.statement !== undefined) {
       await forgetExampleLines({ client: tx, userId });
+
+      await oweFollowUps({
+        db: tx,
+        followUps: [
+          { input: { factId, statement: updated.statement }, kind: "checkFactSensitivity" },
+        ],
+        userId,
+      });
     }
 
     return { changed: true, fact: updated };
@@ -87,10 +95,6 @@ export async function updateMemoryFact({
 
   if (saved.changed) {
     revalidateCacheTags([getMemoryCacheTag(userId)]);
-  }
-
-  if (saved.changed && input.statement !== undefined) {
-    scheduleSensitivityCheck(saved.fact);
   }
 
   return { fact: toMemoryFactView(saved.fact), status: "updated" };

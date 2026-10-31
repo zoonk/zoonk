@@ -2,7 +2,6 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { gradeTypedItemAnswer } from "../../../learner/_utils/typed-grading";
 import { recordLearnerAnswer } from "../../../learner/record-learner-answer";
-import { scheduleMistakeCause } from "../../../mistakes/resolve-mistake-cause";
 import { getItemMarking } from "../../scoring/mock-points";
 import { getPickOutcome } from "../../scoring/partial-credit";
 import { type GradedMockAnswer } from "../mock-analysis";
@@ -52,7 +51,7 @@ async function recordAnswer({
   const paceMs = getPaceMs({ mock, section: graded.section });
   const diagnostic = isDiagnostic({ grade, mock });
 
-  const recorded = await recordLearnerAnswer({
+  await recordLearnerAnswer({
     answer: grade.recorded,
     graded: { durationMs, expectedDurationMs: paceMs ?? undefined, isCorrect: grade.isCorrect },
     itemId: item.id,
@@ -68,8 +67,6 @@ async function recordAnswer({
     timeZone,
     userId: mock.userId,
   });
-
-  scheduleMistakeCause(recorded.causeRequest);
 }
 
 async function gradeAsked({

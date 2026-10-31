@@ -7,10 +7,10 @@ import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner"
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { logError } from "@zoonk/utils/logger";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { runDeferredWork } from "../_test-utils/deferred-work";
-import { scheduleMemoryAfterSession } from "./after-session";
+import { runSessionFollowUps } from "./_test-utils/session-follow-ups";
+import { claimDailyInsight } from "./insights/daily-insight";
+import { getSessionMemoryFollowUps } from "./memory-follow-ups";
 
 const DAY_MS = 86_400_000;
 const NO_PATTERNS: SessionPattern[] = [];
@@ -78,21 +78,15 @@ async function learnerWithAnswers({
   return { goal, skill, user };
 }
 
-async function endSession(request: Parameters<typeof scheduleMemoryAfterSession>[0]) {
-  const settle = runDeferredWork();
-  scheduleMemoryAfterSession(request);
-  await settle();
-}
-
 function endSessionFor({ goalId, userId }: { goalId: string; userId: string }) {
-  return endSession({ goalId, sessionId: null, timeZone: "UTC", userId });
+  return runSessionFollowUps({ goalId, userId });
 }
 
 function findInsights(userId: string) {
   return prisma.memoryInsight.findMany({ where: { userId } });
 }
 
-describe(scheduleMemoryAfterSession, () => {
+describe("memory after a session", () => {
   beforeEach(() => {
     vi.mocked(findSessionPatterns).mockResolvedValue({
       data: { patterns: NO_PATTERNS },
@@ -141,12 +135,38 @@ describe(scheduleMemoryAfterSession, () => {
     await expect(findInsights(user.id)).resolves.toHaveLength(1);
   });
 
-  it("checks the active goal for a session without one", async () => {
+  it("reads a session without a goal for the active goal", async () => {
     const { goal, user } = await learnerWithAnswers({ answersPerDay: 7, days: 2 });
     await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
 
-    await endSession({ goalId: null, sessionId: null, timeZone: "UTC", userId: user.id });
-    await expect(findInsights(user.id)).resolves.toMatchObject([{ goalId: goal.id }]);
+    const followUps = await getSessionMemoryFollowUps({
+      endedAt: new Date("2026-09-26T23:30:00Z"),
+      goalId: null,
+      sessionId: goal.id,
+      timeZone: "America/Sao_Paulo",
+      userId: user.id,
+    });
+
+    expect(followUps).toStrictEqual([
+      {
+        input: {
+          endedAt: "2026-09-26T23:30:00.000Z",
+          goalId: goal.id,
+          sessionId: goal.id,
+          timeZone: "America/Sao_Paulo",
+        },
+        kind: "rememberSession",
+      },
+      {
+        input: {
+          date: "2026-09-26",
+          endedAt: "2026-09-26T23:30:00.000Z",
+          goalId: goal.id,
+          timeZone: "America/Sao_Paulo",
+        },
+        kind: "checkDailyInsight",
+      },
+    ]);
   });
 
   it("runs no model on too little activity", async () => {
@@ -192,18 +212,31 @@ describe(scheduleMemoryAfterSession, () => {
     await expect(findInsights(user.id)).resolves.toMatchObject([{ kind: null, message: null }]);
   });
 
-  it("logs a failed coach call and releases the day, so a later session can try again", async () => {
+  it("throws a failed coach call and keeps the day's claim, which its retry resumes with its goal", async () => {
     const { goal, user } = await learnerWithAnswers({ answersPerDay: 7, days: 2 });
-    vi.mocked(generateMemoryInsight).mockRejectedValue(new Error("Gateway down"));
+    const other = await goalFixture({ language: "en", userId: user.id });
+    vi.mocked(generateMemoryInsight).mockRejectedValueOnce(new Error("Gateway down"));
 
-    await endSessionFor({ goalId: goal.id, userId: user.id });
-
-    expect(logError).toHaveBeenCalledWith(
-      `Could not run memory after a session for learner ${user.id}.`,
-      expect.any(Error),
+    await expect(endSessionFor({ goalId: goal.id, userId: user.id })).rejects.toThrow(
+      "Gateway down",
     );
 
-    await expect(prisma.memoryInsight.count({ where: { userId: user.id } })).resolves.toBe(0);
+    const [claimed] = await findInsights(user.id);
+    expect(claimed).toMatchObject({ generatedAt: null, goalId: goal.id, message: null });
+
+    const date = claimed?.localDate.toISOString().slice(0, 10) ?? "";
+    const day = { endedAt: new Date().toISOString(), timeZone: "UTC", userId: user.id };
+
+    await expect(claimDailyInsight({ ...day, date, goalId: other.id })).resolves.toStrictEqual({
+      goalId: goal.id,
+      id: claimed?.id,
+    });
+
+    await endSessionFor({ goalId: other.id, userId: user.id });
+
+    await expect(findInsights(user.id)).resolves.toMatchObject([
+      { goalId: goal.id, kind: "tip", model: "openai/gpt-6-luna" },
+    ]);
   });
 
   it("does nothing while memory is off or for another learner's goal", async () => {

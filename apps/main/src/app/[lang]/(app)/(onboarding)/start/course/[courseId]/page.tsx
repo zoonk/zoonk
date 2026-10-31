@@ -4,6 +4,7 @@ import { isStartBlocked } from "@/components/public/course-start-remedy";
 import { NoAccountNote } from "@/components/public/no-account-note";
 import { type CourseStartFailure } from "@/components/public/use-course-start";
 import { redirect } from "@/i18n/navigation";
+import { getGoalLimitReason } from "@/lib/goals/goal-limit-reason";
 import { CHAPTER_PARAM, MINUTES_PARAM, readDailyMinutes } from "@/lib/public/public-hrefs";
 import { getAllowanceCacheTag, getGoalsCacheTag } from "@zoonk/core/cache-tags";
 import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
@@ -27,7 +28,6 @@ import { cacheTag } from "next/cache";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { OnboardingNotFound } from "../../../_components/onboarding-not-found";
-import { getGoalLimitReason } from "../../goal-limit-reason";
 import { COURSE_START_ERROR_PARAM } from "../course-start-params";
 import { CourseStartScreen } from "./course-start-screen";
 
@@ -77,9 +77,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 function toLimitFailure(limit: AllowanceLimit | null): CourseStartFailure | null {
-  return limit
-    ? { reason: getGoalLimitReason({ limit, status: "limitReached" }), status: "limitReached" }
-    : null;
+  return limit ? { reason: getGoalLimitReason(limit), status: "limitReached" } : null;
 }
 
 /** Kept for the browser so the page opens from its prefetch; starting checks both learner facts again. */

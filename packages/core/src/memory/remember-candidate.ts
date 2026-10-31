@@ -3,16 +3,16 @@ import { type MemoryReconcileAction } from "@zoonk/ai/tasks/memory/decisions";
 import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
 import { reconcileMemoryFact } from "@zoonk/ai/tasks/memory/reconcile";
 import { type MemoryFact } from "@zoonk/db";
-import { type MemoryChange, type MemorySource } from "../memory-contract";
-import { type MemoryCandidate, isSameStatement } from "./memory-candidates";
-import { toMemoryFactView } from "./memory-fact-view";
+import { type MemoryCandidate, isSameStatement } from "./_utils/memory-candidates";
+import { toMemoryFactView } from "./_utils/memory-fact-view";
 import {
   type NewMemoryFact,
   addMemoryFact,
   removeMemoryFact,
   replaceMemoryFact,
-} from "./memory-writes";
-import { findRelatedMemoryFacts } from "./related-memory-facts";
+} from "./_utils/memory-writes";
+import { findRelatedMemoryFacts } from "./_utils/related-memory-facts";
+import { type MemoryChange, type MemorySource } from "./memory-contract";
 
 export type CandidateContext = {
   language: string;
@@ -22,7 +22,10 @@ export type CandidateContext = {
   userId: string;
 };
 
-async function passGate(candidate: MemoryCandidate): Promise<{ sensitive: boolean } | null> {
+export type MemoryGate = { sensitive: boolean };
+
+/** Null when the candidate isn't worth keeping; a model failure throws. */
+export async function gateMemoryCandidate(candidate: MemoryCandidate): Promise<MemoryGate | null> {
   if (candidate.intent === "forget") {
     return { sensitive: false };
   }
@@ -93,22 +96,18 @@ async function applyDecision({
     : null;
 }
 
-export async function rememberCandidate({
+/** Decides against the facts it relates to and saves; a model failure throws before anything is saved. */
+export async function saveMemoryCandidate({
   candidate,
   context,
+  gate,
 }: {
   candidate: MemoryCandidate;
   context: CandidateContext;
+  gate: MemoryGate;
 }): Promise<MemoryChange | null> {
   const { language, now, provenance, source, userId } = context;
-  const gate = await passGate(candidate);
-
-  if (!gate) {
-    return null;
-  }
-
   const related = await findRelatedMemoryFacts({ candidate, language, now, userId });
-
   const action = await decide({ candidate, related });
 
   const fact: NewMemoryFact = {
@@ -123,4 +122,15 @@ export async function rememberCandidate({
   };
 
   return applyDecision({ action, fact, related, userId });
+}
+
+export async function rememberCandidate({
+  candidate,
+  context,
+}: {
+  candidate: MemoryCandidate;
+  context: CandidateContext;
+}): Promise<MemoryChange | null> {
+  const gate = await gateMemoryCandidate(candidate);
+  return gate ? saveMemoryCandidate({ candidate, context, gate }) : null;
 }

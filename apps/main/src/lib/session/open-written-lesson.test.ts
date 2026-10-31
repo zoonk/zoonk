@@ -7,14 +7,15 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import { prepareStudySession } from "./session-preparation";
 import { openWrittenLessonAction } from "./study-session-actions";
 
 // Request identity and Next's after-response scheduling are platform boundaries.
 vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
 vi.mock("next/server", () => ({ after: vi.fn() }));
-// Preparation sends a request to the external API; a read-driven opening must never reach it.
-vi.mock("./session-preparation", () => ({ prepareStudySession: vi.fn() }));
+
+function countOwedPreparations(sessionId: string) {
+  return prisma.followUp.count({ where: { key: sessionId, kind: "prepareSession" } });
+}
 
 async function waitingLesson(contentStatus: "completed" | "pending") {
   const [user, lesson] = await Promise.all([
@@ -35,7 +36,7 @@ async function waitingLesson(contentStatus: "completed" | "pending") {
 }
 
 describe(openWrittenLessonAction, () => {
-  it("opens a written lesson and starts its block without preparing more AI work", async () => {
+  it("opens a written lesson and starts its block", async () => {
     const { block, input, lesson, session } = await waitingLesson("completed");
 
     await expect(openWrittenLessonAction(input)).resolves.toStrictEqual({
@@ -47,23 +48,21 @@ describe(openWrittenLessonAction, () => {
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
     ).resolves.toMatchObject({ status: "active" });
-
-    expect(prepareStudySession).not.toHaveBeenCalled();
   });
 
   it("cannot generate or start an unwritten lesson from a read-driven opening", async () => {
-    const { block, input } = await waitingLesson("pending");
+    const { block, input, session } = await waitingLesson("pending");
     await expect(openWrittenLessonAction(input)).resolves.toBeNull();
 
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
     ).resolves.toMatchObject({ status: "pending" });
 
-    expect(prepareStudySession).not.toHaveBeenCalled();
+    await expect(countOwedPreparations(session.id)).resolves.toBe(0);
   });
 
   it("cannot open another learner's block", async () => {
-    const { block, input } = await waitingLesson("completed");
+    const { block, input, session } = await waitingLesson("completed");
     const stranger = await userFixture();
     vi.mocked(getSession).mockResolvedValue({ user: { id: stranger.id } } as never);
     await expect(openWrittenLessonAction(input)).resolves.toBeNull();
@@ -72,13 +71,13 @@ describe(openWrittenLessonAction, () => {
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
     ).resolves.toMatchObject({ status: "pending" });
 
-    expect(prepareStudySession).not.toHaveBeenCalled();
+    await expect(countOwedPreparations(session.id)).resolves.toBe(0);
   });
 
   it("leaves the ready Start action available when request identity cannot be read", async () => {
-    const { input } = await waitingLesson("completed");
+    const { input, session } = await waitingLesson("completed");
     vi.mocked(getSession).mockRejectedValueOnce(new Error("Session unavailable"));
     await expect(openWrittenLessonAction(input)).resolves.toBeNull();
-    expect(prepareStudySession).not.toHaveBeenCalled();
+    await expect(countOwedPreparations(session.id)).resolves.toBe(0);
   });
 });

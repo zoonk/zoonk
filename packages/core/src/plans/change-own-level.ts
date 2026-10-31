@@ -2,6 +2,7 @@ import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../cache/tags";
+import { oweGoalLessons } from "../follow-ups/owe-goal-lessons";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getOwnLevel } from "../learner/placement/placement-contract";
@@ -106,6 +107,7 @@ export async function changeOwnLevel({
     ]);
 
     await refreshGoalPlan({ goalId });
+    await oweGoalLessons({ goalId, userId: current.context.goal.userId });
 
     return { ownLevel: { change, direction, level: input.level, testOuts }, status: "ready" };
   });

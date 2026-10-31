@@ -11,6 +11,7 @@ import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
+import { listOwed } from "../../_test-utils/follow-ups";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
@@ -443,5 +444,12 @@ describe(gradeSpokenAnswer, () => {
     expect(reviews.map((review) => review.word.word.toLowerCase())).toStrictEqual(["rent"]);
     expect(reviews[0]).toMatchObject({ language: "en", stage: 0, userLanguage: "pt" });
     expect(reviews[0]?.dueAt?.getTime()).toBeGreaterThan(Date.now());
+
+    const owed = await listOwed(learner.id);
+    const silent = reviews.filter((review) => !review.word.audioUrl).map((review) => review.wordId);
+
+    expect(owed.filter((row) => row.kind === "voiceWord").map((row) => row.key)).toStrictEqual(
+      silent,
+    );
   });
 });

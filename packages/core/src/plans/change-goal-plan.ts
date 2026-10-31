@@ -1,4 +1,5 @@
 import "server-only";
+import { oweGoalLessons } from "../follow-ups/owe-goal-lessons";
 import {
   type UnchangedFocusReason,
   applyChangeNow,
@@ -72,9 +73,11 @@ export async function changeGoalPlan({
 
     assertPlanTargetDates({ context: owned.context, operations: input.operations });
 
+    const { goal } = owned.context;
     const setBack = await undoSetBack({ context: owned.context, operations: input.operations });
 
     if (setBack) {
+      await oweGoalLessons({ goalId: goal.id, userId: goal.userId });
       return setBack;
     }
 
@@ -94,6 +97,7 @@ export async function changeGoalPlan({
     }
 
     const change = result.status === "saved" ? null : await loadPlanChangeView(result.changeId);
+    await oweGoalLessons({ goalId: goal.id, userId: goal.userId });
 
     return { change, status: "applied" };
   });

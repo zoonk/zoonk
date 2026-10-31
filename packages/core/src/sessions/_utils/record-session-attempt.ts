@@ -76,7 +76,6 @@ export async function recordSessionAttempt({
 
         const recorded: RecordedLearnerAnswer = {
           attempt: existing,
-          causeRequest: null,
           fixedMistakeIds: [],
           learnerSkill: null,
           mistake,

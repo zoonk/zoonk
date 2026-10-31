@@ -13,7 +13,7 @@ import {
 } from "../sessions/_test-utils/session-goal";
 import {
   requestChallengeQuestions,
-  requestUpcomingChallengeQuestions,
+  requestUpcomingChallengeQuestionsFor,
 } from "./challenge-questions";
 
 async function thinChallengeSetup({
@@ -98,7 +98,7 @@ describe(requestChallengeQuestions, () => {
   });
 });
 
-describe(requestUpcomingChallengeQuestions, () => {
+describe(requestUpcomingChallengeQuestionsFor, () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
@@ -109,9 +109,11 @@ describe(requestUpcomingChallengeQuestions, () => {
   });
 
   it("writes a reached challenge's questions now, for the learner who may open it any minute", async () => {
-    const { boss, goal, skills } = await thinChallengeSetup();
+    const { boss, goal, skills, user } = await thinChallengeSetup();
 
-    await expect(requestUpcomingChallengeQuestions({ goalId: goal.id })).resolves.toMatchObject({
+    await expect(
+      requestUpcomingChallengeQuestionsFor({ goalId: goal.id, userId: user.id }),
+    ).resolves.toMatchObject({
       challenges: [
         {
           later: false,
@@ -131,7 +133,7 @@ describe(requestUpcomingChallengeQuestions, () => {
     });
 
     await expect(
-      requestUpcomingChallengeQuestions({ goalId: soon.goal.id }),
+      requestUpcomingChallengeQuestionsFor({ goalId: soon.goal.id, userId: soon.user.id }),
     ).resolves.toMatchObject({
       challenges: [{ later: true, planItemId: soon.boss.id }],
       status: "start",
@@ -142,9 +144,9 @@ describe(requestUpcomingChallengeQuestions, () => {
       scheduledFor: new Date(SESSION_TODAY.getTime() + 20 * DAY_MS),
     });
 
-    await expect(requestUpcomingChallengeQuestions({ goalId: far.goal.id })).resolves.toStrictEqual(
-      { status: "ready" },
-    );
+    await expect(
+      requestUpcomingChallengeQuestionsFor({ goalId: far.goal.id, userId: far.user.id }),
+    ).resolves.toStrictEqual({ status: "ready" });
   });
 
   it("writes the week's mixed challenge the day before, on the skills the week studied", async () => {
@@ -173,7 +175,10 @@ describe(requestUpcomingChallengeQuestions, () => {
       scheduledFor: new Date(SESSION_TODAY.getTime() + DAY_MS),
     });
 
-    const request = await requestUpcomingChallengeQuestions({ goalId: goal.id });
+    const request = await requestUpcomingChallengeQuestionsFor({
+      goalId: goal.id,
+      userId: user.id,
+    });
 
     expect(request).toMatchObject({
       challenges: [{ later: true, planItemId: weekly.id, writes: [{ questionsPerSkill: 4 }] }],
@@ -189,8 +194,8 @@ describe(requestUpcomingChallengeQuestions, () => {
     const { boss, goal, user } = await thinChallengeSetup();
 
     const requests = await Promise.all([
-      requestUpcomingChallengeQuestions({ goalId: goal.id }),
-      requestUpcomingChallengeQuestions({ goalId: goal.id }),
+      requestUpcomingChallengeQuestionsFor({ goalId: goal.id, userId: user.id }),
+      requestUpcomingChallengeQuestionsFor({ goalId: goal.id, userId: user.id }),
       requestChallengeQuestions({ planItemId: boss.id }),
     ]);
 
@@ -210,14 +215,14 @@ describe(requestUpcomingChallengeQuestions, () => {
   });
 
   it("writes nothing for a challenge whose phase already holds its ten questions", async () => {
-    const { goal, skills } = await thinChallengeSetup();
+    const { goal, skills, user } = await thinChallengeSetup();
 
     await Promise.all(
       skills.slice(0, 2).map((skill) => addQuestions({ count: 4, skillId: skill.id })),
     );
 
-    await expect(requestUpcomingChallengeQuestions({ goalId: goal.id })).resolves.toStrictEqual({
-      status: "ready",
-    });
+    await expect(
+      requestUpcomingChallengeQuestionsFor({ goalId: goal.id, userId: user.id }),
+    ).resolves.toStrictEqual({ status: "ready" });
   });
 });

@@ -4,7 +4,13 @@ import { getSession } from "../../users/get-session";
 
 type VisibleRow = { ownerId: string | null; visibility: LibraryVisibility };
 
-function isVisibleTo({ row, viewerId }: { row: VisibleRow; viewerId: string | null }): boolean {
+export function isVisibleTo({
+  row,
+  viewerId,
+}: {
+  row: VisibleRow;
+  viewerId: string | null;
+}): boolean {
   return row.visibility === "public" || (viewerId !== null && row.ownerId === viewerId);
 }
 

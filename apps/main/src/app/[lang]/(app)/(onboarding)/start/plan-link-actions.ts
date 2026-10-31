@@ -1,11 +1,10 @@
 "use server";
 
-import { startGoalWork } from "@/lib/goals/start-goal-work";
+import { startPlanLinkGoal } from "@/lib/goals/start-plan-link-goal";
 import { goalCreateInputSchema } from "@zoonk/core/goals/contract";
-import { startGoalFromPlanLink } from "@zoonk/core/plans/start-from-link";
+import { getGoalGenerationId } from "@zoonk/core/goals/generation-id";
 import { type CreateGoalsOutcome } from "@zoonk/learn/onboarding/actions";
 import { isUuid } from "@zoonk/utils/uuid";
-import { getGoalLimitReason } from "./goal-limit-reason";
 
 export async function createGoalsFromPlanLinkAction(
   planId: string,
@@ -18,7 +17,7 @@ export async function createGoalsFromPlanLinkAction(
     return { status: "failed" };
   }
 
-  const result = await startGoalFromPlanLink({
+  const result = await startPlanLinkGoal({
     input: {
       dailyMinutes: parsed.data.dailyMinutes,
       studyDays: parsed.data.studyDays,
@@ -30,19 +29,19 @@ export async function createGoalsFromPlanLinkAction(
     planId,
   });
 
-  if (result.status === "refused") {
-    return { reason: getGoalLimitReason(result.refusals[0]?.decision), status: "limitReached" };
-  }
-
   if (result.status === "owner") {
-    return { generationId: null, goalId: result.goal.id, status: "created" };
+    return { generationId: null, goalId: result.goalId, status: "created" };
   }
 
   if (result.status !== "created") {
-    return { status: "failed" };
+    return result;
   }
 
-  const [start] = await startGoalWork([result.goal], { research: false });
+  const generation = await getGoalGenerationId({ goalId: result.goalId });
 
-  return { generationId: start?.generationId ?? null, goalId: result.goal.id, status: "created" };
+  return {
+    generationId: generation.status === "ready" ? generation.generationId : null,
+    goalId: result.goalId,
+    status: "created",
+  };
 }

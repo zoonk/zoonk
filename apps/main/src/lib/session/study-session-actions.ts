@@ -18,7 +18,6 @@ import { logError } from "@zoonk/utils/logger";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 import { openStudyBlock } from "./open-study-block";
-import { prepareStudySession } from "./session-preparation";
 import { type StudyDestination } from "./study-destination";
 
 const sessionInputSchema = z.object({
@@ -262,10 +261,6 @@ export async function finishStudyBlockAction(input: BlockInput): Promise<StudyFi
     return { status: "failed" };
   }
 
-  if (result.completion.sessionCompleted) {
-    prepareStudySession(sessionId);
-  }
-
   return { moment: serializeStudyBlockCompletion(result.completion), status: "finished" };
 }
 
@@ -288,13 +283,7 @@ export async function stopStudySessionAction(input: SessionInput): Promise<boole
     return false;
   }
 
-  if (result.status !== "ready") {
-    return false;
-  }
-
-  prepareStudySession(parsed.data.sessionId);
-
-  return true;
+  return result.status === "ready";
 }
 
 export async function addExtraStudyBlockAction(

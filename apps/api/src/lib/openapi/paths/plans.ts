@@ -66,7 +66,7 @@ export const planPaths = {
   "/goals/{goalId}/plan/changes": {
     post: {
       description:
-        "Applies a change the learner made in the plan: daily time, a weekday's time or a rest day, a light week, the date, areas to focus on (more time and depth, starting right away), skip or bring back, areas to start past their basics, or steering. It re-plans from today and can be undone. A change of focus alone (`focusAreas`, `reduceAreas`) that wouldn't do what it asks isn't saved: focusing on subjects that would move nothing, or more or less of some that would do the opposite in the plan the learner sees, answers `unchanged` with the reason.",
+        "Applies a change the learner made in the plan: daily time, a weekday's time or a rest day, a light week, the date, areas to focus on (more time and depth, starting right away), skip or bring back, areas to start past their basics, or steering. It re-plans from today and can be undone, and the server prepares the lessons it brings in soon. A change of focus alone (`focusAreas`, `reduceAreas`) that wouldn't do what it asks isn't saved: focusing on subjects that would move nothing, or more or less of some that would do the opposite in the plan the learner sees, answers `unchanged` with the reason.",
       operationId: "createPlanChange",
       requestBody: {
         content: { "application/json": { schema: planChangeInputSchema } },
@@ -89,7 +89,7 @@ export const planPaths = {
   "/goals/{goalId}/plan/changes/{changeId}": {
     post: {
       description:
-        'The learner\'s answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen ("Got it") for an applied change the plan should stop showing. Applying or undoing a change starts preparing the lessons it brings in soon. 409 when the change was already answered or the plan moved on.',
+        'The learner\'s answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen ("Got it") for an applied change the plan should stop showing. Applying or undoing a change prepares the lessons it brings in soon on the server; ask for nothing after it. 409 when the change was already answered or the plan moved on.',
       operationId: "decidePlanChange",
       requestBody: {
         content: { "application/json": { schema: planChangeDecisionInputSchema } },
@@ -182,7 +182,7 @@ export const planPaths = {
   "/goals/{goalId}/plan/own-level": {
     post: {
       description:
-        "Changes the learner's own level (nothing yet, basic, intermediate or advanced) from the plan. Past work is never undone: known skills and passed test-outs stay. A lower level adds the foundations the plan left out, right before the skills they prepare for, as a change with an undo. A higher level skips nothing: it returns test-outs for the chapters the new level covers. Placement starts from the new level. The next lessons start being prepared after this request.",
+        "Changes the learner's own level (nothing yet, basic, intermediate or advanced) from the plan. Past work is never undone: known skills and passed test-outs stay. A lower level adds the foundations the plan left out, right before the skills they prepare for, as a change with an undo. A higher level skips nothing: it returns test-outs for the chapters the new level covers. Placement starts from the new level. The server prepares the next lessons; ask for nothing after it.",
       operationId: "updateOwnLevel",
       requestBody: {
         content: { "application/json": { schema: ownLevelChangeInputSchema } },

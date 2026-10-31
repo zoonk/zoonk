@@ -1,7 +1,8 @@
 "use server";
 
+import { startPlanLinkGoal } from "@/lib/goals/start-plan-link-goal";
 import { planLinkStartInputSchema } from "@zoonk/core/plans/link-contract";
-import { startGoalFromPlanLink } from "@zoonk/core/plans/start-from-link";
+import { isUuid } from "@zoonk/utils/uuid";
 
 export type StartPlanState = { error: "failed" | "refused" } | { started: true } | null;
 
@@ -15,19 +16,15 @@ export async function startPlanAction(
     timeZone: formData.get("timeZone") || undefined,
   });
 
-  if (!input.success) {
+  if (!input.success || !isUuid(planId)) {
     return { error: "failed" };
   }
 
-  const result = await startGoalFromPlanLink({ input: input.data, planId });
+  const result = await startPlanLinkGoal({ input: input.data, planId });
 
-  if (result.status === "refused") {
+  if (result.status === "limitReached") {
     return { error: "refused" };
   }
 
-  if (result.status !== "created" && result.status !== "owner") {
-    return { error: "failed" };
-  }
-
-  return { started: true };
+  return result.status === "failed" ? { error: "failed" } : { started: true };
 }

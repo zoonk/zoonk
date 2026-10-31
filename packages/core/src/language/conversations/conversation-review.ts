@@ -11,9 +11,12 @@ import { getExamTaskEvidence } from "../exam-speaking/speaking-evidence";
 import { recordLanguageSkillEvidence } from "../levels/record-language-evidence";
 import { type LevelEvidence } from "../levels/skill-level-rules";
 import {
+  type ExamScore,
   type WrittenFeedback,
+  checkReviewedObjectives,
   getExamTaskObjectives,
-  reviewConversation,
+  scoreReviewedExam,
+  writeCallReviewFeedback,
 } from "./_utils/conversation-feedback";
 import {
   type ConversationRow,
@@ -116,33 +119,55 @@ async function keepReview({
   });
 }
 
-/** Does not store the transcript; model failures throw so the workflow can retry. */
-export async function reviewConversationCall({
-  conversationId,
-  runId,
-  spokenSeconds,
-  turns,
-  userId,
-}: Pick<ConversationReviewInput, "conversationId" | "spokenSeconds" | "turns" | "userId"> & {
-  runId: string;
-}): Promise<ConversationReview> {
+type ReviewStepInput = Pick<
+  ConversationReviewInput,
+  "conversationId" | "spokenSeconds" | "turns" | "userId"
+>;
+
+/** A review kept by an earlier attempt is read back, so a retried step never asks a model again. */
+async function readReview({ conversationId, spokenSeconds, turns, userId }: ReviewStepInput) {
   const { level, owned, scenario } = await loadReviewedCall({ conversationId, userId });
-  const kept = readKeptReview(owned.row);
+  const call = { level, row: owned.row, scenario, spokenSeconds, turns, userId };
+
+  return { call, kept: readKeptReview(owned.row) };
+}
+
+/** One of the review's model calls. Does not store the transcript; a model failure throws. */
+export async function checkConversationCallObjectives(input: ReviewStepInput): Promise<string[]> {
+  const { call, kept } = await readReview(input);
+  return kept ? kept.objectivesMet : checkReviewedObjectives(call);
+}
+
+/** An exam's score, the review's other model call; a practice call's feedback needs its objectives. */
+export async function scoreConversationCall(input: ReviewStepInput): Promise<ExamScore> {
+  const { call, kept } = await readReview(input);
+  return kept ? { exam: true, feedback: kept.feedback } : scoreReviewedExam(call);
+}
+
+/** Kept on the call, so a retried settle reads the same review back. */
+export async function writeConversationCallReview({
+  objectivesMet,
+  runId,
+  score,
+  ...input
+}: ReviewStepInput & {
+  objectivesMet: string[];
+  runId: string;
+  score: ExamScore;
+}): Promise<ConversationReview> {
+  const { call, kept } = await readReview(input);
 
   if (kept) {
     return kept;
   }
 
-  const review = await reviewConversation({
-    level,
-    row: owned.row,
-    scenario,
-    spokenSeconds,
-    turns,
-    userId,
-  });
+  const feedback = score.exam
+    ? score.feedback
+    : await writeCallReviewFeedback({ ...call, objectivesMet });
 
-  await keepReview({ conversationId, review, runId, userId });
+  const review = { feedback, objectivesMet };
+
+  await keepReview({ conversationId: input.conversationId, review, runId, userId: input.userId });
   return review;
 }
 

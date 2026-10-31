@@ -50,16 +50,19 @@ export async function loadRecentActivity({
         skillId: true,
         studySessionId: true,
       },
-      where: { localDate: { gte: since }, userId },
+      where: { answeredAt: { lte: now }, localDate: { gte: since }, userId },
     }),
     prisma.mistake.findMany({
       orderBy: { createdAt: "desc" },
       select: { cause: true, skillId: true, snapshot: true },
-      where: { createdAt: { gte: new Date(now.getTime() - WINDOW_DAYS * MS_PER_DAY) }, userId },
+      where: {
+        createdAt: { gte: new Date(now.getTime() - WINDOW_DAYS * MS_PER_DAY), lte: now },
+        userId,
+      },
     }),
     prisma.learningEvent.findMany({
       select: { kind: true, localDate: true, seconds: true },
-      where: { endedAt: { not: null }, localDate: { gte: since }, userId },
+      where: { endedAt: { lte: now, not: null }, localDate: { gte: since }, userId },
     }),
     loadGoalSkillIds(goal.id),
   ]);

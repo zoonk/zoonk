@@ -2,10 +2,10 @@ import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
 import { prisma } from "@zoonk/db";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { logError } from "@zoonk/utils/logger";
-import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { listFollowUps } from "../follow-ups/follow-up-rows";
+import { checkFactSensitivity } from "./check-fact-sensitivity";
 import { updateMemoryFact } from "./update-memory-fact";
 
 const SENSITIVE = "Has diabetes";
@@ -20,8 +20,13 @@ function mockGate() {
   );
 }
 
-function deferredChecks() {
-  return vi.mocked(after).mock.calls.map(([task]) => task as () => Promise<void>);
+/** The checks the corrections owe, oldest first, as the follow-ups run reads them. */
+async function owedChecks(userId: string) {
+  const owed = await listFollowUps(userId);
+
+  return owed.flatMap((followUp) =>
+    followUp.kind === "checkFactSensitivity" ? [() => checkFactSensitivity(followUp.input)] : [],
+  );
 }
 
 async function learnerFact({ sensitive = false }: { sensitive?: boolean } = {}) {
@@ -49,7 +54,7 @@ describe("sensitivity of a corrected fact", () => {
     await updateMemoryFact({ factId: fact.id, input: { statement: SENSITIVE } });
     await updateMemoryFact({ factId: fact.id, input: { statement: "Likes chess" } });
 
-    const [checkSensitive, checkLatest] = deferredChecks();
+    const [checkSensitive, checkLatest] = await owedChecks(fact.userId);
 
     await checkLatest?.();
     await checkSensitive?.();
@@ -63,24 +68,33 @@ describe("sensitivity of a corrected fact", () => {
     const fact = await learnerFact({ sensitive: true });
 
     await updateMemoryFact({ factId: fact.id, input: { statement: "Likes chess" } });
-    await Promise.all(deferredChecks().map((check) => check()));
+    const checks = await owedChecks(fact.userId);
+    await Promise.all(checks.map((check) => check()));
 
     await expect(
       prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
     ).resolves.toMatchObject({ sensitive: false, statement: "Likes chess" });
   });
 
-  it("leaves the flag as it was when the check fails", async () => {
+  it("throws a failed check, so its step retries, and leaves the flag as it was", async () => {
     const fact = await learnerFact();
     vi.mocked(gateMemoryFact).mockRejectedValue(new Error("Gateway down"));
 
     await updateMemoryFact({ factId: fact.id, input: { statement: SENSITIVE } });
-    await Promise.all(deferredChecks().map((check) => check()));
+    const [check] = await owedChecks(fact.userId);
+
+    await expect(check?.()).rejects.toThrow("Gateway down");
 
     await expect(
       prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
     ).resolves.toMatchObject({ sensitive: false, statement: SENSITIVE });
+  });
 
-    expect(logError).toHaveBeenCalledOnce();
+  it("owes no check when only the category changes", async () => {
+    const fact = await learnerFact();
+
+    await updateMemoryFact({ factId: fact.id, input: { category: "routine" } });
+
+    await expect(owedChecks(fact.userId)).resolves.toStrictEqual([]);
   });
 });

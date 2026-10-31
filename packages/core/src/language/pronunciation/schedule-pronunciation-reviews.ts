@@ -1,11 +1,10 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { after } from "next/server";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../cache/tags";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { fillMissingAudio } from "../../library/language/_utils/language-audio";
 import { schedulePronunciationMiss, toReviewWord } from "./pronunciation-rules";
 
 type ReviewWord = { audioUrl: string | null; id: string; word: string };
@@ -113,10 +112,13 @@ export async function schedulePronunciationReviews({
 
   revalidateCacheTags([getLearnerModelCacheTag(userId)]);
 
-  const silent = rows.filter((row) => !row.audioUrl).map((row) => row.id);
-
-  if (orgSlug && silent.length > 0) {
-    after(() => fillMissingAudio({ orgSlug, sentenceIds: [], targetLanguage, wordIds: silent }));
+  if (orgSlug) {
+    await oweFollowUps({
+      followUps: rows
+        .filter((row) => !row.audioUrl)
+        .map((row) => ({ input: { orgSlug, targetLanguage, wordId: row.id }, kind: "voiceWord" })),
+      userId,
+    });
   }
 
   return reviews.map((review) => review.id);

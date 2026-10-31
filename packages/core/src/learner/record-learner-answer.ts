@@ -13,7 +13,7 @@ import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../cache/tags";
 import { fixMistakesAnsweredRight } from "../mistakes/fix-mistakes";
 import { type MistakeSnapshot } from "../mistakes/mistake-snapshot";
-import { type MistakeCauseRequest, recordMistake } from "../mistakes/record-mistake";
+import { recordMistake } from "../mistakes/record-mistake";
 import { createLearnerAttempt } from "./_utils/create-learner-attempt";
 import { markLearnerChanged } from "./_utils/mark-learner-changed";
 import { applyAnswerToLearnerSkill, loadSkillSurvivors } from "./_utils/update-learner-skill";
@@ -51,8 +51,6 @@ export type LearnerAnswer = {
 
 export type RecordedLearnerAnswer = {
   attempt: Attempt;
-  /** Pass to `scheduleMistakeCause` so an ambiguous cause is classified after the response. */
-  causeRequest: MistakeCauseRequest | null;
   fixedMistakeIds: string[];
   learnerSkill: LearnerSkill | null;
   mistake: Mistake | null;
@@ -209,7 +207,7 @@ export async function persistLearnerAnswer({
 
   const review = await updateMemory(context);
   const fixedMistakes = await fixAnsweredMistakes(context);
-  const recorded = await addToNotebook({ attemptId: attempt.id, context });
+  const notebookEntry = await addToNotebook({ attemptId: attempt.id, context });
 
   // Attribution must come from server evidence, never the raw client answer.
   const recordedAttempt =
@@ -235,10 +233,9 @@ export async function persistLearnerAnswer({
 
   const result: RecordedLearnerAnswer = {
     attempt: recordedAttempt,
-    causeRequest: recorded?.causeRequest ?? null,
     fixedMistakeIds: fixedMistakes.map((mistake) => mistake.id),
     learnerSkill: review?.after ?? context.before,
-    mistake: recorded?.mistake ?? null,
+    mistake: notebookEntry,
   };
 
   return { events, recorded: result };

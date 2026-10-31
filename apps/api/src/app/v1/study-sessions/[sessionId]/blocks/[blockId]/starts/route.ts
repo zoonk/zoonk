@@ -1,7 +1,6 @@
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { studyBlockPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
-import { scheduleSessionPreparation } from "@/lib/session-preparation";
 import { studySessionError } from "@/lib/study-session-errors";
 import { studyBlockStartInputSchema } from "@zoonk/core/sessions/contract";
 import { startStudyBlock } from "@zoonk/core/sessions/start-block";
@@ -21,8 +20,6 @@ async function createStart(
   if (result.status !== "ready") {
     return studySessionError(result);
   }
-
-  await scheduleSessionPreparation(path.sessionId);
 
   return NextResponse.json(result.block);
 }

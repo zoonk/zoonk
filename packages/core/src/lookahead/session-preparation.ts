@@ -1,7 +1,7 @@
 import "server-only";
 import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { findGoalFor, findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import {
   canRedraftLesson,
   getLessonGenerationStates,
@@ -10,7 +10,11 @@ import { getGoalFieldInput } from "../library/items/item-field";
 import { findPlanFirstLessonId } from "../plans/_utils/plan-first-lesson";
 import { parsePlanSettings } from "../plans/planner/plan-state";
 import { loadExamPrepAccess } from "../sessions/_utils/plus-only-lessons";
-import { findOwnedStudySession } from "../sessions/_utils/study-session-access";
+import {
+  type StudySessionRow,
+  findOwnedStudySession,
+  findStudySessionFor,
+} from "../sessions/_utils/study-session-access";
 import { type LearnerLookahead, getLearnerTier, getLookahead } from "./learner-lookahead";
 
 const OPEN_BLOCK_STATUSES = new Set<StudySessionBlock["status"]>(["active", "pending"]);
@@ -60,26 +64,23 @@ async function isPrepHeldForPlus(goal: Goal): Promise<boolean> {
   return access.trialEnded;
 }
 
-/** Guests may prepare only their next lesson, never the full session. */
-export async function getSessionPreparationAccess({
-  sessionId,
-}: {
-  sessionId: string;
-}): Promise<SessionPreparationAccess> {
-  const owned = await findOwnedStudySession(sessionId);
-
-  if (owned.status !== "ready") {
-    return owned;
-  }
-
-  const { session, userId } = owned;
-
+async function isGuest(userId: string): Promise<boolean> {
   const user = await prisma.user.findUnique({
     select: { isAnonymous: true },
     where: { id: userId },
   });
 
-  if (user?.isAnonymous) {
+  return user?.isAnonymous === true;
+}
+
+async function decideSessionAccess({
+  session,
+  userId,
+}: {
+  session: StudySessionRow;
+  userId: string;
+}): Promise<SessionPreparationAccess> {
+  if (await isGuest(userId)) {
     return {
       goalId: session.goalId,
       lessonId: findNextLessonId(session.blocks),
@@ -105,6 +106,56 @@ export async function getSessionPreparationAccess({
   };
 }
 
+/** Guests may prepare only their next lesson, never the full session. */
+export async function getSessionPreparationAccess({
+  sessionId,
+}: {
+  sessionId: string;
+}): Promise<SessionPreparationAccess> {
+  const owned = await findOwnedStudySession(sessionId);
+  return owned.status === "ready" ? decideSessionAccess(owned) : owned;
+}
+
+/** Internal, for preparation runs: `userId` must come from the learner's own write. */
+export async function getSessionPreparationAccessFor({
+  sessionId,
+  userId,
+}: {
+  sessionId: string;
+  userId: string;
+}): Promise<SessionPreparationAccess> {
+  const owned = await findStudySessionFor({ sessionId, userId });
+  return owned.status === "ready" ? decideSessionAccess(owned) : owned;
+}
+
+async function decideGoalAccess({
+  goal,
+  userId,
+}: {
+  goal: Goal;
+  userId: string;
+}): Promise<GoalPreparationAccess> {
+  if (await isGuest(userId)) {
+    return {
+      goalId: goal.id,
+      lessonId: await findPlanFirstLessonId(goal.id),
+      status: "guest",
+      userId,
+    };
+  }
+
+  if (await isPrepHeldForPlus(goal)) {
+    return { status: "plusRequired" };
+  }
+
+  return {
+    goalId: goal.id,
+    status: "ready",
+    timeZone: getAnswerTimeZone({ goal, timeZone: null }),
+    userId,
+  };
+}
+
 /** Before session creation, guests may prepare only the plan's first lesson, counted as its start. */
 export async function getGoalPreparationAccess({
   goalId,
@@ -112,35 +163,19 @@ export async function getGoalPreparationAccess({
   goalId: string;
 }): Promise<GoalPreparationAccess> {
   const owned = await findOwnedGoal(goalId);
+  return owned.status === "ready" ? decideGoalAccess(owned) : owned;
+}
 
-  if (owned.status !== "ready") {
-    return owned;
-  }
-
-  const user = await prisma.user.findUnique({
-    select: { isAnonymous: true },
-    where: { id: owned.userId },
-  });
-
-  if (user?.isAnonymous) {
-    return {
-      goalId,
-      lessonId: await findPlanFirstLessonId(goalId),
-      status: "guest",
-      userId: owned.userId,
-    };
-  }
-
-  if (await isPrepHeldForPlus(owned.goal)) {
-    return { status: "plusRequired" };
-  }
-
-  return {
-    goalId,
-    status: "ready",
-    timeZone: getAnswerTimeZone({ goal: owned.goal, timeZone: null }),
-    userId: owned.userId,
-  };
+/** Internal, for preparation runs: `userId` must come from the learner's own write. */
+export async function getGoalPreparationAccessFor({
+  goalId,
+  userId,
+}: {
+  goalId: string;
+  userId: string;
+}): Promise<GoalPreparationAccess> {
+  const owned = await findGoalFor({ goalId, userId });
+  return owned.status === "ready" ? decideGoalAccess(owned) : owned;
 }
 
 async function loadPlannedDayLessons({ goal, day }: { goal: Goal; day: Date }) {

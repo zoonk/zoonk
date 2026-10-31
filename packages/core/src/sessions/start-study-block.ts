@@ -3,6 +3,7 @@ import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/d
 import { safeAsync } from "@zoonk/utils/error";
 import { fillCheckpointQuestions } from "../checkpoints/_utils/fill-checkpoint-questions";
 import { arePhaseChallengesRequired } from "../checkpoints/_utils/phase-challenge-access";
+import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getCompletionEnergyContext } from "../stats/completion-energy";
@@ -91,7 +92,7 @@ async function openSession({
   return opened;
 }
 
-/** Requires ownership; checks the daily limit before new work and fills checkpoint questions before starting. */
+/** Requires ownership; checks the daily limit before new work, fills checkpoint questions before starting, and owes the session's preparation. */
 export async function startStudyBlock({
   blockId,
   input,
@@ -227,6 +228,12 @@ export async function startStudyBlock({
         },
         select: { id: true, kind: true, lessonId: true, startedAt: true, status: true },
         where: { id: current.id },
+      });
+
+      await oweFollowUps({
+        db: tx,
+        followUps: [{ input: { sessionId }, kind: "prepareSession" }],
+        userId,
       });
 
       return { block: started, opened, session: locked, status: "ready" as const };

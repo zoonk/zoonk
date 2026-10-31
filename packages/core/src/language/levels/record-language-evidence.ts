@@ -8,9 +8,10 @@ import {
 } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { usesNonLatinScript } from "@zoonk/utils/languages";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { findLearnerLanguageGoal, readGoalDetails } from "../_utils/language-goal";
-import { scheduleMistakePatternCheck } from "../patterns/find-mistake-pattern";
+import { isPatternCheckDue } from "../patterns/find-mistake-pattern";
 import {
   type LevelEvidence,
   applyLevelEvidence,
@@ -197,18 +198,22 @@ export async function loadLanguageStepEvidence({
 
 export async function writeLanguageStepEvidence(
   tx: TransactionClient,
-  { skill, word }: LanguageStepEvidence,
+  { isCorrect, skill, word }: LanguageStepEvidence,
 ): Promise<void> {
   await addSkillEvidence(tx, skill);
 
   if (word) {
     await tx.learnerWord.createMany({ data: word, skipDuplicates: true });
   }
-}
 
-export function afterLanguageStepEvidence({ isCorrect, skill }: LanguageStepEvidence): void {
-  if (!isCorrect) {
-    scheduleMistakePatternCheck({ language: skill.language, userId: skill.userId });
+  const { language, userId } = skill;
+
+  if (!isCorrect && (await isPatternCheckDue({ db: tx, language, userId }))) {
+    await oweFollowUps({
+      db: tx,
+      followUps: [{ input: { language }, kind: "findMistakePattern" }],
+      userId,
+    });
   }
 }
 
@@ -221,8 +226,6 @@ export async function recordLanguageStepEvidence(
   if (!evidence) {
     return;
   }
-
-  afterLanguageStepEvidence(evidence);
 
   await writeEvidence({
     skill: evidence.skill,

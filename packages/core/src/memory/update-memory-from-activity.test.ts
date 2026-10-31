@@ -7,11 +7,12 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { proposeOnboardingMemory, rememberMemoryCandidate } from "./memory-follow-ups";
+import { gateMemoryCandidate } from "./remember-candidate";
 import { undoMemoryChanges } from "./undo-memory-changes";
-import { scheduleMemoryUpdate, updateMemoryFromActivity } from "./update-memory-from-activity";
+import { proposeMemoryUpdate, updateMemoryFromActivity } from "./update-memory-from-activity";
 
 const PROVENANCE = {
   generatedAt: "2026-09-26T12:00:00.000Z",
@@ -340,20 +341,58 @@ describe(updateMemoryFromActivity, () => {
   });
 });
 
-describe(scheduleMemoryUpdate, () => {
-  it("learns after the response is sent", async () => {
+describe("memory as follow-up steps", () => {
+  it("proposes onboarding's facts, then gates and saves each one on its own", async () => {
     const user = await userFixture();
+    const goal = await goalFixture({ prompt: "Quero Direito", userId: user.id });
     mockGate("keep");
     vi.mocked(reconcileMemoryFact).mockResolvedValue(null);
-    mockExtraction([extracted({})]);
 
-    scheduleMemoryUpdate(chat(user.id));
+    mockExtraction([
+      extracted({ statement: "Wants Law" }),
+      extracted({ statement: "Works nights" }),
+    ]);
+
+    const proposed = await proposeOnboardingMemory({ goalId: goal.id, userId: user.id });
+    const candidate = proposed?.candidates[0];
+
+    expect(proposed?.candidates.map((each) => each.statement)).toStrictEqual([
+      "Wants Law",
+      "Works nights",
+    ]);
 
     await expect(prisma.memoryFact.count({ where: { userId: user.id } })).resolves.toBe(0);
 
-    const [[task]] = vi.mocked(after).mock.calls as [[() => Promise<void>]];
-    await task();
+    if (!proposed || !candidate) {
+      throw new Error("Onboarding proposed no facts");
+    }
 
-    await expect(prisma.memoryFact.count({ where: { userId: user.id } })).resolves.toBe(1);
+    await expect(gateMemoryCandidate(candidate)).resolves.toStrictEqual({ sensitive: false });
+
+    await rememberMemoryCandidate({
+      candidate,
+      context: proposed.context,
+      gate: { sensitive: false },
+    });
+
+    await expect(
+      prisma.memoryFact.findMany({ select: { statement: true }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual([{ statement: "Wants Law" }]);
+  });
+
+  it("throws a failed gate, so its step retries before anything is saved", async () => {
+    const user = await userFixture();
+    vi.mocked(gateMemoryFact).mockRejectedValueOnce(new Error("model down"));
+    mockExtraction([extracted({})]);
+
+    const proposed = await proposeMemoryUpdate(chat(user.id));
+    const candidate = proposed?.candidates[0];
+
+    if (!candidate) {
+      throw new Error("The chat proposed no facts");
+    }
+
+    await expect(gateMemoryCandidate(candidate)).rejects.toThrow("model down");
+    await expect(prisma.memoryFact.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 });

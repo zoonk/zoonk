@@ -13,6 +13,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
@@ -746,8 +747,8 @@ describe(finishGoalPlacement, () => {
     expect(statuses.map((item) => item.status)).toStrictEqual(["todo", "todo"]);
   });
 
-  it("names the lesson the plan opens with once placement tested some out, so it's written now", async () => {
-    const { goal, items, planItems, skills } = await setup();
+  it("owes the lesson the plan opens with once placement tested some out, so it's written now", async () => {
+    const { goal, items, planItems, skills, user } = await setup();
     const known = items.filter((item) => item.skillId === skills[0]?.id);
 
     await Promise.all(
@@ -760,8 +761,15 @@ describe(finishGoalPlacement, () => {
     );
 
     const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
+    const lessonId = planItems[1]?.lessonId;
+    const owed = await listOwed(user.id);
 
-    expect(result).toMatchObject({ firstLessonId: planItems[1]?.lessonId, status: "ready" });
+    expect(result).toMatchObject({ status: "ready" });
+
+    expect(owed).toMatchObject([
+      { key: goal.id, kind: "prepareGoalLessons" },
+      { input: { lessonId }, key: lessonId, kind: "writeLesson" },
+    ]);
   });
 
   it("never skips the bands below a stated level before their own answers: it asks them first", async () => {
@@ -1192,7 +1200,11 @@ describe(finishGoalPlacement, () => {
 
     const result = await finishGoalPlacement({ goalId: goal.id, input: { fromScratch: true } });
 
-    expect(result).toMatchObject({ firstLessonId: null, status: "ready" });
+    expect(result).toMatchObject({ status: "ready" });
+
+    await expect(listOwed(user.id)).resolves.toMatchObject([
+      { key: goal.id, kind: "prepareGoalLessons" },
+    ]);
 
     expect(result.status === "ready" && result.completion).toStrictEqual({
       areas: [{ area: null, confident: true, startSkillId: skills[0]?.id }],

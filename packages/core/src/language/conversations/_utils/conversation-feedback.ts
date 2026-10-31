@@ -146,9 +146,17 @@ async function findObjectivesMet(input: ReviewInput): Promise<string[]> {
   });
 }
 
-export async function reviewConversation(
-  input: ReviewInput,
-): Promise<{ feedback: WrittenFeedback | null; objectivesMet: string[] }> {
+/** A live call's objectives are checked again on the whole call; an exam task's need no model. */
+export function checkReviewedObjectives(input: ReviewInput): Promise<string[]> {
+  return input.scenario.examTask
+    ? Promise.resolve(getExamTaskObjectives(input))
+    : findObjectivesMet(input);
+}
+
+/** An exam's score doesn't read the objectives, so it's written alongside their check. */
+export type ExamScore = { exam: false } | { exam: true; feedback: WrittenFeedback | null };
+
+export async function scoreReviewedExam(input: ReviewInput): Promise<ExamScore> {
   const { exam, examTask } = input.scenario;
 
   if (examTask) {
@@ -157,24 +165,23 @@ export async function reviewConversation(
       write: () => writeExamTaskFeedback({ examTask, input }),
     });
 
-    return { feedback, objectivesMet: getExamTaskObjectives(input) };
+    return { exam: true, feedback };
   }
 
   if (exam) {
-    const [objectivesMet, feedback] = await Promise.all([
-      findObjectivesMet(input),
-      writeFeedback({ turns: input.turns, write: () => writeMockFeedback({ exam, input }) }),
-    ]);
+    const feedback = await writeFeedback({
+      turns: input.turns,
+      write: () => writeMockFeedback({ exam, input }),
+    });
 
-    return { feedback, objectivesMet };
+    return { exam: true, feedback };
   }
 
-  const objectivesMet = await findObjectivesMet(input);
+  return { exam: false };
+}
 
-  const feedback = await writeFeedback({
-    turns: input.turns,
-    write: () => writeCallFeedback({ ...input, objectivesMet }),
-  });
-
-  return { feedback, objectivesMet };
+export function writeCallReviewFeedback(
+  input: ReviewInput & { objectivesMet: string[] },
+): Promise<WrittenFeedback | null> {
+  return writeFeedback({ turns: input.turns, write: () => writeCallFeedback(input) });
 }

@@ -3,7 +3,6 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { planChangeInvalid } from "@/lib/plan-errors";
 import { readBody, readPathParams } from "@/lib/request-input";
-import { scheduleGoalPreparation } from "@/lib/session-preparation";
 import { chooseExamOption } from "@zoonk/core/exams/choices/choose";
 import { examChoiceInputSchema } from "@zoonk/core/exams/choices/contract";
 import { type NextRequest, NextResponse } from "next/server";
@@ -25,10 +24,6 @@ async function createExamChoice(
 
   if (result.status !== "applied") {
     return accessError(result.status);
-  }
-
-  if (result.change) {
-    await scheduleGoalPreparation(path.goalId);
   }
 
   return NextResponse.json({ change: result.change, status: result.status });

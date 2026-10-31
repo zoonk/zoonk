@@ -15,24 +15,31 @@ export const STUDY_SESSION_INCLUDE = {
   goal: true,
 } as const;
 
+/** Internal: `userId` must come from a session or a learner's own write, never from a client. */
+export async function findStudySessionFor({
+  sessionId,
+  userId,
+}: {
+  sessionId: string;
+  userId: string;
+}): Promise<Exclude<OwnedStudySession, { status: "unauthorized" }>> {
+  const row = isUuid(sessionId)
+    ? await prisma.studySession.findFirst({
+        include: STUDY_SESSION_INCLUDE,
+        where: { id: sessionId, userId },
+      })
+    : null;
+
+  return row ? { session: row, status: "ready", userId } : { status: "notFound" };
+}
+
 /** Requires sign-in and ownership; other learners' session ids return not-found without revealing existence. */
 export async function findOwnedStudySession(sessionId: string): Promise<OwnedStudySession> {
   const session = await getSession();
 
-  if (!session) {
-    return { status: "unauthorized" };
-  }
-
-  if (!isUuid(sessionId)) {
-    return { status: "notFound" };
-  }
-
-  const row = await prisma.studySession.findFirst({
-    include: STUDY_SESSION_INCLUDE,
-    where: { id: sessionId, userId: session.user.id },
-  });
-
-  return row ? { session: row, status: "ready", userId: session.user.id } : { status: "notFound" };
+  return session
+    ? findStudySessionFor({ sessionId, userId: session.user.id })
+    : { status: "unauthorized" };
 }
 
 export type OwnedStudyBlock =

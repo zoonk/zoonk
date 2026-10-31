@@ -2,8 +2,9 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { after } from "next/server";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
-import { scheduleMemoryAfterSession } from "../../memory/after-session";
+import { getSessionMemoryFollowUps } from "../../memory/memory-follow-ups";
 import { type BrainPowerReward } from "../../milestones/milestone-reward";
 import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 import { type Mission } from "../missions";
@@ -56,7 +57,16 @@ async function completeIfFinished({
 
   const endedAt = new Date();
 
-  const end = await measureSessionState({ goalId: session.goalId, now: endedAt, timeZone, userId });
+  const [end, memoryFollowUps] = await Promise.all([
+    measureSessionState({ goalId: session.goalId, now: endedAt, timeZone, userId }),
+    getSessionMemoryFollowUps({
+      endedAt,
+      goalId: session.goalId,
+      sessionId: session.id,
+      timeZone,
+      userId,
+    }),
+  ]);
 
   const { data: completed, error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
@@ -99,6 +109,18 @@ async function completeIfFinished({
         userId,
       });
 
+      // Memory reads once at the first stop or end; later work belongs to the next session's reading.
+      const firstEnd = !current.endedAt && !current.stoppedAt;
+
+      await oweFollowUps({
+        db: tx,
+        followUps: [
+          { input: { sessionId: session.id }, kind: "prepareSession" },
+          ...(firstEnd ? memoryFollowUps : []),
+        ],
+        userId,
+      });
+
       return { session: current, status: "completed" as const };
     }),
   );
@@ -118,11 +140,6 @@ async function completeIfFinished({
   // "10 more minutes" reopens a finished session; finishing it again isn't a new session.
   if (!completed.session.endedAt) {
     trackSessionCompleted({ ...session, ...completed.session });
-  }
-
-  // Memory reads once at the first stop or end; later work belongs to the next session's reading.
-  if (!completed.session.endedAt && !completed.session.stoppedAt) {
-    scheduleMemoryAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
   }
 
   if (session.goalId) {

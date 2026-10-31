@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { applyChangeNow } from "../../plans/_utils/apply-plan-change";
@@ -109,6 +110,12 @@ export async function chooseExamOption({
       return { error: "unknownOption", status: "invalid" };
     }
 
-    return applyChoices({ choices: offered, context });
+    const result = await applyChoices({ choices: offered, context });
+
+    if (result.status === "applied" && result.change) {
+      await oweGoalLessons({ goalId: owned.goal.id, userId: owned.userId });
+    }
+
+    return result;
   });
 }

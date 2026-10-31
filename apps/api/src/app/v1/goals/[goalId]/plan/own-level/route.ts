@@ -2,7 +2,6 @@ import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
-import { scheduleGoalPreparation } from "@/lib/session-preparation";
 import { changeOwnLevel } from "@zoonk/core/plans/own-level";
 import { ownLevelChangeInputSchema } from "@zoonk/core/plans/own-level-contract";
 import { type NextRequest, NextResponse } from "next/server";
@@ -21,8 +20,6 @@ async function updateOwnLevel(
   if (result.status !== "ready") {
     return accessError(result.status);
   }
-
-  await scheduleGoalPreparation(path.goalId);
 
   return NextResponse.json(result.ownLevel);
 }

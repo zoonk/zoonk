@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 const API_ORIGIN = new URL(API_URL).origin;
 
 export type LearnerApiResponse =
-  | { json: unknown; ok: true }
+  | { json: unknown; ok: true; status: number }
   | { json: unknown; ok: false; status: number | null };
 
 /** Forwards the learner's cookie and browser, so the API acts as them and counts the work as web. */
@@ -40,7 +40,7 @@ export async function postAsLearner({
       return { json, ok: false, status: response.status };
     }
 
-    return { json, ok: true };
+    return { json, ok: true, status: response.status };
   } catch (error) {
     logError("[postAsLearner] Failed to reach the API:", error);
     return { json: null, ok: false, status: null };

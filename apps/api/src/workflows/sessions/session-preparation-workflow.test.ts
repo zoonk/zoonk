@@ -59,7 +59,7 @@ describe("session preparation records admission for its children", () => {
 
     const result = await sessionPreparationWorkflow({
       goalId: goal.id,
-      timeZone: "UTC",
+      lessonsAskedAt: null,
       userId: user.id,
     });
 
@@ -127,7 +127,7 @@ describe("session preparation records admission for its children", () => {
     });
 
     await expect(
-      sessionPreparationWorkflow({ goalId: goal.id, timeZone: "UTC", userId: user.id }),
+      sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id }),
     ).resolves.toMatchObject({ lessonIds: [lesson.id], status: "prepared" });
 
     expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [

@@ -21,6 +21,7 @@ describe(postAsLearner, () => {
     await expect(postAsLearner({ path: "/v1/example" })).resolves.toStrictEqual({
       json: { status: "ready" },
       ok: true,
+      status: 200,
     });
 
     await expect(postAsLearner({ path: "/v1/example" })).resolves.toStrictEqual({

@@ -3,8 +3,7 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
-import { requestClaimQuestions } from "./claim-questions";
+import { requestClaimQuestionsFor } from "./claim-questions";
 
 async function setup() {
   const user = await userFixture();
@@ -46,29 +45,21 @@ async function setup() {
   return { goal, nucleus, user };
 }
 
-describe(requestClaimQuestions, () => {
-  it("requires the goal's learner", async () => {
+describe(requestClaimQuestionsFor, () => {
+  it("reads only the goal's own learner's goal", async () => {
     const { goal } = await setup();
-
-    mockSession(null);
-
-    await expect(requestClaimQuestions({ goalId: goal.id })).resolves.toStrictEqual({
-      status: "unauthorized",
-    });
-
     const other = await userFixture();
-    mockSession(other.id);
 
-    await expect(requestClaimQuestions({ goalId: goal.id })).resolves.toStrictEqual({
-      status: "notFound",
-    });
+    await expect(
+      requestClaimQuestionsFor({ goalId: goal.id, userId: other.id }),
+    ).resolves.toStrictEqual({ status: "notFound" });
   });
 
   it("asks for a few questions only for a topic to confirm that practice has none left to ask", async () => {
     const { goal, nucleus, user } = await setup();
-    mockSession(user.id);
+    const request = { goalId: goal.id, userId: user.id };
 
-    await expect(requestClaimQuestions({ goalId: goal.id })).resolves.toMatchObject({
+    await expect(requestClaimQuestionsFor(request)).resolves.toMatchObject({
       analytics: { distinctId: user.id, goalId: goal.id },
       format: "multipleChoice",
       questionsPerSkill: 3,
@@ -78,8 +69,6 @@ describe(requestClaimQuestions, () => {
 
     await itemFixture({ content: choiceItemContent(), skillId: nucleus.id });
 
-    await expect(requestClaimQuestions({ goalId: goal.id })).resolves.toStrictEqual({
-      status: "ready",
-    });
+    await expect(requestClaimQuestionsFor(request)).resolves.toStrictEqual({ status: "ready" });
   });
 });

@@ -4,8 +4,10 @@ import { type ConversationReviewRuns } from "../language/conversations/complete-
 import {
   type ConversationReviewInput,
   type ConversationReviewOutcome,
-  reviewConversationCall,
+  checkConversationCallObjectives,
+  scoreConversationCall,
   settleConversationReview,
+  writeConversationCallReview,
 } from "../language/conversations/conversation-review";
 import { endLiveCall } from "../language/conversations/end-live-call";
 
@@ -26,7 +28,15 @@ async function runReview(
   }
 
   await endLiveCall({ connectionId: input.connectionId, reason: "completion" }).catch(() => null);
-  const review = await reviewConversationCall({ ...input, runId }).catch(() => null);
+
+  const review = await Promise.all([
+    checkConversationCallObjectives(input),
+    scoreConversationCall(input),
+  ])
+    .then(([objectivesMet, score]) =>
+      writeConversationCallReview({ ...input, objectivesMet, runId, score }),
+    )
+    .catch(() => null);
 
   return settleConversationReview({ ...input, review, runId });
 }

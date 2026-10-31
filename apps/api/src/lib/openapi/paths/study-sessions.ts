@@ -149,7 +149,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/blocks/{blockId}/completions": {
     post: {
       description:
-        "Finishes a block and returns its completion moment: Brain Power (with the full 50-point bonus for finishing every offered mission when it just paid), the session bar, achievable missions, a checkpoint's result with each right answer and why, when a lesson comes back, and milestones earned. One, two or three offered missions earn the same completion bonus; zero missions earn none. Learn blocks finish once their lesson was finished in the lesson player. Finishing a finished block again (a retry after a lost response) returns its moment again, paying nothing twice.",
+        "Finishes a block and returns its completion moment: Brain Power (with the full 50-point bonus for finishing every offered mission when it just paid), the session bar, achievable missions, a checkpoint's result with each right answer and why, when a lesson comes back, and milestones earned. One, two or three offered missions earn the same completion bonus; zero missions earn none. Learn blocks finish once their lesson was finished in the lesson player. Finishing a finished block again (a retry after a lost response) returns its moment again, paying nothing twice. When the block ends the session, the server prepares what comes next; ask for nothing after it.",
       operationId: "createStudyBlockCompletion",
       requestBody: timeZoneBody,
       requestParams: { path: studyBlockPathParamsSchema },
@@ -173,7 +173,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/blocks/{blockId}/starts": {
     post: {
       description:
-        "Starts or resumes a block. A phase challenge waits for earlier lessons and phase challenges in the same session to be completed or skipped; `waitReason` says which is still unfinished. Other blocks can open in any order, including lessons, review, practice, weekly challenges and mocks. The session's first start records where the learner stands, so its end can say what changed. The daily time limit is checked before anything new starts.",
+        "Starts or resumes a block. A phase challenge waits for earlier lessons and phase challenges in the same session to be completed or skipped; `waitReason` says which is still unfinished. Other blocks can open in any order, including lessons, review, practice, weekly challenges and mocks. The session's first start records where the learner stands, so its end can say what changed. The daily time limit is checked before anything new starts. Starting a block prepares the session's next lessons on the server; ask for nothing after it.",
       operationId: "createStudyBlockStart",
       requestBody: {
         content: { "application/json": { schema: studyBlockStartInputSchema } },
@@ -247,7 +247,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/stops": {
     post: {
       description:
-        '"Stop for today": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` is false until every block is done).',
+        '"Stop for today": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` is false until every block is done). The first stop prepares what comes next on the server; ask for nothing after it.',
       operationId: "createStudySessionStop",
       requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },

@@ -1,6 +1,5 @@
 "use server";
 
-import { prepareStudySession } from "@/lib/session/session-preparation";
 import { languageConversationStartInputSchema } from "@zoonk/core/language/conversations/contract";
 import { startLanguageConversation } from "@zoonk/core/language/conversations/start";
 import { type ConversationConnection } from "@zoonk/learn/language/conversation";
@@ -47,10 +46,6 @@ export async function startLanguageConversationAction(
 
   if (data.status !== "ready") {
     return null;
-  }
-
-  if (data.sessionId) {
-    prepareStudySession(data.sessionId);
   }
 
   return { conversationId: data.conversationId };

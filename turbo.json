@@ -31,6 +31,7 @@
     "passThroughEnv": [
       "ANDROID_*",
       "APP_CACHE_SECRET",
+      "APP_FOLLOW_UP_SECRET",
       "CODEX_SANDBOX",
       "DATABASE_*",
       "MAIN_CACHE_BYPASS_SECRET",

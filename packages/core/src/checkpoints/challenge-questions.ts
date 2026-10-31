@@ -5,11 +5,11 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getRequestPlatform } from "../analytics/request-platform";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
-import { claimUsage } from "../entitlements/claim-usage";
+import { claimUsageFor } from "../entitlements/claim-usage";
 import { type RefusedUsage } from "../entitlements/contract";
 import { loadListeningSkillIds } from "../exams/listening/listening-skills";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
-import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { findGoalFor, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import {
   type PlacementQuickFormat,
   getPlacementQuickFormat,
@@ -172,8 +172,14 @@ async function planWrites({
   return { key, writes };
 }
 
-async function claimWriting(planItemId: string): Promise<NotOwned | Refused | null> {
-  const decision = await claimUsage({ kind: "assist", targetId: planItemId });
+async function claimWriting({
+  planItemId,
+  userId,
+}: {
+  planItemId: string;
+  userId: string;
+}): Promise<NotOwned | Refused | null> {
+  const decision = await claimUsageFor({ kind: "assist", targetId: planItemId, userId });
 
   if (decision.status === "unauthorized") {
     return decision;
@@ -215,7 +221,7 @@ export async function requestChallengeQuestions({
     return { status: "ready" };
   }
 
-  const refused = await claimWriting(item.id);
+  const refused = await claimWriting({ planItemId: item.id, userId });
 
   if (refused) {
     return refused;
@@ -255,19 +261,21 @@ function findUpcomingChallenges({ items, today }: { items: readonly PlanItem[]; 
   return [...bosses, ...mixed];
 }
 
-/** Session POSTs only; each challenge claims AI help once, and guests request writing on Start instead. */
-export async function requestUpcomingChallengeQuestions({
+/** Internal, for a session's preparation: `userId` must come from the learner's own write. Each challenge claims AI help once, and guests request writing on Start instead. */
+export async function requestUpcomingChallengeQuestionsFor({
   goalId,
+  userId,
 }: {
   goalId: string;
+  userId: string;
 }): Promise<UpcomingChallengeQuestionsRequest> {
-  const owned = await findOwnedGoal(goalId);
+  const owned = await findGoalFor({ goalId, userId });
 
   if (owned.status !== "ready") {
     return owned;
   }
 
-  const { goal, userId } = owned;
+  const { goal } = owned;
 
   if (goal.kind === "language" || goal.status !== "active") {
     return { status: "ready" };
@@ -311,18 +319,18 @@ export async function requestUpcomingChallengeQuestions({
   }
 
   const claims = await Promise.all(
-    challenges.map((challenge) => claimWriting(challenge.planItemId)),
+    challenges.map((challenge) => claimWriting({ planItemId: challenge.planItemId, userId })),
   );
 
   const allowed = challenges.filter((_, index) => claims[index] === null);
-  const refused = claims.find((claim) => claim !== null);
+  const refused = claims.find((claimed) => claimed !== null);
 
   if (allowed.length === 0 && refused) {
     return refused;
   }
 
   return {
-    analytics: { distinctId: userId, goalId, platform: await getRequestPlatform() },
+    analytics: { distinctId: userId, goalId, platform: null },
     challenges: allowed,
     quickFormat: context.quickFormat,
     status: "start",

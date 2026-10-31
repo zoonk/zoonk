@@ -1,6 +1,8 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { type FollowUp } from "../../follow-ups/follow-up-contract";
+import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { findPlanFirstLessonId } from "../../plans/_utils/plan-first-lesson";
 import { replanAfterPlacement } from "../../plans/replan-after-placement";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
@@ -25,12 +27,7 @@ type PlacementCompletion = {
 };
 
 export type FinishPlacementResult =
-  | {
-      completion: PlacementCompletion;
-      /** Null while the first item stands in for an unoutlined skill. */
-      firstLessonId: string | null;
-      status: "ready";
-    }
+  | { completion: PlacementCompletion; status: "ready" }
   | { status: "notFound" }
   | { status: "unauthorized" };
 
@@ -48,6 +45,11 @@ async function declinePlacement(goal: Goal) {
       where: { id: goal.id },
     });
   });
+}
+
+/** Day 1 opens the first lesson minutes from now, so it's written on its own right away. */
+function writeFirstLesson(lessonId: string | null): FollowUp[] {
+  return lessonId ? [{ input: { lessonId }, kind: "writeLesson" }] : [];
 }
 
 /** May stop before placement settles; starting from scratch also disables first-week placement questions. */
@@ -72,6 +74,8 @@ export async function finishGoalPlacement({
       declinePlacement(owned.goal),
     ]);
 
+    await oweGoalLessons({ also: writeFirstLesson(firstLessonId), goalId, userId: owned.userId });
+
     return {
       completion: {
         areas: getScratchAreaStarts(plan.skills),
@@ -80,7 +84,6 @@ export async function finishGoalPlacement({
         phases: getScratchPhaseStarts(plan.skills),
         testedOutPlanItemIds: [],
       },
-      firstLessonId,
       status: "ready",
     };
   }
@@ -100,6 +103,10 @@ export async function finishGoalPlacement({
     await replanAfterPlacement({ goalId, now, pastBasicsAreas, timeZone });
   }
 
+  const firstLessonId = await findPlanFirstLessonId(goalId);
+
+  await oweGoalLessons({ also: writeFirstLesson(firstLessonId), goalId, userId: owned.userId });
+
   return {
     completion: {
       areas: state.areas,
@@ -108,7 +115,6 @@ export async function finishGoalPlacement({
       phases: state.phases,
       testedOutPlanItemIds,
     },
-    firstLessonId: await findPlanFirstLessonId(goalId),
     status: "ready",
   };
 }

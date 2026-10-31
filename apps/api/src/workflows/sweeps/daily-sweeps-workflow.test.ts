@@ -12,6 +12,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { start } from "workflow/api";
 import { getStartMock } from "../_test-utils/start-mock";
+import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
@@ -137,6 +138,29 @@ describe(dailySweepsWorkflow, () => {
 
     expect(reviewed).toContain(lesson.id);
     expect(result.laterReviews).toBe(reviewed.length);
+  });
+
+  it("starts the follow-ups of learners whose owed work no run took", async () => {
+    const [waiting, recent] = await Promise.all([userFixture(), userFixture()]);
+
+    await prisma.followUp.createMany({
+      data: [
+        {
+          input: { language: "en" },
+          key: "en",
+          kind: "findMistakePattern",
+          requestedAt: new Date(Date.now() - DAY_MS),
+          userId: waiting.id,
+        },
+        { input: { language: "en" }, key: "en", kind: "findMistakePattern", userId: recent.id },
+      ],
+    });
+
+    const result = await dailySweepsWorkflow();
+
+    expect(start).toHaveBeenCalledWith(followUpsWorkflow, [{ userId: waiting.id }]);
+    expect(start).not.toHaveBeenCalledWith(followUpsWorkflow, [{ userId: recent.id }]);
+    expect(result.followUpsStarted).toBeGreaterThanOrEqual(1);
   });
 
   it("starts the rewrite of what a changed source left flagged", async () => {

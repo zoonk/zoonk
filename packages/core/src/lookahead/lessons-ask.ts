@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { replanWaitingGoal } from "../library/curriculum/replan-waiting-goals";
@@ -14,16 +14,15 @@ import { findSavedDaySession } from "../sessions/_utils/saved-day-session";
  * end, or null without a plan. Authorize the goal first.
  */
 export async function askForLessons({
+  db = prisma,
   goalId,
   now = new Date(),
 }: {
+  db?: TransactionClient;
   goalId: string;
   now?: Date;
 }): Promise<number | null> {
-  const { count } = await prisma.plan.updateMany({
-    data: { lessonsAskedAt: now },
-    where: { goalId },
-  });
+  const { count } = await db.plan.updateMany({ data: { lessonsAskedAt: now }, where: { goalId } });
 
   return count > 0 ? now.getTime() : null;
 }

@@ -1,10 +1,13 @@
 import { conversationReviewRuns } from "@/lib/conversation-review-runs";
 import { writeConversationFeedback } from "@zoonk/ai/tasks/language/conversation-feedback";
 import { checkConversationObjectives } from "@zoonk/ai/tasks/language/conversation-objectives";
+import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/language/speaking-mock-scenario";
+import { scoreSpeaking } from "@zoonk/ai/tasks/language/speaking-score";
 import { completeLanguageConversation } from "@zoonk/core/language/conversations/complete";
+import { prepareSpeakingMock } from "@zoonk/core/language/conversations/prepare";
 import { getSession } from "@zoonk/core/users/session";
 import { prisma } from "@zoonk/db";
-import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
+import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { BLOCKED_TEST_CALL } from "@zoonk/utils/blocked-test-call";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -25,7 +28,12 @@ vi.mock("@zoonk/ai/tasks/language/conversation-objectives", () => ({
   checkConversationObjectives: vi.fn(),
 }));
 
+vi.mock("@zoonk/ai/tasks/language/speaking-mock-scenario", () => ({
+  generateSpeakingMockScenario: vi.fn(),
+}));
+
 vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
+vi.mock("@zoonk/ai/tasks/language/speaking-score", () => ({ scoreSpeaking: vi.fn() }));
 
 const PROVENANCE = {
   generatedAt: new Date().toISOString(),
@@ -115,6 +123,7 @@ describe(conversationReviewWorkflow, () => {
 
     await expect(run.returnValue).resolves.toMatchObject({ status: "completed" });
     expect(writeConversationFeedback).toHaveBeenCalledTimes(2);
+    expect(checkConversationObjectives).toHaveBeenCalledOnce();
 
     const [conversation, events, connection] = await Promise.all([
       prisma.languageConversation.findUniqueOrThrow({ where: { id: call.conversationId } }),
@@ -175,5 +184,72 @@ describe(conversationReviewWorkflow, () => {
     expect(writeConversationFeedback).toHaveBeenCalledOnce();
 
     await expect(prisma.learningEvent.count({ where: { userId: call.userId } })).resolves.toBe(1);
+  });
+
+  it("[3] writes the next speaking mock once it settles one the learner connected to", async () => {
+    const { goal, user } = await languageGoalFixture();
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { details: { level: "A2", reason: "Preciso do TOEFL", targetLevel: "B1+" } },
+        where: { id: goal.id },
+      }),
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      }),
+    ]);
+
+    vi.mocked(generateSpeakingMockScenario).mockResolvedValue(modelAnswer(RENTING_SCENARIO));
+    vi.mocked(scoreSpeaking).mockRejectedValue(new Error(BLOCKED_TEST_CALL));
+
+    await prepareSpeakingMock({ goalId: goal.id, userId: user.id });
+
+    const mock = await prisma.languageConversation.findFirstOrThrow({
+      where: { goalId: goal.id, kind: "speakingMock" },
+    });
+
+    const startedAt = new Date();
+
+    const [, connection] = await Promise.all([
+      prisma.languageConversation.update({ data: { startedAt }, where: { id: mock.id } }),
+      prisma.liveCallConnection.create({
+        data: {
+          conversationId: mock.id,
+          costMicros: 122_500,
+          deadlineAt: new Date(startedAt.getTime() + 120_000),
+          heldSeconds: 120,
+          providerSessionId: `live_${crypto.randomUUID()}`,
+          startedAt,
+          state: "live",
+          userId: user.id,
+        },
+      }),
+    ]);
+
+    const run = await start(conversationReviewWorkflow, [
+      {
+        connectionId: connection.id,
+        conversationId: mock.id,
+        spokenSeconds: 20,
+        timeZone: "UTC",
+        turns: TURNS,
+        usedHelp: false,
+        userId: user.id,
+      },
+    ]);
+
+    await expect(run.returnValue).resolves.toMatchObject({ status: "completed" });
+
+    await vi.waitFor(
+      async () => {
+        await expect(
+          prisma.languageConversation.findMany({
+            select: { startedAt: true, status: true },
+            where: { goalId: goal.id, id: { not: mock.id }, kind: "speakingMock" },
+          }),
+        ).resolves.toStrictEqual([{ startedAt: null, status: "ready" }]);
+      },
+      { interval: 200, timeout: 30_000 },
+    );
   });
 });

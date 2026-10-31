@@ -1,5 +1,7 @@
 import { start } from "workflow/api";
 import { repeatUntil } from "../_shared/repeat-until";
+import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
+import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
@@ -23,6 +25,7 @@ export type DailySweepsResult = {
   sessionsPurged: number;
   evaluationRunsPurged: number;
   flaggedContentStarted: boolean;
+  followUpsStarted: number;
   freshnessChecks: number;
   guestsDeleted: number;
   itemsRecalibrated: number;
@@ -41,6 +44,14 @@ async function checkFreshness(): Promise<number> {
   await Promise.all(targets.map((target) => start(freshnessWorkflow, [target])));
 
   return targets.length;
+}
+
+/** Owed work whose start failed, such as an API that didn't answer the learner's request. */
+async function startOldFollowUps(): Promise<number> {
+  const userIds = await listLearnersWithOldFollowUpsStep();
+  await Promise.all(userIds.map((userId) => start(followUpsWorkflow, [{ userId }])));
+
+  return userIds.length;
 }
 
 async function deleteGuests(): Promise<number> {
@@ -80,24 +91,37 @@ async function startLaterReviews(): Promise<number> {
 export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
   "use workflow";
 
-  const [checks, guests, facts, runs, items, reviews, flagged, retired, verifications, access] =
-    await Promise.allSettled([
-      checkFreshness(),
-      deleteGuests(),
-      purgeMemoryFactsStep(),
-      purgeEvaluationRunsStep(),
-      recalibrateItemDifficultiesStep(),
-      startLaterReviews(),
-      rewriteFlaggedContent(),
-      deleteRetiredStepsStep(),
-      purgeExpiredVerificationsStep(),
-      purgeExpiredAuthRecordsStep(),
-    ]);
+  const [
+    checks,
+    guests,
+    facts,
+    runs,
+    items,
+    reviews,
+    flagged,
+    retired,
+    verifications,
+    access,
+    followUps,
+  ] = await Promise.allSettled([
+    checkFreshness(),
+    deleteGuests(),
+    purgeMemoryFactsStep(),
+    purgeEvaluationRunsStep(),
+    recalibrateItemDifficultiesStep(),
+    startLaterReviews(),
+    rewriteFlaggedContent(),
+    deleteRetiredStepsStep(),
+    purgeExpiredVerificationsStep(),
+    purgeExpiredAuthRecordsStep(),
+    startOldFollowUps(),
+  ]);
 
   return {
     accessRecordsPurged: access.status === "fulfilled" ? access.value.recordsPurged : 0,
     evaluationRunsPurged: countOf(runs),
     flaggedContentStarted: flagged.status === "fulfilled" && flagged.value,
+    followUpsStarted: countOf(followUps),
     freshnessChecks: countOf(checks),
     guestsDeleted: countOf(guests),
     itemsRecalibrated: countOf(items),

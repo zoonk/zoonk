@@ -55,3 +55,23 @@ export async function prepareSpeakingMock({ goalId, userId }: LearnerGoal): Prom
     await writeSpeakingMock(setup);
   }
 }
+
+/**
+ * Internal, for the review workflow once it settled a call: a speaking mock the learner connected to
+ * is followed by the next one, written ahead. Read from the completed call, so a retried settle
+ * decides the same.
+ */
+export async function findNextSpeakingMockGoalId({
+  conversationId,
+  userId,
+}: {
+  conversationId: string;
+  userId: string;
+}): Promise<string | null> {
+  const call = await prisma.languageConversation.findFirst({
+    select: { goalId: true, kind: true, startedAt: true },
+    where: { id: conversationId, status: "completed", userId },
+  });
+
+  return call?.kind === "speakingMock" && call.startedAt ? call.goalId : null;
+}

@@ -15,9 +15,11 @@ import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
+import { listFollowUps } from "../follow-ups/follow-up-rows";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { getMistakePractice } from "./get-mistake-practice";
+import { resolveMistakeCause } from "./resolve-mistake-cause";
 
 const deferred: Promise<unknown>[] = [];
 const YESTERDAY = new Date(Date.now() - 86_400_000);
@@ -490,7 +492,7 @@ describe(answerMistakePractice, () => {
     expect(result.status === "ready" && result.feedback.mistakeStatus).toBe("fixed");
   });
 
-  it("names an ambiguous cause after the response, with the classifier", async () => {
+  it("owes an ambiguous cause's naming by the classifier", async () => {
     const { extra, original, skill, user } = await setup();
 
     const mistake = await mistakeFixture({
@@ -540,25 +542,32 @@ describe(answerMistakePractice, () => {
       mistakeId: mistake.id,
     });
 
-    await Promise.all(deferred);
-
     expect(result.status === "ready" && result.feedback).toMatchObject({
       isCorrect: false,
       mistakeStatus: "open",
     });
 
-    expect(classifyMistakeCause).toHaveBeenCalledWith(
-      expect.objectContaining({
-        learnerAnswer: "Wrong answer",
-        misconception: "Applies the rule backwards",
-      }),
-    );
-
     const added = await prisma.mistake.findFirstOrThrow({
       where: { itemId: extra.id, userId: user.id },
     });
 
-    expect(added.cause).toBe("trap");
+    const [owed] = await listFollowUps(user.id);
+
+    expect(owed).toMatchObject({
+      input: {
+        cause: { learnerAnswer: "Wrong answer", misconception: "Applies the rule backwards" },
+        mistakeId: added.id,
+      },
+      kind: "classifyMistakeCause",
+    });
+
+    if (owed?.kind === "classifyMistakeCause") {
+      await resolveMistakeCause({ ...owed.input, userId: user.id });
+    }
+
+    await expect(
+      prisma.mistake.findUniqueOrThrow({ where: { id: added.id } }),
+    ).resolves.toMatchObject({ cause: "trap" });
   });
 
   it("counts an answer that takes a timed drill's whole time box as wrong, run out of time", async () => {

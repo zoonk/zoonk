@@ -3,7 +3,6 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
-import { after } from "next/server";
 import { describe, expect, it } from "vitest";
 import {
   LEARNER_LOCK,
@@ -55,7 +54,7 @@ describe(recordLanguageStepEvidence, () => {
     });
   });
 
-  it("remembers a word learned once, and looks for a pattern after a wrong answer", async () => {
+  it("remembers a word learned once, whatever the answers", async () => {
     const user = await learner();
     const org = await organizationFixture();
     const word = await wordFixture({ organizationId: org.id, targetLanguage: "en" });
@@ -75,8 +74,6 @@ describe(recordLanguageStepEvidence, () => {
       userId: user.id,
     });
 
-    expect(after).not.toHaveBeenCalled();
-
     await recordLanguageStepEvidence({
       isCorrect: false,
       lesson: ENGLISH_BEGINNER,
@@ -85,7 +82,6 @@ describe(recordLanguageStepEvidence, () => {
     });
 
     await expect(prisma.learnerWord.count({ where: { userId: user.id } })).resolves.toBe(1);
-    expect(after).toHaveBeenCalledOnce();
   });
 
   it("counts every answer given at the same moment, even before the skill has a level", async () => {

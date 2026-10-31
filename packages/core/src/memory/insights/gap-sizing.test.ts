@@ -11,12 +11,11 @@ import {
 import { skillFixture, skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
-import { scheduleMemoryAfterSession } from "../after-session";
+import { runSessionFollowUps } from "../_test-utils/session-follow-ups";
 import { readInsightPayload } from "./_utils/insight-view";
 import { getCurrentMemoryInsight } from "./get-current-memory-insight";
 import { respondToMemoryInsight } from "./respond-to-memory-insight";
@@ -123,10 +122,8 @@ async function chapterFixture({ skills, title }: { skills: Skill[]; title: strin
   return { chapter, lessons };
 }
 
-async function runAfterSession({ goalId, userId }: { goalId: string; userId: string }) {
-  const settle = runDeferredWork();
-  scheduleMemoryAfterSession({ goalId, sessionId: null, timeZone: "UTC", userId });
-  await settle();
+function runAfterSession({ goalId, userId }: { goalId: string; userId: string }) {
+  return runSessionFollowUps({ goalId, userId });
 }
 
 async function loadPlanSkillIds(goalId: string) {

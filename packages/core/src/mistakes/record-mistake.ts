@@ -1,9 +1,8 @@
 import { type MistakeCauseInput } from "@zoonk/ai/tasks/mistakes/cause";
 import { type Mistake, type TransactionClient, prisma } from "@zoonk/db";
+import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { type MistakeSignals, inferMistakeCause } from "./mistake-cause";
 import { type MistakeSnapshot } from "./mistake-snapshot";
-
-export type MistakeCauseRequest = { input: MistakeCauseInput; mistakeId: string; userId: string };
 
 type MistakeTarget = { itemId: string | null; stepId: string | null };
 
@@ -45,7 +44,7 @@ function toCauseInput({
   };
 }
 
-/** Reuses an existing open entry; ambiguous causes return a classifier request for post-response work. */
+/** Reuses an existing open entry; an ambiguous cause owes its classification, in the same transaction. */
 export async function recordMistake(
   {
     attemptId,
@@ -69,7 +68,7 @@ export async function recordMistake(
     userId: string;
   },
   transaction: TransactionClient = prisma,
-): Promise<{ causeRequest: MistakeCauseRequest | null; mistake: Mistake }> {
+): Promise<Mistake> {
   /** Writing corrections establish the error, not whether the learner misread, guessed or forgot. */
   const isLanguageWriting = Boolean(targetLanguage) && snapshot.format === "typedAnswer";
   const cause = isLanguageWriting ? null : inferMistakeCause(signals);
@@ -83,24 +82,30 @@ export async function recordMistake(
   const existing = target ?? (await findOpenMistake({ itemId, stepId, transaction, userId }));
 
   if (existing) {
-    const mistake = unknownGap
-      ? await transaction.mistake.update({
+    return unknownGap
+      ? transaction.mistake.update({
           data: { cause: "gap", fixedAt: null, status: "open" },
           where: { id: existing.id },
         })
       : existing;
-
-    return { causeRequest: null, mistake };
   }
 
   const mistake = await transaction.mistake.create({
     data: { attemptId, cause, itemId, skillId, snapshot, stepId, userId },
   });
 
-  const causeRequest =
-    cause || isLanguageWriting
-      ? null
-      : { input: toCauseInput({ language, signals, snapshot }), mistakeId: mistake.id, userId };
+  if (!cause && !isLanguageWriting) {
+    await oweFollowUps({
+      db: transaction,
+      followUps: [
+        {
+          input: { cause: toCauseInput({ language, signals, snapshot }), mistakeId: mistake.id },
+          kind: "classifyMistakeCause",
+        },
+      ],
+      userId,
+    });
+  }
 
-  return { causeRequest, mistake };
+  return mistake;
 }

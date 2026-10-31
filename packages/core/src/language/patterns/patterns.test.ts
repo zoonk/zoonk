@@ -4,11 +4,12 @@ import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { after } from "next/server";
 import { describe, expect, it, vi } from "vitest";
+import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
+import { writeLanguageStepEvidence } from "../levels/record-language-evidence";
 import { dismissMistakePattern } from "./dismiss-mistake-pattern";
-import { scheduleMistakePatternCheck } from "./find-mistake-pattern";
+import { checkMistakePattern } from "./find-mistake-pattern";
 import { getMistakePattern } from "./get-mistake-pattern";
 import { practiceMistakePattern } from "./practice-mistake-pattern";
 
@@ -35,16 +36,6 @@ const PATTERN_OUTPUT = {
   rule: "Começou no passado e continua? Use have + particípio.",
   title: "since e for",
 };
-
-async function runScheduledCheck() {
-  const callback = vi.mocked(after).mock.calls.at(-1)?.[0];
-
-  if (typeof callback !== "function") {
-    throw new TypeError("No check was scheduled");
-  }
-
-  await callback();
-}
 
 async function languageMistakes(count: number) {
   const setup = await languageGoalFixture();
@@ -121,14 +112,44 @@ function createDrillPattern({ goalId, userId }: { goalId: string; userId: string
   });
 }
 
+describe(writeLanguageStepEvidence, () => {
+  it.each([
+    [3, "wrong", [{ input: { language: "en" }, key: "en", kind: "findMistakePattern" }]],
+    [3, "right", []],
+    [2, "wrong", []],
+    [22, "wrong", []],
+  ])(
+    "owes a look for a pattern only at every third new mistake: %i mistakes, then a %s answer",
+    async (count, answer, owed) => {
+      const { user } = await languageMistakes(count);
+      const isCorrect = answer === "right";
+
+      await prisma.$transaction((tx) =>
+        writeLanguageStepEvidence(tx, {
+          isCorrect,
+          skill: {
+            evidence: { ceiling: 1, correct: isCorrect ? 1 : 0, total: 1 },
+            language: "en",
+            skill: "reading",
+            startScore: 0,
+            userId: user.id,
+          },
+          word: null,
+        }),
+      );
+
+      await expect(listOwed(user.id)).resolves.toStrictEqual(owed);
+    },
+  );
+});
+
 describe("mistake patterns", () => {
   it("checks every third new mistake and saves the pattern it finds", async () => {
     const { goal, user } = await languageMistakes(3);
 
     mockPatternFound();
 
-    scheduleMistakePatternCheck({ language: "en", userId: user.id });
-    await runScheduledCheck();
+    await checkMistakePattern({ language: "en", userId: user.id });
 
     const saved = await prisma.mistakePattern.findFirstOrThrow({ where: { userId: user.id } });
 
@@ -149,8 +170,7 @@ describe("mistake patterns", () => {
   it("waits for a few new mistakes before checking", async () => {
     const { user } = await languageMistakes(2);
 
-    scheduleMistakePatternCheck({ language: "en", userId: user.id });
-    await runScheduledCheck();
+    await checkMistakePattern({ language: "en", userId: user.id });
 
     expect(findMistakePattern).not.toHaveBeenCalled();
   });
@@ -159,8 +179,7 @@ describe("mistake patterns", () => {
     const { goal, mistakes, user } = await languageMistakes(21);
     mockPatternFound();
 
-    scheduleMistakePatternCheck({ language: "en", userId: user.id });
-    await runScheduledCheck();
+    await checkMistakePattern({ language: "en", userId: user.id });
 
     expect(findMistakePattern).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -182,15 +201,17 @@ describe("mistake patterns", () => {
     });
   });
 
-  it("waits at 22 eligible mistakes even when the newest sample is full", async () => {
-    const { user } = await languageMistakes(22);
+  it("checks every mistake since the last pattern when asks for several checks ran as one", async () => {
+    const { user } = await languageMistakes(4);
     mockPatternFound();
 
-    scheduleMistakePatternCheck({ language: "en", userId: user.id });
-    await runScheduledCheck();
+    await checkMistakePattern({ language: "en", userId: user.id });
 
-    expect(findMistakePattern).not.toHaveBeenCalled();
-    await expect(prisma.mistakePattern.count({ where: { userId: user.id } })).resolves.toBe(0);
+    expect(findMistakePattern).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ mistakes: expect.arrayContaining([expect.anything()]) }),
+    );
+
+    await expect(prisma.mistakePattern.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
   it("drills a pattern once for full Brain Power and takes it off Today", async () => {

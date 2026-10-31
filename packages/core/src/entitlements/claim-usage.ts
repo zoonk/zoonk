@@ -4,23 +4,22 @@ import { type UsageKind } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../cache/tags";
 import { claimUsageForViewer } from "./_utils/claim-usage-for-viewer";
-import { getEntitlementViewer } from "./_utils/entitlement-viewer";
+import {
+  type EntitlementViewer,
+  getEntitlementViewer,
+  getEntitlementViewerFor,
+} from "./_utils/entitlement-viewer";
 import { type UsageDecision } from "./contract";
 
-/** Claim immediately before work and obey the decision; targetId makes retries free. Calls may hold fewer seconds than requested. */
-export async function claimUsage({
+type UsageClaim = { generated?: boolean; kind: UsageKind; seconds?: number; targetId: string };
+
+async function claimAs({
   generated = false,
   kind,
   seconds,
   targetId,
-}: {
-  generated?: boolean;
-  kind: UsageKind;
-  seconds?: number;
-  targetId: string;
-}): Promise<UsageDecision> {
-  const viewer = await getEntitlementViewer();
-
+  viewer,
+}: UsageClaim & { viewer: EntitlementViewer | null }): Promise<UsageDecision> {
   if (!viewer) {
     return { status: "unauthorized" };
   }
@@ -39,6 +38,19 @@ export async function claimUsage({
   }
 
   return decision;
+}
+
+/** Claim immediately before work and obey the decision; targetId makes retries free. Calls may hold fewer seconds than requested. */
+export async function claimUsage(claim: UsageClaim): Promise<UsageDecision> {
+  return claimAs({ ...claim, viewer: await getEntitlementViewer() });
+}
+
+/** Internal, for workflows: `userId` must come from the learner's own write. */
+export async function claimUsageFor({
+  userId,
+  ...claim
+}: UsageClaim & { userId: string }): Promise<UsageDecision> {
+  return claimAs({ ...claim, viewer: await getEntitlementViewerFor(userId) });
 }
 
 /** Claim immediately before starting a small AI call. */

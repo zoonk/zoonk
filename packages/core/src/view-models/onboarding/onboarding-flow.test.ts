@@ -15,11 +15,12 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { normalizeString } from "@zoonk/utils/string";
 import { describe, expect, it, vi } from "vitest";
-import { runDeferredWork } from "../../_test-utils/deferred-work";
+import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
 import { type GoalDraft } from "../../goals/goal-contract";
 import { recordGoalGeneration } from "../../goals/record-goal-generation";
 import { getCurrentUserMemory } from "../../memory/get-current-user-memory";
+import { proposeOnboardingMemory, rememberMemoryCandidate } from "../../memory/memory-follow-ups";
 import { answerOnboardingQuestion } from "./answer-onboarding-question";
 import { createOnboardingGoals } from "./create-onboarding-goals";
 import { getOnboarding } from "./get-onboarding";
@@ -97,9 +98,8 @@ async function getSteps(goalId: string) {
 }
 
 describe("onboarding a new goal", () => {
-  it("learns who the learner is from onboarding, since memory starts on", async () => {
+  it("owes learning who the learner is and their first lessons once the schedule is answered", async () => {
     const user = await useLearner();
-    const flush = runDeferredWork();
     mockWorkFact("Works as a data analyst");
 
     const [goal] = await createGoal([
@@ -115,7 +115,24 @@ describe("onboarding a new goal", () => {
     await expect(getCurrentUserMemory()).resolves.toMatchObject({ enabled: true });
 
     await answerOnboardingQuestion({ goalId, input: { dailyMinutes: 15, question: "schedule" } });
-    await flush();
+
+    await expect(listOwed(user.id)).resolves.toMatchObject([
+      { key: goalId, kind: "prepareGoalLessons" },
+      { input: { goalId }, key: goalId, kind: "rememberOnboarding" },
+    ]);
+
+    const proposed = await proposeOnboardingMemory({ goalId, userId: user.id });
+    const candidate = proposed?.candidates[0];
+
+    if (!proposed || !candidate) {
+      throw new Error("Onboarding proposed no facts");
+    }
+
+    await rememberMemoryCandidate({
+      candidate,
+      context: proposed.context,
+      gate: { sensitive: false },
+    });
 
     expect(extractMemoryFacts).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({

@@ -70,7 +70,7 @@ export async function loadOnboardingInput({
 }: {
   goalId: string;
   userId: string;
-}): Promise<{ input: string; language: string } | null> {
+}): Promise<{ input: string; language: string; timeZone: string | null } | null> {
   const goal = await prisma.goal.findFirst({ where: { id: goalId, userId } });
 
   if (!goal) {
@@ -84,5 +84,5 @@ export async function loadOnboardingInput({
     ...formatDetails(goal.details),
   ].filter(Boolean);
 
-  return { input: lines.join("\n"), language: goal.language };
+  return { input: lines.join("\n"), language: goal.language, timeZone: goal.timezone };
 }

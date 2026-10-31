@@ -1,7 +1,6 @@
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { studyBlockPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
-import { scheduleSessionPreparation } from "@/lib/session-preparation";
 import { studySessionError } from "@/lib/study-session-errors";
 import { serializeStudyBlockCompletion } from "@zoonk/core/sessions/completion-contract";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
@@ -21,10 +20,6 @@ async function createCompletion(
 
   if (result.status !== "ready") {
     return studySessionError(result);
-  }
-
-  if (result.completion.sessionCompleted) {
-    await scheduleSessionPreparation(path.sessionId);
   }
 
   return NextResponse.json(serializeStudyBlockCompletion(result.completion));

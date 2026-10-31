@@ -4,6 +4,7 @@ import { generatePlacementItems } from "@zoonk/ai/tasks/items/placement-items";
 import { classifyWorkField } from "@zoonk/ai/tasks/items/work-field";
 import { generateConversationScenario } from "@zoonk/ai/tasks/language/conversation-scenario";
 import { generateStepVariant } from "@zoonk/ai/tasks/variants/step-variant";
+import { requestClaimQuestionsFor } from "@zoonk/core/lookahead/claim-questions";
 import { prisma } from "@zoonk/db";
 import { writtenChallengeCaseFixture } from "@zoonk/testing/fixtures/challenge-written-case";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -34,6 +35,8 @@ import { taskResult } from "../_test-utils/recorded-outputs";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { sessionPreparationWorkflow } from "./session-preparation-workflow";
+
+vi.mock("@zoonk/core/lookahead/claim-questions", { spy: true });
 
 const TIME_ZONE = "UTC";
 
@@ -214,8 +217,8 @@ describe(sessionPreparationWorkflow, () => {
 
     const result = await sessionPreparationWorkflow({
       goalId: goal.id,
+      lessonsAskedAt: null,
       platform: "ios",
-      timeZone: TIME_ZONE,
       userId: user.id,
     });
 
@@ -263,7 +266,7 @@ describe(sessionPreparationWorkflow, () => {
     const nurse = await nurseWithWrittenLessons();
     const { challenge, goal, taught, user } = nurse;
 
-    await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
+    await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
 
     expect(generateStepVariant).toHaveBeenCalledWith(
       expect.objectContaining({ key: "no-install" }),
@@ -301,7 +304,7 @@ describe(sessionPreparationWorkflow, () => {
     });
 
     await expect(
-      sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id }),
+      sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id }),
     ).resolves.toMatchObject({ lessonIds: [taught.lesson.id], status: "prepared" });
 
     await expect(personalLayer(nurse)).resolves.toMatchObject({
@@ -335,7 +338,7 @@ describe(sessionPreparationWorkflow, () => {
         }) as unknown as ReturnType<typeof createHook>,
     );
 
-    await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
+    await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
 
     expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
       expect.objectContaining({ lessonId: taught.lesson.id }),
@@ -350,7 +353,7 @@ describe(sessionPreparationWorkflow, () => {
     vi.mocked(generateItems).mockRejectedValue(new Error("Provider unavailable"));
 
     await expect(
-      sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id }),
+      sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id }),
     ).resolves.toMatchObject({ status: "prepared" });
 
     await expect(personalLayer(nurse)).resolves.toStrictEqual({
@@ -413,7 +416,7 @@ describe(sessionPreparationWorkflow, () => {
       }),
     ]);
 
-    await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
+    await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
 
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
       expect.objectContaining({
@@ -456,7 +459,7 @@ describe(sessionPreparationWorkflow, () => {
 
     await planItemFixture({ planId: plan.id, position: 0, scheduledFor: today, skillId: skill.id });
 
-    await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
+    await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
 
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
       expect.objectContaining({ background: false, courseId: course.id, waitedSkillId: skill.id }),
@@ -524,7 +527,7 @@ describe(sessionPreparationWorkflow, () => {
         }),
       ]);
 
-      await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
+      await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
 
       const ref = {
         area: null,
@@ -582,7 +585,7 @@ describe(sessionPreparationWorkflow, () => {
       taskResult({ ...RENTING_SCENARIO, title: "Negociar o aluguel" }),
     );
 
-    await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
+    await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
 
     expect(generateConversationScenario).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ unitTitle: renting.title }),
@@ -597,16 +600,22 @@ describe(sessionPreparationWorkflow, () => {
       skillFixture({ name: "Identificar as funções do núcleo" }),
     ]);
 
-    await planFixture({ goalId: goal.id });
+    const [session] = await Promise.all([
+      studySessionFixture({ goalId: goal.id, userId: user.id }),
+      planFixture({ goalId: goal.id }),
+    ]);
 
     writePlacementQuestions();
 
-    await sessionPreparationWorkflow({
-      claimQuestions: { format: "multipleChoice", questionsPerSkill: 3, skillIds: [nucleus.id] },
-      goalId: goal.id,
-      timeZone: TIME_ZONE,
-      userId: user.id,
+    vi.mocked(requestClaimQuestionsFor).mockResolvedValueOnce({
+      analytics: { distinctId: user.id, goalId: goal.id, platform: null },
+      format: "multipleChoice",
+      questionsPerSkill: 3,
+      skillIds: [nucleus.id],
+      status: "start",
     });
+
+    await sessionPreparationWorkflow({ sessionId: session.id, userId: user.id });
 
     expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -648,7 +657,7 @@ describe(sessionPreparationWorkflow, () => {
 
     writePlacementQuestions();
 
-    await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
+    await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
 
     expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -669,7 +678,7 @@ describe(sessionPreparationWorkflow, () => {
       prisma.item.deleteMany({ where: { skillId: english.id } }),
     ]);
 
-    await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
+    await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
 
     expect(generatePlacementItems).not.toHaveBeenCalled();
   });
@@ -681,7 +690,7 @@ describe(sessionPreparationWorkflow, () => {
     mockHookConflict({ returnValue: Promise.resolve(null), runId: "running-prep" });
 
     await expect(
-      sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id }),
+      sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id }),
     ).resolves.toStrictEqual({ status: "alreadyRunning" });
 
     expect(start).not.toHaveBeenCalled();

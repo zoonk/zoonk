@@ -1,6 +1,6 @@
 "use server";
 
-import { startGoalWork } from "@/lib/goals/start-goal-work";
+import { postAsLearner } from "@/lib/api/learner-api";
 import { getExplanation } from "@zoonk/core/view-models/explain/get";
 import { isUuid } from "@zoonk/utils/uuid";
 
@@ -19,6 +19,9 @@ export async function retryExplanationAction(goalId: string): Promise<boolean> {
     return true;
   }
 
-  const [started] = await startGoalWork([{ id: goalId, kind: "explain" }]);
-  return Boolean(started?.generationId);
+  const response = await postAsLearner({
+    path: `/v1/goals/${encodeURIComponent(goalId)}/generations`,
+  });
+
+  return response.ok;
 }

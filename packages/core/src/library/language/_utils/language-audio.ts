@@ -28,7 +28,7 @@ async function generateAudio({
   return data;
 }
 
-function toAudioData({ provenance, url }: VoicedClip) {
+export function toAudioData({ provenance, url }: VoicedClip) {
   return {
     audioGeneratedAt: new Date(provenance.generatedAt),
     audioModel: provenance.model,

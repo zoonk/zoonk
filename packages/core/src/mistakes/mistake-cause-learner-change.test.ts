@@ -3,10 +3,9 @@ import { prisma } from "@zoonk/db";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import { runDeferredWork } from "../_test-utils/deferred-work";
-import { scheduleMistakeCause } from "./resolve-mistake-cause";
+import { resolveMistakeCause } from "./resolve-mistake-cause";
 
-const INPUT = {
+const CAUSE = {
   correctAnswer: "since",
   language: "en",
   learnerAnswer: "for",
@@ -25,39 +24,43 @@ function classifiedAs(cause: "gap" | "trap") {
   });
 }
 
-async function classify(request: { mistakeId: string; userId: string }) {
-  const flush = runDeferredWork();
-  scheduleMistakeCause({ input: INPUT, ...request });
-  await flush();
-}
-
-describe("mistake cause writes", () => {
+describe(resolveMistakeCause, () => {
   it("saves the cause once when the notebook entry gets it", async () => {
     const user = await userFixture();
     const mistake = await mistakeFixture({ cause: null, userId: user.id });
 
     classifiedAs("trap");
-    await classify({ mistakeId: mistake.id, userId: user.id });
+    await resolveMistakeCause({ cause: CAUSE, mistakeId: mistake.id, userId: user.id });
 
     await expect(
       prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } }),
     ).resolves.toMatchObject({ cause: "trap" });
   });
 
-  it("changes nothing when the cause was set meanwhile or the model fails", async () => {
+  it("never overwrites a cause set meanwhile", async () => {
     const user = await userFixture();
     const settled = await mistakeFixture({ cause: "time", userId: user.id });
-    const open = await mistakeFixture({ cause: null, userId: user.id });
 
     classifiedAs("gap");
-    await classify({ mistakeId: settled.id, userId: user.id });
 
-    vi.mocked(classifyMistakeCause).mockRejectedValueOnce(new Error("model down"));
-    await classify({ mistakeId: open.id, userId: user.id });
+    await expect(
+      resolveMistakeCause({ cause: CAUSE, mistakeId: settled.id, userId: user.id }),
+    ).resolves.toBeNull();
 
     await expect(
       prisma.mistake.findUniqueOrThrow({ where: { id: settled.id } }),
     ).resolves.toMatchObject({ cause: "time" });
+  });
+
+  it("throws a model failure, so its step retries, and saves nothing", async () => {
+    const user = await userFixture();
+    const open = await mistakeFixture({ cause: null, userId: user.id });
+
+    vi.mocked(classifyMistakeCause).mockRejectedValueOnce(new Error("model down"));
+
+    await expect(
+      resolveMistakeCause({ cause: CAUSE, mistakeId: open.id, userId: user.id }),
+    ).rejects.toThrow("model down");
 
     await expect(
       prisma.mistake.findUniqueOrThrow({ where: { id: open.id } }),

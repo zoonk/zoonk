@@ -1,3 +1,4 @@
+import { getGoalLimitReason } from "@/lib/goals/goal-limit-reason";
 import { getAllowanceCacheTag, getGoalsCacheTag } from "@zoonk/core/cache-tags";
 import { findGoalStartLimit } from "@zoonk/core/entitlements/goal-start-limit";
 import { getSession } from "@zoonk/core/users/session";
@@ -5,7 +6,6 @@ import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/con
 import { getOnboardingDraft } from "@zoonk/core/view-models/onboarding/get-draft";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
-import { getGoalLimitReason } from "./goal-limit-reason";
 
 async function loadDraft(draftId: string | null): Promise<OnboardingDraftView | null> {
   if (!draftId || !isUuid(draftId)) {
@@ -32,10 +32,7 @@ export async function loadStartView(draftId: string | null) {
   return {
     canAttach: Boolean(session && !session.user.isAnonymous),
     draft,
-    goalLimit:
-      goalLimit && !isGuestLimit
-        ? getGoalLimitReason({ limit: goalLimit, status: "limitReached" })
-        : null,
+    goalLimit: goalLimit && !isGuestLimit ? getGoalLimitReason(goalLimit) : null,
     hasSession: Boolean(session),
     needsAccount: isGuestLimit,
   };

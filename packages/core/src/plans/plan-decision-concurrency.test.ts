@@ -3,6 +3,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { isJsonObject } from "@zoonk/utils/json";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { listOwed } from "../_test-utils/follow-ups";
 import {
   LEARNER_LOCK,
   holdLearnerLock,
@@ -161,6 +162,39 @@ describe("plan decisions preserve the first committed answer", () => {
       const replay = await countDatabaseStatements(() => decidePlanChange(decision));
       expect(replay.result).toStrictEqual({ status: "conflict" });
       expect(replay.writes).toBe(0);
+    }));
+
+  it("owes the lessons an applied proposal brings in, and nothing for a decline", () =>
+    runBody(async () => {
+      const applied = await setup();
+
+      await decidePlanChange({
+        changeId: applied.changeId,
+        goalId: applied.goal.id,
+        input: { status: "applied", timeZone: "UTC" },
+      });
+
+      await expect(listOwed(applied.user.id)).resolves.toStrictEqual([
+        {
+          input: { goalId: applied.goal.id, lessonsAskedAt: NOW.getTime() },
+          key: applied.goal.id,
+          kind: "prepareGoalLessons",
+        },
+      ]);
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: applied.plan.id } }),
+      ).resolves.toMatchObject({ lessonsAskedAt: NOW });
+
+      const declined = await setup();
+
+      await decidePlanChange({
+        changeId: declined.changeId,
+        goalId: declined.goal.id,
+        input: { status: "declined" },
+      });
+
+      await expect(listOwed(declined.user.id)).resolves.toStrictEqual([]);
     }));
 
   it("commits only one decline when two taps read the same waiting proposal", () =>

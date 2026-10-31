@@ -1,10 +1,10 @@
 import "server-only";
+import { askForSessionPreparation } from "@zoonk/core/follow-ups/session-preparation";
 import { openLanguageCheckpointCall } from "@zoonk/core/language/conversations/start";
 import { getLessonGenerationState } from "@zoonk/core/library/generation/state";
 import { getDayBlockScreen } from "@zoonk/core/sessions/day-block";
 import { startStudyBlock } from "@zoonk/core/sessions/start-block";
 import { type StudyBlock } from "@zoonk/learn/session/types";
-import { prepareStudySession } from "./session-preparation";
 import { type StudyDestination } from "./study-destination";
 
 /** Straight to the intro: the router keeps the block page's redirect, so Start would land back on the intro. */
@@ -32,6 +32,30 @@ async function toChallengeDestination({
   return { blockId: block.id, kind: block.checkpoint?.mock ? "mock" : "checkpoint", sessionId };
 }
 
+async function openChallenge({
+  block,
+  sessionId,
+  timeZone,
+}: {
+  block: Pick<StudyBlock, "checkpoint" | "id" | "planItemId" | "status">;
+  sessionId: string;
+  timeZone: string;
+}): Promise<StudyDestination | null> {
+  if (block.status === "active") {
+    const resumed = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });
+
+    if (resumed.status === "plusRequired" && block.planItemId) {
+      return { kind: "challenge", planItemId: block.planItemId, sessionId };
+    }
+
+    if (resumed.status !== "ready") {
+      return null;
+    }
+  }
+
+  return toChallengeDestination({ block, sessionId });
+}
+
 async function isLessonReady(lessonId: string | null): Promise<boolean> {
   if (!lessonId) {
     return false;
@@ -56,7 +80,7 @@ export async function openStudyBlock({
   if (block.kind === "learn" && screen === "session") {
     if (!block.lessonId) {
       // A plan placeholder has no browser generation endpoint until preparation picks its lesson.
-      prepareStudySession(sessionId);
+      await askForSessionPreparation({ sessionId });
       return { blockId: block.id, kind: "preparingLesson" };
     }
 
@@ -64,22 +88,13 @@ export async function openStudyBlock({
     return { blockId: block.id, kind: "unwrittenLesson", lessonId: block.lessonId, sessionId };
   }
 
-  prepareStudySession(sessionId);
-
   if (screen === "challenge") {
-    if (block.status === "active") {
-      const resumed = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });
+    const [destination] = await Promise.all([
+      openChallenge({ block, sessionId, timeZone }),
+      askForSessionPreparation({ sessionId }),
+    ]);
 
-      if (resumed.status === "plusRequired" && block.planItemId) {
-        return { kind: "challenge", planItemId: block.planItemId, sessionId };
-      }
-
-      if (resumed.status !== "ready") {
-        return null;
-      }
-    }
-
-    return toChallengeDestination({ block, sessionId });
+    return destination;
   }
 
   const started = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });

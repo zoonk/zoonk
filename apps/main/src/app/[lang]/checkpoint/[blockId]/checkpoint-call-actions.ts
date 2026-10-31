@@ -1,6 +1,5 @@
 "use server";
 
-import { prepareStudySession } from "@/lib/session/session-preparation";
 import { languageConversationStartInputSchema } from "@zoonk/core/language/conversations/contract";
 import { getLanguageConversation } from "@zoonk/core/language/conversations/get";
 import {
@@ -37,10 +36,6 @@ export async function startCheckpointCallAction(blockId: string) {
 
   if (started.status !== "ready") {
     return { status: "failed" } as const;
-  }
-
-  if (started.sessionId) {
-    prepareStudySession(started.sessionId);
   }
 
   const view = await getLanguageConversation(started.conversationId);

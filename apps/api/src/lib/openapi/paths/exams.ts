@@ -150,7 +150,7 @@ export const examPaths = {
   "/goals/{goalId}/plan/exam-choices": {
     post: {
       description:
-        "The option the learner takes of one of their exam's choices, such as ENEM's foreign language (English or Spanish), from `examChoices` on the plan or onboarding. The plan, practice and mocks then study that option and no other of the choice; until the learner picks, they study none. It re-plans from today and can be undone like any plan change; picking the option they already take changes nothing (`change` is null, as it is while the plan is being built). 422 PLAN_CHANGE_INVALID with reason unknownOption when the exam has no such choice or option.",
+        "The option the learner takes of one of their exam's choices, such as ENEM's foreign language (English or Spanish), from `examChoices` on the plan or onboarding. The plan, practice and mocks then study that option and no other of the choice; until the learner picks, they study none. It re-plans from today, the server prepares the lessons it brings in soon, and it can be undone like any plan change; picking the option they already take changes nothing (`change` is null, as it is while the plan is being built). 422 PLAN_CHANGE_INVALID with reason unknownOption when the exam has no such choice or option.",
       operationId: "createPlanExamChoice",
       requestBody: {
         content: { "application/json": { schema: examChoiceInputSchema } },

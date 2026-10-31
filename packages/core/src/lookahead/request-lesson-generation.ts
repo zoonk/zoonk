@@ -2,8 +2,9 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { getRequestPlatform } from "../analytics/request-platform";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
-import { claimUsage } from "../entitlements/claim-usage";
+import { claimUsage, claimUsageFor } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
+import { isVisibleTo } from "../library/_utils/library-visibility";
 import { getLessonGenerationState } from "../library/generation/lesson-generation-state";
 import { isLessonPlusOnly } from "../sessions/_utils/plus-only-lessons";
 import { findViewerLesson } from "./_utils/viewer-lesson";
@@ -37,19 +38,18 @@ async function getActiveGoal(userId: string) {
   return profile?.activeGoal ?? null;
 }
 
-/** Claims the later lesson start before AI work; starting after generation must not consume allowance again. */
-export async function requestLessonGeneration({
+async function requestFor({
+  claim,
   lessonId,
+  platform,
+  userId,
 }: {
+  claim: (input: Parameters<typeof claimUsage>[0]) => Promise<UsageDecision>;
   lessonId: string;
+  platform: AnalyticsPlatform | null;
+  userId: string;
 }): Promise<LessonGenerationRequest> {
-  const viewer = await findViewerLesson(lessonId);
-
-  if (viewer.status !== "ready") {
-    return viewer;
-  }
-
-  if (await isLessonPlusOnly({ lessonId, userId: viewer.userId })) {
+  if (await isLessonPlusOnly({ lessonId, userId })) {
     return { status: "plusRequired" };
   }
 
@@ -72,7 +72,7 @@ export async function requestLessonGeneration({
     return { status: "setAside" };
   }
 
-  const decision = await claimUsage({ generated: true, kind: "lessonStart", targetId: lessonId });
+  const decision = await claim({ generated: true, kind: "lessonStart", targetId: lessonId });
 
   if (decision.status === "unauthorized") {
     return decision;
@@ -82,12 +82,57 @@ export async function requestLessonGeneration({
     return { decision, status: "refused" };
   }
 
-  const [goal, platform] = await Promise.all([getActiveGoal(viewer.userId), getRequestPlatform()]);
+  const goal = await getActiveGoal(userId);
 
   return {
-    analytics: { distinctId: viewer.userId, goalId: goal?.id, platform },
+    analytics: { distinctId: userId, goalId: goal?.id, platform },
     forExam: goal?.kind === "exam",
     lessonId,
     status: "start",
   };
+}
+
+/** Claims the later lesson start before AI work; starting after generation must not consume allowance again. */
+export async function requestLessonGeneration({
+  lessonId,
+}: {
+  lessonId: string;
+}): Promise<LessonGenerationRequest> {
+  const viewer = await findViewerLesson(lessonId);
+
+  if (viewer.status !== "ready") {
+    return viewer;
+  }
+
+  return requestFor({
+    claim: claimUsage,
+    lessonId,
+    platform: await getRequestPlatform(),
+    userId: viewer.userId,
+  });
+}
+
+/** Internal, for the lesson a learner's write owes: `userId` must come from that write. */
+export async function requestLessonGenerationFor({
+  lessonId,
+  userId,
+}: {
+  lessonId: string;
+  userId: string;
+}): Promise<LessonGenerationRequest> {
+  const lesson = await prisma.lesson.findUnique({
+    select: { ownerId: true, visibility: true },
+    where: { id: lessonId },
+  });
+
+  if (!lesson || !isVisibleTo({ row: lesson, viewerId: userId })) {
+    return { status: "notFound" };
+  }
+
+  return requestFor({
+    claim: (input) => claimUsageFor({ ...input, userId }),
+    lessonId,
+    platform: null,
+    userId,
+  });
 }

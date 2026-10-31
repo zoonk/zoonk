@@ -2,23 +2,24 @@ import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { extractMemoryFacts } from "@zoonk/ai/tasks/memory/extraction";
 import { findSessionPatterns } from "@zoonk/ai/tasks/memory/session-patterns";
-import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { after } from "next/server";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { toProvenanceData } from "../library/_utils/library-rows";
 import { isMemoryEnabled } from "./_utils/memory-access";
-import { toMemoryCandidates, toSessionFacts } from "./_utils/memory-candidates";
+import {
+  type MemoryCandidate,
+  toMemoryCandidates,
+  toSessionFacts,
+} from "./_utils/memory-candidates";
 import {
   type MemoryChatMessage,
   formatChatInput,
   loadOnboardingInput,
 } from "./_utils/memory-source-input";
-import { type CandidateContext, rememberCandidate } from "./_utils/remember-candidate";
 import { type MemoryChange, type MemorySource } from "./memory-contract";
+import { type CandidateContext, rememberCandidate } from "./remember-candidate";
 
 type MemoryUpdateSource =
   | { kind: "onboarding"; goalId: string }
@@ -32,7 +33,14 @@ export type MemoryUpdateRequest = {
   goalId?: string | null;
 };
 
-type ExtractionInput = { input: string; language: string; source: MemorySource };
+export type ProposedMemoryUpdate = { candidates: MemoryCandidate[]; context: CandidateContext };
+
+type ExtractionInput = {
+  input: string;
+  language: string;
+  source: MemorySource;
+  timeZone?: string | null;
+};
 
 async function proposeFacts({
   analytics,
@@ -90,10 +98,7 @@ async function loadExtractionInput({
 async function rememberInOrder({
   candidates,
   context,
-}: {
-  candidates: Parameters<typeof rememberCandidate>[0]["candidate"][];
-  context: CandidateContext;
-}): Promise<MemoryChange[]> {
+}: ProposedMemoryUpdate): Promise<MemoryChange[]> {
   const changes: MemoryChange[] = [];
 
   for (const candidate of candidates) {
@@ -108,10 +113,13 @@ async function rememberInOrder({
   return changes;
 }
 
-/** `userId` must come from the capability or workflow a session started, never from a client. */
-export async function updateMemoryFromActivity(
+/**
+ * Internal: `userId` must come from the capability or workflow a session started, never from a
+ * client. Null when memory is off or there's nothing to read; a model failure throws.
+ */
+export async function proposeMemoryUpdate(
   request: MemoryUpdateRequest,
-): Promise<MemoryChange[]> {
+): Promise<ProposedMemoryUpdate | null> {
   const { goalId, timeZone, userId } = request;
 
   const [enabled, extraction] = await Promise.all([
@@ -120,11 +128,11 @@ export async function updateMemoryFromActivity(
   ]);
 
   if (!enabled || !extraction?.input.trim()) {
-    return [];
+    return null;
   }
 
   const now = new Date();
-  const zone = getAnswerTimeZone({ goal: null, timeZone });
+  const zone = getAnswerTimeZone({ goal: null, timeZone: timeZone ?? extraction.timeZone });
   const today = getDateInTimeZone({ date: now, timeZone: zone });
 
   const { facts, provenance } = await proposeFacts({
@@ -133,10 +141,8 @@ export async function updateMemoryFromActivity(
     today: today.toISOString().slice(0, 10),
   });
 
-  const candidates = toMemoryCandidates({ facts, today });
-
-  const changes = await rememberInOrder({
-    candidates,
+  return {
+    candidates: toMemoryCandidates({ facts, today }),
     context: {
       language: extraction.language,
       now,
@@ -144,22 +150,24 @@ export async function updateMemoryFromActivity(
       source: extraction.source,
       userId,
     },
-  });
+  };
+}
+
+/** `userId` must come from the capability or workflow a session started, never from a client. */
+export async function updateMemoryFromActivity(
+  request: MemoryUpdateRequest,
+): Promise<MemoryChange[]> {
+  const proposed = await proposeMemoryUpdate(request);
+
+  if (!proposed) {
+    return [];
+  }
+
+  const changes = await rememberInOrder(proposed);
 
   if (changes.length > 0) {
-    revalidateCacheTags([getMemoryCacheTag(userId)]);
+    revalidateCacheTags([getMemoryCacheTag(request.userId)]);
   }
 
   return changes;
-}
-
-/** Never throws: it runs after the response and logs a failure. */
-export function scheduleMemoryUpdate(request: MemoryUpdateRequest): void {
-  after(async () => {
-    const { error } = await safeAsync(() => updateMemoryFromActivity(request));
-
-    if (error) {
-      logError(`Could not update memory for learner ${request.userId}.`, error);
-    }
-  });
 }

@@ -38,7 +38,11 @@ async function runDevelopmentCommand({
     args: [...pnpmCommand.args, ...args],
     command: pnpmCommand.command,
     currentDirectory,
-    environment: { APP_CACHE_SECRET: randomUUID(), ...environment },
+    environment: {
+      APP_CACHE_SECRET: randomUUID(),
+      APP_FOLLOW_UP_SECRET: randomUUID(),
+      ...environment,
+    },
   });
 }
 

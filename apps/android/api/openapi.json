@@ -2322,7 +2322,7 @@
     },
     "/goals/{goalId}/lesson-preparations": {
       "post": {
-        "description": "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion calls it itself; call it when placement ends another way, or from the learner's tap on a Today whose `emptyDay` is `lessonsToPrepare` (the next read says `lessonsComing`), never on a screen view. For a guest only the plan's first lesson is written, counted as its start like opening it.",
+        "description": "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion, onboarding's schedule answer and plan changes prepare them on the server, so call it only from the learner's tap on a Today whose `emptyDay` is `lessonsToPrepare` (the next read says `lessonsComing`), never after those writes or on a screen view. For a guest only the plan's first lesson is written, counted as its start like opening it.",
         "operationId": "createGoalLessonPreparation",
         "security": [
           {
@@ -2697,7 +2697,7 @@
     },
     "/study-sessions/{sessionId}/preparations": {
       "post": {
-        "description": "Prepares content around one of the learner's study sessions: every lesson of this session and the next gets written in the background. Block starts, stops and the last block's completion call it themselves; call it when the learner moves a session along another way, never on a screen view. For a guest only the lesson they reach next is written, counted as its start like opening it.",
+        "description": "Prepares content around one of the learner's study sessions: every lesson of this session and the next gets written in the background. Starting a block, the first stop and the session's end prepare it on the server, so call it only when the learner opens a block without starting it, such as a plan placeholder whose lesson isn't picked yet, never on a screen view. For a guest only the lesson they reach next is written, counted as its start like opening it.",
         "operationId": "createStudySessionPreparation",
         "security": [
           {
@@ -3912,7 +3912,7 @@
     },
     "/goals/{goalId}/plan/exam-choices": {
       "post": {
-        "description": "The option the learner takes of one of their exam's choices, such as ENEM's foreign language (English or Spanish), from `examChoices` on the plan or onboarding. The plan, practice and mocks then study that option and no other of the choice; until the learner picks, they study none. It re-plans from today and can be undone like any plan change; picking the option they already take changes nothing (`change` is null, as it is while the plan is being built). 422 PLAN_CHANGE_INVALID with reason unknownOption when the exam has no such choice or option.",
+        "description": "The option the learner takes of one of their exam's choices, such as ENEM's foreign language (English or Spanish), from `examChoices` on the plan or onboarding. The plan, practice and mocks then study that option and no other of the choice; until the learner picks, they study none. It re-plans from today, the server prepares the lessons it brings in soon, and it can be undone like any plan change; picking the option they already take changes nothing (`change` is null, as it is while the plan is being built). 422 PLAN_CHANGE_INVALID with reason unknownOption when the exam has no such choice or option.",
         "operationId": "createPlanExamChoice",
         "security": [
           {
@@ -15235,7 +15235,7 @@
     },
     "/goals/{goalId}/plan/changes": {
       "post": {
-        "description": "Applies a change the learner made in the plan: daily time, a weekday's time or a rest day, a light week, the date, areas to focus on (more time and depth, starting right away), skip or bring back, areas to start past their basics, or steering. It re-plans from today and can be undone. A change of focus alone (`focusAreas`, `reduceAreas`) that wouldn't do what it asks isn't saved: focusing on subjects that would move nothing, or more or less of some that would do the opposite in the plan the learner sees, answers `unchanged` with the reason.",
+        "description": "Applies a change the learner made in the plan: daily time, a weekday's time or a rest day, a light week, the date, areas to focus on (more time and depth, starting right away), skip or bring back, areas to start past their basics, or steering. It re-plans from today and can be undone, and the server prepares the lessons it brings in soon. A change of focus alone (`focusAreas`, `reduceAreas`) that wouldn't do what it asks isn't saved: focusing on subjects that would move nothing, or more or less of some that would do the opposite in the plan the learner sees, answers `unchanged` with the reason.",
         "operationId": "createPlanChange",
         "security": [
           {
@@ -15346,7 +15346,7 @@
     },
     "/goals/{goalId}/plan/changes/{changeId}": {
       "post": {
-        "description": "The learner's answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen (\"Got it\") for an applied change the plan should stop showing. Applying or undoing a change starts preparing the lessons it brings in soon. 409 when the change was already answered or the plan moved on.",
+        "description": "The learner's answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen (\"Got it\") for an applied change the plan should stop showing. Applying or undoing a change prepares the lessons it brings in soon on the server; ask for nothing after it. 409 when the change was already answered or the plan moved on.",
         "operationId": "decidePlanChange",
         "security": [
           {
@@ -15792,7 +15792,7 @@
     },
     "/goals/{goalId}/plan/own-level": {
       "post": {
-        "description": "Changes the learner's own level (nothing yet, basic, intermediate or advanced) from the plan. Past work is never undone: known skills and passed test-outs stay. A lower level adds the foundations the plan left out, right before the skills they prepare for, as a change with an undo. A higher level skips nothing: it returns test-outs for the chapters the new level covers. Placement starts from the new level. The next lessons start being prepared after this request.",
+        "description": "Changes the learner's own level (nothing yet, basic, intermediate or advanced) from the plan. Past work is never undone: known skills and passed test-outs stay. A lower level adds the foundations the plan left out, right before the skills they prepare for, as a change with an undo. A higher level skips nothing: it returns test-outs for the chapters the new level covers. Placement starts from the new level. The server prepares the next lessons; ask for nothing after it.",
         "operationId": "updateOwnLevel",
         "security": [
           {
@@ -22985,7 +22985,7 @@
     },
     "/study-sessions/{sessionId}/blocks/{blockId}/completions": {
       "post": {
-        "description": "Finishes a block and returns its completion moment: Brain Power (with the full 50-point bonus for finishing every offered mission when it just paid), the session bar, achievable missions, a checkpoint's result with each right answer and why, when a lesson comes back, and milestones earned. One, two or three offered missions earn the same completion bonus; zero missions earn none. Learn blocks finish once their lesson was finished in the lesson player. Finishing a finished block again (a retry after a lost response) returns its moment again, paying nothing twice.",
+        "description": "Finishes a block and returns its completion moment: Brain Power (with the full 50-point bonus for finishing every offered mission when it just paid), the session bar, achievable missions, a checkpoint's result with each right answer and why, when a lesson comes back, and milestones earned. One, two or three offered missions earn the same completion bonus; zero missions earn none. Learn blocks finish once their lesson was finished in the lesson player. Finishing a finished block again (a retry after a lost response) returns its moment again, paying nothing twice. When the block ends the session, the server prepares what comes next; ask for nothing after it.",
         "operationId": "createStudyBlockCompletion",
         "security": [
           {
@@ -23111,7 +23111,7 @@
     },
     "/study-sessions/{sessionId}/blocks/{blockId}/starts": {
       "post": {
-        "description": "Starts or resumes a block. A phase challenge waits for earlier lessons and phase challenges in the same session to be completed or skipped; `waitReason` says which is still unfinished. Other blocks can open in any order, including lessons, review, practice, weekly challenges and mocks. The session's first start records where the learner stands, so its end can say what changed. The daily time limit is checked before anything new starts.",
+        "description": "Starts or resumes a block. A phase challenge waits for earlier lessons and phase challenges in the same session to be completed or skipped; `waitReason` says which is still unfinished. Other blocks can open in any order, including lessons, review, practice, weekly challenges and mocks. The session's first start records where the learner stands, so its end can say what changed. The daily time limit is checked before anything new starts. Starting a block prepares the session's next lessons on the server; ask for nothing after it.",
         "operationId": "createStudyBlockStart",
         "security": [
           {
@@ -23455,7 +23455,7 @@
     },
     "/study-sessions/{sessionId}/stops": {
       "post": {
-        "description": "\"Stop for today\": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` is false until every block is done).",
+        "description": "\"Stop for today\": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` is false until every block is done). The first stop prepares what comes next on the server; ask for nothing after it.",
         "operationId": "createStudySessionStop",
         "security": [
           {

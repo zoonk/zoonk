@@ -8,6 +8,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
+import { listOwed } from "../_test-utils/follow-ups";
 import { trackServerEvent } from "../analytics/server";
 import { type LearnerAnswer, recordLearnerAnswer } from "./record-learner-answer";
 
@@ -127,11 +128,11 @@ describe(recordLearnerAnswer, () => {
       status: "open",
     });
 
-    expect(recorded.causeRequest).toBeNull();
     expect(recorded.learnerSkill?.reps).toBe(1);
+    await expect(listOwed(user.id)).resolves.toStrictEqual([]);
   });
 
-  it("asks the classifier when the pattern is ambiguous", async () => {
+  it("owes the classifier's reading when the pattern is ambiguous", async () => {
     const { item, skill, user } = await setup();
     const answers = [true, true, false, true, false];
 
@@ -162,18 +163,23 @@ describe(recordLearnerAnswer, () => {
 
     expect(recorded.mistake?.cause).toBeNull();
 
-    expect(recorded.causeRequest).toStrictEqual({
-      input: {
-        correctAnswer: "Right answer",
-        language: "en",
-        learnerAnswer: "Wrong answer",
-        misconception: "",
-        question: SNAPSHOT.question,
-        recentAccuracy: "3 of 5 right",
+    await expect(listOwed(user.id)).resolves.toStrictEqual([
+      {
+        input: {
+          cause: {
+            correctAnswer: "Right answer",
+            language: "en",
+            learnerAnswer: "Wrong answer",
+            misconception: "",
+            question: SNAPSHOT.question,
+            recentAccuracy: "3 of 5 right",
+          },
+          mistakeId: recorded.mistake?.id,
+        },
+        key: recorded.mistake?.id,
+        kind: "classifyMistakeCause",
       },
-      mistakeId: recorded.mistake?.id,
-      userId: user.id,
-    });
+    ]);
   });
 
   it("keeps one open entry per question", async () => {
