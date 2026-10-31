@@ -21,6 +21,7 @@ internal data class LineLabel(
     val isUpper: Boolean,
     val segment: LabelSegment,
     val size: Size,
+    val isOptional: Boolean = false,
 )
 
 internal class LabelMarks(
@@ -35,16 +36,17 @@ internal class LabelMarks(
  * placed before it. When no spot close by clears every line, it keeps off its own line and the marks, then
  * just off its own line, searching the whole chart when nothing near is free. Every spot it searches keeps
  * clear of the arrows, heads included. Its halo never cuts the line it names: with no free spot anywhere it
- * stays by its end, on the line's open side. [unit] is pixels per dp.
+ * stays by its end, on the line's open side. An optional name with no spot clear of the marks and the names
+ * before it is left out, as null. [unit] is pixels per dp.
  */
 internal fun placeLineLabels(
     area: Rect,
     labels: List<LineLabel>,
     marks: LabelMarks,
     unit: Float,
-): List<Rect> =
-    labels.fold(emptyList()) { placed, label ->
-        placed + placeLineLabel(area, label, marks, placed, unit)
+): List<Rect?> =
+    labels.fold(emptyList()) { boxes, label ->
+        boxes + placeLineLabel(area, label, marks, boxes.filterNotNull(), unit)
     }
 
 private fun placeLineLabel(
@@ -53,7 +55,7 @@ private fun placeLineLabel(
     marks: LabelMarks,
     placed: List<Rect>,
     unit: Float,
-): Rect {
+): Rect? {
     val clearance = CLEARANCE * unit
     val start = besideEnd(label, area, unit)
     val step = label.size.height / STEPS_PER_LABEL_HEIGHT
@@ -73,13 +75,15 @@ private fun placeLineLabel(
         listOf<(Rect, Offset) -> Boolean>(
             { box, shift -> shift.getDistance() <= CLEAR_OF_ALL_STEPS && box.fits(marks.lines) && box.clearsMarks() },
             { box, _ -> isClear(box) },
-            { box, _ -> offItsLine(box) },
+            { box, _ -> !label.isOptional && offItsLine(box) },
         )
     val nearby = passes.firstNotNullOfOrNull { pass -> NEAREST_SHIFTS.firstOrNull { pass(start.translate(it * step), it) } }
     if (nearby != null) return start.translate(nearby * step)
 
     val spots = spotsAcross(area, start)
-    return spots.firstOrNull(isClear) ?: spots.firstOrNull(offItsLine) ?: start
+    val clear = spots.firstOrNull(isClear)
+    if (clear != null || label.isOptional) return clear
+    return spots.firstOrNull(offItsLine) ?: start
 }
 
 private fun spotsAcross(

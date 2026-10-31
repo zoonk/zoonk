@@ -3,6 +3,7 @@ package com.zoonk.android.feature.activities.geometry
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -12,6 +13,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
@@ -39,6 +41,7 @@ import com.zoonk.android.feature.activities.sorting.choiceCheck
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
 import com.zoonk.android.feature.player.summaryStep
+import com.zoonk.android.ui.theme.LightPalette
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonStepAnswer
 import kotlinx.serialization.json.JsonObject
@@ -53,6 +56,9 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 @RunWith(AndroidJUnit4::class)
 class GeometryFlowTest {
@@ -360,6 +366,36 @@ class GeometryFlowTest {
         assertEquals(true, handle(SUPPLY).state()?.contains("Price per dozen goes up"))
     }
 
+    private fun inkWithin(
+        center: Offset,
+        radius: Float,
+    ): Int {
+        val pixels = rule.onRoot().captureToImage().toPixelMap()
+        val ink = LightPalette.foreground
+        val reach = radius.roundToInt()
+        return (-reach..reach).sumOf { dx ->
+            (-reach..reach).count { dy ->
+                val pixel = pixels[center.x.roundToInt() + dx, center.y.roundToInt() + dy]
+                dx * dx + dy * dy <= reach * reach &&
+                    abs(pixel.red - ink.red) + abs(pixel.green - ink.green) + abs(pixel.blue - ink.blue) < NEAR_INK
+            }
+        }
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun lineCrossingDrawsTheNewCrossingOverAHandleRestingOnItAndTheHandleStillDrags() {
+        play("lineCrossing", isCorrect = true)
+
+        handle(DEMAND).press(Key.MoveEnd)
+        val knob = handle(SUPPLY).fetchSemanticsNode().boundsInRoot.center
+        assertTrue("the crossing shows in Supply's knob", inkWithin(knob, with(rule.density) { KNOB_INSIDE.toPx() }) > 0)
+
+        handle(SUPPLY).performTouchInput { swipe(center, center - Offset(60.dp.toPx(), 0f)) }
+        assertEquals("Supply moved left", handle(SUPPLY).state()?.substringBefore("."))
+    }
+
     @Test
     fun lineCrossingBringsAMoveBackNoFurtherThanItsLineCanGo() {
         val content = ActivityFixtures.contentJson("lineCrossing.breakEven")
@@ -449,6 +485,8 @@ class GeometryFlowTest {
         const val DEMAND = "Move the line Demand"
         const val COST = "Move the line Cost"
         val KNOB_REACH = 15.25.dp
+        val KNOB_INSIDE = 11.dp
+        const val NEAR_INK = 0.25f
         val CANVAS_PADDING = 16.dp
     }
 }

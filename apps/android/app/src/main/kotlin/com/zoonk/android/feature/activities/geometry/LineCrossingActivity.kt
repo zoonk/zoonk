@@ -268,7 +268,7 @@ private fun LineCrossingChart(
         val names =
             fields.lines.mapIndexed { index, line -> LineName(line.label, colors.tones[index], shown[index], isUpper = true) } +
                 listOfNotNull(answerLine?.let { LineName(whatHappened, colors.rightText, it, isUpper = false) }) +
-                movedLines.map { LineName(beforeLabel, colors.muted, it, isUpper = false) }
+                movedLines.map { LineName(beforeLabel, colors.muted, it, isUpper = false, isOptional = true) }
         val texts = names.map { measurer.measure(it.text, lineStyle) }
         val unit = density.density
         val arrows = if (movedLines.isEmpty()) emptyList() else changeArrowSegments(pixel(before), pixel(after), left, bottom, unit)
@@ -283,6 +283,7 @@ private fun LineCrossingChart(
                             name.isUpper,
                             segment(name.line),
                             Size(texts[index].size.width.toFloat(), with(density) { lineStyle.fontSize.toPx() }),
+                            name.isOptional,
                         )
                     },
                 marks =
@@ -312,13 +313,13 @@ private fun LineCrossingChart(
                 shown.forEachIndexed { index, line -> drawSegment(segment(line), colors.tones[index], dashed = false) }
             }
             names.forEachIndexed { index, name ->
-                drawLabel(texts[index], Offset(boxes[index].left, boxes[index].center.y), name.color, colors.halo, LabelAnchor.Start)
+                boxes[index]?.let { drawLabel(texts[index], Offset(it.left, it.center.y), name.color, colors.halo, LabelAnchor.Start) }
             }
             if (movedLines.isNotEmpty()) {
-                crossingMark(pixel(before), left, bottom, isBefore = true, colors)
+                crossingGuide(pixel(before), left, bottom, isBefore = true, colors)
                 arrows.forEach { arrow(it.from, it.to, colors.ink) }
             }
-            crossingMark(pixel(after), left, bottom, isBefore = false, colors)
+            crossingGuide(pixel(after), left, bottom, isBefore = false, colors)
         }
 
         val reach = with(density) { TRACK_WIDTH.toPx() / 2 }
@@ -356,6 +357,12 @@ private fun LineCrossingChart(
                 disabled = !enabled,
                 valueAt = { nearestOffset(slide, it) },
             ) { LineKnob(axis, colors.tones[index], colors.halo) }
+        }
+
+        // The crossings are the answer, so they show over a handle resting on them.
+        Canvas(Modifier.matchParentSize().clearAndSetSemantics {}) {
+            if (movedLines.isNotEmpty()) crossingDot(pixel(before), isBefore = true, colors)
+            crossingDot(pixel(after), isBefore = false, colors)
         }
     }
 }
@@ -479,7 +486,7 @@ private fun DrawScope.drawSegment(
     )
 }
 
-private fun DrawScope.crossingMark(
+private fun DrawScope.crossingGuide(
     at: Offset,
     left: Float,
     bottom: Float,
@@ -495,6 +502,13 @@ private fun DrawScope.crossingMark(
         }
     val dash = GUIDE_DASH.toPx()
     drawPath(path, guide, style = Stroke(1.5.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash, dash))))
+}
+
+private fun DrawScope.crossingDot(
+    at: Offset,
+    isBefore: Boolean,
+    colors: ChartColors,
+) {
     val radius = DOT_RADIUS.toPx()
     if (isBefore) {
         drawCircle(colors.halo, radius, at)
@@ -551,6 +565,7 @@ private class LineName(
     val color: Color,
     val line: Line,
     val isUpper: Boolean,
+    val isOptional: Boolean = false,
 )
 
 private val PLOT_AREA = 192.dp

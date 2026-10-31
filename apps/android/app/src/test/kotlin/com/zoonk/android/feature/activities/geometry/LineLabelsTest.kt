@@ -4,6 +4,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -25,7 +27,7 @@ class LineLabelsTest {
     private fun place(
         vararg labels: LineLabel,
         marks: LabelMarks = noMarks,
-    ) = placeLineLabels(area, labels.toList(), marks, unit = 1f)
+    ) = placeLineLabels(area, labels.toList(), marks, unit = 1f).map { requireNotNull(it) }
 
     @Test
     fun keepsANameOffItsLineWhereTheLineLeavesThroughTheChartsTop() {
@@ -119,5 +121,21 @@ class LineLabelsTest {
 
         assertTrue("box $box", gap >= 3f)
         assertTrue("gap ${gap(box, segment)}", gap(box, segment) >= 3f)
+    }
+
+    @Test
+    fun leavesAnOptionalNameOutWhenNoSpotClearsTheMarksAndKeepsTheOthers() {
+        val segment = LabelSegment(Offset(22f, 222f), Offset(293f, 26f))
+        val everywhere = LabelCircle(Offset(166f, 124f), radius = 400f)
+        val (name, optional) =
+            placeLineLabels(
+                area,
+                listOf(LineLabel(isUpper = true, segment, size), LineLabel(isUpper = false, segment, size, isOptional = true)),
+                LabelMarks(arrows = emptyList(), circles = listOf(everywhere), lines = emptyList()),
+                unit = 1f,
+            )
+
+        assertNotNull(name)
+        assertNull(optional)
     }
 }
