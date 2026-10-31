@@ -166,12 +166,12 @@ export function SourceComparisonActivity({
   phase,
 }: SourceComparisonProps) {
   const t = useExtracted();
+  const space = useSentenceSpace();
   const { check, fields } = content;
 
   const [marked, setMarked] = useState<string[]>(() =>
     answer?.kind === "selection" ? answer.ids : [],
   );
-  const space = useSentenceSpace();
 
   const isChecked = phase === "checked";
 

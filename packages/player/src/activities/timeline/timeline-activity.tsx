@@ -63,9 +63,48 @@ function resultOf({
   return expected.answer.ids.indexOf(id) === answer.ids.indexOf(id) ? "correct" : "incorrect";
 }
 
-function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | "labelId">) {
+function TimelineDescription({
+  dated,
+  end,
+  events,
+  formatYear,
+  start,
+}: {
+  dated: readonly { label: string; year: number }[];
+  end: number;
+  events: readonly TrackEvent[];
+  formatYear: (year: number) => string;
+  start: number;
+}) {
   const t = useExtracted();
   const space = useSentenceSpace();
+
+  function describeEvent(event: TrackEvent) {
+    if (!event.isRevealed) {
+      return t("{label}: placed at {year}.", { label: event.label, year: formatYear(event.guess) });
+    }
+
+    return hasShownGuess(event)
+      ? t("{label}: {year}, your guess was {guess}.", {
+          guess: formatYear(event.guess),
+          label: event.label,
+          year: formatYear(event.year),
+        })
+      : t("{label}: {year}.", { label: event.label, year: formatYear(event.year) });
+  }
+
+  const sentences = [
+    t("A timeline from {start} to {end}.", { end: formatYear(end), start: formatYear(start) }),
+    ...dated.map((item) =>
+      t("{label}: {year}.", { label: item.label, year: formatYear(item.year) }),
+    ),
+    ...events.map((event) => describeEvent(event)),
+  ];
+
+  return <ActivityTextAlternative>{sentences.join(space)}</ActivityTextAlternative>;
+}
+
+function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | "labelId">) {
   const { fields } = content;
   const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
   const formatYear = useFormatYear(fields.start);
@@ -104,16 +143,13 @@ function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | 
 
       <TimelineGaps anchors={fields.anchors} events={fields.events} formatYear={formatYear} />
 
-      <ActivityTextAlternative>
-        {t("A timeline from {start} to {end}.", {
-          end: formatYear(fields.end),
-          start: formatYear(fields.start),
-        })}
-        {space}
-        {dated
-          .map((item) => t("{label}: {year}.", { label: item.label, year: formatYear(item.year) }))
-          .join(space)}
-      </ActivityTextAlternative>
+      <TimelineDescription
+        dated={dated}
+        end={fields.end}
+        events={[]}
+        formatYear={formatYear}
+        start={fields.start}
+      />
     </ActivityCanvas>
   );
 }
@@ -127,7 +163,6 @@ function TimelineQuestion({
   phase,
 }: TimelineProps) {
   const t = useExtracted();
-  const space = useSentenceSpace();
   const { check, fields } = content;
   const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
   const [placements, setPlacements] = useState<Placement[]>([]);
@@ -184,20 +219,6 @@ function TimelineQuestion({
         ? placements.map((item) => (item.id === id ? { id, year } : item))
         : [...others, { id, year }],
     );
-  }
-
-  function describeEvent(event: TrackEvent) {
-    if (!event.isRevealed) {
-      return t("{label}: placed at {year}.", { label: event.label, year: formatYear(event.guess) });
-    }
-
-    return hasShownGuess(event)
-      ? t("{label}: {year}, your guess was {guess}.", {
-          guess: formatYear(event.guess),
-          label: event.label,
-          year: formatYear(event.year),
-        })
-      : t("{label}: {year}.", { label: event.label, year: formatYear(event.year) });
   }
 
   const trackEvents: TrackEvent[] = fields.events.flatMap((event) => {
@@ -272,20 +293,13 @@ function TimelineQuestion({
         )}
       </div>
 
-      <ActivityTextAlternative>
-        {t("A timeline from {start} to {end}.", {
-          end: formatYear(fields.end),
-          start: formatYear(fields.start),
-        })}
-        {space}
-        {fields.anchors
-          .map((anchor) =>
-            t("{label}: {year}.", { label: anchor.label, year: formatYear(anchor.year) }),
-          )
-          .join(space)}
-        {space}
-        {trackEvents.map((event) => describeEvent(event)).join(space)}
-      </ActivityTextAlternative>
+      <TimelineDescription
+        dated={fields.anchors}
+        end={fields.end}
+        events={trackEvents}
+        formatYear={formatYear}
+        start={fields.start}
+      />
     </ActivityCanvas>
   );
 }
